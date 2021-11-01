@@ -1,6 +1,7 @@
 #Nexus definitions in github: https://github.com/nexusformat/definitions
-#to be cloned under ./defintions/
+#to be cloned under os.environ['NEXUS_DEF_PATH'] 
 
+import os
 import h5py
 import sys
 from lxml import etree, objectify
@@ -120,7 +121,7 @@ def get_nxdl_child(nxdlElem, name):
     #filter primitive types
     if bc_name[2] == '_':
         return None
-    bc = objectify.parse('definitions/base_classes/' + bc_name +
+    bc = objectify.parse(os.environ['NEXUS_DEF_PATH'] + '/base_classes/' + bc_name +
                          '.nxdl.xml').getroot()
     return get_own_nxdl_child(bc, name)
 
@@ -223,7 +224,7 @@ def get_nxdl_doc(hdfNode, attr=False):
     """get nxdl documentation for an HDF5 node (or its attribute)"""
 
     nxdef = get_nxdl_entry(hdfNode)
-    root = objectify.parse("definitions/applications/" + nxdef + ".nxdl.xml")
+    root = objectify.parse(os.environ['NEXUS_DEF_PATH'] + "/applications/" + nxdef + ".nxdl.xml")
     elem = root.getroot()
     path = get_nx_class_path(hdfNode)
     for group in path.split('/')[1:]:
