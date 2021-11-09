@@ -45,13 +45,13 @@ def get_node_name(node):
     '''
         node - xml node
         returns:
-            html documentation name 
+            html documentation name
             Either as specified by the 'name' or taken from the type (nx_class).
-            Note that if only class name is available, the NX prefix is removed and 
+            Note that if only class name is available, the NX prefix is removed and
             the string is coverted to UPPER case.
     '''
     if 'name' in node.attrib.keys():
-        name=node.attrib['name'] 
+        name=node.attrib['name']
     else:
         name=node.attrib['type']
         if name.startswith('NX'):
@@ -61,7 +61,7 @@ def get_node_name(node):
 def get_nx_class(node):
     '''
         node - xml node
-        returns: 
+        returns:
             nx_class name
             Note that if 'type' is not defined, NX_CHAR is assumes
     '''
@@ -86,7 +86,7 @@ def get_required_string(node):
 def get_doc(node, ntype, level, nxhtml, nxpath):
     #URL for html documentation
     anchor=''
-    for n in nxpath: 
+    for n in nxpath:
         anchor+=n.lower()+"-"
     anchor='https://manual.nexusformat.org/classes/'+nxhtml+"#"+anchor.replace('_', '-')+ntype
     if len(ntype)==0:
@@ -119,7 +119,7 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
         ntype  - node type (e.g. group, field, attribute)
         level  - hierachy depth (level 1 - definition)
         nxhtml - url extension to html documentation (e.g. 'applications/NXxas.html')
-        nxpath - list of NX nodes in hierarchy 
+        nxpath - list of NX nodes in hierarchy
                  elements are in html documentation format. E.g. ['NXxas', 'ENTRY']
     '''
     nxpath_new=nxpath.copy()
@@ -129,7 +129,7 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
     print_doc(node, ntype, level, nxhtml, nxpath_new)
 
     #Create a sub-section
-    metaNode=Section(name=nxpath_new[-1])
+    metaNode=Section(name=get_nx_class(node))
     mss = SubSection(sub_section=metaNode,name=nxpath_new[-1], repeats=True)
     #decorate with properties
     decorate(metaNode,node,ntype,level,nxhtml,nxpath)
@@ -141,7 +141,7 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
         #sub-attributes
         for attr in node.findall('attribute'):
             parse_node(metaNode,attr, 'attribute', level+1,nxhtml,nxpath_new)
-        
+
         #groups can have sub-groups and sub-fields, too
         if ntype!='field':
             #sub-fields
@@ -159,6 +159,7 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
     '''
     #add inherited nx properties (e.g. type, minOccurs, depricated)
     for prop in node.attrib.keys():
+      if "}schemaLocation" not in prop:
         if prop not in nx_props:
             nx_props.append(prop)
         q = Quantity(
@@ -181,7 +182,7 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
     metaNode.quantities.append(q)
 
     #add derived nx properties (e.g. required)
-    #REQUIRED    
+    #REQUIRED
     reqStr=get_required_string(node)
     q = Quantity(
         name='nxd_required',
@@ -233,7 +234,7 @@ def parse_file(nxdef):
 
         nxdef - filename (with path) under the subfolder 'definitions'
     '''
-    xmlparser = objectify.parse("definitions/" + nxdef)
+    xmlparser = objectify.parse(os.environ["NEXUS_DEF_PATH"] + nxdef)
     #tag-ging elements with their names
     for elem in xmlparser.getiterator():
         try:
@@ -263,7 +264,7 @@ p = Package(name='NEXUS')
 
 #parse_file('applications/NXmx.nxdl.xml')
 
-for file in getfiles('definitions'):
+for file in getfiles(os.environ["NEXUS_DEF_PATH"]):
     print(file)
     parse_file(file)
 

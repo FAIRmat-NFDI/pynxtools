@@ -80,7 +80,7 @@ class {{ section.name }}({%- if section.extends_base_section -%}{{ format_defini
 
     {%- for sub_section in section.sub_sections %}
     {{ sub_section.name }} = SubSection(
-        sub_section=SectionProxy('{{ sub_section.sub_section.name }}'),
+        sub_section=SectionProxy('{{ sub_section.sub_section.type }}'),
         repeats={{ sub_section.repeats }}
         {%- if sub_section.description is not none -%},
         description='''
