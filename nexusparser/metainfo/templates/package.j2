@@ -4,9 +4,10 @@ from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference, MEnum)
 from nomad.metainfo.legacy import LegacyDefinition
-from nomad.metainfo.search_extension import Search
+from nomad.datamodel.metainfo.nxobject import NXobject
+
 {% for dependency in pkg.dependencies %}
-{{ fromat_package_import(dependency) }}
+{{ format_package_import(dependency) }}
 {%- endfor %}
 
 m_package = Package(
@@ -15,6 +16,43 @@ m_package = Package(
     {%- if pkg.a_legacy is defined %},
     a_legacy=LegacyDefinition(name='{{pkg.a_legacy.name}}')
     {%- endif %})
+
+class NXtranslation(NXobject):
+    pass
+
+class NXorientation(NXobject):
+    pass
+
+class NXcsg(NXobject):
+    pass
+
+class NX_FLOAT(NXobject):
+    pass
+
+class NX_BINARY(NXobject):
+    pass
+
+class NX_BOOLEAN(NXobject):
+    pass
+
+class NX_CHAR(NXobject):
+    pass
+
+class NX_DATE_TIME(NXobject):
+    pass
+
+class NX_INT(NXobject):
+    pass
+
+class NX_NUMBER(NXobject):
+    pass
+
+class NX_POSINT(NXobject):
+    pass
+
+class NX_UINT(NXobject):
+    pass
+
 {% for category in order_categories(pkg.category_definitions) %}
 
 class {{ category.name }}(MCategory):
@@ -77,10 +115,10 @@ class {{ section.name }}({%- if section.extends_base_section -%}{{ format_defini
         a_legacy=LegacyDefinition(name='{{quantity.a_legacy.name}}')
         {%- endif -%})
     {% endfor -%}
-
+'''
     {%- for sub_section in section.sub_sections %}
     {{ sub_section.name }} = SubSection(
-        sub_section=SectionProxy('{{ sub_section.sub_section.type }}'),
+        sub_section=SectionProxy('{{ sub_section.sub_section.name }}'),
         repeats={{ sub_section.repeats }}
         {%- if sub_section.description is not none -%},
         description='''
@@ -93,7 +131,11 @@ class {{ section.name }}({%- if section.extends_base_section -%}{{ format_defini
         a_legacy=LegacyDefinition(name='{{sub_section.a_legacy.name}}')
         {%- endif -%})
     {% endfor -%}
+'''
+    {%- for sub_section in section.sub_sections %}
+    {{ sub_section.name }} = {{ sub_section.sub_section.name }}()
+    {% endfor -%}
 {%- endfor %}
 
 m_package.__init_metainfo__()
-{{- format_aliases(pkg) -}}
+#{{- format_aliases(pkg) -}}

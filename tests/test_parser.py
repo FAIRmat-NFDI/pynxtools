@@ -34,6 +34,6 @@ def test_example(parser):
     parser.parse('tests/data/nexus.out', archive, logging)
 
     run = archive.section_run[0]
-    assert len(run.section_system) == 2
-    assert len(run.section_single_configuration_calculation) == 2
-    assert run.section_single_configuration_calculation[0].x_nexus_magic_value == 42
+    assert len(run.system) == 2
+    assert len(run.calculation) == 2
+    assert run.calculation[0].x_nexus_magic_value == 42

@@ -18,21 +18,21 @@
 
 from nomad.metainfo import Section, Quantity, Package
 
-from nomad.datamodel.metainfo.public import section_single_configuration_calculation as SCC
-
+from nomad.datamodel.metainfo.simulation.calculation import Calculation
+import meta_nexus
 
 m_package = Package(
-    name='nexus_nomadmetainfo_json',
+    name='example_nomadmetainfo_json',
     description='None')
 
 
 # We extend the existing common definition of a section "single configuration calculation"
-class NexusSCC(SCC):
+class NexusCalculation(Calculation):
     # We alter the default base class behavior to add all definitions to the existing
     # base class instead of inheriting from the base class
     m_def = Section(extends_base_section=True)
 
-    # We define an additional nexus quantity. Use the prefix x_<parsername>_ to denote
+    # We define an additional example quantity. Use the prefix x_<parsername>_ to denote
     # non common quantities.
     x_nexus_magic_value = Quantity(type=int, description='The magic value from a magic source.')
 

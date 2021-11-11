@@ -95,7 +95,7 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
 
         return ', '.join([format_definition_ref(definition) for definition in definitions])
 
-    def fromat_package_import(pkg):
+    def format_package_import(pkg):
         python_module = pkg.a_legacy.python_module
         modules = python_module.split('.')
         return 'from %s import %s' % ('.'.join(modules[:-1]), modules[-1])
@@ -112,8 +112,12 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
     def order_categories(categories):
         return sorted(categories, key=lambda c: len(c.categories))
 
+    import sys
+    sys.path.insert(0, '..')
+    sys.path.insert(0, '../..')
+    sys.path.insert(0, '.')
     env = JinjaEnvironment(
-        loader=PackageLoader('nomad.metainfo', 'templates'),
+        loader=PackageLoader('metainfo', 'templates'),
         autoescape=select_autoescape(['python']))
     env.globals.update(
         order_categories=order_categories,
@@ -121,10 +125,9 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         format_type=format_type,
         format_unit=format_unit,
         format_definition_refs=format_definition_refs,
-        fromat_package_import=fromat_package_import,
+        format_package_import=format_package_import,
         format_aliases=format_aliases,
         format_default=format_default)
-
     with open(python_package_path, 'wt') as f:
         code = env.get_template('package.j2').render(pkg=metainfo_pkg)
         code = '\n'.join([

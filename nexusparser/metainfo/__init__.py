@@ -16,16 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import sys
 from nomad.metainfo import Environment
-from nomad.metainfo.legacy import LegacyMetainfoEnvironment
-import nexusparser.metainfo.nexus
-import nomad.datamodel.metainfo.common
-import nomad.datamodel.metainfo.public
-import nomad.datamodel.metainfo.general
 
-m_env = LegacyMetainfoEnvironment()
-m_env.m_add_sub_section(Environment.packages, sys.modules['nexusparser.metainfo.nexus'].m_package)  # type: ignore
-m_env.m_add_sub_section(Environment.packages, sys.modules['nomad.datamodel.metainfo.common'].m_package)  # type: ignore
-m_env.m_add_sub_section(Environment.packages, sys.modules['nomad.datamodel.metainfo.public'].m_package)  # type: ignore
-m_env.m_add_sub_section(Environment.packages, sys.modules['nomad.datamodel.metainfo.general'].m_package)  # type: ignore
+from . import nexus
+
+m_env = Environment()
+m_env.m_add_sub_section(Environment.packages, nexus.m_package)

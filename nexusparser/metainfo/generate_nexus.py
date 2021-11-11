@@ -1,6 +1,9 @@
-from nomad.metainfo.generate import generate_metainfo_code
+#from nomad.metainfo.generate import generate_metainfo_code
+from nomad.metainfo.metainfo import MSection
+from generate import generate_metainfo_code
 from nomad.metainfo import Package
 from nomad.metainfo import Section, Quantity, SubSection
+from nomad.datamodel.metainfo.nxobject import NXobject
 
 # you define a quantity like this
 q = Quantity(
@@ -27,6 +30,7 @@ p.section_definitions.append(r)
 
 # we write the schema as file
 #generate_metainfo_code(p, 'meta.py')
+
 
 
 
@@ -218,6 +222,10 @@ def parse_definition(definition,nxhtml):
     print('definition: %s' % (definition.attrib['name']))
     #Create a section
     m = Section(name=definition.attrib['name'])
+    #check for base classes
+    if 'extends' in definition.keys():
+        m.extends_base_section = True
+        m.base_sections = [definition.attrib['extends']]
     #decorate with properties
     decorate(m,definition,'',1,nxhtml,[nxhtml.replace('.html', '').split('/')[-1]])
     #parse the definition
@@ -252,7 +260,7 @@ def getfiles(path):
         get the NXDL files in the different definition subfolders
         (e.g. 'applications','base_classes','contributed_definitions')
     '''
-    dirs=['applications','base_classes','contributed_definitions']
+    dirs=['base_classes', 'applications','contributed_definitions']
     for dir in dirs:
         for file in os.listdir(path+'/'+dir):
             if file.endswith('nxdl.xml'):
@@ -261,12 +269,41 @@ def getfiles(path):
 
 p = Package(name='NEXUS')
 
+# add NXobject as a base class
+
 
 #parse_file('applications/NXmx.nxdl.xml')
 
 for file in getfiles(os.environ["NEXUS_DEF_PATH"]):
     print(file)
-    parse_file(file)
+    if 'NXtranslation.' not in file and \
+        'NXorientation.' not in file:
+        parse_file(file)
+        break
+
+# sorting all sections
+def compare_dependencies(i1, i2):
+    for i in i1.sub_sections:
+        if i.sub_section.name == i2.name:
+            return True
+    return False
+
+
+l = p.section_definitions
+i=0
+while i<len(l):
+ j=i+1
+ while j<len(l):
+  if compare_dependencies(l[i],l[j]):
+   #l[i],l[j]=l[j],l[i]
+   l.append(l[i])
+   l.__delitem__(i)
+   break
+  j=j+1
+ if j==len(l):
+  i=i+1
+print(l)
+
 
 # we write the schema as file
 generate_metainfo_code(p, 'meta_nexus.py')
