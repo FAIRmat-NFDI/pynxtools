@@ -87,6 +87,7 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
 
     def format_definition_refs(pkg, definitions):
         def format_definition_ref(definition: Definition):
+            return definition.name
             if pkg == definition.m_parent:
                 return definition.name
             else:
@@ -96,9 +97,10 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         return ', '.join([format_definition_ref(definition) for definition in definitions])
 
     def format_package_import(pkg):
-        python_module = pkg.a_legacy.python_module
-        modules = python_module.split('.')
-        return 'from %s import %s' % ('.'.join(modules[:-1]), modules[-1])
+        #python_module = pkg.a_legacy.python_module
+        #modules = python_module.split('.')
+        #return 'from %s import %s' % ('.'.join(modules[:-1]), modules[-1])
+        return ''
 
     def format_aliases(pkg):
         result = ''

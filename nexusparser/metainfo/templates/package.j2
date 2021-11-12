@@ -3,8 +3,8 @@ import typing                 # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference, MEnum)
-from nomad.metainfo.legacy import LegacyDefinition
-from nomad.datamodel.metainfo.nxobject import NXobject
+#from nomad.metainfo.legacy import LegacyDefinition
+#from nomad.datamodel.metainfo.nxobject import NXobject
 
 {% for dependency in pkg.dependencies %}
 {{ format_package_import(dependency) }}
@@ -12,10 +12,10 @@ from nomad.datamodel.metainfo.nxobject import NXobject
 
 m_package = Package(
     name='{{ pkg.name }}',
-    description='{{ pkg.description }}'
-    {%- if pkg.a_legacy is defined %},
-    a_legacy=LegacyDefinition(name='{{pkg.a_legacy.name}}')
-    {%- endif %})
+    description='{{ pkg.description }}')
+
+class NXobject(MSection):
+    pass
 
 class NXtranslation(NXobject):
     pass
@@ -68,10 +68,7 @@ class {{ category.name }}(MCategory):
         {%- endif -%}
         {%- if category.categories | length > 0 %}
         categories=[{{ format_definition_refs(pkg, category.categories) }}],
-        {%- endif -%}
-        {%- if category.a_legacy is defined %}
-        a_legacy=LegacyDefinition(name='{{category.a_legacy.name}}')
-        {%- endif %})
+        {%- endif -%})
 {% endfor -%}
 
 {% for section in pkg.section_definitions %}
@@ -87,10 +84,7 @@ class {{ section.name }}({%- if section.extends_base_section -%}{{ format_defini
         aliases=['{{ section.aliases[0] }}'],
         {%- endif %}
         validate=False{%- if section.extends_base_section -%},
-        extends_base_section=True{%- endif -%},
-        {% if section.a_legacy is defined -%}
-        a_legacy=LegacyDefinition(name='{{section.a_legacy.name}}')
-        {%- endif -%})
+        extends_base_section=True{%- endif -%})
     {% for quantity in section.quantities %}
     {{ quantity.name }} = Quantity(
         type={{ format_type(pkg, quantity.type) }},
@@ -109,10 +103,7 @@ class {{ section.name }}({%- if section.extends_base_section -%}{{ format_defini
         categories=[{{ format_definition_refs(pkg, quantity.categories) }}]
         {%- endif -%},
         {%- if quantity.a_search is defined %}
-        a_search=Search(),
-        {%- endif -%}
-        {%- if quantity.a_legacy is defined %}
-        a_legacy=LegacyDefinition(name='{{quantity.a_legacy.name}}')
+        a_search=Search()
         {%- endif -%})
     {% endfor -%}
 '''
@@ -126,10 +117,7 @@ class {{ section.name }}({%- if section.extends_base_section -%}{{ format_defini
         '''{%- endif -%},
         {%- if sub_section.categories | length > 0 %}
         categories=[{{ format_definition_refs(pkg, sub_section.categories) }}],
-        {%- endif %}
-        {% if sub_section.a_legacy is defined -%}
-        a_legacy=LegacyDefinition(name='{{sub_section.a_legacy.name}}')
-        {%- endif -%})
+        {%- endif %})
     {% endfor -%}
 '''
     {%- for sub_section in section.sub_sections %}

@@ -3,7 +3,7 @@ from nomad.metainfo.metainfo import MSection
 from generate import generate_metainfo_code
 from nomad.metainfo import Package
 from nomad.metainfo import Section, Quantity, SubSection
-from nomad.datamodel.metainfo.nxobject import NXobject
+#from nomad.datamodel.metainfo.nxobject import NXobject
 
 # you define a quantity like this
 q = Quantity(
@@ -225,7 +225,7 @@ def parse_definition(definition,nxhtml):
     #check for base classes
     if 'extends' in definition.keys():
         m.extends_base_section = True
-        m.base_sections = [definition.attrib['extends']]
+        m.base_sections = [NXobject.m_def] #definition.attrib['extends']]
     #decorate with properties
     decorate(m,definition,'',1,nxhtml,[nxhtml.replace('.html', '').split('/')[-1]])
     #parse the definition
@@ -270,7 +270,8 @@ def getfiles(path):
 p = Package(name='NEXUS')
 
 # add NXobject as a base class
-
+class NXobject(MSection):
+    pass
 
 #parse_file('applications/NXmx.nxdl.xml')
 
@@ -279,7 +280,7 @@ for file in getfiles(os.environ["NEXUS_DEF_PATH"]):
     if 'NXtranslation.' not in file and \
         'NXorientation.' not in file:
         parse_file(file)
-        break
+
 
 # sorting all sections
 def compare_dependencies(i1, i2):
@@ -307,6 +308,8 @@ print(l)
 
 # we write the schema as file
 generate_metainfo_code(p, 'meta_nexus.py')
+print('!!! meta_nexus.py is ready to be used:')
+print('cp meta_nexus.py nexus.py\n')
 
 print('==============================================')
 for prop in nx_props:
