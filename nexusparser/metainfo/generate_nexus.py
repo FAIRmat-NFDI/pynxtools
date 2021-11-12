@@ -224,8 +224,17 @@ def parse_definition(definition,nxhtml):
     m = Section(name=definition.attrib['name'])
     #check for base classes
     if 'extends' in definition.keys():
-        m.extends_base_section = True
-        m.base_sections = [NXobject.m_def] #definition.attrib['extends']]
+        #try to find the proposed based class
+        for base in p.section_definitions:
+            if base.name == definition.attrib['extends']:
+                m.extends_base_section = True
+                m.base_sections = [base.section_cls.m_def] #.m_def]
+                break
+        if not m.extends_base_section:
+            if not definition.attrib['extends'] == 'NXobject':
+                print('!!! PROBLEM WITH BASE CLASS !!! %s(%s)' % (definition.attrib['name'],definition.attrib['extends']))
+            m.extends_base_section = True
+            m.base_sections = [NXobject.m_def]
     #decorate with properties
     decorate(m,definition,'',1,nxhtml,[nxhtml.replace('.html', '').split('/')[-1]])
     #parse the definition
@@ -272,13 +281,15 @@ p = Package(name='NEXUS')
 # add NXobject as a base class
 class NXobject(MSection):
     pass
+#p.section_definitions.append(NXobject)
 
 #parse_file('applications/NXmx.nxdl.xml')
 
 for file in getfiles(os.environ["NEXUS_DEF_PATH"]):
     print(file)
     if 'NXtranslation.' not in file and \
-        'NXorientation.' not in file:
+        'NXorientation.' not in file and \
+        'NXobject.' not in file:
         parse_file(file)
 
 
