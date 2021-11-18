@@ -79,51 +79,40 @@ class {{ section.name }}({%- if section.extends_base_section -%}{{ format_defini
     {{ format_description(section.description, indent=1) }}
     '''
     {% endif %}
-    m_def = Section(
-        {%- if section.aliases | length > 0 %}
-        aliases=['{{ section.aliases[0] }}'],
-        {%- endif %}
-        validate=False{%- if section.extends_base_section -%},
-        extends_base_section=True{%- endif -%})
-    {% for quantity in section.quantities %}
-    {{ quantity.name }} = Quantity(
-        type={{ format_type(pkg, quantity.type) }},
-        shape={{ quantity.shape }}
-        {%- if quantity.unit is not none -%},
-        unit={{ format_unit(quantity.unit) }}
-        {%- endif -%}
-        {%- if quantity.description is not none -%},
-        description='''
-        {{ format_description(quantity.description, indent=2) }}
-        '''{%- endif -%}
-        {%- if quantity.default is not none -%},
-        default={{ format_default(quantity.default) }}
-        {%- endif -%}
-        {%- if quantity.categories | length > 0 -%},
-        categories=[{{ format_definition_refs(pkg, quantity.categories) }}]
-        {%- endif -%},
-        {%- if quantity.a_search is defined %}
-        a_search=Search()
-        {%- endif -%})
-    {% endfor -%}
-'''
-    {%- for sub_section in section.sub_sections %}
-    {{ sub_section.name }} = SubSection(
-        sub_section=SectionProxy('{{ sub_section.sub_section.name }}'),
-        repeats={{ sub_section.repeats }}
-        {%- if sub_section.description is not none -%},
-        description='''
-        {{ format_description(sub_section.description, indent=2) }}
-        '''{%- endif -%},
-        {%- if sub_section.categories | length > 0 %}
-        categories=[{{ format_definition_refs(pkg, sub_section.categories) }}],
-        {%- endif %})
-    {% endfor -%}
-'''
-    {%- for sub_section in section.sub_sections %}
-    {{ sub_section.name }} = {{ sub_section.sub_section.name }}()
-    {% endfor -%}
-{%- endfor %}
+    def __init__(self):
+        super().__init__()
+        m_def = Section(
+            {%- if section.aliases | length > 0 %}
+            aliases=['{{ section.aliases[0] }}'],
+            {%- endif %}
+            validate=False{%- if section.extends_base_section -%},
+            extends_base_section=True{%- endif -%})
+        {% for quantity in section.quantities %}
+        self.{{ quantity.name }} = Quantity(
+            type={{ format_type(pkg, quantity.type) }},
+            shape={{ quantity.shape }}
+            {%- if quantity.unit is not none -%},
+            unit={{ format_unit(quantity.unit) }}
+            {%- endif -%}
+            {%- if quantity.description is not none -%},
+            description='''
+            {{ format_description(quantity.description, indent=2) }}
+            '''{%- endif -%}
+            {%- if quantity.default is not none -%},
+            default={{ format_default(quantity.default) }}
+            {%- endif -%}
+            {%- if quantity.categories | length > 0 -%},
+            categories=[{{ format_definition_refs(pkg, quantity.categories) }}]
+            {%- endif -%},
+            {%- if quantity.a_search is defined %}
+            a_search=Search()
+            {%- endif -%})
+        {% endfor -%}
+        {%- for sub_section in section.sub_sections %}
+        self.{{ sub_section.name }} = {{ sub_section.sub_section.name }}()
+{{ format_sub_section(pkg, sub_section, indent=2) }}
+        {% endfor -%}
+    {%- endfor %}
 
 m_package.__init_metainfo__()
 #{{- format_aliases(pkg) -}}

@@ -21,6 +21,7 @@ This module contains functionality to generate metainfo source-code from metainf
 definitions.
 '''
 
+from re import sub
 import numpy as np
 
 from nomad import utils
@@ -111,6 +112,42 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         if result != '':
             return '\n\n\n%s' % result
 
+    def sub_section_path(sub_section, level):
+        if level == 0:
+            return sub_section.name
+        return sub_section_path(sub_section.m_parent.nexus_parent, level -1) + '.' + sub_section.name
+
+
+    def format_sub_section(pkg, sub_section, indent=0, level=0):
+        result = ''
+        indent_str = indent * 4 * ' '
+        inner_indent_str = (indent + 2) * 4 * ' '
+        for quantity in sub_section.sub_section.quantities:
+            result += indent_str + 'self.' + sub_section_path(sub_section, level) + '.' + quantity.name + '= Quantity(\n'
+            result += inner_indent_str + 'type=' + format_type(pkg, quantity.type) + ',\n'
+            result += inner_indent_str + 'shape=' + str(quantity.shape) + ',\n'
+            if quantity.unit is not None:
+                result += inner_indent_str + 'unit=' + format_unit(quantity.unit) + ',\n'
+            if quantity.description is not None:
+                result += inner_indent_str + 'description=' + "'''" + '\n' + inner_indent_str + format_description(quantity.description, indent=4) + "''',\n"
+            if quantity.default is not None:
+                result += inner_indent_str + 'default=' + format_default(quantity.default) + ',\n'
+            if len(quantity.categories) > 0:
+                result += inner_indent_str +'categories=[' + format_definition_refs(pkg, quantity.categories) + '],\n'
+            # if quantity.a_search == 'defined':
+            #     result += 'a_search=Search()+\n'
+            result += inner_indent_str + ')\n'
+        for sub_sec in sub_section.sub_section.sub_sections:
+            result += '\n'
+            result += indent_str + 'self.' + sub_section_path(sub_section, level) + '.' + sub_sec.name + ' = ' + sub_sec.sub_section.name + '()\n'
+            result += format_sub_section(pkg, sub_sec, indent=indent, level=level+1) + '\n'
+            pass
+            #  if sub_section.sub_sections is not None:
+            #     sub_section = sub_section.sub_sections
+            #     format_sub_section(pkg, sub_section, indent=1)
+
+        return result
+
     def order_categories(categories):
         return sorted(categories, key=lambda c: len(c.categories))
 
@@ -129,7 +166,8 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         format_definition_refs=format_definition_refs,
         format_package_import=format_package_import,
         format_aliases=format_aliases,
-        format_default=format_default)
+        format_default=format_default,
+        format_sub_section=format_sub_section)
     with open(python_package_path, 'wt') as f:
         code = env.get_template('package.j2').render(pkg=metainfo_pkg)
         code = '\n'.join([

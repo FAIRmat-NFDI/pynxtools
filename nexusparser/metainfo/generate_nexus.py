@@ -1,5 +1,6 @@
+#
 #from nomad.metainfo.generate import generate_metainfo_code
-from nomad.metainfo.metainfo import MSection
+from nomad.metainfo.metainfo import MEnum, MSection
 from generate import generate_metainfo_code
 from nomad.metainfo import Package
 from nomad.metainfo import Section, Quantity, SubSection
@@ -71,13 +72,12 @@ def get_nx_class(node):
     '''
     return node.attrib['type'] if 'type' in node.attrib.keys() else 'NX_CHAR'
 
-def get_required_string(node):
+def get_required_string(node, nxhtml):
     """
         check for being required.
         returns:
          REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
     """
-
     if node is None:
         return "<<NOT IN SCHEMA>>"
     elif ('optional' in node.attrib.keys() and node.attrib['optional']=="true") or \
@@ -85,7 +85,12 @@ def get_required_string(node):
         return "<<OPTIONAL>>"
     elif 'recommended' in node.attrib.keys() and node.attrib['recommended'] == "true":
         return "<<RECOMMENDED>>"
-    return "<<REQUIRED>>"
+    elif 'optional' in node.attrib.keys() and node.attrib['optional'] == "false":
+        return "<<REQUIRED>>"
+    elif nxhtml.split("/")[0] == "base_classes":
+        return "<<OPTIONAL>>"
+    else:
+        return "<<REQUIRED>>"
 
 def get_doc(node, ntype, level, nxhtml, nxpath):
     #URL for html documentation
@@ -117,6 +122,25 @@ def print_doc(node, ntype, level, nxhtml, nxpath):
             print(wrapper.fill(par))
     #print(doc.text if doc is not None else "")
 
+def get_enums(node):
+    """
+    makes list of enumerations, if node contains any.
+    Returns comma separated STRING of enumeration values, if there are enum tag,
+    otherwise empty string.
+    """
+    #collect item values from enumeration tag, if any
+    try:
+        for items in node.enumeration:
+            enums = []
+            for values in items.findall('item'):
+                enums.append(values.attrib['value'])
+            enums = ','.join(enums)
+            return (True, enums)
+    #if there is no enumeration tag, returns empty string
+    except:
+        return (False, '')
+
+
 def parse_node(m,node, ntype, level, nxhtml, nxpath):
     '''
         node   - xml node
@@ -129,12 +153,14 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
     nxpath_new=nxpath.copy()
     nxpath_new.append(get_node_name(node))
     indent='  ' *level
-    print("%s%s: %s (%s) %s %s" % (indent,ntype,nxpath_new[-1],get_nx_class(node),'DEPRICATED!!!' if 'deprecated' in node.attrib.keys() else '',get_required_string(node)))
+    print("%s%s: %s (%s) %s %s" % (indent,ntype,nxpath_new[-1],get_nx_class(node),'DEPRICATED!!!' if 'deprecated' in node.attrib.keys() else '',get_required_string(node, nxhtml)))
     print_doc(node, ntype, level, nxhtml, nxpath_new)
 
     #Create a sub-section
     metaNode=Section(name=get_nx_class(node))
-    mss = SubSection(sub_section=metaNode,name=nxpath_new[-1], repeats=True)
+    sub_section_name = 'nxp_' + nxpath_new[-1]
+    mss = SubSection(sub_section=metaNode,name=sub_section_name, repeats=True)
+    metaNode.nexus_parent = mss
     #decorate with properties
     decorate(metaNode,node,ntype,level,nxhtml,nxpath)
     #add the section
@@ -187,32 +213,55 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
 
     #add derived nx properties (e.g. required)
     #REQUIRED
-    reqStr=get_required_string(node)
-    q = Quantity(
-        name='nxd_required',
-        type=bool,
-        shape=[],
-        description='''
-        ''',
-        default=True if 'REQUIRED' in  reqStr else False)
-    metaNode.quantities.append(q)
-    q = Quantity(
-        name='nxd_recommended',
-        type=bool,
-        shape=[],
-        description='''
-        ''',
-        default=True if 'RECOMENDED' in  reqStr else False)
-    metaNode.quantities.append(q)
+    reqStr=get_required_string(node, nxhtml)
+    if 'REQUIRED' in reqStr:
+        q = Quantity(
+            name='nxp_required',
+            type=bool,
+            shape=[],
+            description='''
+            ''',
+            default=True )
+        metaNode.quantities.append(q)
+    if 'RECOMENDED' in reqStr:
+        q = Quantity(
+            name='nxp_recommended',
+            type=bool,
+            shape=[],
+            description='''
+            ''',
+            default=True)
+        metaNode.quantities.append(q)
+    if 'OPTIONAL' in reqStr:
+        q = Quantity(
+            name='nxp_optional',
+            type=bool,
+            shape=[],
+            description='''
+            ''',
+            default=True)
+        metaNode.quantities.append(q)
     #DEPRECATED
-    q = Quantity(
-        name='nxd_deprecated',
-        type=bool,
-        shape=[],
-        description='''
-        ''',
-        default=True if 'deprecated' in node.attrib.keys() else False)
-    metaNode.quantities.append(q)
+    if 'deprecated' in node.attrib.keys():
+        q = Quantity(
+            name='nxp_deprecated',
+            type=bool,
+            shape=[],
+            description='''
+            ''',
+            default=True )
+        metaNode.quantities.append(q)
+    #ENUMS
+    (o, enums) = get_enums(node)
+    if o:
+        q = Quantity(
+            name='nxp_enumeration',
+            type=str,
+            shape=[],
+            description='''
+            ''',
+            default=enums)
+        metaNode.quantities.append(q)
 
 def parse_definition(definition,nxhtml):
     '''
@@ -284,13 +333,13 @@ class NXobject(MSection):
 #p.section_definitions.append(NXobject)
 
 #parse_file('applications/NXmx.nxdl.xml')
-
 for file in getfiles(os.environ["NEXUS_DEF_PATH"]):
     print(file)
     if 'NXtranslation.' not in file and \
         'NXorientation.' not in file and \
         'NXobject.' not in file:
         parse_file(file)
+        #break
 
 
 # sorting all sections
