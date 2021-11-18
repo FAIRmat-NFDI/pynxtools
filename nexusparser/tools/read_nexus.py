@@ -6,12 +6,28 @@ import h5py
 import sys
 from lxml import etree, objectify
 import logging
+import subprocess
 
 LOGGING_FORMAT = "%(levelname)s: %(message)s"
 #logging.basicConfig(level=logging.INFO, format=LOGGING_FORMAT)
 logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT)
 logger = logging.getLogger()
 
+#check for NEXUS definitions
+try:
+    #either given by sys env
+    nexusDefPath = os.environ['NEXUS_DEF_PATH']
+except:
+    #or it should be available locally under the dir 'definitions'
+    localDir=os.path.abspath(os.path.dirname(__file__))
+    nexusDefPath=os.path.join(localDir,'definitions')
+    if not os.path.exists(nexusDefPath):
+        #check the definitions out if it has not been done yet
+        cwd=os.getcwd()
+        os.chdir(localDir)
+        subprocess.call(['git','clone','https://github.com/nexusformat/definitions'])
+        os.chdir(cwd)
+        
 
 def get_nx_class_path(hdfNode):
     """
@@ -121,7 +137,7 @@ def get_nxdl_child(nxdlElem, name):
     #filter primitive types
     if bc_name[2] == '_':
         return None
-    bc = objectify.parse(os.environ['NEXUS_DEF_PATH'] + '/base_classes/' + bc_name +
+    bc = objectify.parse(nexusDefPath + '/base_classes/' + bc_name +
                          '.nxdl.xml').getroot()
     return get_own_nxdl_child(bc, name)
 
@@ -224,7 +240,7 @@ def get_nxdl_doc(hdfNode, attr=False):
     """get nxdl documentation for an HDF5 node (or its attribute)"""
 
     nxdef = get_nxdl_entry(hdfNode)
-    root = objectify.parse(os.environ['NEXUS_DEF_PATH'] + "/applications/" + nxdef + ".nxdl.xml")
+    root = objectify.parse(nexusDefPath + "/applications/" + nxdef + ".nxdl.xml")
     elem = root.getroot()
     path = get_nx_class_path(hdfNode)
     for group in path.split('/')[1:]:
