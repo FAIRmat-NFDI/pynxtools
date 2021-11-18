@@ -22,13 +22,14 @@ import numpy as np
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
 from nomad.units import ureg as units
-from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.simulation.calculation import Calculation, Energy, EnergyEntry
 
 from nomad.parsing.file_parser import TextParser, Quantity
 
 from . import metainfo  # pylint: disable=unused-import
+from nexusparser.tools.read_nexus import HandleNexus
+
+import sys
+import logging
 
 '''
 This is a hello world style nexus for an nexus parser/converter.
@@ -40,7 +41,7 @@ def str_to_sites(string):
     pos = np.array(pos.split(')')[0].split(',')[:3], dtype=float)
     return sym, pos
 
-
+'''
 calculation_parser = TextParser(quantities=[
     Quantity('sites', r'([A-Z]\([\d\.\, \-]+\))', str_operation=str_to_sites, repeats=True),
     Quantity(
@@ -58,7 +59,7 @@ mainfile_parser = TextParser(quantities=[
         sub_parser=calculation_parser,
         repeats=True)
 ])
-
+'''
 
 class NexusParser(MatchingParser):
     def __init__(self):
@@ -69,9 +70,28 @@ class NexusParser(MatchingParser):
             supported_compressions=['gz', 'bz2', 'xz']
         )
 
+    def nexus_populate(self,hdfPath,hdfNode,nxdef,nxdlPath,val):
+        print('%%%%%%%%%%%%%%')
+        #print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+        if nxdlPath is not None:
+            print((nxdef or '???')+':'+'.'.join(str(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+        print('%%%%%%%%%%%%%%')
+        pass
+
     def parse(self, mainfile: str, archive: EntryArchive, logger):
         # Log a hello world, just to get us started. TODO remove from an actual parser.
-        logger.info('Hello World')
+        stdout_handler = logging.StreamHandler(sys.stdout)
+        stdout_handler.setLevel(logging.DEBUG)
+        stdout_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+        logger.addHandler(stdout_handler)
+        logger.info('Hello NeXus World')
+
+        nexus_helper = HandleNexus([mainfile])
+        nexus_helper.process_nexus_master_file(self.nexus_populate)
+
+
+
+'''
 
         # Use the previously defined parsers on the given mainfile
         mainfile_parser.mainfile = mainfile
@@ -102,3 +122,4 @@ class NexusParser(MatchingParser):
             magic_source = calculation.get('magic_source')
             if magic_source is not None:
                 scc.x_nexus_magic_value = magic_source
+'''

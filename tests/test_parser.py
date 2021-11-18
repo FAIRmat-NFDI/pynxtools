@@ -21,6 +21,10 @@ import logging
 
 from nomad.datamodel import EntryArchive
 
+import sys
+sys.path.insert(0, '.')
+sys.path.insert(0, '..')
+sys.path.insert(0, '../..')
 from nexusparser import NexusParser
 
 
@@ -31,9 +35,17 @@ def parser():
 
 def test_example(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/nexus.out', archive, logging)
-
+    #parser.parse('tests/data/nexus.out', archive, logging)
+    parser.parse('/home/sanya/work/FAIRmat/nexus/ARPES/201805_WSe2_arpes.nxs', archive, logging.getLogger())
+    '''
     run = archive.section_run[0]
     assert len(run.system) == 2
     assert len(run.calculation) == 2
     assert run.calculation[0].x_nexus_magic_value == 42
+    '''
+
+if __name__ == '__main__':
+    p = parser()
+    test_example(p)
+    #nexus_helper = HandleNexus(sys.argv[1:])
+    #nexus_helper.process_nexus_master_file(None)
