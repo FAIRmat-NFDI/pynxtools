@@ -26,7 +26,7 @@ from nomad.units import ureg as units
 from nomad.parsing.file_parser import TextParser, Quantity
 
 from . import metainfo  # pylint: disable=unused-import
-from nexusparser.tools.read_nexus import HandleNexus
+from nexusparser.tools import read_nexus
 
 import sys
 import logging
@@ -74,7 +74,9 @@ class NexusParser(MatchingParser):
         print('%%%%%%%%%%%%%%')
         #print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
         if nxdlPath is not None:
-            print((nxdef or '???')+':'+'.'.join(str(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+            print((nxdef or '???')+':'+'.'.join(p if isinstance(p,str) else read_nexus.get_node_name(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+        else:
+            print('NOT IN SCHEMA - skipped')
         print('%%%%%%%%%%%%%%')
         pass
 
@@ -86,7 +88,7 @@ class NexusParser(MatchingParser):
         logger.addHandler(stdout_handler)
         logger.info('Hello NeXus World')
 
-        nexus_helper = HandleNexus([mainfile])
+        nexus_helper = read_nexus.HandleNexus([mainfile])
         nexus_helper.process_nexus_master_file(self.nexus_populate)
 
 

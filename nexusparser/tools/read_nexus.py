@@ -123,6 +123,24 @@ def get_own_nxdl_child(nxdlElem, name):
     return None
 
 
+def get_node_name(node):
+    '''
+        node - xml node
+        returns:
+            html documentation name
+            Either as specified by the 'name' or taken from the type (nx_class).
+            Note that if only class name is available, the NX prefix is removed and
+            the string is coverted to UPPER case.
+    '''
+    if 'name' in node.attrib.keys():
+        name=node.attrib['name']
+    else:
+        name=node.attrib['type']
+        if name.startswith('NX'):
+            name=name[2:].upper()
+    return name
+
+
 def get_nxdl_child(nxdlElem, name):
     """
             #get the NXDL child node corresponding to a specific name
