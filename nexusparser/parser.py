@@ -22,6 +22,12 @@ import numpy as np
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
 from nomad.units import ureg as units
+from nomad.datamodel.metainfo.common_experimental import Experiment
+from nomad.datamodel.datamodel import EntryMetadata
+from nomad.datamodel.results import Results
+from nomad.metainfo import SubSection
+from nomad.datamodel.metainfo.common import FastAccess
+from nomad.metainfo.elasticsearch_extension import Elasticsearch
 
 from nomad.parsing.file_parser import TextParser, Quantity
 
@@ -75,6 +81,10 @@ class NexusParser(MatchingParser):
         #print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
         if nxdlPath is not None:
             print((nxdef or '???')+':'+'.'.join(p if isinstance(p,str) else read_nexus.get_node_name(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+            if self.entry is None:
+                #self.entry=self.archive.m_create(eval('metainfo.'+nxdef+'()'))
+                self.entry=self.archive.m_create(metainfo.nexus.NXarpes)
+            eval('self.entry.'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath[1:])+'.val='+val[0]+("..." if len(val) > 1 else ''))
         else:
             print('NOT IN SCHEMA - skipped')
         print('%%%%%%%%%%%%%%')
@@ -87,6 +97,12 @@ class NexusParser(MatchingParser):
         stdout_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
         logger.addHandler(stdout_handler)
         logger.info('Hello NeXus World')
+
+        self.archive=archive #.m_create(EntryMetadata)
+        #nx=metainfo.nexus.NXarpes()
+        #self.archive.m_add_sub_section(EntryArchive.NXexperiment,nx)
+        #self.archive.NXexperiment=SubSection(sub_section=metainfo.nexus.NXarpes,repeats=True,category=[FastAccess],a_elasticsearch=Elasticsearch())
+        self.entry=None
 
         nexus_helper = read_nexus.HandleNexus([mainfile])
         nexus_helper.process_nexus_master_file(self.nexus_populate)
