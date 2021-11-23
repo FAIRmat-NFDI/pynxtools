@@ -71,16 +71,44 @@ def get_nx_class(nxdlElem):
     except:
         return 'NX_CHAR'
 
-
-def belongs_to(nxdlElem, hdfName):
+def get_nx_namefit(hdfName,name):
     """
-            #checks if an HDF5 node name corresponds to an NXDL element
-            #uppercase letters in front can be replaced by arbitraty name
+            #checks if an HDF5 node name corresponds to a child of the NXDL element
+            #uppercase letters in front can be replaced by arbitraty name, but
+            #uppercase to lowercase match is preferred, 
+            #so such match is counted as a measure of the fit
+            """
+    #count leading capitals
+    ct = 0
+    while ct < len(name) and name[ct] >= 'A' and name[ct] <= 'Z':
+        ct += 1
+    #if potential fit
+    if ct == len(name) or hdfName.endswith(name[ct:]):
+        #count the matching chars
+        fit=0
+        for i in range(max(ct,len(hdfName))):
+            if hdfName[i].upper()==name[i]:
+                fit+=1
+            else:
+                break
+        #accept only full fits as better fits
+        if fit==max(ct,len(hdfName)):
+            return fit
+        return 0
+    #no fit
+    return -1
+
+
+def belongs_to(nxdlElem, child, hdfName):
+    """
+            #checks if an HDF5 node name corresponds to a child of the NXDL element
+            #uppercase letters in front can be replaced by arbitraty name, but
+            #uppercase to lowercase match is preferred
             """
 
     #check if nameType allows different name
     try:
-        if nxdlElem.attrib['nameType'] == "any":
+        if child.attrib['nameType'] == "any":
             nameAny = True
         else:
             nameAny = False
@@ -88,16 +116,21 @@ def belongs_to(nxdlElem, hdfName):
         nameAny = False
     #and no reserved words used
     if nameAny and hdfName != 'doc' and hdfName != 'enumeration':
-        ct = 0
-        while ct < len(nxdlElem.attrib['name']) and nxdlElem.attrib['name'][
-                ct] >= 'A' and nxdlElem.attrib['name'][ct] <= 'Z':
-            ct += 1
-        if ct == len(nxdlElem.attrib['name']) or hdfName.endswith(
-                nxdlElem.attrib['name'][ct:]):
-            return True
-        return False
+        #check if name fits
+        fit=get_nx_namefit(hdfName,child.attrib['name'])
+        if fit < 0:
+            return False
+        for child2 in nxdlElem.getchildren():
+            if etree.QName(child).localname != etree.QName(child2).localname or child2.attrib['name']==child.attrib['name']:
+                continue
+            #check if the name of another sibling fits better
+            fit2=get_nx_namefit(hdfName,child2.attrib['name'])
+            if fit2>fit:
+                return False
+        #accept this fit
+        return True
     else:
-        if nxdlElem.attrib['name'] == hdfName:
+        if child.attrib['name'] == hdfName:
             return True
     return False
 
@@ -110,9 +143,9 @@ def get_own_nxdl_child(nxdlElem, name):
         if etree.QName(child).localname == 'group' and get_nx_class(
                 child) == name:
             return child
-        if etree.QName(child).localname == 'field' and belongs_to(child, name):
+        if etree.QName(child).localname == 'field' and belongs_to(nxdlElem, child, name):
             return child
-        if etree.QName(child).localname == 'attribute' and belongs_to(
+        if etree.QName(child).localname == 'attribute' and belongs_to(nxdlElem,
                 child, name):
             return child
         if etree.QName(child).localname == 'doc' and name == 'doc':
@@ -263,6 +296,7 @@ def get_nxdl_doc(hdfNode, doc, attr=False):
     elem = root.getroot()
     nxdlPath = [elem]
     path = get_nx_class_path(hdfNode)
+    REQstr = None
     for group in path.split('/')[1:]:
         if group.startswith('NX'):
             elem = get_nxdl_child(elem, group)
@@ -283,24 +317,52 @@ def get_nxdl_doc(hdfNode, doc, attr=False):
             else:
                 if doc: logger.info("/" + group + " - IS NOT IN SCHEMA")
     if elem is not None and attr != False:
-        if attr == 'NX_class':
+        #NX_class is a compulsory attribute for groups in a nexus file
+        #which should match the type of the corresponding NXDL element
+        if attr == 'NX_class' and not isinstance(hdfNode, h5py.Dataset):
             elem = None
             if doc: logger.info("@" + attr + ' [NX_CHAR]')
-        elif attr == 'units':
+        #units category is a compulsory attribute for any fields
+        elif attr == 'units' and isinstance(hdfNode, h5py.Dataset):
+            REQstr = "<<REQUIRED>>"
             try:
-                #try to handle if units is deinfed in the field
-                if doc: logger.info("@" + attr + ' [' + elem.attrib[attr] + ']')
+                #try to find if units is deinfed inside the field in the NXDL element
+                unit=elem.attrib[attr]
+                if doc: logger.info("@" + attr + ' [' + unit + ']')
                 elem = None
                 nxdlPath.append(attr)
             except:
-                #handle if units is defined as an attribute
+                #otherwise try to find if units is defined as a child of the NXDL element
                 elem = get_nxdl_child(elem, attr)
                 if elem is not None:
                     if doc: logger.info("@" + attr + ' - [' + get_nx_class(elem) +
                                  ']')
                     nxdlPath.append(attr)
                 else:
+                    #if no units category were defined in NXDL:
+                    if doc: logger.info("@" + attr + " - REQUIRED, but undefined unit category")
+                    nxdlPath.append(attr)
+                    pass
+        #units for attributes can be given as ATTRIBUTENAME_units
+        elif attr.endswith('_units'):
+            #check for ATTRIBUTENAME_units in NXDL (normal)
+            elem2 = get_nxdl_child(elem, attr)
+            if elem2 is not None:
+                elem=elem2
+                if doc: logger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
+                nxdlPath.append(attr)
+            else:
+                #if not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE is in the SCHEMA, but no units category were defined
+                elem2 = get_nxdl_child(elem, attr[:-6])
+                if elem2 is not None:
+                    REQstr = '<<RECOMMENDED>>'
+                    if doc: logger.info("@" + attr + " - RECOMMENDED, but undefined unit category")
+                    nxdlPath.append(attr)
+                else:
+                    #otherwise: NOT IN SCHEMA
+                    elem=elem2
                     if doc: logger.info("@" + attr + " - IS NOT IN SCHEMA")
+        #other attributes
         else:
             elem = get_nxdl_child(elem, attr)
             if elem is not None:
@@ -308,29 +370,31 @@ def get_nxdl_doc(hdfNode, doc, attr=False):
                 nxdlPath.append(attr)
             else:
                 if doc: logger.info("@" + attr + " - IS NOT IN SCHEMA")
-    if elem is None:
+    if elem is None and REQstr is None:
         if doc: logger.info("")
         return ('None',None,None,None)
     else:
-        #check for being required
-        REQstr = get_required_string(elem)
-        if doc: logger.info(REQstr)
-        #check for deprecation
-        depStr = elem.attrib.get('deprecated')
-        if depStr:
-            if doc: logger.info("DEPRECATED - " + depStr)
-        #check for enums
-        sdoc = get_nxdl_child(elem, 'enumeration')
-        if sdoc is not None:
-            if doc: logger.info("enumeration:")
-            for item in sdoc.getchildren():
-                if etree.QName(item).localname == 'item':
-                    if doc: logger.info("-> " + item.attrib['value'])
-        #check for NXdata references (axes/signal)
-        chk_NXdataAxis(hdfNode, path.split('/')[-1])
-        #check for doc
-        sdoc = get_nxdl_child(elem, 'doc')
-        if doc: logger.info(sdoc if sdoc is not None else "")
+        if REQstr is None:
+            #check for being required
+            REQstr = get_required_string(elem)
+            if doc: logger.info(REQstr)
+        if elem is not None:
+            #check for deprecation
+            depStr = elem.attrib.get('deprecated')
+            if depStr:
+                if doc: logger.info("DEPRECATED - " + depStr)
+            #check for enums
+            sdoc = get_nxdl_child(elem, 'enumeration')
+            if sdoc is not None:
+                if doc: logger.info("enumeration:")
+                for item in sdoc.getchildren():
+                    if etree.QName(item).localname == 'item':
+                        if doc: logger.info("-> " + item.attrib['value'])
+            #check for NXdata references (axes/signal)
+            chk_NXdataAxis(hdfNode, path.split('/')[-1])
+            #check for doc
+            sdoc = get_nxdl_child(elem, 'doc')
+            if doc: logger.info(sdoc if sdoc is not None else "")
         return (REQstr,elem,nxdef,nxdlPath)
 
 
