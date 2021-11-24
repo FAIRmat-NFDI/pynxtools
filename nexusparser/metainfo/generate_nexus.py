@@ -162,7 +162,7 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
     mss = SubSection(sub_section=metaNode,name=sub_section_name, repeats=True)
     metaNode.nexus_parent = mss
     #decorate with properties
-    decorate(metaNode,node,ntype,level,nxhtml,nxpath)
+    decorate(metaNode,node,ntype,level,nxhtml,nxpath_new)
     #add the section
     m.sub_sections.append(mss)
 
@@ -206,8 +206,8 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
         name='nxp_documentation',
         type=str,
         shape=[],
-        description='\n'+doc+'\n' if doc is not None else '''
-        ''',
+        description=('\n'+doc+'\n ' if doc is not None else '''
+        ''')+anchor+" .",
         default=anchor)
     metaNode.quantities.append(q)
 
@@ -259,7 +259,7 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
             type=str,
             shape=[],
             description='''
-            ''',
+            '''+"\n Possible values:\n"+enums,
             default=enums)
         metaNode.quantities.append(q)
 
