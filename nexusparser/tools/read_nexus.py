@@ -98,6 +98,24 @@ def get_nx_namefit(hdfName,name):
     #no fit
     return -1
 
+def get_node_name(node):
+    '''
+        node - xml node
+        returns:
+            html documentation name
+            Either as specified by the 'name' or taken from the type (nx_class).
+            Note that if only class name is available, the NX prefix is removed and
+            the string is coverted to UPPER case.
+    '''
+    if 'name' in node.attrib.keys():
+        name=node.attrib['name']
+    else:
+        name=node.attrib['type']
+        if name.startswith('NX'):
+            name=name[2:].upper()
+    return name
+
+
 
 def belongs_to(nxdlElem, child, hdfName):
     """
@@ -114,23 +132,25 @@ def belongs_to(nxdlElem, child, hdfName):
             nameAny = False
     except:
         nameAny = False
+    childname=get_node_name(child)
+    name=hdfName[2:].upper() if hdfName.startswith('NX') else hdfName
     #and no reserved words used
-    if nameAny and hdfName != 'doc' and hdfName != 'enumeration':
+    if nameAny and name != 'doc' and name != 'enumeration':
         #check if name fits
-        fit=get_nx_namefit(hdfName,child.attrib['name'])
+        fit=get_nx_namefit(name,childname)
         if fit < 0:
             return False
         for child2 in nxdlElem.getchildren():
-            if etree.QName(child).localname != etree.QName(child2).localname or child2.attrib['name']==child.attrib['name']:
+            if etree.QName(child).localname != etree.QName(child2).localname or get_node_name(child2)==childname:
                 continue
             #check if the name of another sibling fits better
-            fit2=get_nx_namefit(hdfName,child2.attrib['name'])
+            fit2=get_nx_namefit(name,get_node_name(child2))
             if fit2>fit:
                 return False
         #accept this fit
         return True
     else:
-        if child.attrib['name'] == hdfName:
+        if childname == name:
             return True
     return False
 
@@ -140,8 +160,7 @@ def get_own_nxdl_child(nxdlElem, name):
     checks if an NXDL child node fits to the specific name
     """
     for child in nxdlElem.getchildren():
-        if etree.QName(child).localname == 'group' and get_nx_class(
-                child) == name:
+        if etree.QName(child).localname == 'group' and belongs_to(nxdlElem, child, name): #get_nx_class(child) == name:
             return child
         if etree.QName(child).localname == 'field' and belongs_to(nxdlElem, child, name):
             return child
