@@ -142,7 +142,7 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
             #     result += 'a_search=Search()+\n'
             result += inner_indent_str + ')\n'
         for sub_sec in sub_section.sub_section.sub_sections:
-            result += format_sub_section(pkg, sub_sec, indent=indent, level=level+1)
+            result += format_sub_section(pkg, sub_sec, indent=indent+1, level=level+1)
             pass
             #  if sub_section.sub_sections is not None:
             #     sub_section = sub_section.sub_sections
