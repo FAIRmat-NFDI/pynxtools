@@ -7,6 +7,7 @@ import sys
 from lxml import etree, objectify
 import logging
 import subprocess
+import textwrap
 
 LOGGING_FORMAT = "%(levelname)s: %(message)s"
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -223,17 +224,20 @@ def get_required_string(nxdlElem):
         return "<<NOT IN SCHEMA>>"
     #if optionality is defined
     elif ('optional' in nxdlElem.attrib.keys() and nxdlElem.attrib['optional']=="true") or \
-        ('minOccurs' in nxdlElem.attrib.keys() and nxdlElem.attrib['minOccurs']=="0") :
+        ('minOccurs' in nxdlElem.attrib.keys() and nxdlElem.attrib['minOccurs']=="0") or \
+        ('required' in nxdlElem.attrib.keys() and nxdlElem.attrib['required']=="false") :
         return "<<OPTIONAL>>"
+    elif ('optional' in nxdlElem.attrib.keys() and nxdlElem.attrib['optional'] == "false") or \
+        ('minOccurs' in nxdlElem.attrib.keys() and int(nxdlElem.attrib['minOccurs'])>0) or \
+        ('required' in nxdlElem.attrib.keys() and nxdlElem.attrib['required']=="true") :
+        return "<<REQUIRED>>"
     #new expression for being recommended
-    elif 'recommended' in nxdlElem.attrib.keys(
-    ) and nxdlElem.attrib['recommended'] == "true":
+    elif 'recommended' in nxdlElem.attrib.keys() and nxdlElem.attrib['recommended'] == "true":
         return "<<RECOMMENDED>>"
     #default optionality
     # in BASE CLASSES: true
     # in APPLICATIONS: false
-    elif "base_classes" in nxdlElem.base or \
-        ('required' in nxdlElem.attrib.keys() and nxdlElem.attrib['required']=="false") :
+    elif "base_classes" in nxdlElem.base:
         return "<<OPTIONAL>>"
     return "<<REQUIRED>>"
 
@@ -415,6 +419,58 @@ def get_nxdl_doc(hdfNode, doc, attr=False):
             sdoc = get_nxdl_child(elem, 'doc')
             if doc: logger.info(sdoc if sdoc is not None else "")
         return (REQstr,elem,nxdef,nxdlPath)
+
+
+def get_doc(node, ntype, level, nxhtml, nxpath):
+    #URL for html documentation
+    anchor=''
+    for n in nxpath:
+        anchor+=n.lower()+"-"
+    anchor='https://manual.nexusformat.org/classes/'+nxhtml+"#"+anchor.replace('_', '-')+ntype
+    if len(ntype)==0:
+        anchor=anchor[:-1]
+
+    #RST documentation from the field 'doc'
+    try:
+        doc=node.doc.pyval
+    except:
+        doc=None
+    return anchor,doc
+
+def print_doc(node, ntype, level, nxhtml, nxpath):
+    anchor,doc = get_doc(node, ntype, level, nxhtml, nxpath)
+    print("  "*(level+1)+anchor)
+
+    preferredWidth = 80 + level*2
+    wrapper = textwrap.TextWrapper(initial_indent='  '*(level+1), width=preferredWidth,
+                               subsequent_indent='  '*(level+1),expand_tabs=False,tabsize=0)
+    #doc=node.find('doc')
+    if doc is not None:
+        #for par in doc.text.split('\n'):
+        for par in doc.split('\n'):
+            print(wrapper.fill(par))
+    #print(doc.text if doc is not None else "")
+
+
+def get_enums(node):
+    """
+    makes list of enumerations, if node contains any.
+    Returns comma separated STRING of enumeration values, if there are enum tag,
+    otherwise empty string.
+    """
+    #collect item values from enumeration tag, if any
+    try:
+        for items in node.enumeration:
+            enums = []
+            for values in items.findall('item'):
+                enums.append(values.attrib['value'])
+            enums = ','.join(enums)
+            return (True, enums)
+    #if there is no enumeration tag, returns empty string
+    except:
+        return (False, '')
+
+
 
 
 def process_node(hdfNode,parser,doc=True):

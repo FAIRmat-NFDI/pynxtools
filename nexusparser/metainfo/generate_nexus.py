@@ -42,104 +42,8 @@ p.section_definitions.append(r)
 #  - minOccurs / maxOccurs
 
 from lxml import etree, objectify
-import textwrap
 import os
-
-
-def get_node_name(node):
-    '''
-        node - xml node
-        returns:
-            html documentation name
-            Either as specified by the 'name' or taken from the type (nx_class).
-            Note that if only class name is available, the NX prefix is removed and
-            the string is coverted to UPPER case.
-    '''
-    if 'name' in node.attrib.keys():
-        name=node.attrib['name']
-    else:
-        name=node.attrib['type']
-        if name.startswith('NX'):
-            name=name[2:].upper()
-    return name
-
-def get_nx_class(node):
-    '''
-        node - xml node
-        returns:
-            nx_class name
-            Note that if 'type' is not defined, NX_CHAR is assumes
-    '''
-    return node.attrib['type'] if 'type' in node.attrib.keys() else 'NX_CHAR'
-
-def get_required_string(node, nxhtml):
-    """
-        check for being required.
-        returns:
-         REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
-    """
-    if node is None:
-        return "<<NOT IN SCHEMA>>"
-    elif ('optional' in node.attrib.keys() and node.attrib['optional']=="true") or \
-        ('minOccurs' in node.attrib.keys() and node.attrib['minOccurs']=="0"):
-        return "<<OPTIONAL>>"
-    elif 'recommended' in node.attrib.keys() and node.attrib['recommended'] == "true":
-        return "<<RECOMMENDED>>"
-    elif 'optional' in node.attrib.keys() and node.attrib['optional'] == "false":
-        return "<<REQUIRED>>"
-    elif nxhtml.split("/")[0] == "base_classes":
-        return "<<OPTIONAL>>"
-    else:
-        return "<<REQUIRED>>"
-
-def get_doc(node, ntype, level, nxhtml, nxpath):
-    #URL for html documentation
-    anchor=''
-    for n in nxpath:
-        anchor+=n.lower()+"-"
-    anchor='https://manual.nexusformat.org/classes/'+nxhtml+"#"+anchor.replace('_', '-')+ntype
-    if len(ntype)==0:
-        anchor=anchor[:-1]
-
-    #RST documentation from the field 'doc'
-    try:
-        doc=node.doc.pyval
-    except:
-        doc=None
-    return anchor,doc
-
-def print_doc(node, ntype, level, nxhtml, nxpath):
-    anchor,doc = get_doc(node, ntype, level, nxhtml, nxpath)
-    print("  "*(level+1)+anchor)
-
-    preferredWidth = 80 + level*2
-    wrapper = textwrap.TextWrapper(initial_indent='  '*(level+1), width=preferredWidth,
-                               subsequent_indent='  '*(level+1),expand_tabs=False,tabsize=0)
-    #doc=node.find('doc')
-    if doc is not None:
-        #for par in doc.text.split('\n'):
-        for par in doc.split('\n'):
-            print(wrapper.fill(par))
-    #print(doc.text if doc is not None else "")
-
-def get_enums(node):
-    """
-    makes list of enumerations, if node contains any.
-    Returns comma separated STRING of enumeration values, if there are enum tag,
-    otherwise empty string.
-    """
-    #collect item values from enumeration tag, if any
-    try:
-        for items in node.enumeration:
-            enums = []
-            for values in items.findall('item'):
-                enums.append(values.attrib['value'])
-            enums = ','.join(enums)
-            return (True, enums)
-    #if there is no enumeration tag, returns empty string
-    except:
-        return (False, '')
-
+from tools import read_nexus
 
 def parse_node(m,node, ntype, level, nxhtml, nxpath):
     '''
@@ -151,13 +55,13 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
                  elements are in html documentation format. E.g. ['NXxas', 'ENTRY']
     '''
     nxpath_new=nxpath.copy()
-    nxpath_new.append(get_node_name(node))
+    nxpath_new.append(read_nexus.get_node_name(node))
     indent='  ' *level
-    print("%s%s: %s (%s) %s %s" % (indent,ntype,nxpath_new[-1],get_nx_class(node),'DEPRICATED!!!' if 'deprecated' in node.attrib.keys() else '',get_required_string(node, nxhtml)))
-    print_doc(node, ntype, level, nxhtml, nxpath_new)
+    print("%s%s: %s (%s) %s %s" % (indent,ntype,nxpath_new[-1],read_nexus.get_nx_class(node),'DEPRICATED!!!' if 'deprecated' in node.attrib.keys() else '',read_nexus.get_required_string(node)))
+    read_nexus.print_doc(node, ntype, level, nxhtml, nxpath_new)
 
     #Create a sub-section
-    metaNode=Section(name=get_nx_class(node))
+    metaNode=Section(name=read_nexus.get_nx_class(node))
     sub_section_name = 'nxp_' + nxpath_new[-1]
     mss = SubSection(sub_section=metaNode,name=sub_section_name, repeats=True)
     metaNode.nexus_parent = mss
@@ -190,7 +94,7 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
     #add inherited nx properties (e.g. type, minOccurs, depricated)
     for prop in node.attrib.keys():
       if "}schemaLocation" not in prop:
-        if prop not in nx_props:
+        if node.tag=='attribute' and prop not in nx_props:
             nx_props.append(prop)
         q = Quantity(
             name='nxp_'+prop,
@@ -201,7 +105,7 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
             default=node.attrib[prop])
         metaNode.quantities.append(q)
     #add documentation
-    anchor, doc = get_doc(node, ntype, level, nxhtml, nxpath)
+    anchor, doc = read_nexus.get_doc(node, ntype, level, nxhtml, nxpath)
     q = Quantity(
         name='nxp_documentation',
         type=str,
@@ -213,7 +117,7 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
 
     #add derived nx properties (e.g. required)
     #REQUIRED
-    reqStr=get_required_string(node, nxhtml)
+    reqStr=read_nexus.get_required_string(node)
     if 'REQUIRED' in reqStr:
         q = Quantity(
             name='nxp_required',
@@ -252,7 +156,7 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
             default=True )
         metaNode.quantities.append(q)
     #ENUMS
-    (o, enums) = get_enums(node)
+    (o, enums) = read_nexus.get_enums(node)
     if o:
         q = Quantity(
             name='nxp_enumeration',
