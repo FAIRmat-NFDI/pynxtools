@@ -62,7 +62,15 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
 
     #Create a sub-section
     metaNode=Section(name=read_nexus.get_nx_class(node))
-    sub_section_name = 'nxp_' + nxpath_new[-1]
+    if ntype=='attribute':
+        sub_section_name = 'nxa_' + nxpath_new[-1]
+    elif ntype=='field':
+        sub_section_name = 'nxf_' + nxpath_new[-1]
+    elif ntype=='group':
+        sub_section_name = 'nxg_' + nxpath_new[-1]
+    else:
+        #error
+        sub_section_name = 'nx_' + nxpath_new[-1]
     mss = SubSection(sub_section=metaNode,name=sub_section_name, repeats=True)
     metaNode.nexus_parent = mss
     #decorate with properties
@@ -85,7 +93,9 @@ def parse_node(m,node, ntype, level, nxhtml, nxpath):
             for sub_group in node.findall('group'):
                 parse_node(metaNode,sub_group, 'group', level+1,nxhtml,nxpath_new)
 
-nx_props = []
+nxa_props = []
+nxf_props = []
+nxg_props = []
 
 def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
     '''
@@ -94,8 +104,12 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
     #add inherited nx properties (e.g. type, minOccurs, depricated)
     for prop in node.attrib.keys():
       if "}schemaLocation" not in prop:
-        if node.tag=='attribute' and prop not in nx_props:
-            nx_props.append(prop)
+        if ntype=='attribute' and prop not in nxa_props:
+            nxa_props.append(prop)
+        if ntype=='field' and prop not in nxf_props:
+            nxf_props.append(prop)
+        if ntype=='group' and prop not in nxg_props:
+            nxg_props.append(prop)
         q = Quantity(
             name='nxp_'+prop,
             type=str,
@@ -103,7 +117,9 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
             description='''
             ''',
             default=node.attrib[prop])
-        metaNode.quantities.append(q)
+        #optionality is added during decoration
+        if prop not in ['optional','recommended','required']:
+            metaNode.quantities.append(q)
     #add documentation
     anchor, doc = read_nexus.get_doc(node, ntype, level, nxhtml, nxpath)
     q = Quantity(
@@ -144,16 +160,6 @@ def decorate(metaNode,node, ntype, level, nxhtml, nxpath):
             description='''
             ''',
             default=True)
-        metaNode.quantities.append(q)
-    #DEPRECATED
-    if 'deprecated' in node.attrib.keys():
-        q = Quantity(
-            name='nxp_deprecated',
-            type=bool,
-            shape=[],
-            description='''
-            ''',
-            default=True )
         metaNode.quantities.append(q)
     #ENUMS
     (o, enums) = read_nexus.get_enums(node)
@@ -276,5 +282,12 @@ print('!!! meta_nexus.py is ready to be used:')
 print('cp meta_nexus.py nexus.py\n')
 
 print('==============================================')
-for prop in nx_props:
-    print(prop)
+print('Attribute properties:')
+for prop in nxa_props:
+    print(' - '+ prop)
+print('Field properties:')
+for prop in nxf_props:
+    print(' - '+ prop)
+print('Group properties:')
+for prop in nxg_props:
+    print(' - '+ prop)
