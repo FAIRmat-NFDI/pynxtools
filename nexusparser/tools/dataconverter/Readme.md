@@ -1,4 +1,8 @@
 # Data Converter
+
+<img src="./convert_routine.svg" />
+
+
 Converts experimental data to Nexus/HDF5 files based on any provided NXDL.
 
 ```console
@@ -10,7 +14,6 @@ Options:
                        more than one file.)
 
   --reader TEXT        The reader to use.
-  --yaml TEXT          The path to the YAML file assosciated with
   --nxdl TEXT          The path to the corresponding NXDL file.  [required]
   --output TEXT        The path to the output Nexus file to be generated.
   --generate-template  Just print out the template generated from given NXDL
@@ -33,14 +36,17 @@ Copy and rename ```readers/example_reader.py``` to your own reader file.
 Then implement the reader function:
 
 ```python
+"""MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
 from typing import Tuple
 
 from readers.base_reader import BaseReader
 
 
 class MyDataReader(BaseReader):
+    """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
 
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
+        """Reads data from given file and returns a filled template dictionary"""
         # Fill the template
         for path in file_paths:
             print(path)

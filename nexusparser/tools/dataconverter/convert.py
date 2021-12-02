@@ -1,3 +1,5 @@
+"""This script runs the conversion routine using a selected reader and write out a Nexus file."""
+
 import importlib.machinery
 import importlib.util
 import json
@@ -11,23 +13,26 @@ import click
 
 from writer import Writer
 
-
 # Nexus related functions to be exported in a common place for all tools
 def convert_nexus_to_caps(nexus):
+    """Helper function to convert a Nexus class from <NxClass> to <CLASS>."""
     return nexus[2:].upper()
 
 
 def convert_nexus_to_suggested_name(nexus):
+    """Helper function to suggest a name for a group from its Nexus class."""
     return nexus[2:]
 
 
 # Common XML function
 def remove_namespace_from_tag(tag):
+    """Helper function to remove the namespace from an XML tag."""
     return tag.split("}")[-1]
 
 
 # Helper functions for the convert script
 def get_first_group(root):
+    """Helper function to get the actual first group element from the NXDL"""
     for child in root:
         if remove_namespace_from_tag(child.tag) == "group":
             return child
@@ -35,6 +40,7 @@ def get_first_group(root):
 
 
 def generate_template_from_nxdl(root, path, template):
+    """Helper function to generate a template dictionary for given NXDL"""
     tag = remove_namespace_from_tag(root.tag)
     # print(' ' * indent + "tag: " + tag)
     if tag == "doc":
@@ -63,6 +69,7 @@ def generate_template_from_nxdl(root, path, template):
 
 
 def get_reader(reader_name):
+    """Helper function to get the reader object from it's given name"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
     path = f"{path_prefix}readers/{reader_name}_reader.py"
     spec = importlib.util.spec_from_file_location(f"{reader_name}_reader.py", path)
@@ -72,6 +79,7 @@ def get_reader(reader_name):
 
 
 def get_names_of_all_readers():
+    """Helper function to populate a list of all available readers"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
     files = next(os.walk(f"{path_prefix}readers/"), (None, None, []))[2]
     return [file.split('_reader.py')[0] for file in files]
@@ -109,6 +117,7 @@ def get_names_of_all_readers():
     help='Just print out the template generated from given NXDL file.'
 )
 def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):
+    """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
     tree = ET.parse(nxdl)
 
