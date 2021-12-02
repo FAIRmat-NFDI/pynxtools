@@ -1,3 +1,4 @@
+"""The writer class for writing a Nexus file in accordance with a given NXDL."""
 
 class Writer:
     """
