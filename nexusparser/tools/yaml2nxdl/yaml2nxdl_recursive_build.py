@@ -8,7 +8,7 @@ Created on Mon Nov 22 17:48:21 2021
 import os, sys
 import yaml
 from lxml import etree
-from yaml2nxdl_utils import nx_base_clss_string_mangling, nx_name_type_resolving
+from yaml2nxdl_utils import nx_name_type_resolving
 from yaml2nxdl_utils import nx_base_clss, nx_cand_clss, nx_unit_idnt, nx_unit_typs
 from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
 
@@ -114,13 +114,14 @@ def recursive_build(obj, dct):
         print('kName: '+kName+' kType: '+kType)
         if kName == '' and kType == '':
             raise ValueError('ERROR: Found an improper YML key !')
-        elif kType.replace('NX','nx_') in nx_base_clss or kType.replace('NX','nx_') in nx_cand_clss:
+        elif kType in nx_base_clss or kType in nx_cand_clss or kType not in nx_type_keys:
             #we can be sure we need to instantiate a new group
             grp = etree.SubElement(obj, 'group')
             if kName != '': #use the custom name for the group
                 grp.set('name', kName) #because we are a base or cand clss kName is a NX<str>
-            #else: #use the NeXus default to infer the name from the base/cand class name stripping the 'NX' decorator prefix
-            #    grp.set('name', kName[2:])
+            else: #use the NeXus default to infer the name from the base/cand class name stripping the 'NX' decorator prefix
+                if kType != '':
+                    grp.set('name', kType)                                  
             grp.set('type', kType)
             if v != None:
                 if isinstance(v,dict):
@@ -159,7 +160,7 @@ def recursive_build(obj, dct):
             xml_handle_links(obj, k, v)
         elif kName != '': #dealing with a field because classes and attributes already ruled out
             typ = 'NX_CHAR'
-            if kType.replace('NX','nx').lower() in nx_type_keys:
+            if kType in nx_type_keys:
                 typ = kType
             #else:
             #    raise valueError(kk+' facing an unknown kType !')
@@ -179,7 +180,7 @@ def recursive_build(obj, dct):
                             kkName, kkType = nx_name_type_resolving(kk[2:]) #strip the nx_attr_idnt prefix
                             attr.set('name', kkName)
                             typ = 'NX_CHAR'
-                            if kkType.replace('NX','nx').lower() in nx_type_keys:
+                            if kkType in nx_type_keys:
                                 typ = kkType
                             attr.set('type', typ)
                             if vv != None:

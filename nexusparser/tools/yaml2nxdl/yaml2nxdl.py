@@ -4,10 +4,10 @@
 import os, sys
 import yaml
 from lxml import etree
-from yaml2nxdl_utils import nx_base_clss_string_mangling
 from yaml2nxdl_utils import nx_base_clss, nx_cand_clss, nx_unit_idnt, nx_unit_typs
 from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
-from yaml2nxdl_read_user_yml_appdef import read_user_appdef
+#check duplicates Types with no Name in read_user_appdef: https://stackoverflow.com/questions/33490870/parsing-yaml-in-python-detect-duplicated-keys
+from yaml2nxdl_read_user_yml_appdef import read_user_appdef 
 from yaml2nxdl_recursive_build import recursive_build
 
 class yml2nxdl():
@@ -24,7 +24,10 @@ class yml2nxdl():
         rt = etree.Element('definition', 
                    {attr_qname: 'http://definition.nexusformat.org/nxdl/nxdl.xsd' },
                    nsmap = {None: 'http://definition.nexusformat.org/nxdl/3.1', 
-                            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'})
+                            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+                           )
+                        #,
+                           # 'schemaLocation'}) ###############àà
         #step2b: user-defined attributes for the root group
         if 'name' in self.yml.keys():
             rt.set('name', self.yml['name'])
@@ -77,7 +80,8 @@ class yml2nxdl():
         print('Parsed YAML to NXDL successfully')
 
 #tests
-fnm = 'NXtest_links.yml'
+fnm = 'NXmpes_core_draft.yml'
+#fnm = 'NXtest_links.yml'
 #fnm = 'NXarpes.yml'
 #fnm = 'NXmx.yml'
 #fnm = 'NXem_base_draft.yml'

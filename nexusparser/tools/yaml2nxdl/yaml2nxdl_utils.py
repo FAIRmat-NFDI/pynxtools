@@ -14,16 +14,10 @@ from lxml import etree
 #import lxml.etree.ElementTree as ET
 
 
-def nx_base_clss_string_mangling(tmp):
-    if tmp[0:3] == 'nx_':
-        return 'NX'+tmp[3::]
-    else:
-        return tmp
-        #raise ValueError(tmp+' is not a properly formatted nexus keyword which this parser knows!')
-
 def nx_name_type_resolving(tmp):
     """
-    extracts the type and eventually custom name from a YML section string
+    extracts the eventually custom name {optional_string} an type {nexus_type} from a YML section string.
+    YML section string syntax: optional_string(nexus_type)  
     """
     #tmp = '' #will throw
     #tmp = '(NXentry)' #will return '', 'NXentry' tuple
@@ -43,26 +37,26 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
-nx_base_clss = ['nx_aperture', 'nx_attenuator', 'nx_beam', 'nx_beam_stop', 'nx_bending_magnet', 'nx_capillary', 'nx_cite', 
-    'nx_collection', 'nx_collimator', 'nx_crystal', 'nx_cylindrical_geometry', 'nx_data', 'nx_detector', 
-    'nx_detector_group', 'nx_detector_module', 'nx_disk_chopper', 'nx_entry', 'nx_environment', 'nx_event_data', 
-    'nx_fermi_chopper', 'nx_filter', 'nx_flipper', 'nx_fresnel_zone_plate, ''nx_geometry', 'nx_grating', 'nx_guide', 
-    'nx_insertion_device', 'nx_instrument', 'nx_log', 'nx_mirror', 'nx_moderator', 'nx_monitor', 'nx_monochromator', 
-    'nx_note', 'nx_object', 'nx_off_geometry', 'nx_orientation', 'nx_parameters', 'nx_pdb', 'nx_pinhole', 'nx_polarizer', 
-    'nx_positioner', 'nx_process', 'nx_reflections', 'nx_root', 'nx_sample', 'nx_sample_component', 'nx_sensor', 'nx_shape', 
-    'nx_slit', 'nx_source', 'nx_subentry', 'nx_transformations', 'nx_translation', 'nx_user', 'nx_velocity_selector',
-    'nx_xraylens']
+nx_base_clss = ['NXaperture', 'NXattenuator', 'NXbeam', 'NXbeam_stop', 'NXbending_magnet', 'NXcapillary', 'NXcite', 
+    'NXcollection', 'NXcollimator', 'NXcrystal', 'NXcylindrical_geometry', 'NXdata', 'NXdetector', 
+    'NXdetector_group', 'NXdetector_module', 'NXdisk_chopper', 'NXentry', 'NXenvironment', 'NXevent_data', 
+    'NXfermi_chopper', 'NXfilter', 'NXflipper', 'NXfresnel_zone_plate, ''NXgeometry', 'NXgrating', 'NXguide', 
+    'NXinsertion_device', 'NXinstrument', 'NXlog', 'NXmirror', 'NXmoderator', 'NXmonitor', 'NXmonochromator', 
+    'NXnote', 'NXobject', 'NXoff_geometry', 'NXorientation', 'NXparameters', 'NXpdb', 'NXpinhole', 'NXpolarizer', 
+    'NXpositioner', 'NXprocess', 'NXreflections', 'NXroot', 'NXsample', 'NXsample_component', 'NXsensor', 'NXshape', 
+    'NXslit', 'NXsource', 'NXsubentry', 'NXtransformations', 'NXtranslation', 'NXuser', 'NXvelocity_selector',
+    'NXxraylens']
 
-nx_type_keys = ['nx_binary', 'nx_boolean', 'nx_char', 'nx_date_time', 
-                'nx_float', 'nx_int', 'nx_number', 'nx_posint', 'nx_uint']
+nx_type_keys = ['NX_BINARY', 'NX_BOOLEAN', 'NX_CHAR', 'NX_DATE_TIME', 
+                'NX_FLOAT', 'NX_INT', 'NX_NUMBER', 'NX_POSINT', 'NX_UINT', '']
 #nx_grpnm_tag = '___'
 nx_attr_idnt = '\@'
 nx_unit_idnt = 'unit'
-nx_unit_typs = ['nx_angle',  'nx_any', 'nx_area', 'nx_charge', 'nx_cross_section', 'nx_current', 'nx_dimensionless',
-                'nx_emittance', 'nx_energy', 'nx_flux', 'nx_frequency', 'nx_length', 'nx_mass', 'nx_mass_density',
-                'nx_molecular_weight', 'nx_period', 'nx_per_area', 'nx_per_length', 'nx_power', 'nx_pressure',
-                'nx_pulses', 'nx_scattering_length_density', 'nx_solid_angle', 'nx_temperature', 'nx_time',
-                'nx_time_of_flight', 'nx_transformation', 'nx_unitless', 'nx_voltage', 'nx_volume', 'nx_wavelength',
-                'nx_wavenumber']
+nx_unit_typs = ['NX_ANGLE',  'NX_ANY', 'NX_AREA', 'NX_CHARGE', 'NX_CROSS_SECTION', 'NX_CURRENT', 'NX_DIMENSIONLESS',
+                'NX_EMITTANCE', 'NX_ENERGY', 'NX_FLUX', 'NX_FREQUENCY', 'NX_LENGTH', 'NX_MASS', 'NX_MASS_DENSITY',
+                'NX_MOLECULAR_WEIGHT', 'NX_PERIOD', 'NX_PER_AREA', 'NX_PER_LENGTH', 'NX_POWER', 'NX_PRESSURE',
+                'NX_PULSES', 'NX_SCATTERING_LENGTH_DENSITY', 'NX_SOLID_ANGLE', 'NX_TEMPERATURE', 'NX_TIME',
+                'NX_TIME_OF_FLIGHT', 'NX_TRANSFORMATION', 'NX_UNITLESS', 'NX_VOLTAGE', 'NX_VOLUME', 'NX_WAVELENGTH',
+                'NX_WAVENUMBER']
 
-nx_cand_clss = ['nx_em_lens', 'nx_em_cs_corr','nx_em_deflector','nx_em_stage']
+nx_cand_clss = ['NXem_lens', 'NXem_c3c5corr','NXem_deflector','NXem_stage']
