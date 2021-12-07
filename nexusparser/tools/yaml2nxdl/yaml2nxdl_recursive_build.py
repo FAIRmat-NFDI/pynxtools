@@ -8,17 +8,26 @@ Created on Mon Nov 22 17:48:21 2021
 import os, sys
 import yaml
 from lxml import etree
-from yaml2nxdl_utils import nx_base_clss_string_mangling, nx_name_type_resolving
+from yaml2nxdl_utils import nx_name_type_resolving
 from yaml2nxdl_utils import nx_base_clss, nx_cand_clss, nx_unit_idnt, nx_unit_typs
 from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
 
 def xml_handle_docstring(obj, k, v):
+    """
+    Xml attribute on existing object node in an xml tree
+    """
     obj.set('doc', str(v))
 
 def xml_handle_units(obj, k, v):
+    """
+    Xml attribute on existing object node in an xml tree
+    """
     obj.set('units', v)
 
 def xml_handle_exists(obj, k, v):
+    """
+    Xml attribute on existing object node in an xml tree
+    """
     if v != None:
         if isinstance(v,list): #handle []
             if len(v) == 2:
@@ -50,6 +59,9 @@ def xml_handle_exists(obj, k, v):
         raise ValueError('exists keyword found but value is None !')
 
 def xml_handle_dimensions(obj, k, v):
+    """
+    Xml attribute on existing object node in an xml tree
+    """
     if v != None:
         if isinstance(v,dict):
             if 'rank' in v and 'dim' in v:
@@ -76,6 +88,9 @@ def xml_handle_dimensions(obj, k, v):
         raise ValueError('exists keyword found but value is None !')
 
 def xml_handle_enumeration(obj, k, v):
+    """
+    Xml attribute on existing object node in an xml tree
+    """
     enum = etree.SubElement(obj, 'enumeration')
     #assume we get a list as the value argument
     if v != None:
@@ -89,6 +104,9 @@ def xml_handle_enumeration(obj, k, v):
         raise ValueError('ERROR: '+k+' we found an enumeration key-value pair but the value is None !')
 
 def xml_handle_links(obj, k, v):
+    """
+    Xml attribute on existing object node in an xml tree
+    """
     #if we have a link we decode the name attribute from <optional string>(link)[:-6]
     if len(k[:-6]) >= 1 and isinstance(v,dict) and 'target' in v.keys():
         if isinstance(v['target'],str) and len(v['target']) >= 1:
@@ -103,30 +121,29 @@ def xml_handle_links(obj, k, v):
 
 def recursive_build(obj, dct):
     """
-    obj is the current node where we want to append to, dct is a dictionary object which represents the content of the child in the nested set of dictionaries
+    obj is the current node where we want to append to, 
+    dct is a dictionary object which represents the content of the child in the nested set of dictionaries
     """
     for k, v in iter(dct.items()):
-        print('Processing key '+k+' value v is a dictionary '+str(isinstance(v,dict)))
-        #base class prefix tag removal
-        #k = '(NXentry)'
-        #k = 'sensor_size(NX_INT)'
+        #print('Processing key '+k+' value v is a dictionary '+str(isinstance(v,dict)))
         kName, kType = nx_name_type_resolving(k)
         print('kName: '+kName+' kType: '+kType)
         if kName == '' and kType == '':
             raise ValueError('ERROR: Found an improper YML key !')
-        elif kType.replace('NX','nx_') in nx_base_clss or kType.replace('NX','nx_') in nx_cand_clss:
+        elif kType in nx_base_clss or kType in nx_cand_clss or kType not in nx_type_keys:
             #we can be sure we need to instantiate a new group
             grp = etree.SubElement(obj, 'group')
             if kName != '': #use the custom name for the group
-                grp.set('name', kName) #because we are a base or cand clss kName is a NX<str>
-            #else: #use the NeXus default to infer the name from the base/cand class name stripping the 'NX' decorator prefix
-            #    grp.set('name', kName[2:])
+                grp.set('name', kName) 
+            else: 
+                if kType != '':
+                    grp.set('name', kType)                                  
             grp.set('type', kType)
             if v != None:
                 if isinstance(v,dict):
                     if v != {}:
                         recursive_build(grp, v)
-        elif kName[0:2] == nx_attr_idnt: #check if obj qualifies as an attribute, do not impose a constraint on kType
+        elif kName[0:2] == nx_attr_idnt: #check if obj qualifies as an attribute identifier
             attr = etree.SubElement(obj, 'attribute')
             attr.set('name', kName[2:])
             if v != None:
@@ -142,9 +159,7 @@ def recursive_build(obj, dct):
                             xml_handle_enumeration(attr,kk, vv)
                         else:
                             raise ValueError(kk+' facing an unknown situation while processing attributes of an attribute !')
-            #else: #e.g. for case like \@depends_on:
-            #    attr.set('name', k[2:])
-        #handle special keywords, ###MK::add handling of symbols!
+        #handle special keywords (symbols), assumed that you do not encounter further symbols nested inside
         elif k == 'doc':
             xml_handle_docstring(obj, k, v)
         elif k == 'enumeration':
@@ -153,16 +168,13 @@ def recursive_build(obj, dct):
             xml_handle_dimensions(obj, k, v)
         elif k == 'exists':
             xml_handle_exists(obj, k, v)
-        #elif k == 'link': ##MK:check handling of links for
-        #base/cand classes, attributes, and special keywords handled, so only members remain
         elif k[-6:] == '(link)':
             xml_handle_links(obj, k, v)
-        elif kName != '': #dealing with a field because classes and attributes already ruled out
+        #base/cand classes, attributes, and special keywords (symbols) handled, so only members of nexus classe remain to handle, which will populate xml fields
+        elif kName != '': 
             typ = 'NX_CHAR'
-            if kType.replace('NX','nx').lower() in nx_type_keys:
+            if kType in nx_type_keys:
                 typ = kType
-            #else:
-            #    raise valueError(kk+' facing an unknown kType !')
             #assume type is NX_CHAR, a NeXus default assumption if in doubt
             fld = etree.SubElement(obj, 'field')
             fld.set('name', kName)
@@ -176,10 +188,10 @@ def recursive_build(obj, dct):
                         if kk[0:2] == nx_attr_idnt:
                             attr = etree.SubElement(fld, 'attribute')
                             #attributes may also come with an nx_type specifier which we need to decipher first
-                            kkName, kkType = nx_name_type_resolving(kk[2:]) #strip the nx_attr_idnt prefix
+                            kkName, kkType = nx_name_type_resolving(kk[2:])
                             attr.set('name', kkName)
                             typ = 'NX_CHAR'
-                            if kkType.replace('NX','nx').lower() in nx_type_keys:
+                            if kkType in nx_type_keys:
                                 typ = kkType
                             attr.set('type', typ)
                             if vv != None:
@@ -210,7 +222,7 @@ def recursive_build(obj, dct):
             else:
                 if k == 'type':
                     print(k+' facing a type where we would not expect it!')
-                elif k == 'doc': #key is a documentation string specifier
+                elif k == 'doc': 
                     xml_handle_docstring(fld, k, v)
                 elif k == nx_unit_idnt:
                     xml_handle_units(fld, k, v)
@@ -220,7 +232,7 @@ def recursive_build(obj, dct):
                     xml_handle_exists(fld, k, v)
                 elif k == 'dimensions':
                     raise ValueError(k+' unknown dimensions of a field case coming from no dict !')
-                else:
-                    pass
                 #else:
-                #    raise ValueError(k+' faces a completely unexpected situation !')
+                #    pass
+                else:
+                    raise ValueError(k+' faces a completely unknown symbol!')

@@ -10,7 +10,14 @@ c) write the NXDL XML file to file
 
 ```console
 user@box:~$ python yaml2nxdl.py
-Usage: yaml2nxdl.py 
+
+Usage: ./yaml2nxdl.py [OPTIONS]
+
+Options:
+   --input_file TEXT    The path to the input data file to read. (Repeat for
+                        more than one file.)
+   --help               Show this message and exit.
+
 ```
 
 The tool is reading a yml file manually defined in the 'fnm' variable in yaml2nxdl.py
