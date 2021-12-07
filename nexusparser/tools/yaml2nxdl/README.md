@@ -19,6 +19,3 @@ Options:
    --help               Show this message and exit.
 
 ```
-
-The tool is reading a yml file manually defined in the 'fnm' variable in yaml2nxdl.py
-
