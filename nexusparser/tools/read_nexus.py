@@ -1,5 +1,5 @@
 #Nexus definitions in github: https://github.com/nexusformat/definitions
-#to be cloned under os.environ['NEXUS_DEF_PATH'] 
+#to be cloned under os.environ['NEXUS_DEF_PATH']
 
 import os
 import h5py
@@ -9,11 +9,11 @@ import logging
 import subprocess
 import textwrap
 
-LOGGING_FORMAT = "%(levelname)s: %(message)s"
-stdout_handler = logging.StreamHandler(sys.stdout)
-stdout_handler.setLevel(logging.DEBUG)
-logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT, handlers=[stdout_handler])
-logger = logging.getLogger()
+# LOGGING_FORMAT = "%(levelname)s: %(message)s"
+# stdout_handler = logging.StreamHandler(sys.stdout)
+# stdout_handler.setLevel(logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT, handlers=[stdout_handler])
+# logger = logging.getLogger()
 
 #check for NEXUS definitions
 try:
@@ -29,7 +29,7 @@ except:
         os.chdir(localDir)
         subprocess.call(['git','clone','https://github.com/nexusformat/definitions'])
         os.chdir(cwd)
-        
+
 
 def get_nx_class_path(hdfNode):
     """
@@ -76,7 +76,7 @@ def get_nx_namefit(hdfName,name):
     """
             #checks if an HDF5 node name corresponds to a child of the NXDL element
             #uppercase letters in front can be replaced by arbitraty name, but
-            #uppercase to lowercase match is preferred, 
+            #uppercase to lowercase match is preferred,
             #so such match is counted as a measure of the fit
             """
     #count leading capitals
@@ -270,7 +270,7 @@ def chk_NXdataAxis_v2(hdfNode, name):
             return
 
 
-def chk_NXdataAxis(hdfNode, name):
+def chk_NXdataAxis(hdfNode, name, logger):
     """
         NEXUS Data Plotting Standard v3: new version from 2014
     """
@@ -311,7 +311,7 @@ def chk_NXdataAxis(hdfNode, name):
     return chk_NXdataAxis_v2(hdfNode, name)
 
 
-def get_nxdl_doc(hdfNode, doc, attr=False):
+def get_nxdl_doc(hdfNode, logger, doc, attr=False):
     """get nxdl documentation for an HDF5 node (or its attribute)"""
 
     nxdef = get_nxdl_entry(hdfNode)
@@ -414,7 +414,7 @@ def get_nxdl_doc(hdfNode, doc, attr=False):
                     if etree.QName(item).localname == 'item':
                         if doc: logger.info("-> " + item.attrib['value'])
             #check for NXdata references (axes/signal)
-            chk_NXdataAxis(hdfNode, path.split('/')[-1])
+            chk_NXdataAxis(hdfNode, path.split('/')[-1], logger)
             #check for doc
             sdoc = get_nxdl_child(elem, 'doc')
             if doc: logger.info(sdoc if sdoc is not None else "")
@@ -473,7 +473,7 @@ def get_enums(node):
 
 
 
-def process_node(hdfNode,parser,doc=True):
+def process_node(hdfNode, parser, logger,doc=True):
     """
             #processes an hdf5 node
             #- it logs the node found and also checks for its attributes
@@ -492,18 +492,18 @@ def process_node(hdfNode,parser,doc=True):
         logger.info('===== GROUP (/%s [%s::%s]): %s' %
                      (hdfPath, get_nxdl_entry(hdfNode),
                       get_nx_class_path(hdfNode), hdfNode))
-    (REQstr,elem,nxdef,nxdlPath) = get_nxdl_doc(hdfNode,doc)
+    (REQstr,elem,nxdef,nxdlPath) = get_nxdl_doc(hdfNode, logger, doc)
     if parser is not None and isinstance(hdfNode, h5py.Dataset):
         parser(hdfPath,hdfNode,nxdef,nxdlPath,val)
     for k, v in hdfNode.attrs.items():
         logger.info('===== ATTRS (/%s@%s)' % (hdfPath, k))
         val = str(v).split('\n')
         logger.info('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
-        (REQstr,elem,nxdef,nxdlPath) = get_nxdl_doc(hdfNode, doc, attr=k)
+        (REQstr,elem,nxdef,nxdlPath) = get_nxdl_doc(hdfNode, logger,doc, attr=k)
         if parser is not None and not 'NOT IN SCHEMA' in REQstr and not 'None' in REQstr:
             parser(hdfPath,hdfNode,nxdef,nxdlPath,val)
 
-def get_default_plotable(root,parser):
+def get_default_plotable(root,parser, logger):
     logger.info('========================')
     logger.info('=== Default Plotable ===')
     logger.info('========================')
@@ -529,7 +529,7 @@ def get_default_plotable(root,parser):
     if not nxentry:
         logger.info('No NXentry has been found')
         return
-    logger.info('')    
+    logger.info('')
     logger.info('NXentry has been identified: '+nxentry.name)
     #process_node(nxentry, None, False)
     #nxdata
@@ -552,9 +552,9 @@ def get_default_plotable(root,parser):
     if not nxdata:
         logger.info('No NXdata group has been found')
         return
-    logger.info('')    
+    logger.info('')
     logger.info('NXdata group has been identified: '+nxdata.name)
-    process_node(nxdata, None, False)
+    process_node(nxdata, None, logger, False)
     #signal
     signal=None
     signal_dataset_name = nxdata.attrs.get("signal")
@@ -579,9 +579,9 @@ def get_default_plotable(root,parser):
     if not signal:
         logger.info('No Signal has been found')
         return
-    logger.info('')    
+    logger.info('')
     logger.info('Signal has been identified: '+signal.name)
-    process_node(signal, None, False)
+    process_node(signal,  None, logger, False)
     dim=len(signal.shape)
     #axes
     axes=[]
@@ -593,7 +593,7 @@ def get_default_plotable(root,parser):
             #single axis is defined
             if ax_datasets is str:
                 #explicite definition of dimension number
-                ind=nxdata.attrs.get(ax_datasets+'_indices')                
+                ind=nxdata.attrs.get(ax_datasets+'_indices')
                 if ind and ind is int:
                     if ind==a:
                         ax.append(nxdata[nxdata[ax_datasets]])
@@ -646,29 +646,36 @@ def get_default_plotable(root,parser):
                     else:
                         ax.append(sax)
         axes.append(ax)
-        logger.info('')    
+        logger.info('')
         logger.info('For Axis #%d, %d axes have been identified: %s' % (a,len(ax),str(ax)))
 
 
 class HandleNexus:
-    def __init__(self, args):
+    def __init__(self, logger, args):
+        self.logger = logger
         self.input_file_name = args[0] if len(
             #args) >= 1 else 'wcopy/from_dallanto_master_from_defs.h5'
-            args) >= 1 else 'ARPES/201805_WSe2_arpes.nxs'
+            #args) >= 1 else 'ARPES/201805_WSe2_arpes.nxs'
+            args) >= 1 else 'tests/data/nexus_test_data/201805_WSe2_arpes.nxs'
 
     def visit_node(self,hdfPath,hdfNode):
-        process_node(hdfNode, self.parser)
+        process_node(hdfNode, self.parser, self.logger)
 
-    def process_nexus_master_file(self,parser):
+    def process_nexus_master_file(self,parser, logger):
         """ Process a nexus master file by processing all its nodes and their attributes"""
-
+        self.logger = logger
         self.parser=parser
         self.in_file = h5py.File(self.input_file_name, 'r')
         self.in_file.visititems(self.visit_node)
-        get_default_plotable(self.in_file,self.parser)
+        get_default_plotable(self.in_file,self.parser, self.logger)
         self.in_file.close()
 
 
 if __name__ == '__main__':
-    nexus_helper = HandleNexus(sys.argv[1:])
+    LOGGING_FORMAT = "%(levelname)s: %(message)s"
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setLevel(logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT, handlers=[stdout_handler])
+    logger = logging.getLogger()
+    nexus_helper = HandleNexus(logger, sys.argv[1:])
     nexus_helper.process_nexus_master_file(None)
