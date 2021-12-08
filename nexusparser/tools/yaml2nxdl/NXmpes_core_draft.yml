@@ -21,11 +21,6 @@ category: application # Defaults "exists" to "required"
   \@entry:
     doc: "NeXus convention is to use \"entry1\", \"entry2\", for analysis software to locate each entry."
   title:
-  start_time(NX_DATE_TIME):
-  definition:
-    \@version: # New approach of NIAC: version controlled application definitions.
-    doc: Official NeXus NXDL schema to which this file conforms.
-    enumeration: [NXmpes_core]
   (NXinstrument):
     (NXsource):
       type:

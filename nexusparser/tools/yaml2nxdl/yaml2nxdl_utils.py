@@ -1,14 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 22 17:41:08 2021
-@author: kuehbach
-"""
-
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 import os, sys
 import yaml
-from lxml import etree
 
 
 def nx_name_type_resolving(tmp):
@@ -28,9 +39,8 @@ def nx_name_type_resolving(tmp):
     typ = ''
     nam = tmp
     return nam, typ
-
-#https://manual.nexusformat.org/classes/base_classes/index.html#base-class-definitions 
-nx_base_clss = ['NXaperture', 'NXattenuator', 'NXbeam', 'NXbeam_stop', 'NXbending_magnet', 'NXcapillary', 'NXcite', 
+ 
+nx_clss = ['NXaperture', 'NXattenuator', 'NXbeam', 'NXbeam_stop', 'NXbending_magnet', 'NXcapillary', 'NXcite', 
     'NXcollection', 'NXcollimator', 'NXcrystal', 'NXcylindrical_geometry', 'NXdata', 'NXdetector', 
     'NXdetector_group', 'NXdetector_module', 'NXdisk_chopper', 'NXentry', 'NXenvironment', 'NXevent_data', 
     'NXfermi_chopper', 'NXfilter', 'NXflipper', 'NXfresnel_zone_plate, ''NXgeometry', 'NXgrating', 'NXguide', 
@@ -40,9 +50,9 @@ nx_base_clss = ['NXaperture', 'NXattenuator', 'NXbeam', 'NXbeam_stop', 'NXbendin
     'NXslit', 'NXsource', 'NXsubentry', 'NXtransformations', 'NXtranslation', 'NXuser', 'NXvelocity_selector',
     'NXxraylens']
 
-#https://manual.nexusformat.org/nxdl-types.html?highlight=nx_number 
 nx_type_keys = ['NX_BINARY', 'NX_BOOLEAN', 'NX_CHAR', 'NX_DATE_TIME', 
-                'NX_FLOAT', 'NX_INT', 'NX_NUMBER', 'NX_POSINT', 'NX_UINT', '']
+                'NX_FLOAT', 'NX_INT', 'NX_NUMBER', 'NX_POSINT', 'NX_UINT']
+
 nx_attr_idnt = '\@'
 nx_unit_idnt = 'unit'
 nx_unit_typs = ['NX_ANGLE',  'NX_ANY', 'NX_AREA', 'NX_CHARGE', 'NX_CROSS_SECTION', 'NX_CURRENT', 'NX_DIMENSIONLESS',
@@ -51,5 +61,3 @@ nx_unit_typs = ['NX_ANGLE',  'NX_ANY', 'NX_AREA', 'NX_CHARGE', 'NX_CROSS_SECTION
                 'NX_PULSES', 'NX_SCATTERING_LENGTH_DENSITY', 'NX_SOLID_ANGLE', 'NX_TEMPERATURE', 'NX_TIME',
                 'NX_TIME_OF_FLIGHT', 'NX_TRANSFORMATION', 'NX_UNITLESS', 'NX_VOLTAGE', 'NX_VOLUME', 'NX_WAVELENGTH',
                 'NX_WAVENUMBER']
-
-nx_cand_clss = ['NXem_lens', 'NXem_c3c5corr','NXem_deflector','NXem_stage']
