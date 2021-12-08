@@ -16,19 +16,17 @@
 # limitations under the License.
 #
 
-from nexusparser.tools import read_nexus
 import os
-from nexusparser import NexusParser
 import pytest
 import logging
-
 from nomad.datamodel import EntryArchive
 
 import sys
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
-
+from nexusparser.tools import read_nexus
+from nexusparser import NexusParser
 
 @pytest.fixture
 def parser():
