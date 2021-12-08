@@ -80,7 +80,7 @@ class NexusParser(MatchingParser):
 
     def nexus_populate(self, hdfPath, hdfNode, nxdef, nxdlPath, val):
         print('%%%%%%%%%%%%%%')
-        #print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+        # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
         if nxdlPath is not None:
             print((nxdef or '???') + ':' + '.'.join(p if isinstance(p, str) else read_nexus.get_node_name(p) for p in nxdlPath) + ' - ' + val[0] + ("..." if len(val) > 1 else ''))
             if self.entry is None:

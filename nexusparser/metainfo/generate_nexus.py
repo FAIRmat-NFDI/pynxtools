@@ -1,5 +1,5 @@
 #
-#from nomad.metainfo.generate import generate_metainfo_code
+# from nomad.metainfo.generate import generate_metainfo_code
 from tools import read_nexus
 import os
 from lxml import etree, objectify
@@ -7,7 +7,7 @@ from nomad.metainfo.metainfo import MEnum, MSection
 from generate import generate_metainfo_code
 from nomad.metainfo import Package
 from nomad.metainfo import Section, Quantity, SubSection
-#from nomad.datamodel.metainfo.nxobject import NXobject
+# from nomad.datamodel.metainfo.nxobject import NXobject
 
 # you define a quantity like this
 q = Quantity(
@@ -33,7 +33,7 @@ p.section_definitions.append(m)
 p.section_definitions.append(r)
 
 # we write the schema as file
-#generate_metainfo_code(p, 'meta.py')
+# generate_metainfo_code(p, 'meta.py')
 
 
 # TODO:
@@ -265,20 +265,20 @@ def compare_dependencies(i1, i2):
     return False
 
 
-l = p.section_definitions
-i = 0
-while i < len(l):
-    j = i + 1
-    while j < len(l):
-        if compare_dependencies(l[i], l[j]):
+list_of_sections = p.section_definitions
+sorted_index = 0
+while sorted_index < len(list_of_sections):
+    current_index = sorted_index + 1
+    while current_index < len(list_of_sections):
+        if compare_dependencies(list_of_sections[sorted_index], list_of_sections[current_index]):
             # l[i],l[j]=l[j],l[i]
-            l.append(l[i])
-            l.__delitem__(i)
+            list_of_sections.append(list_of_sections[sorted_index])
+            list_of_sections.__delitem__(sorted_index)
             break
-        j = j + 1
-    if j == len(l):
-        i = i + 1
-print(l)
+        current_index = current_index + 1
+    if current_index == len(list_of_sections):
+        sorted_index = sorted_index + 1
+print(list_of_sections)
 
 
 # we write the schema as file
