@@ -459,7 +459,7 @@ def print_doc(node, ntype, level, nxhtml, nxpath):
         # for par in doc.text.split('\n'):
         for par in doc.split('\n'):
             print(wrapper.fill(par))
-    #print(doc.text if doc is not None else "")
+    # print(doc.text if doc is not None else "")
 
 
 def get_enums(node):
@@ -540,7 +540,7 @@ def get_default_plotable(root, parser, logger):
         return
     logger.info('')
     logger.info('NXentry has been identified: ' + nxentry.name)
-    #process_node(nxentry, None, False)
+    # process_node(nxentry, None, False)
     # nxdata
     nxdata = None
     default_nxdata_group_name = nxentry.attrs.get("default")

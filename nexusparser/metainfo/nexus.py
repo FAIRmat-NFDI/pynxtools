@@ -3,8 +3,8 @@ import typing                 # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference, MEnum)
-#from nomad.metainfo.legacy import LegacyDefinition
-#from nomad.datamodel.metainfo.nxobject import NXobject
+# from nomad.metainfo.legacy import LegacyDefinition
+# from nomad.datamodel.metainfo.nxobject import NXobject
 
 
 m_package = Package(

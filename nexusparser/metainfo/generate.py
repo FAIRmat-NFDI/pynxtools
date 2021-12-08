@@ -98,8 +98,8 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         return ', '.join([format_definition_ref(definition) for definition in definitions])
 
     def format_package_import(pkg):
-        #python_module = pkg.a_legacy.python_module
-        #modules = python_module.split('.')
+        # python_module = pkg.a_legacy.python_module
+        # modules = python_module.split('.')
         # return 'from %s import %s' % ('.'.join(modules[:-1]), modules[-1])
         return ''
 
@@ -173,14 +173,14 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
                         result += inner2_indent_str + quantity.name + "='" + str(quantity.default) + "',\n"
         result += inner2_indent_str + ")\n"
         # inherited case:
-        #result += inner_indent_str + "nxp_base = SubSection(sub_section="+sub_section.sub_section.name+".m_def,repeats=True)\n"
+        # result += inner_indent_str + "nxp_base = SubSection(sub_section="+sub_section.sub_section.name+".m_def,repeats=True)\n"
 
         # real Quantities (not nexus properties)
         for quantity in section.quantities:
             if not quantity.name.startswith("nxp_"):
                 result += format_quantity(pkg, quantity, indent, level)
 
-        #SubSections (groups/fields/attributes)
+        # SubSections (groups/fields/attributes)
         for sub_section in section.sub_sections:
             result += format_sub_section(pkg, sub_section, indent + 1, level + 1)
 
