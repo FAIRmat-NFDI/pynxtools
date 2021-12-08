@@ -146,24 +146,41 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         result += indent_str + "class " + section.name + "(" + (format_definition_refs(pkg, section.base_sections) if section.extends_base_section else "MSection") + "):\n"
         if section.description is not None:
             result += inner_indent_str + "'''\n"
-            result += format_description(section.description, indent=1)
+            result += format_description(section.description, indent=1) + "\n"
             result += inner_indent_str + "'''\n"
+        else:
+            doc = section.all_quantities["nxp_documentation"]
+            if doc is not None and doc.description is not None:
+                result += inner_indent_str + "'''\n"
+                result += format_description(doc.description, indent=2) + "\n"
+                result += inner_indent_str + "'''\n"
         result += inner_indent_str + "m_def = Section(\n"
         # if section.aliases | length > 0 %}
         #    aliases=['{{ section.aliases[0] }}'],
         result += inner2_indent_str + "validate=False"
         if section.extends_base_section:
             result += ",\n"
-            result += inner2_indent_str + "extends_base_section=True"
-        result += ")\n"
+            result += inner2_indent_str + "extends_base_section=True,\n"
+        # add own nexus properties
+        for quantity in section.quantities:
+            if quantity.name.startswith("nxp_"):
+                if quantity.name == "nxp_deprecated":
+                    result += inner2_indent_str + "deprecated=''' DEPRECATED:\n"
+                    result += inner2_indent_str + quantity.default + "\n"
+                    result += inner2_indent_str + "''',\n"
+                else:
+                    if quantity.default is not None:
+                        result += inner2_indent_str + quantity.name + "='" + str(quantity.default) + "',\n"
+        result += inner2_indent_str + ")\n"
         # inherited case:
         #result += inner_indent_str + "nxp_base = SubSection(sub_section="+sub_section.sub_section.name+".m_def,repeats=True)\n"
 
-        # Quantities
+        # real Quantities (not nexus properties)
         for quantity in section.quantities:
-            result += format_quantity(pkg, quantity, indent, level)
+            if not quantity.name.startswith("nxp_"):
+                result += format_quantity(pkg, quantity, indent, level)
 
-        # SubSections
+        #SubSections (groups/fields/attributes)
         for sub_section in section.sub_sections:
             result += format_sub_section(pkg, sub_section, indent + 1, level + 1)
 
@@ -174,18 +191,45 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         indent_str = indent * 4 * ' '
         inner_indent_str = (indent + 1) * 4 * ' '
         inner2_indent_str = (indent + 2) * 4 * ' '
-        result += indent_str + "class " + sub_section.name + "(NXobject):\n"
-        result += inner_indent_str + "m_def = Section(validate=False,extends_base_section=True)\n"
+        # class
+        result += indent_str + "class " + sub_section.name + "(NXobject):\n"  # "+sub_section.sub_section.name+"):\n"    #NXobject):\n"
+        doc = sub_section.sub_section.all_quantities["nxp_documentation"] if "nxp_documentation" in sub_section.sub_section.all_quantities.keys() else None
+        if doc is not None and doc.description is not None:
+            result += inner_indent_str + "'''\n"
+            result += format_description(doc.description, indent=indent + 2) + "\n"
+            result += inner_indent_str + "'''\n"
+        # section definition
+        result += inner_indent_str + "m_def = Section(validate=False,\n"
+        result += inner2_indent_str + ")\n"  # extends_base_section=True)\n"
+        # inherited section
         result += inner_indent_str + "nxp_base = SubSection(sub_section=" + sub_section.sub_section.name + ".m_def,repeats=True)\n"
+        # real (non nexus property /nxp_/) quantities
         for quantity in sub_section.sub_section.quantities:
-            result += format_quantity(pkg, quantity, indent, level)
+            if not quantity.name.startswith("nxp_"):
+                result += format_quantity(pkg, quantity, indent, level)
+        # additional sub_sections (nexus groups/fields/attributes)
         for sub_sec in sub_section.sub_section.sub_sections:
             result += format_sub_section(pkg, sub_sec, indent=indent + 1, level=level + 1)
             pass
             #  if sub_section.sub_sections is not None:
             #     sub_section = sub_section.sub_sections
             #     format_sub_section(pkg, sub_section, indent=1)
-        result += indent_str + sub_section.name + ' = ' + 'SubSection(sub_section=' + sub_section.name + '.m_def,repeats=True)\n'
+        # the actual sub_section (either a group/field/attribute)
+        result += indent_str + sub_section.name + ' = ' + 'SubSection(sub_section=' + sub_section.name + '.m_def,repeats=True,\n'
+        # also add its own nexus properties
+        for quantity in sub_section.sub_section.quantities:
+            if quantity.name.startswith("nxp_"):
+                if quantity.name == "nxp_enumeration":
+                    if quantity.default is not None:
+                        result += inner_indent_str + "enumeration=" + quantity.default + ",\n"
+                elif quantity.name == "nxp_deprecated":
+                    result += inner_indent_str + "deprecated=''' DEPRECATED:\n"
+                    result += inner_indent_str + quantity.default + "\n"
+                    result += inner_indent_str + "''',\n"
+                else:
+                    if quantity.default is not None:
+                        result += inner_indent_str + quantity.name + "='" + str(quantity.default) + "',\n"
+        result += inner_indent_str + ")\n"  # extends_base_section=True)\n"
 
         return result
 

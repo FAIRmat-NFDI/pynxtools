@@ -435,8 +435,16 @@ def get_doc(node, ntype, level, nxhtml, nxpath):
     try:
         doc = node.doc.pyval
     except BaseException:
-        doc = None
-    return anchor, doc
+        doc = ""
+
+    # enums
+    (o, enums) = get_enums(node)
+    if o:
+        enum_str = "\n " + ("Possible values:" if len(enums.split(',')) > 1 else "Obligatory value:") + "\n   " + enums + "\n"
+    else:
+        enum_str = ""
+
+    return anchor, doc + enum_str
 
 
 def print_doc(node, ntype, level, nxhtml, nxpath):
@@ -465,9 +473,9 @@ def get_enums(node):
         for items in node.enumeration:
             enums = []
             for values in items.findall('item'):
-                enums.append(values.attrib['value'])
+                enums.append("'" + values.attrib['value'] + "'")
             enums = ','.join(enums)
-            return (True, enums)
+            return (True, '[' + enums + ']')
     # if there is no enumeration tag, returns empty string
     except BaseException:
         return (False, '')
