@@ -47,6 +47,7 @@ def str_to_sites(string):
     pos = np.array(pos.split(')')[0].split(',')[:3], dtype=float)
     return sym, pos
 
+
 '''
 calculation_parser = TextParser(quantities=[
     Quantity('sites', r'([A-Z]\([\d\.\, \-]+\))', str_operation=str_to_sites, repeats=True),
@@ -67,6 +68,7 @@ mainfile_parser = TextParser(quantities=[
 ])
 '''
 
+
 class NexusParser(MatchingParser):
     def __init__(self):
         super().__init__(
@@ -76,15 +78,15 @@ class NexusParser(MatchingParser):
             supported_compressions=['gz', 'bz2', 'xz']
         )
 
-    def nexus_populate(self,hdfPath,hdfNode,nxdef,nxdlPath,val):
+    def nexus_populate(self, hdfPath, hdfNode, nxdef, nxdlPath, val):
         print('%%%%%%%%%%%%%%')
-        #print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+        # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
         if nxdlPath is not None:
-            print((nxdef or '???')+':'+'.'.join(p if isinstance(p,str) else read_nexus.get_node_name(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
+            print((nxdef or '???') + ':' + '.'.join(p if isinstance(p, str) else read_nexus.get_node_name(p) for p in nxdlPath) + ' - ' + val[0] + ("..." if len(val) > 1 else ''))
             if self.entry is None:
-                #self.entry=self.archive.m_create(eval('metainfo.'+nxdef+'()'))
-                self.entry=self.archive.m_create(metainfo.nexus.NXarpes)
-            eval('self.entry.'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath[1:])+'.val='+val[0]+("..." if len(val) > 1 else ''))
+                # self.entry=self.archive.m_create(eval('metainfo.'+nxdef+'()'))
+                self.entry = self.archive.m_create(metainfo.nexus.NXarpes)
+            eval('self.entry.' + '.'.join(p.getroottree().getpath(p) for p in nxdlPath[1:]) + '.val=' + val[0] + ("..." if len(val) > 1 else ''))
         else:
             print('NOT IN SCHEMA - skipped')
         print('%%%%%%%%%%%%%%')
@@ -98,15 +100,14 @@ class NexusParser(MatchingParser):
         logger.addHandler(stdout_handler)
         logger.info('Hello NeXus World')
 
-        self.archive=archive #.m_create(EntryMetadata)
-        #nx=metainfo.nexus.NXarpes()
-        #self.archive.m_add_sub_section(EntryArchive.NXexperiment,nx)
-        #self.archive.NXexperiment=SubSection(sub_section=metainfo.nexus.NXarpes,repeats=True,category=[FastAccess],a_elasticsearch=Elasticsearch())
-        self.entry=None
+        self.archive = archive  # .m_create(EntryMetadata)
+        # nx=metainfo.nexus.NXarpes()
+        # self.archive.m_add_sub_section(EntryArchive.NXexperiment,nx)
+        # self.archive.NXexperiment=SubSection(sub_section=metainfo.nexus.NXarpes,repeats=True,category=[FastAccess],a_elasticsearch=Elasticsearch())
+        self.entry = None
 
         nexus_helper = read_nexus.HandleNexus([mainfile])
         nexus_helper.process_nexus_master_file(self.nexus_populate)
-
 
 
 '''

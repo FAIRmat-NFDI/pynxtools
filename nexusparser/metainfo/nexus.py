@@ -3,55 +3,65 @@ import typing                 # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference, MEnum)
-#from nomad.metainfo.legacy import LegacyDefinition
-#from nomad.datamodel.metainfo.nxobject import NXobject
-
-
+# from nomad.metainfo.legacy import LegacyDefinition
+# from nomad.datamodel.metainfo.nxobject import NXobject
 
 
 m_package = Package(
     name='NEXUS',
     description='None')
 
+
 class NXobject(MSection):
     pass
+
 
 class NXtranslation(NXobject):
     pass
 
+
 class NXorientation(NXobject):
     pass
+
 
 class NXcsg(NXobject):
     pass
 
+
 class NX_FLOAT(NXobject):
     pass
+
 
 class NX_BINARY(NXobject):
     pass
 
+
 class NX_BOOLEAN(NXobject):
     pass
+
 
 class NX_CHAR(NXobject):
     pass
 
+
 class NX_DATE_TIME(NXobject):
     pass
+
 
 class NX_INT(NXobject):
     pass
 
+
 class NX_NUMBER(NXobject):
     pass
+
 
 class NX_POSINT(NXobject):
     pass
 
+
 class NX_UINT(NXobject):
     pass
-
 
 
 class NXcollection(NXobject):
@@ -199,23 +209,23 @@ class NXslit(NXobject):
         default=True,)
 
     class nxp_depends_on(NXobject):
-        m_def = Section(validate=False,extends_base_section=True)
-        nxp_base = SubSection(sub_section=NX_CHAR.m_def,repeats=True)
-        nxp_name= Quantity(
+        m_def = Section(validate=False, extends_base_section=True)
+        nxp_base = SubSection(sub_section=NX_CHAR.m_def, repeats=True)
+        nxp_name = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='depends_on',
         )
-        nxp_type= Quantity(
+        nxp_type = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='NX_CHAR',
         )
-        nxp_documentation= Quantity(
+        nxp_documentation = Quantity(
             type=str,
             shape=[],
             description='''
@@ -229,41 +239,40 @@ class NXslit(NXobject):
                 .''',
             default='https://manual.nexusformat.org/classes/base_classes/NXslit.html#nxslit-depends-on-field',
         )
-        nxp_optional= Quantity(
+        nxp_optional = Quantity(
             type=bool,
             shape=[],
             description='''
         ''',
             default=True,
         )
-    nxp_depends_on = SubSection(sub_section=nxp_depends_on.m_def,repeats=True)
-
+    nxp_depends_on = SubSection(sub_section=nxp_depends_on.m_def, repeats=True)
 
     class nxp_x_gap(NXobject):
-        m_def = Section(validate=False,extends_base_section=True)
-        nxp_base = SubSection(sub_section=NX_NUMBER.m_def,repeats=True)
-        nxp_name= Quantity(
+        m_def = Section(validate=False, extends_base_section=True)
+        nxp_base = SubSection(sub_section=NX_NUMBER.m_def, repeats=True)
+        nxp_name = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='x_gap',
         )
-        nxp_type= Quantity(
+        nxp_type = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='NX_NUMBER',
         )
-        nxp_units= Quantity(
+        nxp_units = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='NX_LENGTH',
         )
-        nxp_documentation= Quantity(
+        nxp_documentation = Quantity(
             type=str,
             shape=[],
             description='''
@@ -273,41 +282,40 @@ class NXslit(NXobject):
                 .''',
             default='https://manual.nexusformat.org/classes/base_classes/NXslit.html#nxslit-x-gap-field',
         )
-        nxp_optional= Quantity(
+        nxp_optional = Quantity(
             type=bool,
             shape=[],
             description='''
         ''',
             default=True,
         )
-    nxp_x_gap = SubSection(sub_section=nxp_x_gap.m_def,repeats=True)
-
+    nxp_x_gap = SubSection(sub_section=nxp_x_gap.m_def, repeats=True)
 
     class nxp_y_gap(NXobject):
-        m_def = Section(validate=False,extends_base_section=True)
-        nxp_base = SubSection(sub_section=NX_NUMBER.m_def,repeats=True)
-        nxp_name= Quantity(
+        m_def = Section(validate=False, extends_base_section=True)
+        nxp_base = SubSection(sub_section=NX_NUMBER.m_def, repeats=True)
+        nxp_name = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='y_gap',
         )
-        nxp_type= Quantity(
+        nxp_type = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='NX_NUMBER',
         )
-        nxp_units= Quantity(
+        nxp_units = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='NX_LENGTH',
         )
-        nxp_documentation= Quantity(
+        nxp_documentation = Quantity(
             type=str,
             shape=[],
             description='''
@@ -317,27 +325,26 @@ class NXslit(NXobject):
                 .''',
             default='https://manual.nexusformat.org/classes/base_classes/NXslit.html#nxslit-y-gap-field',
         )
-        nxp_optional= Quantity(
+        nxp_optional = Quantity(
             type=bool,
             shape=[],
             description='''
         ''',
             default=True,
         )
-    nxp_y_gap = SubSection(sub_section=nxp_y_gap.m_def,repeats=True)
-
+    nxp_y_gap = SubSection(sub_section=nxp_y_gap.m_def, repeats=True)
 
     class nxp_default(NXobject):
-        m_def = Section(validate=False,extends_base_section=True)
-        nxp_base = SubSection(sub_section=NX_CHAR.m_def,repeats=True)
-        nxp_name= Quantity(
+        m_def = Section(validate=False, extends_base_section=True)
+        nxp_base = SubSection(sub_section=NX_CHAR.m_def, repeats=True)
+        nxp_name = Quantity(
             type=str,
             shape=[],
             description='''
         ''',
             default='default',
         )
-        nxp_documentation= Quantity(
+        nxp_documentation = Quantity(
             type=str,
             shape=[],
             description='''
@@ -351,15 +358,15 @@ class NXslit(NXobject):
                 .''',
             default='https://manual.nexusformat.org/classes/base_classes/NXslit.html#nxslit-default-attribute',
         )
-        nxp_optional= Quantity(
+        nxp_optional = Quantity(
             type=bool,
             shape=[],
             description='''
         ''',
             default=True,
         )
-    nxp_default = SubSection(sub_section=nxp_default.m_def,repeats=True)
+    nxp_default = SubSection(sub_section=nxp_default.m_def, repeats=True)
 
 
 m_package.__init_metainfo__()
-#None
+# None
