@@ -16,6 +16,9 @@
 # limitations under the License.
 #
 
+from nexusparser.tools import read_nexus
+import os
+from nexusparser import NexusParser
 import pytest
 import logging
 
@@ -25,9 +28,7 @@ import sys
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
-from nexusparser import NexusParser
-import os
-from nexusparser.tools import read_nexus
+
 
 @pytest.fixture
 def parser():
@@ -35,11 +36,11 @@ def parser():
 
 
 def test_read_nexus():
-    localDir=os.path.abspath(os.path.dirname(__file__))
-    example_data=os.path.join(localDir,'data/nexus_test_data/201805_WSe2_arpes.nxs')
+    localDir = os.path.abspath(os.path.dirname(__file__))
+    example_data = os.path.join(localDir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    handler = logging.FileHandler(os.path.join(localDir,'data/read_nexus_test.log'), 'w')
+    handler = logging.FileHandler(os.path.join(localDir, 'data/read_nexus_test.log'), 'w')
     handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -48,13 +49,14 @@ def test_read_nexus():
     nexus_helper.process_nexus_master_file(None, logger)
 
     # check logging result
-    with open(os.path.join(localDir,'data/read_nexus_test.log'), "r") as file:
+    with open(os.path.join(localDir, 'data/read_nexus_test.log'), "r") as file:
         number_of_lines = len(file.readlines())
         file.seek(0)
         sum_char_values = sum(map(ord, file.read()))
     assert number_of_lines == 1653
     assert sum_char_values == 4419958
     print('Testing of read_nexus.py is SUCCESSFUL.')
+
 
 def test_example(parser):
     archive = EntryArchive()
@@ -64,8 +66,8 @@ def test_example(parser):
     assert len(run.calculation) == 2
     assert run.calculation[0].x_nexus_magic_value == 42
 
+
 if __name__ == '__main__':
     p = parser()
     test_read_nexus()
-    #test_example(p)
-
+    # test_example(p)

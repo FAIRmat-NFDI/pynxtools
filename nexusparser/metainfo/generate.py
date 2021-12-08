@@ -82,7 +82,7 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         return "'%s'" % unit
 
     def format_default(default):
-        if isinstance(default,bool):
+        if isinstance(default, bool):
             return "%s" % str(default)
         return "'%s'" % str(default)
 
@@ -100,7 +100,7 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
     def format_package_import(pkg):
         #python_module = pkg.a_legacy.python_module
         #modules = python_module.split('.')
-        #return 'from %s import %s' % ('.'.join(modules[:-1]), modules[-1])
+        # return 'from %s import %s' % ('.'.join(modules[:-1]), modules[-1])
         return ''
 
     def format_aliases(pkg):
@@ -115,8 +115,7 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
     def sub_section_path(sub_section, level):
         if level == 0:
             return sub_section.name
-        return sub_section_path(sub_section.m_parent.nexus_parent, level -1) + '.' + sub_section.name
-
+        return sub_section_path(sub_section.m_parent.nexus_parent, level - 1) + '.' + sub_section.name
 
     def format_quantity(pkg, quantity, indent=0, level=0):
         result = ''
@@ -129,66 +128,64 @@ def generate_metainfo_code(metainfo_pkg: Package, python_package_path: str):
         if quantity.unit is not None:
             result += inner2_indent_str + 'unit=' + format_unit(quantity.unit) + ',\n'
         if quantity.description is not None:
-            result += inner2_indent_str + 'description=' + "'''" + '\n' + format_description(quantity.description, indent=indent+3) + "\n"+ inner2_indent_str +"''',\n"
+            result += inner2_indent_str + 'description=' + "'''" + '\n' + format_description(quantity.description, indent=indent + 3) + "\n" + inner2_indent_str + "''',\n"
         if quantity.default is not None:
             result += inner2_indent_str + 'default=' + format_default(quantity.default) + ',\n'
         if len(quantity.categories) > 0:
-            result += inner2_indent_str +'categories=[' + format_definition_refs(pkg, quantity.categories) + '],\n'
+            result += inner2_indent_str + 'categories=[' + format_definition_refs(pkg, quantity.categories) + '],\n'
         # if quantity.a_search == 'defined':
         #     result += 'a_search=Search()+\n'
         result += inner_indent_str + ')\n'
         return result
-
 
     def format_section(pkg, section, indent=0, level=0):
         result = ''
         indent_str = indent * 4 * ' '
         inner_indent_str = (indent + 1) * 4 * ' '
         inner2_indent_str = (indent + 2) * 4 * ' '
-        result += indent_str + "class "+section.name+"("+(format_definition_refs(pkg, section.base_sections) if section.extends_base_section else "MSection")+"):\n"
+        result += indent_str + "class " + section.name + "(" + (format_definition_refs(pkg, section.base_sections) if section.extends_base_section else "MSection") + "):\n"
         if section.description is not None:
             result += inner_indent_str + "'''\n"
             result += format_description(section.description, indent=1)
             result += inner_indent_str + "'''\n"
         result += inner_indent_str + "m_def = Section(\n"
-        #if section.aliases | length > 0 %}
+        # if section.aliases | length > 0 %}
         #    aliases=['{{ section.aliases[0] }}'],
         result += inner2_indent_str + "validate=False"
         if section.extends_base_section:
-            result+=",\n"
+            result += ",\n"
             result += inner2_indent_str + "extends_base_section=True"
-        result+=")\n"
-        #inherited case:
+        result += ")\n"
+        # inherited case:
         #result += inner_indent_str + "nxp_base = SubSection(sub_section="+sub_section.sub_section.name+".m_def,repeats=True)\n"
 
-        #Quantities
+        # Quantities
         for quantity in section.quantities:
             result += format_quantity(pkg, quantity, indent, level)
 
-        #SubSections
+        # SubSections
         for sub_section in section.sub_sections:
-            result += format_sub_section(pkg, sub_section, indent+1, level+1)
+            result += format_sub_section(pkg, sub_section, indent + 1, level + 1)
 
         return result
-
 
     def format_sub_section(pkg, sub_section, indent=0, level=0):
         result = ''
         indent_str = indent * 4 * ' '
         inner_indent_str = (indent + 1) * 4 * ' '
         inner2_indent_str = (indent + 2) * 4 * ' '
-        result += indent_str + "class "+sub_section.name+"(NXobject):\n"
+        result += indent_str + "class " + sub_section.name + "(NXobject):\n"
         result += inner_indent_str + "m_def = Section(validate=False,extends_base_section=True)\n"
-        result += inner_indent_str + "nxp_base = SubSection(sub_section="+sub_section.sub_section.name+".m_def,repeats=True)\n"
+        result += inner_indent_str + "nxp_base = SubSection(sub_section=" + sub_section.sub_section.name + ".m_def,repeats=True)\n"
         for quantity in sub_section.sub_section.quantities:
             result += format_quantity(pkg, quantity, indent, level)
         for sub_sec in sub_section.sub_section.sub_sections:
-            result += format_sub_section(pkg, sub_sec, indent=indent+1, level=level+1)
+            result += format_sub_section(pkg, sub_sec, indent=indent + 1, level=level + 1)
             pass
             #  if sub_section.sub_sections is not None:
             #     sub_section = sub_section.sub_sections
             #     format_sub_section(pkg, sub_section, indent=1)
-        result += indent_str + sub_section.name+' = '+'SubSection(sub_section='+sub_section.name+'.m_def,repeats=True)\n'
+        result += indent_str + sub_section.name + ' = ' + 'SubSection(sub_section=' + sub_section.name + '.m_def,repeats=True)\n'
 
         return result
 
