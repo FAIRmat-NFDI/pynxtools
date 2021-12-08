@@ -37,9 +37,10 @@ def pretty_print_xml_given_root(root, output_xml):
     Print formatted xml file with built-in libraries
     """
     xml_string = xml.dom.minidom.parseString(ET.tostring(root)).toprettyxml()
-    xml_string = os.linesep.join([s for s in xml_string.splitlines() if s.strip()]) 
+    xml_string = os.linesep.join([s for s in xml_string.splitlines() if s.strip()])
     with open(output_xml, "w") as file_out:
         file_out.write(xml_string)
+
 
 @click.command()
 @click.option(
@@ -54,16 +55,16 @@ def yaml2nxdl(input_file: str):
     # step2a
     attr_qname = ET.QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation")
     rt = ET.Element(
-        'definition',{attr_qname: 'http://definition.nexusformat.org/nxdl/nxdl.xsd'},
+        'definition', {attr_qname: 'http://definition.nexusformat.org/nxdl/nxdl.xsd'},
         nsmap={None: 'http://definition.nexusformat.org/nxdl/3.1',
-        'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
-        )
+               'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+    )
     # step2b
-    assert 'name' in yml_appdef, 'keyword not specified' 
+    assert 'name' in yml_appdef, 'keyword not specified'
 
-    #pi = ET.ProcessingInstruction(
+    # pi = ET.ProcessingInstruction(
     #    "xml-stylesheet", text='type="text/xsl" href="nxdlformat.xsl"')
-    #rt.addprevious(pi) 
+    # rt.addprevious(pi)
 
     if 'category' in yml_appdef.keys():
         if yml_appdef['category'] == 'application':
@@ -77,7 +78,7 @@ def yaml2nxdl(input_file: str):
             rt.set('extends', 'NXobject')
         else:
             raise ValueError(
-            'Top-level keyword category exists in the yml but one of these: application, contributed, base !')
+                'Top-level keyword category exists in the yml but one of these: application, contributed, base !')
         del yml_appdef['category']
         rt.set('type', 'group')
     else:
@@ -107,6 +108,7 @@ def yaml2nxdl(input_file: str):
     # step4
     pretty_print_xml_given_root(rt, 'output.xml')
     print('Parsed YAML to NXDL successfully')
+
 
 if __name__ == '__main__':
     yaml2nxdl().parse()  # pylint: disable=no-value-for-parameter

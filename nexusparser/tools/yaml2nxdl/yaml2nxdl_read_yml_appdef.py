@@ -19,8 +19,10 @@
 #
 
 
-import os, sys
+import os
+import sys
 import yaml
+
 
 def read_application_definition(inputfile):
     with open(inputfile) as stream:
