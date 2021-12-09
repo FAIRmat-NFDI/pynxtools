@@ -135,7 +135,7 @@ def belongs_to(nxdlElem, child, hdfName):
     except BaseException:
         nameAny = False
     childname = get_node_name(child)
-    name = hdfName[2:].upper() if hdfName.startswith('NX') else hdfName
+    name = hdfName[2:].upper() if hdfName.startswith('NX') and 'name' not in child.attrib else hdfName
     # and no reserved words used
     if nameAny and name != 'doc' and name != 'enumeration':
         # check if name fits
@@ -672,9 +672,9 @@ class HandleNexus:
     def visit_node(self, hdfPath, hdfNode):
         process_node(hdfNode, self.parser, self.logger)
 
-    def process_nexus_master_file(self, parser, logger):
+    def process_nexus_master_file(self, parser):
         """ Process a nexus master file by processing all its nodes and their attributes"""
-        self.logger = logger
+        #self.logger = logger
         self.parser = parser
         self.in_file = h5py.File(self.input_file_name, 'r')
         self.in_file.visititems(self.visit_node)
