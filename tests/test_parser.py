@@ -44,7 +44,7 @@ def test_read_nexus():
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     nexus_helper = read_nexus.HandleNexus(logger, [example_data])
-    nexus_helper.process_nexus_master_file(None, logger)
+    nexus_helper.process_nexus_master_file(None)
 
     # check logging result
     with open(os.path.join(localDir, 'data/read_nexus_test.log'), "r") as file:
@@ -62,20 +62,24 @@ def test_nxdl_to_attr_obj_1(example_path,result_str):
 
 def test_nxdl_to_attr_obj():
     test_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
+    test_nxdl_to_attr_obj_1('NXspe:/ENTRY/NXSPE_info', "NXcollection")
     #test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
 
 
 def test_example(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/nexus.out', archive, logging)
-    run = archive.section_run[0]
-    assert len(run.system) == 2
-    assert len(run.calculation) == 2
-    assert run.calculation[0].x_nexus_magic_value == 42
+    localDir = os.path.abspath(os.path.dirname(__file__))
+    example_data = os.path.join(localDir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
+    parser.parse(example_data, archive, logging.getLogger())
+    pass
+    #run = archive.section_run[0]
+    #assert len(run.system) == 2
+    #assert len(run.calculation) == 2
+    #assert run.calculation[0].x_nexus_magic_value == 42
 
 
 if __name__ == '__main__':
-    p = parser()
     test_read_nexus()
     test_nxdl_to_attr_obj()
-    # test_example(p)
+    p = parser()
+    test_example(p)
