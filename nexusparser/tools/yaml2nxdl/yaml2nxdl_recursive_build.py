@@ -103,9 +103,9 @@ def xml_handle_enumeration(obj, keyword, value):
                 itm = ET.SubElement(enum, 'item')
                 itm.set('value', str(m))
         else:
-            raise ValueError('ERROR: ' + keyword + ' we found an enumeration key-value pair but the value is not an ordinary Python list !')
+            raise ValueError(keyword + ' we found an enumeration key-value pair but the value is not an ordinary Python list !')
     else:
-        raise ValueError('ERROR: ' + keyword + ' we found an enumeration key-value pair but the value is None !')
+        raise ValueError(keyword + ' we found an enumeration key-value pair but the value is None !')
 
 
 def xml_handle_link(obj, keyword, value):
@@ -129,15 +129,11 @@ def recursive_build(obj, dct):
     for keyword, value in iter(dct.items()):
         kName, kType = nx_name_type_resolving(keyword)
         print('kName: ' + kName + ' kType: ' + kType)
-        print(type(kName),type(kType),type(keyword))
         if kName == '' and kType == '':
-            print('all empty')
-            raise ValueError('ERROR: Found an improper YML key !')
+            raise ValueError('Found an improper YML key !')
         elif keyword[-6:] == '(link)': 
-            print('link elif')
             xml_handle_link(obj, keyword, value)
         elif (kType in nx_clss) or (kType not in nx_type_keys + ['']):
-            print('nx_class')
             # we can be sure we need to instantiate a new group
             grp = ET.SubElement(obj, 'group')
             if kName != '':  # use the custom name for the group
@@ -151,7 +147,6 @@ def recursive_build(obj, dct):
                     if value != {}:
                         recursive_build(grp, value)
         elif kName[0:2] == nx_attr_idnt:  # check if obj qualifies as an attribute identifier
-            print('print attribute')
             attr = ET.SubElement(obj, 'attribute')
             attr.set('name', kName[2:])
             if value is not None:
@@ -169,19 +164,14 @@ def recursive_build(obj, dct):
                             raise ValueError(kkeyword + ' facing an unknown situation while processing attributes of an attribute !')
         # handle special keywords (symbols), assumed that you do not encounter further symbols nested inside
         elif keyword == 'doc':
-            print('doc elif')
             xml_handle_docstring(obj, keyword, value)
         elif keyword == 'enumeration':
-            print('enum elif')
             xml_handle_enumeration(obj, keyword, value)
         elif keyword == 'dimensions':
-            print('dimensions elif')
             xml_handle_dimensions(obj, keyword, value)
         elif keyword == 'exists':
-            print('exists elif')
             xml_handle_exists(obj, keyword, value)
-        elif kName != '':
-            print('kName not empty elif')
+        elif kName is not '':
             typ = 'NX_CHAR'
             if kType in nx_type_keys:
                 typ = kType
@@ -227,9 +217,7 @@ def recursive_build(obj, dct):
                         else:
                             raise ValueError(keyword + ' ' + kkeyword + ' faced unknown situation !')
             else:
-                if keyword == 'type':
-                    print(keyword + ' facing a type where we would not expect it!')
-                elif keyword == 'doc':
+                if keyword == 'doc':
                     xml_handle_docstring(fld, keyword, value)
                 elif keyword == nx_unit_idnt:
                     xml_handle_units(fld, keyword, value)
@@ -242,5 +230,4 @@ def recursive_build(obj, dct):
                 else:
                     pass
         else:
-            print('else point')
             pass

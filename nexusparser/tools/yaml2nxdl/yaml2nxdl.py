@@ -28,15 +28,14 @@ from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
 from yaml2nxdl_read_yml_appdef import read_application_definition
 from yaml2nxdl_recursive_build import recursive_build
 
-from typing import Tuple
 import click
 
 
-def pretty_print_xml_given_root(root, output_xml):
+def pretty_print_xml(xml_root, output_xml):
     """
     Print formatted xml file with built-in libraries
     """
-    xml_string = xml.dom.minidom.parseString(ET.tostring(root)).toprettyxml()
+    xml_string = xml.dom.minidom.parseString(ET.tostring(xml_root, encoding='utf-8', method='xml', xml_declaration=True)).toprettyxml()
     xml_string = os.linesep.join([s for s in xml_string.splitlines() if s.strip()])
     with open(output_xml, "w") as file_out:
         file_out.write(xml_string)
@@ -53,45 +52,47 @@ def yaml2nxdl(input_file: str):
     yml_appdef = read_application_definition(input_file)
 
     # step2a
-    attr_qname = ET.QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation")
-    rt = ET.Element(
-        'definition', {attr_qname: 'http://definition.nexusformat.org/nxdl/nxdl.xsd'},
-        nsmap={None: 'http://definition.nexusformat.org/nxdl/3.1',
-               'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+    xml_root = ET.Element(
+        'definition', {
+        ET.QName("xmlns"): 'http://definition.nexusformat.org/nxdl/3.1', 
+        ET.QName("xmlns:xsi"): 'http://www.w3.org/2001/XMLSchema-instance',
+        ET.QName("xsi:schemaLocation"): 'http://www.w3.org/2001/XMLSchema-instance'
+        }
     )
+
     # step2b
     assert 'name' in yml_appdef, 'keyword not specified'
 
     # pi = ET.ProcessingInstruction(
     #    "xml-stylesheet", text='type="text/xsl" href="nxdlformat.xsl"')
-    # rt.addprevious(pi)
+    # xml_root.addprevious(pi)
 
     if 'category' in yml_appdef.keys():
         if yml_appdef['category'] == 'application':
-            rt.set('category', 'application')
-            rt.set('extends', 'NXentry')
+            xml_root.set('category', 'application')
+            xml_root.set('extends', 'NXentry')
         elif yml_appdef['category'] == 'contributed':
-            rt.set('category', 'contributed')
-            rt.set('extends', 'NXobject')
+            xml_root.set('category', 'contributed')
+            xml_root.set('extends', 'NXobject')
         elif yml_appdef['category'] == 'base':
-            rt.set('category', 'base')
-            rt.set('extends', 'NXobject')
+            xml_root.set('category', 'base')
+            xml_root.set('extends', 'NXobject')
         else:
             raise ValueError(
                 'Top-level keyword category exists in the yml but one of these: application, contributed, base !')
         del yml_appdef['category']
-        rt.set('type', 'group')
+        xml_root.set('type', 'group')
     else:
         raise ValueError(
             'Top-level keyword category does not exist in the yml !')
     # step2c
     if 'doc' in yml_appdef.keys():
-        rt.set('doc', yml_appdef['doc'])
+        xml_root.set('doc', yml_appdef['doc'])
         del yml_appdef['doc']
     else:
         raise ValueError('Top-level docstring does not exist in the yml !')
     if 'symbols' in yml_appdef.keys():
-        syms = ET.SubElement(rt, 'symbols')
+        syms = ET.SubElement(xml_root, 'symbols')
         if 'doc' in yml_appdef['symbols'].keys():
             syms.set('doc', yml_appdef['symbols']['doc'])
             del yml_appdef['symbols']['doc']
@@ -103,10 +104,10 @@ def yaml2nxdl(input_file: str):
     # do not throw in the case of else just accept that we do not have symbols
 
     # step3
-    recursive_build(rt, yml_appdef)
+    recursive_build(xml_root, yml_appdef)
 
     # step4
-    pretty_print_xml_given_root(rt, 'output.xml')
+    pretty_print_xml(xml_root, input_file + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
 
 
