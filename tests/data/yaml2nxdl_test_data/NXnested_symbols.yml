@@ -1,0 +1,14 @@
+name: testsymbols inside a nexus class
+category: contributed
+doc: Test case for verifying handling of symbols inside a nexus class in nested layers of the hierarchy
+(NXentry):
+   (NXsample):
+     symbols:
+       doc:
+       n_comp: number of compositions
+       n_Temp: number of temperatures
+       (NXprocess):
+         symbols:
+           doc: another nest
+           x: parameter1
+           y: parameter2
