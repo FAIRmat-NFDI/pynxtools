@@ -177,24 +177,6 @@ def get_own_nxdl_child(nxdlElem, name):
     return None
 
 
-def get_node_name(node):
-    '''
-        node - xml node
-        returns:
-            html documentation name
-            Either as specified by the 'name' or taken from the type (nx_class).
-            Note that if only class name is available, the NX prefix is removed and
-            the string is coverted to UPPER case.
-    '''
-    if 'name' in node.attrib.keys():
-        name = node.attrib['name']
-    else:
-        name = node.attrib['type']
-        if name.startswith('NX'):
-            name = name[2:].upper()
-    return name
-
-
 def get_nxdl_child(nxdlElem, name):
     """
             #get the NXDL child node corresponding to a specific name
@@ -479,6 +461,26 @@ def get_enums(node):
     # if there is no enumeration tag, returns empty string
     except BaseException:
         return (False, '')
+
+
+def nxdl_to_attr_obj(nxdlPath):
+    """
+    Finds the path entry in NXDL file
+    Grabs all the attrs in NXDL entry
+    Checks Nexus base application defs for missing attrs and adds them as well
+    returns attr as a Python obj that can be directly placed into the h5py library
+    """
+    nxdef = nxdlPath.split(':')[0]
+    #nexusDefPath = os.environ['NEXUS_DEF_PATH']
+    root = objectify.parse(nexusDefPath + "/applications/" + nxdef + ".nxdl.xml")
+    elem = root.getroot()
+    path = nxdlPath.split(':')[1]
+    for group in path.split('/')[1:]:
+        elem = get_nxdl_child(elem, group)
+    return elem
+
+
+
 
 
 def process_node(hdfNode, parser, logger, doc=True):
