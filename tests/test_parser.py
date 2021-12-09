@@ -57,13 +57,12 @@ def test_read_nexus():
 
 
 def test_nxdl_to_attr_obj_1(example_path,result_str): 
-    print(example_path.split('/'))
-    result = nxdl_to_attr_obj(example_path)
-    assert result is not None and result_str in result.attrib
+    result = read_nexus.nxdl_to_attr_obj(example_path)
+    assert result.attrib['type'] == result_str, "failed on: " + example_path + "expected type: " + result_str
 
 def test_nxdl_to_attr_obj():
     test_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
-    test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
+    #test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
 
 
 def test_example(parser):
