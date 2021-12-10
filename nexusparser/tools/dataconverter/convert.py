@@ -5,13 +5,14 @@ import importlib.util
 import json
 import logging
 import os
-import pprint
+import sys
 import xml.etree.ElementTree as ET
 from typing import Tuple
 
 import click
 
 from writer import Writer
+
 
 # Nexus related functions to be exported in a common place for all tools
 def convert_nexus_to_caps(nexus):
@@ -42,7 +43,7 @@ def get_first_group(root):
 def generate_template_from_nxdl(root, path, template):
     """Helper function to generate a template dictionary for given NXDL"""
     tag = remove_namespace_from_tag(root.tag)
-    # print(' ' * indent + "tag: " + tag)
+
     if tag == "doc":
         return
 
@@ -53,6 +54,9 @@ def generate_template_from_nxdl(root, path, template):
         nexus_class = convert_nexus_to_caps(root.attrib['type'])
         hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
         suffix = f"{nexus_class}{hdf5name}"
+
+    if tag == "attribute":
+        suffix = f"@{suffix}"
 
     path = path + "/" + suffix
 
@@ -83,7 +87,6 @@ def get_names_of_all_readers():
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
     files = next(os.walk(f"{path_prefix}readers/"), (None, None, []))[2]
     return [file.split('_reader.py')[0] for file in files]
-
 
 
 @click.command()
@@ -124,27 +127,29 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     template = {}
     root = get_first_group(tree.getroot())
     generate_template_from_nxdl(root, '', template)
-
     if generate_template:
         template.update((key, 'None') for key in template)
-        logging.info(json.dumps(template, indent=4, sort_keys=True))
+        logger.info(json.dumps(template, indent=4, sort_keys=True))
+        return
 
     # Setting up all the input data
     bulletpoint = "\n\u2022 "
     print_input_files = bulletpoint.join((' ', *input_file))
-    logging.info("Using %s reader to convert the given files: %s ", reader, print_input_files)
+    logger.info("Using %s reader to convert the given files: %s ", reader, print_input_files)
 
     reader = get_reader(reader)
     data = reader().read(template=template, file_paths=input_file)
 
-    logging.debug("The following data was read: %s", pprint.pformat(data, depth=1))
+    logger.debug("The following data was read: %s", json.dumps(template, indent=4, sort_keys=True))
 
     # Writing the data to output file
-    Writer().write(data)
+    Writer(data, nxdl, output).write()
 
-    logging.info("The output file generated: %s", output)
+    logger.info("The output file generated: %s", output)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    convert() # pylint: disable=no-value-for-parameter
+    logger = logging.getLogger(__name__)  # pylint: disable=C0103
+    logger.setLevel(logging.INFO)
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+    convert()  # pylint: disable=no-value-for-parameter

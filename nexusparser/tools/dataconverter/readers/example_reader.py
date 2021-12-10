@@ -12,9 +12,7 @@ class ExampleReader(BaseReader):
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
 
-        # Fill the template
-        for path in file_paths:
-            print(path)
+        # Read your data and fill the available keys in the template dict
 
         return template
 
