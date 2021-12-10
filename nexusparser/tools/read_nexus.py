@@ -343,7 +343,7 @@ def get_nxdl_doc(hdfNode, logger, doc, attr=False):
                 if elem is not None:
                     if doc: logger.info("@" + attr + ' - [' + get_nx_class(elem) +
                                         ']')
-                    nxdlPath.append(attr)
+                    nxdlPath.append(elem)
                 else:
                     # if no units category were defined in NXDL:
                     if doc: logger.info("@" + attr + " - REQUIRED, but undefined unit category")
@@ -356,7 +356,7 @@ def get_nxdl_doc(hdfNode, logger, doc, attr=False):
             if elem2 is not None:
                 elem = elem2
                 if doc: logger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
-                nxdlPath.append(attr)
+                nxdlPath.append(elem)
             else:
                 # if not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE is in the SCHEMA, but no units category were defined
                 elem2 = get_nxdl_child(elem, attr[:-6])
@@ -373,7 +373,7 @@ def get_nxdl_doc(hdfNode, logger, doc, attr=False):
             elem = get_nxdl_child(elem, attr)
             if elem is not None:
                 if doc: logger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
-                nxdlPath.append(attr)
+                nxdlPath.append(elem)
             else:
                 if doc: logger.info("@" + attr + " - IS NOT IN SCHEMA")
     if elem is None and REQstr is None:

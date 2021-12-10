@@ -18,16 +18,18 @@
 
 import datetime
 import numpy as np
+import h5py
 
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
-from nomad.units import ureg as units
-from nomad.datamodel.metainfo.common_experimental import Experiment
-from nomad.datamodel.datamodel import EntryMetadata
-from nomad.datamodel.results import Results
-from nomad.metainfo import SubSection
-from nomad.datamodel.metainfo.common import FastAccess
-from nomad.metainfo.elasticsearch_extension import Elasticsearch
+#from nomad.units import ureg as units
+#from nomad.datamodel.metainfo.common_experimental import Experiment
+#from nomad.datamodel.datamodel import EntryMetadata
+#from nomad.datamodel.results import Results
+#from nomad.metainfo import SubSection
+#from nomad.datamodel.metainfo.common import FastAccess
+#from nomad.metainfo.elasticsearch_extension import Elasticsearch
+from nomad.datamodel.metainfo import nexus
 
 from nomad.parsing.file_parser import TextParser, Quantity
 
@@ -41,34 +43,6 @@ import logging
 This is a hello world style nexus for an nexus parser/converter.
 '''
 
-
-def str_to_sites(string):
-    sym, pos = string.split('(')
-    pos = np.array(pos.split(')')[0].split(',')[:3], dtype=float)
-    return sym, pos
-
-
-'''
-calculation_parser = TextParser(quantities=[
-    Quantity('sites', r'([A-Z]\([\d\.\, \-]+\))', str_operation=str_to_sites, repeats=True),
-    Quantity(
-        Atoms.lattice_vectors,
-        r'(?:latice|cell): \((\d)\, (\d), (\d)\)\,?\s*\((\d)\, (\d), (\d)\)\,?\s*\((\d)\, (\d), (\d)\)\,?\s*',
-        repeats=False),
-    Quantity('energy', r'energy: (\d\.\d+)'),
-    Quantity('magic_source', r'done with magic source\s*\*{3}\s*\*{3}\s*[^\d]*(\d+)', repeats=False)])
-
-mainfile_parser = TextParser(quantities=[
-    Quantity('date', r'(\d\d\d\d\/\d\d\/\d\d)', repeats=False),
-    Quantity('program_version', r'super\_code\s*v(\d+)\s*', repeats=False),
-    Quantity(
-        'calculation', r'\s*system \d+([\s\S]+?energy: [\d\.]+)([\s\S]+\*\*\*)*',
-        sub_parser=calculation_parser,
-        repeats=True)
-])
-'''
-
-
 class NexusParser(MatchingParser):
     def __init__(self):
         super().__init__(
@@ -78,15 +52,108 @@ class NexusParser(MatchingParser):
             supported_compressions=['gz', 'bz2', 'xz']
         )
 
+    def to_camel_case(self, snake_str: str, upper: bool = False) -> str:
+        components = snake_str.split('_')
+        if upper:
+            return ''.join(f'{x[0].upper()}{x[1:]}' for x in components)
+
+        return components[0] + ''.join(f'{x[0].upper()}{x[1:]}' for x in components[1:])
+
+    def get_nomad_classname(self, xmlName, xmlType, suffix):
+        if suffix == 'Attribute' or suffix=='Field' or xmlType[2:].upper() != xmlName:
+            name = self.to_camel_case(xmlName, True) + suffix
+        else:
+            name = self.to_camel_case(xmlType, True) + suffix
+        return name
+
+    def get_to_new_SubSection(self, hdfName, nxdef, nxdlNode, act_class, act_section):
+        '''
+        hdfName         name of the hdf group/field/attribute (None for definition)
+        nxdef           application definition
+        nxdlNode        node in the nxdl.xml
+        act_class       actual class
+        act_section     actual section in which the new entry needs to be picked up from
+                        Note that if the new element did not exists, it is created now
+        return          (new_class, new_section)
+        TODO:   try to find also in the base section???
+        '''
+        if hdfName is None:
+            nomad_def_name = 'nx_application_' + nxdef[2:]
+            nomad_class_name = nxdef
+        elif nxdlNode.tag.endswith('field'):
+            nxdl_F_A_Name = nxdlNode.attrib['name'] if 'name' in nxdlNode.attrib else hdfName
+            nomad_def_name = 'nx_field_' + nxdl_F_A_Name
+            nomad_class_name = self.get_nomad_classname(nxdl_F_A_Name, None, "Field")
+        elif nxdlNode.tag.endswith('group'):
+            nxdl_G_Name = nxdlNode.attrib['name'] if 'name' in nxdlNode.attrib else nxdlNode.attrib['type'][2:]
+            nomad_def_name = 'nx_group_' + nxdl_G_Name
+            nomad_class_name = self.get_nomad_classname(read_nexus.get_node_name(nxdlNode), nxdlNode.attrib['type'], "Group")
+        else:
+            nxdl_F_A_Name = nxdlNode.attrib['name'] if 'name' in nxdlNode.attrib else hdfName
+            nomad_def_name = 'nx_attribute_' + nxdl_F_A_Name
+            nomad_class_name = self.get_nomad_classname(nxdl_F_A_Name, None, "Attribute")
+
+        new_def=act_section.m_def.all_properties.get(nomad_def_name, None)
+        new_class = act_class.__dict__[nomad_class_name]
+        new_section = None
+        new_section = act_section.m_get_sub_section(new_def, -1)
+        #for section in act_section.m_get_sub_sections(new_def):
+        #    if hdfName is not None and 'nx_name' in section.__dict__ and section.nx_name is not None and section.nx_name == hdfName:
+        #        new_section = section
+        #        break
+        if new_section is None:
+            act_section.m_create(new_class)
+            new_section = act_section.m_get_sub_section(new_def, -1)
+            if hdfName is not None:
+                new_section.nx_name=hdfName
+        return (new_class, new_section)
+
+    def get_value(self, hdfValue):
+        if str(hdfValue.dtype) == 'bool':
+            val = bool(hdfValue)
+        elif hdfValue.dtype.kind in 'iufc':
+            val = hdfValue
+        else:
+            val = str(hdfValue.astype(str))
+        return val
+
+
     def nexus_populate(self, hdfPath, hdfNode, nxdef, nxdlPath, val):
         print('%%%%%%%%%%%%%%')
         # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
         if nxdlPath is not None:
             print((nxdef or '???') + ':' + '.'.join(p if isinstance(p, str) else read_nexus.get_node_name(p) for p in nxdlPath) + ' - ' + val[0] + ("..." if len(val) > 1 else ''))
-            if self.entry is None:
-                # self.entry=self.archive.m_create(eval('metainfo.'+nxdef+'()'))
-                self.entry = self.archive.m_create(metainfo.nexus.NXarpes)
-            eval('self.entry.' + '.'.join(p.getroottree().getpath(p) for p in nxdlPath[1:]) + '.val=' + val[0] + ("..." if len(val) > 1 else ''))
+            act_section = self.nxroot
+            hdfNamelist=hdfPath.split('/')[1:]
+            (act_class, act_section) = self.get_to_new_SubSection(None, nxdef, None, nexus, act_section)
+            level = 1
+            for hdfName in hdfNamelist:
+                nxdlNode = nxdlPath[level] if level < len(nxdlPath) else hdfName
+                (act_class, act_section) = self.get_to_new_SubSection (hdfName, nxdef, nxdlNode, act_class, act_section)
+                level += 1
+            if level < len(nxdlPath):
+                nxdlNode = nxdlPath[level]
+                if isinstance(nxdlNode,str):
+                    # conventional attribute not in schema
+                    try:
+                        if nxdlNode == "units":
+                            act_section.nx_unit = val[0]
+                        elif nxdlNode == "default":
+                            assert 1 == 2, "Quantity 'default' is not yet added by default to groups in Nomad schema"
+                    except Exception as e:
+                        print("Problem with storage!!!"+str(e))
+                else:
+                    # attribute in schema
+                    (act_class, act_section) = self.get_to_new_SubSection (nxdlNode.attrib['name'], nxdef, nxdlNode, act_class, act_section)
+                    try:
+                        act_section.nx_value = val[0]
+                    except Exception as e:
+                        print("Problem with storage!!!"+str(e))
+            else:
+                try:
+                    act_section.nx_value = self.get_value(hdfNode[...])
+                except Exception as e:
+                    print("Problem with storage!!!"+str(e))
         else:
             print('NOT IN SCHEMA - skipped')
         print('%%%%%%%%%%%%%%')
@@ -100,45 +167,10 @@ class NexusParser(MatchingParser):
         logger.addHandler(stdout_handler)
         logger.info('Hello NeXus World')
 
-        self.archive = archive  # .m_create(EntryMetadata)
-        # nx=metainfo.nexus.NXarpes()
-        # self.archive.m_add_sub_section(EntryArchive.NXexperiment,nx)
-        # self.archive.NXexperiment=SubSection(sub_section=metainfo.nexus.NXarpes,repeats=True,category=[FastAccess],a_elasticsearch=Elasticsearch())
-        self.entry = None
+        self.archive = archive
+        self.archive.m_create(nexus.Nexus)
+        #self.archive.nexus = nexus.Nexus()
+        self.nxroot=self.archive.nexus
 
-        nexus_helper = read_nexus.HandleNexus([mainfile])
+        nexus_helper = read_nexus.HandleNexus(logger,[mainfile])
         nexus_helper.process_nexus_master_file(self.nexus_populate)
-
-
-'''
-
-        # Use the previously defined parsers on the given mainfile
-        mainfile_parser.mainfile = mainfile
-        mainfile_parser.parse()
-
-        # Output all parsed data into the given archive.
-        run = archive.m_create(Run)
-        date = datetime.datetime.strptime(
-            mainfile_parser.get('date'),
-            '%Y/%m/%d') - datetime.datetime(1970, 1, 1)
-        run.program = Program(
-            name = 'super_code',
-            version = str(mainfile_parser.get('program_version')),
-            compilation_datetime = date.total_seconds())
-
-        for calculation in mainfile_parser.get('calculation'):
-            system = run.m_create(System)
-            atoms = system.m_create(Atoms)
-
-            atoms.lattice_vectors = calculation.get('lattice_vectors')
-            sites = calculation.get('sites')
-            atoms.labels = [site[0] for site in sites]
-            atom.positions = [site[1] for site in sites]
-
-            scc = run.m_create(Calculation)
-            scc.system_ref = system
-            scc.m_create(Energy, total = EnergyEntry(value = calculation.get('energy') * unit.eV))
-            magic_source = calculation.get('magic_source')
-            if magic_source is not None:
-                scc.x_nexus_magic_value = magic_source
-'''
