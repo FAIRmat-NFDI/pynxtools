@@ -120,6 +120,19 @@ def xml_handle_link(obj, keyword, value):
     else:
         raise ValueError(keyword + ' the formatting of what seems to be a link is invalid in the yml file !')
 
+def xml_handle_symbols(obj, value):
+    syms = ET.SubElement(obj, 'symbols')
+    if value is not None:
+        if isinstance(value, dict):
+            if 'doc' in value.keys():
+                syms.set('doc', value['doc'])
+                for kkeyword, vvalue in value.items():
+                    #if vvalue is not None:
+                        assert vvalue is not None, 'Put a comment in doc string!'
+                        assert isinstance(vvalue, str)
+                        sym = ET.SubElement(syms, 'sym')
+                        sym.set('name', kkeyword)
+                        sym.set('doc', vvalue)
 
 def recursive_build(obj, dct):
     """
@@ -133,6 +146,11 @@ def recursive_build(obj, dct):
             raise ValueError('Found an improper YML key !')
         elif keyword[-6:] == '(link)': 
             xml_handle_link(obj, keyword, value)
+
+        elif kType == '' and kName == 'symbols':
+            #print(value.key(), type(value.key()), value.value(), type(value.value()))
+            xml_handle_symbols(obj,value)
+
         elif (kType in nx_clss) or (kType not in nx_type_keys + ['']):
             # we can be sure we need to instantiate a new group
             grp = ET.SubElement(obj, 'group')
@@ -171,7 +189,7 @@ def recursive_build(obj, dct):
             xml_handle_dimensions(obj, keyword, value)
         elif keyword == 'exists':
             xml_handle_exists(obj, keyword, value)
-        elif kName is not '':
+        elif kName != '':
             typ = 'NX_CHAR'
             if kType in nx_type_keys:
                 typ = kType
@@ -180,6 +198,7 @@ def recursive_build(obj, dct):
             fld.set('name', kName)
             fld.set('type', typ)
             if value is not None:  # a field may have subordinated attributes
+                print(value)
                 if isinstance(value, dict):
                     for kkeyword, vvalue in iter(value.items()):
                         if kkeyword[0:2] == nx_attr_idnt:

@@ -22,21 +22,40 @@ import os
 import sys
 import yaml
 import xml.etree.ElementTree as ET
-import xml.dom.minidom
+from xml.dom import minidom
 from yaml2nxdl_utils import nx_clss, nx_unit_idnt, nx_unit_typs
 from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
 from yaml2nxdl_read_yml_appdef import read_application_definition
 from yaml2nxdl_recursive_build import recursive_build
+import subprocess
 
 import click
 
+#check for NEXUS definitions
+try:
+    #either given by sys env
+    nexusDefPath = os.environ['NEXUS_DEF_PATH']
+except:
+    #or it should be available locally under the dir 'definitions'
+    localDir=os.path.abspath(os.path.dirname(__file__))
+    nexusDefPath=os.path.join(localDir,'definitions')
+    if not os.path.exists(nexusDefPath):
+        #check the definitions out if it has not been done yet
+        cwd=os.getcwd()
+        os.chdir(localDir)
+        subprocess.call(['git','clone','https://github.com/nexusformat/definitions'])
+        os.chdir(cwd)
 
 def pretty_print_xml(xml_root, output_xml):
     """
     Print formatted xml file with built-in libraries
     """
-    xml_string = xml.dom.minidom.parseString(ET.tostring(xml_root, encoding='utf-8', method='xml', xml_declaration=True)).toprettyxml()
-    xml_string = os.linesep.join([s for s in xml_string.splitlines() if s.strip()])
+    dom = minidom.parseString(ET.tostring(xml_root, encoding="utf-8", method="xml", xml_declaration=True))
+    pi = dom.createProcessingInstruction('xml-stylesheet',
+    'type="text/xsl" href="nxdlformat.xslt"')
+    root = dom.firstChild
+    dom.insertBefore(pi, root)
+    xml_string = dom.toprettyxml()
     with open(output_xml, "w") as file_out:
         file_out.write(xml_string)
 
@@ -91,17 +110,6 @@ def yaml2nxdl(input_file: str):
         del yml_appdef['doc']
     else:
         raise ValueError('Top-level docstring does not exist in the yml !')
-    if 'symbols' in yml_appdef.keys():
-        syms = ET.SubElement(xml_root, 'symbols')
-        if 'doc' in yml_appdef['symbols'].keys():
-            syms.set('doc', yml_appdef['symbols']['doc'])
-            del yml_appdef['symbols']['doc']
-        for kkeyword, vvalue in iter(yml_appdef['symbols'].items()):
-            sym = ET.SubElement(syms, 'sym')
-            sym.set('name', kkeyword)
-            sym.set('doc', vvalue)
-        del yml_appdef['symbols']
-    # do not throw in the case of else just accept that we do not have symbols
 
     # step3
     recursive_build(xml_root, yml_appdef)
@@ -109,7 +117,6 @@ def yaml2nxdl(input_file: str):
     # step4
     pretty_print_xml(xml_root, input_file + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
-
 
 if __name__ == '__main__':
     yaml2nxdl().parse()  # pylint: disable=no-value-for-parameter
