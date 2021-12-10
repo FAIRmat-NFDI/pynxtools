@@ -71,11 +71,10 @@ def test_example(parser):
     localDir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(localDir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
     parser.parse(example_data, archive, logging.getLogger())
-    pass
-    #run = archive.section_run[0]
-    #assert len(run.system) == 2
-    #assert len(run.calculation) == 2
-    #assert run.calculation[0].x_nexus_magic_value == 42
+    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_sample.nx_field_pressure.nx_unit == "millibar"
+    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
+    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_name == 'energy'
+    
 
 
 if __name__ == '__main__':
