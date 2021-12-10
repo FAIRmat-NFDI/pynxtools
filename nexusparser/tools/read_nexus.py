@@ -192,8 +192,7 @@ def get_nxdl_child(nxdlElem, name):
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc = objectify.parse(nexusDefPath + '/base_classes/' + bc_name +
-                         '.nxdl.xml').getroot()
+    bc = objectify.parse(nexusDefPath + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
     return get_own_nxdl_child(bc, name)
 
 
@@ -341,8 +340,7 @@ def get_nxdl_doc(hdfNode, logger, doc, attr=False):
                 # otherwise try to find if units is defined as a child of the NXDL element
                 elem = get_nxdl_child(elem, attr)
                 if elem is not None:
-                    if doc: logger.info("@" + attr + ' - [' + get_nx_class(elem) +
-                                        ']')
+                    if doc: logger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
                     nxdlPath.append(elem)
                 else:
                     # if no units category were defined in NXDL:
@@ -471,16 +469,12 @@ def nxdl_to_attr_obj(nxdlPath):
     returns attr as a Python obj that can be directly placed into the h5py library
     """
     nxdef = nxdlPath.split(':')[0]
-    #nexusDefPath = os.environ['NEXUS_DEF_PATH']
     root = objectify.parse(nexusDefPath + "/applications/" + nxdef + ".nxdl.xml")
     elem = root.getroot()
     path = nxdlPath.split(':')[1]
     for group in path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
     return elem
-
-
-
 
 
 def process_node(hdfNode, parser, logger, doc=True):
@@ -674,7 +668,6 @@ class HandleNexus:
 
     def process_nexus_master_file(self, parser):
         """ Process a nexus master file by processing all its nodes and their attributes"""
-        #self.logger = logger
         self.parser = parser
         self.in_file = h5py.File(self.input_file_name, 'r')
         self.in_file.visititems(self.visit_node)
