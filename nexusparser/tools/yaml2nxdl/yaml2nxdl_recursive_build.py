@@ -109,7 +109,9 @@ def xml_handle_enumeration(obj, keyword, value):
 
 
 def xml_handle_link(obj, keyword, value):
-    # if we have a link we decode the name attribute from <optional string>(link)[:-6]
+    """ 
+    # if we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
+    """
     if len(keyword[:-6]) >= 1 and isinstance(value, dict) and 'target' in value.keys():
         if isinstance(value['target'], str) and len(value['target']) >= 1:
             lnk = ET.SubElement(obj, 'link')
@@ -121,23 +123,28 @@ def xml_handle_link(obj, keyword, value):
         raise ValueError(keyword + ' the formatting of what seems to be a link is invalid in the yml file !')
 
 def xml_handle_symbols(obj, value):
+    """
+    handle a set of NXDL symbols as a child to obj
+    """
     syms = ET.SubElement(obj, 'symbols')
     if value is not None:
         if isinstance(value, dict):
             if 'doc' in value.keys():
                 syms.set('doc', value['doc'])
                 for kkeyword, vvalue in value.items():
-                    #if vvalue is not None:
-                        assert vvalue is not None, 'Put a comment in doc string!'
-                        assert isinstance(vvalue, str)
-                        sym = ET.SubElement(syms, 'sym')
-                        sym.set('name', kkeyword)
-                        sym.set('doc', vvalue)
+                    assert vvalue is not None, 'Found an empty doc string while processing symbols table. Specify the doc string!'
+                    assert isinstance(vvalue, str)
+                    sym = ET.SubElement(syms, 'sym')
+                    sym.set('name', kkeyword)
+                    sym.set('doc', vvalue)
+
 
 def recursive_build(obj, dct):
     """
-    obj is the current node where we want to append to,
-    dct is a dictionary object which represents the content of the child in the nested set of dictionaries
+    obj is the current node of the XML tree where we want to append to,
+    dct is a dictionary object which represents the content of a child to obj
+    dct may contain further dictionary nests, representing NXDL groups, which trigger recursive processing
+    NXDL fields may contain attributes but trigger no recursion so attributes are leafs.
     """
     for keyword, value in iter(dct.items()):
         kName, kType = nx_name_type_resolving(keyword)
