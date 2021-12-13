@@ -2,19 +2,6 @@
 
 **Tool purpose**: Offer a simple YAML-based schema to describe NeXus instances. These can be NeXus application definitions, or classes such as base or contributed classes. Users create NeXus instances by writing a YAML file which details a hierarchy of data/metadata elements.
 
-**Rule set**: To enable a transcoding YAML files need to follow several rules.
-* Named NeXus groups, which are instances of NeXus classes especially base or contributed classes. Creating (NXbeam) is a simple example of a request to define a group named according to NeXus default rules. mybeam1(NXbeam) or mybeam2(NXbeam) are examples how to create multiple named instances at the same hierarchy level.
-* Members of groups so-called fields. A simple example of a member is voltage. Here the datatype is implied automatically as the default NeXus NX_CHAR type.  By contrast, voltage(NX_FLOAT) can be used to instantiate a member of class which should be of NeXus type NX_FLOAT.
-* And attributes or either groups or fields. Names of attributes have to be preceeded by \@ to mark them as attributes.
-
-**Special keywords**: Several can be used with groups, fields, and attributes. These are nodes of the XML tree.
-* *doc*: A human-readable description/docstring
-* *exists* A statement if an entry is more than optional. Options are recommended, required, [min, 1, max, infty] numbers like here 1 can be replaced by uint or infty to indicate no restriction on how frequently the entry can occur inside the NXDL schema at the same hierarchy level.
-* *link* Define links between nodes.
-* *units* A statement introducing NeXus-compliant NXDL units arguments, like NX_VOLTAGE
-* *dimensions* Details which dimensional arrays to expect
-* *enumeration* Python list of strings which are considered as recommended entries to choose from.
-
 **How the tool works**:
 1. Reads the user-specified NeXus instance that the yml file represents as a nested dictionary.
 2. Creates an instantiated NXDL schema XML tree by walking the dictionary nest.
@@ -31,3 +18,16 @@ Options:
    --help               Show this message and exit.
 
 ```
+
+**Rule set**: From transcoding YAML files we need to follow several rules.
+* Named NeXus groups, which are instances of NeXus classes especially base or contributed classes. Creating (NXbeam) is a simple example of a request to define a group named according to NeXus default rules. mybeam1(NXbeam) or mybeam2(NXbeam) are examples how to create multiple named instances at the same hierarchy level.
+* Members of groups so-called fields. A simple example of a member is voltage. Here the datatype is implied automatically as the default NeXus NX_CHAR type.  By contrast, voltage(NX_FLOAT) can be used to instantiate a member of class which should be of NeXus type NX_FLOAT.
+* And attributes or either groups or fields. Names of attributes have to be preceeded by \@ to mark them as attributes.
+
+**Special keywords**: Several keywords can be used as childs of groups, fields, and attributes to specify the members of these. Groups, fields and attributes are nodes of the XML tree.
+* *doc*: A human-readable description/docstring
+* *exists* A statement if an entry is more than optional. Options are recommended, required, [min, 1, max, infty] numbers like here 1 can be replaced by uint or infty to indicate no restriction on how frequently the entry can occur inside the NXDL schema at the same hierarchy level.
+* *link* Define links between nodes.
+* *units* A statement introducing NeXus-compliant NXDL units arguments, like NX_VOLTAGE
+* *dimensions* Details which dimensional arrays to expect
+* *enumeration* Python list of strings which are considered as recommended entries to choose from.
