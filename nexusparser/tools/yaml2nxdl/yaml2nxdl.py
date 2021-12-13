@@ -99,7 +99,7 @@ def yaml2nxdl(input_file: str):
         xml_root.set('type', 'group')
     else:
         raise ValueError('Top-level keyword category does not exist in the yml !')
-    # step2c
+
     if 'doc' in yml_appdef.keys():
         xml_root.set('doc', yml_appdef['doc'])
     else:
