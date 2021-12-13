@@ -28,10 +28,9 @@ from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
 from yaml2nxdl_read_yml_appdef import read_application_definition
 from yaml2nxdl_recursive_build import recursive_build
 import subprocess
-
 import click
 
-#check for NEXUS definitions
+#import NEXUS definitions, i.e. NIAC-approved application definitions, base and contributed classes
 try:
     #either given by sys env
     nexusDefPath = os.environ['NEXUS_DEF_PATH']
@@ -48,7 +47,7 @@ except:
 
 def pretty_print_xml(xml_root, output_xml):
     """
-    Print formatted xml file with built-in libraries
+    Print better human-readable idented and formatted xml file using built-in libraries and add preceding XML processing instruction
     """
     dom = minidom.parseString(ET.tostring(xml_root, encoding="utf-8", method="xml"))
     pi = dom.createProcessingInstruction('xml-stylesheet',
@@ -63,14 +62,17 @@ def pretty_print_xml(xml_root, output_xml):
 @click.command()
 @click.option(
     '--input-file',
-    help='The path to the input data file to read. (Repeat for more than one file.)'
+    help='The path to the yaml-formatted input data file to read and create a NXDL XML file from. (Repeat for more than one file.)'
 )
 def yaml2nxdl(input_file: str):
-
+    """
+    main of the yaml2nxdl converter, creates XML tree, namespace and schema, then evaluates a dictionary 
+    nest of groups recursively and fields or (their) attributes as childs of the groups
+    
     # step1
     yml_appdef = read_application_definition(input_file)
 
-    # step2a
+    # step2 XML schema, namespace
     xml_root = ET.Element(
         'definition', {
         ET.QName("xmlns"): 'http://definition.nexusformat.org/nxdl/3.1', 
@@ -78,14 +80,10 @@ def yaml2nxdl(input_file: str):
         ET.QName("xsi:schemaLocation"): 'http://www.w3.org/2001/XMLSchema-instance'
         }
     )
+    
+    assert 'name' in yml_appdef.keys(), 'keyword not specified'
 
-    # step2b
-    assert 'name' in yml_appdef, 'keyword not specified'
-
-    # pi = ET.ProcessingInstruction(
-    #    "xml-stylesheet", text='type="text/xsl" href="nxdlformat.xsl"')
-    # xml_root.addprevious(pi)
-
+    #step 3 define which NeXus object the yaml file conceptualized
     if 'category' in yml_appdef.keys():
         if yml_appdef['category'] == 'application':
             xml_root.set('category', 'application')
@@ -97,24 +95,20 @@ def yaml2nxdl(input_file: str):
             xml_root.set('category', 'base')
             xml_root.set('extends', 'NXobject')
         else:
-            raise ValueError(
-                'Top-level keyword category exists in the yml but one of these: application, contributed, base !')
-        del yml_appdef['category']
+            raise ValueError('Top-level keyword category exists in the yml but one of these: application, contributed, base !')
         xml_root.set('type', 'group')
     else:
-        raise ValueError(
-            'Top-level keyword category does not exist in the yml !')
+        raise ValueError('Top-level keyword category does not exist in the yml !')
     # step2c
     if 'doc' in yml_appdef.keys():
         xml_root.set('doc', yml_appdef['doc'])
-        del yml_appdef['doc']
     else:
         raise ValueError('Top-level docstring does not exist in the yml !')
 
-    # step3
+    # step4 traverse nested dictionaries representing groups and fields of NeXus and their attributes
     recursive_build(xml_root, yml_appdef)
 
-    # step4
+    # step5 I/O
     pretty_print_xml(xml_root, input_file + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
 
