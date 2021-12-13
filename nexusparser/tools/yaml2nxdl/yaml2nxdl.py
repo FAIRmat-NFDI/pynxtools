@@ -50,7 +50,7 @@ def pretty_print_xml(xml_root, output_xml):
     """
     Print formatted xml file with built-in libraries
     """
-    dom = minidom.parseString(ET.tostring(xml_root, encoding="utf-8", method="xml", xml_declaration=True))
+    dom = minidom.parseString(ET.tostring(xml_root, encoding="utf-8", method="xml"))
     pi = dom.createProcessingInstruction('xml-stylesheet',
     'type="text/xsl" href="nxdlformat.xslt"')
     root = dom.firstChild

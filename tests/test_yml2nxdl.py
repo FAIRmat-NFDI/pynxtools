@@ -1,4 +1,5 @@
-#
+#!/usr/bin/env python3
+# 
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -16,61 +17,83 @@
 # limitations under the License.
 #
 
-import pytest
-import logging
-
-from nomad.datamodel import EntryArchive
 import os
 import sys
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
+sys.path.insert(0, '../nexusparser/tools/yaml2nxdl')
+import pytest
+import logging
+import yaml2nxdl
+from click.testing import CliRunner
+from datetime import datetime
+from pathlib import Path
 
-from nexusparser.tools.yaml2nxdl import yaml2nxdl
-
+runner = CliRunner()
+localDir = os.path.abspath(os.path.dirname(__file__))
 
 @pytest.fixture
-def parser():
-    return yaml2nxdl.yaml2nxdl()
+def test_links():
 
+    # Files
+    ref_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXtest_links.yml.nxdl.xml')
+    test_yml_link_file ='data/yaml2nxdl_test_data/NXtest_links.yml'
+    test_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXtest_links.yml.nxdl.xml')
+    test_match_string = '<link>'
 
-def test_link(parser):
-    archive = EntryArchive()
-    localDir = os.path.abspath(os.path.dirname(__file__))
-    ref_xml_data = os.path.join(localDir, 'yaml2nxdl_test_data/Ref_NXtest_links.yml.nxdl.xml')
-    with open(ref_xml_data, 'r') as file:
+    # Reference file is called
+    with open(ref_xml_link_file, 'r') as file:
         xml_reference = file.readlines()
-        #xml_reference = file.read()
     for i,line in enumerate(xml_reference):
-            if '<link>' in line:
-                a = line
-                b = i
-    print(type(xml_reference))
+            if test_match_string in line:
+                ref_line = line
+                ref_line_index = i
 
-    parser.parse('yaml2nxdl/tests/yaml2nxdl_test_data/NXtest_links.yml', archive, logging.getLogger())
-    parsed_xml_data = os.path.join(localDir, 'yaml2nxdl_test_data/NXtest_links.yml.nxdl.xml')
-    with open(parsed_xml_data, 'r') as file:
-        #xml_parsed = file.read()
-        xml_parsed = file.readlines()
-    for i,line in enumerate(xml_parsed):
-            if '<link>' in line:
-                assert line == a
-                assert i == b
-    print(type(xml_parsed))
+    # Test file is generated and called
+    result = CliRunner().invoke(yaml2nxdl.yaml2nxdl, ['--input-file', test_yml_link_file])
+    assert result.exit_code == 0
+    path = Path(test_xml_link_file)
+    timestamp = datetime.fromtimestamp(path.stat().st_mtime).strftime("%d/%m/%Y %H:%M")
+    now = datetime.now().strftime("%d/%m/%Y %H:%M")
+    assert timestamp == now, 'xml file not generated'
+    with open(test_xml_link_file, 'r') as file:
+        xml_tested = file.readlines()
+    for i,line in enumerate(xml_tested):
+            if test_match_string in line:
+                assert line == ref_line
+                assert i == ref_line_index
 
-    assert xml_reference == xml_parsed
-    # load a txt file
-    # xml file from parser
-    # reference file
-    '''
-    run = archive.section_run[0]
-    assert len(run.system) == 2
-    assert len(run.calculation) == 2
-    assert run.calculation[0].x_nexus_magic_value == 42
-    '''
+def test_symbols():
+
+    # Files
+    ref_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXnested_symbols.yml.nxdl.xml')
+    test_yml_symbol_file ='data/yaml2nxdl_test_data/NXnested_symbols.yml'
+    test_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXnested_symbols.yml.nxdl.xml')
+    test_match_string = '<symbol>'
+
+    # Reference file is called
+    with open(ref_xml_symbol_file, 'r') as file:
+        xml_reference = file.readlines()
+    for i,line in enumerate(xml_reference):
+            if test_match_string in line:
+                ref_line = line
+                ref_line_index = i
+
+    # Test file is generated and called
+    result = CliRunner().invoke(yaml2nxdl.yaml2nxdl, ['--input-file', test_yml_symbol_file])
+    assert result.exit_code == 0
+    path = Path(test_xml_symbol_file)
+    timestamp = datetime.fromtimestamp(path.stat().st_mtime).strftime("%d/%m/%Y %H:%M")
+    now = datetime.now().strftime("%d/%m/%Y %H:%M")
+    assert timestamp == now, 'xml file not generated'
+    with open(test_xml_symbol_file, 'r') as file:
+        xml_tested = file.readlines()
+    for i,line in enumerate(xml_tested):
+            if test_match_string in line:
+                assert line == ref_line
+                assert i == ref_line_index
 
 if __name__ == '__main__':
-    p = parser()
-    test_link(p)
-    #nexus_helper = HandleNexus(sys.argv[1:])
-    #nexus_helper.process_nexus_master_file(None)
+    test_links()
+    test_symbols()

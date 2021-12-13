@@ -156,9 +156,6 @@ def recursive_build(obj, dct):
             grp = ET.SubElement(obj, 'group')
             if kName != '':  # use the custom name for the group
                 grp.set('name', kName)
-            else:
-                if kType != '':
-                    grp.set('name', kType)
             grp.set('type', kType)
             if value is not None:
                 if isinstance(value, dict):
@@ -198,7 +195,6 @@ def recursive_build(obj, dct):
             fld.set('name', kName)
             fld.set('type', typ)
             if value is not None:  # a field may have subordinated attributes
-                print(value)
                 if isinstance(value, dict):
                     for kkeyword, vvalue in iter(value.items()):
                         if kkeyword[0:2] == nx_attr_idnt:
@@ -211,7 +207,7 @@ def recursive_build(obj, dct):
                                 typ = kkType
                             attr.set('type', typ)
                             if vvalue is not None:
-                                if isinstance(vv, dict):
+                                if isinstance(vvalue, dict):
                                     for kkkeyword, vvvalue in iter(vvalue.items()):
                                         if kkkeyword == 'doc':
                                             attr.set('doc', vvvalue)

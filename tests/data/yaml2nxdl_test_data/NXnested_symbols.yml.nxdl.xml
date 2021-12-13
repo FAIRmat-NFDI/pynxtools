@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xslt"?>
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance" category="contributed" extends="NXobject" type="group" doc="Test case for verifying handling of symbols inside a nexus class in nested layers of the hierarchy">
+	<field name="name" type="NX_CHAR"/>
+	<symbols doc="teststring">
+		<sym name="doc" doc="teststring"/>
+		<sym name="nfa" doc="Number of fast axes (acquired simutaneously) e.g. emission angle, kinetic energy"/>
+		<sym name="nsa" doc="Number of slow axes (acquired scanning a physical quantity) e.g. lens voltage, photon energy or temperature"/>
+		<sym name="nx" doc="Number of points in the first angular direction"/>
+		<sym name="ne" doc="Number of points in the energy dispersion direction"/>
+	</symbols>
+	<group name="NXentry" type="NXentry">
+		<group name="NXsample" type="NXsample">
+			<symbols doc="teststring">
+				<sym name="doc" doc="teststring"/>
+				<sym name="n_comp" doc="number of compositions"/>
+				<sym name="n_Temp" doc="number of temperatures"/>
+			</symbols>
+			<group name="NXprocess" type="NXprocess">
+				<symbols doc="another nest">
+					<sym name="doc" doc="another nest"/>
+					<sym name="x" doc="parameter1"/>
+					<sym name="y" doc="parameter2"/>
+				</symbols>
+			</group>
+		</group>
+	</group>
+</definition>
