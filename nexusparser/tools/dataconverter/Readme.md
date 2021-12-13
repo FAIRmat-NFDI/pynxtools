@@ -28,6 +28,10 @@ Options:
 user@box:~$ python convert.py --nxdl nxdl --input_file metadata --input_file data.raw --input_file otherfile
 ```
 
+## Installation
+
+This tool requires having the parent package installed i.e. "nexusparser".
+
 ## Writing a Reader
 
 Readers have to be placed in the **readers** folder. The reader Python files should end in ```_reader.py```.
@@ -72,7 +76,7 @@ user@box:~$ python convert.py --reader my_data --nxdl path_to_nxdl --output path
 
 ### The reader template dictionary
 
-Example: 
+Example:
 
 ```json
 {
@@ -86,6 +90,14 @@ You can choose any name you prefer instead of the suggested name. This allows th
 ```json
 {
     "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type": "None"
+}
+```
+
+For attributes defined in the NXDL, the reader template dictionary will have the assosciated key with a "@" prefix to the attributes name at the end of the path:
+
+```json
+{
+    "/entry/instrument/source/@attribute": "None"
 }
 ```
 
