@@ -27,6 +27,7 @@ sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
 from nexusparser.tools import read_nexus  # noqa: E402
 from nexusparser import NexusParser  # noqa: E402
+from . import test_nexus
 
 
 @pytest.fixture
@@ -57,14 +58,15 @@ def test_read_nexus():
     print('Testing of read_nexus.py is SUCCESSFUL.')
 
 
-def test_nxdl_to_attr_obj_1(example_path, result_str):
+@pytest.mark.skip(reason="not to test it alone")
+def testing_nxdl_to_attr_obj_1(example_path, result_str):
     result = read_nexus.nxdl_to_attr_obj(example_path)
     assert result.attrib['type'] == result_str, "failed on: " + example_path + "expected type: " + result_str
 
 
 def test_nxdl_to_attr_obj():
-    test_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
-    test_nxdl_to_attr_obj_1('NXspe:/ENTRY/NXSPE_info', "NXcollection")
+    testing_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
+    testing_nxdl_to_attr_obj_1('NXspe:/ENTRY/NXSPE_info', "NXcollection")
     # test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
 
 

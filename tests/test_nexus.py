@@ -20,7 +20,7 @@ from typing import cast, Any
 import pytest
 
 from nomad.metainfo import Definition, MSection, Section
-from nomad.datamodel.metainfo import nexus
+from nexusparser.metainfo import nexus
 from nomad.datamodel import EntryArchive
 
 

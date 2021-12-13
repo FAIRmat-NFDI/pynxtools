@@ -22,13 +22,7 @@ try:
 except BaseException:
     # or it should be available locally under the dir 'definitions'
     localDir = os.path.abspath(os.path.dirname(__file__))
-    nexusDefPath = os.path.join(localDir, 'definitions')
-    if not os.path.exists(nexusDefPath):
-        # check the definitions out if it has not been done yet
-        cwd = os.getcwd()
-        os.chdir(localDir)
-        subprocess.call(['git', 'clone', 'https://github.com/nexusformat/definitions'])
-        os.chdir(cwd)
+    nexusDefPath = os.path.join(localDir, '../definitions')
 
 
 def get_nx_class_path(hdfNode):
