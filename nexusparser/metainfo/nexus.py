@@ -407,7 +407,7 @@ def create_package_from_nxdl_directory(path: str) -> Package:
 
 nx_definitions_path = os.path.join(
     os.path.dirname(__file__),
-    '../../../dependencies/nexus_definitions')
+    '../definitions')
 
 
 # We generate separated metainfo package for the nexus base classes and application

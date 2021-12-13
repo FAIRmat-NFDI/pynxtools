@@ -22,12 +22,12 @@ import h5py
 
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
-from nomad.datamodel.metainfo import nexus
 
 from nomad.parsing.file_parser import TextParser, Quantity
 
 from . import metainfo  # pylint: disable=unused-import
 from nexusparser.tools import read_nexus
+from nexusparser.metainfo import nexus
 
 import sys
 import logging

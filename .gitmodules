@@ -1,0 +1,3 @@
+[submodule "nexusparser/definitions"]
+	path = nexusparser/definitions
+	url = https://github.com/nexusformat/definitions/
