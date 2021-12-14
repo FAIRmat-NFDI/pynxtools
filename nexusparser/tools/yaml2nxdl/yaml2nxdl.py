@@ -116,7 +116,7 @@ def yaml2nxdl(input_file: str):
     recursive_build(xml_root, yml_appdef)
 
     # step5 I/O
-    pretty_print_xml(xml_root, input_file + '.nxdl.xml')
+    pretty_print_xml(xml_root, input_file[:-4] + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
 
 if __name__ == '__main__':

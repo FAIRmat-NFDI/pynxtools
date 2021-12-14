@@ -94,6 +94,10 @@ def get_nx_namefit(hdfName, name):
     # no fit
     return -1
 
+def get_nx_classes():
+    base_classes_list_files = os.listdir(os.path.join(nexusDefPath, 'base_classes'))
+    nx_clss = sorted([s.strip('.nxdl.xml') for s in base_classes_list_files])
+    return nx_clss
 
 def get_node_name(node):
     '''

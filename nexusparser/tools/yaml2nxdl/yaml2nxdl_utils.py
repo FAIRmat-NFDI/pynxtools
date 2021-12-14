@@ -21,7 +21,8 @@
 import os
 import sys
 import yaml
-
+sys.path.insert(0, '..')
+import read_nexus
 
 def nx_name_type_resolving(tmp):
     """
@@ -42,15 +43,7 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
-nx_clss = ['NXaperture', 'NXattenuator', 'NXbeam', 'NXbeam_stop', 'NXbending_magnet', 'NXcapillary', 'NXcite',
-           'NXcollection', 'NXcollimator', 'NXcrystal', 'NXcylindrical_geometry', 'NXdata', 'NXdetector',
-           'NXdetector_group', 'NXdetector_module', 'NXdisk_chopper', 'NXentry', 'NXenvironment', 'NXevent_data',
-           'NXfermi_chopper', 'NXfilter', 'NXflipper', 'NXfresnel_zone_plate, ''NXgeometry', 'NXgrating', 'NXguide',
-           'NXinsertion_device', 'NXinstrument', 'NXlog', 'NXmirror', 'NXmoderator', 'NXmonitor', 'NXmonochromator',
-           'NXnote', 'NXobject', 'NXoff_geometry', 'NXorientation', 'NXparameters', 'NXpdb', 'NXpinhole', 'NXpolarizer',
-           'NXpositioner', 'NXprocess', 'NXreflections', 'NXroot', 'NXsample', 'NXsample_component', 'NXsensor', 'NXshape',
-           'NXslit', 'NXsource', 'NXsubentry', 'NXtransformations', 'NXtranslation', 'NXuser', 'NXvelocity_selector',
-           'NXxraylens']
+nx_clss = read_nexus.get_nx_classes()
 
 nx_type_keys = ['NX_BINARY', 'NX_BOOLEAN', 'NX_CHAR', 'NX_DATE_TIME',
                 'NX_FLOAT', 'NX_INT', 'NX_NUMBER', 'NX_POSINT', 'NX_UINT']

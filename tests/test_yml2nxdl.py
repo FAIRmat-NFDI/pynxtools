@@ -37,9 +37,9 @@ localDir = os.path.abspath(os.path.dirname(__file__))
 def test_links():
 
     # Files
-    ref_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXtest_links.yml.nxdl.xml')
+    ref_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXtest_links.nxdl.xml')
     test_yml_link_file ='data/yaml2nxdl_test_data/NXtest_links.yml'
-    test_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXtest_links.yml.nxdl.xml')
+    test_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXtest_links.nxdl.xml')
     test_match_string = '<link>'
 
     # Reference file is called
@@ -67,9 +67,9 @@ def test_links():
 def test_symbols():
 
     # Files
-    ref_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXnested_symbols.yml.nxdl.xml')
+    ref_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXnested_symbols.nxdl.xml')
     test_yml_symbol_file ='data/yaml2nxdl_test_data/NXnested_symbols.yml'
-    test_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXnested_symbols.yml.nxdl.xml')
+    test_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXnested_symbols.nxdl.xml')
     test_match_string = '<symbol>'
 
     # Reference file is called
