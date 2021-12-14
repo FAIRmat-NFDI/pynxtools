@@ -49,7 +49,13 @@ def pretty_print_xml(xml_root, output_xml):
     """
     Print better human-readable idented and formatted xml file using built-in libraries and add preceding XML processing instruction
     """
-    dom = minidom.parseString(ET.tostring(xml_root, encoding="utf-8", method="xml"))
+    # lack of "xml_declaration" for python<=3.7
+    try:
+        dom = minidom.parseString(ET.tostring(
+        xml_root, encoding = "UTF-8", xml_declaration = True, method = "xml"))
+    except TypeError:
+        dom = minidom.parseString(ET.tostring(
+        xml_root, encoding = "UTF-8", method = "xml"))
     pi = dom.createProcessingInstruction('xml-stylesheet',
     'type="text/xsl" href="nxdlformat.xslt"')
     root = dom.firstChild
@@ -68,6 +74,7 @@ def yaml2nxdl(input_file: str):
     """
     main of the yaml2nxdl converter, creates XML tree, namespace and schema, then evaluates a dictionary 
     nest of groups recursively and fields or (their) attributes as childs of the groups
+    """
     
     # step1
     yml_appdef = read_application_definition(input_file)
