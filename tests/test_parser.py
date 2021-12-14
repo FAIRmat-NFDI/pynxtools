@@ -27,7 +27,6 @@ sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
 from nexusparser.tools import read_nexus  # noqa: E402
 from nexusparser import NexusParser  # noqa: E402
-from . import test_nexus
 
 
 @pytest.fixture
@@ -75,13 +74,20 @@ def test_example(parser):
     localDir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(localDir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
     parser.parse(example_data, archive, logging.getLogger())
-    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_sample.nx_field_pressure.nx_unit == "millibar"
-    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
-    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_name == 'energy'
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_unit == "millibar"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.m_def.nx_units == "NX_PRESSURE"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_MONOCHROMATOR[0].nx_field_energy.nx_value == 36.49699020385742
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_MONOCHROMATOR[0].nx_field_energy.nx_name == 'energy'
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_name == "delays"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_name == "energies"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_unit == "1/Å"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_unit == "fs"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_unit == "eV"
 
 
 if __name__ == '__main__':
-    test_read_nexus()
-    test_nxdl_to_attr_obj()
+    # test_read_nexus()
+    # test_nxdl_to_attr_obj()
     p = parser()
     test_example(p)

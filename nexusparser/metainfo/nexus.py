@@ -172,9 +172,13 @@ def add_attributes(xml_node: ET.Element, section: Section):
     for attribute in xml_node.findall('nx:attribute', xml_namespaces):
         attribute_section = create_attribute_section(attribute, section)
 
+        name = attribute.attrib["name"]
+        max_occurs = attribute.attrib.get('maxOccurs', '0')
+        repeats = any(name_char.isupper() for name_char in name) or max_occurs == 'unbounded' or int(max_occurs) > 1
+
         section.sub_sections.append(SubSection(
             section_def=attribute_section, nx_kind='attribute',
-            name=f'nx_attribute_{attribute.attrib["name"]}'))
+            name=f'nx_attribute_{name}', repeats=repeats))
 
 
 def add_group_properties(xml_node: ET.Element, section: Section):
@@ -189,19 +193,23 @@ def add_group_properties(xml_node: ET.Element, section: Section):
         if 'name' in group.attrib:
             name = f'nx_group_{group.attrib["name"]}'
         else:
-            name = group.attrib['type'].replace('NX', 'nx_group_')
+            name = f'nx_group_{group.attrib["type"].replace("NX", "").upper()}'
 
         max_occurs = group.attrib.get('maxOccurs', '0')
-        repeats = max_occurs == 'unbounded' or int(max_occurs) > 1
+        repeats = any(name_char.isupper() for name_char in name) or max_occurs == 'unbounded' or int(max_occurs) > 1
         section.sub_sections.append(SubSection(
             section_def=group_section, nx_kind='group', name=name, repeats=repeats))
 
     for field in xml_node.findall('nx:field', xml_namespaces):
         field_section = create_field_section(field, section)
 
+        name = field.attrib["name"]
+        max_occurs = field.attrib.get('maxOccurs', '0')
+        repeats = any(name_char.isupper() for name_char in name) or max_occurs == 'unbounded' or int(max_occurs) > 1
+
         section.sub_sections.append(SubSection(
             section_def=field_section, nx_kind='field',
-            name=f'nx_field_{field.attrib["name"]}'))
+            name=f'nx_field_{name}', repeats=repeats))
 
     add_attributes(xml_node, section)
 
@@ -243,7 +251,7 @@ def create_attribute_section(xml_node: ET.Element, container: Section) -> Sectio
 
     attribute_section = Section(
         validate=validate, nx_kind='attribute',
-        name=to_camel_case(xml_attrs['name'], True) + 'Attribute')
+        name=xml_attrs['name'] + 'Attribute')
     add_base_section(attribute_section, container)
     container.inner_section_definitions.append(attribute_section)
 
@@ -275,7 +283,7 @@ def create_field_section(xml_node: ET.Element, container: Section):
     xml_attrs = xml_node.attrib
 
     assert 'name' in xml_attrs, 'field has not name'
-    name = to_camel_case(xml_attrs['name'], True) + 'Field'
+    name = xml_attrs['name'] + 'Field'
     field_section = Section(validate=validate, nx_kind='field', name=name)
     add_base_section(field_section, container)
     container.inner_section_definitions.append(field_section)
@@ -339,9 +347,9 @@ def create_group_section(xml_node: ET.Element, container: Section) -> Section:
     type = xml_attrs['type']
 
     if 'name' in xml_attrs:
-        name = to_camel_case(xml_attrs['name'], True) + 'Group'
+        name = xml_attrs['name'] + 'Group'
     else:
-        name = to_camel_case(type, True) + 'Group'
+        name = type + 'Group'
 
     group_section = Section(validate=validate, nx_kind='group', name=name)
     add_base_section(group_section, container, get_or_create_section(type))
