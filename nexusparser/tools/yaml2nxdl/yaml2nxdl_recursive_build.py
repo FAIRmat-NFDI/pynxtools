@@ -18,12 +18,9 @@
 # limitations under the License.
 #
 
-import os
-import sys
-import yaml
 import xml.etree.ElementTree as ET
 from yaml2nxdl_utils import nx_name_type_resolving
-from yaml2nxdl_utils import nx_clss, nx_unit_idnt, nx_unit_typs
+from yaml2nxdl_utils import nx_clss, nx_unit_idnt
 from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
 
 
@@ -109,7 +106,7 @@ def xml_handle_enumeration(obj, keyword, value):
 
 
 def xml_handle_link(obj, keyword, value):
-    """ 
+    """
     # if we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
     """
     if len(keyword[:-6]) >= 1 and isinstance(value, dict) and 'target' in value.keys():
@@ -121,6 +118,7 @@ def xml_handle_link(obj, keyword, value):
             raise ValueError(keyword + ' value for target member of a link is invalid !')
     else:
         raise ValueError(keyword + ' the formatting of what seems to be a link is invalid in the yml file !')
+
 
 def xml_handle_symbols(obj, value):
     """
@@ -151,12 +149,12 @@ def recursive_build(obj, dct):
         print('kName: ' + kName + ' kType: ' + kType)
         if kName == '' and kType == '':
             raise ValueError('Found an improper YML key !')
-        elif keyword[-6:] == '(link)': 
+        elif keyword[-6:] == '(link)':
             xml_handle_link(obj, keyword, value)
 
         elif kType == '' and kName == 'symbols':
-            #print(value.key(), type(value.key()), value.value(), type(value.value()))
-            xml_handle_symbols(obj,value)
+            # print(value.key(), type(value.key()), value.value(), type(value.value()))
+            xml_handle_symbols(obj, value)
 
         elif (kType in nx_clss) or (kType not in nx_type_keys + ['']):
             # we can be sure we need to instantiate a new group

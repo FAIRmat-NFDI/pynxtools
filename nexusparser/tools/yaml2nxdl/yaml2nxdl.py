@@ -18,46 +18,26 @@
 # limitations under the License.
 #
 
-import os
-import sys
-import yaml
+import platform
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
-from yaml2nxdl_utils import nx_clss, nx_unit_idnt, nx_unit_typs
-from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
 from yaml2nxdl_read_yml_appdef import read_application_definition
 from yaml2nxdl_recursive_build import recursive_build
-import subprocess
 import click
 
-#import NEXUS definitions, i.e. NIAC-approved application definitions, base and contributed classes
-try:
-    #either given by sys env
-    nexusDefPath = os.environ['NEXUS_DEF_PATH']
-except:
-    #or it should be available locally under the dir 'definitions'
-    localDir=os.path.abspath(os.path.dirname(__file__))
-    nexusDefPath=os.path.join(localDir,'definitions')
-    if not os.path.exists(nexusDefPath):
-        #check the definitions out if it has not been done yet
-        cwd=os.getcwd()
-        os.chdir(localDir)
-        subprocess.call(['git','clone','https://github.com/nexusformat/definitions'])
-        os.chdir(cwd)
 
 def pretty_print_xml(xml_root, output_xml):
     """
-    Print better human-readable idented and formatted xml file using built-in libraries and add preceding XML processing instruction
+    #Print better human-readable idented and formatted xml file using built-in libraries and add preceding XML processing instruction
     """
-    # lack of "xml_declaration" for python<=3.7
+    # lack of "xml_declaration" for python <= 3.7
     try:
         dom = minidom.parseString(ET.tostring(
-        xml_root, encoding = "UTF-8", xml_declaration = True, method = "xml"))
-    except TypeError:
+            xml_root, encoding="UTF-8", xml_declaration=True, method="xml"))
+    except platform.python_version() <= 3.7:
         dom = minidom.parseString(ET.tostring(
-        xml_root, encoding = "UTF-8", method = "xml"))
-    pi = dom.createProcessingInstruction('xml-stylesheet',
-    'type="text/xsl" href="nxdlformat.xslt"')
+            xml_root, encoding="UTF-8", method="xml"))
+    pi = dom.createProcessingInstruction('xml-stylesheet', 'type="text/xsl" href="nxdlformat.xslt"')
     root = dom.firstChild
     dom.insertBefore(pi, root)
     xml_string = dom.toprettyxml()
@@ -72,25 +52,25 @@ def pretty_print_xml(xml_root, output_xml):
 )
 def yaml2nxdl(input_file: str):
     """
-    main of the yaml2nxdl converter, creates XML tree, namespace and schema, then evaluates a dictionary 
+    main of the yaml2nxdl converter, creates XML tree, namespace and schema, then evaluates a dictionary
     nest of groups recursively and fields or (their) attributes as childs of the groups
     """
-    
+
     # step1
     yml_appdef = read_application_definition(input_file)
 
     # step2 XML schema, namespace
     xml_root = ET.Element(
         'definition', {
-        ET.QName("xmlns"): 'http://definition.nexusformat.org/nxdl/3.1', 
-        ET.QName("xmlns:xsi"): 'http://www.w3.org/2001/XMLSchema-instance',
-        ET.QName("xsi:schemaLocation"): 'http://www.w3.org/2001/XMLSchema-instance'
+            ET.QName("xmlns"): 'http://definition.nexusformat.org/nxdl/3.1',
+            ET.QName("xmlns:xsi"): 'http://www.w3.org/2001/XMLSchema-instance',
+            ET.QName("xsi:schemaLocation"): 'http://www.w3.org/2001/XMLSchema-instance'
         }
     )
-    
+
     assert 'name' in yml_appdef.keys(), 'keyword not specified'
 
-    #step 3 define which NeXus object the yaml file conceptualized
+    # step 3 define which NeXus object the yaml file conceptualized
     if 'category' in yml_appdef.keys():
         if yml_appdef['category'] == 'application':
             xml_root.set('category', 'application')
@@ -118,6 +98,7 @@ def yaml2nxdl(input_file: str):
     # step5 I/O
     pretty_print_xml(xml_root, input_file[:-4] + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
+
 
 if __name__ == '__main__':
     yaml2nxdl().parse()  # pylint: disable=no-value-for-parameter

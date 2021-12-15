@@ -18,9 +18,6 @@
 # limitations under the License.
 #
 
-
-import os
-import sys
 import yaml
 
 
@@ -31,3 +28,7 @@ def read_application_definition(inputfile):
         except yaml.YAMLError as exc:
             print(exc)
     return None
+
+if __name__ == '__main__':
+    read_application_definition()
+
