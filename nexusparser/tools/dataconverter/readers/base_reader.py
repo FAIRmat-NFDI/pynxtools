@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
 
+
 class BaseReader(ABC):
     """
     The abstract class off of which to implement readers.
@@ -20,5 +21,6 @@ class BaseReader(ABC):
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         return template
+
 
 READER = BaseReader

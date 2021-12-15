@@ -16,36 +16,69 @@
 # limitations under the License.
 #
 
+import os
 import pytest
 import logging
-
 from nomad.datamodel import EntryArchive
 
 import sys
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
+from nexusparser.tools import read_nexus
 from nexusparser import NexusParser
-
 
 @pytest.fixture
 def parser():
     return NexusParser()
 
 
+def test_read_nexus():
+    localDir = os.path.abspath(os.path.dirname(__file__))
+    example_data = os.path.join(localDir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    handler = logging.FileHandler(os.path.join(localDir, 'data/read_nexus_test.log'), 'w')
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    nexus_helper = read_nexus.HandleNexus(logger, [example_data])
+    nexus_helper.process_nexus_master_file(None)
+
+    # check logging result
+    with open(os.path.join(localDir, 'data/read_nexus_test.log'), "r") as file:
+        number_of_lines = len(file.readlines())
+        file.seek(0)
+        sum_char_values = sum(map(ord, file.read()))
+    assert number_of_lines == 1653
+    assert sum_char_values == 4419958
+    print('Testing of read_nexus.py is SUCCESSFUL.')
+
+
+def test_nxdl_to_attr_obj_1(example_path,result_str): 
+    result = read_nexus.nxdl_to_attr_obj(example_path)
+    assert result.attrib['type'] == result_str, "failed on: " + example_path + "expected type: " + result_str
+
+def test_nxdl_to_attr_obj():
+    test_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
+    test_nxdl_to_attr_obj_1('NXspe:/ENTRY/NXSPE_info', "NXcollection")
+    #test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
+
+
 def test_example(parser):
     archive = EntryArchive()
-    #parser.parse('tests/data/nexus.out', archive, logging)
-    parser.parse('/home/sanya/work/FAIRmat/nexus/ARPES/201805_WSe2_arpes.nxs', archive, logging.getLogger())
-    '''
-    run = archive.section_run[0]
-    assert len(run.system) == 2
-    assert len(run.calculation) == 2
-    assert run.calculation[0].x_nexus_magic_value == 42
-    '''
+    localDir = os.path.abspath(os.path.dirname(__file__))
+    example_data = os.path.join(localDir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
+    parser.parse(example_data, archive, logging.getLogger())
+    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_sample.nx_field_pressure.nx_unit == "millibar"
+    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
+    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_name == 'energy'
+    
+
 
 if __name__ == '__main__':
+    test_read_nexus()
+    test_nxdl_to_attr_obj()
     p = parser()
     test_example(p)
-    #nexus_helper = HandleNexus(sys.argv[1:])
-    #nexus_helper.process_nexus_master_file(None)

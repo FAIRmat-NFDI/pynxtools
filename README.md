@@ -1,4 +1,4 @@
-This is not a real parser, but an nexus template on how to write one. You can fork this repository to create actual parsers.
+This is a NOMAD parser for [NEXUS](https://www.nexusformat.org/). It will read input in NEXUS format and output files and provide all information in NOMAD's unified Metainfo based Archive format.
 
 ## Get started
 
@@ -33,6 +33,53 @@ Install the remaining dev dependencies and run the tests with:
 pip install -r requirements.txt
 pytest -sv tests
 ```
+
+## Modules and their functions
+### **Metainfo**
+
+First go to the nexus metainfo directory:
+```
+cd nexusparser/metainfo
+```
+This directory have several modules/files as following:
+
+| file | function|
+|---|---|
+|[generate.py](nexusparser/metainfo/generate.py)| This module contains functionality to generate metainfo source-code from metainfo definitions.|
+|[templates/package.j2](nexusparser/metainfo/templates/package.j2)| A template to create/convert NEXUS classes with NOMAD schema.|
+|[generate_nexus.py](nexusparser/metainfo/generate_nexus.py)|This module uses the `generate.py` module and the `package.j2` template to create classes in NOMAD format, with inheritance and extension of bases classes. It will create a `meta_nexus.py` file after running.|
+|[meta_nexus.py](nexusparser/metainfo/meta_nexus.py)| This file is being created every time the generate_nexus.py script runs. It contains all base classes, application definitions, and contributed classes converted from NEXUS schema to NOMAD schema.|
+|[test_nexus.py](nexusparser/metainfo/test_nexus.py)| After the meta_nexus.py file has been created, test_nexus.py can be run to test if it is correctly structured and working as desired.|
+|[nexus.py](nexusparser/metainfo/nexus.py)| If the meta_nexus.py passes the above test, then run the following command to create/replace the current nexus.py file: ```cp meta_nexus.py nexus.py```. It is important that only, after testing meta_nexus.py and being sure that it is working appropriately, create nexus.py. Because nexus_py will be used by the actual parser later.|
+
+### **Tools**
+This module contains several tools that are necessary to read user-specific experimental data and parse them into NOMAD.
+
+**1. Read_nexus**
+
+First go to the nexus tools directory:
+```
+cd nexusparser/tools
+```
+
+The module `read_nexus.py` reads HDF5 data file (i.e it is a user-specific data file, which contains numerical and metadata about the experiment. And it is formatted in NEXUS style.)
+
+<span style="color:red">*The environmental variable called "NEXUS_DEF_PATH" should be set to the directory, which contains application definitions as XML files. If this environmental variable is not defined, then code will first clone a directory from GitHub, which contains application definitions.*</span>
+
+To set environmental variable, you can do:
+```
+export 'NEXUS_DEF_PATH'=<folder_path_that_contains_app_defs>
+```
+
+***Testing read_nexus***
+
+Following example dataset can be used to test `read_nexus.py` module `tests/data/nexus_test_data/201805_WSe2_arpes.nxs`. This is angular resolved photoelectron spectroscopy (ARPES) dataset and it is formatted according to the [NXarpes application definition of NEXUS](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes). Run the following command to test the `read_nexus.py` using example ARPES dataset:
+```
+python test_parser.py
+```
+*You should get "Testing of read_nexus.py is SUCCESSFUL." message, if everything goes as expected!*
+
+
 
 ## Next steps
 
