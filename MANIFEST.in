@@ -1,0 +1,3 @@
+recursive-include nexusparser/definitions/base_classes/ *.xml
+recursive-include nexusparser/definitions/applications/ *.xml
+recursive-include nexusparser/definitions/contributed_definitions/ *.xml

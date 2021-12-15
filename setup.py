@@ -17,9 +17,14 @@
 #
 
 from setuptools import setup, find_packages
+import os
 
 
 def main():
+    for nexus_definition_dir in ("/./", "/base_classes/", "/applications/", "/contributed_definitions/"):
+        f = open(os.path.abspath(os.path.dirname(__file__)) + "/nexusparser/definitions/" + nexus_definition_dir + "__init__.py", "a")
+        f.close()
+
     setup(
         name='nexusparser',
         version='1.0',
@@ -27,6 +32,7 @@ def main():
         author='The NOMAD Authors',
         license='APACHE 2.0',
         packages=find_packages(exclude=['tests']),
+        include_package_data=True,
         install_requires=['nomad-lab'])
 
 
