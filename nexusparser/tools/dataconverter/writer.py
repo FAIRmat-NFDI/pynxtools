@@ -148,10 +148,11 @@ class Writer:
 
                 dataset = grp.create_dataset(entry_name, data=data)
                 units_key = f"{path}/units"
-                if units_key in self.data and self.data[units_key] is not None:
-                    dataset.attrs["units"] = self.data[units_key]
-                else:
-                    raise Exception(f"Units should be supplied for: {path}")
+                if units_key in self.data:
+                    if self.data[units_key] is not None:
+                        dataset.attrs["units"] = self.data[units_key]
+                    else:
+                        raise Exception(f"Units should be supplied for: {path}")
             else:
                 dataset = self.ensure_and_get_parent_node(path)
                 dataset.attrs[entry_name[1:]] = data
