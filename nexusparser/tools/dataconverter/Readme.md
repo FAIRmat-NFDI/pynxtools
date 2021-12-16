@@ -94,6 +94,15 @@ Example:
 }
 ```
 
+**Units**: If there is a field defined in the NXDL, the converter expects a filled in /data/@units entry in the template dictionary corresponding to the right /data field unless it is specified as NX_UNITLESS in the NXDL. Otherwise, you will get an exception.
+
+```json
+{
+    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data": "None",
+    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units": "Should be set to a string value"
+}
+```
+
 In case the NXDL does not define a ```name``` for the group the requested data belongs to, the template dictionary will list it as ```/NAME_IN_NXDL[name_in_output_nexus]```
 You can choose any name you prefer instead of the suggested name. This allows the reader function to repeat groups defined in the NXDL to be outputted to the Nexus file.
 
