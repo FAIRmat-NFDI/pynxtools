@@ -1,0 +1,28 @@
+{
+    "editor.rulers": [90],
+    "editor.renderWhitespace": "all",
+    "editor.tabSize": 4,
+    "[javascript]": {
+        "editor.tabSize": 2
+    },
+    "files.trimTrailingWhitespace": true,
+    "python.linting.pylintArgs": [
+        "--load-plugins=pylint_mongoengine",
+    ],
+    "python.linting.pycodestylePath": "pycodestyle",
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.pycodestyleArgs": ["--ignore=E501,E701,E731"],
+    "python.linting.mypyEnabled": false,
+    "python.linting.mypyArgs": [
+        "--ignore-missing-imports",
+        "--follow-imports=silent",
+        "--no-strict-optional"
+    ],
+    "python.linting.pylintEnabled": false,
+    "python.linting.enabled": true,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
