@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-
 from typing import cast, Any
 import pytest
 
