@@ -19,8 +19,8 @@
 #
 
 import sys
-sys.path.insert(0, '..')
 import read_nexus
+sys.path.insert(0, '..')
 
 
 def nx_name_type_resolving(tmp):

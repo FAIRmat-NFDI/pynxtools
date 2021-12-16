@@ -21,23 +21,20 @@
 import platform
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import click
 from yaml2nxdl_read_yml_appdef import read_application_definition
 from yaml2nxdl_recursive_build import recursive_build
-import click
 
 
 def pretty_print_xml(xml_root, output_xml):
     """
-    #Print better human-readable idented and formatted xml file using built-in libraries and add preceding XML processing instruction
+    #Print better human-readable idented and formatted xml file
+    #using built-in libraries and add preceding XML processing instruction
     """
-    # lack of "xml_declaration" for python <= 3.7
-    try:
-        dom = minidom.parseString(ET.tostring(
-            xml_root, encoding="UTF-8", xml_declaration=True, method="xml"))
-    except platform.python_version() <= 3.7:
-        dom = minidom.parseString(ET.tostring(
-            xml_root, encoding="UTF-8", method="xml"))
-    pi = dom.createProcessingInstruction('xml-stylesheet', 'type="text/xsl" href="nxdlformat.xslt"')
+
+    dom = minidom.parseString(ET.tostring(xml_root, encoding="UTF-8", method="xml"))
+    pi = dom.createProcessingInstruction(
+        'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xslt"')
     root = dom.firstChild
     dom.insertBefore(pi, root)
     xml_string = dom.toprettyxml()
