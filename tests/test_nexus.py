@@ -139,3 +139,5 @@ def test_use_nexus_metainfo_reflectivly(path):
 
         parent_object = new_object
         parent_definition = section_definition
+#
+
