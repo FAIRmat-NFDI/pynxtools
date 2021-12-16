@@ -25,8 +25,9 @@ import sys
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
-from nexusparser.tools import read_nexus
-from nexusparser import NexusParser
+from nexusparser.tools import read_nexus  # noqa: E402
+from nexusparser import NexusParser  # noqa: E402
+
 
 @pytest.fixture
 def parser():
@@ -56,14 +57,16 @@ def test_read_nexus():
     print('Testing of read_nexus.py is SUCCESSFUL.')
 
 
-def test_nxdl_to_attr_obj_1(example_path,result_str): 
+@pytest.mark.skip(reason="not to test it alone")
+def testing_nxdl_to_attr_obj_1(example_path, result_str):
     result = read_nexus.nxdl_to_attr_obj(example_path)
     assert result.attrib['type'] == result_str, "failed on: " + example_path + "expected type: " + result_str
 
+
 def test_nxdl_to_attr_obj():
-    test_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
-    test_nxdl_to_attr_obj_1('NXspe:/ENTRY/NXSPE_info', "NXcollection")
-    #test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
+    testing_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
+    testing_nxdl_to_attr_obj_1('NXspe:/ENTRY/NXSPE_info', "NXcollection")
+    # test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
 
 
 def test_example(parser):
@@ -71,14 +74,20 @@ def test_example(parser):
     localDir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(localDir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
     parser.parse(example_data, archive, logging.getLogger())
-    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_sample.nx_field_pressure.nx_unit == "millibar"
-    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
-    assert archive.nexus.nx_application_arpes.nx_group_entry.nx_group_instrument.nx_group_monochromator.nx_field_energy.nx_name == 'energy'
-    
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_unit == "millibar"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.m_def.nx_units == "NX_PRESSURE"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_MONOCHROMATOR[0].nx_field_energy.nx_value == 36.49699020385742
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_MONOCHROMATOR[0].nx_field_energy.nx_name == 'energy'
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_name == "delays"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_name == "energies"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_unit == "1/Å"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_unit == "fs"
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_unit == "eV"
 
 
 if __name__ == '__main__':
-    test_read_nexus()
-    test_nxdl_to_attr_obj()
+    # test_read_nexus()
+    # test_nxdl_to_attr_obj()
     p = parser()
     test_example(p)

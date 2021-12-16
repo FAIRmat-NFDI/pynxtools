@@ -7,5 +7,5 @@ pycodestyle
 pytest==3.10.0
 pytest-timeout
 pytest-cov==2.7.1
-h5py
+h5py==3.6.0
 python-json-logger

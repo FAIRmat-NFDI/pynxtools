@@ -1,0 +1,3 @@
+[submodule "nexusparser/definitions"]
+	path = nexusparser/definitions
+	url = https://github.com/FAIRmat-Experimental/nexus_definitions.git

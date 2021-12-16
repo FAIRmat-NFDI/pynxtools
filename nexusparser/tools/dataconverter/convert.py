@@ -66,7 +66,7 @@ def generate_template_from_nxdl(root, path, template):
 
     # Only add units if it is a field and the the units are not set to NX_UNITLESS
     if tag == "field" and "units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS":
-        template[f"{path}/units"] = None
+        template[f"{path}/@units"] = None
 
     for child in root:
         generate_template_from_nxdl(child, path, template)
@@ -91,7 +91,7 @@ def get_names_of_all_readers():
 
 @click.command()
 @click.option(
-    '--input_file',
+    '--input-file',
     default=['example.data'],
     multiple=True,
     help='The path to the input data file to read. (Repeat for more than one file.)'

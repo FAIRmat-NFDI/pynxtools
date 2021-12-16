@@ -136,7 +136,7 @@ class Writer:
         self.output_nexus = h5py.File(self.output_path, "w")
 
         for path, value in self.data.items():
-            if path[path.rindex('/') + 1:] == 'units':
+            if path[path.rindex('/') + 1:] == '@units':
                 continue
 
             entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
@@ -147,12 +147,12 @@ class Writer:
                 grp = self.ensure_and_get_parent_node(path)
 
                 dataset = grp.create_dataset(entry_name, data=data)
-                units_key = f"{path}/units"
+                units_key = f"{path}/@units"
                 if units_key in self.data:
                     if self.data[units_key] is not None:
                         dataset.attrs["units"] = self.data[units_key]
                     else:
-                        raise Exception(f"Units should be supplied for: {path}")
+                        raise Exception(f"Units should be supplied at: {path}/{units_key}")
             else:
                 dataset = self.ensure_and_get_parent_node(path)
                 dataset.attrs[entry_name[1:]] = data

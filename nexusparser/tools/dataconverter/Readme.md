@@ -10,7 +10,7 @@ user@box:~$ python convert.py
 Usage: convert.py [OPTIONS]
 
 Options:
-  --input_file TEXT    The path to the input data file to read. (Repeat for
+  --input-file TEXT    The path to the input data file to read. (Repeat for
                        more than one file.)
 
   --reader TEXT        The reader to use.
@@ -30,7 +30,18 @@ user@box:~$ python convert.py --nxdl nxdl --input_file metadata --input_file dat
 
 ## Installation
 
-This tool requires having the parent package installed i.e. "nexusparser".
+1, Clone the repo using: git clone https://github.com/nomad-coe/nomad-parser-nexus.git --recursive\
+2. From the root folder where the setup.py exists, run: pip install -e .
+
+```console
+user@box:~$ git clone https://github.com/nomad-coe/nomad-parser-nexus.git --recursive
+user@box:~$ cd nomad-parser-nexus
+user@box:~$ git checkout data-converter
+user@box:~$ pip install -e .
+user@box:~$ cd nexusparser/tools/dataconverter
+```
+
+For now, I have made sure that this tools works on this branch.
 
 ## Writing a Reader
 
@@ -66,8 +77,7 @@ READER = MyDataReader
 ```
 
 This function takes a template dictionary based on the provided NXDL file (similar to ```--generate-template```) and the list of all the file paths the user provides with ```--input```.
-The returned dictionary should contain keys that correspond to paths in the NXDL and the output Nexus file as defined below. The values of these keys have to be data objects to be populated 
-in the output Nexus file.
+The returned dictionary should contain keys that correspond to paths in the NXDL and the output Nexus file as defined below. The values of these keys have to be data objects to be populated in the output Nexus file.
 
 Save the ```MyDataReader``` snippet as ```my_data_reader.py```. Then you can then call this using:
 ```console
@@ -81,6 +91,15 @@ Example:
 ```json
 {
     "/entry/instrument/source/type": "None"
+}
+```
+
+**Units**: If there is a field defined in the NXDL, the converter expects a filled in /data/@units entry in the template dictionary corresponding to the right /data field unless it is specified as NX_UNITLESS in the NXDL. Otherwise, you will get an exception.
+
+```json
+{
+    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data": "None",
+    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units": "Should be set to a string value"
 }
 ```
 
