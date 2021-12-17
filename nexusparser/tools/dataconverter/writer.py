@@ -93,7 +93,7 @@ class Writer:
         self.data = data
         self.nxdl_path = nxdl_path
         self.output_path = output_path
-        self.output_nexus = None
+        self.output_nexus = h5py.File(self.output_path, "w")
         self.data = data
         self.nxdl_name = re.search("NX[a-z]*(?=.nxdl.xml)", self.nxdl_path).group(0)
         self.nxdl_data = ET.parse(self.nxdl_path).getroot()
@@ -133,8 +133,6 @@ class Writer:
 
     def write(self):
         """Writes the Nexus file with data from the reader and appropriate attrs."""
-        self.output_nexus = h5py.File(self.output_path, "w")
-
         for path, value in self.data.items():
             if path[path.rindex('/') + 1:] == '@units':
                 continue

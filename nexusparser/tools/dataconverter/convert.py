@@ -1,17 +1,22 @@
 """This script runs the conversion routine using a selected reader and write out a Nexus file."""
 
+import glob
 import importlib.machinery
 import importlib.util
 import json
 import logging
 import os
 import sys
+from typing import List, Tuple, Dict
 import xml.etree.ElementTree as ET
-from typing import Tuple
 
 import click
 
-from writer import Writer
+from nexusparser.tools.dataconverter.writer import Writer
+
+logger = logging.getLogger(__name__)  # pylint: disable=C0103
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 # Nexus related functions to be exported in a common place for all tools
@@ -82,11 +87,11 @@ def get_reader(reader_name):
     return module.READER
 
 
-def get_names_of_all_readers():
+def get_names_of_all_readers() -> List[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
-    files = next(os.walk(f"{path_prefix}readers/"), (None, None, []))[2]
-    return [file.split('_reader.py')[0] for file in files]
+    files = glob.glob(f"{path_prefix}/readers/*.py")
+    return [file.split('_reader.py')[0][file.rindex("/") + 1:] for file in files]
 
 
 @click.command()
@@ -124,7 +129,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     # Reading in the NXDL and generating a template
     tree = ET.parse(nxdl)
 
-    template = {}
+    template: Dict[str, str] = {}
     root = get_first_group(tree.getroot())
     generate_template_from_nxdl(root, '', template)
     if generate_template:
@@ -138,7 +143,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     logger.info("Using %s reader to convert the given files: %s ", reader, print_input_files)
 
     reader = get_reader(reader)
-    data = reader().read(template=template, file_paths=input_file)
+    data = reader().read(template=template, file_paths=input_file)  # type: ignore[operator]
 
     logger.debug("The following data was read: %s", json.dumps(template, indent=4, sort_keys=True))
 
@@ -149,7 +154,4 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
 
 
 if __name__ == '__main__':
-    logger = logging.getLogger(__name__)  # pylint: disable=C0103
-    logger.setLevel(logging.INFO)
-    logger.addHandler(logging.StreamHandler(sys.stdout))
     convert()  # pylint: disable=no-value-for-parameter

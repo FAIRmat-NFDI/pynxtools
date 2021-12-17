@@ -54,7 +54,7 @@ Then implement the reader function:
 """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
 from typing import Tuple
 
-from readers.base_reader import BaseReader
+from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
 
 
 class MyDataReader(BaseReader):

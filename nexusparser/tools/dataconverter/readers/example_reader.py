@@ -1,7 +1,7 @@
 """An example reader implementation for the DataConverter."""
 from typing import Tuple
 
-from readers.base_reader import BaseReader
+from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
 
 
 class ExampleReader(BaseReader):
