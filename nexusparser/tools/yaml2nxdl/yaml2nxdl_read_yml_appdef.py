@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Function to read a yaml file
+"""
 # -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
@@ -22,6 +25,9 @@ import yaml
 
 
 def read_application_definition(inputfile):
+    """
+    Yaml module based reading of .yml file
+    """
     with open(inputfile) as stream:
         try:
             return yaml.safe_load(stream)

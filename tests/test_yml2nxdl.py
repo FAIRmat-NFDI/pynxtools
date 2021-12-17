@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+#This tool accomplishes some tests for the yaml2nxdl parser
+"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -27,17 +30,18 @@ import yaml2nxdl
 sys.path.insert(0, '../nexusparser/tools')
 sys.path.insert(0, '../nexusparser/tools/yaml2nxdl')
 
-runner = CliRunner()
-localDir = os.path.abspath(os.path.dirname(__file__))
+LOCALDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 @pytest.fixture
 def test_links():
-
+    """
+    # first test: check the correct parsing of links
+    """
     # Files
-    ref_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXtest_links.nxdl.xml')
+    ref_xml_link_file = os.path.join(LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXtest_links.nxdl.xml')
     test_yml_link_file = 'data/yaml2nxdl_test_data/NXtest_links.yml'
-    test_xml_link_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXtest_links.nxdl.xml')
+    test_xml_link_file = os.path.join(LOCALDIR, 'data/yaml2nxdl_test_data/NXtest_links.nxdl.xml')
     test_match_string = '<link>'
 
     # Reference file is called
@@ -64,11 +68,15 @@ def test_links():
 
 
 def test_symbols():
-
+    """
+    # second test: check the correct parsing of symbols
+    """
     # Files
-    ref_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/Ref_NXnested_symbols.nxdl.xml')
+    ref_xml_symbol_file = os.path.join(
+        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXnested_symbols.nxdl.xml')
     test_yml_symbol_file = 'data/yaml2nxdl_test_data/NXnested_symbols.yml'
-    test_xml_symbol_file = os.path.join(localDir, 'data/yaml2nxdl_test_data/NXnested_symbols.nxdl.xml')
+    test_xml_symbol_file = os.path.join(
+        LOCALDIR, 'data/yaml2nxdl_test_data/NXnested_symbols.nxdl.xml')
     test_match_string = '<symbol>'
 
     # Reference file is called

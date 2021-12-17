@@ -3,6 +3,7 @@
 
 import os
 import h5py
+import xml.etree.ElementTree as ET
 import sys
 from lxml import etree, objectify
 import logging
@@ -101,41 +102,72 @@ def get_nx_classes():
     return nx_clss
 
 
+# def get_nx_units():
+#     filepath = nexusDefPath + '/nxdlTypes.xsd'
+#     with open(filepath, 'r') as file:
+#         xsd_file = file.readlines()
+#         for i, line in enumerate(xsd_file):
+#             if 'name="anyUnitsAttr"' in line:
+#                 num_lines = sum(1 for line in open(filepath))
+#                 nx_units = []
+#                 flag = False
+#                 for j in range(i + 1, num_lines):
+#                     if 'nxdl:' in xsd_file[j]:
+#                         flag = True
+#                         nx_units = nx_units + [xsd_file[j][8:-1]]
+#                     elif 'nxdl:' not in xsd_file[j] and flag is True:
+#                         break
+#                 break
+#     return nx_units
+
+
 def get_nx_units():
+    """
+    # read unit kinds from the Nexus definition/nxdlTypes.xsd file
+    """
     filepath = nexusDefPath + '/nxdlTypes.xsd'
-    with open(filepath, 'r') as file:
-        xsd_file = file.readlines()
-        for i, line in enumerate(xsd_file):
-            if 'name="anyUnitsAttr"' in line:
-                num_lines = sum(1 for line in open(filepath))
-                nx_units = []
-                flag = False
-                for j in range(i + 1, num_lines):
-                    if 'nxdl:' in xsd_file[j]:
-                        flag = True
-                        nx_units = nx_units + [xsd_file[j][8:-1]]
-                    elif 'nxdl:' not in xsd_file[j] and flag is True:
-                        break
-                break
+    tree = ET.parse(filepath)
+    root = tree.getroot()
+    units_and_type_list = []
+    for child in root:
+        for i in child.attrib.values():
+            units_and_type_list.append(i)
+    flag = False
+    for line in units_and_type_list:
+        if line == 'anyUnitsAttr':
+            flag = True
+            nx_units = []
+        elif 'NX' in line and flag is True:
+            nx_units.append(line)
+        elif line == 'primitiveType':
+            flag = False
+        else:
+            pass
     return nx_units
 
 
 def get_nx_attribute_type():
+    """
+    # read attribute types from the Nexus definition/nxdlTypes.xsd file
+    """
     filepath = nexusDefPath + '/nxdlTypes.xsd'
-    with open(filepath, 'r') as file:
-        xsd_file = file.readlines()
-        for i, line in enumerate(xsd_file):
-            if 'name="primitiveType"' in line:
-                num_lines = sum(1 for line in open(filepath))
-                nx_types = []
-                flag = False
-                for j in range(i + 1, num_lines):
-                    if 'nxdl:' in xsd_file[j]:
-                        flag = True
-                        nx_types = nx_types + [xsd_file[j][8:-1]]
-                    elif 'nxdl:' not in xsd_file[j] and flag is True:
-                        break
-                break
+    tree = ET.parse(filepath)
+    root = tree.getroot()
+    units_and_type_list = []
+    for child in root:
+        for i in child.attrib.values():
+            units_and_type_list.append(i)
+    flag = False
+    for line in units_and_type_list:
+        if line == 'primitiveType':
+            flag = True
+            nx_types = []
+        elif 'NX' in line and flag is True:
+            nx_types.append(line)
+        elif line == 'anyUnitsAttr':
+            flag = False
+        else:
+            pass
     return nx_types
 
 

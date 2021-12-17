@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Some utilities used in recursive_build function
+"""
 # -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
@@ -43,8 +46,8 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
-nx_clss = read_nexus.get_nx_classes()
-nx_type_keys = read_nexus.get_nx_attribute_type()
-nx_attr_idnt = '\\@'
-nx_unit_idnt = 'unit'
-nx_unit_typs = read_nexus.get_nx_units()
+NX_CLSS = read_nexus.get_nx_classes()
+NX_TYPE_KEYS = read_nexus.get_nx_attribute_type()
+NX_ATTR_IDNT = '\\@'
+NX_UNIT_IDNT = 'unit'
+NX_UNIT_TYPS = read_nexus.get_nx_units()
