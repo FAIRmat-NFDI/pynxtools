@@ -26,7 +26,8 @@ from datetime import datetime
 from pathlib import Path
 import pytest
 from click.testing import CliRunner
-import yaml2nxdl
+import nexusparser.tools.yaml2nxdl.yaml2nxdl as yaml2nxdl
+
 sys.path.insert(0, '../nexusparser/tools')
 sys.path.insert(0, '../nexusparser/tools/yaml2nxdl')
 

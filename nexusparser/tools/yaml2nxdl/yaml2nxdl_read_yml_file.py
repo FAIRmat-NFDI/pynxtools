@@ -24,7 +24,7 @@ Function to read a yaml file
 import yaml
 
 
-def read_application_definition(inputfile):
+def yml_reader(inputfile):
     """
     Yaml module based reading of .yml file
     """

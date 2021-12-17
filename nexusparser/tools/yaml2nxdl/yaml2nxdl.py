@@ -23,12 +23,20 @@
 # limitations under the License.
 #
 
+# pylint: disable=E1101
+
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
-from yaml2nxdl_read_yml_appdef import read_application_definition
-from yaml2nxdl_recursive_build import recursive_build
-from yaml2nxdl_recursive_build import xml_handle_symbols
+
+from . import yaml2nxdl_read_yml_file as read
+from . import yaml2nxdl_recursive_build as recursive_build
+
+# from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file as read
+# from nexusparser.tools.yaml2nxdl import yaml2nxdl_recursive_build as recursive_build
+
+# import yaml2nxdl_read_yml_file as read
+# import yaml2nxdl_recursive_build as recursive_build
 
 
 def pretty_print_xml(xml_root, output_xml):
@@ -58,16 +66,16 @@ def yaml2nxdl(input_file: str):
     namespace and schema, then evaluates a dictionary
     nest of groups recursively and fields or (their) attributes as childs of the groups
     """
-    yml_appdef = read_application_definition(input_file)
+    yml_appdef = read.yml_reader(input_file)
 
     print('input-file: ' + input_file)
     print('application/base contains the following root-level entries:')
     print(list(yml_appdef.keys()))
     xml_root = ET.Element(
         'definition', {
-            ET.QName("xmlns"): 'http://definition.nexusformat.org/nxdl/3.1',
-            ET.QName("xmlns:xsi"): 'http://www.w3.org/2001/XMLSchema-instance',
-            ET.QName("xsi:schemaLocation"): 'http://www.w3.org/2001/XMLSchema-instance'
+            'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
+            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            'xsi:schemaLocation': 'http://www.w3.org/2001/XMLSchema-instance'
         }
     )
 
@@ -92,7 +100,7 @@ def yaml2nxdl(input_file: str):
     del yml_appdef['doc']
 
     if 'symbols' in yml_appdef.keys():
-        xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        recursive_build.xml_handle_symbols(xml_root, yml_appdef['symbols'])
         del yml_appdef['symbols']
 
     assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
@@ -102,7 +110,7 @@ def yaml2nxdl(input_file: str):
         keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
 
-    recursive_build(xml_root, yml_appdef[keyword])
+    recursive_build.recursive_build(xml_root, yml_appdef[keyword])
 
     pretty_print_xml(xml_root, input_file[:-4] + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
