@@ -21,9 +21,12 @@ import os
 
 
 def main():
-    for nexus_definition_dir in ("/./", "/base_classes/", "/applications/", "/contributed_definitions/"):
-        f = open(os.path.abspath(os.path.dirname(__file__)) + "/nexusparser/definitions/" + nexus_definition_dir + "__init__.py", "a")
-        f.close()
+    try:
+        for nexus_definition_dir in ("/./", "/base_classes/", "/applications/", "/contributed_definitions/"):
+            f = open(os.path.abspath(os.path.dirname(__file__)) + "/nexusparser/definitions/" + nexus_definition_dir + "__init__.py", "a")
+            f.close()
+    except FileNotFoundError:
+        pass
 
     setup(
         name='nexusparser',
@@ -32,6 +35,12 @@ def main():
         author='The NOMAD Authors',
         license='APACHE 2.0',
         packages=find_packages(exclude=['tests']),
+        package_data={
+            'nexusparser.definitions.base_classes': ['*.xml'],
+            'nexusparser.definitions.applications': ['*.xml'],
+            'nexusparser.definitions.contributed_definitions': ['*.xml'],
+            'nexusparser.definitions': ['*.xsd']
+        },
         include_package_data=True,
         install_requires=['nomad-lab'])
 
