@@ -1,31 +1,35 @@
-import numpy as np
 import h5py 
-from typing import Tuple
-from base_reader import BaseReader
-import yaml
+from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
 import pprint
+import os
 
-
-class Reader(BaseReader):
+class MPESReader(BaseReader):
     
-    def read(template, input_file): #For the case of one input file
-        with h5py.File(input_file, 'r') as f:
+    def read(self, template, file_paths):
 
-            metadata= dict(f.attrs.items())
+        for file_path in file_paths:
+            add_path= '' if os.path.exists(file_path) else 'readers\\input_files\\' 
+            file= add_path+file_path
+            file_name= file.split('\\')[-1]
 
-            for path in template:
-                path_trunc= path.split('/')[-1]
+            if file_name == 'fixed_metadata.h5':
 
-                if path_trunc in metadata:
-                    template[path]= metadata[path_trunc]
+                with h5py.File(file, 'r') as f:
+                    metadata= dict(f.attrs.items())
+
+                    for path in template:
+
+                        if path in metadata:
+                            template[path]= metadata[path]
+
+            elif file_name == 'binned.h5':
+                pass
                     
         return template
 
 
 
-
-READER = Reader
-# pprint.pprint(READER.read(template, "fixed_metadata.h5"))
+READER = MPESReader
 
 
 

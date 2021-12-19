@@ -95,7 +95,7 @@ class Writer:
         self.output_path = output_path
         self.output_nexus = None
         self.data = data
-        self.nxdl_name = re.search("NX[a-z]*(?=.nxdl.xml)", self.nxdl_path).group(0)
+        self.nxdl_name = re.search("NX[a-z_]*(?=.nxdl.xml)", self.nxdl_path).group(0)
         self.nxdl_data = ET.parse(self.nxdl_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
