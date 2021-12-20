@@ -21,10 +21,7 @@ Some utilities used in recursive_build function
 # limitations under the License.
 #
 
-# import sys
-from .. import read_nexus
-# sys.path.insert(0, '..')
-# import read_nexus
+from nexusparser.tools import read_nexus
 
 
 def nx_name_type_resolving(tmp):

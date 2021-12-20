@@ -102,25 +102,6 @@ def get_nx_classes():
     return nx_clss
 
 
-# def get_nx_units():
-#     filepath = nexusDefPath + '/nxdlTypes.xsd'
-#     with open(filepath, 'r') as file:
-#         xsd_file = file.readlines()
-#         for i, line in enumerate(xsd_file):
-#             if 'name="anyUnitsAttr"' in line:
-#                 num_lines = sum(1 for line in open(filepath))
-#                 nx_units = []
-#                 flag = False
-#                 for j in range(i + 1, num_lines):
-#                     if 'nxdl:' in xsd_file[j]:
-#                         flag = True
-#                         nx_units = nx_units + [xsd_file[j][8:-1]]
-#                     elif 'nxdl:' not in xsd_file[j] and flag is True:
-#                         break
-#                 break
-#     return nx_units
-
-
 def get_nx_units():
     """
     # read unit kinds from the Nexus definition/nxdlTypes.xsd file

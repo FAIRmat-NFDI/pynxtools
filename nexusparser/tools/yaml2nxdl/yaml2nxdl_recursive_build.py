@@ -22,12 +22,7 @@ Creates an instantiated NXDL schema XML tree by walking the dictionary nest
 #
 
 import xml.etree.ElementTree as ET
-
-from . import yaml2nxdl_utils
-
-# from nexusparser.tools.yaml2nxdl import yaml2nxdl_utils
-
-# import yaml2nxdl_utils
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_utils
 
 
 def xml_handle_doc(obj, value: str):

@@ -29,14 +29,8 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
 
-from . import yaml2nxdl_read_yml_file as read
-from . import yaml2nxdl_recursive_build as recursive_build
-
-# from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file as read
-# from nexusparser.tools.yaml2nxdl import yaml2nxdl_recursive_build as recursive_build
-
-# import yaml2nxdl_read_yml_file as read
-# import yaml2nxdl_recursive_build as recursive_build
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file as read
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_recursive_build as recursive_build
 
 
 def pretty_print_xml(xml_root, output_xml):
