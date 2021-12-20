@@ -463,7 +463,7 @@ def nxdl_to_attr_obj(nxdlPath):
     returns attr as a Python obj that can be directly placed into the h5py library
     """
     nxdef = nxdlPath.split(':')[0]
-    root = objectify.parse('C:\\Users\\Abeer Arora\\nomad-parser-nexus\\nexusparser\\tools\\definitions\\applications\\'+ nxdef + ".nxdl.xml")
+    root = objectify.parse('C:\\Users\\Abeer Arora\\nomad-parser-nexus\\nexusparser\\definitions\\applications\\'+ nxdef + ".nxdl.xml")
     elem = root.getroot()
     path = nxdlPath.split(':')[1]
     for group in path.split('/')[1:]:
