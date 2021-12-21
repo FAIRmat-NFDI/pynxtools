@@ -108,6 +108,10 @@ class Writer:
         elem = self.nxdl_data
         elem = read_nexus.nxdl_to_attr_obj(f"{self.nxdl_name}:{path_nxdl}")
 
+        if elem is None:
+            raise Exception(f"Attributes were not found for {path}."
+                            "Please check this entry in the template dictionary.")
+
         # Remove the name attribute as we only use it to name the HDF5 entry
         if "name" in elem.attrib.keys():
             del elem.attrib["name"]
