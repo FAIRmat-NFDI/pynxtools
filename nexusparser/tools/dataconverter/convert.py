@@ -80,7 +80,7 @@ def generate_template_from_nxdl(root, path, template):
 def get_reader(reader_name):
     """Helper function to get the reader object from it's given name"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
-    path = f"{path_prefix}readers/{reader_name}_reader.py"
+    path = os.path.join(path_prefix, "readers/", f"{reader_name}_reader.py")
     spec = importlib.util.spec_from_file_location(f"{reader_name}_reader.py", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -90,7 +90,7 @@ def get_reader(reader_name):
 def get_names_of_all_readers() -> List[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
-    files = glob.glob(f"{path_prefix}/readers/*.py")
+    files = glob.glob(os.path.join(path_prefix, "readers/*.py"))
     return [file.split('_reader.py')[0][file.rindex("/") + 1:] for file in files]
 
 
