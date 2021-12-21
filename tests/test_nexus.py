@@ -24,7 +24,7 @@ from nomad.metainfo import Definition, MSection, Section
 from nexusparser.metainfo import nexus
 from nomad.datamodel import EntryArchive
 
-from nexusparser.tools import read_nexus
+from nexusparser.tools import nexus
 
 
 @pytest.mark.parametrize('path,value', [
@@ -150,17 +150,17 @@ def test_get_nexus_classes_units_attributes():
     # Nexus classes (base_classes)
     # Nexus units (memberTypes)
     # Nexus attribute type (primitiveTypes)
-    # the tested functions can be found in read_nexus.py file
+    # the tested functions can be found in nexus.py file
     """
 
     # Test 1
-    nexus_classes_list = read_nexus.get_nx_classes
+    nexus_classes_list = nexus.get_nx_classes
     assert 'NXbeam' in nexus_classes_list
 
     # Test 2
-    nexus_units_list = read_nexus.get_nx_units
+    nexus_units_list = nexus.get_nx_units
     assert 'NX_TEMPERATURE' in nexus_units_list
 
     # Test 3
-    nexus_attribute_list = read_nexus.get_nx_attribute_type
+    nexus_attribute_list = nexus.get_nx_attribute_type
     assert 'NX_FLOAT' in nexus_attribute_list

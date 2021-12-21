@@ -26,7 +26,7 @@ from nomad.parsing import MatchingParser
 from nomad.parsing.file_parser import TextParser, Quantity
 
 from . import metainfo  # pylint: disable=unused-import
-from nexusparser.tools import read_nexus
+from nexusparser.tools import nexus as read_nexus
 from nexusparser.metainfo import nexus
 
 import sys
