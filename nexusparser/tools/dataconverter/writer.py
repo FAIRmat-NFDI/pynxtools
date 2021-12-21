@@ -131,7 +131,7 @@ class Writer:
             grp = parent.create_group(parent_path_hdf5)
             attrs = self.__nxdl_to_attrs(parent_path)
             if attrs is not None:
-                grp.attrs['NX_CLASS'] = attrs["type"]
+                grp.attrs['NX_class'] = attrs["type"]
             return grp
         return self.output_nexus[parent_path_hdf5]
 
