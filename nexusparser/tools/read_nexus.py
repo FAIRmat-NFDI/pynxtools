@@ -22,7 +22,7 @@ import h5py
 try:
     # either given by sys env
     NEXUS_DEF_PATH = os.environ['NEXUS_DEF_PATH']
-except NameError:
+except BaseException:
     # or it should be available locally under the dir 'definitions'
     LOCAL_DIR = os.path.abspath(os.path.dirname(__file__))
     NEXUS_DEF_PATH = os.path.join(LOCAL_DIR, '../definitions')
@@ -57,7 +57,7 @@ def get_nxdl_entry(hdf_node):
     try:
         nxdef = entry['definition'][()]
         return nxdef.decode()
-    except NameError:
+    except BaseException:
         return 'NO Definition referenced'
 
 
@@ -66,7 +66,7 @@ def get_nx_class(nxdl_elem):
 
     try:
         return nxdl_elem.attrib['type']
-    except NameError:
+    except BaseException:
         return 'NX_CHAR'
 
 
@@ -185,7 +185,7 @@ def belongs_to(nxdl_elem, child, hdf_name):
             name_any = True
         else:
             name_any = False
-    except NameError:
+    except BaseException:
         name_any = False
     childname = get_node_name(child)
     name = hdf_name[2:].upper() if hdf_name.startswith('NX') and 'name\
@@ -394,7 +394,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
                     loger.info("@" + attr + ' [' + unit + ']')
                 elem = None
                 nxdl_path.append(attr)
-            except NameError:
+            except BaseException:
                 # otherwise try to find if units is defined as a child of the NXDL element
                 elem = get_nxdl_child(elem, attr)
                 if elem is not None:
@@ -487,7 +487,7 @@ def get_doc(node, ntype, level, nxhtml, nxpath):
     # RST documentation from the field 'doc'
     try:
         doc = node.doc.pyval
-    except NameError:
+    except BaseException:
         doc = ""
 
     # enums
@@ -533,7 +533,7 @@ def get_enums(node):
             enums = ','.join(enums)
             return (True, '[' + enums + ']')
     # if there is no enumeration tag, returns empty string
-    except NameError:
+    except BaseException:
         return (False, '')
 
 
@@ -596,7 +596,7 @@ def get_default_plotable(root, parser, logger):
     if default_nxentry_group_name:
         try:
             nxentry = root[default_nxentry_group_name]
-        except NameError:
+        except BaseException:
             nxentry = None
     if not nxentry:
         nxentries = []
@@ -620,7 +620,7 @@ def get_default_plotable(root, parser, logger):
     if default_nxdata_group_name:
         try:
             nxdata = nxentry[default_nxdata_group_name]
-        except NameError:
+        except BaseException:
             nxdata = None
     if not nxdata:
         lnxdata = []
@@ -643,7 +643,7 @@ def get_default_plotable(root, parser, logger):
     signal_dataset_name = nxdata.attrs.get("signal")
     try:
         signal = nxdata[signal_dataset_name]
-    except NameError:
+    except BaseException:
         signal = None
     if not signal:
         signals = []
@@ -707,7 +707,7 @@ def get_default_plotable(root, parser, logger):
             try:
                 ax_datasets = signal.attrs.get("axes").split(':')
                 ax_list.append(nxdata[ax_datasets[a_item]])
-            except NameError:
+            except BaseException:
                 pass
         # check for axis/primary specifications
         if not ax_list:
