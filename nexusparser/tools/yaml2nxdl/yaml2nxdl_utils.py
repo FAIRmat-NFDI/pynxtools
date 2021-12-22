@@ -21,7 +21,7 @@ Some utilities used in recursive_build function
 # limitations under the License.
 #
 
-from nexusparser.tools import read_nexus
+from nexusparser.tools import nexus
 
 
 def nx_name_type_resolving(tmp):
@@ -44,8 +44,8 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
-NX_CLSS = read_nexus.get_nx_classes()
-NX_TYPE_KEYS = read_nexus.get_nx_attribute_type()
+NX_CLSS = nexus.get_nx_classes()
+NX_TYPE_KEYS = nexus.get_nx_attribute_type()
 NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'
-NX_UNIT_TYPS = read_nexus.get_nx_units()
+NX_UNIT_TYPS = nexus.get_nx_units()
