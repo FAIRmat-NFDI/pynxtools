@@ -174,19 +174,20 @@ def recursive_build(obj, dct):
             # obj qualifies as an attribute identifier
             attr = ET.SubElement(obj, 'attribute')
             attr.set('name', keyword_name[2:])
-            assert value is dict, 'the keyword is an attribute, its value must be a dict!'
-            for kkeyword, vvalue in iter(value.items()):
-                if kkeyword == 'name':
-                    attr.set('name', vvalue)
-                elif kkeyword == 'doc':
-                    attr.set('doc', vvalue)
-                elif kkeyword == 'type':
-                    attr.set('type', vvalue.upper())
-                elif kkeyword == 'enumeration':
-                    xml_handle_enumeration(attr, vvalue)
-                else:
-                    raise ValueError(kkeyword + ' facing an unknown situation \
-                        while processing attributes of an attribute !')
+            if value is not None:
+                assert value is dict, 'the keyword is an attribute, its value must be a dict!'
+                for kkeyword, vvalue in iter(value.items()):
+                    if kkeyword == 'name':
+                        attr.set('name', vvalue)
+                    elif kkeyword == 'doc':
+                        attr.set('doc', vvalue)
+                    elif kkeyword == 'type':
+                        attr.set('type', vvalue.upper())
+                    elif kkeyword == 'enumeration':
+                        xml_handle_enumeration(attr, vvalue)
+                    else:
+                        raise ValueError(kkeyword + ' facing an unknown situation \
+                            while processing attributes of an attribute !')
         # handle special keywords (symbols),
         # assumed that you do not encounter further symbols nested inside
 
