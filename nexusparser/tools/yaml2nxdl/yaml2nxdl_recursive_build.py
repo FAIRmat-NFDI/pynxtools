@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""
-Creates an instantiated NXDL schema XML tree by walking the dictionary nest
+"""Creates an instantiated NXDL schema XML tree by walking the dictionary nest
+
 """
 # -*- coding: utf-8 -*-
 #
@@ -26,23 +26,23 @@ from nexusparser.tools.yaml2nxdl import yaml2nxdl_utils
 
 
 def xml_handle_doc(obj, value: str):
-    """
-    This function creates a 'doc' element instance, and appends it to an existing element
+    """This function creates a 'doc' element instance, and appends it to an existing element
+
     """
     doctag = ET.SubElement(obj, 'doc')
     doctag.text = value
 
 
 def xml_handle_units(obj, value):
-    """
-    This function creates a 'units' element instance, and appends it to an existing element
+    """This function creates a 'units' element instance, and appends it to an existing element
+
     """
     obj.set('units', value)
 
 
 def xml_handle_exists(obj, value):
-    """
-    This function creates an 'exists' element instance, and appends it to an existing element
+    """This function creates an 'exists' element instance, and appends it to an existing element
+
     """
     assert value is not None, 'xml_handle_exists, value must not be None!'
     if isinstance(value, list):
@@ -58,12 +58,12 @@ def xml_handle_exists(obj, value):
                 obj.set('maxOccurs', 'unbounded')
         elif len(value) == 4 and (value[0] != 'min' or value[2] != 'max'):
             raise ValueError('exists keyword needs to go either with an optional \
-                    [recommended] list with two entries either [min, <uint>] or \
-                    [max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
+[recommended] list with two entries either [min, <uint>] or \
+[max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
         else:
             raise ValueError('exists keyword needs to go either with optional, \
-                recommended, a list with two entries either [min, <uint>] or \
-                [max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
+recommended, a list with two entries either [min, <uint>] or \
+[max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
     else:
         if value == 'optional':
             obj.set('optional', 'true')
@@ -76,11 +76,11 @@ def xml_handle_exists(obj, value):
 
 
 def xml_handle_dimensions(obj, value: dict):
-    """
-    This function creates a 'dimensions' element instance, and appends it to an existing element
+    """This function creates a 'dimensions' element instance, and appends it to an existing element
+
     """
     assert 'rank' in value.keys() and 'dim' in value.keys(), 'xml_handle_dimensions \
-        rank and/or dim not keys in value dict!'
+rank and/or dim not keys in value dict!'
     dims = ET.SubElement(obj, 'dimensions')
     dims.set('rank', str(value['rank']))
     for element in value['dim']:
@@ -91,13 +91,14 @@ def xml_handle_dimensions(obj, value: dict):
         dim.set('value', str(element[1]))
         if len(element) == 3:
             assert element[2] == 'optional', 'xml_handle_dimensions element is \
-                a list with unexpected number of entries!'
+a list with unexpected number of entries!'
             dim.set('required', 'false')
 
 
 def xml_handle_enumeration(obj, value: list):
-    """
-    This function creates an 'enumeration' element instance, and appends it to an existing element
+    """This function creates an 'enumeration' element instance,
+and appends it to an existing element
+
     """
     enum = ET.SubElement(obj, 'enumeration')
     assert len(value) >= 1, 'xml_handle_enumeration, value must not be an empty list!'
@@ -107,8 +108,8 @@ def xml_handle_enumeration(obj, value: list):
 
 
 def xml_handle_link(obj, keyword, value):
-    """
-    # if we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
+    """If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
+
     """
     if len(keyword[:-6]) >= 1 and isinstance(value, dict) and 'target' in value.keys():
         if isinstance(value['target'], str) and len(value['target']) >= 1:
@@ -119,12 +120,12 @@ def xml_handle_link(obj, keyword, value):
             raise ValueError(keyword + ' value for target member of a link is invalid !')
     else:
         raise ValueError(keyword + ' the formatting of what seems to be a link \
-            is invalid in the yml file !')
+is invalid in the yml file !')
 
 
 def xml_handle_symbols(obj, value: dict):
-    """
-    handle a set of NXDL symbols as a child to obj
+    """Handle a set of NXDL symbols as a child to obj
+
     """
     assert len(list(value.keys())) >= 1, 'xml_handle_symbols, symbols tables must not be empty!'
     syms = ET.SubElement(obj, 'symbols')
@@ -140,18 +141,17 @@ def xml_handle_symbols(obj, value: dict):
 
 
 def recursive_build(obj, dct, verbose):
-    """
-    obj is the current node of the XML tree where we want to append to,
+    """obj is the current node of the XML tree where we want to append to,
     dct is a dictionary object which represents the content of a child to obj
-    dct may contain further dictionary nests, representing NXDL groups, \
-        which trigger recursive processing
+    dct may contain further dictionary nests, representing NXDL groups,
+    which trigger recursive processing
     NXDL fields may contain attributes but trigger no recursion so attributes are leafs.
+
     """
     for keyword, value in iter(dct.items()):
         keyword_name, keyword_type = yaml2nxdl_utils.nx_name_type_resolving(keyword)
         if verbose:
-            print('keyword_name:', keyword_name,
-                  'keyword_type:', keyword_type)
+            print('keyword_name:', keyword_name, 'keyword_type:', keyword_type)
             print('value:', '[' + str(type(value)) + ']')
         if keyword_name == '' and keyword_type == '':
             raise ValueError('Found an improper YML key !')
@@ -179,11 +179,11 @@ def recursive_build(obj, dct, verbose):
             attr.set('name', keyword_name[2:])
             if value is not None:
                 assert isinstance(value, dict), 'the keyword is an attribute, \
-                    its value must be a dict!'
+its value must be a dict!'
                 for kkeyword, vvalue in iter(value.items()):
                     if verbose:
                         print('  kkeyword:', kkeyword)
-                        print('  vvalue:', vvalue, '[' + str(type(vvalue)) + ']')
+                        print('  vvalue:', '[' + str(type(vvalue)) + ']')
                     if kkeyword == 'name':
                         attr.set('name', vvalue)
                     elif kkeyword == 'doc':
@@ -194,7 +194,7 @@ def recursive_build(obj, dct, verbose):
                         xml_handle_enumeration(attr, vvalue)
                     else:
                         raise ValueError(kkeyword + ' facing an unknown situation \
-                            while processing attributes of an attribute !')
+while processing attributes of an attribute !')
         # handle special keywords (symbols),
         # assumed that you do not encounter further symbols nested inside
 
@@ -247,8 +247,7 @@ def recursive_build(obj, dct, verbose):
                                     xml_handle_enumeration(attr, vvvalue)
                                 else:
                                     raise ValueError(
-                                        keyword + ' ' + kkeyword + ' ' + kkkeyword + ' a\
-                                            ttribute handling !')
+                                        keyword, kkeyword, kkkeyword, ' attribute handling !')
                     elif kkeyword == 'doc':
                         xml_handle_doc(fld, vvalue)
                     elif kkeyword == yaml2nxdl_utils.NX_UNIT_IDNT:
@@ -262,21 +261,20 @@ def recursive_build(obj, dct, verbose):
                     elif kkeyword == 'link':
                         fld.set('link', '')
                     else:
-                        raise ValueError(keyword + ' ' + kkeyword + ' faced unknown\
-                                situation !')
+                        raise ValueError(keyword, kkeyword, ' faced unknown situation !')
             else:
                 if keyword == 'doc':
                     xml_handle_doc(fld, value)
                 elif keyword == yaml2nxdl_utils.NX_UNIT_IDNT:
                     xml_handle_units(fld, value)
                 elif keyword[0:2] == yaml2nxdl_utils.NX_ATTR_IDNT:  # attribute of a field
-                    raise ValueError(keyword + ' unknown attribute \
-                        of a field case coming from no dict !')
+                    raise ValueError(keyword, ' unknown attribute \
+of a field case coming from no dict !')
                 elif keyword == 'exists':
                     xml_handle_exists(fld, value)
                 elif keyword == 'dimensions':
-                    raise ValueError(keyword + ' unknown dimensions \
-                        of a field case coming from no dict !')
+                    raise ValueError(keyword, ' unknown dimensions \
+of a field case coming from no dict !')
                 else:
                     pass
         else:

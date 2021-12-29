@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""
-# Main file of yaml2nxdl tool. \
-# Users create NeXus instances by writing a YAML file \
-# which details a hierarchy of data/metadata elements
+"""Main file of yaml2nxdl tool.
+Users create NeXus instances by writing a YAML file
+which details a hierarchy of data/metadata elements
+
 """
 # -*- coding: utf-8 -*-
 #
@@ -34,9 +34,9 @@ from nexusparser.tools.yaml2nxdl import yaml2nxdl_recursive_build as recursive_b
 
 
 def pretty_print_xml(xml_root, output_xml):
-    """
-    # Print better human-readable idented and formatted xml file
-    # using built-in libraries and add preceding XML processing instruction
+    """Print better human-readable idented and formatted xml file
+using built-in libraries and add preceding XML processing instruction
+
     """
     dom = minidom.parseString(ET.tostring(xml_root, encoding="UTF-8", method="xml"))
     sibling = dom.createProcessingInstruction(
@@ -52,20 +52,20 @@ def pretty_print_xml(xml_root, output_xml):
 @click.option(
     '--input-file',
     help='The path to the yaml-formatted input data file to read and create \
-        a NXDL XML file from. (Repeat for more than one file.)'
+a NXDL XML file from. (Repeat for more than one file.)'
 )
 @click.option(
     '--verbose',
     is_flag=True,
     default=False,
     help='Print in standard output keywords and value types to help \
-        possible issues in yaml files'
+possible issues in yaml files'
 )
 def yaml2nxdl(input_file: str, verbose: bool):
-    """
-    main of the yaml2nxdl converter, creates XML tree, \
-    namespace and schema, then evaluates a dictionary
-    nest of groups recursively and fields or (their) attributes as childs of the groups
+    """Main of the yaml2nxdl converter, creates XML tree,
+namespace and schema, then evaluates a dictionary
+nest of groups recursively and fields or (their) attributes as childs of the groups
+
     """
     yml_appdef = read.yml_reader(input_file)
 
@@ -82,7 +82,7 @@ def yaml2nxdl(input_file: str, verbose: bool):
 
     assert 'category' in yml_appdef.keys(), 'Required root-level keyword category is missing!'
     assert yml_appdef['category'] in ['application', 'base'], 'Only \
-        application and base are valid categories!'
+application and base are valid categories!'
     assert 'doc' in yml_appdef.keys(), 'Required root-level keyword doc is missing!'
 
     xml_root.set('extends', 'NXobject')
@@ -95,7 +95,7 @@ def yaml2nxdl(input_file: str, verbose: bool):
         del yml_appdef['category']
 
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
-        has to be a non-empty string!'
+has to be a non-empty string!'
     doctag = ET.SubElement(xml_root, 'doc')
     doctag.text = yml_appdef['doc']
     del yml_appdef['doc']
@@ -105,10 +105,10 @@ def yaml2nxdl(input_file: str, verbose: bool):
         del yml_appdef['symbols']
 
     assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
-        doc, symbols, and NX... at root-level!'
+doc, symbols, and NX... at root-level!'
     keyword = list(yml_appdef.keys())[0]  # which is the only one
     assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
-        keyword has an invalid pattern, or is too short!'
+keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
 
     recursive_build.recursive_build(xml_root, yml_appdef[keyword], verbose)
