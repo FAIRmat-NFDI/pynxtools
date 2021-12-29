@@ -139,7 +139,7 @@ def xml_handle_symbols(obj, value: dict):
             sym.set('doc', vvalue)
 
 
-def recursive_build(obj, dct):
+def recursive_build(obj, dct, verbose):
     """
     obj is the current node of the XML tree where we want to append to,
     dct is a dictionary object which represents the content of a child to obj
@@ -149,7 +149,10 @@ def recursive_build(obj, dct):
     """
     for keyword, value in iter(dct.items()):
         keyword_name, keyword_type = yaml2nxdl_utils.nx_name_type_resolving(keyword)
-        print('keyword_name: ' + keyword_name + ' keyword_type: ' + keyword_type)
+        if verbose:
+            print('keyword_name:', keyword_name,
+                  'keyword_type:', keyword_type)
+            print('value:', '[' + str(type(value)) + ']')
         if keyword_name == '' and keyword_type == '':
             raise ValueError('Found an improper YML key !')
 
@@ -168,19 +171,23 @@ def recursive_build(obj, dct):
                 grp.set('name', keyword_name)
             grp.set('type', keyword_type)
             if isinstance(value, dict) and value != {}:
-                recursive_build(grp, value)
+                recursive_build(grp, value, verbose)
 
-        elif keyword_name[0:2] == yaml2nxdl_utils.NX_ATTR_IDNT:  # check if \
-            # obj qualifies as an attribute identifier
+        elif keyword_name[0:2] == yaml2nxdl_utils.NX_ATTR_IDNT:  # check if obj qualifies
+            # as an attribute identifier
             attr = ET.SubElement(obj, 'attribute')
             attr.set('name', keyword_name[2:])
             if value is not None:
-                assert value is dict, 'the keyword is an attribute, its value must be a dict!'
+                assert isinstance(value, dict), 'the keyword is an attribute, \
+                    its value must be a dict!'
                 for kkeyword, vvalue in iter(value.items()):
+                    if verbose:
+                        print('  kkeyword:', kkeyword)
+                        print('  vvalue:', vvalue, '[' + str(type(vvalue)) + ']')
                     if kkeyword == 'name':
                         attr.set('name', vvalue)
                     elif kkeyword == 'doc':
-                        attr.set('doc', vvalue)
+                        xml_handle_doc(attr, vvalue)
                     elif kkeyword == 'type':
                         attr.set('type', vvalue.upper())
                     elif kkeyword == 'enumeration':
@@ -213,6 +220,9 @@ def recursive_build(obj, dct):
             fld.set('type', typ)
             if isinstance(value, dict):
                 for kkeyword, vvalue in iter(value.items()):
+                    if verbose:
+                        print('  kkeyword:', kkeyword)
+                        print('  vvalue:', '[' + str(type(vvalue)) + ']')
                     if kkeyword[0:2] == yaml2nxdl_utils.NX_ATTR_IDNT:
                         attr = ET.SubElement(fld, 'attribute')
                         # attributes may also come with an nx_type specifier
@@ -226,6 +236,9 @@ def recursive_build(obj, dct):
                         attr.set('type', typ)
                         if isinstance(vvalue, dict):
                             for kkkeyword, vvvalue in iter(vvalue.items()):
+                                if verbose:
+                                    print('    kkkeyword:', kkkeyword)
+                                    print('    vvvalue:', '[' + str(type(vvvalue)) + ']')
                                 if kkkeyword == 'doc':
                                     xml_handle_doc(attr, vvvalue)
                                 elif kkkeyword == 'exists':

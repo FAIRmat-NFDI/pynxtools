@@ -54,7 +54,14 @@ def pretty_print_xml(xml_root, output_xml):
     help='The path to the yaml-formatted input data file to read and create \
         a NXDL XML file from. (Repeat for more than one file.)'
 )
-def yaml2nxdl(input_file: str):
+@click.option(
+    '--verbose',
+    is_flag=True,
+    default=False,
+    help='Print in standard output keywords and value types to help \
+        possible issues in yaml files'
+)
+def yaml2nxdl(input_file: str, verbose: bool):
     """
     main of the yaml2nxdl converter, creates XML tree, \
     namespace and schema, then evaluates a dictionary
@@ -104,7 +111,7 @@ def yaml2nxdl(input_file: str):
         keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
 
-    recursive_build.recursive_build(xml_root, yml_appdef[keyword])
+    recursive_build.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file[:-4] + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
