@@ -1,5 +1,4 @@
-name: testlinks
-category: contributed
+category: base
 doc: Test case for verifying that the parser can handle links correctly.
 (NXentry):
    (NXdata):
