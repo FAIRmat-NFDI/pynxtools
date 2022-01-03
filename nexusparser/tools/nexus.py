@@ -10,7 +10,6 @@ import xml.etree.ElementTree as ET
 import sys
 import logging
 import textwrap
-from lxml import etree, objectify
 import h5py
 
 # LOGGING_FORMAT = "%(levelname)s: %(message)s"
@@ -203,8 +202,8 @@ uppercase to lowercase match is preferred
         if fit < 0:
             return False
         for child2 in nxdl_elem.getchildren():
-            if etree.QName(child).localname != \
-                    etree.QName(child2).localname or get_node_name(child2) == childname:
+            if get_local_name_from_xml(child) != \
+                    get_local_name_from_xml(child2) or get_node_name(child2) == childname:
                 continue
             # check if the name of another sibling fits better
             fit2 = get_nx_namefit(name, get_node_name(child2))
@@ -218,23 +217,24 @@ uppercase to lowercase match is preferred
     return False
 
 
-def get_own_nxdl_child(nxdl_elem, name):
-    """Checks if an NXDL child node fits to the specific name
+def get_local_name_from_xml(element):
+    """Helper function to extract the element tag without the namespace."""
+    return element.tag[element.tag.rindex("}") + 1:]
 
-"""
-    for child in nxdl_elem.getchildren():
-        if etree.QName(child).localname == 'group' and belongs_to(nxdl_elem, child, name):
+
+def get_own_nxdl_child(nxdl_elem, name):
+    """Checks if an NXDL child node fits to the specific name"""
+    for child in nxdl_elem.iter():
+        if get_local_name_from_xml(child) == 'group' and belongs_to(nxdl_elem, child, name):
             # get_nx_class(child) == name:
             return child
-        if etree.QName(child).localname == 'field' and belongs_to(nxdl_elem, child, name):
+        if get_local_name_from_xml(child) == 'field' and belongs_to(nxdl_elem, child, name):
             return child
-        if etree.QName(child).localname == 'attribute' and belongs_to(nxdl_elem,
-                                                                      child, name):
+        if get_local_name_from_xml(child) == 'attribute' and belongs_to(nxdl_elem, child, name):
             return child
-        if etree.QName(child).localname == 'doc' and name == 'doc':
+        if get_local_name_from_xml(child) == 'doc' and name == 'doc':
             return child
-        if etree.QName(
-                child).localname == 'enumeration' and name == 'enumeration':
+        if get_local_name_from_xml(child) == 'enumeration' and name == 'enumeration':
             return child
     return None
 
@@ -254,7 +254,7 @@ it also checks for the base classes
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc_obj = objectify.parse(NEXUS_DEF_PATH + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
+    bc_obj = ET.parse(NEXUS_DEF_PATH + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
     return get_own_nxdl_child(bc_obj, name)
 
 
@@ -358,8 +358,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
 """
 
     nxdef = get_nxdl_entry(hdf_node)
-    root = objectify.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml")
-    elem = root.getroot()
+    elem = ET.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml").getroot()
     nxdl_path = [elem]
     path = get_nx_class_path(hdf_node)
     req_str = None
@@ -472,7 +471,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
                 if doc:
                     loger.info("enumeration:")
                 for item in sdoc.getchildren():
-                    if etree.QName(item).localname == 'item':
+                    if get_local_name_from_xml(item) == 'item':
                         if doc:
                             loger.info("-> " + item.attrib['value'])
             # check for NXdata references (axes/signal)
@@ -550,18 +549,16 @@ def get_enums(node):
         return (False, '')
 
 
-def nxdl_to_attr_obj(nxdl_path):  # Leave this one
+def nxdl_to_attr_obj(nxdl_path: str = None, nx_name: str = None, elem: ET.Element = None):
+    """Returns an ET.Element for the given path.
+
+    This function either takes the name for the Nexus Application Definition
+    we are looking for or the root elem from a previously loaded NXDL file
+    and finds the corresponding XML element with the needed attributes.
     """
-    Finds the path entry in NXDL file
-    Grabs all the attrs in NXDL entry
-    Checks Nexus base application defs for missing attrs and adds them as well
-    returns attr as a Python obj that can be directly placed into the h5py library
-    """
-    nxdef = nxdl_path.split(':')[0]
-    root = objectify.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml")
-    elem = root.getroot()
-    path = nxdl_path.split(':')[1]
-    for group in path.split('/')[1:]:
+    if elem is None:
+        elem = ET.parse(NEXUS_DEF_PATH + "/applications/" + nx_name + ".nxdl.xml").getroot()
+    for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
     return elem
 
