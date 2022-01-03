@@ -1,5 +1,7 @@
 """Test cases for the convert script used to access the DataConverter."""
 
+import os
+
 from click.testing import CliRunner
 import pytest
 
@@ -29,7 +31,13 @@ def test_get_names_of_all_readers():
         "tests/data/dataconverter/NXspe.nxdl.xml",
         "--input-file",
         "test_input"
-    ], id="input-file")
+    ], id="input-file"),
+    pytest.param([
+        "--nxdl",
+        "tests/data/dataconverter/NXspe.nxdl.xml",
+        "--output",
+        "tests/data/dataconverter/test_output"
+    ], id="output-file")
 ])
 def test_cli(caplog, cli_inputs):
     """A test for the convert CLI."""
@@ -41,5 +49,8 @@ def test_cli(caplog, cli_inputs):
                 "[fermi_chopper]/energy\": \"None\",") in caplog.text
     elif "--input-file" in cli_inputs:
         assert "test_input" in caplog.text
+    elif "--output" in cli_inputs:
+        assert os.path.isfile("tests/data/dataconverter/test_output")
+        os.remove("tests/data/dataconverter/test_output")
     elif result.exit_code == 2:
         assert "Error: Missing option '--nxdl'" in result.output

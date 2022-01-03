@@ -17,6 +17,9 @@ class BaseReader(ABC):
 
     # pylint: disable=too-few-public-methods
 
+    # Whitelist for the NXDLs that the reader supports and can process
+    supported_nxdls = [""]
+
     @abstractmethod
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""

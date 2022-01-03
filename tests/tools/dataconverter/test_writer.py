@@ -36,7 +36,6 @@ def test_init(writer):
 def test_write(writer):
     """Test for the Writer's write function. Checks whether entries given above get written out."""
     writer.write()
-    assert writer.nxdl_name == "NXspe"
     test_nxs = h5py.File(writer.output_path, "r")
     assert test_nxs["/my_entry/our_instrument/their_fermi_chopper/energy"].asstr()[...] == "Value"  # pylint: disable=no-member
     assert test_nxs["/my_entry/our_instrument/their_fermi_chopper/energy"].attrs["units"] == "units"

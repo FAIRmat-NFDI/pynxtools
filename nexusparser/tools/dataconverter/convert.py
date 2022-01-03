@@ -6,6 +6,7 @@ import importlib.util
 import json
 import logging
 import os
+import re
 import sys
 from typing import List, Tuple, Dict
 import xml.etree.ElementTree as ET
@@ -97,7 +98,7 @@ def get_names_of_all_readers() -> List[str]:
 @click.command()
 @click.option(
     '--input-file',
-    default=['example.data'],
+    default=[],
     multiple=True,
     help='The path to the input data file to read. (Repeat for more than one file.)'
 )
@@ -124,7 +125,7 @@ def get_names_of_all_readers() -> List[str]:
     default=False,
     help='Just print out the template generated from given NXDL file.'
 )
-def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):
+def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):  #TODO: Write test function for this.
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
     tree = ET.parse(nxdl)
@@ -143,12 +144,15 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     logger.info("Using %s reader to convert the given files: %s ", reader, print_input_files)
 
     reader = get_reader(reader)
+    nxdl_name = re.search("NX[a-z_]*(?=.nxdl.xml)", nxdl).group(0)
+    if nxdl_name not in reader.supported_nxdls:
+        raise Exception("The chosen NXDL isn't supported by the selected reader.")
     data = reader().read(template=template, file_paths=input_file)  # type: ignore[operator]
 
     logger.debug("The following data was read: %s", json.dumps(template, indent=4, sort_keys=True))
 
     # Writing the data to output file
-    Writer(data, nxdl, output).write()
+    Writer(data=data, nxdl_path=nxdl, output_path=output).write()
 
     logger.info("The output file generated: %s", output)
 

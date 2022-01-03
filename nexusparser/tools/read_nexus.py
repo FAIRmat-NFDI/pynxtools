@@ -150,23 +150,25 @@ def belongs_to(nxdlElem, child, hdfName):
             return True
     return False
 
+def get_local_name_from_xml(element):
+    """Helper function to extract the element tag without the namespace."""
+    return element.tag[element.tag.rindex("}") + 1:]
 
 def get_own_nxdl_child(nxdlElem, name):
     """
     checks if an NXDL child node fits to the specific name
     """
-    for child in nxdlElem.getchildren():
-        if etree.QName(child).localname == 'group' and belongs_to(nxdlElem, child, name):  # get_nx_class(child) == name:
+    for child in nxdlElem.iter():
+        if get_local_name_from_xml(child) == 'group' and belongs_to(nxdlElem, child, name):  # get_nx_class(child) == name:
             return child
-        if etree.QName(child).localname == 'field' and belongs_to(nxdlElem, child, name):
+        if get_local_name_from_xml(child) == 'field' and belongs_to(nxdlElem, child, name):
             return child
-        if etree.QName(child).localname == 'attribute' and belongs_to(nxdlElem,
+        if get_local_name_from_xml(child) == 'attribute' and belongs_to(nxdlElem,
                                                                       child, name):
             return child
-        if etree.QName(child).localname == 'doc' and name == 'doc':
+        if get_local_name_from_xml(child) == 'doc' and name == 'doc':
             return child
-        if etree.QName(
-                child).localname == 'enumeration' and name == 'enumeration':
+        if get_local_name_from_xml(child) == 'enumeration' and name == 'enumeration':
             return child
     return None
 
@@ -455,18 +457,40 @@ def get_enums(node):
         return (False, '')
 
 
-def nxdl_to_attr_obj(nxdlPath):
+# def nxdl_to_attr_obj(nxdlPath):
+#     """
+#     Finds the path entry in NXDL file
+#     Grabs all the attrs in NXDL entry
+#     Checks Nexus base application defs for missing attrs and adds them as well
+#     returns attr as a Python obj that can be directly placed into the h5py library
+#     """
+#     nxdef = nxdlPath.split(':')[0]
+#     root = objectify.parse(os.path.join(nexusDefPath, "applications/", f"{nxdef}.nxdl.xml"))
+#     elem = root.getroot()
+#     path = nxdlPath.split(':')[1]
+#     for group in path.split('/')[1:]:
+#         elem = get_nxdl_child(elem, group)
+#     return elem
+
+def nxdl_to_attr_obj(nxdl_path, nxdef=None, elem=None):
     """
+    This function either takes the name for the Nexus Application Definition
+    we are looking for or the root elem from a previously loaded NXDL file.
+
+    Attributes
+    nxdl_path: The hierarchical path down the NXDL to get attributes from.
+    nxdef: The NXDL name without the .nxdl.xml extension
+    elem: The root NXDL element if file has been previously loaded
+
     Finds the path entry in NXDL file
     Grabs all the attrs in NXDL entry
     Checks Nexus base application defs for missing attrs and adds them as well
     returns attr as a Python obj that can be directly placed into the h5py library
     """
-    nxdef = nxdlPath.split(':')[0]
-    root = objectify.parse(os.path.join(nexusDefPath, "applications/", f"{nxdef}.nxdl.xml"))
-    elem = root.getroot()
-    path = nxdlPath.split(':')[1]
-    for group in path.split('/')[1:]:
+    if elem == None:
+        root = objectify.parse(nexusDefPath + "/applications/" + nxdef + ".nxdl.xml")
+        elem = root.getroot()
+    for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
     return elem
 

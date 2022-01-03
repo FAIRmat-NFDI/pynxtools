@@ -1,21 +1,27 @@
 """The writer class for writing a Nexus file in accordance with a given NXDL."""
 
 import re
+import logging
+import sys
 import xml.etree.ElementTree as ET
 
 import h5py
 import numpy as np
 
-from nexusparser.tools import read_nexus
+from nexusparser.tools import nexus
+
+logger = logging.getLogger(__name__)  # pylint: disable=C0103
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
-def convert_data_converter_dict_to_nxdl_path_entry(entry) -> str:
+def convert_data_converter_entry_to_nxdl_path_entry(entry) -> str:
     """
     Helper function to convert data converter style entry to NXDL style entry:
     ENTRY[entry] -> ENTRY
     """
-    regex = r'(.*?)(?=\[)'
-    results = re.search(regex, entry)
+    regex = re.compile(r'(.*?)(?=\[)')
+    results = regex.search(entry)
     return entry if results is None else results.group(1)
 
 
@@ -26,7 +32,7 @@ def convert_data_converter_dict_to_nxdl_path(path) -> str:
     """
     nxdl_path = ''
     for entry in path.split('/')[1:]:
-        nxdl_path += '/' + convert_data_converter_dict_to_nxdl_path_entry(entry)
+        nxdl_path += '/' + convert_data_converter_entry_to_nxdl_path_entry(entry)
     return nxdl_path
 
 
@@ -35,8 +41,8 @@ def get_name_from_data_dict_entry(entry) -> str:
     Helper function to get entry name from data converter style entry:
     ENTRY[entry] -> entry
     """
-    regex = r'(?<=\[)(.*?)(?=\])'
-    results = re.search(regex, entry)
+    regex = re.compile(r'(?<=\[)(.*?)(?=\])')
+    results = regex.search(entry)
     return entry if results is None else results.group(1)
 
 
@@ -73,19 +79,20 @@ def get_namespace(element) -> str:
 
 
 class Writer:
-    """
-    The writer class for writing a Nexus file in accordance with a given NXDL.
+    """The writer class for writing a Nexus file in accordance with a given NXDL.
 
-    Attributes
-    ----------
-    data : dict
-        dictionary containing the data to convert
-    nxdl_path : str
-        path to the nxdl file to use during conversion
-    output_path : str
-        path to the output Nexus file
-    nxdl : dict
-        stores xml data from given nxdl file to use during conversion
+    Args:
+        data (dict): Dictionary containing the data to convert.
+        nxdl_path (str): Path to the nxdl file to use during conversion.
+        output_path (str): Path to the output Nexus file.
+
+    Attributes:
+        data (dict): Dictionary containing the data to convert.
+        nxdl_path (str): Path to the nxdl file to use during conversion.
+        output_path (str): Path to the output Nexus file.
+        output_nexus (h5py.File): The h5py file object to manipulate output file.
+        nxdl_data (dict): Stores xml data from given nxdl file to use during conversion.
+        nxs_namespace (str): The namespace used in the NXDL tags. Helps search for XML children.
     """
 
     def __init__(self, data: dict = None, nxdl_path: str = None, output_path: str = None):
@@ -94,8 +101,6 @@ class Writer:
         self.nxdl_path = nxdl_path
         self.output_path = output_path
         self.output_nexus = h5py.File(self.output_path, "w")
-        self.data = data
-        self.nxdl_name = re.search("NX[a-z_]*(?=.nxdl.xml)", self.nxdl_path).group(0)
         self.nxdl_data = ET.parse(self.nxdl_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
@@ -104,10 +109,10 @@ class Writer:
         Return a dictionary of all the attributes at the given path in the NXDL and
         the required attribute values that were requested in the NXDL from the data.
         """
-        path_nxdl = convert_data_converter_dict_to_nxdl_path(path)
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         elem = self.nxdl_data
-        elem = read_nexus.nxdl_to_attr_obj(f"{self.nxdl_name}:{path_nxdl}")
-
+        # elem = read_nexus.nxdl_to_attr_obj(f"{self.nxdl_name}:{nxdl_path}")  #TODO: Get this working without file read.
+        elem = nexus.nxdl_to_attr_obj(nxdl_path, elem=elem)
         if elem is None:
             raise Exception(f"Attributes were not found for {path}."
                             "Please check this entry in the template dictionary.")

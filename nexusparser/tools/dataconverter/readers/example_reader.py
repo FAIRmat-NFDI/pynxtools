@@ -9,10 +9,23 @@ class ExampleReader(BaseReader):
 
     # pylint: disable=too-few-public-methods
 
+    # Whitelist for the NXDLs that the reader supports and can process
+    supported_nxdls = ["NXsample", "NXspe"]
+
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
+        metadata = []
 
-        # Read your data and fill the available keys in the template dict
+        for file_path in file_paths:
+            file_extension = file_path[file_path.rindex("."):]
+            with open(file_path, "r") as f:
+                if file_extension == ".metadata_extension":
+                    metadata = f.read()
+        
+        for value in metadata:
+            # The entries in the template dict should correspond with what the dataconverter
+            # outputs with --generate-template for a provided NXDL file
+            template[f"/entry/instrument/metadata/{value}"] = value
 
         return template
 
