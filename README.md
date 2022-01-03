@@ -55,14 +55,14 @@ This directory have several modules/files as following:
 ### **Tools**
 This module contains several tools that are necessary to read user-specific experimental data and parse them into NOMAD.
 
-**1. Read_nexus**
+**1. Read nexus**
 
 First go to the nexus tools directory:
 ```
 cd nexusparser/tools
 ```
 
-The module `read_nexus.py` reads HDF5 data file (i.e it is a user-specific data file, which contains numerical and metadata about the experiment. And it is formatted in NEXUS style.)
+The module `nexus.py` reads HDF5 data file (i.e it is a user-specific data file, which contains numerical and metadata about the experiment. And it is formatted in NEXUS style.)
 
 <span style="color:red">*The environmental variable called "NEXUS_DEF_PATH" should be set to the directory, which contains application definitions as XML files. If this environmental variable is not defined, then code will first clone a directory from GitHub, which contains application definitions.*</span>
 
@@ -71,13 +71,13 @@ To set environmental variable, you can do:
 export 'NEXUS_DEF_PATH'=<folder_path_that_contains_app_defs>
 ```
 
-***Testing read_nexus***
+***Testing nexus***
 
-Following example dataset can be used to test `read_nexus.py` module `tests/data/nexus_test_data/201805_WSe2_arpes.nxs`. This is angular resolved photoelectron spectroscopy (ARPES) dataset and it is formatted according to the [NXarpes application definition of NEXUS](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes). Run the following command to test the `read_nexus.py` using example ARPES dataset:
+Following example dataset can be used to test `nexus.py` module `tests/data/nexus_test_data/201805_WSe2_arpes.nxs`. This is angular resolved photoelectron spectroscopy (ARPES) dataset and it is formatted according to the [NXarpes application definition of NEXUS](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes). Run the following command to test the `nexus.py` using example ARPES dataset:
 ```
 python test_parser.py
 ```
-*You should get "Testing of read_nexus.py is SUCCESSFUL." message, if everything goes as expected!*
+*You should get "Testing of nexus.py is SUCCESSFUL." message, if everything goes as expected!*
 
 
 

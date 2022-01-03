@@ -1,6 +1,6 @@
 #
 # from nomad.metainfo.generate import generate_metainfo_code
-from tools import read_nexus
+from nexusparser.tools import nexus
 import os
 from lxml import etree, objectify
 from nomad.metainfo.metainfo import MEnum, MSection
@@ -53,13 +53,13 @@ def parse_node(m, node, ntype, level, nxhtml, nxpath):
                  elements are in html documentation format. E.g. ['NXxas', 'ENTRY']
     '''
     nxpath_new = nxpath.copy()
-    nxpath_new.append(read_nexus.get_node_name(node))
+    nxpath_new.append(nexus.get_node_name(node))
     indent = '  ' * level
-    print("%s%s: %s (%s) %s %s" % (indent, ntype, nxpath_new[-1], read_nexus.get_nx_class(node), 'DEPRICATED!!!' if 'deprecated' in node.attrib.keys() else '', read_nexus.get_required_string(node)))
-    read_nexus.print_doc(node, ntype, level, nxhtml, nxpath_new)
+    print("%s%s: %s (%s) %s %s" % (indent, ntype, nxpath_new[-1], nexus.get_nx_class(node), 'DEPRICATED!!!' if 'deprecated' in node.attrib.keys() else '', nexus.get_required_string(node)))
+    nexus.print_doc(node, ntype, level, nxhtml, nxpath_new)
 
     # Create a sub-section
-    metaNode = Section(name=read_nexus.get_nx_class(node))
+    metaNode = Section(name=nexus.get_nx_class(node))
     if ntype == 'attribute':
         sub_section_name = 'nxa_' + nxpath_new[-1]
     elif ntype == 'field':
@@ -121,7 +121,7 @@ def decorate(metaNode, node, ntype, level, nxhtml, nxpath):
             if prop not in ['optional', 'recommended', 'required']:
                 metaNode.quantities.append(q)
     # add documentation
-    anchor, doc = read_nexus.get_doc(node, ntype, level, nxhtml, nxpath)
+    anchor, doc = nexus.get_doc(node, ntype, level, nxhtml, nxpath)
     q = Quantity(
         name='nxp_documentation',
         type=str,
@@ -133,7 +133,7 @@ def decorate(metaNode, node, ntype, level, nxhtml, nxpath):
 
     # add derived nx properties (e.g. required)
     # REQUIRED
-    reqStr = read_nexus.get_required_string(node)
+    reqStr = nexus.get_required_string(node)
     if 'REQUIRED' in reqStr:
         q = Quantity(
             name='nxp_required',
@@ -162,7 +162,7 @@ def decorate(metaNode, node, ntype, level, nxhtml, nxpath):
             default=True)
         metaNode.quantities.append(q)
     # ENUMS
-    (o, enums) = read_nexus.get_enums(node)
+    (o, enums) = nexus.get_enums(node)
     if o:
         q = Quantity(
             name='nxp_enumeration',
