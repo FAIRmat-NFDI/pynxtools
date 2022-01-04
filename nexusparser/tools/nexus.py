@@ -1,5 +1,6 @@
-"""
-Read files from different format and print it in a standard Nexus format
+#!/usr/bin/env python3
+"""Read files from different format and print it in a standard Nexus format
+
 """
 # Nexus definitions in github: https://github.com/nexusformat/definitions
 # to be cloned under os.environ['NEXUS_DEF_PATH']
@@ -9,7 +10,6 @@ import xml.etree.ElementTree as ET
 import sys
 import logging
 import textwrap
-from lxml import etree, objectify
 import h5py
 
 # LOGGING_FORMAT = "%(levelname)s: %(message)s"
@@ -29,10 +29,10 @@ except BaseException:
 
 
 def get_nx_class_path(hdf_node):
-    """
-            #get the full path of an HDF5 node using nexus classes
-            #in case of a field, end with the field name
-            """
+    """Get the full path of an HDF5 node using nexus classes
+in case of a field, end with the field name
+
+"""
 
     if hdf_node.name == '/':
         return ''
@@ -46,7 +46,9 @@ def get_nx_class_path(hdf_node):
 
 
 def get_nxdl_entry(hdf_node):
-    """ #get the nxdl application definition for an HDF5 node """
+    """Get the nxdl application definition for an HDF5 node
+
+"""
 
     entry = hdf_node
     while isinstance(entry,
@@ -62,8 +64,9 @@ def get_nxdl_entry(hdf_node):
 
 
 def get_nx_class(nxdl_elem):
-    """ #get the nexus class for a NXDL node """
+    """Get the nexus class for a NXDL node
 
+"""
     try:
         return nxdl_elem.attrib['type']
     except BaseException:
@@ -71,12 +74,12 @@ def get_nx_class(nxdl_elem):
 
 
 def get_nx_namefit(hdf_name, name):
-    """
-            #checks if an HDF5 node name corresponds to a child of the NXDL element
-            #uppercase letters in front can be replaced by arbitraty name, but
-            #uppercase to lowercase match is preferred,
-            #so such match is counted as a measure of the fit
-            """
+    """Checks if an HDF5 node name corresponds to a child of the NXDL element
+uppercase letters in front can be replaced by arbitraty name, but
+uppercase to lowercase match is preferred,
+so such match is counted as a measure of the fit
+
+"""
     # count leading capitals
     counting = 0
     while counting < len(name) and name[counting] >= 'A' and name[counting] <= 'Z':
@@ -99,15 +102,18 @@ def get_nx_namefit(hdf_name, name):
 
 
 def get_nx_classes():
+    """Read base classes from the Nexus definition/base_classes folder
+
+"""
     base_classes_list_files = os.listdir(os.path.join(NEXUS_DEF_PATH, 'base_classes'))
     nx_clss = sorted([s.strip('.nxdl.xml') for s in base_classes_list_files])
     return nx_clss
 
 
 def get_nx_units():
-    """
-    # read unit kinds from the Nexus definition/nxdlTypes.xsd file
-    """
+    """Read unit kinds from the Nexus definition/nxdlTypes.xsd file
+
+"""
     filepath = NEXUS_DEF_PATH + '/nxdlTypes.xsd'
     tree = ET.parse(filepath)
     root = tree.getroot()
@@ -130,9 +136,9 @@ def get_nx_units():
 
 
 def get_nx_attribute_type():
-    """
-    # read attribute types from the Nexus definition/nxdlTypes.xsd file
-    """
+    """Read attribute types from the Nexus definition/nxdlTypes.xsd file
+
+"""
     filepath = NEXUS_DEF_PATH + '/nxdlTypes.xsd'
     tree = ET.parse(filepath)
     root = tree.getroot()
@@ -155,14 +161,14 @@ def get_nx_attribute_type():
 
 
 def get_node_name(node):
-    '''
-        node - xml node
-        returns:
-            html documentation name
-            Either as specified by the 'name' or taken from the type (nx_class).
-            Note that if only class name is available, the NX prefix is removed and
-            the string is coverted to UPPER case.
-    '''
+    '''Node - xml node
+returns:
+    html documentation name
+    Either as specified by the 'name' or taken from the type (nx_class).
+    Note that if only class name is available, the NX prefix is removed and
+    the string is coverted to UPPER case.
+
+'''
     if 'name' in node.attrib.keys():
         name = node.attrib['name']
     else:
@@ -173,12 +179,11 @@ def get_node_name(node):
 
 
 def belongs_to(nxdl_elem, child, hdf_name):
-    """
-            #checks if an HDF5 node name corresponds to a child of the NXDL element
-            #uppercase letters in front can be replaced by arbitraty name, but
-            #uppercase to lowercase match is preferred
-            """
+    """Checks if an HDF5 node name corresponds to a child of the NXDL element
+uppercase letters in front can be replaced by arbitraty name, but
+uppercase to lowercase match is preferred
 
+"""
     # check if nameType allows different name
     try:
         if child.attrib['nameType'] == "any":
@@ -197,7 +202,8 @@ def belongs_to(nxdl_elem, child, hdf_name):
         if fit < 0:
             return False
         for child2 in nxdl_elem.getchildren():
-            if etree.QName(child).localname != etree.QName(child2).localname or get_node_name(child2) == childname:
+            if get_local_name_from_xml(child) != \
+                    get_local_name_from_xml(child2) or get_node_name(child2) == childname:
                 continue
             # check if the name of another sibling fits better
             fit2 = get_nx_namefit(name, get_node_name(child2))
@@ -211,35 +217,35 @@ def belongs_to(nxdl_elem, child, hdf_name):
     return False
 
 
+def get_local_name_from_xml(element):
+    """Helper function to extract the element tag without the namespace."""
+    return element.tag[element.tag.rindex("}") + 1:]
+
+
 def get_own_nxdl_child(nxdl_elem, name):
-    """
-    checks if an NXDL child node fits to the specific name
-    """
-    for child in nxdl_elem.getchildren():
-        if etree.QName(child).localname == 'group' and belongs_to(nxdl_elem, child, name):
+    """Checks if an NXDL child node fits to the specific name"""
+    for child in nxdl_elem.iter():
+        if get_local_name_from_xml(child) == 'group' and belongs_to(nxdl_elem, child, name):
             # get_nx_class(child) == name:
             return child
-        if etree.QName(child).localname == 'field' and belongs_to(nxdl_elem, child, name):
+        if get_local_name_from_xml(child) == 'field' and belongs_to(nxdl_elem, child, name):
             return child
-        if etree.QName(child).localname == 'attribute' and belongs_to(nxdl_elem,
-                                                                      child, name):
+        if get_local_name_from_xml(child) == 'attribute' and belongs_to(nxdl_elem, child, name):
             return child
-        if etree.QName(child).localname == 'doc' and name == 'doc':
+        if get_local_name_from_xml(child) == 'doc' and name == 'doc':
             return child
-        if etree.QName(
-                child).localname == 'enumeration' and name == 'enumeration':
+        if get_local_name_from_xml(child) == 'enumeration' and name == 'enumeration':
             return child
     return None
 
 
 def get_nxdl_child(nxdl_elem, name):
-    """
-            # get the NXDL child node corresponding to a specific name
-            # (e.g. of an HDF5 node,or of a documentation)
-            # note that if child is not found in application definition,\
-            # it also checks for the base classes
-            """
+    """Get the NXDL child node corresponding to a specific name
+(e.g. of an HDF5 node,or of a documentation)
+note that if child is not found in application definition,
+it also checks for the base classes
 
+"""
     own_child = get_own_nxdl_child(nxdl_elem, name)
     if own_child is not None:
         return own_child
@@ -248,16 +254,15 @@ def get_nxdl_child(nxdl_elem, name):
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc_obj = objectify.parse(NEXUS_DEF_PATH + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
+    bc_obj = ET.parse(NEXUS_DEF_PATH + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
     return get_own_nxdl_child(bc_obj, name)
 
 
 def get_required_string(nxdl_elem):
-    """
-            #check for being required
-            # REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
-            """
+    """Check for being required
+REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
 
+"""
     if nxdl_elem is None:
         return "<<NOT IN SCHEMA>>"
     # if optionality is defined
@@ -281,40 +286,43 @@ def get_required_string(nxdl_elem):
 
 
 def chk_nxdataaxis_v2(hdf_node, name):
+    """Check if dataset is an axis
+
+"""
     # check for being a Signal
     own_signal = hdf_node.attrs.get('signal')
     if own_signal is str and own_signal == "1":
-        logger.info("Dataset referenced (v2) as NXdata SIGNAL")
+        LOGGER.info("Dataset referenced (v2) as NXdata SIGNAL")
     # check for being an axis
     own_axes = hdf_node.attrs.get('axes')
     if own_axes is str:
         axes = own_axes.split(':')
         for i in len(axes):
             if axes[i] and name == axes[i]:
-                logger.info("Dataset referenced (v2) as NXdata AXIS #%d", i)
+                LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", i)
                 return
     ownpaxis = hdf_node.attrs.get('primary')
     own_axis = hdf_node.attrs.get('axis')
     assert own_axis is int, 'axis is not int type!'
     # also convention v1
     if ownpaxis is int and ownpaxis == 1:
-        logger.info("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
+        LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
         return
     if not (ownpaxis is int and ownpaxis == 1):
-        logger.info(
+        LOGGER.info(
             "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d", own_axis - 1)
         return
 
 
 def chk_nxdataaxis(hdf_node, name, loger):
-    """
-        NEXUS Data Plotting Standard v3: new version from 2014
-    """
+    """NEXUS Data Plotting Standard v3: new version from 2014
+
+"""
     # check if it is a field in an NXdata node
     if not isinstance(hdf_node, h5py.Dataset):
         return
     parent = hdf_node.parent
-    if not parent or (parent and not "NXdata" == parent.attrs.get('NX_class')):
+    if not parent or (parent and not parent.attrs.get('NX_class') == "NXdata"):
         return
     # chk for Signal
     signal = parent.attrs.get('signal')
@@ -345,11 +353,12 @@ def chk_nxdataaxis(hdf_node, name, loger):
 
 
 def get_nxdl_doc(hdf_node, loger, doc, attr=False):
-    """get nxdl documentation for an HDF5 node (or its attribute)"""
+    """Get nxdl documentation for an HDF5 node (or its attribute)
+
+"""
 
     nxdef = get_nxdl_entry(hdf_node)
-    root = objectify.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml")
-    elem = root.getroot()
+    elem = ET.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml").getroot()
     nxdl_path = [elem]
     path = get_nx_class_path(hdf_node)
     req_str = None
@@ -452,17 +461,17 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
                 loger.info(req_str)
         if elem is not None:
             # check for deprecation
-            depStr = elem.attrib.get('deprecated')
-            if depStr:
+            dep_str = elem.attrib.get('deprecated')
+            if dep_str:
                 if doc:
-                    loger.info("DEPRECATED - " + depStr)
+                    loger.info("DEPRECATED - " + dep_str)
             # check for enums
             sdoc = get_nxdl_child(elem, 'enumeration')
             if sdoc is not None:
                 if doc:
                     loger.info("enumeration:")
                 for item in sdoc.getchildren():
-                    if etree.QName(item).localname == 'item':
+                    if get_local_name_from_xml(item) == 'item':
                         if doc:
                             loger.info("-> " + item.attrib['value'])
             # check for NXdata references (axes/signal)
@@ -475,12 +484,15 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
 
 
 def get_doc(node, ntype, level, nxhtml, nxpath):
+    """Get documentation
+
+    """
     # URL for html documentation
     anchor = ''
     for n_item in nxpath:
         anchor += n_item.lower() + "-"
-    anchor = 'https://manual.nexusformat.org/classes/\
-    ' + nxhtml + "#" + anchor.replace('_', '-') + ntype
+    anchor = ('https://manual.nexusformat.org/classes/',
+              nxhtml + "#" + anchor.replace('_', '-') + ntype)
     if not ntype:
         anchor = anchor[:-1]
 
@@ -537,18 +549,16 @@ def get_enums(node):
         return (False, '')
 
 
-def nxdl_to_attr_obj(nxdl_path):  # Leave this one
+def nxdl_to_attr_obj(nxdl_path: str = None, nx_name: str = None, elem: ET.Element = None):
+    """Returns an ET.Element for the given path.
+
+    This function either takes the name for the Nexus Application Definition
+    we are looking for or the root elem from a previously loaded NXDL file
+    and finds the corresponding XML element with the needed attributes.
     """
-    Finds the path entry in NXDL file
-    Grabs all the attrs in NXDL entry
-    Checks Nexus base application defs for missing attrs and adds them as well
-    returns attr as a Python obj that can be directly placed into the h5py library
-    """
-    nxdef = nxdl_path.split(':')[0]
-    root = objectify.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml")
-    elem = root.getroot()
-    path = nxdl_path.split(':')[1]
-    for group in path.split('/')[1:]:
+    if elem is None:
+        elem = ET.parse(NEXUS_DEF_PATH + "/applications/" + nx_name + ".nxdl.xml").getroot()
+    for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
     return elem
 
@@ -736,8 +746,8 @@ def get_default_plotable(root, parser, logger):
 
 
 class HandleNexus:
-    """
-    documentation
+    """documentation
+
     """
     def __init__(self, logger, args):
         self.logger = logger
@@ -745,12 +755,20 @@ class HandleNexus:
             # args) >= 1 else 'wcopy/from_dallanto_master_from_defs.h5'
             # args) >= 1 else 'ARPES/201805_WSe2_arpes.nxs'
             args) >= 1 else 'tests/data/nexus_test_data/201805_WSe2_arpes.nxs'
+        self.parser = None
+        self.in_file = None
 
     def visit_node(self, hdf_path, hdf_node):
+        """Visit node
+
+        """
         process_node(hdf_node, self.parser, self.logger)
 
     def process_nexus_master_file(self, parser):
-        """ Process a nexus master file by processing all its nodes and their attributes"""
+        """
+        Process a nexus master file by processing all its nodes and their attributes
+
+        """
         self.parser = parser
         self.in_file = h5py.File(self.input_file_name, 'r')
         self.in_file.visititems(self.visit_node)
@@ -763,6 +781,6 @@ if __name__ == '__main__':
     STDOUT_HANDLER = logging.StreamHandler(sys.stdout)
     STDOUT_HANDLER.setLevel(logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT, handlers=[STDOUT_HANDLER])
-    logger = logging.getLogger()
-    NEXUS_HELPER = HandleNexus(logger, sys.argv[1:])
+    LOGGER = logging.getLogger()
+    NEXUS_HELPER = HandleNexus(LOGGER, sys.argv[1:])
     NEXUS_HELPER.process_nexus_master_file(None)
