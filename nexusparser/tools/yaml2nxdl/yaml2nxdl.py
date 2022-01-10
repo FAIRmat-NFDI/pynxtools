@@ -108,7 +108,6 @@ has to be a non-empty string!'
         assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'
         keyword = list(yml_appdef.keys())[0]  # which is the only one
-        print(yml_appdef[keyword])
         assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
 keyword has an invalid pattern, or is too short!'
         xml_root.set('name', keyword[1:-1])
