@@ -1,3 +1,20 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 """This script runs the conversion routine using a selected reader and write out a Nexus file."""
 
 import glob
@@ -13,6 +30,7 @@ import xml.etree.ElementTree as ET
 
 import click
 
+from nexusparser.tools.dataconverter import helpers
 from nexusparser.tools.dataconverter.writer import Writer
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
@@ -20,24 +38,11 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
-# Nexus related functions to be exported in a common place for all tools
-def convert_nexus_to_caps(nexus):
-    """Helper function to convert a Nexus class from <NxClass> to <CLASS>."""
-    return nexus[2:].upper()
-
-
-def convert_nexus_to_suggested_name(nexus):
-    """Helper function to suggest a name for a group from its Nexus class."""
-    return nexus[2:]
-
-
-# Common XML function
 def remove_namespace_from_tag(tag):
     """Helper function to remove the namespace from an XML tag."""
     return tag.split("}")[-1]
 
 
-# Helper functions for the convert script
 def get_first_group(root):
     """Helper function to get the actual first group element from the NXDL"""
     for child in root:
@@ -57,8 +62,8 @@ def generate_template_from_nxdl(root, path, template):
     if "name" in root.attrib:
         suffix = root.attrib['name']
     elif "type" in root.attrib:
-        nexus_class = convert_nexus_to_caps(root.attrib['type'])
-        hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
+        nexus_class = helpers.convert_nexus_to_caps(root.attrib['type'])
+        hdf5name = f"[{helpers.convert_nexus_to_suggested_name(root.attrib['type'])}]"
         suffix = f"{nexus_class}{hdf5name}"
 
     if tag == "attribute":
@@ -125,13 +130,13 @@ def get_names_of_all_readers() -> List[str]:
     default=False,
     help='Just print out the template generated from given NXDL file.'
 )
-def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):  #TODO: Write test function for this.
+def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
-    tree = ET.parse(nxdl)
+    nxdl_root = ET.parse(nxdl).getroot()
 
     template: Dict[str, str] = {}
-    root = get_first_group(tree.getroot())
+    root = get_first_group(nxdl_root)
     generate_template_from_nxdl(root, '', template)
     if generate_template:
         template.update((key, 'None') for key in template)
@@ -143,13 +148,16 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     print_input_files = bulletpoint.join((' ', *input_file))
     logger.info("Using %s reader to convert the given files: %s ", reader, print_input_files)
 
-    reader = get_reader(reader)
+    data_reader = get_reader(reader)
     nxdl_name = re.search("NX[a-z_]*(?=.nxdl.xml)", nxdl).group(0)
-    if nxdl_name not in reader.supported_nxdls:
+    if nxdl_name not in data_reader.supported_nxdls:
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
-    data = reader().read(template=template, file_paths=input_file)  # type: ignore[operator]
+    data = data_reader().read(template=dict(template),
+                              file_paths=input_file)  # type: ignore[operator]
 
-    logger.debug("The following data was read: %s", json.dumps(template, indent=4, sort_keys=True))
+    helpers.validate_data_dict(template, data, nxdl_root)
+
+    logger.debug("The following data was read: %s", json.dumps(data, indent=4, sort_keys=True))
 
     # Writing the data to output file
     Writer(data=data, nxdl_path=nxdl, output_path=output).write()
