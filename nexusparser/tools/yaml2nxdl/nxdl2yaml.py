@@ -23,15 +23,11 @@ class Nxdl2yaml():
             root_level_definition: List[str],
             append_flag=True,
             found_definition=False,
-            app_def_further_indent=False,
-            jump_root_doc=False,
             jump_symbol_child=False,
             root_level_doc='',
             root_level_symbols=''):
         self.append_flag = append_flag
         self.found_definition = found_definition
-        self.app_def_further_indent = app_def_further_indent
-        self.jump_root_doc = jump_root_doc
         self.jump_symbol_child = jump_symbol_child
         self.root_level_doc = root_level_doc
         self.root_level_symbols = root_level_symbols
@@ -46,9 +42,6 @@ then prints recursively each level of the tree
     """
         with open(output_yml, "a") as file_out:
             tag = node.tag.split("}", 1)[1]
-            if self.app_def_further_indent:
-                depth += 1
-                self.app_def_further_indent = False
             if tag == ('definition'):
                 self.found_definition = True
                 for item in node.attrib:
@@ -64,12 +57,16 @@ then prints recursively each level of the tree
                     self.root_level_definition.append(
                         '({value}):'.format(
                             value=node.attrib['name'] or ''))
-            if tag == ('doc') and depth == 0:
-                self.root_level_doc = '{indent}{tag}: "{text}"'.format(
-                    indent=depth * '  ',
-                    tag=node.tag.split("}", 1)[1],
-                    text=node.text.strip().replace('\"', '\'') if node.text else '')
-            if tag == ('doc') and depth != 0:
+            if depth == 0 and not self.root_level_doc:
+                for child in list(node):
+                    tag = child.tag.split("}", 1)[1]
+                    if tag == ('doc'):
+                        self.root_level_doc = '{indent}{tag}: "{text}"'.format(
+                            indent=0 * '  ',
+                            tag=child.tag.split("}", 1)[1],
+                            text=child.text.strip().replace('\"', '\'') if child.text else '')
+                        node.remove(child)
+            if tag == ('doc') and depth != 1:
                 file_out.write(
                     '{indent}{tag}: "{text}"\n'.format(
                         indent=depth * '  ',
@@ -77,7 +74,7 @@ then prints recursively each level of the tree
                         text=node.text.strip().replace('\"', '\'') if node.text else ''))
             if tag == ('symbols'):
                 self.root_level_symbols = '{indent}{tag}: {text}'.format(
-                    indent=depth * '  ',
+                    indent=0 * '  ',
                     tag=node.tag.split("}", 1)[1],
                     text=node.text.strip() if node.text else '')
                 depth += 1
@@ -86,30 +83,29 @@ then prints recursively each level of the tree
                     if tag == ('doc'):
                         self.symbol_list.append(
                             '{indent}{tag}: "{text}"'.format(
-                                indent=depth * '  ',
+                                indent=1 * '  ',
                                 tag=child.tag.split("}", 1)[1],
                                 text=child.text.strip().replace('\"', '\'') if child.text else ''))
                     elif tag == ('symbol'):
                         self.symbol_list.append(
                             '{indent}{key}: "{value}"'.format(
-                                indent=depth * '  ',
+                                indent=1 * '  ',
                                 key=child.attrib['name'],
                                 value=child.attrib['doc'] or ''))
                 self.jump_symbol_child = True
             # End of root level definition. Print root-level definitions in file
-            if depth == 0 \
-                    and self.jump_root_doc is False \
-                    and self.root_level_doc \
-                    and self.append_flag is True:
+            if self.root_level_doc \
+                    and self.append_flag is True \
+                    and (depth in (0, 1)):
                 file_out.write(
                     '{indent}{root_level_doc}\n'.format(
                         indent=0 * '  ',
                         root_level_doc=self.root_level_doc))
-                self.jump_root_doc = True
+                self.root_level_doc = ''
             if self.found_definition is True and self.append_flag is True:
-                if depth > 0 \
+                if depth > 1 \
                         and [s for s in self.root_level_definition if "category: application" in s]\
-                        or depth == 0 \
+                        or depth == 1 \
                         and [s for s in self.root_level_definition if "category: base" in s]:
                     if self.root_level_symbols:
                         file_out.write(
@@ -128,10 +124,8 @@ then prints recursively each level of the tree
                                     indent=0 * '  ',
                                     defs=defs))
                     self.found_definition = False
-                    if [s for s in self.root_level_definition if "category: application" in s]:
-                        self.app_def_further_indent = True
             #
-            if tag == ('field') or tag == ('group'):
+            if tag in ('field', 'group') and depth != 0:
                 if "name" in node.attrib and "type" in node.attrib:
                     file_out.write(
                         '{indent}{name}({value1}):\n'.format(
@@ -230,12 +224,12 @@ def print_yml(input_file):
     if os.path.isfile(output_yml):
         os.remove(output_yml)
     my_file = Nxdl2yaml([], [])
-    depth = -1
+    depth = 0
     tree = ET.parse(input_file)
     my_file.xmlparse(output_yml, tree.getroot(), depth)
 
 
-def append_yml(input_file):
+def append_yml(input_file, append_to_base):
     """Append to an existing Nexus base class new elements provided in YML input file \
 and print both an XML and YML file of the extended base class.
 Note: the input file name must match one existing Nexus base class to be appended
@@ -247,15 +241,15 @@ Note: the input file name must match one existing Nexus base class to be appende
     local_dir = os.path.abspath(os.path.dirname(__file__))
     nexus_def_path = os.path.join(local_dir, '../../definitions')
     base_classes_list_files = os.listdir(os.path.join(nexus_def_path, 'base_classes'))
-    assert [s for s in base_classes_list_files if input_file in s], 'Your base class extension \
-does not match any existing Nexus base classes'
-    base_class = os.path.join(nexus_def_path + '/base_classes', input_file)
+    assert [s for s in base_classes_list_files if append_to_base.strip() == s.strip('.nxdl.xml')], \
+        'Your base class extension does not match any existing Nexus base classes'
+    base_class = os.path.join(nexus_def_path + '/base_classes', append_to_base + '.nxdl.xml')
     nexus_file = Nxdl2yaml([], [])
-    depth = -1
+    depth = 0
     tree = ET.parse(base_class)
     nexus_file.xmlparse(output_yml, tree.getroot(), depth)
     my_file = Nxdl2yaml([], [], False)  # False print of definition: it's already on top of file
-    depth = -1
+    depth = 0
     tree = ET.parse(input_file)
     my_file.xmlparse(output_yml, tree.getroot(), depth)
     back_to_xml = CliRunner().invoke(yml2nxdl.yaml2nxdl, ['--input-file', output_yml])
@@ -270,19 +264,17 @@ a YAML file from.'
 )
 @click.option(
     '--append-to-base',
-    is_flag=True,
-    default=False,
     help='Parse xml file and append to base class, given that the xml file has same name \
 of an existing base class'
 )
-def launch_nxdl2yml(input_file: str, append_to_base: bool):
+def launch_nxdl2yml(input_file: str, append_to_base: str):
     """Helper function that triggers either the parsing or the appending routines
 
 """
     if not append_to_base:
         print_yml(input_file)
     else:
-        append_yml(input_file)
+        append_yml(input_file, append_to_base)
 
 
 if __name__ == '__main__':

@@ -104,20 +104,13 @@ has to be a non-empty string!'
         recursive_build.xml_handle_symbols(xml_root, yml_appdef['symbols'])
         del yml_appdef['symbols']
 
-    if xml_root.attrib['category'] == 'application':
-        assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
+    assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'
-        keyword = list(yml_appdef.keys())[0]  # which is the only one
-        assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
+    keyword = list(yml_appdef.keys())[0]  # which is the only one
+    assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
 keyword has an invalid pattern, or is too short!'
-        xml_root.set('name', keyword[1:-1])
-        recursive_build.recursive_build(xml_root, yml_appdef[keyword], verbose)
-
-    if xml_root.attrib['category'] == 'base':
-        keyword = list(yml_appdef.keys())[0]  # which is the only one
-        assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
-keyword has an invalid pattern!'
-        recursive_build.recursive_build(xml_root, yml_appdef, verbose)
+    xml_root.set('name', keyword[1:-1])
+    recursive_build.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file[:-4] + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')

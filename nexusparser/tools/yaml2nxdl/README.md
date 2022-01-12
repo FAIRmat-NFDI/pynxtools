@@ -12,7 +12,11 @@ The reverse conversion is also implemented.
 - nxdl2yaml.py
 1. Reads the user-specified NeXus instance that the NXDL input file represents as a nested dictionary.
 2. Creates a YML file walking the dictionary nest.
-3. Optionally, if --append-to-base flag is switched on, the NXDL input file is read as an extension of a base class and the entries contained are appended below a standard Nexus base class. The NXDL file name must be the same of a Nexus base class for this feature.
+3. Optionally, if --append-to-base argument is given,
+   the NXDL input file is interpreted as an extension of a base class and the entries contained in it
+   are appended below a standard Nexus base class.
+   You need to specify both your XML input file (.nxdl.xml) and Nexus class (no extension).
+   Both .yml and .nxdl.xml file of the extended class are printed.
 
 ```console
 user@box:~$ python yaml2nxdl.py
@@ -20,10 +24,9 @@ user@box:~$ python yaml2nxdl.py
 Usage: ./yaml2nxdl.py [OPTIONS]
 
 Options:
-   --input-file TEXT    The path to the input data file to read. (Repeat for
-                        more than one file.)
-   --verbose            Addictional std output info is printed to help debugging.
-   --help               Show this message and exit.
+   --input-file TEXT     The path to the input data file to read.
+   --verbose             Addictional std output info is printed to help debugging.
+   --help                Show this message and exit.
 
 
 user@box:~$ python nxdl2yaml.py
@@ -31,10 +34,10 @@ user@box:~$ python nxdl2yaml.py
 Usage: ./nxdl2yaml.py [OPTIONS]
 
 Options:
-   --input-file TEXT    The path to the input data file to read. (Repeat for
-                        more than one file.)
-   --append-to-base     Parse xml file and append to base class, given that the xml file has same name of an existing base class.
-   --help               Show this message and exit.
+   --input-file TEXT     The path to the input data file to read.
+   --append-to-base TEXT Parse xml file and append to specified base class,
+                         write the base class name with no extension.
+   --help                Show this message and exit.
 
 ```
 
