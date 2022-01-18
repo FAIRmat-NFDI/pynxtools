@@ -31,16 +31,12 @@ def fixture_writer(tmp_path):
     """pytest fixture to setup Writer object to be used by tests with dummy data."""
     writer = Writer(
         {
-            ("/ENTRY[my_entry]/INSTRUMENT[our_instrument]/"
-             "FERMI_CHOPPER[their_fermi_chopper]/energy"): "Value",
-            ("/ENTRY[my_entry]/INSTRUMENT[our_instrument]/"
-             "FERMI_CHOPPER[their_fermi_chopper]/energy/@units"): "eV",
-            ("/ENTRY[my_entry]/INSTRUMENT[our_instrument]/"
-             "FERMI_CHOPPER[their_fermi_chopper]/numpy"): np.zeros(3),
-            ("/ENTRY[my_entry]/INSTRUMENT[our_instrument]/"
-             "FERMI_CHOPPER[their_fermi_chopper]/numpy/@units"): "kg"
+            "/ENTRY[my_entry]/NXODD_name/int_value": 2,
+            "/ENTRY[my_entry]/NXODD_name/int_value/@units": "eV",
+            "/ENTRY[my_entry]/NXODD_name/posint_value": np.zeros(3),
+            "/ENTRY[my_entry]/NXODD_name/posint_value/@units": "kg"
         },
-        "tests/data/dataconverter/NXspe.nxdl.xml",
+        "tests/data/dataconverter/NXtest.nxdl.xml",
         os.path.join(tmp_path, "test.nxs")
     )
     yield writer
@@ -56,6 +52,6 @@ def test_write(writer):
     """Test for the Writer's write function. Checks whether entries given above get written out."""
     writer.write()
     test_nxs = h5py.File(writer.output_path, "r")
-    assert test_nxs["/my_entry/our_instrument/their_fermi_chopper/energy"].asstr()[...] == "Value"  # pylint: disable=no-member
-    assert test_nxs["/my_entry/our_instrument/their_fermi_chopper/energy"].attrs["units"] == "eV"
-    assert test_nxs["/my_entry/our_instrument/their_fermi_chopper/numpy"].shape == (3,)  # pylint: disable=no-member
+    assert test_nxs["/my_entry/NXODD_name/int_value"][()] == 2
+    assert test_nxs["/my_entry/NXODD_name/int_value"].attrs["units"] == "eV"
+    assert test_nxs["/my_entry/NXODD_name/posint_value"].shape == (3,)  # pylint: disable=no-member

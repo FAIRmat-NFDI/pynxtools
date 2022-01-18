@@ -19,17 +19,21 @@
 
 import glob
 import importlib
+import os
 from typing import List
+import xml.etree.ElementTree as ET
 
 import pytest
 
-from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
+from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+from nexusparser.tools.dataconverter.convert import generate_template_from_nxdl
+from nexusparser.tools.dataconverter.helpers import validate_data_dict
 
 
-def get_reader(reader_name: str = None, reader_path: str = None) -> BaseReader:
+def get_reader(reader_path: str = None) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
     spec = importlib.util.spec_from_file_location(  # type: ignore[attr-defined]
-        f"{reader_name}_reader.py", reader_path)
+        "reader.py", reader_path)
     module = importlib.util.module_from_spec(spec)  # type: ignore[attr-defined]
     spec.loader.exec_module(module)  # type: ignore[attr-defined]
     return module.READER  # type: ignore[attr-defined]
@@ -39,20 +43,16 @@ def get_readers() -> List:
     """Helper function for parametrizing reader objects"""
     readers = []
     for reader_filename in get_readers_file_names():
-        reader_name = reader_filename[reader_filename.rindex("/") + 1:-(len("_reader.py")):]
-        readers.append(get_reader(reader_name, reader_filename))
+        reader_name = reader_filename[reader_filename.rindex("readers/")
+                                      + len("readers/"):reader_filename.rindex("/")]
+        print(reader_name)
+        readers.append(get_reader(reader_filename))
     return readers
 
 
 def get_readers_file_names() -> List[str]:
     """Helper function to parametrize paths of all the reader Python files"""
-    return glob.glob("nexusparser/tools/dataconverter/readers/*.py")
-
-
-@pytest.mark.parametrize("reader_filename", get_readers_file_names())
-def test_is_valid_reader_name(reader_filename):
-    """Test to check if all readers have a valid name"""
-    assert reader_filename[-(len("_reader.py")):] == "_reader.py"
+    return glob.glob("nexusparser/tools/dataconverter/readers/*/reader.py")
 
 
 @pytest.mark.parametrize("reader", get_readers())
@@ -67,5 +67,26 @@ def test_has_correct_read_func(reader):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
     if reader.__name__ != "BaseReader":
-        read_data = reader().read(template={"henh": "2"}, file_paths=())
-        assert isinstance(read_data, dict)
+        assert hasattr(reader, "supported_nxdls")
+
+        reader_name = reader.__name__[:reader.__name__.rindex("Reader")].lower()
+
+        nexus_appdef_dir = os.path.join(os.getcwd(), "nexusparser", "definitions", "applications")
+        dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
+
+        input_files = glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
+
+        for supported_nxdl in reader.supported_nxdls:
+            if supported_nxdl == "NXtest":
+                nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")
+            else:
+                nxdl_file = os.path.join(nexus_appdef_dir, f"{supported_nxdl}.nxdl.xml")
+
+            root = ET.parse(nxdl_file).getroot()
+            template = {}
+            generate_template_from_nxdl(root, template)
+
+            read_data = reader().read(template=dict(template), file_paths=tuple(input_files))
+
+            assert isinstance(read_data, dict)
+            assert validate_data_dict(template, read_data, root)

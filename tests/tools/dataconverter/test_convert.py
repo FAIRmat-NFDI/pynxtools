@@ -21,7 +21,7 @@ from click.testing import CliRunner
 import pytest
 
 import nexusparser.tools.dataconverter.convert as dataconverter
-from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
+from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 
 def test_get_reader():
@@ -37,13 +37,13 @@ def test_get_names_of_all_readers():
 @pytest.mark.parametrize("cli_inputs", [
     pytest.param([
         "--nxdl",
-        "tests/data/dataconverter/NXspe.nxdl.xml",
+        "tests/data/dataconverter/NXtest.nxdl.xml",  # TODO: Make sure this works on Windows
         "--generate-template"
     ], id="generate-template"),
     pytest.param([], id="nxdl-not-provided"),
     pytest.param([
         "--nxdl",
-        "tests/data/dataconverter/NXspe.nxdl.xml",
+        "tests/data/dataconverter/NXtest.nxdl.xml",
         "--input-file",
         "test_input"
     ], id="input-file")
@@ -54,8 +54,7 @@ def test_cli(caplog, cli_inputs):
     result = runner.invoke(dataconverter.convert, cli_inputs)
     if "--generate-template" in cli_inputs:
         assert result.exit_code == 0
-        assert ("\"/ENTRY[entry]/INSTRUMENT[instrument]/FERMI_CHOPPER"
-                "[fermi_chopper]/energy\": \"None\",") in caplog.text
+        assert "\"/ENTRY[entry]/NXODD_name/int_value\": \"None\"," in caplog.text
     elif "--input-file" in cli_inputs:
         assert "test_input" in caplog.text
     elif result.exit_code == 2:

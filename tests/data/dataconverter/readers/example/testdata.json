@@ -1,0 +1,13 @@
+{
+    "bool_value": true,
+    "char_value": "A random string!",
+    "float_value": 0.1,
+    "float_value_units": "Units are always strings.",
+    "int_value": -3,
+    "int_value_units": "m/s^2",
+    "posint_value": 7,
+    "posint_value_units": "V",
+    "definition": "This is just test data!",
+    "definition_version": "0.0.1",
+    "program_name": "Nexus Parser"
+}

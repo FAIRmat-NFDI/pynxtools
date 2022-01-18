@@ -17,9 +17,11 @@
 #
 """Helper functions commonly used by the convert routine."""
 
-from typing import Tuple
+from typing import Tuple, Callable
 import re
 import xml.etree.ElementTree as ET
+
+import numpy as np
 
 from nexusparser.tools import nexus
 
@@ -81,32 +83,53 @@ def is_value_valid_element_of_enum(value, elem) -> Tuple[bool, list]:
     Returns the list of enums"""
     if elem is not None:
         has_enums, enums = nexus.get_enums(elem)
-        if has_enums and (value not in enums[0:-1] or value == ""):
+        if has_enums and (isinstance(value, list) or value not in enums[0:-1] or value == ""):
             return False, enums
     return True, []
 
 
+NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
+NUMPY_INT_TYPES = (np.short, np.ushort, np.intc, np.uintc, np.int_, np.uint)
+
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str),
-    "NX_BINARY": (bytes, bytearray),
+    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte),
     "NX_BOOLEAN": (bool),
     "NX_CHAR": (str),
     "NX_DATE_TIME": (str),
-    "NX_FLOAT": (float),
-    "NX_INT": (int),
-    "NX_NUMBER": (int, float),
-    "NX_POSINT": (int),  # value > 0 is checked in is_valid_data_type()
-    "NOT_PROVIDED": (str)  # Defaults to a string if a type is not provided.
+    "NX_FLOAT": (float, np.ndarray) + NUMPY_FLOAT_TYPES,
+    "NX_INT": (int, np.ndarray) + NUMPY_INT_TYPES,
+    "NX_NUMBER": (int, float, np.ndarray) + NUMPY_INT_TYPES + NUMPY_FLOAT_TYPES,
+    "NX_POSINT": (int, np.ndarray),  # value > 0 is checked in is_valid_data_type()
+    "NXDL_TYPE_UNAVAILABLE": (str)  # Defaults to a string if a type is not provided.
 }
+
+
+def check_all_children_for_callable(objects: list, check: Callable, *args) -> bool:
+    """Takes a callable as an argument and checks whether all objects in list are validated
+    by given callable. The callable should return a bool to validate."""
+    # TODO: Check the syntax on the function docstring.
+    for obj in objects:
+        if not check(obj.flat[0], *args) if isinstance(obj, np.ndarray) else check(obj, *args):
+            return False
+
+    return True
 
 
 def is_valid_data_type(value, nxdl_type, path):
     """Checks whether a given value is valid according to what is defined in the NXDL."""
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
-    if not isinstance(value, accepted_types):
-        raise Exception(f"The value at {path} should be of Python type: {accepted_types}")
+    if not ((isinstance(value, list)
+             and check_all_children_for_callable(value, isinstance, accepted_types))
+            or isinstance(value, accepted_types)):
+        raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
+                        f", as defined in the NXDL as {nxdl_type}.")
 
-    if nxdl_type == "NX_POSINT" and value < 1:
+    if (nxdl_type == "NX_POSINT"
+            and ((isinstance(value, list)
+                  and check_all_children_for_callable(value,
+                                                      lambda x: x > 0))
+                 or value < 0)):
         raise Exception(f"The value at {path} should be a positive int.")
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
@@ -145,7 +168,22 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
            data[path] is None:
             raise Exception(f"The data entry, {path}, is required and hasn't been "
                             "supplied by the reader.")
-        nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NOT_PROVIDED"
+        nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
 
         is_valid_data_type(data[path], nxdl_type, path)
         is_value_valid_element_of_enum(data[path], elem)
+
+    return True
+
+
+def remove_namespace_from_tag(tag):
+    """Helper function to remove the namespace from an XML tag."""
+    return tag.split("}")[-1]
+
+
+def get_first_group(root):
+    """Helper function to get the actual first group element from the NXDL"""
+    for child in root:
+        if remove_namespace_from_tag(child.tag) == "group":
+            return child
+    return root

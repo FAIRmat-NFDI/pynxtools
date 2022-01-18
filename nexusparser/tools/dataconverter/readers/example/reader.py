@@ -16,9 +16,10 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
-from typing import Tuple, List
+from typing import Tuple
+import json
 
-from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
+from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 
 class ExampleReader(BaseReader):
@@ -27,22 +28,29 @@ class ExampleReader(BaseReader):
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls = ["NXspe"]
+    supported_nxdls = ["NXtest"]
 
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
-        metadata: List[str] = []
+        data: dict = {}
+
+        if not file_paths:
+            raise Exception("No input files were given to Example Reader.")
 
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex("."):]
             with open(file_path, "r") as input_file:
-                if file_extension == ".metadata_extension":
-                    metadata = input_file.read().split("\n")
+                if file_extension == ".json":
+                    data = json.loads(input_file.read())
 
-        for value in metadata:
+        for k in template.keys():
             # The entries in the template dict should correspond with what the dataconverter
             # outputs with --generate-template for a provided NXDL file
-            template[f"/entry/instrument/metadata/{value}"] = value
+            field_name = k[k.rfind("/") + 1:]
+            if field_name[0] != "@":
+                template[k] = data[field_name]
+                if f"{field_name}_units" in data.keys() and f"{k}/@units" in template.keys():
+                    template[f"{k}/@units"] = data[f"{field_name}_units"]
 
         return template
 

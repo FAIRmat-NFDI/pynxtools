@@ -30,30 +30,23 @@ import xml.etree.ElementTree as ET
 
 import click
 
+from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter import helpers
 from nexusparser.tools.dataconverter.writer import Writer
+
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
-def remove_namespace_from_tag(tag):
-    """Helper function to remove the namespace from an XML tag."""
-    return tag.split("}")[-1]
-
-
-def get_first_group(root):
-    """Helper function to get the actual first group element from the NXDL"""
-    for child in root:
-        if remove_namespace_from_tag(child.tag) == "group":
-            return child
-    return root
-
-
-def generate_template_from_nxdl(root, path, template):
+def generate_template_from_nxdl(root, template, path=None):
     """Helper function to generate a template dictionary for given NXDL"""
-    tag = remove_namespace_from_tag(root.tag)
+    if path is None:
+        root = helpers.get_first_group(root)
+        path = ""
+
+    tag = helpers.remove_namespace_from_tag(root.tag)
 
     if tag == "doc":
         return
@@ -75,29 +68,29 @@ def generate_template_from_nxdl(root, path, template):
     if tag in ("field", "attribute"):
         template[path] = None
 
-    # Only add units if it is a field and the the units are not set to NX_UNITLESS
-    if tag == "field" and "units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS":
+    # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
+    if tag == "field" and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
         template[f"{path}/@units"] = None
 
     for child in root:
-        generate_template_from_nxdl(child, path, template)
+        generate_template_from_nxdl(child, template, path)
 
 
-def get_reader(reader_name):
+def get_reader(reader_name) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
-    path = os.path.join(path_prefix, "readers/", f"{reader_name}_reader.py")
-    spec = importlib.util.spec_from_file_location(f"{reader_name}_reader.py", path)
+    path = os.path.join(path_prefix, "readers", reader_name, "reader.py")
+    spec = importlib.util.spec_from_file_location("reader.py", path)
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.READER
+    spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    return module.READER  # type: ignore[attr-defined]
 
 
 def get_names_of_all_readers() -> List[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
-    files = glob.glob(os.path.join(path_prefix, "readers/*.py"))
-    return [file.split('_reader.py')[0][file.rindex("/") + 1:] for file in files]
+    files = glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py"))
+    return [file[file.rindex("readers/") + len("readers/"):file.rindex("/")] for file in files]
 
 
 @click.command()
@@ -136,16 +129,15 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     nxdl_root = ET.parse(nxdl).getroot()
 
     template: Dict[str, str] = {}
-    root = get_first_group(nxdl_root)
-    generate_template_from_nxdl(root, '', template)
+    generate_template_from_nxdl(nxdl_root, template)
     if generate_template:
-        template.update((key, 'None') for key in template)
+        template.update((key, "None") for key in template)
         logger.info(json.dumps(template, indent=4, sort_keys=True))
         return
 
     # Setting up all the input data
     bulletpoint = "\n\u2022 "
-    print_input_files = bulletpoint.join((' ', *input_file))
+    print_input_files = bulletpoint.join((" ", *input_file))
     logger.info("Using %s reader to convert the given files: %s ", reader, print_input_files)
 
     data_reader = get_reader(reader)

@@ -131,7 +131,8 @@ class Writer:
                     dataset = grp.create_dataset(entry_name, data=data)
                     units_key = f"{path}/@units"
 
-                    dataset.attrs["units"] = self.data[units_key]
+                    if units_key in self.data.keys():
+                        dataset.attrs["units"] = self.data[units_key]
                 else:
                     dataset = self.ensure_and_get_parent_node(path)
                     dataset.attrs[entry_name[1:]] = data
