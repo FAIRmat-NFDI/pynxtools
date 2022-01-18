@@ -5,8 +5,10 @@
 # Nexus definitions in github: https://github.com/nexusformat/definitions
 # to be cloned under os.environ['NEXUS_DEF_PATH']
 
+from typing import Optional
 import os
 import xml.etree.ElementTree as ET
+import re
 import sys
 import logging
 import textwrap
@@ -17,6 +19,7 @@ import h5py
 # stdout_handler.setLevel(logging.DEBUG)
 # logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT, handlers=[stdout_handler])
 # logger = logging.getLogger()
+
 
 # check for NEXUS definitions
 try:
@@ -193,7 +196,8 @@ uppercase to lowercase match is preferred
     except BaseException:
         name_any = False
     childname = get_node_name(child)
-    name = hdf_name[2:].upper() if hdf_name.startswith('NX') and 'name\
+    nx_class_regex = re.compile(r"NX[a-z_]+")
+    name = hdf_name[2:].upper() if nx_class_regex.search(hdf_name) and 'name\
     ' not in child.attrib else hdf_name
     # and no reserved words used
     if name_any and name != 'doc' and name != 'enumeration':
@@ -224,7 +228,7 @@ def get_local_name_from_xml(element):
 
 def get_own_nxdl_child(nxdl_elem, name):
     """Checks if an NXDL child node fits to the specific name"""
-    for child in nxdl_elem.iter():
+    for child in nxdl_elem:
         if get_local_name_from_xml(child) == 'group' and belongs_to(nxdl_elem, child, name):
             # get_nx_class(child) == name:
             return child
@@ -280,7 +284,7 @@ REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
     # default optionality
     # in BASE CLASSES: true
     # in APPLICATIONS: false
-    elif "base_classes" in nxdl_elem.base:
+    elif "base" in nxdl_elem.attrib and "base_classes" in nxdl_elem.base:
         return "<<OPTIONAL>>"
     return "<<REQUIRED>>"
 
@@ -530,6 +534,11 @@ def print_doc(node, ntype, level, nxhtml, nxpath):
     # print(doc.text if doc is not None else "")
 
 
+def get_namespace(element) -> str:
+    """Extracts the namespace for elements in the NXDL"""
+    return element.tag[element.tag.index("{"):element.tag.rindex("}") + 1]
+
+
 def get_enums(node):
     """
     makes list of enumerations, if node contains any.
@@ -537,19 +546,21 @@ def get_enums(node):
     otherwise empty string.
     """
     # collect item values from enumeration tag, if any
-    try:
-        for items in node.enumeration:
-            enums = []
-            for values in items.findall('item'):
-                enums.append("'" + values.attrib['value'] + "'")
-            enums = ','.join(enums)
+    namespace = get_namespace(node)
+    enums = []
+    for enumeration in node.findall(f"{namespace}enumeration"):
+        for item in enumeration.findall(f"{namespace}item"):
+            enums.append(item.attrib["value"])
+        enums = ','.join(enums)
+        if enums != "":
             return (True, '[' + enums + ']')
     # if there is no enumeration tag, returns empty string
-    except BaseException:
-        return (False, '')
+    return (False, "")
 
 
-def nxdl_to_attr_obj(nxdl_path: str = None, nx_name: str = None, elem: ET.Element = None):
+def get_node_at_nxdl_path(nxdl_path: str = None,
+                          nx_name: str = None,
+                          elem: Optional[ET.Element] = None):
     """Returns an ET.Element for the given path.
 
     This function either takes the name for the Nexus Application Definition
@@ -557,9 +568,14 @@ def nxdl_to_attr_obj(nxdl_path: str = None, nx_name: str = None, elem: ET.Elemen
     and finds the corresponding XML element with the needed attributes.
     """
     if elem is None:
-        elem = ET.parse(NEXUS_DEF_PATH + "/applications/" + nx_name + ".nxdl.xml").getroot()
+        elem = ET.parse(os.path.join(NEXUS_DEF_PATH,
+                                     "/applications/",
+                                     nx_name, ".nxdl.xml")).getroot()
     for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
+    if elem is None:
+        raise Exception(f"Attributes were not found for {nxdl_path}. "
+                        "Please check this entry in the template dictionary.")
     return elem
 
 
