@@ -38,9 +38,9 @@ def pretty_print_xml(xml_root, output_xml):
 using built-in libraries and add preceding XML processing instruction
 
     """
-    dom = minidom.parseString(ET.tostring(xml_root, encoding="UTF-8", method="xml"))
+    dom = minidom.parseString(ET.tostring(xml_root, encoding='utf-8', method='xml'))
     sibling = dom.createProcessingInstruction(
-        'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xslt"')
+        'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
     root = dom.firstChild
     dom.insertBefore(sibling, root)
     xml_string = dom.toprettyxml()

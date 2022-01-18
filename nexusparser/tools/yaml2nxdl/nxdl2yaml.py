@@ -13,6 +13,116 @@ from click.testing import CliRunner
 import nexusparser.tools.yaml2nxdl.yaml2nxdl as yml2nxdl
 
 
+def handle_group_or_field(depth, node, file_out):
+    """Handle all the possible attributes that come along a field or group
+
+"""
+    if "name" in node.attrib and "type" in node.attrib:
+        file_out.write(
+            '{indent}{name}({value1}):\n'.format(
+                indent=depth * '  ',
+                name=node.attrib['name'] or '',
+                value1=node.attrib['type'] or ''))
+    if "name" in node.attrib and "type" not in node.attrib:
+        file_out.write(
+            '{indent}{name}:\n'.format(
+                indent=depth * '  ',
+                name=node.attrib['name'] or ''))
+    if "name" not in node.attrib and "type" in node.attrib:
+        file_out.write(
+            '{indent}({type}):\n'.format(
+                indent=depth * '  ',
+                type=node.attrib['type'] or ''))
+    if "minOccurs" in node.attrib and "maxOccurs" in node.attrib:
+        file_out.write(
+            '{indent}exists: [min, {value1}, max, {value2}]\n'.format(
+                indent=(depth + 1) * '  ',
+                value1=node.attrib['minOccurs'] or '',
+                value2=node.attrib['maxOccurs'] or ''))
+    if "minOccurs" in node.attrib \
+            and "maxOccurs" not in node.attrib \
+            and node.attrib['minOccurs'] == "1":
+        file_out.write(
+            '{indent}{name}: required \n'.format(
+                indent=(depth + 1) * '  ',
+                name='exists'))
+    if "recommended" in node.attrib and node.attrib['recommended'] == "true":
+        file_out.write(
+            '{indent}exists: recommended\n'.format(
+                indent=(depth + 1) * '  '))
+    if "units" in node.attrib:
+        file_out.write(
+            '{indent}unit: {value}\n'.format(
+                indent=(depth + 1) * '  ',
+                value=node.attrib['units'] or ''))
+
+
+def handle_dimension(depth, node, file_out):
+    """Handle the dimension field
+
+"""
+    file_out.write(
+        '{indent}{tag}:\n'.format(
+            indent=depth * '  ',
+            tag=node.tag.split("}", 1)[1]))
+    file_out.write(
+        '{indent}rank: {rank}\n'.format(
+            indent=(depth + 1) * '  ',
+            rank=node.attrib['rank']))
+    dim_list = ''
+    for child in list(node):
+        tag = child.tag.split("}", 1)[1]
+        if tag == ('dim'):
+            dim_list = dim_list + '[{index}, {value}], '.format(
+                index=child.attrib['index'],
+                value=child.attrib['value'])
+    file_out.write(
+        '{indent}dim: [{value}]\n'.format(
+            indent=(depth + 1) * '  ',
+            value=dim_list[:-2] or ''))
+
+
+def handle_attributes(depth, node, file_out):
+    """Handle the attributes parsed from the xml file
+
+"""
+    file_out.write(
+        '{indent}{escapesymbol}{key}:\n'.format(
+            indent=depth * '  ',
+            escapesymbol=r'\@',
+            key=node.attrib['name']))
+
+
+def handle_enumeration(depth, node, file_out):
+    """Handle the enumeration field parsed from the xml file
+
+"""
+    file_out.write(
+        '{indent}{tag}:'.format(
+            indent=depth * '  ',
+            tag=node.tag.split("}", 1)[1]))
+    enum_list = ''
+    for child in list(node):
+        tag = child.tag.split("}", 1)[1]
+        if tag == ('item'):
+            enum_list = enum_list + '{value}, '.format(
+                value=child.attrib['value'])
+    file_out.write(
+        ' [{enum_list}]\n'.format(
+            enum_list=enum_list[:-2] or ''))
+
+
+def handle_not_root_level_doc(depth, node, file_out):
+    """Handle docs field along the yaml file
+
+"""
+    file_out.write(
+        '{indent}{tag}: "{text}"\n'.format(
+            indent=depth * '  ',
+            tag=node.tag.split("}", 1)[1],
+            text=node.text.strip().replace('\"', '\'') if node.text else ''))
+
+
 class Nxdl2yaml():
     """Parse XML file and print a YML file
 
@@ -21,18 +131,118 @@ class Nxdl2yaml():
             self,
             symbol_list: List[str],
             root_level_definition: List[str],
-            append_flag=True,
-            found_definition=False,
-            jump_symbol_child=False,
             root_level_doc='',
             root_level_symbols=''):
-        self.append_flag = append_flag
-        self.found_definition = found_definition
-        self.jump_symbol_child = jump_symbol_child
+        self.append_flag = True
+        self.found_definition = False
+        self.jump_symbol_child = False
         self.root_level_doc = root_level_doc
         self.root_level_symbols = root_level_symbols
         self.root_level_definition = root_level_definition
         self.symbol_list = symbol_list
+
+    def handle_symbols(self, depth, node):
+        """Handle symbols field and its childs
+
+        """
+        self.root_level_symbols = '{indent}{tag}: {text}'.format(
+            indent=0 * '  ',
+            tag=node.tag.split("}", 1)[1],
+            text=node.text.strip() if node.text else '')
+        depth += 1
+        for child in list(node):
+            tag = child.tag.split("}", 1)[1]
+            if tag == ('doc'):
+                self.symbol_list.append(
+                    '{indent}{tag}: "{text}"'.format(
+                        indent=1 * '  ',
+                        tag=child.tag.split("}", 1)[1],
+                        text=child.text.strip().replace('\"', '\'') if child.text else ''))
+            elif tag == ('symbol'):
+                self.symbol_list.append(
+                    '{indent}{key}: "{value}"'.format(
+                        indent=1 * '  ',
+                        key=child.attrib['name'],
+                        value=child.attrib['doc'] or ''))
+
+    def handle_definition(self, node):
+        """Handle definition group and its attributes
+
+        """
+        for item in node.attrib:
+            if 'schemaLocation' not in item \
+                    and 'name' not in item \
+                    and 'extends' not in item \
+                    and 'type' not in item:
+                self.root_level_definition.append(
+                    '{key}: {value}'.format(
+                        key=item,
+                        value=node.attrib[item] or ''))
+        if 'name' in node.attrib.keys():
+            self.root_level_definition.append(
+                '({value}):'.format(
+                    value=node.attrib['name'] or ''))
+
+    def handle_root_level_doc(self, node):
+        """Handle the documentation field found at root level
+
+"""
+        for child in list(node):
+            tag = child.tag.split("}", 1)[1]
+            if tag == ('doc'):
+                self.root_level_doc = '{indent}{tag}: "{text}"'.format(
+                    indent=0 * '  ',
+                    tag=child.tag.split("}", 1)[1],
+                    text=child.text.strip().replace('\"', '\'') if child.text else '')
+                node.remove(child)
+
+    def print_root_level_doc(self, file_out):
+        """Print at the root level of YML file \
+the general documentation field found in XML file
+
+ """
+        file_out.write(
+            '{indent}{root_level_doc}\n'.format(
+                indent=0 * '  ',
+                root_level_doc=self.root_level_doc))
+        self.root_level_doc = ''
+
+    def print_root_level_info(self, depth, file_out):
+        """Print at the root level of YML file \
+the information stored as definition attributes in the XML file
+
+"""
+        if depth > 0 \
+                and [s for s in self.root_level_definition if "category: application" in s]\
+                or depth == 1 \
+                and [s for s in self.root_level_definition if "category: base" in s]:
+            if self.root_level_symbols:
+                file_out.write(
+                    '{indent}{root_level_symbols}\n'.format(
+                        indent=0 * '  ',
+                        root_level_symbols=self.root_level_symbols))
+                for symbol in self.symbol_list:
+                    file_out.write(
+                        '{indent}{symbol}\n'.format(
+                            indent=0 * '  ',
+                            symbol=symbol))
+            if self.root_level_definition:
+                for defs in self.root_level_definition:
+                    file_out.write(
+                        '{indent}{defs}\n'.format(
+                            indent=0 * '  ',
+                            defs=defs))
+            self.found_definition = False
+
+    def recursion_in_xml_tree(self, depth, node, output_yml):
+        """Descend lower level in xml tree. If we are in the symbols branch, \
+the recursive behaviour is not triggered as we already handled the symbols' childs
+"""
+        if self.jump_symbol_child is True:
+            self.jump_symbol_child = False
+        else:
+            for child in list(node):
+                Nxdl2yaml.xmlparse(self, output_yml, child, depth)
 
     def xmlparse(self, output_yml, node, depth):
         """Main of the nxdl2yaml converter.
@@ -40,180 +250,38 @@ It parses XML tree,
 then prints recursively each level of the tree
 
     """
+        print(depth, node.attrib)
         with open(output_yml, "a") as file_out:
             tag = node.tag.split("}", 1)[1]
             if tag == ('definition'):
                 self.found_definition = True
-                for item in node.attrib:
-                    if 'schemaLocation' not in item \
-                            and 'name' not in item \
-                            and 'extends' not in item \
-                            and 'type' not in item:
-                        self.root_level_definition.append(
-                            '{key}: {value}'.format(
-                                key=item,
-                                value=node.attrib[item] or ''))
-                if 'name' in node.attrib.keys():
-                    self.root_level_definition.append(
-                        '({value}):'.format(
-                            value=node.attrib['name'] or ''))
+                Nxdl2yaml.handle_definition(self, node)
             if depth == 0 and not self.root_level_doc:
-                for child in list(node):
-                    tag = child.tag.split("}", 1)[1]
-                    if tag == ('doc'):
-                        self.root_level_doc = '{indent}{tag}: "{text}"'.format(
-                            indent=0 * '  ',
-                            tag=child.tag.split("}", 1)[1],
-                            text=child.text.strip().replace('\"', '\'') if child.text else '')
-                        node.remove(child)
+                Nxdl2yaml.handle_root_level_doc(self, node)
             if tag == ('doc') and depth != 1:
-                file_out.write(
-                    '{indent}{tag}: "{text}"\n'.format(
-                        indent=depth * '  ',
-                        tag=node.tag.split("}", 1)[1],
-                        text=node.text.strip().replace('\"', '\'') if node.text else ''))
+                handle_not_root_level_doc(depth, node, file_out)
             if tag == ('symbols'):
-                self.root_level_symbols = '{indent}{tag}: {text}'.format(
-                    indent=0 * '  ',
-                    tag=node.tag.split("}", 1)[1],
-                    text=node.text.strip() if node.text else '')
-                depth += 1
-                for child in list(node):
-                    tag = child.tag.split("}", 1)[1]
-                    if tag == ('doc'):
-                        self.symbol_list.append(
-                            '{indent}{tag}: "{text}"'.format(
-                                indent=1 * '  ',
-                                tag=child.tag.split("}", 1)[1],
-                                text=child.text.strip().replace('\"', '\'') if child.text else ''))
-                    elif tag == ('symbol'):
-                        self.symbol_list.append(
-                            '{indent}{key}: "{value}"'.format(
-                                indent=1 * '  ',
-                                key=child.attrib['name'],
-                                value=child.attrib['doc'] or ''))
+                Nxdl2yaml.handle_symbols(self, depth, node)
                 self.jump_symbol_child = True
-            # End of root level definition. Print root-level definitions in file
+            # End of root level definition parsing. Print root-level definitions in file
             if self.root_level_doc \
                     and self.append_flag is True \
                     and (depth in (0, 1)):
-                file_out.write(
-                    '{indent}{root_level_doc}\n'.format(
-                        indent=0 * '  ',
-                        root_level_doc=self.root_level_doc))
-                self.root_level_doc = ''
+                Nxdl2yaml.print_root_level_doc(self, file_out)
             if self.found_definition is True and self.append_flag is True:
-                if depth > 1 \
-                        and [s for s in self.root_level_definition if "category: application" in s]\
-                        or depth == 1 \
-                        and [s for s in self.root_level_definition if "category: base" in s]:
-                    if self.root_level_symbols:
-                        file_out.write(
-                            '{indent}{root_level_symbols}\n'.format(
-                                indent=0 * '  ',
-                                root_level_symbols=self.root_level_symbols))
-                        for symbol in self.symbol_list:
-                            file_out.write(
-                                '{indent}{symbol}\n'.format(
-                                    indent=0 * '  ',
-                                    symbol=symbol))
-                    if self.root_level_definition:
-                        for defs in self.root_level_definition:
-                            file_out.write(
-                                '{indent}{defs}\n'.format(
-                                    indent=0 * '  ',
-                                    defs=defs))
-                    self.found_definition = False
-            #
+                Nxdl2yaml.print_root_level_info(self, depth, file_out)
+            # End of print root-level definitions in file
             if tag in ('field', 'group') and depth != 0:
-                if "name" in node.attrib and "type" in node.attrib:
-                    file_out.write(
-                        '{indent}{name}({value1}):\n'.format(
-                            indent=depth * '  ',
-                            name=node.attrib['name'] or '',
-                            value1=node.attrib['type'] or ''))
-                if "name" in node.attrib and "type" not in node.attrib:
-                    file_out.write(
-                        '{indent}{name}:\n'.format(
-                            indent=depth * '  ',
-                            name=node.attrib['name'] or ''))
-                if "name" not in node.attrib and "type" in node.attrib:
-                    file_out.write(
-                        '{indent}({type}):\n'.format(
-                            indent=depth * '  ',
-                            type=node.attrib['type'] or ''))
-                if "minOccurs" in node.attrib and "maxOccurs" in node.attrib:
-                    file_out.write(
-                        '{indent}exists: [min, {value1}, max, {value2}]\n'.format(
-                            indent=(depth + 1) * '  ',
-                            value1=node.attrib['minOccurs'] or '',
-                            value2=node.attrib['maxOccurs'] or ''))
-                if "minOccurs" in node.attrib \
-                        and "maxOccurs" not in node.attrib \
-                        and node.attrib['minOccurs'] == "1":
-                    file_out.write(
-                        '{indent}{name}: required \n'.format(
-                            indent=(depth + 1) * '  ',
-                            name='exists'))
-                if "recommended" in node.attrib and node.attrib['recommended'] == "true":
-                    file_out.write(
-                        '{indent}exists: recommended\n'.format(
-                            indent=(depth + 1) * '  '))
-                if "units" in node.attrib:
-                    file_out.write(
-                        '{indent}unit: {value}\n'.format(
-                            indent=(depth + 1) * '  ',
-                            value=node.attrib['units'] or ''))
+                handle_group_or_field(depth, node, file_out)
             if tag == ('enumeration'):
-                file_out.write(
-                    '{indent}{tag}:'.format(
-                        indent=depth * '  ',
-                        tag=node.tag.split("}", 1)[1]))
-                enum_list = ''
-                for child in list(node):
-                    tag = child.tag.split("}", 1)[1]
-                    if tag == ('item'):
-                        enum_list = enum_list + '{value}, '.format(
-                            value=child.attrib['value'])
-                file_out.write(
-                    ' [{enum_list}]\n'.format(
-                        enum_list=enum_list[:-2] or ''))
+                handle_enumeration(depth, node, file_out)
             if tag == ('attribute'):
-                file_out.write(
-                    '{indent}{escapesymbol}{key}:\n'.format(
-                        indent=depth * '  ',
-                        escapesymbol=r'\@',
-                        key=node.attrib['name']))
+                handle_attributes(depth, node, file_out)
             if tag == ('dimensions'):
-                file_out.write(
-                    '{indent}{tag}:\n'.format(
-                        indent=depth * '  ',
-                        tag=tag))
-                file_out.write(
-                    '{indent}rank: {rank}\n'.format(
-                        indent=(depth + 1) * '  ',
-                        rank=node.attrib['rank']))
-                dim_list = ''
-                for child in list(node):
-                    tag = child.tag.split("}", 1)[1]
-                    if tag == ('dim'):
-                        dim_list = dim_list + '[{index}, {value}], '.format(
-                            index=child.attrib['index'],
-                            value=child.attrib['value'])
-                file_out.write(
-                    '{indent}dim: [{value}]\n'.format(
-                        indent=(depth + 1) * '  ',
-                        value=dim_list[:-2] or ''))
-            else:
-                pass
-
+                handle_dimension(depth, node, file_out)
         depth += 1
         # Write nested nodes
-        if self.jump_symbol_child is True:
-            self.jump_symbol_child = False
-        else:
-            for child in list(node):
-                Nxdl2yaml.xmlparse(self, output_yml, child, depth)
+        Nxdl2yaml.recursion_in_xml_tree(self, depth, node, output_yml)
 
 
 def print_yml(input_file):
