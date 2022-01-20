@@ -23,7 +23,7 @@
             <field name="float_value" type="NX_FLOAT" units="NX_ENERGY">
                 <doc>A dummy entry for a float value.</doc>
             </field>
-            <field name="bool_value" type="NX_BOOLEAN">
+            <field name="bool_value" type="NX_BOOLEAN" units="NX_UNITLESS">
                 <doc>A dummy entry for a bool value.</doc>
             </field>
             <field name="int_value" type="NX_INT" units="NX_LENGTH">
@@ -34,6 +34,14 @@
             </field>
             <field name="char_value" type="NX_CHAR" units="NX_UNITLESS">
                 <doc>A dummy entry for a char value.</doc>
+            </field>
+            <field name="type">
+                <enumeration>
+                    <item value="1st type" />
+                    <item value="2nd type" />
+                    <item value="3rd type" />
+                    <item value="4th type" />
+                </enumeration>
             </field>
         </group>
     </group>

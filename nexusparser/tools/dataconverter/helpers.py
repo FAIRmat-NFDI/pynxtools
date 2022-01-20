@@ -106,11 +106,9 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
 
 
 def check_all_children_for_callable(objects: list, check: Callable, *args) -> bool:
-    """Takes a callable as an argument and checks whether all objects in list are validated
-    by given callable. The callable should return a bool to validate."""
-    # TODO: Check the syntax on the function docstring.
+    """Checks whether all objects in list are validated by given callable."""
     for obj in objects:
-        if not check(obj.flat[0], *args) if isinstance(obj, np.ndarray) else check(obj, *args):
+        if not check(obj, *args):
             return False
 
     return True
@@ -125,11 +123,14 @@ def is_valid_data_type(value, nxdl_type, path):
         raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
                         f", as defined in the NXDL as {nxdl_type}.")
 
+    is_greater_than = lambda x: x.flat[0] if isinstance(x, np.ndarray) else x > 0
+
     if (nxdl_type == "NX_POSINT"
-            and ((isinstance(value, list)
-                  and check_all_children_for_callable(value,
-                                                      lambda x: x > 0))
-                 or value < 0)):
+            and ((not isinstance(value, list)
+                  and (value.flat[0] < 0 if isinstance(value, np.ndarray) else value < 0))
+                 or (isinstance(value, list)
+                     and not check_all_children_for_callable(value,
+                                                             is_greater_than)))):
         raise Exception(f"The value at {path} should be a positive int.")
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
@@ -140,12 +141,12 @@ def is_valid_data_type(value, nxdl_type, path):
             raise Exception(f"The date at {path} should be an ISO8601 formatted str object.")
 
 
-def is_path_in_data_dict(nxdl_path: str, data: dict) -> bool:
-    """Checks whether there is any of the accepted variations of path in the dictionary"""
+def path_in_data_dict(nxdl_path: str, data: dict) -> Tuple[bool, str]:
+    """Checks if there is an accepted variation of path in the dictionary & returns the dict path"""
     for key in data.keys():
         if nxdl_path == convert_data_converter_dict_to_nxdl_path(key):
-            return True
-    return False
+            return True, key
+    return False, ""
 
 
 def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
@@ -154,24 +155,29 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
         raise Exception("The NXDL file hasn't been loaded.")
 
     for path in template:
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+        is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
+
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
         if entry_name[0] == "@":
             if entry_name == "@units":
-                is_valid_data_type(data[path], "NX_CHAR", path)
+                is_valid_data_type(data[renamed_path], "NX_CHAR", renamed_path)
             continue
 
-        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
         if nexus.get_required_string(elem) == "<<REQUIRED>>" and \
-           not is_path_in_data_dict(nxdl_path, data) or \
-           data[path] is None:
-            raise Exception(f"The data entry, {path}, is required and hasn't been "
+           not is_path_in_data_dict or\
+           data[renamed_path] is None:
+            raise Exception(f"The data entry, {renamed_path}, is required and hasn't been "
                             "supplied by the reader.")
         nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
 
-        is_valid_data_type(data[path], nxdl_type, path)
-        is_value_valid_element_of_enum(data[path], elem)
+        is_valid_data_type(data[renamed_path], nxdl_type, renamed_path)
+        is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
+        if not is_valid_enum:
+            raise Exception(f"The value at {renamed_path} should be"
+                            f" one of the following strings: {enums}")
 
     return True
 
