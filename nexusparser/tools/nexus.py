@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Read files from different format and print it in a standard Nexus format
 
 """
@@ -25,7 +24,7 @@ import h5py
 try:
     # either given by sys env
     NEXUS_DEF_PATH = os.environ['NEXUS_DEF_PATH']
-except BaseException:
+except KeyError:
     # or it should be available locally under the dir 'definitions'
     LOCAL_DIR = os.path.abspath(os.path.dirname(__file__))
     NEXUS_DEF_PATH = os.path.join(LOCAL_DIR, '../definitions')
@@ -341,12 +340,12 @@ def chk_nxdataaxis(hdf_node, name, loger):
             return
     elif axes is not None:
         for i, j in enumerate(axes):
-            if name == axes[i.index(j)]:
-                indices = parent.attrs.get(axes[i.index(j)] + '_indices')
+            if name == j:
+                indices = parent.attrs.get(j + '_indices')
                 if indices is int:
                     loger.info("Dataset referenced as NXdata AXIS #%d" % indices)
                 else:
-                    loger.info("Dataset referenced as NXdata AXIS #%d" % i.index(j))
+                    loger.info("Dataset referenced as NXdata AXIS #%d" % i)
                 return
     # check for alternative Axes
     indices = parent.attrs.get(name + '_indices')
@@ -764,7 +763,7 @@ def get_default_plotable(root, parser, logger):
 class HandleNexus:
     """documentation
 
-    """
+"""
     def __init__(self, logger, args):
         self.logger = logger
         self.input_file_name = args[0] if len(
