@@ -35,6 +35,12 @@ def main():
         author='The NOMAD Authors',
         license='APACHE 2.0',
         packages=find_packages(exclude=['tests']),
+        package_data={
+            'nexusparser.definitions.base_classes': ['*.xml'],
+            'nexusparser.definitions.applications': ['*.xml'],
+            'nexusparser.definitions.contributed_definitions': ['*.xml'],
+            'nexusparser.definitions': ['*.xsd']
+        },
         include_package_data=True,
         install_requires=['nomad-lab','h5py', 'lxml', 'click'])
 

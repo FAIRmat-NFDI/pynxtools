@@ -1,8 +1,5 @@
 # Data Converter
 
-<img src="./convert_routine.svg" />
-
-
 Converts experimental data to Nexus/HDF5 files based on any provided NXDL.
 
 ```console
@@ -30,7 +27,7 @@ user@box:~$ python convert.py --nxdl nxdl --input_file metadata --input_file dat
 
 ## Installation
 
-1, Clone the repo using: git clone https://github.com/nomad-coe/nomad-parser-nexus.git --recursive\
+1, Clone the repo using: `git clone https://github.com/nomad-coe/nomad-parser-nexus.git --recursive`\
 2. From the root folder where the setup.py exists, run: pip install -e .
 
 ```console
@@ -45,16 +42,20 @@ For now, I have made sure that this tools works on this branch.
 
 ## Writing a Reader
 
-Readers have to be placed in the **readers** folder. The reader Python files should end in ```_reader.py```.
+This converter allows extending support to other data formats by allowing extensions called readers.  The converter provides a dev platform to build a Nexus compatible reader by providing checking against a chosen Nexus Application Definition.
 
-Copy and rename ```readers/example_reader.py``` to your own reader file.
+Readers have to be placed in the **readers** folder in there own subfolder. The reader folder should be named with the reader's name and contain a `reader.py`.\
+For example: The reader `Example Reader` is placed under `dataconverter/readers/example/reader.py`.
+
+Copy and rename `readers/example/reader.py` to your own `readers/mydatareader/reader.py`.
+
 Then implement the reader function:
 
 ```python
 """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
 from typing import Tuple
 
-from readers.base_reader import BaseReader
+from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
 
 
 class MyDataReader(BaseReader):
@@ -76,12 +77,12 @@ READER = MyDataReader
 
 ```
 
-This function takes a template dictionary based on the provided NXDL file (similar to ```--generate-template```) and the list of all the file paths the user provides with ```--input```.
-The returned dictionary should contain keys that correspond to paths in the NXDL and the output Nexus file as defined below. The values of these keys have to be data objects to be populated in the output Nexus file.
+The read function takes a template dictionary based on the provided NXDL file (similar to `--generate-template`) and the list of all the file paths the user provides with `--input`.
+The returned dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to be populated in the output Nexus file. They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints. Practically you can pass any value that can be handled by `h5py` package.
 
-Save the ```MyDataReader``` snippet as ```my_data_reader.py```. Then you can then call this using:
+Then you can then call this using:
 ```console
-user@box:~$ python convert.py --reader my_data --nxdl path_to_nxdl --output path_to_output.nxs
+user@box:~$ python convert.py --reader mydata --nxdl path_to_nxdl --output path_to_output.nxs
 ```
 
 ### The reader template dictionary
@@ -103,7 +104,7 @@ Example:
 }
 ```
 
-In case the NXDL does not define a ```name``` for the group the requested data belongs to, the template dictionary will list it as ```/NAME_IN_NXDL[name_in_output_nexus]```
+In case the NXDL does not define a `name` for the group the requested data belongs to, the template dictionary will list it as `/NAME_IN_NXDL[name_in_output_nexus]`
 You can choose any name you prefer instead of the suggested name. This allows the reader function to repeat groups defined in the NXDL to be outputted to the Nexus file.
 
 ```json
@@ -120,8 +121,11 @@ For attributes defined in the NXDL, the reader template dictionary will have the
 }
 ```
 
-You can also define links by setting the value to sub dictionary object with key ```link```:
+(Note: Links are not supported yet.)
+You can also define links by setting the value to sub dictionary object with key `link`:
 
 ```python
 template["/entry/instrument/source"] = {"link": "/path/to/source/data"}
 ```
+
+<img src="./convert_routine.svg" />
