@@ -65,20 +65,7 @@ def test_nexus():
     print('Testing of nexus.py is SUCCESSFUL.')
 
 
-@pytest.mark.skip(reason="not to test it alone")
-def testing_nxdl_to_attr_obj_1(example_path, result_str):
-    """Test one on nxdl to attribute object
-
-"""
-    result = nexus.nxdl_to_attr_obj(example_path)
-    assert result.attrib['type'] == \
-        result_str, "failed on: " + example_path + "expected type: " + result_str
-
-
-def test_nxdl_to_attr_obj():
-    testing_nxdl_to_attr_obj_1('NXsqom:/ENTRY/instrument/SOURCE', "NXsource")
-    testing_nxdl_to_attr_obj_1('NXspe:/ENTRY/NXSPE_info', "NXcollection")
-    # test_nxdl_to_attr_obj_1('NXem_base_draft.yml:/ENTRY/SUBENTRY/thumbnail/mime_type', "")
+# TODO Write a test for tools.nexus.get_node_at_nxdl_path - Sherjeel
 
 
 def test_example(parsers):

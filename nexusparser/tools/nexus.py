@@ -21,13 +21,14 @@ import h5py
 
 
 # check for NEXUS definitions
-try:
-    # either given by sys env
-    NEXUS_DEF_PATH = os.environ['NEXUS_DEF_PATH']
-except KeyError:
-    # or it should be available locally under the dir 'definitions'
-    LOCAL_DIR = os.path.abspath(os.path.dirname(__file__))
-    NEXUS_DEF_PATH = os.path.join(LOCAL_DIR, '../definitions')
+def get_nexus_definitions_path():
+    try:
+        # either given by sys env
+        return os.environ['NEXUS_DEF_PATH']
+    except KeyError:
+        # or it should be available locally under the dir 'definitions'
+        LOCAL_DIR = os.path.abspath(os.path.dirname(__file__))
+        return os.path.join(LOCAL_DIR, '../definitions')
 
 
 def get_nx_class_path(hdf_node):
@@ -61,7 +62,7 @@ def get_nxdl_entry(hdf_node):
     try:
         nxdef = entry['definition'][()]
         return nxdef.decode()
-    except BaseException:
+    except KeyError:
         return 'NO Definition referenced'
 
 
@@ -71,7 +72,7 @@ def get_nx_class(nxdl_elem):
 """
     try:
         return nxdl_elem.attrib['type']
-    except BaseException:
+    except KeyError:
         return 'NX_CHAR'
 
 
@@ -107,7 +108,7 @@ def get_nx_classes():
     """Read base classes from the Nexus definition/base_classes folder
 
 """
-    base_classes_list_files = os.listdir(os.path.join(NEXUS_DEF_PATH, 'base_classes'))
+    base_classes_list_files = os.listdir(os.path.join(get_nexus_definitions_path(), 'base_classes'))
     nx_clss = sorted([s.strip('.nxdl.xml') for s in base_classes_list_files])
     return nx_clss
 
@@ -116,7 +117,7 @@ def get_nx_units():
     """Read unit kinds from the Nexus definition/nxdlTypes.xsd file
 
 """
-    filepath = NEXUS_DEF_PATH + '/nxdlTypes.xsd'
+    filepath = get_nexus_definitions_path() + '/nxdlTypes.xsd'
     tree = ET.parse(filepath)
     root = tree.getroot()
     units_and_type_list = []
@@ -141,7 +142,7 @@ def get_nx_attribute_type():
     """Read attribute types from the Nexus definition/nxdlTypes.xsd file
 
 """
-    filepath = NEXUS_DEF_PATH + '/nxdlTypes.xsd'
+    filepath = get_nexus_definitions_path() + '/nxdlTypes.xsd'
     tree = ET.parse(filepath)
     root = tree.getroot()
     units_and_type_list = []
@@ -193,7 +194,7 @@ uppercase to lowercase match is preferred
         #    name_any = True
         # else:
         #    name_any = False
-    except BaseException:
+    except KeyError:
         name_any = False
     childname = get_node_name(child)
     nx_class_regex = re.compile(r"NX[a-z_]+")
@@ -257,7 +258,7 @@ it also checks for the base classes
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc_obj = ET.parse(NEXUS_DEF_PATH + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
+    bc_obj = ET.parse(get_nexus_definitions_path() + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
     return get_own_nxdl_child(bc_obj, name)
 
 
@@ -361,7 +362,9 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
 
 """
     nxdef = get_nxdl_entry(hdf_node)
-    elem = ET.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml").getroot()
+    elem = ET.parse(os.path.join(get_nexus_definitions_path(),
+                                     "applications",
+                                     f"{nxdef}.nxdl.xml")).getroot()
     nxdl_path = [elem]
     path = get_nx_class_path(hdf_node)
     req_str = None
@@ -568,9 +571,9 @@ and finds the corresponding XML element with the needed attributes.
 
 """
     if elem is None:
-        elem = ET.parse(os.path.join(NEXUS_DEF_PATH,
-                                     "/applications/",
-                                     nx_name, ".nxdl.xml")).getroot()
+        elem = ET.parse(os.path.join(get_nexus_definitions_path(),
+                                     "applications",
+                                     f"{nx_name}.nxdl.xml")).getroot()
     for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
     if elem is None:
