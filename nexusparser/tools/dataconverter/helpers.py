@@ -89,16 +89,18 @@ def is_value_valid_element_of_enum(value, elem) -> Tuple[bool, list]:
 
 
 NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
-NUMPY_INT_TYPES = (np.short, np.ushort, np.intc, np.uintc, np.int_, np.uint)
+NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
+NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str),
-    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte),
-    "NX_BOOLEAN": (bool),
-    "NX_CHAR": (str),
+    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
+    "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
+    "NX_CHAR": (str, np.ndarray, np.chararray),
     "NX_DATE_TIME": (str),
     "NX_FLOAT": (float, np.ndarray) + NUMPY_FLOAT_TYPES,
     "NX_INT": (int, np.ndarray) + NUMPY_INT_TYPES,
+    "NX_UINT": (np.ndarray,) + NUMPY_UINT_TYPES,
     "NX_NUMBER": (int, float, np.ndarray) + NUMPY_INT_TYPES + NUMPY_FLOAT_TYPES,
     "NX_POSINT": (int, np.ndarray),  # value > 0 is checked in is_valid_data_type()
     "NXDL_TYPE_UNAVAILABLE": (str)  # Defaults to a string if a type is not provided.
@@ -167,8 +169,8 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
         elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
         if nexus.get_required_string(elem) == "<<REQUIRED>>" and \
-           not is_path_in_data_dict or\
-           data[renamed_path] is None:
+            (not is_path_in_data_dict
+             or data[renamed_path] is None):
             raise Exception(f"The data entry, {renamed_path}, is required and hasn't been "
                             "supplied by the reader.")
         nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"

@@ -35,7 +35,7 @@ def test_get_reader():
 
 def test_get_names_of_all_readers():
     """Unit test for the helper function to get all readers."""
-    assert "base" in dataconverter.get_names_of_all_readers()
+    assert "example" in dataconverter.get_names_of_all_readers()
 
 
 @pytest.mark.parametrize("cli_inputs", [

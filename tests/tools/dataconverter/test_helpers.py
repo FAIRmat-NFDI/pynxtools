@@ -83,15 +83,14 @@ VALID_DATA_DICT = {
         ("The value at /ENTRY[my_entry]/NXODD_name/in"
          "t_value should be of Python type: (<class 'int'>, <cla"
          "ss 'numpy.ndarray'>, <class 'numpy.int16'>, <class 'nu"
-         "mpy.uint16'>, <class 'numpy.int32'>, <class 'numpy.uin"
-         "t32'>, <class 'numpy.int64'>, <class 'numpy.uint64'>),"
+         "mpy.int32'>, <class 'numpy.int64'>),"
          " as defined in the NXDL as NX_INT."),
         id="string-instead-of-int"),
     pytest.param(
         alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/bool_value", "True"),
         ("The value at /ENTRY[my_entry]/NXODD_name/bool_value sh"
-         "ould be of Python type: <class 'bool'>, as defined in "
-         "the NXDL as NX_BOOLEAN."),
+         "ould be of Python type: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
+         "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."),
         id="string-instead-of-bool"),
     pytest.param(
         alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/posint_value", -1),
@@ -101,7 +100,8 @@ VALID_DATA_DICT = {
     pytest.param(
         alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/char_value", 3),
         ("The value at /ENTRY[my_entry]/NXODD_name/char_value should be of Python type:"
-         " <class 'str'>, as defined in the NXDL as NX_CHAR."),
+         " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
+         " as defined in the NXDL as NX_CHAR."),
         id="int-instead-of-chars"),
     pytest.param(
         {
@@ -117,8 +117,7 @@ VALID_DATA_DICT = {
             "/ENTRY[my_entry]/definition/@version": ["2.4.6"],
             "/ENTRY[my_entry]/program_name": ["Testing program"],
             "/ENTRY[my_entry]/NXODD_name/type": "2nd type"
-        }, ("The value at /ENTRY[my_entry]/NXODD_name/char_value should be of Python type:"
-            " <class 'str'>, as defined in the NXDL as NX_CHAR."),
+        }, "",
         id="lists"),
     pytest.param(
         alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/type", "Wrong option"),

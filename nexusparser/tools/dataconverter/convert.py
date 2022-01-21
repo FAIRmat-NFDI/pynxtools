@@ -78,7 +78,7 @@ def generate_template_from_nxdl(root, template, path=None):
 
 def get_reader(reader_name) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
-    path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
+    path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     path = os.path.join(path_prefix, "readers", reader_name, "reader.py")
     spec = importlib.util.spec_from_file_location("reader.py", path)
     module = importlib.util.module_from_spec(spec)
@@ -88,9 +88,15 @@ def get_reader(reader_name) -> BaseReader:
 
 def get_names_of_all_readers() -> List[str]:
     """Helper function to populate a list of all available readers"""
-    path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
+    path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     files = glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py"))
-    return [file[file.rindex("readers/") + len("readers/"):file.rindex("/")] for file in files]
+    all_readers = []
+    for file in files:
+        if f"{os.sep}base{os.sep}" not in file:
+            index_of_readers_folder_name = file.rindex(f"readers{os.sep}") + len(f"readers{os.sep}")
+            index_of_last_path_sep = file.rindex(os.sep)
+            all_readers.append(file[index_of_readers_folder_name:index_of_last_path_sep])
+    return all_readers
 
 
 @click.command()
