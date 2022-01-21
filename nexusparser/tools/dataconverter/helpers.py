@@ -175,11 +175,13 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
                             "supplied by the reader.")
         nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
 
-        is_valid_data_type(data[renamed_path], nxdl_type, renamed_path)
-        is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
-        if not is_valid_enum:
-            raise Exception(f"The value at {renamed_path} should be"
-                            f" one of the following strings: {enums}")
+        # TODO: Make a test case for when optional entry is not sent back
+        if data[renamed_path] is not None:
+            is_valid_data_type(data[renamed_path], nxdl_type, renamed_path)
+            is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
+            if not is_valid_enum:
+                raise Exception(f"The value at {renamed_path} should be"
+                                f" one of the following strings: {enums}")
 
     return True
 
