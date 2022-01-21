@@ -42,7 +42,7 @@ def main():
             'nexusparser.definitions': ['*.xsd']
         },
         include_package_data=True,
-        install_requires=['nomad-lab','h5py', 'lxml', 'click'])
+        install_requires=['nomad-lab', 'h5py', 'lxml', 'click'])
 
 
 if __name__ == '__main__':

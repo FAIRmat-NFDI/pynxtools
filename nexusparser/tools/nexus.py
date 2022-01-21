@@ -188,10 +188,11 @@ uppercase to lowercase match is preferred
 """
     # check if nameType allows different name
     try:
-        if child.attrib['nameType'] == "any":
-            name_any = True
-        else:
-            name_any = False
+        name_any = bool(child.attrib['nameType'] == "any")
+        # if child.attrib['nameType'] == "any":
+        #    name_any = True
+        # else:
+        #    name_any = False
     except BaseException:
         name_any = False
     childname = get_node_name(child)
@@ -214,9 +215,8 @@ uppercase to lowercase match is preferred
                 return False
         # accept this fit
         return True
-    else:
-        if childname == name:
-            return True
+    if childname == name:
+        return True
     return False
 
 
@@ -268,24 +268,24 @@ REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
 """
     if nxdl_elem is None:
         return "<<NOT IN SCHEMA>>"
-    # if optionality is defined
-    elif ('optional' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['optional'] == "true") or \
-        ('minOccurs' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['minOccurs'] == "0") or \
-            ('required' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['required'] == "false"):
-        return "<<OPTIONAL>>"
-    elif ('optional' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['optional'] == "false") or \
-        ('minOccurs' in nxdl_elem.attrib.keys() and int(nxdl_elem.attrib['minOccurs']) > 0) or \
-            ('required' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['required'] == "true"):
-        return "<<REQUIRED>>"
-    # new expression for being recommended
-    elif 'recommended' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['recommended'] == "true":
+    is_optional = 'optional' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['optional'] == "true"
+    is_minoccurs = 'minOccurs' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['minOccurs'] == "0"
+    # is_required = 'required' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['required'] == "true"
+    is_recommended = 'recommended' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['recommended'] == "true"
+
+    if is_recommended:
         return "<<RECOMMENDED>>"
+    if is_optional or is_minoccurs:
+        return "<<OPTIONAL>>"
+    return "<<REQUIRED>>"
+
+
     # default optionality
     # in BASE CLASSES: true
     # in APPLICATIONS: false
-    elif "base" in nxdl_elem.attrib and "base_classes" in nxdl_elem.base:
-        return "<<OPTIONAL>>"
-    return "<<REQUIRED>>"
+
+    # if "base" in nxdl_elem.attrib and "base_classes" in nxdl_elem.base: # TODO: confirm with Sandor
+    #    return "<<OPTIONAL>>"
 
 
 def chk_nxdataaxis_v2(hdf_node, name):
@@ -303,18 +303,19 @@ def chk_nxdataaxis_v2(hdf_node, name):
         for i in len(axes):
             if axes[i] and name == axes[i]:
                 LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", i)
-                return
+                return None
     ownpaxis = hdf_node.attrs.get('primary')
     own_axis = hdf_node.attrs.get('axis')
     assert own_axis is int, 'axis is not int type!'
     # also convention v1
     if ownpaxis is int and ownpaxis == 1:
         LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
-        return
+        return None
     if not (ownpaxis is int and ownpaxis == 1):
         LOGGER.info(
             "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d", own_axis - 1)
-        return
+        return None
+    return None
 
 
 def chk_nxdataaxis(hdf_node, name, loger):
@@ -323,21 +324,21 @@ def chk_nxdataaxis(hdf_node, name, loger):
 """
     # check if it is a field in an NXdata node
     if not isinstance(hdf_node, h5py.Dataset):
-        return
+        return None
     parent = hdf_node.parent
     if not parent or (parent and not parent.attrs.get('NX_class') == "NXdata"):
-        return
+        return None
     # chk for Signal
     signal = parent.attrs.get('signal')
     if signal and name == signal:
         loger.info("Dataset referenced as NXdata SIGNAL")
-        return
+        return None
     # check for default Axes
     axes = parent.attrs.get('axes')
     if axes is str:
         if name == axes:
             loger.info("Dataset referenced as NXdata AXIS")
-            return
+            return None
     elif axes is not None:
         for i, j in enumerate(axes):
             if name == j:
@@ -346,7 +347,7 @@ def chk_nxdataaxis(hdf_node, name, loger):
                     loger.info("Dataset referenced as NXdata AXIS #%d" % indices)
                 else:
                     loger.info("Dataset referenced as NXdata AXIS #%d" % i)
-                return
+                return None
     # check for alternative Axes
     indices = parent.attrs.get(name + '_indices')
     if indices is int:
@@ -359,7 +360,6 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)
 
 """
-
     nxdef = get_nxdl_entry(hdf_node)
     elem = ET.parse(NEXUS_DEF_PATH + "/applications/" + nxdef + ".nxdl.xml").getroot()
     nxdl_path = [elem]
@@ -562,10 +562,11 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
                           elem: Optional[ET.Element] = None):
     """Returns an ET.Element for the given path.
 
-    This function either takes the name for the Nexus Application Definition
-    we are looking for or the root elem from a previously loaded NXDL file
-    and finds the corresponding XML element with the needed attributes.
-    """
+This function either takes the name for the Nexus Application Definition
+we are looking for or the root elem from a previously loaded NXDL file
+and finds the corresponding XML element with the needed attributes.
+
+"""
     if elem is None:
         elem = ET.parse(os.path.join(NEXUS_DEF_PATH,
                                      "/applications/",
@@ -609,7 +610,10 @@ def process_node(hdf_node, parser, logger, doc=True):
             parser(hdf_path, hdf_node, nxdef, nxdl_path, val)
 
 
-def get_default_plotable(root, parser, logger):
+def get_default_plotable(root, logger):
+    """Get default plotable
+
+"""
     logger.info('========================')
     logger.info('=== Default Plotable ===')
     logger.info('========================')
@@ -624,15 +628,7 @@ def get_default_plotable(root, parser, logger):
         except BaseException:
             nxentry = None
     if not nxentry:
-        nxentries = []
-        for key in root.keys():
-            if (isinstance(root[key], h5py.Group) and root[key].attrs.get('NX_class\
-            ') and root[key].attrs['NX_class'] == "NXentry"):
-                nxentries.append(root[key])
-        # v3: as there was no selection given, only 1 nxentry shall exists
-        # v2: take any
-        if len(nxentries) >= 1:
-            nxentry = nxentries[0]
+        nxentry = entry_helper(root)
     if not nxentry:
         logger.info('No NXentry has been found')
         return
@@ -648,15 +644,7 @@ def get_default_plotable(root, parser, logger):
         except BaseException:
             nxdata = None
     if not nxdata:
-        lnxdata = []
-        for key in nxentry.keys():
-            if isinstance(nxentry[key], h5py.Group) and nxentry[key].attrs.get('NX_class\
-            ') and nxentry[key].attrs['NX_class'] == "NXdata":
-                lnxdata.append(nxentry[key])
-        # v3: as there was no selection given, only 1 nxdata shall exists
-        # v2: take any
-        if len(lnxdata) >= 1:
-            nxdata = lnxdata[0]
+        nxdata = nxdata_helper(nxentry)
     if not nxdata:
         logger.info('No NXdata group has been found')
         return
@@ -671,20 +659,7 @@ def get_default_plotable(root, parser, logger):
     except BaseException:
         signal = None
     if not signal:
-        signals = []
-        for key in nxdata.keys():
-            if isinstance(nxdata[key], h5py.Dataset):
-                signals.append(nxdata[key])
-        # v3: as there was no selection given, only 1 data field shall exists
-        if len(signals) == 1:
-            signal = signals[0]
-        # v2: select the one with an attribute signal="1" attribute
-        elif len(signals) > 1:
-            for sig in signals:
-                if sig.attrs.get("signal") and sig.attrs.get("signal\
-                ") is str and sig.attrs.get("signal") == "1":
-                    signal = sig
-                    break
+        signal = signal_helper(nxdata)
     if not signal:
         logger.info('No Signal has been found')
         return
@@ -694,6 +669,62 @@ def get_default_plotable(root, parser, logger):
     dim = len(signal.shape)
     # axes
     axes = []
+    axis_helper(dim, nxdata, signal, axes, logger)
+
+
+def entry_helper(root):
+    """Check entry related data
+
+"""
+    nxentries = []
+    for key in root.keys():
+        if (isinstance(root[key], h5py.Group) and root[key].attrs.get('NX_class\
+        ') and root[key].attrs['NX_class'] == "NXentry"):
+            nxentries.append(root[key])
+    # v3: as there was no selection given, only 1 nxentry shall exists
+    # v2: take any
+    if len(nxentries) >= 1:
+        return nxentries[0]
+    return None
+
+
+def nxdata_helper(nxentry):
+    lnxdata = []
+    for key in nxentry.keys():
+        if isinstance(nxentry[key], h5py.Group) and nxentry[key].attrs.get('NX_class\
+        ') and nxentry[key].attrs['NX_class'] == "NXdata":
+            lnxdata.append(nxentry[key])
+    # v3: as there was no selection given, only 1 nxdata shall exists
+    # v2: take any
+    if len(lnxdata) >= 1:
+        return lnxdata[0]
+    return None
+
+
+def signal_helper(nxdata):
+    """Check signal related data
+
+"""
+    signals = []
+    for key in nxdata.keys():
+        if isinstance(nxdata[key], h5py.Dataset):
+            signals.append(nxdata[key])
+    # v3: as there was no selection given, only 1 data field shall exists
+    if len(signals) == 1:
+        return signals[0]
+    # v2: select the one with an attribute signal="1" attribute
+    if len(signals) > 1:
+        for sig in signals:
+            if sig.attrs.get("signal") and sig.attrs.get("signal\
+            ") is str and sig.attrs.get("signal") == "1":
+                return sig
+    return None
+
+
+def axis_helper(dim, nxdata, signal, axes, logger):
+    """Check axis related data
+
+"""
     for a_item in range(dim):
         ax_list = []
         # primary axes listed in attribute axes
@@ -773,7 +804,7 @@ class HandleNexus:
         self.parser = None
         self.in_file = None
 
-    def visit_node(self, hdf_path, hdf_node):
+    def visit_node(self, hdf_node):
         """Visit node
 
         """

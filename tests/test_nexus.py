@@ -21,9 +21,8 @@ from typing import cast, Any
 import pytest
 
 from nomad.metainfo import Definition, MSection, Section
-from nexusparser.metainfo import nexus
 from nomad.datamodel import EntryArchive
-
+from nexusparser.metainfo import nexus
 from nexusparser.tools import nexus
 
 
@@ -63,7 +62,7 @@ def test_assert_nexus_metainfo(path: str, value: Any):
         if current is None:
             assert False, f'{path} does not exist'
 
-    if value is '*':
+    if value == '*':
         assert current is not None, f'{path} does not exist'
     elif value is None:
         assert current is None, f'{path} does exist'
@@ -77,25 +76,35 @@ def test_assert_nexus_metainfo(path: str, value: Any):
 
 
 def test_use_nexus_metainfo():
+    """Test on use of Nexus metainfo
+
+"""
     # pylint: disable=no-member
     archive = EntryArchive()
     archive.nexus = nexus.Nexus()
     archive.nexus.nx_application_arpes = nexus.NXarpes()
     archive.nexus.nx_application_arpes.m_create(nexus.NXarpes.NXentryGroup)
-    archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_field_title = nexus.NXarpes.NXentryGroup.titleField()
+    archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_field_title = \
+        nexus.NXarpes.NXentryGroup.titleField()
     archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_field_title.nx_value = 'my title'
 
-    # Entry/default is not overwritten in NXarpes. Therefore technically, there is no attribute section
+    # Entry/default is not overwritten in NXarpes. Therefore technically,
+    # there is no attribute section
     # nexus.NXarpes.NXentryGroup.DefaultAttribute. We artifically extented inheritence to
     # include inner section/classes. So both options work:
-    # archive.nexus.nx_application_arpes.nx_group_ENTRY.nx_attribute_default = nexus.NXentry.DefaultAttribute()
-    archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default = nexus.NXarpes.NXentryGroup.defaultAttribute()
-    archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default.nx_value = 'my default'
+    # archive.nexus.nx_application_arpes.nx_group_ENTRY.nx_attribute_default =
+    # nexus.NXentry.DefaultAttribute()
+    archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default = \
+        nexus.NXarpes.NXentryGroup.defaultAttribute()
+    archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default.nx_value = \
+        'my default'
     # pylint: enable=no-member
 
     archive = EntryArchive.m_from_dict(archive.m_to_dict())
-    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default.nx_value == 'my default'
-    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_field_title.nx_value == 'my title'
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default.nx_value == \
+        'my default'
+    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_field_title.nx_value == \
+        'my title'
 
     # TODO remove
     # print(json.dumps(archive.m_to_dict(), indent=2))
@@ -106,6 +115,9 @@ def test_use_nexus_metainfo():
     pytest.param('NXarpes:app/NXentry:group/default:attribute/my default:value', id='attribute')
 ])
 def test_use_nexus_metainfo_reflectivly(path):
+    """Test of the use of nexus metainfo reflectivly
+
+"""
     archive = EntryArchive()
     archive.nexus = nexus.Nexus()  # pylint: disable=no-member
     parent_object: MSection = archive.nexus
@@ -117,19 +129,28 @@ def test_use_nexus_metainfo_reflectivly(path):
         if kind in ['app', 'group', 'field', 'attribute']:
             if kind == 'app':
                 section_definition = nexus.applications.all_definitions[name_or_value]
-                sub_section_definition = parent_definition.all_sub_sections[name_or_value.replace('NX', 'nx_application_')]
+                sub_section_definition = \
+                    parent_definition.all_sub_sections[name_or_value.replace('NX', '\
+nx_application_')]
 
             if kind == 'group':
-                section_definition = parent_definition.all_inner_section_definitions[f'{name_or_value}Group']
-                sub_section_definition = parent_definition.all_sub_sections[f'nx_group_{name_or_value.replace("NX", "").upper()}']
+                section_definition = \
+                    parent_definition.all_inner_section_definitions[f'{name_or_value}Group']
+                sub_section_definition = \
+                    parent_definition.all_sub_sections[f'\
+                        nx_group_{name_or_value.replace("NX", "").upper()}']
 
             if kind == 'field':
-                section_definition = parent_definition.all_inner_section_definitions[f'{name_or_value}Field']
-                sub_section_definition = parent_definition.all_sub_sections[f'nx_field_{name_or_value}']
+                section_definition = \
+                    parent_definition.all_inner_section_definitions[f'{name_or_value}Field']
+                sub_section_definition = \
+                    parent_definition.all_sub_sections[f'nx_field_{name_or_value}']
 
             if kind == 'attribute':
-                section_definition = parent_definition.all_inner_section_definitions[f'{name_or_value}Attribute']
-                sub_section_definition = parent_definition.all_sub_sections[f'nx_attribute_{name_or_value}']
+                section_definition = \
+                    parent_definition.all_inner_section_definitions[f'{name_or_value}Attribute']
+                sub_section_definition = \
+                    parent_definition.all_sub_sections[f'nx_attribute_{name_or_value}']
 
             new_object = section_definition.section_cls()
             parent_object.m_add_sub_section(sub_section_definition, new_object)
@@ -145,13 +166,12 @@ def test_use_nexus_metainfo_reflectivly(path):
 
 
 def test_get_nexus_classes_units_attributes():
-    """
-    # check the correct parsing of a separate list for:
-    # Nexus classes (base_classes)
-    # Nexus units (memberTypes)
-    # Nexus attribute type (primitiveTypes)
-    # the tested functions can be found in nexus.py file
-    """
+    """Check the correct parsing of a separate list for:
+Nexus classes (base_classes)
+Nexus units (memberTypes)
+Nexus attribute type (primitiveTypes)
+the tested functions can be found in nexus.py file
+"""
 
     # Test 1
     nexus_classes_list = nexus.get_nx_classes

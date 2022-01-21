@@ -163,15 +163,32 @@ def check_keyword_variable(verbose, keyword_name, keyword_type, value):
         raise ValueError('Found an improper YML key !')
 
 
+def helper_keyword_type(kkeyword_type):
+    """This function is returning a value of keyword_type if it belong to NX_TYPE_KEYS
+
+"""
+    if kkeyword_type in yaml2nxdl_utils.NX_TYPE_KEYS:
+        return kkeyword_type
+    return None
+
+
+def verbose_flag(verbose, kkeyword, vvalue):
+    """Verbose stdout printing, if verbose flag is active
+
+"""
+    if verbose:
+        print('  kkeyword:', kkeyword)
+        print('  vvalue:', '[' + str(type(vvalue)) + ']')
+    return None
+
+
 def second_nested_level_handle(verbose, fld, value):
     """When a second dictionary is found inside a value, a new cycle of handlings is run
 
 """
     if isinstance(value, dict):
         for kkeyword, vvalue in iter(value.items()):
-            if verbose:
-                print('  kkeyword:', kkeyword)
-                print('  vvalue:', '[' + str(type(vvalue)) + ']')
+            verbose_flag(verbose, kkeyword, vvalue)
             if kkeyword[0:2] == yaml2nxdl_utils.NX_ATTR_IDNT:
                 attr = ET.SubElement(fld, 'attribute')
                 # attributes may also come with an nx_type specifier
@@ -180,8 +197,7 @@ def second_nested_level_handle(verbose, fld, value):
                     yaml2nxdl_utils.nx_name_type_resolving(kkeyword[2:])
                 attr.set('name', kkeyword_name)
                 typ = 'NX_CHAR'
-                if kkeyword_type in yaml2nxdl_utils.NX_TYPE_KEYS:
-                    typ = kkeyword_type
+                typ = helper_keyword_type(kkeyword_type)
                 attr.set('type', typ)
                 if isinstance(vvalue, dict):
                     for kkkeyword, vvvalue in iter(vvalue.items()):
