@@ -35,6 +35,9 @@
             <field name="char_value" type="NX_CHAR" units="NX_UNITLESS">
                 <doc>A dummy entry for a char value.</doc>
             </field>
+            <field name="date_value" type="NX_DATE_TIME" units="NX_UNITLESS">
+                <doc>A dummy entry for a date value.</doc>
+            </field>
             <field name="type">
                 <enumeration>
                     <item value="1st type" />

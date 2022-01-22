@@ -136,8 +136,8 @@ def is_valid_data_type(value, nxdl_type, path):
         raise Exception(f"The value at {path} should be a positive int.")
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-        iso8601 = re.compile(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):"
-                             r"(\d{2}(?:\.\d*)?)((-(\d{2}):(\d{2})|Z)?)$")
+        iso8601 = re.compile(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
+                             r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$")
         results = iso8601.search(value)
         if results is None:
             raise Exception(f"The date at {path} should be an ISO8601 formatted str object.")

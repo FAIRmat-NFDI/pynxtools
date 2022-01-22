@@ -57,7 +57,8 @@ def fixture_template():
         "/ENTRY[entry]/NXODD_name/type": None,
         "/ENTRY[entry]/definition": None,
         "/ENTRY[entry]/definition/@version": None,
-        "/ENTRY[entry]/program_name": None
+        "/ENTRY[entry]/program_name": None,
+        "/ENTRY[entry]/NXODD_name/date_value": None
     }
 
 
@@ -73,7 +74,8 @@ VALID_DATA_DICT = {
     "/ENTRY[my_entry]/definition": "NXtest",
     "/ENTRY[my_entry]/definition/@version": "2.4.6",
     "/ENTRY[my_entry]/program_name": "Testing program",
-    "/ENTRY[my_entry]/NXODD_name/type": "2nd type"
+    "/ENTRY[my_entry]/NXODD_name/type": "2nd type",
+    "/ENTRY[my_entry]/NXODD_name/date_value": "2022-01-22T12:14:12.05018+00:00"
 }
 
 
@@ -104,13 +106,32 @@ VALID_DATA_DICT = {
         id="int-instead-of-chars"),
     pytest.param(
         alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/float_value", None),
-        (""),
+        "",
         id="empty-optional-field"),
     pytest.param(
         alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/bool_value", None),
         ("The data entry, /ENTRY[my_entry]/NXODD_name/bool_value, is required and "
          "hasn't been supplied by the reader."),
         id="empty-required-field"),
+    pytest.param(
+        alter_dict(VALID_DATA_DICT,
+                   "/ENTRY[my_entry]/NXODD_name/date_value",
+                   "2022-01-22T12:14:12.05018+00:00"),
+        "",
+        id="UTC-with-+00:00"),
+    pytest.param(
+        alter_dict(VALID_DATA_DICT,
+                   "/ENTRY[my_entry]/NXODD_name/date_value",
+                   "2022-01-22T12:14:12.05018Z"),
+        "",
+        id="UTC-with-Z"),
+    pytest.param(
+        alter_dict(VALID_DATA_DICT,
+                   "/ENTRY[my_entry]/NXODD_name/date_value",
+                   "2022-01-22T12:14:12.05018-00:00"),
+        "The date at /ENTRY[my_entry]/NXODD_name/date_value should be an ISO8601 "
+        "formatted str object.",
+        id="UTC-with--00:00"),
     pytest.param(
         {
             "/ENTRY[my_entry]/NXODD_name/float_value": [2.0],
@@ -124,7 +145,8 @@ VALID_DATA_DICT = {
             "/ENTRY[my_entry]/definition": "NXtest",
             "/ENTRY[my_entry]/definition/@version": ["2.4.6"],
             "/ENTRY[my_entry]/program_name": ["Testing program"],
-            "/ENTRY[my_entry]/NXODD_name/type": "2nd type"
+            "/ENTRY[my_entry]/NXODD_name/type": "2nd type",
+            "/ENTRY[my_entry]/NXODD_name/date_value": "2022-01-22T12:14:12.05018+00:00"
         }, "",
         id="lists"),
     pytest.param(
@@ -139,7 +161,11 @@ VALID_DATA_DICT = {
 ])
 def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
     """Unit test for the data validation routine"""
-    if request.node.callspec.id in ("valid-data-dict", "lists", "empty-optional-field"):
+    if request.node.callspec.id in ("valid-data-dict",
+                                    "lists",
+                                    "empty-optional-field",
+                                    "UTC-with-+00:00",
+                                    "UTC-with-Z"):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:
