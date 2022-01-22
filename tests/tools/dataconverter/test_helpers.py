@@ -82,8 +82,7 @@ VALID_DATA_DICT = {
         alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/int_value", "1"),
         ("The value at /ENTRY[my_entry]/NXODD_name/in"
          "t_value should be of Python type: (<class 'int'>, <cla"
-         "ss 'numpy.ndarray'>, <class 'numpy.int16'>, <class 'nu"
-         "mpy.int32'>, <class 'numpy.int64'>),"
+         "ss 'numpy.ndarray'>, <class 'numpy.signedinteger'>),"
          " as defined in the NXDL as NX_INT."),
         id="string-instead-of-int"),
     pytest.param(
@@ -103,6 +102,15 @@ VALID_DATA_DICT = {
          " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
          " as defined in the NXDL as NX_CHAR."),
         id="int-instead-of-chars"),
+    pytest.param(
+        alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/float_value", None),
+        (""),
+        id="empty-optional-field"),
+    pytest.param(
+        alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/NXODD_name/bool_value", None),
+        ("The data entry, /ENTRY[my_entry]/NXODD_name/bool_value, is required and "
+         "hasn't been supplied by the reader."),
+        id="empty-required-field"),
     pytest.param(
         {
             "/ENTRY[my_entry]/NXODD_name/float_value": [2.0],
@@ -131,7 +139,7 @@ VALID_DATA_DICT = {
 ])
 def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
     """Unit test for the data validation routine"""
-    if request.node.callspec.id in ("valid-data-dict", "lists"):
+    if request.node.callspec.id in ("valid-data-dict", "lists", "empty-optional-field"):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:

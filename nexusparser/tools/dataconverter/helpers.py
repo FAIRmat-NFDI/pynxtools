@@ -98,11 +98,11 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
     "NX_CHAR": (str, np.ndarray, np.chararray),
     "NX_DATE_TIME": (str),
-    "NX_FLOAT": (float, np.ndarray) + NUMPY_FLOAT_TYPES,
-    "NX_INT": (int, np.ndarray) + NUMPY_INT_TYPES,
-    "NX_UINT": (np.ndarray,) + NUMPY_UINT_TYPES,
-    "NX_NUMBER": (int, float, np.ndarray) + NUMPY_INT_TYPES + NUMPY_FLOAT_TYPES,
-    "NX_POSINT": (int, np.ndarray),  # value > 0 is checked in is_valid_data_type()
+    "NX_FLOAT": (float, np.ndarray, np.floating),
+    "NX_INT": (int, np.ndarray, np.signedinteger),
+    "NX_UINT": (np.ndarray, np.unsignedinteger),
+    "NX_NUMBER": (int, float, np.ndarray, np.signedinteger, np.unsignedinteger, np.floating),
+    "NX_POSINT": (int, np.ndarray, np.signedinteger),  # > 0 is checked in is_valid_data_type()
     "NXDL_TYPE_UNAVAILABLE": (str)  # Defaults to a string if a type is not provided.
 }
 
@@ -175,8 +175,7 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
                             "supplied by the reader.")
         nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
 
-        # TODO: Make a test case for when optional entry is not sent back
-        if data[renamed_path] is not None:
+        if is_path_in_data_dict and data[renamed_path] is not None:
             is_valid_data_type(data[renamed_path], nxdl_type, renamed_path)
             is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
             if not is_valid_enum:
