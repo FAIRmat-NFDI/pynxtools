@@ -27,7 +27,6 @@ import re
 import sys
 from typing import List, Tuple, Dict
 import xml.etree.ElementTree as ET
-
 import click
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
@@ -90,7 +89,8 @@ def get_names_of_all_readers() -> List[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = f"{os.path.dirname(__file__)}/" if os.path.dirname(__file__) else ""
     files = glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py"))
-    return [file[file.rindex("readers/") + len("readers/"):file.rindex("/")] for file in files]
+    print(files)
+    return [file[file.rindex("readers"+os.sep) + len("readers"+os.sep):file.rindex(os.sep)] for file in files]
 
 
 @click.command()
