@@ -157,8 +157,7 @@ def check_keyword_variable(verbose, keyword_name, keyword_type, value):
 
 """
     if verbose:
-        print('keyword_name:', keyword_name, 'keyword_type:', keyword_type)
-        print('value:', '[' + str(type(value)) + ']')
+        print(keyword_name + '(' + keyword_type + ') value:', str(type(value)))
     if keyword_name == '' and keyword_type == '':
         raise ValueError('Found an improper YML key !')
 
@@ -172,13 +171,12 @@ def helper_keyword_type(kkeyword_type):
     return None
 
 
-def verbose_flag(verbose, kkeyword, vvalue):
-    """Verbose stdout printing, if verbose flag is active
+def verbose_flag(verbose, keyword, value):
+    """Verbose stdout printing for nested levels of yaml file, if verbose flag is active
 
 """
     if verbose:
-        print('  kkeyword:', kkeyword)
-        print('  vvalue:', '[' + str(type(vvalue)) + ']')
+        print('  key:', keyword, 'value:', str(type(value)) )
     return None
 
 
@@ -196,8 +194,8 @@ def second_nested_level_handle(verbose, fld, value):
                 kkeyword_name, kkeyword_type = \
                     yaml2nxdl_utils.nx_name_type_resolving(kkeyword[2:])
                 attr.set('name', kkeyword_name)
-                typ = 'NX_CHAR'
-                typ = helper_keyword_type(kkeyword_type)
+                # typ = 'NX_CHAR'
+                typ = helper_keyword_type(kkeyword_type) or 'NX_CHAR'
                 attr.set('type', typ)
                 if isinstance(vvalue, dict):
                     for kkkeyword, vvvalue in iter(vvalue.items()):
@@ -222,9 +220,7 @@ def third_nested_level_handle(verbose, attr, kkeyword, kkkeyword, vvvalue):
     """When a third dictionary is found inside a value, a new cycle of handlings is run
 
 """
-    if verbose:
-        print('    kkkeyword:', kkkeyword)
-        print('    vvvalue:', '[' + str(type(vvvalue)) + ']')
+    verbose_flag(verbose, kkkeyword, vvvalue)
     if kkkeyword == 'doc':
         xml_handle_doc(attr, vvvalue)
     elif kkkeyword == 'exists':
@@ -245,9 +241,7 @@ def attribute_attributes_handle(verbose, obj, value, keyword_name):
         assert isinstance(value, dict), 'the keyword is an attribute, \
 its value must be a dict!'
         for kkeyword, vvalue in iter(value.items()):
-            if verbose:
-                print('  kkeyword:', kkeyword)
-                print('  vvalue:', '[' + str(type(vvalue)) + ']')
+            verbose_flag(verbose, kkeyword, vvalue)
             if kkeyword == 'name':
                 attr.set('name', vvalue)
             elif kkeyword == 'doc':
