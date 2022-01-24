@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<definition category="base" extends="NXobject" name="NXprocess" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
+	<doc>Draft extension of NXprocess to include fields to describe the processing of photoemission data.</doc>
+	<group name="REGISTRATION" type="NXregistration">
+		<doc>Class to describe the operations of image registration</doc>
+	</group>
+	<group name="DISTORTION" type="NXdistortion">
+		<doc>class to describe the operations of image distrortion correction</doc>
+	</group>
+	<group name="CALIBRATION" type="NXcalibration">
+		<doc>class to describe the operations of calibration</doc>
+	</group>
+</definition>

@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<definition category="base" extends="NXobject" name="NXaperture" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
+	<doc>Draft extension of NXaperture to describe apertures in electron analysers.</doc>
+	<field name="shape" type="NX_CHAR">
+		<doc>Shape of the aperture, i.e. straight or curved for slits, circle, square hexagon, octagon, bladed for pinholes and irises.</doc>
+	</field>
+	<field name="size" type="NX_NUMBER" units="NX_LENGTH">
+		<doc>The relevant dimension for the aperture, i.e. slit width, pinhole and iris diameter</doc>
+	</field>
+</definition>

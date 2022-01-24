@@ -87,7 +87,7 @@ def h5_to_xarray(faddr, mode='r'):
         
         # Reading data array
         try:
-            data = h5File['binned']['BinnedData'].value
+            data = h5File['binned']['BinnedData']
         except:
             print("Wrong Data Format, data not found")
             raise
@@ -98,7 +98,7 @@ def h5_to_xarray(faddr, mode='r'):
         
         try:
             for axis in h5File['axes']:
-                axes.append(h5File['axes'][axis].value)
+                axes.append(h5File['axes'][axis])
                 binNames.append(h5File['axes'][axis].attrs['name'])
         except:
             print("Wrong Data Format, axes not found")
@@ -114,7 +114,13 @@ def h5_to_xarray(faddr, mode='r'):
                         d[k] = recursive_parse_metadata(v)
                 
                 else: 
-                    d = node.value
+                    d = node[...]
+                    try:
+                        d = d.item()
+                        if isinstance(d, (bytes, bytearray)):
+                            d = d.decode()
+                    except:
+                        pass
                 
                 return d
             
@@ -125,12 +131,24 @@ def h5_to_xarray(faddr, mode='r'):
 
         print('Loading complete!')
 
+
+def iterate_dictionary(dic, key_string):
+    keys = key_string.split('/',1)
+    if keys[0] in dic:
+        if len(keys) == 1:
+            return dic[keys[0]]
+        else:
+            return iterate_dictionary(dic[keys[0]], keys[1])
+    else:
+        raise KeyError
+
+
 class MPESReader(BaseReader):
 
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls = ["NXmpes_core"]
+    supported_nxdls = ["NXmpes_core", "NXmpes"]
 
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
@@ -160,7 +178,7 @@ class MPESReader(BaseReader):
                 value= v[v.index(':')+1:]
 
                 #Filling in the data and axes along with units from xarray
-                if precursor == '@xarray_data':
+                if precursor == '@data':
                     try:
                         template[k] = eval("x_array_loaded." + value)
                         if k.split('/')[-1] == '@axes':
@@ -174,16 +192,18 @@ class MPESReader(BaseReader):
 
 
                 #Filling in the metadata from xarray
-                elif precursor == '@xarray_attrs':
+                elif precursor == '@attrs':
 
-                    if k in template:
-                        try: #Tries to fill the metadata 
-                            template[k] = eval("x_array_loaded.attrs" + value)                   
+                    try: #Tries to fill the metadata 
+                        template[k] = iterate_dictionary(x_array_loaded.attrs, value)  
+                        #print(k)
+                        #print(value)
+                        #print(template[k])
+                        #print(type(template[k]))
 
-                        except KeyError:
-                            print(f"The xarray doesn't contain entry corresponding to the path {k}")
-                    else:
-                        print(f'Path name related to {k} incorrect')
+                    except KeyError:
+                        print(f"The xarray doesn't contain entry corresponding to the path {k}")
+
                         
             else:  
                 #Fills in the fixed metadata
