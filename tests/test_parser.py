@@ -21,10 +21,10 @@
 
 import sys
 import os
-import pytest
 import logging
 from datetime import datetime
 from pathlib import Path
+import pytest
 from nomad.datamodel import EntryArchive
 from nexusparser.tools import nexus  # noqa: E402
 from nexusparser import NexusParser  # noqa: E402
@@ -87,11 +87,11 @@ def test_nexus():
 # TODO Write a test for tools.nexus.get_node_at_nxdl_path - Sherjeel
 
 
-def test_example(parsers):
+def test_example():
     archive = EntryArchive()
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
-    parsers.parse(example_data, archive, logging.getLogger())
+    parser().parse(example_data, archive, logging.getLogger())
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_unit == "millibar"
     assert archive.nexus.nx_application_arpes.\
@@ -112,10 +112,3 @@ def test_example(parsers):
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_unit == "fs"
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_unit == "eV"
-
-
-if __name__ == '__main__':
-    # test_nexus()
-    # test_nxdl_to_attr_obj()
-    pars = parser()
-    test_example(pars)

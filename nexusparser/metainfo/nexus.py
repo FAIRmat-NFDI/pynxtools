@@ -34,7 +34,7 @@ from nomad.datamodel import EntryArchive
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-URL_REGEXP = re.compile(r'(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))')
+URL_REGEXP = re.compile(r'(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))') # TODO please, Sherjeel, break this line :)
 XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 
 # TODO the validation still show some problems. Most notably there are a few higher
@@ -53,7 +53,7 @@ _NX_TYPES = {
     'NX_CHAR': str,
     'NX_BOOLEAN': bool,
     'NX_INT': np.dtype(np.int64),
-    'NX_NUMBER': np.dtype(np.number),
+    'NX_NUMBER': np.dtype(np.number),  # TODO Sherjeel
     'NX_POSINT': np.dtype(np.uint64),
     'NX_BINARY': Bytes,
     'NX_DATE_TIME': Datetime
@@ -124,6 +124,7 @@ def get_enum(xml_node: ET.Element):
         return MEnum(*enum_values)
     return None
 
+
 def add_common_properties_helper(base_section, definition):
     """Define definition var from base_section var
 
@@ -134,6 +135,7 @@ def add_common_properties_helper(base_section, definition):
         definition.deprecated = base_section.deprecated
     if base_section.more:
         definition.more.update(**base_section.more)
+
 
 def add_common_properties(xml_node: ET.Element, definition: Definition):
     '''

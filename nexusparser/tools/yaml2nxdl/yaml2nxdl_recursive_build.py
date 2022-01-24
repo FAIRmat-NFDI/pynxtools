@@ -177,7 +177,6 @@ def verbose_flag(verbose, keyword, value):
 """
     if verbose:
         print('  key:', keyword, 'value:', str(type(value)))
-    return None
 
 
 def second_nested_level_handle(verbose, fld, value):
@@ -281,7 +280,17 @@ def second_level_attributes_handle(fld, keyword, value):
 
 
 def not_empty_keyword_name_handle(obj, keyword_type, keyword_name):
-    """When a not empty keyword_name is found, this simple function will define a new node of xml tree
+    """Handle a field in yaml file.
+When a keyword is NOT:
+symbol,
+NX baseclass member,
+attribute (\\@),
+doc,
+enumerations,
+dimension,
+exists,
+then the not empty keyword_name is a field!
+This simple function will define a new node of xml tree
 
 """
     typ = 'NX_CHAR'

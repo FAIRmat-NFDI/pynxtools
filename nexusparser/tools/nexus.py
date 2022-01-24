@@ -22,13 +22,17 @@ import h5py
 
 # check for NEXUS definitions
 def get_nexus_definitions_path():
+    """Check NEXUS_DEF_PATH variable.
+If it is empty, this function is filling it
+
+"""
     try:
         # either given by sys env
         return os.environ['NEXUS_DEF_PATH']
     except KeyError:
         # or it should be available locally under the dir 'definitions'
-        LOCAL_DIR = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(LOCAL_DIR, '../definitions')
+        local_dir = os.path.abspath(os.path.dirname(__file__))
+        return os.path.join(local_dir, '../definitions')
 
 
 def get_nx_class_path(hdf_node):
@@ -109,7 +113,7 @@ def get_nx_classes():
 
 """
     base_classes_list_files = os.listdir(os.path.join(get_nexus_definitions_path(), 'base_classes'))
-    nx_clss = sorted([s.strip('.nxdl.xml') for s in base_classes_list_files])
+    nx_clss = sorted([str(s)[:-9] for s in base_classes_list_files])
     return nx_clss
 
 
@@ -206,7 +210,7 @@ uppercase to lowercase match is preferred
         fit = get_nx_namefit(name, childname)
         if fit < 0:
             return False
-        for child2 in nxdl_elem.getchildren():
+        for child2 in nxdl_elem:
             if get_local_name_from_xml(child) != \
                     get_local_name_from_xml(child2) or get_node_name(child2) == childname:
                 continue
@@ -258,7 +262,8 @@ it also checks for the base classes
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc_obj = ET.parse(get_nexus_definitions_path() + '/base_classes/' + bc_name + '.nxdl.xml').getroot()
+    bc_obj = ET.parse(get_nexus_definitions_path() + '/base_classes/' + bc_name + '.nxdl.xml')\
+        .getroot()
     return get_own_nxdl_child(bc_obj, name)
 
 
@@ -269,17 +274,19 @@ REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
 """
     if nxdl_elem is None:
         return "<<NOT IN SCHEMA>>"
-    is_optional = 'optional' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['optional'] == "true"
-    is_minoccurs = 'minOccurs' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['minOccurs'] == "0"
+    is_optional = 'optional' in nxdl_elem.attrib.keys() \
+        and nxdl_elem.attrib['optional'] == "true"
+    is_minoccurs = 'minOccurs' in nxdl_elem.attrib.keys() \
+        and nxdl_elem.attrib['minOccurs'] == "0"
     # is_required = 'required' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['required'] == "true"
-    is_recommended = 'recommended' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['recommended'] == "true"
+    is_recommended = 'recommended' in nxdl_elem.attrib.keys() \
+        and nxdl_elem.attrib['recommended'] == "true"
 
     if is_recommended:
         return "<<RECOMMENDED>>"
     if is_optional or is_minoccurs:
         return "<<OPTIONAL>>"
     return "<<REQUIRED>>"
-
 
     # default optionality
     # in BASE CLASSES: true
@@ -363,8 +370,8 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
 """
     nxdef = get_nxdl_entry(hdf_node)
     elem = ET.parse(os.path.join(get_nexus_definitions_path(),
-                                     "applications",
-                                     f"{nxdef}.nxdl.xml")).getroot()
+                                 "applications",
+                                 f"{nxdef}.nxdl.xml")).getroot()
     nxdl_path = [elem]
     path = get_nx_class_path(hdf_node)
     req_str = None
@@ -476,7 +483,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
             if sdoc is not None:
                 if doc:
                     loger.info("enumeration:")
-                for item in sdoc.getchildren():
+                for item in sdoc:
                     if get_local_name_from_xml(item) == 'item':
                         if doc:
                             loger.info("-> " + item.attrib['value'])
@@ -486,10 +493,11 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
             sdoc = get_nxdl_child(elem, 'doc')
             if doc:
                 loger.info(get_local_name_from_xml(sdoc) if sdoc is not None else "")
-        return (req_str, elem, nxdef, nxdl_path)
+        # return (req_str, elem, nxdef, nxdl_path)
+        return (req_str, nxdef, nxdl_path)
 
 
-def get_doc(node, ntype, level, nxhtml, nxpath):
+def get_doc(node, ntype, nxhtml, nxpath):
     """Get documentation
 
     """
@@ -521,7 +529,7 @@ def get_doc(node, ntype, level, nxhtml, nxpath):
 
 
 def print_doc(node, ntype, level, nxhtml, nxpath):
-    anchor, doc = get_doc(node, ntype, level, nxhtml, nxpath)
+    anchor, doc = get_doc(node, ntype, nxhtml, nxpath)
     print("  " * (level + 1) + anchor)
 
     preferred_width = 80 + level * 2
@@ -600,14 +608,14 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
         logger.info('===== GROUP (/%s [%s::%s]): %s' %
                     (hdf_path, get_nxdl_entry(hdf_node),
                      get_nx_class_path(hdf_node), hdf_node))
-    (req_str, elem, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
+    (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
         parser(hdf_path, hdf_node, nxdef, nxdl_path, val)
     for key, value in hdf_node.attrs.items():
         logger.info('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
         logger.info('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
-        (req_str, elem, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc, attr=key)
+        (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
             parser(hdf_path, hdf_node, nxdef, nxdl_path, val)
 

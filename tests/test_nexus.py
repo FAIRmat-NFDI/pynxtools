@@ -174,13 +174,14 @@ the tested functions can be found in nexus.py file
 """
 
     # Test 1
-    nexus_classes_list = tools.nexus.get_nx_classes
+    nexus_classes_list = tools.nexus.get_nx_classes()
+
     assert 'NXbeam' in nexus_classes_list
 
     # Test 2
-    nexus_units_list = tools.nexus.get_nx_units
+    nexus_units_list = tools.nexus.get_nx_units()
     assert 'NX_TEMPERATURE' in nexus_units_list
 
     # Test 3
-    nexus_attribute_list = tools.nexus.get_nx_attribute_type
+    nexus_attribute_list = tools.nexus.get_nx_attribute_type()
     assert 'NX_FLOAT' in nexus_attribute_list
