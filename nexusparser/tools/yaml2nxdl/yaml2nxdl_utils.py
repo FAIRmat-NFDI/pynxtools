@@ -45,6 +45,7 @@ def nx_name_type_resolving(tmp):
 
 
 NX_CLSS = nexus.get_nx_classes()
+NX_NEW_DEFINED_CLASSES = ['NX_COMPLEX']
 NX_TYPE_KEYS = nexus.get_nx_attribute_type()
 NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'

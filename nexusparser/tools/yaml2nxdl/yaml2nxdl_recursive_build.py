@@ -176,7 +176,7 @@ def verbose_flag(verbose, keyword, value):
 
 """
     if verbose:
-        print('  key:', keyword, 'value:', str(type(value)) )
+        print('  key:', keyword, 'value:', str(type(value)))
     return None
 
 
@@ -280,12 +280,12 @@ def second_level_attributes_handle(fld, keyword, value):
             pass
 
 
-def empty_keyword_name_handle(obj, keyword_type, keyword_name):
-    """When an empty keyword_name is found, this simple function will define a new node of xml tree
+def not_empty_keyword_name_handle(obj, keyword_type, keyword_name):
+    """When a not empty keyword_name is found, this simple function will define a new node of xml tree
 
 """
     typ = 'NX_CHAR'
-    if keyword_type in yaml2nxdl_utils.NX_TYPE_KEYS:
+    if keyword_type in yaml2nxdl_utils.NX_TYPE_KEYS + yaml2nxdl_utils.NX_NEW_DEFINED_CLASSES:
         typ = keyword_type
     # assume type is NX_CHAR, a NeXus default assumption if in doubt
     fld = ET.SubElement(obj, 'field')
@@ -306,7 +306,7 @@ def recursive_build(obj, dct, verbose):
         keyword_name, keyword_type = yaml2nxdl_utils.nx_name_type_resolving(keyword)
 
         check_keyword_variable(verbose, keyword_name, keyword_type, value)
-
+        print('keyword_name:', keyword_name, 'keyword_type', keyword_type)
         if keyword[-6:] == '(link)':
             xml_handle_link(obj, keyword, value)
 
@@ -315,7 +315,8 @@ def recursive_build(obj, dct, verbose):
             xml_handle_symbols(obj, value)
 
         elif (keyword_type in yaml2nxdl_utils.NX_CLSS) or \
-             (keyword_type not in yaml2nxdl_utils.NX_TYPE_KEYS + ['']):
+             (keyword_type not in yaml2nxdl_utils.NX_TYPE_KEYS + [''] + yaml2nxdl_utils.
+              NX_NEW_DEFINED_CLASSES):
             # we can be sure we need to instantiate a new group
             xml_handle_group(verbose, obj, value, keyword_name, keyword_type)
 
@@ -334,7 +335,7 @@ def recursive_build(obj, dct, verbose):
             xml_handle_exists(obj, value)
 
         elif keyword_name != '':
-            fld = empty_keyword_name_handle(obj, keyword_type, keyword_name)
+            fld = not_empty_keyword_name_handle(obj, keyword_type, keyword_name)
             second_nested_level_handle(verbose, fld, value)
             second_level_attributes_handle(fld, keyword, value)
         else:

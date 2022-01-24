@@ -485,7 +485,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
             # check for doc
             sdoc = get_nxdl_child(elem, 'doc')
             if doc:
-                loger.info(sdoc if sdoc is not None else "")
+                loger.info(get_local_name_from_xml(sdoc) if sdoc is not None else "")
         return (req_str, elem, nxdef, nxdl_path)
 
 
@@ -582,7 +582,7 @@ and finds the corresponding XML element with the needed attributes.
     return elem
 
 
-def process_node(hdf_node, parser, logger, doc=True):
+def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     """
             #processes an hdf5 node
             #- it logs the node found and also checks for its attributes
@@ -591,7 +591,6 @@ def process_node(hdf_node, parser, logger, doc=True):
             # - follow variants
             # - NOMAD parser: store in NOMAD
             """
-    hdf_path = hdf_node.name
     if isinstance(hdf_node, h5py.Dataset):
         logger.info('===== FIELD (/%s): %s' % (hdf_path, hdf_node))
         val = str(hdf_node[()]).split('\n') if len(hdf_node.shape) <= 1 else str(
@@ -653,7 +652,7 @@ def get_default_plotable(root, logger):
         return
     logger.info('')
     logger.info('NXdata group has been identified: ' + nxdata.name)
-    process_node(nxdata, None, logger, False)
+    process_node(nxdata, nxdata.name, None, logger, False)
     # signal
     signal = None
     signal_dataset_name = nxdata.attrs.get("signal")
@@ -668,7 +667,7 @@ def get_default_plotable(root, logger):
         return
     logger.info('')
     logger.info('Signal has been identified: ' + signal.name)
-    process_node(signal, None, logger, False)
+    process_node(signal, signal.name, None, logger, False)
     dim = len(signal.shape)
     # axes
     axes = []
@@ -807,11 +806,14 @@ class HandleNexus:
         self.parser = None
         self.in_file = None
 
-    def visit_node(self, hdf_node):
-        """Visit node
+    def visit_node(self, hdf_name, hdf_node):
+        """Function called by h5py that iterates on each node of hdf5file.
+
+        It allows h5py visititems function to visit nodes.
 
         """
-        process_node(hdf_node, self.parser, self.logger)
+        hdf_path = '/' + hdf_name
+        process_node(hdf_node, hdf_path, self.parser, self.logger)
 
     def process_nexus_master_file(self, parser):
         """
@@ -821,7 +823,7 @@ class HandleNexus:
         self.parser = parser
         self.in_file = h5py.File(self.input_file_name, 'r')
         self.in_file.visititems(self.visit_node)
-        get_default_plotable(self.in_file, self.parser, self.logger)
+        get_default_plotable(self.in_file, self.logger)
         self.in_file.close()
 
 
