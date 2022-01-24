@@ -89,18 +89,20 @@ def is_value_valid_element_of_enum(value, elem) -> Tuple[bool, list]:
 
 
 NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
-NUMPY_INT_TYPES = (np.short, np.ushort, np.intc, np.uintc, np.int_, np.uint)
+NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
+NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str),
-    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte),
-    "NX_BOOLEAN": (bool),
-    "NX_CHAR": (str),
+    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
+    "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
+    "NX_CHAR": (str, np.ndarray, np.chararray),
     "NX_DATE_TIME": (str),
-    "NX_FLOAT": (float, np.ndarray) + NUMPY_FLOAT_TYPES,
-    "NX_INT": (int, np.ndarray) + NUMPY_INT_TYPES,
-    "NX_NUMBER": (int, float, np.ndarray) + NUMPY_INT_TYPES + NUMPY_FLOAT_TYPES,
-    "NX_POSINT": (int, np.ndarray),  # value > 0 is checked in is_valid_data_type()
+    "NX_FLOAT": (float, np.ndarray, np.floating),
+    "NX_INT": (int, np.ndarray, np.signedinteger),
+    "NX_UINT": (np.ndarray, np.unsignedinteger),
+    "NX_NUMBER": (int, float, np.ndarray, np.signedinteger, np.unsignedinteger, np.floating),
+    "NX_POSINT": (int, np.ndarray, np.signedinteger),  # > 0 is checked in is_valid_data_type()
     "NXDL_TYPE_UNAVAILABLE": (str)  # Defaults to a string if a type is not provided.
 }
 
@@ -134,8 +136,8 @@ def is_valid_data_type(value, nxdl_type, path):
         raise Exception(f"The value at {path} should be a positive int.")
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
-        iso8601 = re.compile(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):"
-                             r"(\d{2}(?:\.\d*)?)((-(\d{2}):(\d{2})|Z)?)$")
+        iso8601 = re.compile(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
+                             r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$")
         results = iso8601.search(value)
         if results is None:
             raise Exception(f"The date at {path} should be an ISO8601 formatted str object.")
@@ -167,17 +169,18 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
         elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
         if nexus.get_required_string(elem) == "<<REQUIRED>>" and \
-           not is_path_in_data_dict or\
-           data[renamed_path] is None:
+            (not is_path_in_data_dict
+             or data[renamed_path] is None):
             raise Exception(f"The data entry, {renamed_path}, is required and hasn't been "
                             "supplied by the reader.")
         nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
 
-        is_valid_data_type(data[renamed_path], nxdl_type, renamed_path)
-        is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
-        if not is_valid_enum:
-            raise Exception(f"The value at {renamed_path} should be"
-                            f" one of the following strings: {enums}")
+        if is_path_in_data_dict and data[renamed_path] is not None:
+            is_valid_data_type(data[renamed_path], nxdl_type, renamed_path)
+            is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
+            if not is_valid_enum:
+                raise Exception(f"The value at {renamed_path} should be"
+                                f" one of the following strings: {enums}")
 
     return True
 
