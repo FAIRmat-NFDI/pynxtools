@@ -58,7 +58,9 @@ def fixture_template():
         "/ENTRY[entry]/definition": None,
         "/ENTRY[entry]/definition/@version": None,
         "/ENTRY[entry]/program_name": None,
-        "/ENTRY[entry]/NXODD_name/date_value": None
+        "/ENTRY[entry]/NXODD_name/date_value": None,
+        "/ENTRY[entry]/optional_parent/required_child": None,
+        "/ENTRY[entry]/optional_parent/optional_child": None,
     }
 
 
@@ -75,7 +77,9 @@ VALID_DATA_DICT = {
     "/ENTRY[my_entry]/definition/@version": "2.4.6",
     "/ENTRY[my_entry]/program_name": "Testing program",
     "/ENTRY[my_entry]/NXODD_name/type": "2nd type",
-    "/ENTRY[my_entry]/NXODD_name/date_value": "2022-01-22T12:14:12.05018+00:00"
+    "/ENTRY[my_entry]/NXODD_name/date_value": "2022-01-22T12:14:12.05018+00:00",
+    "/ENTRY[my_entry]/optional_parent/required_child": 1,
+    "/ENTRY[my_entry]/optional_parent/optional_child": 1
 }
 
 
@@ -146,7 +150,9 @@ VALID_DATA_DICT = {
             "/ENTRY[my_entry]/definition/@version": ["2.4.6"],
             "/ENTRY[my_entry]/program_name": ["Testing program"],
             "/ENTRY[my_entry]/NXODD_name/type": "2nd type",
-            "/ENTRY[my_entry]/NXODD_name/date_value": "2022-01-22T12:14:12.05018+00:00"
+            "/ENTRY[my_entry]/NXODD_name/date_value": "2022-01-22T12:14:12.05018+00:00",
+            "/ENTRY[my_entry]/optional_parent/required_child": [1],
+            "/ENTRY[my_entry]/optional_parent/optional_child": [1]
         }, "",
         id="lists"),
     pytest.param(
@@ -154,6 +160,19 @@ VALID_DATA_DICT = {
         ("The value at /ENTRY[my_entry]/NXODD_name/type should be one of the following"
          " strings: [1st type,2nd type,3rd type,4th type]"),
         id="wrong-enum-choice"),
+    pytest.param(
+        alter_dict(VALID_DATA_DICT, "/ENTRY[my_entry]/optional_parent/required_child", None),
+        ("The data entry, /ENTRY[my_entry]/optional_parent/required_child, is required "
+         "and hasn't been supplied by the reader."),
+        id="atleast-one-required-child-not-provided-optional-parent"),
+    pytest.param(
+        alter_dict(alter_dict(VALID_DATA_DICT,
+                              "/ENTRY[my_entry]/optional_parent/required_child",
+                              None),
+                   "/ENTRY[my_entry]/optional_parent/optional_child",
+                   None),
+        (""),
+        id="no-child-provided-optional-parent"),
     pytest.param(
         VALID_DATA_DICT,
         "",
@@ -165,7 +184,8 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
                                     "lists",
                                     "empty-optional-field",
                                     "UTC-with-+00:00",
-                                    "UTC-with-Z"):
+                                    "UTC-with-Z",
+                                    "no-child-provided-optional-parent"):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:

@@ -47,5 +47,13 @@
                 </enumeration>
             </field>
         </group>
+        <group type="NXdata" name="optional_parent" optional="true">
+            <field name="required_child" required="true" type="NX_INT">
+                <doc>A dummy entry to test optional parent check for required child.</doc>
+            </field>
+            <field name="optional_child" optional="true" type="NX_INT">
+                <doc>A dummy entry to test optional parent check for required child.</doc>
+            </field>
+        </group>
     </group>
 </definition>
