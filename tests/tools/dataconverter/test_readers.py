@@ -43,9 +43,6 @@ def get_readers() -> List:
     """Helper function for parametrizing reader objects"""
     readers = []
     for reader_filename in get_readers_file_names():
-        reader_name = reader_filename[reader_filename.rindex("readers/")
-                                      + len("readers/"):reader_filename.rindex("/")]
-        print(reader_name)
         readers.append(get_reader(reader_filename))
     return readers
 

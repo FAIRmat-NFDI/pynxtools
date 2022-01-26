@@ -133,8 +133,9 @@ VALID_DATA_DICT = {
         alter_dict(VALID_DATA_DICT,
                    "/ENTRY[my_entry]/NXODD_name/date_value",
                    "2022-01-22T12:14:12.05018-00:00"),
-        "The date at /ENTRY[my_entry]/NXODD_name/date_value should be an ISO8601 "
-        "formatted str object.",
+        "The date at /ENTRY[my_entry]/NXODD_name/date_value should be a timezone aware"
+        " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
+        "T12:14:12.05018+00:00.",
         id="UTC-with--00:00"),
     pytest.param(
         {

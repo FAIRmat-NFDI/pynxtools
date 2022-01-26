@@ -101,7 +101,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "NX_INT": (int, np.ndarray, np.signedinteger),
     "NX_UINT": (np.ndarray, np.unsignedinteger),
     "NX_NUMBER": (int, float, np.ndarray, np.signedinteger, np.unsignedinteger, np.floating),
-    "NX_POSINT": (int, np.ndarray, np.signedinteger),  # > 0 is checked in is_valid_data_type()
+    "NX_POSINT": (int, np.ndarray, np.signedinteger),  # > 0 is checked in is_valid_data_field()
     "NXDL_TYPE_UNAVAILABLE": (str)  # Defaults to a string if a type is not provided.
 }
 
@@ -115,23 +115,33 @@ def check_all_children_for_callable(objects: list, check: Callable, *args) -> bo
     return True
 
 
-def is_valid_data_type(value, nxdl_type, path):
+def is_valid_data_type(value, accepted_types):
+    """Checks whether the given value or its children are of an accepted type."""
+    if not isinstance(value, list):
+        return isinstance(value, accepted_types)
+
+    return check_all_children_for_callable(value, isinstance, accepted_types)
+
+
+def is_positive_int(value):
+    """Checks whether the given value or its children are positive."""
+    is_greater_than = lambda x: x.flat[0] > 0 if isinstance(x, np.ndarray) else x > 0
+
+    if isinstance(value, list):
+        return check_all_children_for_callable(value, is_greater_than)
+
+    return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
+
+
+def is_valid_data_field(value, nxdl_type, path):
     """Checks whether a given value is valid according to what is defined in the NXDL."""
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
-    if not ((isinstance(value, list)
-             and check_all_children_for_callable(value, isinstance, accepted_types))
-            or isinstance(value, accepted_types)):
+
+    if not is_valid_data_type(value, accepted_types):
         raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
                         f", as defined in the NXDL as {nxdl_type}.")
 
-    is_greater_than = lambda x: x.flat[0] if isinstance(x, np.ndarray) else x > 0
-
-    if (nxdl_type == "NX_POSINT"
-            and ((not isinstance(value, list)
-                  and (value.flat[0] < 0 if isinstance(value, np.ndarray) else value < 0))
-                 or (isinstance(value, list)
-                     and not check_all_children_for_callable(value,
-                                                             is_greater_than)))):
+    if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         raise Exception(f"The value at {path} should be a positive int.")
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
@@ -139,7 +149,9 @@ def is_valid_data_type(value, nxdl_type, path):
                              r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$")
         results = iso8601.search(value)
         if results is None:
-            raise Exception(f"The date at {path} should be an ISO8601 formatted str object.")
+            raise Exception(f"The date at {path} should be a timezone aware ISO8601 "
+                            f"formatted str. For example, 2022-01-22T12:14:12.05018Z"
+                            f" or 2022-01-22T12:14:12.05018+00:00.")
 
 
 def path_in_data_dict(nxdl_path: str, data: dict) -> Tuple[bool, str]:
@@ -191,7 +203,7 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
         if entry_name[0] == "@":
             if entry_name == "@units":
-                is_valid_data_type(data[renamed_path], "NX_CHAR", renamed_path)
+                is_valid_data_field(data[renamed_path], "NX_CHAR", renamed_path)
             continue
 
         elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
@@ -207,7 +219,7 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
         nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
 
         if is_path_in_data_dict and data[renamed_path] is not None:
-            is_valid_data_type(data[renamed_path], nxdl_type, renamed_path)
+            is_valid_data_field(data[renamed_path], nxdl_type, renamed_path)
             is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
             if not is_valid_enum:
                 raise Exception(f"The value at {renamed_path} should be"
