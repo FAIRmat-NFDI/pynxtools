@@ -32,7 +32,7 @@ If it is empty, this function is filling it
     except KeyError:
         # or it should be available locally under the dir 'definitions'
         local_dir = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(local_dir, '../definitions')
+        return os.path.join(local_dir, '..' + os.sep + 'definitions')
 
 
 def get_nx_class_path(hdf_node):
@@ -262,7 +262,7 @@ it also checks for the base classes
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc_obj = ET.parse(get_nexus_definitions_path() + '/base_classes/' + bc_name + '.nxdl.xml')\
+    bc_obj = ET.parse(get_nexus_definitions_path() + os.sep + 'base_classes' + os.sep + bc_name + '.nxdl.xml')\
         .getroot()
     return get_own_nxdl_child(bc_obj, name)
 

@@ -148,7 +148,7 @@ class MPESReader(BaseReader):
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls = ["NXmpes_core", "NXmpes"]
+    supported_nxdls = ["NXmpes"]
 
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
@@ -157,10 +157,7 @@ class MPESReader(BaseReader):
             raise Exception("No input files were given to MPES Reader.")
 
         for file_path in file_paths:
-            # add_path= '' if os.path.exists(file_path) else 'readers\\input_files\\' 
-            # file= add_path+file_path
-            # file_name= file.split('\\')[-1]
-            print(file_path)
+ 
             file_extension = file_path[file_path.rindex("."):]
 
             if file_extension == '.h5':
@@ -186,10 +183,8 @@ class MPESReader(BaseReader):
                         
                     except NameError:  
                         print(f"Incorrect naming syntax or the xarray doesn't contain entry corresponding to the path {k}")
-
                     except KeyError:
-                        print(f'Path name related to {k} incorrect')
-
+                        print(f"The xarray doesn't contain entry corresponding to the path {k}")
 
                 #Filling in the metadata from xarray
                 elif precursor == '@attrs':
@@ -207,14 +202,13 @@ class MPESReader(BaseReader):
                         
             else:  
                 #Fills in the fixed metadata
-                try:
-                    template[k] = v 
+                
+                template[k] = v 
                     
-                except KeyError:
-                    print(f'Path name related to {k} incorrect')
+                
                     
         print('Template ready!')
-        print(template)
+        # print(template)
         return template
 
 
