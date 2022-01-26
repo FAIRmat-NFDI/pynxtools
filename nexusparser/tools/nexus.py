@@ -465,7 +465,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     if elem is None and req_str is None:
         if doc:
             loger.info("")
-        return ('None', None, None, None)
+        return ('None', None, None)
     else:
         if req_str is None:
             # check for being required
@@ -493,7 +493,6 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
             sdoc = get_nxdl_child(elem, 'doc')
             if doc:
                 loger.info(get_local_name_from_xml(sdoc) if sdoc is not None else "")
-        # return (req_str, elem, nxdef, nxdl_path)
         return (req_str, nxdef, nxdl_path)
 
 
