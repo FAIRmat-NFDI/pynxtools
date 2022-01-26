@@ -181,7 +181,6 @@ def check_for_optional_parent(path: str, nxdl_root: ET.Element) -> str:
 def check_are_children_set(optional_parent_path: str, data: dict):
     """Checks if any children of the given parent are set."""
     optional_parent_path = convert_data_converter_dict_to_nxdl_path(optional_parent_path)
-    print(optional_parent_path)
 
     # Check if any of this optional parents children are given:
     for key in data:
@@ -202,8 +201,6 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
 
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
         if entry_name[0] == "@":
-            if entry_name == "@units":
-                is_valid_data_field(data[renamed_path], "NX_CHAR", renamed_path)
             continue
 
         elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
