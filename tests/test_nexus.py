@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+"""This is a code that performs several tests on nexus tool
+
+"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -46,6 +48,9 @@ from nexusparser import tools
     pytest.param('applications.NXarpes.NXentryGroup.NXdataGroup.nx_optional', False)
 ])
 def test_assert_nexus_metainfo(path: str, value: Any):
+    """Test the existance of nexus metainfo
+
+"""
     segments = path.split('.')
     package, definition_names = segments[0], segments[1:]
 
@@ -105,9 +110,6 @@ def test_use_nexus_metainfo():
         'my default'
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_field_title.nx_value == \
         'my title'
-
-    # TODO remove
-    # print(json.dumps(archive.m_to_dict(), indent=2))
 
 
 @pytest.mark.parametrize('path', [

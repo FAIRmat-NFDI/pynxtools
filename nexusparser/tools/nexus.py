@@ -410,13 +410,13 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         elif attr == 'units' and isinstance(hdf_node, h5py.Dataset):
             req_str = "<<REQUIRED>>"
             try:
-                # try to find if units is deinfed inside the field in the NXDL element
+                # try to find if units is defined inside the field in the NXDL element
                 unit = elem.attrib[attr]
                 if doc:
                     loger.info("@" + attr + ' [' + unit + ']')
                 elem = None
                 nxdl_path.append(attr)
-            except BaseException:
+            except KeyError:
                 # otherwise try to find if units is defined as a child of the NXDL element
                 elem = get_nxdl_child(elem, attr)
                 if elem is not None:
@@ -462,38 +462,38 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
             else:
                 if doc:
                     loger.info("@" + attr + " - IS NOT IN SCHEMA")
-    if elem is None and req_str is None:
+
+    if (elem is None and req_str is None):
         if doc:
             loger.info("")
         return ('None', None, None)
-    else:
-        if req_str is None:
-            # check for being required
-            req_str = get_required_string(elem)
+    if req_str is None:
+        # check for being required
+        req_str = get_required_string(elem)
+        if doc:
+            loger.info(req_str)
+    if elem is not None:
+        # check for deprecation
+        dep_str = elem.attrib.get('deprecated')
+        if dep_str:
             if doc:
-                loger.info(req_str)
-        if elem is not None:
-            # check for deprecation
-            dep_str = elem.attrib.get('deprecated')
-            if dep_str:
-                if doc:
-                    loger.info("DEPRECATED - " + dep_str)
-            # check for enums
-            sdoc = get_nxdl_child(elem, 'enumeration')
-            if sdoc is not None:
-                if doc:
-                    loger.info("enumeration:")
-                for item in sdoc:
-                    if get_local_name_from_xml(item) == 'item':
-                        if doc:
-                            loger.info("-> " + item.attrib['value'])
-            # check for NXdata references (axes/signal)
-            chk_nxdataaxis(hdf_node, path.split('/')[-1], loger)
-            # check for doc
-            sdoc = get_nxdl_child(elem, 'doc')
+                loger.info("DEPRECATED - " + dep_str)
+        # check for enums
+        sdoc = get_nxdl_child(elem, 'enumeration')
+        if sdoc is not None:
             if doc:
-                loger.info(get_local_name_from_xml(sdoc) if sdoc is not None else "")
-        return (req_str, nxdef, nxdl_path)
+                loger.info("enumeration:")
+            for item in sdoc:
+                if get_local_name_from_xml(item) == 'item':
+                    if doc:
+                        loger.info("-> " + item.attrib['value'])
+        # check for NXdata references (axes/signal)
+        chk_nxdataaxis(hdf_node, path.split('/')[-1], loger)
+        # check for doc
+        sdoc = get_nxdl_child(elem, 'doc')
+        if doc:
+            loger.info(get_local_name_from_xml(sdoc) if sdoc is not None else "")
+    return (req_str, nxdef, nxdl_path)
 
 
 def get_doc(node, ntype, nxhtml, nxpath):
@@ -528,6 +528,8 @@ def get_doc(node, ntype, nxhtml, nxpath):
 
 
 def print_doc(node, ntype, level, nxhtml, nxpath):
+    """Print documentation
+"""
     anchor, doc = get_doc(node, ntype, nxhtml, nxpath)
     print("  " * (level + 1) + anchor)
 
@@ -634,12 +636,12 @@ def get_default_plotable(root, logger):
     if default_nxentry_group_name:
         try:
             nxentry = root[default_nxentry_group_name]
-        except BaseException:
+        except KeyError:
             nxentry = None
     if not nxentry:
         nxentry = entry_helper(root)
     if not nxentry:
-        logger.info('No NXentry has been found')
+        logger.info('No NXentry has been found')  # TODO the code always falls here, solve it
         return
     logger.info('')
     logger.info('NXentry has been identified: ' + nxentry.name)
@@ -698,6 +700,10 @@ def entry_helper(root):
 
 
 def nxdata_helper(nxentry):
+    """Check if nxentry hdf5 object has a NX_class and, if it contains NXdata,
+return its value
+
+"""
     lnxdata = []
     for key in nxentry.keys():
         if isinstance(nxentry[key], h5py.Group) and nxentry[key].attrs.get('NX_class\

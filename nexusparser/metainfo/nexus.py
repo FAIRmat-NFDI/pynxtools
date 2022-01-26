@@ -34,7 +34,7 @@ from nomad.datamodel import EntryArchive
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-URL_REGEXP = re.compile(r'(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))') # TODO please, Sherjeel, break this line :)
+URL_REGEXP = re.compile(r'(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))')  # TODO please, Sherjeel, break this line :)
 XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 
 # TODO the validation still show some problems. Most notably there are a few higher

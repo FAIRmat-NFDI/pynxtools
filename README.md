@@ -7,16 +7,27 @@ the required nomad-lab pypi package requires many dependencies with specific ver
 that might conflict with other libraries that you have installed. This was tested
 with Python 3.7.
 
+If you don't have Python 3.7 installed on your computer, follow these commands:
 ```
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install python3.7 python3-dev libpython3.7-dev python-numpy
+
+```
+
+You can now install your virtual environment with python3.7 interpreter
+
+```
+mkdir <your-brand-new-folder>
+cd <your-brand-new-folder>
 pip install virtualenv
-virtualenv -p `which python3` .pyenv
+virtualenv --python=python3.7 .pyenv
 source .pyenv/bin/activate
 ```
 
 Simply install our pypi package with pip:
 ```
 pip install --upgrade pip
-pip install nomad-lab
+pip install nomad-lab==1.0.0 --extra-index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
 ```
 
 Clone this project (or fork and then clone the fork). Go into the cloned directly and
@@ -24,7 +35,9 @@ directly run the parser from there:
 ```
 git clone https://github.com/nomad-coe/nomad-parser-nexus.git parser-nexus
 cd parser-nexus
-python -m nexusparser tests/data/nexus.out
+git submodule sync --recursive
+git submodule update --init --recursive
+
 ```
 
 There are also a basic test framework written in [pytest](https://docs.pytest.org/en/stable/).
