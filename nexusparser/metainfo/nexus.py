@@ -54,7 +54,7 @@ _NX_TYPES = {
     'NX_BOOLEAN': bool,
     'NX_INT': np.dtype(np.int64),
     'NX_UINT': np.dtype(np.uint64),
-    'NX_NUMBER': np.dtype(np.number),  # TODO Sherjeel
+    'NX_NUMBER': np.dtype(np.number),
     'NX_POSINT': np.dtype(np.uint64),
     'NX_BINARY': Bytes,
     'NX_DATE_TIME': Datetime
