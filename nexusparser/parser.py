@@ -1,3 +1,6 @@
+"""parser doc
+
+"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -16,24 +19,76 @@
 # limitations under the License.
 #
 
-import datetime
-import numpy as np
-import h5py
-
-from nomad.datamodel import EntryArchive
-from nomad.parsing import MatchingParser
-
-from nomad.parsing.file_parser import TextParser, Quantity
-
-from . import metainfo  # pylint: disable=unused-import
-from nexusparser.tools import read_nexus
-from nexusparser.metainfo import nexus
-
 import sys
 import logging
+from nomad.datamodel import EntryArchive
+from nomad.parsing import MatchingParser
+# from . import metainfo  # pylint: disable=unused-import
+from nexusparser.tools import nexus as read_nexus
+from nexusparser.metainfo import nexus
+
+
+def get_to_new_subsection(hdf_name, nxdef, nxdl_node, act_section):
+    """hdf_name         name of the hdf group/field/attribute (None for definition)
+    nxdef           application definition
+    nxdl_node        node in the nxdl.xml
+    act_class       actual class
+    act_section     actual section in which the new entry needs to be picked up from
+                    Note that if the new element did not exists, it is created now
+    return          (new_class, new_section)
+    TODO:   try to find also in the base section???
+
+"""
+    if hdf_name is None:
+        nomad_def_name = 'nx_application_' + nxdef[2:]
+        # nomad_class_name = nxdef
+    elif nxdl_node.tag.endswith('field'):
+        nxdl_f_a_name = nxdl_node.attrib['name'] if 'name' in nxdl_node.attrib else hdf_name
+        nomad_def_name = 'nx_field_' + nxdl_f_a_name
+        # nomad_class_name = self.get_nomad_classname(nxdl_f_a_name, None, "Field")
+    elif nxdl_node.tag.endswith('group'):
+        nxdl_g_name = nxdl_node.attrib['name'] \
+            if 'name' in nxdl_node.attrib else nxdl_node.attrib['type'][2:].upper()
+        nomad_def_name = 'nx_group_' + nxdl_g_name
+        # nomad_class_name = self.get_nomad_classname(read_nexus.get_node_name(nxdl_node),
+        #                                             nxdl_node.attrib['type'], "Group")
+    else:
+        nxdl_f_a_name = nxdl_node.attrib['name'] if 'name' in nxdl_node.attrib else hdf_name
+        nomad_def_name = 'nx_attribute_' + nxdl_f_a_name
+        # nomad_class_name = self.get_nomad_classname(nxdl_f_a_name, None, "Attribute")
+
+    new_def = act_section.m_def.all_sub_sections[nomad_def_name]
+    new_class = new_def.section_def.section_cls
+    new_section = None
+    for section in act_section.m_get_sub_sections(new_def):
+        if hdf_name is None or (getattr(section, "nx_name") and section.nx_name == hdf_name):
+            new_section = section
+            break
+    if new_section is None:
+        act_section.m_create(new_class)
+        new_section = act_section.m_get_sub_section(new_def, -1)
+        if hdf_name is not None:
+            new_section.nx_name = hdf_name
+    return (new_class, new_section)
+
+
+def get_value(hdf_value):
+    """Get value from hdl5 node
+
+"""
+    if str(hdf_value.dtype) == 'bool':
+        val = bool(hdf_value)
+    elif hdf_value.dtype.kind in 'iufc':
+        val = hdf_value
+    else:
+        val = str(hdf_value.astype(str))
+    return val
 
 
 class NexusParser(MatchingParser):
+    """NesusParser doc
+
+"""
     def __init__(self):
         super().__init__(
             name='parsers/nexus', code_name='NEXUS', code_homepage='https://www.nexus.eu/',
@@ -42,103 +97,67 @@ class NexusParser(MatchingParser):
             supported_compressions=['gz', 'bz2', 'xz']
         )
 
-    def get_nomad_classname(self, xmlName, xmlType, suffix):
-        if suffix == 'Attribute' or suffix == 'Field' or xmlType[2:].upper() != xmlName:
-            name = xmlName + suffix
-        else:
-            name = xmlType + suffix
-        return name
+#     def get_nomad_classname(self, xml_name, xml_type, suffix):
+#         """Get nomad classname from xml file
 
-    def get_to_new_SubSection(self, hdfName, nxdef, nxdlNode, act_class, act_section):
-        '''
-        hdfName         name of the hdf group/field/attribute (None for definition)
-        nxdef           application definition
-        nxdlNode        node in the nxdl.xml
-        act_class       actual class
-        act_section     actual section in which the new entry needs to be picked up from
-                        Note that if the new element did not exists, it is created now
-        return          (new_class, new_section)
-        TODO:   try to find also in the base section???
-        '''
-        if hdfName is None:
-            nomad_def_name = 'nx_application_' + nxdef[2:]
-            nomad_class_name = nxdef
-        elif nxdlNode.tag.endswith('field'):
-            nxdl_F_A_Name = nxdlNode.attrib['name'] if 'name' in nxdlNode.attrib else hdfName
-            nomad_def_name = 'nx_field_' + nxdl_F_A_Name
-            nomad_class_name = self.get_nomad_classname(nxdl_F_A_Name, None, "Field")
-        elif nxdlNode.tag.endswith('group'):
-            nxdl_G_Name = nxdlNode.attrib['name'] if 'name' in nxdlNode.attrib else nxdlNode.attrib['type'][2:].upper()
-            nomad_def_name = 'nx_group_' + nxdl_G_Name
-            nomad_class_name = self.get_nomad_classname(read_nexus.get_node_name(nxdlNode), nxdlNode.attrib['type'], "Group")
-        else:
-            nxdl_F_A_Name = nxdlNode.attrib['name'] if 'name' in nxdlNode.attrib else hdfName
-            nomad_def_name = 'nx_attribute_' + nxdl_F_A_Name
-            nomad_class_name = self.get_nomad_classname(nxdl_F_A_Name, None, "Attribute")
+# """
+#         if suffix == 'Attribute' or suffix == 'Field' or xml_type[2:].upper() != xml_name:
+#             name = xml_name + suffix
+#         else:
+#             name = xml_type + suffix
+#         return name
 
-        new_def = act_section.m_def.all_sub_sections[nomad_def_name]
-        new_class = new_def.section_def.section_cls
-        new_section = None
-        for section in act_section.m_get_sub_sections(new_def):
-            if hdfName is None or (getattr(section, "nx_name") and section.nx_name == hdfName):
-                new_section = section
-                break
-        if new_section is None:
-            act_section.m_create(new_class)
-            new_section = act_section.m_get_sub_section(new_def, -1)
-            if hdfName is not None:
-                new_section.nx_name = hdfName
-        return (new_class, new_section)
+    def nexus_populate(self, hdf_path, hdf_node, nxdef, nxdl_path, val):
+        """Walks through hdf_namelist and generate nxdl nodes
 
-    def get_value(self, hdfValue):
-        if str(hdfValue.dtype) == 'bool':
-            val = bool(hdfValue)
-        elif hdfValue.dtype.kind in 'iufc':
-            val = hdfValue
-        else:
-            val = str(hdfValue.astype(str))
-        return val
-
-    def nexus_populate(self, hdfPath, hdfNode, nxdef, nxdlPath, val):
+"""
         print('%%%%%%%%%%%%%%')
-        # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdlPath)+' - '+val[0]+ ("..." if len(val) > 1 else ''))
-        if nxdlPath is not None:
-            print((nxdef or '???') + ':' + '.'.join(p if isinstance(p, str) else read_nexus.get_node_name(p) for p in nxdlPath) + ' - ' + val[0] + ("..." if len(val) > 1 else ''))
+        # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdl_path)+
+        # ' - '+val[0]+ ("..." if len(val) > 1 else ''))
+        if nxdl_path is not None:
+            print((nxdef or '???') + ':' + '.'.join(p if isinstance(p, str) else
+                                                    read_nexus.get_node_name(p)
+                                                    for p in nxdl_path) + ' - \
+' + val[0] + ("..." if len(val) > 1 else ''))
             act_section = self.nxroot
-            hdfNamelist = hdfPath.split('/')[1:]
-            (act_class, act_section) = self.get_to_new_SubSection(None, nxdef, None, nexus, act_section)
+            hdf_namelist = hdf_path.split('/')[1:]
+            act_section = get_to_new_subsection(None, nxdef, None, act_section)[1]
             path_level = 1
-            for hdfName in hdfNamelist:
-                nxdlNode = nxdlPath[path_level] if path_level < len(nxdlPath) else hdfName
-                (act_class, act_section) = self.get_to_new_SubSection(hdfName, nxdef, nxdlNode, act_class, act_section)
+            for hdf_name in hdf_namelist:
+                nxdl_node = nxdl_path[path_level] if path_level < len(nxdl_path) else hdf_name
+                act_section = get_to_new_subsection(hdf_name, nxdef,
+                                                    nxdl_node, act_section)[1]
                 path_level += 1
-            if path_level < len(nxdlPath):
-                nxdlAttribute = nxdlPath[path_level]
-                if isinstance(nxdlAttribute, str):
-                    # conventional attribute not in schema. Only necessary, if schema is not populated according
+            if path_level < len(nxdl_path):
+                nxdl_attribute = nxdl_path[path_level]
+                if isinstance(nxdl_attribute, str):
+                    # conventional attribute not in schema. Only necessary,
+                    # if schema is not populated according
                     try:
-                        if nxdlAttribute == "units":
+                        if nxdl_attribute == "units":
                             act_section.nx_unit = val[0]
-                        elif nxdlAttribute == "default":
-                            assert 1 == 2, "Quantity 'default' is not yet added by default to groups in Nomad schema"
-                    except Exception as e:
-                        print("Problem with storage!!!" + str(e))
+                        elif nxdl_attribute == "default":
+                            assert 1 == 2, "Quantity \
+'default' is not yet added by default to groups in Nomad schema"
+                    except Exception as exc:
+                        print("Problem with storage!!!" + str(exc))
                 else:
                     # attribute in schema
-                    (act_class, act_section) = self.get_to_new_SubSection(nxdlAttribute.attrib['name'], nxdef, nxdlAttribute, act_class, act_section)
+                    act_section = \
+                        get_to_new_subsection(nxdl_attribute.attrib['name'], nxdef,
+                                              nxdl_attribute, act_section)[1]
                     try:
                         act_section.nx_value = val[0]
-                    except Exception as e:
-                        print("Problem with storage!!!" + str(e))
+                    except Exception as exc:
+                        print("Problem with storage!!!" + str(exc))
             else:
                 try:
-                    act_section.nx_value = self.get_value(hdfNode[...])
-                except Exception as e:
-                    print("Problem with storage!!!" + str(e))
+                    act_section.nx_value = get_value(hdf_node[...])
+                except Exception as exc:
+                    print("Problem with storage!!!" + str(exc))
         else:
             print('NOT IN SCHEMA - skipped')
         print('%%%%%%%%%%%%%%')
-        pass
 
     def parse(self, mainfile: str, archive: EntryArchive, logger):
         # Log a hello world, just to get us started. TODO remove from an actual parser.
@@ -149,7 +168,7 @@ class NexusParser(MatchingParser):
         logger.info('Hello NeXus World')
 
         self.archive = archive
-        self.archive.m_create(nexus.Nexus)
+        self.archive.m_create(nexus.Nexus)  # TODO I don't know where it comes from
         self.nxroot = self.archive.nexus
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])
