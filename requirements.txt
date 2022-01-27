@@ -5,7 +5,7 @@ pylint==2.3.1
 pylint_plugin_utils==0.5
 pycodestyle==2.8.0
 pytest==3.10.0
-pytest-timeout==2.1.0
+pytest-timeout==1.4.2
 pytest-cov==2.7.1
 h5py==3.6.0
 python-json-logger==2.0.2
