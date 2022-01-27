@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xslt"?>
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance" extends="NXobject" type="group" category="base" name="NXentry">
+	<doc>Test case for verifying that the parser can handle links correctly.</doc>
+	<group type="NXdata">
+		<link name="polar_angle" target="here1"/>
+		<link name="target_angle" target="here2"/>
+	</group>
+</definition>

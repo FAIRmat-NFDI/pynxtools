@@ -1,111 +1,120 @@
 #!/usr/bin/env python3
+"""Main file of yaml2nxdl tool.
+Users create NeXus instances by writing a YAML file
+which details a hierarchy of data/metadata elements
+
+"""
 # -*- coding: utf-8 -*-
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-import os
-import sys
-import yaml
-from lxml import etree
-from yaml2nxdl_utils import nx_base_clss, nx_cand_clss, nx_unit_idnt, nx_unit_typs
-from yaml2nxdl_utils import nx_type_keys, nx_attr_idnt
-# check duplicates Types with no Name in read_user_appdef: https://stackoverflow.com/questions/33490870/parsing-yaml-in-python-detect-duplicated-keys
-from yaml2nxdl_read_user_yml_appdef import read_user_appdef
-from yaml2nxdl_recursive_build import recursive_build
+# pylint: disable=E1101
 
-from typing import Tuple
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
 import click
+
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file as read
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_recursive_build as recursive_build
+
+
+def pretty_print_xml(xml_root, output_xml):
+    """Print better human-readable idented and formatted xml file
+using built-in libraries and add preceding XML processing instruction
+
+    """
+    dom = minidom.parseString(ET.tostring(xml_root, encoding='utf-8', method='xml'))
+    sibling = dom.createProcessingInstruction(
+        'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
+    root = dom.firstChild
+    dom.insertBefore(sibling, root)
+    xml_string = dom.toprettyxml()
+    with open(output_xml, "w") as file_out:
+        file_out.write(xml_string)
 
 
 @click.command()
 @click.option(
-    '--input_file',
-    #default=['example.yml'],
-    multiple=True,
-    help='The path to the input data file to read. (Repeat for more than one file.)'
+    '--input-file',
+    help='The path to the yaml-formatted input data file to read and create \
+a NXDL XML file from. (Repeat for more than one file.)'
 )
-def yaml2nxdl(input_file: Tuple[str]):
-    # add check if file exists
-    # step1: read the user-specific application definition which was written as a yml file
-    yml = read_user_appdef(input_file[0])
-    # print('Read YAML schema file')
+@click.option(
+    '--verbose',
+    is_flag=True,
+    default=False,
+    help='Print in standard output keywords and value types to help \
+possible issues in yaml files'
+)
+def yaml2nxdl(input_file: str, verbose: bool):
+    """Main of the yaml2nxdl converter, creates XML tree,
+namespace and schema, then evaluates a dictionary
+nest of groups recursively and fields or (their) attributes as childs of the groups
 
-    # step2a: create an instantiated NXDL schema XML tree, begin with the header add XML schema/namespaces
-    attr_qname = etree.QName(
-        "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation")
-    rt = etree.Element('definition',
-                       {attr_qname: 'http://definition.nexusformat.org/nxdl/nxdl.xsd'},
-                       nsmap={None: 'http://definition.nexusformat.org/nxdl/3.1',
-                                 'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
-                       )
-                  # ,
-                     # 'schemaLocation'}) ###############àà
-      # step2b: user-defined attributes for the root group
-    if 'name' in yml.keys():
-        rt.set('name', yml['name'])
-        del yml['name']
-    else:
-        raise ValueError('ERROR: name: keyword not specified !')
-    pi = etree.ProcessingInstruction(
-        "xml-stylesheet", text='type="text/xsl" href="nxdlformat.xsl"')
-    rt.addprevious(pi)
-        # evaluate whether we handle an application definition, a contributed or base class
-    if 'category' in yml.keys():
-        if yml['category'] == 'application':
-            rt.set('category', 'application')
-            rt.set('extends', 'NXentry')
-        elif yml['category'] == 'contributed':
-            rt.set('category', 'contributed')
-            rt.set('extends', 'NXobject')
-        elif yml['category'] == 'base':
-            rt.set('category', 'base')
-            rt.set('extends', 'NXobject')
-        else:
-            raise ValueError(
-            'Top-level keyword category exists in the yml but one of these: application, contributed, base !')
-        del yml['category']
-        rt.set('type', 'group')
-    else:
-        raise ValueError(
-            'Top-level keyword category does not exist in the yml !')
-    # step2c: docstring
-    if 'doc' in yml.keys():
-        rt.set('doc', yml['doc'])
-        del yml['doc']
-    else:
-        raise ValueError('Top-level docstring does not exist in the yml !')
-    if 'symbols' in yml.keys():
-        syms = etree.SubElement(rt, 'symbols')
-        if 'doc' in yml['symbols'].keys():
-            syms.set('doc', yml['symbols']['doc'])
-            del yml['symbols']['doc']
-        for kk, vv in iter(yml['symbols'].items()):
-            sym = etree.SubElement(syms, 'sym')
-            sym.set('name', kk)
-            sym.set('doc', vv)
-        del yml['symbols']
-    # do not throw in the case of else just accept that we do not have symbols
+    """
+    yml_appdef = read.yml_reader(input_file)
 
-        # step3: walk the dictionary nested in yml to create an instantiated NXDL schema XML tree rt
-    recursive_build(rt, yml)
+    print('input-file: ' + input_file)
+    print('application/base contains the following root-level entries:')
+    print(list(yml_appdef.keys()))
+    xml_root = ET.Element(
+        'definition', {
+            'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
+            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            'xsi:schemaLocation': 'http://www.w3.org/2001/XMLSchema-instance'
+        }
+    )
 
-        # step4: write the tree to a properly formatted NXDL XML file to disk
-    nxdl = etree.ElementTree(rt)
-    nxdl.write(input_file[0] + '.nxdl.xml', pretty_print=True,
-               xml_declaration=True, encoding="utf-8")
+    assert 'category' in yml_appdef.keys(), 'Required root-level keyword category is missing!'
+    assert yml_appdef['category'] in ['application', 'base'], 'Only \
+application and base are valid categories!'
+    assert 'doc' in yml_appdef.keys(), 'Required root-level keyword doc is missing!'
+
+    xml_root.set('extends', 'NXobject')
+    xml_root.set('type', 'group')
+    if yml_appdef['category'] == 'application':
+        xml_root.set('category', 'application')
+        del yml_appdef['category']
+    else:
+        xml_root.set('category', 'base')
+        del yml_appdef['category']
+
+    assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
+has to be a non-empty string!'
+    doctag = ET.SubElement(xml_root, 'doc')
+    doctag.text = yml_appdef['doc']
+    del yml_appdef['doc']
+
+    if 'symbols' in yml_appdef.keys():
+        recursive_build.xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        del yml_appdef['symbols']
+
+    assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
+doc, symbols, and NX... at root-level!'
+    keyword = list(yml_appdef.keys())[0]  # which is the only one
+    assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
+keyword has an invalid pattern, or is too short!'
+    xml_root.set('name', keyword[1:-1])
+    recursive_build.recursive_build(xml_root, yml_appdef[keyword], verbose)
+
+    pretty_print_xml(xml_root, input_file[:-4] + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
-
-# tests
-# fnm = 'NXmpes_core_draft.yml'
-# fnm = 'NXtest_links.yml'
-# fnm = 'NXarpes.yml'
-# fnm = 'NXmx.yml'
-# fnm = 'NXem_base_draft.yml'
-# fnm = 'NXellipsometry_base_draft.yml'
-# fnm = NXapm_draft.yml
-
-# how to use the parser as a component
-# cv = yml2nxdl( fnm ).parse()
 
 
 if __name__ == '__main__':
-  #  logging.basicConfig(level=logging.DEBUG)
     yaml2nxdl().parse()  # pylint: disable=no-value-for-parameter
