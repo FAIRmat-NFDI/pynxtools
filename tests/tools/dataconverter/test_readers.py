@@ -52,11 +52,13 @@ def get_all_readers() -> List[BaseReader]:
     for reader in [get_reader(x) for x in get_names_of_all_readers()]:
         if reader.__name__ in ("ApmReader", "EmNionReader"):
             readers.append(pytest.param(reader,
-                                     marks=pytest.mark.skip(reason="Missing test data.")))
+                                        marks=pytest.mark.skip(reason="Missing test data.")
+                                        ))
         else:
             readers.append(reader)
 
     return readers
+
 
 @pytest.mark.parametrize("reader", get_all_readers())
 def test_if_readers_are_children_of_base_reader(reader):
@@ -69,7 +71,7 @@ def test_if_readers_are_children_of_base_reader(reader):
 def test_has_correct_read_func(reader):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
-    if reader.__name__ is not "BaseReader":
+    if reader.__name__ != "BaseReader":
         assert hasattr(reader, "supported_nxdls")
 
         reader_name = get_reader_name_from_reader_object(reader)
