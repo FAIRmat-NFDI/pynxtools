@@ -402,6 +402,19 @@ class ApmReader(BaseReader):
         # instantiation of the template, i.e. if ION[ion] is minOccur=0
         # the converter should not ask for this field to be present !
 
+        # hot fixed for now suggesting to implement as a new issue
+        # NEW ISSUE: implement a functionality to return NX data type information
+        # at this reader level so that values of a certain type family, like NX_UINT
+        # get transformed into the specific datatype, like uint32 or uint64 e.g.
+        implicit_int_to_uint32 = [
+        "/ENTRY[entry]/atom_probe/hit_multiplicity/hit_multiplicity",
+        "/ENTRY[entry]/atom_probe/hit_multiplicity/pulses_since_last_ion",
+        "/ENTRY[entry]/atom_probe/hit_multiplicity/pulse_id",
+        "/ENTRY[entry]/atom_probe/ranging/peak_identification/ION[ion]/ion_type",
+        "/ENTRY[entry]/atom_probe/ranging/peak_identification/ION[ion]/isotope_vector"]
+        for entry in implicit_int_to_uint32:
+            template[entry] = np.uint32(template[entry])
+
         return template
 
 

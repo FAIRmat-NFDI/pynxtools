@@ -50,6 +50,8 @@ def ods_to_json_routing_dict() -> dict:  # file_name: str) -> dict:
     prefix += "/readers/em_nion/utils/"
     print('Loading: ' + ROUTING_TABLE_FILE + ' from...')
     print(prefix)
+    # no prefixing for jupyter-lab assuming datasets are in /
+    prefix = ''
     tmp = pd.read_excel(prefix + ROUTING_TABLE_FILE,
                         sheet_name='JsonToNeXusRoutingTable',
                         engine="odf",
