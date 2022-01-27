@@ -1,0 +1,56 @@
+#filename: 2020-09-11-InS-2020-07-06-D5.dat
+filename: tests/data/tools/dataconverter/readers/ellips/test-data.dat
+skip: 3
+sep: "\t"
+
+# if the file has a block structure,
+# which column has the block index?
+blocks:
+  - type
+  - angle_of_incidence
+
+colnames:
+  - type
+  - wavelength
+  - angle_of_incidence
+  - psi
+  - delta
+  - err.psi
+  - err.delta
+x-var: wavelength
+y-var:
+  - psi
+  - delta
+err-var:
+  - err.psi
+  - err.delta
+parameters:
+  - type
+  - angle
+experiment_description: V-VASE scan on SiO2 on Si in air.
+experiment_identifier: exp-ID
+detector_type: photodiode
+integration_time: 2 s
+rotating_element: analyzer
+angle_of_incidence: 70 degrees
+data_type: psi / delta
+ellipsometry_type: rotating analyzer
+focussing_probes: false
+light_source: xenon arc lamp
+model: V-VASE
+sample_history: Sample history
+address: Unter den Linden
+affiliation: HU Berlin
+email: name@hu-berlin.de
+name: me
+software: WVASE
+program_version: "3.5"
+atom_types: Si, O
+data_identifier: 0
+layer_structure: SiO2 on Si
+measured_data: 1
+medium: air
+sample_name: SiO2 on Si
+start_time: "2022-01-22T12:14:12.05018+00:00"
+definition: ""
+angular_spread: "0.2 sr"

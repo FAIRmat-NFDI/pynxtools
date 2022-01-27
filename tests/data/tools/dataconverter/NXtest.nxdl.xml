@@ -20,10 +20,10 @@
             </enumeration>
         </field>
         <group type="NXdata" name="NXODD_name">
-            <field name="float_value" type="NX_FLOAT" units="NX_ENERGY">
+            <field name="float_value" type="NX_FLOAT" optional="true" units="NX_ENERGY">
                 <doc>A dummy entry for a float value.</doc>
             </field>
-            <field name="bool_value" type="NX_BOOLEAN" units="NX_UNITLESS">
+            <field name="bool_value" type="NX_BOOLEAN" required="true" units="NX_UNITLESS">
                 <doc>A dummy entry for a bool value.</doc>
             </field>
             <field name="int_value" type="NX_INT" units="NX_LENGTH">
@@ -35,6 +35,9 @@
             <field name="char_value" type="NX_CHAR" units="NX_UNITLESS">
                 <doc>A dummy entry for a char value.</doc>
             </field>
+            <field name="date_value" type="NX_DATE_TIME" units="NX_UNITLESS">
+                <doc>A dummy entry for a date value.</doc>
+            </field>
             <field name="type">
                 <enumeration>
                     <item value="1st type" />
@@ -42,6 +45,14 @@
                     <item value="3rd type" />
                     <item value="4th type" />
                 </enumeration>
+            </field>
+        </group>
+        <group type="NXdata" name="optional_parent" optional="true">
+            <field name="required_child" required="true" type="NX_INT">
+                <doc>A dummy entry to test optional parent check for required child.</doc>
+            </field>
+            <field name="optional_child" optional="true" type="NX_INT">
+                <doc>A dummy entry to test optional parent check for required child.</doc>
             </field>
         </group>
     </group>

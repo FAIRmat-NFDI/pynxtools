@@ -18,7 +18,6 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
-import importlib
 import os
 from typing import List
 import xml.etree.ElementTree as ET
@@ -26,28 +25,18 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
-from nexusparser.tools.dataconverter.convert import generate_template_from_nxdl
+from nexusparser.tools.dataconverter.convert import \
+    generate_template_from_nxdl, get_names_of_all_readers, get_reader
 from nexusparser.tools.dataconverter.helpers import validate_data_dict
 
 
-def get_reader(reader_path: str = None) -> BaseReader:
-    """Helper function to get the reader object from it's given name"""
-    spec = importlib.util.spec_from_file_location(  # type: ignore[attr-defined]
-        "reader.py", reader_path)
-    module = importlib.util.module_from_spec(spec)  # type: ignore[attr-defined]
-    spec.loader.exec_module(module)  # type: ignore[attr-defined]
-    return module.READER  # type: ignore[attr-defined]
-
-
-def get_readers() -> List:
-    """Helper function for parametrizing reader objects"""
-    readers = []
-    for reader_filename in get_readers_file_names():
-        reader_name = reader_filename[reader_filename.rindex("readers/")
-                                      + len("readers/"):reader_filename.rindex("/")]
-        print(reader_name)
-        readers.append(get_reader(reader_filename))
-    return readers
+def get_reader_name_from_reader_object(reader) -> str:
+    """Helper function to find the name of a reader given the reader object."""
+    for reader_name in get_names_of_all_readers():
+        gotten_reader = get_reader(reader_name)
+        if reader.__name__ is gotten_reader.__name__:
+            return reader_name
+    return ""
 
 
 def get_readers_file_names() -> List[str]:
@@ -55,7 +44,7 @@ def get_readers_file_names() -> List[str]:
     return glob.glob("nexusparser/tools/dataconverter/readers/*/reader.py")
 
 
-@pytest.mark.parametrize("reader", get_readers())
+@pytest.mark.parametrize("reader", [get_reader(x) for x in get_names_of_all_readers()])
 def test_if_readers_are_children_of_base_reader(reader):
     """Test to verify that all readers are children of BaseReader"""
     if reader.__name__ != "BaseReader":
@@ -69,13 +58,12 @@ def test_has_correct_read_func(reader):
     if reader.__name__ != "BaseReader":
         assert hasattr(reader, "supported_nxdls")
 
-        reader_name = reader.__name__[:reader.__name__.rindex("Reader")].lower()
+        reader_name = get_reader_name_from_reader_object(reader)
 
         nexus_appdef_dir = os.path.join(os.getcwd(), "nexusparser", "definitions", "applications")
         dataconverter_data_dir = os.path.join("tests", "data", "tools", "dataconverter")
 
         input_files = glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
-
         for supported_nxdl in reader.supported_nxdls:
             if supported_nxdl == "NXtest":
                 nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")

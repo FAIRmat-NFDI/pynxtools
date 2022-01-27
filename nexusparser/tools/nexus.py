@@ -21,18 +21,13 @@ import h5py
 
 
 # check for NEXUS definitions
-def get_nexus_definitions_path():
-    """Check NEXUS_DEF_PATH variable.
-If it is empty, this function is filling it
-
-"""
-    try:
-        # either given by sys env
-        return os.environ['NEXUS_DEF_PATH']
-    except KeyError:
-        # or it should be available locally under the dir 'definitions'
-        local_dir = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(local_dir, '../definitions')
+try:
+    # either given by sys env
+    NEXUS_DEF_PATH = os.environ['NEXUS_DEF_PATH']
+except BaseException:
+    # or it should be available locally under the dir 'definitions'
+    LOCAL_DIR = os.path.abspath(os.path.dirname(__file__))
+    NEXUS_DEF_PATH = os.path.join(LOCAL_DIR, f"..{os.sep}definitions")
 
 
 def get_nx_class_path(hdf_node):
@@ -121,7 +116,7 @@ def get_nx_units():
     """Read unit kinds from the Nexus definition/nxdlTypes.xsd file
 
 """
-    filepath = get_nexus_definitions_path() + '/nxdlTypes.xsd'
+    filepath = f"{NEXUS_DEF_PATH}{os.sep}nxdlTypes.xsd"
     tree = ET.parse(filepath)
     root = tree.getroot()
     units_and_type_list = []
@@ -262,8 +257,7 @@ it also checks for the base classes
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc_obj = ET.parse(get_nexus_definitions_path() + '/base_classes/' + bc_name + '.nxdl.xml')\
-        .getroot()
+    bc_obj = ET.parse(f"{NEXUS_DEF_PATH}{os.sep}base_classes{os.sep}{bc_name}.nxdl.xml").getroot()
     return get_own_nxdl_child(bc_obj, name)
 
 
@@ -369,9 +363,8 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
 
 """
     nxdef = get_nxdl_entry(hdf_node)
-    elem = ET.parse(os.path.join(get_nexus_definitions_path(),
-                                 "applications",
-                                 f"{nxdef}.nxdl.xml")).getroot()
+    nxdl_file_path = f"{NEXUS_DEF_PATH}{os.sep}applications{os.sep}{nxdef}.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
     nxdl_path = [elem]
     path = get_nx_class_path(hdf_node)
     req_str = None
@@ -580,9 +573,8 @@ and finds the corresponding XML element with the needed attributes.
 
 """
     if elem is None:
-        elem = ET.parse(os.path.join(get_nexus_definitions_path(),
-                                     "applications",
-                                     f"{nx_name}.nxdl.xml")).getroot()
+        nxdl_file_path = f"{NEXUS_DEF_PATH}{os.sep}applications{os.sep}{nx_name}.nxdl.xml"
+        elem = ET.parse(nxdl_file_path).getroot()
     for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
     if elem is None:
