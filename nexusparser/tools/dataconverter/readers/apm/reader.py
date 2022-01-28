@@ -415,6 +415,26 @@ class ApmReader(BaseReader):
         for entry in implicit_int_to_uint32:
             template[entry] = np.uint32(template[entry])
 
+        # NEW ISSUE: add path to default plottable data
+
+        if 0 == 1:
+            template["/@default"] = "entry"
+            template["/ENTRY[entry]/@default"] = "atom_probe"
+            template["/ENTRY[entry]/atom_probe/\@default"] = "ranging"
+            template["/ENTRY[entry]/atom_probe/ranging/@default"] = "data"  # to instruct h5web of which class this is
+
+            template["/ENTRY[entry]/atom_probe/ranging/data/@NX_class"] = "NXdata"  # to instruct h5web of which class this is
+            template["/ENTRY[entry]/atom_probe/ranging/data/@signal"] = "mass_spectrum"  # dependent data
+            template["/ENTRY[entry]/atom_probe/ranging/data/@axes"] = "bins"  # array degenerates to single entry ["counts"]
+
+            template["/ENTRY[entry]/atom_probe/ranging/data/@bins_incides"] = np.uint32(0)  # independent data
+            template["/ENTRY[entry]/atom_probe/ranging/data/@long_name"] = "Mass-to-charge histogram"
+            template["/ENTRY[entry]/atom_probe/ranging/data/mass_spectrum"] = np.uint32([1, 2, 3, 4, 5, 6, 10, 50])
+            template["/ENTRY[entry]/atom_probe/ranging/data/bins"] = np.float32([-1., -2., -3., -4., -5., -6., -7., -8.])
+            template["/ENTRY[entry]/atom_probe/ranging/data/bins/@units"] = "Da"
+
+        # NEW ISSUE: visualize detector stack data
+
         return template
 
 
