@@ -160,12 +160,11 @@ def extract_data_from_scans(
 
     path_prefix = "/ENTRY[entry]/em_lab/hadf/DATA[data]/"
 
-    template[path_prefix + "@axes"] \
-        = ["photon_energy", "xpos", "ypos"]
+    template[path_prefix + "@axes"] = ["ypos", "xpos"]
     template[path_prefix + "@signal"] = "intensity"
     # here assuming h5py will encodes the str into an UTF-8
-    template[path_prefix + "@xpos_indices"] = 0
-    template[path_prefix + "@ypos_indices"] = 1
+    template[path_prefix + "@ypos_indices"] = 0
+    template[path_prefix + "@xpos_indices"] = 1
 
     npy = np.load(npy_file_name)
     template[path_prefix + "intensity"] = npy
@@ -288,6 +287,12 @@ class EmNionReader(BaseReader):
         # inspect the template for debugging purposes
         # for keyword, value in template.items():
         #     print('Keyword: ' + keyword + ' value: ' + str(value))
+
+        # NEW ISSUE: add path to default plottable data
+        template['/@default'] = "entry"
+        template['/ENTRY[entry]/@default'] = "em_lab"
+        template['/ENTRY[entry]/em_lab/@default'] = "hadf"
+        template['/ENTRY[entry]/em_lab/hadf/@default'] = "data"
 
         return template
 
