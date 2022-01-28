@@ -112,7 +112,7 @@ keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
     recursive_build.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
-    pretty_print_xml(xml_root, input_file[:-4] + '.nxdl.xml')
+    pretty_print_xml(xml_root, input_file.split(".", 1)[0] + '.nxdl.xml')
     print('Parsed YAML to NXDL successfully')
 
 

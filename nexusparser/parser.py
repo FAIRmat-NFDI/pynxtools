@@ -96,6 +96,8 @@ class NexusParser(MatchingParser):
             mainfile_contents_re=(r'^\s*#\s*This is nexus output'),
             supported_compressions=['gz', 'bz2', 'xz']
         )
+        self.archive = None
+        self.nxroot = None
 
 #     def get_nomad_classname(self, xml_name, xml_type, suffix):
 #         """Get nomad classname from xml file
@@ -133,14 +135,13 @@ class NexusParser(MatchingParser):
                 if isinstance(nxdl_attribute, str):
                     # conventional attribute not in schema. Only necessary,
                     # if schema is not populated according
-                    try:
-                        if nxdl_attribute == "units":
-                            act_section.nx_unit = val[0]
-                        elif nxdl_attribute == "default":
-                            assert 1 == 2, "Quantity \
-'default' is not yet added by default to groups in Nomad schema"
-                    except Exception as exc:
-                        print("Problem with storage!!!" + str(exc))
+                    if nxdl_attribute == "units":
+                        act_section.nx_unit = val[0]
+                    elif nxdl_attribute == "default":
+                        Exception("Quantity \
+'default' is not yet added by default to groups in Nomad schema")
+                    else:
+                        Exception("NXDL attributes were not units or default")
                 else:
                     # attribute in schema
                     act_section = \
@@ -148,12 +149,12 @@ class NexusParser(MatchingParser):
                                               nxdl_attribute, act_section)[1]
                     try:
                         act_section.nx_value = val[0]
-                    except Exception as exc:
+                    except AttributeError as exc:
                         print("Problem with storage!!!" + str(exc))
             else:
                 try:
                     act_section.nx_value = get_value(hdf_node[...])
-                except Exception as exc:
+                except AttributeError as exc:
                     print("Problem with storage!!!" + str(exc))
         else:
             print('NOT IN SCHEMA - skipped')
