@@ -1,4 +1,6 @@
 {
+  "/@default": "entry",
+  "/ENTRY[entry]/@default": "data",
   "/ENTRY[entry]/definition": "NXmpes",
   "/ENTRY[entry]/definition/@version": "None",
   "/ENTRY[entry]/title": "@attrs:metadata/entry_title",
@@ -133,20 +135,22 @@
   "/ENTRY[entry]/SAMPLE[sample]/bias/@units": "V",
 
 
-  "/ENTRY[entry]/PROCESS[process]/calculated_energy": "@data:coords[\"E\"].data",
+  "/ENTRY[entry]/PROCESS[process]/calculated_energy": "@data:coords[\"energy\"].data",
   "/ENTRY[entry]/PROCESS[process]/calculated_kx": "@data:coords[\"kx\"].data",
   "/ENTRY[entry]/PROCESS[process]/calculated_energy/@units": "eV",
   "/ENTRY[entry]/PROCESS[process]/calculated_kx/@units": "1/A",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/applied": true,
 
   "/ENTRY[entry]/DATA[data]/@axes": "@data:dims",
-  "/ENTRY[entry]/DATA[data]/@energy_indices": "@data:coords[\"E\"].data",
-  "/ENTRY[entry]/DATA[data]/@kx_indices": "@data:coords[\"kx\"].data",
+  "/ENTRY[entry]/DATA[data]/@kx_indices": "0",
+  "/ENTRY[entry]/DATA[data]/@ky_indices": "1",
+  "/ENTRY[entry]/DATA[data]/@energy_indices": "2",
+  "/ENTRY[entry]/DATA[data]/@delay_indices": "3",
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
-  "/ENTRY[entry]/DATA[data]/energy": "@data:coords[\"E\"].data",
   "/ENTRY[entry]/DATA[data]/kx": "@data:coords[\"kx\"].data",
   "/ENTRY[entry]/DATA[data]/ky": "@data:coords[\"ky\"].data",
+  "/ENTRY[entry]/DATA[data]/energy": "@data:coords[\"energy\"].data",
   "/ENTRY[entry]/DATA[data]/delay": "@data:coords[\"delay\"].data"
 
 
