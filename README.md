@@ -30,20 +30,26 @@ pip install --upgrade pip
 pip install nomad-lab==1.0.0 --extra-index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
 ```
 
-Clone this project (or fork and then clone the fork). Go into the cloned directly and
+Clone this project (or fork and then clone the fork). Go into the cloned directory and
 directly run the parser from there:
 ```
-git clone https://github.com/nomad-coe/nomad-parser-nexus.git parser-nexus
+git clone https://github.com/nomad-coe/nomad-parser-nexus.git --branch yaml2nxdl --recursive parser-nexus
 cd parser-nexus
 git submodule sync --recursive
 git submodule update --init --recursive
 
 ```
 
-There are also a basic test framework written in [pytest](https://docs.pytest.org/en/stable/).
-Install the remaining dev dependencies and run the tests with:
+Install the remaining dev dependencies and install the package with:
 ```
 pip install -r requirements.txt
+pip install -e .[all]
+```
+
+There are also a basic test framework written in [pytest](https://docs.pytest.org/en/stable/).
+Run the test with:
+
+```
 pytest -sv tests
 ```
 
