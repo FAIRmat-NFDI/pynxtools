@@ -148,10 +148,15 @@
   "/ENTRY[entry]/DATA[data]/@delay_indices": "3",
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
+  "/ENTRY[entry]/DATA[data]/data/@units": "counts",
   "/ENTRY[entry]/DATA[data]/kx": "@data:coords[\"kx\"].data",
+  "/ENTRY[entry]/DATA[data]/kx/@units": "1/A",
   "/ENTRY[entry]/DATA[data]/ky": "@data:coords[\"ky\"].data",
+  "/ENTRY[entry]/DATA[data]/ky/@units": "1/A",
   "/ENTRY[entry]/DATA[data]/energy": "@data:coords[\"energy\"].data",
-  "/ENTRY[entry]/DATA[data]/delay": "@data:coords[\"delay\"].data"
+  "/ENTRY[entry]/DATA[data]/energy/@units": "eV",
+  "/ENTRY[entry]/DATA[data]/delay": "@data:coords[\"delay\"].data",
+  "/ENTRY[entry]/DATA[data]/delay/@units": "fs"
 
 
 
