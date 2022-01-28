@@ -29,10 +29,10 @@ If it is empty, this function is filling it
     try:
         # either given by sys env
         return os.environ['NEXUS_DEF_PATH']
-    except BaseException:
+    except KeyError:
         # or it should be available locally under the dir 'definitions'
-        LOCAL_DIR = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(LOCAL_DIR, f"..{os.sep}definitions")
+        local_dir = os.path.abspath(os.path.dirname(__file__))
+        return os.path.join(local_dir, f"..{os.sep}definitions")
 
 
 def get_nx_class_path(hdf_node):
@@ -262,7 +262,8 @@ it also checks for the base classes
     # filter primitive types
     if bc_name[2] == '_':
         return None
-    bc_obj = ET.parse(f"{get_nexus_definitions_path()}{os.sep}base_classes{os.sep}{bc_name}.nxdl.xml").getroot()
+    bc_obj = ET.parse(f"{get_nexus_definitions_path()}{os.sep}"
+                      f"base_classes{os.sep}{bc_name}.nxdl.xml").getroot()
     return get_own_nxdl_child(bc_obj, name)
 
 
@@ -291,7 +292,8 @@ REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
     # in BASE CLASSES: true
     # in APPLICATIONS: false
 
-    # if "base" in nxdl_elem.attrib and "base_classes" in nxdl_elem.base: # TODO: confirm with Sandor
+    # TODO: confirm with Sandor if we can get rid of these lines
+    # if "base" in nxdl_elem.attrib and "base_classes" in nxdl_elem.base:
     #    return "<<OPTIONAL>>"
 
 
@@ -578,7 +580,8 @@ and finds the corresponding XML element with the needed attributes.
 
 """
     if elem is None:
-        nxdl_file_path = f"{get_nexus_definitions_path()}{os.sep}applications{os.sep}{nx_name}.nxdl.xml"
+        nxdl_file_path = (f"{get_nexus_definitions_path()}{os.sep}"
+                          f"applications{os.sep}{nx_name}.nxdl.xml")
         elem = ET.parse(nxdl_file_path).getroot()
     for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
