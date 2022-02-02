@@ -20,12 +20,11 @@
 import glob
 import importlib.machinery
 import importlib.util
-import json
 import logging
 import os
 import re
 import sys
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 import xml.etree.ElementTree as ET
 
 import click
@@ -33,6 +32,7 @@ import click
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter import helpers
 from nexusparser.tools.dataconverter.writer import Writer
+from nexusparser.tools.dataconverter.template import Template
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
@@ -40,10 +40,12 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
-def generate_template_from_nxdl(root, template, path=None):
+def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
     """Helper function to generate a template dictionary for given NXDL"""
-    if path is None:
+    if nxdl_root is None:
+        nxdl_root = root
         root = helpers.get_first_group(root)
+    if path is None:
         path = ""
 
     tag = helpers.remove_namespace_from_tag(root.tag)
@@ -66,14 +68,21 @@ def generate_template_from_nxdl(root, template, path=None):
 
     # Only add fields or attributes to the dictionary
     if tag in ("field", "attribute"):
-        template[path] = None
+        optionality = helpers.get_required_string(root)
+        if optionality == "required":
+            optional_parent = helpers.check_for_optional_parent(path, nxdl_root)
+            optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
+            if optional_parent != "<<NOT_FOUND>>":
+                template.optional_parents.append(optional_parent)
+        template[optionality][path] = None
 
-    # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
-    if tag == "field" and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
-        template[f"{path}/@units"] = None
+        # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
+        if tag == "field" \
+           and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
+            template[optionality][f"{path}/@units"] = None
 
     for child in root:
-        generate_template_from_nxdl(child, template, path)
+        generate_template_from_nxdl(child, template, path, nxdl_root)
 
 
 def get_reader(reader_name) -> BaseReader:
@@ -134,11 +143,13 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     # Reading in the NXDL and generating a template
     nxdl_root = ET.parse(nxdl).getroot()
 
-    template: Dict[str, str] = {}
+    # template: Dict[str, str] = {}
+    template = Template()
     generate_template_from_nxdl(nxdl_root, template)
     if generate_template:
-        template.update((key, "None") for key in template)
-        logger.info(json.dumps(template, indent=4, sort_keys=True))
+        logger.info(template)
+        # template.update((key, "None") for key in template)
+        # logger.info(json.dumps(template, indent=4, sort_keys=True))
         return
 
     # Setting up all the input data
@@ -150,7 +161,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     nxdl_name = re.search("NX[a-z_]*(?=.nxdl.xml)", nxdl).group(0)
     if nxdl_name not in data_reader.supported_nxdls:
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
-    data = data_reader().read(template=dict(template),
+    data = data_reader().read(template=Template(template),
                               file_paths=input_file)  # type: ignore[operator]
 
     helpers.validate_data_dict(template, data, nxdl_root)

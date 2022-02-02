@@ -26,6 +26,11 @@ import numpy as np
 from nexusparser.tools import nexus
 
 
+def get_required_string(elem):
+    """Helper function to return nicely formatted names for optionality."""
+    return nexus.get_required_string(elem)[2:-2].lower()
+
+
 def convert_nexus_to_caps(nexus_name):
     """Helper function to convert a Nexus class from <NxClass> to <CLASS>."""
     return nexus_name[2:].upper()
@@ -190,36 +195,65 @@ def check_are_children_set(optional_parent_path: str, data: dict):
     return False
 
 
+def is_node_required(nxdl_key, nxdl_root):
+    """Checks whether a node at given nxdl path is required"""
+    node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root)
+    return nexus.get_required_string(node) == "<<REQUIRED>>"
+
+
+def all_required_children_are_set(optional_parent_path, data, nxdl_root):
+    """Walks over optional parent's children and makes sure all required ones are set"""
+    optional_parent_path = convert_data_converter_dict_to_nxdl_path(optional_parent_path)
+    for key in data:
+        nxdl_key = convert_data_converter_dict_to_nxdl_path(key)
+        if optional_parent_path in nxdl_key \
+           and is_node_required(nxdl_key, nxdl_root) \
+           and data[key] is None:
+            return False
+
+    return True
+
+
 def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     if nxdl_root is None:
         raise Exception("The NXDL file hasn't been loaded.")
 
-    for path in template:
-        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
-        is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
-
+    # Make sure all required fields exist.
+    for path in template["required"]:
+        # TODO: Check attrs
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
         if entry_name[0] == "@":
             continue
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+        is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
+        if not is_path_in_data_dict or data[renamed_path] is None:
+            raise Exception(f"The data entry corresponding to {path} is required and"
+                            f" hasn't been supplied by the reader.")
 
-        elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+    for path in data:
+        if data[path] is not None:
+            entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
+            if entry_name[0] == "@":
+                continue
+            nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
-        if nexus.get_required_string(elem) == "<<REQUIRED>>" and \
-           (not is_path_in_data_dict or data[renamed_path] is None):
-            # Check if any parent is optional and none of its children are set.
-            optional_parent = check_for_optional_parent(path, nxdl_root)
-            if optional_parent == "<<NOT_FOUND>>" or check_are_children_set(optional_parent, data):
-                raise Exception(f"The data entry, {renamed_path if renamed_path else path}, "
-                                f"is required and hasn't been supplied by the reader.")
+            for optional_parent in template["optional_parents"]:
+                optional_parent_nxdl = convert_data_converter_dict_to_nxdl_path(optional_parent)
+                if optional_parent_nxdl in nxdl_path \
+                   and not all_required_children_are_set(optional_parent, data, nxdl_root):
+                    raise Exception(f"The data entry, {path}, has an optional parent, "
+                                    f"{optional_parent}, with required children set. Either"
+                                    f" provide no children for {optional_parent} or provide"
+                                    f" all required ones.")
 
-        nxdl_type = elem.attrib["type"] if "type" in elem.attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
-
-        if is_path_in_data_dict and data[renamed_path] is not None:
-            is_valid_data_field(data[renamed_path], nxdl_type, renamed_path)
-            is_valid_enum, enums = is_value_valid_element_of_enum(data[renamed_path], elem)
+            attrib = elem.attrib
+            nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
+            is_valid_data_field(data[path], nxdl_type, path)
+            is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
             if not is_valid_enum:
-                raise Exception(f"The value at {renamed_path} should be"
+                raise Exception(f"The value at {path} should be"
                                 f" one of the following strings: {enums}")
 
     return True
