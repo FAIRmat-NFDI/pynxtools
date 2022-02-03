@@ -571,7 +571,7 @@ def get_enums(node):
 
 def get_node_at_nxdl_path(nxdl_path: str = None,
                           nx_name: str = None,
-                          elem: Optional[ET.Element] = None):
+                          elem: ET.Element = None):
     """Returns an ET.Element for the given path.
 
 This function either takes the name for the Nexus Application Definition
@@ -611,14 +611,14 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
                      get_nx_class_path(hdf_node), hdf_node))
     (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser(hdf_path, hdf_node, nxdef, nxdl_path, val)
+        parser(hdf_path, hdf_node, nxdef, nxdl_path)
     for key, value in hdf_node.attrs.items():
         logger.info('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
         logger.info('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
         (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
-            parser(hdf_path, hdf_node, nxdef, nxdl_path, val)
+            parser(hdf_path, hdf_node, nxdef, nxdl_path)
 
 
 def get_default_plotable(root, logger):
