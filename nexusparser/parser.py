@@ -109,10 +109,12 @@ class NexusParser(MatchingParser):
 #             name = xml_type + suffix
 #         return name
 
-    def nexus_populate(self, hdf_path, hdf_node, nxdef, nxdl_path, val):
+    def nexus_populate(self, hdf_path, hdf_node, nxdef, nxdl_path):
         """Walks through hdf_namelist and generate nxdl nodes
 
 """
+        val = str(hdf_node[()]).split('\n') if len(hdf_node.shape) <= 1 else str(
+            hdf_node[0]).split('\n')
         print('%%%%%%%%%%%%%%')
         # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdl_path)+
         # ' - '+val[0]+ ("..." if len(val) > 1 else ''))
@@ -161,15 +163,14 @@ class NexusParser(MatchingParser):
         print('%%%%%%%%%%%%%%')
 
     def parse(self, mainfile: str, archive: EntryArchive, logger):
-        # Log a hello world, just to get us started. TODO remove from an actual parser.
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setLevel(logging.DEBUG)
         stdout_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
         logger.addHandler(stdout_handler)
-        logger.info('Hello NeXus World')
 
         self.archive = archive
-        self.archive.m_create(nexus.Nexus)  # TODO I don't know where it comes from
+        # TODO ask Markus S. whether to disable or not this pylint error
+        self.archive.m_create(nexus.Nexus)  # pylint: disable=no-member
         self.nxroot = self.archive.nexus
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])

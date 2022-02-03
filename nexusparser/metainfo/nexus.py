@@ -34,7 +34,8 @@ from nomad.datamodel import EntryArchive
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-URL_REGEXP = re.compile(r'(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))')  # TODO please, Sherjeel, break this line :)
+URL_REGEXP = re.compile(r'(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]'
+                        r'{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))')
 XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 
 # TODO the validation still show some problems. Most notably there are a few higher
@@ -475,5 +476,5 @@ for package in PACKAGES:
 # TODO not necessary right now, could also be done case-by-case by the nexus parser
 PYTHON_MODULE = sys.modules[__name__]
 for package in PACKAGES:
-    for sektion in package.section_definitions:
+    for sektion in package.section_definitions:  # pylint: disable=not-an-iterable
         setattr(PYTHON_MODULE, sektion.name, sektion.section_cls)
