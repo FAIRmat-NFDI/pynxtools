@@ -19,11 +19,10 @@
 # limitations under the License.
 #
 
+import xml.etree.ElementTree as ET
 import sys
 import os
 import logging
-from datetime import datetime
-from pathlib import Path
 import pytest
 from nomad.datamodel import EntryArchive
 from nexusparser.tools import nexus  # noqa: E402
@@ -73,10 +72,21 @@ def test_nexus(tmp_path):
     print('Testing of nexus.py is SUCCESSFUL.')
 
 
-# TODO Write a test for tools.nexus.get_node_at_nxdl_path - Sherjeel
+def test_get_node_at_nxdl_path():
+    """Test to verify if we receive the right XML element for a given NXDL path"""
+    nxdl_file_path = "tests/data/tools/dataconverter/NXtest.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name", elem=elem)
+    assert node.attrib["type"] == "NXdata"
+    assert node.attrib["name"] == "NXODD_name"
+
+    node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name/float_value", elem=elem)
+    assert node.attrib["type"] == "NX_FLOAT"
+    assert node.attrib["name"] == "float_value"
 
 
 def test_example():
+    """Tests if parser can parse our example data"""
     archive = EntryArchive()
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
