@@ -86,7 +86,9 @@ def test_get_node_at_nxdl_path():
 
 
 def test_example():
-    """Tests if parser can parse our example data"""
+    """Tests if parser can parse our example data
+
+"""
     archive = EntryArchive()
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')

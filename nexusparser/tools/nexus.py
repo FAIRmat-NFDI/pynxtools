@@ -4,7 +4,6 @@
 # Nexus definitions in github: https://github.com/nexusformat/definitions
 # to be cloned under os.environ['NEXUS_DEF_PATH']
 
-from typing import Optional
 import os
 import xml.etree.ElementTree as ET
 import re
@@ -364,10 +363,8 @@ def chk_nxdataaxis(hdf_node, name, loger):
     # check for older conventions
     return chk_nxdataaxis_v2(hdf_node, name)
 
-
 def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)
-
 """
     nxdl_file_path = (f"{get_nexus_definitions_path()}{os.sep}applications"
                       f"{os.sep}{get_nxdl_entry(hdf_node)}.nxdl.xml")

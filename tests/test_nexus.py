@@ -139,7 +139,9 @@ nx_application_')]
                 section_definition = \
                     parent_definition.all_inner_section_definitions[f'{name_or_value}Group']
                 sub_section_definition = \
-                    parent_definition.all_sub_sections[f'nx_group_{name_or_value.replace("NX", "").upper()}']
+                    parent_definition.all_sub_sections[f'nx_group_'
+                                                       f'{name_or_value.replace("NX", "").upper()}'
+                                                       ]
 
             if kind == 'field':
                 section_definition = \

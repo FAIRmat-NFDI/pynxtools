@@ -409,7 +409,7 @@ def create_package_from_nxdl_directory(path: str) -> Package:
     Creates a metainfo package from the given nexus directory. Will generate the respective
     metainfo definitions from all the nxdl files in that directory.
     '''
-    global CURRENT_PACKAGE
+    global CURRENT_PACKAGE  # pylint: disable=global-statement
     CURRENT_PACKAGE = Package(name=f'nexus_{os.path.basename(path)}')
 
     for nxdl_file in sorted(os.listdir(path)):
@@ -421,7 +421,7 @@ def create_package_from_nxdl_directory(path: str) -> Package:
             xml_tree = ET.parse(nxdl_path)
             xml_node = xml_tree.getroot()
 
-            global _XML_PARENT_MAP
+            global _XML_PARENT_MAP  # pylint: disable=global-statement
             _XML_PARENT_MAP = {child: parent for parent in xml_tree.iter() for child in parent}
 
             assert xml_node.attrib.get('type') == 'group', 'definition is not a group'
