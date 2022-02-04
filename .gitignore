@@ -3,7 +3,6 @@
 *.pyc
 *.nxs
 *.txt
-*.log
 build/
 nexusparser.egg-info/PKG-INFO
 
