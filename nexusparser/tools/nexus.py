@@ -369,8 +369,8 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)
 
 """
-    nxdef = get_nxdl_entry(hdf_node)
-    nxdl_file_path = f"{get_nexus_definitions_path()}{os.sep}applications{os.sep}{nxdef}.nxdl.xml"
+    nxdl_file_path = (f"{get_nexus_definitions_path()}{os.sep}applications"
+                      f"{os.sep}{get_nxdl_entry(hdf_node)}.nxdl.xml")
     elem = ET.parse(nxdl_file_path).getroot()
     nxdl_path = [elem]
     path = get_nx_class_path(hdf_node)
@@ -493,7 +493,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         sdoc = get_nxdl_child(elem, 'doc')
         if doc:
             loger.info(get_local_name_from_xml(sdoc) if sdoc is not None else "")
-    return (req_str, nxdef, nxdl_path)
+    return (req_str, get_nxdl_entry(hdf_node), nxdl_path)
 
 
 def get_doc(node, ntype, nxhtml, nxpath):
@@ -510,10 +510,10 @@ def get_doc(node, ntype, nxhtml, nxpath):
         anchor = anchor[:-1]
 
     # RST documentation from the field 'doc'
-    try:
-        doc = node.doc.pyval
-    except BaseException:
-        doc = ""
+    doc = ""
+    doc_field = node.find("doc")
+    if doc_field is not None:
+        doc = doc_field.text
 
     # enums
     (index, enums) = get_enums(node)

@@ -162,7 +162,7 @@ class NexusParser(MatchingParser):
             print('NOT IN SCHEMA - skipped')
         print('%%%%%%%%%%%%%%')
 
-    def parse(self, mainfile: str, archive: EntryArchive, logger):
+    def parse(self, mainfile: str, archive: EntryArchive, logger=None):
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setLevel(logging.DEBUG)
         stdout_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
