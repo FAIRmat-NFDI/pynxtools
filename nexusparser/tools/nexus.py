@@ -363,6 +363,7 @@ def chk_nxdataaxis(hdf_node, name, loger):
     # check for older conventions
     return chk_nxdataaxis_v2(hdf_node, name)
 
+
 def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)
 """
@@ -732,6 +733,7 @@ def signal_helper(nxdata):
                 return sig
     return None
 
+
 def find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list):
     """Finds axis that have defined dimensions"""
     # find those with attribute axis= actual dimension number
@@ -752,6 +754,7 @@ def find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list):
                 ax_list.insert(0, sax)
             else:
                 ax_list.append(sax)
+
 
 def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
     """Gets either single or multiple axes from the NXDL"""
@@ -779,6 +782,7 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
                 ax_list.append(nxdata[ax_datasets[a_item]])
     except KeyError:
         pass
+
 
 def axis_helper(dim, nxdata, signal, axes, logger):
     """Check axis related data
