@@ -52,5 +52,5 @@ measured_data: 1
 medium: air
 sample_name: SiO2 on Si
 start_time: "2022-01-22T12:14:12.05018+00:00"
-definition: ""
+definition: "NXellipsometry"
 angular_spread: "0.2 sr"
