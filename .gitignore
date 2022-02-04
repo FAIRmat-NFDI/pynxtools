@@ -1,0 +1,8 @@
+.mypy_cache/
+.pyenv
+*.pyc
+*.nxs
+*.txt
+*.log
+nexusparser.egg-info/PKG-INFO
+
