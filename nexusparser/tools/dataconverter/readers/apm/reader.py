@@ -216,7 +216,8 @@ def configure_ranging_data(template: dict) -> dict:
     #     if keyword.find('ION[ion]') >= 0:
     #         del template[keyword]
 
-    template['/ENTRY[entry]/atom_probe/ranging/maximum_number_of_atoms_per_molecular_ion'] \
+    path_prefix = '/ENTRY[entry]/atom_probe/ranging/'
+    template[path_prefix + 'maximum_number_of_atoms_per_molecular_ion'] \
         = np.uint32(32)
 
     return template
@@ -329,6 +330,200 @@ def extract_data_from_json_file(file_name: str, template: dict) -> dict:
     return template
 
 
+def create_default_plottable_data_reconstruction(template: dict) -> dict:
+    """Compute on-the-fly, add, and give path to discretized reconstruction."""
+    path_prefix = "/ENTRY[entry]/atom_probe/reconstruction"
+    xyz = template[path_prefix + "/reconstructed_positions"]
+
+    print('--> Enter histogram computation ')
+    print(np.shape(xyz))
+
+    resolution = 1.0  # in nm
+    bounds = np.zeros([3, 2], np.float32)  # in nm
+    for i in np.arange(0, 3):
+        bounds[i, 0] = np.min(xyz[:, i])
+        bounds[i, 1] = np.max(xyz[:, i])
+    # make the bounding box a quadric prism
+    xymax = np.ceil(np.max(np.array(
+        np.fabs(bounds[0:1, 0])[0],
+        np.fabs(bounds[0:1, 1])[0])))
+    zmin = np.floor(bounds[2, 0])
+    zmax = np.ceil(bounds[2, 1])
+
+    xedges = np.linspace(-1.0 * xymax, +1.0 * xymax,
+                         num=int(np.ceil(2.0 * xymax / resolution)) + 1,
+                         endpoint=True)
+    # for debugging correct cuboidal storage order make prism a cuboid
+    # yedges = np.linspace(-9 + -1.0 * xymax, +9 + +1.0 * xymax,
+    #                      num=int(np.ceil((+9 +xymax - (-xymax -9))
+    #                                      / resolution))+1,
+    #                      endpoint=True)
+    yedges = xedges
+    zedges = np.linspace(zmin, zmax,
+                         num=int(np.ceil((zmax - zmin) / resolution)) + 1,
+                         endpoint=True)
+
+    hist3d = np.histogramdd((xyz[:, 0], xyz[:, 1], xyz[:, 2]),
+                            bins=(xedges, yedges, zedges))
+    del xyz
+    assert isinstance(hist3d[0], np.ndarray), \
+        'Hist3d computation from the reconstruction failed!'
+    assert len(np.shape(hist3d[0])) == 3, \
+        'Hist3d computation from the reconstruction failed!'
+    for i in np.arange(0, 3):
+        assert np.shape(hist3d[0])[i] > 0, \
+            'Dimensions ' + str(i) + ' has no length!'
+
+    path_prefix = "/ENTRY[entry]/atom_probe/reconstruction/"
+    path_prefix += "naive_point_cloud_density_map/"
+    template[path_prefix + "program"] \
+        = "nomad-parser-nexus/apm/reader.py"
+    template[path_prefix + "program/@version"] \
+        = "Add current GitCommit message"  # NEW ISSUE
+
+    template[path_prefix + "DATA[data]/@signal"] = "counts"
+    template[path_prefix + "DATA[data]/@axes"] = ["xpos", "ypos", "zpos"]
+    # mind that histogram does not follow Cartesian conventions so a transpose
+    # might be necessary, for now we implement the transpose in the appdef
+
+    template[path_prefix + "DATA[data]/counts"] = hist3d[0]
+    template[path_prefix + "DATA[data]/xpos"] = hist3d[1][0][1::]
+    template[path_prefix + "DATA[data]/xpos/@units"] = "nm"
+    template[path_prefix + "DATA[data]/@xpos_indices"] = 0  # "my x axis"
+    template[path_prefix + "DATA[data]/ypos"] = hist3d[1][1][1::]
+    template[path_prefix + "DATA[data]/ypos/@units"] = "nm"
+    template[path_prefix + "DATA[data]/@ypos_indices"] = 1  # "my y axis"
+    template[path_prefix + "DATA[data]/zpos"] = hist3d[1][2][1::]
+    template[path_prefix + "DATA[data]/zpos/@units"] = "nm"
+    template[path_prefix + "DATA[data]/@zpos_indices"] = 2  # "my z axis"
+    template[path_prefix + "DATA[data]/@long_name"] = "awesome hist3d"
+    print('Default plot 3D discretized reconstruction at 1nm binning.')
+    del hist3d
+
+    return template
+
+
+def create_default_plottable_data_mass_spectrum(template: dict) -> dict:
+    """Compute on-the-fly, add, and give path to discretized reconstruction."""
+    path_prefix = "/ENTRY[entry]/atom_probe/mass_to_charge_conversion/"
+    m_z = template[path_prefix + "mass_to_charge"]
+
+    print('--> Enter mass spectrum computation ')
+    print(np.shape(m_z))
+
+    mqmin = 0.0  # in Da, do not plot unphysical values < 0.0
+    mqmax = np.ceil(np.max(m_z[:]))
+    mqincr = 0.01  # in Da by default
+
+    hist1d = np.histogram(
+        m_z[:],
+        np.linspace(mqmin, mqmax,
+                    num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1,
+                    endpoint=True))
+    del m_z
+    assert isinstance(hist1d[0], np.ndarray), \
+        'Hist1d computation from the mass spectrum failed!'
+    assert len(np.shape(hist1d[0])) == 1, \
+        'Hist1d computation from the mass spectrum failed!'
+    for i in np.arange(0, 1):
+        assert np.shape(hist1d[0])[i] > 0, \
+            'Dimensions ' + str(i) + ' has no length!'
+
+    path_prefix = "/ENTRY[entry]/atom_probe/ranging/"
+    path_prefix += "mass_to_charge_distribution/"
+    template[path_prefix + "program"] \
+        = "nomad-parser-nexus/apm/reader.py"
+    template[path_prefix + "program/@version"] \
+        = "Add current GitCommit message"  # NEW ISSUE
+    template[path_prefix + "range_increment"] = mqincr
+    template[path_prefix + "range_increment/@units"] = "Da"
+    template[path_prefix + "range_minmax"] \
+        = np.array([mqmin, mqmax], np.float32)
+    template[path_prefix + "range_minmax/@units"] = "Da"
+
+    template[path_prefix + "mass_spectrum/@signal"] = "counts"
+    template[path_prefix + "mass_spectrum/@axes"] = "bin_ends"
+    template[path_prefix + "mass_spectrum/counts"] = hist1d[0]
+
+    template[path_prefix + "mass_spectrum/@long_name"] \
+        = "awesome hist1d"
+
+    template[path_prefix + "mass_spectrum/bin_ends"] = hist1d[1][1::]
+    template[path_prefix + "mass_spectrum/bin_ends/@units"] = "Da"
+    template[path_prefix + "mass_spectrum/@bin_ends_indices"] = 0
+    print('Plot mass spectrum at 0.01Da binning was created.')
+    del hist1d
+
+    return template
+
+
+def create_default_plottable_data(template: dict) -> dict:
+    """Compute on-the-fly, add, and give path to default plottable data."""
+    print('Create default plots on-the-fly...')
+    # now the reader implements what is effectively the task of a normalizer step
+    # adding plot (discretized representation of the dataset), for now the default plot
+    # adding plot mass-to-charge-state ratio histogram, termed mass spectrum in APM community
+
+    # NEW ISSUE: add path to default plottable data
+
+    # check if reconstructed ion positions have been stored
+    path_prefix = "/ENTRY[entry]/atom_probe/reconstruction/"
+    has_valid_xyz = False
+    if isinstance(template[path_prefix + "reconstructed_positions"],
+                  np.ndarray):
+        has_valid_xyz = True
+
+    path_prefix = "/ENTRY[entry]/atom_probe/mass_to_charge_conversion/"
+    has_valid_m_z = False
+    if isinstance(template[path_prefix + "mass_to_charge"], np.ndarray):
+        has_valid_m_z = True
+
+    has_default_data = has_valid_xyz | has_valid_m_z
+    assert has_default_data is True, \
+        'There is no possibility to create a default plot!'
+
+    if has_valid_xyz is True:
+        create_default_plottable_data_reconstruction(template)
+
+    if has_valid_m_z is True:
+        create_default_plottable_data_mass_spectrum(template)
+
+    template["/@default"] = "entry"
+    template["/ENTRY[entry]/@default"] = "atom_probe"
+    template["/ENTRY[entry]/atom_probe/@default"] = "reconstruction"
+    template["/ENTRY[entry]/atom_probe/reconstruction/@default"] \
+        = "naive_point_cloud_density_map"
+    path_prefix = "/ENTRY[entry]/atom_probe/reconstruction/"
+    template[path_prefix + "naive_point_cloud_density_map/@default"] \
+        = "data"  # to instruct h5web of which class this is
+
+    # template["/ENTRY[entry]/atom_probe/ranging/data/@NX_class"] \
+    #     = "NXdata"  # to instruct h5web of which class this is
+    # template["/ENTRY[entry]/atom_probe/ranging/data/@signal"] \
+    #     = "mass_spectrum"  # dependent data
+    # template["/ENTRY[entry]/atom_probe/ranging/data/@axes"] \
+    #     = "bins"  # array degenerates to single entry ["counts"]
+
+    # template["/ENTRY[entry]/atom_probe/ranging/data/@bins_incides"] \
+    #     = np.uint32(0)  # independent data
+    # template["/ENTRY[entry]/atom_probe/ranging/data/@long_name"] \
+    #     = "Mass-to-charge histogram"
+    # template["/ENTRY[entry]/atom_probe/ranging/data/mass_spectrum"] \
+    #     = np.uint32([1, 2, 3, 4, 5, 6, 10, 50])
+    # template["/ENTRY[entry]/atom_probe/ranging/data/bins"] \
+    #     = np.float32([-1., -2., -3., -4., -5., -6., -7., -8.])
+    # template["/ENTRY[entry]/atom_probe/ranging/data/bins/@units"] = "Da"
+
+    # NEW ISSUE: visualize detector stack data
+
+    # debugging reporting of what has not been properly defined at the reader level
+    for keyword in template.keys():
+        if template[keyword] is None:
+            print("Entry: '" + keyword + " is not properly defined yet!")
+
+    return template
+
+
 class ApmReader(BaseReader):
     """Parse content from community file formats.
 
@@ -393,10 +588,6 @@ class ApmReader(BaseReader):
             print('Unable to extract information from a range file!')
             return {}
 
-        for keyword in template.keys():
-            if template[keyword] is None:
-                print("Entry: '" + keyword + " is not properly defined yet!")
-
         # delete_not_properly_handled_fields(template)
         # NEW ISSUE: these deleted fields should be handled during the
         # instantiation of the template, i.e. if ION[ion] is minOccur=0
@@ -406,95 +597,20 @@ class ApmReader(BaseReader):
         # NEW ISSUE: implement a functionality to return NX data type information
         # at this reader level so that values of a certain type family, like NX_UINT
         # get transformed into the specific datatype, like uint32 or uint64 e.g.
+        path_prefix = "/ENTRY[entry]/atom_probe/"
         implicit_int_to_uint32 \
-            = ["/ENTRY[entry]/atom_probe/hit_multiplicity/hit_multiplicity",
-               "/ENTRY[entry]/atom_probe/hit_multiplicity/pulses_since_last_ion",
-               "/ENTRY[entry]/atom_probe/hit_multiplicity/pulse_id",
-               "/ENTRY[entry]/atom_probe/ranging/peak_identification/ION[ion]/ion_type",
-               "/ENTRY[entry]/atom_probe/ranging/peak_identification/ION[ion]/isotope_vector"]
+            = [path_prefix + "hit_multiplicity/hit_multiplicity",
+               path_prefix + "hit_multiplicity/pulses_since_last_ion",
+               path_prefix + "hit_multiplicity/pulse_id",
+               path_prefix + "ranging/peak_identification/ION[ion]/ion_type",
+               path_prefix + "ranging/peak_identification/ION[ion]/isotope_vector"]
         for entry in implicit_int_to_uint32:
             template[entry] = np.uint32(template[entry])
 
-        # NEW ISSUE: add path to default plottable data
-
-        # template["/@default"] = "entry"
-        # template["/ENTRY[entry]/@default"] = "atom_probe"
-        # template["/ENTRY[entry]/atom_probe/@default"] = "ranging"
-        # template["/ENTRY[entry]/atom_probe/ranging/@default"] \
-        #     = "data"  # to instruct h5web of which class this is
-
-        # template["/ENTRY[entry]/atom_probe/ranging/data/@NX_class"] \
-        #     = "NXdata"  # to instruct h5web of which class this is
-        # template["/ENTRY[entry]/atom_probe/ranging/data/@signal"] \
-        #     = "mass_spectrum"  # dependent data
-        # template["/ENTRY[entry]/atom_probe/ranging/data/@axes"] \
-        #     = "bins"  # array degenerates to single entry ["counts"]
-
-        # template["/ENTRY[entry]/atom_probe/ranging/data/@bins_incides"] \
-        #     = np.uint32(0)  # independent data
-        # template["/ENTRY[entry]/atom_probe/ranging/data/@long_name"] \
-        #     = "Mass-to-charge histogram"
-        # template["/ENTRY[entry]/atom_probe/ranging/data/mass_spectrum"] \
-        #     = np.uint32([1, 2, 3, 4, 5, 6, 10, 50])
-        # template["/ENTRY[entry]/atom_probe/ranging/data/bins"] \
-        #     = np.float32([-1., -2., -3., -4., -5., -6., -7., -8.])
-        # template["/ENTRY[entry]/atom_probe/ranging/data/bins/@units"] = "Da"
-
-        # NEW ISSUE: visualize detector stack data
+        create_default_plottable_data(template)
 
         return template
 
 
 # This has to be set to allow the convert script to use this reader.
 READER = ApmReader
-
-
-# deprecated
-# =============================================================================
-# def delete_not_properly_handled_fields(template: dict) -> dict:
-#     """Remove fields which are currently not properly handled by the converter."""
-#     prefix = "/ENTRY[entry]/atom_probe/"
-#     nxdl_paths = [
-#         prefix + "ranging/peak_identification/ION[ion]/name",
-#         prefix + "ranging/peak_identification/ION[ion]/charge_state",
-#         prefix + "ranging/peak_identification/ION[ion]/charge_state/@units",
-#         prefix + "ranging/peak_identification/ION[ion]/ion_type",
-#         prefix + "ranging/peak_identification/ION[ion]/isotope_vector",
-#         prefix + "ranging/peak_identification/ION[ion]/mass_to_charge_range",
-#         prefix + "ranging/peak_identification/ION[ion]/mass_to_charge_range/@units",
-#         prefix + "control_software/analysis_chamber/pressure",
-#         prefix + "control_software/analysis_chamber/pressure/@units",
-#         prefix + "hit_multiplicity/hit_multiplicity",
-#         prefix + "hit_multiplicity/pulses_since_last_ion",
-#         prefix + "ion_impact_positions/hit_positions",
-#         prefix + "ion_impact_positions/hit_positions/@units",
-#         prefix + "laser_or_high_voltage_pulser/pulsed_voltage",
-#         prefix + "laser_or_high_voltage_pulser/pulsed_voltage/@units",
-#         prefix + "laser_or_high_voltage_pulser/standing_voltage",
-#         prefix + "laser_or_high_voltage_pulser/standing_voltage/@units",
-#         prefix + "voltage_and_bowl_correction/calibrated_tof/@units",
-#         prefix + "voltage_and_bowl_correction/raw_tof",
-#         prefix + "voltage_and_bowl_correction/raw_tof/@units"]
-#
-#     for path in nxdl_paths:
-#         assert path in template.keys(), \
-#             "nxdl_path: " + path + " is not a key in template!"
-#         template.pop(path, None)
-#
-#     # NEW ISSUE: remove also these fields in the future they are redundant for peak_identification
-#     prefix = "/ENTRY[entry]/atom_probe/"
-#     nxdl_paths = [
-#         prefix + "ranging/peak_search_and_deconvolution/PEAK[peak]/intensity",
-#         prefix + "ranging/peak_search_and_deconvolution/PEAK[peak]/intensity/@units",
-#         prefix + "ranging/peak_search_and_deconvolution/PEAK[peak]/label",
-#         prefix + "ranging/peak_search_and_deconvolution/PEAK[peak]/peak_model",
-#         prefix + "ranging/peak_search_and_deconvolution/PEAK[peak]/position",
-#         prefix + "ranging/peak_search_and_deconvolution/PEAK[peak]/position/@units"]
-#
-#     for path in nxdl_paths:
-#         assert path in template.keys(), \
-#             "nxdl_path: " + path + " is not a key in template!"
-#         template.pop(path, None)
-#
-#     return template
-# =============================================================================
