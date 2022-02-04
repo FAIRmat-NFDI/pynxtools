@@ -652,7 +652,7 @@ def get_default_plotable(root, logger):
     if default_nxdata_group_name:
         try:
             nxdata = nxentry[default_nxdata_group_name]
-        except BaseException:
+        except KeyError:
             nxdata = None
     if not nxdata:
         nxdata = nxdata_helper(nxentry)
@@ -667,7 +667,7 @@ def get_default_plotable(root, logger):
     signal_dataset_name = nxdata.attrs.get("signal")
     try:
         signal = nxdata[signal_dataset_name]
-    except BaseException:
+    except KeyError:
         signal = None
     if not signal:
         signal = signal_helper(nxdata)
@@ -735,6 +735,53 @@ def signal_helper(nxdata):
                 return sig
     return None
 
+def find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list):
+    """Finds axis that have defined dimensions"""
+    # find those with attribute axis= actual dimension number
+    lax = []
+    for key in nxdata.keys():
+        if isinstance(nxdata[key], h5py.Dataset):
+            try:
+                if nxdata[key].attrs['axis'] == a_item + 1:
+                    lax.append(nxdata[key])
+            except KeyError:
+                pass
+    if len(lax) == 1:
+        ax_list.append(lax[0])
+    # if there are more alternatives, prioritise the one with an attribute primary="1"
+    elif len(lax) > 1:
+        for sax in lax:
+            if sax.attrs.get('primary') and sax.attrs.get('primary') == 1:
+                ax_list.insert(0, sax)
+            else:
+                ax_list.append(sax)
+
+def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
+    """Gets either single or multiple axes from the NXDL"""
+    try:
+        # single axis is defined
+        if ax_datasets is str:
+            # explicite definition of dimension number
+            ind = nxdata.attrs.get(ax_datasets + '_indices')
+            if ind and ind is int:
+                if ind == a_item:
+                    ax_list.append(nxdata[nxdata[ax_datasets]])
+            # positional determination of the dimension number
+            elif a_item == 0:
+                ax_list.append(nxdata[nxdata[ax_datasets]])
+        # multiple axes are listed
+        else:
+            # explicite definition of dimension number
+            for aax in ax_datasets:
+                ind = nxdata.attrs.get(aax + '_indices')
+                if ind and ind is int:
+                    if ind == a_item:
+                        ax_list.append(nxdata[nxdata[aax]])
+            # positional determination of the dimension number
+            if not ax_list:
+                ax_list.append(nxdata[ax_datasets[a_item]])
+    except KeyError:
+        pass
 
 def axis_helper(dim, nxdata, signal, axes, logger):
     """Check axis related data
@@ -744,30 +791,7 @@ def axis_helper(dim, nxdata, signal, axes, logger):
         ax_list = []
         # primary axes listed in attribute axes
         ax_datasets = nxdata.attrs.get("axes")
-        try:
-            # single axis is defined
-            if ax_datasets is str:
-                # explicite definition of dimension number
-                ind = nxdata.attrs.get(ax_datasets + '_indices')
-                if ind and ind is int:
-                    if ind == a_item:
-                        ax_list.append(nxdata[nxdata[ax_datasets]])
-                # positional determination of the dimension number
-                elif a_item == 0:
-                    ax_list.append(nxdata[nxdata[ax_datasets]])
-            # multiple axes are listed
-            else:
-                # explicite definition of dimension number
-                for aax in ax_datasets:
-                    ind = nxdata.attrs.get(aax + '_indices')
-                    if ind and ind is int:
-                        if ind == a_item:
-                            ax_list.append(nxdata[nxdata[aax]])
-                # positional determination of the dimension number
-                if not ax_list:
-                    ax_list.append(nxdata[ax_datasets[a_item]])
-        except BaseException:
-            pass
+        get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list)
         # check for corresponding AXISNAME_indices
         for attr in nxdata.attrs.keys():
             if attr.endswith('_indices') and nxdata.sttrs[attr] == a_item:
@@ -778,28 +802,11 @@ def axis_helper(dim, nxdata, signal, axes, logger):
             try:
                 ax_datasets = signal.attrs.get("axes").split(':')
                 ax_list.append(nxdata[ax_datasets[a_item]])
-            except BaseException:
+            except KeyError:
                 pass
         # check for axis/primary specifications
         if not ax_list:
-            # find those with attribute axis= actual dimension number
-            lax = []
-            for key in nxdata.keys():
-                if isinstance(nxdata[key], h5py.Dataset):
-                    try:
-                        if nxdata[key].attrs['axis'] == a_item + 1:
-                            lax.append(nxdata[key])
-                    except BaseException:
-                        pass
-            if len(lax) == 1:
-                ax_list.append(lax[0])
-            # if there are more alternatives, prioritise the one with an attribute primary="1"
-            elif len(lax) > 1:
-                for sax in lax:
-                    if sax.attrs.get('primary') and sax.attrs.get('primary') == 1:
-                        ax_list.insert(0, sax)
-                    else:
-                        ax_list.append(sax)
+            find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list)
         axes.append(ax_list)
         logger.info('')
         logger.info('For Axis #%d, %d axes have been identified: %s\
