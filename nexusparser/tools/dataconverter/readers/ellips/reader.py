@@ -17,7 +17,6 @@
 #
 """An example reader implementation for the DataConverter."""
 from typing import Tuple
-import json
 
 import pyaml as yaml
 import os
@@ -127,6 +126,7 @@ class EllipsometryReader(BaseReader):
             raise KeyError("filename is missing")
         tempdata = load_as_blocks(header["filename"], header)
         header["measured_data"] = tempdata["data"]
+        data_to_plot = tempdata["data"]
         del tempdata["keys"]
         del tempdata["data"]
         for k in tempdata:
@@ -170,11 +170,24 @@ class EllipsometryReader(BaseReader):
             #     if f"{field_name}_units" in data.keys() and f"{k}/@units" in template.keys():
             #         template[f"{k}/@units"] = data[f"{field_name}_units"]
         # we are hardcoding the wavelength unit but it has to be fixed
+        wave_length = data_to_plot[0, 0, :, 0]
+        psi = data_to_plot[0, 0, :, 1]
+
         return_data["/ENTRY[entry]/SAMPLE[sample]/wavelength/@units"] = "nm"
         return_data["/ENTRY[entry]/INSTRUMENT[instrument]/angle_of_incidence/@units"] = "degrees"
 
         # Wavelength should be of type float. Pandas sends it back as Python object aka dtype('O')
         return_data["/ENTRY[entry]/SAMPLE[sample]/wavelength"] = return_data["/ENTRY[entry]/SAMPLE[sample]/wavelength"].astype("float64")
+
+        return_data["/ENTRY[entry]/plot/@units"] = "nm"
+        return_data["/ENTRY[entry]/plot/@signal"] = "psi"
+
+        return_data["/ENTRY[entry]/plot/wavelength"] = wave_length
+        return_data["/ENTRY[entry]/plot/psi"] = psi
+        return_data["/ENTRY[entry]/plot/@axes"] = "wavelength"
+
+        return_data['/@default'] = "entry"
+        return_data["/ENTRY[entry]/@default"] = "plot"
 
         return return_data
 
