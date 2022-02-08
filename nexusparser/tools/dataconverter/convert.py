@@ -41,51 +41,6 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
-def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
-    """Helper function to generate a template dictionary for given NXDL"""
-    if nxdl_root is None:
-        nxdl_root = root
-        root = helpers.get_first_group(root)
-    if path is None:
-        path = ""
-
-    tag = helpers.remove_namespace_from_tag(root.tag)
-
-    if tag == "doc":
-        return
-
-    suffix = ""
-    if "name" in root.attrib:
-        suffix = root.attrib['name']
-    elif "type" in root.attrib:
-        nexus_class = helpers.convert_nexus_to_caps(root.attrib['type'])
-        hdf5name = f"[{helpers.convert_nexus_to_suggested_name(root.attrib['type'])}]"
-        suffix = f"{nexus_class}{hdf5name}"
-
-    if tag == "attribute":
-        suffix = f"@{suffix}"
-
-    path = path + "/" + suffix
-
-    # Only add fields or attributes to the dictionary
-    if tag in ("field", "attribute"):
-        optionality = helpers.get_required_string(root)
-        if optionality == "required":
-            optional_parent = helpers.check_for_optional_parent(path, nxdl_root)
-            optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
-            if optional_parent != "<<NOT_FOUND>>":
-                template.optional_parents.append(optional_parent)
-        template[optionality][path] = None
-
-        # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
-        if tag == "field" \
-           and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
-            template[optionality][f"{path}/@units"] = None
-
-    for child in root:
-        generate_template_from_nxdl(child, template, path, nxdl_root)
-
-
 def get_reader(reader_name) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
     path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
@@ -152,7 +107,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
 
     # template: Dict[str, str] = {}
     template = Template()
-    generate_template_from_nxdl(nxdl_root, template)
+    helpers.generate_template_from_nxdl(nxdl_root, template)
     if generate_template:
         logger.info(template)
         return

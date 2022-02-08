@@ -26,6 +26,51 @@ import numpy as np
 from nexusparser.tools import nexus
 
 
+def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
+    """Helper function to generate a template dictionary for given NXDL"""
+    if nxdl_root is None:
+        nxdl_root = root
+        root = get_first_group(root)
+    if path is None:
+        path = ""
+
+    tag = remove_namespace_from_tag(root.tag)
+
+    if tag == "doc":
+        return
+
+    suffix = ""
+    if "name" in root.attrib:
+        suffix = root.attrib['name']
+    elif "type" in root.attrib:
+        nexus_class = convert_nexus_to_caps(root.attrib['type'])
+        hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
+        suffix = f"{nexus_class}{hdf5name}"
+
+    if tag == "attribute":
+        suffix = f"@{suffix}"
+
+    path = path + "/" + suffix
+
+    # Only add fields or attributes to the dictionary
+    if tag in ("field", "attribute"):
+        optionality = get_required_string(root)
+        if optionality == "required":
+            optional_parent = check_for_optional_parent(path, nxdl_root)
+            optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
+            if optional_parent != "<<NOT_FOUND>>":
+                template.optional_parents.append(optional_parent)
+        template[optionality][path] = None
+
+        # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
+        if tag == "field" \
+           and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
+            template[optionality][f"{path}/@units"] = None
+
+    for child in root:
+        generate_template_from_nxdl(child, template, path, nxdl_root)
+
+
 def get_required_string(elem):
     """Helper function to return nicely formatted names for optionality."""
     return nexus.get_required_string(elem)[2:-2].lower()
@@ -214,16 +259,41 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
     return True
 
 
-def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
+def get_attribute_from_nxdl_elem(elem: ET.Element, attribute_name: str):
+    """Loops through the children in the ET element and returns the correct attribute"""
+    for child in elem:
+        if nexus.get_local_name_from_xml(child) == "attribute" \
+           and child.attrib["name"] == attribute_name:
+            return child
+    return None
+
+
+def check_optionality_based_on_parent_group(
+        path,
+        nxdl_path,
+        nxdl_root,
+        data,
+        template):
+    """Checks whether field is part of an optional parent and then confirms its optionality"""
+    for optional_parent in template["optional_parents"]:
+        optional_parent_nxdl = convert_data_converter_dict_to_nxdl_path(optional_parent)
+        if optional_parent_nxdl in nxdl_path \
+           and not all_required_children_are_set(optional_parent, data, nxdl_root):
+            raise Exception(f"The data entry, {path}, has an optional parent, "
+                            f"{optional_parent}, with required children set. Either"
+                            f" provide no children for {optional_parent} or provide"
+                            f" all required ones.")
+
+
+def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     if nxdl_root is None:
         raise Exception("The NXDL file hasn't been loaded.")
 
     # Make sure all required fields exist.
     for path in template["required"]:
-        # TODO: Check attrs
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-        if entry_name[0] == "@":
+        if entry_name == "@units":
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
@@ -234,19 +304,21 @@ def validate_data_dict(template: dict, data: dict, nxdl_root: ET.Element):
     for path in data:
         if data[path] is not None:
             entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-            if entry_name[0] == "@":
-                continue
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
-            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
-            for optional_parent in template["optional_parents"]:
-                optional_parent_nxdl = convert_data_converter_dict_to_nxdl_path(optional_parent)
-                if optional_parent_nxdl in nxdl_path \
-                   and not all_required_children_are_set(optional_parent, data, nxdl_root):
-                    raise Exception(f"The data entry, {path}, has an optional parent, "
-                                    f"{optional_parent}, with required children set. Either"
-                                    f" provide no children for {optional_parent} or provide"
-                                    f" all required ones.")
+            if entry_name == "@units":
+                continue
+            elif entry_name[0] == "@":
+                nxdl_path = nxdl_path[:nxdl_path.rindex("/")]
+                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+                elem = get_attribute_from_nxdl_elem(elem, entry_name[1:])
+                if elem is None:
+                    raise Exception(f"Attribute, {entry_name}, was not found under"
+                                    f" {nxdl_path} in the NXDL.")
+            else:
+                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+
+            check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
 
             attrib = elem.attrib
             nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"

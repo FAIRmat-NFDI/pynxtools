@@ -24,7 +24,6 @@ import numpy as np
 
 import nexusparser.tools.dataconverter.helpers as helpers
 from nexusparser.tools.dataconverter.template import Template
-import nexusparser.tools.dataconverter.convert as converter
 
 
 def alter_dict(data_dict: dict, key: str, value: object):
@@ -39,7 +38,7 @@ def alter_dict(data_dict: dict, key: str, value: object):
 
 @pytest.fixture(name="nxdl_root")
 def fixture_nxdl_root():
-    """pytest fixtrue to load the same NXDL file for all tests."""
+    """pytest fixture to load the same NXDL file for all tests."""
     nxdl_file = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
     yield ET.parse(nxdl_file).getroot()
 
@@ -49,7 +48,7 @@ def fixture_template():
     """pytest fixture to use the same template in all tests"""
     nxdl_root = ET.parse("tests/data/tools/dataconverter/NXtest.nxdl.xml").getroot()
     template = Template()
-    converter.generate_template_from_nxdl(nxdl_root, template)
+    helpers.generate_template_from_nxdl(nxdl_root, template)
     yield template
 
 

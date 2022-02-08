@@ -20,6 +20,8 @@
 import copy
 import json
 
+from nexusparser.tools.dataconverter import helpers
+
 
 class Template(dict):
     """A Template object to control and separate template paths according to optionality"""
@@ -113,6 +115,27 @@ class Template(dict):
         for del_dict in (self.optional, self.recommended, self.required):
             del_dict.clear()
 
-    def add_entry(self):
+    def rename_entry(self, old_name: str, new_name: str, deepcopy=True):
+        """Rename all entries under old name to new name."""
+        for internal_dict in (self.optional, self.recommended, self.required):
+            keys = list(internal_dict.keys())
+            for key in keys:
+                entry_name = helpers.get_name_from_data_dict_entry(key.split("/")[1])
+
+                entry_search_term = f"{entry_name}]"
+                rest_of_path = key[key.index(entry_search_term) + len(entry_search_term):]
+                if entry_name == old_name:
+                    value = internal_dict[key] if deepcopy else None
+                    internal_dict[f"/ENTRY[{new_name}]{rest_of_path}"] = value
+                    del internal_dict[key]
+
+    def update(self, template):
+        """Merges second template to original"""
+        for optionality in ("optional", "recommended", "required"):
+            self.get_optionality(optionality).update(template.get_optionality(optionality))
+
+    def add_entry(self, entry_name):
         """Add the whole NXDL again with a new HDF5 name for the template."""
-        # TODO: Implement
+        template = Template(self)
+        template.rename_entry("entry", entry_name, False)
+        self.update(template)
