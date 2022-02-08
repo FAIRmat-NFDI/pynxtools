@@ -33,6 +33,7 @@ from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter import helpers
 from nexusparser.tools.dataconverter.writer import Writer
 from nexusparser.tools.dataconverter.template import Template
+from nexusparser.tools import nexus
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
@@ -125,7 +126,7 @@ def get_names_of_all_readers() -> List[str]:
     '--nxdl',
     default=None,
     required=True,
-    help='The path to the corresponding NXDL file.'
+    help='The name of the NXDL file to use without extension.'
 )
 @click.option(
     '--output',
@@ -141,15 +142,19 @@ def get_names_of_all_readers() -> List[str]:
 def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
-    nxdl_root = ET.parse(nxdl).getroot()
+    if nxdl == "NXtest":
+        nxdl_path = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
+    else:
+        definitions_path = nexus.get_nexus_definitions_path()
+        nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
+
+    nxdl_root = ET.parse(nxdl_path).getroot()
 
     # template: Dict[str, str] = {}
     template = Template()
     generate_template_from_nxdl(nxdl_root, template)
     if generate_template:
         logger.info(template)
-        # template.update((key, "None") for key in template)
-        # logger.info(json.dumps(template, indent=4, sort_keys=True))
         return
 
     # Setting up all the input data
