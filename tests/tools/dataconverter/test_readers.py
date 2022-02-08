@@ -26,8 +26,9 @@ import pytest
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter.convert import \
-    generate_template_from_nxdl, get_names_of_all_readers, get_reader
-from nexusparser.tools.dataconverter.helpers import validate_data_dict
+    get_names_of_all_readers, get_reader
+from nexusparser.tools.dataconverter.helpers import \
+    validate_data_dict, generate_template_from_nxdl
 from nexusparser.tools.dataconverter.template import Template
 
 

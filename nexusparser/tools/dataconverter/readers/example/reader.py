@@ -47,7 +47,7 @@ class ExampleReader(BaseReader):
             # The entries in the template dict should correspond with what the dataconverter
             # outputs with --generate-template for a provided NXDL file
             field_name = k[k.rfind("/") + 1:]
-            if field_name[0] != "@":
+            if field_name != "@units":
                 template[k] = data[field_name]
                 if f"{field_name}_units" in data.keys() and f"{k}/@units" in template.keys():
                     template[f"{k}/@units"] = data[f"{field_name}_units"]
