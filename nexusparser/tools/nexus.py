@@ -261,6 +261,10 @@ it also checks for the base classes
     # filter primitive types
     if bc_name[2] == '_':
         return None
+
+    # Checking if it is actually the root element. Then we send it to NXroot.nxdl.xml
+    if bc_name == "group":
+        bc_name = "NXroot"
     bc_obj = ET.parse(f"{get_nexus_definitions_path()}{os.sep}"
                       f"base_classes{os.sep}{bc_name}.nxdl.xml").getroot()
     return get_own_nxdl_child(bc_obj, name)
