@@ -188,6 +188,11 @@ class EllipsometryReader(BaseReader):
 
         return_data['/@default'] = "entry"
         return_data["/ENTRY[entry]/@default"] = "plot"
+        return_data["/ENTRY[entry]/definition/@version"] = "0.0.1"
+        return_data["/ENTRY[entry]/definition/@url"] = "definition-url"
+        return_data["/ENTRY[entry]/INSTRUMENT[instrument]/model/@version"] = "0.0.1"
+        return_data["/ENTRY[entry]/INSTRUMENT[instrument]/software/@version"] = "0.0.1"
+        return_data["/ENTRY[entry]/INSTRUMENT[instrument]/software/@url"] = "software-url"
 
         return return_data
 
