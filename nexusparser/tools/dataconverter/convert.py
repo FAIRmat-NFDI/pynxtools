@@ -20,12 +20,11 @@
 import glob
 import importlib.machinery
 import importlib.util
-import json
 import logging
 import os
 import re
 import sys
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 import xml.etree.ElementTree as ET
 
 import click
@@ -33,47 +32,13 @@ import click
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter import helpers
 from nexusparser.tools.dataconverter.writer import Writer
+from nexusparser.tools.dataconverter.template import Template
+from nexusparser.tools import nexus
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
-
-
-def generate_template_from_nxdl(root, template, path=None):
-    """Helper function to generate a template dictionary for given NXDL"""
-    if path is None:
-        root = helpers.get_first_group(root)
-        path = ""
-
-    tag = helpers.remove_namespace_from_tag(root.tag)
-
-    if tag == "doc":
-        return
-
-    suffix = ""
-    if "name" in root.attrib:
-        suffix = root.attrib['name']
-    elif "type" in root.attrib:
-        nexus_class = helpers.convert_nexus_to_caps(root.attrib['type'])
-        hdf5name = f"[{helpers.convert_nexus_to_suggested_name(root.attrib['type'])}]"
-        suffix = f"{nexus_class}{hdf5name}"
-
-    if tag == "attribute":
-        suffix = f"@{suffix}"
-
-    path = path + "/" + suffix
-
-    # Only add fields or attributes to the dictionary
-    if tag in ("field", "attribute"):
-        template[path] = None
-
-    # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
-    if tag == "field" and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
-        template[f"{path}/@units"] = None
-
-    for child in root:
-        generate_template_from_nxdl(child, template, path)
 
 
 def get_reader(reader_name) -> BaseReader:
@@ -116,7 +81,7 @@ def get_names_of_all_readers() -> List[str]:
     '--nxdl',
     default=None,
     required=True,
-    help='The path to the corresponding NXDL file.'
+    help='The name of the NXDL file to use without extension.'
 )
 @click.option(
     '--output',
@@ -132,13 +97,19 @@ def get_names_of_all_readers() -> List[str]:
 def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
-    nxdl_root = ET.parse(nxdl).getroot()
+    if nxdl == "NXtest":
+        nxdl_path = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
+    else:
+        definitions_path = nexus.get_nexus_definitions_path()
+        nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
 
-    template: Dict[str, str] = {}
-    generate_template_from_nxdl(nxdl_root, template)
+    nxdl_root = ET.parse(nxdl_path).getroot()
+
+    # template: Dict[str, str] = {}
+    template = Template()
+    helpers.generate_template_from_nxdl(nxdl_root, template)
     if generate_template:
-        template.update((key, "None") for key in template)
-        logger.info(json.dumps(template, indent=4, sort_keys=True))
+        logger.info(template)
         return
 
     # Setting up all the input data
@@ -150,7 +121,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     nxdl_name = re.search("NX[a-z_]*(?=.nxdl.xml)", nxdl).group(0)
     if nxdl_name not in data_reader.supported_nxdls:
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
-    data = data_reader().read(template=dict(template),
+    data = data_reader().read(template=Template(template),
                               file_paths=input_file)  # type: ignore[operator]
 
     helpers.validate_data_dict(template, data, nxdl_root)

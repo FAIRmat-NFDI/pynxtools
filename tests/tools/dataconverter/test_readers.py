@@ -26,8 +26,10 @@ import pytest
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter.convert import \
-    generate_template_from_nxdl, get_names_of_all_readers, get_reader
-from nexusparser.tools.dataconverter.helpers import validate_data_dict
+    get_names_of_all_readers, get_reader
+from nexusparser.tools.dataconverter.helpers import \
+    validate_data_dict, generate_template_from_nxdl
+from nexusparser.tools.dataconverter.template import Template
 
 
 def get_reader_name_from_reader_object(reader) -> str:
@@ -87,7 +89,7 @@ def test_has_correct_read_func(reader):
                 nxdl_file = os.path.join(nexus_appdef_dir, f"{supported_nxdl}.nxdl.xml")
 
             root = ET.parse(nxdl_file).getroot()
-            template = {}
+            template = Template()
             generate_template_from_nxdl(root, template)
 
             read_data = reader().read(template=dict(template), file_paths=tuple(input_files))

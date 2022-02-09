@@ -11,7 +11,7 @@ Options:
                        more than one file.)
 
   --reader TEXT        The reader to use.
-  --nxdl TEXT          The path to the corresponding NXDL file.  [required]
+  --nxdl TEXT          The name of the NXDL file to use without extension.  [required]
   --output TEXT        The path to the output Nexus file to be generated.
   --generate-template  Just print out the template generated from given NXDL
                        file.
@@ -82,7 +82,7 @@ The returned dictionary should contain keys that exist in the template as define
 
 Then you can then call this using:
 ```console
-user@box:~$ python convert.py --reader mydata --nxdl path_to_nxdl --output path_to_output.nxs
+user@box:~$ python convert.py --reader mydata --nxdl NXmynxdl --output path_to_output.nxs
 ```
 
 ### The reader template dictionary

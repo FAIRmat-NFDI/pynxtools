@@ -17,15 +17,11 @@
 #
 """Test cases for the convert script used to access the DataConverter."""
 
-import os
 from click.testing import CliRunner
 import pytest
 
 import nexusparser.tools.dataconverter.convert as dataconverter
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
-
-
-NX_TEST = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
 
 
 def test_get_reader():
@@ -41,13 +37,13 @@ def test_get_names_of_all_readers():
 @pytest.mark.parametrize("cli_inputs", [
     pytest.param([
         "--nxdl",
-        NX_TEST,
+        "NXtest",
         "--generate-template"
     ], id="generate-template"),
     pytest.param([], id="nxdl-not-provided"),
     pytest.param([
         "--nxdl",
-        NX_TEST,
+        "NXtest",
         "--input-file",
         "test_input"
     ], id="input-file")
