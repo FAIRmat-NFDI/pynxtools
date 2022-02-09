@@ -228,18 +228,6 @@ def check_for_optional_parent(path: str, nxdl_root: ET.Element) -> str:
     return check_for_optional_parent(parent_path, nxdl_root)
 
 
-def check_are_children_set(optional_parent_path: str, data: dict):
-    """Checks if any children of the given parent are set."""
-    optional_parent_path = convert_data_converter_dict_to_nxdl_path(optional_parent_path)
-
-    # Check if any of this optional parents children are given:
-    for key in data:
-        nxdl_key = convert_data_converter_dict_to_nxdl_path(key)
-        if optional_parent_path in nxdl_key and data[key] is not None:
-            return True
-    return False
-
-
 def is_node_required(nxdl_key, nxdl_root):
     """Checks whether a node at given nxdl path is required"""
     node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root)
@@ -257,15 +245,6 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
             return False
 
     return True
-
-
-def get_attribute_from_nxdl_elem(elem: ET.Element, attribute_name: str):
-    """Loops through the children in the ET element and returns the correct attribute"""
-    for child in elem:
-        if nexus.get_local_name_from_xml(child) == "attribute" \
-           and child.attrib["name"] == attribute_name:
-            return child
-    return None
 
 
 def check_optionality_based_on_parent_group(
@@ -309,14 +288,13 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
             if entry_name == "@units":
                 continue
             elif entry_name[0] == "@":
-                nxdl_path = nxdl_path[:nxdl_path.rindex("/")]
-                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
-                elem = get_attribute_from_nxdl_elem(elem, entry_name[1:])
-                if elem is None:
-                    raise Exception(f"Attribute, {entry_name}, was not found under"
-                                    f" {nxdl_path} in the NXDL.")
-            else:
-                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+                index_of_at = nxdl_path.rindex("@")
+                nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
+
+            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+
+            if elem is None:
+                raise Exception(f"NXDL object not found for the path: {path}")
 
             check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
 
