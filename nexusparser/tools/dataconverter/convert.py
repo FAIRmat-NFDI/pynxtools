@@ -133,7 +133,14 @@ def convert(input_file: Tuple[str],
     data = data_reader().read(template=Template(template),
                               file_paths=input_file)  # type: ignore[operator]
 
-    helpers.validate_data_dict(template, data, nxdl_root, fair)
+    helpers.validate_data_dict(template, data, nxdl_root)
+
+    if fair and data.undocumented.keys():
+        logger.warning("There are undocumented paths in the template. This is not acceptable!")
+        return
+
+    for path in data.undocumented.keys():
+        logger.warning("The path, %s, is being written but has no documentation.", path)
 
     # Writing the data to output file
     Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()

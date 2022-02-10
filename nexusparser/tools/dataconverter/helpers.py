@@ -24,7 +24,6 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 from nexusparser.tools import nexus
-from nexusparser.tools.nexus import NxdlAttributeError
 
 
 def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
@@ -231,6 +230,8 @@ def check_for_optional_parent(path: str, nxdl_root: ET.Element) -> str:
 
 def is_node_required(nxdl_key, nxdl_root):
     """Checks whether a node at given nxdl path is required"""
+    if nxdl_key[nxdl_key.rindex("/") + 1:] == "@units":
+        return False
     node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root)
     return nexus.get_required_string(node) == "<<REQUIRED>>"
 
@@ -265,11 +266,8 @@ def check_optionality_based_on_parent_group(
                             f" all required ones.")
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element, fair=False):
-    """Checks whether all the required paths from the template are returned in data dict."""
-    assert nxdl_root is not None, "The NXDL file hasn't been loaded."
-
-    # Make sure all required fields exist.
+def ensure_all_required_fields_exist(template, data):
+    """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
         if entry_name == "@units":
@@ -280,7 +278,15 @@ def validate_data_dict(template, data, nxdl_root: ET.Element, fair=False):
             raise Exception(f"The data entry corresponding to {path} is required and"
                             f" hasn't been supplied by the reader.")
 
-    for path in data:
+
+def validate_data_dict(template, data, nxdl_root: ET.Element):
+    """Checks whether all the required paths from the template are returned in data dict."""
+    assert nxdl_root is not None, "The NXDL file hasn't been loaded."
+
+    # Make sure all required fields exist.
+    ensure_all_required_fields_exist(template, data)
+
+    for path in data.get_documented().keys():
         if data[path] is not None:
             entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
@@ -291,17 +297,13 @@ def validate_data_dict(template, data, nxdl_root: ET.Element, fair=False):
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
-            try:
-                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
-            except NxdlAttributeError:
-                if not fair:
-                    print(f"WARNING!!! Undocumented entry, {path}, is being accepted.")
-                else:
-                    raise
+            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
             # Only check for validation in the NXDL if we did find the entry
             # otherwise we just pass it along
-            if elem.attrib["name"] == entry_name:
+            if elem is not None \
+               and elem.attrib["name"] == entry_name \
+               and remove_namespace_from_tag(elem.tag) in ("field", "attribute"):
                 check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
 
                 attrib = elem.attrib
