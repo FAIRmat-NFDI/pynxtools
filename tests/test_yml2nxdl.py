@@ -28,7 +28,6 @@ import xml.etree.ElementTree as ET
 import pytest
 from click.testing import CliRunner
 import nexusparser.tools.yaml2nxdl.yaml2nxdl as yml2nxdl
-import nexusparser.tools.yaml2nxdl.nxdl2yaml as nxdl2yaml
 from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file as read
 
 sys.path.insert(0, '../nexusparser/tools')
@@ -167,10 +166,10 @@ The xml trees of the two files are then compared.
         LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml')
     test_xml_file = os.path.join(
         LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.nxdl.xml')
-    result = CliRunner().invoke(nxdl2yaml.launch_nxdl2yml, ['--input-file', ref_xml_file])
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', ref_xml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_yml_file)
-    result = CliRunner().invoke(yml2nxdl.yaml2nxdl, ['--input-file', test_yml_file])
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_xml_file)
 
@@ -197,10 +196,10 @@ The xml trees of the two files are then compared.
         LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry.nxdl.xml')
     test_yml_file = os.path.join(
         LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry_parsed.yml')
-    result = CliRunner().invoke(yml2nxdl.yaml2nxdl, ['--input-file', ref_yml_file])
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', ref_yml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_xml_file)
-    result = CliRunner().invoke(nxdl2yaml.launch_nxdl2yml, ['--input-file', test_xml_file])
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_xml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_yml_file)
 
