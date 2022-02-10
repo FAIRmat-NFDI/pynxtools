@@ -19,6 +19,11 @@ import h5py
 # logger = logging.getLogger()
 
 
+class NxdlAttributeError(Exception):
+    """An exception for throwing an error when an Nxdl attribute is not found."""
+    pass
+
+
 # check for NEXUS definitions
 def get_nexus_definitions_path():
     """Check NEXUS_DEF_PATH variable.
@@ -588,8 +593,8 @@ and finds the corresponding XML element with the needed attributes.
     for group in nxdl_path.split('/')[1:]:
         elem = get_nxdl_child(elem, group)
     if elem is None:
-        raise Exception(f"Attributes were not found for {nxdl_path}. "
-                        "Please check this entry in the template dictionary.")
+        raise NxdlAttributeError(f"Attributes were not found for {nxdl_path}. "
+                                 "Please check this entry in the template dictionary.")
     return elem
 
 

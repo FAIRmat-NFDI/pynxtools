@@ -93,7 +93,18 @@ def get_names_of_all_readers() -> List[str]:
     default=False,
     help='Just print out the template generated from given NXDL file.'
 )
-def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generate_template: bool):
+@click.option(  # pylint: disable=too-many-arguments
+    '--fair',
+    is_flag=True,
+    default=False,
+    help='Let the converter know to be stricter in checking the documentation.'
+)
+def convert(input_file: Tuple[str],
+            reader: str,
+            nxdl: str,
+            output: str,
+            generate_template: bool,
+            fair: bool):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
     if nxdl == "NXtest":
@@ -122,7 +133,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     data = data_reader().read(template=Template(template),
                               file_paths=input_file)  # type: ignore[operator]
 
-    helpers.validate_data_dict(template, data, nxdl_root)
+    helpers.validate_data_dict(template, data, nxdl_root, fair)
 
     # Writing the data to output file
     Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
