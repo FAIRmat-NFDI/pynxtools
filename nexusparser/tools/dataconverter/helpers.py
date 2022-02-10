@@ -24,6 +24,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 from nexusparser.tools import nexus
+from nexusparser.tools.nexus import NxdlAttributeError
 
 
 def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
@@ -264,10 +265,9 @@ def check_optionality_based_on_parent_group(
                             f" all required ones.")
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element):
+def validate_data_dict(template, data, nxdl_root: ET.Element, fair=False):
     """Checks whether all the required paths from the template are returned in data dict."""
-    if nxdl_root is None:
-        raise Exception("The NXDL file hasn't been loaded.")
+    assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
     # Make sure all required fields exist.
     for path in template["required"]:
@@ -291,7 +291,13 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
-            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+            try:
+                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+            except NxdlAttributeError:
+                if not fair:
+                    print(f"WARNING!!! Undocumented entry, {path}, is being accepted.")
+                else:
+                    raise
 
             if elem is None:
                 raise Exception(f"NXDL object not found for the path: {path}")
