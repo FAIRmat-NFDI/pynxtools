@@ -299,18 +299,18 @@ def validate_data_dict(template, data, nxdl_root: ET.Element, fair=False):
                 else:
                     raise
 
-            if elem is None:
-                raise Exception(f"NXDL object not found for the path: {path}")
+            # Only check for validation in the NXDL if we did find the entry
+            # otherwise we just pass it along
+            if elem.attrib["name"] == entry_name:
+                check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
 
-            check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
-
-            attrib = elem.attrib
-            nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
-            is_valid_data_field(data[path], nxdl_type, path)
-            is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
-            if not is_valid_enum:
-                raise Exception(f"The value at {path} should be"
-                                f" one of the following strings: {enums}")
+                attrib = elem.attrib
+                nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
+                is_valid_data_field(data[path], nxdl_type, path)
+                is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
+                if not is_valid_enum:
+                    raise Exception(f"The value at {path} should be"
+                                    f" one of the following strings: {enums}")
 
     return True
 
