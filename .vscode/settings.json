@@ -1,5 +1,4 @@
 {
-    "python.pythonPath": "/.pyenv/bin/python",
     "editor.rulers": [90],
     "editor.renderWhitespace": "all",
     "editor.tabSize": 4,

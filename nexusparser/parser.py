@@ -93,7 +93,7 @@ class NexusParser(MatchingParser):
         super().__init__(
             name='parsers/nexus', code_name='NEXUS', code_homepage='https://www.nexus.eu/',
             mainfile_mime_re=r'(application/.*)|(text/.*)',
-            mainfile_contents_re=(r'^\s*#\s*This is nexus output'),
+            mainfile_name_re=(r'.*\.nxs'),
             supported_compressions=['gz', 'bz2', 'xz']
         )
         self.archive = None
