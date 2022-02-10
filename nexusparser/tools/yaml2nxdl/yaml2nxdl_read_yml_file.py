@@ -29,8 +29,5 @@ def yml_reader(inputfile):
     Yaml module based reading of .yml file
     """
     with open(inputfile) as stream:
-        try:
-            return yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
-    return None
+        return yaml.safe_load(stream)
+    #return None

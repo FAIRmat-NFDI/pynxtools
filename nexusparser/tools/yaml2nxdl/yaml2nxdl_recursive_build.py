@@ -21,6 +21,7 @@
 # limitations under the License.
 #
 
+import sys
 import xml.etree.ElementTree as ET
 from nexusparser.tools.yaml2nxdl import yaml2nxdl_utils
 
@@ -157,7 +158,7 @@ def check_keyword_variable(verbose, keyword_name, keyword_type, value):
 
 """
     if verbose:
-        print(keyword_name + '(' + keyword_type + ') value:', str(type(value)))
+        sys.stdout.write(f'{keyword_name}({keyword_type}){value}:{type(value)}')
     if keyword_name == '' and keyword_type == '':
         raise ValueError('Found an improper YML key !')
 
@@ -176,7 +177,7 @@ def verbose_flag(verbose, keyword, value):
 
 """
     if verbose:
-        print('  key:', keyword, 'value:', str(type(value)))
+        sys.stdout.write(f'  key:{keyword} {value}:{type(value)}')
 
 
 def second_nested_level_handle(verbose, fld, value):
@@ -315,7 +316,8 @@ def recursive_build(obj, dct, verbose):
         keyword_name, keyword_type = yaml2nxdl_utils.nx_name_type_resolving(keyword)
 
         check_keyword_variable(verbose, keyword_name, keyword_type, value)
-        print('keyword_name:', keyword_name, 'keyword_type', keyword_type)
+        if verbose:
+            sys.stdout.write(f'keyword_name:{keyword_name} keyword_type {keyword_type}')
         if keyword[-6:] == '(link)':
             xml_handle_link(obj, keyword, value)
 
