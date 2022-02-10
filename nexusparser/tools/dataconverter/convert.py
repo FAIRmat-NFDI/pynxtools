@@ -125,7 +125,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     helpers.validate_data_dict(template, data, nxdl_root)
 
     # Writing the data to output file
-    Writer(data=data, nxdl_path=nxdl, output_path=output).write()
+    Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
 
     logger.info("The output file generated: %s", output)
 
