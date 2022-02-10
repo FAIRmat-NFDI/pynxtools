@@ -142,26 +142,26 @@ class EllipsometryReader(BaseReader):
                 del header[k]
 
         return_data = {}
-        for k in template.keys():
+        for k in template:
             if "@units" in k:
                 continue
             short_k = k.rsplit("/", 1)[1]
             k_units = f"{k}/@units"
             if short_k in header:
-                if k_units in template:
+                if k_units in template.keys():
                     if isinstance(header[short_k], str) and " " in header[short_k]:
                         val = header.pop(short_k).rsplit(" ", 1)
-                        return_data[k_units] = val[-1]
-                        return_data[k] = val[0]
+                        template[k_units] = val[-1]
+                        template[k] = val[0]
                         try:
-                            return_data[k] = float(val[0])
+                            template[k] = float(val[0])
                         except ValueError:
                             pass
                     else:
                         # we did not find unit but we assigned a value
-                        return_data[k] = header.pop(short_k)
+                        template[k] = header.pop(short_k)
                 else:
-                    return_data[k] = header.pop(short_k)
+                    template[k] = header.pop(short_k)
             # The entries in the template dict should correspond with what the dataconverter
             # outputs with --generate-template for a provided NXDL file
             # field_name = k[k.rfind("/") + 1:]
@@ -173,28 +173,28 @@ class EllipsometryReader(BaseReader):
         wave_length = data_to_plot[0, 0, :, 0]
         psi = data_to_plot[0, 0, :, 1]
 
-        return_data["/ENTRY[entry]/SAMPLE[sample]/wavelength/@units"] = "nm"
-        return_data["/ENTRY[entry]/INSTRUMENT[instrument]/angle_of_incidence/@units"] = "degrees"
+        template["/ENTRY[entry]/SAMPLE[sample]/wavelength/@units"] = "nm"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/angle_of_incidence/@units"] = "degrees"
 
         # Wavelength should be of type float. Pandas sends it back as Python object aka dtype('O')
-        return_data["/ENTRY[entry]/SAMPLE[sample]/wavelength"] = return_data["/ENTRY[entry]/SAMPLE[sample]/wavelength"].astype("float64")
+        template["/ENTRY[entry]/SAMPLE[sample]/wavelength"] = template["/ENTRY[entry]/SAMPLE[sample]/wavelength"].astype("float64")
 
-        return_data["/ENTRY[entry]/plot/@units"] = "nm"
-        return_data["/ENTRY[entry]/plot/@signal"] = "psi"
+        template["/ENTRY[entry]/plot/@units"] = "nm"
+        template["/ENTRY[entry]/plot/@signal"] = "psi"
 
-        return_data["/ENTRY[entry]/plot/wavelength"] = wave_length
-        return_data["/ENTRY[entry]/plot/psi"] = psi
-        return_data["/ENTRY[entry]/plot/@axes"] = "wavelength"
+        template["/ENTRY[entry]/plot/wavelength"] = wave_length
+        template["/ENTRY[entry]/plot/psi"] = psi
+        template["/ENTRY[entry]/plot/@axes"] = "wavelength"
 
-        return_data['/@default'] = "entry"
-        return_data["/ENTRY[entry]/@default"] = "plot"
-        return_data["/ENTRY[entry]/definition/@version"] = "0.0.1"
-        return_data["/ENTRY[entry]/definition/@url"] = "definition-url"
-        return_data["/ENTRY[entry]/INSTRUMENT[instrument]/model/@version"] = "0.0.1"
-        return_data["/ENTRY[entry]/INSTRUMENT[instrument]/software/@version"] = "0.0.1"
-        return_data["/ENTRY[entry]/INSTRUMENT[instrument]/software/@url"] = "software-url"
+        template['/@default'] = "entry"
+        template["/ENTRY[entry]/@default"] = "plot"
+        template["/ENTRY[entry]/definition/@version"] = "0.0.1"
+        template["/ENTRY[entry]/definition/@url"] = "definition-url"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/model/@version"] = "0.0.1"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/software/@version"] = "0.0.1"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/software/@url"] = "software-url"
 
-        return return_data
+        return template
 
 
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".

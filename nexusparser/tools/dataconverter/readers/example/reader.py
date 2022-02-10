@@ -52,6 +52,10 @@ class ExampleReader(BaseReader):
                 if f"{field_name}_units" in data.keys() and f"{k}/@units" in template.keys():
                     template[f"{k}/@units"] = data[f"{field_name}_units"]
 
+        # Add non template key
+        template["/ENTRY[entry]/does/not/exist"] = "None"
+        template["/ENTRY[entry]/program_name"] = "None"
+
         return template
 
 

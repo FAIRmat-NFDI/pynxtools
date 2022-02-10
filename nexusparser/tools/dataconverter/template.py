@@ -28,21 +28,22 @@ class Template(dict):
 
     def __init__(self, template=None, **kwargs):
         super(Template, self).__init__(**kwargs)
-        self.iteration_index = 0
         if template is None:
             self.optional: dict = {}
             self.recommended: dict = {}
             self.required: dict = {}
+            self.undocumented: dict = {}
             self.optional_parents: list = []
         else:
             self.optional: dict = copy.deepcopy(template["optional"])
             self.recommended: dict = copy.deepcopy(template["recommended"])
             self.required: dict = copy.deepcopy(template["required"])
+            self.undocumented: dict = copy.deepcopy(template["undocumented"])
             self.optional_parents: list = copy.deepcopy(template["optional_parents"])
 
     def get_accumulated_dict(self):
         """Returns a dictionary of all the optionalities merged into one."""
-        return {**self.optional, **self.recommended, **self.required}
+        return {**self.optional, **self.recommended, **self.required, **self.undocumented}
 
     def __repr__(self):
         """Returns a unique string representation for the Template object."""
@@ -61,24 +62,28 @@ class Template(dict):
                 self.recommended[k] = v
             elif k in self.required:
                 self.required[k] = v
-            else:
+            elif k in self.optional:
                 self.optional[k] = v
+            else:
+                self.undocumented[k] = v
         else:
             raise KeyError("You cannot add non paths to the root template object. "
-                           "Place them appropriately e.g. template[\"optional\"]")
+                           "Place them appropriately e.g. template[\"optional\"]"
+                           "[\"/ENTRY[entry]/data/path\"]")
 
     def keys(self):
         """Returns the list of keys stored in the Template object."""
         return list(self.optional.keys()) + \
             list(self.recommended.keys()) + \
-            list(self.required.keys())
+            list(self.required.keys()) + \
+            list(self.undocumented.keys())
 
     def items(self):
         """Returns a list of tuples of key, value stored in the Template object."""
         return self.get_accumulated_dict().items()
 
     def __iter__(self):
-        return iter(self.keys())
+        return dict.__iter__(self.get_accumulated_dict())
 
     def get_optionality(self, optionality):
         """Returns the dictionary for given optionality"""
@@ -88,13 +93,17 @@ class Template(dict):
             return self.recommended
         if optionality == "required":
             return self.required
+        if optionality == "undocumented":
+            return self.undocumented
         return self.required
+
+    def get_documented(self):
+        """Returns a dictionary of all the optionalities merged into one."""
+        return {**self.optional, **self.recommended, **self.required}
 
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
-        if k in ("optional", "recommended", "required"):
-            return self.get_optionality(k)
         if k == "optional_parents":
             return self.optional_parents
         if k.startswith("/"):
@@ -104,18 +113,20 @@ class Template(dict):
                 try:
                     return self.recommended[k]
                 except KeyError:
-                    return self.required[k]
-        raise KeyError("You can only set keys to the internal dicts using "
-                       "e.g. template.optional[\"/path\"] = value")
+                    try:
+                        return self.required[k]
+                    except KeyError:
+                        return self.undocumented[k]
+        return self.get_optionality(k)
 
     def clear(self):
         """Clears all data stored in the Template object."""
-        for del_dict in (self.optional, self.recommended, self.required):
+        for del_dict in (self.optional, self.recommended, self.required, self.undocumented):
             del_dict.clear()
 
     def rename_entry(self, old_name: str, new_name: str, deepcopy=True):
         """Rename all entries under old name to new name."""
-        for internal_dict in (self.optional, self.recommended, self.required):
+        for internal_dict in (self.optional, self.recommended, self.required, self.undocumented):
             keys = list(internal_dict.keys())
             for key in keys:
                 entry_name = helpers.get_name_from_data_dict_entry(key.split("/")[1])
@@ -129,7 +140,7 @@ class Template(dict):
 
     def update(self, template):
         """Merges second template to original"""
-        for optionality in ("optional", "recommended", "required"):
+        for optionality in ("optional", "recommended", "required", "undocumented"):
             self.get_optionality(optionality).update(template.get_optionality(optionality))
 
     def add_entry(self, entry_name):

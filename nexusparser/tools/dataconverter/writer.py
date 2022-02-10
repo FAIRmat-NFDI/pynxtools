@@ -101,16 +101,18 @@ class Writer:
 
         return elem.attrib
 
-    def ensure_and_get_parent_node(self, path: str) -> h5py.Group:
+    def ensure_and_get_parent_node(self, path: str, undocumented_paths) -> h5py.Group:
         """Returns the parent if it exists for a given path else creates the parent group."""
         parent_path = path[0:path.rindex('/')] or '/'
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
+        parent_undocumented_paths = [path[0:path.rindex("/")] for path in undocumented_paths]
         if not does_path_exist(parent_path, self.output_nexus):
-            parent = self.ensure_and_get_parent_node(parent_path)
+            parent = self.ensure_and_get_parent_node(parent_path, parent_undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
-            attrs = self.__nxdl_to_attrs(parent_path)
-            if attrs is not None:
-                grp.attrs['NX_class'] = attrs["type"]
+            if path not in undocumented_paths:
+                attrs = self.__nxdl_to_attrs(parent_path)
+                if attrs is not None:
+                    grp.attrs['NX_class'] = attrs["type"]
             return grp
         return self.output_nexus[parent_path_hdf5]
 
@@ -126,7 +128,7 @@ class Writer:
                 data = value if is_not_data_empty(value) else ""
 
                 if entry_name[0] != "@":
-                    grp = self.ensure_and_get_parent_node(path)
+                    grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
 
                     dataset = grp.create_dataset(entry_name, data=data)
                     units_key = f"{path}/@units"
@@ -134,7 +136,7 @@ class Writer:
                     if units_key in self.data.keys():
                         dataset.attrs["units"] = self.data[units_key]
                 else:
-                    dataset = self.ensure_and_get_parent_node(path)
+                    dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data
             except Exception as exception:
                 raise Exception(f"Unkown error occured writing the path: {path} "
