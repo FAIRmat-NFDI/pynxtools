@@ -22,7 +22,6 @@ import importlib.machinery
 import importlib.util
 import logging
 import os
-import re
 import sys
 from typing import List, Tuple
 import xml.etree.ElementTree as ET
@@ -118,8 +117,7 @@ def convert(input_file: Tuple[str], reader: str, nxdl: str, output: str, generat
     logger.info("Using %s reader to convert the given files: %s ", reader, print_input_files)
 
     data_reader = get_reader(reader)
-    nxdl_name = re.search("NX[a-z_]*(?=.nxdl.xml)", nxdl).group(0)
-    if nxdl_name not in data_reader.supported_nxdls:
+    if nxdl not in data_reader.supported_nxdls:
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
     data = data_reader().read(template=Template(template),
                               file_paths=input_file)  # type: ignore[operator]
