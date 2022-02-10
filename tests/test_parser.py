@@ -94,6 +94,8 @@ def test_example():
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
     parser().parse(example_data, archive, logging.getLogger())
     assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_value == 3.27e-10
+    assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_unit == "millibar"
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.m_def.nx_units == "NX_PRESSURE"
