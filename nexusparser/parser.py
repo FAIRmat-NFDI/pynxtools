@@ -109,12 +109,12 @@ class NexusParser(MatchingParser):
 #             name = xml_type + suffix
 #         return name
 
-    def nexus_populate(self, hdf_path, hdf_node, nxdef, nxdl_path):
+    def nexus_populate(self, hdf_info, nxdef, nxdl_path, val):
         """Walks through hdf_namelist and generate nxdl nodes
 
 """
-        val = str(hdf_node[()]).split('\n') if len(hdf_node.shape) <= 1 else str(
-            hdf_node[0]).split('\n')
+        hdf_path = hdf_info['hdf_path']
+        hdf_node = hdf_info['hdf_node']
         print('%%%%%%%%%%%%%%')
         # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdl_path)+
         # ' - '+val[0]+ ("..." if len(val) > 1 else ''))
@@ -137,13 +137,14 @@ class NexusParser(MatchingParser):
                 if isinstance(nxdl_attribute, str):
                     # conventional attribute not in schema. Only necessary,
                     # if schema is not populated according
-                    if nxdl_attribute == "units":
-                        act_section.nx_unit = val[0]
-                    elif nxdl_attribute == "default":
-                        Exception("Quantity \
+                    try:
+                        if nxdl_attribute == "units":
+                            act_section.nx_unit = val[0]
+                        elif nxdl_attribute == "default":
+                            Exception("Quantity \
 'default' is not yet added by default to groups in Nomad schema")
-                    else:
-                        Exception("NXDL attributes were not units or default")
+                    except Exception as exc:
+                        print("Problem with storage!!!" + str(exc))
                 else:
                     # attribute in schema
                     act_section = \
@@ -153,10 +154,12 @@ class NexusParser(MatchingParser):
                         act_section.nx_value = val[0]
                     except AttributeError as exc:
                         print("Problem with storage!!!" + str(exc))
+                    except TypeError as exc:
+                        print("Problem with storage!!!" + str(exc))
             else:
                 try:
                     act_section.nx_value = get_value(hdf_node[...])
-                except AttributeError as exc:
+                except TypeError as exc:
                     print("Problem with storage!!!" + str(exc))
         else:
             print('NOT IN SCHEMA - skipped')
