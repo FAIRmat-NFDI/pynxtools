@@ -57,14 +57,12 @@ class Template(dict):
     def __setitem__(self, k, v):
         """Handles how values are set within the Template object."""
         if k.startswith("/"):
-            if k in self.optional:
-                self.optional[k] = v
-            elif k in self.recommended:
+            if k in self.recommended:
                 self.recommended[k] = v
             elif k in self.required:
                 self.required[k] = v
             else:
-                raise KeyError("You can only set already existing paths.")
+                self.optional[k] = v
         else:
             raise KeyError("You cannot add non paths to the root template object. "
                            "Place them appropriately e.g. template[\"optional\"]")
