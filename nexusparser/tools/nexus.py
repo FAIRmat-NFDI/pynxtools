@@ -602,6 +602,7 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
             # - follow variants
             # - NOMAD parser: store in NOMAD
             """
+    hdf_info = {'hdf_path': hdf_path, 'hdf_node': hdf_node}
     if isinstance(hdf_node, h5py.Dataset):
         logger.info('===== FIELD (/%s): %s' % (hdf_path, hdf_node))
         val = str(hdf_node[()]).split('\n') if len(hdf_node.shape) <= 1 else str(
@@ -613,14 +614,14 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
                      get_nx_class_path(hdf_node), hdf_node))
     (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser(hdf_path, hdf_node, nxdef, nxdl_path)
+        parser(hdf_info, nxdef, nxdl_path, val)
     for key, value in hdf_node.attrs.items():
         logger.info('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
         logger.info('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
         (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
-            parser(hdf_path, hdf_node, nxdef, nxdl_path)
+            parser(hdf_info, nxdef, nxdl_path, val)
 
 
 def get_default_plotable(root, logger):
