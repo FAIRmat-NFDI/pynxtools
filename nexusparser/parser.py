@@ -85,6 +85,19 @@ def get_value(hdf_value):
     return val
 
 
+def helper_nexus_populate(nxdl_attribute, act_section, val):
+    """Handle info of units attribute, raise error if default or something else is found
+
+"""
+    try:
+        if nxdl_attribute == "units":
+            act_section.nx_unit = val[0]
+        elif nxdl_attribute == "default":
+            Exception("Quantity default' is not yet added by default to groups in Nomad schema")
+    except Exception as exc:  # pylint: disable=broad-except
+        print("Problem with storage!!!" + str(exc))
+
+
 class NexusParser(MatchingParser):
     """NesusParser doc
 
@@ -137,14 +150,7 @@ class NexusParser(MatchingParser):
                 if isinstance(nxdl_attribute, str):
                     # conventional attribute not in schema. Only necessary,
                     # if schema is not populated according
-                    try:
-                        if nxdl_attribute == "units":
-                            act_section.nx_unit = val[0]
-                        elif nxdl_attribute == "default":
-                            Exception("Quantity \
-'default' is not yet added by default to groups in Nomad schema")
-                    except Exception as exc:
-                        print("Problem with storage!!!" + str(exc))
+                    helper_nexus_populate(nxdl_attribute, act_section, val)
                 else:
                     # attribute in schema
                     act_section = \

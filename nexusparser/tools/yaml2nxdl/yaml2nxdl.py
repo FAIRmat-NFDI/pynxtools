@@ -28,15 +28,14 @@ which details a hierarchy of data/metadata elements
 
 import os
 import sys
-from io import StringIO
 from typing import List
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
 
-from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file as read
-from nexusparser.tools.yaml2nxdl import yaml2nxdl_recursive_build as recursive_build
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_front_tool
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_reverse_tool
 
 
 def pretty_print_xml(xml_root, output_xml):
@@ -61,7 +60,7 @@ namespace and schema, then evaluates a dictionary
 nest of groups recursively and fields or (their) attributes as childs of the groups
 
     """
-    yml_appdef = read.yml_reader(input_file)
+    yml_appdef = yaml2nxdl_front_tool.yml_reader(input_file)
 
     if verbose:
         sys.stdout.write('input-file: ' + input_file)
@@ -96,7 +95,7 @@ has to be a non-empty string!'
     del yml_appdef['doc']
 
     if 'symbols' in yml_appdef.keys():
-        recursive_build.xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        yaml2nxdl_front_tool.xml_handle_symbols(xml_root, yml_appdef['symbols'])
         del yml_appdef['symbols']
 
     assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
@@ -105,121 +104,11 @@ doc, symbols, and NX... at root-level!'
     assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
 keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
-    recursive_build.recursive_build(xml_root, yml_appdef[keyword], verbose)
+    yaml2nxdl_front_tool.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file.split(".", 1)[0] + '.nxdl.xml')
     if verbose:
         sys.stdout.write('Parsed YAML to NXDL successfully')
-
-
-def handle_group_or_field(depth, node, file_out):
-    """Handle all the possible attributes that come along a field or group
-
-"""
-    if "name" in node.attrib and "type" in node.attrib:
-        file_out.write(
-            '{indent}{name}({value1}):\n'.format(
-                indent=depth * '  ',
-                name=node.attrib['name'] or '',
-                value1=node.attrib['type'] or ''))
-    if "name" in node.attrib and "type" not in node.attrib:
-        file_out.write(
-            '{indent}{name}:\n'.format(
-                indent=depth * '  ',
-                name=node.attrib['name'] or ''))
-    if "name" not in node.attrib and "type" in node.attrib:
-        file_out.write(
-            '{indent}({type}):\n'.format(
-                indent=depth * '  ',
-                type=node.attrib['type'] or ''))
-    if "minOccurs" in node.attrib and "maxOccurs" in node.attrib:
-        file_out.write(
-            '{indent}exists: [min, {value1}, max, {value2}]\n'.format(
-                indent=(depth + 1) * '  ',
-                value1=node.attrib['minOccurs'] or '',
-                value2=node.attrib['maxOccurs'] or ''))
-    if "minOccurs" in node.attrib \
-            and "maxOccurs" not in node.attrib \
-            and node.attrib['minOccurs'] == "1":
-        file_out.write(
-            '{indent}{name}: required \n'.format(
-                indent=(depth + 1) * '  ',
-                name='exists'))
-    if "recommended" in node.attrib and node.attrib['recommended'] == "true":
-        file_out.write(
-            '{indent}exists: recommended\n'.format(
-                indent=(depth + 1) * '  '))
-    if "units" in node.attrib:
-        file_out.write(
-            '{indent}unit: {value}\n'.format(
-                indent=(depth + 1) * '  ',
-                value=node.attrib['units'] or ''))
-
-
-def handle_dimension(depth, node, file_out):
-    """Handle the dimension field
-
-"""
-    file_out.write(
-        '{indent}{tag}:\n'.format(
-            indent=depth * '  ',
-            tag=node.tag.split("}", 1)[1]))
-    file_out.write(
-        '{indent}rank: {rank}\n'.format(
-            indent=(depth + 1) * '  ',
-            rank=node.attrib['rank']))
-    dim_list = ''
-    for child in list(node):
-        tag = child.tag.split("}", 1)[1]
-        if tag == ('dim'):
-            dim_list = dim_list + '[{index}, {value}], '.format(
-                index=child.attrib['index'],
-                value=child.attrib['value'])
-    file_out.write(
-        '{indent}dim: [{value}]\n'.format(
-            indent=(depth + 1) * '  ',
-            value=dim_list[:-2] or ''))
-
-
-def handle_attributes(depth, node, file_out):
-    """Handle the attributes parsed from the xml file
-
-"""
-    file_out.write(
-        '{indent}{escapesymbol}{key}:\n'.format(
-            indent=depth * '  ',
-            escapesymbol=r'\@',
-            key=node.attrib['name']))
-
-
-def handle_enumeration(depth, node, file_out):
-    """Handle the enumeration field parsed from the xml file
-
-"""
-    file_out.write(
-        '{indent}{tag}:'.format(
-            indent=depth * '  ',
-            tag=node.tag.split("}", 1)[1]))
-    enum_list = ''
-    for child in list(node):
-        tag = child.tag.split("}", 1)[1]
-        if tag == ('item'):
-            enum_list = enum_list + '{value}, '.format(
-                value=child.attrib['value'])
-    file_out.write(
-        ' [{enum_list}]\n'.format(
-            enum_list=enum_list[:-2] or ''))
-
-
-def handle_not_root_level_doc(depth, node, file_out):
-    """Handle docs field along the yaml file
-
-"""
-    file_out.write(
-        '{indent}{tag}: "{text}"\n'.format(
-            indent=depth * '  ',
-            tag=node.tag.split("}", 1)[1],
-            text=node.text.strip().replace('\"', '\'') if node.text else ''))
 
 
 def get_node_parent_info(tree, node):
@@ -269,11 +158,22 @@ class Nxdl2yaml():
                         tag=child.tag.split("}", 1)[1],
                         text=child.text.strip().replace('\"', '\'') if child.text else ''))
             elif tag == ('symbol'):
-                self.symbol_list.append(
-                    '{indent}{key}: "{value}"'.format(
-                        indent=1 * '  ',
-                        key=child.attrib['name'],
-                        value=child.attrib['doc'] or ''))
+                if 'doc' in child.attrib:
+                    self.symbol_list.append(
+                        '{indent}{key}: "{value}"'.format(
+                            indent=1 * '  ',
+                            key=child.attrib['name'],
+                            value=child.attrib['doc'] or ''))
+                else:
+                    for symbol_doc in list(child):
+                        tag = symbol_doc.tag.split("}", 1)[1]
+                        if tag == ('doc'):
+                            self.symbol_list.append(
+                                '{indent}{key}: "{text}"'.format(
+                                    indent=2 * '  ',
+                                    key=child.attrib['name'],
+                                    text=symbol_doc.text.strip().replace('\"', '\'')))
+
 
     def handle_definition(self, node):
         """Handle definition group and its attributes
@@ -344,22 +244,27 @@ the information stored as definition attributes in the XML file
                             defs=defs))
             self.found_definition = False
 
-    def recursion_in_xml_tree(self, depth, node, output_yml, verbose):
+    def recursion_in_xml_tree(self, depth, xml_tree, output_yml, verbose):
         """Descend lower level in xml tree. If we are in the symbols branch, \
 the recursive behaviour is not triggered as we already handled the symbols' childs
 """
+        tree = xml_tree['tree']
+        node = xml_tree['node']
         if self.jump_symbol_child is True:
             self.jump_symbol_child = False
         else:
             for child in list(node):
-                Nxdl2yaml.xmlparse(self, output_yml, child, depth, verbose)
+                xml_tree_children = {'tree': tree, 'node': child}
+                Nxdl2yaml.xmlparse(self, output_yml, xml_tree_children, depth, verbose)
 
-    def xmlparse(self, output_yml, node, depth, verbose):
+    def xmlparse(self, output_yml, xml_tree, depth, verbose):
         """Main of the nxdl2yaml converter.
 It parses XML tree,
 then prints recursively each level of the tree
 
     """
+        tree = xml_tree['tree']
+        node = xml_tree['node']
         if verbose:
             sys.stdout.write(str(depth))
             sys.stdout.write(str(node.attrib))
@@ -371,7 +276,10 @@ then prints recursively each level of the tree
             if depth == 0 and not self.root_level_doc:
                 Nxdl2yaml.handle_root_level_doc(self, node)
             if tag == ('doc') and depth != 1:
-                handle_not_root_level_doc(depth, node, file_out)
+                parent = get_node_parent_info(tree, node)[0]
+                doc_parent = parent.tag.split("}", 1)[1]
+                if doc_parent != 'item':
+                    yaml2nxdl_reverse_tool.handle_not_root_level_doc(depth, node, file_out)
             if tag == ('symbols'):
                 Nxdl2yaml.handle_symbols(self, depth, node)
                 self.jump_symbol_child = True
@@ -384,16 +292,16 @@ then prints recursively each level of the tree
                 Nxdl2yaml.print_root_level_info(self, depth, file_out)
             # End of print root-level definitions in file
             if tag in ('field', 'group') and depth != 0:
-                handle_group_or_field(depth, node, file_out)
+                yaml2nxdl_reverse_tool.handle_group_or_field(depth, node, file_out)
             if tag == ('enumeration'):
-                handle_enumeration(depth, node, file_out)
+                yaml2nxdl_reverse_tool.handle_enumeration(depth, node, file_out)
             if tag == ('attribute'):
-                handle_attributes(depth, node, file_out)
+                yaml2nxdl_reverse_tool.handle_attributes(depth, node, file_out)
             if tag == ('dimensions'):
-                handle_dimension(depth, node, file_out)
+                yaml2nxdl_reverse_tool.handle_dimension(depth, node, file_out)
         depth += 1
         # Write nested nodes
-        Nxdl2yaml.recursion_in_xml_tree(self, depth, node, output_yml, verbose)
+        Nxdl2yaml.recursion_in_xml_tree(self, depth, xml_tree, output_yml, verbose)
 
 
 def print_yml(input_file, verbose):
@@ -406,43 +314,8 @@ def print_yml(input_file, verbose):
     my_file = Nxdl2yaml([], [])
     depth = 0
     tree = ET.parse(input_file)
-    my_file.xmlparse(output_yml, tree.getroot(), depth, verbose)
-
-
-def compare_niac_and_my(tree, tree2, verbose, node, root_no_duplicates):
-    """This function creates two trees with Niac XML file and My XML file.
-The main aim is to compare the two trees and create a new one that is the
-union of the two initial trees.
-
-"""
-    root = tree.getroot()
-    root2 = tree2.getroot()
-    attrs_list_niac = []
-    for nodo in root.iter(node):
-        attrs_list_niac.append(nodo.attrib)
-    if verbose:
-        sys.stdout.write('Attributes found in Niac file: \n')
-        sys.stdout.write(str(attrs_list_niac) + '\n')
-        sys.stdout.write('  \n')
-        sys.stdout.write('Started merging of Niac and My file... \n')
-    for elem in root.iter(node):
-        if verbose:
-            sys.stdout.write('- Niac element inserted: \n')
-            sys.stdout.write(str(elem.attrib) + '\n')
-        index = get_node_parent_info(tree, elem)[1]
-        root_no_duplicates.insert(index, elem)
-
-    for elem2 in root2.iter(node):
-        index = get_node_parent_info(tree2, elem2)[1]
-        if elem2.attrib not in attrs_list_niac:
-            if verbose:
-                sys.stdout.write('- My element inserted: \n')
-                sys.stdout.write(str(elem2.attrib) + '\n')
-            root_no_duplicates.insert(index, elem2)
-
-    if verbose:
-        sys.stdout.write('     \n')
-    return root_no_duplicates
+    xml_tree = {'tree': tree.getroot(), 'node': tree.getroot()}
+    my_file.xmlparse(output_yml, xml_tree, depth, verbose)
 
 
 def append_yml(input_file, append_to_base, verbose):
@@ -450,24 +323,17 @@ def append_yml(input_file, append_to_base, verbose):
 and print both an XML and YML file of the extended base class.
 
 """
-    local_dir = os.path.abspath(os.path.dirname(__file__))
-    nexus_def_path = os.path.join(local_dir, '../../definitions')
-    base_classes_list_files = os.listdir(
-        os.path.join(nexus_def_path, 'base_classes'))
-    assert [s for s in base_classes_list_files if append_to_base.strip() == s.strip('.nxdl.xml')], \
+    nexus_def_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../definitions')
+    assert [s for s in os.listdir(os.path.join(nexus_def_path, 'base_classes')
+                                  ) if append_to_base.strip() == s.strip('.nxdl.xml')], \
         'Your base class extension does not match any existing Nexus base classes'
-    base_class = os.path.join(
-        nexus_def_path + '/base_classes', append_to_base + '.nxdl.xml')
-    tree = ET.parse(base_class)
+    tree = ET.parse(os.path.join(nexus_def_path + '/base_classes', append_to_base + '.nxdl.xml'))
     root = tree.getroot()
     # warning: tmp files are printed on disk and removed at the ends!!
-    tmp_nxdl_xml = 'tmp.nxdl.xml'
-    tmp_parsed_yml = 'tmp_parsed.yml'
-    tmp_parsed_nxdl_xml = 'tmp_parsed.nxdl.xml'
-    pretty_print_xml(root, tmp_nxdl_xml)
-    print_yml(tmp_nxdl_xml, verbose)
-    yaml2nxdl(tmp_parsed_yml, verbose)
-    tree = ET.parse(tmp_parsed_nxdl_xml)
+    pretty_print_xml(root, 'tmp.nxdl.xml')
+    print_yml('tmp.nxdl.xml', verbose)
+    yaml2nxdl('tmp_parsed.yml', verbose)
+    tree = ET.parse('tmp_parsed.nxdl.xml')
     tree2 = ET.parse(input_file)
     root_no_duplicates = ET.Element(
         'definition', {'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
@@ -484,12 +350,12 @@ and print both an XML and YML file of the extended base class.
             root_doc = ET.SubElement(root_no_duplicates, 'doc')
             root_doc.text = elems.text
             break
-    root_no_duplicates = compare_niac_and_my(tree, tree2, verbose,
-                                             '{http://definition.nexusformat.org/nxdl/3.1}group',
-                                             root_no_duplicates)
-    root_no_duplicates = compare_niac_and_my(tree, tree2, verbose,
-                                             '{http://definition.nexusformat.org/nxdl/3.1}field',
-                                             root_no_duplicates)
+    group = '{http://definition.nexusformat.org/nxdl/3.1}group'
+    root_no_duplicates = yaml2nxdl_reverse_tool.compare_niac_and_my(tree, tree2, verbose,
+                                                                    group, root_no_duplicates)
+    field = '{http://definition.nexusformat.org/nxdl/3.1}field'
+    root_no_duplicates = yaml2nxdl_reverse_tool.compare_niac_and_my(tree, tree2, verbose,
+                                                                    field, root_no_duplicates)
     pretty_print_xml(root_no_duplicates, f'{input_file.split(".", 1)[0]}'
                      f'_appended.nxdl.xml')
     print_yml(input_file.split(".", 1)[0] + '_appended.nxdl.xml', verbose)
@@ -498,9 +364,9 @@ and print both an XML and YML file of the extended base class.
               f'{input_file.split(".", 1)[0]}_appended.yml')
     os.rename(f'{input_file.split(".", 1)[0]}_appended_parsed.nxdl.xml',
               f'{input_file.split(".", 1)[0]}_appended.nxdl.xml')
-    #os.remove(tmp_nxdl_xml)
-    #os.remove(tmp_parsed_nxdl_xml)
-    #os.remove(tmp_parsed_yml)
+    os.remove('tmp.nxdl.xml')
+    os.remove('tmp_parsed.yml')
+    os.remove('tmp_parsed.nxdl.xml')
 
 
 @click.command()
