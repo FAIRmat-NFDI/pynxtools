@@ -232,6 +232,8 @@ def is_node_required(nxdl_key, nxdl_root):
     """Checks whether a node at given nxdl path is required"""
     if nxdl_key[nxdl_key.rindex("/") + 1:] == "@units":
         return False
+    if nxdl_key[nxdl_key.rindex("/") + 1] == "@":
+        nxdl_key = nxdl_key[0:nxdl_key.rindex("/") + 1] + nxdl_key[nxdl_key.rindex("/") + 2:]
     node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root)
     return nexus.get_required_string(node) == "<<REQUIRED>>"
 
