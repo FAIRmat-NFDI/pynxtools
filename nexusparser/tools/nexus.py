@@ -21,7 +21,6 @@ import h5py
 
 class NxdlAttributeError(Exception):
     """An exception for throwing an error when an Nxdl attribute is not found."""
-    pass
 
 
 # check for NEXUS definitions

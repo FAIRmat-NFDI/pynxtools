@@ -28,7 +28,7 @@ import xml.etree.ElementTree as ET
 import pytest
 from click.testing import CliRunner
 import nexusparser.tools.yaml2nxdl.yaml2nxdl as yml2nxdl
-from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file as read
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_front_tool
 
 sys.path.insert(0, '../nexusparser/tools')
 sys.path.insert(0, '../nexusparser/tools/yaml2nxdl')
@@ -203,9 +203,9 @@ The xml trees of the two files are then compared.
     assert result.exit_code == 0
     check_file_fresh_baked(test_yml_file)
 
-    test_yml_tree = read.yml_reader(test_yml_file)
+    test_yml_tree = yaml2nxdl_front_tool.yml_reader(test_yml_file)
 
-    ref_yml_tree = read.yml_reader(ref_yml_file)
+    ref_yml_tree = yaml2nxdl_front_tool.yml_reader(ref_yml_file)
 
     assert list(test_yml_tree) == list(ref_yml_tree), 'Ref YML and parsed YML \
 has not the same root entries!!'
