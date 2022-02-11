@@ -105,7 +105,7 @@ class Writer:
         """Returns the parent if it exists for a given path else creates the parent group."""
         parent_path = path[0:path.rindex('/')] or '/'
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
-        parent_undocumented_paths = [path[0:path.rindex("/")] for path in undocumented_paths]
+        parent_undocumented_paths = [path[0:path.rindex("/")] or "/" for path in undocumented_paths]
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, parent_undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
@@ -125,7 +125,7 @@ class Writer:
 
                 entry_name = helpers.get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
 
-                data = value if is_not_data_empty(value) else ""
+                data = value if is_not_data_empty(value) else "NOT_PROVIDED"
 
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
@@ -133,8 +133,10 @@ class Writer:
                     dataset = grp.create_dataset(entry_name, data=data)
                     units_key = f"{path}/@units"
 
-                    if units_key in self.data.keys():
+                    if units_key in self.data.keys() and self.data[units_key] is not None:
                         dataset.attrs["units"] = self.data[units_key]
+                    else:
+                        dataset.attrs["units"] = "NOT_PROVIDED"
                 else:
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data
