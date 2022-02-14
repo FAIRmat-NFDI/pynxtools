@@ -24,7 +24,7 @@
 import sys
 import xml.etree.ElementTree as ET
 
-import yaml
+from pyaml import yaml
 
 from nexusparser.tools import nexus
 
@@ -207,7 +207,7 @@ def check_keyword_variable(verbose, keyword_name, keyword_type, value):
 
 """
     if verbose:
-        sys.stdout.write(f'{keyword_name}({keyword_type}){value}:{type(value)}')
+        sys.stdout.write(f'{keyword_name}({keyword_type}): value type is {type(value)}\n')
     if keyword_name == '' and keyword_type == '':
         raise ValueError('Found an improper YML key !')
 
@@ -226,7 +226,7 @@ def verbose_flag(verbose, keyword, value):
 
 """
     if verbose:
-        sys.stdout.write(f'  key:{keyword} {value}:{type(value)}')
+        sys.stdout.write(f'  key:{keyword}; value type is {type(value)}\n')
 
 
 def second_nested_level_handle(verbose, fld, value):
@@ -366,7 +366,7 @@ def recursive_build(obj, dct, verbose):
 
         check_keyword_variable(verbose, keyword_name, keyword_type, value)
         if verbose:
-            sys.stdout.write(f'keyword_name:{keyword_name} keyword_type {keyword_type}')
+            sys.stdout.write(f'keyword_name:{keyword_name} keyword_type {keyword_type}\n')
         if keyword[-6:] == '(link)':
             xml_handle_link(obj, keyword, value)
 
