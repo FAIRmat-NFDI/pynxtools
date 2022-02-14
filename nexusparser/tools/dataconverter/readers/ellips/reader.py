@@ -36,6 +36,10 @@ def load_header(filename, default=default_header):
     with open(filename, 'rt') as fp:
         header = yaml.yaml.safe_load(fp)
 
+    for k in header:
+        if "@" in k:
+            header[k.replace("\@","@")] = header.pop(k)
+
     for k, v in default.items():
         if k not in header:
             header[k] = v
@@ -104,7 +108,11 @@ def load_as_blocks(fn, header):
 
 
 class EllipsometryReader(BaseReader):
-    """An example reader implementation for the DataConverter."""
+    """
+        An example reader implementation for the DataConverter.
+        Importing metadata from the yaml file based on the last
+        two parts of the key in the application definition.
+    """
 
     # pylint: disable=too-few-public-methods
 
@@ -141,58 +149,80 @@ class EllipsometryReader(BaseReader):
             if k in header:
                 del header[k]
 
-        return_data = {}
-        for k in template:
-            if "@units" in k:
-                continue
-            short_k = k.rsplit("/", 1)[1]
-            k_units = f"{k}/@units"
-            if short_k in header:
-                if k_units in template.keys():
-                    if isinstance(header[short_k], str) and " " in header[short_k]:
-                        val = header.pop(short_k).rsplit(" ", 1)
-                        template[k_units] = val[-1]
-                        template[k] = val[0]
-                        try:
-                            template[k] = float(val[0])
-                        except ValueError:
-                            pass
-                    else:
-                        # we did not find unit but we assigned a value
-                        template[k] = header.pop(short_k)
-                else:
-                    template[k] = header.pop(short_k)
+        # return_data = {}
+        # for k in template.keys():
+        #     if "@units" in k:
+        #         continue
+        #     short_k = k.rsplit("/", 1)[1]
+        #     k_units = f"{k}/@units"
+        #     if short_k in header:
+        #         if k_units in template:
+        #             if isinstance(header[short_k], str) and " " in header[short_k]:
+        #                 val = header.pop(short_k).rsplit(" ", 1)
+        #                 return_data[k_units] = val[-1]
+        #                 return_data[k] = val[0]
+        #                 sys.stdout.write("val0", val[0], type(val[0]), short_k)
+        #                 with open('/home/carola/NOMAD/nomad2/testlog.txt', "w") as file:
+        #                     #file.write("val0", val[0], type(val[0]), short_k)
+        #                     file.write("val0")
+        #                 try:
+        #                     return_data[k] = float(val[0])
+        #                 except ValueError:
+        #                     pass
+        #             else:
+        #                 # we did not find unit but we assigned a value
+        #                 return_data[k] = header.pop(short_k)
+        #         else:
+        #             return_data[k] = header.pop(short_k)
             # The entries in the template dict should correspond with what the dataconverter
             # outputs with --generate-template for a provided NXDL file
             # field_name = k[k.rfind("/") + 1:]
             # if field_name[0] != "@":
             #     template[k] = data[field_name]
             #     if f"{field_name}_units" in data.keys() and f"{k}/@units" in template.keys():
-            #         template[f"{k}/@units"] = data[f"{field_name}_units"]
-        # we are hardcoding the wavelength unit but it has to be fixed
-        wave_length = data_to_plot[0, 0, :, 0]
-        psi = data_to_plot[0, 0, :, 1]
 
-        template["/ENTRY[entry]/SAMPLE[sample]/wavelength/@units"] = "nm"
-        template["/ENTRY[entry]/INSTRUMENT[instrument]/angle_of_incidence/@units"] = "degrees"
+
+        ## For loop handling attributes from yaml to appdef:
+        for k in template.keys():
+            k_list = k.rsplit("/", 2)
+            long_k = "/".join(k_list[1:]) if len(k_list) > 2 else ""
+            short_k = k_list[-1]
+            if len(k_list) > 2 and long_k in header:
+                template[k] = header.pop(long_k)
+            elif short_k in header:
+                template[k] = header.pop(short_k)
+
+        wave_length = data_to_plot[0, 0, :, 0]
 
         # Wavelength should be of type float. Pandas sends it back as Python object aka dtype('O')
         template["/ENTRY[entry]/SAMPLE[sample]/wavelength"] = template["/ENTRY[entry]/SAMPLE[sample]/wavelength"].astype("float64")
 
-        template["/ENTRY[entry]/plot/@units"] = "nm"
-        template["/ENTRY[entry]/plot/@signal"] = "psi"
+        # psi and delta for plots:
+        psilist=[]
+        deltalist=[]
+        for k in range(data_to_plot.shape[1]):
+            this_k = f"psi_{int(tempdata['angle_of_incidence'][k])}deg" if "angle_of_incidence" in tempdata else f"psi{k}"
+            template[f"/ENTRY[entry]/plot/{this_k}"] = data_to_plot[0, k, :, 1]
+            psilist.append(this_k)
+            this_k = f"delta_{int(tempdata['angle_of_incidence'][k])}deg" if "angle_of_incidence" in tempdata else f"delta{k}"
+            template[f"/ENTRY[entry]/plot/{this_k}"] = data_to_plot[0, k, :, 2]
+            deltalist.append(this_k)
+
+        # Define default plot showing psi and delta at all angles:
+        template["/@default"] = "entry"
+        template["/ENTRY[entry]/@default"] = "plot"
+        template["/ENTRY[entry]/plot/@signal"] = psilist[0]
+        if len(psilist) > 1:
+            template["/ENTRY[entry]/plot/@auxiliary_signals"] = psilist[1:]+deltalist
+        else:
+            template["/ENTRY[entry]/plot/@auxiliary_signals"] = deltalist
 
         template["/ENTRY[entry]/plot/wavelength"] = wave_length
-        template["/ENTRY[entry]/plot/psi"] = psi
         template["/ENTRY[entry]/plot/@axes"] = "wavelength"
 
-        template['/@default'] = "entry"
-        template["/ENTRY[entry]/@default"] = "plot"
-        template["/ENTRY[entry]/definition/@version"] = "0.0.1"
-        template["/ENTRY[entry]/definition/@url"] = "definition-url"
-        template["/ENTRY[entry]/INSTRUMENT[instrument]/model/@version"] = "0.0.1"
-        template["/ENTRY[entry]/INSTRUMENT[instrument]/software/@version"] = "0.0.1"
-        template["/ENTRY[entry]/INSTRUMENT[instrument]/software/@url"] = "software-url"
+        for k in template:
+            if "@" in k:
+                print(k, template[k])
 
         return template
 
