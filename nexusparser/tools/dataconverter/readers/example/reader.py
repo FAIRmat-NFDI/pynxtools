@@ -55,6 +55,8 @@ class ExampleReader(BaseReader):
         # Add non template key
         template["/ENTRY[entry]/does/not/exist"] = "None"
         template["/ENTRY[entry]/program_name"] = "None"
+        my_link_dict = {"link": "/ENTRY[entry]/NXODD_name/posint_value"}
+        template["/ENTRY[entry]/test_link/linked_field"] = my_link_dict
 
         return template
 

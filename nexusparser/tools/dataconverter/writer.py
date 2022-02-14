@@ -130,13 +130,19 @@ class Writer:
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
 
-                    dataset = grp.create_dataset(entry_name, data=data)
-                    units_key = f"{path}/@units"
+                    if isinstance(data, dict) and 'link' in data.keys():
+                        where_to_place_link = helpers.convert_data_dict_path_to_hdf5_path(path)
+                        self.output_nexus[where_to_place_link] = h5py.SoftLink(
+                            helpers.convert_data_dict_path_to_hdf5_path(data['link']))
 
-                    if units_key in self.data.keys() and self.data[units_key] is not None:
-                        dataset.attrs["units"] = self.data[units_key]
                     else:
-                        dataset.attrs["units"] = "NOT_PROVIDED"
+                        dataset = grp.create_dataset(entry_name, data=data)
+                        units_key = f"{path}/@units"
+
+                        if units_key in self.data.keys() and self.data[units_key] is not None:
+                            dataset.attrs["units"] = self.data[units_key]
+                        else:
+                            dataset.attrs["units"] = "NOT_PROVIDED"
                 else:
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data

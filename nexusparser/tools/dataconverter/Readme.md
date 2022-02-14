@@ -121,7 +121,6 @@ For attributes defined in the NXDL, the reader template dictionary will have the
 }
 ```
 
-(Note: Links are not supported yet.)
 You can also define links by setting the value to sub dictionary object with key `link`:
 
 ```python
