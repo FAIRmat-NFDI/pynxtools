@@ -161,7 +161,7 @@ class Nxdl2yaml():
                 if 'doc' in child.attrib:
                     self.symbol_list.append(
                         '{indent}{key}: "{value}"'.format(
-                            indent=1 * '  ',
+                            indent=0 * '  ',
                             key=child.attrib['name'],
                             value=child.attrib['doc'] or ''))
                 else:
@@ -170,10 +170,9 @@ class Nxdl2yaml():
                         if tag == ('doc'):
                             self.symbol_list.append(
                                 '{indent}{key}: "{text}"'.format(
-                                    indent=2 * '  ',
+                                    indent=1 * '  ',
                                     key=child.attrib['name'],
                                     text=symbol_doc.text.strip().replace('\"', '\'')))
-
 
     def handle_definition(self, node):
         """Handle definition group and its attributes
@@ -391,13 +390,13 @@ def launch_tool(input_file, verbose, append):
     """Main function that distiguishes the input file format and launches the tools.
 
 """
-    if input_file.split(".", 1)[1] == ('yml' or 'yaml'):
+    if input_file.split(".", 1)[1] in ('yml', 'yaml'):
         yaml2nxdl(input_file, verbose)
         if append:
             append_yml(input_file.split(".", 1)[0] + '.nxdl.xml', append, verbose)
         else:
             pass
-    elif input_file.split(".", 1)[1] == ('nxdl.xml'):
+    elif input_file.split(".", 1)[1] == 'nxdl.xml':
         if not append:
             print_yml(input_file, verbose)
         else:
