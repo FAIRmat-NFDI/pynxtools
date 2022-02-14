@@ -185,12 +185,20 @@ class EllipsometryReader(BaseReader):
         ## For loop handling attributes from yaml to appdef:
         for k in template.keys():
             k_list = k.rsplit("/", 2)
-            long_k = "/".join(k_list[1:]) if len(k_list) > 2 else ""
+            long_k = "/".join(k_list[-2:]) if len(k_list) > 2 else ""
             short_k = k_list[-1]
             if len(k_list) > 2 and long_k in header:
                 template[k] = header.pop(long_k)
             elif short_k in header:
                 template[k] = header.pop(short_k)
+
+        # Because plot fields do not exist in template,
+        # we check for the keys which contain plot in the header
+        for k in header.keys():
+            if k[0:4] != "plot":
+                continue
+            tk = f"/ENTRY[entry]/{k}"
+            template[tk] = header[k]
 
         wave_length = data_to_plot[0, 0, :, 0]
 
@@ -220,9 +228,13 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/plot/wavelength"] = wave_length
         template["/ENTRY[entry]/plot/@axes"] = "wavelength"
 
-        for k in template:
-            if "@" in k:
-                print(k, template[k])
+        for k in range(data_to_plot.shape[1]):
+            template[f"/ENTRY[entry]/plot/{psilist[k]}/@units"] = "degrees"
+            template[f"/ENTRY[entry]/plot/{deltalist[k]}/@units"] = "degrees"
+
+        # for k in template:
+        #     if "@" in k:
+        #         print(k, template[k])
 
         return template
 
