@@ -34,8 +34,8 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
 
-from nexusparser.tools.yaml2nxdl import yaml2nxdl_front_tool
-from nexusparser.tools.yaml2nxdl import yaml2nxdl_reverse_tool
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_forward_tools
+from nexusparser.tools.yaml2nxdl import yaml2nxdl_backward_tools
 
 
 def pretty_print_xml(xml_root, output_xml):
@@ -60,7 +60,7 @@ namespace and schema, then evaluates a dictionary
 nest of groups recursively and fields or (their) attributes as childs of the groups
 
     """
-    yml_appdef = yaml2nxdl_front_tool.yml_reader(input_file)
+    yml_appdef = yaml2nxdl_forward_tools.yml_reader(input_file)
 
     if verbose:
         sys.stdout.write('input-file: ' + input_file)
@@ -95,7 +95,7 @@ has to be a non-empty string!'
     del yml_appdef['doc']
 
     if 'symbols' in yml_appdef.keys():
-        yaml2nxdl_front_tool.xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
         del yml_appdef['symbols']
 
     assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
@@ -104,7 +104,7 @@ doc, symbols, and NX... at root-level!'
     assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
 keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
-    yaml2nxdl_front_tool.recursive_build(xml_root, yml_appdef[keyword], verbose)
+    yaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file.split(".", 1)[0] + '.nxdl.xml')
     if verbose:
@@ -279,7 +279,7 @@ then prints recursively each level of the tree
                 parent = get_node_parent_info(tree, node)[0]
                 doc_parent = parent.tag.split("}", 1)[1]
                 if doc_parent != 'item':
-                    yaml2nxdl_reverse_tool.handle_not_root_level_doc(depth, node, file_out)
+                    yaml2nxdl_backward_tools.handle_not_root_level_doc(depth, node, file_out)
             if tag == ('symbols'):
                 Nxdl2yaml.handle_symbols(self, depth, node)
                 self.jump_symbol_child = True
@@ -292,13 +292,13 @@ then prints recursively each level of the tree
                 Nxdl2yaml.print_root_level_info(self, depth, file_out)
             # End of print root-level definitions in file
             if tag in ('field', 'group') and depth != 0:
-                yaml2nxdl_reverse_tool.handle_group_or_field(depth, node, file_out)
+                yaml2nxdl_backward_tools.handle_group_or_field(depth, node, file_out)
             if tag == ('enumeration'):
-                yaml2nxdl_reverse_tool.handle_enumeration(depth, node, file_out)
+                yaml2nxdl_backward_tools.handle_enumeration(depth, node, file_out)
             if tag == ('attribute'):
-                yaml2nxdl_reverse_tool.handle_attributes(depth, node, file_out)
+                yaml2nxdl_backward_tools.handle_attributes(depth, node, file_out)
             if tag == ('dimensions'):
-                yaml2nxdl_reverse_tool.handle_dimension(depth, node, file_out)
+                yaml2nxdl_backward_tools.handle_dimension(depth, node, file_out)
         depth += 1
         # Write nested nodes
         Nxdl2yaml.recursion_in_xml_tree(self, depth, xml_tree, output_yml, verbose)
@@ -318,16 +318,16 @@ def print_yml(input_file, verbose):
     my_file.xmlparse(output_yml, xml_tree, depth, verbose)
 
 
-def append_yml(input_file, append_to_base, verbose):
+def append_yml(input_file, append, verbose):
     """Append to an existing Nexus base class new elements provided in YML input file \
 and print both an XML and YML file of the extended base class.
 
 """
     nexus_def_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../definitions')
     assert [s for s in os.listdir(os.path.join(nexus_def_path, 'base_classes')
-                                  ) if append_to_base.strip() == s.strip('.nxdl.xml')], \
+                                  ) if append.strip() == s.strip('.nxdl.xml')], \
         'Your base class extension does not match any existing Nexus base classes'
-    tree = ET.parse(os.path.join(nexus_def_path + '/base_classes', append_to_base + '.nxdl.xml'))
+    tree = ET.parse(os.path.join(nexus_def_path + '/base_classes', append + '.nxdl.xml'))
     root = tree.getroot()
     # warning: tmp files are printed on disk and removed at the ends!!
     pretty_print_xml(root, 'tmp.nxdl.xml')
@@ -351,11 +351,11 @@ and print both an XML and YML file of the extended base class.
             root_doc.text = elems.text
             break
     group = '{http://definition.nexusformat.org/nxdl/3.1}group'
-    root_no_duplicates = yaml2nxdl_reverse_tool.compare_niac_and_my(tree, tree2, verbose,
-                                                                    group, root_no_duplicates)
+    root_no_duplicates = yaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
+                                                                      group, root_no_duplicates)
     field = '{http://definition.nexusformat.org/nxdl/3.1}field'
-    root_no_duplicates = yaml2nxdl_reverse_tool.compare_niac_and_my(tree, tree2, verbose,
-                                                                    field, root_no_duplicates)
+    root_no_duplicates = yaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
+                                                                      field, root_no_duplicates)
     pretty_print_xml(root_no_duplicates, f'{input_file.split(".", 1)[0]}'
                      f'_appended.nxdl.xml')
     print_yml(input_file.split(".", 1)[0] + '_appended.nxdl.xml', verbose)
@@ -376,7 +376,7 @@ and print both an XML and YML file of the extended base class.
 a YAML or XML file from, respectively.'
 )
 @click.option(
-    '--append-to-base',
+    '--append',
     help='Parse xml file and append to base class, given that the xml file has same name \
 of an existing base class'
 )
@@ -387,21 +387,21 @@ of an existing base class'
     help='Print in standard output keywords and value types to help \
 possible issues in yaml files'
 )
-def launch_tool(input_file, verbose, append_to_base):
+def launch_tool(input_file, verbose, append):
     """Main function that distiguishes the input file format and launches the tools.
 
 """
     if input_file.split(".", 1)[1] == ('yml' or 'yaml'):
         yaml2nxdl(input_file, verbose)
-        if append_to_base:
-            append_yml(input_file.split(".", 1)[0] + '.nxdl.xml', append_to_base, verbose)
+        if append:
+            append_yml(input_file.split(".", 1)[0] + '.nxdl.xml', append, verbose)
         else:
             pass
     elif input_file.split(".", 1)[1] == ('nxdl.xml'):
-        if not append_to_base:
+        if not append:
             print_yml(input_file, verbose)
         else:
-            append_yml(input_file, append_to_base, verbose)
+            append_yml(input_file, append, verbose)
 
 
 if __name__ == '__main__':
