@@ -27,30 +27,47 @@ err-var:
 parameters:
   - type
   - angle
-experiment_description: V-VASE scan on SiO2 on Si in air.
+
+definition: NXellipsometry
+definition/\@version: 0.0.1
+definition/\@url: https://
+
+experiment_description: RC2 scan on 2nm SiO2 on Si in air
 experiment_identifier: exp-ID
-detector_type: photodiode
-integration_time: 2 s
-rotating_element: analyzer
-angle_of_incidence: 70 degrees
+name: Name Surname
+email: name@hu-berlin.de
+affiliation: HU Berlin
+address: Unter den Linden
+
 data_type: psi / delta
-ellipsometry_type: rotating analyzer
+angle_of_incidence/\@units: degrees
+wavelength/\@units: nm
+program: CompleteEASE
+program/\@version: "6.37"
+program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
+
+model: RC2
+model/\@version: 0.0.1
+company: J.A. Woollam Co.
+software: WVASE
+software/\@version: 3.882
+software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
+rotating_element: analyzer
+ellipsometry_type: dual compensator
+detector_type: CCD spectrometer
+integration_time: 0
+integration_time/\@units: s
 focussing_probes: false
 light_source: xenon arc lamp
-model: V-VASE
-sample_history: Sample history
-address: Unter den Linden
-affiliation: HU Berlin
-email: name@hu-berlin.de
-name: me
-software: WVASE
-program_version: "3.5"
+
+sample_name: 2nm SiO2 on Si
+data_identifier: 1
 atom_types: Si, O
-data_identifier: 0
-layer_structure: SiO2 on Si
-measured_data: 1
+sample_history: Sample history
+layer_structure: 2nm SiO2 on Si
+#measured_data: 1
 medium: air
-sample_name: SiO2 on Si
-start_time: "2022-01-22T12:14:12.05018+00:00"
-definition: "NXellipsometry"
-angular_spread: "0.2 sr"
+start_time: "2022-01-27T12:05:35+00:00"
+
+angular_spread: 0.2
+angular_spread/\@units: sr
