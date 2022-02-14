@@ -1,18 +1,18 @@
 # YAML to NXDL converter and NXDL to YAML converter
 
-**Tools purpose**: Offer a simple YAML-based schema to describe NeXus instances. These can be NeXus application definitions, or classes such as base or contributed classes. Users create NeXus instances by writing a YAML file which details a hierarchy of data/metadata elements.
-The reverse conversion is also implemented.
+**Tools purpose**: Offer a simple YAML-based schema and a XML-based schema to describe NeXus instances. These can be NeXus application definitions, or classes such as base or contributed classes. Users either create NeXus instances by writing a YAML file or a XML file which details a hierarchy of data/metadata elements.
+The forward (YAML -> XML) and backward (XML -> YAML) conversions are implemented.
 
 **How the tool works**:
 - yaml2nxdl.py
 1. Reads the user-specified NeXus instance, either in YML or XML format.
 2. If input is in YAML, creates an instantiated NXDL schema XML tree by walking the dictionary nest.
    If input is in XML, creates a YML file walking the dictionary nest.
-3. Write the tree into a properly formatted NXDL XML schema file to disk.
-4. Optionally, if --append-to-base argument is given,
+3. Write the tree into a YAML file or a properly formatted NXDL XML schema file to disk.
+4. Optionally, if --append argument is given,
    the XML or YAML input file is interpreted as an extension of a base class and the entries contained in it
    are appended below a standard Nexus base class.
-   You need to specify both your input file (with YAML or XML extension) and Nexus class (no extension).
+   You need to specify both your input file (with YAML or XML extension) and Nexus class (with no extension).
    Both .yml and .nxdl.xml file of the extended class are printed.
 
 ```console
@@ -22,7 +22,7 @@ Usage: python yaml2nxdl.py [OPTIONS]
 
 Options:
    --input-file TEXT     The path to the input data file to read.
-   --append-to-base TEXT Parse xml file and append to specified base class,
+   --append TEXT         Parse xml NeXus file and append to specified base class,
                          write the base class name with no extension.
    --verbose             Addictional std output info is printed to help debugging.
    --help                Show this message and exit.
