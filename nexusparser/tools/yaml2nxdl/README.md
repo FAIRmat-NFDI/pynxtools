@@ -5,38 +5,26 @@ The reverse conversion is also implemented.
 
 **How the tool works**:
 - yaml2nxdl.py
-1. Reads the user-specified NeXus instance that the YML input file represents as a nested dictionary.
-2. Creates an instantiated NXDL schema XML tree by walking the dictionary nest.
+1. Reads the user-specified NeXus instance, either in YML or XML format.
+2. If input is in YAML, creates an instantiated NXDL schema XML tree by walking the dictionary nest.
+   If input is in XML, creates a YML file walking the dictionary nest.
 3. Write the tree into a properly formatted NXDL XML schema file to disk.
-
-- nxdl2yaml.py
-1. Reads the user-specified NeXus instance that the NXDL input file represents as a nested dictionary.
-2. Creates a YML file walking the dictionary nest.
-3. Optionally, if --append-to-base argument is given,
-   the NXDL input file is interpreted as an extension of a base class and the entries contained in it
+4. Optionally, if --append-to-base argument is given,
+   the XML or YAML input file is interpreted as an extension of a base class and the entries contained in it
    are appended below a standard Nexus base class.
-   You need to specify both your XML input file (.nxdl.xml) and Nexus class (no extension).
+   You need to specify both your input file (with YAML or XML extension) and Nexus class (no extension).
    Both .yml and .nxdl.xml file of the extended class are printed.
 
 ```console
 user@box:~$ python yaml2nxdl.py
 
-Usage: ./yaml2nxdl.py [OPTIONS]
-
-Options:
-   --input-file TEXT     The path to the input data file to read.
-   --verbose             Addictional std output info is printed to help debugging.
-   --help                Show this message and exit.
-
-
-user@box:~$ python nxdl2yaml.py
-
-Usage: ./nxdl2yaml.py [OPTIONS]
+Usage: python yaml2nxdl.py [OPTIONS]
 
 Options:
    --input-file TEXT     The path to the input data file to read.
    --append-to-base TEXT Parse xml file and append to specified base class,
                          write the base class name with no extension.
+   --verbose             Addictional std output info is printed to help debugging.
    --help                Show this message and exit.
 
 ```
