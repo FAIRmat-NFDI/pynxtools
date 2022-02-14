@@ -40,8 +40,8 @@ affiliation: HU Berlin
 address: Unter den Linden
 
 data_type: psi / delta
-angle_of_incidence/\@units: degrees
-wavelength/\@units: nm
+angle_of_incidence/\@units: "degrees"
+wavelength/\@units: "angstrom"
 program: CompleteEASE
 program/\@version: "6.37"
 program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
@@ -65,9 +65,10 @@ data_identifier: 1
 atom_types: Si, O
 sample_history: Sample history
 layer_structure: 2nm SiO2 on Si
-#measured_data: 1
 medium: air
 start_time: "2022-01-27T12:05:35+00:00"
 
 angular_spread: 0.2
-angular_spread/\@units: sr
+angular_spread/@units: sr
+
+plot/wavelength/\@units: angstrom
