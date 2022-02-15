@@ -130,9 +130,16 @@ class EllipsometryReader(BaseReader):
             file_extension = os.path.splitext(file_path)[1]
             if file_extension.lower() in [".yaml", ".yml"]:
                 header = load_header(file_path, header)
+
         if "filename" not in header:
             raise KeyError("filename is missing")
-        tempdata = load_as_blocks(header["filename"], header)
+
+        tempfile = os.path.join(os.path.split(file_path)[0], header["filename"])
+        if os.path.isfile(tempfile):
+            tempdata = load_as_blocks(tempfile, header)
+        else:
+            tempdata = load_as_blocks(header["filename"], header)
+
         header["measured_data"] = tempdata["data"]
         data_to_plot = tempdata["data"]
         del tempdata["keys"]
@@ -209,10 +216,10 @@ class EllipsometryReader(BaseReader):
         psilist=[]
         deltalist=[]
         for k in range(data_to_plot.shape[1]):
-            this_k = f"psi_{int(tempdata['angle_of_incidence'][k])}deg" if "angle_of_incidence" in tempdata else f"psi{k}"
+            this_k = f"psi ({int(tempdata['angle_of_incidence'][k])}deg)" if "angle_of_incidence" in tempdata else f"psi{k}"
             template[f"/ENTRY[entry]/plot/{this_k}"] = data_to_plot[0, k, :, 1]
             psilist.append(this_k)
-            this_k = f"delta_{int(tempdata['angle_of_incidence'][k])}deg" if "angle_of_incidence" in tempdata else f"delta{k}"
+            this_k = f"delta ({int(tempdata['angle_of_incidence'][k])}deg)" if "angle_of_incidence" in tempdata else f"delta{k}"
             template[f"/ENTRY[entry]/plot/{this_k}"] = data_to_plot[0, k, :, 2]
             deltalist.append(this_k)
 
@@ -228,6 +235,7 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/plot/wavelength"] = wave_length
         template["/ENTRY[entry]/plot/@axes"] = "wavelength"
 
+        template[f"/ENTRY[entry]/plot/psi/@units"] = "degrees"
         for k in range(data_to_plot.shape[1]):
             template[f"/ENTRY[entry]/plot/{psilist[k]}/@units"] = "degrees"
             template[f"/ENTRY[entry]/plot/{deltalist[k]}/@units"] = "degrees"

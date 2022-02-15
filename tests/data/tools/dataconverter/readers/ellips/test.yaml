@@ -1,5 +1,6 @@
 #filename: 2020-09-11-InS-2020-07-06-D5.dat
-filename: tests/data/tools/dataconverter/readers/ellips/test-data.dat
+#filename: tests/data/tools/dataconverter/readers/ellips/test-data.dat
+filename: test-data.dat
 skip: 3
 sep: "\t"
 
