@@ -21,6 +21,7 @@
 
 import sys
 import logging
+import numpy as np
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
 # from . import metainfo  # pylint: disable=unused-import
@@ -164,7 +165,17 @@ class NexusParser(MatchingParser):
                         print("Problem with storage!!!" + str(exc))
             else:
                 try:
-                    act_section.nx_value = get_value(hdf_node[...])
+                    data_field = get_value(hdf_node[...])
+                    if hdf_node[...].dtype.kind in 'iufc' and \
+                            isinstance(data_field, np.ndarray) and \
+                            data_field.size > 1:
+                        data_field = np.array([
+                            np.mean(data_field),
+                            np.var(data_field),
+                            np.min(data_field),
+                            np.max(data_field)
+                        ])
+                    act_section.nx_value = data_field
                 except TypeError as exc:
                     print("Problem with storage!!!" + str(exc))
         else:
