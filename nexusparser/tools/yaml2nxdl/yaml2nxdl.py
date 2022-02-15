@@ -34,6 +34,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
 
+from nexusparser.tools.dataconverter import helpers
 from nexusparser.tools.yaml2nxdl import yaml2nxdl_forward_tools
 from nexusparser.tools.yaml2nxdl import yaml2nxdl_backward_tools
 
@@ -63,8 +64,8 @@ nest of groups recursively and fields or (their) attributes as childs of the gro
     yml_appdef = yaml2nxdl_forward_tools.yml_reader(input_file)
 
     if verbose:
-        sys.stdout.write('input-file: ' + input_file)
-        sys.stdout.write('application/base contains the following root-level entries:')
+        sys.stdout.write(f'input-file: {input_file}\n')
+        sys.stdout.write('application/base contains the following root-level entries:\n')
         sys.stdout.write(str(yml_appdef.keys()))
     xml_root = ET.Element(
         'definition', {
@@ -108,7 +109,7 @@ keyword has an invalid pattern, or is too short!'
 
     pretty_print_xml(xml_root, input_file.split(".", 1)[0] + '.nxdl.xml')
     if verbose:
-        sys.stdout.write('Parsed YAML to NXDL successfully')
+        sys.stdout.write('Parsed YAML to NXDL successfully\n')
 
 
 def get_node_parent_info(tree, node):
@@ -146,16 +147,16 @@ class Nxdl2yaml():
         """
         self.root_level_symbols = '{indent}{tag}: {text}'.format(
             indent=0 * '  ',
-            tag=node.tag.split("}", 1)[1],
+            tag=helpers.remove_namespace_from_tag(node.tag),
             text=node.text.strip() if node.text else '')
         depth += 1
         for child in list(node):
-            tag = child.tag.split("}", 1)[1]
+            tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
                 self.symbol_list.append(
                     '{indent}{tag}: "{text}"'.format(
                         indent=1 * '  ',
-                        tag=child.tag.split("}", 1)[1],
+                        tag=helpers.remove_namespace_from_tag(child.tag),
                         text=child.text.strip().replace('\"', '\'') if child.text else ''))
             elif tag == ('symbol'):
                 if 'doc' in child.attrib:
@@ -197,11 +198,11 @@ class Nxdl2yaml():
 
 """
         for child in list(node):
-            tag = child.tag.split("}", 1)[1]
+            tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
                 self.root_level_doc = '{indent}{tag}: "{text}"'.format(
                     indent=0 * '  ',
-                    tag=child.tag.split("}", 1)[1],
+                    tag=helpers.remove_namespace_from_tag(child.tag),
                     text=child.text.strip().replace('\"', '\'') if child.text else '')
                 node.remove(child)
 
@@ -265,10 +266,10 @@ then prints recursively each level of the tree
         tree = xml_tree['tree']
         node = xml_tree['node']
         if verbose:
-            sys.stdout.write(str(depth))
-            sys.stdout.write(str(node.attrib))
+            sys.stdout.write(f'Node tag: {helpers.remove_namespace_from_tag(node.tag)}\n')
+            sys.stdout.write(f'Attributes: {node.attrib}\n')
         with open(output_yml, "a") as file_out:
-            tag = node.tag.split("}", 1)[1]
+            tag = helpers.remove_namespace_from_tag(node.tag)
             if tag == ('definition'):
                 self.found_definition = True
                 Nxdl2yaml.handle_definition(self, node)
@@ -276,7 +277,7 @@ then prints recursively each level of the tree
                 Nxdl2yaml.handle_root_level_doc(self, node)
             if tag == ('doc') and depth != 1:
                 parent = get_node_parent_info(tree, node)[0]
-                doc_parent = parent.tag.split("}", 1)[1]
+                doc_parent = helpers.remove_namespace_from_tag(parent.tag)
                 if doc_parent != 'item':
                     yaml2nxdl_backward_tools.handle_not_root_level_doc(depth, node, file_out)
             if tag == ('symbols'):
@@ -324,7 +325,7 @@ and print both an XML and YML file of the extended base class.
 """
     nexus_def_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../definitions')
     assert [s for s in os.listdir(os.path.join(nexus_def_path, 'base_classes')
-                                  ) if append.strip() == s.strip('.nxdl.xml')], \
+                                  ) if append.strip() == s.split('.nxdl.xml')[0]], \
         'Your base class extension does not match any existing Nexus base classes'
     tree = ET.parse(os.path.join(nexus_def_path + '/base_classes', append + '.nxdl.xml'))
     root = tree.getroot()
@@ -351,10 +352,16 @@ and print both an XML and YML file of the extended base class.
             break
     group = '{http://definition.nexusformat.org/nxdl/3.1}group'
     root_no_duplicates = yaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
-                                                                      group, root_no_duplicates)
+                                                                      group,
+                                                                      root_no_duplicates)
     field = '{http://definition.nexusformat.org/nxdl/3.1}field'
     root_no_duplicates = yaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
-                                                                      field, root_no_duplicates)
+                                                                      field,
+                                                                      root_no_duplicates)
+    attribute = '{http://definition.nexusformat.org/nxdl/3.1}attribute'
+    root_no_duplicates = yaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
+                                                                      attribute,
+                                                                      root_no_duplicates)
     pretty_print_xml(root_no_duplicates, f'{input_file.split(".", 1)[0]}'
                      f'_appended.nxdl.xml')
     print_yml(input_file.split(".", 1)[0] + '_appended.nxdl.xml', verbose)

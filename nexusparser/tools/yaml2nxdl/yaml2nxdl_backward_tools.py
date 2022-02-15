@@ -78,10 +78,11 @@ def handle_dimension(depth, node, file_out):
         '{indent}{tag}:\n'.format(
             indent=depth * '  ',
             tag=node.tag.split("}", 1)[1]))
-    file_out.write(
-        '{indent}rank: {rank}\n'.format(
-            indent=(depth + 1) * '  ',
-            rank=node.attrib['rank']))
+    if 'rank' in node.attrib:
+        file_out.write(
+            '{indent}rank: {rank}\n'.format(
+                indent=(depth + 1) * '  ',
+                rank=node.attrib['rank']))
     dim_list = ''
     for child in list(node):
         tag = child.tag.split("}", 1)[1]
