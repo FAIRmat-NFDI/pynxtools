@@ -590,7 +590,10 @@ and finds the corresponding XML element with the needed attributes.
                           f"applications{os.sep}{nx_name}.nxdl.xml")
         elem = ET.parse(nxdl_file_path).getroot()
     for group in nxdl_path.split('/')[1:]:
-        elem = get_nxdl_child(elem, group)
+        try:
+            elem = get_nxdl_child(elem, group)
+        except TypeError:
+            raise NxdlAttributeError
     if elem is None:
         raise NxdlAttributeError(f"Attributes were not found for {nxdl_path}. "
                                  "Please check this entry in the template dictionary.")

@@ -281,6 +281,44 @@ def ensure_all_required_fields_exist(template, data):
                             f" hasn't been supplied by the reader.")
 
 
+def validate_data_entry(path, template, data, nxdl_root, undocumented=False):
+    """Checks whether a given entry in the data dict adheres to the schema definition."""
+    elem = None
+    if data[path] is not None:
+        entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+
+        if entry_name == "@units":
+            return
+        if entry_name[0] == "@":
+            index_of_at = nxdl_path.rindex("@")
+            nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
+
+        try:
+            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+        except nexus.NxdlAttributeError as error:
+            print(error)
+
+        # Only check for validation in the NXDL if we did find the entry
+        # otherwise we just pass it along
+        if elem is not None \
+           and elem.attrib["name"] == entry_name \
+           and remove_namespace_from_tag(elem.tag) in ("field", "attribute"):
+            if undocumented:
+                data[get_required_string(elem)][path] = data["undocumented"][path]
+                del data["undocumented"][path]
+
+            check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
+
+            attrib = elem.attrib
+            nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
+            is_valid_data_field(data[path], nxdl_type, path)
+            is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
+            if not is_valid_enum:
+                raise Exception(f"The value at {path} should be"
+                                f" one of the following strings: {enums}")
+
+
 def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
@@ -289,32 +327,10 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     ensure_all_required_fields_exist(template, data)
 
     for path in data.get_documented().keys():
-        if data[path] is not None:
-            entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-            nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+        validate_data_entry(path, template, data, nxdl_root)
 
-            if entry_name == "@units":
-                continue
-            elif entry_name[0] == "@":
-                index_of_at = nxdl_path.rindex("@")
-                nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
-
-            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
-
-            # Only check for validation in the NXDL if we did find the entry
-            # otherwise we just pass it along
-            if elem is not None \
-               and elem.attrib["name"] == entry_name \
-               and remove_namespace_from_tag(elem.tag) in ("field", "attribute"):
-                check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
-
-                attrib = elem.attrib
-                nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
-                is_valid_data_field(data[path], nxdl_type, path)
-                is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
-                if not is_valid_enum:
-                    raise Exception(f"The value at {path} should be"
-                                    f" one of the following strings: {enums}")
+    for path in list(data["undocumented"]):
+        validate_data_entry(path, template, data, nxdl_root, True)
 
     return True
 

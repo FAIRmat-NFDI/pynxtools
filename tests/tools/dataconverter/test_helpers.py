@@ -26,6 +26,9 @@ import nexusparser.tools.dataconverter.helpers as helpers
 from nexusparser.tools.dataconverter.template import Template
 
 
+# pylint: disable=invalid-sequence-index
+
+
 def alter_dict(data_dict: Template, key: str, value: object):
     """Helper function to alter a single entry in dict for parametrize."""
     if data_dict is not None:
