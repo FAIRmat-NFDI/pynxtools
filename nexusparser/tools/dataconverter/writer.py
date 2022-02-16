@@ -54,6 +54,41 @@ def get_namespace(element) -> str:
     return element.tag[element.tag.index("{"):element.tag.rindex("}") + 1]
 
 
+def handle_dicts_entries(data, grp, entry_name):
+    """Handke function for dictionaries found as value of the nexus file.
+
+Several cases can be encoutered:
+- Internal links
+- External links
+- Virtual data set
+"""
+    if 'internal_link' in data.keys():
+        grp[entry_name] = h5py.SoftLink(
+            helpers.convert_data_dict_path_to_hdf5_path(data['internal_link']))
+    elif 'external_link' in data.keys():
+        grp[entry_name] = h5py.ExternalLink(data['external_link'],
+                                            data['path_to_dataset']
+                                            )
+    elif 'source_file_path' in data.keys():
+        total_length = 0
+        sources = []
+        for index, source_file in enumerate(data['source_file_path']):
+            dataset_entry_key = data['dataset_path'][index]
+            lenght = h5py.File(source_file, 'r')[data['dataset_path'][index]].shape
+            vsource = h5py.VirtualSource(source_file, dataset_entry_key, shape=lenght)
+            total_length += vsource.shape[0]
+            sources.append(vsource)
+        layout = h5py.VirtualLayout(shape=total_length,
+                                    dtype=np.float64)
+        offset = 0
+        for vsource in sources:
+            length = vsource.shape[0]
+            layout[offset:offset + length] = vsource
+            offset += length
+
+        grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
+
+
 class Writer:
     """The writer class for writing a Nexus file in accordance with a given NXDL.
 
@@ -130,11 +165,8 @@ class Writer:
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
 
-                    if isinstance(data, dict) and 'link' in data.keys():
-                        where_to_place_link = helpers.convert_data_dict_path_to_hdf5_path(path)
-                        self.output_nexus[where_to_place_link] = h5py.SoftLink(
-                            helpers.convert_data_dict_path_to_hdf5_path(data['link']))
-
+                    if isinstance(data, dict):
+                        handle_dicts_entries(data, grp, entry_name)
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
                         units_key = f"{path}/@units"
