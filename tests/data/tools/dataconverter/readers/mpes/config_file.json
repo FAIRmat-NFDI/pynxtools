@@ -23,8 +23,8 @@
   "/ENTRY[entry]/USER[user]/address": "@attrs:metadata/user0/name",
   "/ENTRY[entry]/USER[user]/email": "@attrs:metadata/user0/name",
   
-  "/ENTRY[entry]/INSTRUMENT[instrument]/name/@short_name": "TR-ARPES @ FHI",
   "/ENTRY[entry]/INSTRUMENT[instrument]/name": "Time-of-flight momentum microscope equipped delay line detector, at the endstation of the high rep-rate HHG source at FHI",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/name/@short_name": "TR-ARPES @ FHI", 
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/momentum_resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/momentum_resolution/@units": "1/A",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/description": "SPECS Metis 1000 Momentum Microscope",
@@ -46,13 +46,13 @@
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/lens_voltages": "@attrs:metadata/instrument/analyzer/lens_voltages", 
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/lens_voltages/@units": "V",   
  
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/APERTURE[field_aperture]/shape": "circle",
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/APERTURE[field_aperture]/size": "@attrs:metadata/instrument/analyzer/fa_size",
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/APERTURE[field_aperture]/size/@units": "µm",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/field_aperture/shape": "circle",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/field_aperture/size": "@attrs:metadata/instrument/analyzer/fa_size",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/field_aperture/size/@units": "µm",
   
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/APERTURE[contrast_aperture]/shape": "circle",
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/APERTURE[contrast_aperture]/size": "@attrs:metadata/instrument/analyzer/ca_size",
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/APERTURE[contrast_aperture]/size/@units": "µm",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/contrast_aperture/shape": "circle",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/contrast_aperture/size": "@attrs:metadata/instrument/analyzer/ca_size",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/contrast_aperture/size/@units": "µm",
  
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/ENERGYDISPERSION[energydispersion]/energy_scan_mode": "fixed",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/ENERGYDISPERSION[energydispersion]/pass_energy": "@attrs:metadata/file/KTOF:Lens:TOF:VSet",
@@ -120,7 +120,7 @@
   "/ENTRY[entry]/INSTRUMENT[instrument]/BEAM[beam_pump]/fluence/@units": "mJ/cm^2",
 
   "/ENTRY[entry]/SAMPLE[sample]/preparation_date": "@attrs:metadata/sample/preparation_date",
-  "/ENTRY[entry]/SAMPLE[sample]/sample_history": "@attrs:metadata/sample/sample_history",
+  "/ENTRY[entry]/SAMPLE[sample]/sample_history/description": "@attrs:metadata/sample/sample_history",
   "/ENTRY[entry]/SAMPLE[sample]/chemical_formula": "@attrs:metadata/sample/chemical_formula",
   "/ENTRY[entry]/SAMPLE[sample]/description": "@attrs:metadata/sample/chemical_formula",
   "/ENTRY[entry]/SAMPLE[sample]/name": "@attrs:metadata/sample/chemical_formula",
@@ -138,10 +138,10 @@
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/applied": true,
 
   "/ENTRY[entry]/DATA[data]/@axes": "@data:dims",
-  "/ENTRY[entry]/DATA[data]/@kx_indices": "0",
-  "/ENTRY[entry]/DATA[data]/@ky_indices": "1",
-  "/ENTRY[entry]/DATA[data]/@energy_indices": "2",
-  "/ENTRY[entry]/DATA[data]/@delay_indices": "3",
+  "/ENTRY[entry]/DATA[data]/@kx_indices": 0,
+  "/ENTRY[entry]/DATA[data]/@ky_indices": 1,
+  "/ENTRY[entry]/DATA[data]/@energy_indices": 2,
+  "/ENTRY[entry]/DATA[data]/@delay_indices": 3,
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
   "/ENTRY[entry]/DATA[data]/data/@units": "counts",
