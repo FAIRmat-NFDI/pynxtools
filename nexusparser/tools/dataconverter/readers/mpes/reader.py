@@ -36,7 +36,7 @@ default_units = {
     'dldTimeBinSize': 'ns',
     'delay': 'ps',
     'timeStamp': 's',
-    'E': 'eV',
+    'energy': 'eV',
     'kx': '1/A',
     'ky': '1/A'}
 
