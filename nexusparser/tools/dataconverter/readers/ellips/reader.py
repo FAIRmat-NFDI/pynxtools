@@ -18,6 +18,7 @@
 """An example reader implementation for the DataConverter."""
 from typing import Tuple
 
+import h5py
 import pyaml as yaml
 import os
 import pandas as pd
@@ -107,6 +108,31 @@ def load_as_blocks(fn, header):
 # end of load_as_blocks
 
 
+def load_as_array(fn, header):
+    """ load a CSV output file using the header dict
+    """
+    required_parameters = ("colnames", "skip", "sep")
+    for required_parameter in required_parameters:
+        if required_parameter not in header:
+            raise ValueError('colnames, skip and sep are required header parameters!')
+
+    if not os.path.isfile(fn):
+        raise IOError(f'File not found error: {fn}')
+
+    whole_data = pd.read_csv(fn,
+                             # use header = None and names to define custom column names
+                             header=None,
+                             names=header['colnames'],
+                             skiprows=header['skip'],
+                             delimiter=header['sep'])
+
+    # if our table has a block structure, we hav to
+    # handle it in a special way
+    dt_header = whole_data['type'].astype(str).values.tolist()
+    energy = dt_header.count("E")
+    dt = whole_data.to_numpy()[0:energy, 1:].astype("float64")
+    return dt
+
 class EllipsometryReader(BaseReader):
     """
         An example reader implementation for the DataConverter.
@@ -137,8 +163,10 @@ class EllipsometryReader(BaseReader):
         tempfile = os.path.join(os.path.split(file_path)[0], header["filename"])
         if os.path.isfile(tempfile):
             tempdata = load_as_blocks(tempfile, header)
+            my_tempdata = load_as_array(tempfile, header)
         else:
             tempdata = load_as_blocks(header["filename"], header)
+            my_tempdata = load_as_array(header["filename"], header)
 
         header["measured_data"] = tempdata["data"]
         data_to_plot = tempdata["data"]
@@ -239,6 +267,15 @@ class EllipsometryReader(BaseReader):
         for k in range(data_to_plot.shape[1]):
             template[f"/ENTRY[entry]/plot/{psilist[k]}/@units"] = "degrees"
             template[f"/ENTRY[entry]/plot/{deltalist[k]}/@units"] = "degrees"
+
+        my_source_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
+                             f"data/tools/dataconverter/readers/ellips")
+        test_h5_file = h5py.File(f"{my_source_path}/test.h5", 'w')
+        test_h5_file.create_dataset('my_test_vds', data=my_tempdata)
+        my_raw_array = {"technique": "ellipsometry",
+                        "raw_dataset": test_h5_file,
+                        "path": f"{my_source_path}/test.h5"}
+        template["/ENTRY[entry]/plot/whole_dataset"] = my_raw_array
 
         # for k in template:
         #     if "@" in k:

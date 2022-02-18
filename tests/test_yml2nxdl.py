@@ -210,11 +210,3 @@ The xml trees of the two files are then compared.
     assert list(test_yml_tree) == list(ref_yml_tree), 'Ref YML and parsed YML \
 has not the same root entries!!'
     sys.stdout.write('Test on yml -> xml -> yml okay.\n')
-
-
-if __name__ == '__main__':
-    test_links()
-    test_symbols()
-    test_attributes()
-    test_xml_parsing()
-    test_yml_parsing()

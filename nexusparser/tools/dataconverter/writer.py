@@ -85,8 +85,30 @@ Several cases can be encoutered:
             length = vsource.shape[0]
             layout[offset:offset + length] = vsource
             offset += length
-
         grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
+    elif 'technique' in data.keys():
+        if data['technique'] == 'ellipsometry':
+            my_angles = h5py.File(data['path'], 'r')['/my_test_vds'][:, 1]
+            unique_angles, counts = np.unique(my_angles, return_counts=True)
+            layout = h5py.VirtualLayout(shape=(counts[0],), dtype=np.float64)
+            initial = 0
+            for index, angle in enumerate(unique_angles):
+                vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 2]
+                layout[:] = vsource
+                grp.create_virtual_dataset(f"psi_{angle}_vds", layout, fillvalue=0)
+                initial += counts[index]
+            initial = 0
+            for index, angle in enumerate(unique_angles):
+                vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 3]
+                layout[:] = vsource
+                grp.create_virtual_dataset(f"delta_{angle}_vds", layout, fillvalue=0)
+                initial += counts[index]
+            initial = 0
+            for index, angle in enumerate(unique_angles):
+                vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 0]
+                layout[:] = vsource
+                grp.create_virtual_dataset(f"wavelenght_{angle}_vds", layout, fillvalue=0)
+                initial += counts[index]
 
 
 class Writer:
