@@ -84,6 +84,11 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
 
+    nxdl_file_path = "nexusparser/definitions/applications/NXellipsometry.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
+    assert node.attrib["type"] == "NXcollection"
+
 
 def test_example():
     """Tests if parser can parse our example data
@@ -100,9 +105,9 @@ def test_example():
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.m_def.nx_units == "NX_PRESSURE"
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-        nx_group_MONOCHROMATOR[0].nx_field_energy.nx_value == 36.49699020385742
+        nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-        nx_group_MONOCHROMATOR[0].nx_field_energy.nx_name == 'energy'
+        nx_group_monochromator.nx_field_energy.nx_name == 'energy'
     # 1D datasets
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"
