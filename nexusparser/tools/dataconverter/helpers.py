@@ -132,7 +132,8 @@ def is_value_valid_element_of_enum(value, elem) -> Tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
     if elem is not None:
         has_enums, enums = nexus.get_enums(elem)
-        if has_enums and (isinstance(value, list) or value not in enums[0:-1] or value == ""):
+        if has_enums and (isinstance(value, list)
+                          or value not in enums[1:-1].split(",") or value == ""):
             return False, enums
     return True, []
 
@@ -302,11 +303,13 @@ def validate_data_entry(path, template, data, nxdl_root, undocumented=False):
         # Only check for validation in the NXDL if we did find the entry
         # otherwise we just pass it along
         if elem is not None \
-           and elem.attrib["name"] == entry_name \
            and remove_namespace_from_tag(elem.tag) in ("field", "attribute"):
             if undocumented:
                 data[get_required_string(elem)][path] = data["undocumented"][path]
+                units_path = f"{path}/@units"
+                data[get_required_string(elem)][units_path] = data["undocumented"][units_path]
                 del data["undocumented"][path]
+                del data["undocumented"][units_path]
 
             check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
 
