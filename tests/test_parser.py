@@ -84,6 +84,11 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
 
+    nxdl_file_path = "nexusparser/definitions/applications/NXellipsometry.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
+    assert node.attrib["type"] == "NXcollection"
+
 
 def test_example():
     """Tests if parser can parse our example data
