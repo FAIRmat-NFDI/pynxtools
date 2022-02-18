@@ -100,9 +100,9 @@ def test_example():
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.m_def.nx_units == "NX_PRESSURE"
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-        nx_group_MONOCHROMATOR[0].nx_field_energy.nx_value == 36.49699020385742
+        nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-        nx_group_MONOCHROMATOR[0].nx_field_energy.nx_name == 'energy'
+        nx_group_monochromator.nx_field_energy.nx_name == 'energy'
     # 1D datasets
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"

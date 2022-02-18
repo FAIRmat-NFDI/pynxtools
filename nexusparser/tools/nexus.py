@@ -6,7 +6,7 @@
 
 import os
 import xml.etree.ElementTree as ET
-import re
+# import re
 import sys
 import logging
 import textwrap
@@ -47,8 +47,9 @@ in case of a field, end with the field name
     if hdf_node.name == '/':
         return ''
     if isinstance(hdf_node, h5py.Group):
-        return get_nx_class_path(
-            hdf_node.parent) + '/' + hdf_node.attrs['NX_class']
+        return get_nx_class_path(hdf_node.parent) + '/' + \
+            (hdf_node.attrs['NX_class'] if 'NX_class' in hdf_node.attrs.keys() else
+             hdf_node.name.split('/')[-1])
     if isinstance(hdf_node, h5py.Dataset):
         return get_nx_class_path(
             hdf_node.parent) + '/' + hdf_node.name.split('/')[-1]
@@ -61,8 +62,9 @@ def get_nxdl_entry(hdf_node):
 """
 
     entry = hdf_node
-    while isinstance(entry,
-                     h5py.Dataset) or entry.attrs['NX_class'] != 'NXentry':
+    while isinstance(entry, h5py.Dataset) or \
+            'NX_class' not in entry.attrs.keys() or \
+            entry.attrs['NX_class'] != 'NXentry':
         entry = entry.parent
         if entry.name == '/':
             return 'NO NXentry found'
@@ -98,13 +100,13 @@ so such match is counted as a measure of the fit
     if counting == len(name) or hdf_name.endswith(name[counting:]):
         # count the matching chars
         fit = 0
-        for i in range(max(counting, len(hdf_name))):
+        for i in range(min(counting, len(hdf_name))):
             if hdf_name[i].upper() == name[i]:
                 fit += 1
             else:
                 break
         # accept only full fits as better fits
-        if fit == max(counting, len(hdf_name)):
+        if fit == min(counting, len(hdf_name)):
             return fit
         return 0
     # no fit
@@ -188,12 +190,21 @@ returns:
     return name
 
 
-def belongs_to(nxdl_elem, child, hdf_name):
+def belongs_to(nxdl_elem, child, name, class_type=None, hdf_name=None):
     """Checks if an HDF5 node name corresponds to a child of the NXDL element
 uppercase letters in front can be replaced by arbitraty name, but
 uppercase to lowercase match is preferred
 
 """
+    if class_type and get_nx_class(child) != class_type:
+        return False
+    act_htmlname = get_node_name(child)
+    # nx_class_regex = re.compile(r"NX[a-z_]+")
+    # chk_name = name[2:].upper() if nx_class_regex.search(name) and \
+    #    'name' not in child.attrib else name
+    chk_name = hdf_name or name
+    if act_htmlname == chk_name:
+        return True
     # check if nameType allows different name
     try:
         name_any = bool(child.attrib['nameType'] == "any")
@@ -203,27 +214,23 @@ uppercase to lowercase match is preferred
         #    name_any = False
     except KeyError:
         name_any = False
-    childname = get_node_name(child)
-    nx_class_regex = re.compile(r"NX[a-z_]+")
-    name = hdf_name[2:].upper() if nx_class_regex.search(hdf_name) and 'name\
-    ' not in child.attrib else hdf_name
-    # and no reserved words used
-    if name_any and name != 'doc' and name != 'enumeration':
+    # or starts with capital and no reserved words used
+    # if (name_any or act_htmlname[0].lower() != act_htmlname[0]) and \
+    if (name_any or 'A' <= act_htmlname[0] <= 'Z') and \
+            name != 'doc' and name != 'enumeration':
         # check if name fits
-        fit = get_nx_namefit(name, childname)
+        fit = get_nx_namefit(chk_name, act_htmlname)
         if fit < 0:
             return False
         for child2 in nxdl_elem:
             if get_local_name_from_xml(child) != \
-                    get_local_name_from_xml(child2) or get_node_name(child2) == childname:
+                    get_local_name_from_xml(child2) or get_node_name(child2) == act_htmlname:
                 continue
             # check if the name of another sibling fits better
-            fit2 = get_nx_namefit(name, get_node_name(child2))
+            fit2 = get_nx_namefit(chk_name, get_node_name(child2))
             if fit2 > fit:
                 return False
         # accept this fit
-        return True
-    if childname == name:
         return True
     return False
 
@@ -233,31 +240,45 @@ def get_local_name_from_xml(element):
     return element.tag[element.tag.rindex("}") + 1:]
 
 
-def get_own_nxdl_child(nxdl_elem, name):
-    """Checks if an NXDL child node fits to the specific name"""
+def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=None):
+    """Checks if an NXDL child node fits to the specific name (either nxdl or hdf)
+        name - nxdl name
+        class_type - nxdl type or hdf classname (for groups, it is obligatory)
+        hdf_name - hdf name
+    """
     for child in nxdl_elem:
-        if get_local_name_from_xml(child) == 'group' and belongs_to(nxdl_elem, child, name):
-            # get_nx_class(child) == name:
-            return child
-        if get_local_name_from_xml(child) == 'field' and belongs_to(nxdl_elem, child, name):
-            return child
-        if get_local_name_from_xml(child) == 'attribute' and belongs_to(nxdl_elem, child, name):
-            return child
         if get_local_name_from_xml(child) == 'doc' and name == 'doc':
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
             return child
         if get_local_name_from_xml(child) == 'enumeration' and name == 'enumeration':
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+            return child
+        if nexus_type and get_local_name_from_xml(child) != nexus_type:
+            continue
+        if get_local_name_from_xml(child) == 'group':
+            if (class_type is None or (class_type and get_nx_class(child) == class_type)) and \
+                    belongs_to(nxdl_elem, child, name, class_type, hdf_name):
+                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+                return child
+        if get_local_name_from_xml(child) == 'field' and \
+                belongs_to(nxdl_elem, child, name, None, hdf_name):
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+            return child
+        if get_local_name_from_xml(child) == 'attribute' and \
+                belongs_to(nxdl_elem, child, name, None, hdf_name):
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
             return child
     return None
 
 
-def get_nxdl_child(nxdl_elem, name):
+def get_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=None):
     """Get the NXDL child node corresponding to a specific name
 (e.g. of an HDF5 node,or of a documentation)
 note that if child is not found in application definition,
 it also checks for the base classes
 
 """
-    own_child = get_own_nxdl_child(nxdl_elem, name)
+    own_child = get_own_nxdl_child(nxdl_elem, name, class_type, hdf_name, nexus_type)
     if own_child is not None:
         return own_child
     # check in the base class
@@ -269,9 +290,11 @@ it also checks for the base classes
     # Checking if it is actually the root element. Then we send it to NXroot.nxdl.xml
     if bc_name == "group":
         bc_name = "NXroot"
-    bc_obj = ET.parse(f"{get_nexus_definitions_path()}{os.sep}"
-                      f"base_classes{os.sep}{bc_name}.nxdl.xml").getroot()
-    return get_own_nxdl_child(bc_obj, name)
+    bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
+        f"base_classes{os.sep}{bc_name}.nxdl.xml"
+    bc_obj = ET.parse(bc_filename).getroot()
+    bc_obj.set('nxdlbase', bc_filename)
+    return get_own_nxdl_child(bc_obj, name, class_type, hdf_name, nexus_type)
 
 
 def get_required_string(nxdl_elem):
@@ -293,15 +316,15 @@ REQUIRED, RECOMMENDED, OPTIONAL, NOT IN SCHEMA
         return "<<RECOMMENDED>>"
     if is_optional or is_minoccurs:
         return "<<OPTIONAL>>"
-    return "<<REQUIRED>>"
-
     # default optionality
     # in BASE CLASSES: true
     # in APPLICATIONS: false
-
-    # TODO: confirm with Sandor if we can get rid of these lines
-    # if "base" in nxdl_elem.attrib and "base_classes" in nxdl_elem.base:
-    #    return "<<OPTIONAL>>"
+    try:
+        if "base_classes" in nxdl_elem.get('nxdlbase'):
+            return "<<OPTIONAL>>"
+    except TypeError:
+        return "<<REQUIRED>>"
+    return "<<REQUIRED>>"
 
 
 def chk_nxdataaxis_v2(hdf_node, name):
@@ -322,15 +345,13 @@ def chk_nxdataaxis_v2(hdf_node, name):
                 return None
     ownpaxis = hdf_node.attrs.get('primary')
     own_axis = hdf_node.attrs.get('axis')
-    assert own_axis is int, 'axis is not int type!'
-    # also convention v1
-    if ownpaxis is int and ownpaxis == 1:
-        LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
-        return None
-    if not (ownpaxis is int and ownpaxis == 1):
-        LOGGER.info(
-            "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d", own_axis - 1)
-        return None
+    if own_axis is int:
+        # also convention v1
+        if ownpaxis is int and ownpaxis == 1:
+            LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
+        else:
+            LOGGER.info(
+                "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d", own_axis - 1)
     return None
 
 
@@ -378,12 +399,21 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     nxdl_file_path = (f"{get_nexus_definitions_path()}{os.sep}applications"
                       f"{os.sep}{get_nxdl_entry(hdf_node)}.nxdl.xml")
     elem = ET.parse(nxdl_file_path).getroot()
+    elem.set('nxdlbase', nxdl_file_path)
     nxdl_path = [elem]
     path = get_nx_class_path(hdf_node)
     req_str = None
+    hdf_path = hdf_node.name.split('/')[1:]
+    level = -1
     for group in path.split('/')[1:]:
+        level = level + 1
+        hdf_name = hdf_path[level]
+        if level < len(hdf_path)-1:
+            act_nexus_type = 'group'
+        else:
+            act_nexus_type = 'field' if isinstance(hdf_node, h5py.Dataset) else 'group'
         if group.startswith('NX'):
-            elem = get_nxdl_child(elem, group)
+            elem = get_nxdl_child(elem, group, group, hdf_name, nexus_type=act_nexus_type)
             if elem is not None:
                 if doc:
                     loger.info("/" + group)
@@ -393,7 +423,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
                     loger.info("/" + group + " - IS NOT IN SCHEMA")
         else:
             if elem is not None:
-                elem = get_nxdl_child(elem, group)
+                elem = get_nxdl_child(elem, group, group, hdf_name, nexus_type=act_nexus_type)
                 nxdl_path.append(elem)
             if elem is not None:
                 if attr:
@@ -424,7 +454,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
                 nxdl_path.append(attr)
             except KeyError:
                 # otherwise try to find if units is defined as a child of the NXDL element
-                elem = get_nxdl_child(elem, attr)
+                elem = get_nxdl_child(elem, attr, nexus_type='attribute')
                 if elem is not None:
                     if doc:
                         loger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
@@ -438,7 +468,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith('_units'):
             # check for ATTRIBUTENAME_units in NXDL (normal)
-            elem2 = get_nxdl_child(elem, attr)
+            elem2 = get_nxdl_child(elem, attr, nexus_type='attribute')
             if elem2 is not None:
                 elem = elem2
                 if doc:
@@ -447,7 +477,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
             else:
                 # if not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE
                 # is in the SCHEMA, but no units category were defined
-                elem2 = get_nxdl_child(elem, attr[:-6])
+                elem2 = get_nxdl_child(elem, attr[:-6], nexus_type='attribute')
                 if elem2 is not None:
                     req_str = '<<RECOMMENDED>>'
                     if doc:
@@ -458,9 +488,23 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
                     elem = elem2
                     if doc:
                         loger.info("@" + attr + " - IS NOT IN SCHEMA")
+        # default is allowed for groups
+        elif attr == 'default' and not isinstance(hdf_node, h5py.Dataset):
+            req_str = "<<RECOMMENDED>>"
+            # try to find if default is defined as a child of the NXDL element
+            elem = get_nxdl_child(elem, attr, nexus_type='attribute')
+            if elem is not None:
+                if doc:
+                    loger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
+                nxdl_path.append(elem)
+            else:
+                # if no default category were defined in NXDL:
+                if doc:
+                    loger.info("@" + attr + " - [NX_CHAR]")
+                nxdl_path.append(attr)
         # other attributes
         else:
-            elem = get_nxdl_child(elem, attr)
+            elem = get_nxdl_child(elem, attr, nexus_type='attribute')
             if elem is not None:
                 if doc:
                     loger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
@@ -498,7 +542,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         # check for doc
         sdoc = get_nxdl_child(elem, 'doc')
         if doc:
-            loger.info(get_local_name_from_xml(sdoc) if sdoc is not None else "")
+            loger.info(sdoc.text if sdoc is not None else "")
     return (req_str, get_nxdl_entry(hdf_node), nxdl_path)
 
 
@@ -623,7 +667,8 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
         logger.info('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
         logger.info('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
-        (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc, attr=key)
+        (req_str, nxdef, nxdl_path) = \
+            get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
             parser(hdf_info, nxdef, nxdl_path, val)
 
@@ -648,21 +693,25 @@ def get_default_plotable(root, logger):
     if not nxentry:
         nxentry = entry_helper(root)
     if not nxentry:
-        logger.info('No NXentry has been found')  # TODO the code always falls here, solve it
+        logger.info('No NXentry has been found')
         return
     logger.info('')
     logger.info('NXentry has been identified: ' + nxentry.name)
     # process_node(nxentry, None, False)
     # nxdata
     nxdata = None
-    default_nxdata_group_name = nxentry.attrs.get("default")
-    if default_nxdata_group_name:
+    nxgroup = nxentry
+    default_group_name = nxgroup.attrs.get("default")
+    while default_group_name:
         try:
-            nxdata = nxentry[default_nxdata_group_name]
+            nxgroup = nxgroup[default_group_name]
+            default_group_name = nxgroup.attrs.get("default")
         except KeyError:
-            nxdata = None
-    if not nxdata:
+            pass
+    if nxgroup == nxentry:
         nxdata = nxdata_helper(nxentry)
+    else:
+        nxdata = nxgroup
     if not nxdata:
         logger.info('No NXdata group has been found')
         return
@@ -674,7 +723,7 @@ def get_default_plotable(root, logger):
     signal_dataset_name = nxdata.attrs.get("signal")
     try:
         signal = nxdata[signal_dataset_name]
-    except KeyError:
+    except (TypeError, KeyError):
         signal = None
     if not signal:
         signal = signal_helper(nxdata)
@@ -696,8 +745,8 @@ def entry_helper(root):
 """
     nxentries = []
     for key in root.keys():
-        if (isinstance(root[key], h5py.Group) and root[key].attrs.get('NX_class\
-        ') and root[key].attrs['NX_class'] == "NXentry"):
+        if isinstance(root[key], h5py.Group) and root[key].attrs.get('NX_class') and \
+                root[key].attrs['NX_class'] == "NXentry":
             nxentries.append(root[key])
     # v3: as there was no selection given, only 1 nxentry shall exists
     # v2: take any
@@ -713,8 +762,8 @@ return its value
 """
     lnxdata = []
     for key in nxentry.keys():
-        if isinstance(nxentry[key], h5py.Group) and nxentry[key].attrs.get('NX_class\
-        ') and nxentry[key].attrs['NX_class'] == "NXdata":
+        if isinstance(nxentry[key], h5py.Group) and nxentry[key].attrs.get('NX_class') and \
+                nxentry[key].attrs['NX_class'] == "NXdata":
             lnxdata.append(nxentry[key])
     # v3: as there was no selection given, only 1 nxdata shall exists
     # v2: take any
@@ -737,8 +786,8 @@ def signal_helper(nxdata):
     # v2: select the one with an attribute signal="1" attribute
     if len(signals) > 1:
         for sig in signals:
-            if sig.attrs.get("signal") and sig.attrs.get("signal\
-            ") is str and sig.attrs.get("signal") == "1":
+            if sig.attrs.get("signal") and sig.attrs.get("signal") is str and \
+                    sig.attrs.get("signal") == "1":
                 return sig
     return None
 
@@ -804,7 +853,8 @@ def axis_helper(dim, nxdata, signal, axes, logger):
         get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list)
         # check for corresponding AXISNAME_indices
         for attr in nxdata.attrs.keys():
-            if attr.endswith('_indices') and nxdata.sttrs[attr] == a_item:
+            if attr.endswith('_indices') and nxdata.attrs[attr] == a_item and \
+                    nxdata[attr.split('_indices')[0]] not in ax_list:
                 ax_list.append(nxdata[attr.split('_indices')[0]])
         # v2
         # check for ':' separated axes defined in Signal
@@ -819,8 +869,8 @@ def axis_helper(dim, nxdata, signal, axes, logger):
             find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list)
         axes.append(ax_list)
         logger.info('')
-        logger.info('For Axis #%d, %d axes have been identified: %s\
-        ' % (a_item, len(ax_list), str(ax_list)))
+        logger.info('For Axis #%d, %d axes have been identified: %s' %
+                    (a_item, len(ax_list), str(ax_list)))
 
 
 class HandleNexus:
