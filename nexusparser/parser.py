@@ -21,6 +21,7 @@
 
 import sys
 import logging
+import numpy as np
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
 # from . import metainfo  # pylint: disable=unused-import
@@ -132,10 +133,10 @@ class NexusParser(MatchingParser):
         # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdl_path)+
         # ' - '+val[0]+ ("..." if len(val) > 1 else ''))
         if nxdl_path is not None:
-            print((nxdef or '???') + ':' + '.'.join(p if isinstance(p, str) else
-                                                    read_nexus.get_node_name(p)
-                                                    for p in nxdl_path) + ' - \
-' + val[0] + ("..." if len(val) > 1 else ''))
+            print((nxdef or '???') + ':' + '.'.
+                  join(p if isinstance(p, str) else
+                       read_nexus.get_node_name(p)
+                       for p in nxdl_path) + ' - ' + val[0] + ("..." if len(val) > 1 else ''))
             act_section = self.nxroot
             hdf_namelist = hdf_path.split('/')[1:]
             act_section = get_to_new_subsection(None, nxdef, None, act_section)[1]
@@ -164,7 +165,17 @@ class NexusParser(MatchingParser):
                         print("Problem with storage!!!" + str(exc))
             else:
                 try:
-                    act_section.nx_value = get_value(hdf_node[...])
+                    data_field = get_value(hdf_node[...])
+                    if hdf_node[...].dtype.kind in 'iufc' and \
+                            isinstance(data_field, np.ndarray) and \
+                            data_field.size > 1:
+                        data_field = np.array([
+                            np.mean(data_field),
+                            np.var(data_field),
+                            np.min(data_field),
+                            np.max(data_field)
+                        ])
+                    act_section.nx_value = data_field
                 except TypeError as exc:
                     print("Problem with storage!!!" + str(exc))
         else:
@@ -178,7 +189,7 @@ class NexusParser(MatchingParser):
         logger.addHandler(stdout_handler)
 
         self.archive = archive
-        # TODO ask Markus S. whether to disable or not this pylint error
+        # TO DO ask Markus S. whether to disable or not this pylint error
         self.archive.m_create(nexus.Nexus)  # pylint: disable=no-member
         self.nxroot = self.archive.nexus
 

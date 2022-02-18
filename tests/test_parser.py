@@ -100,9 +100,10 @@ def test_example():
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.m_def.nx_units == "NX_PRESSURE"
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-        nx_group_MONOCHROMATOR[0].nx_field_energy.nx_value == 36.49699020385742
+        nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-        nx_group_MONOCHROMATOR[0].nx_field_energy.nx_name == 'energy'
+        nx_group_monochromator.nx_field_energy.nx_name == 'energy'
+    # 1D datasets
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"
     assert archive.nexus.nx_application_arpes.\
@@ -115,3 +116,14 @@ def test_example():
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_unit == "fs"
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_unit == "eV"
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_value[0] == 0.10033616393632831
+    # 2D datasets
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_DATA[0].nx_field_DATA[0].nx_name == "data"
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_DATA[0].nx_field_DATA[0].nx_value[2] == 0.0
+    assert pytest.approx(
+        archive.nexus.nx_application_arpes.
+        nx_group_ENTRY[0].nx_group_DATA[0].nx_field_DATA[0].nx_value[3] - 0.00078192557) \
+        == 0.0
