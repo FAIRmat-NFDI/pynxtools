@@ -72,7 +72,7 @@
 
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/name": "HHG @ TR-ARPES @ FHI",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/probe": "ultraviolet",
-  "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/type": "Laser",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/type": "HHG laser",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/mode": "Single Bunch",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/frequency": "@attrs:metadata/instrument/beam/probe/frequency",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/frequency/@units": "kHz",
@@ -92,7 +92,7 @@
 
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]/name": "OPCPA @ TR-ARPES @ FHI",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]/probe": "visible light",
-  "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]/type": "Laser",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]/type": "Optical Laser",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]/mode": "Single Bunch",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]/frequency": "@attrs:metadata/instrument/beam/pump/frequency",
   "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]/frequency/@units": "kHz",
@@ -137,10 +137,10 @@
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/applied": true,
 
   "/ENTRY[entry]/DATA[data]/@axes": "@data:dims",
-  "/ENTRY[entry]/DATA[data]/@kx_indices": 0,
-  "/ENTRY[entry]/DATA[data]/@ky_indices": 1,
-  "/ENTRY[entry]/DATA[data]/@energy_indices": 2,
-  "/ENTRY[entry]/DATA[data]/@delay_indices": 3,
+  "/ENTRY[entry]/DATA[data]/@kx_indices": "0",
+  "/ENTRY[entry]/DATA[data]/@ky_indices": "1",
+  "/ENTRY[entry]/DATA[data]/@energy_indices": "2",
+  "/ENTRY[entry]/DATA[data]/@delay_indices": "3",
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
   "/ENTRY[entry]/DATA[data]/data/@units": "counts",
