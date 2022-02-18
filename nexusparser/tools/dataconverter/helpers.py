@@ -306,10 +306,11 @@ def validate_data_entry(path, template, data, nxdl_root, undocumented=False):
            and remove_namespace_from_tag(elem.tag) in ("field", "attribute"):
             if undocumented:
                 data[get_required_string(elem)][path] = data["undocumented"][path]
-                units_path = f"{path}/@units"
-                data[get_required_string(elem)][units_path] = data["undocumented"][units_path]
                 del data["undocumented"][path]
-                del data["undocumented"][units_path]
+                units_path = f"{path}/@units"
+                if units_path in data["undocumented"]:
+                    data[get_required_string(elem)][units_path] = data["undocumented"][units_path]
+                    del data["undocumented"][units_path]
 
             check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
 

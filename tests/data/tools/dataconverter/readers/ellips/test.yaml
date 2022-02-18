@@ -29,7 +29,7 @@ parameters:
   - angle
 
 definition: NXellipsometry
-definition/\@version: 0.0.1
+definition/\@version: "0.0.1"
 definition/\@url: https://
 
 experiment_description: RC2 scan on 2nm SiO2 on Si in air
@@ -47,12 +47,12 @@ program/\@version: "6.37"
 program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
 
 model: RC2
-model/\@version: 0.0.1
+model/\@version: "0.0.1"
 company: J.A. Woollam Co.
 software: WVASE
-software/\@version: 3.882
+software/\@version: "3.882"
 software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
-rotating_element: analyzer
+rotating_element: analyzer (detector side)
 ellipsometry_type: dual compensator
 detector_type: CCD spectrometer
 integration_time: 0
