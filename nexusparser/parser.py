@@ -133,10 +133,10 @@ class NexusParser(MatchingParser):
         # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdl_path)+
         # ' - '+val[0]+ ("..." if len(val) > 1 else ''))
         if nxdl_path is not None:
-            print((nxdef or '???') + ':' + '.'.join(p if isinstance(p, str) else
-                                                    read_nexus.get_node_name(p)
-                                                    for p in nxdl_path) + ' - \
-' + val[0] + ("..." if len(val) > 1 else ''))
+            print((nxdef or '???') + ':' + '.'.
+                  join(p if isinstance(p, str) else
+                       read_nexus.get_node_name(p)
+                       for p in nxdl_path) + ' - ' + val[0] + ("..." if len(val) > 1 else ''))
             act_section = self.nxroot
             hdf_namelist = hdf_path.split('/')[1:]
             act_section = get_to_new_subsection(None, nxdef, None, act_section)[1]
@@ -189,7 +189,7 @@ class NexusParser(MatchingParser):
         logger.addHandler(stdout_handler)
 
         self.archive = archive
-        # TODO ask Markus S. whether to disable or not this pylint error
+        # TO DO ask Markus S. whether to disable or not this pylint error
         self.archive.m_create(nexus.Nexus)  # pylint: disable=no-member
         self.nxroot = self.archive.nexus
 
