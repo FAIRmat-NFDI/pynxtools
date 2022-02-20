@@ -247,11 +247,7 @@ def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_ty
         hdf_name - hdf name
     """
     for child in nxdl_elem:
-<<<<<<< HEAD
         if 'name' in child.attrib and child.attrib['name'] == name:
-=======
-        if "name" in child.attrib and child.attrib["name"] == name:
->>>>>>> 88b7e51c26740657137ba68e8df832c331d47eea
             child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
             return child
 
