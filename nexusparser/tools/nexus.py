@@ -94,7 +94,7 @@ so such match is counted as a measure of the fit
 """
     # count leading capitals
     counting = 0
-    while counting < len(name) and name[counting] >= 'A' and name[counting] <= 'Z':
+    while counting < len(name) and name[counting].upper() == name[counting]:
         counting += 1
     # if potential fit
     if counting == len(name) or hdf_name.endswith(name[counting:]):
