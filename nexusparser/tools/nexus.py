@@ -247,7 +247,11 @@ def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_ty
         hdf_name - hdf name
     """
     for child in nxdl_elem:
+<<<<<<< HEAD
         if 'name' in child.attrib and child.attrib['name'] == name:
+=======
+        if "name" in child.attrib and child.attrib["name"] == name:
+>>>>>>> 88b7e51c26740657137ba68e8df832c331d47eea
             child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
             return child
 
@@ -629,11 +633,11 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
                           elem: ET.Element = None):
     """Returns an ET.Element for the given path.
 
-This function either takes the name for the Nexus Application Definition
-we are looking for or the root elem from a previously loaded NXDL file
-and finds the corresponding XML element with the needed attributes.
+    This function either takes the name for the Nexus Application Definition
+    we are looking for or the root elem from a previously loaded NXDL file
+    and finds the corresponding XML element with the needed attributes.
 
-"""
+    """
     if elem is None:
         nxdl_file_path = (f"{get_nexus_definitions_path()}{os.sep}"
                           f"applications{os.sep}{nx_name}.nxdl.xml")
