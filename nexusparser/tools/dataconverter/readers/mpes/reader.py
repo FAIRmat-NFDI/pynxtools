@@ -23,6 +23,7 @@ import h5py
 import json
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 import xarray as xr
+from functools import reduce
 
 default_units = {
     'X': 'step',
@@ -138,6 +139,15 @@ def iterate_dictionary(dic, key_string):
         raise KeyError
 
 
+def rgetattr(key, obj, attr):
+    def _getattr(obj, attr):
+        return getattr(obj, attr)
+    if "_indices" in key:
+        return str(obj.dims.index(f"{attr}"))
+    else:
+        return reduce(_getattr, [obj] + attr.split('.'))
+
+
 class MPESReader(BaseReader):
 
     # pylint: disable=too-few-public-methods
@@ -153,12 +163,12 @@ class MPESReader(BaseReader):
 
         for file_path in file_paths:
 
-            file_extension = file_path[file_path.rindex("."):]
+            file_extension = file_path[file_path.rindex(".") + 1:]
 
-            if file_extension == '.h5':
+            if file_extension == 'h5':
                 x_array_loaded = h5_to_xarray(file_path)
 
-            elif file_extension == '.json':
+            elif file_extension == 'json':
                 with open(file_path, 'r') as f:
                     config_file_dict = json.load(f)
 
@@ -171,14 +181,15 @@ class MPESReader(BaseReader):
                 # Filling in the data and axes along with units from xarray
                 if precursor == '@data':
                     try:
-                        template[k] = eval("x_array_loaded." + value)
+                        template[k] = rgetattr(key=k, obj=x_array_loaded, attr=value)
                         if k.split('/')[-1] == '@axes':
                             template[k] = list(template[k])
 
-                    except NameError:
+                    except ValueError:
+                        print(f"Incorrect axis name corresponding to the path {k}")
+
+                    except AttributeError:
                         print(f"Incorrect naming syntax or the xarray doesn't contain entry corresponding to the path {k}")
-                    except KeyError:
-                        print(f"The xarray doesn't contain entry corresponding to the path {k}")
 
                 # Filling in the metadata from xarray
                 elif precursor == '@attrs':

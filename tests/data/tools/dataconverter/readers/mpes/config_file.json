@@ -132,26 +132,26 @@
   "/ENTRY[entry]/SAMPLE[sample]/bias/@units": "V",
 
 
-  "/ENTRY[entry]/PROCESS[process]/calculated_energy": "@data:coords[\"energy\"].data",
+  "/ENTRY[entry]/PROCESS[process]/calculated_energy": "@data:energy.data",
   "/ENTRY[entry]/PROCESS[process]/calculated_energy/@units": "eV",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/applied": true,
 
   "/ENTRY[entry]/DATA[data]/@axes": "@data:dims",
-  "/ENTRY[entry]/DATA[data]/@kx_indices": "0",
-  "/ENTRY[entry]/DATA[data]/@ky_indices": "1",
-  "/ENTRY[entry]/DATA[data]/@energy_indices": "2",
-  "/ENTRY[entry]/DATA[data]/@delay_indices": "3",
+  "/ENTRY[entry]/DATA[data]/@kx_indices": "@data:kx",
+  "/ENTRY[entry]/DATA[data]/@ky_indices": "@data:ky",
+  "/ENTRY[entry]/DATA[data]/@energy_indices": "@data:energy",
+  "/ENTRY[entry]/DATA[data]/@delay_indices": "@data:delay",
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
   "/ENTRY[entry]/DATA[data]/data/@units": "counts",
-  "/ENTRY[entry]/DATA[data]/kx": "@data:coords[\"kx\"].data",
-  "/ENTRY[entry]/DATA[data]/kx/@units": "@data:coords[\"kx\"].unit",
-  "/ENTRY[entry]/DATA[data]/ky": "@data:coords[\"ky\"].data",
-  "/ENTRY[entry]/DATA[data]/ky/@units": "@data:coords[\"ky\"].unit",
-  "/ENTRY[entry]/DATA[data]/energy": "@data:coords[\"energy\"].data",
-  "/ENTRY[entry]/DATA[data]/energy/@units": "@data:coords[\"energy\"].unit",
-  "/ENTRY[entry]/DATA[data]/delay": "@data:coords[\"delay\"].data",
-  "/ENTRY[entry]/DATA[data]/delay/@units": "@data:coords[\"delay\"].unit"
+  "/ENTRY[entry]/DATA[data]/kx": "@data:kx.data",
+  "/ENTRY[entry]/DATA[data]/kx/@units": "@data:kx.unit",
+  "/ENTRY[entry]/DATA[data]/ky": "@data:ky.data",
+  "/ENTRY[entry]/DATA[data]/ky/@units": "@data:ky.unit",
+  "/ENTRY[entry]/DATA[data]/energy": "@data:energy.data",
+  "/ENTRY[entry]/DATA[data]/energy/@units": "@data:energy.unit",
+  "/ENTRY[entry]/DATA[data]/delay": "@data:delay.data",
+  "/ENTRY[entry]/DATA[data]/delay/@units": "@data:delay.unit"
 
 
 
