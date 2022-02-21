@@ -94,7 +94,7 @@ so such match is counted as a measure of the fit
 """
     # count leading capitals
     counting = 0
-    while counting < len(name) and name[counting] >= 'A' and name[counting] <= 'Z':
+    while counting < len(name) and name[counting].upper() == name[counting]:
         counting += 1
     # if potential fit
     if counting == len(name) or hdf_name.endswith(name[counting:]):
@@ -247,7 +247,7 @@ def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_ty
         hdf_name - hdf name
     """
     for child in nxdl_elem:
-        if "name" in child.attrib and child.attrib["name"] == name:
+        if 'name' in child.attrib and child.attrib['name'] == name:
             child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
             return child
 
@@ -413,7 +413,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     for group in path.split('/')[1:]:
         level = level + 1
         hdf_name = hdf_path[level]
-        if level < len(hdf_path)-1:
+        if level < len(hdf_path) - 1:
             act_nexus_type = 'group'
         else:
             act_nexus_type = 'field' if isinstance(hdf_node, h5py.Dataset) else 'group'
@@ -738,6 +738,13 @@ def get_default_plotable(root, logger):
     logger.info('')
     logger.info('Signal has been identified: ' + signal.name)
     process_node(signal, signal.name, None, logger, False)
+    # check auxiliary_signals
+    aux = nxdata.attrs.get('auxiliary_signals')
+    if aux is not None:
+        if isinstance(aux, str):
+            aux = [aux]
+        for asig in aux:
+            logger.info('Further auxiliary signal has been identified: %s' % (asig))
     dim = len(signal.shape)
     # axes
     axes = []
@@ -823,28 +830,29 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
     """Gets either single or multiple axes from the NXDL"""
     try:
         # single axis is defined
-        if ax_datasets is str:
+        if isinstance(ax_datasets, str):
             # explicite definition of dimension number
             ind = nxdata.attrs.get(ax_datasets + '_indices')
             if ind and ind is int:
                 if ind == a_item:
-                    ax_list.append(nxdata[nxdata[ax_datasets]])
+                    ax_list.append(nxdata[ax_datasets])
             # positional determination of the dimension number
             elif a_item == 0:
-                ax_list.append(nxdata[nxdata[ax_datasets]])
+                ax_list.append(nxdata[ax_datasets])
         # multiple axes are listed
         else:
             # explicite definition of dimension number
             for aax in ax_datasets:
                 ind = nxdata.attrs.get(aax + '_indices')
-                if ind and ind is int:
+                if ind and isinstance(ind, int):
                     if ind == a_item:
-                        ax_list.append(nxdata[nxdata[aax]])
+                        ax_list.append(nxdata[aax])
             # positional determination of the dimension number
             if not ax_list:
                 ax_list.append(nxdata[ax_datasets[a_item]])
     except KeyError:
         pass
+    return ax_list
 
 
 def axis_helper(dim, nxdata, signal, axes, logger):
@@ -855,7 +863,7 @@ def axis_helper(dim, nxdata, signal, axes, logger):
         ax_list = []
         # primary axes listed in attribute axes
         ax_datasets = nxdata.attrs.get("axes")
-        get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list)
+        ax_list = get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list)
         # check for corresponding AXISNAME_indices
         for attr in nxdata.attrs.keys():
             if attr.endswith('_indices') and nxdata.attrs[attr] == a_item and \
@@ -867,7 +875,7 @@ def axis_helper(dim, nxdata, signal, axes, logger):
             try:
                 ax_datasets = signal.attrs.get("axes").split(':')
                 ax_list.append(nxdata[ax_datasets[a_item]])
-            except KeyError:
+            except (KeyError, AttributeError):
                 pass
         # check for axis/primary specifications
         if not ax_list:
