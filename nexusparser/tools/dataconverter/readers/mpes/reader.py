@@ -139,11 +139,12 @@ def iterate_dictionary(dic, key_string):
         raise KeyError
 
 
-def rgetattr(key, obj, attr):
+def rgetattr(obj, attr):
     def _getattr(obj, attr):
         return getattr(obj, attr)
-    if "_indices" in key:
-        return str(obj.dims.index(f"{attr}"))
+    if "index" in attr:
+        ax = attr.split(".")[0]
+        return str(obj.dims.index(f"{ax}"))
     else:
         return reduce(_getattr, [obj] + attr.split('.'))
 
@@ -181,7 +182,7 @@ class MPESReader(BaseReader):
                 # Filling in the data and axes along with units from xarray
                 if precursor == '@data':
                     try:
-                        template[k] = rgetattr(key=k, obj=x_array_loaded, attr=value)
+                        template[k] = rgetattr(obj=x_array_loaded, attr=value)
                         if k.split('/')[-1] == '@axes':
                             template[k] = list(template[k])
 
