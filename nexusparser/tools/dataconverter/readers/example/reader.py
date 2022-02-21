@@ -68,7 +68,8 @@ class ExampleReader(BaseReader):
         my_ext_link_dict = {"external_link":
                             f"{os.path.dirname(__file__)}/../../../../../tests/"
                             f"data/tools/dataconverter/readers/mpes/xarray_saved_small.h5",
-                            "path_to_dataset": "/axes/ax3"}
+                            "path_to_dataset":
+                            "/axes/ax3"}
         template["/ENTRY[entry]/test_ext_link/external_link"] = my_ext_link_dict
 
         # virtual datasets

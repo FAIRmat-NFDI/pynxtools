@@ -96,15 +96,11 @@ Several cases can be encoutered:
                 vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 2]
                 layout[:] = vsource
                 grp.create_virtual_dataset(f"psi_{angle}_vds", layout, fillvalue=0)
-                initial += counts[index]
-            initial = 0
-            for index, angle in enumerate(unique_angles):
+
                 vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 3]
                 layout[:] = vsource
                 grp.create_virtual_dataset(f"delta_{angle}_vds", layout, fillvalue=0)
-                initial += counts[index]
-            initial = 0
-            for index, angle in enumerate(unique_angles):
+
                 vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 0]
                 layout[:] = vsource
                 grp.create_virtual_dataset(f"wavelenght_{angle}_vds", layout, fillvalue=0)
