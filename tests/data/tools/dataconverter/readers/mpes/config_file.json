@@ -131,10 +131,24 @@
   "/ENTRY[entry]/SAMPLE[sample]/bias": "@attrs:metadata/file/KTOF:Lens:Sample:VSet",
   "/ENTRY[entry]/SAMPLE[sample]/bias/@units": "V",
 
+  "/ENTRY[entry]/PROCESS[process]/DISTORTION[distortion]/applied": true,
+  "/ENTRY[entry]/PROCESS[process]/DISTORTION[distortion]/symmetry": "@attrs:metadata/momentum_correction/rotsym",
+  "/ENTRY[entry]/PROCESS[process]/DISTORTION[distortion]/original_centre": "@attrs:metadata/momentum_correction/pcent",
+  "/ENTRY[entry]/PROCESS[process]/DISTORTION[distortion]/original_points_x": "@attrs:metadata/momentum_correction/pouter_x",
+  "/ENTRY[entry]/PROCESS[process]/DISTORTION[distortion]/original_points_y": "@attrs:metadata/momentum_correction/pouter_y",
+
+  "/ENTRY[entry]/PROCESS[process]/REGISTRATION[registration]/applied": true,
+  "/ENTRY[entry]/PROCESS[process]/REGISTRATION[registration]/new_centre": "@attrs:metadata/momentum_correction/BZcenter",
+  "/ENTRY[entry]/PROCESS[process]/REGISTRATION[registration]/rotation_centre": "@attrs:metadata/momentum_correction/adjust_params/center",
 
   "/ENTRY[entry]/PROCESS[process]/calculated_energy": "@data:energy.data",
   "/ENTRY[entry]/PROCESS[process]/calculated_energy/@units": "eV",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/applied": true,
+  "/ENTRY[entry]/PROCESS[process]/energy_calibration/coefficients": "@attrs:metadata/energy_correction/calibration/coeffs",
+  "/ENTRY[entry]/PROCESS[process]/energy_calibration/offset": "@attrs:metadata/energy_correction/calibration/offset",
+  "/ENTRY[entry]/PROCESS[process]/energy_calibration/calibrated_axis": "@attrs:metadata/energy_correction/calibration/axis",
+
+  "/ENTRY[entry]/PROCESS[process]/momentum_calibration/applied": true,
 
   "/ENTRY[entry]/DATA[data]/@axes": "@data:dims",
   "/ENTRY[entry]/DATA[data]/@kx_indices": "@data:kx.index",
