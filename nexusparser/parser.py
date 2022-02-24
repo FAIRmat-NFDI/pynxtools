@@ -193,8 +193,7 @@ class NexusParser(MatchingParser):
         logger.addHandler(stdout_handler)
 
         self.archive = archive
-        # TO DO ask Markus S. whether to disable or not this pylint error
-        self.archive.m_create(nexus.Nexus)  # pylint: disable=no-member
+        self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
         self.nxroot = self.archive.nexus
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])
