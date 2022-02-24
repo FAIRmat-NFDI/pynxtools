@@ -16,7 +16,8 @@
     "python.linting.mypyArgs": [
         "--ignore-missing-imports",
         "--follow-imports=silent",
-        "--no-strict-optional"
+        "--no-strict-optional",
+        "--show-error-codes"
     ],
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
