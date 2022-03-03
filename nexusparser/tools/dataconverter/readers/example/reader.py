@@ -20,9 +20,6 @@ import os
 from typing import Tuple
 import json
 
-import h5py
-import numpy as np
-
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 
@@ -65,28 +62,28 @@ class ExampleReader(BaseReader):
         template["/ENTRY[entry]/test_int_link/internal_link"] = my_int_link_dict
 
         # external links
-        my_ext_link_dict = {"external_link":
+        my_ext_link_dict = {"external_link": "/axes/ax3",
+                            "file_link":
                             f"{os.path.dirname(__file__)}/../../../../../tests/"
-                            f"data/tools/dataconverter/readers/mpes/xarray_saved_small.h5",
-                            "path_to_dataset":
-                            "/axes/ax3"}
+                            f"data/tools/dataconverter/readers/mpes/xarray_saved_small.h5"
+                            }
         template["/ENTRY[entry]/test_ext_link/external_link"] = my_ext_link_dict
 
-        # virtual datasets
+        # virtual datasets concatenation
         my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
                       f"data/tools/dataconverter/readers/mpes")
-        my_dataset_to_concatenate = {"source_file_path":
-                                     [f"{my_path}/xarray_saved_small.h5",
-                                      f"{my_path}/xarray_saved_small.h5",
-                                      f"{my_path}/xarray_saved_small.h5"
-                                      ],
-                                     "dataset_path":
-                                     ["/axes/ax0",
-                                      "/axes/ax1",
-                                      "/axes/ax2"
-                                      ]
-                                     }
-        template["/ENTRY[entry]/test_virtual_dataset/only_file_provided"] = my_dataset_to_concatenate
+        my_datasets = {"external_links_to_concatenate":
+                       ["/axes/ax0",
+                        "/axes/ax1",
+                        "/axes/ax2"
+                        ],
+                       "file_links":
+                       [f"{my_path}/xarray_saved_small.h5",
+                        f"{my_path}/xarray_saved_small.h5",
+                        f"{my_path}/xarray_saved_small.h5"
+                        ]
+                       }
+        template["/ENTRY[entry]/test_virtual_dataset/only_file_provided"] = my_datasets
 
         # sh = h5py.File(file_names_to_concatenate[0], 'r')[entry_key].shape
         # layout = h5py.VirtualLayout(shape=(len(file_names_to_concatenate),) + sh,

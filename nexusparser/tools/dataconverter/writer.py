@@ -65,16 +65,41 @@ Several cases can be encoutered:
     if 'internal_link' in data.keys():
         grp[entry_name] = h5py.SoftLink(
             helpers.convert_data_dict_path_to_hdf5_path(data['internal_link']))
+    elif 'slice_column' in data.keys():
+        physical_dataset = h5py.File(data['file_link'],
+                                     'r')[data['external_link']]
+        if len(data['slice_row']) == 2:
+            length = data['slice_row'][1] - data['slice_row'][0]
+        else:
+            length = 1
+        start_row = data['slice_row'][0]
+        start_col = data['slice_column'][0]
+        if len(data['slice_row']) == 2:
+            end_row = data['slice_row'][1]
+        else:
+            end_row = data['slice_row'][0] + 1
+        if len(data['slice_column']) == 2:
+            end_col = data['slice_column'][1]
+        else:
+            end_col = data['slice_column'][0] + 1
+        layout = h5py.VirtualLayout(shape=(length,), dtype=np.float64)
+        vsource = h5py.VirtualSource(data['file_link'],
+                                     data['external_link'],
+                                     shape=(physical_dataset.shape[0], physical_dataset.shape[1])
+                                     )[start_row:end_row, start_col:end_col]
+        layout[:] = vsource
+        grp.create_virtual_dataset(entry_name, layout)
     elif 'external_link' in data.keys():
-        grp[entry_name] = h5py.ExternalLink(data['external_link'],
-                                            data['path_to_dataset']
+        grp[entry_name] = h5py.ExternalLink(data['file_link'],
+                                            data['external_link']
                                             )
-    elif 'source_file_path' in data.keys():
+    elif 'external_links_to_concatenate' in data.keys():
         total_length = 0
         sources = []
-        for index, source_file in enumerate(data['source_file_path']):
-            dataset_entry_key = data['dataset_path'][index]
-            lenght = h5py.File(source_file, 'r')[data['dataset_path'][index]].shape
+        for index, source_file in enumerate(data['file_links']):
+            dataset_entry_key = data['external_links_to_concatenate'][index]
+            lenght = h5py.File(source_file, 'r')[data['external_links_to_concatenate'][index]
+                                                 ].shape
             vsource = h5py.VirtualSource(source_file, dataset_entry_key, shape=lenght)
             total_length += vsource.shape[0]
             sources.append(vsource)
@@ -86,25 +111,8 @@ Several cases can be encoutered:
             layout[offset:offset + length] = vsource
             offset += length
         grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
-    elif 'technique' in data.keys():
-        if data['technique'] == 'ellipsometry':
-            my_angles = h5py.File(data['path'], 'r')['/my_test_vds'][:, 1]
-            unique_angles, counts = np.unique(my_angles, return_counts=True)
-            layout = h5py.VirtualLayout(shape=(counts[0],), dtype=np.float64)
-            initial = 0
-            for index, angle in enumerate(unique_angles):
-                vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 2]
-                layout[:] = vsource
-                grp.create_virtual_dataset(f"psi_{angle}_vds", layout, fillvalue=0)
 
-                vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 3]
-                layout[:] = vsource
-                grp.create_virtual_dataset(f"delta_{angle}_vds", layout, fillvalue=0)
-
-                vsource = h5py.VirtualSource(data['path'], '/my_test_vds', shape=(my_angles.shape[0], 6))[initial:initial + counts[index], 0]
-                layout[:] = vsource
-                grp.create_virtual_dataset(f"wavelenght_{angle}_vds", layout, fillvalue=0)
-                initial += counts[index]
+    return grp[entry_name]
 
 
 class Writer:
@@ -177,22 +185,20 @@ class Writer:
                     continue
 
                 entry_name = helpers.get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-
                 data = value if is_not_data_empty(value) else "NOT_PROVIDED"
 
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
 
                     if isinstance(data, dict):
-                        handle_dicts_entries(data, grp, entry_name)
+                        dataset = handle_dicts_entries(data, grp, entry_name)
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
-                        units_key = f"{path}/@units"
-
-                        if units_key in self.data.keys() and self.data[units_key] is not None:
-                            dataset.attrs["units"] = self.data[units_key]
-                        else:
-                            dataset.attrs["units"] = "NOT_PROVIDED"
+                    units_key = f"{path}/@units"
+                    if units_key in self.data.keys() and self.data[units_key] is not None:
+                        dataset.attrs["units"] = self.data[units_key]
+                    else:
+                        dataset.attrs["units"] = "NOT_PROVIDED"
                 else:
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data
