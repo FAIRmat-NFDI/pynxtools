@@ -72,21 +72,24 @@ Several cases can be encoutered:
             length = data['slice_row'][1] - data['slice_row'][0]
         else:
             length = 1
-        start_row = data['slice_row'][0]
-        start_col = data['slice_column'][0]
+        row_and_col_shape = {}
+        row_and_col_shape['start_row'] = data['slice_row'][0]
+        row_and_col_shape['start_col'] = data['slice_column'][0]
         if len(data['slice_row']) == 2:
-            end_row = data['slice_row'][1]
+            row_and_col_shape['end_row'] = data['slice_row'][1]
         else:
-            end_row = data['slice_row'][0] + 1
+            row_and_col_shape['end_row'] = data['slice_row'][0] + 1
         if len(data['slice_column']) == 2:
-            end_col = data['slice_column'][1]
+            row_and_col_shape['end_col'] = data['slice_column'][1]
         else:
-            end_col = data['slice_column'][0] + 1
+            row_and_col_shape['end_col'] = data['slice_column'][0] + 1
         layout = h5py.VirtualLayout(shape=(length,), dtype=np.float64)
         vsource = h5py.VirtualSource(data['file_link'],
                                      data['external_link'],
                                      shape=(physical_dataset.shape[0], physical_dataset.shape[1])
-                                     )[start_row:end_row, start_col:end_col]
+                                     )[row_and_col_shape['start_row']:row_and_col_shape['end_row'],
+                                       row_and_col_shape['start_col']:row_and_col_shape['end_col']
+                                       ]
         layout[:] = vsource
         grp.create_virtual_dataset(entry_name, layout)
     elif 'external_link' in data.keys():

@@ -70,10 +70,10 @@ def load_as_array(my_file, header):
 
 
 def slice_shape_definition(my_numpy_array):
-    """This is an ellipsometry-specific slicing procedure of data.
+    """This is an ellipsometry-specific data slicing procedure.
 
 The virtual datasets are created in the NeXus file
-by the writer.py according to the shapes we define here.
+by the writer.py according to the shapes defined in this function.
 
 The my_numpy_array[:, 1] column of source array my_numpy_array contains the incidence angles,
 it is read to obtain the values of incidence_angles and their index in the source array.
@@ -105,10 +105,10 @@ These parameters are stored in lists and then passed to the writer.py
 def virtual_dataset_generation(my_source_file, my_numpy_array):
     """This is an ellipsometry-specific slicing procedure of data.
 
-The virtual datasets are created IN THE ROOT LEVEL of SOURCE FILE
-according to the shapes we define here.
+The virtual datasets are created in this function IN THE ROOT LEVEL of SOURCE FILE
+according to the shapes defined here.
 
-The strategy Is the following:
+The procedure is the following:
 An array of data is saved in a HDF file as a dataset.
 Virtual datasets are created in the same file in the root level.
 Virtual datasets are then linked in the NeXus file as external links by the writer.py.
@@ -173,7 +173,7 @@ class EllipsometryReader(BaseReader):
     supported_nxdls = ["NXellipsometry"]
 
     def read_and_populate_template(self, file_paths, template):
-        """This function is creating and populating the header dictionary reading the yaml file.
+        """This function creates and populates the header dictionary reading the yaml file.
 
 The template dictionary is then populated according to the content of header dictionary.
 """
@@ -214,16 +214,27 @@ The template dictionary is then populated according to the content of header dic
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary.
 
-Two handling of virtual datasets are implemented:
+Two handlings of virtual datasets are implemented:
 
 METHOD 1: virtual datasets are in the source file and they are linked via external link
 (requires definition of virtual datasets via "virtual_dataset_generation").
 It is usefull for particular slicings that are not accounted in method 2
 
+The template entry is filled with a dictionary containing the following keys:
+- external_link: the dataset path in the external data file
+- file_link: the path of the external data file
+
 METHOD 2: virtual dataset are created inside the NeXus file
 (requires definition of the slices' shapes we want to pick from the whole dataset
 via "slice_shape_definition").
 
+The template entry is filled with a dictionary containing the following keys:
+- external_link: the dataset path in the external data file
+- file_link: the path of the external data file
+- slice_column: a two-element list containing the start and the end column to cut
+                if one element is provided, it is intended as the only column to cut
+- slice_row: a two-element list containing the start and the end row to cut
+             if one element is provided, it is intended as the only row to cut
 """
         if not file_paths:
             raise Exception("No input files were given to Ellipsometry Reader.")
@@ -265,7 +276,7 @@ via "slice_shape_definition").
                                                              interval_list[index + 1]
                                                              ]
                                                             }
-            template[f"/ENTRY[entry]/plot/{wavy}_test2/@units"] = "degrees"
+            template[f"/ENTRY[entry]/plot/{wavy}_test2/@units"] = "angstrom"
         for index, psi in enumerate(psilist):
             template[f"/ENTRY[entry]/plot/{psi}_test2"] = {"external_link":
                                                            f"/single_array_data/ellips_data",
@@ -300,7 +311,7 @@ via "slice_shape_definition").
         template["/ENTRY[entry]/plot/@axes"] = "wavelength_50deg_test2"
         if len(psilist) > 1:
             test_psi = [s + "_test2" for s in psilist[1:]]
-            test_delta = [s + "_test2" for s in deltalist[1:]]
+            test_delta = [s + "_test2" for s in deltalist]
             template["/ENTRY[entry]/plot/@auxiliary_signals"] = test_psi + test_delta
         else:
             template["/ENTRY[entry]/plot/@auxiliary_signals"] = [s + "_test2" for s in deltalist]
