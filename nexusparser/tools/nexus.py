@@ -384,6 +384,10 @@ def chk_nxdataaxis(hdf_node, name, loger):
     return chk_nxdataaxis_v2(hdf_node, name)
 
 
+def get_node_docname(elem):
+    return str(elem.get('nxdlbase').split('/')[-1] + ":" + elem.get('nxdlpath'))
+
+
 def get_nxdl_doc(hdf_node, loger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)"""
     # new way: retrieve multiple inherited base classes
@@ -394,7 +398,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         loger.info("classpath: " + str(class_path))
         loger.info("NOT IN SCHEMA" if elem is None else
                    "classes:\n" + "\n".join
-                   (str(e.get('nxdlbase').split('/')[-1] + ":" + e.get('nxdlpath')) for e in elist))
+                   (get_node_docname(e) for e in elist))
     # old solution with a single elem instead of using elist
     path = get_nx_class_path(hdf_node)
     req_str = None
@@ -495,7 +499,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
             sdoc = get_nxdl_child(base_elem, 'enumeration', go_base=False)
             if sdoc is not None:
                 if doc:
-                    loger.info("enumeration:")
+                    loger.info("enumeration (" + get_node_docname(base_elem) + "):")
                 for item in sdoc:
                     if get_local_name_from_xml(item) == 'item':
                         if doc:
@@ -506,6 +510,7 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         for base_elem in elist if not attr else [elem]:
             sdoc = get_nxdl_child(base_elem, 'doc', go_base=False)
             if doc:
+                loger.info("documentation (" + get_node_docname(base_elem) + "):")
                 loger.info(sdoc.text if sdoc is not None else "")
     return (req_str, get_nxdl_entry(hdf_node), nxdl_path)
 
