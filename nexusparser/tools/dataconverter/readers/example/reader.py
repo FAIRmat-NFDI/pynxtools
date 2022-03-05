@@ -58,29 +58,24 @@ class ExampleReader(BaseReader):
         template["/ENTRY[entry]/program_name"] = "None"
 
         # internal links
-        my_int_link_dict = {"internal_link": "/ENTRY[entry]/NXODD_name/posint_value"}
+        my_int_link_dict = {"link": "/entry/NXODD_name/posint_value"}
         template["/ENTRY[entry]/test_int_link/internal_link"] = my_int_link_dict
 
         # external links
-        my_ext_link_dict = {"external_link": "/axes/ax3",
-                            "file_link":
+        my_ext_link_dict = {"link":
                             f"{os.path.dirname(__file__)}/../../../../../tests/"
                             f"data/tools/dataconverter/readers/mpes/xarray_saved_small.h5"
+                            f":/axes/ax3"
                             }
         template["/ENTRY[entry]/test_ext_link/external_link"] = my_ext_link_dict
 
         # virtual datasets concatenation
         my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
                       f"data/tools/dataconverter/readers/mpes")
-        my_datasets = {"external_links_to_concatenate":
-                       ["/axes/ax0",
-                        "/axes/ax1",
-                        "/axes/ax2"
-                        ],
-                       "file_links":
-                       [f"{my_path}/xarray_saved_small.h5",
-                        f"{my_path}/xarray_saved_small.h5",
-                        f"{my_path}/xarray_saved_small.h5"
+        my_datasets = {"link":
+                       [f"{my_path}/xarray_saved_small.h5:/axes/ax0",
+                        f"{my_path}/xarray_saved_small.h5:/axes/ax1",
+                        f"{my_path}/xarray_saved_small.h5:/axes/ax2"
                         ]
                        }
         template["/ENTRY[entry]/test_virtual_dataset/only_file_provided"] = my_datasets

@@ -247,28 +247,30 @@ The template entry is filled with a dictionary containing the following keys:
                                                                         my_numpy_array
                                                                         )
         for wavelength in wavelengthlist:
-            template[f"/ENTRY[entry]/plot/{wavelength}"] = {"external_link": f"/{wavelength}",
-                                                            "file_link": self.my_source_file
+            template[f"/ENTRY[entry]/plot/{wavelength}"] = {"link":
+                                                            f"{self.my_source_file}"
+                                                            f":/{wavelength}"
                                                             }
             template[f"/ENTRY[entry]/plot/{wavelength}/@units"] = "angstrom"
         for psi in psilist:
-            template[f"/ENTRY[entry]/plot/{psi}"] = {"external_link": f"/{psi}",
-                                                     "file_link": self.my_source_file
+            template[f"/ENTRY[entry]/plot/{psi}"] = {"link":
+                                                     f"{self.my_source_file}"
+                                                     f":/{psi}"
                                                      }
             template[f"/ENTRY[entry]/plot/{psi}/@units"] = "degrees"
         for delta in deltalist:
-            template[f"/ENTRY[entry]/plot/{delta}"] = {"external_link": f"/{delta}",
-                                                       "file_link": self.my_source_file
+            template[f"/ENTRY[entry]/plot/{delta}"] = {"link":
+                                                       f"{self.my_source_file}"
+                                                       f":/{delta}"
                                                        }
             template[f"/ENTRY[entry]/plot/{delta}/@units"] = "degrees"
 
         # METHOD 2:
         wavelengthlist, psilist, deltalist, interval_list = slice_shape_definition(my_numpy_array)
         for index, wavy in enumerate(wavelengthlist):
-            template[f"/ENTRY[entry]/plot/{wavy}_test2"] = {"external_link":
-                                                            f"/single_array_data/ellips_data",
-                                                            "file_link":
-                                                            self.my_source_file,
+            template[f"/ENTRY[entry]/plot/{wavy}_test2"] = {"link":
+                                                            f"{self.my_source_file}"
+                                                            f":/single_array_data/ellips_data",
                                                             "slice_column":
                                                             [0],
                                                             "slice_row":
@@ -278,10 +280,9 @@ The template entry is filled with a dictionary containing the following keys:
                                                             }
             template[f"/ENTRY[entry]/plot/{wavy}_test2/@units"] = "angstrom"
         for index, psi in enumerate(psilist):
-            template[f"/ENTRY[entry]/plot/{psi}_test2"] = {"external_link":
-                                                           f"/single_array_data/ellips_data",
-                                                           "file_link":
-                                                           self.my_source_file,
+            template[f"/ENTRY[entry]/plot/{psi}_test2"] = {"link":
+                                                           f"{self.my_source_file}"
+                                                           f":/single_array_data/ellips_data",
                                                            "slice_column":
                                                            [2],
                                                            "slice_row":
@@ -291,10 +292,9 @@ The template entry is filled with a dictionary containing the following keys:
                                                            }
             template[f"/ENTRY[entry]/plot/{psi}_test2/@units"] = "degrees"
         for index, delta in enumerate(deltalist):
-            template[f"/ENTRY[entry]/plot/{delta}_test2"] = {"external_link":
-                                                             f"/single_array_data/ellips_data",
-                                                             "file_link":
-                                                             self.my_source_file,
+            template[f"/ENTRY[entry]/plot/{delta}_test2"] = {"link":
+                                                             f"{self.my_source_file}"
+                                                             f":/single_array_data/ellips_data",
                                                              "slice_column":
                                                              [3],
                                                              "slice_row":

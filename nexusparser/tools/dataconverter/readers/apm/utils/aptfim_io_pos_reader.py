@@ -54,12 +54,12 @@ class ReadPosFileFormat():
         #               'Reconstructed position along the z-axis (nm)',
         #               'Reconstructed mass-to-charge-state ratio (Da)']
 
-    def get_reconstructed_positions(self):
-        """Read xyz columns."""
+    def get_reconstructed_positions(self):  # pylint: disable=R0801
+        """Read xyz columns."""  # pylint: disable=R0801
         # self.pos['reconstructed_positions'] = NxField()
-        xyz = NxField()
-        xyz.value = np.zeros([self.number_of_events, 3], np.float32)
-        xyz.unit = 'nm'
+        xyz = NxField()  # pylint: disable=R0801
+        xyz.value = np.zeros([self.number_of_events, 3], np.float32)  # pylint: disable=R0801
+        xyz.unit = 'nm'  # pylint: disable=R0801
 
         xyz.value[:, 0] = \
             get_memory_mapped_data(self.filename, '>f4',
@@ -72,12 +72,12 @@ class ReadPosFileFormat():
                                    2 * 4, 4 * 4, self.number_of_events)  # z
         return xyz
 
-    def get_mass_to_charge(self):
-        """Read mass-to-charge column."""
+    def get_mass_to_charge(self):  # pylint: disable=R0801
+        """Read mass-to-charge column."""  # pylint: disable=R0801
         # self.pos['mass_to_charge_state_ratios'] = NxField()
-        m_n = NxField()
-        m_n.value = np.zeros([self.number_of_events, 1], np.float32)
-        m_n.unit = 'Da'
+        m_n = NxField()  # pylint: disable=R0801
+        m_n.value = np.zeros([self.number_of_events, 1], np.float32)  # pylint: disable=R0801
+        m_n.unit = 'Da'  # pylint: disable=R0801
 
         m_n.value[:, 0] = \
             get_memory_mapped_data(self.filename, '>f4',

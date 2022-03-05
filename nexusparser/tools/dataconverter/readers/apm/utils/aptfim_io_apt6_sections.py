@@ -226,8 +226,8 @@ class AptFileSectionMetadata():
         self.accepted_units = value
 
     @classmethod
-    def get_numpy_struct(cls) -> np.dtype:
-        """Create customized numpy struct to read a section header at once."""
+    def get_numpy_struct(cls) -> np.dtype:  # pylint: disable=R0801
+        """Create customized numpy struct to read a section header at once."""  # pylint: disable=R0801
         return np.dtype([('cSignature', np.uint8, (4,)),
                          ('iHeaderSize', np.int32),
                          ('iHeaderVersion', np.int32),
@@ -240,7 +240,7 @@ class AptFileSectionMetadata():
                          ('iRecordSize', np.int32),
                          ('wcDataUnit', np.uint16, 16),
                          ('llRecordCount', np.uint64),
-                         ('llByteCount', np.uint64)])
+                         ('llByteCount', np.uint64)])  # pylint: disable=R0801
 
     def get_ametek_size(self) -> np.uint64:
         """Compute how many byte raw data in bytes to read from AMETEK defs."""

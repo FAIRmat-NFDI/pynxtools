@@ -54,67 +54,99 @@ def get_namespace(element) -> str:
     return element.tag[element.tag.index("{"):element.tag.rindex("}") + 1]
 
 
-def handle_dicts_entries(data, grp, entry_name):
+def split_link(data, output_path):
+    """Handle the special syntax used in the reader for the dataset links.
+
+Split the file:path variable in two variables file and path.
+If multiple datasets are provided, the function returns two lists"""
+
+    if not isinstance(data['link'], list):
+        if ':' in data['link']:
+            file = data['link'].split(":", 1)[0]
+            path = data['link'].split(":", 1)[1]
+        elif ':' not in data['link']:
+            file = output_path
+            path = data['link']
+    else:
+        file = []
+        path = []
+        for dataset in data['link']:
+            if ':' in dataset:
+                file.append(dataset.split(":", 1)[0])
+                path.append(dataset.split(":", 1)[1])
+            elif ':' not in data['link']:
+                file.append(output_path)
+                path.append(dataset)
+
+    return file, path
+
+
+def define_slices_intervals(data):
+    """Handle the start and end value of rows and cols.
+
+"""
+    row_and_col_shape = {}
+    row_and_col_shape['start_row'] = data['slice_row'][0]
+    row_and_col_shape['start_col'] = data['slice_column'][0]
+    if len(data['slice_row']) == 2:
+        row_and_col_shape['end_row'] = data['slice_row'][1]
+    else:
+        row_and_col_shape['end_row'] = data['slice_row'][0] + 1
+    if len(data['slice_column']) == 2:
+        row_and_col_shape['end_col'] = data['slice_column'][1]
+    else:
+        row_and_col_shape['end_col'] = data['slice_column'][0] + 1
+    return row_and_col_shape
+
+
+def handle_dicts_entries(data, grp, entry_name, output_path):
     """Handke function for dictionaries found as value of the nexus file.
 
 Several cases can be encoutered:
+- Data to slice and place in virtual datasets
+- Concatenate dataset in one virtual dataset
 - Internal links
 - External links
-- Virtual data set
 """
-    if 'internal_link' in data.keys():
-        grp[entry_name] = h5py.SoftLink(
-            helpers.convert_data_dict_path_to_hdf5_path(data['internal_link']))
-    elif 'slice_column' in data.keys():
-        physical_dataset = h5py.File(data['file_link'],
-                                     'r')[data['external_link']]
+    file, path = split_link(data, output_path)
+    # generate virtual datasets from slices
+    if 'slice_column' in data.keys():
         if len(data['slice_row']) == 2:
             length = data['slice_row'][1] - data['slice_row'][0]
         else:
             length = 1
-        row_and_col_shape = {}
-        row_and_col_shape['start_row'] = data['slice_row'][0]
-        row_and_col_shape['start_col'] = data['slice_column'][0]
-        if len(data['slice_row']) == 2:
-            row_and_col_shape['end_row'] = data['slice_row'][1]
-        else:
-            row_and_col_shape['end_row'] = data['slice_row'][0] + 1
-        if len(data['slice_column']) == 2:
-            row_and_col_shape['end_col'] = data['slice_column'][1]
-        else:
-            row_and_col_shape['end_col'] = data['slice_column'][0] + 1
+        row_and_col_shape = define_slices_intervals(data)
         layout = h5py.VirtualLayout(shape=(length,), dtype=np.float64)
-        vsource = h5py.VirtualSource(data['file_link'],
-                                     data['external_link'],
-                                     shape=(physical_dataset.shape[0], physical_dataset.shape[1])
+        vsource = h5py.VirtualSource(file, path,
+                                     shape=(h5py.File(file, 'r')[path].shape[0],
+                                            h5py.File(file, 'r')[path].shape[1])
                                      )[row_and_col_shape['start_row']:row_and_col_shape['end_row'],
                                        row_and_col_shape['start_col']:row_and_col_shape['end_col']
                                        ]
         layout[:] = vsource
         grp.create_virtual_dataset(entry_name, layout)
-    elif 'external_link' in data.keys():
-        grp[entry_name] = h5py.ExternalLink(data['file_link'],
-                                            data['external_link']
-                                            )
-    elif 'external_links_to_concatenate' in data.keys():
+    # multiple datasets to concatenate
+    elif 'link' in data.keys() and isinstance(data['link'], list):
         total_length = 0
         sources = []
-        for index, source_file in enumerate(data['file_links']):
-            dataset_entry_key = data['external_links_to_concatenate'][index]
-            lenght = h5py.File(source_file, 'r')[data['external_links_to_concatenate'][index]
-                                                 ].shape
-            vsource = h5py.VirtualSource(source_file, dataset_entry_key, shape=lenght)
+        for index, source_file in enumerate(file):
+            vsource = h5py.VirtualSource(source_file,
+                                         path[index],
+                                         shape=h5py.File(source_file, 'r')[path[index]].shape)
             total_length += vsource.shape[0]
             sources.append(vsource)
-        layout = h5py.VirtualLayout(shape=total_length,
-                                    dtype=np.float64)
+        layout = h5py.VirtualLayout(shape=total_length, dtype=np.float64)
         offset = 0
         for vsource in sources:
-            length = vsource.shape[0]
-            layout[offset:offset + length] = vsource
-            offset += length
+            layout[offset:offset + vsource.shape[0]] = vsource
+            offset += vsource.shape[0]
         grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
-
+    # internal and external links
+    elif 'link' in data.keys():
+        if ':' not in data['link']:
+            grp[entry_name] = h5py.SoftLink(path)  # internal link
+        else:
+            grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     return grp[entry_name]
 
 
@@ -194,7 +226,7 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
 
                     if isinstance(data, dict):
-                        dataset = handle_dicts_entries(data, grp, entry_name)
+                        dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
                     units_key = f"{path}/@units"
