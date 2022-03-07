@@ -77,6 +77,8 @@ not found in file'
     return [lines, lines_index]
 
 
+@pytest.mark.parametrize(
+)
 def compare_matches(ref_xml_file, test_yml_file, test_xml_file, desired_matches):
     """Check if a new xml file is generated
 and if test xml file is equal to reference xml file
@@ -169,7 +171,8 @@ The xml trees of the two files are then compared.
     """
     ref_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft.nxdl.xml'
     test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml'
-    test_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.nxdl.xml'
+    test_xml_file = 'tests/data/tools/yaml2nxdl_test_data/\
+Ref_NXellipsometry_base_draft_parsed.nxdl.xml'
     result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', ref_xml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_yml_file)
@@ -210,4 +213,3 @@ The xml trees of the two files are then compared.
     assert list(test_yml_tree) == list(ref_yml_tree), 'Ref YML and parsed YML \
 has not the same root entries!!'
     sys.stdout.write('Test on yml -> xml -> yml okay.\n')
-

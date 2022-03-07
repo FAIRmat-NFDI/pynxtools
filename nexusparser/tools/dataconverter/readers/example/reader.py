@@ -59,7 +59,7 @@ class ExampleReader(BaseReader):
 
         # internal links
         my_int_link_dict = {"link": "/entry/NXODD_name/posint_value"}
-        template["/ENTRY[entry]/test_int_link/internal_link"] = my_int_link_dict
+        template["/ENTRY[entry]/test_link/internal_link"] = my_int_link_dict
 
         # external links
         my_ext_link_dict = {"link":
@@ -67,7 +67,7 @@ class ExampleReader(BaseReader):
                             f"data/tools/dataconverter/readers/mpes/xarray_saved_small.h5"
                             f":/axes/ax3"
                             }
-        template["/ENTRY[entry]/test_ext_link/external_link"] = my_ext_link_dict
+        template["/ENTRY[entry]/test_link/external_link"] = my_ext_link_dict
 
         # virtual datasets concatenation
         my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
@@ -78,7 +78,7 @@ class ExampleReader(BaseReader):
                         f"{my_path}/xarray_saved_small.h5:/axes/ax2"
                         ]
                        }
-        template["/ENTRY[entry]/test_virtual_dataset/only_file_provided"] = my_datasets
+        template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = my_datasets
 
         # sh = h5py.File(file_names_to_concatenate[0], 'r')[entry_key].shape
         # layout = h5py.VirtualLayout(shape=(len(file_names_to_concatenate),) + sh,

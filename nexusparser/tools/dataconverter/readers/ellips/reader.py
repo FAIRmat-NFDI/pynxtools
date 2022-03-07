@@ -193,9 +193,30 @@ The template dictionary is then populated according to the content of header dic
         my_numpy_array = whole_data.to_numpy()[0:energy, 1:].astype("float64")
         del whole_data["type"]
         # measured_data is a required field
-        header["measured_data"] = my_numpy_array
-        for k in whole_data:
-            header[k] = whole_data[k].to_numpy()[0:energy].astype("float64")
+        header["measured_data"] = {"link":
+                                   f"{self.my_source_file}"
+                                   f":/single_array_data/ellips_data"
+                                   }
+        # for k in whole_data:
+        #    print('hey', k)
+        #    header[k] = whole_data[k].to_numpy()[0:energy].astype("float64")
+        header["wavelength"] = {"link":
+                                f"{self.my_source_file}"
+                                f":/single_array_data/ellips_data",
+                                "slice_column":
+                                [0],
+                                "slice_row":
+                                [0, energy]
+                                }
+        header["angle_of_incidence"] = {"link":
+                                        f"{self.my_source_file}"
+                                        f":/single_array_data/ellips_data",
+                                        "slice_column":
+                                        [1],
+                                        "slice_row":
+                                        [0, energy]
+                                        }
+
         if "calibration_filename" in header:
             calibration = load_as_array(header["calibration_filename"], header)
             for k in calibration:
