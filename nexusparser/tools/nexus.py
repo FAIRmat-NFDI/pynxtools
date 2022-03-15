@@ -1,7 +1,5 @@
 """Read files from different format and print it in a standard Nexus format
 """
-# Nexus definitions in github: https://github.com/nexusformat/definitions
-# to be cloned under os.environ['NEXUS_DEF_PATH']
 
 import os
 import xml.etree.ElementTree as ET
@@ -160,7 +158,7 @@ def get_node_name(node):
     '''Node - xml node. Returns html documentation name.
     Either as specified by the 'name' or taken from the type (nx_class).
     Note that if only class name is available, the NX prefix is removed and
-    the string is coverted to UPPER case.'''
+    the string is converted to UPPER case.'''
     if 'name' in node.attrib.keys():
         name = node.attrib['name']
     else:
@@ -260,20 +258,25 @@ def get_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=N
     """Get the NXDL child node corresponding to a specific name
 (e.g. of an HDF5 node,or of a documentation) note that if child is not found in application
 definition, it also checks for the base classes"""
-    # search for posiible fits for hdf_nodes : skipped
+    # search for possible fits for hdf_nodes : skipped
     # only exact hits are returned when searching an nxdl child
     own_child = get_own_nxdl_child(nxdl_elem, name, class_type, hdf_name, nexus_type)
     if own_child is not None:
         return own_child
     if not go_base:
         return None
-    bc_name = get_nx_class(nxdl_elem)  # check in the base class
+    bc_name = get_nx_class(nxdl_elem)  # check in the base class, app def or contributed
     if bc_name[2] == '_':  # filter primitive types
         return None
     if bc_name == "group":  # Check if it is the root element. Then send to NXroot.nxdl.xml
         bc_name = "NXroot"
-    bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
-        f"base_classes{os.sep}{bc_name}.nxdl.xml"
+    for nxdl_folder in ['base_classes', 'contributed_definitions', 'applications']:
+        if os.path.exists(f"{get_nexus_definitions_path()}{os.sep}"
+                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
+            bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
+                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"
+    if not bc_filename:
+        raise ValueError('nxdl file not found in definitions folder!')
     bc_obj = ET.parse(bc_filename).getroot()
     bc_obj.set('nxdlbase', bc_filename)
     bc_obj.set('nxdlpath', '')
@@ -590,7 +593,7 @@ def get_enums(node):
 
 def add_base_classes(elist, nx_name=None, elem: ET.Element = None):
     """Add the base classes corresponsing to the last eleme in elist to the list. Note that if
-elist is empty, a nxdl file with the name of nx_name or a rather room elem is used if privded"""
+elist is empty, a nxdl file with the name of nx_name or a rather room elem is used if provided"""
     if elist and nx_name is None:
         nx_name = get_nx_class(elist[-1])
     if elist and nx_name and f"{nx_name}.nxdl.xml" in (e.get('nxdlbase') for e in elist):
@@ -626,6 +629,7 @@ def get_direct_child(nxdl_elem, html_name):
                 child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
                 child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
             return child
+    return None
 
 
 def get_best_child(nxdl_elem, hdf_name, hdf_class_name, nexus_type):
