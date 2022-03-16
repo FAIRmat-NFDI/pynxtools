@@ -89,12 +89,31 @@ def test_get_node_at_nxdl_path():
     node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
     assert node.attrib["type"] == "NXcollection"
 
+    nxdl_file_path = "nexusparser/definitions/applications/NXem_nion.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path("/ENTRY/em_lab/hadf/SCANBOX_EM", elem=elem)
+    assert node.attrib["type"] == "NXscanbox_em"
+
 
 def test_example():
     """Tests if parser can parse our example data
 
 """
     archive = EntryArchive()
+
+    # local_dir = os.path.abspath(os.path.dirname(__file__))
+    # example_data = os.path.join(local_dir, 'data/nexus_test_data/em0001.test.nxs')
+    # parser().parse(example_data, archive, logging.getLogger())
+    # assert archive.nexus.nx_application_em_nion.\
+    #     nx_group_ENTRY[0].nx_group_operator.nx_field_affiliation.nx_value ==
+    #     "Humboldt Universität zu Berlin"
+
+    # local_dir = os.path.abspath(os.path.dirname(__file__))
+    # example_data = os.path.join(local_dir, 'data/nexus_test_data/mpes.test.nxs')
+    # parser().parse(example_data, archive, logging.getLogger())
+    # assert archive.nexus.nx_application_em_nion.\
+    #     nx_group_ENTRY[0].nx_field_definition.nx_value == "NXmpes"
+
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
     parser().parse(example_data, archive, logging.getLogger())

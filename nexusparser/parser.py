@@ -73,16 +73,20 @@ def get_to_new_subsection(hdf_name, nxdef, nxdl_node, act_section):
     return (new_class, new_section)
 
 
-def get_value(hdf_value):
+def get_value(hdf_node):
     """Get value from hdl5 node
 
 """
+    hdf_value = hdf_node[...]
     if str(hdf_value.dtype) == 'bool':
         val = bool(hdf_value)
     elif hdf_value.dtype.kind in 'iufc':
         val = hdf_value
     else:
-        val = str(hdf_value.astype(str))
+        try:
+            val = str(hdf_value.astype(str))
+        except UnicodeDecodeError:
+            val = str(hdf_node[()].decode())
     return val
 
 
@@ -165,7 +169,7 @@ class NexusParser(MatchingParser):
                         print("Problem with storage!!!" + str(exc))
             else:
                 try:
-                    data_field = get_value(hdf_node[...])
+                    data_field = get_value(hdf_node)
                     if hdf_node[...].dtype.kind in 'iufc' and \
                             isinstance(data_field, np.ndarray) and \
                             data_field.size > 1:
@@ -189,8 +193,7 @@ class NexusParser(MatchingParser):
         logger.addHandler(stdout_handler)
 
         self.archive = archive
-        # TO DO ask Markus S. whether to disable or not this pylint error
-        self.archive.m_create(nexus.Nexus)  # pylint: disable=no-member
+        self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
         self.nxroot = self.archive.nexus
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])
