@@ -148,24 +148,24 @@
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/offset": "@attrs:metadata/energy_correction/calibration/offset",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/calibrated_axis": "@attrs:metadata/energy_correction/calibration/axis",
 
-  "/ENTRY[entry]/PROCESS[process]/momentum_calibration/applied": true,
+  "/ENTRY[entry]/PROCESS[process]/CALIBRATION[momentum_calibration]/applied": true,
 
   "/ENTRY[entry]/DATA[data]/@axes": "@data:dims",
-  "/ENTRY[entry]/DATA[data]/@kx_indices": "@data:kx.index",
-  "/ENTRY[entry]/DATA[data]/@ky_indices": "@data:ky.index",
-  "/ENTRY[entry]/DATA[data]/@energy_indices": "@data:energy.index",
-  "/ENTRY[entry]/DATA[data]/@delay_indices": "@data:delay.index",
+  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@kx_indices]": "@data:kx.index",
+  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@ky_indices]": "@data:ky.index",
+  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@energy_indices]": "@data:energy.index",
+  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@delay_indices]": "@data:delay.index",
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
   "/ENTRY[entry]/DATA[data]/data/@units": "counts",
-  "/ENTRY[entry]/DATA[data]/kx": "@data:kx.data",
-  "/ENTRY[entry]/DATA[data]/kx/@units": "@data:kx.unit",
-  "/ENTRY[entry]/DATA[data]/ky": "@data:ky.data",
-  "/ENTRY[entry]/DATA[data]/ky/@units": "@data:ky.unit",
-  "/ENTRY[entry]/DATA[data]/energy": "@data:energy.data",
-  "/ENTRY[entry]/DATA[data]/energy/@units": "@data:energy.unit",
-  "/ENTRY[entry]/DATA[data]/delay": "@data:delay.data",
-  "/ENTRY[entry]/DATA[data]/delay/@units": "@data:delay.unit"
+  "/ENTRY[entry]/DATA[data]/VARIABLE[kx]": "@data:kx.data",
+  "/ENTRY[entry]/DATA[data]/VARIABLE[kx]/@units": "@data:kx.unit",
+  "/ENTRY[entry]/DATA[data]/VARIABLE[ky]": "@data:ky.data",
+  "/ENTRY[entry]/DATA[data]/VARIABLE[ky]/@units": "@data:ky.unit",
+  "/ENTRY[entry]/DATA[data]/VARIABLE[energy]": "@data:energy.data",
+  "/ENTRY[entry]/DATA[data]/VARIABLE[energy]/@units": "@data:energy.unit",
+  "/ENTRY[entry]/DATA[data]/VARIABLE[delay]": "@data:delay.data",
+  "/ENTRY[entry]/DATA[data]/VARIABLE[delay]/@units": "@data:delay.unit"
 
 
 

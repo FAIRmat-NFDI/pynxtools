@@ -292,13 +292,15 @@ def validate_data_entry(path, template, data, nxdl_root, undocumented=False):
         if entry_name == "@units":
             return
         if entry_name[0] == "@":
-            index_of_at = nxdl_path.rindex("@")
-            nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
+            if nxdl_path.find("@") >= 0: # Only strip @ from path if it is contained.
+                index_of_at = nxdl_path.rindex("@")
+                nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
         try:
             elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
         except nexus.NxdlAttributeError as error:
-            print(error)
+            # print(error)
+            print(f'Attributes were not found for element {path}.')
 
         # Only check for validation in the NXDL if we did find the entry
         # otherwise we just pass it along
