@@ -417,9 +417,8 @@ def create_package_from_nxdl_directory(path: str) -> Package:
             # The section gets already implicitly added to CURRENT_PACKAGE by get_or_create_section
             create_class_section(xml_node)
 
-        except Exception as exc:
+        except NotImplementedError:
             print(f'Exception while mapping {nxdl_file}', file=sys.stderr)
-            raise exc
 
     return CURRENT_PACKAGE
 
@@ -429,11 +428,9 @@ BASE_CLASSES = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_d
                                                                'base_classes'))
 APPLICATIONS = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
                                                                'applications'))
-# TODO 15.03.2022 check with Sandor the following alert
-# CONTRIBUTED = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
-#                                                              'contributed_definitions'))
-# PACKAGES = (BASE_CLASSES, APPLICATIONS, CONTRIBUTED)
-PACKAGES = (BASE_CLASSES, APPLICATIONS)
+CONTRIBUTED = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
+                                                              'contributed_definitions'))
+PACKAGES = (BASE_CLASSES, APPLICATIONS, CONTRIBUTED)
 
 # We take the application definitions and create a common parent section that allows to
 # include nexus in an EntryArchive.
