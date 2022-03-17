@@ -143,7 +143,7 @@ Several cases can be encoutered:
         grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
     # internal and external links
     elif 'link' in data.keys():
-        if ':' not in data['link']:
+        if ':/' not in data['link']:
             grp[entry_name] = h5py.SoftLink(path)  # internal link
         else:
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link

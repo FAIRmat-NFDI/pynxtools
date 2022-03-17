@@ -22,6 +22,7 @@
 #
 
 import sys
+import os
 import xml.etree.ElementTree as ET
 
 from pyaml import yaml
@@ -41,8 +42,18 @@ def yml_reader(inputfile):
     """
     Yaml module based reading of .yml file
     """
-    with open(inputfile) as stream:
-        return yaml.safe_load(stream)
+    with open(inputfile, 'r') as stream:
+        file = stream.readlines()
+    with open('formatted_doc_file.yml', 'w') as new_file:
+        for line in file:
+            if not line.strip():
+                new_file.write(f"_newline_\n")
+            else:
+                new_file.write(line)
+    with open('formatted_doc_file.yml') as stream:
+        parsed_yaml = yaml.safe_load(stream)
+        os.remove("formatted_doc_file.yml")
+        return parsed_yaml
 
 
 def nx_name_type_resolving(tmp):
@@ -70,6 +81,8 @@ def xml_handle_doc(obj, value: str):
 
     """
     doctag = ET.SubElement(obj, 'doc')
+    if '_newline_' in value:
+        value = value.replace("_newline_", " \n \n")
     doctag.text = value
 
 
@@ -364,7 +377,6 @@ def recursive_build(obj, dct, verbose):
     """
     for keyword, value in iter(dct.items()):
         keyword_name, keyword_type = nx_name_type_resolving(keyword)
-
         check_keyword_variable(verbose, keyword_name, keyword_type, value)
         if verbose:
             sys.stdout.write(f'keyword_name:{keyword_name} keyword_type {keyword_type}\n')
