@@ -162,7 +162,7 @@ class Nxdl2yaml():
                 if 'doc' in child.attrib:
                     self.symbol_list.append(
                         '{indent}{key}: "{value}"'.format(
-                            indent=0 * '  ',
+                            indent=1 * '  ',
                             key=child.attrib['name'],
                             value=child.attrib['doc'] or ''))
                 else:

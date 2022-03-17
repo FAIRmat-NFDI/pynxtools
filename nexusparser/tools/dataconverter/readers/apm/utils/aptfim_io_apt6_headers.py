@@ -53,14 +53,14 @@ class AptFileHeaderMetadata():
         self.ll_ion_count = np.uint64(0)  # or an int64 ?
 
     @classmethod
-    def get_numpy_struct(cls) -> np.dtype:
-        """Create customized numpy struct to read a file header at once."""
+    def get_numpy_struct(cls) -> np.dtype:  # pylint: disable=R0801
+        """Create customized numpy struct to read a file header at once."""  # pylint: disable=R0801
         return np.dtype([('cSignature', np.uint8, (4,)),
                          ('iHeaderSize', np.int32),
                          ('iHeaderVersion', np.int32),
                          ('wcFilename', np.uint16, 256),
                          ('ftCreationTime', np.uint64),
-                         ('llIonCount', np.uint64)])
+                         ('llIonCount', np.uint64)])  # pylint: disable=R0801
 
     def set_ll_ion_count(self, value: np.uint64):
         """Check and set total ion count."""

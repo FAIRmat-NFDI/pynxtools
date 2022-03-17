@@ -77,6 +77,8 @@ not found in file'
     return [lines, lines_index]
 
 
+@pytest.mark.parametrize(
+)
 def compare_matches(ref_xml_file, test_yml_file, test_xml_file, desired_matches):
     """Check if a new xml file is generated
 and if test xml file is equal to reference xml file
@@ -85,7 +87,8 @@ and if test xml file is equal to reference xml file
     # Reference file is read
     ref_matches = find_matches(ref_xml_file, desired_matches)
     # Test file is generated
-    result = CliRunner().invoke(yml2nxdl.yaml2nxdl, ['--input-file', test_yml_file])
+    runner = CliRunner()
+    result = runner.invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_xml_file)
     # Test file is read
@@ -93,17 +96,13 @@ and if test xml file is equal to reference xml file
     assert test_matches == ref_matches
 
 
-@pytest.fixture
 def test_links():
     """First test: check the correct parsing of links
 
 """
-    ref_xml_link_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXtest_links.nxdl.xml')
-    test_yml_link_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/NXtest_links.yml')
-    test_xml_link_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/NXtest_links.nxdl.xml')
+    ref_xml_link_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXtest_links.nxdl.xml'
+    test_yml_link_file = 'tests/data/tools/yaml2nxdl_test_data/NXtest_links.yml'
+    test_xml_link_file = 'tests/data/tools/yaml2nxdl_test_data/NXtest_links.nxdl.xml'
     desired_matches = ['<link', '/>']
     compare_matches(
         ref_xml_link_file,
@@ -113,17 +112,13 @@ def test_links():
     sys.stdout.write('Test on links okay.\n')
 
 
-@pytest.fixture
 def test_symbols():
     """Second test: check the correct parsing of symbols
 
 """
-    ref_xml_symbol_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXnested_symbols.nxdl.xml')
-    test_yml_symbol_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/NXnested_symbols.yml')
-    test_xml_symbol_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/NXnested_symbols.nxdl.xml')
+    ref_xml_symbol_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXnested_symbols.nxdl.xml'
+    test_yml_symbol_file = 'tests/data/tools/yaml2nxdl_test_data/NXnested_symbols.yml'
+    test_xml_symbol_file = 'tests/data/tools/yaml2nxdl_test_data/NXnested_symbols.nxdl.xml'
     desired_matches = ['<symbols>', '</symbols>', '<symbols']
     compare_matches(
         ref_xml_symbol_file,
@@ -133,18 +128,14 @@ def test_symbols():
     sys.stdout.write('Test on symbols okay.\n')
 
 
-@pytest.fixture
 def test_attributes():
     """Third test: check the correct handling of empty attributes
     or attributes fields, e.g. doc
 
 """
-    ref_xml_attribute_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXattributes.nxdl.xml')
-    test_yml_attribute_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/NXattributes.yml')
-    test_xml_attribute_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/NXattributes.nxdl.xml')
+    ref_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXattributes.nxdl.xml'
+    test_yml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.yml'
+    test_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml'
     desired_matches = ['<attribute', '</attribute>', '<doc>', '</doc>']
     compare_matches(
         ref_xml_attribute_file,
@@ -154,18 +145,34 @@ def test_attributes():
     sys.stdout.write('Test on attributes okay.\n')
 
 
-@pytest.fixture
+def test_symbols_and_enum_docs():
+    """Third test: check the correct handling of empty attributes
+    or attributes fields, e.g. doc
+
+"""
+    ref_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXmytests.nxdl.xml'
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXmytests.yml'
+    test_xml_file = 'tests/data/tools/yaml2nxdl_test_data/NXmytests.nxdl.xml'
+    desired_matches = ['<attribute', '</attribute>', '<doc>', '</doc>',
+                       '<symbols>', '</symbols>', '<symbols',
+                       '<dimensions', '</dimensions>', '<dim']
+    compare_matches(
+        ref_xml_file,
+        test_yml_file,
+        test_xml_file,
+        desired_matches)
+    sys.stdout.write('Test on docs in enumeration and symbols okay.\n')
+
+
 def test_xml_parsing():
     """In this test an xml file in converted to yml and then back to xml.
 The xml trees of the two files are then compared.
 
     """
-    ref_xml_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft.nxdl.xml')
-    test_yml_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml')
-    test_xml_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.nxdl.xml')
+    ref_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft.nxdl.xml'
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml'
+    test_xml_file = 'tests/data/tools/yaml2nxdl_test_data/\
+Ref_NXellipsometry_base_draft_parsed.nxdl.xml'
     result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', ref_xml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_yml_file)
@@ -184,18 +191,14 @@ has not the same tree structure!!'
     sys.stdout.write('Test on xml -> yml -> xml okay.\n')
 
 
-@pytest.fixture
 def test_yml_parsing():
     """In this test an xml file in converted to yml and then back to xml.
 The xml trees of the two files are then compared.
 
     """
-    ref_yml_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry.yml')
-    test_xml_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry.nxdl.xml')
-    test_yml_file = os.path.join(
-        LOCALDIR, 'data/yaml2nxdl_test_data/Ref_NXellipsometry_parsed.yml')
+    ref_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry.yml'
+    test_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry.nxdl.xml'
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_parsed.yml'
     result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', ref_yml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_xml_file)
@@ -210,11 +213,3 @@ The xml trees of the two files are then compared.
     assert list(test_yml_tree) == list(ref_yml_tree), 'Ref YML and parsed YML \
 has not the same root entries!!'
     sys.stdout.write('Test on yml -> xml -> yml okay.\n')
-
-
-if __name__ == '__main__':
-    test_links()
-    test_symbols()
-    test_attributes()
-    test_xml_parsing()
-    test_yml_parsing()
