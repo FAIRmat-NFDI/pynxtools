@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
+import os
 from typing import Tuple
 import json
 
@@ -55,8 +56,33 @@ class ExampleReader(BaseReader):
         # Add non template key
         template["/ENTRY[entry]/does/not/exist"] = "None"
         template["/ENTRY[entry]/program_name"] = "None"
-        my_link_dict = {"link": "/ENTRY[entry]/NXODD_name/posint_value"}
-        template["/ENTRY[entry]/test_link/linked_field"] = my_link_dict
+
+        # internal links
+        my_int_link_dict = {"link": "/entry/NXODD_name/posint_value"}
+        template["/ENTRY[entry]/test_link/internal_link"] = my_int_link_dict
+
+        # external links
+        my_ext_link_dict = {"link":
+                            f"{os.path.dirname(__file__)}/../../../../../tests/"
+                            f"data/tools/dataconverter/readers/mpes/xarray_saved_small.h5"
+                            f":/axes/ax3"
+                            }
+        template["/ENTRY[entry]/test_link/external_link"] = my_ext_link_dict
+
+        # virtual datasets concatenation
+        my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
+                      f"data/tools/dataconverter/readers/mpes")
+        my_datasets = {"link":
+                       [f"{my_path}/xarray_saved_small.h5:/axes/ax0",
+                        f"{my_path}/xarray_saved_small.h5:/axes/ax1",
+                        f"{my_path}/xarray_saved_small.h5:/axes/ax2"
+                        ]
+                       }
+        template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = my_datasets
+
+        # sh = h5py.File(file_names_to_concatenate[0], 'r')[entry_key].shape
+        # layout = h5py.VirtualLayout(shape=(len(file_names_to_concatenate),) + sh,
+        #                             dtype=np.float64)
 
         return template
 

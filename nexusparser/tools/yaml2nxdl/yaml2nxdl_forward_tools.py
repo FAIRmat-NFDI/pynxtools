@@ -131,10 +131,11 @@ def xml_handle_dimensions(obj, value: dict):
     """This function creates a 'dimensions' element instance, and appends it to an existing element
 
     """
-    assert 'rank' in value.keys() and 'dim' in value.keys(), 'xml_handle_dimensions \
+    assert 'dim' in value.keys(), 'xml_handle_dimensions \
 rank and/or dim not keys in value dict!'
     dims = ET.SubElement(obj, 'dimensions')
-    dims.set('rank', str(value['rank']))
+    if 'rank' in value.keys():
+        dims.set('rank', str(value['rank']))
     for element in value['dim']:
         assert isinstance(element, list), 'xml_handle_dimensions, element is not a list!'
         assert len(element) >= 2, 'xml_handle_dimensions, list element has less than two entries!'

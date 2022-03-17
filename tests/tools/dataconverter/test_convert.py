@@ -17,8 +17,10 @@
 #
 """Test cases for the convert script used to access the DataConverter."""
 
+import os
 from click.testing import CliRunner
 import pytest
+import h5py
 
 import nexusparser.tools.dataconverter.convert as dataconverter
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
@@ -59,3 +61,29 @@ def test_cli(caplog, cli_inputs):
         assert "test_input" in caplog.text
     elif result.exit_code == 2:
         assert "Error: Missing option '--nxdl'" in result.output
+
+
+def test_links_and_virtual_datasets(tmp_path):
+    """A test for the convert CLI to check whether a Dataset object is created.
+
+When  the template contains links."""
+    runner = CliRunner()
+    result = runner.invoke(dataconverter.convert, [
+        "--nxdl",
+        "NXtest",
+        "--reader",
+        "example",
+        "--input-file",
+        f"/home/andrea/NOMAD/nomad/dependencies/parsers/nexus/tests/"
+        f"data/tools/dataconverter/readers/example/testdata.json",
+        "--output",
+        os.path.join(tmp_path, "test_output.h5")
+    ])
+    test_nxs = h5py.File(os.path.join(tmp_path, "test_output.h5"), "r")
+    assert result.exit_code == 0
+    assert 'entry/test_link/internal_link' in test_nxs
+    assert isinstance(test_nxs["entry/test_link/internal_link"], h5py.Dataset)
+    assert 'entry/test_link/external_link' in test_nxs
+    assert isinstance(test_nxs["entry/test_link/external_link"], h5py.Dataset)
+    assert 'entry/test_virtual_dataset/concatenate_datasets' in test_nxs
+    assert isinstance(test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset)
