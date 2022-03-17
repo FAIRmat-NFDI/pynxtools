@@ -91,7 +91,10 @@ application and base are valid categories!'
 
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
 has to be a non-empty string!'
+
     doctag = ET.SubElement(xml_root, 'doc')
+    if '_newline_' in yml_appdef['doc']:
+        yml_appdef['doc'] = yml_appdef['doc'].replace("_newline_", " \n \n")
     doctag.text = yml_appdef['doc']
     del yml_appdef['doc']
 
@@ -162,7 +165,7 @@ class Nxdl2yaml():
                 if 'doc' in child.attrib:
                     self.symbol_list.append(
                         '{indent}{key}: "{value}"'.format(
-                            indent=0 * '  ',
+                            indent=1 * '  ',
                             key=child.attrib['name'],
                             value=child.attrib['doc'] or ''))
                 else:

@@ -31,6 +31,7 @@ from nomad.metainfo import (
     Section, Package, SubSection, Definition, Datetime, Bytes, Unit, MEnum, Quantity)
 from nomad.datamodel import EntryArchive
 from nomad.metainfo.elasticsearch_extension import Elasticsearch
+from nexusparser.tools import nexus
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -42,14 +43,10 @@ XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 # dimensional fields with non number types, which the metainfo does not support
 VALIDATE = False
 CURRENT_PACKAGE: Package = None
-
 _definition_sections: Dict[str, Section] = dict()
 _XML_PARENT_MAP: Dict[ET.Element, ET.Element] = None
 _NX_DOC_BASE = 'https://manual.nexusformat.org/classes'
-
-# TO DO There are more types in nxdl, but they are not used by the current base classes and
-# application definitions.
-_NX_TYPES = {
+_NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
     'NX_FLOAT': np.dtype(np.float64),
     'NX_CHAR': str,
     'NX_BOOLEAN': bool,
@@ -58,8 +55,7 @@ _NX_TYPES = {
     'NX_NUMBER': np.dtype(np.number),
     'NX_POSINT': np.dtype(np.uint64),
     'NX_BINARY': Bytes,
-    'NX_DATE_TIME': Datetime
-}
+    'NX_DATE_TIME': Datetime}
 
 
 def to_camel_case(snake_str: str, upper: bool = False):
@@ -211,21 +207,17 @@ def add_group_properties(xml_node: ET.Element, section: Section):
     for group in xml_node.findall('nx:group', XML_NAMESPACES):
         group_section = create_group_section(group, section)
         section.inner_section_definitions.append(group_section)
-
         if 'name' in group.attrib:
             name = f'nx_group_{group.attrib["name"]}'
         else:
             name = f'nx_group_{group.attrib["type"].replace("NX", "").upper()}'
-
         max_occurs = group.attrib.get('maxOccurs', '0')
         repeats = any(name_char.isupper()
                       for name_char in name) or max_occurs == 'unbounded' or int(max_occurs) > 1
         section.sub_sections.append(SubSection(
             section_def=group_section, nx_kind='group', name=name, repeats=repeats))
-
     for field in xml_node.findall('nx:field', XML_NAMESPACES):
         field_section = create_field_section(field, section)
-
         name = field.attrib["name"]
         max_occurs = field.attrib.get('maxOccurs', '0')
         repeats = any(name_char.isupper()
@@ -420,34 +412,27 @@ def create_package_from_nxdl_directory(path: str) -> Package:
             nxdl_path = os.path.join(path, nxdl_file)
             xml_tree = ET.parse(nxdl_path)
             xml_node = xml_tree.getroot()
-
             global _XML_PARENT_MAP  # pylint: disable=global-statement
             _XML_PARENT_MAP = {child: parent for parent in xml_tree.iter() for child in parent}
-
             assert xml_node.attrib.get('type') == 'group', 'definition is not a group'
 
-            # The section gets already implicitly added to CURRENT_PACKAGE by
-            # get_or_create_section
+            # The section gets already implicitly added to CURRENT_PACKAGE by get_or_create_section
             create_class_section(xml_node)
 
-        except Exception as exc:
+        except NotImplementedError:
             print(f'Exception while mapping {nxdl_file}', file=sys.stderr)
-            raise exc
 
     return CURRENT_PACKAGE
 
 
-NX_DEFINITIONS_PATH = os.path.join(
-    os.path.dirname(__file__),
-    '../definitions')
-
-
-# We generate separated metainfo package for the nexus base classes and application
-# definitions.
-BASE_CLASSES = create_package_from_nxdl_directory(os.path.join(NX_DEFINITIONS_PATH, 'base_classes'))
-APPLICATIONS = create_package_from_nxdl_directory(os.path.join(NX_DEFINITIONS_PATH, 'applications'))
-# TO DO there are problems generating with nx_package='contributed_definitions'
-PACKAGES = (BASE_CLASSES, APPLICATIONS)
+# separated metainfo package for the nexus base classes, application defs and contributed classes.
+BASE_CLASSES = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
+                                                               'base_classes'))
+APPLICATIONS = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
+                                                               'applications'))
+CONTRIBUTED = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
+                                                              'contributed_definitions'))
+PACKAGES = (BASE_CLASSES, APPLICATIONS, CONTRIBUTED)
 
 # We take the application definitions and create a common parent section that allows to
 # include nexus in an EntryArchive.
