@@ -94,6 +94,11 @@ def test_get_node_at_nxdl_path():
     node = nexus.get_node_at_nxdl_path("/ENTRY/em_lab/hadf/SCANBOX_EM", elem=elem)
     assert node.attrib["type"] == "NXscanbox_em"
 
+    nxdl_file_path = "nexusparser/definitions/applications/NXmpes.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path("/ENTRY/DATA/VARIABLE", elem=elem)
+    assert node.attrib["name"] == "VARIABLE"
+
 
 def test_example():
     """Tests if parser can parse our example data

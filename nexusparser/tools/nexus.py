@@ -385,6 +385,7 @@ def chk_nxdataaxis(hdf_node, name, loger):
 
 
 def get_node_docname(elem):
+    """get the short version of nxdlbase:nxdlpath"""
     return str(elem.get('nxdlbase').split('/')[-1] + ":" + elem.get('nxdlpath'))
 
 
@@ -712,8 +713,8 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
     This function either takes the name for the Nexus Application Definition
     we are looking for or the root elem from a previously loaded NXDL file
     and finds the corresponding XML element with the needed attributes."""
-    (class_path, nxdl_path, elist) = get_inherited_nodes(nxdl_path, nx_name, elem)
-    if class_path and nxdl_path and elist:
+    (class_path, nxdlpath, elist) = get_inherited_nodes(nxdl_path, nx_name, elem)
+    if class_path and nxdlpath and elist:
         elem = elist[0]
     else:
         elem = None
