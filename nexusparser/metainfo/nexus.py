@@ -30,7 +30,7 @@ from nomad.utils import strip
 from nomad.metainfo import (
     Section, Package, SubSection, Definition, Datetime, Bytes, Unit, MEnum, Quantity)
 from nomad.datamodel import EntryArchive
-
+from nomad.metainfo.elasticsearch_extension import Elasticsearch
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -38,7 +38,7 @@ URL_REGEXP = re.compile(r'(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]'
                         r'{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))')
 XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 
-# TODO the validation still show some problems. Most notably there are a few higher
+# TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
 VALIDATE = False
 CURRENT_PACKAGE: Package = None
@@ -47,7 +47,7 @@ _definition_sections: Dict[str, Section] = dict()
 _XML_PARENT_MAP: Dict[ET.Element, ET.Element] = None
 _NX_DOC_BASE = 'https://manual.nexusformat.org/classes'
 
-# TODO There are more types in nxdl, but they are not used by the current base classes and
+# TO DO There are more types in nxdl, but they are not used by the current base classes and
 # application definitions.
 _NX_TYPES = {
     'NX_FLOAT': np.dtype(np.float64),
@@ -182,7 +182,7 @@ def add_common_properties(xml_node: ET.Element, definition: Definition):
     if 'recommended' in xml_attrs:
         definition.more['nx_recommended'] = xml_attrs['recommended']
 
-    # TODO there are probably even more nxdl attributes?
+    # TO DO there are probably even more nxdl attributes?
 
 
 def add_attributes(xml_node: ET.Element, section: Section):
@@ -340,7 +340,7 @@ def create_field_section(xml_node: ET.Element, container: Section):
     if 'units' in xml_attrs:
         field_section.more['nx_units'] = xml_attrs['units']
         if xml_attrs['units'] != 'NX_UNITLESS':
-            # TODO a default could be created from the nx_units value
+            # TO DO a default could be created from the nx_units value
             field_section.quantities.append(Quantity(
                 name='nx_unit', type=Unit,
                 description='The specific unit for that this fields data has.'))
@@ -446,7 +446,7 @@ NX_DEFINITIONS_PATH = os.path.join(
 # definitions.
 BASE_CLASSES = create_package_from_nxdl_directory(os.path.join(NX_DEFINITIONS_PATH, 'base_classes'))
 APPLICATIONS = create_package_from_nxdl_directory(os.path.join(NX_DEFINITIONS_PATH, 'applications'))
-# TODO there are problems generating with nx_package='contributed_definitions'
+# TO DO there are problems generating with nx_package='contributed_definitions'
 PACKAGES = (BASE_CLASSES, APPLICATIONS)
 
 # We take the application definitions and create a common parent section that allows to
@@ -461,7 +461,10 @@ for application_section in APPLICATIONS.section_definitions:  # pylint: disable=
 
 APPLICATIONS.section_definitions.append(NEXUS_SECTION)
 
-ENTRY_ARCHIVE_NEXUS_SUB_SECTION = SubSection(name='nexus', section_def=NEXUS_SECTION)
+ENTRY_ARCHIVE_NEXUS_SUB_SECTION = \
+    SubSection(name='nexus',
+               section_def=NEXUS_SECTION,
+               a_elasticsearch=Elasticsearch(nested=True))
 EntryArchive.nexus = ENTRY_ARCHIVE_NEXUS_SUB_SECTION  # type: ignore
 EntryArchive.m_def.sub_sections.append(ENTRY_ARCHIVE_NEXUS_SUB_SECTION)
 
@@ -473,7 +476,7 @@ for package in PACKAGES:
 
 
 # We skip the Python code generation for now and offer Python classes as variables
-# TODO not necessary right now, could also be done case-by-case by the nexus parser
+# TO DO not necessary right now, could also be done case-by-case by the nexus parser
 PYTHON_MODULE = sys.modules[__name__]
 for package in PACKAGES:
     for sektion in package.section_definitions:  # pylint: disable=not-an-iterable
