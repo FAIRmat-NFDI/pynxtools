@@ -94,18 +94,20 @@ class ReadRngFileFormat():
         with open(self.filename, mode='r', encoding='utf8') as rngf:
             txt = rngf.read()
 
-        txt = txt.replace('\r\n', '\n')  # windows to unix EOL conversion
-        txt = txt.replace(',', '.')  # use decimal dots instead of comma
-        txt_stripped = [line for line in txt.split('\n')
-                        if line.strip() != '' and line.startswith('#') is False]
-        del txt
+        # windows to unix EOL conversion  # pylint: disable=R0801
+        txt = txt.replace('\r\n', '\n')  # pylint: disable=R0801
+        # use decimal dots instead of comma  # pylint: disable=R0801
+        txt = txt.replace(',', '.')  # pylint: disable=R0801
+        txt_stripped = [line for line in txt.split('\n')  # pylint: disable=R0801
+                        if line.strip() != '' and line.startswith('#') is False]  # pylint: disable=R0801
+        del txt  # pylint: disable=R0801
 
-        # see DOI: 10.1007/978-1-4899-7430-3 for further details to this
-        # Oak Ridge National Lab / Oxford *.rng file format
-        # only the first ------ line is relevant
-        # it details all ion labels aka ions
-        # AMETEK's IVAS/APSuite-specific trailing
-        # polyatomic extension is redundant info
+        # pylint: disable=R0801 # see DOI: 10.1007/978-1-4899-7430-3 for further details to this  # pylint: disable=R0801
+        # pylint: disable=R0801 # Oak Ridge National Lab / Oxford *.rng file format  # pylint: disable=R0801
+        # pylint: disable=R0801 # only the first ------ line is relevant  # pylint: disable=R0801
+        # pylint: disable=R0801 # it details all ion labels aka ions  # pylint: disable=R0801
+        # pylint: disable=R0801 # AMETEK's IVAS/APSuite-specific trailing  # pylint: disable=R0801
+        # pylint: disable=R0801 # polyatomic extension is redundant info  # pylint: disable=R0801
 
         tmp = None
         current_line_id = int(0)  # search key header line

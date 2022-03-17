@@ -51,3 +51,15 @@ def test_write(writer):
     assert test_nxs["/my_entry/NXODD_name/int_value"][()] == 2
     assert test_nxs["/my_entry/NXODD_name/int_value"].attrs["units"] == "eV"
     assert test_nxs["/my_entry/NXODD_name/posint_value"].shape == (3,)  # pylint: disable=no-member
+
+
+def test_write_link(writer):
+    """Test for the Writer's write function.
+
+Checks whether entries given above get written out when a dictionary containing a link is
+given in the template dictionary."""
+    writer.write()
+    print(writer)
+    print(type(writer))
+    test_nxs = h5py.File(writer.output_path, "r")
+    assert isinstance(test_nxs["/my_entry/links/ext_link"], h5py.Dataset)
