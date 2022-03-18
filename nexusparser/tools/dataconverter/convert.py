@@ -132,7 +132,6 @@ def convert(input_file: Tuple[str],
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
     data = data_reader().read(template=Template(template),
                               file_paths=input_file)  # type: ignore[operator]
-
     helpers.validate_data_dict(template, data, nxdl_root)
 
     if fair and data.undocumented.keys():

@@ -19,13 +19,13 @@
 """MPES reader implementation for the DataConverter."""
 
 from typing import Tuple
-import h5py
 import json
-from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+import h5py
 import xarray as xr
 from functools import reduce
+from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
-default_units = {
+DEFAULT_UNITS = {
     'X': 'step',
     'Y': 'step',
     't': 'step',
@@ -42,27 +42,27 @@ default_units = {
     'ky': '1/A'}
 
 
-def res_to_xarray(res, binNames, binAxes, metadata=None):
+def res_to_xarray(res, bin_names, bin_axes, metadata=None):
     """ creates a BinnedArray (xarray subclass) out of the given np.array
     Parameters:
         res: np.array
             nd array of binned data
-        binNames (list): list of names of the binned axes
-        binAxes (list): list of np.arrays with the values of the axes
+        bin_names (list): list of names of the binned axes
+        bin_axes (list): list of np.arrays with the values of the axes
     Returns:
         ba: BinnedArray (xarray)
             an xarray-like container with binned data, axis, and all available metadata
     """
-    dims = binNames
+    dims = bin_names
     coords = {}
-    for name, vals in zip(binNames, binAxes):
+    for name, vals in zip(bin_names, bin_axes):
         coords[name] = vals
 
     xres = xr.DataArray(res, dims=dims, coords=coords)
 
-    for name in binNames:
+    for name in bin_names:
         try:
-            xres[name].attrs['unit'] = default_units[name]
+            xres[name].attrs['unit'] = DEFAULT_UNITS[name]
         except KeyError:
             pass
 
@@ -83,60 +83,78 @@ def h5_to_xarray(faddr, mode='r'):
     Returns:
         xarray (xarray.DataArray): output xarra data
     """
-    with h5py.File(faddr, mode) as h5File:
+    with h5py.File(faddr, mode) as h5_file:
         # Reading data array
         try:
-            data = h5File['binned']['BinnedData']
+            data = h5_file['binned']['BinnedData']
         except KeyError:
             print("Wrong Data Format, data not found")
             raise
 
         # Reading the axes
         axes = []
-        binNames = []
+        bin_names = []
 
         try:
-            for axis in h5File['axes']:
-                axes.append(h5File['axes'][axis])
-                binNames.append(h5File['axes'][axis].attrs['name'])
+            for axis in h5_file['axes']:
+                axes.append(h5_file['axes'][axis])
+                bin_names.append(h5_file['axes'][axis].attrs['name'])
         except KeyError:
             print("Wrong Data Format, axes not found")
             raise
 
         # load metadata
-        if 'metadata' in h5File:
+        if 'metadata' in h5_file:
             def recursive_parse_metadata(node):
                 if isinstance(node, h5py.Group):
-                    d = {}
-                    for k, v in node.items():
-                        d[k] = recursive_parse_metadata(v)
+                    dictionary = {}
+                    for key, value in node.items():
+                        dictionary[key] = recursive_parse_metadata(value)
 
                 else:
-                    d = node[...]
+                    dictionary = node[...]
                     try:
-                        d = d.item()
-                        if isinstance(d, (bytes, bytearray)):
-                            d = d.decode()
+                        dictionary = dictionary.item()
+                        if isinstance(dictionary, (bytes, bytearray)):
+                            dictionary = dictionary.decode()
                     except ValueError:
                         pass
 
-                return d
+                return dictionary
 
-            metadata = recursive_parse_metadata(h5File['metadata'])
+            metadata = recursive_parse_metadata(h5_file['metadata'])
 
-        xarray = res_to_xarray(data, binNames, axes, metadata)
+        xarray = res_to_xarray(data, bin_names, axes, metadata)
         return xarray
 
 
 def iterate_dictionary(dic, key_string):
+    """Recursively iterate in dictionary and give back its values
+
+"""
     keys = key_string.split('/', 1)
     if keys[0] in dic:
         if len(keys) == 1:
             return dic[keys[0]]
-        else:
+        if not len(keys) == 1:
             return iterate_dictionary(dic[keys[0]], keys[1])
     else:
         raise KeyError
+    return None
+
+
+def handle_h5_and_json_file(file_paths):
+    """Handle h5 or json input files.
+
+"""
+    for file_path in file_paths:
+        file_extension = file_path[file_path.rindex("."):]
+        if file_extension == '.h5':
+            x_array_loaded = h5_to_xarray(file_path)
+        elif file_extension == '.json':
+            with open(file_path, 'r') as file:
+                config_file_dict = json.load(file)
+    return x_array_loaded, config_file_dict
 
 
 def rgetattr(obj, attr):
@@ -150,7 +168,9 @@ def rgetattr(obj, attr):
 
 
 class MPESReader(BaseReader):
+    """MPES-specific reader class
 
+"""
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
@@ -162,48 +182,39 @@ class MPESReader(BaseReader):
         if not file_paths:
             raise Exception("No input files were given to MPES Reader.")
 
-        for file_path in file_paths:
+        x_array_loaded, config_file_dict = handle_h5_and_json_file(file_paths)
 
-            file_extension = file_path[file_path.rindex(".") + 1:]
+        for key, value in config_file_dict.items():
 
-            if file_extension == 'h5':
-                x_array_loaded = h5_to_xarray(file_path)
-
-            elif file_extension == 'json':
-                with open(file_path, 'r') as f:
-                    config_file_dict = json.load(f)
-
-        for k, v in config_file_dict.items():
-
-            if isinstance(v, str) and ':' in v:
-                precursor = v.split(':')[0]
-                value = v[v.index(':') + 1:]
+            if isinstance(value, str) and ':' in value:
+                precursor = value.split(':')[0]
+                value = value[value.index(':') + 1:]
 
                 # Filling in the data and axes along with units from xarray
                 if precursor == '@data':
                     try:
-                        template[k] = rgetattr(obj=x_array_loaded, attr=value)
-                        if k.split('/')[-1] == '@axes':
-                            template[k] = list(template[k])
+                        template[key] = rgetattr(obj=x_array_loaded, attr=value)
+                        if key.split('/')[-1] == '@axes':
+                            template[key] = list(template[key])
 
                     except ValueError:
-                        print(f"Incorrect axis name corresponding to the path {k}")
+                        print(f"Incorrect axis name corresponding to the path {key}")
 
                     except AttributeError:
-                        print(f"Incorrect naming syntax or the xarray doesn't contain entry corresponding to the path {k}")
+                        print(f"Incorrect naming syntax or the xarray doesn't contain entry corresponding to the path {key}")
 
                 # Filling in the metadata from xarray
                 elif precursor == '@attrs':
 
                     try:  # Tries to fill the metadata
-                        template[k] = iterate_dictionary(x_array_loaded.attrs, value)
+                        template[key] = iterate_dictionary(x_array_loaded.attrs, value)
 
                     except KeyError:
-                        print(f"The xarray doesn't contain entry corresponding to the path {k}")
+                        print(f"The xarray doesn't contain entry corresponding to the path {key}")
 
             else:
                 # Fills in the fixed metadata
-                template[k] = v
+                template[key] = value
 
         return template
 

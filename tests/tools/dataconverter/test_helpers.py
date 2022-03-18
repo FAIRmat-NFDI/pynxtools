@@ -90,26 +90,34 @@ def fixture_filled_test_data(template):
     template["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
                                                                       ":14:12.05018+00:00")
     template["undocumented"]["/ENTRY[my_entry]/does/not/exist"] = "random"
+    template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {"link":
+                                                                   f"{os.path.dirname(__file__)}"
+                                                                   f"/../../"
+                                                                   f"data/tools/dataconverter/"
+                                                                   f"readers/mpes/"
+                                                                   f"xarray_saved_small.h5"
+                                                                   f":/axes/ax3"
+                                                                   }
     yield template
 
 
 TEMPLATE = Template()
-TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
-TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],
-                                                                            dtype=np.int8)
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
-TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"
-TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
-TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"
+TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0  # pylint: disable=E1126
+TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"  # pylint: disable=E1126
+TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
+TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],  # pylint: disable=E1126
+                                                                            dtype=np.int8)  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
 
 

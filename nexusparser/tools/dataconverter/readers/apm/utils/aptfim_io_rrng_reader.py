@@ -103,20 +103,20 @@ class ReadRrngFileFormat():
         with open(self.filename, mode='r', encoding='utf8') as rrngf:
             txt = rrngf.read()
 
-        txt = txt.replace('\r\n', '\n')  # windows to unix EOL conversion
-        txt = txt.replace(',', '.')  # use decimal dots instead of comma
-        txt_stripped = [line for line in txt.split('\n')
-                        if line.strip() != '' and line.startswith('#') is False]
-        del txt
+        txt = txt.replace('\r\n', '\n')  # pylint: disable=R0801 # windows to unix EOL conversion
+        txt = txt.replace(',', '.')  # pylint: disable=R0801 # use decimal dots instead of comma
+        txt_stripped = [line for line in txt.split('\n')  # pylint: disable=R0801
+                        if line.strip() != '' and line.startswith('#') is False]  # pylint: disable=R0801
+        del txt  # pylint: disable=R0801
 
-        # see DOI: 10.1007/978-1-4899-7430-3 for further details to this
-        # AMETEK/Cameca's *.rrng file format
+        # see DOI: 10.1007/978-1-4899-7430-3 for further details to this  # pylint: disable=R0801
+        # AMETEK/Cameca's *.rrng file format  # pylint: disable=R0801
 
-        # first, parse [Ions] section, which holds a list of element names
-        # there are documented cases where experimentalists add custom strings
-        # to specify ranges they consider special
-        # these are loaded as user types
-        # with isotope_vector np.iinfo(np.uint16).max
+        # pylint: disable=R0801 # first, parse [Ions] section, which holds a list of element names
+        # pylint: disable=R0801 # there are documented cases where experimentalists add custom strings
+        # pylint: disable=R0801 # to specify ranges they consider special
+        # pylint: disable=R0801 # these are loaded as user types
+        # pylint: disable=R0801 # with isotope_vector np.iinfo(np.uint16).max
         where = [idx for idx, element in
                  enumerate(txt_stripped) if element == '[Ions]']
         assert isinstance(where, list), 'Section [Ions] not found!'
