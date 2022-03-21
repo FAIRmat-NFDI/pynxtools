@@ -187,11 +187,17 @@ two parts of the key in the application definition.
 
         hdf_source_file = h5py.File(self.my_source_file, 'w')
         hdf_source_file.create_dataset('ellips_data',
-                                       data=my_numpy_array
+                                       data=my_numpy_array,
+                                       chunks=True,
+                                       compression="gzip",
+                                       compression_opts=9
                                        )
         hdf_source_file.create_dataset('wavelength',
                                        data=whole_data["wavelength"
-                                                       ].to_numpy()[0:counts[0]].astype("float64")
+                                                       ].to_numpy()[0:counts[0]].astype("float64"),
+                                       chunks=True,
+                                       compression="gzip",
+                                       compression_opts=9
                                        )
 
         # populate some header dictionary entries with data

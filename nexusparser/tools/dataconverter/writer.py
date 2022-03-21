@@ -207,8 +207,17 @@ class Writer:
 
                     if isinstance(data, dict):
                         dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
+                    elif not (isinstance(data, str) or np.isscalar(data)):
+                        dataset = grp.create_dataset(entry_name,
+                                                     data=data,
+                                                     compression="gzip",
+                                                     chunks=True,
+                                                     compression_opts=9
+                                                     )
                     else:
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        dataset = grp.create_dataset(entry_name,
+                                                     data=data
+                                                     )
                     units_key = f"{path}/@units"
                     if units_key in self.data.keys() and self.data[units_key] is not None:
                         dataset.attrs["units"] = self.data[units_key]
