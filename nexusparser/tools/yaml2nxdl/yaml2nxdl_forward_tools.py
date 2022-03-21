@@ -81,7 +81,7 @@ def xml_handle_doc(obj, value: str):
 
     """
     doctag = ET.SubElement(obj, 'doc')
-    if '_newline_' in value:
+    if '#_newline_' in value:
         value = value.replace("#_newline_", " \n \n")
     doctag.text = value
 
