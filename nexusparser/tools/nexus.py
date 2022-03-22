@@ -461,7 +461,7 @@ def check_deprecation_enum_axis(variables, doc, elist, attr, hdf_node):
         sdoc = get_nxdl_child(base_elem, 'enumeration', go_base=False)
         if sdoc is not None:
             if doc:
-                loger.info("enumeration:")
+                loger.info("enumeration (" + get_node_docname(base_elem) + "):")
             for item in sdoc:
                 if get_local_name_from_xml(item) == 'item':
                     if doc:
@@ -470,6 +470,7 @@ def check_deprecation_enum_axis(variables, doc, elist, attr, hdf_node):
     for base_elem in elist if not attr else [elem]:  # check for doc
         sdoc = get_nxdl_child(base_elem, 'doc', go_base=False)
         if doc:
+            loger.info("documentation (" + get_node_docname(base_elem) + "):")
             loger.info(sdoc.text if sdoc is not None else "")
     return loger, elem, path, doc, elist, attr, hdf_node
 
@@ -531,35 +532,12 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         if doc:
             loger.info(req_str)
     if elem is not None:
-        # check for deprecation
-        dep_str = elem.attrib.get('deprecated')
-        if dep_str:
-            if doc:
-                loger.info("DEPRECATED - " + dep_str)
-        # check for enums
-        for base_elem in elist if not attr else [elem]:
-            sdoc = get_nxdl_child(base_elem, 'enumeration', go_base=False)
-            if sdoc is not None:
-                if doc:
-                    loger.info("enumeration (" + get_node_docname(base_elem) + "):")
-                for item in sdoc:
-                    if get_local_name_from_xml(item) == 'item':
-                        if doc:
-                            loger.info("-> " + item.attrib['value'])
-        # check for NXdata references (axes/signal)
-        chk_nxdataaxis(hdf_node, path.split('/')[-1], loger)
-        # check for doc
-        for base_elem in elist if not attr else [elem]:
-            sdoc = get_nxdl_child(base_elem, 'doc', go_base=False)
-            if doc:
-                loger.info("documentation (" + get_node_docname(base_elem) + "):")
-                loger.info(sdoc.text if sdoc is not None else "")
-        # variables = [loger, elem, path]
-        # loger, elem, path, doc, elist, attr, hdf_node = check_deprecation_enum_axis(variables,
-        #                                                                             doc,
-        #                                                                             elist,
-        #                                                                             attr,
-        #                                                                             hdf_node)
+        variables = [loger, elem, path]
+        loger, elem, path, doc, elist, attr, hdf_node = check_deprecation_enum_axis(variables,
+                                                                                    doc,
+                                                                                    elist,
+                                                                                    attr,
+                                                                                    hdf_node)
     return (req_str, get_nxdl_entry(hdf_node), nxdl_path)
 
 
