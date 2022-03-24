@@ -63,10 +63,13 @@ def test_cli(caplog, cli_inputs):
         assert "Error: Missing option '--nxdl'" in result.output
 
 
-def test_links_and_virtual_datasets(tmp_path):
-    """A test for the convert CLI to check whether a Dataset object is created.
+def test_links_and_virtual_datasets():
+    """A test for the convert CLI to check whether a Dataset object is created,
 
-When  the template contains links."""
+when  the template contains links."""
+
+    dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter")
+    test_file_path = os.path.join(dirpath, "test_output.h5")
     runner = CliRunner()
     result = runner.invoke(dataconverter.convert, [
         "--nxdl",
@@ -74,13 +77,13 @@ When  the template contains links."""
         "--reader",
         "example",
         "--input-file",
-        f"/home/andrea/NOMAD/nomad/dependencies/parsers/nexus/tests/"
-        f"data/tools/dataconverter/readers/example/testdata.json",
+        os.path.join(dirpath, "readers/example/testdata.json"),
         "--output",
-        os.path.join(tmp_path, "test_output.h5")
+        test_file_path
     ])
-    test_nxs = h5py.File(os.path.join(tmp_path, "test_output.h5"), "r")
+
     assert result.exit_code == 0
+    test_nxs = h5py.File(test_file_path, "r")
     assert 'entry/test_link/internal_link' in test_nxs
     assert isinstance(test_nxs["entry/test_link/internal_link"], h5py.Dataset)
     assert 'entry/test_link/external_link' in test_nxs

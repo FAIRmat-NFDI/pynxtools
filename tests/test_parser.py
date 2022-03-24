@@ -40,7 +40,7 @@ def parser():
     return NexusParser()
 
 
-def test_nexus(tmp_path):
+def test_nexus():
     """The nexus test function
 
 """
@@ -49,7 +49,7 @@ def test_nexus(tmp_path):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     handler = logging.\
-        FileHandler(os.path.join(tmp_path, 'nexus_test.log'), 'w')
+        FileHandler(os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log'), 'w')
     handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -57,18 +57,23 @@ def test_nexus(tmp_path):
     nexus_helper = nexus.HandleNexus(logger, [example_data])
     nexus_helper.process_nexus_master_file(None)
 
-    # check logging result
-    # with open(os.path.join(local_dir, 'data/nexus_test.log'), "r") as file:
-    #     number_of_lines = len(file.readlines())
-    #     file.seek(0)
-    #     sum_char_values = sum(map(ord, file.read()))
-    # assert number_of_lines == 1653
-    # assert sum_char_values == 4419958
-    with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
+    with open(os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
     with open(os.path.join(local_dir, 'data/nexus_test_data/Ref_nexus_test.log'), 'r') as reffile:
         ref = reffile.readlines()
-    assert log == ref
+
+    for i, line in enumerate(log):
+        if str(line) == str(ref[i]):
+            pass
+        else:
+            assert str(line) == str(ref[i])
+    os.remove(os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log'))
+
+    # didn't work with filecmp library
+    # log = os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log')
+    # ref = os.path.join(local_dir, 'data/nexus_test_data/Ref2_nexus_test.log')
+    # print('yoyo', filecmp.cmp(log, ref, shallow=False))
+
     print('Testing of nexus.py is SUCCESSFUL.')
 
 

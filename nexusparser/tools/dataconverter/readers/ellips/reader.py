@@ -139,12 +139,10 @@ two parts of the key in the application definition.
 
         # User defined variables to produce slices of the whole data set
         energy = whole_data['type'].astype(str).values.tolist().count("E")
-
         unique_angles, counts = np.unique(whole_data["angle_of_incidence"
                                                      ].to_numpy()[0:energy].astype("int64"),
                                           return_counts=True
                                           )
-
         labels = {"psi": [], "delta": []}
         block_idx = [np.int64(0)]
         index = 0

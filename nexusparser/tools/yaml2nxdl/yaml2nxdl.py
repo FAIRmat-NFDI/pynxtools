@@ -40,10 +40,11 @@ from nexusparser.tools.yaml2nxdl import yaml2nxdl_backward_tools
 
 
 def pretty_print_xml(xml_root, output_xml):
-    """Print better human-readable idented and formatted xml file
+    """Print better human-readable indented and formatted xml file
 using built-in libraries and add preceding XML processing instruction
 
     """
+    # dom = minidom.parse(xml_root)  # or xml.dom.minidom.parseString(xml_string)
     dom = minidom.parseString(ET.tostring(
         xml_root, encoding='utf-8', method='xml'))
     sibling = dom.createProcessingInstruction(
@@ -93,8 +94,8 @@ application and base are valid categories!'
 has to be a non-empty string!'
 
     doctag = ET.SubElement(xml_root, 'doc')
-    if '_newline_' in yml_appdef['doc']:
-        yml_appdef['doc'] = yml_appdef['doc'].replace("#_newline_", " \n \n")
+    if '#_newline_' in yml_appdef['doc']:
+        yml_appdef['doc'] = yml_appdef['doc'].replace("#_newline_ ", "\n\n")
     doctag.text = yml_appdef['doc']
     del yml_appdef['doc']
 
