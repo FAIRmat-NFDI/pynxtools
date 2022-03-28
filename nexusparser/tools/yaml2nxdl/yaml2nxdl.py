@@ -32,6 +32,7 @@ from typing import List
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import textwrap
 import click
 
 from nexusparser.tools.dataconverter import helpers
@@ -51,9 +52,26 @@ using built-in libraries and add preceding XML processing instruction
         'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
     root = dom.firstChild
     dom.insertBefore(sibling, root)
-    xml_string = dom.toprettyxml()
-    with open(output_xml, "w") as file_out:
-        file_out.write(xml_string)
+    xml_string = dom.toprettyxml(indent='    ', newl='\n')
+    with open('tmp.xml', "w") as file_tmp:
+        file_tmp.write(xml_string)
+    flag = False
+    with open('tmp.xml', "r") as file_out:
+        with open(output_xml, "w") as file_out_mod:
+            for i in file_out.readlines():
+                if '<doc>' not in i and '</doc>' not in i and flag is False:
+                    file_out_mod.write(i)
+                elif '<doc>' in i and '</doc>' in i:
+                    file_out_mod.write(i)
+                elif '<doc>' in i and '</doc>' not in i:
+                    flag = True
+                    white_spaces = len(i) - len(i.lstrip())
+                    file_out_mod.write(i)
+                elif '<doc>' not in i and '</doc>' not in i and flag is True:
+                    file_out_mod.write((white_spaces + 5) * ' ' + i)
+                elif '<doc>' not in i and '</doc>' in i and flag is True:
+                    file_out_mod.write((white_spaces + 5)*' ' + i)
+                    flag = False
 
 
 def yaml2nxdl(input_file: str, verbose: bool):
@@ -96,7 +114,7 @@ has to be a non-empty string!'
     doctag = ET.SubElement(xml_root, 'doc')
     if '#_newline_' in yml_appdef['doc']:
         yml_appdef['doc'] = yml_appdef['doc'].replace("#_newline_ ", "\n\n")
-    doctag.text = yml_appdef['doc']
+    doctag.text = textwrap.fill(yml_appdef['doc'], width=70)
     del yml_appdef['doc']
 
     if 'symbols' in yml_appdef.keys():

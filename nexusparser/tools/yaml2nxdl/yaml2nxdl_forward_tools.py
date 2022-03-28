@@ -24,6 +24,7 @@
 import sys
 import os
 import xml.etree.ElementTree as ET
+import textwrap
 
 from pyaml import yaml
 
@@ -83,7 +84,7 @@ def xml_handle_doc(obj, value: str):
     doctag = ET.SubElement(obj, 'doc')
     if '#_newline_' in value:
         value = value.replace("#_newline_", " \n \n")
-    doctag.text = value
+    doctag.text = textwrap.fill(value, width=70)
 
 
 def xml_handle_units(obj, value):
