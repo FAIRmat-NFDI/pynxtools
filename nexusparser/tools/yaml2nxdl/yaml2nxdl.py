@@ -70,8 +70,9 @@ using built-in libraries and add preceding XML processing instruction
                 elif '<doc>' not in i and '</doc>' not in i and flag is True:
                     file_out_mod.write((white_spaces + 5) * ' ' + i)
                 elif '<doc>' not in i and '</doc>' in i and flag is True:
-                    file_out_mod.write((white_spaces + 5)*' ' + i)
+                    file_out_mod.write((white_spaces + 5) * ' ' + i)
                     flag = False
+    os.remove('tmp.xml')
 
 
 def yaml2nxdl(input_file: str, verbose: bool):
