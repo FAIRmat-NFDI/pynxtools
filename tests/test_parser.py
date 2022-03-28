@@ -40,7 +40,7 @@ def parser():
     return NexusParser()
 
 
-def test_nexus():
+def test_nexus(tmp_path):
     """The nexus test function
 
 """
@@ -49,7 +49,7 @@ def test_nexus():
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     handler = logging.\
-        FileHandler(os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log'), 'w')
+        FileHandler(os.path.join(tmp_path, 'nexus_test.log'), 'w')
     handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -57,17 +57,12 @@ def test_nexus():
     nexus_helper = nexus.HandleNexus(logger, [example_data])
     nexus_helper.process_nexus_master_file(None)
 
-    with open(os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log'), 'r') as logfile:
+    with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
     with open(os.path.join(local_dir, 'data/nexus_test_data/Ref_nexus_test.log'), 'r') as reffile:
         ref = reffile.readlines()
 
-    for i, line in enumerate(log):
-        if str(line) == str(ref[i]):
-            pass
-        else:
-            assert str(line) == str(ref[i])
-    os.remove(os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log'))
+    assert log == ref
 
     # didn't work with filecmp library
     # log = os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log')

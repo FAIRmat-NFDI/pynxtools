@@ -192,10 +192,8 @@ Ref_NXellipsometry_base_draft_parsed.nxdl.xml'
 
     assert set(test_tree_flattened) == set(ref_tree_flattened), 'Ref XML and parsed XML\
 has not the same tree structure!!'
-    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry.nxdl.xml')
     os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.nxdl.xml')
     os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml')
-    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_parsed.yml')
     sys.stdout.write('Test on xml -> yml -> xml okay.\n')
 
 
