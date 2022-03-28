@@ -24,6 +24,7 @@
 import sys
 import os
 import xml.etree.ElementTree as ET
+import textwrap
 
 from pyaml import yaml
 
@@ -47,7 +48,7 @@ def yml_reader(inputfile):
     with open('formatted_doc_file.yml', 'w') as new_file:
         for line in file:
             if not line.strip():
-                new_file.write(f"_newline_\n")
+                new_file.write(f"#_newline_\n")
             else:
                 new_file.write(line)
     with open('formatted_doc_file.yml') as stream:
@@ -81,9 +82,9 @@ def xml_handle_doc(obj, value: str):
 
     """
     doctag = ET.SubElement(obj, 'doc')
-    if '_newline_' in value:
-        value = value.replace("_newline_", " \n \n")
-    doctag.text = value
+    if '#_newline_' in value:
+        value = value.replace("#_newline_", " \n \n")
+    doctag.text = textwrap.fill(value, width=70)
 
 
 def xml_handle_units(obj, value):
