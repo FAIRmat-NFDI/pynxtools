@@ -315,12 +315,14 @@ def create_field_section(xml_node: ET.Element, container: Section):
 
     if 'type' in xml_attrs:
         nx_type = xml_attrs['type']
-        if nx_type not in _NX_TYPES:
-            raise NotImplementedError(f'type {nx_type} is not supported')
-        field_section.more['nx_type'] = nx_type
+    else:
+        nx_type = 'NX_CHAR'
+    if nx_type not in _NX_TYPES:
+        raise NotImplementedError(f'type {nx_type} is not supported')
+    field_section.more['nx_type'] = nx_type
 
-        if value_quantity.type is None or value_quantity.type is Any or nx_type != 'NX_CHAR':
-            value_quantity.type = _NX_TYPES[nx_type]
+    if value_quantity.type is None or value_quantity.type is Any or nx_type != 'NX_CHAR':
+        value_quantity.type = _NX_TYPES[nx_type]
 
     enum_type = get_enum(xml_node)
     if enum_type:
