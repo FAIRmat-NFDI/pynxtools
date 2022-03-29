@@ -30,7 +30,7 @@ from nomad.utils import strip
 from nomad.metainfo import (
     Section, Package, SubSection, Definition, Datetime, Bytes, Unit, MEnum, Quantity)
 from nomad.datamodel import EntryArchive
-from nomad.metainfo.elasticsearch_extension import Elasticsearch
+# from nomad.metainfo.elasticsearch_extension import Elasticsearch
 from nexusparser.tools import nexus
 
 # URL_REGEXP from
@@ -444,12 +444,20 @@ for application_section in APPLICATIONS.section_definitions:  # pylint: disable=
         name=application_section.name.replace('NX', 'nx_application_'))
     NEXUS_SECTION.sub_sections.append(sub_section)
 
+for application_section in CONTRIBUTED.section_definitions:  # pylint: disable=not-an-iterable
+    sub_section = SubSection(
+        section_def=application_section,
+        name=application_section.name.replace('NX', 'nx_application_'))
+    NEXUS_SECTION.sub_sections.append(sub_section)
+
 APPLICATIONS.section_definitions.append(NEXUS_SECTION)
 
 ENTRY_ARCHIVE_NEXUS_SUB_SECTION = \
     SubSection(name='nexus',
-               section_def=NEXUS_SECTION,
-               a_elasticsearch=Elasticsearch(nested=True))
+               section_def=NEXUS_SECTION)
+# SubSection(name='nexus',
+#            section_def=NEXUS_SECTION,
+#            a_elasticsearch=Elasticsearch(nested=True))
 EntryArchive.nexus = ENTRY_ARCHIVE_NEXUS_SUB_SECTION  # type: ignore
 EntryArchive.m_def.sub_sections.append(ENTRY_ARCHIVE_NEXUS_SUB_SECTION)
 
