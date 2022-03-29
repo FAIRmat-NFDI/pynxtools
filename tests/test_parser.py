@@ -132,6 +132,10 @@ def test_example():
         nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
         nx_group_monochromator.nx_field_energy.nx_name == 'energy'
+    # cannot store number 750 to a field expecting NX_CHAR
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_analyser.\
+        nx_field_entrance_slit_size.nx_value is None
     # 1D datasets
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"
