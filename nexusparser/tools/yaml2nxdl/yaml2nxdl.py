@@ -33,6 +33,7 @@ from typing import List
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import textwrap
+from inspect import currentframe, getframeinfo
 import click
 
 from nexusparser.tools.dataconverter import helpers
@@ -70,9 +71,24 @@ using built-in libraries and add preceding XML processing instruction
                 elif '<doc>' not in i and '</doc>' not in i and flag is True:
                     file_out_mod.write((white_spaces + 5) * ' ' + i)
                 elif '<doc>' not in i and '</doc>' in i and flag is True:
-                    file_out_mod.write((white_spaces + 5) * ' ' + i)
+                    file_out_mod.write(white_spaces * ' ' + i)
                     flag = False
     os.remove('tmp.xml')
+
+
+def format_nxdl_doc(string):
+    '''nexus format for doc string in the root definition of file'''
+    formatted_doc = ''
+    for index, line in enumerate(string.split("\n")):
+        if len(line) > 90:
+            w = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
+            line = '\n'.join(w.wrap(line))
+        if index == 0:
+            formatted_doc += f"\n"
+        if index == 1:
+            formatted_doc += f"\n"
+        formatted_doc += f"{line}\n"
+    return formatted_doc
 
 
 def yaml2nxdl(input_file: str, verbose: bool):
@@ -113,11 +129,19 @@ application and base are valid categories!'
 has to be a non-empty string!'
 
     doctag = ET.SubElement(xml_root, 'doc')
-    if '#_newline_' in yml_appdef['doc']:
-        yml_appdef['doc'] = yml_appdef['doc'].replace("#_newline_ ", "\n\n")
-    doctag.text = textwrap.fill(yml_appdef['doc'], width=70)
-    del yml_appdef['doc']
+    # formatted_doc = yml_appdef['doc'].split("#_newline_ ")[0] + '\n'
+    # if len(yml_appdef['doc'].split("#_newline_ ")) >= 1:
+    #     formatted_doc += '\n'
+    #     for paragraph in yml_appdef['doc'].split("#_newline_ ")[1:]:
+    #         #for subpar in paragraph.split("\n")
+    #         formatted_doc += textwrap.fill(paragraph, width=70) + '\n'
+    # mydoc = textwrap.TextWrapper(width=90,break_long_words=False,replace_whitespace=False)
+    # print(type(yml_appdef['doc']))
+    # doctag.text = str(mydoc.wrap(yml_appdef['doc'])) #formatted_doc
 
+    doctag.text = format_nxdl_doc(yml_appdef['doc'])
+
+    del yml_appdef['doc']
     if 'symbols' in yml_appdef.keys():
         yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
         del yml_appdef['symbols']
