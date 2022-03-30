@@ -44,16 +44,7 @@ def yml_reader(inputfile):
     Yaml module based reading of .yml file
     """
     with open(inputfile, 'r') as stream:
-        file = stream.readlines()
-    with open('formatted_doc_file.yml', 'w') as new_file:
-        for line in file:
-            if not line.strip():
-                new_file.write(f"#_newline_\n")
-            else:
-                new_file.write(line)
-    with open('formatted_doc_file.yml') as stream:
         parsed_yaml = yaml.safe_load(stream)
-        os.remove("formatted_doc_file.yml")
         return parsed_yaml
 
 
@@ -82,9 +73,8 @@ def xml_handle_doc(obj, value: str):
 
     """
     doctag = ET.SubElement(obj, 'doc')
-    if '#_newline_' in value:
-        value = value.replace("#_newline_", " \n \n")
     doctag.text = textwrap.fill(value, width=70)
+    doctag.text += '\n'
 
 
 def xml_handle_units(obj, value):
