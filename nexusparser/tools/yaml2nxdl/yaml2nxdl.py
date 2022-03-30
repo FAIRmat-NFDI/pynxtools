@@ -33,7 +33,6 @@ from typing import List
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import textwrap
-from inspect import currentframe, getframeinfo
 import click
 
 from nexusparser.tools.dataconverter import helpers
