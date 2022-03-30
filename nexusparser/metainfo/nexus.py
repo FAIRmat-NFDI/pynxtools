@@ -101,7 +101,6 @@ def get_or_create_section(name: str, **kwargs) -> Section:
     if name in _definition_sections:
         section = _definition_sections[name]
         section.more.update(**kwargs)
-        CURRENT_PACKAGE.section_definitions.append(section)
         return section
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
@@ -193,7 +192,7 @@ def add_common_properties(xml_node: ET.Element, definition: Definition):
         definition.more['nx_recommended'] = xml_attrs['recommended']
 
     if 'category' in xml_attrs:
-        definition.more['nx_category'] = xml_attrs['category']\
+        definition.more['nx_category'] = xml_attrs['category']
 
     # TO DO there are probably even more nxdl attributes?
 
@@ -462,13 +461,14 @@ PACKAGES = (BASE_CLASSES, APPLICATIONS, CONTRIBUTED)
 NEXUS_SECTION = Section(validate=VALIDATE, name='Nexus')
 
 for application_section in APPLICATIONS.section_definitions:  # pylint: disable=not-an-iterable
-    sub_section = SubSection(
-        section_def=application_section,
-        name=application_section.name.replace('NX', 'nx_application_'))
-    NEXUS_SECTION.sub_sections.append(sub_section)
+    if application_section.more.get('nx_category') == 'application':
+        sub_section = SubSection(
+            section_def=application_section,
+            name=application_section.name.replace('NX', 'nx_application_'))
+        NEXUS_SECTION.sub_sections.append(sub_section)
 
 for application_section in CONTRIBUTED.section_definitions:  # pylint: disable=not-an-iterable
-    if application_section.more.get('category') == 'application':
+    if application_section.more.get('nx_category') == 'application':
         sub_section = SubSection(
             section_def=application_section,
             name=application_section.name.replace('NX', 'nx_application_'))
