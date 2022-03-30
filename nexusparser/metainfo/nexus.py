@@ -101,6 +101,7 @@ def get_or_create_section(name: str, **kwargs) -> Section:
     if name in _definition_sections:
         section = _definition_sections[name]
         section.more.update(**kwargs)
+        CURRENT_PACKAGE.section_definitions.append(section)
         return section
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
@@ -135,12 +136,25 @@ def add_common_properties_helper(base_section, definition):
         definition.more.update(**base_section.more)
 
 
+def get_nexus_category(xml_node: ET.Element):
+    '''
+    retrieves the category from the root element
+    '''
+    elem = xml_node
+    parent = elem
+    while parent is not None:
+        elem = parent
+        parent = _XML_PARENT_MAP.get(elem)
+    return elem.attrib['category']
+
+
 def add_common_properties(xml_node: ET.Element, definition: Definition):
     '''
     Adds general metainfo definition properties (e.g. deprecated, docs, optional, ...)
     from the given nexus XML node to the given metainfo definition.
     '''
     nx_kind = definition.more.get('nx_kind')
+    nx_category = get_nexus_category(xml_node)
     xml_attrs = xml_node.attrib
 
     # Read properties from potential base section. Those are not inherited, but we
@@ -167,7 +181,7 @@ def add_common_properties(xml_node: ET.Element, definition: Definition):
         definition.deprecated = xml_attrs['deprecated']
 
     definition.more['nx_optional'] = xml_attrs.get(
-        'optional', CURRENT_PACKAGE.name == 'nexus_base_classes')
+        'optional', nx_category == 'base')
 
     if 'minOccurs' in xml_attrs:
         definition.more['nx_min_occurs'] = xml_attrs['minOccurs']
@@ -177,6 +191,9 @@ def add_common_properties(xml_node: ET.Element, definition: Definition):
         definition.more['nx_required'] = xml_attrs['required']
     if 'recommended' in xml_attrs:
         definition.more['nx_recommended'] = xml_attrs['recommended']
+
+    if 'category' in xml_attrs:
+        definition.more['nx_category'] = xml_attrs['category']\
 
     # TO DO there are probably even more nxdl attributes?
 
@@ -386,8 +403,11 @@ def create_class_section(xml_node: ET.Element) -> Section:
     '''
     xml_attrs = xml_node.attrib
     assert 'name' in xml_attrs
+    assert 'category' in xml_attrs
 
-    class_section = get_or_create_section(xml_attrs['name'], nx_kind=xml_attrs['type'])
+    class_section = get_or_create_section(xml_attrs['name'],
+                                          nx_kind=xml_attrs['type'],
+                                          nx_category=xml_attrs['category'])
 
     if 'extends' in xml_attrs:
         base_section = get_or_create_section(xml_attrs['extends'])
@@ -448,10 +468,11 @@ for application_section in APPLICATIONS.section_definitions:  # pylint: disable=
     NEXUS_SECTION.sub_sections.append(sub_section)
 
 for application_section in CONTRIBUTED.section_definitions:  # pylint: disable=not-an-iterable
-    sub_section = SubSection(
-        section_def=application_section,
-        name=application_section.name.replace('NX', 'nx_application_'))
-    NEXUS_SECTION.sub_sections.append(sub_section)
+    if application_section.more.get('category') == 'application':
+        sub_section = SubSection(
+            section_def=application_section,
+            name=application_section.name.replace('NX', 'nx_application_'))
+        NEXUS_SECTION.sub_sections.append(sub_section)
 
 APPLICATIONS.section_definitions.append(NEXUS_SECTION)
 
