@@ -19,8 +19,6 @@
 # limitations under the License.
 #
 
-import sys
-import logging
 import numpy as np
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
@@ -202,11 +200,6 @@ class NexusParser(MatchingParser):
             logger.critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
-        stdout_handler = logging.StreamHandler(sys.stdout)
-        stdout_handler.setLevel(logging.INFO)
-        stdout_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-        logger.addHandler(stdout_handler)
-
         self.archive = archive
         self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
         self.nxroot = self.archive.nexus
