@@ -131,7 +131,7 @@ class NexusParser(MatchingParser):
         """Walks through hdf_namelist and generate nxdl nodes"""
         hdf_path = hdf_info['hdf_path']
         hdf_node = hdf_info['hdf_node']
-        logstr = 'Parsing ' + hdf_path + (("@" + attr) if attr else '') + '\n'
+        logstr = hdf_path + (("@" + attr) if attr else '') + '\n'
         loglev = 'info'
         if nxdl_path is not None:
             logstr += ((nxdef or '???') + ':' + '.'.
@@ -193,13 +193,13 @@ class NexusParser(MatchingParser):
             logstr += ('NOT IN SCHEMA - skipped') + '\n'
             loglev = 'warning'
         if loglev == 'info':
-            logger.info(logstr)
+            logger.info('Parsing', nexusparser=logstr)
         elif loglev == 'warning':
-            logger.warning(logstr)
+            logger.warning('Parsing', nexusparser=logstr)
         elif loglev == 'error':
-            logger.error(logstr)
+            logger.error('Parsing', nexusparser=logstr)
         else:
-            logger.critical(logstr + 'NOT HANDLED\n')
+            logger.critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
         stdout_handler = logging.StreamHandler(sys.stdout)

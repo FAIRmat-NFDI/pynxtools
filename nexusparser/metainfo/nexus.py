@@ -30,7 +30,7 @@ from nomad.utils import strip
 from nomad.metainfo import (
     Section, Package, SubSection, Definition, Datetime, Bytes, Unit, MEnum, Quantity)
 from nomad.datamodel import EntryArchive
-# from nomad.metainfo.elasticsearch_extension import Elasticsearch
+from nomad.metainfo.elasticsearch_extension import Elasticsearch
 from nexusparser.tools import nexus
 
 # URL_REGEXP from
@@ -337,7 +337,8 @@ def create_field_section(xml_node: ET.Element, container: Section):
             # TO DO a default could be created from the nx_units value
             field_section.quantities.append(Quantity(
                 name='nx_unit', type=Unit,
-                description='The specific unit for that this fields data has.'))
+                description='The specific unit for that this fields data has.',
+                a_elasticsearch=Elasticsearch()))
 
     dimensions = xml_node.find('nx:dimensions', XML_NAMESPACES)
     if dimensions is not None:
