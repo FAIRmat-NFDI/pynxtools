@@ -84,17 +84,17 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
 
-    nxdl_file_path = "nexusparser/definitions/applications/NXellipsometry.nxdl.xml"
+    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXellipsometry.nxdl.xml"
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
     assert node.attrib["type"] == "NXcollection"
 
-    nxdl_file_path = "nexusparser/definitions/applications/NXem_nion.nxdl.xml"
+    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXem_nion.nxdl.xml"
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/em_lab/hadf/SCANBOX_EM", elem=elem)
     assert node.attrib["type"] == "NXscanbox_em"
 
-    nxdl_file_path = "nexusparser/definitions/applications/NXmpes.nxdl.xml"
+    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/DATA/VARIABLE", elem=elem)
     assert node.attrib["name"] == "VARIABLE"
@@ -137,6 +137,18 @@ def test_example():
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_analyser.\
         nx_field_entrance_slit_size.nx_value is None
+    # good ENUM - x-ray
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
+        nx_field_probe.nx_value == 'x-ray'
+    # wrong inherited ENUM - Burst
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
+        nx_field_mode.nx_value is None
+    # wrong inherited ENUM for extended field - 'Free Electron Laser'
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
+        nx_field_type.nx_value is None
     # 1D datasets
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"
