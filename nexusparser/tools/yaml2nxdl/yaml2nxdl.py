@@ -45,7 +45,6 @@ def pretty_print_xml(xml_root, output_xml):
 using built-in libraries and add preceding XML processing instruction
 
     """
-    # dom = minidom.parse(xml_root)  # or xml.dom.minidom.parseString(xml_string)
     dom = minidom.parseString(ET.tostring(
         xml_root, encoding='utf-8', method='xml'))
     sibling = dom.createProcessingInstruction(
@@ -128,16 +127,6 @@ application and base are valid categories!'
 has to be a non-empty string!'
 
     doctag = ET.SubElement(xml_root, 'doc')
-    # formatted_doc = yml_appdef['doc'].split("#_newline_ ")[0] + '\n'
-    # if len(yml_appdef['doc'].split("#_newline_ ")) >= 1:
-    #     formatted_doc += '\n'
-    #     for paragraph in yml_appdef['doc'].split("#_newline_ ")[1:]:
-    #         #for subpar in paragraph.split("\n")
-    #         formatted_doc += textwrap.fill(paragraph, width=70) + '\n'
-    # mydoc = textwrap.TextWrapper(width=90,break_long_words=False,replace_whitespace=False)
-    # print(type(yml_appdef['doc']))
-    # doctag.text = str(mydoc.wrap(yml_appdef['doc'])) #formatted_doc
-
     doctag.text = format_nxdl_doc(yml_appdef['doc'])
 
     del yml_appdef['doc']
