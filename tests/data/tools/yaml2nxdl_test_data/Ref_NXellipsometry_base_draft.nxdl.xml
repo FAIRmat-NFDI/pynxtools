@@ -2,8 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="application" extends="NXobject" name="NXellipsometry_base_draft" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
     <doc>
-         draft application definition for ellipsometry measurements, including complex systems up
-         to variable angle spectroscopic ellipsometry.
+         draft application definition for ellipsometry measurements, including complex systems up to variable angle spectroscopic ellipsometry.
     </doc>
     <symbols>
         <doc>Variables used throughout the document, e.g. dimensions and important parameters</doc>
