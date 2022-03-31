@@ -268,8 +268,7 @@ def add_base_section(section: Section, container: Section, default_base_section:
     Potentially adds a base section to the given section, if the given container has
     a base-section with a suitable base.
     '''
-    base_section = container.all_inner_section_definitions.get(
-        section.name, None)
+    base_section = container.all_inner_section_definitions.get(section.name, None)
     if base_section:
         assert base_section.nx_kind == section.nx_kind, 'base section has wrong nexus kind'
     else:
@@ -331,8 +330,7 @@ def create_field_section(xml_node: ET.Element, container: Section):
     if base_value_quantity:
         value_quantity = base_value_quantity.m_copy()
     else:
-        value_quantity = Quantity(
-            name='nx_value', description='The value for this nexus field')
+        value_quantity = Quantity(name='nx_value', description='The value for this nexus field')
     field_section.quantities.append(value_quantity)
 
     if 'type' in xml_attrs:
