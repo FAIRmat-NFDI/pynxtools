@@ -72,8 +72,7 @@ def xml_handle_doc(obj, value: str):
 
     """
     doctag = ET.SubElement(obj, 'doc')
-    doctag.text = textwrap.fill(value, width=70)
-    doctag.text += '\n'
+    doctag.text = '\n' + textwrap.fill(value, width=70) + '\n'
 
 
 def xml_handle_units(obj, value):
@@ -196,14 +195,14 @@ def xml_handle_symbols(obj, value: dict):
     syms = ET.SubElement(obj, 'symbols')
     if 'doc' in value.keys():
         doctag = ET.SubElement(syms, 'doc')
-        doctag.text = value['doc']
+        doctag.text = '\n' + textwrap.fill(value['doc'], width=70) + '\n'
     for kkeyword, vvalue in value.items():
         if kkeyword != 'doc':
             assert vvalue is not None and isinstance(vvalue, str), 'Put a comment in doc string!'
             sym = ET.SubElement(syms, 'symbol')
             sym.set('name', kkeyword)
             sym_doc = ET.SubElement(sym, 'doc')
-            sym_doc.text = vvalue
+            sym_doc.text = '\n' + textwrap.fill(vvalue, width=70) + '\n'
 
 
 def check_keyword_variable(verbose, keyword_name, keyword_type, value):
