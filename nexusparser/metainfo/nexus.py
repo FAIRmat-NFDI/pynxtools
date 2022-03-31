@@ -47,6 +47,7 @@ _definition_sections: Dict[str, Section] = dict()
 _XML_PARENT_MAP: Dict[ET.Element, ET.Element] = None
 _NX_DOC_BASE = 'https://manual.nexusformat.org/classes'
 _NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
+    'NX_COMPLEX': np.dtype(np.float64),
     'NX_FLOAT': np.dtype(np.float64),
     'NX_CHAR': str,
     'NX_BOOLEAN': bool,
@@ -79,13 +80,16 @@ def nx_documenation_url(xml_node: ET.Element, nx_type: str):
         anchor_segments.append(nx_type)
 
     while xml_node is not None:
+        xml_parent = xml_node
         if 'name' in xml_node.attrib:
             anchor_segments.append(xml_node.attrib['name'].replace('_', '-'))
+        else:
+            anchor_segments.append(xml_node.attrib['type'][2:].replace('_', '-'))
 
         xml_node = _XML_PARENT_MAP.get(xml_node)
 
     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    nx_package = CURRENT_PACKAGE.name.replace('nexus_', '')
+    nx_package = xml_parent.get('nxdl_base').split('/')[-1]
     doc_url = f'{_NX_DOC_BASE}/{nx_package}/{anchor_segments[-1]}.html#{anchor}'
     return doc_url
 
@@ -264,7 +268,8 @@ def add_base_section(section: Section, container: Section, default_base_section:
     Potentially adds a base section to the given section, if the given container has
     a base-section with a suitable base.
     '''
-    base_section = container.all_inner_section_definitions.get(section.name, None)
+    base_section = container.all_inner_section_definitions.get(
+        section.name, None)
     if base_section:
         assert base_section.nx_kind == section.nx_kind, 'base section has wrong nexus kind'
     else:
@@ -326,7 +331,8 @@ def create_field_section(xml_node: ET.Element, container: Section):
     if base_value_quantity:
         value_quantity = base_value_quantity.m_copy()
     else:
-        value_quantity = Quantity(name='nx_value', description='The value for this nexus field')
+        value_quantity = Quantity(
+            name='nx_value', description='The value for this nexus field')
     field_section.quantities.append(value_quantity)
 
     if 'type' in xml_attrs:
@@ -334,7 +340,7 @@ def create_field_section(xml_node: ET.Element, container: Section):
     else:
         nx_type = 'NX_CHAR'
     if nx_type not in _NX_TYPES:
-        raise NotImplementedError(f'type {nx_type} is not supported')
+        raise NotImplementedError(f'type {nx_type} is not supported for {name}')
     field_section.more['nx_type'] = nx_type
 
     if value_quantity.type is None or value_quantity.type is Any or nx_type != 'NX_CHAR':
@@ -418,56 +424,91 @@ def create_class_section(xml_node: ET.Element) -> Section:
     return class_section
 
 
-def create_package_from_nxdl_directory(path: str) -> Package:
+def sort_nxdl_files(paths):
+    '''sorting all definitions based on dependencies'''
+    def compare_dependencies(nxdl1, nxdl2):
+        if 'extends' in nxdl1.attrib and nxdl1.attrib['extends'] == nxdl2.attrib['name']:
+            return True
+        for group1 in nxdl1.iter("*"):
+            if group1.tag[group1.tag.rindex("}") + 1:] == 'group' and \
+                    group1.attrib['type'] == nxdl2.attrib['name']:
+                break
+        else:
+            return False
+        for group2 in nxdl2.iter("*"):
+            if group2.tag[group2.tag.rindex("}") + 1:] == 'group' and \
+                    group2.attrib['type'] == nxdl1.attrib['name']:
+                return False
+        return True
+
+    list_of_nxdl = []
+    for path in paths:
+        for nxdl_file in sorted(os.listdir(path)):
+            if not nxdl_file.endswith('.nxdl.xml'):
+                continue
+            xml_tree = ET.parse(os.path.join(path, nxdl_file))
+            xml_node = xml_tree.getroot()
+            xml_node.set('nxdl_base', path)
+            assert xml_node.attrib.get('type') == 'group', 'definition is not a group'
+            list_of_nxdl.append(xml_node)
+    sorted_index = 0
+    while sorted_index < len(list_of_nxdl):
+        current_index = sorted_index + 1
+        while current_index < len(list_of_nxdl):
+            if compare_dependencies(list_of_nxdl[sorted_index], list_of_nxdl[current_index]):
+                list_of_nxdl.append(list_of_nxdl[sorted_index])
+                list_of_nxdl.__delitem__(sorted_index)
+                break
+            current_index = current_index + 1
+        if current_index == len(list_of_nxdl):
+            sorted_index = sorted_index + 1
+    # print('\n'.join([nxdl.attrib['name'] for nxdl in list_of_nxdl]))
+    return list_of_nxdl
+
+
+def add_section_from_nxdl(xml_node):
+    '''
+    Creates a metainfo section from an nxdl file.
+    '''
+    try:
+        global _XML_PARENT_MAP  # pylint: disable=global-statement
+        _XML_PARENT_MAP = {
+            child: parent for parent in xml_node.iter() for child in parent}
+
+        # The section gets already implicitly added to CURRENT_PACKAGE by get_or_create_section
+        create_class_section(xml_node)
+
+    except NotImplementedError as err:
+        print('Exception while mapping ' + xml_node.attrib["name"] + ':', err, file=sys.stderr)
+
+
+def create_package_from_nxdl_directories(paths) -> Package:
     '''
     Creates a metainfo package from the given nexus directory. Will generate the respective
     metainfo definitions from all the nxdl files in that directory.
     '''
     global CURRENT_PACKAGE  # pylint: disable=global-statement
-    CURRENT_PACKAGE = Package(name=f'nexus_{os.path.basename(path)}')
+    CURRENT_PACKAGE = Package(name=f'nexus')
 
-    for nxdl_file in sorted(os.listdir(path)):
-        if not nxdl_file.endswith('.nxdl.xml'):
-            continue
-
-        try:
-            nxdl_path = os.path.join(path, nxdl_file)
-            xml_tree = ET.parse(nxdl_path)
-            xml_node = xml_tree.getroot()
-            global _XML_PARENT_MAP  # pylint: disable=global-statement
-            _XML_PARENT_MAP = {child: parent for parent in xml_tree.iter() for child in parent}
-            assert xml_node.attrib.get('type') == 'group', 'definition is not a group'
-
-            # The section gets already implicitly added to CURRENT_PACKAGE by get_or_create_section
-            create_class_section(xml_node)
-
-        except NotImplementedError:
-            print(f'Exception while mapping {nxdl_file}', file=sys.stderr)
+    sorted_files = sort_nxdl_files(paths)
+    for nxdl_file in sorted_files:
+        add_section_from_nxdl(nxdl_file)
 
     return CURRENT_PACKAGE
 
 
 # separated metainfo package for the nexus base classes, application defs and contributed classes.
-BASE_CLASSES = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
-                                                               'base_classes'))
-APPLICATIONS = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
-                                                               'applications'))
-CONTRIBUTED = create_package_from_nxdl_directory(os.path.join(nexus.get_nexus_definitions_path(),
-                                                              'contributed_definitions'))
-PACKAGES = (BASE_CLASSES, APPLICATIONS, CONTRIBUTED)
+DIRS = [os.path.join(nexus.get_nexus_definitions_path(), 'base_classes')]
+DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'contributed_definitions'))
+DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'applications'))
+APPLICATIONS = create_package_from_nxdl_directories(DIRS)
+PACKAGES = (APPLICATIONS,)  # , APPLICATIONS, CONTRIBUTED)
 
 # We take the application definitions and create a common parent section that allows to
 # include nexus in an EntryArchive.
 NEXUS_SECTION = Section(validate=VALIDATE, name='Nexus')
 
 for application_section in APPLICATIONS.section_definitions:  # pylint: disable=not-an-iterable
-    if application_section.more.get('nx_category') == 'application':
-        sub_section = SubSection(
-            section_def=application_section,
-            name=application_section.name.replace('NX', 'nx_application_'))
-        NEXUS_SECTION.sub_sections.append(sub_section)
-
-for application_section in CONTRIBUTED.section_definitions:  # pylint: disable=not-an-iterable
     if application_section.more.get('nx_category') == 'application':
         sub_section = SubSection(
             section_def=application_section,
