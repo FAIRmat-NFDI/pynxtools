@@ -79,7 +79,7 @@ def format_nxdl_doc(string):
     '''nexus format for doc string in the root definition of file'''
     formatted_doc = ''
     for index, line in enumerate(string.split("\n")):
-        if len(line) > 90:
+        if len(line) > 90 and index > 0:
             w = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
             line = '\n'.join(w.wrap(line))
         if index == 0:
