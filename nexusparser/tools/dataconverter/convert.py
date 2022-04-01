@@ -111,7 +111,11 @@ def convert(input_file: Tuple[str],
         nxdl_path = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
     else:
         definitions_path = nexus.get_nexus_definitions_path()
-        nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
+        nxdl_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_path):
+            nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_path):
+            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
     nxdl_root = ET.parse(nxdl_path).getroot()
 
