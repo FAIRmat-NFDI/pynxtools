@@ -33,7 +33,7 @@ pip install nomad-lab==1.0.0 --extra-index-url https://gitlab.mpcdf.mpg.de/api/v
 Clone this project (or fork and then clone the fork). Go into the cloned directory and
 directly run the parser from there:
 ```
-git clone https://github.com/nomad-coe/nomad-parser-nexus.git --branch yaml2nxdl --recursive parser-nexus
+git clone https://github.com/nomad-coe/nomad-parser-nexus.git --branch master --recursive parser-nexus
 cd parser-nexus
 git submodule sync --recursive
 git submodule update --init --recursive
