@@ -26,6 +26,31 @@ import nexusparser.tools.dataconverter.convert as dataconverter
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 
+@pytest.mark.parametrize("cli_inputs", [
+    pytest.param([
+        "--nxdl",
+        "NXcontainer",
+    ], id="exists-in-contributed"),
+    pytest.param([
+        "--nxdl",
+        "NXarchive",
+    ], id="exists-in-applications"),
+    pytest.param([
+        "--nxdl",
+        "NXdoesnotexist",
+    ], id="does-not-exist")
+])
+def test_find_nxdl(cli_inputs):
+    """Unit test to check if dataconverter can find NXDLs in contributed/applications folder."""
+    runner = CliRunner()
+    result = runner.invoke(dataconverter.convert, cli_inputs)
+    if "NXdoesnotexist" in cli_inputs:
+        assert isinstance(result.exception, FileNotFoundError)
+    else:
+        assert isinstance(result.exception, Exception)
+        assert "The chosen NXDL isn't supported by the selected reader." in str(result.exception)
+
+
 def test_get_reader():
     """Unit test for the helper function to get a reader."""
     assert isinstance(dataconverter.get_reader("example")(), BaseReader)
