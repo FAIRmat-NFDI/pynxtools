@@ -206,3 +206,12 @@ class NexusParser(MatchingParser):
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])
         nexus_helper.process_nexus_master_file(self.nexus_populate)
+
+        appdef = ""
+        for var in dir(archive.nexus):
+            if var.startswith("nx_application") and getattr(archive.nexus, var) is not None:
+                appdef = var[len("nx_application_"):]
+
+        if archive.metadata is not None:
+            archive.metadata.entry_type = f"NX{appdef}"
+        # archive.results.method.method_name =  # This is where we want the AppDef to finally be set.
