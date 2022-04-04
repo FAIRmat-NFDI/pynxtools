@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """Read files from different format and print it in a standard Nexus format
 """
 
@@ -320,31 +321,31 @@ def get_required_string(nxdl_elem):
     return "<<REQUIRED>>"
 
 
-def chk_nxdataaxis_v2(hdf_node, name):
+def chk_nxdataaxis_v2(hdf_node, name, logger):
     """Check if dataset is an axis"""
     own_signal = hdf_node.attrs.get('signal')  # check for being a Signal
     if own_signal is str and own_signal == "1":
-        LOGGER.info("Dataset referenced (v2) as NXdata SIGNAL")
+        logger.debug("Dataset referenced (v2) as NXdata SIGNAL")
     own_axes = hdf_node.attrs.get('axes')  # check for being an axis
     if own_axes is str:
         axes = own_axes.split(':')
         for i in len(axes):
             if axes[i] and name == axes[i]:
-                LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", i)
+                logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
                 return None
     ownpaxis = hdf_node.attrs.get('primary')
     own_axis = hdf_node.attrs.get('axis')
     if own_axis is int:
         # also convention v1
         if ownpaxis is int and ownpaxis == 1:
-            LOGGER.info("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
+            logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
         else:
-            LOGGER.info(
+            logger.debug(
                 "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d", own_axis - 1)
     return None
 
 
-def chk_nxdataaxis(hdf_node, name, loger):
+def chk_nxdataaxis(hdf_node, name, logger):
     """NEXUS Data Plotting Standard v3: new version from 2014"""
     if not isinstance(hdf_node, h5py.Dataset):  # check if it is a field in an NXdata node
         return None
@@ -353,59 +354,59 @@ def chk_nxdataaxis(hdf_node, name, loger):
         return None
     signal = parent.attrs.get('signal')  # chk for Signal
     if signal and name == signal:
-        loger.info("Dataset referenced as NXdata SIGNAL")
+        logger.debug("Dataset referenced as NXdata SIGNAL")
         return None
     axes = parent.attrs.get('axes')  # check for default Axes
     if axes is str:
         if name == axes:
-            loger.info("Dataset referenced as NXdata AXIS")
+            logger.debug("Dataset referenced as NXdata AXIS")
             return None
     elif axes is not None:
         for i, j in enumerate(axes):
             if name == j:
                 indices = parent.attrs.get(j + '_indices')
                 if indices is int:
-                    loger.info("Dataset referenced as NXdata AXIS #%d" % indices)
+                    logger.debug("Dataset referenced as NXdata AXIS #%d" % indices)
                 else:
-                    loger.info("Dataset referenced as NXdata AXIS #%d" % i)
+                    logger.debug("Dataset referenced as NXdata AXIS #%d" % i)
                 return None
     indices = parent.attrs.get(name + '_indices')  # check for alternative Axes
     if indices is int:
-        loger.info("Dataset referenced as NXdata alternative AXIS #%d" % indices)
-    return chk_nxdataaxis_v2(hdf_node, name)  # check for older conventions
+        logger.debug("Dataset referenced as NXdata alternative AXIS #%d" % indices)
+    return chk_nxdataaxis_v2(hdf_node, name, logger)  # check for older conventions
 
 
 # below there are some functions used in get_nxdl_doc function:
-def write_doc_string(loger, doc, attr):
+def write_doc_string(logger, doc, attr):
     """Simple function that prints a line in the logger if doc exists"""
     if doc:
-        loger.info("@" + attr + ' [NX_CHAR]')
-    return loger, doc, attr
+        logger.debug("@" + attr + ' [NX_CHAR]')
+    return logger, doc, attr
 
 
-def try_find_units(loger, elem, nxdl_path, doc, attr):
+def try_find_units(logger, elem, nxdl_path, doc, attr):
     """Try to find if units is defined inside the field in the NXDL element,
     otherwise try to find if units is defined as a child of the NXDL element."""
     try:  # try to find if units is defined inside the field in the NXDL element
         unit = elem.attrib[attr]
         if doc:
-            loger.info("@" + attr + ' [' + unit + ']')
+            logger.debug("@" + attr + ' [' + unit + ']')
         elem = None
         nxdl_path.append(attr)
     except KeyError:  # otherwise try to find if units is defined as a child of the NXDL element
         elem = get_nxdl_child(elem, attr, nexus_type='attribute')
         if elem is not None:
             if doc:
-                loger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
+                logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
             nxdl_path.append(elem)
         else:  # if no units category were defined in NXDL:
             if doc:
-                loger.info("@" + attr + " - REQUIRED, but undefined unit category")
+                logger.debug("@" + attr + " - REQUIRED, but undefined unit category")
             nxdl_path.append(attr)
-    return loger, elem, nxdl_path, doc, attr
+    return logger, elem, nxdl_path, doc, attr
 
 
-def check_attr_name_nxdl(loger, elem, nxdl_path, doc, attr):
+def check_attr_name_nxdl(logger, elem, nxdl_path, doc, attr):
     """Check for ATTRIBUTENAME_units in NXDL (normal).
 If not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE
 is in the SCHEMA, but no units category were defined. """
@@ -413,7 +414,7 @@ is in the SCHEMA, but no units category were defined. """
     if elem2 is not None:  # check for ATTRIBUTENAME_units in NXDL (normal)
         elem = elem2
         if doc:
-            loger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
+            logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
         nxdl_path.append(elem)
     else:  # if not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE
         # is in the SCHEMA, but no units category were defined
@@ -421,75 +422,81 @@ is in the SCHEMA, but no units category were defined. """
         if elem2 is not None:
             req_str = '<<RECOMMENDED>>'
             if doc:
-                loger.info("@" + attr + " - RECOMMENDED, but undefined unit category")
+                logger.debug("@" + attr + " - RECOMMENDED, but undefined unit category")
             nxdl_path.append(attr)
         else:  # otherwise: NOT IN SCHEMA
             elem = elem2
             if doc:
-                loger.info("@" + attr + " - IS NOT IN SCHEMA")
-    return loger, elem, nxdl_path, doc, attr, req_str
+                logger.debug("@" + attr + " - IS NOT IN SCHEMA")
+    return logger, elem, nxdl_path, doc, attr, req_str
 
 
-def try_find_default(loger, elem, nxdl_path, doc, attr):
+def try_find_default(logger, elem, nxdl_path, doc, attr):
     """Try to find if default is defined as a child of the NXDL element """
     if elem is not None:
         if doc:
-            loger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
+            logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
         nxdl_path.append(elem)
     else:  # if no default category were defined in NXDL:
         if doc:
-            loger.info("@" + attr + " - [NX_CHAR]")
+            logger.debug("@" + attr + " - [NX_CHAR]")
         nxdl_path.append(attr)
-    return loger, elem, nxdl_path, doc, attr
+    return logger, elem, nxdl_path, doc, attr
 
 
-def other_attrs(loger, elem, nxdl_path, doc, attr):
+def other_attrs(logger, elem, nxdl_path, doc, attr):
     """Handle remaining attributes """
     if elem is not None:
         if doc:
-            loger.info("@" + attr + ' - [' + get_nx_class(elem) + ']')
+            logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
         nxdl_path.append(elem)
     else:
         if doc:
-            loger.info("@" + attr + " - IS NOT IN SCHEMA")
-    return loger, elem, nxdl_path, doc, attr
+            logger.debug("@" + attr + " - IS NOT IN SCHEMA")
+    return logger, elem, nxdl_path, doc, attr
 
 
 def check_deprecation_enum_axis(variables, doc, elist, attr, hdf_node):
     """Check for several attributes. - deprecation - enums - nxdataaxis """
-    loger, elem, path = variables
+    logger, elem, path = variables
     dep_str = elem.attrib.get('deprecated')  # check for deprecation
     if dep_str:
         if doc:
-            loger.info("DEPRECATED - " + dep_str)
+            logger.debug("DEPRECATED - " + dep_str)
     for base_elem in elist if not attr else [elem]:  # check for enums
         sdoc = get_nxdl_child(base_elem, 'enumeration', go_base=False)
         if sdoc is not None:
             if doc:
-                loger.info("enumeration:")
+                logger.debug("enumeration (" + get_node_docname(base_elem) + "):")
             for item in sdoc:
                 if get_local_name_from_xml(item) == 'item':
                     if doc:
-                        loger.info("-> " + item.attrib['value'])
-    chk_nxdataaxis(hdf_node, path.split('/')[-1], loger)  # look for NXdata reference (axes/signal)
+                        logger.debug("-> " + item.attrib['value'])
+    chk_nxdataaxis(hdf_node, path.split('/')[-1], logger)  # look for NXdata reference (axes/signal)
     for base_elem in elist if not attr else [elem]:  # check for doc
         sdoc = get_nxdl_child(base_elem, 'doc', go_base=False)
         if doc:
-            loger.info(sdoc.text if sdoc is not None else "")
-    return loger, elem, path, doc, elist, attr, hdf_node
+            logger.debug("documentation (" + get_node_docname(base_elem) + "):")
+            logger.debug(sdoc.text if sdoc is not None else "")
+    return logger, elem, path, doc, elist, attr, hdf_node
 
 
-def get_nxdl_doc(hdf_node, loger, doc, attr=False):
+def get_node_docname(elem):
+    """get the short version of nxdlbase:nxdlpath"""
+    return str(elem.get('nxdlbase').split('/')[-1] + ":" + elem.get('nxdlpath'))
+
+
+def get_nxdl_doc(hdf_node, logger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)"""
     # new way: retrieve multiple inherited base classes
     (class_path, nxdl_path, elist) = \
         get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_node), hdf_node=hdf_node)
     elem = elist[0] if class_path and elist else None
     if doc:
-        loger.info("classpath: " + str(class_path))
-        loger.info("NOT IN SCHEMA" if elem is None else
-                   "classes:\n" + "\n".join
-                   (str(e.get('nxdlbase').split('/')[-1] + ":" + e.get('nxdlpath')) for e in elist))
+        logger.debug("classpath: " + str(class_path))
+        logger.debug("NOT IN SCHEMA" if elem is None else
+                     "classes:\n" + "\n".join
+                     (get_node_docname(e) for e in elist))
     # old solution with a single elem instead of using elist
     path = get_nx_class_path(hdf_node)
     req_str = None
@@ -497,46 +504,50 @@ def get_nxdl_doc(hdf_node, loger, doc, attr=False):
         # which should match the type of the corresponding NXDL element
         if attr == 'NX_class' and not isinstance(hdf_node, h5py.Dataset):
             elem = None
-            loger, doc, attr = write_doc_string(loger, doc, attr)
+            logger, doc, attr = write_doc_string(logger, doc, attr)
         # units category is a compulsory attribute for any fields
         elif attr == 'units' and isinstance(hdf_node, h5py.Dataset):
             req_str = "<<REQUIRED>>"
-            loger, elem, nxdl_path, doc, attr = try_find_units(loger,
-                                                               elem,
-                                                               nxdl_path,
-                                                               doc,
-                                                               attr)
+            logger, elem, nxdl_path, doc, attr = try_find_units(logger,
+                                                                elem,
+                                                                nxdl_path,
+                                                                doc,
+                                                                attr)
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith('_units'):
-            loger, elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl(loger,
-                                                                              elem,
-                                                                              nxdl_path,
-                                                                              doc,
-                                                                              attr)
+            logger, elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl(logger,
+                                                                               elem,
+                                                                               nxdl_path,
+                                                                               doc,
+                                                                               attr)
         # default is allowed for groups
         elif attr == 'default' and not isinstance(hdf_node, h5py.Dataset):
             req_str = "<<RECOMMENDED>>"
             # try to find if default is defined as a child of the NXDL element
             elem = get_nxdl_child(elem, attr, nexus_type='attribute')
-            loger, elem, nxdl_path, doc, attr = try_find_default(loger, elem, nxdl_path, doc, attr)
+            logger, elem, nxdl_path, doc, attr = try_find_default(logger,
+                                                                  elem,
+                                                                  nxdl_path,
+                                                                  doc,
+                                                                  attr)
         else:  # other attributes
             elem = get_nxdl_child(elem, attr, nexus_type='attribute')
-            loger, elem, nxdl_path, doc, attr = other_attrs(loger, elem, nxdl_path, doc, attr)
+            logger, elem, nxdl_path, doc, attr = other_attrs(logger, elem, nxdl_path, doc, attr)
     if (elem is None and req_str is None):
         if doc:
-            loger.info("")
+            logger.debug("")
         return ('None', None, None)
     if req_str is None:
         req_str = get_required_string(elem)  # check for being required
         if doc:
-            loger.info(req_str)
+            logger.debug(req_str)
     if elem is not None:
-        variables = [loger, elem, path]
-        loger, elem, path, doc, elist, attr, hdf_node = check_deprecation_enum_axis(variables,
-                                                                                    doc,
-                                                                                    elist,
-                                                                                    attr,
-                                                                                    hdf_node)
+        variables = [logger, elem, path]
+        logger, elem, path, doc, elist, attr, hdf_node = check_deprecation_enum_axis(variables,
+                                                                                     doc,
+                                                                                     elist,
+                                                                                     attr,
+                                                                                     hdf_node)
     return (req_str, get_nxdl_entry(hdf_node), nxdl_path)
 
 
@@ -738,8 +749,8 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
     This function either takes the name for the Nexus Application Definition
     we are looking for or the root elem from a previously loaded NXDL file
     and finds the corresponding XML element with the needed attributes."""
-    (class_path, nxdl_path, elist) = get_inherited_nodes(nxdl_path, nx_name, elem)
-    if class_path and nxdl_path and elist:
+    (class_path, nxdlpath, elist) = get_inherited_nodes(nxdl_path, nx_name, elem)
+    if class_path and nxdlpath and elist:
         elem = elist[0]
     else:
         elem = None
@@ -758,25 +769,25 @@ TODO:
 - NOMAD parser: store in NOMAD """
     hdf_info = {'hdf_path': hdf_path, 'hdf_node': hdf_node}
     if isinstance(hdf_node, h5py.Dataset):
-        logger.info('===== FIELD (/%s): %s' % (hdf_path, hdf_node))
+        logger.debug('===== FIELD (/%s): %s' % (hdf_path, hdf_node))
         val = str(hdf_node[()]).split('\n') if len(hdf_node.shape) <= 1 else str(
             hdf_node[0]).split('\n')
-        logger.info('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
+        logger.debug('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
     else:
-        logger.info('===== GROUP (/%s [%s::%s]): %s' %
-                    (hdf_path, get_nxdl_entry(hdf_node),
-                     get_nx_class_path(hdf_node), hdf_node))
+        logger.debug('===== GROUP (/%s [%s::%s]): %s' %
+                     (hdf_path, get_nxdl_entry(hdf_node),
+                      get_nx_class_path(hdf_node), hdf_node))
     (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser(hdf_info, nxdef, nxdl_path, val)
+        parser(hdf_info, nxdef, nxdl_path, val, logger)
     for key, value in hdf_node.attrs.items():
-        logger.info('===== ATTRS (/%s@%s)' % (hdf_path, key))
+        logger.debug('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
-        logger.info('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
+        logger.debug('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
         (req_str, nxdef, nxdl_path) = \
             get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
-            parser(hdf_info, nxdef, nxdl_path, val)
+            parser(hdf_info, nxdef, nxdl_path, val, logger, attr=key)
 
 
 def logger_auxiliary_signal(logger, nxdata):
@@ -786,15 +797,15 @@ def logger_auxiliary_signal(logger, nxdata):
         if isinstance(aux, str):
             aux = [aux]
         for asig in aux:
-            logger.info('Further auxiliary signal has been identified: %s' % (asig))
+            logger.debug('Further auxiliary signal has been identified: %s' % (asig))
     return logger
 
 
 def print_default_plotable_header(logger):
     """Print a three-lines header"""
-    logger.info('========================')
-    logger.info('=== Default Plotable ===')
-    logger.info('========================')
+    logger.debug('========================')
+    logger.debug('=== Default Plotable ===')
+    logger.debug('========================')
 
 
 def get_default_plotable(root, logger):
@@ -812,10 +823,10 @@ def get_default_plotable(root, logger):
     if not nxentry:
         nxentry = entry_helper(root)
     if not nxentry:
-        logger.info('No NXentry has been found')
+        logger.debug('No NXentry has been found')
         return
-    logger.info('')
-    logger.info('NXentry has been identified: ' + nxentry.name)
+    logger.debug('')
+    logger.debug('NXentry has been identified: ' + nxentry.name)
     # nxdata
     nxdata = None
     nxgroup = nxentry
@@ -831,10 +842,10 @@ def get_default_plotable(root, logger):
     else:
         nxdata = nxgroup
     if not nxdata:
-        logger.info('No NXdata group has been found')
+        logger.debug('No NXdata group has been found')
         return
-    logger.info('')
-    logger.info('NXdata group has been identified: ' + nxdata.name)
+    logger.debug('')
+    logger.debug('NXdata group has been identified: ' + nxdata.name)
     process_node(nxdata, nxdata.name, None, logger, False)
     # signal
     signal = None
@@ -846,10 +857,10 @@ def get_default_plotable(root, logger):
     if not signal:
         signal = signal_helper(nxdata)
     if not signal:
-        logger.info('No Signal has been found')
+        logger.debug('No Signal has been found')
         return
-    logger.info('')
-    logger.info('Signal has been identified: ' + signal.name)
+    logger.debug('')
+    logger.debug('Signal has been identified: ' + signal.name)
     process_node(signal, signal.name, None, logger, False)
     logger = logger_auxiliary_signal(logger, nxdata)  # check auxiliary_signals
     dim = len(signal.shape)
@@ -965,9 +976,9 @@ def axis_helper(dim, nxdata, signal, axes, logger):
         if not ax_list:  # check for axis/primary specifications
             find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list)
         axes.append(ax_list)
-        logger.info('')
-        logger.info('For Axis #%d, %d axes have been identified: %s' %
-                    (a_item, len(ax_list), str(ax_list)))
+        logger.debug('')
+        logger.debug('For Axis #%d, %d axes have been identified: %s' %
+                     (a_item, len(ax_list), str(ax_list)))
 
 
 class HandleNexus:

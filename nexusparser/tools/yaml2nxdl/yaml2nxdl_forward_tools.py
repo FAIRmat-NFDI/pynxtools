@@ -22,8 +22,8 @@
 #
 
 import sys
-import os
 import xml.etree.ElementTree as ET
+import textwrap
 
 from pyaml import yaml
 
@@ -43,16 +43,7 @@ def yml_reader(inputfile):
     Yaml module based reading of .yml file
     """
     with open(inputfile, 'r') as stream:
-        file = stream.readlines()
-    with open('formatted_doc_file.yml', 'w') as new_file:
-        for line in file:
-            if not line.strip():
-                new_file.write(f"_newline_\n")
-            else:
-                new_file.write(line)
-    with open('formatted_doc_file.yml') as stream:
         parsed_yaml = yaml.safe_load(stream)
-        os.remove("formatted_doc_file.yml")
         return parsed_yaml
 
 
@@ -81,9 +72,7 @@ def xml_handle_doc(obj, value: str):
 
     """
     doctag = ET.SubElement(obj, 'doc')
-    if '_newline_' in value:
-        value = value.replace("_newline_", " \n \n")
-    doctag.text = value
+    doctag.text = '\n' + textwrap.fill(value, width=70) + '\n'
 
 
 def xml_handle_units(obj, value):
@@ -206,14 +195,14 @@ def xml_handle_symbols(obj, value: dict):
     syms = ET.SubElement(obj, 'symbols')
     if 'doc' in value.keys():
         doctag = ET.SubElement(syms, 'doc')
-        doctag.text = value['doc']
+        doctag.text = '\n' + textwrap.fill(value['doc'], width=70) + '\n'
     for kkeyword, vvalue in value.items():
         if kkeyword != 'doc':
             assert vvalue is not None and isinstance(vvalue, str), 'Put a comment in doc string!'
             sym = ET.SubElement(syms, 'symbol')
             sym.set('name', kkeyword)
             sym_doc = ET.SubElement(sym, 'doc')
-            sym_doc.text = vvalue
+            sym_doc.text = '\n' + textwrap.fill(vvalue, width=70) + '\n'
 
 
 def check_keyword_variable(verbose, keyword_name, keyword_type, value):

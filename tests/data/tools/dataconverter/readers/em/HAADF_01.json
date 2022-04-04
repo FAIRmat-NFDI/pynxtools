@@ -1,0 +1,188 @@
+{
+	"version": 1,
+	"reader_version": 1,
+	"large_format": false,
+	"spatial_calibrations": [
+		{
+			"offset": -4.0,
+			"scale": 0.015625,
+			"units": "nm"
+		},
+		{
+			"offset": -4.0,
+			"scale": 0.015625,
+			"units": "nm"
+		}
+	],
+	"intensity_calibration": {
+		"offset": 0.0,
+		"scale": 1.0,
+		"units": ""
+	},
+	"collection_dimension_count": 0,
+	"datum_dimension_count": 2,
+	"metadata": {
+		"instrument": {
+			"high_tension": 60000.0,
+			"defocus": 2.107734855509256e-9,
+			"ImageScanned": {
+				"EHT": 60000.0,
+				"PMTBF_gain": 0.0,
+				"PMTDF_gain": 1933.59375,
+				"StageOutA": -0.03729969210692419,
+				"StageOutB": 0.01738158857406741,
+				"StageOutX": -0.0003063858235397869,
+				"StageOutY": -0.0001353885807373515,
+				"StageOutZ": 0.0002824967227973447,
+				"C10": 2.107734855509256e-9,
+				"C12.a": -1.3270899476983896e-9,
+				"C12.b": 2.45416743732438e-9,
+				"C21.a": -1.8515161285500849e-8,
+				"C21.b": 1.455094762656879e-7,
+				"C23.a": 4.779994961830252e-8,
+				"C23.b": 8.451288085825055e-8,
+				"C30": -0.000006482662696236511,
+				"C32.a": -9.283273836488566e-7,
+				"C32.b": -0.0000021884600984798149,
+				"C34.a": 0.0000029847510241933799,
+				"C34.b": -0.0000010075905433611283,
+				"C50": 0.0041532602451731979,
+				"C1 ConstW": 0.0,
+				"C2 ConstW": 0.7066859999999983,
+				"C3 ConstW": 0.9436699999999997,
+				"PMT2_gain": 168.0,
+				"SuperFEG.^EmissionCurrent": 0.0000022013023715804149,
+				"G_2Db": -0.008842152356133365,
+				"LastTuneCurrent": 0.0,
+				"probe_ha": 0.03600084615384612,
+				"HAADF_Inner_ha": 0.075,
+				"HAADF_Outer_ha": 0.208,
+				"GeometricProbeSize": 8.687178534215421e-11
+			}
+		},
+		"scan": {
+			"hardware_source_id": "superscan",
+			"hardware_source_name": "SuperScan",
+			"scan_id": "f3d8cb6f-7a51-4634-ba5d-30d363f99737",
+			"center_x_nm": 0.0,
+			"center_y_nm": 0.0,
+			"fov_nm": 8.0,
+			"rotation": 0.4171336889266968,
+			"rotation_deg": 23.89999986822269,
+			"scan_context_size": [
+				512,
+				512
+			],
+			"scan_size": [
+				512,
+				512
+			],
+			"scan_device_parameters": {
+				"size": [
+					512,
+					512
+				],
+				"center_nm": [
+					0.0,
+					0.0
+				],
+				"pixel_time_us": 128.0,
+				"fov_nm": 8.0,
+				"rotation_rad": 0.4171336889266968,
+				"ac_line_sync": false,
+				"ac_frame_sync": true,
+				"flyback_time_us": 120,
+				"external_clock_mode": 0,
+				"external_clock_wait_time_ms": 0,
+				"external_scan_mode": 0,
+				"external_scan_ratio": 0.0,
+				"subscan_rotation": 0.0
+			},
+			"scan_device_properties": {
+				"ac_line_sync": 0.0,
+				"calibration_style": "space",
+				"center_x_nm": 0.0,
+				"center_y_nm": 0.0,
+				"flyback_time_us": 254.0,
+				"fov_nm": 8.0,
+				"line_time_us": 65278.0,
+				"pixel_time_us": 127.0,
+				"pixels_x": 512.0,
+				"pixels_y": 512.0,
+				"requested_pixel_time_us": 127.999999676831,
+				"rotation_deg": 23.8999998682227,
+				"rotation_rad": 0.417133688926697,
+				"mag_boards": {
+					"MagBoard 0 DAC 0": 0.0,
+					"MagBoard 0 DAC 1": 0.0,
+					"MagBoard 0 DAC 10": 59582.0,
+					"MagBoard 0 DAC 11": 54388.0,
+					"MagBoard 0 DAC 2": 0.0,
+					"MagBoard 0 DAC 3": 0.0,
+					"MagBoard 0 DAC 4": 59700.0,
+					"MagBoard 0 DAC 5": 10762.0,
+					"MagBoard 0 DAC 6": 45845.0,
+					"MagBoard 0 DAC 7": 681.0,
+					"MagBoard 0 DAC 8": 19705.0,
+					"MagBoard 0 DAC 9": 799.0,
+					"MagBoard 0 Relay": 0.0,
+					"MagBoard 1 DAC 0": 0.0,
+					"MagBoard 1 DAC 1": 0.0,
+					"MagBoard 1 DAC 10": 31608.0,
+					"MagBoard 1 DAC 11": 48046.0,
+					"MagBoard 1 DAC 2": 0.0,
+					"MagBoard 1 DAC 3": 0.0,
+					"MagBoard 1 DAC 4": 31738.0,
+					"MagBoard 1 DAC 5": 48122.0,
+					"MagBoard 1 DAC 6": 44233.0,
+					"MagBoard 1 DAC 7": 14038.0,
+					"MagBoard 1 DAC 8": 16265.0,
+					"MagBoard 1 DAC 9": 54988.0,
+					"MagBoard 1 Relay": 0.0
+				}
+			},
+			"valid_rows": 512
+		},
+		"hardware_source": {
+			"hardware_source_id": "superscan",
+			"hardware_source_name": "SuperScan",
+			"exposure": 33.292288,
+			"frame_index": 54,
+			"channel_id": "a",
+			"channel_name": "HADF",
+			"pixel_time_us": 127.0,
+			"line_time_us": 65278.0,
+			"valid_rows": 512,
+			"channel_index": 0,
+			"reference_key": "superscan_a"
+		}
+	},
+	"properties": {
+		"hardware_source_id": "superscan",
+		"hardware_source_name": "SuperScan",
+		"exposure": 33.292288,
+		"frame_index": 54,
+		"channel_id": "a",
+		"channel_name": "HADF",
+		"pixel_time_us": 127.0,
+		"line_time_us": 65278.0,
+		"valid_rows": 512,
+		"channel_index": 0,
+		"reference_key": "superscan_a"
+	},
+	"title": "SuperScan (HADF)",
+	"source_file_path": null,
+	"datetime_modified": {
+		"local_datetime": "2021-04-19T19:18:00.763327",
+		"tz": "+0200",
+		"dst": "+60",
+		"timezone": "Europe/Berlin"
+	},
+	"datetime_original": {
+		"local_datetime": "2021-04-19T19:18:00.763327",
+		"tz": "+0200",
+		"dst": "+60",
+		"timezone": "Europe/Berlin"
+	},
+	"uuid": "92511cb2-02ad-4114-b786-3b46558d7d04"
+}

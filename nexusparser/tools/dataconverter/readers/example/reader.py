@@ -17,7 +17,7 @@
 #
 """An example reader implementation for the DataConverter."""
 import os
-from typing import Tuple
+from typing import Tuple, Any
 import json
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
@@ -31,7 +31,10 @@ class ExampleReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXtest"]
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
+    def read(self,
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         data: dict = {}
 

@@ -82,7 +82,10 @@ def test_has_correct_read_func(reader):
 
         reader_name = get_reader_name_from_reader_object(reader)
 
-        nexus_appdef_dir = os.path.join(os.getcwd(), "nexusparser", "definitions", "applications")
+        nexus_appdef_dir = os.path.join(os.getcwd(),
+                                        "nexusparser",
+                                        "definitions",
+                                        "contributed_definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "tools", "dataconverter")
 
         input_files = glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))

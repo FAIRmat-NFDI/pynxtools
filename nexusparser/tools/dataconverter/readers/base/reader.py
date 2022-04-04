@@ -17,7 +17,7 @@
 #
 """The abstract class off of which to implement readers."""
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Tuple, Any
 
 
 class BaseReader(ABC):
@@ -38,7 +38,10 @@ class BaseReader(ABC):
     supported_nxdls = [""]
 
     @abstractmethod
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
+    def read(self,
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         return template
 

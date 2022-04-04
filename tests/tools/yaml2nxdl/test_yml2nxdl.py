@@ -109,6 +109,7 @@ def test_links():
         test_yml_link_file,
         test_xml_link_file,
         desired_matches)
+    os.remove('tests/data/tools/yaml2nxdl_test_data/NXtest_links.nxdl.xml')
     sys.stdout.write('Test on links okay.\n')
 
 
@@ -125,6 +126,7 @@ def test_symbols():
         test_yml_symbol_file,
         test_xml_symbol_file,
         desired_matches)
+    os.remove('tests/data/tools/yaml2nxdl_test_data/NXnested_symbols.nxdl.xml')
     sys.stdout.write('Test on symbols okay.\n')
 
 
@@ -142,6 +144,7 @@ def test_attributes():
         test_yml_attribute_file,
         test_xml_attribute_file,
         desired_matches)
+    os.remove('tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml')
     sys.stdout.write('Test on attributes okay.\n')
 
 
@@ -161,6 +164,7 @@ def test_symbols_and_enum_docs():
         test_yml_file,
         test_xml_file,
         desired_matches)
+    os.remove('tests/data/tools/yaml2nxdl_test_data/NXmytests.nxdl.xml')
     sys.stdout.write('Test on docs in enumeration and symbols okay.\n')
 
 
@@ -188,6 +192,8 @@ Ref_NXellipsometry_base_draft_parsed.nxdl.xml'
 
     assert set(test_tree_flattened) == set(ref_tree_flattened), 'Ref XML and parsed XML\
 has not the same tree structure!!'
+    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.nxdl.xml')
+    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml')
     sys.stdout.write('Test on xml -> yml -> xml okay.\n')
 
 
@@ -212,4 +218,6 @@ The xml trees of the two files are then compared.
 
     assert list(test_yml_tree) == list(ref_yml_tree), 'Ref YML and parsed YML \
 has not the same root entries!!'
+    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_parsed.yml')
+    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry.nxdl.xml')
     sys.stdout.write('Test on yml -> xml -> yml okay.\n')

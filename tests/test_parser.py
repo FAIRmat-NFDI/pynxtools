@@ -57,18 +57,18 @@ def test_nexus(tmp_path):
     nexus_helper = nexus.HandleNexus(logger, [example_data])
     nexus_helper.process_nexus_master_file(None)
 
-    # check logging result
-    # with open(os.path.join(local_dir, 'data/nexus_test.log'), "r") as file:
-    #     number_of_lines = len(file.readlines())
-    #     file.seek(0)
-    #     sum_char_values = sum(map(ord, file.read()))
-    # assert number_of_lines == 1653
-    # assert sum_char_values == 4419958
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
     with open(os.path.join(local_dir, 'data/nexus_test_data/Ref_nexus_test.log'), 'r') as reffile:
         ref = reffile.readlines()
+
     assert log == ref
+
+    # didn't work with filecmp library
+    # log = os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log')
+    # ref = os.path.join(local_dir, 'data/nexus_test_data/Ref2_nexus_test.log')
+    # print('yoyo', filecmp.cmp(log, ref, shallow=False))
+
     print('Testing of nexus.py is SUCCESSFUL.')
 
 
@@ -84,15 +84,20 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
 
-    nxdl_file_path = "nexusparser/definitions/applications/NXellipsometry.nxdl.xml"
+    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXellipsometry.nxdl.xml"
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
     assert node.attrib["type"] == "NXcollection"
 
-    nxdl_file_path = "nexusparser/definitions/applications/NXem_nion.nxdl.xml"
+    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXem_nion.nxdl.xml"
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/em_lab/hadf/SCANBOX_EM", elem=elem)
     assert node.attrib["type"] == "NXscanbox_em"
+
+    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path("/ENTRY/DATA/VARIABLE", elem=elem)
+    assert node.attrib["name"] == "VARIABLE"
 
 
 def test_example():
@@ -116,7 +121,8 @@ def test_example():
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
-    parser().parse(example_data, archive, logging.getLogger())
+    import structlog
+    parser().parse(example_data, archive, structlog.get_logger())
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_value == 3.27e-10
     assert archive.nexus.nx_application_arpes.\
@@ -127,6 +133,22 @@ def test_example():
         nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
         nx_group_monochromator.nx_field_energy.nx_name == 'energy'
+    # cannot store number 750 to a field expecting NX_CHAR
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_analyser.\
+        nx_field_entrance_slit_size.nx_value is None
+    # good ENUM - x-ray
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
+        nx_field_probe.nx_value == 'x-ray'
+    # wrong inherited ENUM - Burst
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
+        nx_field_mode.nx_value is None
+    # wrong inherited ENUM for extended field - 'Free Electron Laser'
+    assert archive.nexus.nx_application_arpes.\
+        nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
+        nx_field_type.nx_value is None
     # 1D datasets
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"

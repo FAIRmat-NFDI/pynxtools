@@ -81,24 +81,6 @@ If multiple datasets are provided, the function returns two lists"""
     return file, path
 
 
-def define_slices_intervals(data):
-    """Handle the start and end value of rows and cols.
-
-"""
-    row_and_col_shape = {}
-    row_and_col_shape['start_row'] = data['slice_row'][0]
-    row_and_col_shape['start_col'] = data['slice_column'][0]
-    if len(data['slice_row']) == 2:
-        row_and_col_shape['end_row'] = data['slice_row'][1]
-    else:
-        row_and_col_shape['end_row'] = data['slice_row'][0] + 1
-    if len(data['slice_column']) == 2:
-        row_and_col_shape['end_col'] = data['slice_column'][1]
-    else:
-        row_and_col_shape['end_col'] = data['slice_column'][0] + 1
-    return row_and_col_shape
-
-
 def handle_dicts_entries(data, grp, entry_name, output_path):
     """Handke function for dictionaries found as value of the nexus file.
 
@@ -110,19 +92,17 @@ Several cases can be encoutered:
 """
     file, path = split_link(data, output_path)
     # generate virtual datasets from slices
-    if 'slice_column' in data.keys():
-        if len(data['slice_row']) == 2:
-            length = data['slice_row'][1] - data['slice_row'][0]
-        else:
-            length = 1
-        row_and_col_shape = define_slices_intervals(data)
-        layout = h5py.VirtualLayout(shape=(length,), dtype=np.float64)
-        vsource = h5py.VirtualSource(file, path,
+    if 'shape' in data.keys():
+        layout = h5py.VirtualLayout(shape=(h5py.File(file, 'r')[path].shape[0],), dtype=np.float64)
+        vsource = h5py.VirtualSource(file,
+                                     path,
                                      shape=(h5py.File(file, 'r')[path].shape[0],
-                                            h5py.File(file, 'r')[path].shape[1])
-                                     )[row_and_col_shape['start_row']:row_and_col_shape['end_row'],
-                                       row_and_col_shape['start_col']:row_and_col_shape['end_col']
-                                       ]
+                                            h5py.File(file, 'r')[path].shape[1],
+                                            h5py.File(file, 'r')[path].shape[2],
+                                            h5py.File(file, 'r')[path].shape[3],
+                                            h5py.File(file, 'r')[path].shape[4]
+                                            )
+                                     )[data['shape']]
         layout[:] = vsource
         grp.create_virtual_dataset(entry_name, layout)
     # multiple datasets to concatenate
@@ -227,8 +207,17 @@ class Writer:
 
                     if isinstance(data, dict):
                         dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
+                    elif not (isinstance(data, str) or np.isscalar(data)):
+                        dataset = grp.create_dataset(entry_name,
+                                                     data=data,
+                                                     compression="gzip",
+                                                     chunks=True,
+                                                     compression_opts=9
+                                                     )
                     else:
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        dataset = grp.create_dataset(entry_name,
+                                                     data=data
+                                                     )
                     units_key = f"{path}/@units"
                     if units_key in self.data.keys() and self.data[units_key] is not None:
                         dataset.attrs["units"] = self.data[units_key]

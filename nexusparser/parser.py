@@ -19,8 +19,6 @@
 # limitations under the License.
 #
 
-import sys
-import logging
 import numpy as np
 from nomad.datamodel import EntryArchive
 from nomad.parsing import MatchingParser
@@ -90,7 +88,7 @@ def get_value(hdf_node):
     return val
 
 
-def helper_nexus_populate(nxdl_attribute, act_section, val):
+def helper_nexus_populate(nxdl_attribute, act_section, val, logger):
     """Handle info of units attribute, raise error if default or something else is found
 
 """
@@ -98,9 +96,9 @@ def helper_nexus_populate(nxdl_attribute, act_section, val):
         if nxdl_attribute == "units":
             act_section.nx_unit = val[0]
         elif nxdl_attribute == "default":
-            Exception("Quantity default' is not yet added by default to groups in Nomad schema")
+            Exception("Quantity 'default' is not yet added by default to groups in Nomad schema")
     except Exception as exc:  # pylint: disable=broad-except
-        print("Problem with storage!!!" + str(exc))
+        logger.debug("Problem with storage!!!\n" + str(exc))
 
 
 class NexusParser(MatchingParser):
@@ -127,20 +125,18 @@ class NexusParser(MatchingParser):
 #             name = xml_type + suffix
 #         return name
 
-    def nexus_populate(self, hdf_info, nxdef, nxdl_path, val):
-        """Walks through hdf_namelist and generate nxdl nodes
-
-"""
+    def nexus_populate(self, hdf_info, nxdef, nxdl_path, val, logger, attr=None):
+        """Walks through hdf_namelist and generate nxdl nodes"""
         hdf_path = hdf_info['hdf_path']
         hdf_node = hdf_info['hdf_node']
-        print('%%%%%%%%%%%%%%')
-        # print(nxdef+':'+'.'.join(p.getroottree().getpath(p) for p in nxdl_path)+
-        # ' - '+val[0]+ ("..." if len(val) > 1 else ''))
+        logstr = hdf_path + (("@" + attr) if attr else '') + '\n'
+        loglev = 'info'
         if nxdl_path is not None:
-            print((nxdef or '???') + ':' + '.'.
-                  join(p if isinstance(p, str) else
-                       read_nexus.get_node_name(p)
-                       for p in nxdl_path) + ' - ' + val[0] + ("..." if len(val) > 1 else ''))
+            logstr += ((nxdef or '???') + ':' + '.'.
+                       join(p if isinstance(p, str) else
+                            read_nexus.get_node_name(p)
+                            for p in nxdl_path) + ' - ' + val[0] + ("..."
+                                                                    if len(val) > 1 else '')) + '\n'
             act_section = self.nxroot
             hdf_namelist = hdf_path.split('/')[1:]
             act_section = get_to_new_subsection(None, nxdef, None, act_section)[1]
@@ -155,7 +151,16 @@ class NexusParser(MatchingParser):
                 if isinstance(nxdl_attribute, str):
                     # conventional attribute not in schema. Only necessary,
                     # if schema is not populated according
-                    helper_nexus_populate(nxdl_attribute, act_section, val)
+                    # helper_nexus_populate(nxdl_attribute, act_section, val, logger)
+                    try:
+                        if nxdl_attribute == "units":
+                            act_section.nx_unit = val[0]
+                        elif nxdl_attribute == "default":
+                            Exception(
+                                "'default' is not yet added by default to groups in Nomad schema")
+                    except Exception as exc:  # pylint: disable=broad-except
+                        logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
+                        loglev = 'error'
                 else:
                     # attribute in schema
                     act_section = \
@@ -163,10 +168,9 @@ class NexusParser(MatchingParser):
                                               nxdl_attribute, act_section)[1]
                     try:
                         act_section.nx_value = val[0]
-                    except AttributeError as exc:
-                        print("Problem with storage!!!" + str(exc))
-                    except TypeError as exc:
-                        print("Problem with storage!!!" + str(exc))
+                    except (AttributeError, TypeError) as exc:
+                        logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
+                        loglev = 'error'
             else:
                 try:
                     data_field = get_value(hdf_node)
@@ -181,20 +185,33 @@ class NexusParser(MatchingParser):
                         ])
                     act_section.nx_value = data_field
                 except TypeError as exc:
-                    print("Problem with storage!!!" + str(exc))
+                    logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
+                    loglev = 'error'
         else:
-            print('NOT IN SCHEMA - skipped')
-        print('%%%%%%%%%%%%%%')
+            logstr += ('NOT IN SCHEMA - skipped') + '\n'
+            loglev = 'warning'
+        if loglev == 'info':
+            logger.info('Parsing', nexusparser=logstr)
+        elif loglev == 'warning':
+            logger.warning('Parsing', nexusparser=logstr)
+        elif loglev == 'error':
+            logger.error('Parsing', nexusparser=logstr)
+        else:
+            logger.critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
-        stdout_handler = logging.StreamHandler(sys.stdout)
-        stdout_handler.setLevel(logging.DEBUG)
-        stdout_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-        logger.addHandler(stdout_handler)
-
         self.archive = archive
         self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
         self.nxroot = self.archive.nexus
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])
         nexus_helper.process_nexus_master_file(self.nexus_populate)
+
+        appdef = ""
+        for var in dir(archive.nexus):
+            if var.startswith("nx_application") and getattr(archive.nexus, var) is not None:
+                appdef = var[len("nx_application_"):]
+
+        if archive.metadata is not None:
+            archive.metadata.entry_type = f"NX{appdef}"
+        # archive.results.method.method_name =  # This is where we want the AppDef to finally be set.

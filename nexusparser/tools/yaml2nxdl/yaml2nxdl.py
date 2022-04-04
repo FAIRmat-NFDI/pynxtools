@@ -32,6 +32,7 @@ from typing import List
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import textwrap
 import click
 
 from nexusparser.tools.dataconverter import helpers
@@ -40,7 +41,7 @@ from nexusparser.tools.yaml2nxdl import yaml2nxdl_backward_tools
 
 
 def pretty_print_xml(xml_root, output_xml):
-    """Print better human-readable idented and formatted xml file
+    """Print better human-readable indented and formatted xml file
 using built-in libraries and add preceding XML processing instruction
 
     """
@@ -50,9 +51,42 @@ using built-in libraries and add preceding XML processing instruction
         'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
     root = dom.firstChild
     dom.insertBefore(sibling, root)
-    xml_string = dom.toprettyxml()
-    with open(output_xml, "w") as file_out:
-        file_out.write(xml_string)
+    xml_string = dom.toprettyxml(indent='    ', newl='\n')
+    with open('tmp.xml', "w") as file_tmp:
+        file_tmp.write(xml_string)
+    flag = False
+    with open('tmp.xml', "r") as file_out:
+        with open(output_xml, "w") as file_out_mod:
+            for i in file_out.readlines():
+                if '<doc>' not in i and '</doc>' not in i and flag is False:
+                    file_out_mod.write(i)
+                elif '<doc>' in i and '</doc>' in i:
+                    file_out_mod.write(i)
+                elif '<doc>' in i and '</doc>' not in i:
+                    flag = True
+                    white_spaces = len(i) - len(i.lstrip())
+                    file_out_mod.write(i)
+                elif '<doc>' not in i and '</doc>' not in i and flag is True:
+                    file_out_mod.write((white_spaces + 5) * ' ' + i)
+                elif '<doc>' not in i and '</doc>' in i and flag is True:
+                    file_out_mod.write(white_spaces * ' ' + i)
+                    flag = False
+    os.remove('tmp.xml')
+
+
+def format_nxdl_doc(string):
+    '''nexus format for doc string in the root definition of file'''
+    formatted_doc = ''
+    for index, line in enumerate(string.split("\n")):
+        if len(line) > 90 and index > 0:
+            w = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
+            line = '\n'.join(w.wrap(line))
+        if index == 0:
+            formatted_doc += f"\n"
+        if index == 1:
+            formatted_doc += f"\n"
+        formatted_doc += f"{line}\n"
+    return formatted_doc
 
 
 def yaml2nxdl(input_file: str, verbose: bool):
@@ -93,11 +127,9 @@ application and base are valid categories!'
 has to be a non-empty string!'
 
     doctag = ET.SubElement(xml_root, 'doc')
-    if '_newline_' in yml_appdef['doc']:
-        yml_appdef['doc'] = yml_appdef['doc'].replace("_newline_", " \n \n")
-    doctag.text = yml_appdef['doc']
-    del yml_appdef['doc']
+    doctag.text = format_nxdl_doc(yml_appdef['doc'])
 
+    del yml_appdef['doc']
     if 'symbols' in yml_appdef.keys():
         yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
         del yml_appdef['symbols']
@@ -110,7 +142,7 @@ keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
     yaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
-    pretty_print_xml(xml_root, input_file.split(".", 1)[0] + '.nxdl.xml')
+    pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml')
     if verbose:
         sys.stdout.write('Parsed YAML to NXDL successfully\n')
 
@@ -328,7 +360,7 @@ and print both an XML and YML file of the extended base class.
 """
     nexus_def_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../definitions')
     assert [s for s in os.listdir(os.path.join(nexus_def_path, 'base_classes')
-                                  ) if append.strip() == s.split('.nxdl.xml')[0]], \
+                                  ) if append.strip() == s.replace('.nxdl.xml', '')], \
         'Your base class extension does not match any existing Nexus base classes'
     tree = ET.parse(os.path.join(nexus_def_path + '/base_classes', append + '.nxdl.xml'))
     root = tree.getroot()
@@ -365,14 +397,14 @@ and print both an XML and YML file of the extended base class.
     root_no_duplicates = yaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
                                                                       attribute,
                                                                       root_no_duplicates)
-    pretty_print_xml(root_no_duplicates, f'{input_file.split(".", 1)[0]}'
-                     f'_appended.nxdl.xml')
-    print_yml(input_file.split(".", 1)[0] + '_appended.nxdl.xml', verbose)
-    yaml2nxdl(input_file.split(".", 1)[0] + '_appended_parsed.yml', verbose)
-    os.rename(f'{input_file.split(".", 1)[0]}_appended_parsed.yml',
-              f'{input_file.split(".", 1)[0]}_appended.yml')
-    os.rename(f'{input_file.split(".", 1)[0]}_appended_parsed.nxdl.xml',
-              f'{input_file.split(".", 1)[0]}_appended.nxdl.xml')
+    pretty_print_xml(root_no_duplicates, f"{input_file.replace('.nxdl.xml', '')}"
+                     f"_appended.nxdl.xml")
+    print_yml(input_file.replace('.nxdl.xml', '') + "_appended.nxdl.xml", verbose)
+    yaml2nxdl(input_file.replace('.nxdl.xml', '') + "_appended_parsed.yml", verbose)
+    os.rename(f"{input_file.replace('.nxdl.xml', '')}_appended_parsed.yml",
+              f"{input_file.replace('.nxdl.xml', '')}_appended.yml")
+    os.rename(f"{input_file.replace('.nxdl.xml', '')}_appended_parsed.nxdl.xml",
+              f"{input_file.replace('.nxdl.xml', '')}_appended.nxdl.xml")
     os.remove('tmp.nxdl.xml')
     os.remove('tmp_parsed.yml')
     os.remove('tmp_parsed.nxdl.xml')
@@ -400,13 +432,16 @@ def launch_tool(input_file, verbose, append):
     """Main function that distiguishes the input file format and launches the tools.
 
 """
-    if input_file.split(".", 1)[1] in ('yml', 'yaml'):
+    if input_file.rsplit(".", 1)[1] in ('yml', 'yaml'):
         yaml2nxdl(input_file, verbose)
         if append:
-            append_yml(input_file.split(".", 1)[0] + '.nxdl.xml', append, verbose)
+            append_yml(input_file.rsplit(".", 1)[0] + '.nxdl.xml',
+                       append,
+                       verbose
+                       )
         else:
             pass
-    elif input_file.split(".", 1)[1] == 'nxdl.xml':
+    elif input_file.rsplit(".", 2)[1] == 'nxdl':
         if not append:
             print_yml(input_file, verbose)
         else:
