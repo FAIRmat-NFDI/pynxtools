@@ -43,7 +43,7 @@ from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 def test_find_nxdl(cli_inputs):
     """Unit test to check if dataconverter can find NXDLs in contributed/applications folder."""
     runner = CliRunner()
-    result = runner.invoke(dataconverter.convert, cli_inputs)
+    result = runner.invoke(dataconverter.convert_cli, cli_inputs)
     if "NXdoesnotexist" in cli_inputs:
         assert isinstance(result.exception, FileNotFoundError)
     else:
@@ -78,7 +78,7 @@ def test_get_names_of_all_readers():
 def test_cli(caplog, cli_inputs):
     """A test for the convert CLI."""
     runner = CliRunner()
-    result = runner.invoke(dataconverter.convert, cli_inputs)
+    result = runner.invoke(dataconverter.convert_cli, cli_inputs)
     if "--generate-template" in cli_inputs:
         assert result.exit_code == 0
         assert "\"/ENTRY[entry]/NXODD_name/int_value\": \"None\"," in caplog.text
@@ -96,7 +96,7 @@ when  the template contains links."""
     dirpath = os.path.join(os.path.dirname(__file__),
                            "../../data/tools/dataconverter/readers/example")
     runner = CliRunner()
-    result = runner.invoke(dataconverter.convert, [
+    result = runner.invoke(dataconverter.convert_cli, [
         "--nxdl",
         "NXtest",
         "--reader",
@@ -122,7 +122,7 @@ def test_compression():
 
     dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/ellips")
     runner = CliRunner()
-    result = runner.invoke(dataconverter.convert, [
+    result = runner.invoke(dataconverter.convert_cli, [
         "--nxdl",
         "NXellipsometry",
         "--reader",
