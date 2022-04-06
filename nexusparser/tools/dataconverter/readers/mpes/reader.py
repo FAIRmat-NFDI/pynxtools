@@ -18,7 +18,7 @@
 
 """MPES reader implementation for the DataConverter."""
 
-from typing import Tuple
+from typing import Tuple, Any
 import json
 import h5py
 import xarray as xr
@@ -143,7 +143,7 @@ def iterate_dictionary(dic, key_string):
     return None
 
 
-def handle_h5_and_json_file(file_paths):
+def handle_h5_and_json_file(file_paths, objects):
     """Handle h5 or json input files.
 
 """
@@ -154,6 +154,9 @@ def handle_h5_and_json_file(file_paths):
         elif file_extension == '.json':
             with open(file_path, 'r') as file:
                 config_file_dict = json.load(file)
+    if objects is not None:
+        x_array_loaded = objects[0]
+
     return x_array_loaded, config_file_dict
 
 
@@ -176,13 +179,16 @@ class MPESReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXmpes"]
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
+    def read(self,
+            template: dict = None,
+            file_paths: Tuple[str] = None,
+            objects: Tuple[Any] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
 
         if not file_paths:
             raise Exception("No input files were given to MPES Reader.")
 
-        x_array_loaded, config_file_dict = handle_h5_and_json_file(file_paths)
+        x_array_loaded, config_file_dict = handle_h5_and_json_file(file_paths, objects)
 
         for key, value in config_file_dict.items():
 

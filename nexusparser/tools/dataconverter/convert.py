@@ -84,6 +84,7 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
 
     nxdl_root = ET.parse(nxdl_path).getroot()
 
+    # template: Dict[str, str] = {}
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
     if generate_template:
