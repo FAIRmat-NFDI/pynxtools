@@ -18,9 +18,11 @@
 
 """MPES reader implementation for the DataConverter."""
 
+from inspect import isclass
 from typing import Tuple, Any
 import json
 import h5py
+import yaml
 import xarray as xr
 from functools import reduce
 import os
@@ -170,11 +172,17 @@ def handle_h5_and_json_file(file_paths, objects):
         elif file_extension == '.json':
             with open(file_path, 'r') as file:
                 config_file_dict = json.load(file)
+        elif file_extension in ['.yaml', '.yml']:
+            with open(file_path, 'r') as ELN:
+                ELN_data_dict = yaml.safe_load(ELN)
+
     if objects is not None:
         # For the case of a single object
+        assert isinstance(objects, xr.core.dataarray.DataArray), \
+            "The given object must be an xarray"
         x_array_loaded = objects
 
-    return x_array_loaded, config_file_dict
+    return x_array_loaded, config_file_dict, ELN_data_dict
 
 
 def rgetattr(obj, attr):
@@ -200,12 +208,14 @@ class MPESReader(BaseReader):
              template: dict = None,
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
-        """Reads data from given file and returns a filled template dictionary"""
+        """Reads data from given file or alternatively an xarray object
+        and returns a filled template dictionary"""
 
         if not file_paths:
             raise Exception("No input files were given to MPES Reader.")
 
-        x_array_loaded, config_file_dict = handle_h5_and_json_file(file_paths, objects)
+        x_array_loaded, config_file_dict, ELN_data_dict = handle_h5_and_json_file(file_paths,
+                                                                                  objects)
 
         for key, value in config_file_dict.items():
 
@@ -224,7 +234,8 @@ class MPESReader(BaseReader):
                         print(f"Incorrect axis name corresponding to the path {key}")
 
                     except AttributeError:
-                        print(f"Incorrect naming syntax or the xarray doesn't contain entry corresponding to the path {key}")
+                        print(f"Incorrect naming syntax or the xarray doesn't contain \
+                              entry corresponding to the path {key}")
 
                 # Filling in the metadata from xarray
                 elif precursor == '@attrs':
@@ -238,6 +249,11 @@ class MPESReader(BaseReader):
             else:
                 # Fills in the fixed metadata
                 template[key] = value
+
+        # Filling in ELN metadata and overwriting the common paths by
+        # giving preference to the ELN metadata
+        for key, value in ELN_data_dict.items():
+            template[key] = value
 
         return template
 
