@@ -23,6 +23,7 @@ import json
 import h5py
 import xarray as xr
 from functools import reduce
+import os
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 DEFAULT_UNITS = {
@@ -148,14 +149,30 @@ def handle_h5_and_json_file(file_paths, objects):
 
 """
     for file_path in file_paths:
-        file_extension = file_path[file_path.rindex("."):]
+        try:
+            file_extension = file_path[file_path.rindex("."):]
+            if file_extension not in ['.h5', '.json', '.yaml', '.yml']:
+                print(f"The file path {file_path} must have the right extension")
+                raise
+        except ValueError:
+            print(f"The file path {file_path} must have an extension")
+            raise
+
+        if not os.path.exists(file_path):
+            file_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..",
+                                     "..", "tests", "data", "tools", "dataconverter",
+                                     "readers", "mpes", file_path)
+        if not os.path.exists(file_path):
+            print(f"The file {file_path} could not be found")
+
         if file_extension == '.h5':
             x_array_loaded = h5_to_xarray(file_path)
         elif file_extension == '.json':
             with open(file_path, 'r') as file:
                 config_file_dict = json.load(file)
     if objects is not None:
-        x_array_loaded = objects[0]
+        # For the case of a single object
+        x_array_loaded = objects
 
     return x_array_loaded, config_file_dict
 
@@ -180,9 +197,9 @@ class MPESReader(BaseReader):
     supported_nxdls = ["NXmpes"]
 
     def read(self,
-            template: dict = None,
-            file_paths: Tuple[str] = None,
-            objects: Tuple[Any] = None) -> dict:
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
 
         if not file_paths:
