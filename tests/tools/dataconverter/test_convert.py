@@ -120,7 +120,8 @@ when  the template contains links."""
 def test_compression():
     """A test for the convert CLI to check whether a Dataset object is compressed."""
 
-    dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/ellips")
+    dirpath = os.path.join(os.path.dirname(__file__),
+                           "../../data/tools/dataconverter/readers/ellips")
     runner = CliRunner()
     result = runner.invoke(dataconverter.convert_cli, [
         "--nxdl",

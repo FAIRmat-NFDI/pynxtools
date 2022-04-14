@@ -92,8 +92,8 @@ def fixture_filled_test_data(template):
                                                                    f"/../../"
                                                                    f"data/tools/dataconverter/"
                                                                    f"readers/mpes/"
-                                                                   f"xarray_saved_small.h5"
-                                                                   f":/axes/ax3"
+                                                                   f"xarray_saved_small_cali"
+                                                                   f"bration.h5:/axes/ax3"
                                                                    }
     yield template
 
