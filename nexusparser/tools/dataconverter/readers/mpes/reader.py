@@ -18,10 +18,13 @@
 
 """MPES reader implementation for the DataConverter."""
 
-from typing import Tuple
+from typing import Tuple, Any
 import json
 import h5py
+import yaml
 import xarray as xr
+from functools import reduce
+import os
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 DEFAULT_UNITS = {
@@ -36,7 +39,7 @@ DEFAULT_UNITS = {
     'dldTimeBinSize': 'ns',
     'delay': 'ps',
     'timeStamp': 's',
-    'E': 'eV',
+    'energy': 'eV',
     'kx': '1/A',
     'ky': '1/A'}
 
@@ -142,18 +145,53 @@ def iterate_dictionary(dic, key_string):
     return None
 
 
-def handle_h5_and_json_file(file_paths):
+def handle_h5_and_json_file(file_paths, objects):
     """Handle h5 or json input files.
 
 """
     for file_path in file_paths:
-        file_extension = file_path[file_path.rindex("."):]
+        try:
+            file_extension = file_path[file_path.rindex("."):]
+            if file_extension not in ['.h5', '.json', '.yaml', '.yml']:
+                print(f"The file path {file_path} must have the right extension")
+                raise
+        except ValueError:
+            print(f"The file path {file_path} must have an extension")
+            raise
+
+        if not os.path.exists(file_path):
+            file_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..",
+                                     "..", "tests", "data", "tools", "dataconverter",
+                                     "readers", "mpes", file_path)
+        if not os.path.exists(file_path):
+            print(f"The file {file_path} could not be found")
+
         if file_extension == '.h5':
             x_array_loaded = h5_to_xarray(file_path)
         elif file_extension == '.json':
             with open(file_path, 'r') as file:
                 config_file_dict = json.load(file)
-    return x_array_loaded, config_file_dict
+        elif file_extension in ['.yaml', '.yml']:
+            with open(file_path, 'r') as ELN:
+                ELN_data_dict = yaml.safe_load(ELN)
+
+    if objects is not None:
+        # For the case of a single object
+        assert isinstance(objects, xr.core.dataarray.DataArray), \
+            "The given object must be an xarray"
+        x_array_loaded = objects
+
+    return x_array_loaded, config_file_dict, ELN_data_dict
+
+
+def rgetattr(obj, attr):
+    def _getattr(obj, attr):
+        return getattr(obj, attr)
+    if "index" in attr:
+        ax = attr.split(".")[0]
+        return str(obj.dims.index(f"{ax}"))
+    else:
+        return reduce(_getattr, [obj] + attr.split('.'))
 
 
 class MPESReader(BaseReader):
@@ -165,13 +203,18 @@ class MPESReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXmpes"]
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
-        """Reads data from given file and returns a filled template dictionary"""
+    def read(self,
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None) -> dict:
+        """Reads data from given file or alternatively an xarray object
+        and returns a filled template dictionary"""
 
         if not file_paths:
             raise Exception("No input files were given to MPES Reader.")
 
-        x_array_loaded, config_file_dict = handle_h5_and_json_file(file_paths)
+        x_array_loaded, config_file_dict, ELN_data_dict = handle_h5_and_json_file(file_paths,
+                                                                                  objects)
 
         for key, value in config_file_dict.items():
 
@@ -182,16 +225,16 @@ class MPESReader(BaseReader):
                 # Filling in the data and axes along with units from xarray
                 if precursor == '@data':
                     try:
-                        template[key] = eval("x_array_loaded." + value)  # pylint:disable=eval-used
-
+                        template[key] = rgetattr(obj=x_array_loaded, attr=value)
                         if key.split('/')[-1] == '@axes':
                             template[key] = list(template[key])
 
-                    except NameError:
-                        print(f"Incorrect naming syntax or the xarray"
-                              f"doesn't contain entry corresponding to the path {key}")
-                    except KeyError:
-                        print(f"The xarray doesn't contain entry corresponding to the path {key}")
+                    except ValueError:
+                        print(f"Incorrect axis name corresponding to the path {key}")
+
+                    except AttributeError:
+                        print(f"Incorrect naming syntax or the xarray doesn't contain \
+                              entry corresponding to the path {key}")
 
                 # Filling in the metadata from xarray
                 elif precursor == '@attrs':
@@ -205,6 +248,11 @@ class MPESReader(BaseReader):
             else:
                 # Fills in the fixed metadata
                 template[key] = value
+
+        # Filling in ELN metadata and overwriting the common paths by
+        # giving preference to the ELN metadata
+        for key, value in ELN_data_dict.items():
+            template[key] = value
 
         return template
 
