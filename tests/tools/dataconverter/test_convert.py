@@ -156,3 +156,13 @@ def test_compression():
     assert 'entry/experiment_identifier' in test_nxs \
         and isinstance(test_nxs['entry/experiment_identifier'], h5py.Dataset) \
         and test_nxs['entry/experiment_identifier'].compression is not 'gzip'
+
+
+def test_mpes_writing():
+    """Check if mpes example can be reproduced"""
+    dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes")
+    dataconverter.convert((os.path.join(dirpath, "MoTe_xarray_final.h5"),
+                           os.path.join(dirpath, "config_file.json")),
+                          "mpes", "NXmpes",
+                          os.path.join(dirpath, "mpes2.test.nxs"),
+                          False, False)
