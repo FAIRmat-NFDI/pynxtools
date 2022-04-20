@@ -15,39 +15,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """MPES reader implementation for the DataConverter."""
-
-from typing import Tuple, Any
-import json
 import errno
+import json
 import os
-import h5py
-import yaml
-import xarray as xr
 from functools import reduce
-import os
+from typing import Any
+from typing import Tuple
+
+import h5py
+import xarray as xr
+import yaml
+
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 DEFAULT_UNITS = {
-    'X': 'step',
-    'Y': 'step',
-    't': 'step',
-    'tofVoltage': 'V',
-    'extractorVoltage': 'V',
-    'extractorCurrent': 'A',
-    'cryoTemperature': 'K',
-    'sampleTemperature': 'K',
-    'dldTimeBinSize': 'ns',
-    'delay': 'ps',
-    'timeStamp': 's',
-    'energy': 'eV',
-    'kx': '1/A',
-    'ky': '1/A'}
+    "X": "step",
+    "Y": "step",
+    "t": "step",
+    "tofVoltage": "V",
+    "extractorVoltage": "V",
+    "extractorCurrent": "A",
+    "cryoTemperature": "K",
+    "sampleTemperature": "K",
+    "dldTimeBinSize": "ns",
+    "delay": "ps",
+    "timeStamp": "s",
+    "energy": "eV",
+    "kx": "1/A",
+    "ky": "1/A",
+}
 
 
 def res_to_xarray(res, bin_names, bin_axes, metadata=None):
-    """ creates a BinnedArray (xarray subclass) out of the given np.array
+    """creates a BinnedArray (xarray subclass) out of the given np.array
     Parameters:
         res: np.array
             nd array of binned data
@@ -55,7 +56,8 @@ def res_to_xarray(res, bin_names, bin_axes, metadata=None):
         bin_axes (list): list of np.arrays with the values of the axes
     Returns:
         ba: BinnedArray (xarray)
-            an xarray-like container with binned data, axis, and all available metadata
+            an xarray-like container with binned data, axis, and all
+            available metadata
     """
     dims = bin_names
     coords = {}
@@ -66,21 +68,21 @@ def res_to_xarray(res, bin_names, bin_axes, metadata=None):
 
     for name in bin_names:
         try:
-            xres[name].attrs['unit'] = DEFAULT_UNITS[name]
+            xres[name].attrs["unit"] = DEFAULT_UNITS[name]
         except KeyError:
             pass
 
-    xres.attrs['units'] = 'counts'
-    xres.attrs['long_name'] = 'photoelectron counts'
+    xres.attrs["units"] = "counts"
+    xres.attrs["long_name"] = "photoelectron counts"
 
     if metadata is not None:
-        xres.attrs['metadata'] = metadata
+        xres.attrs["metadata"] = metadata
 
     return xres
 
 
-def h5_to_xarray(faddr, mode='r'):
-    """ Rear xarray data from formatted hdf5 file
+def h5_to_xarray(faddr, mode="r"):
+    """Rear xarray data from formatted hdf5 file
     Args:
         faddr (str): complete file name (including path)
         mode (str): hdf5 read/write mode
@@ -90,7 +92,7 @@ def h5_to_xarray(faddr, mode='r'):
     with h5py.File(faddr, mode) as h5_file:
         # Reading data array
         try:
-            data = h5_file['binned']['BinnedData']
+            data = h5_file["binned"]["BinnedData"]
         except KeyError:
             print("Wrong Data Format, data not found")
             raise
@@ -100,15 +102,16 @@ def h5_to_xarray(faddr, mode='r'):
         bin_names = []
 
         try:
-            for axis in h5_file['axes']:
-                axes.append(h5_file['axes'][axis])
-                bin_names.append(h5_file['axes'][axis].attrs['name'])
+            for axis in h5_file["axes"]:
+                axes.append(h5_file["axes"][axis])
+                bin_names.append(h5_file["axes"][axis].attrs["name"])
         except KeyError:
             print("Wrong Data Format, axes not found")
             raise
 
         # load metadata
-        if 'metadata' in h5_file:
+        if "metadata" in h5_file:
+
             def recursive_parse_metadata(node):
                 if isinstance(node, h5py.Group):
                     dictionary = {}
@@ -126,17 +129,15 @@ def h5_to_xarray(faddr, mode='r'):
 
                 return dictionary
 
-            metadata = recursive_parse_metadata(h5_file['metadata'])
+            metadata = recursive_parse_metadata(h5_file["metadata"])
 
         xarray = res_to_xarray(data, bin_names, axes, metadata)
         return xarray
 
 
 def iterate_dictionary(dic, key_string):
-    """Recursively iterate in dictionary and give back its values
-
-"""
-    keys = key_string.split('/', 1)
+    """Recursively iterate in dictionary and give back its values"""
+    keys = key_string.split("/", 1)
     if keys[0] in dic:
         if len(keys) == 1:
             return dic[keys[0]]
@@ -148,43 +149,64 @@ def iterate_dictionary(dic, key_string):
 
 
 def handle_h5_and_json_file(file_paths, objects):
-    """Handle h5 or json input files.
-
-"""
+    """Handle h5 or json input files."""
     x_array_loaded = xr.DataArray()
     config_file_dict = {}
     ELN_data_dict = {}
-    
+
     for file_path in file_paths:
         try:
-            file_extension = file_path[file_path.rindex("."):]
+            file_extension = file_path[file_path.rindex(".") :]
         except ValueError:
-            raise ValueError(f"The file path {file_path} must have an extension.")
-            
-        extentions = ['.h5', '.json', '.yaml', '.yml']
+            raise ValueError(
+                f"The file path {file_path} must have an extension.",
+            )
+
+        extentions = [".h5", ".json", ".yaml", ".yml"]
         if file_extension not in extentions:
-            raise ValueError(f"The reader only supports files of type {extentions}, but {file_path} does not match.")
+            raise ValueError(
+                f"The reader only supports files of type {extentions}, \
+                    but {file_path} does not match.",
+            )
 
         if not os.path.exists(file_path):
-            file_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..",
-                                     "..", "tests", "data", "tools", "dataconverter",
-                                     "readers", "mpes", file_path)
+            file_path = os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "..",
+                "..",
+                "tests",
+                "data",
+                "tools",
+                "dataconverter",
+                "readers",
+                "mpes",
+                file_path,
+            )
         if not os.path.exists(file_path):
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
+            raise FileNotFoundError(
+                errno.ENOENT,
+                os.strerror(errno.ENOENT),
+                file_path,
+            )
 
-        if file_extension == '.h5':
+        if file_extension == ".h5":
             x_array_loaded = h5_to_xarray(file_path)
-        elif file_extension == '.json':
-            with open(file_path, 'r') as file:
+        elif file_extension == ".json":
+            with open(file_path) as file:
                 config_file_dict = json.load(file)
-        elif file_extension in ['.yaml', '.yml']:
-            with open(file_path, 'r') as ELN:
+        elif file_extension in [".yaml", ".yml"]:
+            with open(file_path) as ELN:
                 ELN_data_dict = yaml.safe_load(ELN)
 
     if objects is not None:
         # For the case of a single object
-        assert isinstance(objects, xr.core.dataarray.DataArray), \
-            "The given object must be an xarray"
+        assert isinstance(
+            objects,
+            xr.core.dataarray.DataArray,
+        ), "The given object must be an xarray"
         x_array_loaded = objects
 
     return x_array_loaded, config_file_dict, ELN_data_dict
@@ -193,63 +215,82 @@ def handle_h5_and_json_file(file_paths, objects):
 def rgetattr(obj, attr):
     def _getattr(obj, attr):
         return getattr(obj, attr)
+
     if "index" in attr:
         ax = attr.split(".")[0]
         return str(obj.dims.index(f"{ax}"))
     else:
-        return reduce(_getattr, [obj] + attr.split('.'))
+        return reduce(_getattr, [obj] + attr.split("."))
 
 
 class MPESReader(BaseReader):
-    """MPES-specific reader class
+    """MPES-specific reader class"""
 
-"""
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXmpes"]
 
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ) -> dict:
         """Reads data from given file or alternatively an xarray object
         and returns a filled template dictionary"""
 
         if not file_paths:
             raise Exception("No input files were given to MPES Reader.")
 
-        x_array_loaded, config_file_dict, ELN_data_dict = handle_h5_and_json_file(file_paths,
-                                                                                  objects)
+        (
+            x_array_loaded,
+            config_file_dict,
+            ELN_data_dict,
+        ) = handle_h5_and_json_file(file_paths, objects)
 
         for key, value in config_file_dict.items():
 
-            if isinstance(value, str) and ':' in value:
-                precursor = value.split(':')[0]
-                value = value[value.index(':') + 1:]
+            if isinstance(value, str) and ":" in value:
+                precursor = value.split(":")[0]
+                value = value[value.index(":") + 1 :]
 
                 # Filling in the data and axes along with units from xarray
-                if precursor == '@data':
+                if precursor == "@data":
                     try:
-                        template[key] = rgetattr(obj=x_array_loaded, attr=value)
-                        if key.split('/')[-1] == '@axes':
+                        template[key] = rgetattr(
+                            obj=x_array_loaded,
+                            attr=value,
+                        )
+                        if key.split("/")[-1] == "@axes":
                             template[key] = list(template[key])
 
                     except ValueError:
-                        print(f"Incorrect axis name corresponding to the path {key}")
+                        print(
+                            f"Incorrect axis name corresponding to\
+                                 the path {key}",
+                        )
 
                     except AttributeError:
-                        print(f"Incorrect naming syntax or the xarray doesn't contain \
-                              entry corresponding to the path {key}")
+                        print(
+                            f"Incorrect naming syntax or the xarray doesn't contain \
+                              entry corresponding to the path {key}",
+                        )
 
                 # Filling in the metadata from xarray
-                elif precursor == '@attrs':
+                elif precursor == "@attrs":
 
                     try:  # Tries to fill the metadata
-                        template[key] = iterate_dictionary(x_array_loaded.attrs, value)
+                        template[key] = iterate_dictionary(
+                            x_array_loaded.attrs,
+                            value,
+                        )
 
                     except KeyError:
-                        print(f"The xarray doesn't contain entry corresponding to the path {key}")
+                        print(
+                            f"The xarray doesn't contain entry corresponding \
+                                 to the path {key}",
+                        )
 
             else:
                 # Fills in the fixed metadata
