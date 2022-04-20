@@ -99,6 +99,11 @@ def test_get_node_at_nxdl_path():
     node = nexus.get_node_at_nxdl_path("/ENTRY/DATA/VARIABLE", elem=elem)
     assert node.attrib["name"] == "VARIABLE"
 
+    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path("/ENTRY/USER/role", elem=elem)
+    assert node.attrib["name"] == "role"
+
 
 def test_example():
     """Tests if parser can parse our example data
@@ -106,22 +111,23 @@ def test_example():
 """
     archive = EntryArchive()
 
+    import structlog
+
     # local_dir = os.path.abspath(os.path.dirname(__file__))
     # example_data = os.path.join(local_dir, 'data/nexus_test_data/em0001.test.nxs')
-    # parser().parse(example_data, archive, logging.getLogger())
+    # parser().parse(example_data, archive, structlog.get_logger())
     # assert archive.nexus.nx_application_em_nion.\
     #     nx_group_ENTRY[0].nx_group_operator.nx_field_affiliation.nx_value ==
     #     "Humboldt Universität zu Berlin"
 
     # local_dir = os.path.abspath(os.path.dirname(__file__))
-    # example_data = os.path.join(local_dir, 'data/nexus_test_data/mpes.test.nxs')
-    # parser().parse(example_data, archive, logging.getLogger())
-    # assert archive.nexus.nx_application_em_nion.\
+    # example_data = os.path.join(local_dir, 'data/nexus_test_data/mpes2.test.nxs')
+    # parser().parse(example_data, archive, structlog.get_logger())
+    # assert archive.nexus.nx_application_mpes.\
     #     nx_group_ENTRY[0].nx_field_definition.nx_value == "NXmpes"
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
-    import structlog
     parser().parse(example_data, archive, structlog.get_logger())
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_value == 3.27e-10

@@ -168,7 +168,7 @@ class NexusParser(MatchingParser):
                                               nxdl_attribute, act_section)[1]
                     try:
                         act_section.nx_value = val[0]
-                    except (AttributeError, TypeError) as exc:
+                    except (AttributeError, TypeError, ValueError) as exc:
                         logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
                         loglev = 'error'
             else:
@@ -184,7 +184,7 @@ class NexusParser(MatchingParser):
                             np.max(data_field)
                         ])
                     act_section.nx_value = data_field
-                except TypeError as exc:
+                except (TypeError, ValueError) as exc:
                     logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
                     loglev = 'error'
         else:
