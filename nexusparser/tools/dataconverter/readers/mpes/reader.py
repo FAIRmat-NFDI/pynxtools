@@ -20,6 +20,8 @@
 
 from typing import Tuple, Any
 import json
+import errno
+import os
 import h5py
 import yaml
 import xarray as xr
@@ -149,22 +151,26 @@ def handle_h5_and_json_file(file_paths, objects):
     """Handle h5 or json input files.
 
 """
+    x_array_loaded = xr.DataArray()
+    config_file_dict = {}
+    ELN_data_dict = {}
+    
     for file_path in file_paths:
         try:
             file_extension = file_path[file_path.rindex("."):]
-            if file_extension not in ['.h5', '.json', '.yaml', '.yml']:
-                print(f"The file path {file_path} must have the right extension")
-                raise
         except ValueError:
-            print(f"The file path {file_path} must have an extension")
-            raise
+            raise ValueError(f"The file path {file_path} must have an extension.")
+            
+        extentions = ['.h5', '.json', '.yaml', '.yml']
+        if file_extension not in extentions:
+            raise ValueError(f"The reader only supports files of type {extentions}, but {file_path} does not match.")
 
         if not os.path.exists(file_path):
             file_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..",
                                      "..", "tests", "data", "tools", "dataconverter",
                                      "readers", "mpes", file_path)
         if not os.path.exists(file_path):
-            print(f"The file {file_path} could not be found")
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
 
         if file_extension == '.h5':
             x_array_loaded = h5_to_xarray(file_path)
