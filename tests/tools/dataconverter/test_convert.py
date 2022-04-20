@@ -162,7 +162,7 @@ def test_compression():
 def test_mpes_writing():
     """Check if mpes example can be reproduced"""
     dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes")
-    dataconverter.convert((os.path.join(dirpath, "MoTe_xarray_final.h5"),
+    dataconverter.convert((os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
                            os.path.join(dirpath, "config_file.json")),
                           "mpes", "NXmpes",
                           os.path.join(dirpath, "mpes2.test.nxs"),
