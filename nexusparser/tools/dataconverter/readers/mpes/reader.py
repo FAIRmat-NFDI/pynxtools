@@ -165,8 +165,8 @@ def handle_h5_and_json_file(file_paths, objects):
         extentions = [".h5", ".json", ".yaml", ".yml"]
         if file_extension not in extentions:
             raise ValueError(
-                f"The reader only supports files of type {extentions}, \
-                    but {file_path} does not match.",
+                f"The reader only supports files of type {extentions}, "
+                f"but {file_path} does not match.",
             )
 
         if not os.path.exists(file_path):
@@ -267,14 +267,14 @@ class MPESReader(BaseReader):
 
                     except ValueError:
                         print(
-                            f"Incorrect axis name corresponding to\
-                                 the path {key}",
+                            f"Incorrect axis name corresponding to "
+                            f"the path {key}",
                         )
 
                     except AttributeError:
                         print(
-                            f"Incorrect naming syntax or the xarray doesn't contain \
-                              entry corresponding to the path {key}",
+                            f"Incorrect naming syntax or the xarray doesn't "
+                            f"contain entry corresponding to the path {key}",
                         )
 
                 # Filling in the metadata from xarray
@@ -288,8 +288,8 @@ class MPESReader(BaseReader):
 
                     except KeyError:
                         print(
-                            f"The xarray doesn't contain entry corresponding \
-                                 to the path {key}",
+                            f"The xarray doesn't contain entry corresponding "
+                            f"to the path {key}",
                         )
 
             else:
