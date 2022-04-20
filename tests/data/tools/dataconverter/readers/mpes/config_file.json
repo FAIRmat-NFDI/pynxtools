@@ -25,7 +25,7 @@
   "/ENTRY[entry]/INSTRUMENT[instrument]/name": "Time-of-flight momentum microscope equipped delay line detector, at the endstation of the high rep-rate HHG source at FHI",
   "/ENTRY[entry]/INSTRUMENT[instrument]/name/@short_name": "TR-ARPES @ FHI",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/momentum_resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/momentum_resolution/@units": "1/anstrom",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/momentum_resolution/@units": "1/angstrom",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/description": "SPECS Metis 1000 Momentum Microscope",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution": 0.14,
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution/@units": "eV",
