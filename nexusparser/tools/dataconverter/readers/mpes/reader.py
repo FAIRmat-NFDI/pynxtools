@@ -156,7 +156,7 @@ def handle_h5_and_json_file(file_paths, objects):
 
     for file_path in file_paths:
         try:
-            file_extension = file_path[file_path.rindex(".") :]
+            file_extension = file_path[file_path.rindex("."):]
         except ValueError:
             raise ValueError(
                 f"The file path {file_path} must have an extension.",
@@ -253,7 +253,7 @@ class MPESReader(BaseReader):
 
             if isinstance(value, str) and ":" in value:
                 precursor = value.split(":")[0]
-                value = value[value.index(":") + 1 :]
+                value = value[value.index(":") + 1:]
 
                 # Filling in the data and axes along with units from xarray
                 if precursor == "@data":
