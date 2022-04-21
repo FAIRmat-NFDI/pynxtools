@@ -18,12 +18,15 @@
 """Test cases for the convert script used to access the DataConverter."""
 
 import os
+import logging
 from click.testing import CliRunner
 import pytest
 import h5py
-
+from nomad.datamodel import EntryArchive
+from nexusparser.tools import nexus  # noqa: E402
 import nexusparser.tools.dataconverter.convert as dataconverter
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+from nexusparser import NexusParser  # noqa: E402
 
 
 @pytest.mark.parametrize("cli_inputs", [
@@ -88,7 +91,7 @@ def test_cli(caplog, cli_inputs):
         assert "Error: Missing option '--nxdl'" in result.output
 
 
-def test_links_and_virtual_datasets():
+def test_links_and_virtual_datasets(tmp_path):
     """A test for the convert CLI to check whether a Dataset object is created,
 
 when  the template contains links."""
@@ -104,11 +107,11 @@ when  the template contains links."""
         "--input-file",
         os.path.join(dirpath, "testdata.json"),
         "--output",
-        os.path.join(dirpath, "test_output.h5")
+        os.path.join(tmp_path, "test_output.h5")
     ])
 
     assert result.exit_code == 0
-    test_nxs = h5py.File(os.path.join(dirpath, "test_output.h5"), "r")
+    test_nxs = h5py.File(os.path.join(tmp_path, "test_output.h5"), "r")
     assert 'entry/test_link/internal_link' in test_nxs
     assert isinstance(test_nxs["entry/test_link/internal_link"], h5py.Dataset)
     assert 'entry/test_link/external_link' in test_nxs
@@ -120,7 +123,8 @@ when  the template contains links."""
 def test_compression():
     """A test for the convert CLI to check whether a Dataset object is compressed."""
 
-    dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/ellips")
+    dirpath = os.path.join(os.path.dirname(__file__),
+                           "../../data/tools/dataconverter/readers/ellips")
     runner = CliRunner()
     result = runner.invoke(dataconverter.convert_cli, [
         "--nxdl",
@@ -158,11 +162,33 @@ def test_compression():
         and test_nxs['entry/experiment_identifier'].compression is not 'gzip'
 
 
-def test_mpes_writing():
+def test_mpes_writing(tmp_path):
     """Check if mpes example can be reproduced"""
+    # dataconverter
     dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes")
-    dataconverter.convert((os.path.join(dirpath, "MoTe_xarray_final.h5"),
+    dataconverter.convert((os.path.join(dirpath, "xarray_saved_small.h5"),
                            os.path.join(dirpath, "config_file.json")),
                           "mpes", "NXmpes",
-                          os.path.join(dirpath, "mpes2.test.nxs"),
+                          os.path.join(tmp_path, "mpes.small_test.nxs"),
                           False, False)
+    # check generated nexus file
+    example_data = os.path.join(tmp_path, 'mpes.small_test.nxs')
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    handler = logging.\
+        FileHandler(os.path.join(tmp_path, 'nexus_test.log'), 'w')
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    nexus_helper = nexus.HandleNexus(logger, [example_data])
+    nexus_helper.process_nexus_master_file(None)
+    with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
+        log = logfile.readlines()
+    assert len(log) == 2464
+    # parsing to NOMAD
+    archive = EntryArchive()
+    import structlog
+    NexusParser().parse(example_data, archive, structlog.get_logger())
+    assert archive.nexus.nx_application_mpes.\
+        nx_group_ENTRY[0].nx_group_PROCESS[0].nx_field_calculated_energy.nx_value[0] == -1.5
