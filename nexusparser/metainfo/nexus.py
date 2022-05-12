@@ -358,8 +358,7 @@ def create_field_section(xml_node: ET.Element, container: Section):
             field_section.quantities.append(Quantity(
                 name='nx_unit', type=Unit,
                 # a_elasticsearch=Elasticsearch(),
-                description='The specific unit for that this fields data has.')
-            )
+                description='The specific unit for that this fields data has.'))
 
     dimensions = xml_node.find('nx:dimensions', XML_NAMESPACES)
     if dimensions is not None:

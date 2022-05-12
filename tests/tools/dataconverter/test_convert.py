@@ -120,46 +120,23 @@ when  the template contains links."""
     assert isinstance(test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset)
 
 
-def test_compression():
+def test_compression(tmp_path):
     """A test for the convert CLI to check whether a Dataset object is compressed."""
 
     dirpath = os.path.join(os.path.dirname(__file__),
-                           "../../data/tools/dataconverter/readers/ellips")
-    runner = CliRunner()
-    result = runner.invoke(dataconverter.convert_cli, [
-        "--nxdl",
-        "NXellipsometry",
-        "--reader",
-        "ellips",
-        "--input-file",
-        os.path.join(dirpath, "test.yaml"),
-        "--output",
-        os.path.join(dirpath, "ellips.test.nxs")
-    ])
+                           "../../data/tools/dataconverter/readers/example")
+    dataconverter.convert(
+        [os.path.join(dirpath, "testdata.json")],
+        "example",
+        "NXtest",
+        os.path.join(tmp_path, "test_output.h5")
+    )
 
-    assert result.exit_code == 0
-
-    test_h5 = h5py.File(os.path.join(dirpath, "test.h5"), "r")
-    assert 'wavelength' in test_h5 \
-        and isinstance(test_h5['wavelength'], h5py.Dataset) \
-        and test_h5['wavelength'].compression is 'gzip'
-
-    test_nxs = h5py.File(os.path.join(dirpath, "ellips.test.nxs"), "r")
-    assert 'entry/sample/wavelength' in test_nxs \
-        and isinstance(test_nxs['entry/sample/wavelength'], h5py.Dataset) \
-        and test_nxs['entry/sample/wavelength'].compression is 'gzip'
-
-    assert 'entry/sample/measured_data' in test_nxs \
-        and isinstance(test_nxs['entry/sample/measured_data'], h5py.Dataset) \
-        and test_nxs['entry/sample/measured_data'].compression is 'gzip'
-
-    assert 'entry/instrument/angular_spread' in test_nxs \
-        and isinstance(test_nxs['entry/instrument/angular_spread'], h5py.Dataset) \
-        and test_nxs['entry/instrument/angular_spread'].compression is not 'gzip'
-
-    assert 'entry/experiment_identifier' in test_nxs \
-        and isinstance(test_nxs['entry/experiment_identifier'], h5py.Dataset) \
-        and test_nxs['entry/experiment_identifier'].compression is not 'gzip'
+    test_nxs = h5py.File(os.path.join(tmp_path, "test_output.h5"), "r")
+    assert 'entry/test_compression/compressed_data' in test_nxs
+    assert isinstance(test_nxs['/entry/test_compression/compressed_data'], h5py.Dataset)
+    assert test_nxs['/entry/test_compression/compressed_data'].compression is 'gzip'
+    assert test_nxs['/entry/test_compression/not_to_compress'].compression is None
 
 
 def test_mpes_writing(tmp_path):

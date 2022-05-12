@@ -83,6 +83,13 @@ class ExampleReader(BaseReader):
                        }
         template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = my_datasets
 
+        # compression
+        my_compression_dict = {"compress": "string not to be compressed"}
+        template["/ENTRY[entry]/test_compression/not_to_compress"] = my_compression_dict
+        import numpy as np
+        my_compression_dict2 = {"compress": np.array([1, 2, 3, 4])}
+        template["/ENTRY[entry]/test_compression/compressed_data"] = my_compression_dict2
+
         # sh = h5py.File(file_names_to_concatenate[0], 'r')[entry_key].shape
         # layout = h5py.VirtualLayout(shape=(len(file_names_to_concatenate),) + sh,
         #                             dtype=np.float64)
