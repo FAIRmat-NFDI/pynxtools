@@ -222,6 +222,11 @@ def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_ty
                 child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
             return child
     for child in nxdl_elem:
+        if "name" in child.attrib and child.attrib["name"] == name:
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+            return child
+
+    for child in nxdl_elem:
         if get_local_name_from_xml(child) == 'doc' and name == 'doc':
             if nxdl_elem.get('nxdlbase'):
                 child.set('nxdlbase', nxdl_elem.get('nxdlbase'))

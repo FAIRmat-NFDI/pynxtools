@@ -67,8 +67,8 @@ class ExampleReader(BaseReader):
         # external links
         my_ext_link_dict = {"link":
                             f"{os.path.dirname(__file__)}/../../../../../tests/"
-                            f"data/tools/dataconverter/readers/mpes/xarray_saved_small.h5"
-                            f":/axes/ax3"
+                            f"data/tools/dataconverter/readers/mpes/"
+                            f"xarray_saved_small_calibration.h5:/axes/ax3"
                             }
         template["/ENTRY[entry]/test_link/external_link"] = my_ext_link_dict
 
@@ -76,9 +76,9 @@ class ExampleReader(BaseReader):
         my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
                       f"data/tools/dataconverter/readers/mpes")
         my_datasets = {"link":
-                       [f"{my_path}/xarray_saved_small.h5:/axes/ax0",
-                        f"{my_path}/xarray_saved_small.h5:/axes/ax1",
-                        f"{my_path}/xarray_saved_small.h5:/axes/ax2"
+                       [f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax0",
+                        f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax1",
+                        f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax2"
                         ]
                        }
         template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = my_datasets

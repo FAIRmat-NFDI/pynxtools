@@ -166,7 +166,7 @@ def test_mpes_writing(tmp_path):
     """Check if mpes example can be reproduced"""
     # dataconverter
     dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes")
-    dataconverter.convert((os.path.join(dirpath, "xarray_saved_small.h5"),
+    dataconverter.convert((os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
                            os.path.join(dirpath, "config_file.json")),
                           "mpes", "NXmpes",
                           os.path.join(tmp_path, "mpes.small_test.nxs"),
@@ -185,7 +185,7 @@ def test_mpes_writing(tmp_path):
     nexus_helper.process_nexus_master_file(None)
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
-    assert len(log) == 2464
+    assert len(log) == 3272
     # parsing to NOMAD
     archive = EntryArchive()
     import structlog
