@@ -67,8 +67,8 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
             reader: str,
             nxdl: str,
             output: str,
-            generate_template: bool,
-            fair: bool,
+            generate_template: bool = False,
+            fair: bool = False,
             objects: Tuple[Any] = None):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
@@ -115,6 +115,8 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
         return
 
     for path in data.undocumented.keys():
+        if path == "/@default":
+            continue
         logger.warning("The path, %s, is being written but has no documentation.", path)
 
     # Writing the data to output file

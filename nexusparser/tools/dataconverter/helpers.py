@@ -24,6 +24,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 from nexusparser.tools import nexus
+from nexusparser.tools.nexus import NxdlAttributeError
 
 
 def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
@@ -281,12 +282,39 @@ def ensure_all_required_fields_exist(template, data):
                             f" hasn't been supplied by the reader.")
 
 
+def try_undocumented(data, nxdl_root: ET.Element):
+    """Tries to move entries used that are from base classes but not in AppDef"""
+    for path in list(data.undocumented):
+        entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
+
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+
+        if entry_name == "@units":
+            continue
+        elif entry_name[0] == "@" and "@" in nxdl_path:
+            index_of_at = nxdl_path.rindex("@")
+            nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
+
+        try:
+            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+            data[get_required_string(elem)][path] = data.undocumented[path]
+            del data.undocumented[path]
+            units = f"{path}/@units"
+            if units in data.undocumented:
+                data[get_required_string(elem)][units] = data.undocumented[units]
+                del data.undocumented[units]
+        except NxdlAttributeError:
+            pass
+
+
 def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
     # Make sure all required fields exist.
     ensure_all_required_fields_exist(template, data)
+
+    try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
         if data[path] is not None:
@@ -295,7 +323,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 
             if entry_name == "@units":
                 continue
-            elif entry_name[0] == "@":
+            elif entry_name[0] == "@" and "@" in nxdl_path:
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
