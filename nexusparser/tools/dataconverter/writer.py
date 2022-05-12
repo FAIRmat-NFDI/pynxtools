@@ -82,15 +82,17 @@ If multiple datasets are provided, the function returns two lists"""
 
 
 def handle_dicts_entries(data, grp, entry_name, output_path):
-    """Handke function for dictionaries found as value of the nexus file.
+    """Handle function for dictionaries found as value of the nexus file.
 
 Several cases can be encoutered:
 - Data to slice and place in virtual datasets
 - Concatenate dataset in one virtual dataset
 - Internal links
 - External links
+- compression label
 """
-    file, path = split_link(data, output_path)
+    if 'link' in data:
+        file, path = split_link(data, output_path)
     # generate virtual datasets from slices
     if 'shape' in data.keys():
         layout = h5py.VirtualLayout(shape=(h5py.File(file, 'r')[path].shape[0],), dtype=np.float64)
@@ -127,6 +129,15 @@ Several cases can be encoutered:
             grp[entry_name] = h5py.SoftLink(path)  # internal link
         else:
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
+    elif 'compress' in data.keys():
+        if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
+            grp.create_dataset(entry_name,
+                               data=data["compress"],
+                               compression="gzip",
+                               chunks=True,
+                               compression_opts=9)
+        else:
+            grp.create_dataset(entry_name, data=data["compress"])
     return grp[entry_name]
 
 
@@ -207,13 +218,6 @@ class Writer:
 
                     if isinstance(data, dict):
                         dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
-                    elif not (isinstance(data, str) or np.isscalar(data)):
-                        dataset = grp.create_dataset(entry_name,
-                                                     data=data,
-                                                     compression="gzip",
-                                                     chunks=True,
-                                                     compression_opts=9
-                                                     )
                     else:
                         dataset = grp.create_dataset(entry_name,
                                                      data=data
