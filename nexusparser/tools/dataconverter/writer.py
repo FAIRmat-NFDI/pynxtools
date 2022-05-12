@@ -185,13 +185,10 @@ class Writer:
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, parent_undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
-            try:
+            if path not in undocumented_paths:
                 attrs = self.__nxdl_to_attrs(parent_path)
                 if attrs is not None:
                     grp.attrs['NX_class'] = attrs["type"]
-            except nexus.NxdlAttributeError as exc:
-                if path not in undocumented_paths:
-                    raise exc
             return grp
         return self.output_nexus[parent_path_hdf5]
 

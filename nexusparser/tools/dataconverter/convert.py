@@ -115,6 +115,8 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
         return
 
     for path in data.undocumented.keys():
+        if path == "/@default":
+            continue
         logger.warning("The path, %s, is being written but has no documentation.", path)
 
     # Writing the data to output file
