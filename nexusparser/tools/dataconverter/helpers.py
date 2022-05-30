@@ -244,7 +244,7 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
     optional_parent_path = convert_data_converter_dict_to_nxdl_path(optional_parent_path)
     for key in data:
         nxdl_key = convert_data_converter_dict_to_nxdl_path(key)
-        if optional_parent_path in nxdl_key \
+        if nxdl_key[0:nxdl_key.rfind("/")] == optional_parent_path \
            and is_node_required(nxdl_key, nxdl_root) \
            and data[key] is None:
             return False

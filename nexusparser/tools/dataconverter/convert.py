@@ -97,7 +97,7 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
                 bulletpoint.join((" ", *input_file)))
 
     data_reader = get_reader(reader)
-    if nxdl not in data_reader.supported_nxdls:
+    if not (nxdl in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
 
     if objects is not None:
