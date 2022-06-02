@@ -130,6 +130,13 @@ def h5_to_xarray(faddr, mode="r"):
                 return dictionary
 
             metadata = recursive_parse_metadata(h5_file["metadata"])
+        # Segment to change Vset to V in lens voltages
+        if "file" in metadata.keys():
+            for k, v in metadata['file'].items():
+                if "VSet" in k:
+                    key = k[:-3]
+                    metadata['file'][key] = v
+                    del metadata['file'][k]
 
         xarray = res_to_xarray(data, bin_names, axes, metadata)
         return xarray
