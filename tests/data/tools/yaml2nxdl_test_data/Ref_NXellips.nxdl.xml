@@ -2,7 +2,8 @@
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="application" extends="NXobject" name="NXellipsometry_base_draft" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
     <doc>
-         draft application definition for ellipsometry measurements, including complex systems up to variable angle spectroscopic ellipsometry.
+         draft application definition for ellipsometry measurements, including complex systems up
+         to variable angle spectroscopic ellipsometry.
     </doc>
     <symbols>
         <doc>
@@ -45,8 +46,7 @@
     <group minOccurs="1" type="NXentry">
         <attribute name="entry">
             <doc>
-                 NeXus convention is to use entry1, entry2, for analysis software to
-                 locate each entry.
+                 NeXus convention is to use entry1, entry2, for analysis software to locate each entry.
             </doc>
         </attribute>
         <doc>
@@ -54,27 +54,25 @@
         </doc>
         <field minOccurs="1" name="experiment_identifier" type="NX_CHAR">
             <doc>
-                 Unique identifier of the experiment, such as a (globally persistent)
-                 unique identifier. The identifier is usually defined by the facility
-                 or principle investigator. The identifier enables to link experiments
-                 to e.g. proposals.
+                 Unique identifier of the experiment, such as a (globally persistent) unique identifier.
+                 The identifier is usually defined by the facility or principle investigator. The
+                 identifier enables to link experiments to e.g. proposals.
             </doc>
         </field>
         <field minOccurs="1" name="experiment_description" type="NX_CHAR"/>
         <field minOccurs="1" name="start_time" type="NX_DATE_TIME" units="NX_TIME"/>
         <field name="program_name" type="NX_CHAR">
             <doc>
-                 Commercial or otherwise defined given name to the program that was
-                 used to generate the results file(s) with measured data and metadata.
+                 Commercial or otherwise defined given name to the program that was used to generate the
+                 results file(s) with measured data and metadata.
             </doc>
         </field>
         <field name="program_version" type="NX_CHAR">
             <doc>
-                 Either version with build number, commit hash, or description of a
-                 (online) repository where the source code of the program and build
-                 instructions can be found so that the program can be configured in
-                 such a way that result files can be created ideally in a deterministic
-                 manner.
+                 Either version with build number, commit hash, or description of a (online) repository
+                 where the source code of the program and build instructions can be found so that the
+                 program can be configured in such a way that result files can be created ideally in a
+                 deterministic manner.
             </doc>
         </field>
         <field minOccurs="1" name="time_zone" type="NX_DATE_TIME">
@@ -84,33 +82,32 @@
         </field>
         <field name="definition_local" type="NX_CHAR">
             <doc>
-                 FAIRmat-specific candidate proposal for an application definition
-                 exemplifying ellipsometry.
+                 FAIRmat-specific candidate proposal for an application definition exemplifying
+                 ellipsometry.
             </doc>
             <attribute name="version" type="NX_CHAR">
                 <doc>
-                     Ideally version with build number are commit hash of the application
-                     definition. If not available a free-text description.
+                     Ideally version with build number are commit hash of the application definition. If not
+                     available a free-text description.
                 </doc>
             </attribute>
             <attribute name="url" type="NX_CHAR">
                 <doc>
-                     URL where to find further material (documentation, examples) relevant
-                     to the application definition
+                     URL where to find further material (documentation, examples) relevant to the application
+                     definition
                 </doc>
             </attribute>
         </field>
         <group maxOccurs="unbounded" minOccurs="1" name="operator" type="NXuser">
             <doc>
-                 Contact information of at least the user of the instrument or the
-                 principal investigator who performed this experiment. Adding multiple
-                 users if relevant is recommended.
+                 Contact information of at least the user of the instrument or the principal investigator
+                 who performed this experiment. Adding multiple users if relevant is recommended.
             </doc>
             <field minOccurs="1" name="name" type="NX_CHAR"/>
             <field name="affiliation" recommended="true" type="NX_CHAR">
                 <doc>
-                     Name of the affiliation of the user at the point in time when the
-                     experiment was performed.
+                     Name of the affiliation of the user at the point in time when the experiment was
+                     performed.
                 </doc>
             </field>
             <field name="address" recommended="true" type="NX_CHAR"/>
@@ -145,8 +142,7 @@
             </field>
             <field name="software_name" type="NX_CHAR">
                 <doc>
-                     Name (e.g. commercial) of the software that was used for the
-                     measurement
+                     Name (e.g. commercial) of the software that was used for the measurement
                 </doc>
             </field>
             <field name="software_version" type="NX_CHAR">
@@ -171,8 +167,7 @@
             </field>
             <field name="data_correction" type="NX_BOOLEAN">
                 <doc>
-                     Were the recorded data corrected by the window effects of the lenses
-                     or not?
+                     Were the recorded data corrected by the window effects of the lenses or not?
                 </doc>
             </field>
             <field name="angular_spread" type="NX_NUMBER" units="NX_ANGLE">
@@ -201,13 +196,12 @@
             </field>
             <group name="calibration" type="NXprocess">
                 <doc>
-                     ellipsometers require regular calibration to adjust the hardware
-                     parameters for proper zero values and background light compensation
+                     ellipsometers require regular calibration to adjust the hardware parameters for proper
+                     zero values and background light compensation
                 </doc>
                 <field name="calibration_time" type="NX_DATE_TIME">
                     <doc>
-                         ISO8601 datum when calibration was last performed before this
-                         measurement
+                         ISO8601 datum when calibration was last performed before this measurement
                     </doc>
                 </field>
                 <field name="calibration_provided" type="NX_BOOLEAN">
@@ -217,9 +211,8 @@
                 </field>
                 <group name="calibration_data" type="NXdata">
                     <doc>
-                         Arrays which provide the measured calibration data. Multiple sets are
-                         possible, e.g. Psi and delta measured on an e.g. silicon calibration
-                         waver, and the straight-through data.
+                         Arrays which provide the measured calibration data. Multiple sets are possible, e.g. Psi
+                         and delta measured on an e.g. silicon calibration waver, and the straight-through data.
                     </doc>
                     <field name="data" type="NX_CHAR">
                         <doc>
@@ -239,10 +232,9 @@
                     </field>
                     <field name="wavelength" type="NX_NUMBER" units="NX_LENGTH">
                         <doc>
-                             The wavelength or equivalent values (, which are inter-convertible).
-                             The importer should convert all to one unit, and make the others
-                             accessible. Historically, energy is used in eV, but for visible
-                             spectroscopy wavelength is more common, for IR wave numbers in 1/cm
+                             The wavelength or equivalent values (, which are inter-convertible). The importer should
+                             convert all to one unit, and make the others accessible. Historically, energy is used in
+                             eV, but for visible spectroscopy wavelength is more common, for IR wave numbers in 1/cm
                              units.
                         </doc>
                     </field>
@@ -253,8 +245,8 @@
                     </field>
                     <field name="calibration_sample" type="NX_CHAR">
                         <doc>
-                             Free-text to describe which sample was used for calibration, e.g.
-                             silicon wafer with 25 nm thermal oxide layer
+                             Free-text to describe which sample was used for calibration, e.g. silicon wafer with 25 nm
+                             thermal oxide layer
                         </doc>
                     </field>
                 </group>
@@ -281,8 +273,8 @@
             </group>
             <group name="window" type="NXcollection">
                 <doc>
-                     For environmental measurements, if a window is between the sample and
-                     the optics of the ellipsometer, describe its properties.
+                     For environmental measurements, if a window is between the sample and the optics of the
+                     ellipsometer, describe its properties.
                 </doc>
                 <field name="thickness" type="NX_NUMBER" units="NX_LENGTH">
                     <doc>
@@ -317,26 +309,24 @@
             </group>
             <group name="detector" type="NXdetector">
                 <doc>
-                     Which type of detector was used, and what is known about it? A
-                     detector can be a photomultiplier (PMT), a CCD in a camera, an array
-                     in a spectrometer. If so, the whole unit goes in here.
+                     Which type of detector was used, and what is known about it? A detector can be a
+                     photomultiplier (PMT), a CCD in a camera, an array in a spectrometer. If so, the whole
+                     unit goes in here.
                 </doc>
                 <field minOccurs="1" name="detector_type" type="NX_CHAR">
                     <doc>
-                         What kind of detector module is used, e.g. CCD-spectrometer, CCD
-                         camera, PMT, photodiode, etc.
+                         What kind of detector module is used, e.g. CCD-spectrometer, CCD camera, PMT, photodiode,
+                         etc.
                     </doc>
                 </field>
                 <field name="duration" type="NX_NUMBER" units="NX_TIME">
                     <doc>
-                         Integration time for the measurement. Single number or array if it was
-                         varied.
+                         Integration time for the measurement. Single number or array if it was varied.
                     </doc>
                 </field>
                 <field name="revolution" type="NX_NUMBER" units="NX_ANY">
                     <doc>
-                         Define how many rotations of the rotating element were taken into
-                         account for one spectra.
+                         Define how many rotations of the rotating element were taken into account for one spectra.
                     </doc>
                 </field>
                 <field name="rotating_element" type="NX_CHAR">
@@ -368,47 +358,41 @@
         <group minOccurs="1" name="sample" type="NXsample">
             <field minOccurs="1" name="atom_types" type="NX_CHAR">
                 <doc>
-                     Use Hill's system for listing elements of the periodic table which are
-                     inside or attached to the surface of the specimen and thus relevant
-                     from a scientific point. The purpose of this field is to allow
-                     materials database to parse the relevant elements without having to
+                     Use Hill's system for listing elements of the periodic table which are inside or attached
+                     to the surface of the specimen and thus relevant from a scientific point. The purpose of
+                     this field is to allow materials database to parse the relevant elements without having to
                      interpret the sample history or other fields.
                 </doc>
             </field>
             <field minOccurs="1" name="name" type="NX_CHAR"/>
             <field minOccurs="1" name="sample_history" type="NX_CHAR">
                 <doc>
-                     Ideally, a reference to the location or a unique (globally persistent)
-                     identifier (e.g.) of e.g. another file which gives as many as possible
-                     details of the material, its microstructure, and its thermo-chemo-
-                     mechanical processing/preparation history. In the case that such a
-                     detailed history of the sample is not available, use this field as a
-                     free-text description to specify details of the sample and its
-                     preparation.
+                     Ideally, a reference to the location or a unique (globally persistent) identifier (e.g.)
+                     of e.g. another file which gives as many as possible details of the material, its
+                     microstructure, and its thermo-chemo-mechanical processing/preparation history. In the
+                     case that such a detailed history of the sample is not available, use this field as a
+                     free-text description to specify details of the sample and its preparation.
                 </doc>
             </field>
             <field minOccurs="1" name="preparation_date" type="NX_DATE_TIME" units="NX_TIME"/>
             <field minOccurs="1" name="preparation_time_zone" type="NX_DATE_TIME" units="NX_TIME">
                 <doc>
-                     ISO 8601 time_zone offset from UTC. The time zone can be different to
-                     the time zone of this experiment description because maybe the sample
-                     was prepared by one international group and is then measured in a
-                     different time zone.
+                     ISO 8601 time_zone offset from UTC. The time zone can be different to the time zone of
+                     this experiment description because maybe the sample was prepared by one international
+                     group and is then measured in a different time zone.
                 </doc>
             </field>
             <field name="description" type="NX_CHAR">
                 <doc>
-                     Specimen/sample preparation and previous processing steps is the
-                     history which the sample carries when it is mounted in the electron
-                     microscope. Therefore, preparation details and other points of this
-                     history should be stored in sample_history.
+                     Specimen/sample preparation and previous processing steps is the history which the sample
+                     carries when it is mounted in the electron microscope. Therefore, preparation details and
+                     other points of this history should be stored in sample_history.
                 </doc>
             </field>
             <field name="layer structure" type="NX_CHAR">
                 <doc>
-                     Qualitative description of the layer structure for the sample in cases
-                     where a detailed geometrical description is not available or
-                     desired/required.
+                     Qualitative description of the layer structure for the sample in cases where a detailed
+                     geometrical description is not available or desired/required.
                 </doc>
             </field>
             <field name="orientation" type="NX_NUMBER" units="NX_ANGLE">
@@ -421,8 +405,7 @@
             </field>
             <field name="position" type="NX_NUMBER" units="NX_LENGTH">
                 <doc>
-                     Specifiy the position (e.g. in a line scan) with respect to a
-                     reference point
+                     Specifiy the position (e.g. in a line scan) with respect to a reference point
                 </doc>
                 <dimensions rank="1">
                     <dim index="1" value="3"/>
@@ -430,8 +413,8 @@
             </field>
             <field name="data_identifier" type="NX_NUMBER">
                 <doc>
-                     A identifier to correlate data to the experimental conditions, if
-                     several were used in this measurement; typically an index of 0 - N
+                     A identifier to correlate data to the experimental conditions, if several were used in
+                     this measurement; typically an index of 0 - N
                 </doc>
             </field>
             <field minOccurs="1" name="data_type" type="NX_CHAR">
@@ -448,9 +431,8 @@
             </field>
             <field name="number_of_variables" type="NX_INT">
                 <doc>
-                     specify the number of variables stored, e.g. psi, delta and their
-                     errors are 4 (this can be also automated, based on the provided data
-                     table)
+                     specify the number of variables stored, e.g. psi, delta and their errors are 4 (this can
+                     be also automated, based on the provided data table)
                 </doc>
             </field>
             <field name="wavelength" type="NX_NUMBER" units="NX_LENGTH">
@@ -460,9 +442,9 @@
             </field>
             <group type="NXdata">
                 <doc>
-                     Resulting data from the measurement, described by data type. Minimum
-                     two columns, if errors are available twice as many. For a Mueller
-                     matrix, it may be nine (1,1 is all 1, the rest is symmetric).
+                     Resulting data from the measurement, described by data type. Minimum two columns, if
+                     errors are available twice as many. For a Mueller matrix, it may be nine (1,1 is all 1,
+                     the rest is symmetric).
                 </doc>
                 <field name="data" type="NX_NUMBER">
                     <dimensions rank="5">
@@ -491,16 +473,14 @@
             </field>
             <field minOccurs="1" name="medium" type="NX_CHAR">
                 <doc>
-                     Describe what was the medium above or around the sample. The common
-                     model is built up from substrate to the medium on the other side. Both
-                     boundaries are assumed infinite in the model. Here define the name of
-                     the material (e.g. water, air, etc.).
+                     Describe what was the medium above or around the sample. The common model is built up from
+                     substrate to the medium on the other side. Both boundaries are assumed infinite in the
+                     model. Here define the name of the material (e.g. water, air, etc.).
                 </doc>
             </field>
             <field name="alternative" type="NX_NUMBER" units="NX_UNITLESS">
                 <doc>
-                     Array of pairs of complex refractive indices of the medium for every
-                     measured wavelength.
+                     Array of pairs of complex refractive indices of the medium for every measured wavelength.
                 </doc>
                 <dimensions rank="2">
                     <dim index="1" value="N_wavelength"/>
@@ -514,15 +494,15 @@
             </field>
             <field name="number_of_runs" type="NX_UINT">
                 <doc>
-                     How many measurements were done varying the parameters? This forms an
-                     extra dimension beyond incident angle and energy / wavelength.
+                     How many measurements were done varying the parameters? This forms an extra dimension
+                     beyond incident angle and energy / wavelength.
                 </doc>
             </field>
             <field name="varied_parameters" type="NX_CHAR">
                 <doc>
-                     this is to indicate which parameter was changed. Its definition must
-                     exist below. The specified variable has to be number_of_runs long,
-                     providing the parameters for each data set.
+                     this is to indicate which parameter was changed. Its definition must exist below. The
+                     specified variable has to be number_of_runs long, providing the parameters for each data
+                     set.
                 </doc>
                 <enumeration>
                     <item value="optical excitation"/>
@@ -587,8 +567,8 @@
             </field>
             <field name="stress" type="NX_NUMBER" units="NX_PRESSURE">
                 <doc>
-                     to be defined, only qualitative (atmospheric) pressure or really the
-                     applied continuum stress/strain tensor on the sample?
+                     to be defined, only qualitative (atmospheric) pressure or really the applied continuum
+                     stress/strain tensor on the sample?
                 </doc>
             </field>
             <group name="derived_parameters" type="NXcollection">

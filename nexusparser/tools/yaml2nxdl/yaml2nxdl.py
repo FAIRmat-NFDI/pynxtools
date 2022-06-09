@@ -32,7 +32,6 @@ from typing import List
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
-import textwrap
 import click
 
 from nexusparser.tools.dataconverter import helpers
@@ -74,21 +73,6 @@ using built-in libraries and add preceding XML processing instruction
     os.remove('tmp.xml')
 
 
-def format_nxdl_doc(string):
-    '''nexus format for doc string in the root definition of file'''
-    formatted_doc = ''
-    for index, line in enumerate(string.split("\n")):
-        if len(line) > 90 and index > 0:
-            wrp = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
-            line = '\n'.join(wrp.wrap(line))
-        if index == 0:
-            formatted_doc += f"\n"
-        if index == 1:
-            formatted_doc += f"\n"
-        formatted_doc += f"{line}\n"
-    return formatted_doc
-
-
 def yaml2nxdl(input_file: str, verbose: bool):
     """Main of the yaml2nxdl converter, creates XML tree,
 namespace and schema, then evaluates a dictionary
@@ -127,7 +111,7 @@ application and base are valid categories!'
 has to be a non-empty string!'
 
     doctag = ET.SubElement(xml_root, 'doc')
-    doctag.text = format_nxdl_doc(yml_appdef['doc'])
+    doctag.text = yaml2nxdl_forward_tools.format_nxdl_doc(yml_appdef['doc'])
 
     del yml_appdef['doc']
     if 'symbols' in yml_appdef.keys():
