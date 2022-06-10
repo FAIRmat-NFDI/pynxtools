@@ -26,7 +26,7 @@ from nomad.datamodel import EntryArchive
 from nexusparser.tools import nexus  # noqa: E402
 import nexusparser.tools.dataconverter.convert as dataconverter
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
-from nexusparser import NexusParser  # noqa: E402
+from nexusparser.parser import NexusParser  # noqa: E402
 
 
 @pytest.mark.parametrize("cli_inputs", [

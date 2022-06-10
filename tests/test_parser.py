@@ -26,7 +26,7 @@ import logging
 import pytest
 from nomad.datamodel import EntryArchive
 from nexusparser.tools import nexus  # noqa: E402
-from nexusparser import NexusParser  # noqa: E402
+from nexusparser.parser import NexusParser  # noqa: E402
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
