@@ -90,7 +90,7 @@ def test_has_correct_read_func(reader):
 
         input_files = glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
         for supported_nxdl in reader.supported_nxdls:
-            if supported_nxdl == "NXtest":
+            if supported_nxdl in ("NXtest", "*"):
                 nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")
             else:
                 nxdl_file = os.path.join(nexus_appdef_dir, f"{supported_nxdl}.nxdl.xml")

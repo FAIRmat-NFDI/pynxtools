@@ -1,0 +1,21 @@
+{
+    "a_level_down":{
+        "bool_value": true,
+        "char_value": "A random string!",
+        "float_value": 0.1,
+        "float_value_units": "Units are always strings.",
+        "int_value": -3,
+        "another_level_down":{
+            "int_value_units": "m/s^2",
+            "posint_value": 7
+        }
+    },
+    "posint_value_units": "V",
+    "definition": "NXtest",
+    "definition_version": "0.0.1",
+    "program_name": "Nexus Parser",
+    "type": "2nd type",
+    "date_value": "2022-01-22T12:14:12.05018+00:00",
+    "required_child": 1,
+    "optional_child": 1
+}
