@@ -52,7 +52,11 @@ class Template(dict):
     def __str__(self):
         """Returns a readable string representation for the Template object."""
         accumulated_dict = self.get_accumulated_dict()
-        accumulated_dict.update((key, "None") for key in accumulated_dict)
+        for key, data in accumulated_dict.items():
+            if data is None:
+                accumulated_dict[key] = "None"
+            else:
+                accumulated_dict[key] = data.__str__()
         return json.dumps(accumulated_dict, indent=4, sort_keys=True)
 
     def __setitem__(self, k, v):
@@ -80,7 +84,7 @@ class Template(dict):
 
     def items(self):
         """Returns a list of tuples of key, value stored in the Template object."""
-        return self.get_accumulated_dict().items()
+        return sorted(self.get_accumulated_dict().items())
 
     def __iter__(self):
         return dict.__iter__(self.get_accumulated_dict())
