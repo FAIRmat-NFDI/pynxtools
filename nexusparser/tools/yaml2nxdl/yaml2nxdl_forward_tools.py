@@ -73,8 +73,8 @@ def format_nxdl_doc(string):
     formatted_doc = ''
     formatted_doc += f"\n"
     if "\n" not in string:
-        if len(string) > 90:
-            w = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
+        if len(string) > 80:
+            w = textwrap.TextWrapper(width=80, break_long_words=False, replace_whitespace=False)
             string = '\n'.join(w.wrap(string))
         formatted_doc += f"{string}\n"
     else:
