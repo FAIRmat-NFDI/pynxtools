@@ -173,8 +173,9 @@ class Nxdl2yaml():
             tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
                 self.symbol_list.append(
-                    '{indent}{tag}: "{text}"'.format(
+                    '{indent}{tag}: | \n{indent2}{text}'.format(
                         indent=1 * '  ',
+                        indent2=2 * '  ',
                         tag=helpers.remove_namespace_from_tag(child.tag),
                         text=child.text.strip().replace('\"', '\'') if child.text else ''))
             elif tag == ('symbol'):
@@ -219,8 +220,9 @@ class Nxdl2yaml():
         for child in list(node):
             tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
-                self.root_level_doc = '{indent}{tag}: "{text}"'.format(
+                self.root_level_doc = '{indent}{tag}: | \n{indent2}{text}'.format(
                     indent=0 * '  ',
+                    indent2=1 * '  ',
                     tag=helpers.remove_namespace_from_tag(child.tag),
                     text=child.text.strip().replace('\"', '\'') if child.text else '')
                 node.remove(child)
