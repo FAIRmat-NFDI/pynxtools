@@ -67,6 +67,10 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
+def replace_right(source, target, replacement, replacements=None):
+    return replacement.join(source.rsplit(target, replacements))
+
+
 def format_nxdl_doc(string):
     """Nexus format for doc string
     """
@@ -76,9 +80,13 @@ def format_nxdl_doc(string):
         if len(string) > 80:
             w = textwrap.TextWrapper(width=80, break_long_words=False, replace_whitespace=False)
             string = '\n'.join(w.wrap(string))
-        formatted_doc += f"{string}\n"
+        formatted_doc += f"{string}"
     else:
         formatted_doc += f"{string}"
+    if string.endswith("\n"):
+        pass
+    else:
+        formatted_doc += f"\n"
     return formatted_doc
 
 
@@ -87,7 +95,6 @@ def xml_handle_doc(obj, value: str):
 
     """
     doctag = ET.SubElement(obj, 'doc')
-    # doctag.text = '\n' + textwrap.fill(value, width=70) + '\n'
     doctag.text = format_nxdl_doc(value)
 
 
