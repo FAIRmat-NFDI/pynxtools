@@ -19,6 +19,7 @@
 
 import xml.etree.ElementTree as ET
 import os
+from distutils import file_util
 import pytest
 import numpy as np
 
@@ -66,8 +67,19 @@ def fixture_template():
 
 @pytest.mark.usefixtures("template")
 @pytest.fixture(name="filled_test_data")
-def fixture_filled_test_data(template):
+def fixture_filled_test_data(template, tmp_path):
     """pytest fixture to setup a filled in template."""
+
+    # Copy original measurement file to tmp dir,
+    # because h5py.ExternalLink is modifying it while
+    # linking the nxs file.
+    file_util.copy_file(f"{os.path.dirname(__file__)}"
+                        f"/../../"
+                        f"data/tools/dataconverter/"
+                        f"readers/mpes/"
+                        f"xarray_saved_small_cali"
+                        "bration.h5", tmp_path)
+
     template.clear()
     template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
     template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"
@@ -88,10 +100,7 @@ def fixture_filled_test_data(template):
                                                                       ":14:12.05018+00:00")
     template["undocumented"]["/ENTRY[my_entry]/does/not/exist"] = "random"
     template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {"link":
-                                                                   f"{os.path.dirname(__file__)}"
-                                                                   f"/../../"
-                                                                   f"data/tools/dataconverter/"
-                                                                   f"readers/mpes/"
+                                                                   f"{tmp_path}/"
                                                                    f"xarray_saved_small_cali"
                                                                    f"bration.h5:/axes/ax3"
                                                                    }
