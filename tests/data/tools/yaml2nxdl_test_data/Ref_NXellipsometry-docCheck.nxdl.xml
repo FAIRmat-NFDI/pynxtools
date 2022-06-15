@@ -5,16 +5,13 @@
          Ellipsometry, complex systems, up to variable angle spectroscopy.
          
          Information on ellipsometry is provided, e.g. in:
-         - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons,
-         2007.
-         - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland
-         Publishing Company, 1977.
+         - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons, 2007.
+         - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland Publishing Company, 1977.
          - H. G. Tompkins and E. A. Irene, Handbook of Ellipsometry, William Andrew, 2005.
          
          Open acces sources:
          - https://www.angstromadvanced.com/resource.asp
          - https://pypolar.readthedocs.io/en/latest/
-         
     </doc>
     <symbols>
         <doc>
@@ -53,16 +50,13 @@
              Ellipsometry, complex systems, up to variable angle spectroscopy.
              
              Information on ellipsometry is provided, e.g. in:
-             - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons,
-             2007.
-             - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland
-             Publishing Company, 1977.
+             - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons, 2007.
+             - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland Publishing Company, 1977.
              - H. G. Tompkins and E. A. Irene, Handbook of Ellipsometry, William Andrew, 2005.
              
              Open acces sources:
              - https://www.angstromadvanced.com/resource.asp
              - https://pypolar.readthedocs.io/en/latest/
-             
         </doc>
         <field name="definition" type="NX_CHAR">
             <doc>
@@ -70,14 +64,14 @@
             </doc>
             <attribute name="version" type="NX_CHAR">
                 <doc>
-                     Version number to identify which definition of this application definition was used for
-                     this entry/data.
+                     Version number to identify which definition of this application definition was
+                     used for this entry/data.
                 </doc>
             </attribute>
             <attribute name="url" type="NX_CHAR">
                 <doc>
-                     URL where to find further material (documentation, examples) relevant to the application
-                     definition
+                     URL where to find further material (documentation, examples) relevant to the
+                     application definition
                 </doc>
             </attribute>
             <enumeration>
@@ -86,15 +80,15 @@
         </field>
         <field name="experiment_identifier" type="NX_CHAR">
             <doc>
-                 Unique identifier of the experiment, such as a (globally persistent) unique identifier. i)
-                 The identifier is usually defined by the facility or principle investigator. ii) The
-                 identifier enables to link experiments to e.g. proposals.
+                 Unique identifier of the experiment, such as a (globally persistent) unique
+                 identifier. i) The identifier is usually defined by the facility or principle
+                 investigator. ii) The identifier enables to link experiments to e.g. proposals.
             </doc>
         </field>
         <field name="experiment_description" recommended="true" type="NX_CHAR">
             <doc>
-                 A free-text description of the experiment. What is the aim of the experiment? The general
-                 procedure.
+                 A free-text description of the experiment. What is the aim of the experiment?
+                 The general procedure.
             </doc>
         </field>
         <field name="start_time" type="NX_DATE_TIME">
@@ -104,15 +98,16 @@
         </field>
         <field name="program" optional="true" type="NX_CHAR">
             <doc>
-                 Commercial or otherwise defined given name to the program that was used to generate the
-                 results file(s) with measured data and metadata (or a link to the instrument software).
+                 Commercial or otherwise defined given name to the program that was used to
+                 generate the results file(s) with measured data and metadata (or a link to the
+                 instrument software).
             </doc>
             <attribute name="version" type="NX_CHAR">
                 <doc>
-                     Either version with build number, commit hash, or description of a (online) repository
-                     where the source code of the program and build instructions can be found so that the
-                     program can be configured in such a way that result files can be created ideally in a
-                     deterministic manner.
+                     Either version with build number, commit hash, or description of a (online)
+                     repository where the source code of the program and build instructions can be
+                     found so that the program can be configured in such a way that result files can
+                     be created ideally in a deterministic manner.
                 </doc>
             </attribute>
             <attribute name="url" type="NX_CHAR">
@@ -123,8 +118,8 @@
         </field>
         <group minOccurs="1" name="operator" type="NXuser">
             <doc>
-                 Contact information of at least the user of the instrument or the investigator who
-                 performed this experiment. Adding multiple users if relevant is recommended.
+                 Contact information of at least the user of the instrument or the investigator
+                 who performed this experiment. Adding multiple users if relevant is recommended.
             </doc>
             <field name="name" type="NX_CHAR">
                 <doc>
@@ -139,7 +134,8 @@
             </field>
             <field name="address" type="NX_CHAR">
                 <doc>
-                     Full address (street, street number, ZIP, city, country) of the user's affiliation.
+                     Full address (street, street number, ZIP, city, country) of the user's
+                     affiliation.
                 </doc>
             </field>
             <field name="email" type="NX_CHAR">
@@ -168,8 +164,8 @@
                 </doc>
                 <attribute name="version" type="NX_CHAR">
                     <doc>
-                         The used version of the hardware if available. If not a commercial instrument use date of
-                         completion of the hardware.
+                         The used version of the hardware if available. If not a commercial instrument
+                         use date of completion of the hardware.
                     </doc>
                 </attribute>
             </field>
@@ -180,7 +176,8 @@
             </field>
             <field name="construction_year" optional="true" type="NX_DATE_TIME">
                 <doc>
-                     ISO8601 date when the instrument was constructed. UTC offset should be specifiec.
+                     ISO8601 date when the instrument was constructed. UTC offset should be
+                     specifiec.
                 </doc>
             </field>
             <field name="software" type="NX_CHAR">
@@ -264,13 +261,14 @@
             </field>
             <group name="calibration" recommended="true" type="NXsubentry">
                 <doc>
-                     Ellipsometers require regular calibration to adjust the hardware parameters for proper
-                     zero values and background light compensation.
+                     Ellipsometers require regular calibration to adjust the hardware parameters for
+                     proper zero values and background light compensation.
                 </doc>
                 <field name="calibration_time" optional="true" type="NX_DATE_TIME">
                     <doc>
-                         If calibtration status is 'calibration time provided', specify the ISO8601 datum when
-                         calibration was last performed before this measurement. UTC offset should be specified.
+                         If calibtration status is 'calibration time provided', specify the ISO8601 datum
+                         when calibration was last performed before this measurement. UTC offset should
+                         be specified.
                     </doc>
                 </field>
                 <group name="calibration_data" type="NXsubentry">
@@ -287,13 +285,13 @@
                          as the measurement was performed, that is if Psi and delta are measured
                          for your data, also provide Psi and delta here.
                          And use the same wavelenghts as there.&quot;
-                         
                     </doc>
                     <field name="calibration_data_type" type="NX_CHAR">
                         <doc>
-                             What data was recorded for the calibration, The number of variables (N_variables) have to
-                             be set to the number of provided data columns accordingly, e.g. psi/delta -&gt; N_variables=
-                             2, Jones vector: N_variables = 4, Mueller martix -&gt; N_variables= 16, etc.
+                             What data was recorded for the calibration, The number of variables
+                             (N_variables) have to be set to the number of provided data columns accordingly,
+                             e.g. psi/delta -&gt; N_variables= 2, Jones vector: N_variables = 4, Mueller martix
+                             -&gt; N_variables= 16, etc.
                         </doc>
                         <enumeration>
                             <item value="psi/delta"/>
@@ -305,8 +303,8 @@
                     </field>
                     <field name="calibration_angle_of_incidence" type="NX_NUMBER" units="NX_ANGLE">
                         <doc>
-                             angle(s) of incidence used during the calibration measurement (excluding straight through
-                             mode)
+                             angle(s) of incidence used during the calibration measurement (excluding
+                             straight through mode)
                         </doc>
                         <dimensions rank="1">
                             <dim index="1" value="N_calibration_angles"/>
@@ -314,10 +312,7 @@
                     </field>
                     <field name="calibration_wavelength" type="NX_NUMBER">
                         <doc>
-                             The wavelength or equivalent values (which are inter-convertible). The importer should
-                             convert all to one unit, and make the others accessible. Historically, energy is used in
-                             eV, but for visible spectroscopy wavelength is more common, for IR wave numbers in 1/cm
-                             units.
+                             The wavelength or equivalent values (which are inter-convertible). The importer should convert all to one unit, and make the others accessible. Historically, energy is used in eV, but for visible spectroscopy wavelength is more common, for IR wave numbers in 1/cm units.
                              Possibly use the same type of data as for the measurement!
                         </doc>
                         <dimensions rank="1">
@@ -326,8 +321,9 @@
                     </field>
                     <field name="calibration_data" type="NX_NUMBER" units="NX_UNITLESS">
                         <doc>
-                             Calibration is performed on a reference surface (usually silicon wafer with well defined
-                             oxide layer) at a number of angles, then in a straight through mode (transmission in air).
+                             Calibration is performed on a reference surface (usually silicon wafer with well
+                             defined oxide layer) at a number of angles, then in a straight through mode
+                             (transmission in air).
                         </doc>
                         <dimensions rank="3">
                             <dim index="3" value="N_calibration_angles+1"/>
@@ -338,15 +334,15 @@
                 </group>
                 <field name="calibration_sample" type="NX_CHAR">
                     <doc>
-                         Free-text to describe which sample was used for calibration, e.g. silicon wafer with 25 nm
-                         thermal oxide layer.
+                         Free-text to describe which sample was used for calibration, e.g. silicon wafer
+                         with 25 nm thermal oxide layer.
                     </doc>
                 </field>
             </group>
             <field name="angle_of_incidence" type="NX_NUMBER" units="NX_ANGLE">
                 <doc>
-                     Incident angle of the beam vs. the normal of the bottom reflective (substrate) surface in
-                     the sample
+                     Incident angle of the beam vs. the normal of the bottom reflective (substrate)
+                     surface in the sample
                 </doc>
                 <dimensions rank="1">
                     <dim index="1" value="N_angles"/>
@@ -354,9 +350,10 @@
             </field>
             <group name="stage" type="NXsubentry">
                 <doc>
-                     Sample stage, holding the sample at a specific position in X,Y,Z (Cartesian) coordinate
-                     system and at an orientation defined by three Euler angles (alpha, beta, gamma). The stage
-                     may be motorized or manual, special for liquids or gas environment.
+                     Sample stage, holding the sample at a specific position in X,Y,Z (Cartesian)
+                     coordinate system and at an orientation defined by three Euler angles (alpha,
+                     beta, gamma). The stage may be motorized or manual, special for liquids or gas
+                     environment.
                 </doc>
                 <enumeration>
                     <item value="manual stage"/>
@@ -372,34 +369,27 @@
                 </field>
                 <group recommended="true" type="NXtransformations">
                     <doc>
-                         The stage coordinate system vs. the incident beam. The Z-axis of the stage is considered
-                         to point along the normal of the substrate (bottom reflecting surface) from the stage
-                         towards the general direction of the light source. The beam comes with angle of incidence
-                         towards this Z-axis, but in opposite direction, thus they are connected with a rotation of
-                         180 - angle of incidence (in degrees).
+                         The stage coordinate system vs. the incident beam. The Z-axis of the stage is considered to point along the normal of the substrate (bottom reflecting surface) from the stage towards the general direction of the light source. The beam comes with angle of incidence towards this Z-axis, but in opposite direction, thus they are connected with a rotation of 180 - angle of incidence (in degrees).
                          This transformation brings us from the NEXUS coordinates to the stage coordinates.
-                         Then provide the set of translations (if there are any). These all have a vector defining
-                         their relative direction in the current coordinate system. (This current coordinate system
-                         changes with every transformation if you set the parameter 'depends' to the name of the
-                         previous step.)
+                         Then provide the set of translations (if there are any). These all have a vector defining their relative direction in the current coordinate system. (This current coordinate system changes with every transformation if you set the parameter 'depends' to the name of the previous step.)
                          Last, provide the rotations of the sample
                     </doc>
                     <field name="alternative" optional="true" type="NX_CHAR">
                         <doc>
-                             If there is no motorized stage, we should at least qualify where the beam hits the sample
-                             and in what direction the sample stands in a free-text description, e.g. 'center of
-                             sample, long edge parallel to plane of incidence'.
+                             If there is no motorized stage, we should at least qualify where the beam hits
+                             the sample and in what direction the sample stands in a free-text description,
+                             e.g. 'center of sample, long edge parallel to plane of incidence'.
                         </doc>
                     </field>
                 </group>
             </group>
             <group name="window" optional="true" type="NXaperture">
                 <doc>
-                     For environmental measurements, the environment (liquid, vapor, vacuum etc.) is enclosed
-                     in a cell or cryostat, which has windows both in the direction of the source and the
-                     detector (looking from the sample). These windows also add a phase shift to the light
-                     altering the measured signal. This shift has to be corrected based on measuring a known
-                     sample in the environmental cell.
+                     For environmental measurements, the environment (liquid, vapor, vacuum etc.) is
+                     enclosed in a cell or cryostat, which has windows both in the direction of the
+                     source and the detector (looking from the sample). These windows also add a
+                     phase shift to the light altering the measured signal. This shift has to be
+                     corrected based on measuring a known sample in the environmental cell.
                 </doc>
                 <field name="material" type="NX_CHAR">
                     <doc>
@@ -413,15 +403,15 @@
                 </field>
                 <field name="orientation_angle" type="NX_NUMBER" units="NX_ANGLE">
                     <doc>
-                         Angle of the window normal (outer) vs. the substrate normal (similar to the angle of
-                         incidence).
+                         Angle of the window normal (outer) vs. the substrate normal (similar to the
+                         angle of incidence).
                     </doc>
                 </field>
                 <group name="reference_data" type="NXsubentry">
                     <doc>
-                         Recorded data that can be used to calculate the window effect. Typically this is the
-                         substrate (e.g. silicon with thermal oxide layer) in air without window and in a known
-                         medium with the window.
+                         Recorded data that can be used to calculate the window effect. Typically this is
+                         the substrate (e.g. silicon with thermal oxide layer) in air without window and
+                         in a known medium with the window.
                     </doc>
                     <field name="reference_sample" type="NX_CHAR">
                         <doc>
@@ -452,13 +442,13 @@
             <group type="NXdetector">
                 <doc>
                      Which type of detector was used, and what is known about it? A detector can be a
-                     photomultiplier (PMT), a CCD in a camera, an array in a spectrometer. If so, the whole
-                     detector unit goes in here.
+                     photomultiplier (PMT), a CCD in a camera, an array in a spectrometer. If so, the
+                     whole detector unit goes in here.
                 </doc>
                 <field name="detector_type" type="NX_CHAR">
                     <doc>
-                         What kind of detector module is used, e.g. CCD-spectrometer, CCD camera, PMT, photodiode,
-                         etc.
+                         What kind of detector module is used, e.g. CCD-spectrometer, CCD camera, PMT,
+                         photodiode, etc.
                     </doc>
                     <enumeration>
                         <item value="PMT"/>
@@ -481,7 +471,8 @@
                 </field>
                 <field name="revolution" optional="true" type="NX_NUMBER" units="NX_ANY">
                     <doc>
-                         Define how many rotations of the rotating element were taken into account per spectrum.
+                         Define how many rotations of the rotating element were taken into account per
+                         spectrum.
                     </doc>
                 </field>
                 <field name="rotating_element" type="NX_CHAR">
@@ -512,16 +503,17 @@
         </group>
         <group type="NXsample">
             <doc>
-                 Properties of the sample, its history, the sample environment and experimental conditions
-                 (e.g. surrounding medium, temperature, pressure etc.), along with the data (data type,
-                 wavelength array, measured data).
+                 Properties of the sample, its history, the sample environment and experimental
+                 conditions (e.g. surrounding medium, temperature, pressure etc.), along with the
+                 data (data type, wavelength array, measured data).
             </doc>
             <field name="atom_types" type="NX_CHAR">
                 <doc>
-                     Use Hill's system for listing elements of the periodic table which are inside or attached
-                     to the surface of the specimen and thus relevant from a scientific point. The purpose of
-                     this field is to allow materials database to parse the relevant elements without having to
-                     interpret the sample history or other fields.
+                     Use Hill's system for listing elements of the periodic table which are inside or
+                     attached to the surface of the specimen and thus relevant from a scientific
+                     point. The purpose of this field is to allow materials database to parse the
+                     relevant elements without having to interpret the sample history or other
+                     fields.
                 </doc>
             </field>
             <field name="sample_name" type="NX_CHAR">
@@ -531,11 +523,12 @@
             </field>
             <field name="sample_history" type="NX_CHAR">
                 <doc>
-                     Ideally, a reference to the location or a unique (globally persistent) identifier (e.g.)
-                     of e.g. another file which gives as many as possible details of the material, its
-                     microstructure, and its thermo-chemo-mechanical processing/preparation history. In the
-                     case that such a detailed history of the sample is not available, use this field as a
-                     free-text description to specify details of the sample and its preparation.
+                     Ideally, a reference to the location or a unique (globally persistent)
+                     identifier (e.g.) of e.g. another file which gives as many as possible details
+                     of the material, its microstructure, and its thermo-chemo-mechanical
+                     processing/preparation history. In the case that such a detailed history of the
+                     sample is not available, use this field as a free-text description to specify
+                     details of the sample and its preparation.
                 </doc>
             </field>
             <field name="preparation_date" recommended="true" type="NX_DATE_TIME">
@@ -545,23 +538,23 @@
             </field>
             <field name="layer_structure" type="NX_CHAR">
                 <doc>
-                     Qualitative description of the layer structure for the sample. For example: Si/native
-                     oxide/thermal oxide/polymer/peptide
+                     Qualitative description of the layer structure for the sample. For example:
+                     Si/native oxide/thermal oxide/polymer/peptide
                 </doc>
             </field>
             <field name="data_identifier" type="NX_NUMBER">
                 <doc>
-                     An identifier to correlate data to the experimental conditions, if several were used in
-                     this measurement; typically an index of 0 - N
+                     An identifier to correlate data to the experimental conditions, if several were
+                     used in this measurement; typically an index of 0 - N
                 </doc>
             </field>
             <field name="data_type" type="NX_CHAR">
                 <doc>
                      Select which type of data was recorded, for example Psi and Delta (see:
-                     https://en.wikipedia.org/wiki/Ellipsometry#Data_acquisition). It is possible to have
-                     multiple selections. Data types may also be converted to each other, e.g. a Mueller matrix
-                     contains N,C,S data as well. This selection defines how many columns (N_variables) are
-                     stored in the data array.
+                     https://en.wikipedia.org/wiki/Ellipsometry#Data_acquisition). It is possible to
+                     have multiple selections. Data types may also be converted to each other, e.g. a
+                     Mueller matrix contains N,C,S data as well. This selection defines how many
+                     columns (N_variables) are stored in the data array.
                 </doc>
                 <enumeration>
                     <item value="psi / delta"/>
@@ -584,8 +577,7 @@
             <field name="measured_data" type="NX_NUMBER">
                 <doc>
                      Resulting data from the measurement, described by data type.
-                      Minimum two columns containing Psi and delta, or for the normalized Mueller matrix, it
-                     may be 16 (or 15 if 1,1 is all 1).
+                      Minimum two columns containing Psi and delta, or for the normalized Mueller matrix, it may be 16 (or 15 if 1,1 is all 1).
                 </doc>
                 <dimensions rank="5">
                     <dim index="5" value="N_time"/>
@@ -597,8 +589,8 @@
             </field>
             <field name="data_error" recommended="true" type="NX_NUMBER">
                 <doc>
-                     Specified uncertainties (errors) of the data described by data type. The structure is the
-                     same as for the measured data.
+                     Specified uncertainties (errors) of the data described by data type. The
+                     structure is the same as for the measured data.
                 </doc>
                 <dimensions rank="5">
                     <dim index="5" value="N_time"/>
@@ -615,16 +607,18 @@
             </field>
             <field name="medium" type="NX_CHAR">
                 <doc>
-                     Describe what was the medium above or around the sample. The common model is built up from
-                     substrate to the medium on the other side. Both boundaries are assumed infinite in the
-                     model. Here define the name of the material (e.g. water, air, etc.).
+                     Describe what was the medium above or around the sample. The common model is
+                     built up from substrate to the medium on the other side. Both boundaries are
+                     assumed infinite in the model. Here define the name of the material (e.g. water,
+                     air, etc.).
                 </doc>
             </field>
             <field name="medium_refractive_indices" optional="true" type="NX_NUMBER" units="NX_UNITLESS">
                 <doc>
-                     Array of pairs of complex refractive indices of the medium for every measured wavelength.
-                     Only necessary if the measurement was performed not in air, or something very well known,
-                     e.g. high purity water. Specify the complex refractive index: n + ik
+                     Array of pairs of complex refractive indices of the medium for every measured
+                     wavelength. Only necessary if the measurement was performed not in air, or
+                     something very well known, e.g. high purity water. Specify the complex
+                     refractive index: n + ik
                 </doc>
                 <dimensions rank="1">
                     <dim index="1" value="N_wavelength"/>
@@ -637,15 +631,16 @@
             </field>
             <field name="number_of_runs" optional="true" type="NX_UINT" units="NX_DIMENSIONLESS">
                 <doc>
-                     How many measurements were done varying the parameters? This forms an extra dimension
-                     beyond incident angle, time points and energy / wavelength (this is the length of the 4th
-                     dimension of the data). Defaults to 1.
+                     How many measurements were done varying the parameters? This forms an extra
+                     dimension beyond incident angle, time points and energy / wavelength (this is
+                     the length of the 4th dimension of the data). Defaults to 1.
                 </doc>
             </field>
             <field name="varied_parameters" optional="true" type="NX_CHAR">
                 <doc>
-                     Indicates which parameter was changed. Its definition must exist below. The specified
-                     variable has to be number_of_runs long, providing the parameters for each data set.
+                     Indicates which parameter was changed. Its definition must exist below. The
+                     specified variable has to be number_of_runs long, providing the parameters for
+                     each data set.
                 </doc>
                 <enumeration>
                     <item value="optical excitation"/>
@@ -658,8 +653,8 @@
             </field>
             <group name="optical_excitation" optional="true" type="NXsubentry">
                 <doc>
-                     Was the sample modified using an optical source? Describe in this group the parameters of
-                     the optical excitation used.
+                     Was the sample modified using an optical source? Describe in this group the
+                     parameters of the optical excitation used.
                 </doc>
                 <field name="excitation_source" type="NX_CHAR">
                     <doc>
@@ -669,9 +664,7 @@
                 <field name="excitation_wavelength" type="NX_NUMBER" units="NX_LENGTH">
                     <doc>
                          Wavelength value(s) or the range used for excitation.
-                          In cases of continuous laser radiation a value or a set of values may do but for other
-                         illumination types, such as pulsed lasers, or lamps, a range may describe the source
-                         better.
+                          In cases of continuous laser radiation a value or a set of values may do but for other illumination types, such as pulsed lasers, or lamps, a range may describe the source better.
                     </doc>
                 </field>
                 <field name="broadening" optional="true" type="NX_NUMBER" units="NX_LENGTH">
@@ -747,13 +740,15 @@
         </group>
         <group name="plot" optional="true" type="NXdata">
             <doc>
-                 A default view of the data, in this case Psi vs. wavelength and the angles of incidence.
-                 If Psi does not exist, use other Müller matrix elements, such as N, C and S.
+                 A default view of the data, in this case Psi vs. wavelength and the angles of
+                 incidence. If Psi does not exist, use other Müller matrix elements, such as N, C
+                 and S.
             </doc>
             <attribute name="axes">
                 <doc>
-                     We recommend to use wavelength as a default attribute, but it can be replaced in the case
-                     of not full spectral ellipsometry to any suitable parameter along the X-axis.
+                     We recommend to use wavelength as a default attribute, but it can be replaced in
+                     the case of not full spectral ellipsometry to any suitable parameter along the
+                     X-axis.
                 </doc>
             </attribute>
         </group>
