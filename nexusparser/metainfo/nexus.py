@@ -30,7 +30,6 @@ from nomad.utils import strip
 from nomad.metainfo import (
     Section, Package, SubSection, Definition, Datetime, Bytes, Unit, MEnum, Quantity)
 from nomad.datamodel import EntryArchive
-from nomad.metainfo.elasticsearch_extension import Elasticsearch
 from nexusparser.tools import nexus
 
 # URL_REGEXP from
@@ -312,6 +311,19 @@ def create_attribute_section(xml_node: ET.Element, container: Section) -> Sectio
     return attribute_section
 
 
+def add_units(xml_attrs, field_section):
+    """add units to section"""
+    if 'units' in xml_attrs:
+        field_section.more['nx_units'] = xml_attrs['units']
+        if xml_attrs['units'] != 'NX_UNITLESS':
+            # TO DO a default could be created from the nx_units value
+            field_section.quantities.append(Quantity(
+                name='nx_unit', type=Unit,
+                # a_elasticsearch=Elasticsearch(),
+                description='The specific unit for that this fields data has.'))
+    return field_section
+
+
 def create_field_section(xml_node: ET.Element, container: Section):
     '''
     Creates a metainfo section from the nexus field given as xml node.
@@ -351,14 +363,7 @@ def create_field_section(xml_node: ET.Element, container: Section):
     if value_quantity.type is None:
         value_quantity.type = Any
 
-    if 'units' in xml_attrs:
-        field_section.more['nx_units'] = xml_attrs['units']
-        if xml_attrs['units'] != 'NX_UNITLESS':
-            # TO DO a default could be created from the nx_units value
-            field_section.quantities.append(Quantity(
-                name='nx_unit', type=Unit,
-                # a_elasticsearch=Elasticsearch(),
-                description='The specific unit for that this fields data has.'))
+    field_section = add_units(xml_attrs, field_section)
 
     dimensions = xml_node.find('nx:dimensions', XML_NAMESPACES)
     if dimensions is not None:
@@ -517,9 +522,7 @@ APPLICATIONS.section_definitions.append(NEXUS_SECTION)
 
 ENTRY_ARCHIVE_NEXUS_SUB_SECTION = \
     SubSection(name='nexus',
-               section_def=NEXUS_SECTION,
-               # a_elasticsearch=Elasticsearch(auto_include_subsections=True)
-    )
+               section_def=NEXUS_SECTION)
 EntryArchive.nexus = ENTRY_ARCHIVE_NEXUS_SUB_SECTION  # type: ignore
 EntryArchive.m_def.sub_sections.append(ENTRY_ARCHIVE_NEXUS_SUB_SECTION)
 ENTRY_ARCHIVE_NEXUS_SUB_SECTION.init_metainfo()
