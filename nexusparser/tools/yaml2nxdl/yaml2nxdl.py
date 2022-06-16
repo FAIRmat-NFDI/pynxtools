@@ -173,11 +173,10 @@ class Nxdl2yaml():
             tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
                 self.symbol_list.append(
-                    '{indent}{tag}: | \n{indent2}{text}'.format(
+                    '{indent}{tag}: | {text}'.format(
                         indent=1 * '  ',
-                        indent2=2 * '  ',
                         tag=helpers.remove_namespace_from_tag(child.tag),
-                        text=child.text.strip().replace('\"', '\'') if child.text else ''))
+                        text='\n'.join([f"{2 * '  '}{s.lstrip()}" for s in child.text.split('\n')[:-1]] if child.text else '')))
             elif tag == ('symbol'):
                 if 'doc' in child.attrib:
                     self.symbol_list.append(
@@ -220,11 +219,10 @@ class Nxdl2yaml():
         for child in list(node):
             tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
-                self.root_level_doc = '{indent}{tag}: | \n{indent2}{text}'.format(
+                self.root_level_doc = '{indent}{tag}: | {text}\n'.format(
                     indent=0 * '  ',
-                    indent2=1 * '  ',
                     tag=helpers.remove_namespace_from_tag(child.tag),
-                    text=child.text.strip().replace('\"', '\'') if child.text else '')
+                    text='\n'.join([f"{1 * '  '}{s.lstrip()}" for s in child.text.split('\n')[:-1]] if child.text else ''))
                 node.remove(child)
 
     def print_root_level_doc(self, file_out):
@@ -233,7 +231,7 @@ the general documentation field found in XML file
 
  """
         file_out.write(
-            '{indent}{root_level_doc}\n'.format(
+            '{indent}{root_level_doc}'.format(
                 indent=0 * '  ',
                 root_level_doc=self.root_level_doc))
         self.root_level_doc = ''
@@ -286,6 +284,7 @@ then prints recursively each level of the tree
     """
         tree = xml_tree['tree']
         node = xml_tree['node']
+
         if verbose:
             sys.stdout.write(f'Node tag: {helpers.remove_namespace_from_tag(node.tag)}\n')
             sys.stdout.write(f'Attributes: {node.attrib}\n')
