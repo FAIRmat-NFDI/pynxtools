@@ -101,6 +101,77 @@ def helper_nexus_populate(nxdl_attribute, act_section, val, logger):
         logger.debug("Problem with storage!!!\n" + str(exc))
 
 
+def nexus_populate_helper(params):
+    """helper for nexus_populate"""
+    (path_level, nxdl_path, act_section, logstr, val, loglev, nxdef, hdf_node) = params
+    if path_level < len(nxdl_path):
+        nxdl_attribute = nxdl_path[path_level]
+        if isinstance(nxdl_attribute, str):
+            # conventional attribute not in schema. Only necessary,
+            # if schema is not populated according
+            # helper_nexus_populate(nxdl_attribute, act_section, val, logger)
+            try:
+                if nxdl_attribute == "units":
+                    act_section.nx_unit = val[0]
+                elif nxdl_attribute == "default":
+                    Exception(
+                        "'default' is not yet added by default to groups in Nomad schema")
+            except Exception as exc:  # pylint: disable=broad-except
+                logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
+                loglev = 'error'
+        else:
+            # attribute in schema
+            act_section = \
+                get_to_new_subsection(nxdl_attribute.attrib['name'], nxdef,
+                                      nxdl_attribute, act_section)[1]
+            try:
+                act_section.nx_value = val[0]
+            except (AttributeError, TypeError, ValueError) as exc:
+                logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
+                loglev = 'error'
+    else:
+        try:
+            data_field = get_value(hdf_node)
+            if hdf_node[...].dtype.kind in 'iufc' and \
+                    isinstance(data_field, np.ndarray) and \
+                    data_field.size > 1:
+                data_field = np.array([
+                    np.mean(data_field),
+                    np.var(data_field),
+                    np.min(data_field),
+                    np.max(data_field)
+                ])
+            act_section.nx_value = data_field
+        except (TypeError, ValueError) as exc:
+            logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
+            loglev = 'error'
+    return [logstr, loglev]
+
+
+def add_log(params, logstr):
+    """adds log entry for the given node"""
+    if params[1] is not None:
+        logstr += params[1]
+    else:
+        logstr += '???'
+    logstr += ':'
+    first = True
+    for p_node in params[2]:
+        if first:
+            first = False
+        else:
+            logstr += '.'
+        if isinstance(p_node, str):
+            logstr += p_node
+        else:
+            read_nexus.get_node_name(p_node)
+    logstr += ' - ' + params[3][0]
+    if len(params[3]) > 1:
+        logstr += '...'
+    logstr += '\n'
+    return logstr
+
+
 class NexusParser(MatchingParser):
     """NesusParser doc
 
@@ -125,81 +196,40 @@ class NexusParser(MatchingParser):
 #             name = xml_type + suffix
 #         return name
 
-    def nexus_populate(self, hdf_info, nxdef, nxdl_path, val, logger, attr=None):
-        """Walks through hdf_namelist and generate nxdl nodes"""
-        hdf_path = hdf_info['hdf_path']
-        hdf_node = hdf_info['hdf_node']
+    def nexus_populate(self, params, attr=None):
+        """Walks through hdf_namelist and generate nxdl nodes
+        (hdf_info, nxdef, nxdl_path, val, logger) = params"""
+        hdf_path = params[0]['hdf_path']
+        hdf_node = params[0]['hdf_node']
         logstr = hdf_path + (("@" + attr) if attr else '') + '\n'
         loglev = 'info'
-        if nxdl_path is not None:
-            logstr += ((nxdef or '???') + ':' + '.'.
-                       join(p if isinstance(p, str) else
-                            read_nexus.get_node_name(p)
-                            for p in nxdl_path) + ' - ' + val[0] + ("..."
-                                                                    if len(val) > 1 else '')) + '\n'
+        if params[2] is not None:
+            logstr = add_log(params, logstr)
             act_section = self.nxroot
             hdf_namelist = hdf_path.split('/')[1:]
-            act_section = get_to_new_subsection(None, nxdef, None, act_section)[1]
+            act_section = get_to_new_subsection(None, params[1], None, act_section)[1]
             path_level = 1
             for hdf_name in hdf_namelist:
-                nxdl_node = nxdl_path[path_level] if path_level < len(nxdl_path) else hdf_name
-                act_section = get_to_new_subsection(hdf_name, nxdef,
+                nxdl_node = params[2][path_level] if path_level < len(params[2]) else hdf_name
+                act_section = get_to_new_subsection(hdf_name, params[1],
                                                     nxdl_node, act_section)[1]
                 path_level += 1
-            if path_level < len(nxdl_path):
-                nxdl_attribute = nxdl_path[path_level]
-                if isinstance(nxdl_attribute, str):
-                    # conventional attribute not in schema. Only necessary,
-                    # if schema is not populated according
-                    # helper_nexus_populate(nxdl_attribute, act_section, val, logger)
-                    try:
-                        if nxdl_attribute == "units":
-                            act_section.nx_unit = val[0]
-                        elif nxdl_attribute == "default":
-                            Exception(
-                                "'default' is not yet added by default to groups in Nomad schema")
-                    except Exception as exc:  # pylint: disable=broad-except
-                        logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
-                        loglev = 'error'
-                else:
-                    # attribute in schema
-                    act_section = \
-                        get_to_new_subsection(nxdl_attribute.attrib['name'], nxdef,
-                                              nxdl_attribute, act_section)[1]
-                    try:
-                        act_section.nx_value = val[0]
-                    except (AttributeError, TypeError, ValueError) as exc:
-                        logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
-                        loglev = 'error'
-            else:
-                try:
-                    data_field = get_value(hdf_node)
-                    if hdf_node[...].dtype.kind in 'iufc' and \
-                            isinstance(data_field, np.ndarray) and \
-                            data_field.size > 1:
-                        data_field = np.array([
-                            np.mean(data_field),
-                            np.var(data_field),
-                            np.min(data_field),
-                            np.max(data_field)
-                        ])
-                    act_section.nx_value = data_field
-                except (TypeError, ValueError) as exc:
-                    logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
-                    loglev = 'error'
+            helper_params = (path_level, params[2], act_section, logstr, params[3],
+                             loglev, params[1], hdf_node)
+            (logstr, loglev) = nexus_populate_helper(helper_params)
         else:
             logstr += ('NOT IN SCHEMA - skipped') + '\n'
             loglev = 'warning'
         if loglev == 'info':
-            logger.info('Parsing', nexusparser=logstr)
+            params[4].info('Parsing', nexusparser=logstr)
         elif loglev == 'warning':
-            logger.warning('Parsing', nexusparser=logstr)
+            params[4].warning('Parsing', nexusparser=logstr)
         elif loglev == 'error':
-            logger.error('Parsing', nexusparser=logstr)
+            params[4].error('Parsing', nexusparser=logstr)
         else:
-            logger.critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
+            params[4].critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
 
-    def parse(self, mainfile: str, archive: EntryArchive, logger=None):
+    def parse(self, mainfile: str, archive: EntryArchive, logger=None, child_archives=None):
         self.archive = archive
         self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
         self.nxroot = self.archive.nexus
@@ -214,4 +244,3 @@ class NexusParser(MatchingParser):
 
         if archive.metadata is not None:
             archive.metadata.entry_type = f"NX{appdef}"
-        # archive.results.method.method_name =  # This is where we want the AppDef to finally be set.

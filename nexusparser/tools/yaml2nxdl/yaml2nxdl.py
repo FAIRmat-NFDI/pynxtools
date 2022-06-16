@@ -79,8 +79,8 @@ def format_nxdl_doc(string):
     formatted_doc = ''
     for index, line in enumerate(string.split("\n")):
         if len(line) > 90 and index > 0:
-            w = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
-            line = '\n'.join(w.wrap(line))
+            wrp = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
+            line = '\n'.join(wrp.wrap(line))
         if index == 0:
             formatted_doc += f"\n"
         if index == 1:

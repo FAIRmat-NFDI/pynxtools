@@ -185,6 +185,13 @@ uppercase to lowercase match is preferred"""
         name_any = bool(child.attrib['nameType'] == "any")
     except KeyError:
         name_any = False
+    params = [act_htmlname, chk_name, name_any, nxdl_elem, child, name]
+    return belongs_to_capital(params)
+
+
+def belongs_to_capital(params):
+    """Checking continues for Upper case"""
+    (act_htmlname, chk_name, name_any, nxdl_elem, child, name) = params
     # or starts with capital and no reserved words used
     if (name_any or 'A' <= act_htmlname[0] <= 'Z') and \
             name != 'doc' and name != 'enumeration':
@@ -209,6 +216,50 @@ def get_local_name_from_xml(element):
     return element.tag[element.tag.rindex("}") + 1:]
 
 
+def get_own_nxdl_child_reserved_elements(child, name, nxdl_elem):
+    """checking reserved elements, like doc, enumeration"""
+    if get_local_name_from_xml(child) == 'doc' and name == 'doc':
+        if nxdl_elem.get('nxdlbase'):
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+            child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
+            child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/doc')
+        return child
+    if get_local_name_from_xml(child) == 'enumeration' and name == 'enumeration':
+        if nxdl_elem.get('nxdlbase'):
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+            child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
+            child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/enumeration')
+        return child
+    return False
+
+
+def get_own_nxdl_child_base_types(child, class_type, nxdl_elem, name, hdf_name):
+    """checking base types of group, field,m attribute"""
+    if get_local_name_from_xml(child) == 'group':
+        if (class_type is None or (class_type and get_nx_class(child) == class_type)) and \
+                belongs_to(nxdl_elem, child, name, class_type, hdf_name):
+            if nxdl_elem.get('nxdlbase'):
+                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+                child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
+                child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
+            return child
+    if get_local_name_from_xml(child) == 'field' and \
+            belongs_to(nxdl_elem, child, name, None, hdf_name):
+        if nxdl_elem.get('nxdlbase'):
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+            child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
+            child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
+        return child
+    if get_local_name_from_xml(child) == 'attribute' and \
+            belongs_to(nxdl_elem, child, name, None, hdf_name):
+        if nxdl_elem.get('nxdlbase'):
+            child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+            child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
+            child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
+        return child
+    return False
+
+
 def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=None):
     """Checks if an NXDL child node fits to the specific name (either nxdl or hdf)
         name       - nxdl name
@@ -227,46 +278,18 @@ def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_ty
             return child
 
     for child in nxdl_elem:
-        if get_local_name_from_xml(child) == 'doc' and name == 'doc':
-            if nxdl_elem.get('nxdlbase'):
-                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
-                child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
-                child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/doc')
-            return child
-        if get_local_name_from_xml(child) == 'enumeration' and name == 'enumeration':
-            if nxdl_elem.get('nxdlbase'):
-                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
-                child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
-                child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/enumeration')
-            return child
+        result = get_own_nxdl_child_reserved_elements(child, name, nxdl_elem)
+        if result is not False:
+            return result
         if nexus_type and get_local_name_from_xml(child) != nexus_type:
             continue
-        if get_local_name_from_xml(child) == 'group':
-            if (class_type is None or (class_type and get_nx_class(child) == class_type)) and \
-                    belongs_to(nxdl_elem, child, name, class_type, hdf_name):
-                if nxdl_elem.get('nxdlbase'):
-                    child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
-                    child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
-                    child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
-                return child
-        if get_local_name_from_xml(child) == 'field' and \
-                belongs_to(nxdl_elem, child, name, None, hdf_name):
-            if nxdl_elem.get('nxdlbase'):
-                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
-                child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
-                child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
-            return child
-        if get_local_name_from_xml(child) == 'attribute' and \
-                belongs_to(nxdl_elem, child, name, None, hdf_name):
-            if nxdl_elem.get('nxdlbase'):
-                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
-                child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
-                child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
-            return child
+        result = get_own_nxdl_child_base_types(child, class_type, nxdl_elem, name, hdf_name)
+        if result is not False:
+            return result
     return None
 
 
-def get_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=None, go_base=True):
+def get_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=None, go_base=True):  # pylint: disable=too-many-arguments
     """Get the NXDL child node corresponding to a specific name
 (e.g. of an HDF5 node,or of a documentation) note that if child is not found in application
 definition, it also checks for the base classes"""
@@ -779,7 +802,7 @@ TODO:
                       get_nx_class_path(hdf_node), hdf_node))
     (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser(hdf_info, nxdef, nxdl_path, val, logger)
+        parser([hdf_info, nxdef, nxdl_path, val, logger])
     for key, value in hdf_node.attrs.items():
         logger.debug('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
@@ -787,7 +810,7 @@ TODO:
         (req_str, nxdef, nxdl_path) = \
             get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
-            parser(hdf_info, nxdef, nxdl_path, val, logger, attr=key)
+            parser([hdf_info, nxdef, nxdl_path, val, logger], attr=key)
 
 
 def logger_auxiliary_signal(logger, nxdata):
