@@ -28,10 +28,18 @@ def main():
     except FileNotFoundError:
         pass
 
+    with open("README.md", "r") as f:
+        long_description = f.read()
+
+    with open("requirements.txt", "r") as f:
+        required = f.read().splitlines()
+
     setup(
         name='nexusparser',
-        version='1.0',
+        version='0.0.1',
         description='NOMAD parser implementation for Nexus.',
+        long_description=long_description,
+        long_description_content_type="text/markdown",
         author='The NOMAD Authors',
         license='APACHE 2.0',
         packages=find_packages(exclude=['tests']),
@@ -42,7 +50,7 @@ def main():
             'nexusparser.definitions': ['*.xsd']
         },
         include_package_data=True,
-        install_requires=['nomad-lab', 'h5py', 'lxml', 'click'])
+        install_requires=required)
 
 
 if __name__ == '__main__':
