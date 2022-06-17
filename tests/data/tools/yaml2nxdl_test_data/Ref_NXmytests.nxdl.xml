@@ -1,10 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="base" extends="NXobject" name="NXbeam" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
-    <doc>
-         This is a test file for checking the correct parsing of several fields and attributes in
-         nxdl files
-    </doc>
     <symbols>
         <doc>
              symbolic array lengths to be coordinated between various fields
@@ -35,6 +31,10 @@
             </doc>
         </symbol>
     </symbols>
+    <doc>
+         This is a test file for checking the correct parsing of several fields and
+         attributes in nxdl files
+    </doc>
     <field name="distance" type="NX_FLOAT" units="NX_LENGTH">
         <doc>
              Distance from sample

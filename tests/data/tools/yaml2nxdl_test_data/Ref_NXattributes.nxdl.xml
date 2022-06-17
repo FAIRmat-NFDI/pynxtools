@@ -1,9 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="application" extends="NXobject" name="NXellipsometry_base_draft" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
-    <doc>
-         documentation no. 0
-    </doc>
     <symbols>
         <doc>
              documentation no. 1
@@ -14,6 +11,9 @@
             </doc>
         </symbol>
     </symbols>
+    <doc>
+         documentation no. 0
+    </doc>
     <group minOccurs="1" type="NXentry">
         <attribute name="entry">
             <doc>

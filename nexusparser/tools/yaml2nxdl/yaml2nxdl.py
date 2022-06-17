@@ -107,6 +107,10 @@ application and base are valid categories!'
         xml_root.set('category', 'base')
         del yml_appdef['category']
 
+    if 'symbols' in yml_appdef.keys():
+        yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        del yml_appdef['symbols']
+
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
 has to be a non-empty string!'
 
@@ -114,9 +118,6 @@ has to be a non-empty string!'
     doctag.text = yaml2nxdl_forward_tools.format_nxdl_doc(yml_appdef['doc'])
 
     del yml_appdef['doc']
-    if 'symbols' in yml_appdef.keys():
-        yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
-        del yml_appdef['symbols']
 
     assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'

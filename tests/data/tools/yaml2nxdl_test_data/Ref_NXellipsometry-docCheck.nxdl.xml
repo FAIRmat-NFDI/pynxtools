@@ -1,18 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="application" extends="NXobject" name="NXellipsometry" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
-    <doc>
-         Ellipsometry, complex systems, up to variable angle spectroscopy.
-         
-         Information on ellipsometry is provided, e.g. in:
-         - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons, 2007.
-         - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland Publishing Company, 1977.
-         - H. G. Tompkins and E. A. Irene, Handbook of Ellipsometry, William Andrew, 2005.
-         
-         Open acces sources:
-         - https://www.angstromadvanced.com/resource.asp
-         - https://pypolar.readthedocs.io/en/latest/
-    </doc>
     <symbols>
         <doc>
              Variables used throughout the document, e.g. dimensions and important
@@ -45,6 +33,18 @@
             </doc>
         </symbol>
     </symbols>
+    <doc>
+         Ellipsometry, complex systems, up to variable angle spectroscopy.
+         
+         Information on ellipsometry is provided, e.g. in:
+         - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons, 2007.
+         - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland Publishing Company, 1977.
+         - H. G. Tompkins and E. A. Irene, Handbook of Ellipsometry, William Andrew, 2005.
+         
+         Open acces sources:
+         - https://www.angstromadvanced.com/resource.asp
+         - https://pypolar.readthedocs.io/en/latest/
+    </doc>
     <group type="NXentry">
         <doc>
              Ellipsometry, complex systems, up to variable angle spectroscopy.
