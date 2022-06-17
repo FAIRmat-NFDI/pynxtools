@@ -38,7 +38,7 @@ experiment_identifier: exp-ID
 start_time: "2022-01-27T12:05:35+00:00"
 
 program: CompleteEASE
-program/version: "6.37"
+program/\@version: "6.37"
 program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
 
 name: Name Surname
@@ -50,9 +50,9 @@ email: name@hu-berlin.de
 model: RC2
 model/\@version: 0.0.1
 company: J.A. Woollam Co.
-firmware: WVASE
-firmware/\@version: 3.882
-firmware/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
+software: WVASE
+software/\@version: 3.882
+software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
 light_source: arc lamp
 light_source/target_material: Xe
 focussing_probes: false
@@ -64,9 +64,12 @@ count_time: 1
 count_time/\@units: s
 stage: manual stage
 detector_type: CCD spectrometer
-rotating_element: 
-  - compensator (source side)
-  - compensator (detector side)
+integration_time: 0
+integration_time/\@units: s
+rotating_element: analyzer # TAKE care: if you use the yaml list syntax, you'll break the
+                          # reader tests, check the reader code
+#  - compensator (source side)
+#  - compensator (detector side)
 # Angle of incidence and wavelength are read by the reader
 # and we just have to define the units here:
 angle_of_incidence/\@units: "degrees"
@@ -77,7 +80,7 @@ sample_name: 2nm SiO2 on Si
 sample_history: Commercially bought sample
 data_identifier: 1
 data_type: psi / delta
-column_names: 
+column_names:
   - psi
   - delta
 medium: air
