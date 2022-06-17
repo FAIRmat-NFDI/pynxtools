@@ -413,6 +413,7 @@ and print both an XML and YML file of the extended base class.
 @click.command()
 @click.option(
     '--input-file',
+    required=True,
     help='The path to the XML or YAML input data file to read and create \
 a YAML or XML file from, respectively.'
 )

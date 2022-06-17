@@ -18,7 +18,48 @@
 
 from setuptools import setup, find_packages
 import os
+import re
 
+
+def parse_requirements():
+    '''
+    Parses the requirements.txt file to extras install and extra requirements.
+    Sections headed with # [extra] are assigned to the 'extra' extra.
+
+    Returns:
+        Tuple with install and extra requires passible to :func:`setuptools.setup`.
+    '''
+    with open('requirements.txt', 'rt') as f:
+        lines = f.readlines()
+
+    extras_require = {}
+    requires = []
+    all_requires = []
+    current = None
+    for line in lines:
+        line = line.strip()
+
+        if line == '':
+            continue
+
+        match = re.match(r'^#\s*\[([a-zA-Z0-9_]+)\]$', line)
+        if match:
+            extra = match.group(1)
+            current = list()
+            extras_require[extra] = current
+        elif line.startswith('#'):
+            continue
+        else:
+            line = line.split('#')[0].strip()
+            if current is None:
+                requires.append(line)
+            else:
+                current.append(line)
+                all_requires.append(line)
+
+    extras_require['all'] = all_requires
+
+    return requires, extras_require
 
 def main():
     try:
@@ -31,8 +72,7 @@ def main():
     with open("README.md", "r") as f:
         long_description = f.read()
 
-    with open("requirements.txt", "r") as f:
-        required = f.read().splitlines()
+    requires, extras_require = parse_requirements()
 
     setup(
         name='nexusparser',
@@ -50,7 +90,8 @@ def main():
             'nexusparser.definitions': ['*.xsd']
         },
         include_package_data=True,
-        install_requires=required)
+        install_requires=requires,
+        extras_require=extras_require)
 
 
 if __name__ == '__main__':
