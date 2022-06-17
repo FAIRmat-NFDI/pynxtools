@@ -32,7 +32,6 @@ from typing import List
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
-import textwrap
 import click
 
 from nexusparser.tools.dataconverter import helpers
@@ -74,21 +73,6 @@ using built-in libraries and add preceding XML processing instruction
     os.remove('tmp.xml')
 
 
-def format_nxdl_doc(string):
-    '''nexus format for doc string in the root definition of file'''
-    formatted_doc = ''
-    for index, line in enumerate(string.split("\n")):
-        if len(line) > 90 and index > 0:
-            wrp = textwrap.TextWrapper(width=90, break_long_words=False, replace_whitespace=False)
-            line = '\n'.join(wrp.wrap(line))
-        if index == 0:
-            formatted_doc += f"\n"
-        if index == 1:
-            formatted_doc += f"\n"
-        formatted_doc += f"{line}\n"
-    return formatted_doc
-
-
 def yaml2nxdl(input_file: str, verbose: bool):
     """Main of the yaml2nxdl converter, creates XML tree,
 namespace and schema, then evaluates a dictionary
@@ -123,16 +107,17 @@ application and base are valid categories!'
         xml_root.set('category', 'base')
         del yml_appdef['category']
 
+    if 'symbols' in yml_appdef.keys():
+        yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        del yml_appdef['symbols']
+
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
 has to be a non-empty string!'
 
     doctag = ET.SubElement(xml_root, 'doc')
-    doctag.text = format_nxdl_doc(yml_appdef['doc'])
+    doctag.text = yaml2nxdl_forward_tools.format_nxdl_doc(yml_appdef['doc'])
 
     del yml_appdef['doc']
-    if 'symbols' in yml_appdef.keys():
-        yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
-        del yml_appdef['symbols']
 
     assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'
@@ -189,10 +174,12 @@ class Nxdl2yaml():
             tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
                 self.symbol_list.append(
-                    '{indent}{tag}: "{text}"'.format(
+                    '{indent}{tag}: | {text}'.format(
                         indent=1 * '  ',
                         tag=helpers.remove_namespace_from_tag(child.tag),
-                        text=child.text.strip().replace('\"', '\'') if child.text else ''))
+                        text='\n'.join([f"{2 * '  '}{s.lstrip()}"
+                                        for s in child.text.split('\n')[:-1]]
+                                       if child.text else '')))
             elif tag == ('symbol'):
                 if 'doc' in child.attrib:
                     self.symbol_list.append(
@@ -235,10 +222,11 @@ class Nxdl2yaml():
         for child in list(node):
             tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
-                self.root_level_doc = '{indent}{tag}: "{text}"'.format(
+                self.root_level_doc = '{indent}{tag}: | {text}\n'.format(
                     indent=0 * '  ',
                     tag=helpers.remove_namespace_from_tag(child.tag),
-                    text=child.text.strip().replace('\"', '\'') if child.text else '')
+                    text='\n'.join([f"{1 * '  '}{s.lstrip()}"
+                                    for s in child.text.split('\n')[:-1]] if child.text else ''))
                 node.remove(child)
 
     def print_root_level_doc(self, file_out):
@@ -247,7 +235,7 @@ the general documentation field found in XML file
 
  """
         file_out.write(
-            '{indent}{root_level_doc}\n'.format(
+            '{indent}{root_level_doc}'.format(
                 indent=0 * '  ',
                 root_level_doc=self.root_level_doc))
         self.root_level_doc = ''
@@ -300,6 +288,7 @@ then prints recursively each level of the tree
     """
         tree = xml_tree['tree']
         node = xml_tree['node']
+
         if verbose:
             sys.stdout.write(f'Node tag: {helpers.remove_namespace_from_tag(node.tag)}\n')
             sys.stdout.write(f'Attributes: {node.attrib}\n')
