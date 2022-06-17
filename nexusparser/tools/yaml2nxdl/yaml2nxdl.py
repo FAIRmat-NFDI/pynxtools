@@ -177,7 +177,9 @@ class Nxdl2yaml():
                     '{indent}{tag}: | {text}'.format(
                         indent=1 * '  ',
                         tag=helpers.remove_namespace_from_tag(child.tag),
-                        text='\n'.join([f"{2 * '  '}{s.lstrip()}" for s in child.text.split('\n')[:-1]] if child.text else '')))
+                        text='\n'.join([f"{2 * '  '}{s.lstrip()}"
+                                        for s in child.text.split('\n')[:-1]]
+                                       if child.text else '')))
             elif tag == ('symbol'):
                 if 'doc' in child.attrib:
                     self.symbol_list.append(
@@ -223,7 +225,8 @@ class Nxdl2yaml():
                 self.root_level_doc = '{indent}{tag}: | {text}\n'.format(
                     indent=0 * '  ',
                     tag=helpers.remove_namespace_from_tag(child.tag),
-                    text='\n'.join([f"{1 * '  '}{s.lstrip()}" for s in child.text.split('\n')[:-1]] if child.text else ''))
+                    text='\n'.join([f"{1 * '  '}{s.lstrip()}"
+                                    for s in child.text.split('\n')[:-1]] if child.text else ''))
                 node.remove(child)
 
     def print_root_level_doc(self, file_out):
