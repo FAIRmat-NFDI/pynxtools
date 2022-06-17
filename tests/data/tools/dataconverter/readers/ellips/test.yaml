@@ -30,44 +30,55 @@ parameters:
   - angle
 
 definition: NXellipsometry
-definition/\@version: 0.0.1
-definition/\@url: https://
+definition/\@version: 0.0.2
+definition/\@url: https://github.com/FAIRmat-Experimental/nexus_definitions/tree/fairmat-ellips/contributed_definitions
 
 experiment_description: RC2 scan on 2nm SiO2 on Si in air
 experiment_identifier: exp-ID
-name: Name Surname
-email: name@hu-berlin.de
-affiliation: HU Berlin
-address: Unter den Linden
+start_time: "2022-01-27T12:05:35+00:00"
 
-data_type: psi / delta
-angle_of_incidence/\@units: "degrees"
-wavelength/\@units: "angstrom"
 program: CompleteEASE
-program/\@version: "6.37"
+program/version: "6.37"
 program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
 
+name: Name Surname
+affiliation: HU Berlin
+address: Unter den Linden
+email: name@hu-berlin.de
+
+# NXinstrument:
 model: RC2
 model/\@version: 0.0.1
 company: J.A. Woollam Co.
-software: WVASE
-software/\@version: 3.882
-software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
-rotating_element: analyzer
-ellipsometry_type: dual compensator
-detector_type: CCD spectrometer
-integration_time: 0
-integration_time/\@units: s
+firmware: WVASE
+firmware/\@version: 3.882
+firmware/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
+light_source: arc lamp
+light_source/target_material: Xe
 focussing_probes: false
-light_source: xenon arc lamp
-
-sample_name: 2nm SiO2 on Si
-data_identifier: 1
-atom_types: Si, O
-sample_history: Sample history
-layer_structure: 2nm SiO2 on Si
-medium: air
-start_time: "2022-01-27T12:05:35+00:00"
-
 angular_spread: 0.2
 angular_spread/@units: sr
+ellipsometry_type: dual compensator
+calibration_status: no calibration
+count_time: 1
+count_time/\@units: s
+stage: manual stage
+detector_type: CCD spectrometer
+rotating_element: 
+  - compensator (source side)
+  - compensator (detector side)
+# Angle of incidence and wavelength are read by the reader
+# and we just have to define the units here:
+angle_of_incidence/\@units: "degrees"
+wavelength/\@units: "angstrom"
+
+atom_types: Si, O
+sample_name: 2nm SiO2 on Si
+sample_history: Commercially bought sample
+data_identifier: 1
+data_type: psi / delta
+column_names: 
+  - psi
+  - delta
+medium: air
+layer_structure: 2nm SiO2 on Si
