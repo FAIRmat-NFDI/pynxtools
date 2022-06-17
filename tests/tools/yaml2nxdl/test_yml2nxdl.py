@@ -113,6 +113,24 @@ def test_links():
     sys.stdout.write('Test on links okay.\n')
 
 
+def test_docs():
+    """In this test an xml file in converted to yml and then back to xml.
+The xml trees of the two files are then compared.
+
+    """
+    ref_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry-docCheck.nxdl.xml'
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXellipsometry-docCheck.yaml'
+    test_xml_file = 'tests/data/tools/yaml2nxdl_test_data/NXellipsometry-docCheck.nxdl.xml'
+    desired_matches = ['<doc', '</doc>']
+    compare_matches(
+        ref_xml_file,
+        test_yml_file,
+        test_xml_file,
+        desired_matches)
+    os.remove('tests/data/tools/yaml2nxdl_test_data/NXellipsometry-docCheck.nxdl.xml')
+    sys.stdout.write('Test on documentation formatting okay.\n')
+
+
 def test_symbols():
     """Second test: check the correct parsing of symbols
 
@@ -173,10 +191,10 @@ def test_xml_parsing():
 The xml trees of the two files are then compared.
 
     """
-    ref_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft.nxdl.xml'
-    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml'
+    ref_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellips.nxdl.xml'
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXellips_parsed.yml'
     test_xml_file = 'tests/data/tools/yaml2nxdl_test_data/\
-Ref_NXellipsometry_base_draft_parsed.nxdl.xml'
+Ref_NXellips_parsed.nxdl.xml'
     result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', ref_xml_file])
     assert result.exit_code == 0
     check_file_fresh_baked(test_yml_file)
@@ -192,8 +210,8 @@ Ref_NXellipsometry_base_draft_parsed.nxdl.xml'
 
     assert set(test_tree_flattened) == set(ref_tree_flattened), 'Ref XML and parsed XML\
 has not the same tree structure!!'
-    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.nxdl.xml')
-    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellipsometry_base_draft_parsed.yml')
+    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellips_parsed.nxdl.xml')
+    os.remove('tests/data/tools/yaml2nxdl_test_data/Ref_NXellips_parsed.yml')
     sys.stdout.write('Test on xml -> yml -> xml okay.\n')
 
 

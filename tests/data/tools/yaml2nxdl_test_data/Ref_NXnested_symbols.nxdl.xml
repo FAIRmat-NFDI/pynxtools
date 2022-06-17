@@ -1,9 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="base" extends="NXobject" name="NXentry" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
-    <doc>
-         Test case for verifying handling of symbols inside a nexus class in nested layers of the hierarchy
-    </doc>
     <symbols>
         <doc>
              teststring
@@ -31,6 +28,10 @@
             </doc>
         </symbol>
     </symbols>
+    <doc>
+         Test case for verifying handling of symbols inside a nexus class in nested
+         layers of the hierarchy
+    </doc>
     <group type="NXsample">
         <symbols>
             <doc>

@@ -157,11 +157,19 @@ def handle_not_root_level_doc(depth, node, file_out):
     """Handle docs field along the yaml file
 
 """
-    file_out.write(
-        '{indent}{tag}: "{text}"\n'.format(
-            indent=depth * '  ',
-            tag=node.tag.split("}", 1)[1],
-            text=node.text.strip().replace('\"', '\'') if node.text else ''))
+    if "\n" in node.text:
+        file_out.write(
+            '{indent}{tag}: | {text}\n'.format(
+                indent=depth * '  ',
+                tag=node.tag.split("}", 1)[1],
+                text='\n'.join([f"{(depth + 1) * '  '}{s.lstrip()}"
+                                for s in node.text.split('\n')[:-1]])))
+    else:
+        file_out.write(
+            '{indent}{tag}: "{text}"\n'.format(
+                indent=depth * '  ',
+                tag=node.tag.split("}", 1)[1],
+                text=node.text.strip().replace('\"', '\'') if node.text else ''))
 
 
 def get_node_parent_info(tree, node):

@@ -67,12 +67,33 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
+def format_nxdl_doc(string):
+    """Nexus format for doc string
+    """
+    formatted_doc = ''
+    formatted_doc += f"\n"
+    if "\n" not in string:
+        if len(string) > 80:
+            wrapped = textwrap.TextWrapper(width=80,
+                                           break_long_words=False,
+                                           replace_whitespace=False)
+            string = '\n'.join(wrapped.wrap(string))
+        formatted_doc += f"{string}"
+    else:
+        formatted_doc += f"{string}"
+    if string.endswith("\n"):
+        pass
+    else:
+        formatted_doc += f"\n"
+    return formatted_doc
+
+
 def xml_handle_doc(obj, value: str):
     """This function creates a 'doc' element instance, and appends it to an existing element
 
     """
     doctag = ET.SubElement(obj, 'doc')
-    doctag.text = '\n' + textwrap.fill(value, width=70) + '\n'
+    doctag.text = format_nxdl_doc(value)
 
 
 def xml_handle_units(obj, value):
