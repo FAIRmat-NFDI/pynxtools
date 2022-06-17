@@ -28,13 +28,17 @@ DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
 
 def load_header(filename, default):
-    """ load the yaml description file, and apply defaults as well
-        Parameters:
-        - filename:           a yaml file containing the definitions
-        - default_header:     predefined default values
+    """ load the yaml description file, and apply defaults from
+        the defalut dict for all keys not found from the file.
 
-"""
-    with open(filename, 'rt') as file:
+        Parameters:
+            filename:           a yaml file containing the definitions
+            default_header:     predefined default values
+
+        Returns:
+            a dict containing the loaded information
+    """
+    with open(filename, 'rt', encoding='utf8') as file:
         header = yaml.yaml.safe_load(file)
 
     for attr in header:
@@ -49,9 +53,19 @@ def load_header(filename, default):
 
 def load_as_pandas_array(my_file, header):
     """ Load a CSV output file using the header dict.
-A pandas array is returned.
+        Use the fields: colnames, skip and sep from the header
+        to instruct the csv reader about:
+        colnames    -- column names
+        skip        -- how many lines to skip
+        sep         -- separator character in the file
 
-"""
+        Parameters:
+            my_file  string, file name
+            header   dict header read from a yaml file
+
+        Returns:
+            A pandas array is returned.
+    """
     required_parameters = ("colnames", "skip", "sep")
     for required_parameter in required_parameters:
         if required_parameter not in header:
@@ -70,23 +84,33 @@ A pandas array is returned.
 
 
 def populate_header_dict(file_paths):
-    """This function creates and populates the header dictionary reading the yaml file.
+    """ This function creates and populates the header dictionary
+        reading one or more yaml file.
 
-"""
+        Parameters:
+            file_paths  a list of file paths to be read
+
+        Returns:
+            a dict merging the content of all files
+    """
+
     header = DEFAULT_HEADER
+
     for file_path in file_paths:
         if os.path.splitext(file_path)[1].lower() in [".yaml", ".yml"]:
             header = load_header(file_path, header)
             if "filename" not in header:
                 raise KeyError("filename is missing from", file_path)
             data_file = os.path.join(os.path.split(file_path)[0], header["filename"])
+
     return header, data_file
 
 
 def populate_template_dict(header, template):
     """The template dictionary is then populated according to the content of header dictionary.
 
-"""
+    """
+
     if "calibration_filename" in header:
         calibration = load_as_pandas_array(header["calibration_filename"], header)
         for k in calibration:
@@ -232,11 +256,11 @@ The template entry is filled with a dictionary containing the following keys:
         # The template dictionary is filled
         template = populate_template_dict(header, template)
 
-        template[f"/ENTRY[entry]/plot/wavelength"] = {"link":
+        template["/ENTRY[entry]/plot/wavelength"] = {"link":
                                                       f"{self.my_source_file}"
                                                       f":/wavelength"
                                                       }
-        template[f"/ENTRY[entry]/plot/wavelength/@units"] = "angstrom"
+        template["/ENTRY[entry]/plot/wavelength/@units"] = "angstrom"
 
         for index, psi in enumerate(psilist):
             template[f"/ENTRY[entry]/plot/{psi}"] = {"link":
