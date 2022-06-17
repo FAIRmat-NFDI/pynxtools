@@ -236,7 +236,7 @@ two parts of the key in the application definition.
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
+    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:  # pylint: disable=W0221
         """Reads data from given file and returns a filled template dictionary.
 
 A handlings of virtual datasets is implemented:
@@ -257,9 +257,9 @@ The template entry is filled with a dictionary containing the following keys:
         template = populate_template_dict(header, template)
 
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
-                                                      f"{self.my_source_file}"
-                                                      f":/wavelength"
-                                                      }
+                                                     f"{self.my_source_file}"
+                                                     f":/wavelength"
+                                                     }
         template["/ENTRY[entry]/plot/wavelength/@units"] = "angstrom"
 
         for index, psi in enumerate(psilist):
