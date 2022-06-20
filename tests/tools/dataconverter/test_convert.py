@@ -18,6 +18,7 @@
 """Test cases for the convert script used to access the DataConverter."""
 
 import os
+from distutils import file_util
 import logging
 from click.testing import CliRunner
 import pytest
@@ -27,6 +28,23 @@ from nexusparser.tools import nexus  # noqa: E402
 import nexusparser.tools.dataconverter.convert as dataconverter
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.parser import NexusParser  # noqa: E402
+
+
+def move_xarray_file_to_tmp(tmp_path):
+    """Moves the xarray file, which is used to test linking into the tmp_path directory."""
+    test_file_path = os.path.join(os.path.dirname(__file__),
+                                  "../../data/tools/dataconverter/readers/mpes")
+    file_util.copy_file(os.path.join(test_file_path, "xarray_saved_small_calibration.h5"),
+                        os.path.join(tmp_path, "xarray_saved_small_calibration.h5"))
+
+
+def restore_xarray_file_from_tmp(tmp_path):
+    """Restores the xarray file from the tmp_path directory."""
+    test_file_path = os.path.join(os.path.dirname(__file__),
+                                  "../../data/tools/dataconverter/readers/mpes")
+    os.remove(os.path.join(test_file_path, "xarray_saved_small_calibration.h5"))
+    file_util.move_file(os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
+                        os.path.join(test_file_path, "xarray_saved_small_calibration.h5"))
 
 
 @pytest.mark.parametrize("cli_inputs", [
@@ -95,6 +113,7 @@ def test_links_and_virtual_datasets(tmp_path):
     """A test for the convert CLI to check whether a Dataset object is created,
 
 when  the template contains links."""
+    move_xarray_file_to_tmp(tmp_path)
 
     dirpath = os.path.join(os.path.dirname(__file__),
                            "../../data/tools/dataconverter/readers/example")
@@ -119,12 +138,17 @@ when  the template contains links."""
     assert 'entry/test_virtual_dataset/concatenate_datasets' in test_nxs
     assert isinstance(test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset)
 
+    restore_xarray_file_from_tmp(tmp_path)
+
 
 def test_compression(tmp_path):
     """A test for the convert CLI to check whether a Dataset object is compressed."""
 
     dirpath = os.path.join(os.path.dirname(__file__),
                            "../../data/tools/dataconverter/readers/example")
+
+    move_xarray_file_to_tmp(tmp_path)
+
     dataconverter.convert(
         [os.path.join(dirpath, "testdata.json")],
         "example",
@@ -137,6 +161,8 @@ def test_compression(tmp_path):
     assert isinstance(test_nxs['/entry/test_compression/compressed_data'], h5py.Dataset)
     assert test_nxs['/entry/test_compression/compressed_data'].compression is 'gzip'
     assert test_nxs['/entry/test_compression/not_to_compress'].compression is None
+
+    restore_xarray_file_from_tmp(tmp_path)
 
 
 def test_mpes_writing(tmp_path):
