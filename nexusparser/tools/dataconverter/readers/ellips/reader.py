@@ -137,10 +137,6 @@ two parts of the key in the application definition.
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXellipsometry"]
 
-    def __init__(self):
-        self.my_source_file = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
-                                  f"data/tools/dataconverter/readers/ellips/test.h5")
-
     def populate_header_dict_with_datasets(self, file_paths):
         """This is an ellipsometry-specific processing of data.
 
@@ -207,32 +203,9 @@ two parts of the key in the application definition.
                            0] = whole_data["delta"].to_numpy()[block_idx[index]:block_idx[index + 1]
                                                                ].astype("float64")
 
-        hdf_source_file = h5py.File(self.my_source_file, 'w')
-        hdf_source_file.create_dataset('ellips_data',
-                                       data=my_numpy_array,
-                                       chunks=True,
-                                       compression="gzip",
-                                       compression_opts=9
-                                       )
-        hdf_source_file.create_dataset('wavelength',
-                                       data=whole_data["wavelength"
-                                                       ].to_numpy()[0:counts[0]].astype("float64"),
-                                       chunks=True,
-                                       compression="gzip",
-                                       compression_opts=9
-                                       )
-
-        # populate some header dictionary entries with data
-
         # measured_data is a required field
-        header["measured_data"] = {"link":
-                                   f"{self.my_source_file}"
-                                   f":/ellips_data"
-                                   }
-        header["wavelength"] = {"link":
-                                f"{self.my_source_file}"
-                                f":/wavelength"
-                                }
+        header["measured_data"] = my_numpy_array
+        header["wavelength"] = whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
@@ -257,15 +230,13 @@ The template entry is filled with a dictionary containing the following keys:
         template = populate_template_dict(header, template)
 
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
-                                                     f"{self.my_source_file}"
-                                                     f":/wavelength"
+                                                     "/entry/sample/wavelength"
                                                      }
         template["/ENTRY[entry]/plot/wavelength/@units"] = "angstrom"
 
         for index, psi in enumerate(psilist):
             template[f"/ENTRY[entry]/plot/{psi}"] = {"link":
-                                                     f"{self.my_source_file}"
-                                                     f":/ellips_data",
+                                                     "/entry/sample/measured_data",
                                                      "shape":
                                                      np.index_exp[:, 0, index, 0, 0]
                                                      }
@@ -273,8 +244,7 @@ The template entry is filled with a dictionary containing the following keys:
 
         for index, delta in enumerate(deltalist):
             template[f"/ENTRY[entry]/plot/{delta}"] = {"link":
-                                                       f"{self.my_source_file}"
-                                                       f":/ellips_data",
+                                                       "/entry/sample/measured_data",
                                                        "shape":
                                                        np.index_exp[:, 1, index, 0, 0]
                                                        }
