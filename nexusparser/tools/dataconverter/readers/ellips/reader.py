@@ -41,8 +41,8 @@ def load_header(filename, default):
     with open(filename, 'rt', encoding='utf8') as file:
         header = yaml.yaml.safe_load(file)
 
-    for attr in header:
-        if "@" in attr:
+    for attr in list(header):
+        if "\\@" in attr:
             header[attr.replace("\\@", "@")] = header.pop(attr)
 
     for key, value in default.items():
