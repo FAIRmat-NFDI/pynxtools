@@ -89,7 +89,7 @@ nest of groups recursively and fields or (their) attributes as childs of the gro
         'definition', {
             'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
             'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-            'xsi:schemaLocation': 'http://www.w3.org/2001/XMLSchema-instance'
+            'xsi:schemaLocation': 'http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd'
         }
     )
     assert 'category' in yml_appdef.keys(
