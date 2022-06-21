@@ -25,7 +25,7 @@ import sys
 import xml.etree.ElementTree as ET
 import textwrap
 
-from pyaml import yaml
+import yaml
 
 from nexusparser.tools import nexus
 
