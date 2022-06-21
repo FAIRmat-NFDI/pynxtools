@@ -1,0 +1,7 @@
+# NexusParser Parameter File - v0.0.1
+
+dataconverter:
+  reader: example
+  nxdl: NXtest
+  output: params.nxs
+  input-file: tests/data/tools/dataconverter/readers/example/testdata.json
