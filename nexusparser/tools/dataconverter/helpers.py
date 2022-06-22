@@ -252,6 +252,11 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
     return True
 
 
+def is_nxdl_path_a_child(nxdl_path: str, parent: str):
+    """Takes an NXDL path for an element and an NXDL parent and confirms it is a child."""
+    nxdl_stripped_to_parent_length = nxdl_path[0:len(parent)]
+    return nxdl_stripped_to_parent_length == parent
+
 def check_optionality_based_on_parent_group(
         path,
         nxdl_path,
@@ -261,7 +266,7 @@ def check_optionality_based_on_parent_group(
     """Checks whether field is part of an optional parent and then confirms its optionality"""
     for optional_parent in template["optional_parents"]:
         optional_parent_nxdl = convert_data_converter_dict_to_nxdl_path(optional_parent)
-        if optional_parent_nxdl in nxdl_path \
+        if is_nxdl_path_a_child(nxdl_path, optional_parent) \
            and not all_required_children_are_set(optional_parent, data, nxdl_root):
             raise Exception(f"The data entry, {path}, has an optional parent, "
                             f"{optional_parent}, with required children set. Either"
