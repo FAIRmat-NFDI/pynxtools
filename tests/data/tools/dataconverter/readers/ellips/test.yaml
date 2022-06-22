@@ -84,7 +84,7 @@ sample_name: 2nm SiO2 on Si
 sample_history: Commercially purchased sample
 layer_structure: 2nm SiO2 on Si
 data_identifier: 1
-data_type: psi / delta
+data_type: psi/delta
 column_names:
   - psi
   - delta
