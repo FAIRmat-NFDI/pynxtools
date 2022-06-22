@@ -211,7 +211,7 @@ two parts of the key in the application definition.
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
-        header["wavelength"] = whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
+        header["spectrometer/wavelength"] = whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
