@@ -215,7 +215,6 @@ two parts of the key in the application definition.
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
-
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:  # pylint: disable=W0221
         """ Reads data from given file and returns a filled template dictionary.
 
