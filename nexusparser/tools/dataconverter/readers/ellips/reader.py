@@ -21,7 +21,7 @@ from typing import Tuple
 import pyaml as yaml
 import pandas as pd
 import numpy as np
-import h5py
+# import h5py
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
