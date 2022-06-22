@@ -103,6 +103,10 @@ def populate_header_dict(file_paths):
                 raise KeyError("filename is missing from", file_path)
             data_file = os.path.join(os.path.split(file_path)[0], header["filename"])
 
+            # if the path is not right, try the path provided directly
+            if !os.path.isfile(data_file):
+                data_file = header["filename"]
+
     return header, data_file
 
 
@@ -155,6 +159,7 @@ two parts of the key in the application definition.
         if os.path.isfile(data_file):
             whole_data = load_as_pandas_array(data_file, header)
         else:
+            # this we have tried, we should throw an error...
             whole_data = load_as_pandas_array(header["filename"], header)
 
         # User defined variables to produce slices of the whole data set
@@ -173,34 +178,35 @@ two parts of the key in the application definition.
             block_idx.append(index)
 
         # array that will be allocated in a HDF5 file
-        my_numpy_array = np.empty([counts[0],
-                                   len(['psi', 'delta']),
-                                   len(unique_angles),
+        # counts[0] = N_wavelents*N_time*N_p1
+        my_numpy_array = np.empty([1,
                                    1,
-                                   1
+                                   len(unique_angles),
+                                   len(['psi', 'delta']),
+                                   counts[0]
                                    ])
 
         for index, unique_angle in enumerate(unique_angles):
-            my_numpy_array[:,
-                           :,
-                           index,
+            my_numpy_array[0,
                            0,
-                           0] = unique_angle
+                           index,
+                           :,
+                           :] = unique_angle
 
         for index in range(len(labels["psi"])):
-            my_numpy_array[:,
+            my_numpy_array[0,
                            0,
                            index,
                            0,
-                           0] = whole_data["psi"].to_numpy()[block_idx[index]:block_idx[index + 1]
+                           :] = whole_data["psi"].to_numpy()[block_idx[index]:block_idx[index + 1]
                                                              ].astype("float64")
 
         for index in range(len(labels["delta"])):
-            my_numpy_array[:,
-                           1,
-                           index,
+            my_numpy_array[0,
                            0,
-                           0] = whole_data["delta"].to_numpy()[block_idx[index]:block_idx[index + 1]
+                           index,
+                           1,
+                           :] = whole_data["delta"].to_numpy()[block_idx[index]:block_idx[index + 1]
                                                                ].astype("float64")
 
         # measured_data is a required field
@@ -209,17 +215,19 @@ two parts of the key in the application definition.
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
+
     def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:  # pylint: disable=W0221
-        """Reads data from given file and returns a filled template dictionary.
+        """ Reads data from given file and returns a filled template dictionary.
 
-A handlings of virtual datasets is implemented:
+            A handlings of virtual datasets is implemented:
 
-virtual dataset are created inside the final NeXus file.
+            virtual dataset are created inside the final NeXus file.
 
-The template entry is filled with a dictionary containing the following keys:
-- link: the path of the external data file and the path of desired dataset inside it
-- shape: numpy array slice object (according to array slice notation)
-"""
+            The template entry is filled with a dictionary containing the following keys:
+            - link: the path of the external data file and the path of desired dataset inside it
+            - shape: numpy array slice object (according to array slice notation)
+        """
+
         if not file_paths:
             raise Exception("No input files were given to Ellipsometry Reader.")
 
@@ -238,7 +246,7 @@ The template entry is filled with a dictionary containing the following keys:
             template[f"/ENTRY[entry]/plot/{psi}"] = {"link":
                                                      "/entry/sample/measured_data",
                                                      "shape":
-                                                     np.index_exp[:, 0, index, 0, 0]
+                                                     np.index_exp[0, 0, index, 0, :]
                                                      }
             template[f"/ENTRY[entry]/plot/{psi}/@units"] = "degrees"
 
@@ -246,7 +254,7 @@ The template entry is filled with a dictionary containing the following keys:
             template[f"/ENTRY[entry]/plot/{delta}"] = {"link":
                                                        "/entry/sample/measured_data",
                                                        "shape":
-                                                       np.index_exp[:, 1, index, 0, 0]
+                                                       np.index_exp[0, 0, index, 1, :]
                                                        }
             template[f"/ENTRY[entry]/plot/{delta}/@units"] = "degrees"
 
