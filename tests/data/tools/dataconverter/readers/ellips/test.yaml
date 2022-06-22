@@ -36,8 +36,8 @@ experiment_identifier: exp-ID
 experiment_description: RC2 scan on 2nm SiO2 on Si in air
 start_time: "2022-01-27T12:05:35+00:00"
 
-acquisition_program: CompleteEASE
-acquisition_program/\@version: "6.37"
+acquisition_program/program: CompleteEASE
+acquisition_program/version: "6.37"
 acquisition_program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
 
 name: Name Surname
