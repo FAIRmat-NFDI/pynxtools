@@ -104,7 +104,7 @@ def populate_header_dict(file_paths):
             data_file = os.path.join(os.path.split(file_path)[0], header["filename"])
 
             # if the path is not right, try the path provided directly
-            if !os.path.isfile(data_file):
+            if not os.path.isfile(data_file):
                 data_file = header["filename"]
 
     return header, data_file
