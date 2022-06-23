@@ -95,15 +95,20 @@ Several cases can be encoutered:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
     if 'shape' in data.keys():
-        layout = h5py.VirtualLayout(shape=(h5py.File(file, 'r')[path].shape[0],), dtype=np.float64)
+        new_shape = []
+        for dim, val in enumerate(data['shape']):
+            if isinstance(val, slice):
+                start = val.start if val.start is not None else 0
+                stop = val.stop if val.stop is not None else h5py.File(file, 'r')[path].shape[dim]
+                step = val.step if val.step is not None else 1
+                new_shape.append(int((stop - start) / step))
+        if not new_shape:
+            new_shape = [1]
+        layout = h5py.VirtualLayout(shape=tuple(new_shape),
+                                    dtype=np.float64)
         vsource = h5py.VirtualSource(file,
                                      path,
-                                     shape=(h5py.File(file, 'r')[path].shape[0],
-                                            h5py.File(file, 'r')[path].shape[1],
-                                            h5py.File(file, 'r')[path].shape[2],
-                                            h5py.File(file, 'r')[path].shape[3],
-                                            h5py.File(file, 'r')[path].shape[4]
-                                            )
+                                     shape=h5py.File(file, 'r')[path].shape
                                      )[data['shape']]
         layout[:] = vsource
         grp.create_virtual_dataset(entry_name, layout)
