@@ -230,6 +230,8 @@ class NexusParser(MatchingParser):
             params[4].critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None, child_archives=None):
+        nexus.init_nexus_metainfo()
+
         self.archive = archive
         self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
         self.nxroot = self.archive.nexus

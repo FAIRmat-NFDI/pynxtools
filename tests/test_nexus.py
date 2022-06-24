@@ -28,26 +28,31 @@ from nexusparser.metainfo import nexus
 from nexusparser import tools
 
 
+@pytest.fixture(scope='session', autouse=True)
+def nexus_metainfo():
+    nexus.init_nexus_metainfo()
+
+
 @pytest.mark.parametrize('path,value', [
-    pytest.param('APPLICATIONS.name', 'nexus'),
-    pytest.param('APPLICATIONS.NXobject.name', 'NXobject'),
-    pytest.param('APPLICATIONS.NXentry.nx_kind', 'group'),
-    pytest.param('APPLICATIONS.NXentry.defaultAttribute.nx_value.type', str),
-    pytest.param('APPLICATIONS.NXentry.nx_attribute_default', '*'),
-    pytest.param('APPLICATIONS.NXentry.NXdataGroup', '*'),
-    pytest.param('APPLICATIONS.NXdetector.real_timeField', '*'),
-    pytest.param('APPLICATIONS.NXentry.NXdataGroup.nx_optional', True),
-    pytest.param('APPLICATIONS.NXentry.nx_group_DATA.section_def.nx_kind', 'group'),
-    pytest.param('APPLICATIONS.NXentry.nx_group_DATA.section_def.nx_optional', True),
-    pytest.param('APPLICATIONS.NXentry.nx_group_DATA.section_def.nx_name.type', str),
-    pytest.param('APPLICATIONS.NXdetector.real_timeField.name', 'real_timeField'),
-    pytest.param('APPLICATIONS.NXdetector.real_timeField.nx_type', 'NX_NUMBER'),
-    pytest.param('APPLICATIONS.NXdetector.real_timeField.nx_units', 'NX_TIME'),
-    pytest.param('APPLICATIONS.NXdetector.real_timeField.nx_unit', '*'),
-    pytest.param('APPLICATIONS.NXdetector.real_timeField.nx_value', '*'),
-    pytest.param('APPLICATIONS.NXarpes.NXentryGroup.NXdataGroup.nx_optional', False),
-    pytest.param('APPLICATIONS.NXentry.nx_category', 'base'),
-    pytest.param('APPLICATIONS.NXapm.nx_category', 'application')
+    pytest.param('nexus_metainfo_package.name', 'nexus'),
+    pytest.param('nexus_metainfo_package.NXobject.name', 'NXobject'),
+    pytest.param('nexus_metainfo_package.NXentry.nx_kind', 'group'),
+    pytest.param('nexus_metainfo_package.NXentry.defaultAttribute.nx_value.type', str),
+    pytest.param('nexus_metainfo_package.NXentry.nx_attribute_default', '*'),
+    pytest.param('nexus_metainfo_package.NXentry.NXdataGroup', '*'),
+    pytest.param('nexus_metainfo_package.NXdetector.real_timeField', '*'),
+    pytest.param('nexus_metainfo_package.NXentry.NXdataGroup.nx_optional', True),
+    pytest.param('nexus_metainfo_package.NXentry.nx_group_DATA.section_def.nx_kind', 'group'),
+    pytest.param('nexus_metainfo_package.NXentry.nx_group_DATA.section_def.nx_optional', True),
+    pytest.param('nexus_metainfo_package.NXentry.nx_group_DATA.section_def.nx_name.type', str),
+    pytest.param('nexus_metainfo_package.NXdetector.real_timeField.name', 'real_timeField'),
+    pytest.param('nexus_metainfo_package.NXdetector.real_timeField.nx_type', 'NX_NUMBER'),
+    pytest.param('nexus_metainfo_package.NXdetector.real_timeField.nx_units', 'NX_TIME'),
+    pytest.param('nexus_metainfo_package.NXdetector.real_timeField.nx_unit', '*'),
+    pytest.param('nexus_metainfo_package.NXdetector.real_timeField.nx_value', '*'),
+    pytest.param('nexus_metainfo_package.NXarpes.NXentryGroup.NXdataGroup.nx_optional', False),
+    pytest.param('nexus_metainfo_package.NXentry.nx_category', 'base'),
+    pytest.param('nexus_metainfo_package.NXapm.nx_category', 'application')
 ])
 def test_assert_nexus_metainfo(path: str, value: Any):
     """Test the existance of nexus metainfo
@@ -132,7 +137,7 @@ def test_use_nexus_metainfo_reflectivly(path):
         name_or_value, kind = segment.split(':')
         if kind in ['app', 'group', 'field', 'attribute']:
             if kind == 'app':
-                section_definition = nexus.APPLICATIONS.all_definitions[name_or_value]
+                section_definition = nexus.nexus_metainfo_package.all_definitions[name_or_value]
                 sub_section_definition = \
                     parent_definition.all_sub_sections[name_or_value.replace('NX', '\
 nx_application_')]

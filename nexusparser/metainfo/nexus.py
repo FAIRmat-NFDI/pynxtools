@@ -1,6 +1,3 @@
-"""This tool is reading the xml file
-
-"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -18,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+'''This tool is reading the xml file'''
 
 import re
 import os
@@ -40,9 +39,11 @@ XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 
 # TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
-VALIDATE = False
-CURRENT_PACKAGE: Package = None
+
+_current_package: Package = None
 _definition_sections: Dict[str, Section] = dict()
+
+VALIDATE = False
 _XML_PARENT_MAP: Dict[ET.Element, ET.Element] = None
 _NX_DOC_BASE = 'https://manual.nexusformat.org/classes'
 _NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
@@ -59,9 +60,9 @@ _NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
 
 
 def to_camel_case(snake_str: str, upper: bool = False):
-    """Take as input a snake case variable and return a camel case one
-
-"""
+    '''
+    Take as input a snake case variable and return a camel case one
+    '''
     components = snake_str.split('_')
 
     if upper:
@@ -71,9 +72,10 @@ def to_camel_case(snake_str: str, upper: bool = False):
 
 
 def nx_documenation_url(xml_node: ET.Element, nx_type: str):
-    """Get documentation url
+    '''
+    Get documentation url
+    '''
 
-"""
     anchor_segments = []
     if nx_type != 'class':
         anchor_segments.append(nx_type)
@@ -94,29 +96,31 @@ def nx_documenation_url(xml_node: ET.Element, nx_type: str):
 
 
 def get_or_create_section(name: str, **kwargs) -> Section:
-    """Returns the 'existing' metainfo section for a given top-level nexus base-class name.
+    '''
+    Returns the 'existing' metainfo section for a given top-level nexus base-class name.
 
     This function ensures that sections for these base-classes are only created one.
     This allows to access the metainfo section even before it is generated from the base-class
     nexus definition.
 
-"""
+    '''
     if name in _definition_sections:
         section = _definition_sections[name]
         section.more.update(**kwargs)
         return section
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
-    CURRENT_PACKAGE.section_definitions.append(section)
+    _current_package.section_definitions.append(section)
     _definition_sections[section.name] = section
 
     return section
 
 
 def get_enum(xml_node: ET.Element):
-    """Get the enumeration field from xml node
+    '''
+    Get the enumeration field from xml node
+    '''
 
-"""
     enumeration = xml_node.find('nx:enumeration', XML_NAMESPACES)
     if enumeration is not None:
         enum_values = []
@@ -127,9 +131,9 @@ def get_enum(xml_node: ET.Element):
 
 
 def add_common_properties_helper(base_section, definition):
-    """Define definition var from base_section var
-
-"""
+    '''
+    Define definition var from base_section var
+    '''
     if base_section.description:
         definition.description = base_section.description
     if base_section.deprecated:
@@ -478,7 +482,7 @@ def add_section_from_nxdl(xml_node):
         _XML_PARENT_MAP = {
             child: parent for parent in xml_node.iter() for child in parent}
 
-        # The section gets already implicitly added to CURRENT_PACKAGE by get_or_create_section
+        # The section gets already implicitly added to _current_package by get_or_create_section
         create_class_section(xml_node)
 
     except NotImplementedError as err:
@@ -490,53 +494,55 @@ def create_package_from_nxdl_directories(paths) -> Package:
     Creates a metainfo package from the given nexus directory. Will generate the respective
     metainfo definitions from all the nxdl files in that directory.
     '''
-    global CURRENT_PACKAGE  # pylint: disable=global-statement
-    CURRENT_PACKAGE = Package(name=f'nexus')
+    global _current_package  # pylint: disable=global-statement
+    _current_package = Package(name=f'nexus')
 
     sorted_files = sort_nxdl_files(paths)
     for nxdl_file in sorted_files:
         add_section_from_nxdl(nxdl_file)
 
-    return CURRENT_PACKAGE
+    return _current_package
 
 
-# separated metainfo package for the nexus base classes, application defs and contributed classes.
-DIRS = [os.path.join(nexus.get_nexus_definitions_path(), 'base_classes')]
-DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'contributed_definitions'))
-DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'applications'))
-APPLICATIONS = create_package_from_nxdl_directories(DIRS)
-PACKAGES = (APPLICATIONS,)  # , APPLICATIONS, CONTRIBUTED)
-
-# We take the application definitions and create a common parent section that allows to
-# include nexus in an EntryArchive.
-NEXUS_SECTION = Section(validate=VALIDATE, name='Nexus')
-
-for application_section in APPLICATIONS.section_definitions:  # pylint: disable=not-an-iterable
-    if application_section.more.get('nx_category') == 'application':
-        sub_section = SubSection(
-            section_def=application_section,
-            name=application_section.name.replace('NX', 'nx_application_'))
-        NEXUS_SECTION.sub_sections.append(sub_section)
-
-APPLICATIONS.section_definitions.append(NEXUS_SECTION)
-
-ENTRY_ARCHIVE_NEXUS_SUB_SECTION = \
-    SubSection(name='nexus',
-               section_def=NEXUS_SECTION)
-EntryArchive.nexus = ENTRY_ARCHIVE_NEXUS_SUB_SECTION  # type: ignore
-EntryArchive.m_def.sub_sections.append(ENTRY_ARCHIVE_NEXUS_SUB_SECTION)
-ENTRY_ARCHIVE_NEXUS_SUB_SECTION.init_metainfo()
+nexus_metainfo_package = None
 
 
-# We need to initialize the metainfo definitions. This is usually done automatically,
-# when the metainfo schema is defined though MSection Python classes.
-for package in PACKAGES:
-    package.init_metainfo()
+def init_nexus_metainfo():
+    global nexus_metainfo_package
 
+    if nexus_metainfo_package is not None:
+        return
 
-# We skip the Python code generation for now and offer Python classes as variables
-# TO DO not necessary right now, could also be done case-by-case by the nexus parser
-PYTHON_MODULE = sys.modules[__name__]
-for package in PACKAGES:
-    for sektion in package.section_definitions:  # pylint: disable=not-an-iterable
-        setattr(PYTHON_MODULE, sektion.name, sektion.section_cls)
+    # separated metainfo package for the nexus base classes, application defs and contributed classes.
+    directories = [os.path.join(nexus.get_nexus_definitions_path(), 'base_classes')]
+    directories.append(os.path.join(nexus.get_nexus_definitions_path(), 'contributed_definitions'))
+    directories.append(os.path.join(nexus.get_nexus_definitions_path(), 'applications'))
+
+    nexus_metainfo_package = create_package_from_nxdl_directories(directories)
+
+    # We take the application definitions and create a common parent section that allows to
+    # include nexus in an EntryArchive.
+    nexus_section = Section(validate=VALIDATE, name='Nexus')
+
+    for application_section in nexus_metainfo_package.section_definitions:  # pylint: disable=not-an-iterable
+        if application_section.more.get('nx_category') == 'application':
+            sub_section = SubSection(
+                section_def=application_section,
+                name=application_section.name.replace('NX', 'nx_application_'))
+            nexus_section.sub_sections.append(sub_section)
+
+    EntryArchive.nexus = SubSection(name='nexus', section_def=nexus_section)
+    EntryArchive.nexus.init_metainfo()
+    EntryArchive.m_def.sub_sections.append(EntryArchive.nexus)
+
+    nexus_metainfo_package.section_definitions.append(nexus_section)
+
+    # We need to initialize the metainfo definitions. This is usually done automatically,
+    # when the metainfo schema is defined though MSection Python classes.
+    nexus_metainfo_package.init_metainfo()
+
+    # We skip the Python code generation for now and offer Python classes as variables
+    # TO DO not necessary right now, could also be done case-by-case by the nexus parser
+    python_module = sys.modules[__name__]
+    for section in nexus_metainfo_package.section_definitions:  # pylint: disable=not-an-iterable
+        setattr(python_module, section.name, section.section_cls)
