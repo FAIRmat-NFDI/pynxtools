@@ -237,7 +237,7 @@ two parts of the key in the application definition.
         template = populate_template_dict(header, template)
 
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
-                                                     "/entry/sample/spectrometer/wavelength"
+                                                     "/entry/instrument/spectrometer/wavelength"
                                                      }
         template["/ENTRY[entry]/plot/wavelength/@units"] = "angstrom"
 
