@@ -43,7 +43,7 @@ def load_header(filename, default):
 
     header_keys = list(header.keys())
     for attr in header_keys:
-        if "@" in attr:
+        if "\\@" in attr:
             header[attr.replace("\\@", "@")] = header.pop(attr)
 
     for key, value in default.items():
