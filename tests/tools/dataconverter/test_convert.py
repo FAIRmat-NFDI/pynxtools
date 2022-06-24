@@ -137,6 +137,15 @@ when  the template contains links."""
     assert isinstance(test_nxs["entry/test_link/external_link"], h5py.Dataset)
     assert 'entry/test_virtual_dataset/concatenate_datasets' in test_nxs
     assert isinstance(test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset)
+    assert 'entry/test_virtual_dataset/sliced_dataset' in test_nxs
+    assert isinstance(test_nxs["entry/test_virtual_dataset/sliced_dataset"], h5py.Dataset)
+    assert test_nxs["entry/test_virtual_dataset/sliced_dataset"].shape == (10, 10, 5)
+    assert 'entry/test_virtual_dataset/sliced_dataset2' in test_nxs
+    assert isinstance(test_nxs["entry/test_virtual_dataset/sliced_dataset2"], h5py.Dataset)
+    assert test_nxs["entry/test_virtual_dataset/sliced_dataset2"].shape == (10, 10, 10)
+    assert 'entry/test_virtual_dataset/sliced_dataset3' in test_nxs
+    assert isinstance(test_nxs["entry/test_virtual_dataset/sliced_dataset3"], h5py.Dataset)
+    assert test_nxs["entry/test_virtual_dataset/sliced_dataset3"].shape == (10, 10, 10, 2)
 
     restore_xarray_file_from_tmp(tmp_path)
 

@@ -18,10 +18,13 @@
 """An example reader implementation for the DataConverter."""
 import os
 from typing import Tuple
-import pyaml as yaml
+import yaml
 import pandas as pd
 import numpy as np
+<<<<<<< HEAD
 # import h5py
+=======
+>>>>>>> master
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
@@ -39,7 +42,7 @@ def load_header(filename, default):
             a dict containing the loaded information
     """
     with open(filename, 'rt', encoding='utf8') as file:
-        header = yaml.yaml.safe_load(file)
+        header = yaml.safe_load(file)
 
     for attr in header:
         if "@" in attr:

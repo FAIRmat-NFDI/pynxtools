@@ -19,6 +19,7 @@
 import os
 from typing import Tuple, Any
 import json
+import numpy as np
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
@@ -83,10 +84,25 @@ class ExampleReader(BaseReader):
                        }
         template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = my_datasets
 
+        # virtual datasets slicing
+        my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
+                      f"data/tools/dataconverter/readers/mpes")
+        my_slice = {"link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
+                    "shape": np.index_exp[:, 1, :, :]
+                    }
+        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset"] = my_slice
+        my_slice2 = {"link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
+                     "shape": np.index_exp[:, :, :, 1]
+                     }
+        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset2"] = my_slice2
+        my_slice3 = {"link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
+                     "shape": np.index_exp[:, :, :, 2:4]
+                     }
+        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset3"] = my_slice3
+
         # compression
         my_compression_dict = {"compress": "string not to be compressed"}
         template["/ENTRY[entry]/test_compression/not_to_compress"] = my_compression_dict
-        import numpy as np
         my_compression_dict2 = {"compress": np.array([1, 2, 3, 4])}
         template["/ENTRY[entry]/test_compression/compressed_data"] = my_compression_dict2
 
