@@ -802,7 +802,11 @@ TODO:
                       get_nx_class_path(hdf_node), hdf_node))
     (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser([hdf_info, nxdef, nxdl_path, val, logger])
+        parser({"hdf_info": hdf_info,
+                "nxdef": nxdef,
+                "nxdl_path": nxdl_path,
+                "val": val,
+                "logger": logger})
     for key, value in hdf_node.attrs.items():
         logger.debug('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
@@ -810,7 +814,11 @@ TODO:
         (req_str, nxdef, nxdl_path) = \
             get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
-            parser([hdf_info, nxdef, nxdl_path, val, logger], attr=key)
+            parser({"hdf_info": hdf_info,
+                    "nxdef": nxdef,
+                    "nxdl_path": nxdl_path,
+                    "val": val,
+                    "logger": logger}, attr=key)
 
 
 def logger_auxiliary_signal(logger, nxdata):

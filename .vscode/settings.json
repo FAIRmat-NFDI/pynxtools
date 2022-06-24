@@ -6,9 +6,6 @@
         "editor.tabSize": 2
     },
     "files.trimTrailingWhitespace": true,
-    "python.linting.pylintArgs": [
-        "--load-plugins=pylint_mongoengine"
-    ],
     "python.linting.pycodestylePath": "pycodestyle",
     "python.linting.pycodestyleEnabled": true,
     "python.linting.pycodestyleArgs": ["--ignore=E501,E701,E731"],
@@ -21,6 +18,11 @@
     ],
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
+    "python.linting.pylintArgs": [
+        "--load-plugins=nomad.metainfo.pylint_plugin",
+        "nexusparser",
+        "tests"
+    ],
     "python.testing.pytestArgs": [
         "tests"
     ],
