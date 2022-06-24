@@ -150,13 +150,13 @@ def nexus_populate_helper(params):
 
 def add_log(params, logstr):
     """adds log entry for the given node"""
-    if params[1] is not None:
-        logstr += params[1]
+    if params["nxdef"] is not None:
+        logstr += params["nxdef"]
     else:
         logstr += '???'
     logstr += ':'
     first = True
-    for p_node in params[2]:
+    for p_node in params["nxdl_path"]:
         if first:
             first = False
         else:
@@ -165,8 +165,8 @@ def add_log(params, logstr):
             logstr += p_node
         else:
             read_nexus.get_node_name(p_node)
-    logstr += ' - ' + params[3][0]
-    if len(params[3]) > 1:
+    logstr += ' - ' + params["val"][0]
+    if len(params["val"]) > 1:
         logstr += '...'
     logstr += '\n'
     return logstr
@@ -199,35 +199,38 @@ class NexusParser(MatchingParser):
     def nexus_populate(self, params, attr=None):
         """Walks through hdf_namelist and generate nxdl nodes
         (hdf_info, nxdef, nxdl_path, val, logger) = params"""
-        hdf_path = params[0]['hdf_path']
-        hdf_node = params[0]['hdf_node']
+        hdf_path = params["hdf_info"]['hdf_path']
+        hdf_node = params["hdf_info"]['hdf_node']
         logstr = hdf_path + (("@" + attr) if attr else '') + '\n'
         loglev = 'info'
-        if params[2] is not None:
+        if params["nxdl_path"] is not None:
             logstr = add_log(params, logstr)
             act_section = self.nxroot
             hdf_namelist = hdf_path.split('/')[1:]
-            act_section = get_to_new_subsection(None, params[1], None, act_section)[1]
+            act_section = get_to_new_subsection(None, params["nxdef"], None, act_section)[1]
             path_level = 1
             for hdf_name in hdf_namelist:
-                nxdl_node = params[2][path_level] if path_level < len(params[2]) else hdf_name
-                act_section = get_to_new_subsection(hdf_name, params[1],
+                if path_level < len(params["nxdl_path"]):
+                    nxdl_node = params["nxdl_path"][path_level]
+                else:
+                    nxdl_node = hdf_name
+                act_section = get_to_new_subsection(hdf_name, params["nxdef"],
                                                     nxdl_node, act_section)[1]
                 path_level += 1
-            helper_params = (path_level, params[2], act_section, logstr, params[3],
-                             loglev, params[1], hdf_node)
+            helper_params = (path_level, params["nxdl_path"], act_section, logstr, params["val"],
+                             loglev, params["nxdef"], hdf_node)
             (logstr, loglev) = nexus_populate_helper(helper_params)
         else:
             logstr += ('NOT IN SCHEMA - skipped') + '\n'
             loglev = 'warning'
         if loglev == 'info':
-            params[4].info('Parsing', nexusparser=logstr)
+            params["logger"].info('Parsing', nexusparser=logstr)
         elif loglev == 'warning':
-            params[4].warning('Parsing', nexusparser=logstr)
+            params["logger"].warning('Parsing', nexusparser=logstr)
         elif loglev == 'error':
-            params[4].error('Parsing', nexusparser=logstr)
+            params["logger"].error('Parsing', nexusparser=logstr)
         else:
-            params[4].critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
+            params["logger"].critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None, child_archives=None):
         self.archive = archive
