@@ -305,7 +305,7 @@ definition, it also checks for the base classes"""
         return None
     if bc_name == "group":  # Check if it is the root element. Then send to NXroot.nxdl.xml
         bc_name = "NXroot"
-    for nxdl_folder in ['base_classes', 'contributed_definitions', 'applications']:
+    for nxdl_folder in ['contributed_definitions', 'base_classes', 'applications']:
         if os.path.exists(f"{get_nexus_definitions_path()}{os.sep}"
                           f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
             bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \

@@ -197,7 +197,7 @@ def test_mpes_writing(tmp_path):
     nexus_helper.process_nexus_master_file(None)
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
-    assert len(log) == 4633
+    assert len(log) == 4637
     # parsing to NOMAD
     archive = EntryArchive()
     import structlog
