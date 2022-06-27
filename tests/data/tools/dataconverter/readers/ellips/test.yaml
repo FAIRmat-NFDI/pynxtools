@@ -1,4 +1,3 @@
-#filename: 2020-09-11-InS-2020-07-06-D5.dat
 #filename: tests/data/tools/dataconverter/readers/ellips/test-data.dat
 filename: test-data.dat
 skip: 3
@@ -33,13 +32,13 @@ definition: NXellipsometry
 definition/\@version: 0.0.2
 definition/\@url: https://github.com/FAIRmat-Experimental/nexus_definitions/tree/fairmat-ellips/contributed_definitions
 
-experiment_description: RC2 scan on 2nm SiO2 on Si in air
 experiment_identifier: exp-ID
+experiment_description: RC2 scan on 2nm SiO2 on Si in air
 start_time: "2022-01-27T12:05:35+00:00"
 
-program: CompleteEASE
-program/\@version: "6.37"
-program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
+acquisition_program/program: CompleteEASE
+acquisition_program/version: "6.37"
+acquisition_program/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
 
 name: Name Surname
 affiliation: HU Berlin
@@ -50,38 +49,43 @@ email: name@hu-berlin.de
 model: RC2
 model/\@version: 0.0.1
 company: J.A. Woollam Co.
-software: WVASE
-software/\@version: 3.882
-software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
+firmware: WVASE
+firmware/\@version: 3.882
+firmware/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
 light_source: arc lamp
-light_source/target_material: Xe
+#light_source/target_material: Xe
 focussing_probes: false
 angular_spread: 0.2
 angular_spread/@units: sr
 ellipsometry_type: dual compensator
 calibration_status: no calibration
+stage_type: manual stage
+detector_type: CCD spectrometer
 count_time: 1
 count_time/\@units: s
-stage: manual stage
-detector_type: CCD spectrometer
 integration_time: 0
 integration_time/\@units: s
-rotating_element: analyzer # TAKE care: if you use the yaml list syntax, you'll break the
-                          # reader tests, check the reader code
+rotating_element: compensator (source side)
+# TAKE care: if you use the yaml list syntax, you'll break the
+# reader tests, check the reader code
 #  - compensator (source side)
 #  - compensator (detector side)
+# Should be both compensators, source and detector side.
+# needs to be taken care of in the reader
+
 # Angle of incidence and wavelength are read by the reader
 # and we just have to define the units here:
 angle_of_incidence/\@units: "degrees"
 wavelength/\@units: "angstrom"
 
+# NXsample:
 atom_types: Si, O
 sample_name: 2nm SiO2 on Si
-sample_history: Commercially bought sample
+sample_history: Commercially purchased sample
+layer_structure: 2nm SiO2 on Si
 data_identifier: 1
-data_type: psi / delta
+data_type: psi/delta
 column_names:
   - psi
   - delta
 medium: air
-layer_structure: 2nm SiO2 on Si

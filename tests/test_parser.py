@@ -87,7 +87,7 @@ def test_get_node_at_nxdl_path():
     nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXellipsometry.nxdl.xml"
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
-    assert node.attrib["type"] == "NXcollection"
+    assert node.attrib["type"] == "NXprocess"
 
     nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXem_nion.nxdl.xml"
     elem = ET.parse(nxdl_file_path).getroot()
@@ -139,10 +139,9 @@ def test_example():
         nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
     assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
         nx_group_monochromator.nx_field_energy.nx_name == 'energy'
-    # cannot store number 750 to a field expecting NX_CHAR
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_analyser.\
-        nx_field_entrance_slit_size.nx_value is None
+        nx_field_entrance_slit_size.nx_value == 750
     # good ENUM - x-ray
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
