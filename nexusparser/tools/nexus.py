@@ -289,6 +289,19 @@ def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_ty
     return None
 
 
+def find_definition_file(bc_name):
+    """find the nxdl file corresponding to the name.
+    Note that it first checks in contributed and goes beyond only if no contributed found"""
+    bc_filename = None
+    for nxdl_folder in ['contributed_definitions', 'base_classes', 'applications']:
+        if os.path.exists(f"{get_nexus_definitions_path()}{os.sep}"
+                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
+            bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
+                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"
+            break
+    return bc_filename
+
+
 def get_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=None, go_base=True):  # pylint: disable=too-many-arguments
     """Get the NXDL child node corresponding to a specific name
 (e.g. of an HDF5 node,or of a documentation) note that if child is not found in application
@@ -305,12 +318,7 @@ definition, it also checks for the base classes"""
         return None
     if bc_name == "group":  # Check if it is the root element. Then send to NXroot.nxdl.xml
         bc_name = "NXroot"
-    for nxdl_folder in ['contributed_definitions', 'base_classes', 'applications']:
-        if os.path.exists(f"{get_nexus_definitions_path()}{os.sep}"
-                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
-            bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
-                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"
-            break
+    bc_filename = find_definition_file(bc_name)
     if not bc_filename:
         raise ValueError('nxdl file not found in definitions folder!')
     bc_obj = ET.parse(bc_filename).getroot()
@@ -638,16 +646,15 @@ def add_base_classes(elist, nx_name=None, elem: ET.Element = None):
 elist is empty, a nxdl file with the name of nx_name or a rather room elem is used if provided"""
     if elist and nx_name is None:
         nx_name = get_nx_class(elist[-1])
-    if elist and nx_name and f"{nx_name}.nxdl.xml" in (e.get('nxdlbase') for e in elist):
-        return
+    # to support recursive defintions, like NXsample in NXsample, the following test is removed
+    # if elist and nx_name and f"{nx_name}.nxdl.xml" in (e.get('nxdlbase') for e in elist):
+    #     return
     if elem is None:
         if not nx_name:
             return
-        nxdl_file_path = f"{nx_name}.nxdl.xml"
-        for root, dirs, files in os.walk(get_nexus_definitions_path()):  # pylint: disable=unused-variable
-            if nxdl_file_path in files:
-                nxdl_file_path = os.path.join(root, nxdl_file_path)
-                break
+        nxdl_file_path = find_definition_file(nx_name)
+        if nxdl_file_path is None:
+            nxdl_file_path = f"{nx_name}.nxdl.xml"
         elem = ET.parse(nxdl_file_path).getroot()
         elem.set('nxdlbase', nxdl_file_path)
     else:
