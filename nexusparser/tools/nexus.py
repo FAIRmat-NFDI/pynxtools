@@ -310,6 +310,7 @@ definition, it also checks for the base classes"""
                           f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
             bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
                           f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"
+            break
     if not bc_filename:
         raise ValueError('nxdl file not found in definitions folder!')
     bc_obj = ET.parse(bc_filename).getroot()
