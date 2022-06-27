@@ -449,6 +449,8 @@ def sort_nxdl_files(paths):
         for nxdl_file in sorted(os.listdir(path)):
             if not nxdl_file.endswith('.nxdl.xml'):
                 continue
+            if nxdl_file in [el.attrib["name"] + '.nxdl.xml' for el in list_of_nxdl]:
+                continue
             xml_tree = ET.parse(os.path.join(path, nxdl_file))
             xml_node = xml_tree.getroot()
             xml_node.set('nxdl_base', path)
@@ -465,7 +467,7 @@ def sort_nxdl_files(paths):
             current_index = current_index + 1
         if current_index == len(list_of_nxdl):
             sorted_index = sorted_index + 1
-    # print('\n'.join([nxdl.attrib['name'] for nxdl in list_of_nxdl]))
+    # print('\n'.join([(nxdl.attrib['name'],p.attrib["nxdl_base"]) for nxdl in list_of_nxdl]))
     return list_of_nxdl
 
 
@@ -501,8 +503,8 @@ def create_package_from_nxdl_directories(paths) -> Package:
 
 
 # separated metainfo package for the nexus base classes, application defs and contributed classes.
-DIRS = [os.path.join(nexus.get_nexus_definitions_path(), 'base_classes')]
-DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'contributed_definitions'))
+DIRS = [os.path.join(nexus.get_nexus_definitions_path(), 'contributed_definitions')]
+DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'base_classes'))
 DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'applications'))
 APPLICATIONS = create_package_from_nxdl_directories(DIRS)
 PACKAGES = (APPLICATIONS,)  # , APPLICATIONS, CONTRIBUTED)
