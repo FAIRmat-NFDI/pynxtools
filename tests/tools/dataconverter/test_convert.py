@@ -197,10 +197,11 @@ def test_mpes_writing(tmp_path):
     nexus_helper.process_nexus_master_file(None)
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
-    assert len(log) == 3272
+    assert len(log) == 4633
     # parsing to NOMAD
     archive = EntryArchive()
     import structlog
     NexusParser().parse(example_data, archive, structlog.get_logger())
     assert archive.nexus.nx_application_mpes.\
-        nx_group_ENTRY[0].nx_group_PROCESS[0].nx_field_calculated_energy.nx_value[0] == -1.5
+        nx_group_ENTRY[0].nx_group_PROCESS[0].nx_group_energy_calibration.\
+        nx_field_calibrated_axis.nx_value[0] + 46.0315977 < 1e-6
