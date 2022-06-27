@@ -449,7 +449,7 @@ def sort_nxdl_files(paths):
         for nxdl_file in sorted(os.listdir(path)):
             if not nxdl_file.endswith('.nxdl.xml'):
                 continue
-            if list_of_nxdl is not None and nxdl_file in list_of_nxdl:
+            if nxdl_file in [el.attrib["name"] + '.nxdl.xml' for el in list_of_nxdl]:
                 continue
             xml_tree = ET.parse(os.path.join(path, nxdl_file))
             xml_node = xml_tree.getroot()
@@ -467,7 +467,7 @@ def sort_nxdl_files(paths):
             current_index = current_index + 1
         if current_index == len(list_of_nxdl):
             sorted_index = sorted_index + 1
-    # print('\n'.join([nxdl.attrib['name'] for nxdl in list_of_nxdl]))
+    # print('\n'.join([(nxdl.attrib['name'],p.attrib["nxdl_base"]) for nxdl in list_of_nxdl]))
     return list_of_nxdl
 
 
