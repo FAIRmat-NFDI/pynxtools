@@ -6,7 +6,7 @@ Files in this directory:
 - Data file: test-data.dat
 - Metadata file: test.yaml
 - Notebook with instructions: ELLIPSOMETRY.NeXus.READER.EXAMPLE.02.ipynb
-- NeXus file: ellips.test.nxs
+- NeXus file: ellips.test.nxs (will be created if running the notebook)
 
 ## Instructions and notebook
 The notebook ELLIPSOMETRY.NeXus.READER.EXAMPLE.02.ipynb contains instructions on how to install Jupyter Lab and the required packages needed to run this example. Furthermore, it is explained how to run the ellipsometry reader and how to create a NeXus file, which then can be inspected within the notebook.
