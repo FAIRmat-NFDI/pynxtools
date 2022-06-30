@@ -15,6 +15,13 @@ class NxdlAttributeError(Exception):
     """An exception for throwing an error when an Nxdl attribute is not found."""
 
 
+def get_app_defs_names():
+    """Returns all the AppDef names without their extension: .nxdl.xml"""
+    app_def_path_glob = f"{get_nexus_definitions_path()}{os.sep}applications{os.sep}*.nxdl*"
+    files = glob(app_def_path_glob)
+    return [os.path.basename(file).split(".")[0] for file in files]
+
+
 def get_nexus_definitions_path():
     """Check NEXUS_DEF_PATH variable.
 If it is empty, this function is filling it"""
