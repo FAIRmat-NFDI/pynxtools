@@ -27,6 +27,7 @@ from typing import List, Tuple, Any
 import xml.etree.ElementTree as ET
 
 import click
+import yaml
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter import helpers
@@ -91,6 +92,8 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
         return
 
     # Setting up all the input data
+    if isinstance(input_file, str):
+        input_file = (input_file,)
     bulletpoint = "\n\u2022 "
     logger.info("Using %s reader to convert the given files: %s ",
                 reader,
@@ -125,6 +128,14 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
     logger.info("The output file generated: %s", output)
 
 
+def parse_params_file(params_file):
+    """Parses the parameters from a given dictionary and returns them"""
+    params = yaml.load(params_file, Loader=yaml.Loader)['dataconverter']
+    for param in list(params.keys()):
+        params[param.replace("-", "_")] = params.pop(param)
+    return params
+
+
 @click.command()
 @click.option(
     '--input-file',
@@ -141,7 +152,7 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
 @click.option(
     '--nxdl',
     default=None,
-    required=True,
+    required=False,
     help='The name of the NXDL file to use without extension.'
 )
 @click.option(
@@ -155,20 +166,39 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
     default=False,
     help='Just print out the template generated from given NXDL file.'
 )
-@click.option(  # pylint: disable=too-many-arguments
+@click.option(
     '--fair',
     is_flag=True,
     default=False,
     help='Let the converter know to be stricter in checking the documentation.'
+)  # pylint: disable=too-many-arguments
+@click.option(
+    '--params-file',
+    type=click.File('r'),
+    default=None,
+    help='Allows to pass a .yaml file with all the parameters the converter supports.'
 )
 def convert_cli(input_file: Tuple[str],
                 reader: str,
                 nxdl: str,
                 output: str,
                 generate_template: bool,
-                fair: bool):
+                fair: bool,
+                params_file: str):
     """The CLI entrypoint for the convert function"""
-    convert(input_file, reader, nxdl, output, generate_template, fair)
+    if params_file:
+        try:
+            convert(**parse_params_file(params_file))
+        except TypeError:
+            raise Exception(("Please make sure you have the following entries in your "
+                             "parameter file:\n\n# NexusParser Parameter File - v0.0.1"
+                             "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
+                             "put-file: value"))
+    else:
+        if nxdl is None:
+            raise Exception("\nError: Please supply an NXDL file with the option:"
+                            " --nxdl <path to NXDL>")
+        convert(input_file, reader, nxdl, output, generate_template, fair)
 
 
 if __name__ == '__main__':

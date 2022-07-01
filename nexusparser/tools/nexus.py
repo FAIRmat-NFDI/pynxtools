@@ -18,7 +18,9 @@ class NxdlAttributeError(Exception):
 def get_app_defs_names():
     """Returns all the AppDef names without their extension: .nxdl.xml"""
     app_def_path_glob = f"{get_nexus_definitions_path()}{os.sep}applications{os.sep}*.nxdl*"
-    files = glob(app_def_path_glob)
+    contrib_def_path_glob = (f"{get_nexus_definitions_path()}{os.sep}"
+                             f"contributed_definitions{os.sep}*.nxdl*")
+    files = glob(app_def_path_glob) + glob(contrib_def_path_glob)
     return [os.path.basename(file).split(".")[0] for file in files]
 
 

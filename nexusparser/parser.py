@@ -19,9 +19,12 @@
 # limitations under the License.
 #
 
+from typing import Iterable, Union
+import os
+import pathlib
 import numpy as np
 from nomad.datamodel import EntryArchive
-from nomad.parsing import MatchingParser
+from nomad.parsing import Parser
 # from . import metainfo  # pylint: disable=unused-import
 from nexusparser.tools import nexus as read_nexus
 from nexusparser.metainfo import nexus
@@ -172,19 +175,28 @@ def add_log(params, logstr):
     return logstr
 
 
-class NexusParser(MatchingParser):
+class NexusParser(Parser):
     """NesusParser doc
 
 """
     def __init__(self):
-        super().__init__(
-            name='parsers/nexus', code_name='NEXUS', code_homepage='https://www.nexus.eu/',
-            mainfile_mime_re=r'(application/.*)|(text/.*)',
-            mainfile_name_re=(r'.*\.nxs'),
-            supported_compressions=['gz', 'bz2', 'xz']
-        )
+        super().__init__()
+        self.name = "parsers/nexus"
         self.archive = None
         self.nxroot = None
+        self.domain = 'ems'
+
+    def is_mainfile(  # pylint: disable=too-many-arguments
+            self, filename: str, mime: str, buffer: bytes, decoded_buffer: str,
+            compression: str = None) -> Union[bool, Iterable[str]]:
+        accepted_extensions = (".nxs", ".yaml", ".yml")
+        extension = pathlib.Path(filename).suffix
+        if extension in accepted_extensions:
+            if buffer[0:8] == b'\x89HDF\r\n\x1a\n':
+                return True
+            if buffer[0:30] == b"# NexusParser Parameter File -":
+                return True
+        return False
 
 #     def get_nomad_classname(self, xml_name, xml_type, suffix):
 #         """Get nomad classname from xml file
@@ -236,6 +248,29 @@ class NexusParser(MatchingParser):
         self.archive = archive
         self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
         self.nxroot = self.archive.nexus
+
+        extension = pathlib.Path(mainfile).suffix
+        if extension in (".yaml", ".yml"):
+            base_dir = os.path.dirname(mainfile)
+            from nexusparser.tools.dataconverter.convert import convert, parse_params_file
+            with open(mainfile) as file:
+                conv_params = parse_params_file(file)
+
+                def check_path(path: str):
+                    """Return true if path supplied by the user is not absolute or has a ../"""
+                    if os.path.isabs(path) or ".." in path:
+                        raise Exception("The user provided an invalid path in the parameter YAML.")
+                    return path
+
+                if isinstance(conv_params["input_file"], list):
+                    conv_params["input_file"] = [f"{base_dir}{os.sep}{check_path(file)}"
+                                                 for file in conv_params["input_file"]]
+                else:
+                    conv_params["input_file"] = (f"{base_dir}{os.sep}"
+                                                 f"{check_path(conv_params['input_file'])}")
+                conv_params["output"] = f"{base_dir}{os.sep}{check_path(conv_params['output'])}"
+                convert(**conv_params)
+                mainfile = conv_params["output"]
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])
         nexus_helper.process_nexus_master_file(self.nexus_populate)
