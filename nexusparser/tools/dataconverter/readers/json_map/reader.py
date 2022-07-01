@@ -68,21 +68,19 @@ class JsonMapReader(BaseReader):
             if isinstance(data[current_key], dict):
                 return get_val_nested_keystring_from_dict(keystring[keystring.find("/") + 1:],
                                                           data[current_key])
-            else:
-                if isinstance(data[current_key], xarray.DataArray):
-                    return data[current_key].values
-                elif isinstance(data[current_key], xarray.core.dataset.Dataset):
-                    raise Exception(f"Xarray datasets are not supported. "
-                                    f"You can only use xarray dataarrays.")
-                else:
-                    return data[current_key]
+            if isinstance(data[current_key], xarray.DataArray):
+                return data[current_key].values
+            if isinstance(data[current_key], xarray.core.dataset.Dataset):
+                raise Exception(f"Xarray datasets are not supported. "
+                                f"You can only use xarray dataarrays.")
+            return data[current_key]
 
         for req in ("required", "optional", "recommended"):
             for path in template[req]:
                 try:
                     template[path] = get_val_nested_keystring_from_dict(mapping[path], data)
                 except KeyError:
-                    if req is not "required":
+                    if req != "required":
                         pass
                     else:
                         raise Exception(f"Required map for, {path},"
