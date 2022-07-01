@@ -22,6 +22,7 @@
 
 import os
 import sys
+import filecmp
 from datetime import datetime
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -129,6 +130,25 @@ The xml trees of the two files are then compared.
         desired_matches)
     os.remove('tests/data/tools/yaml2nxdl_test_data/NXellipsometry-docCheck.nxdl.xml')
     sys.stdout.write('Test on documentation formatting okay.\n')
+
+
+def test_nxdl2yaml_doc_format():
+    """In this test an nxdl file with all kind of doc formats are translated to yaml
+       to check if they are correct.
+
+    """
+    ref_xml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXentry.nxdl.xml'
+    ref_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXentry.yml'
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXentry_parsed.yml'
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', ref_xml_file])
+    assert result.exit_code == 0
+    check_file_fresh_baked(test_yml_file)
+
+    result = filecmp.cmp(ref_yml_file, test_yml_file, shallow=False)
+    assert result, 'Ref YML and parsed YML\
+has not the same structure!!'
+    # os.remove(test_yml_file)
+    sys.stdout.write('Test on xml -> yml doc formatting okay.\n')
 
 
 def test_symbols():
