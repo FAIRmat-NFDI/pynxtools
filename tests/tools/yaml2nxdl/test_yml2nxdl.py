@@ -147,7 +147,7 @@ def test_nxdl2yaml_doc_format():
     result = filecmp.cmp(ref_yml_file, test_yml_file, shallow=False)
     assert result, 'Ref YML and parsed YML\
 has not the same structure!!'
-    # os.remove(test_yml_file)
+    os.remove(test_yml_file)
     sys.stdout.write('Test on xml -> yml doc formatting okay.\n')
 
 
