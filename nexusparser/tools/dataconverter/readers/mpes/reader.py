@@ -171,7 +171,8 @@ def handle_h5_and_json_file(file_paths, objects):
 
         extentions = [".h5", ".json", ".yaml", ".yml"]
         if file_extension not in extentions:
-            raise ValueError(
+            print(
+                f"WARNING \n"
                 f"The reader only supports files of type {extentions}, "
                 f"but {file_path} does not match.",
             )
