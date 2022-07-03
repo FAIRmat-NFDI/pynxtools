@@ -163,7 +163,7 @@ def handle_not_root_level_doc(depth, node, file_out):
                 indent=depth * '  ',
                 tag=node.tag.split("}", 1)[1],
                 text='\n' + (depth + 1) * '  ' + '\n'.join([f"{(depth + 1) * '  '}{s.lstrip()}"
-                                                           for s in node.text.split('\n')]
+                                                            for s in node.text.split('\n')]
                                                            ).strip()))
     else:
         file_out.write(

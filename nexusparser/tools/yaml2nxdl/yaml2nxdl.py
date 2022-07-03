@@ -226,7 +226,7 @@ class Nxdl2yaml():
                     indent=0 * '  ',
                     tag=helpers.remove_namespace_from_tag(child.tag),
                     text='\n' + '  ' + '\n'.join([f"{1 * '  '}{s.lstrip()}"
-                                                 for s in child.text.split('\n')]
+                                                  for s in child.text.split('\n')]
                                                  if child.text else '').strip())
                 node.remove(child)
 
