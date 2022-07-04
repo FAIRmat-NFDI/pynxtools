@@ -155,6 +155,7 @@ def iterate_dictionary(dic, key_string):
         raise KeyError
     return None
 
+
 convert_dict = {
     'Instrument': 'INSTRUMENT[instrument]',
     'Analyzer': 'ANALYZER[analyzer]',
@@ -168,6 +169,7 @@ replace_nested = {
     'BEAM[beam]/Probe': 'BEAM[beam]',
     'BEAM[beam]/Pump': 'BEAM[beam_pump]'
 }
+
 
 def flatten_and_replace(d, parent_key='/ENTRY[entry]', sep='/'):
     """Flatten a nested dictionary, and replace the keys with the appropriate
