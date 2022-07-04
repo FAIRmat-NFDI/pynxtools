@@ -688,9 +688,15 @@ EXPECTED_SECTIONS['Detector Coordinates'].set_accepted_units(['mm'])
 # EXPECTED_SECTIONS['Var44'].set_section_name('Var44')
 
 
-# deprecated sections
-# EXPECTED_SECTIONS['Vref'] = AptFileSectionMetadata()  # now 'Voltage'
+# deprecated sections or sections with detected inconsistencies across versions
+# Vref vs Voltage branch issue
+EXPECTED_SECTIONS['Vref'] = EXPECTED_SECTIONS['Voltage']
+EXPECTED_SECTIONS['Vref'].set_wc_data_unit('V')
+EXPECTED_SECTIONS['Vref'].set_accepted_units(['V'])
 
+# pulseDelta vs Delta Pulse issue
+# at least in one case a section Delta Pulse appeared
+# at least in one case a section Epos ToF appeared
 
 # other comments and issues
 # Need to check APSuite version and build number
