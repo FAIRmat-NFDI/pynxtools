@@ -149,7 +149,7 @@ class ReadRngFileFormat():
                 self.rng['ions'][keyword].name = NxField(keyword, None)
                 self.rng['ions'][keyword].charge_state = \
                     NxField(np.int32(0), '')
-                # RNG files do not store charge state
+                # RNG files do not store charge state and isotopes explicitly
                 self.rng['ions'][keyword].isotope_vector = \
                     NxField(hashvector, None)
 

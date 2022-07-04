@@ -23,8 +23,6 @@
 # pylint: disable=E1101
 
 
-# from .nomad4exp_process_aptfim_utils import *
-
 import numpy as np
 
 
