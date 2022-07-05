@@ -19,6 +19,7 @@
 import errno
 import json
 import os
+import collections
 from functools import reduce
 from typing import Any
 from typing import Tuple
@@ -155,11 +156,52 @@ def iterate_dictionary(dic, key_string):
     return None
 
 
+CONVERT_DICT = {
+    'Instrument': 'INSTRUMENT[instrument]',
+    'Analyzer': 'ANALYZER[analyzer]',
+    'Beam': 'BEAM[beam]',
+    'unit': '@units',
+    'Sample': 'SAMPLE[sample]',
+    'User': 'USER[user]'
+}
+
+REPLACE_NESTED = {
+    'BEAM[beam]/Probe': 'BEAM[beam]',
+    'BEAM[beam]/Pump': 'BEAM[beam_pump]'
+}
+
+
+def flatten_and_replace(dic, parent_key='/ENTRY[entry]', sep='/'):
+    """Flatten a nested dictionary, and replace the keys with the appropriate
+    paths in the nxs file.
+    Args:
+        d (dict): dictionary to flatten
+        parent_key (str): parent key of the dictionary
+        sep (str): separator for the keys
+    Returns:
+        dict: flattened dictionary
+    """
+    items = []
+    for key, val in dic.items():
+        new_key = parent_key + sep + CONVERT_DICT.get(key, key)
+        if isinstance(val, collections.Mapping):
+            items.extend(flatten_and_replace(val, new_key, sep=sep).items())
+        else:
+            for old, new in REPLACE_NESTED.items():
+                new_key = new_key.replace(old, new)
+
+            if new_key.endswith('/value'):
+                items.append((new_key[:-6], val))
+            else:
+                items.append((new_key, val))
+    return dict(items)
+
+
 def handle_h5_and_json_file(file_paths, objects):
     """Handle h5 or json input files."""
     x_array_loaded = xr.DataArray()
     config_file_dict = {}
-    ELN_data_dict = {}
+    eln_data_dict = {}
 
     for file_path in file_paths:
         try:
@@ -206,8 +248,8 @@ def handle_h5_and_json_file(file_paths, objects):
             with open(file_path) as file:
                 config_file_dict = json.load(file)
         elif file_extension in [".yaml", ".yml"]:
-            with open(file_path) as ELN:
-                ELN_data_dict = yaml.safe_load(ELN)
+            with open(file_path) as feln:
+                eln_data_dict = flatten_and_replace(yaml.safe_load(feln))
 
     if objects is not None:
         # For the case of a single object
@@ -217,18 +259,19 @@ def handle_h5_and_json_file(file_paths, objects):
         ), "The given object must be an xarray"
         x_array_loaded = objects
 
-    return x_array_loaded, config_file_dict, ELN_data_dict
+    return x_array_loaded, config_file_dict, eln_data_dict
 
 
 def rgetattr(obj, attr):
+    """Get attributes recursively"""
     def _getattr(obj, attr):
         return getattr(obj, attr)
 
     if "index" in attr:
-        ax = attr.split(".")[0]
-        return str(obj.dims.index(f"{ax}"))
-    else:
-        return reduce(_getattr, [obj] + attr.split("."))
+        axis = attr.split(".")[0]
+        return str(obj.dims.index(f"{axis}"))
+
+    return reduce(_getattr, [obj] + attr.split("."))
 
 
 class MPESReader(BaseReader):
@@ -240,10 +283,10 @@ class MPESReader(BaseReader):
     supported_nxdls = ["NXmpes"]
 
     def read(
-        self,
-        template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+            self,
+            template: dict = None,
+            file_paths: Tuple[str] = None,
+            objects: Tuple[Any] = None,
     ) -> dict:
         """Reads data from given file or alternatively an xarray object
         and returns a filled template dictionary"""
@@ -254,7 +297,7 @@ class MPESReader(BaseReader):
         (
             x_array_loaded,
             config_file_dict,
-            ELN_data_dict,
+            eln_data_dict,
         ) = handle_h5_and_json_file(file_paths, objects)
 
         for key, value in config_file_dict.items():
@@ -306,7 +349,7 @@ class MPESReader(BaseReader):
 
         # Filling in ELN metadata and overwriting the common paths by
         # giving preference to the ELN metadata
-        for key, value in ELN_data_dict.items():
+        for key, value in eln_data_dict.items():
             template[key] = value
 
         return template
