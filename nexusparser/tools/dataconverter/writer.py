@@ -222,7 +222,10 @@ class Writer:
                     continue
 
                 entry_name = helpers.get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-                data = value if is_not_data_empty(value) else "NOT_PROVIDED"
+                if is_not_data_empty(value):
+                    data = value
+                else:
+                    continue
 
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
@@ -237,7 +240,7 @@ class Writer:
                     if units_key in self.data.keys() and self.data[units_key] is not None:
                         dataset.attrs["units"] = self.data[units_key]
                     else:
-                        dataset.attrs["units"] = "NOT_PROVIDED"
+                        continue
                 else:
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data
