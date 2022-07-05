@@ -19,6 +19,7 @@
 import errno
 import json
 import os
+import collections
 from functools import reduce
 from typing import Any
 from typing import Tuple
@@ -155,6 +156,47 @@ def iterate_dictionary(dic, key_string):
     return None
 
 
+convert_dict = {
+    'Instrument': 'INSTRUMENT[instrument]',
+    'Analyzer': 'ANALYZER[analyzer]',
+    'Beam': 'BEAM[beam]',
+    'unit': '@units',
+    'Sample': 'SAMPLE[sample]',
+    'user': 'USER[user]'
+}
+
+replace_nested = {
+    'BEAM[beam]/Probe': 'BEAM[beam]',
+    'BEAM[beam]/Pump': 'BEAM[beam_pump]'
+}
+
+
+def flatten_and_replace(d, parent_key='/ENTRY[entry]', sep='/'):
+    """Flatten a nested dictionary, and replace the keys with the appropriate
+    paths in the nxs file.
+    Args:
+        d (dict): dictionary to flatten
+        parent_key (str): parent key of the dictionary
+        sep (str): separator for the keys
+    Returns:
+        dict: flattened dictionary
+    """
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + convert_dict.get(k, k)
+        if isinstance(v, collections.Mapping):
+            items.extend(flatten_and_replace(v, new_key, sep=sep).items())
+        else:
+            for old, new in replace_nested.items():
+                new_key = new_key.replace(old, new)
+
+            if new_key.endswith('/value'):
+                items.append((new_key[:-6], v))
+            else:
+                items.append((new_key, v))
+    return dict(items)
+
+
 def handle_h5_and_json_file(file_paths, objects):
     """Handle h5 or json input files."""
     x_array_loaded = xr.DataArray()
@@ -171,7 +213,8 @@ def handle_h5_and_json_file(file_paths, objects):
 
         extentions = [".h5", ".json", ".yaml", ".yml"]
         if file_extension not in extentions:
-            raise ValueError(
+            print(
+                f"WARNING \n"
                 f"The reader only supports files of type {extentions}, "
                 f"but {file_path} does not match.",
             )
@@ -206,7 +249,7 @@ def handle_h5_and_json_file(file_paths, objects):
                 config_file_dict = json.load(file)
         elif file_extension in [".yaml", ".yml"]:
             with open(file_path) as ELN:
-                ELN_data_dict = yaml.safe_load(ELN)
+                ELN_data_dict = flatten_and_replace(yaml.safe_load(ELN))
 
     if objects is not None:
         # For the case of a single object
