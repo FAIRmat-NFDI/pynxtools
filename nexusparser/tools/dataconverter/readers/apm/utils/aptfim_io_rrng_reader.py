@@ -27,7 +27,8 @@ import re
 import numpy as np
 
 from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_utils \
-    import NxField, NxIon, significant_range, create_isotope_vector, isotope_vector_to_dict_keyword
+    import NxField, NxIon, significant_range, create_isotope_vector, \
+    isotope_vector_to_dict_keyword
 
 
 def evaluate_rrng_range_line(i: int, line: str, ion_type_names: list) -> dict:
@@ -170,7 +171,7 @@ class ReadRrngFileFormat():
                 self.rrng['ions'][keyword].name = NxField(keyword, None)
                 self.rrng['ions'][keyword].charge_state = \
                     NxField(np.int32(0), '')
-                # RRNG files do not store charge state
+                # RRNG files do not store charge state and isotopes explicitly
                 self.rrng['ions'][keyword].isotope_vector = \
                     NxField(hashvector, None)
 
