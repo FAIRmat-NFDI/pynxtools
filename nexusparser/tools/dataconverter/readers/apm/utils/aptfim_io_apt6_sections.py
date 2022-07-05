@@ -116,7 +116,7 @@ class AptFileSectionMetadata():
         # so far all example file indicated AMETEK implemented 'SEC\0' hard
         self.meta['c_signature'] = string_to_typed_nparray('SEC\0', 4, np.uint8)
 
-    def set_i_header_size(self, value: np.int32):
+    def set_i_header_size(self, value: int):
         """Check and set i_header_size."""
         # assert isinstance(value, int), \
         #     'iHeaderSize needs to be an int!'
@@ -126,7 +126,7 @@ class AptFileSectionMetadata():
             'iHeaderSize too large, needs to map to np.int32!'
         self.meta['i_header_size'] = np.int32(value)
 
-    def set_i_header_version(self, value: np.int32):
+    def set_i_header_version(self, value: int):
         """Check and size i_header_version."""
         # assert isinstance(value, int), \
         #     'iHeaderVersion needs to be an int!'
@@ -148,7 +148,7 @@ class AptFileSectionMetadata():
         #     'wcSectionType needs to include the null-terminator!'
         self.meta['wc_section_type'] = string_to_typed_nparray(value, 32, np.uint16)
 
-    def set_i_section_version(self, value: np.int32):
+    def set_i_section_version(self, value: int):
         """Check and set i_section_version."""
         # assert isinstance(value, int), \
         #     'iSectionVersion needs to be an int!'
@@ -158,7 +158,7 @@ class AptFileSectionMetadata():
             'iiSectionVersion too large, needs to map to np.int32!'
         self.meta['i_section_version'] = np.int32(value)
 
-    def set_e_relationship_type(self, value: np.uint32):
+    def set_e_relationship_type(self, value: int):
         """Check and set e_relationship_type."""
         # assert isinstance(value, int), \
         #     'eRelationShipType needs to be an int!'
@@ -168,7 +168,7 @@ class AptFileSectionMetadata():
             'eRelationShipType cannot process 2, 3, and 4, lacking examples!'
         self.meta['e_relationship_type'] = np.uint32(value)
 
-    def set_e_record_type(self, value: np.uint32):
+    def set_e_record_type(self, value: int):
         """Check and set e_record_type."""
         # assert isinstance(value, int), \
         #     'eRecordType needs to be an int!'
@@ -178,7 +178,7 @@ class AptFileSectionMetadata():
         #     'eRecordType cannot process 2, 3, and 4, lacking examples!'
         self.meta['e_record_type'] = np.uint32(value)
 
-    def set_e_record_data_type(self, value: np.uint32):
+    def set_e_record_data_type(self, value: int):
         """Check and set e_record_data_type."""
         # assert isinstance(value, int), \
         #     'e_record_data_type needs to be an int!'
@@ -188,7 +188,7 @@ class AptFileSectionMetadata():
             'eRecordDataType cannot process 5 due to lacking examples!'
         self.meta['e_record_data_type'] = np.uint32(value)
 
-    def set_i_data_type_size(self, value: np.int32):
+    def set_i_data_type_size(self, value: int):
         """Check and set i_data_type_size."""
         # assert isinstance(value, int), \
         #     'iDataTypeSize needs to be an int!'
@@ -305,7 +305,7 @@ class AptFileSectionMetadata():
         assert np.array_equal(self.meta['c_signature'], found_section['cSignature'][0],
                               equal_nan=True), 'Section cSignature differs, \
             is ' + np_uint16_to_string(found_section['cSignature'][0]) \
-            + ' but should be ' + np_uint16_to_string(self.c_signature)
+            + ' but should be ' + np_uint16_to_string(self.meta['c_signature'])
 
         assert found_section['iHeaderSize'][0] == self.meta['i_header_size'], \
             'Section iHeaderSize differs, is ' \

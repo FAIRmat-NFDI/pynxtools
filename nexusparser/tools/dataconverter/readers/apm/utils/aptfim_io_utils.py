@@ -29,11 +29,15 @@
 
 import re
 
+import typing
+
 from typing import Tuple
 
 import mmap
 
 import numpy as np
+
+# import numpy.typing as npt
 
 from ase.data import atomic_numbers
 from ase.data import chemical_symbols
@@ -54,26 +58,28 @@ def rchop(string: str = '', suffix: str = '') -> str:
     return string
 
 
-def hash_isotope(proton_number: np.uint8 = 0,
-                 neutron_number: np.uint8 = 0) -> np.uint16:
+def hash_isotope(proton_number: int = 0,
+                 neutron_number: int = 0) -> int:
     """Encode an isotope to a hashvalue."""
-    assert proton_number >= 0, 'Proton number >= 0 needed!'
-    assert proton_number < 256, 'Proton number < 256 needed!'
-    assert neutron_number >= 0, 'Neutron number >= 0 needed!'
-    assert neutron_number < 256, 'Neutron number < 256 needed!'
-    return np.uint16(proton_number) \
-        + np.uint16(256) * np.uint16(neutron_number)
+    n_protons = np.uint16(proton_number)
+    n_neutrons = np.uint16(neutron_number)
+    assert n_protons >= np.uint16(0), 'Proton number >= 0 needed!'
+    assert n_protons < np.uint16(256), 'Proton number < 256 needed!'
+    assert n_neutrons >= np.uint16(0), 'Neutron number >= 0 needed!'
+    assert n_neutrons < np.uint16(256), 'Neutron number < 256 needed!'
+    return int(n_protons + (np.uint16(256) * n_neutrons))
 
 
-def unhash_isotope(hashval: np.uint16 = 0) -> Tuple[np.uint8]:
+def unhash_isotope(hashval: int = 0) -> Tuple[int, int]:
     """Decode a hashvalue to an isotope."""
     assert isinstance(hashval, int), 'Hashval needs to be integer!'
-    assert hashval >= 0, 'Hashval needs to be an unsigned integer!'
-    assert hashval <= np.iinfo(np.uint16).max, \
+    val = np.uint16(hashval)
+    assert val >= np.uint16(0), 'Hashval needs to be an unsigned integer!'
+    assert val <= np.iinfo(np.uint16).max, \
         'Hashval needs to map on an uint16!'
-    neutron_number = np.uint16(hashval / np.uint16(256))
-    proton_number = np.uint16(hashval - neutron_number * np.uint16(256))
-    return (proton_number, neutron_number)
+    neutron_number = np.uint16(val / np.uint16(256))
+    proton_number = np.uint16(val - neutron_number * np.uint16(256))
+    return (int(proton_number), int(neutron_number))
 
 
 def create_isotope_vector(building_blocks: list) -> np.ndarray:
@@ -112,17 +118,17 @@ def create_isotope_vector(building_blocks: list) -> np.ndarray:
             return np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
 
     assert len(hashvector) <= MAX_NUMBER_OF_ATOMS_PER_ION, \
-        'More than ' + MAX_NUMBER_OF_ATOMS_PER_ION \
+        'More than ' + str(MAX_NUMBER_OF_ATOMS_PER_ION) \
         + ' atoms in the molecular ion!'
 
-    hashvector = np.asarray(hashvector, np.uint16)
-    hashvector = np.sort(hashvector, kind='stable')[::-1]
+    ivec = np.asarray(hashvector, np.uint16)
+    ivec = np.sort(ivec, kind='stable')[::-1]
     retval = np.zeros([1, MAX_NUMBER_OF_ATOMS_PER_ION], np.uint16)
-    retval[0, 0:len(hashvector)] = hashvector
+    retval[0, 0:len(ivec)] = ivec
     return retval
 
 
-def charge_estimation_heuristics(ivec, mleft, mright, sign: str) -> np.int32:
+def charge_estimation_heuristics(ivec, mleft, mright) -> np.int32:
     """Estimate molecular ion charge based on isotopes and associated range."""
     # estimate the charge of a molecular ion given its range
     # assume molecular ion mass is additive based on individual isotope mass
@@ -160,7 +166,7 @@ def charge_estimation_heuristics(ivec, mleft, mright, sign: str) -> np.int32:
             break  # ivec is always sorted in descending order
     # print('accumulated mass ' + str(accumulated_mass))
     charge = np.int32(round(2. * accumulated_mass / (mleft + mright)))
-    assert charge >= 1 and charge <= 7, \
+    assert (charge >= 1) & (charge <= 7), \
         'charge estimated out of reasonable bounds!'
     return charge
 
@@ -202,7 +208,7 @@ def ascii_to_paraprobe_iontype(building_blocks: list) -> np.ndarray:
                 neutron_number = 0
             else:
                 neutron_number = mass_number - proton_number
-            for i in np.arange(0, multiplier):
+            for _ in np.arange(0, multiplier):
                 hashvector.append(hash_isotope(proton_number, neutron_number))
         else:
             print('WARNING: Block does not specify a unique element name !')
@@ -211,13 +217,13 @@ def ascii_to_paraprobe_iontype(building_blocks: list) -> np.ndarray:
             return np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
 
     assert len(hashvector) <= MAX_NUMBER_OF_ATOMS_PER_ION, \
-        'More than ' + MAX_NUMBER_OF_ATOMS_PER_ION \
+        'More than ' + str(MAX_NUMBER_OF_ATOMS_PER_ION) \
         + ' atoms in the molecular ion is currently not supported !'
 
-    hashvector = np.asarray(hashvector, np.uint16)
-    hashvector = np.sort(hashvector, kind='stable')[::-1]
-    retval = np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
-    retval[0:len(hashvector)] = hashvector
+    ivec = np.asarray(hashvector, np.uint16)
+    ivec = np.sort(ivec, kind='stable')[::-1]
+    retval = np.zeros([1, MAX_NUMBER_OF_ATOMS_PER_ION], np.uint16)
+    retval[0, 0:len(ivec)] = ivec
     return retval
 
 
@@ -230,7 +236,7 @@ def isotope_vector_to_dict_keyword(uint16_array: np.ndarray) -> str:
     return ','.join(lst)
 
 
-def significant_overlap(interval: np.float64,
+def significant_overlap(interval: np.ndarray,
                         interval_set: np.float64) -> bool:
     """Check if interval overlaps within with members of interval set."""
     assert np.shape(interval) == (2,), 'Interval needs to have two columns!'
@@ -260,8 +266,9 @@ def significant_range(left: np.float64, right: np.float64) -> bool:
     return False
 
 
+@typing.no_type_check
 def get_memory_mapped_data(filename: str, data_type: str, oset: int,
-                           strd: int, shp: int) -> np.ndarray:
+                           strd: int, shp: int):
     """Memory-maps file plus offset strided read of typed data."""
     # https://stackoverflow.com/questions/60493766/ \
     #       read-binary-flatfile-and-skip-bytes for I/O access details
@@ -275,7 +282,7 @@ def get_memory_mapped_data(filename: str, data_type: str, oset: int,
 class NxField():
     """Representative of a NeXus field."""
 
-    def __init__(self, value: str = None, unit: str = None):
+    def __init__(self, value=None, unit: str = None):
         self.parent = None
         self.isa = None  # ontology reference concept ID e.g.
         self.value = value
@@ -358,7 +365,7 @@ class NxIon():
         if self.charge_state.value > 0:
             human_readable += '+' * self.charge_state.value
         elif self.charge_state.value < 0:
-            human_readable += '-' * -self.charge_state.value
+            human_readable += '-' * (-1 * self.charge_state.value)
         else:
             human_readable = human_readable[0:-1]
         return human_readable

@@ -22,11 +22,11 @@
 
 # pylint: disable=E1101
 
+from typing import Tuple, Any
+
 import flatdict as fd
 
 import yaml
-
-from typing import Tuple, Any
 
 import numpy as np
 
@@ -73,7 +73,7 @@ def get_dct_value(flat_dict: fd.FlatDict, keyword_path: str):
     return None
 
 
-def assess_situation_with_input_files(file_paths: Tuple[str] = None) -> dict:
+def assess_situation_with_input_files(file_paths: Tuple[str] = None) -> Tuple[dict, int]:
     """Different file formats contain different types of data.
 
     Identify how many files of specific type Tuple contains to judge if the
@@ -81,7 +81,7 @@ def assess_situation_with_input_files(file_paths: Tuple[str] = None) -> dict:
     the application definition.
 
     """
-    filetype_dict = {}
+    filetype_dict: dict = {}
     for file_name in file_paths:
         index = file_name.lower().rfind('.')
         if index >= 0:
@@ -135,13 +135,13 @@ def extract_data_from_apt_file(file_name: str, template: dict) -> dict:
 
     trg = '/ENTRY[entry]/atom_probe/reconstruction/'
     xyz = aptfile.get_named_quantity('Position')
-    template[trg + 'reconstructed_positions'] = xyz.value
+    template[trg + 'reconstructed_positions'] = np.array(xyz.value, np.float32)
     template[trg + 'reconstructed_positions/@units'] = xyz.unit
     del xyz
 
     trg = '/ENTRY[entry]/atom_probe/mass_to_charge_conversion/'
     m_z = aptfile.get_named_quantity('Mass')
-    template[trg + 'mass_to_charge'] = m_z.value
+    template[trg + 'mass_to_charge'] = np.array(m_z.value, np.float32)
     template[trg + 'mass_to_charge/@units'] = m_z.unit
     del m_z
 
@@ -159,13 +159,13 @@ def extract_data_from_pos_file(file_name: str, template: dict) -> dict:
 
     trg = '/ENTRY[entry]/atom_probe/reconstruction/'
     xyz = posfile.get_reconstructed_positions()
-    template[trg + 'reconstructed_positions'] = xyz.value
+    template[trg + 'reconstructed_positions'] = np.array(xyz.value, np.float32)
     template[trg + 'reconstructed_positions/@units'] = xyz.unit
     del xyz
 
     trg = '/ENTRY[entry]/atom_probe/mass_to_charge_conversion/'
     m_z = posfile.get_mass_to_charge()
-    template[trg + 'mass_to_charge'] = m_z.value
+    template[trg + 'mass_to_charge'] = np.array(m_z.value, np.float32)
     template[trg + 'mass_to_charge/@units'] = m_z.unit
     del m_z
     return template
@@ -178,13 +178,13 @@ def extract_data_from_epos_file(file_name: str, template: dict) -> dict:
 
     trg = '/ENTRY[entry]/atom_probe/reconstruction/'
     xyz = eposfile.get_reconstructed_positions()
-    template[trg + 'reconstructed_positions'] = xyz.value
+    template[trg + 'reconstructed_positions'] = np.array(xyz.value, np.float32)
     template[trg + 'reconstructed_positions/@units'] = xyz.unit
     del xyz
 
     trg = '/ENTRY[entry]/atom_probe/mass_to_charge_conversion/'
     m_z = eposfile.get_mass_to_charge()
-    template[trg + 'mass_to_charge'] = m_z.value
+    template[trg + 'mass_to_charge'] = np.array(m_z.value, np.float32)
     template[trg + 'mass_to_charge/@units'] = m_z.unit
     del m_z
 
@@ -261,7 +261,7 @@ def configure_ranging_data(template: dict) -> dict:
 
     path_specifier = trg + "peak_identification/ION[ion0]/"
     template[path_specifier + 'isotope_vector'] \
-        = np.reshape(np.uint16([0] * 32), (1, 32))
+        = np.reshape(np.asarray(([0] * 32), np.uint16), (1, 32))
     template[path_specifier + 'isotope_vector/@units'] \
         = "NX_UNITLESS"
     template[path_specifier + 'charge_state'] \
@@ -269,7 +269,7 @@ def configure_ranging_data(template: dict) -> dict:
     template[path_specifier + 'charge_state/@units'] \
         = 'NX_DIMENSIONLESS'
     template[path_specifier + 'mass_to_charge_range'] \
-        = np.reshape(np.float32([0.0, 0.001]), (1, 2))
+        = np.reshape(np.asarray([0.0, 0.001], np.float32), (1, 2))
     template[path_specifier + 'mass_to_charge_range/@units'] \
         = "Da"
 
@@ -292,7 +292,7 @@ def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
     print('Extracting data from RNG file: ' + file_name)
     rangefile = ReadRngFileFormat(file_name)
 
-    rangefile.read()
+    rangefile.read_rng()
 
     # ion indices are on the interval [1, 256]
     assert len(rangefile.rng['ions'].keys()) <= np.iinfo(np.uint8).max + 1, \
@@ -309,7 +309,7 @@ def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
         path_specifier = trg + 'ION[ion' + str(ion_id) + ']/'
 
         template[path_specifier + 'isotope_vector'] \
-            = ion_obj.isotope_vector.value
+            = np.array(ion_obj.isotope_vector.value, np.uint16)
         template[path_specifier + 'isotope_vector/@units'] \
             = 'NX_UNITLESS'
         template[path_specifier + 'charge_state'] \
@@ -318,7 +318,7 @@ def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
         template[path_specifier + 'charge_state/@units'] \
             = 'NX_DIMENSIONLESS'
         template[path_specifier + 'mass_to_charge_range'] \
-            = np.float32(ion_obj.ranges.value)
+            = np.array(ion_obj.ranges.value, np.float32)
         template[path_specifier + 'mass_to_charge_range/@units'] \
             = ion_obj.ranges.unit
         # template[path_specifier + 'ion_type'] = np.uint8(ion_id)
@@ -339,7 +339,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
     print('Extracting data from RRNG file: ' + file_name)
     rangefile = ReadRrngFileFormat(file_name)
 
-    rangefile.read()
+    rangefile.read_rrng()
 
     # ion indices are on the interval [1, 256]
     assert len(rangefile.rrng['ions'].keys()) <= np.iinfo(np.uint8).max + 1, \
@@ -356,7 +356,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
         path_specifier = trg + 'ION[ion' + str(ion_id) + ']/'
 
         template[path_specifier + 'isotope_vector'] \
-            = ion_obj.isotope_vector.value
+            = np.array(ion_obj.isotope_vector.value, np.uint16)
         template[path_specifier + 'isotope_vector/@units'] \
             = 'NX_UNITLESS'
         template[path_specifier + 'charge_state'] \
@@ -365,7 +365,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
         template[path_specifier + 'charge_state/@units'] \
             = 'NX_DIMENSIONLESS'
         template[path_specifier + 'mass_to_charge_range'] \
-            = np.float32(ion_obj.ranges.value)
+            = np.array(ion_obj.ranges.value, np.float32)
         template[path_specifier + 'mass_to_charge_range/@units'] \
             = ion_obj.ranges.unit
         # template[path_specifier + 'ion_type'] = np.uint8(ion_id)
@@ -599,7 +599,7 @@ def parse_instrument_section(yml: fd.FlatDict, template: dict) -> dict:
     return template
 
 
-def parse_analysis_workflow_section(yml: fd.FlatDict, template: dict) -> dict:
+def parse_analysis_workflow_section(template: dict) -> dict:
     """Add additional fields related to NXprocess analysis steps."""
     # hit_positions are not part of POS, EPOS, or APT files but a required
     trg = "/ENTRY[entry]/atom_probe/hit_multiplicity/"
@@ -664,7 +664,7 @@ def extract_data_from_yaml_file(file_name: str, template: dict) -> dict:
     parse_operator_section(yml, template)
     parse_specimen_section(yml, template)
     parse_instrument_section(yml, template)
-    parse_analysis_workflow_section(yml, template)
+    parse_analysis_workflow_section(template)
     parse_reconstruction_section(yml, template)
     parse_ranging_section(yml, template)
     return template
@@ -727,15 +727,15 @@ def create_default_plottable_data_reconstruction(template: dict) -> dict:
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the appdef
 
-    template[trg + "counts"] = hist3d[0]
+    template[trg + "counts"] = np.array(hist3d[0], np.uint32)
     template[trg + "counts/@units"] = "NX_UNITLESS"
-    template[trg + "xpos"] = hist3d[1][0][1::]
+    template[trg + "xpos"] = np.array(hist3d[1][0][1::], np.float32)
     template[trg + "xpos/@units"] = "nm"
     template[trg + "@xpos_indices"] = 0  # "my x axis"
-    template[trg + "ypos"] = hist3d[1][1][1::]
+    template[trg + "ypos"] = np.array(hist3d[1][1][1::], np.float32)
     template[trg + "ypos/@units"] = "nm"
     template[trg + "@ypos_indices"] = 1  # "my y axis"
-    template[trg + "zpos"] = hist3d[1][2][1::]
+    template[trg + "zpos"] = np.array(hist3d[1][2][1::], np.float32)
     template[trg + "zpos/@units"] = "nm"
     template[trg + "@zpos_indices"] = 2  # "my z axis"
     template[trg + "@long_name"] = "hist3d tomographic reconstruction"
@@ -787,10 +787,10 @@ def create_default_plottable_data_mass_spectrum(template: dict) -> dict:
     trg += "mass_spectrum/"
     template[trg + "@signal"] = "counts"
     template[trg + "@axes"] = "bin_ends"
-    template[trg + "counts"] = hist1d[0]
+    template[trg + "counts"] = np.array(hist1d[0], np.uint32)
     template[trg + "counts/@units"] = "NX_UNITLESS"
     template[trg + "@long_name"] = "hist1d mass-to-charge-state ratios"
-    template[trg + "bin_ends"] = hist1d[1][1::]
+    template[trg + "bin_ends"] = np.array(hist1d[1][1::], np.float32)
     template[trg + "bin_ends/@units"] = "Da"
     template[trg + "@bin_ends_indices"] = 0
     print('Plot mass spectrum at 0.01Da binning was created.')

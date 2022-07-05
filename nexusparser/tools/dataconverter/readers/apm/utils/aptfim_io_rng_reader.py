@@ -35,7 +35,7 @@ def evaluate_rng_range_line(
         i: int, line: str, column_id_to_label: dict, number_of_columns: int) -> dict:
     """Represent information content of a single range line."""
     # example line: '. 107.7240 108.0960 1 0 0 0 0 0 0 0 0 0 3 0 0 0'
-    info = {}
+    info: dict = {}
     info['identifier'] = 'Range' + str(i)
     info['range'] = None
     info['comp'] = []
@@ -67,7 +67,7 @@ def evaluate_rng_range_line(
 def evaluate_rng_ion_type_header(line: str) -> dict:
     """Represent information content in the key header line."""
     # line = '------------------- Fe Mg Al Mn Si V C Ga Ti Ca O Na Co H'
-    info = {}
+    info: dict = {}
     info['column_id_to_label'] = {}
     tmp = re.split(r'\s+', line)
     assert len(tmp) > 1, 'RNG file does not contain iontype labels!'
@@ -85,11 +85,11 @@ class ReadRngFileFormat():
             'RNG file incorrect file type!'
         self.filename = filename
 
-        self.rng = {}
+        self.rng: dict = {}
         self.rng['ions'] = {}
         self.rng['ranges'] = {}
 
-    def read(self):
+    def read_rng(self):
         """Read RNG range file content."""
         with open(self.filename, mode='r', encoding='utf8') as rngf:
             txt = rngf.read()

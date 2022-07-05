@@ -32,11 +32,10 @@ def np_uint16_to_string(uint16_array: np.ndarray) -> str:
     for value in uint16_array:
         if value != 0:  # '\x00'
             str_parsed += chr(value)
-    return np.str(str_parsed)
+    return str(str_parsed)
 
 
-def string_to_typed_nparray(string: str, length: int,
-                            dtype: np.dtype = np.uint8) -> np.ndarray:
+def string_to_typed_nparray(string: str, length: int, dtype: type) -> np.ndarray:
     """Create fixed length np.uint16 numpy array from string."""
     assert dtype is not None, 'dtype must not be None!'
     assert len(string) <= length, 'Input string is longer than \
