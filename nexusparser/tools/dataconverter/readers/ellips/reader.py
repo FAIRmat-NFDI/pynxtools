@@ -142,7 +142,8 @@ two parts of the key in the application definition.
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXellipsometry"]
 
-    def populate_header_dict_with_datasets(self, file_paths):
+    @staticmethod
+    def populate_header_dict_with_datasets(file_paths):
         """This is an ellipsometry-specific processing of data.
 
     The procedure is the following:
@@ -212,7 +213,9 @@ two parts of the key in the application definition.
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
-        header["spectrometer/wavelength"] = whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
+        header["spectrometer/wavelength"] = (
+            whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
+        )
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
@@ -232,7 +235,9 @@ two parts of the key in the application definition.
             raise Exception("No input files were given to Ellipsometry Reader.")
 
         # The header dictionary is filled with entries.
-        header, psilist, deltalist = self.populate_header_dict_with_datasets(file_paths)
+        header, psilist, deltalist = (
+            EllipsometryReader.populate_header_dict_with_datasets(file_paths)
+        )
 
         # The template dictionary is filled
         template = populate_template_dict(header, template)
