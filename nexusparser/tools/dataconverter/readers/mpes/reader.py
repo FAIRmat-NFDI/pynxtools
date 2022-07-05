@@ -162,7 +162,7 @@ CONVERT_DICT = {
     'Beam': 'BEAM[beam]',
     'unit': '@units',
     'Sample': 'SAMPLE[sample]',
-    'user': 'USER[user]'
+    'User': 'USER[user]'
 }
 
 REPLACE_NESTED = {
