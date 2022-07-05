@@ -4,4 +4,4 @@
 *.txt
 build/
 nexusparser.egg-info/PKG-INFO
-
+.python-version

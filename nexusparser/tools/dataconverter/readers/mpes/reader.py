@@ -167,7 +167,8 @@ CONVERT_DICT = {
 
 REPLACE_NESTED = {
     'BEAM[beam]/Probe': 'BEAM[beam]',
-    'BEAM[beam]/Pump': 'BEAM[beam_pump]'
+    'BEAM[beam]/Pump': 'BEAM[beam_pump]',
+    'sample_history': 'sample_history/description'
 }
 
 
