@@ -57,10 +57,10 @@ class ReadAptFileFormat():
         print('Reading ' + self.filename + ' which is ' + str(self.filesize) + ' bytes')
 
         self.header_section = None
-        self.byte_offsets = {}
-        self.available_sections = {}
+        self.byte_offsets: dict = {}
+        self.available_sections: dict = {}
         # where do sections start bytes from beginning of the file?
-        self.apt = {}
+        self.apt: dict = {}
 
         self.parse_file_structure()
 
@@ -218,7 +218,7 @@ class ReadAptFileFormat():
 
             dtype = self.available_sections[keyword].get_ametek_type()
             offset = byte_position_start
-            stride = np.uint64(
+            stride = int(
                 self.available_sections[keyword].meta['i_data_type_size'] / 8)
             count = self.available_sections[keyword].get_ametek_count()
 
