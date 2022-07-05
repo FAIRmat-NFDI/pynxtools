@@ -26,7 +26,7 @@ import re
 
 import json
 
-from typing import Tuple
+from typing import Tuple, Any
 
 import numpy as np
 
@@ -253,7 +253,10 @@ class EmNionReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXem_nion"]
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
+    def read(self,
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary."""
         typed_files, case = assess_situation_with_input_files(file_paths)
 
