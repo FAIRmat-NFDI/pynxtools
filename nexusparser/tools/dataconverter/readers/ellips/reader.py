@@ -17,7 +17,7 @@
 #
 """An example reader implementation for the DataConverter."""
 import os
-from typing import Tuple
+from typing import Tuple, Any
 import yaml
 import pandas as pd
 import numpy as np
@@ -219,7 +219,10 @@ two parts of the key in the application definition.
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:  # pylint: disable=W0221
+    def read(self,
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None) -> dict:
         """ Reads data from given file and returns a filled template dictionary.
 
             A handlings of virtual datasets is implemented:

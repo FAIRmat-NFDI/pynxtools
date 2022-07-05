@@ -62,16 +62,17 @@ class ExampleReader(BaseReader):
         template["/ENTRY[entry]/program_name"] = "None"
 
         # internal links
-        my_int_link_dict = {"link": "/entry/NXODD_name/posint_value"}
-        template["/ENTRY[entry]/test_link/internal_link"] = my_int_link_dict
+        template["/ENTRY[entry]/test_link/internal_link"] = {"link":
+                                                             "/entry/NXODD_name/posint_value"}
 
         # external links
-        my_ext_link_dict = {"link":
-                            f"{os.path.dirname(__file__)}/../../../../../tests/"
-                            f"data/tools/dataconverter/readers/mpes/"
-                            f"xarray_saved_small_calibration.h5:/axes/ax3"
-                            }
-        template["/ENTRY[entry]/test_link/external_link"] = my_ext_link_dict
+        template[("/ENTRY"
+                  "[entry]/test_link"
+                  "/external_link")] = {"link":
+                                        f"{os.path.dirname(__file__)}/../../../../../tests/"
+                                        f"data/tools/dataconverter/readers/mpes/"
+                                        f"xarray_saved_small_calibration.h5:/axes/ax3"
+                                        }
 
         # virtual datasets concatenation
         my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
@@ -87,18 +88,30 @@ class ExampleReader(BaseReader):
         # virtual datasets slicing
         my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
                       f"data/tools/dataconverter/readers/mpes")
-        my_slice = {"link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
-                    "shape": np.index_exp[:, 1, :, :]
-                    }
-        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset"] = my_slice
-        my_slice2 = {"link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
-                     "shape": np.index_exp[:, :, :, 1]
-                     }
-        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset2"] = my_slice2
-        my_slice3 = {"link": f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData",
-                     "shape": np.index_exp[:, :, :, 2:4]
-                     }
-        template["/ENTRY[entry]/test_virtual_dataset/sliced_dataset3"] = my_slice3
+        template[("/ENTRY[entry]"
+                  "/test_virtual"
+                  "_dataset/sliced"
+                  "_dataset")] = {"link":
+                                  (f"{my_path}/xarray_saved_small_"
+                                   "calibration.h5:/binned/BinnedData"),
+                                  "shape": np.index_exp[:, 1, :, :]
+                                  }
+        template[("/ENTRY[entry]"
+                  "/test_virtual"
+                  "_dataset/slic"
+                  "ed_dataset2")] = {"link":
+                                     (f"{my_path}/xarray_saved_small"
+                                      "_calibration.h5:/binned/BinnedData"),
+                                     "shape": np.index_exp[:, :, :, 1]
+                                     }
+        template[("/ENTRY[entry]"
+                  "/test_virtual"
+                  "_dataset/slic"
+                  "ed_dataset3")] = {"link":
+                                     (f"{my_path}/xarray_saved_small"
+                                      "_calibration.h5:/binned/BinnedData"),
+                                     "shape": np.index_exp[:, :, :, 2:4]
+                                     }
 
         # compression
         my_compression_dict = {"compress": "string not to be compressed"}

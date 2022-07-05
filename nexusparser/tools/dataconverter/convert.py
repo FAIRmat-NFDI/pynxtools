@@ -104,12 +104,12 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
 
     if objects is not None:
-        data = data_reader().read(template=Template(template),
+        data = data_reader().read(template=Template(template),  # type: ignore[operator]
                                   file_paths=input_file,
-                                  objects=objects)  # type: ignore[operator]
+                                  objects=objects)
     else:
-        data = data_reader().read(template=Template(template),
-                                  file_paths=input_file)  # type: ignore[operator]
+        data = data_reader().read(template=Template(template),  # type: ignore[operator]
+                                  file_paths=input_file)
 
     helpers.validate_data_dict(template, data, nxdl_root)
 
