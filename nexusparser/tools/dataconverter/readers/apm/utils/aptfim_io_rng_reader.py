@@ -23,7 +23,6 @@
 # pylint: disable=E1101
 
 import re
-
 import numpy as np
 
 from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_utils \
