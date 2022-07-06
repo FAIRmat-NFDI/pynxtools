@@ -60,8 +60,7 @@ class JsonMapReader(BaseReader):
                         data = json.loads(input_file.read())
             elif file_extension == ".pickle":
                 with open(file_path, "rb") as input_file:  # type: ignore[assignment]
-                    if ".xarray" in file_path:
-                        data = pickle.load(input_file)  # type: ignore[arg-type]
+                    data = pickle.load(input_file)  # type: ignore[arg-type]
 
         def get_val_nested_keystring_from_dict(keystring, data):
             current_key = keystring.split("/")[0]
