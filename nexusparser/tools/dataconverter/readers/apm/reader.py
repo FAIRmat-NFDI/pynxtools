@@ -73,7 +73,7 @@ def get_dct_value(flat_dict: fd.FlatDict, keyword_path: str):
     return None
 
 
-def assess_situation_with_input_files(file_paths: Tuple[str] = None) -> Tuple[dict, int]:
+def assess_situation_with_apm_input_files(file_paths: Tuple[str] = None) -> Tuple[dict, int]:
     """Different file formats contain different types of data.
 
     Identify how many files of specific type Tuple contains to judge if the
@@ -879,7 +879,7 @@ class ApmReader(BaseReader):
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary."""
-        typed_files, case = assess_situation_with_input_files(file_paths)
+        typed_files, case = assess_situation_with_apm_input_files(file_paths)
         print(typed_files)
         print(case)
         assert case > INVALID_INPUT, \
