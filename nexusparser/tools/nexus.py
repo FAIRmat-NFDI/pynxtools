@@ -1053,11 +1053,16 @@ class HandleNexus:
         self.in_file.close()
 
 
+def main():
+    """The main function to call when used as a script."""
+    logging_format = "%(levelname)s: %(message)s"
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setLevel(logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format=logging_format, handlers=[stdout_handler])
+    logger = logging.getLogger()
+    nexus_helper = HandleNexus(logger, sys.argv[1:])
+    nexus_helper.process_nexus_master_file(None)
+
+
 if __name__ == '__main__':
-    LOGGING_FORMAT = "%(levelname)s: %(message)s"
-    STDOUT_HANDLER = logging.StreamHandler(sys.stdout)
-    STDOUT_HANDLER.setLevel(logging.DEBUG)
-    logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT, handlers=[STDOUT_HANDLER])
-    LOGGER = logging.getLogger()
-    NEXUS_HELPER = HandleNexus(LOGGER, sys.argv[1:])
-    NEXUS_HELPER.process_nexus_master_file(None)
+    main()
