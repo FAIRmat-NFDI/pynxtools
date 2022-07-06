@@ -111,6 +111,19 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
         data = data_reader().read(template=Template(template),  # type: ignore[operator]
                                   file_paths=input_file)
 
+    # # Extract default plot
+    # if "/default_plot" in data.keys():
+    #     plot = data["/default_plot"]
+    #     template_entry = plot[0:plot.rindex("/")]
+    #     field_name = plot[plot.rindex("/")+1:]
+    #     print(plot)
+    #     data["/@default"] = helpers.get_name_from_data_dict_entry(template_entry)
+    #     data[f"{template_entry}/plot/{field_name}"] = {"link": helpers.convert_data_dict_path_to_hdf5_path(plot)}
+    #     data[f"{template_entry}/plot/{field_name}/@signal"] = field_name
+    #     del data["undocumented"]["/default_plot"]
+    #     # print(data["optional"][f"{template_entry}/plot"])
+    # print(data, template)
+    # print(data)
     helpers.validate_data_dict(template, data, nxdl_root)
 
     if fair and data.undocumented.keys():

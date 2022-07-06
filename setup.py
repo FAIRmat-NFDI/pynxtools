@@ -91,7 +91,14 @@ def main():
         },
         include_package_data=True,
         install_requires=requires,
-        extras_require=extras_require)
+        extras_require=extras_require,
+        entry_points={
+            'console_scripts': [
+                'read_nexus = nexusparser.tools.nexus:main',
+                'dataconverter = nexusparser.tools.dataconverter.convert:convert_cli',
+                'yaml2nxdl = nexusparser.tools.yaml2nxdl.yaml2nxdl:launch_tool'
+            ]
+        })
 
 
 if __name__ == '__main__':

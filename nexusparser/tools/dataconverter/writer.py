@@ -229,7 +229,6 @@ class Writer:
 
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
-
                     if isinstance(data, dict):
                         dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
                     else:
