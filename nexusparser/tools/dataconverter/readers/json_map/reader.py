@@ -60,8 +60,7 @@ class JsonMapReader(BaseReader):
                         data = json.loads(input_file.read())
             elif file_extension == ".pickle":
                 with open(file_path, "rb") as input_file:  # type: ignore[assignment]
-                    if ".xarray" in file_path:
-                        data = pickle.load(input_file)  # type: ignore[arg-type]
+                    data = pickle.load(input_file)  # type: ignore[arg-type]
 
         def get_val_nested_keystring_from_dict(keystring, data):
             current_key = keystring.split("/")[0]
@@ -74,6 +73,10 @@ class JsonMapReader(BaseReader):
                 raise Exception(f"Xarray datasets are not supported. "
                                 f"You can only use xarray dataarrays.")
             return data[current_key]
+
+        template["optional"]["/default_plot"] = mapping["/default_plot"]
+
+        # if we have links dict, then we process them differently
 
         for req in ("required", "optional", "recommended"):
             for path in template[req]:

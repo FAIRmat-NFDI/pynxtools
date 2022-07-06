@@ -320,38 +320,48 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
-    # Make sure all required fields exist.
-    ensure_all_required_fields_exist(template, data)
+    # Extract default plot
+    print(data)
+    if "/default_plot" in data.keys():
+        plot = data["/default_plot"]
+        template_entry = plot[0:plot.rindex("/")]
+        data["optional"]["/@default"] = get_name_from_data_dict_entry(template_entry)
+        data["optional"][f"{template_entry}/plot"] = {"link": plot}
+        del data["optional"]["/default_plot"]
+        print(data["optional"][f"{template_entry}/plot"])
 
-    try_undocumented(data, nxdl_root)
+    # # Make sure all required fields exist.
+    # ensure_all_required_fields_exist(template, data)
 
-    for path in data.get_documented().keys():
-        if data[path] is not None:
-            entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-            nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+    # try_undocumented(data, nxdl_root)
 
-            if entry_name == "@units":
-                continue
-            elif entry_name[0] == "@" and "@" in nxdl_path:
-                index_of_at = nxdl_path.rindex("@")
-                nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
+    # for path in data.get_documented().keys():
+    #     if data[path] is not None:
+    #         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
+    #         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
-            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+    #         if entry_name == "@units":
+    #             continue
+    #         elif entry_name[0] == "@" and "@" in nxdl_path:
+    #             index_of_at = nxdl_path.rindex("@")
+    #             nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
-            # Only check for validation in the NXDL if we did find the entry
-            # otherwise we just pass it along
-            if elem is not None \
-               and elem.attrib["name"] == entry_name \
-               and remove_namespace_from_tag(elem.tag) in ("field", "attribute"):
-                check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
+    #         elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
-                attrib = elem.attrib
-                nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
-                is_valid_data_field(data[path], nxdl_type, path)
-                is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
-                if not is_valid_enum:
-                    raise Exception(f"The value at {path} should be"
-                                    f" one of the following strings: {enums}")
+    #         # Only check for validation in the NXDL if we did find the entry
+    #         # otherwise we just pass it along
+    #         if elem is not None \
+    #            and elem.attrib["name"] == entry_name \
+    #            and remove_namespace_from_tag(elem.tag) in ("field", "attribute"):
+    #             check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template)
+
+    #             attrib = elem.attrib
+    #             nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
+    #             is_valid_data_field(data[path], nxdl_type, path)
+    #             is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
+    #             if not is_valid_enum:
+    #                 raise Exception(f"The value at {path} should be"
+    #                                 f" one of the following strings: {enums}")
 
     return True
 

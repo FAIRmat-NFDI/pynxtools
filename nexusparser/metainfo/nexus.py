@@ -502,43 +502,43 @@ def create_package_from_nxdl_directories(paths) -> Package:
     return CURRENT_PACKAGE
 
 
-# separated metainfo package for the nexus base classes, application defs and contributed classes.
-DIRS = [os.path.join(nexus.get_nexus_definitions_path(), 'contributed_definitions')]
-DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'base_classes'))
-DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'applications'))
-APPLICATIONS = create_package_from_nxdl_directories(DIRS)
-PACKAGES = (APPLICATIONS,)  # , APPLICATIONS, CONTRIBUTED)
+# # separated metainfo package for the nexus base classes, application defs and contributed classes.
+# DIRS = [os.path.join(nexus.get_nexus_definitions_path(), 'contributed_definitions')]
+# DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'base_classes'))
+# DIRS.append(os.path.join(nexus.get_nexus_definitions_path(), 'applications'))
+# APPLICATIONS = create_package_from_nxdl_directories(DIRS)
+# PACKAGES = (APPLICATIONS,)  # , APPLICATIONS, CONTRIBUTED)
 
-# We take the application definitions and create a common parent section that allows to
-# include nexus in an EntryArchive.
-NEXUS_SECTION = Section(validate=VALIDATE, name='Nexus')
+# # We take the application definitions and create a common parent section that allows to
+# # include nexus in an EntryArchive.
+# NEXUS_SECTION = Section(validate=VALIDATE, name='Nexus')
 
-for application_section in APPLICATIONS.section_definitions:  # pylint: disable=not-an-iterable
-    if application_section.more.get('nx_category') == 'application':
-        sub_section = SubSection(
-            section_def=application_section,
-            name=application_section.name.replace('NX', 'nx_application_'))
-        NEXUS_SECTION.sub_sections.append(sub_section)
+# for application_section in APPLICATIONS.section_definitions:  # pylint: disable=not-an-iterable
+#     if application_section.more.get('nx_category') == 'application':
+#         sub_section = SubSection(
+#             section_def=application_section,
+#             name=application_section.name.replace('NX', 'nx_application_'))
+#         NEXUS_SECTION.sub_sections.append(sub_section)
 
-APPLICATIONS.section_definitions.append(NEXUS_SECTION)
+# APPLICATIONS.section_definitions.append(NEXUS_SECTION)
 
-ENTRY_ARCHIVE_NEXUS_SUB_SECTION = \
-    SubSection(name='nexus',
-               section_def=NEXUS_SECTION)
-EntryArchive.nexus = ENTRY_ARCHIVE_NEXUS_SUB_SECTION  # type: ignore
-EntryArchive.m_def.sub_sections.append(ENTRY_ARCHIVE_NEXUS_SUB_SECTION)
-ENTRY_ARCHIVE_NEXUS_SUB_SECTION.init_metainfo()
-
-
-# We need to initialize the metainfo definitions. This is usually done automatically,
-# when the metainfo schema is defined though MSection Python classes.
-for package in PACKAGES:
-    package.init_metainfo()
+# ENTRY_ARCHIVE_NEXUS_SUB_SECTION = \
+#     SubSection(name='nexus',
+#                section_def=NEXUS_SECTION)
+# EntryArchive.nexus = ENTRY_ARCHIVE_NEXUS_SUB_SECTION  # type: ignore
+# EntryArchive.m_def.sub_sections.append(ENTRY_ARCHIVE_NEXUS_SUB_SECTION)
+# ENTRY_ARCHIVE_NEXUS_SUB_SECTION.init_metainfo()
 
 
-# We skip the Python code generation for now and offer Python classes as variables
-# TO DO not necessary right now, could also be done case-by-case by the nexus parser
-PYTHON_MODULE = sys.modules[__name__]
-for package in PACKAGES:
-    for sektion in package.section_definitions:  # pylint: disable=not-an-iterable
-        setattr(PYTHON_MODULE, sektion.name, sektion.section_cls)
+# # We need to initialize the metainfo definitions. This is usually done automatically,
+# # when the metainfo schema is defined though MSection Python classes.
+# for package in PACKAGES:
+#     package.init_metainfo()
+
+
+# # We skip the Python code generation for now and offer Python classes as variables
+# # TO DO not necessary right now, could also be done case-by-case by the nexus parser
+# PYTHON_MODULE = sys.modules[__name__]
+# for package in PACKAGES:
+#     for sektion in package.section_definitions:  # pylint: disable=not-an-iterable
+#         setattr(PYTHON_MODULE, sektion.name, sektion.section_cls)
