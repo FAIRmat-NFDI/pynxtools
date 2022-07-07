@@ -656,7 +656,6 @@ def extract_data_from_yaml_file(file_name: str, template: dict) -> dict:
     # given that the syntax for nomadOASIS ELN and NeXus schemata is
     # as of 2022/06/28 not yet fully harmonized plus we dont want
     # to create an extra blocker in sprint 8, we carry the values hardcoded
-    file_name = 'eln_data.yaml'
     with open(file_name, 'r') as stream:
         yml = fd.FlatDict(yaml.safe_load(stream), delimiter=':')
 
