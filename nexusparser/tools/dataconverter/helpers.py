@@ -185,12 +185,23 @@ def is_positive_int(value):
 
 
 def is_valid_data_field(value, nxdl_type, path):
-    """Checks whether a given value is valid according to what is defined in the NXDL."""
+    """Checks whether a given value is valid according to what is defined in the NXDL.
+
+        This function will also try to convert typical types, for example int to float,
+        and return the successful conversion.
+
+        If it fails to convert, it raises an Exception.
+
+        As a default it just returns the value again.
+    """
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
 
     if not is_valid_data_type(value, accepted_types):
-        raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
-                        f", as defined in the NXDL as {nxdl_type}.")
+        try:
+            return accepted_types[0](value)
+        except ValueError:
+            raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
+                            f", as defined in the NXDL as {nxdl_type}.")
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         raise Exception(f"The value at {path} should be a positive int.")
@@ -203,6 +214,8 @@ def is_valid_data_field(value, nxdl_type, path):
             raise Exception(f"The date at {path} should be a timezone aware ISO8601 "
                             f"formatted str. For example, 2022-01-22T12:14:12.05018Z"
                             f" or 2022-01-22T12:14:12.05018+00:00.")
+
+    return value
 
 
 def path_in_data_dict(nxdl_path: str, data: dict) -> Tuple[bool, str]:
@@ -347,7 +360,9 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 
                 attrib = elem.attrib
                 nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
-                is_valid_data_field(data[path], nxdl_type, path)
+                data[path] = is_valid_data_field(data[path], nxdl_type, path)
+                print(data[path])
+                print(data)
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
                 if not is_valid_enum:
                     raise Exception(f"The value at {path} should be"
