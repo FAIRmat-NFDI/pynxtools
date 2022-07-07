@@ -184,6 +184,18 @@ def is_positive_int(value):
     return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
 
 
+def convert_str_to_bool_safe(value):
+    """Only returns True or False if someone mistakenly adds quotation marks but mean a bool.
+
+       For everything else it returns None.
+    """
+    if value.lower() == "true":
+        return True
+    if value.lower() == "false":
+        return False
+    return None
+
+
 def is_valid_data_field(value, nxdl_type, path):
     """Checks whether a given value is valid according to what is defined in the NXDL.
 
@@ -198,6 +210,10 @@ def is_valid_data_field(value, nxdl_type, path):
 
     if not is_valid_data_type(value, accepted_types):
         try:
+            if accepted_types[0] is bool and isinstance(value, str):
+                value = convert_str_to_bool_safe(value)
+                if value is None:
+                    raise ValueError
             return accepted_types[0](value)
         except ValueError:
             raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
@@ -361,8 +377,6 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 attrib = elem.attrib
                 nxdl_type = attrib["type"] if "type" in attrib.keys() else "NXDL_TYPE_UNAVAILABLE"
                 data[path] = is_valid_data_field(data[path], nxdl_type, path)
-                print(data[path])
-                print(data)
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
                 if not is_valid_enum:
                     raise Exception(f"The value at {path} should be"
