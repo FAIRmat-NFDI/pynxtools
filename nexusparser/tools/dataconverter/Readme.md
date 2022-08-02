@@ -42,7 +42,7 @@ For now, I have made sure that this tools works on this branch.
 
 ## Writing a Reader
 
-This converter allows extending support to other data formats by allowing extensions called readers.  The converter provides a dev platform to build a Nexus compatible reader by providing checking against a chosen Nexus Application Definition.
+This converter allows extending support to other data formats by allowing extensions called readers. The converter provides a dev platform to build a Nexus compatible reader by providing checking against a chosen Nexus Application Definition.
 
 Readers have to be placed in the **readers** folder in there own subfolder. The reader folder should be named with the reader's name and contain a `reader.py`.\
 For example: The reader `Example Reader` is placed under `dataconverter/readers/example/reader.py`.
@@ -53,15 +53,20 @@ Then implement the reader function:
 
 ```python
 """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
-from typing import Tuple
+from typing import Tuple, Any
 
-from nexusparser.tools.dataconverter.readers.base_reader import BaseReader
+from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 
 class MyDataReader(BaseReader):
     """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:
+    def read(
+        self,
+        template: Tuple[str] = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None
+    ) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         # Fill the template
         for path in file_paths:
@@ -81,6 +86,7 @@ The read function takes a template dictionary based on the provided NXDL file (s
 The returned dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to be populated in the output Nexus file. They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints. Practically you can pass any value that can be handled by `h5py` package.
 
 Then you can then call this using:
+
 ```console
 user@box:~$ python convert.py --reader mydata --nxdl NXmynxdl --output path_to_output.nxs
 ```
@@ -91,7 +97,7 @@ Example:
 
 ```json
 {
-    "/entry/instrument/source/type": "None"
+  "/entry/instrument/source/type": "None"
 }
 ```
 
@@ -99,8 +105,8 @@ Example:
 
 ```json
 {
-    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data": "None",
-    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units": "Should be set to a string value"
+  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data": "None",
+  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units": "Should be set to a string value"
 }
 ```
 
@@ -109,7 +115,7 @@ You can choose any name you prefer instead of the suggested name. This allows th
 
 ```json
 {
-    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type": "None"
+  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type": "None"
 }
 ```
 
@@ -117,7 +123,7 @@ For attributes defined in the NXDL, the reader template dictionary will have the
 
 ```json
 {
-    "/entry/instrument/source/@attribute": "None"
+  "/entry/instrument/source/@attribute": "None"
 }
 ```
 
