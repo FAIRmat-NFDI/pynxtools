@@ -19,19 +19,22 @@
 
 import os
 import collections
-from typing import Tuple, Any, Dict
+from typing import Tuple, Any, Dict, Callable
 import json
 import yaml
 import pandas as pd
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+from nexusparser.tools.dataconverter.readers.transmission.metadata_parsers import *
 
 
-#: Dictionary mapping the line numbers in the asc file to the paths in the NeXus file.
-METADATA_MAP: Dict[str, Any] = {}
+#: Dictionary mapping metadata in the asc file to the paths in the NeXus file.
+METADATA_MAP: Dict[str, Callable[[list], Any]] = {
+    "/ENTRY[entry]/start_time": read_start_date,
+}
 
 
-def parse_asc(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
+def parse_asc(file_path: str) -> Dict[str, Any]:
     """Parses a Perkin Ellmer asc file into metadata and data dictionary.
 
     Args:
@@ -43,15 +46,15 @@ def parse_asc(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
     template: Dict[str, Any] = {}
     data_start_ind = "#DATA"
 
-    with open(file_path, encoding=encoding) as fobj:
+    with open(file_path, encoding="utf-8") as fobj:
         keys = []
         for line in fobj:
             if line.strip() == data_start_ind:
                 break
             keys.append(line.strip())
 
-        for key, val in METADATA_MAP.items():
-            template[key] = keys[val]
+        for path, parser in METADATA_MAP.items():
+            template[path] = parser(keys)
 
         data = pd.read_csv(
             fobj, delim_whitespace=True, header=None, index_col=0
@@ -146,7 +149,7 @@ class TransmissionReader(BaseReader):
             dict: _description_
         """
         extensions = {
-            ".asc": lambda fpath: parse_asc(fpath),
+            ".asc": parse_asc,
             ".json": parse_json,
             ".yml": parse_yml,
             ".yaml": parse_yml,
