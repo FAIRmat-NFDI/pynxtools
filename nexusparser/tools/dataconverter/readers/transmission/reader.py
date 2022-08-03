@@ -53,9 +53,17 @@ def parse_asc(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
         for key, val in METADATA_MAP.items():
             template[key] = keys[val]
 
-        template["/ENTRY[entry]/data"] = pd.read_csv(
+        data = pd.read_csv(
             fobj, delim_whitespace=True, header=None, index_col=0
         )
+
+    template["/ENTRY[entry]/data/@signal"] = "data"
+    template["/ENTRY[entry]/data/@axes"] = "wavelength"
+    template["/ENTRY[entry]/data/type"] = "transmission"
+    template["/ENTRY[entry]/data/@signal"] = "transmission"
+    template["/ENTRY[entry]/data/wavelength"] = data.index.values
+    template["/ENTRY[entry]/data/wavelength/@units"] = "nm"
+    template["/ENTRY[entry]/data/transmission"] = data.values[:, 0]
 
     return template
 
@@ -137,7 +145,6 @@ class TransmissionReader(BaseReader):
         Returns:
             dict: _description_
         """
-
         extensions = {
             ".asc": lambda fpath: parse_asc(fpath),
             ".json": parse_json,
@@ -145,8 +152,8 @@ class TransmissionReader(BaseReader):
             ".yaml": parse_yml,
         }
 
-        if template is None:
-            template = {}
+        template["/@default"] = "entry"
+        template["/ENTRY[entry]/@default"] = "data"
 
         sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
         for file_path in sorted_paths:
