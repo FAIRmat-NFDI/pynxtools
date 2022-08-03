@@ -18,7 +18,6 @@
 """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
 
 import os
-import collections
 from typing import Tuple, Any, Dict, Callable
 import json
 import yaml
@@ -26,6 +25,7 @@ import pandas as pd
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 import nexusparser.tools.dataconverter.readers.transmission.metadata_parsers as mpars
+from nexusparser.tools.dataconverter.readers.utils import flatten_and_replace
 
 
 #: Dictionary mapping metadata in the asc file to the paths in the NeXus file.
@@ -92,32 +92,6 @@ CONVERT_DICT: Dict[str, str] = {}
 REPLACE_NESTED: Dict[str, str] = {}
 
 
-def flatten_and_replace(dic, parent_key="/ENTRY[entry]", sep="/"):
-    """Flatten a nested dictionary, and replace the keys with the appropriate
-    paths in the nxs file.
-    Args:
-        d (dict): dictionary to flatten
-        parent_key (str): parent key of the dictionary
-        sep (str): separator for the keys
-    Returns:
-        dict: flattened dictionary
-    """
-    items = []
-    for key, val in dic.items():
-        new_key = parent_key + sep + CONVERT_DICT.get(key, key)
-        if isinstance(val, collections.Mapping):
-            items.extend(flatten_and_replace(val, new_key, sep=sep).items())
-        else:
-            for old, new in REPLACE_NESTED.items():
-                new_key = new_key.replace(old, new)
-
-            if new_key.endswith("/value"):
-                items.append((new_key[:-6], val))
-            else:
-                items.append((new_key, val))
-    return dict(items)
-
-
 def parse_yml(file_path: str) -> Dict[str, Any]:
     """Parses a metadata yaml file into a dictionary.
 
@@ -128,19 +102,20 @@ def parse_yml(file_path: str) -> Dict[str, Any]:
         Dict[str, Any]: The dictionary containing the data readout from the yml.
     """
     with open(file_path) as file:
-        return flatten_and_replace(yaml.safe_load(file))
+        return flatten_and_replace(yaml.safe_load(file), CONVERT_DICT, REPLACE_NESTED)
 
 
+# pylint: disable=too-few-public-methods
 class TransmissionReader(BaseReader):
     """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
 
     supported_nxdls = ["NXtransmission"]
 
     def read(
-        self,
-        template: dict = None,
-        file_paths: Tuple[str] = None,
-        _: Tuple[Any] = None,
+            self,
+            template: dict = None,
+            file_paths: Tuple[str] = None,
+            _: Tuple[Any] = None,
     ) -> dict:
         """_summary_
 

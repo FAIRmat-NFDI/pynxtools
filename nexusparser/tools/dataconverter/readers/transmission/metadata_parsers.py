@@ -17,7 +17,6 @@
 #
 """Functions for reading metadata values from Perkin Ellmer files"""
 from datetime import datetime
-from typing import Dict, Any
 
 
 def read_start_date(metadata: list) -> str:

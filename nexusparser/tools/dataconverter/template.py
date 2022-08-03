@@ -145,7 +145,7 @@ class Template(dict):
     def update(self, template):
         """Merges second template to original
         or updates values from a dictionary if the type of :code:`template` is dict"""
-        if type(template) is dict:
+        if isinstance(template, dict):
             for key, value in template.items():
                 self[key] = value
         else:
