@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
+"""Perkin Ellmer transmission file reader implementation for the DataConverter."""
 
 import os
 from typing import Tuple, Any, Dict, Callable
@@ -36,6 +36,12 @@ METADATA_MAP: Dict[str, Callable[[list], Any]] = {
     "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission":
         mpars.read_ref_attenuator
 }
+# Dictionary to map value during the yaml eln reading
+# This is typically a mapping from ELN signifier to NeXus path
+CONVERT_DICT: Dict[str, str] = {}
+# Dictionary to map nested values during the yaml eln reading
+# This is typically a mapping from nested ELN signifiers to NeXus group
+REPLACE_NESTED: Dict[str, str] = {}
 
 
 def parse_asc(file_path: str) -> Dict[str, Any]:
@@ -88,10 +94,6 @@ def parse_json(file_path: str) -> Dict[str, Any]:
         return json.load(file)
 
 
-CONVERT_DICT: Dict[str, str] = {}
-REPLACE_NESTED: Dict[str, str] = {}
-
-
 def parse_yml(file_path: str) -> Dict[str, Any]:
     """Parses a metadata yaml file into a dictionary.
 
@@ -117,16 +119,7 @@ class TransmissionReader(BaseReader):
             file_paths: Tuple[str] = None,
             _: Tuple[Any] = None,
     ) -> dict:
-        """_summary_
-
-        Args:
-            template (dict, optional): _description_. Defaults to None.
-            file_paths (Tuple[str], optional): _description_. Defaults to None.
-            objects (Tuple[Any], optional): _description_. Defaults to None.
-
-        Returns:
-            dict: _description_
-        """
+        """Reader class to read transmission data from Perkin Ellmer measurement files"""
         extensions = {
             ".asc": parse_asc,
             ".json": parse_json,
@@ -137,7 +130,7 @@ class TransmissionReader(BaseReader):
         template["/@default"] = "entry"
         template["/ENTRY[entry]/@default"] = "data"
         template["/ENTRY[entry]/definition"] = "NXtransmission"
-        template["/ENTRY[entry]/definition/@version"] = "v2022.??"
+        template["/ENTRY[entry]/definition/@version"] = "v2022.06"
         template["/ENTRY[entry]/definition/@url"] = \
             "https://fairmat-experimental.github.io/nexus-fairmat-proposal/" + \
             "50433d9039b3f33299bab338998acb5335cd8951/index.html"
