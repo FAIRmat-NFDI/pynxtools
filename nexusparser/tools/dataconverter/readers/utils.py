@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 """Utility functions for the NeXus reader classes."""
-from typing import List, Any, Mapping
-import collections
+from typing import List, Any
+from collections.abc import Mapping
 
 
 def flatten_and_replace(
@@ -44,7 +44,7 @@ def flatten_and_replace(
     items: List[Any] = []
     for key, val in dic.items():
         new_key = parent_key + sep + convert_dict.get(key, key)
-        if isinstance(val, collections.Mapping):
+        if isinstance(val, Mapping):
             items.extend(
                 flatten_and_replace(val, convert_dict, replace_nested, new_key, sep=sep)
                 .items()
