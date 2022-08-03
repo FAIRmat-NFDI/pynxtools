@@ -25,3 +25,13 @@ def read_start_date(metadata: list) -> str:
     century = str(datetime.now().year // 100)
     formated_date = metadata[3].replace("/", "-")
     return f"{century}{formated_date}T{metadata[4]}000Z"
+
+
+def read_sample_attenuator(metadata: list) -> int:
+    """Reads the sample attenuator from the metadata"""
+    return int(metadata[47].split()[0].split(":")[1])
+
+
+def read_ref_attenuator(metadata: list) -> int:
+    """Reads the sample attenuator from the metadata"""
+    return int(metadata[47].split()[1].split(":")[1])

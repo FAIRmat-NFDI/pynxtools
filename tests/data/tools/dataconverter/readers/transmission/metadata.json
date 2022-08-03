@@ -1,0 +1,15 @@
+{
+    "/ENTRY[entry]/instrument/common_beam_mask/x_gap": 0.1,
+    "/ENTRY[entry]/instrument/common_beam_depolarizer": false,
+    "/ENTRY[entry]/instrument/polarizer": 0,
+    "/ENTRY[entry]/instrument/operator/name": "Test",
+    "/ENTRY[entry]/instrument/operator/affiliation": "Testinstitute",
+    "/ENTRY[entry]/instrument/operator/address": "My Adress 1",
+    "/ENTRY[entry]/instrument/operator/email": "test@test.org",
+    "/ENTRY[entry]/instrument/MONOCHROMATOR[monochromator]/wavelength_range": [190, 2500],
+    "/ENTRY[entry]/instrument/DETECTOR[detector]/wavelength_range": [190, 2500],
+    "/ENTRY[entry]/instrument/SOURCE[source]/type": "halogen",
+    "/ENTRY[entry]/instrument/SOURCE[source]/wavelength_range": [190, 2500],
+    "/ENTRY[entry]/instrument/SOURCE[source]/slit/type": "fixed",
+    "/ENTRY[entry]/SAMPLE[sample]/name": "KTF-9_1_A"
+}

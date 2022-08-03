@@ -25,12 +25,16 @@ import yaml
 import pandas as pd
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
-from nexusparser.tools.dataconverter.readers.transmission.metadata_parsers import *
+import nexusparser.tools.dataconverter.readers.transmission.metadata_parsers as mpars
 
 
 #: Dictionary mapping metadata in the asc file to the paths in the NeXus file.
 METADATA_MAP: Dict[str, Callable[[list], Any]] = {
-    "/ENTRY[entry]/start_time": read_start_date,
+    "/ENTRY[entry]/start_time": mpars.read_start_date,
+    "/ENTRY[entry]/instrument/sample_attenuator/attenuator_transmission":
+        mpars.read_sample_attenuator,
+    "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission":
+        mpars.read_ref_attenuator
 }
 
 
@@ -157,6 +161,11 @@ class TransmissionReader(BaseReader):
 
         template["/@default"] = "entry"
         template["/ENTRY[entry]/@default"] = "data"
+        template["/ENTRY[entry]/definition"] = "NXtransmission"
+        template["/ENTRY[entry]/definition/@version"] = "v2022.??"
+        template["/ENTRY[entry]/definition/@url"] = \
+            "https://fairmat-experimental.github.io/nexus-fairmat-proposal/" + \
+            "50433d9039b3f33299bab338998acb5335cd8951/index.html"
 
         sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
         for file_path in sorted_paths:
