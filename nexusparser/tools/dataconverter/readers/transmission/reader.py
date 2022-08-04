@@ -109,7 +109,8 @@ def parse_yml(file_path: str) -> Dict[str, Any]:
 
 # pylint: disable=too-few-public-methods
 class TransmissionReader(BaseReader):
-    """MyDataReader implementation for the DataConverter to convert mydata to Nexus."""
+    """MyDataReader implementation for the DataConverter
+    to convert transmission data to Nexus."""
 
     supported_nxdls = ["NXtransmission"]
 
@@ -119,7 +120,7 @@ class TransmissionReader(BaseReader):
             file_paths: Tuple[str] = None,
             _: Tuple[Any] = None,
     ) -> dict:
-        """Reader class to read transmission data from Perkin Ellmer measurement files"""
+        """Read transmission data from Perkin Ellmer measurement files"""
         extensions = {
             ".asc": parse_asc,
             ".json": parse_json,
