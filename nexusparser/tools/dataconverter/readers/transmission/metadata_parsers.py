@@ -34,3 +34,32 @@ def read_sample_attenuator(metadata: list) -> int:
 def read_ref_attenuator(metadata: list) -> int:
     """Reads the sample attenuator from the metadata"""
     return int(metadata[47].split()[1].split(":")[1])
+
+
+# TODO: Check wavelength ranges and write settings only if they were used
+def read_uv_monochromator_range(metadata: list) -> list:
+    """Reads the uv monochromator range from the metadata"""
+    start_wavelength = float(metadata[9])
+    monochromator_change = float(metadata[41])
+    return [start_wavelength, monochromator_change]
+
+
+def read_visir_monochromator_range(metadata: list) -> list:
+    """Reads the visir monochromator range from the metadata"""
+    monochromator_change = float(metadata[41])
+    stop_wavelength = float(metadata[83])
+    return [monochromator_change, stop_wavelength]
+
+
+def get_d2_range(metadata: list) -> list:
+    """Reads the D2 lamp range from the metadata"""
+    start_wavelength = float(metadata[9])
+    lamp_change = float(metadata[42])
+    return [start_wavelength, lamp_change]
+
+
+def get_halogen_range(metadata: list) -> list:
+    """Reads the halogen lamp range from the metadata"""
+    lamp_change = float(metadata[42])
+    stop_wavelength = float(metadata[83])
+    return [lamp_change, stop_wavelength]

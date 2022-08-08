@@ -18,7 +18,8 @@
 """Perkin Ellmer transmission file reader implementation for the DataConverter."""
 
 import os
-from typing import Tuple, Any, Dict, Callable
+from inspect import isfunction
+from typing import Callable, List, Tuple, Any, Dict
 import json
 import yaml
 import pandas as pd
@@ -28,13 +29,28 @@ import nexusparser.tools.dataconverter.readers.transmission.metadata_parsers as 
 from nexusparser.tools.dataconverter.readers.utils import flatten_and_replace
 
 
-#: Dictionary mapping metadata in the asc file to the paths in the NeXus file.
-METADATA_MAP: Dict[str, Callable[[list], Any]] = {
+# Dictionary mapping metadata in the asc file to the paths in the NeXus file.
+# The entry can either be a function with one list parameter
+# which is executed to fill the specific path or an
+# integer which is used to get the value at the index of the metadata.
+# If the value is a str this string gets inputed at the path.
+METADATA_MAP: Dict[str, Any] = {
+    "/ENTRY[entry]/SAMPLE[sample]/name": 8,
     "/ENTRY[entry]/start_time": mpars.read_start_date,
     "/ENTRY[entry]/instrument/sample_attenuator/attenuator_transmission":
         mpars.read_sample_attenuator,
     "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission":
-        mpars.read_ref_attenuator
+        mpars.read_ref_attenuator,
+    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating]/wavelength_range":
+        mpars.read_uv_monochromator_range,
+    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating1]/wavelength_range":
+        mpars.read_visir_monochromator_range,
+    "/ENTRY[entry]/instrument/SOURCE[source]/type": "D2",
+    "/ENTRY[entry]/instrument/SOURCE[source]/wavelength_range":
+        mpars.get_d2_range,
+    "/ENTRY[entry]/instrument/SOURCE[source1]/type": "halogen",
+    "/ENTRY[entry]/instrument/SOURCE[source1]/wavelength_range":
+        mpars.get_halogen_range
 }
 # Dictionary to map value during the yaml eln reading
 # This is typically a mapping from ELN signifier to NeXus path
@@ -42,6 +58,120 @@ CONVERT_DICT: Dict[str, str] = {}
 # Dictionary to map nested values during the yaml eln reading
 # This is typically a mapping from nested ELN signifiers to NeXus group
 REPLACE_NESTED: Dict[str, str] = {}
+
+
+def data_to_template(data: pd.DataFrame) -> Dict[str, Any]:
+    """Builds the data entry dict from the data in a pandas dataframe
+
+    Args:
+        data (pd.DataFrame): The dataframe containing the data.
+
+    Returns:
+        Dict[str, Any]: The dict with the data paths inside NeXus.
+    """
+    template: Dict[str, Any] = {}
+    template["/ENTRY[entry]/data/@signal"] = "data"
+    template["/ENTRY[entry]/data/@axes"] = "wavelength"
+    template["/ENTRY[entry]/data/type"] = "transmission"
+    template["/ENTRY[entry]/data/@signal"] = "transmission"
+    template["/ENTRY[entry]/data/wavelength"] = data.index.values
+    template["/ENTRY[entry]/instrument/spectrometer/wavelength"] = data.index.values
+    template["/ENTRY[entry]/data/wavelength/@units"] = "nm"
+    template["/ENTRY[entry]/data/transmission"] = data.values[:, 0]
+    template["/ENTRY[entry]/instrument/measured_data"] = data.values
+
+    return template
+
+
+def parse_detector_line(line: str, convert: Callable[[str], Any] = None) -> List[Any]:
+    """Parses a detector line from the asc file.
+
+    Args:
+        line (str): The line to parse.
+
+    Returns:
+        List[Any]: The list of detector settings.
+    """
+    if convert is None:
+        convert = lambda x: x
+    return [convert(s.split('/')[-1]) for s in line.split()]
+
+
+# pylint: disable=too-many-arguments
+def convert_detector_to_template(
+        det_type: str,
+        slit: str,
+        time: float,
+        gain: float,
+        det_idx: int,
+        wavelength_range: List[float]
+) -> Dict[str, Any]:
+    """Writes the detector settings to the template.
+
+    Args:
+        det_type (str): The detector type.
+        slit (float): The slit width.
+        time (float): The exposure time.
+        gain (str): The gain setting.
+
+    Returns:
+        Dict[str, Any]: The dictionary containing the data readout from the asc file.
+    """
+    if det_idx == 0:
+        path = '/ENTRY[entry]/instrument/DETECTOR[detector]'
+    else:
+        path = f'/ENTRY[entry]/instrument/DETECTOR[detector{det_idx}]'
+    template: Dict[str, Any] = {}
+    template[f"{path}/type"] = det_type
+    template[f"{path}/response_time"] = time
+    if gain is not None:
+        template[f"{path}/gain"] = gain
+
+    if slit == "servo":
+        template[f"{path}/slit/type"] = "servo"
+    else:
+        template[f"{path}/slit/type"] = "fixed"
+        template[f"{path}/slit/x_gap"] = float(slit)
+        template[f"{path}/slit/x_gap/@units"] = "nm"
+
+    template[f"{path}/wavelength_range"] = wavelength_range
+
+    return template
+
+
+def read_detectors(metadata: list) -> Dict[str, Any]:
+    """Reads detector values from the metadata and writes them into a template
+    with the appropriate NeXus path."""
+
+    template: Dict[str, Any] = {}
+    detector_slits = parse_detector_line(metadata[31])
+    detector_times = parse_detector_line(metadata[32], float)
+    detector_gains = parse_detector_line(metadata[35], float)
+    detector_changes = [float(x) for x in metadata[43].split()]
+    wavelength_ranges = \
+        [float(metadata[9])] + detector_changes[::-1] + [float(metadata[83])]
+
+    # TODO: Check if detectors are in range and only write them if they were used.
+    template.update(
+        convert_detector_to_template(
+            "PMT", detector_slits[2], detector_times[2],
+            None, 2, [wavelength_ranges[0], wavelength_ranges[1]]
+        )
+    )
+
+    for name, idx in zip(["PbS", "InGaAs"], [1, 0]):
+        template.update(
+            convert_detector_to_template(
+                name,
+                detector_slits[idx],
+                detector_times[idx],
+                detector_gains[idx],
+                idx,
+                [wavelength_ranges[2 - idx], wavelength_ranges[3 - idx]]
+            )
+        )
+
+    return template
 
 
 def parse_asc(file_path: str) -> Dict[str, Any]:
@@ -57,26 +187,32 @@ def parse_asc(file_path: str) -> Dict[str, Any]:
     data_start_ind = "#DATA"
 
     with open(file_path, encoding="utf-8") as fobj:
-        keys = []
+        metadata = []
         for line in fobj:
             if line.strip() == data_start_ind:
                 break
-            keys.append(line.strip())
-
-        for path, parser in METADATA_MAP.items():
-            template[path] = parser(keys)
+            metadata.append(line.strip())
 
         data = pd.read_csv(
             fobj, delim_whitespace=True, header=None, index_col=0
         )
 
-    template["/ENTRY[entry]/data/@signal"] = "data"
-    template["/ENTRY[entry]/data/@axes"] = "wavelength"
-    template["/ENTRY[entry]/data/type"] = "transmission"
-    template["/ENTRY[entry]/data/@signal"] = "transmission"
-    template["/ENTRY[entry]/data/wavelength"] = data.index.values
-    template["/ENTRY[entry]/data/wavelength/@units"] = "nm"
-    template["/ENTRY[entry]/data/transmission"] = data.values[:, 0]
+    for path, val in METADATA_MAP.items():
+        # If the dict value is an int just get the data with it's index
+        if isinstance(val, int):
+            template[path] = metadata[val]
+        elif isinstance(val, str):
+            template[path] = val
+        elif isfunction(val):
+            template[path] = val(metadata)
+        else:
+            print(
+                f"WARNING: "
+                f"Invalid type value {type(val)} of entry '{path}:{val}' in METADATA_MAP"
+            )
+
+    template.update(read_detectors(metadata))
+    template.update(data_to_template(data))
 
     return template
 
