@@ -18,6 +18,10 @@
 """Functions for reading metadata values from Perkin Ellmer files"""
 from datetime import datetime
 
+# The min & max wavelength the instrument can measure
+MIN_WAVELENGTH = 190.
+MAX_WAVELENGTH = 3350.
+
 
 def read_start_date(metadata: list) -> str:
     """Reads the start date from the metadata"""
@@ -36,30 +40,25 @@ def read_ref_attenuator(metadata: list) -> int:
     return int(metadata[47].split()[1].split(":")[1])
 
 
-# TODO: Check wavelength ranges and write settings only if they were used
 def read_uv_monochromator_range(metadata: list) -> list:
     """Reads the uv monochromator range from the metadata"""
-    start_wavelength = float(metadata[9])
     monochromator_change = float(metadata[41])
-    return [start_wavelength, monochromator_change]
+    return [MIN_WAVELENGTH, monochromator_change]
 
 
 def read_visir_monochromator_range(metadata: list) -> list:
     """Reads the visir monochromator range from the metadata"""
     monochromator_change = float(metadata[41])
-    stop_wavelength = float(metadata[83])
-    return [monochromator_change, stop_wavelength]
+    return [monochromator_change, MAX_WAVELENGTH]
 
 
 def get_d2_range(metadata: list) -> list:
     """Reads the D2 lamp range from the metadata"""
-    start_wavelength = float(metadata[9])
     lamp_change = float(metadata[42])
-    return [start_wavelength, lamp_change]
+    return [MIN_WAVELENGTH, lamp_change]
 
 
 def get_halogen_range(metadata: list) -> list:
     """Reads the halogen lamp range from the metadata"""
     lamp_change = float(metadata[42])
-    stop_wavelength = float(metadata[83])
-    return [lamp_change, stop_wavelength]
+    return [lamp_change, MAX_WAVELENGTH]

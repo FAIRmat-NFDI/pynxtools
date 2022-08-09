@@ -149,9 +149,8 @@ def read_detectors(metadata: list) -> Dict[str, Any]:
     detector_gains = parse_detector_line(metadata[35], float)
     detector_changes = [float(x) for x in metadata[43].split()]
     wavelength_ranges = \
-        [float(metadata[9])] + detector_changes[::-1] + [float(metadata[83])]
+        [mpars.MIN_WAVELENGTH] + detector_changes[::-1] + [mpars.MAX_WAVELENGTH]
 
-    # TODO: Check if detectors are in range and only write them if they were used.
     template.update(
         convert_detector_to_template(
             "PMT", detector_slits[2], detector_times[2],
