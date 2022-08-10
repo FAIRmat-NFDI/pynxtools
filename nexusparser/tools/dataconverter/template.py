@@ -143,9 +143,16 @@ class Template(dict):
                     del internal_dict[key]
 
     def update(self, template):
-        """Merges second template to original"""
-        for optionality in ("optional", "recommended", "required", "undocumented"):
-            self.get_optionality(optionality).update(template.get_optionality(optionality))
+        """Merges second template to original
+        or updates values from a dictionary if the type of :code:`template` is dict"""
+        if isinstance(template, dict):
+            for key, value in template.items():
+                self[key] = value
+        else:
+            for optionality in ("optional", "recommended", "required", "undocumented"):
+                self.get_optionality(optionality).update(
+                    template.get_optionality(optionality)
+                )
 
     def add_entry(self, entry_name):
         """Add the whole NXDL again with a new HDF5 name for the template."""
