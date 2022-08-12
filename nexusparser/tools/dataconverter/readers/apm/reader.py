@@ -73,7 +73,7 @@ def get_dct_value(flat_dict: fd.FlatDict, keyword_path: str):
     return None
 
 
-def assess_situation_with_input_files(file_paths: Tuple[str] = None) -> Tuple[dict, int]:
+def assess_situation_with_apm_input_files(file_paths: Tuple[str] = None) -> Tuple[dict, int]:
     """Different file formats contain different types of data.
 
     Identify how many files of specific type Tuple contains to judge if the
@@ -656,7 +656,6 @@ def extract_data_from_yaml_file(file_name: str, template: dict) -> dict:
     # given that the syntax for nomadOASIS ELN and NeXus schemata is
     # as of 2022/06/28 not yet fully harmonized plus we dont want
     # to create an extra blocker in sprint 8, we carry the values hardcoded
-    file_name = 'eln_data.yaml'
     with open(file_name, 'r') as stream:
         yml = fd.FlatDict(yaml.safe_load(stream), delimiter=':')
 
@@ -879,7 +878,7 @@ class ApmReader(BaseReader):
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary."""
-        typed_files, case = assess_situation_with_input_files(file_paths)
+        typed_files, case = assess_situation_with_apm_input_files(file_paths)
         print(typed_files)
         print(case)
         assert case > INVALID_INPUT, \

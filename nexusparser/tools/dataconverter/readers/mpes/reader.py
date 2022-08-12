@@ -19,7 +19,6 @@
 import errno
 import json
 import os
-import collections
 from functools import reduce
 from typing import Any
 from typing import Tuple
@@ -29,6 +28,7 @@ import xarray as xr
 import yaml
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+from nexusparser.tools.dataconverter.readers.utils import flatten_and_replace
 
 DEFAULT_UNITS = {
     "X": "step",
@@ -158,7 +158,7 @@ def iterate_dictionary(dic, key_string):
 
 CONVERT_DICT = {
     'Instrument': 'INSTRUMENT[instrument]',
-    'Analyzer': 'ANALYZER[analyzer]',
+    'Analyzer': 'ELECTRONANALYSER[electronanalyser]',
     'Beam': 'BEAM[beam]',
     'unit': '@units',
     'Sample': 'SAMPLE[sample]',
@@ -170,32 +170,6 @@ REPLACE_NESTED = {
     'BEAM[beam]/Pump': 'BEAM[beam_pump]',
     'sample_history': 'sample_history/description'
 }
-
-
-def flatten_and_replace(dic, parent_key='/ENTRY[entry]', sep='/'):
-    """Flatten a nested dictionary, and replace the keys with the appropriate
-    paths in the nxs file.
-    Args:
-        d (dict): dictionary to flatten
-        parent_key (str): parent key of the dictionary
-        sep (str): separator for the keys
-    Returns:
-        dict: flattened dictionary
-    """
-    items = []
-    for key, val in dic.items():
-        new_key = parent_key + sep + CONVERT_DICT.get(key, key)
-        if isinstance(val, collections.Mapping):
-            items.extend(flatten_and_replace(val, new_key, sep=sep).items())
-        else:
-            for old, new in REPLACE_NESTED.items():
-                new_key = new_key.replace(old, new)
-
-            if new_key.endswith('/value'):
-                items.append((new_key[:-6], val))
-            else:
-                items.append((new_key, val))
-    return dict(items)
 
 
 def handle_h5_and_json_file(file_paths, objects):
@@ -250,7 +224,9 @@ def handle_h5_and_json_file(file_paths, objects):
                 config_file_dict = json.load(file)
         elif file_extension in [".yaml", ".yml"]:
             with open(file_path) as feln:
-                eln_data_dict = flatten_and_replace(yaml.safe_load(feln))
+                eln_data_dict = flatten_and_replace(
+                    yaml.safe_load(feln), CONVERT_DICT, REPLACE_NESTED
+                )
 
     if objects is not None:
         # For the case of a single object

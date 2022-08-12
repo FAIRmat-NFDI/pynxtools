@@ -41,15 +41,22 @@ def load_header(filename, default):
     with open(filename, 'rt', encoding='utf8') as file:
         header = yaml.safe_load(file)
 
-    header_keys = list(header.keys())
-    for attr in header_keys:
-        if "\\@" in attr:
-            header[attr.replace("\\@", "@")] = header.pop(attr)
+    clean_header = {}
+    for key, val in header.items():
+        if "\\@" in key:
+            clean_header[key.replace("\\@", "@")] = val
+        elif key == 'sep':
+            clean_header[key] = val.encode("utf-8").decode("unicode_escape")
+        elif isinstance(val, dict):
+            clean_header[key] = val.get('value')
+            clean_header[f'{key}/@units'] = val.get('unit')
+        else:
+            clean_header[key] = val
 
     for key, value in default.items():
-        if key not in header:
-            header[key] = value
-    return header
+        if key not in clean_header:
+            clean_header[key] = value
+    return clean_header
 
 
 def load_as_pandas_array(my_file, header):
