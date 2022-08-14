@@ -113,7 +113,7 @@ If its category attribute is 'base', then it is added to the list. """
         tree = ET.parse(nexus_file)
         root = tree.getroot()
         if root.attrib['category'] == 'base':
-            nx_clss.append(str(nexus_file[nexus_file.rindex('/') + 1:])[:-9])
+            nx_clss.append(str(nexus_file[nexus_file.rindex(os.sep) + 1:])[:-9])
     nx_clss = sorted(nx_clss)
     return nx_clss
 
