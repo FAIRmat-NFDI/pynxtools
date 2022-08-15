@@ -262,7 +262,7 @@
   "/ENTRY[entry]/PROCESS[process]/REGISTRATION[registration]/TRANSFORMATIONS[tranformations]/AXISNAME[rot_z]/@depends_on": "trans_y",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/applied": true,
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/coefficients": "@attrs:metadata/energy_correction/calibration/coeffs",
-  "/ENTRY[entry]/PROCESS[process]/energy_calibration/fit_function": "Polynomial",
+  "/ENTRY[entry]/PROCESS[process]/energy_calibration/fit_function": "@attrs:metadata/energy_correction/calibration/fit_function",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/offset": "@attrs:metadata/energy_correction/calibration/offset",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/original_axis": "@attrs:metadata/energy_correction/tof",
   "/ENTRY[entry]/PROCESS[process]/energy_calibration/calibrated_axis": "@attrs:metadata/energy_correction/calibration/axis",
