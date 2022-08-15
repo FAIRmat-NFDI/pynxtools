@@ -316,8 +316,8 @@ class MPESReader(BaseReader):
 
                     except KeyError:
                         print(
-                            f"The xarray doesn't contain entry corresponding "
-                            f"to the path {key}",
+                            f"[info]: Path {key} not found. "
+                            f"Skipping the entry.",
                         )
 
             else:
