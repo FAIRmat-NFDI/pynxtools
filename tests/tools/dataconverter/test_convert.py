@@ -206,4 +206,4 @@ def test_mpes_writing(tmp_path):
     NexusParser().parse(example_data, archive, structlog.get_logger())
     assert archive.nexus.nx_application_mpes.\
         nx_group_ENTRY[0].nx_group_PROCESS[0].nx_group_energy_calibration.\
-        nx_field_calibrated_axis.nx_value[0] + 14.264604 < 1e-6
+        nx_field_calibrated_axis.nx_value[0] == pytest.approx(-14.264604, rel=1e-6)

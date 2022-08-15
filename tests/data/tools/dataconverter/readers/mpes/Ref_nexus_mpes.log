@@ -330,7 +330,7 @@ DEBUG - value: counts
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/DATA/data
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ANY]
 DEBUG - ===== FIELD (//entry/data/delay): <HDF5 dataset "delay": shape (5,), type "<f8">
 DEBUG - value: [-2000.   125.  2250.  4375.  6500.] 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
@@ -589,7 +589,7 @@ DEBUG - value: mm
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/distance
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/instrument/beam/extent): <HDF5 dataset "extent": shape (2,), type "<f8">
 DEBUG - value: [ 80. 190.] 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
@@ -637,7 +637,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_energy
 NXbeam.nxdl.xml:/incident_energy
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/beam/incident_energy_spread): <HDF5 dataset "incident_energy_spread": shape (), type "<f8">
 DEBUG - value: 0.11 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
@@ -660,7 +660,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_energy_spread
 NXbeam.nxdl.xml:/incident_energy_spread
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/beam/incident_polarization): <HDF5 dataset "incident_polarization": shape (4,), type "<f8">
 DEBUG - value: [1. 1. 0. 0.] 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
@@ -674,7 +674,7 @@ DEBUG - value: V^2/mm^2
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_polarization
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/beam/pulse_duration): <HDF5 dataset "pulse_duration": shape (), type "<f8">
 DEBUG - value: 20.0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
@@ -753,7 +753,7 @@ DEBUG - value: mm
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/distance
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump/extent): <HDF5 dataset "extent": shape (2,), type "<f8">
 DEBUG - value: [155. 367.] 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
@@ -817,7 +817,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_energy
 NXbeam.nxdl.xml:/incident_energy
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump/incident_energy_spread): <HDF5 dataset "incident_energy_spread": shape (), type "<f8">
 DEBUG - value: 0.05 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
@@ -840,7 +840,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_energy_spread
 NXbeam.nxdl.xml:/incident_energy_spread
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump/incident_polarization): <HDF5 dataset "incident_polarization": shape (4,), type "<i8">
 DEBUG - value: [1 1 0 0] 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
@@ -854,7 +854,7 @@ DEBUG - value: V^2/mm^2
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_polarization
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump/incident_wavelength): <HDF5 dataset "incident_wavelength": shape (), type "<f8">
 DEBUG - value: 1030.0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
@@ -1073,7 +1073,7 @@ DEBUG -
              indicate leakage, field emission or arc currents to the extractor lens.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/extractor_current@units)
-DEBUG - value: muA 
+DEBUG - value: µA 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NX_FLOAT']
 DEBUG - classes:
 NXcollectioncolumn.nxdl.xml:/extractor_current
@@ -2149,7 +2149,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution
 NXelectronanalyser.nxdl.xml:/energy_resolution
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== GROUP (//entry/instrument/electronanalyser/energydispersion [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXenergydispersion]): <HDF5 group "/entry/instrument/electronanalyser/energydispersion" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXenergydispersion']
 DEBUG - classes:
@@ -2213,7 +2213,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXenergydi
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/ENERGYDISPERSION/pass_energy
 NXenergydispersion.nxdl.xml:/pass_energy
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/energydispersion/scheme): <HDF5 dataset "scheme": shape (), type "|O">
 DEBUG - value: b'tof' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXenergydispersion', 'NX_CHAR']
@@ -2576,7 +2576,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/energy_resolution
 NXinstrument.nxdl.xml:/energy_resolution
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== GROUP (//entry/instrument/manipulator [NXmpes::/NXentry/NXinstrument/NXmanipulator]): <HDF5 group "/entry/instrument/manipulator" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
 DEBUG - classes:
@@ -2631,7 +2631,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias
 NXmanipulator.nxdl.xml:/sample_bias
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_CURRENT]
 DEBUG - ===== FIELD (//entry/instrument/manipulator/sample_temperature): <HDF5 dataset "sample_temperature": shape (), type "<f8">
 DEBUG - value: 23.050763803680983 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_FLOAT']
@@ -2652,7 +2652,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_temperature
 NXmanipulator.nxdl.xml:/sample_temperature
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_TEMPERATURE]
 DEBUG - ===== GROUP (//entry/instrument/manipulator/transformations [NXmpes::/NXentry/NXinstrument/NXmanipulator/NXtransformations]): <HDF5 group "/entry/instrument/manipulator/transformations" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations']
 DEBUG - classes:
@@ -3431,7 +3431,7 @@ DEBUG -
 
                 .. _symmetry-guided distortion correction: https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub
         
-DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (5 members)>
+DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (6 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
@@ -3494,7 +3494,7 @@ DEBUG -
              E(TOF). Here we can store the array of fit coefficients.
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/fit_function): <HDF5 dataset "fit_function": shape (), type "|O">
-DEBUG - value: b'(a0/(x0-a1))**2 + a3' 
+DEBUG - value: b'(a0/(x0-a1))**2 + a2' 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_CHAR']
 DEBUG - classes:
 NXcalibration.nxdl.xml:/fit_function
@@ -3509,6 +3509,16 @@ DEBUG -
              Use x0, x1, ..., xn for the variables.
              
              The formula should be numpy compliant.
+        
+DEBUG - ===== FIELD (//entry/process/energy_calibration/offset): <HDF5 dataset "offset": shape (), type "<f8">
+DEBUG - value: -24.164778378162257 
+DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
+DEBUG - classes:
+NXcalibration.nxdl.xml:/offset
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
+DEBUG - 
+             For linear calibration. Offset parameter.
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/original_axis): <HDF5 dataset "original_axis": shape (900,), type "<f8">
 DEBUG - value: [ 60027.77777778  60083.33333333  60138.88888889  60194.44444444 ...
@@ -4095,7 +4105,7 @@ DEBUG -
              * This is the *Hill* system used by Chemical Abstracts.
         
 DEBUG - ===== FIELD (//entry/sample/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
-DEBUG - value: b'/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[offset_phi]' 
+DEBUG - value: b'/entry/sample/transformations/offset_phi' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
 NXsample.nxdl.xml:/depends_on
@@ -4128,7 +4138,7 @@ DEBUG - value: mbar
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE/gas_pressure
-DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - @units [NX_PRESSURE]
 DEBUG - ===== FIELD (//entry/sample/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
