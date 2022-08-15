@@ -3411,8 +3411,8 @@ NXsample.nxdl.xml:/preparation_date
 DEBUG - <<RECOMMENDED>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/preparation_date):
 DEBUG - 
-                     Date of preparation of the sample for the XPS experiment (i.e.
-                     cleaving, last annealing).
+                     Date of preparation of the sample for the XPS experiment (i.e. cleaving, last
+                     annealing).
                 
 DEBUG - documentation (NXsample.nxdl.xml:/preparation_date):
 DEBUG - 
