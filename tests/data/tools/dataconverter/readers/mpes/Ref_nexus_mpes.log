@@ -45,14 +45,6 @@ DEBUG -
              .. [#] NIAC2014 discussion summary:
                  https://www.nexusformat.org/2014_How_to_find_default_data.html
         
-DEBUG - ===== ATTRS (//entry@entry)
-DEBUG - value: entry 
-DEBUG - classpath: ['NXentry']
-DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY
-NXentry.nxdl.xml:
-DEBUG - @entry - IS NOT IN SCHEMA
-DEBUG - 
 DEBUG - ===== FIELD (//entry/collection_time): <HDF5 dataset "collection_time": shape (), type "<f8">
 DEBUG - value: 2317.343 
 DEBUG - classpath: ['NXentry', 'NX_FLOAT']
@@ -320,7 +312,7 @@ DEBUG - -> data
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/DATA/signal):
 DEBUG - 
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (10, 10, 10, 5), type "<f4">
-DEBUG - value: [[[2.70300e+03 3.78900e+03 3.63000e+03 3.66800e+03 2.55700e+03] ...
+DEBUG - value: [[[1.14760e+04 1.64560e+04 1.55440e+04 1.48940e+04 1.08810e+04] ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/DATA/data
@@ -339,7 +331,7 @@ DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/DATA/data
 DEBUG - @units - REQUIRED, but undefined unit category
-DEBUG - ===== FIELD (//entry/data/delay): <HDF5 dataset "delay": shape (5,), type "<f4">
+DEBUG - ===== FIELD (//entry/data/delay): <HDF5 dataset "delay": shape (5,), type "<f8">
 DEBUG - value: [-2000.   125.  2250.  4375.  6500.] 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
@@ -360,8 +352,8 @@ DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/VARIABLE
 DEBUG - @units - REQUIRED, but undefined unit category
-DEBUG - ===== FIELD (//entry/data/energy): <HDF5 dataset "energy": shape (10,), type "<f4">
-DEBUG - value: [-4.         -3.4444444  -2.8888888  -2.3333333  -1.7777778  -1.2222222 ...
+DEBUG - ===== FIELD (//entry/data/energy): <HDF5 dataset "energy": shape (10,), type "<f8">
+DEBUG - value: [-4.         -3.44444444 -2.88888889 -2.33333333 -1.77777778 -1.22222222 ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/VARIABLE
@@ -381,8 +373,8 @@ DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/VARIABLE
 DEBUG - @units - REQUIRED, but undefined unit category
-DEBUG - ===== FIELD (//entry/data/kx): <HDF5 dataset "kx": shape (10,), type "<f4">
-DEBUG - value: [-1.8 -1.4 -1.  -0.6 -0.2  0.2  0.6  1.   1.4  1.8] 
+DEBUG - ===== FIELD (//entry/data/kx): <HDF5 dataset "kx": shape (10,), type "<f8">
+DEBUG - value: [-1.5        -1.16666667 -0.83333333 -0.5        -0.16666667  0.16666667 ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/VARIABLE
@@ -402,8 +394,8 @@ DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/VARIABLE
 DEBUG - @units - REQUIRED, but undefined unit category
-DEBUG - ===== FIELD (//entry/data/ky): <HDF5 dataset "ky": shape (10,), type "<f4">
-DEBUG - value: [-1.8 -1.4 -1.  -0.6 -0.2  0.2  0.6  1.   1.4  1.8] 
+DEBUG - ===== FIELD (//entry/data/ky): <HDF5 dataset "ky": shape (10,), type "<f8">
+DEBUG - value: [-1.5        -1.16666667 -0.83333333 -0.5        -0.16666667  0.16666667 ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/VARIABLE
@@ -521,7 +513,7 @@ DEBUG - documentation (NXentry.nxdl.xml:/experiment_laboratory):
 DEBUG - 
              Name of the laboratory or beamline
         
-DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (7 members)>
+DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (8 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT
@@ -849,8 +841,8 @@ DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_energy_spread
 NXbeam.nxdl.xml:/incident_energy_spread
 DEBUG - @units - REQUIRED, but undefined unit category
-DEBUG - ===== FIELD (//entry/instrument/beam_pump/incident_polarization): <HDF5 dataset "incident_polarization": shape (4,), type "<f8">
-DEBUG - value: [1. 1. 0. 0.] 
+DEBUG - ===== FIELD (//entry/instrument/beam_pump/incident_polarization): <HDF5 dataset "incident_polarization": shape (4,), type "<i8">
+DEBUG - value: [1 1 0 0] 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/BEAM/incident_polarization
@@ -925,7 +917,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_energy
 DEBUG - @units [NX_ENERGY]
-DEBUG - ===== GROUP (//entry/instrument/electronanalyser [NXmpes::/NXentry/NXinstrument/NXelectronanalyser]): <HDF5 group "/entry/instrument/electronanalyser" (8 members)>
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser [NXmpes::/NXentry/NXinstrument/NXelectronanalyser]): <HDF5 group "/entry/instrument/electronanalyser" (10 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER
@@ -972,7 +964,7 @@ NXelectronanalyser.nxdl.xml:/COLLECTIONCOLUMN
 NXcollectioncolumn.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/contrast_aperture [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXcollectioncolumn/NXaperture]): <HDF5 group "/entry/instrument/electronanalyser/collectioncolumn/contrast_aperture" (2 members)>
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/contrast_aperture [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXcollectioncolumn/NXaperture]): <HDF5 group "/entry/instrument/electronanalyser/collectioncolumn/contrast_aperture" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_aperture
@@ -995,8 +987,44 @@ NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_ape
 NXaperture.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/contrast_aperture/ca_m3 [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXcollectioncolumn/NXaperture/NXpositioner]): <HDF5 group "/entry/instrument/electronanalyser/collectioncolumn/contrast_aperture/ca_m3" (1 members)>
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner']
+DEBUG - classes:
+NXaperture.nxdl.xml:/POSITIONER
+NXpositioner.nxdl.xml:
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXaperture.nxdl.xml:/POSITIONER):
+DEBUG - 
+             Stores the raw positions of aperture motors.
+        
+DEBUG - documentation (NXpositioner.nxdl.xml:):
+DEBUG - 
+        A generic positioner such as a motor or piezo-electric transducer.  
+    
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/contrast_aperture/ca_m3@NX_class)
+DEBUG - value: NXpositioner 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner']
+DEBUG - classes:
+NXaperture.nxdl.xml:/POSITIONER
+NXpositioner.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/contrast_aperture/ca_m3/value): <HDF5 dataset "value": shape (), type "<f8">
+DEBUG - value: -11.49979350759219 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner', 'NX_NUMBER']
+DEBUG - classes:
+NXpositioner.nxdl.xml:/value
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXpositioner.nxdl.xml:/value):
+DEBUG - best known value of positioner - need [n] as may be scanned
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/contrast_aperture/ca_m3/value@units)
+DEBUG - value: mm 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner', 'NX_NUMBER']
+DEBUG - classes:
+NXpositioner.nxdl.xml:/value
+DEBUG - @units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/contrast_aperture/shape): <HDF5 dataset "shape": shape (), type "|O">
-DEBUG - value: b'circle' 
+DEBUG - value: b'open' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NX_CHAR']
 DEBUG - classes:
 NXaperture.nxdl.xml:/shape
@@ -1045,7 +1073,7 @@ DEBUG -
              indicate leakage, field emission or arc currents to the extractor lens.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/extractor_current@units)
-DEBUG - value: A 
+DEBUG - value: muA 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NX_FLOAT']
 DEBUG - classes:
 NXcollectioncolumn.nxdl.xml:/extractor_current
@@ -1066,7 +1094,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollecti
 DEBUG - classes:
 NXcollectioncolumn.nxdl.xml:/extractor_voltage
 DEBUG - @units [NX_VOLTAGE]
-DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/field_aperture [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXcollectioncolumn/NXaperture]): <HDF5 group "/entry/instrument/electronanalyser/collectioncolumn/field_aperture" (2 members)>
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/field_aperture [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXcollectioncolumn/NXaperture]): <HDF5 group "/entry/instrument/electronanalyser/collectioncolumn/field_aperture" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_aperture
@@ -1089,6 +1117,78 @@ NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_apertu
 NXaperture.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m1 [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXcollectioncolumn/NXaperture/NXpositioner]): <HDF5 group "/entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m1" (1 members)>
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner']
+DEBUG - classes:
+NXaperture.nxdl.xml:/POSITIONER
+NXpositioner.nxdl.xml:
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXaperture.nxdl.xml:/POSITIONER):
+DEBUG - 
+             Stores the raw positions of aperture motors.
+        
+DEBUG - documentation (NXpositioner.nxdl.xml:):
+DEBUG - 
+        A generic positioner such as a motor or piezo-electric transducer.  
+    
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m1@NX_class)
+DEBUG - value: NXpositioner 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner']
+DEBUG - classes:
+NXaperture.nxdl.xml:/POSITIONER
+NXpositioner.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m1/value): <HDF5 dataset "value": shape (), type "<f8">
+DEBUG - value: 3.749874153422982 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner', 'NX_NUMBER']
+DEBUG - classes:
+NXpositioner.nxdl.xml:/value
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXpositioner.nxdl.xml:/value):
+DEBUG - best known value of positioner - need [n] as may be scanned
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m1/value@units)
+DEBUG - value: mm 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner', 'NX_NUMBER']
+DEBUG - classes:
+NXpositioner.nxdl.xml:/value
+DEBUG - @units [NX_ANY]
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m2 [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXcollectioncolumn/NXaperture/NXpositioner]): <HDF5 group "/entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m2" (1 members)>
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner']
+DEBUG - classes:
+NXaperture.nxdl.xml:/POSITIONER
+NXpositioner.nxdl.xml:
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXaperture.nxdl.xml:/POSITIONER):
+DEBUG - 
+             Stores the raw positions of aperture motors.
+        
+DEBUG - documentation (NXpositioner.nxdl.xml:):
+DEBUG - 
+        A generic positioner such as a motor or piezo-electric transducer.  
+    
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m2@NX_class)
+DEBUG - value: NXpositioner 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner']
+DEBUG - classes:
+NXaperture.nxdl.xml:/POSITIONER
+NXpositioner.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m2/value): <HDF5 dataset "value": shape (), type "<f8">
+DEBUG - value: -5.200156936301793 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner', 'NX_NUMBER']
+DEBUG - classes:
+NXpositioner.nxdl.xml:/value
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXpositioner.nxdl.xml:/value):
+DEBUG - best known value of positioner - need [n] as may be scanned
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/fa_m2/value@units)
+DEBUG - value: mm 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NXpositioner', 'NX_NUMBER']
+DEBUG - classes:
+NXpositioner.nxdl.xml:/value
+DEBUG - @units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/shape): <HDF5 dataset "shape": shape (), type "|O">
 DEBUG - value: b'circle' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NX_CHAR']
@@ -1111,7 +1211,7 @@ DEBUG -
              Shape of the aperture.
         
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/field_aperture/size): <HDF5 dataset "size": shape (), type "<f8">
-DEBUG - value: nan 
+DEBUG - value: 200.0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture', 'NX_NUMBER']
 DEBUG - classes:
 NXaperture.nxdl.xml:/size
@@ -1812,7 +1912,7 @@ DEBUG - classes:
 NXlens_em.nxdl.xml:/voltage
 DEBUG - @units [NX_VOLTAGE]
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/mode): <HDF5 dataset "mode": shape (), type "|O">
-DEBUG - value: b'6kV_kmodem4.0_30VTOF_WTe2_2340VMCP.sav' 
+DEBUG - value: b'6kV_kmodem2.0_30VTOF_MoTe2_2340VMCP.sav' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NX_CHAR']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/mode
@@ -1879,6 +1979,17 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollecti
 DEBUG - classes:
 NXcollectioncolumn.nxdl.xml:/working_distance
 DEBUG - @units [NX_LENGTH]
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
+DEBUG - value: b'/entry/instrument/electronanalyser/transformations/trans_z' 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_CHAR']
+DEBUG - classes:
+NXelectronanalyser.nxdl.xml:/depends_on
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXelectronanalyser.nxdl.xml:/depends_on):
+DEBUG - 
+             Refers to the last transformation specifying the positon of the manipulator in
+             the NXtransformations chain.
+        
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/description): <HDF5 dataset "description": shape (), type "|O">
 DEBUG - value: b'SPECS Metis 1000 Momentum Microscope' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_CHAR']
@@ -2196,6 +2307,256 @@ DEBUG -
              List of the axes that are acquired by scanning a physical parameter, listed in
              order of decreasing speed. See fast_axes for examples.
         
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser/transformations [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXtransformations]): <HDF5 group "/entry/instrument/electronanalyser/transformations" (2 members)>
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations']
+DEBUG - classes:
+NXelectronanalyser.nxdl.xml:/TRANSFORMATIONS
+NXtransformations.nxdl.xml:
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXelectronanalyser.nxdl.xml:/TRANSFORMATIONS):
+DEBUG - 
+             Collection of axis-based translations and rotations to describe the location and
+             geometry of the manipulator as a component in the instrument. Conventions from
+             the NXtransformations base class are used. In principle, the McStas coordinate
+             system is used. The first transformation has to point either to another
+             component of the system or . (for pointing to the reference frame) to relate it
+             relative to the experimental setup. Typically, the components of a system should
+             all be related relative to each other and only one component should relate to
+             the reference coordinate system.
+        
+DEBUG - documentation (NXtransformations.nxdl.xml:):
+DEBUG - 
+		Collection of axis-based translations and rotations to describe a geometry.
+		May also contain axes that do not move and therefore do not have a transformation
+		type specified, but are useful in understanding coordinate frames within which
+		transformations are done, or in documenting important directions, such as the
+		direction of gravity.
+
+		A nested sequence of transformations lists the translation and rotation steps
+		needed to describe the position and orientation of any movable or fixed device.
+
+		There will be one or more transformations (axes) defined by one or more fields
+		for each transformation. Transformations can also be described by NXlog groups when
+		the values change with time. The all-caps name ``AXISNAME`` designates the
+		particular axis generating a transformation (e.g. a rotation axis or a translation
+		axis or a general axis).   The attribute ``units="NX_TRANSFORMATION"`` designates the
+		units will be appropriate to the ``transformation_type`` attribute:
+
+		* ``NX_LENGTH`` for ``translation``
+		* ``NX_ANGLE`` for ``rotation``
+		* ``NX_UNITLESS`` for axes for which no transformation type is specified
+
+		This class will usually contain all axes of a sample stage or goniometer or
+		a detector.  The NeXus default McSTAS coordinate frame is assumed, but additional
+		useful coordinate axes may be defined by using axes for which no transformation
+		type has been specified.
+
+		The entry point (``depends_on``) will be outside of this class and point to a
+		field in here. Following the chain may also require following ``depends_on``
+		links to transformations outside, for example to a common base table.  If
+		a relative path is given, it is relative to the group enclosing the ``depends_on``
+		specification.
+
+		For a chain of three transformations, where :math:`T_1` depends on :math:`T_2`
+		and that in turn depends on :math:`T_3`, the final transformation :math:`T_f` is
+
+		.. math:: T_f = T_3 T_2 T_1
+
+		In explicit terms, the transformations are a subset of affine transformations
+		expressed as 4x4 matrices that act on homogeneous coordinates, :math:`w=(x,y,z,1)^T`.
+
+		For rotation and translation,
+
+		.. math:: T_r &= \begin{pmatrix} R & o \\ 0_3 & 1 \end{pmatrix} \\ T_t &= \begin{pmatrix} I_3  & t + o \\ 0_3 & 1 \end{pmatrix}
+
+		where :math:`R` is the usual 3x3 rotation matrix, :math:`o` is an offset vector,
+		:math:`0_3` is a row of 3 zeros, :math:`I_3` is the 3x3 identity matrix and
+		:math:`t` is the translation vector.
+
+		:math:`o` is given by the ``offset`` attribute, :math:`t` is given by the ``vector``
+		attribute multiplied by the field value, and :math:`R` is defined as a rotation
+		about an axis in the direction of ``vector``, of angle of the field value.
+
+		NOTE
+		
+		One possible use of ``NXtransformations`` is to define the motors and
+		transformations for a diffractometer (goniometer).  Such use is mentioned
+		in the ``NXinstrument`` base class.  Use one ``NXtransformations`` group 
+		for each diffractometer and name the group appropriate to the device.
+		Collecting the motors of a sample table or xyz-stage in an NXtransformations
+		group is equally possible.
+
+
+		Following the section on the general dscription of axis in NXtransformations is a section which
+		documents the fields commonly used within NeXus for positioning purposes and their meaning. Whenever
+		there is a need for positioning a beam line component please use the existing names. Use as many fields
+		as needed in order to position the component. Feel free to add more axis if required. In the description
+		given below, only those atttributes which are defined through the name are spcified. Add the other attributes
+		of the full set:
+
+		* vector
+		* offset
+		* transformation_type
+		* depends_on
+
+		as needed.
+	
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations@NX_class)
+DEBUG - value: NXtransformations 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations']
+DEBUG - classes:
+NXelectronanalyser.nxdl.xml:/TRANSFORMATIONS
+NXtransformations.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/transformations/rot_y): <HDF5 dataset "rot_y": shape (), type "<f8">
+DEBUG - value: -115.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/rot_y@depends_on)
+DEBUG - value: . 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/rot_y@transformation_type)
+DEBUG - value: rotation 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/rot_y@units)
+DEBUG - value: degrees 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/rot_y@vector)
+DEBUG - value: [0 1 0] 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/transformations/trans_z): <HDF5 dataset "trans_z": shape (), type "<f8">
+DEBUG - value: 4.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/trans_z@depends_on)
+DEBUG - value: rot_y 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/trans_z@transformation_type)
+DEBUG - value: translation 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/trans_z@units)
+DEBUG - value: mm 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/transformations/trans_z@vector)
+DEBUG - value: [0 0 1] 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
 DEBUG - ===== FIELD (//entry/instrument/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<f8">
 DEBUG - value: 0.14 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
@@ -2216,6 +2577,406 @@ DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/energy_resolution
 NXinstrument.nxdl.xml:/energy_resolution
 DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - ===== GROUP (//entry/instrument/manipulator [NXmpes::/NXentry/NXinstrument/NXmanipulator]): <HDF5 group "/entry/instrument/manipulator" (4 members)>
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR
+NXmanipulator.nxdl.xml:
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR):
+DEBUG - 
+                     Manipulator for positioning of the sample.
+                
+DEBUG - documentation (NXmanipulator.nxdl.xml:):
+DEBUG - 
+         Extension of NXpositioner to include fields to describe the use of manipulators
+         in photoemission experiments.
+    
+DEBUG - ===== ATTRS (//entry/instrument/manipulator@NX_class)
+DEBUG - value: NXmanipulator 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR
+NXmanipulator.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/manipulator/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
+DEBUG - value: b'/entry/instrument/manipulator/transformations/trans_z' 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_CHAR']
+DEBUG - classes:
+NXmanipulator.nxdl.xml:/depends_on
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXmanipulator.nxdl.xml:/depends_on):
+DEBUG - 
+             Refers to the last transformation specifying the positon of the manipulator in
+             the NXtransformations chain.
+        
+DEBUG - ===== FIELD (//entry/instrument/manipulator/sample_bias): <HDF5 dataset "sample_bias": shape (), type "<f8">
+DEBUG - value: 17.799719004221362 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias
+NXmanipulator.nxdl.xml:/sample_bias
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias):
+DEBUG - 
+DEBUG - documentation (NXmanipulator.nxdl.xml:/sample_bias):
+DEBUG - 
+             Possible bias of the sample with trespect to analyser ground. This field may
+             also be found in NXsample if present.
+        
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_bias@units)
+DEBUG - value: V 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias
+NXmanipulator.nxdl.xml:/sample_bias
+DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - ===== FIELD (//entry/instrument/manipulator/sample_temperature): <HDF5 dataset "sample_temperature": shape (), type "<f8">
+DEBUG - value: 23.050763803680983 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_temperature
+NXmanipulator.nxdl.xml:/sample_temperature
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_temperature):
+DEBUG - 
+DEBUG - documentation (NXmanipulator.nxdl.xml:/sample_temperature):
+DEBUG - 
+             Temperature at the closest point to the sample. This field may also be found in
+             NXsample if present.
+        
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_temperature@units)
+DEBUG - value: K 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_temperature
+NXmanipulator.nxdl.xml:/sample_temperature
+DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - ===== GROUP (//entry/instrument/manipulator/transformations [NXmpes::/NXentry/NXinstrument/NXmanipulator/NXtransformations]): <HDF5 group "/entry/instrument/manipulator/transformations" (3 members)>
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations']
+DEBUG - classes:
+NXmanipulator.nxdl.xml:/TRANSFORMATIONS
+NXtransformations.nxdl.xml:
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXmanipulator.nxdl.xml:/TRANSFORMATIONS):
+DEBUG - 
+             Collection of axis-based translations and rotations to describe the location and
+             geometry of the manipulator as a component in the instrument. Conventions from
+             the NXtransformations base class are used. In principle, the McStas coordinate
+             system is used. The first transformation has to point either to another
+             component of the system or . (for pointing to the reference frame) to relate it
+             relative to the experimental setup. Typically, the components of a system should
+             all be related relative to each other and only one component should relate to
+             the reference coordinate system.
+        
+DEBUG - documentation (NXtransformations.nxdl.xml:):
+DEBUG - 
+		Collection of axis-based translations and rotations to describe a geometry.
+		May also contain axes that do not move and therefore do not have a transformation
+		type specified, but are useful in understanding coordinate frames within which
+		transformations are done, or in documenting important directions, such as the
+		direction of gravity.
+
+		A nested sequence of transformations lists the translation and rotation steps
+		needed to describe the position and orientation of any movable or fixed device.
+
+		There will be one or more transformations (axes) defined by one or more fields
+		for each transformation. Transformations can also be described by NXlog groups when
+		the values change with time. The all-caps name ``AXISNAME`` designates the
+		particular axis generating a transformation (e.g. a rotation axis or a translation
+		axis or a general axis).   The attribute ``units="NX_TRANSFORMATION"`` designates the
+		units will be appropriate to the ``transformation_type`` attribute:
+
+		* ``NX_LENGTH`` for ``translation``
+		* ``NX_ANGLE`` for ``rotation``
+		* ``NX_UNITLESS`` for axes for which no transformation type is specified
+
+		This class will usually contain all axes of a sample stage or goniometer or
+		a detector.  The NeXus default McSTAS coordinate frame is assumed, but additional
+		useful coordinate axes may be defined by using axes for which no transformation
+		type has been specified.
+
+		The entry point (``depends_on``) will be outside of this class and point to a
+		field in here. Following the chain may also require following ``depends_on``
+		links to transformations outside, for example to a common base table.  If
+		a relative path is given, it is relative to the group enclosing the ``depends_on``
+		specification.
+
+		For a chain of three transformations, where :math:`T_1` depends on :math:`T_2`
+		and that in turn depends on :math:`T_3`, the final transformation :math:`T_f` is
+
+		.. math:: T_f = T_3 T_2 T_1
+
+		In explicit terms, the transformations are a subset of affine transformations
+		expressed as 4x4 matrices that act on homogeneous coordinates, :math:`w=(x,y,z,1)^T`.
+
+		For rotation and translation,
+
+		.. math:: T_r &= \begin{pmatrix} R & o \\ 0_3 & 1 \end{pmatrix} \\ T_t &= \begin{pmatrix} I_3  & t + o \\ 0_3 & 1 \end{pmatrix}
+
+		where :math:`R` is the usual 3x3 rotation matrix, :math:`o` is an offset vector,
+		:math:`0_3` is a row of 3 zeros, :math:`I_3` is the 3x3 identity matrix and
+		:math:`t` is the translation vector.
+
+		:math:`o` is given by the ``offset`` attribute, :math:`t` is given by the ``vector``
+		attribute multiplied by the field value, and :math:`R` is defined as a rotation
+		about an axis in the direction of ``vector``, of angle of the field value.
+
+		NOTE
+		
+		One possible use of ``NXtransformations`` is to define the motors and
+		transformations for a diffractometer (goniometer).  Such use is mentioned
+		in the ``NXinstrument`` base class.  Use one ``NXtransformations`` group 
+		for each diffractometer and name the group appropriate to the device.
+		Collecting the motors of a sample table or xyz-stage in an NXtransformations
+		group is equally possible.
+
+
+		Following the section on the general dscription of axis in NXtransformations is a section which
+		documents the fields commonly used within NeXus for positioning purposes and their meaning. Whenever
+		there is a need for positioning a beam line component please use the existing names. Use as many fields
+		as needed in order to position the component. Feel free to add more axis if required. In the description
+		given below, only those atttributes which are defined through the name are spcified. Add the other attributes
+		of the full set:
+
+		* vector
+		* offset
+		* transformation_type
+		* depends_on
+
+		as needed.
+	
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations@NX_class)
+DEBUG - value: NXtransformations 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations']
+DEBUG - classes:
+NXmanipulator.nxdl.xml:/TRANSFORMATIONS
+NXtransformations.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/manipulator/transformations/rot_x): <HDF5 dataset "rot_x": shape (), type "<f8">
+DEBUG - value: -90.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_x@depends_on)
+DEBUG - value: . 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_x@transformation_type)
+DEBUG - value: rotation 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_x@units)
+DEBUG - value: degrees 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_x@vector)
+DEBUG - value: [1 0 0] 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/instrument/manipulator/transformations/rot_z): <HDF5 dataset "rot_z": shape (), type "<f8">
+DEBUG - value: -25.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_z@depends_on)
+DEBUG - value: rot_x 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_z@transformation_type)
+DEBUG - value: rotation 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_z@units)
+DEBUG - value: degrees 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/rot_z@vector)
+DEBUG - value: [0 0 1] 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/instrument/manipulator/transformations/trans_z): <HDF5 dataset "trans_z": shape (), type "<f8">
+DEBUG - value: -0.32 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/trans_z@depends_on)
+DEBUG - value: rot_z 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/trans_z@transformation_type)
+DEBUG - value: translation 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/trans_z@units)
+DEBUG - value: m 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/transformations/trans_z@vector)
+DEBUG - value: [0 0 1] 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
 DEBUG - ===== FIELD (//entry/instrument/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'Time-of-flight momentum microscope equipped delay line detector, at the endstation of the high rep-rate HHG source at FHI' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_CHAR']
@@ -2551,7 +3312,7 @@ DEBUG - documentation (NXsource.nxdl.xml:/type):
 DEBUG - 
              Type of radiation source (pick one from the enumerated list and spell exactly)
         
-DEBUG - ===== GROUP (//entry/process [NXmpes::/NXentry/NXprocess]): <HDF5 group "/entry/process" (6 members)>
+DEBUG - ===== GROUP (//entry/process [NXmpes::/NXentry/NXprocess]): <HDF5 group "/entry/process" (5 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS
@@ -2578,16 +3339,6 @@ NXmpes.nxdl.xml:/ENTRY/PROCESS
 NXentry.nxdl.xml:/PROCESS
 NXprocess.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
-DEBUG - 
-DEBUG - ===== FIELD (//entry/process/calculated_energy): <HDF5 dataset "calculated_energy": shape (10,), type "<f4">
-DEBUG - value: [-4.         -3.4444444  -2.8888888  -2.3333333  -1.7777778  -1.2222222 ...
-DEBUG - classpath: ['NXentry', 'NXprocess']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
-DEBUG - ===== ATTRS (//entry/process/calculated_energy@units)
-DEBUG - value: eV 
-DEBUG - classpath: ['NXentry', 'NXprocess']
-DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== GROUP (//entry/process/distortion [NXmpes::/NXentry/NXprocess/NXdistortion]): <HDF5 group "/entry/process/distortion" (6 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXdistortion']
@@ -2680,7 +3431,7 @@ DEBUG -
 
                 .. _symmetry-guided distortion correction: https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub
         
-DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (6 members)>
+DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (5 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
@@ -2716,7 +3467,7 @@ DEBUG -
              Has the calibration been applied?
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/calibrated_axis): <HDF5 dataset "calibrated_axis": shape (900,), type "<f8">
-DEBUG - value: [ 1.00823631e+01  9.97851289e+00  9.87458499e+00  9.77057940e+00 ...
+DEBUG - value: [ 5.22069940e+01  5.10746894e+01  4.99673811e+01  4.88843387e+01 ...
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration/calibrated_axis
@@ -2731,7 +3482,7 @@ DEBUG -
              A vector representing the axis after calibration, matching the data length
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/coefficients): <HDF5 dataset "coefficients": shape (3,), type "<f8">
-DEBUG - value: [ 3.29721778e-14 -1.85333621e-08 -2.68975284e-13] 
+DEBUG - value: [ 6.33783929e-01  8.68180227e-07 -2.41647784e+01] 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
 DEBUG - classes:
 NXcalibration.nxdl.xml:/coefficients
@@ -2743,7 +3494,7 @@ DEBUG -
              E(TOF). Here we can store the array of fit coefficients.
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/fit_function): <HDF5 dataset "fit_function": shape (), type "|O">
-DEBUG - value: b'Polynomial' 
+DEBUG - value: b'(a0/(x0-a1))**2 + a3' 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_CHAR']
 DEBUG - classes:
 NXcalibration.nxdl.xml:/fit_function
@@ -2758,16 +3509,6 @@ DEBUG -
              Use x0, x1, ..., xn for the variables.
              
              The formula should be numpy compliant.
-        
-DEBUG - ===== FIELD (//entry/process/energy_calibration/offset): <HDF5 dataset "offset": shape (), type "<f8">
-DEBUG - value: 68194.44444444444 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/offset
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
-DEBUG - 
-             For linear calibration. Offset parameter.
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/original_axis): <HDF5 dataset "original_axis": shape (900,), type "<f8">
 DEBUG - value: [ 60027.77777778  60083.33333333  60138.88888889  60194.44444444 ...
@@ -2903,7 +3644,7 @@ DEBUG - documentation (NXcalibration.nxdl.xml:/scaling):
 DEBUG - 
              For linear calibration. Scaling parameter.
         
-DEBUG - ===== GROUP (//entry/process/registration [NXmpes::/NXentry/NXprocess/NXregistration]): <HDF5 group "/entry/process/registration" (4 members)>
+DEBUG - ===== GROUP (//entry/process/registration [NXmpes::/NXentry/NXprocess/NXregistration]): <HDF5 group "/entry/process/registration" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration']
 DEBUG - classes:
 NXprocess.nxdl.xml:/REGISTRATION
@@ -2925,19 +3666,6 @@ NXprocess.nxdl.xml:/REGISTRATION
 NXregistration.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== ATTRS (//entry/process/registration@depends_on)
-DEBUG - value: rot_z 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration']
-DEBUG - classes:
-NXprocess.nxdl.xml:/REGISTRATION
-NXregistration.nxdl.xml:
-DEBUG - @depends_on - [NX_CHAR]
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXregistration.nxdl.xml:/depends_on):
-DEBUG - 
-             Specifies the position by pointing to the last transformation in the
-             transformation chain in the NXtransformations group.
-        
 DEBUG - ===== FIELD (//entry/process/registration/applied): <HDF5 dataset "applied": shape (), type "|b1">
 DEBUG - value: True 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration', 'NX_BOOLEAN']
@@ -2948,16 +3676,17 @@ DEBUG - documentation (NXregistration.nxdl.xml:/applied):
 DEBUG - 
              Has the registration been applied?
         
-DEBUG - ===== FIELD (//entry/process/registration/new_centre): <HDF5 dataset "new_centre": shape (2,), type "<f8">
-DEBUG - value: [256. 256.] 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration']
-DEBUG - NOT IN SCHEMA
+DEBUG - ===== FIELD (//entry/process/registration/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
+DEBUG - value: b'/entry/process/registration/tranformations/rot_z' 
+DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration', 'NX_CHAR']
+DEBUG - classes:
+NXregistration.nxdl.xml:/depends_on
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXregistration.nxdl.xml:/depends_on):
 DEBUG - 
-DEBUG - ===== FIELD (//entry/process/registration/rotation_centre): <HDF5 dataset "rotation_centre": shape (2,), type "<f8">
-DEBUG - value: [256. 256.] 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+             Specifies the position by pointing to the last transformation in the
+             transformation chain in the NXtransformations group.
+        
 DEBUG - ===== GROUP (//entry/process/registration/tranformations [NXmpes::/NXentry/NXprocess/NXregistration/NXtransformations]): <HDF5 group "/entry/process/registration/tranformations" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration', 'NXtransformations']
 DEBUG - classes:
@@ -3055,7 +3784,7 @@ NXtransformations.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/process/registration/tranformations/rot_z): <HDF5 dataset "rot_z": shape (), type "<f8">
-DEBUG - value: -0.017453292519943295 
+DEBUG - value: -1.0 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration', 'NXtransformations', 'NX_NUMBER']
 DEBUG - classes:
 NXtransformations.nxdl.xml:/AXISNAME
@@ -3119,7 +3848,7 @@ DEBUG -
 				coordinate frame.
 			
 DEBUG - ===== ATTRS (//entry/process/registration/tranformations/rot_z@units)
-DEBUG - value: radians 
+DEBUG - value: degrees 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration', 'NXtransformations', 'NX_NUMBER']
 DEBUG - classes:
 NXtransformations.nxdl.xml:/AXISNAME
@@ -3289,7 +4018,7 @@ DEBUG -
 				increasing displacement. For general axes, an appropriate direction
 				should be chosen.
 			
-DEBUG - ===== GROUP (//entry/sample [NXmpes::/NXentry/NXsample]): <HDF5 group "/entry/sample" (9 members)>
+DEBUG - ===== GROUP (//entry/sample [NXmpes::/NXentry/NXsample]): <HDF5 group "/entry/sample" (11 members)>
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE
@@ -3334,7 +4063,7 @@ DEBUG - classes:
 NXsample.nxdl.xml:/bias
 DEBUG - @units [NX_VOLTAGE]
 DEBUG - ===== FIELD (//entry/sample/chemical_formula): <HDF5 dataset "chemical_formula": shape (), type "|O">
-DEBUG - value: b'MoSe2' 
+DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE/chemical_formula
@@ -3365,8 +4094,19 @@ DEBUG -
                - If carbon is not present, the elements are listed purely in alphabetic order of their symbol. 
              * This is the *Hill* system used by Chemical Abstracts.
         
+DEBUG - ===== FIELD (//entry/sample/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
+DEBUG - value: b'/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[offset_phi]' 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
+DEBUG - classes:
+NXsample.nxdl.xml:/depends_on
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXsample.nxdl.xml:/depends_on):
+DEBUG - 
+             Refers to the last transformation specifying the positon of the manipulator in
+             the NXtransformations chain.
+        
 DEBUG - ===== FIELD (//entry/sample/description): <HDF5 dataset "description": shape (), type "|O">
-DEBUG - value: b'MoSe2' 
+DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
 NXsample.nxdl.xml:/description
@@ -3376,7 +4116,7 @@ DEBUG -
              Description of the sample
         
 DEBUG - ===== FIELD (//entry/sample/gas_pressure): <HDF5 dataset "gas_pressure": shape (), type "<f8">
-DEBUG - value: 4.694267922553637e-11 
+DEBUG - value: 4.5599999999999996e-11 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE/gas_pressure
@@ -3390,7 +4130,7 @@ DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE/gas_pressure
 DEBUG - @units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/sample/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: b'MoSe2' 
+DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE/name
@@ -3518,6 +4258,626 @@ DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE/temperature
 NXsample.nxdl.xml:/temperature
 DEBUG - @units [NX_TEMPERATURE]
+DEBUG - ===== GROUP (//entry/sample/transformations [NXmpes::/NXentry/NXsample/NXtransformations]): <HDF5 group "/entry/sample/transformations" (7 members)>
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations']
+DEBUG - classes:
+NXsample.nxdl.xml:/TRANSFORMATIONS
+NXtransformations.nxdl.xml:
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXsample.nxdl.xml:/TRANSFORMATIONS):
+DEBUG - 
+             Collection of axis-based translations and rotations to describe the location and
+             geometry of the manipulator as a component in the instrument. Conventions from
+             the NXtransformations base class are used. In principle, the McStas coordinate
+             system is used. The first transformation has to point either to another
+             component of the system or . (for pointing to the reference frame) to relate it
+             relative to the experimental setup. Typically, the components of a system should
+             all be related relative to each other and only one component should relate to
+             the reference coordinate system.
+        
+DEBUG - documentation (NXtransformations.nxdl.xml:):
+DEBUG - 
+		Collection of axis-based translations and rotations to describe a geometry.
+		May also contain axes that do not move and therefore do not have a transformation
+		type specified, but are useful in understanding coordinate frames within which
+		transformations are done, or in documenting important directions, such as the
+		direction of gravity.
+
+		A nested sequence of transformations lists the translation and rotation steps
+		needed to describe the position and orientation of any movable or fixed device.
+
+		There will be one or more transformations (axes) defined by one or more fields
+		for each transformation. Transformations can also be described by NXlog groups when
+		the values change with time. The all-caps name ``AXISNAME`` designates the
+		particular axis generating a transformation (e.g. a rotation axis or a translation
+		axis or a general axis).   The attribute ``units="NX_TRANSFORMATION"`` designates the
+		units will be appropriate to the ``transformation_type`` attribute:
+
+		* ``NX_LENGTH`` for ``translation``
+		* ``NX_ANGLE`` for ``rotation``
+		* ``NX_UNITLESS`` for axes for which no transformation type is specified
+
+		This class will usually contain all axes of a sample stage or goniometer or
+		a detector.  The NeXus default McSTAS coordinate frame is assumed, but additional
+		useful coordinate axes may be defined by using axes for which no transformation
+		type has been specified.
+
+		The entry point (``depends_on``) will be outside of this class and point to a
+		field in here. Following the chain may also require following ``depends_on``
+		links to transformations outside, for example to a common base table.  If
+		a relative path is given, it is relative to the group enclosing the ``depends_on``
+		specification.
+
+		For a chain of three transformations, where :math:`T_1` depends on :math:`T_2`
+		and that in turn depends on :math:`T_3`, the final transformation :math:`T_f` is
+
+		.. math:: T_f = T_3 T_2 T_1
+
+		In explicit terms, the transformations are a subset of affine transformations
+		expressed as 4x4 matrices that act on homogeneous coordinates, :math:`w=(x,y,z,1)^T`.
+
+		For rotation and translation,
+
+		.. math:: T_r &= \begin{pmatrix} R & o \\ 0_3 & 1 \end{pmatrix} \\ T_t &= \begin{pmatrix} I_3  & t + o \\ 0_3 & 1 \end{pmatrix}
+
+		where :math:`R` is the usual 3x3 rotation matrix, :math:`o` is an offset vector,
+		:math:`0_3` is a row of 3 zeros, :math:`I_3` is the 3x3 identity matrix and
+		:math:`t` is the translation vector.
+
+		:math:`o` is given by the ``offset`` attribute, :math:`t` is given by the ``vector``
+		attribute multiplied by the field value, and :math:`R` is defined as a rotation
+		about an axis in the direction of ``vector``, of angle of the field value.
+
+		NOTE
+		
+		One possible use of ``NXtransformations`` is to define the motors and
+		transformations for a diffractometer (goniometer).  Such use is mentioned
+		in the ``NXinstrument`` base class.  Use one ``NXtransformations`` group 
+		for each diffractometer and name the group appropriate to the device.
+		Collecting the motors of a sample table or xyz-stage in an NXtransformations
+		group is equally possible.
+
+
+		Following the section on the general dscription of axis in NXtransformations is a section which
+		documents the fields commonly used within NeXus for positioning purposes and their meaning. Whenever
+		there is a need for positioning a beam line component please use the existing names. Use as many fields
+		as needed in order to position the component. Feel free to add more axis if required. In the description
+		given below, only those atttributes which are defined through the name are spcified. Add the other attributes
+		of the full set:
+
+		* vector
+		* offset
+		* transformation_type
+		* depends_on
+
+		as needed.
+	
+DEBUG - ===== ATTRS (//entry/sample/transformations@NX_class)
+DEBUG - value: NXtransformations 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations']
+DEBUG - classes:
+NXsample.nxdl.xml:/TRANSFORMATIONS
+NXtransformations.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/sample/transformations/offset_phi): <HDF5 dataset "offset_phi": shape (), type "<f8">
+DEBUG - value: -90.0 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@depends_on)
+DEBUG - value: rot_omg 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@transformation_type)
+DEBUG - value: rotation 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@units)
+DEBUG - value: degrees 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@vector)
+DEBUG - value: [0 1 0] 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/sample/transformations/rot_omg): <HDF5 dataset "rot_omg": shape (), type "<f8">
+DEBUG - value: 131.7 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_omg@depends_on)
+DEBUG - value: rot_phi 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_omg@transformation_type)
+DEBUG - value: rotation 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_omg@units)
+DEBUG - value: degrees 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_omg@vector)
+DEBUG - value: [1 0 0] 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/sample/transformations/rot_phi): <HDF5 dataset "rot_phi": shape (), type "<f8">
+DEBUG - value: 2.5 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_phi@depends_on)
+DEBUG - value: rot_tht 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_phi@transformation_type)
+DEBUG - value: rotation 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_phi@units)
+DEBUG - value: degrees 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_phi@vector)
+DEBUG - value: [0 1 0] 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/sample/transformations/rot_tht): <HDF5 dataset "rot_tht": shape (), type "<f8">
+DEBUG - value: 401.18 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_tht@depends_on)
+DEBUG - value: trans_z 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_tht@transformation_type)
+DEBUG - value: rotation 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_tht@units)
+DEBUG - value: degrees 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/sample/transformations/rot_tht@vector)
+DEBUG - value: [0 0 1] 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/sample/transformations/trans_x): <HDF5 dataset "trans_x": shape (), type "<f8">
+DEBUG - value: 2.65 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_x@depends_on)
+DEBUG - value: /entry/instrument/manipulator/transformations/trans_z 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_x@transformation_type)
+DEBUG - value: translation 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_x@units)
+DEBUG - value: mm 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_x@vector)
+DEBUG - value: [1 0 0] 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/sample/transformations/trans_y): <HDF5 dataset "trans_y": shape (), type "<f8">
+DEBUG - value: -4.321 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_y@depends_on)
+DEBUG - value: trans_x 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_y@transformation_type)
+DEBUG - value: translation 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_y@units)
+DEBUG - value: mm 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_y@vector)
+DEBUG - value: [0 1 0] 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
+DEBUG - ===== FIELD (//entry/sample/transformations/trans_z): <HDF5 dataset "trans_z": shape (), type "<f8">
+DEBUG - value: 34.82 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME):
+DEBUG - 
+			Units need to be appropriate for translation or rotation
+
+			The name of this field is not forced.  The user is free to use any name
+			that does not cause confusion.  When using more than one ``AXISNAME`` field,
+			make sure that each field name is unique in the same group, as required
+			by HDF5.
+
+			The values given should be the start points of exposures for the corresponding
+			frames.  The end points should be given in ``AXISNAME_end``.
+		
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_z@depends_on)
+DEBUG - value: trans_y 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @depends_on - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/depends_on):
+DEBUG - 
+				Points to the path to a field defining the axis on which this
+				depends or the string ".".
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_z@transformation_type)
+DEBUG - value: translation 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @transformation_type - [NX_CHAR]
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - -> translation
+DEBUG - -> rotation
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/transformation_type):
+DEBUG - 
+				The transformation_type may be ``translation``, in which case the
+				values are linear displacements along the axis, ``rotation``,
+				in which case the values are angular rotations around the axis.
+
+				If this attribute is omitted, this is an axis for which there
+				is no motion to be specifies, such as the direction of gravity,
+				or the direction to the source, or a basis vector of a
+				coordinate frame.
+			
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_z@units)
+DEBUG - value: mm 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @units [NX_TRANSFORMATION]
+DEBUG - ===== ATTRS (//entry/sample/transformations/trans_z@vector)
+DEBUG - value: [0 0 1] 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
+DEBUG - classes:
+NXtransformations.nxdl.xml:/AXISNAME
+DEBUG - @vector - [NX_NUMBER]
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXtransformations.nxdl.xml:/AXISNAME/vector):
+DEBUG - 
+				Three values that define the axis for this transformation.
+				The axis should be normalized to unit length, making it
+				dimensionless.  For ``rotation`` axes, the direction should be
+				chosen for a right-handed rotation with increasing angle.
+				For ``translation`` axes the direction should be chosen for
+				increasing displacement. For general axes, an appropriate direction
+				should be chosen.
+			
 DEBUG - ===== FIELD (//entry/start_time): <HDF5 dataset "start_time": shape (), type "|O">
 DEBUG - value: b'2019-05-23T18:13:54.657000+00:00' 
 DEBUG - classpath: ['NXentry', 'NX_DATE_TIME']
@@ -3604,7 +4964,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXuser.nxdl.xml:/name):
 DEBUG - Name of user responsible for this entry
 DEBUG - ===== FIELD (//entry/user/role): <HDF5 dataset "role": shape (), type "|O">
-DEBUG - value: b'Principal Invstigator' 
+DEBUG - value: b'Principal Investigator' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
 NXuser.nxdl.xml:/role
@@ -3640,15 +5000,15 @@ DEBUG - value: data
 DEBUG - 
 DEBUG - Signal has been identified: /entry/data/data
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (10, 10, 10, 5), type "<f4">
-DEBUG - value: [[[2.70300e+03 3.78900e+03 3.63000e+03 3.66800e+03 2.55700e+03] ...
+DEBUG - value: [[[1.14760e+04 1.64560e+04 1.55440e+04 1.48940e+04 1.08810e+04] ...
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - ===== ATTRS (//entry/data/data@units)
 DEBUG - value: counts 
 DEBUG - 
-DEBUG - For Axis #0, 1 axes have been identified: [<HDF5 dataset "kx": shape (10,), type "<f4">]
+DEBUG - For Axis #0, 1 axes have been identified: [<HDF5 dataset "kx": shape (10,), type "<f8">]
 DEBUG - 
-DEBUG - For Axis #1, 1 axes have been identified: [<HDF5 dataset "ky": shape (10,), type "<f4">]
+DEBUG - For Axis #1, 1 axes have been identified: [<HDF5 dataset "ky": shape (10,), type "<f8">]
 DEBUG - 
-DEBUG - For Axis #2, 1 axes have been identified: [<HDF5 dataset "energy": shape (10,), type "<f4">]
+DEBUG - For Axis #2, 1 axes have been identified: [<HDF5 dataset "energy": shape (10,), type "<f8">]
 DEBUG - 
-DEBUG - For Axis #3, 1 axes have been identified: [<HDF5 dataset "delay": shape (5,), type "<f4">]
+DEBUG - For Axis #3, 1 axes have been identified: [<HDF5 dataset "delay": shape (5,), type "<f8">]
