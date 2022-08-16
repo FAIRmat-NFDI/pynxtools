@@ -208,7 +208,7 @@ def is_valid_data_field(value, nxdl_type, path):
     """
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
 
-    if not is_valid_data_type(value, accepted_types):
+    if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
         try:
             if accepted_types[0] is bool and isinstance(value, str):
                 value = convert_str_to_bool_safe(value)
