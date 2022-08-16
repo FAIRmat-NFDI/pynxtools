@@ -140,7 +140,11 @@ TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
         ("The value at /ENTRY[my_entry]/NXODD_name/bool_value sh"
          "ould be of Python type: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
          "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."),
-        id="string-instead-of-bool"),
+        id="string-instead-of-int"),
+    pytest.param(
+        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/int_value", {"link": "/a-link"}),
+        (""),
+        id="link-dict-instead-of-bool"),
     pytest.param(
         alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/posint_value", -1),
         ("The value at /ENTRY[my_entry]/NXODD_name/posint_value "
@@ -218,7 +222,8 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
                                     "UTC-with-+00:00",
                                     "UTC-with-Z",
                                     "no-child-provided-optional-parent",
-                                    "int-instead-of-chars"):
+                                    "int-instead-of-chars",
+                                    "link-dict-instead-of-bool"):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:
