@@ -24,7 +24,7 @@
 
 from typing import Tuple, Any
 
-# import numpy as np
+import numpy as np
 
 import hyperspy.api as hs
 
@@ -90,29 +90,34 @@ class NxEventDataEm:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        prefix = "/ENTRY[entry]/measurement"
+        prefix = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
         prefix += "/EVENT_DATA_EM[event_data_em_1]"
 
         # ##MK::dummies for now
         import datetime
         NOW = datetime.datetime.now().astimezone().isoformat()
         template[prefix + "/detector_identifier"] = NOW  # self.detector_identifier.value
+        # ##MK::hyperspy cannot implement per-event time stamping especially
+        # not for time-zones because time data are vendor-specifically formatted
+        # not always reported in which case hspy replaces missing vendor timestamps
+        # with system time at runtime of the script !
         template[prefix + "/start_time"] = NOW  # self.start_time.value
         template[prefix + "/end_time"] = NOW  # self.end_time.value
         template[prefix + "/event_identifier"] = NOW  # self.event_identifier.value
         template[prefix + "/event_type"] = NOW  # self.event_type.value
         # ##MK::dummies for now end
 
-        prefix = "/ENTRY[entry]/measurement"
+        # if True is False:  # for development purposes to reduce nxs content
+        prefix = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
         prefix += "/EVENT_DATA_EM[event_data_em_1]/"
-        # ##MK::implement id management
+        # ##MK::connect and compare frame_id with that of hspy
         if isinstance(self.spectrum_set_em_xray,
                       NxSpectrumSetEmXray) is True:
             self.spectrum_set_em_xray.report(prefix, 1, template)
 
-        prefix = "/ENTRY[entry]/measurement"
+        prefix = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
         prefix += "/EVENT_DATA_EM[event_data_em_1]/"
-        # ##MK::implement id management
+        # ##MK::connect and compare frame_id with that of hspy
         if isinstance(self.image_set_em_adf,
                       NxImageSetEmAdf) is True:
             self.image_set_em_adf.report(prefix, 1, template)
@@ -138,7 +143,24 @@ def create_default_plottable_data(template: dict) -> dict:
     """For a valid NXS file at least one default plot is required."""
     # ##MK::for EDS use the spectrum stack, the more generic, the more complex
     # ##MK::the logic has to be to infer a default plottable
-    print('Skipping default plotting for now...')
+    # when using hyperspy and EDS data, the path to the default plottable
+    # needs to point to an existent plot, in this example we use the
+    # NxSpectrumSetEmXray stack_data instance of the first event which
+    # has such
+    trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
+    trg += "/EVENT_DATA_EM[event_data_em_1]/"
+    trg += "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray_1]/"
+    trg += "DATA[summary]/counts"  # "DATA[stack]/counts"
+    assert isinstance(template[trg], np.ndarray), \
+        "The data which should support the default plottable are not existent!"
+    trg = "/ENTRY[entry]/"
+    template[trg + "@default"] = "measurement"
+    trg += "EVENT_DATA_EM_SET[measurement]/"
+    template[trg + "@default"] = "event_data_em_1"
+    trg += "EVENT_DATA_EM[event_data_em_1]/"
+    template[trg + "@default"] = "spectrum_set_em_xray_1"
+    trg += "NX_SPECTRUM_SET_EM[spectrum_set_em_xray_1]/"
+    template[trg + "@default"] = "summary"  # "stack"
     return template
 
 

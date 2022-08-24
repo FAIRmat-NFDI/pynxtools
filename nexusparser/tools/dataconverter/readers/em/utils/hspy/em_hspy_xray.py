@@ -77,8 +77,13 @@ class HspyRectRoiXraySummarySpectrum:
     def parse(self, hspy_s1d):
         """Parse a hyperspy Signal1D stack instance into an NX default plottable."""
         self.title.value = hspy_s1d.metadata['General']['title']
-        self.long_name.value = hspy_s1d.metadata['Signal']['signal_type']
-        self.counts.value = np.asarray(hspy_s1d.data, np.uint32)
+        # self.long_name.value = hspy_s1d.metadata['Signal']['signal_type']
+        self.long_name.value = hspy_s1d.metadata['General']['title']
+        self.counts.value = hspy_s1d.data
+        # ##MK::it seems that hspy is adaptive, uses numpy under the hood
+        # though, so the .data instance is already a proper numpy dtype
+        # therefore, an explicit call like this
+        # np.asarray(hspy_s1d.data, np.uint32) is not necessary
         axes_dict = hspy_s1d.axes_manager.as_dictionary()
         for keyword, value in axes_dict.items():
             offset = np.float64(axes_dict[keyword]['offset'])
@@ -142,8 +147,9 @@ class HspyRectRoiXrayAllSpectra:
     def parse(self, hspy_s3d):
         """Parse a hyperspy Signal2D stack instance into an NX default plottable."""
         self.title.value = hspy_s3d.metadata['General']['title']
-        self.long_name.value = hspy_s3d.metadata['Signal']['signal_type']
-        self.counts.value = np.asarray(hspy_s3d.data, np.uint32)
+        # self.long_name.value = hspy_s3d.metadata['Signal']['signal_type']
+        self.long_name.value = hspy_s3d.metadata['General']['title']
+        self.counts.value = hspy_s3d.data  # hspy uses numpy and adapts ??
         axes_dict = hspy_s3d.axes_manager.as_dictionary()
         for keyword, value in axes_dict.items():
             offset = np.float64(axes_dict[keyword]['offset'])
@@ -216,8 +222,9 @@ class HspyRectRoiXrayMap:
     def parse(self, hspy_s2d):
         """Parse a hyperspy Signal2D instance into an NX default plottable."""
         self.title.value = hspy_s2d.metadata['General']['title']
-        self.long_name.value = hspy_s2d.metadata['Signal']['signal_type']
-        self.counts.value = np.asarray(hspy_s2d.data, np.float64)
+        # self.long_name.value = hspy_s2d.metadata['Signal']['signal_type']
+        self.long_name.value = hspy_s2d.metadata['General']['title']
+        self.counts.value = hspy_s2d.data    # hspy uses numpy and adapts ??
         axes_dict = hspy_s2d.axes_manager.as_dictionary()
         for keyword, value in axes_dict.items():
             offset = np.float64(axes_dict[keyword]['offset'])
@@ -334,50 +341,58 @@ class NxSpectrumSetEmXray:
         # template[trg + "adf_inner_half_angle"] = np.float64(0.)
         # template[trg + "adf_inner_half_angle/@units"] = 'rad'
         prfx = trg + "DATA[stack]/"
+        template[prfx + "@NX_class"] = "NXdata"
+        # ##MK::usually this should be added by the dataconverter automatically
         template[prfx + "@long_name"] = self.stack_data[0].long_name.value
         template[prfx + "@signal"] = "counts"
         template[prfx + "@axes"] = ["ypos", "xpos", "photon_energy"]
-        template[prfx + "@ypos_indices"] = np.uint32(0)
-        template[prfx + "@xpos_indices"] = np.uint32(1)
-        template[prfx + "@photon_energy_indices"] = np.uint32(2)
+        template[prfx + "@photon_energy_indices"] = 2
+        template[prfx + "@xpos_indices"] = 1
+        template[prfx + "@ypos_indices"] = 0
         template[prfx + "counts"] = self.stack_data[0].counts.value
-        template[prfx + "ypos"] = self.stack_data[0].ypos.value
-        template[prfx + "ypos/@units"] = self.stack_data[0].ypos.unit
-        template[prfx + "xpos"] = self.stack_data[0].xpos.value
-        template[prfx + "xpos/@units"] = self.stack_data[0].xpos.unit
         template[prfx + "photon_energy"] \
             = self.stack_data[0].photon_energy.value
         template[prfx + "photon_energy/@units"] \
             = self.stack_data[0].photon_energy.unit
-        template[prfx + "title"] = "X-ray spectra"
+        template[prfx + "xpos"] = self.stack_data[0].xpos.value
+        template[prfx + "xpos/@units"] = self.stack_data[0].xpos.unit
+        template[prfx + "ypos"] = self.stack_data[0].ypos.value
+        template[prfx + "ypos/@units"] = self.stack_data[0].ypos.unit
+        template[prfx + "title"] = self.stack_data[0].long_name.value
+        # "X-ray spectra"
 
         prfx = trg + "DATA[summary]/"
+        template[prfx + "@NX_class"] = "NXdata"
+        # ##MK::usually this should be added by the dataconverter automatically
         template[prfx + "@long_name"] = self.summary_data[0].long_name.value
         template[prfx + "@signal"] = "counts"
         template[prfx + "@axes"] = ["photon_energy"]
-        template[prfx + "@photon_energy_indices"] = np.uint32(0)
+        template[prfx + "@photon_energy_indices"] = 0
         template[prfx + "counts"] = self.summary_data[0].counts.value
         template[prfx + "photon_energy"] \
             = self.summary_data[0].photon_energy.value
         template[prfx + "photon_energy/@units"] \
             = self.summary_data[0].photon_energy.unit
-        template[prfx + "title"] = "Accumulated X-ray spectrum over ROI"
+        template[prfx + "title"] = self.summary_data[0].long_name.value
+        # "Accumulated X-ray spectrum over ROI"
 
-        prfx = trg + "PROCESS[indexing]/"
         # template[prfx + "program"] = self.program.value
         # template[prfx + "program/@version"] = self.program_version.value
         for keyword, xray_map in self.composition_map.items():
-            prfx = trg + "PROCESS[indexing]/" + keyword.lower() + "/"
+            prfx = trg + "PROCESS[indexing]/DATA[" + keyword.lower() + "]/"
+            template[prfx + "@NX_class"] = "NXdata"
+            # ##MK::usually this should be added by the dataconverter automatically
             template[prfx + "@long_name"] = xray_map.long_name.value
             template[prfx + "@signal"] = "counts"
             template[prfx + "@axes"] = ["ypos", "xpos"]
-            template[prfx + "@ypos_indices"] = np.uint32(0)
-            template[prfx + "@xpos_indices"] = np.uint32(1)
+            template[prfx + "@xpos_indices"] = 1
+            template[prfx + "@ypos_indices"] = 0
             template[prfx + "counts"] = xray_map.counts.value
-            template[prfx + "ypos"] = xray_map.ypos.value
-            template[prfx + "ypos/@units"] = xray_map.ypos.unit
             template[prfx + "xpos"] = xray_map.xpos.value
             template[prfx + "xpos/@units"] = xray_map.xpos.unit
-            template[prfx + "title"] = xray_map.title.value
+            template[prfx + "ypos"] = xray_map.ypos.value
+            template[prfx + "ypos/@units"] = xray_map.ypos.unit
+            template[prfx + "title"] = xray_map.long_name.value
+            # xray_map.title.value
 
         return template
