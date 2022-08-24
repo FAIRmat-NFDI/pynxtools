@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generic parser for loading electron microscopy data into NXem."""
+"""Parser for loading generic X-ray spectroscopy hyperspy data into NXem."""
 
 # -*- coding: utf-8 -*-
 #
@@ -22,192 +22,124 @@
 
 # pylint: disable=E1101
 
-# \\wsl.localhost\Ubuntu\home\mkuehbach\markus_archive\TESTING\nomad-parser-nexus\nexusparser\tools\dataconverter
-
-
 from typing import Tuple, Any
 
-import flatdict as fd
+# import numpy as np
 
-import yaml
-
-import numpy as np
-
-# from ase.data import atomic_numbers
-# from ase.data import chemical_symbols
+import hyperspy.api as hs
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
-# from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_reader \
-#    import ReadAptFileFormat
 
-# NEW ISSUE: move these globals and the assess function to utilities like
+from nexusparser.tools.dataconverter.readers.em.utils.em_use_case_selector \
+    import EmUseCaseSelector
+
+from nexusparser.tools.dataconverter.readers.em.utils.em_nexus_base_classes \
+    import NxObject, NxAppDefHeader
+
+from nexusparser.tools.dataconverter.readers.em.utils.em_nomad_oasis_eln \
+    import NxEmNomadOasisElnSchemaParser
+
+from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_xray \
+    import NxSpectrumSetEmXray
+
+from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_adf \
+     import NxImageSetEmAdf
 
 
-NX_EM_ADEF_NAME = 'NXem'
-NX_EM_ADEF_VERSION = '50433d9039b3f33299bab338998acb5335cd8951'
-# based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
-NX_EM_EXEC_NAME = 'dataconverter/reader/em.py'
-NX_EM_EXEC_VERSION = 'add gitsha of parent repo automatically'
+# example_file_name = "46_ES-LP_L1_brg.bcf"
+# example_file_name = "1613_Si_HAADF_610_kx.emd"
+# hspy_object_list = hs.load(example_file_name)
 
 
-class EmUseCaseSelector:
-    """Decision maker about what needs to be parsed given arbitrary input.
+class NxEventDataEm:
+    """Representing a data collection event with a single detector.
 
-    Users might invoke this dataconverter with arbitrary input, no input, or
-    too much input. The UseCaseSelector decide what to do in each case.
+    During this data collection event, the microscope
+    was considered stable enough.
     """
 
-    def __init__(self, file_paths: Tuple[str] = None, *args, **kwargs):
-        """Initialize the class.
+    def __init__(self, file_name: str):
+        self.start_time = NxObject('non_recoverable')
+        self.end_time = NxObject('non_recoverable')
+        self.event_identifier = NxObject()
+        self.event_type = NxObject()
+        self.detector_identifier = NxObject()
+        # ##MK::the following list is not complete
+        # but brings an example how NXem can be used disentangle
+        # data and processing when, at a given point in time,
+        # multiple detectors have been used
+        self.spectrum_set_em_xray = None
+        self.image_set_em_adf = None
 
-        dataset injects numerical data and metadata from an analysis.
-        eln injects additional metadata and eventually numerical data.
+        self.parse_hspy_analysis_results(file_name)
+
+    def parse_hspy_analysis_results(self, file_name: str):
+        """Parse the individual hyperspy-specific data.
+
+        Route these respective classes of an NxEventDataEm instance.
         """
-        self.case = {}
-        self.is_valid = False
-        self.supported_mime_types = ['bcf', 'yaml', 'yml']
-        for mime_type in self.supported_mime_types:
-            self.case[mime_type] = []
-        for file_name in file_paths:
-            index = file_name.lower().rfind('.')
-            if index >= 0:
-                suffix = file_name.lower()[index+1::]
-                if suffix in self.supported_mime_types:
-                    if file_name not in self.case[suffix]:
-                        self.case[suffix].append(file_name)
-        if len(self.case['bcf']) == 1:
-            condition = len(self.case['yaml']) + len(self.case['yml'])
-            if 0 <= condition and condition <= 1:
-                self.is_valid = True
-                self.micr = []
-                for mime_type in ['bcf']:
-                    self.micr += self.case[mime_type]
-                self.eln = []
-                for mime_type in ['yaml', 'yml']:
-                    self.eln += self.case[mime_type]
+        hspy_objs = hs.load(file_name)
+        # ##MK::this logic is too simplistic e.g. what if the dataset is TBs?
+        # because file_name is usually the file from the microscope session...
+        self.spectrum_set_em_xray = NxSpectrumSetEmXray(hspy_objs)
+        self.image_set_em_adf = NxImageSetEmAdf(hspy_objs)
 
-# test = EmUseCaseSelector(('a.bcf', 'b.yaml', 'c.apt'))
+    def report(self, template: dict) -> dict:
+        """Copy data from self into template the appdef instance.
 
+        Paths in template are prefixed by prefix and have to be compliant
+        with the application definition.
+        """
+        prefix = "/ENTRY[entry]/measurement"
+        prefix += "/EVENT_DATA_EM[event_data_em_1]"
 
-class NxObject:
-    """An object in a graph e.g. a field or group in NeXus."""
+        # ##MK::dummies for now
+        import datetime
+        NOW = datetime.datetime.now().astimezone().isoformat()
+        template[prefix + "/detector_identifier"] = NOW  # self.detector_identifier.value
+        template[prefix + "/start_time"] = NOW  # self.start_time.value
+        template[prefix + "/end_time"] = NOW  # self.end_time.value
+        template[prefix + "/event_identifier"] = NOW  # self.event_identifier.value
+        template[prefix + "/event_type"] = NOW  # self.event_type.value
+        # ##MK::dummies for now end
 
-    def __init__(self,
-                 name: str = None,
-                 unit: str = None,
-                 dtype=str,
-                 value=None,
-                 *args, **kwargs):
-        if name is not None:
-            assert name != '', 'Argument name needs to be a non-empty string !'
-        if unit is not None:
-            assert unit != '', 'Argument unit needs to be a non-empty string !'
-        assert dtype is not None, 'Argument dtype must not be None !'
-        if dtype is not None:
-            assert isinstance(dtype, type), \
-                'Argument dtype needs a valid, ideally numpy, datatype !'
-        # ##MK::if value is not None:
-        self.is_a = 'NXobject'
-        self.is_attr = False  # if True indicates object is attribute
-        self.doc = ''  # docstring
-        self.name = name  # name of the field
-        self.unit = unit  # not unit category but actual unit
-        # use special values 'unitless' for NX_UNITLESS (e.g. 1) and
-        # 'dimensionless' for NX_DIMENSIONLESS (e.g. 1m / 1m)
-        self.dtype = dtype  # use np.dtype if possible
-        self.value = None
-        if dtype is str:
-            if value is None:
-                self.value = 'unitless'
-            else:
-                self.value = value
-        else:
-            self.value = value  # make np scalar, tensor, string if possible
-        if 'is_attr' in kwargs.keys():
-            assert isinstance(kwargs['is_attr'], bool), \
-                'Kwarg is_attr needs to be a boolean !'
-            self.is_attr = kwargs['is_attr']
+        prefix = "/ENTRY[entry]/measurement"
+        prefix += "/EVENT_DATA_EM[event_data_em_1]/"
+        # ##MK::implement id management
+        if isinstance(self.spectrum_set_em_xray,
+                      NxSpectrumSetEmXray) is True:
+            self.spectrum_set_em_xray.report(prefix, 1, template)
 
-    def print(self):
-        """Report values."""
-        print('name: ')
-        print(str(self.name))
-        print('unit:')
-        print(str(self.unit))
+        prefix = "/ENTRY[entry]/measurement"
+        prefix += "/EVENT_DATA_EM[event_data_em_1]/"
+        # ##MK::implement id management
+        if isinstance(self.image_set_em_adf,
+                      NxImageSetEmAdf) is True:
+            self.image_set_em_adf.report(prefix, 1, template)
 
-
-# test = NxObject(name='test', unit='baud', dtype=np.uint32, value=32000)
-
-
-class NxEmOperator:
-    """An object representing an operator, typically a human."""
-
-    def __init__(self, *args, **kwargs):
-        self.name = NxObject()
-        self.affiliation = NxObject()
-        self.address = NxObject()
-        self.email = NxObject()
-        self.orcid = NxObject()
-        self.telephone_number = NxObject()
-        self.role = NxObject()
-        self.social_media_name = NxObject()
-        self.social_media_platform = NxObject()
-
-
-class NxEmSample:
-    """An object representing a sample."""
-
-    def __init__(self, *args, **kwargs):
-        self.method = NxObject(value='experimental')
-        self.name = NxObject()
-        self.sample_history = NxObject()
-        self.preparation_date = NxObject()
-        self.short_title = NxObject()
-        self.atom_types = NxObject(value=[])
-        self.thickness = NxObject()
-        self.description = NxObject()
-
-
-# test = NxEmSample()
-
-
-class NxAppDefHeader:
-    """An object representing the typical header of nexus-fairmat appdefs."""
-
-    def __init__(self, *args, **kwargs):
-        self.version = NxObject(value=NX_EM_ADEF_VERSION,
-                                is_attr=True)
-        self.definition = NxObject(value=NX_EM_ADEF_NAME)
-        self.experiment_identifier = NxObject()
-        self.experiment_description = NxObject()
-        self.start_time = NxObject()
-        self.end_time = NxObject()
-        self.program = NxObject(value=NX_EM_EXEC_NAME)
-        self.program_version = NxObject(value=NX_EM_EXEC_VERSION,
-                                        is_attr=True)
-        self.experiment_documentation = NxObject()
-        self.thumbnail = NxObject()
-
-
-# test = NxAppDefHeader()
+        return template
 
 
 def hyperspy_parser(file_name: str, template: dict) -> dict:
-    """Use hyperspy to parse content from electron microscopy files."""
-    # ##MK::
-    pass
+    """Parse content from electron microscopy vendor files."""
+    test = NxEventDataEm(file_name)
+    test.report(template)
+    return template
 
 
 def nomad_oasis_eln_parser(file_name: str, template: dict) -> dict:
     """Parse out output from a YAML file from a NOMAD OASIS YAML."""
-    # ##MK::
-    pass
+    test = NxEmNomadOasisElnSchemaParser(file_name)
+    test.report(template)
+    return template
 
 
 def create_default_plottable_data(template: dict) -> dict:
     """For a valid NXS file at least one default plot is required."""
-    # ##MK::
-    pass
+    # ##MK::for EDS use the spectrum stack, the more generic, the more complex
+    # ##MK::the logic has to be to infer a default plottable
+    print('Skipping default plotting for now...')
+    return template
 
 
 class EmReader(BaseReader):
@@ -231,20 +163,19 @@ class EmReader(BaseReader):
         assert case.is_valid is True, \
             'Such a combination of input-file if any is not supported !'
 
-        # nx_em_header = NxAppDefHeader()
-
-        # ##MK:: #####
-        # report_appdef_version(template)
+        nx_em_header = NxAppDefHeader()
+        prefix = "/ENTRY[entry]"
+        nx_em_header.report(prefix, template)
 
         print("Parsing numerical data and metadata with hyperspy...")
-        if case.micr != []:
+        if len(case.micr) == 1:
             hyperspy_parser(case.micr[0], template)
         else:
             print("No input-file defined for micr data !")
             return {}
 
         print("Parsing metadata as well as numerical data from NOMAD OASIS ELN...")
-        if case.eln != []:
+        if len(case.eln) == 1:
             nomad_oasis_eln_parser(case.eln[0], template)
         else:
             print("No input file defined for eln data !")
