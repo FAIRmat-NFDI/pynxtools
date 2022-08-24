@@ -25,7 +25,15 @@ import sys
 import xml.etree.ElementTree as ET
 import textwrap
 
+from pprint import pprint
+
 import yaml
+from yaml.composer import Composer
+from yaml.constructor import Constructor
+
+from yaml.nodes import ScalarNode
+from yaml.resolver import BaseResolver
+from yaml.loader import Loader
 
 from nexusparser.tools import nexus
 
@@ -38,12 +46,45 @@ NX_UNIT_IDNT = 'unit'
 NX_UNIT_TYPS = nexus.get_nx_units()
 
 
+class LineLoader(Loader):
+    def __init__(self, stream):
+        super(LineLoader, self).__init__(stream)
+
+    def compose_node(self, parent, index):
+        # the line number where the previous token has ended (plus empty lines)
+        line = self.line
+        node = Composer.compose_node(self, parent, index)
+        node.__line__ = line + 1
+        return node
+
+    def construct_mapping(self, node, deep=False):
+        node_pair_lst = node.value
+        node_pair_lst_for_appending = []
+
+        for key_node, value_node in node_pair_lst:
+            shadow_key_node = ScalarNode(tag=BaseResolver.DEFAULT_SCALAR_TAG, value='__line__' + key_node.value)
+            shadow_value_node = ScalarNode(tag=BaseResolver.DEFAULT_SCALAR_TAG, value=key_node.__line__)
+            node_pair_lst_for_appending.append((shadow_key_node, shadow_value_node))
+            sys.stdout.write(f'{key_node.value}  at line  {shadow_value_node.value}\n')
+
+        node.value = node_pair_lst + node_pair_lst_for_appending
+        mapping = Constructor.construct_mapping(self, node, deep=deep)
+        return mapping
+
+
 def yml_reader(inputfile):
     """
     Yaml module based reading of .yml file
     """
     with open(inputfile, 'r') as stream:
         parsed_yaml = yaml.safe_load(stream)
+
+        # prints a line-numbered dict
+        pretty = open(inputfile, "r").read()
+        loader = LineLoader(pretty)
+        data = loader.get_single_data()
+        pprint(data)
+
         return parsed_yaml
 
 
@@ -160,13 +201,13 @@ rank and/or dim not keys in value dict!'
     if 'rank' in value.keys():
         dims.set('rank', str(value['rank']))
     for element in value['dim']:
-        assert isinstance(element, list), 'xml_handle_dimensions, element is not a list!'
-        assert len(element) >= 2, 'xml_handle_dimensions, list element has less than two entries!'
+        assert isinstance(element, list), f'{value} element is not a list!'
+        assert len(element) >= 2, f'{value} list element has less than two entries!'
         dim = ET.SubElement(dims, 'dim')
         dim.set('index', str(element[0]))
         dim.set('value', str(element[1]))
         if len(element) == 3:
-            assert element[2] == 'optional', 'xml_handle_dimensions element is \
+            assert element[2] == 'optional', f'{value}, xml_handle_dimensions element is \
 a list with unexpected number of entries!'
             dim.set('required', 'false')
 
@@ -204,8 +245,7 @@ def xml_handle_link(obj, keyword, value):
         else:
             raise ValueError(keyword + ' value for target member of a link is invalid !')
     else:
-        raise ValueError(keyword + ' the formatting of what seems to be a link \
-is invalid in the yml file !')
+        raise ValueError(keyword + ' the link formatting is invalid in the yml file !')
 
 
 def xml_handle_symbols(obj, value: dict):
