@@ -75,8 +75,9 @@ class HspyRectRoiAdfImage:
 
     def parse(self, hspy_s2d):
         """Parse a hyperspy Signal2D instance into an NX default plottable."""
-        self.long_name.value = hspy_s2d.metadata['Signal']['signal_type']
-        self.intensity.value = np.asarray(hspy_s2d.data, np.float64)
+        # self.long_name.value = hspy_s2d.metadata['Signal']['signal_type']
+        self.long_name.value = hspy_s2d.metadata['General']['title']
+        self.intensity.value = hspy_s2d.data  # hspy uses numpy and adapts ??
         axes_dict = hspy_s2d.axes_manager.as_dictionary()
         for keyword, value in axes_dict.items():
             offset = np.float64(axes_dict[keyword]['offset'])
@@ -151,6 +152,8 @@ class NxImageSetEmAdf:
 
     def report(self, prefix: str, frame_id: int, template: dict) -> dict:
         """Enter data from the NX-specific representation into the template."""
+        assert (0 <= len(self.data)) and (len(self.data) <= 1), \
+            'More than one spectrum stack is currently not supported!'
         trg = prefix + "NX_IMAGE_SET_EM_ADF[image_set_em_adf_" + str(frame_id) + "]/"
         template[trg + "program"] = 'hyperspy'
         template[trg + "program/@version"] = hs.__version__
@@ -161,18 +164,21 @@ class NxImageSetEmAdf:
         # template[trg + "adf_outer_half_angle/@units"] = 'rad'
         # template[trg + "adf_inner_half_angle"] = np.float64(0.)
         # template[trg + "adf_inner_half_angle/@units"] = 'rad'
-        trg += "DATA[adf]/"
-        template[trg + "@long_name"] = self.data[0].long_name.value
-        template[trg + "@signal"] = "intensity"
-        template[trg + "@axes"] = ["ypos", "xpos"]
-        template[trg + "@ypos_indices"] = np.uint32(0)
-        template[trg + "@xpos_indices"] = np.uint32(1)
-        template[trg + "intensity"] = self.data[0].intensity.value
+        prfx = trg + "DATA[adf]/"
+        template[prfx + "@NX_class"] = "NXdata"
+        # ##MK::usually this should be added by the dataconverter automatically
+        template[prfx + "@long_name"] = self.data[0].long_name.value
+        template[prfx + "@signal"] = "intensity"
+        template[prfx + "@axes"] = ["ypos", "xpos"]
+        template[prfx + "@xpos_indices"] = 1
+        template[prfx + "@ypos_indices"] = 0
+        template[prfx + "intensity"] = self.data[0].intensity.value
+        template[prfx + "intensity/@units"] = "NX_UNITLESS"
         # but should be a 1 * n_y * n_x array and not a n_y * n_x array !!
-        template[trg + "image_id"] = np.uint32(frame_id)
-        template[trg + "ypos"] = self.data[0].ypos.value
-        template[trg + "ypos/@units"] = self.data[0].ypos.unit
-        template[trg + "xpos"] = self.data[0].xpos.value
-        template[trg + "xpos/@units"] = self.data[0].xpos.unit
-        template[trg + "title"] = "ADF"
+        template[prfx + "image_id"] = np.uint32(frame_id)
+        template[prfx + "xpos"] = self.data[0].xpos.value
+        template[prfx + "xpos/@units"] = self.data[0].xpos.unit
+        template[prfx + "ypos"] = self.data[0].ypos.value
+        template[prfx + "ypos/@units"] = self.data[0].ypos.unit
+        # template[prfx + "title"] = "ADF"
         return template
