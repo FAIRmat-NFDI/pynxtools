@@ -264,7 +264,7 @@ class NxEmNomadOasisElnSchemaParser:
             = np.float64(self.yml[src + "camera_length:value"])
         template[trg + "camera_length/@units"] \
             = self.yml[src + "camera_length:unit"]
-        template[trg + "magnificaton"] \
+        template[trg + "magnification"] \
             = np.float64(self.yml[src + "magnification:value"])
         template[trg + "magnification/@units"] \
             = self.yml[src + "magnification:unit"]
