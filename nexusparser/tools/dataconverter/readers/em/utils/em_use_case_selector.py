@@ -40,7 +40,7 @@ class EmUseCaseSelector:
         """
         self.case = {}
         self.is_valid = False
-        self.supported_mime_types = ['bcf', 'emd', 'yaml', 'yml']
+        self.supported_mime_types = ['bcf', 'dm3', 'emd', 'yaml', 'yml']
         for mime_type in self.supported_mime_types:
             self.case[mime_type] = []
         for file_name in file_paths:
@@ -50,12 +50,15 @@ class EmUseCaseSelector:
                 if suffix in self.supported_mime_types:
                     if file_name not in self.case[suffix]:
                         self.case[suffix].append(file_name)
-        hspy_input = len(self.case['emd']) + len(self.case['bcf'])
+        hspy_input = 0
+        for mime_type, value in self.case.items():
+            if mime_type in ['bcf', 'dm3', 'emd']:
+                hspy_input += len(value)
         eln_input = len(self.case['yaml']) + len(self.case['yml'])
         if (hspy_input == 1) and (eln_input == 1):
             self.is_valid = True
             self.micr = []
-            for mime_type in ['emd', 'bcf']:
+            for mime_type in ['bcf', 'dm3', 'emd']:
                 self.micr += self.case[mime_type]
             self.eln = []
             for mime_type in ['yaml', 'yml']:

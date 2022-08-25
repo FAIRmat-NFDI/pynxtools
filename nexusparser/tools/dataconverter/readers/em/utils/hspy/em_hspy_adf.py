@@ -43,6 +43,7 @@ class HspyRectRoiAdfImage:
         self.xpos_long_name = NxObject()
         self.ypos = NxObject()
         self.ypos_long_name = NxObject()
+        self.is_valid = True
 
         self.is_supported(hspy_clss)
         self.parse(hspy_clss)
@@ -68,14 +69,18 @@ class HspyRectRoiAdfImage:
                 keyword + ', this axis is not of type UniformDataAxis !'
             avail_axis_names.append(axes_dict[keyword]['name'])
 
-        if np.all(np.sort(avail_axis_names) == np.sort(['y', 'x'])) is True:
-            return True
-        else:
-            return False
+        axes_as_expected = np.all(np.sort(avail_axis_names)
+                                  == np.sort(['y', 'x']))
+        if axes_as_expected is False:
+            print(__name__ + ' as expected')
+            self.is_valid = False
 
     def parse(self, hspy_s2d):
         """Parse a hyperspy Signal2D instance into an NX default plottable."""
         # self.long_name.value = hspy_s2d.metadata['Signal']['signal_type']
+        if self.is_valid is False:
+            pass
+        print('\t' + __name__)
         self.long_name.value = hspy_s2d.metadata['General']['title']
         self.intensity.value = hspy_s2d.data  # hspy uses numpy and adapts ??
         axes_dict = hspy_s2d.axes_manager.as_dictionary()
@@ -100,6 +105,7 @@ class HspyRectRoiAdfImage:
                                 endpoint=True) + offset/2., np.float64)
                 self.xpos.unit = unit
                 self.xpos_long_name.value = 'x'
+        self.is_valid = True
 
 
 class NxImageSetEmAdf:
@@ -112,12 +118,10 @@ class NxImageSetEmAdf:
         self.adf_outer_half_angle = NxObject()
         # an NXdata object, here represented as an instance of HspyRectRoiAdfImage
         self.data = []
+        self.is_valid = True
 
-        if self.is_an_implemented_case(hspy_list) is True:
-            self.parse_hspy_instances(hspy_list)
-            print('NxImageSetEmAdf successfully parsed hspy objects')
-        else:
-            print('NxImageSetEmAdf does not support these this hspy object set!')
+        self.is_an_implemented_case(hspy_list)
+        self.parse_hspy_instances(hspy_list)
 
     def is_an_implemented_case(self, hspy_list):
         """Check if signal instances in a list is a supported combination."""
@@ -132,10 +136,8 @@ class NxImageSetEmAdf:
             if isinstance(hspy_clss, hs.signals.Signal2D) is True:
                 if hspy_clss.metadata['General']['title'] == 'HAADF':
                     cardinality_adf += 1
-        if cardinality_adf == 1:
-            return True
-        else:
-            return False
+        if cardinality_adf != 1:
+            self.is_valid = False
 
     def parse_hspy_instances(self, hspy_list):
         """Extract hspy class instances.
@@ -143,15 +145,24 @@ class NxImageSetEmAdf:
         These have to be mappable on NXem base classes
         if these are understood by NOMAD OASIS.
         """
+        if self.is_valid is False:
+            pass
+        print('\t' + __name__)
         for hspy_clss in hspy_list:
             if isinstance(hspy_clss, hs.signals.Signal2D) is True:
                 ndim = hspy_clss.data.ndim
                 if ndim == 2:
                     if hspy_clss.metadata['General']['title'] == 'HAADF':
                         self.data.append(HspyRectRoiAdfImage(hspy_clss))
+                        # if self.data[-1].is_valid is False:
+                        #     self.is_valid = False
 
     def report(self, prefix: str, frame_id: int, template: dict) -> dict:
         """Enter data from the NX-specific representation into the template."""
+        if self.is_valid is False:
+            print('\t' + __name__ + ' reporting nothing!')
+            return template
+        print('\t' + __name__ + ' reporting...')
         assert (0 <= len(self.data)) and (len(self.data) <= 1), \
             'More than one spectrum stack is currently not supported!'
         trg = prefix + "NX_IMAGE_SET_EM_ADF[image_set_em_adf_" + str(frame_id) + "]/"

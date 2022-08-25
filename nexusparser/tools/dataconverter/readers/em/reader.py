@@ -22,6 +22,8 @@
 
 # pylint: disable=E1101
 
+import datetime
+
 from typing import Tuple, Any
 
 import numpy as np
@@ -42,13 +44,11 @@ from nexusparser.tools.dataconverter.readers.em.utils.em_nomad_oasis_eln \
 from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_xray \
     import NxSpectrumSetEmXray
 
+from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_eels \
+     import NxSpectrumSetEmEels
+
 from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_adf \
      import NxImageSetEmAdf
-
-
-# example_file_name = "46_ES-LP_L1_brg.bcf"
-# example_file_name = "1613_Si_HAADF_610_kx.emd"
-# hspy_object_list = hs.load(example_file_name)
 
 
 class NxEventDataEm:
@@ -69,6 +69,7 @@ class NxEventDataEm:
         # data and processing when, at a given point in time,
         # multiple detectors have been used
         self.spectrum_set_em_xray = None
+        self.spectrum_set_em_eels = None
         self.image_set_em_adf = None
 
         self.parse_hspy_analysis_results(file_name)
@@ -81,8 +82,18 @@ class NxEventDataEm:
         hspy_objs = hs.load(file_name)
         # ##MK::this logic is too simplistic e.g. what if the dataset is TBs?
         # because file_name is usually the file from the microscope session...
-        self.spectrum_set_em_xray = NxSpectrumSetEmXray(hspy_objs)
-        self.image_set_em_adf = NxImageSetEmAdf(hspy_objs)
+
+        # developers can here switch easily one and off certain sub-parsers
+        if isinstance(hspy_objs, list):
+            print('Processing a list of hspy_objs...')
+            self.spectrum_set_em_xray = NxSpectrumSetEmXray(hspy_objs)
+            self.spectrum_set_em_eels = NxSpectrumSetEmEels(hspy_objs)
+            self.image_set_em_adf = NxImageSetEmAdf(hspy_objs)
+        else:
+            print('Converting (a single hspy obj) into a list, processing it...')
+            self.spectrum_set_em_xray = NxSpectrumSetEmXray([hspy_objs])
+            self.spectrum_set_em_eels = NxSpectrumSetEmEels([hspy_objs])
+            self.image_set_em_adf = NxImageSetEmAdf([hspy_objs])
 
     def report(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -94,7 +105,6 @@ class NxEventDataEm:
         prefix += "/EVENT_DATA_EM[event_data_em_1]"
 
         # ##MK::dummies for now
-        import datetime
         NOW = datetime.datetime.now().astimezone().isoformat()
         template[prefix + "/detector_identifier"] = NOW  # self.detector_identifier.value
         # ##MK::hyperspy cannot implement per-event time stamping especially
@@ -111,16 +121,25 @@ class NxEventDataEm:
         prefix = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
         prefix += "/EVENT_DATA_EM[event_data_em_1]/"
         # ##MK::connect and compare frame_id with that of hspy
-        if isinstance(self.spectrum_set_em_xray,
-                      NxSpectrumSetEmXray) is True:
-            self.spectrum_set_em_xray.report(prefix, 1, template)
+        if self.spectrum_set_em_xray is not None:
+            if isinstance(self.spectrum_set_em_xray,
+                          NxSpectrumSetEmXray) is True:
+                self.spectrum_set_em_xray.report(prefix, 1, template)
+
+        prefix = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
+        prefix += "/EVENT_DATA_EM[event_data_em_1]/"
+        if self.spectrum_set_em_eels is not None:
+            if isinstance(self.spectrum_set_em_eels,
+                          NxSpectrumSetEmEels) is True:
+                self.spectrum_set_em_eels.report(prefix, 1, template)
 
         prefix = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
         prefix += "/EVENT_DATA_EM[event_data_em_1]/"
         # ##MK::connect and compare frame_id with that of hspy
-        if isinstance(self.image_set_em_adf,
-                      NxImageSetEmAdf) is True:
-            self.image_set_em_adf.report(prefix, 1, template)
+        if self.image_set_em_adf is not None:
+            if isinstance(self.image_set_em_adf,
+                          NxImageSetEmAdf) is True:
+                self.image_set_em_adf.report(prefix, 1, template)
 
         return template
 
@@ -144,23 +163,46 @@ def create_default_plottable_data(template: dict) -> dict:
     # ##MK::for EDS use the spectrum stack, the more generic, the more complex
     # ##MK::the logic has to be to infer a default plottable
     # when using hyperspy and EDS data, the path to the default plottable
-    # needs to point to an existent plot, in this example we use the
-    # NxSpectrumSetEmXray stack_data instance of the first event which
-    # has such
+    # should point to an existent plot, in this example we use the
+    # NxSpectrumSetEmXray stack_data instance in the first event ...
+
     trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
     trg += "/EVENT_DATA_EM[event_data_em_1]/"
     trg += "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray_1]/"
     trg += "DATA[summary]/counts"  # "DATA[stack]/counts"
-    assert isinstance(template[trg], np.ndarray), \
-        "The data which should support the default plottable are not existent!"
-    trg = "/ENTRY[entry]/"
-    template[trg + "@default"] = "measurement"
-    trg += "EVENT_DATA_EM_SET[measurement]/"
-    template[trg + "@default"] = "event_data_em_1"
-    trg += "EVENT_DATA_EM[event_data_em_1]/"
-    template[trg + "@default"] = "spectrum_set_em_xray_1"
-    trg += "NX_SPECTRUM_SET_EM[spectrum_set_em_xray_1]/"
-    template[trg + "@default"] = "summary"  # "stack"
+    if trg in template.keys():
+        assert isinstance(template[trg], np.ndarray), \
+            "EDS data which should support the default plot are not existent!"
+        trg = "/ENTRY[entry]/"
+        template[trg + "@default"] = "measurement"
+        trg += "EVENT_DATA_EM_SET[measurement]/"
+        template[trg + "@default"] = "event_data_em_1"
+        trg += "EVENT_DATA_EM[event_data_em_1]/"
+        template[trg + "@default"] = "spectrum_set_em_xray_1"
+        trg += "NX_SPECTRUM_SET_EM[spectrum_set_em_xray_1]/"
+        template[trg + "@default"] = "summary"  # "stack"
+        return template
+
+    # ... if the data are EELS though, we use the EELSSpectrum summary,
+    # also in the first event
+    trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
+    trg += "/EVENT_DATA_EM[event_data_em_1]/"
+    trg += "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels_1]/"
+    trg += "DATA[summary]/counts"  # "DATA[stack]/counts"
+    if trg in template.keys():
+        assert isinstance(template[trg], np.ndarray), \
+            "EELS data which should support the default plot are not existent!"
+        trg = "/ENTRY[entry]/"
+        template[trg + "@default"] = "measurement"
+        trg += "EVENT_DATA_EM_SET[measurement]/"
+        template[trg + "@default"] = "event_data_em_1"
+        trg += "EVENT_DATA_EM[event_data_em_1]/"
+        template[trg + "@default"] = "spectrum_set_em_eels_1"
+        trg += "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels_1]/"
+        template[trg + "@default"] = "summary"  # "stack"
+        return template
+
+    # print("WARNING::Creating the default plot found no relevant to pick!")
     return template
 
 
@@ -202,17 +244,18 @@ class EmReader(BaseReader):
         else:
             print("No input file defined for eln data !")
 
+        if True is False:
+            # reporting of what has not been properly defined at the reader level
+            print('\n\nDebugging...')
+            for keyword in template.keys():
+                # if template[keyword] is None:
+                print(keyword + '...')
+                print(template[keyword])
+                # if template[keyword] is None:
+                #     print("Entry: '" + keyword + " is not properly defined yet!")
+
         print("Creating default plottable data...")
         create_default_plottable_data(template)
-
-        # reporting of what has not been properly defined at the reader level
-        print('\n\nDebugging...')
-        for keyword in template.keys():
-            # if template[keyword] is None:
-            print(keyword + '...')
-            print(template[keyword])
-            # if template[keyword] is None:
-            #     print("Entry: '" + keyword + " is not properly defined yet!")
 
         print("Forwarding the instantiated template to the NXS writer...")
 

@@ -43,6 +43,7 @@ class HspyRectRoiXraySummarySpectrum:
         self.counts = NxObject()
         self.photon_energy = NxObject()
         self.photon_energy_long_name = NxObject()  # value='X-ray energy')
+        self.is_valid = True
 
         self.is_supported(hspy_clss)
         self.parse(hspy_clss)
@@ -69,13 +70,17 @@ class HspyRectRoiXraySummarySpectrum:
                 keyword + ', this axis is not of type UniformDataAxis !'
             avail_axis_names.append(axes_dict[keyword]['name'])
 
-        if np.all(np.sort(avail_axis_names) == np.sort(['Energy'])) is True:
-            return True
-        else:
-            return False
+        axes_as_expected = np.all(np.sort(avail_axis_names)
+                                  == np.sort(['Energy']))
+        if axes_as_expected is False:
+            print(__name__ + ' as expected')
+            self.is_valid = False
 
     def parse(self, hspy_s1d):
         """Parse a hyperspy Signal1D stack instance into an NX default plottable."""
+        if self.is_valid is False:
+            pass
+        print('\t' + __name__)
         self.title.value = hspy_s1d.metadata['General']['title']
         # self.long_name.value = hspy_s1d.metadata['Signal']['signal_type']
         self.long_name.value = hspy_s1d.metadata['General']['title']
@@ -113,6 +118,7 @@ class HspyRectRoiXrayAllSpectra:
         self.ypos_long_name = NxObject()
         self.photon_energy = NxObject()
         self.photon_energy_long_name = NxObject()  # value='X-ray energy')
+        self.is_valid = True
 
         self.is_supported(hspy_clss)
         self.parse(hspy_clss)
@@ -139,13 +145,17 @@ class HspyRectRoiXrayAllSpectra:
                 keyword + ', this axis is not of type UniformDataAxis !'
             avail_axis_names.append(axes_dict[keyword]['name'])
 
-        if np.all(np.sort(avail_axis_names) == np.sort(['y', 'x', 'X-ray energy'])) is True:
-            return True
-        else:
-            return False
+        axes_as_expected = np.all(np.sort(avail_axis_names)
+                                          == np.sort(['y', 'x', 'X-ray energy']))
+        if axes_as_expected is False:
+            print(__name__ + ' as expected')
+            self.is_valid = False
 
     def parse(self, hspy_s3d):
         """Parse a hyperspy Signal2D stack instance into an NX default plottable."""
+        if self.is_valid is False:
+            pass
+        print('\t' + __name__)
         self.title.value = hspy_s3d.metadata['General']['title']
         # self.long_name.value = hspy_s3d.metadata['Signal']['signal_type']
         self.long_name.value = hspy_s3d.metadata['General']['title']
@@ -189,6 +199,7 @@ class HspyRectRoiXrayMap:
         self.xpos_long_name = NxObject()
         self.ypos = NxObject()
         self.ypos_long_name = NxObject()
+        self.is_valid = True
 
         self.is_supported(hspy_clss)
         self.parse(hspy_clss)
@@ -214,13 +225,17 @@ class HspyRectRoiXrayMap:
                 keyword + ', this axis is not of type UniformDataAxis !'
             avail_axis_names.append(axes_dict[keyword]['name'])
 
-        if np.all(np.sort(avail_axis_names) == np.sort(['y', 'x'])) is True:
-            return True
-        else:
-            return False
+        axes_as_expected = np.all(np.sort(avail_axis_names)
+                                  == np.sort(['y', 'x']))
+        if axes_as_expected is False:
+            print(__name__ + ' as expected')
+            self.is_valid = False
 
     def parse(self, hspy_s2d):
         """Parse a hyperspy Signal2D instance into an NX default plottable."""
+        if self.is_valid is False:
+            pass
+        print('\t' + __name__)
         self.title.value = hspy_s2d.metadata['General']['title']
         # self.long_name.value = hspy_s2d.metadata['Signal']['signal_type']
         self.long_name.value = hspy_s2d.metadata['General']['title']
@@ -260,12 +275,10 @@ class NxSpectrumSetEmXray:
         # ##MK::self.element_names = NxObject()
         # ##MK::self.peak = {}
         self.composition_map = {}  # instances of HspyRectRoiXrayMap
+        self.is_valid = True
 
-        if self.is_an_implemented_case(hspy_list) is True:
-            self.parse_hspy_instances(hspy_list)
-            print('NxSpectrumSetEmXray successfully parsed hspy objects')
-        else:
-            print('NxSpectrumSetEmXray does not support these this hspy object set!')
+        self.is_an_implemented_case(hspy_list)
+        self.parse_hspy_instances(hspy_list)
 
     def is_an_implemented_case(self, hspy_list):
         """Check if signal instances in a list is a supported combination."""
@@ -289,13 +302,14 @@ class NxSpectrumSetEmXray:
                     cardinality_stack += 1
                 else:
                     continue
-        if (cardinality_stack == 1) and (cardinality_summary == 1):
-            return True
-        else:
-            return False
+        if cardinality_stack != 1:  # a stack is always needed ) or (cardinality_summary == 1):
+            self.is_valid = False
 
     def parse_hspy_instances(self, hspy_list):
         """Extract from hspy class instances what NOMAD OASIS understands."""
+        if self.is_valid is False:
+            pass
+        print('\t' + __name__)
         for hspy_clss in hspy_list:
             if isinstance(hspy_clss, hs.signals.EDSTEMSpectrum) is True:
                 ndim = hspy_clss.data.ndim
@@ -318,7 +332,10 @@ class NxSpectrumSetEmXray:
 
     def report(self, prefix: str, frame_id: int, template: dict) -> dict:
         """Enter data from the NX-specific representation into the template."""
-        print('Skipping NxSpectrumSetEmXray reporting...')
+        if self.is_valid is False:
+            print('\t' + __name__ + ' reporting nothing!')
+            return template
+        print('\t' + __name__ + ' reporting...')
         assert (0 <= len(self.stack_data)) and (len(self.stack_data) <= 1), \
             'More than one spectrum stack is currently not supported!'
         assert (0 <= len(self.summary_data)) and (len(self.summary_data) <= 1), \
