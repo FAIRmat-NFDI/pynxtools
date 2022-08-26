@@ -24,7 +24,7 @@
 
 import datetime
 
-from typing import Tuple, Any
+from typing import Tuple, Any, Dict
 
 import numpy as np
 
@@ -45,10 +45,10 @@ from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_xray \
     import NxSpectrumSetEmXray
 
 from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_eels \
-     import NxSpectrumSetEmEels
+    import NxSpectrumSetEmEels
 
 from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_adf \
-     import NxImageSetEmAdf
+    import NxImageSetEmAdf
 
 
 class NxEventDataEm:
@@ -59,11 +59,12 @@ class NxEventDataEm:
     """
 
     def __init__(self, file_name: str):
-        self.start_time = NxObject('non_recoverable')
-        self.end_time = NxObject('non_recoverable')
-        self.event_identifier = NxObject()
-        self.event_type = NxObject()
-        self.detector_identifier = NxObject()
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["start_time"] = NxObject('non_recoverable')
+        self.meta["end_time"] = NxObject('non_recoverable')
+        self.meta["event_identifier"] = NxObject()
+        self.meta["event_type"] = NxObject()
+        self.meta["detector_identifier"] = NxObject()
         # ##MK::the following list is not complete
         # but brings an example how NXem can be used disentangle
         # data and processing when, at a given point in time,
@@ -105,16 +106,21 @@ class NxEventDataEm:
         prefix += "/EVENT_DATA_EM[event_data_em_1]"
 
         # ##MK::dummies for now
-        NOW = datetime.datetime.now().astimezone().isoformat()
-        template[prefix + "/detector_identifier"] = NOW  # self.detector_identifier.value
+        now = datetime.datetime.now().astimezone().isoformat()
+        template[prefix + "/detector_identifier"] = now
+        # self.meta["detector_identifier"].value
         # ##MK::hyperspy cannot implement per-event time stamping especially
         # not for time-zones because time data are vendor-specifically formatted
         # not always reported in which case hspy replaces missing vendor timestamps
         # with system time at runtime of the script !
-        template[prefix + "/start_time"] = NOW  # self.start_time.value
-        template[prefix + "/end_time"] = NOW  # self.end_time.value
-        template[prefix + "/event_identifier"] = NOW  # self.event_identifier.value
-        template[prefix + "/event_type"] = NOW  # self.event_type.value
+        template[prefix + "/start_time"] = now
+        # self.meta["start_time"].value
+        template[prefix + "/end_time"] = now
+        # self.meta["end_time"].value
+        template[prefix + "/event_identifier"] = now
+        # self.meta["event_identifier"].value
+        template[prefix + "/event_type"] = now
+        # self.meta["event_type"].value
         # ##MK::dummies for now end
 
         # if True is False:  # for development purposes to reduce nxs content
@@ -169,9 +175,9 @@ def create_default_plottable_data(template: dict) -> dict:
     trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
     trg += "/EVENT_DATA_EM[event_data_em_1]/"
     trg += "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray_1]/"
-    trg += "DATA[summary]/counts"  # "DATA[stack]/counts"
+    trg += "DATA[stack]/counts"  # "DATA[stack]/counts"
     if trg in template.keys():
-        assert isinstance(template[trg], np.ndarray), \
+        assert isinstance(template[trg]["compress"], np.ndarray), \
             "EDS data which should support the default plot are not existent!"
         trg = "/ENTRY[entry]/"
         template[trg + "@default"] = "measurement"
@@ -180,7 +186,7 @@ def create_default_plottable_data(template: dict) -> dict:
         trg += "EVENT_DATA_EM[event_data_em_1]/"
         template[trg + "@default"] = "spectrum_set_em_xray_1"
         trg += "NX_SPECTRUM_SET_EM[spectrum_set_em_xray_1]/"
-        template[trg + "@default"] = "summary"  # "stack"
+        template[trg + "@default"] = "stack"  # "summary"  # "stack"
         return template
 
     # ... if the data are EELS though, we use the EELSSpectrum summary,
@@ -188,9 +194,9 @@ def create_default_plottable_data(template: dict) -> dict:
     trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
     trg += "/EVENT_DATA_EM[event_data_em_1]/"
     trg += "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels_1]/"
-    trg += "DATA[summary]/counts"  # "DATA[stack]/counts"
+    trg += "DATA[stack]/counts"  # "DATA[stack]/counts"
     if trg in template.keys():
-        assert isinstance(template[trg], np.ndarray), \
+        assert isinstance(template[trg]["compress"], np.ndarray), \
             "EELS data which should support the default plot are not existent!"
         trg = "/ENTRY[entry]/"
         template[trg + "@default"] = "measurement"
@@ -199,8 +205,11 @@ def create_default_plottable_data(template: dict) -> dict:
         trg += "EVENT_DATA_EM[event_data_em_1]/"
         template[trg + "@default"] = "spectrum_set_em_eels_1"
         trg += "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels_1]/"
-        template[trg + "@default"] = "summary"  # "stack"
+        template[trg + "@default"] = "stack"  # "summary"  # "stack"
         return template
+
+    # ##MK::if no stack data are available implement fallback to use or
+    # compute the summary or some other mapping
 
     # print("WARNING::Creating the default plot found no relevant to pick!")
     return template
@@ -244,7 +253,7 @@ class EmReader(BaseReader):
         else:
             print("No input file defined for eln data !")
 
-        if True is False:
+        if True is True:
             # reporting of what has not been properly defined at the reader level
             print('\n\nDebugging...')
             for keyword in template.keys():

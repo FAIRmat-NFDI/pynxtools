@@ -22,7 +22,7 @@
 
 # pylint: disable=E1101
 
-# from typing import Tuple, Any
+from typing import Dict
 
 import numpy as np
 
@@ -36,13 +36,14 @@ class HspyRectRoiAdfImage:
     """Representing a stack of annular dark field image(s) with metadata."""
 
     def __init__(self, hspy_clss):
-        self.long_name = NxObject()
-        self.intensity = NxObject()
-        self.image_id = NxObject()
-        self.xpos = NxObject()
-        self.xpos_long_name = NxObject()
-        self.ypos = NxObject()
-        self.ypos_long_name = NxObject()
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["long_name"] = NxObject()
+        self.meta["intensity"] = NxObject()
+        self.meta["image_id"] = NxObject()
+        self.meta["xpos"] = NxObject()
+        self.meta["xpos_long_name"] = NxObject()
+        self.meta["ypos"] = NxObject()
+        self.meta["ypos_long_name"] = NxObject()
         self.is_valid = True
 
         self.is_supported(hspy_clss)
@@ -69,9 +70,20 @@ class HspyRectRoiAdfImage:
                 keyword + ', this axis is not of type UniformDataAxis !'
             avail_axis_names.append(axes_dict[keyword]['name'])
 
-        axes_as_expected = np.all(np.sort(avail_axis_names)
-                                  == np.sort(['y', 'x']))
-        if axes_as_expected is False:
+        axes_as_expected_emd \
+            = np.all(np.sort(avail_axis_names) == np.sort(['y', 'x']))
+        axes_as_expected_bcf \
+            = np.all(np.sort(avail_axis_names) == np.sort(['height', 'width']))
+        # ##MK::Adrien/Cecile's BCF and EMD example contains at least one
+        # such case where the hyperspy created view in metadata is not
+        # consistent across representations generated with different parses
+        # which demands adaptive strategies like the one above
+        # in the example e.g. the Bruker HAADF image stores dimensions
+        # as height and width, where digital micrograph and Velox EMD store
+        # y and x... both names are useless without a coordinate system
+        # so here discussions with vendors, hspy developers and community are
+        # needed
+        if (axes_as_expected_emd is False) and (axes_as_expected_bcf is False):
             print(__name__ + ' as expected')
             self.is_valid = False
 
@@ -81,30 +93,35 @@ class HspyRectRoiAdfImage:
         if self.is_valid is False:
             pass
         print('\t' + __name__)
-        self.long_name.value = hspy_s2d.metadata['General']['title']
-        self.intensity.value = hspy_s2d.data  # hspy uses numpy and adapts ??
+        self.meta["long_name"].value = hspy_s2d.metadata['General']['title']
+        self.meta["intensity"].value = hspy_s2d.data  # hspy uses numpy and adapts ??
         axes_dict = hspy_s2d.axes_manager.as_dictionary()
-        for keyword, value in axes_dict.items():
+        for keyword in axes_dict.keys():
             offset = np.float64(axes_dict[keyword]['offset'])
             scale = np.float64(axes_dict[keyword]['scale'])
             size = np.uint32(axes_dict[keyword]['size'])
             unit = str(axes_dict[keyword]['units'])
-            if axes_dict[keyword]['name'] == 'y':
+            y_axis = (axes_dict[keyword]['name'] == 'y') \
+                or (axes_dict[keyword]["name"] == 'height')
+            x_axis = (axes_dict[keyword]['name'] == 'x') \
+                or (axes_dict[keyword]["name"] == 'width')
+            if y_axis is True:
                 assert axes_dict[keyword]['_type'] == "UniformDataAxis", \
                     keyword + ', this x axis is not of type UniformDataAxis !'
-                self.ypos.value = np.asarray(
+                self.meta["ypos"].value = np.asarray(
                     np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset/2., np.float64)
-                self.ypos.unit = unit
-                self.ypos_long_name.value = 'y'
-            else:  # axes_dict[keyword]['name'] == 'x':
+                                endpoint=True) + offset / 2., np.float64)
+                self.meta["ypos"].unit = unit
+                self.meta["ypos_long_name"].value = 'y'  # ##MK::name y always!
+            if x_axis is True:
                 assert axes_dict[keyword]['_type'] == "UniformDataAxis", \
                     keyword + ', this y axis is not of type UniformDataAxis !'
-                self.xpos.value = np.asarray(
+                self.meta["xpos"].value = np.asarray(
                     np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset/2., np.float64)
-                self.xpos.unit = unit
-                self.xpos_long_name.value = 'x'
+                                endpoint=True) + offset / 2., np.float64)
+                self.meta["xpos"].unit = unit
+                self.meta["xpos_long_name"].value = 'x'  # ##MK::name x always!
+            # ##MK::improve case handling
         self.is_valid = True
 
 
@@ -112,10 +129,11 @@ class NxImageSetEmAdf:
     """Representing a set of (HA)ADF images with metadata."""
 
     def __init__(self, hspy_list):
-        self.program = NxObject()
-        self.program_version = NxObject(is_attr=True)
-        self.adf_inner_half_angle = NxObject()
-        self.adf_outer_half_angle = NxObject()
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["program"] = NxObject()
+        self.meta["program_version"] = NxObject(is_attr=True)
+        self.meta["adf_inner_half_angle"] = NxObject()
+        self.meta["adf_outer_half_angle"] = NxObject()
         # an NXdata object, here represented as an instance of HspyRectRoiAdfImage
         self.data = []
         self.is_valid = True
@@ -163,11 +181,12 @@ class NxImageSetEmAdf:
             print('\t' + __name__ + ' reporting nothing!')
             return template
         print('\t' + __name__ + ' reporting...')
-        assert (0 <= len(self.data)) and (len(self.data) <= 1), \
+        assert (len(self.data) >= 0) and (len(self.data) <= 1), \
             'More than one spectrum stack is currently not supported!'
         trg = prefix + "NX_IMAGE_SET_EM_ADF[image_set_em_adf_" + str(frame_id) + "]/"
-        template[trg + "program"] = 'hyperspy'
-        template[trg + "program/@version"] = hs.__version__
+
+        # template[trg + "program"] = 'hyperspy'
+        # template[trg + "program/@version"] = hs.__version__
         # MISSING_DATA_MSG = "not in hspy metadata case specifically in original_metadata"
         # ##MK::!!!!!
         # ##MK::how to communicate that these data do not exist?
@@ -175,21 +194,28 @@ class NxImageSetEmAdf:
         # template[trg + "adf_outer_half_angle/@units"] = 'rad'
         # template[trg + "adf_inner_half_angle"] = np.float64(0.)
         # template[trg + "adf_inner_half_angle/@units"] = 'rad'
-        prfx = trg + "DATA[adf]/"
-        template[prfx + "@NX_class"] = "NXdata"
-        # ##MK::usually this should be added by the dataconverter automatically
-        template[prfx + "@long_name"] = self.data[0].long_name.value
-        template[prfx + "@signal"] = "intensity"
-        template[prfx + "@axes"] = ["ypos", "xpos"]
-        template[prfx + "@xpos_indices"] = 1
-        template[prfx + "@ypos_indices"] = 0
-        template[prfx + "intensity"] = self.data[0].intensity.value
-        template[prfx + "intensity/@units"] = "NX_UNITLESS"
-        # but should be a 1 * n_y * n_x array and not a n_y * n_x array !!
-        template[prfx + "image_id"] = np.uint32(frame_id)
-        template[prfx + "xpos"] = self.data[0].xpos.value
-        template[prfx + "xpos/@units"] = self.data[0].xpos.unit
-        template[prfx + "ypos"] = self.data[0].ypos.value
-        template[prfx + "ypos/@units"] = self.data[0].ypos.unit
-        # template[prfx + "title"] = "ADF"
+        if len(self.data) == 1:
+            prfx = trg + "DATA[adf]/"
+            template[prfx + "@NX_class"] = "NXdata"
+            # ##MK::usually this should be added by the dataconverter automatically
+            template[prfx + "@long_name"] = self.data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "intensity"
+            template[prfx + "@axes"] = ["ypos", "xpos"]
+            template[prfx + "@xpos_indices"] = 1
+            template[prfx + "@ypos_indices"] = 0
+            template[prfx + "intensity"] \
+                = {"compress": self.data[0].meta["intensity"].value}
+            template[prfx + "intensity/@units"] = "NX_UNITLESS"
+            # but should be a 1 * n_y * n_x array and not a n_y * n_x array !!
+            template[prfx + "image_id"] = np.uint32(frame_id)
+            template[prfx + "xpos"] \
+                = {"compress": self.data[0].meta["xpos"].value}
+            template[prfx + "xpos/@units"] \
+                = self.data[0].meta["xpos"].unit
+            template[prfx + "ypos"] \
+                = {"compress": self.data[0].meta["ypos"].value}
+            template[prfx + "ypos/@units"] \
+                = self.data[0].meta["ypos"].unit
+            # template[prfx + "title"] = "ADF"
+
         return template

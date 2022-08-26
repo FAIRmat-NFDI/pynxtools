@@ -22,7 +22,7 @@
 
 # pylint: disable=E1101
 
-# from typing import Tuple, Any
+from typing import Dict
 
 import numpy as np
 
@@ -36,17 +36,19 @@ class HspyRectRoiEelsAllSpectra:
     """Representing a regular stack of EELS spectra over a rectangular ROI."""
 
     def __init__(self, hspy_clss):
-        self.program = NxObject(value="hyperspy")
-        self.program_version = NxObject(value=hs.__version__)
-        self.title = NxObject()
-        self.long_name = NxObject()  # value='counts')
-        self.counts = NxObject()
-        self.xpos = NxObject()
-        self.xpos_long_name = NxObject()
-        self.ypos = NxObject()
-        self.ypos_long_name = NxObject()
-        self.energy_loss = NxObject()
-        self.energy_loss_long_name = NxObject()  # value='Electron energy loss')
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["program"] = NxObject(value="hyperspy")
+        self.meta["program_version"] = NxObject(value=hs.__version__)
+        self.meta["title"] = NxObject()
+        self.meta["long_name"] = NxObject()  # value='counts')
+        self.meta["counts"] = NxObject()
+        self.meta["xpos"] = NxObject()
+        self.meta["xpos_long_name"] = NxObject()
+        self.meta["ypos"] = NxObject()
+        self.meta["ypos_long_name"] = NxObject()
+        self.meta["energy_loss"] = NxObject()
+        self.meta["energy_loss_long_name"] = NxObject()
+        # value='Electron energy loss')
         self.is_valid = True
 
         self.is_supported(hspy_clss)
@@ -87,50 +89,49 @@ class HspyRectRoiEelsAllSpectra:
         if self.is_valid is False:
             pass
         print('\t' + __name__)
-        self.title.value = hspy_s3d.metadata['General']['title']
-        self.long_name.value = hspy_s3d.metadata['Signal']['signal_type']
-        # self.long_name.value = hspy_s3d.metadata['General']['title']
-        self.title.value = hspy_s3d.metadata['Signal']['signal_type']
-        self.counts.value = hspy_s3d.data  # hspy uses numpy and adapts ??
+        # self.meta["title"].value = hspy_s3d.metadata['General']['title']
+        self.meta["long_name"].value = hspy_s3d.metadata['Signal']['signal_type']
+        # self.meta["long_name"].value = hspy_s3d.metadata['General']['title']
+        self.meta["title"].value = hspy_s3d.metadata['Signal']['signal_type']
+        self.meta["counts"].value = hspy_s3d.data  # hspy uses numpy and adapts ??
         axes_dict = hspy_s3d.axes_manager.as_dictionary()
-        for keyword, value in axes_dict.items():
+        for keyword in axes_dict.keys():
             offset = np.float64(axes_dict[keyword]['offset'])
             scale = np.float64(axes_dict[keyword]['scale'])
             size = np.uint32(axes_dict[keyword]['size'])
             unit = str(axes_dict[keyword]['units'])
             if axes_dict[keyword]['name'] == 'y':
-                self.ypos.value = np.asarray(
+                self.meta["ypos"].value = np.asarray(
                     np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset/2., np.float64)
-                self.ypos.unit = unit
-                self.ypos_long_name.value = 'y'
+                                endpoint=True) + offset / 2., np.float64)
+                self.meta["ypos"].unit = unit
+                self.meta["ypos_long_name"].value = 'y'
             elif axes_dict[keyword]['name'] == 'x':
-                self.xpos.value = np.asarray(
+                self.meta["xpos"].value = np.asarray(
                     np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset/2., np.float64)
-                self.xpos.unit = unit
-                self.xpos_long_name.value = 'x'
+                                endpoint=True) + offset / 2., np.float64)
+                self.meta["xpos"].unit = unit
+                self.meta["xpos_long_name"].value = 'x'
             else:  # axes_dict[keyword]['name'] == 'Energy loss':
-                self.energy_loss.value = np.asarray(
+                self.meta["energy_loss"].value = np.asarray(
                     np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset/2., np.float64)
-                self.energy_loss.unit = unit
-                self.energy_loss_long_name.value = 'Energy loss'
-                print('np.shape(self.energy_loss.value)')
-                print(np.shape(self.energy_loss.value))
+                                endpoint=True) + offset / 2., np.float64)
+                self.meta["energy_loss"].unit = unit
+                self.meta["energy_loss_long_name"].value = 'Energy loss'
 
 
 class HspyRectRoiEelsSummarySpectrum:
     """Represent/compute an accumulated EELS spectrum from hspy EELSSpectrum."""
 
     def __init__(self, hspy_clss):
-        self.program = NxObject(value="hyperspy")
-        self.program_version = NxObject(value=hs.__version__)
-        self.title = NxObject()
-        self.long_name = NxObject()  # value='Counts')
-        self.counts = NxObject()
-        self.energy_loss = NxObject()
-        self.energy_loss_long_name = NxObject()  # value='Energy loss')
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["program"] = NxObject(value="hyperspy")
+        self.meta["program_version"] = NxObject(value=hs.__version__)
+        self.meta["title"] = NxObject()
+        self.meta["long_name"] = NxObject()  # value='Counts')
+        self.meta["counts"] = NxObject()
+        self.meta["energy_loss"] = NxObject()
+        self.meta["energy_loss_long_name"] = NxObject()  # value='Energy loss')
         self.is_valid = True
 
         self.is_supported(hspy_clss)
@@ -171,8 +172,8 @@ class HspyRectRoiEelsSummarySpectrum:
         if self.is_valid is False:
             pass
         print('\t' + __name__)
-        self.long_name.value = hspy_s3d.metadata['Signal']['signal_type']
-        self.title.value = hspy_s3d.metadata['Signal']['signal_type']
+        self.meta["long_name"].value = hspy_s3d.metadata['Signal']['signal_type']
+        self.meta["title"].value = hspy_s3d.metadata['Signal']['signal_type']
         axes_dict = hspy_s3d.axes_manager.as_dictionary()
         # ##MK::assume for now that hspy arranges the axes such that the
         # Energy loss comes last, then we can iterate over
@@ -183,30 +184,28 @@ class HspyRectRoiEelsSummarySpectrum:
         # ##MK::for now cast them back to uint32 and accumulate
         # instead it should be uint, so we have to be careful with not
         shape = np.shape(hspy_s3d.data)
-        self.counts.value = np.zeros([shape[2]], np.uint32)
-        for y in np.arange(0, shape[0]):
-            for x in np.arange(1, shape[1]):
-                self.counts.value \
-                    += np.asarray(hspy_s3d.data[y, x, :], np.uint32)
+        self.meta["counts"].value = np.zeros([shape[2]], np.uint32)
+        for y_pixel in np.arange(0, shape[0]):
+            for x_pixel in np.arange(1, shape[1]):
+                self.meta["counts"].value \
+                    += np.asarray(hspy_s3d.data[y_pixel, x_pixel, :], np.uint32)
         # ##MK::it seems that hspy is adaptive, uses numpy under the hood
         # though, so the .data instance is already a proper numpy dtype
         # therefore, an explicit call like this
         # np.asarray(hspy_s1d.data, np.uint32) is not necessary
         # ##MK::on the contrary the above-mentioned observed cast to float32
         # means it might not be adaptive enough ??
-        for keyword, value in axes_dict.items():
+        for keyword in axes_dict.keys():
             offset = np.float64(axes_dict[keyword]['offset'])
             scale = np.float64(axes_dict[keyword]['scale'])
             size = np.uint32(axes_dict[keyword]['size'])
             unit = str(axes_dict[keyword]['units'])
             if axes_dict[keyword]['name'] == 'Energy loss':
-                self.energy_loss.value = np.asarray(
+                self.meta["energy_loss"].value = np.asarray(
                     np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset/2., np.float64)
-                self.energy_loss.unit = unit
-                self.energy_loss_long_name.value = 'Energy loss'
-                print('np.shape(self.energy_loss.value)')
-                print(np.shape(self.energy_loss.value))
+                                endpoint=True) + offset / 2., np.float64)
+                self.meta["energy_loss"].unit = unit
+                self.meta["energy_loss_long_name"].value = 'Energy loss'
 
 
 class NxSpectrumSetEmEels:
@@ -249,7 +248,6 @@ class NxSpectrumSetEmEels:
                 assert hspy_clss.data.ndim in [3], \
                     "Unexpectedly found unsupported-dimensional EELSSpectrum!"
                 if hspy_clss.data.ndim == 3:
-                    print('--->>>>>>>>>>>>>>')
                     self.stack_data.append(
                         HspyRectRoiEelsAllSpectra(hspy_clss))
                     self.summary_data.append(
@@ -261,47 +259,59 @@ class NxSpectrumSetEmEels:
             print('\t' + __name__ + ' reporting nothing!')
             return template
         print('\t' + __name__ + ' reporting...')
-        assert (0 <= len(self.stack_data)) and (len(self.stack_data) <= 1), \
+        assert (len(self.stack_data) >= 0) and (len(self.stack_data) <= 1), \
             'More than one spectrum stack is currently not supported!'
-        assert (0 <= len(self.summary_data)) and (len(self.summary_data) <= 1), \
+        assert (len(self.summary_data) >= 0) and (len(self.summary_data) <= 1), \
             'More than one sum spectrum stack is currently not supported!'
 
         trg = prefix + "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels_" \
             + str(frame_id) + "]/"
-        # template[trg + "program"] = 'hyperspy'
-        # template[trg + "program/@version"] = hs.__version__
-        prfx = trg + "DATA[stack]/"
-        template[prfx + "@NX_class"] = "NXdata"
-        # ##MK::usually this should be added by the dataconverter automatically
-        template[prfx + "@long_name"] = self.stack_data[0].long_name.value
-        template[prfx + "@signal"] = "counts"
-        template[prfx + "@axes"] = ["ypos", "xpos", "energy_loss"]
-        template[prfx + "@energy_loss_indices"] = 2
-        template[prfx + "@xpos_indices"] = 1
-        template[prfx + "@ypos_indices"] = 0
-        template[prfx + "counts"] = self.stack_data[0].counts.value
-        template[prfx + "energy_loss"] \
-            = self.stack_data[0].energy_loss.value
-        template[prfx + "energy_loss/@units"] \
-            = self.stack_data[0].energy_loss.unit
-        template[prfx + "xpos"] = self.stack_data[0].xpos.value
-        template[prfx + "xpos/@units"] = self.stack_data[0].xpos.unit
-        template[prfx + "ypos"] = self.stack_data[0].ypos.value
-        template[prfx + "ypos/@units"] = self.stack_data[0].ypos.unit
-        template[prfx + "title"] = self.stack_data[0].long_name.value
+        if len(self.stack_data) == 1:
+            # template[trg + "program"] = 'hyperspy'
+            # template[trg + "program/@version"] = hs.__version__
+            prfx = trg + "DATA[stack]/"
+            template[prfx + "@NX_class"] = "NXdata"
+            # ##MK::usually this should be added by the dataconverter automatically
+            template[prfx + "@long_name"] \
+                = self.stack_data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "counts"
+            template[prfx + "@axes"] = ["ypos", "xpos", "energy_loss"]
+            template[prfx + "@energy_loss_indices"] = 2
+            template[prfx + "@xpos_indices"] = 1
+            template[prfx + "@ypos_indices"] = 0
+            template[prfx + "counts"] \
+                = {"compress": self.stack_data[0].meta["counts"].value}
+            template[prfx + "energy_loss"] \
+                = {"compress": self.stack_data[0].meta["energy_loss"].value}
+            template[prfx + "energy_loss/@units"] \
+                = self.stack_data[0].meta["energy_loss"].unit
+            template[prfx + "xpos"] \
+                = {"compress": self.stack_data[0].meta["xpos"].value}
+            template[prfx + "xpos/@units"] \
+                = self.stack_data[0].meta["xpos"].unit
+            template[prfx + "ypos"] \
+                = {"compress": self.stack_data[0].meta["ypos"].value}
+            template[prfx + "ypos/@units"] \
+                = self.stack_data[0].meta["ypos"].unit
+            template[prfx + "title"] \
+                = self.stack_data[0].meta["long_name"].value
 
-        prfx = trg + "DATA[summary]/"
-        template[prfx + "@NX_class"] = "NXdata"
-        # ##MK::usually this should be added by the dataconverter automatically
-        template[prfx + "@long_name"] = self.summary_data[0].long_name.value
-        template[prfx + "@signal"] = "counts"
-        template[prfx + "@axes"] = ["energy_loss"]
-        template[prfx + "@energy_loss_indices"] = 0
-        template[prfx + "counts"] = self.summary_data[0].counts.value
-        template[prfx + "energy_loss"] \
-            = self.summary_data[0].energy_loss.value
-        template[prfx + "energy_loss/@units"] \
-            = self.summary_data[0].energy_loss.unit
-        template[prfx + "title"] = self.summary_data[0].long_name.value
+        if len(self.summary_data) == 1:
+            prfx = trg + "DATA[summary]/"
+            template[prfx + "@NX_class"] = "NXdata"
+            # ##MK::usually this should be added by the dataconverter automatically
+            template[prfx + "@long_name"] \
+                = self.summary_data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "counts"
+            template[prfx + "@axes"] = ["energy_loss"]
+            template[prfx + "@energy_loss_indices"] = 0
+            template[prfx + "counts"] \
+                = {"compress": self.summary_data[0].meta["counts"].value}
+            template[prfx + "energy_loss"] \
+                = {"compress": self.summary_data[0].meta["energy_loss"].value}
+            template[prfx + "energy_loss/@units"] \
+                = self.summary_data[0].meta["energy_loss"].unit
+            template[prfx + "title"] \
+                = self.summary_data[0].meta["long_name"].value
 
         return template
