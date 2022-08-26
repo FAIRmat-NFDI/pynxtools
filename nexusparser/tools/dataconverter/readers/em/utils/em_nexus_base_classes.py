@@ -22,14 +22,14 @@
 
 # pylint: disable=E1101
 
-# from typing import Tuple
+from typing import Dict
 
 from nexusparser.tools.dataconverter.readers.em.utils.em_versioning \
     import NX_EM_ADEF_NAME, NX_EM_ADEF_VERSION, \
     NX_EM_EXEC_NAME, NX_EM_EXEC_VERSION
 
 
-class NxObject:
+class NxObject:  # pylint: disable=R0903
     """An object in a graph e.g. a field or group in NeXus."""
 
     def __init__(self,
@@ -37,7 +37,7 @@ class NxObject:
                  unit: str = None,
                  dtype=str,
                  value=None,
-                 *args, **kwargs):
+                 **kwargs):
         if name is not None:
             assert name != '', 'Argument name needs to be a non-empty string !'
         if unit is not None:
@@ -80,19 +80,20 @@ class NxObject:
 # test.print()
 
 
-class NxEmOperator:
+class NxEmOperator:  # pylint: disable=R0903
     """An object representing an operator, typically a human."""
 
-    def __init__(self, *args, **kwargs):
-        self.name = NxObject()
-        self.affiliation = NxObject()
-        self.address = NxObject()
-        self.email = NxObject()
-        self.orcid = NxObject()
-        self.telephone_number = NxObject()
-        self.role = NxObject()
-        self.social_media_name = NxObject()
-        self.social_media_platform = NxObject()
+    def __init__(self):
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["name"] = NxObject()
+        self.meta["affiliation"] = NxObject()
+        self.meta["address"] = NxObject()
+        self.meta["email"] = NxObject()
+        self.meta["orcid"] = NxObject()
+        self.meta["telephone_number"] = NxObject()
+        self.meta["role"] = NxObject()
+        self.meta["social_media_name"] = NxObject()
+        self.meta["social_media_platform"] = NxObject()
 
     def report(self, prefix: str, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -100,15 +101,18 @@ class NxEmOperator:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        template[prefix + "/address"] = self.address.value
-        template[prefix + "/affiliation"] = self.affiliation.value
-        template[prefix + "/email"] = self.email.value
-        template[prefix + "/name"] = self.name.value
-        template[prefix + "/orcid"] = self.orcid.value
-        template[prefix + "/role"] = self.role.value
-        template[prefix + "/social_media_name"] = self.social_media_name.value
-        template[prefix + "/social_media_platform"] = self.social_media_platform.value
-        template[prefix + "/telephone_number"] = self.telephone_number.value
+        template[prefix + "/address"] = self.meta["address"].value
+        template[prefix + "/affiliation"] = self.meta["affiliation"].value
+        template[prefix + "/email"] = self.meta["email"].value
+        template[prefix + "/name"] = self.meta["name"].value
+        template[prefix + "/orcid"] = self.meta["orcid"].value
+        template[prefix + "/role"] = self.meta["role"].value
+        template[prefix + "/social_media_name"] \
+            = self.meta["social_media_name"].value
+        template[prefix + "/social_media_platform"] \
+            = self.meta["social_media_platform"].value
+        template[prefix + "/telephone_number"] \
+            = self.meta["telephone_number"].value
         return template
 
 # test = NxEmOperator()
@@ -116,18 +120,19 @@ class NxEmOperator:
 # a = test.report("/ENTRY", {})
 
 
-class NxEmSample:
+class NxEmSample:  # pylint: disable=R0903
     """An object representing a sample."""
 
-    def __init__(self, *args, **kwargs):
-        self.method = NxObject(value='experimental')
-        self.name = NxObject()
-        self.sample_history = NxObject()
-        self.preparation_date = NxObject()
-        self.short_title = NxObject()
-        self.atom_types = NxObject(value=[])
-        self.thickness = NxObject()
-        self.description = NxObject()
+    def __init__(self):
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["method"] = NxObject(value='experimental')
+        self.meta["name"] = NxObject()
+        self.meta["sample_history"] = NxObject()
+        self.meta["preparation_date"] = NxObject()
+        self.meta["short_title"] = NxObject()
+        self.meta["atom_types"] = NxObject(value=[])
+        self.meta["thickness"] = NxObject()
+        self.meta["description"] = NxObject()
 
     def report(self, prefix: str, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -135,37 +140,39 @@ class NxEmSample:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        template[prefix + "/method"] = self.method.value
-        template[prefix + "/name"] = self.name.value
-        template[prefix + "/sample_history"] = self.sample_history.value
-        template[prefix + "/preparation_date"] = self.preparation_date.value
-        template[prefix + "/short_title"] = self.short_title.value
-        template[prefix + "/atom_types"] = self.atom_types.value
-        template[prefix + "/thickness"] = self.thickness.value
-        template[prefix + "/thickness/@units"] = self.thickness.unit
-        template[prefix + "/description"] = self.description.value
+        template[prefix + "/method"] = self.meta["method"].value
+        template[prefix + "/name"] = self.meta["name"].value
+        template[prefix + "/sample_history"] = self.meta["sample_history"].value
+        template[prefix + "/preparation_date"] = self.meta["preparation_date"].value
+        template[prefix + "/short_title"] = self.meta["short_title"].value
+        template[prefix + "/atom_types"] = self.meta["atom_types"].value
+        template[prefix + "/thickness"] = self.meta["thickness"].value
+        template[prefix + "/thickness/@units"] = self.meta["thickness"].unit
+        template[prefix + "/description"] = self.meta["description"].value
         return template
 
 # test = NxEmSample()
 
 
-class NxAppDefHeader:
+class NxAppDefHeader:  # pylint: disable=R0903
     """An object representing the typical header of nexus-fairmat appdefs."""
 
-    def __init__(self, *args, **kwargs):
-        self.version = NxObject(value=NX_EM_ADEF_VERSION,
-                                is_attr=True)
-        self.definition = NxObject(value=NX_EM_ADEF_NAME)
-        self.experiment_identifier = NxObject()
-        self.experiment_description = NxObject()
-        self.start_time = NxObject()
-        self.end_time = NxObject()
-        self.program = NxObject(value=NX_EM_EXEC_NAME)
-        self.program_version = NxObject(value=NX_EM_EXEC_VERSION,
-                                        is_attr=True)
-        self.experiment_documentation = NxObject()
-        self.thumbnail = NxObject()
-        self.thumbnail_type = NxObject()
+    def __init__(self):
+        self.meta: Dict[str, NxObject] = {}
+        self.meta["version"] \
+            = NxObject(value=NX_EM_ADEF_VERSION, is_attr=True)
+        self.meta["definition"] \
+            = NxObject(value=NX_EM_ADEF_NAME)
+        self.meta["experiment_identifier"] = NxObject()
+        self.meta["experiment_description"] = NxObject()
+        self.meta["start_time"] = NxObject()
+        self.meta["end_time"] = NxObject()
+        self.meta["program"] = NxObject(value=NX_EM_EXEC_NAME)
+        self.meta["program_version"] \
+            = NxObject(value=NX_EM_EXEC_VERSION, is_attr=True)
+        self.meta["experiment_documentation"] = NxObject()
+        self.meta["thumbnail"] = NxObject()
+        self.meta["thumbnail_type"] = NxObject()
 
     def report(self, prefix: str, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -173,20 +180,23 @@ class NxAppDefHeader:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        template[prefix + "/@version"] = self.version.value
-        template[prefix + "/definition"] = self.definition.value
+        template[prefix + "/@version"] = self.meta["version"].value
+        template[prefix + "/definition"] = self.meta["definition"].value
         template[prefix + "/experiment_identifier"] \
-            = self.experiment_identifier.value
+            = self.meta["experiment_identifier"].value
         template[prefix + "/experiment_description"] \
-            = self.experiment_description.value
-        template[prefix + "/start_time"] = self.start_time.value
-        template[prefix + "/end_time"] = self.end_time.value
-        template[prefix + "/program"] = self.program.value
-        template[prefix + "/program/@version"] = self.program_version.value
+            = self.meta["experiment_description"].value
+        template[prefix + "/start_time"] = self.meta["start_time"].value
+        template[prefix + "/end_time"] = self.meta["end_time"].value
+        template[prefix + "/program"] = self.meta["program"].value
+        template[prefix + "/program/@version"] \
+            = self.meta["program_version"].value
         template[prefix + "/experiment_documentation"] \
-            = self.experiment_documentation.value
-        template[prefix + "/thumbnail"] = self.thumbnail.value
-        template[prefix + "/thumbnail/@type"] = self.thumbnail_type.value
+            = self.meta["experiment_documentation"].value
+        template[prefix + "/thumbnail"] \
+            = self.meta["thumbnail"].value
+        template[prefix + "/thumbnail/@type"] \
+            = self.meta["thumbnail_type"].value
         return template
 
 # test = NxAppDefHeader()

@@ -22,23 +22,23 @@
 
 # pylint: disable=E1101
 
-from typing import Tuple
+from typing import Tuple, Dict, List
 
 
-class EmUseCaseSelector:
+class EmUseCaseSelector:  # pylint: disable=R0903
     """Decision maker about what needs to be parsed given arbitrary input.
 
     Users might invoke this dataconverter with arbitrary input, no input, or
     too much input. The UseCaseSelector decide what to do in each case.
     """
 
-    def __init__(self, file_paths: Tuple[str] = None, *args, **kwargs):
+    def __init__(self, file_paths: Tuple[str] = None):
         """Initialize the class.
 
         dataset injects numerical data and metadata from an analysis.
         eln injects additional metadata and eventually numerical data.
         """
-        self.case = {}
+        self.case: Dict[str, list] = {}
         self.is_valid = False
         self.supported_mime_types = ['bcf', 'dm3', 'emd', 'yaml', 'yml']
         for mime_type in self.supported_mime_types:
@@ -46,7 +46,7 @@ class EmUseCaseSelector:
         for file_name in file_paths:
             index = file_name.lower().rfind('.')
             if index >= 0:
-                suffix = file_name.lower()[index+1::]
+                suffix = file_name.lower()[index + 1::]
                 if suffix in self.supported_mime_types:
                     if file_name not in self.case[suffix]:
                         self.case[suffix].append(file_name)
@@ -57,10 +57,10 @@ class EmUseCaseSelector:
         eln_input = len(self.case['yaml']) + len(self.case['yml'])
         if (hspy_input == 1) and (eln_input == 1):
             self.is_valid = True
-            self.micr = []
+            self.micr: List[str] = []
             for mime_type in ['bcf', 'dm3', 'emd']:
                 self.micr += self.case[mime_type]
-            self.eln = []
+            self.eln: List[str] = []
             for mime_type in ['yaml', 'yml']:
                 self.eln += self.case[mime_type]
 
