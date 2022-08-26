@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """Helper functions for reading sections from Lake Shore files"""
+from typing import Tuple, Union
 import re
 
 
@@ -69,6 +70,55 @@ def is_meas_header(expr: str) -> bool:
         bool: Returns true if the expr is of the form of a measurement header
     """
     return bool(re.search(r"^[^\]]+\[[^\]]+\]", expr))
+
+
+def is_value_with_unit(expr: str) -> bool:
+    """Checks whether an expression is a value with a unit,
+    i.e. is of the form value [unit].
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is a value with unit
+    """
+    return bool(re.search(r"^.+\s\[.+\]$", expr))
+
+
+def is_number(expr: str) -> bool:
+    """Checks whether an expression is a number,
+    i.e. is of the form 0.3, 3, 1e-3, 1E5 etc.
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is a number
+    """
+    return bool(
+        re.search(r"^[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)$", expr)
+    )
+
+
+def split_value_with_unit(expr: str) -> Tuple[Union[float, str], str]:
+    """Splits an expression into a string and a unit.
+    The input expression should be of the form value [unit] as
+    is checked with is_value_with_unit function.
+    The value is automatically converted to a float if it is a number.
+
+    Args:
+        expr (str): The expression to split
+
+    Returns:
+        Tuple[Union[float, str], str]: A tuple of a value unit pair.
+    """
+    value = re.split(r"\s+\[.+\]", expr)[0]
+    unit = re.search(r"(?<=\[).+?(?=\])", expr)[0]
+
+    if is_number(value):
+        return float(value), unit
+
+    return value, unit
 
 
 def get_unique_dkey(dic: dict, dkey: str) -> str:

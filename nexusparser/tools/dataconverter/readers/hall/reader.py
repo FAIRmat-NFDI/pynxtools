@@ -74,7 +74,14 @@ def split_add_key(fobj: TextIO, dic: dict, prefix: str, expr: str) -> None:
         dkey = helpers.get_unique_dkey(dic, f"{prefix}/{key}/{jval}/data")
         dic[dkey] = pd.DataFrame(np.array(data[1:], dtype=np.float64), columns=data[0])
     else:
-        dic[f"{prefix}/{key}"] = jval
+        if helpers.is_value_with_unit(jval):
+            val, unit = helpers.split_value_with_unit(jval)
+            dic[f"{prefix}/{key}"] = val
+            dic[f"{prefix}/{key}/@unit"] = unit
+        elif helpers.is_number(jval):
+            dic[f"{prefix}/{key}"] = float(jval)
+        else:
+            dic[f"{prefix}/{key}"] = jval
 
 
 def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
