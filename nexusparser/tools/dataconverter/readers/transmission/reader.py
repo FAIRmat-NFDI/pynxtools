@@ -244,7 +244,7 @@ def parse_yml(file_path: str) -> Dict[str, Any]:
 
 # pylint: disable=too-few-public-methods
 class TransmissionReader(BaseReader):
-    """MyDataReader implementation for the DataConverter
+    """TransmissionReader implementation for the DataConverter
     to convert transmission data to Nexus."""
 
     supported_nxdls = ["NXtransmission"]
