@@ -75,8 +75,8 @@ def split_add_key(fobj: TextIO, dic: dict, prefix: str, expr: str) -> None:
         dic[dkey] = pd.DataFrame(np.array(data[1:], dtype=np.float64), columns=data[0])
     else:
         if helpers.is_value_with_unit(jval):
-            val, unit = helpers.split_value_with_unit(jval)
-            dic[f"{prefix}/{key}"] = val
+            value, unit = helpers.split_value_with_unit(jval)
+            dic[f"{prefix}/{key}"] = value
             dic[f"{prefix}/{key}/@unit"] = unit
         elif helpers.is_number(jval):
             dic[f"{prefix}/{key}"] = float(jval)
