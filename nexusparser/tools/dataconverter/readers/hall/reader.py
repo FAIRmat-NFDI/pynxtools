@@ -37,6 +37,12 @@ MEASUREMENT_REPLACEMENTS = {
     "Variable Field Measurement": "variable_field",
 }
 
+# Dict for converting values for specific keys
+CONVERSION_FUNCTIONS = {
+    "Start Time": helpers.convert_date,
+    "Time Completed": helpers.convert_date
+}
+
 # Keys that indicate the start of measurement block
 MEASUREMENT_KEYS = ["Contact Sets"]
 
@@ -81,7 +87,7 @@ def split_add_key(fobj: TextIO, dic: dict, prefix: str, expr: str) -> None:
         elif helpers.is_number(jval):
             dic[f"{prefix}/{key}"] = float(jval)
         else:
-            dic[f"{prefix}/{key}"] = jval
+            dic[f"{prefix}/{key}"] = CONVERSION_FUNCTIONS.get(key, lambda v: v)(jval)
 
 
 def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
@@ -122,9 +128,12 @@ def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
                 dkey = helpers.get_unique_dkey(
                     template, f"{current_section}{current_measurement}/data"
                 )
-                template[dkey] = pd.DataFrame(
-                    np.array(data, dtype=np.float64), columns=header
-                )
+                template.update(helpers.pandas_df_to_template(
+                    dkey,
+                    pd.DataFrame(
+                        np.array(data, dtype=np.float64), columns=header
+                    )
+                ))
             else:
                 if line.strip():
                     print(f"Warning: line `{line.strip()}` ignored")

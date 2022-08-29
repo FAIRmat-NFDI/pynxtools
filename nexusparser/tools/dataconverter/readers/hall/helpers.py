@@ -16,8 +16,11 @@
 # limitations under the License.
 #
 """Helper functions for reading sections from Lake Shore files"""
-from typing import Tuple, Union
+from typing import Tuple, Union, Dict, Any
 import re
+from datetime import datetime
+import numpy as np
+import pandas as pd
 
 
 def is_section(expr: str) -> bool:
@@ -100,8 +103,29 @@ def is_number(expr: str) -> bool:
     )
 
 
-def split_value_with_unit(expr: str) -> Tuple[Union[float, str], str]:
+def split_str_with_unit(expr: str, lower: bool = True) -> Tuple[str, str]:
     """Splits an expression into a string and a unit.
+    The input expression should be of the form value [unit] as
+    is checked with is_value_with_unit function.
+
+    Args:
+        expr (str): The expression to split
+        lower (bool, optional):
+            If True the value is converted to lower case. Defaults to True.
+
+    Returns:
+        Tuple[str, str]: A tuple of a value unit pair.
+    """
+    value = re.split(r"\s+\[.+\]", expr)[0]
+    unit = re.search(r"(?<=\[).+?(?=\])", expr)[0]
+
+    if lower:
+        return value.lower(), unit
+    return value, unit
+
+
+def split_value_with_unit(expr: str) -> Tuple[Union[float, str], str]:
+    """Splits an expression into a string or float and a unit.
     The input expression should be of the form value [unit] as
     is checked with is_value_with_unit function.
     The value is automatically converted to a float if it is a number.
@@ -112,8 +136,7 @@ def split_value_with_unit(expr: str) -> Tuple[Union[float, str], str]:
     Returns:
         Tuple[Union[float, str], str]: A tuple of a value unit pair.
     """
-    value = re.split(r"\s+\[.+\]", expr)[0]
-    unit = re.search(r"(?<=\[).+?(?=\])", expr)[0]
+    value, unit = split_str_with_unit(expr, False)
 
     if is_number(value):
         return float(value), unit
@@ -137,3 +160,72 @@ def get_unique_dkey(dic: dict, dkey: str) -> str:
         suffix += 1
 
     return f"{dkey}{suffix}"
+
+
+def pandas_df_to_template(prefix: str, data: pd.DataFrame) -> Dict[str, Any]:
+    """Converts a dataframe to a NXdata entry template.
+
+    Args:
+        prefix (str): The path prefix to write the data into. Without a trailing slash.
+        df (pd.DataFrame): The dataframe which should be converted.
+
+    Returns:
+        Dict[str, Any]: The dict containing the data and metainfo.
+    """
+    if prefix.endswith('/'):
+        prefix = prefix[:-1]
+
+    template: Dict[str, Any] = {}
+    template[f'{prefix}/@NX_class'] = 'NXdata'
+
+    def write_data(header: str, attr: str, data: np.ndarray) -> None:
+        if header is None:
+            print('Warning: Trying to write dataframe without a header. Skipping.')
+            return
+
+        if is_value_with_unit(header):
+            name, unit = split_str_with_unit(header)
+            template[f'{prefix}/{name}/@units'] = unit
+        else:
+            name = header.lower()
+
+        if attr == '@auxiliary_signals':
+            if f'{prefix}/{attr}' in template:
+                template[f'{prefix}/{attr}'].append(name)
+            else:
+                template[f'{prefix}/{attr}'] = [name]
+        else:
+            template[f'{prefix}/{attr}'] = name
+        template[f'{prefix}/{name}'] = data
+
+    if data.index.name is None:
+        data = data.set_index(data.columns[0])
+
+    # Drop last line if it has an errornous zero temperature
+    if data.index.values[-1] == 0:
+        data = data.iloc[:-1]
+
+    write_data(data.index.name, '@axes', data.index.values)
+    write_data(data.columns[0], '@signal', data.iloc[:, 0].values)
+
+    for column in data.columns[1:]:
+        write_data(column, '@auxiliary_signals', data[column].values)
+
+    return template
+
+
+def convert_date(datestr: str) -> str:
+    """Converts a hall date formated string to isoformat string.
+
+    Args:
+        datestr (str): The hall date string
+
+    Returns:
+        str: The iso formatted string.
+    """
+
+    try:
+        return datetime.strptime(datestr, r'%m/%d/%y %H%M%S').isoformat()
+    except ValueError:
+        print("Warning: datestring does not conform to date format. Skipping.")
+        return datestr

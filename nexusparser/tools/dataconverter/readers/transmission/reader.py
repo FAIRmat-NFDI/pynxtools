@@ -66,7 +66,6 @@ def data_to_template(data: pd.DataFrame) -> Dict[str, Any]:
         Dict[str, Any]: The dict with the data paths inside NeXus.
     """
     template: Dict[str, Any] = {}
-    template["/ENTRY[entry]/data/@signal"] = "data"
     template["/ENTRY[entry]/data/@axes"] = "wavelength"
     template["/ENTRY[entry]/data/type"] = "transmission"
     template["/ENTRY[entry]/data/@signal"] = "transmission"
