@@ -28,22 +28,7 @@ import flatdict as fd
 
 import yaml
 
-# import matplotlib.pyplot as plt
-# from ase.data import atomic_numbers
 from ase.data import chemical_symbols
-
-
-def get_dct_value(flat_dict: fd.FlatDict, keyword_path: str):
-    """Extract value from a dict nest under keyword_path."""
-    # keyword_path = 'NXapm/entry/specimen/name'  #'/name'
-    # keyword_path = 'NXapm/entry/atom_probe/pulser/pulse_frequency/value'
-    # dct = yml
-    # print(keyword_path)
-    is_leaf = (keyword_path in flat_dict.keys()) \
-        & (isinstance(flat_dict[keyword_path], fd.FlatDict) is False)
-    if is_leaf is True:
-        return flat_dict[keyword_path]
-    return None
 
 
 class NxEmNomadOasisElnSchemaParser:
@@ -77,78 +62,76 @@ class NxEmNomadOasisElnSchemaParser:
     def parse_entry_section(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
+        print('Parsing entry...')
+        trg = "/ENTRY[entry]/"
         src = "entry"
-        appdef_version = "NeXus 2022.06 commitID "
-        appdef_version += "d9574a8f90626a929c677f1505729d1751170989 NXem"
+        assert isinstance(self.yml[src], fd.FlatDict), \
+            'Required section ' + src + ' does not exist!'
+        appdef_version = "nexus-fairmat-proposal successor of "
+        appdef_version += "50433d9039b3f33299bab338998acb5335cd8951 NXem"
         appdef_name = "NXem"
+
+        # check for required fields based on the above-mentioned NXem version
         assert self.yml[src + ":attr_version"] == appdef_version, \
             "Facing an ELN schema instance whose NXem version is not supported!"
+        template[trg + "@version"] = appdef_version
         assert self.yml[src + ":definition"] == appdef_name, \
             "Facing an ELN schema instance whose appdef name is not NXem!"
-        req_field_names = [
-            "program", "start_time", "end_time", "experiment_identifier"]
-        opt_field_names = [
-            "experiment_description", "experiment_documentation"]
-        for required in req_field_names:
-            assert required in self.yml[src].keys(), \
-                required + " is a required field but not found in ELN input!"
+        template[trg + "definition"] = appdef_name
+        assert "program" in self.yml[src].keys(), \
+            "program is a required field but not found in ELN input!"
+        template[trg + "program"] \
+            = self.yml[src + ":program"]
         assert "program__attr_version" in self.yml[src].keys(), \
             "program__attr_version is a required field but not found in ELN input!"
-
-        trg = "/ENTRY[entry]/"
-        template[trg + "@version"] = appdef_version
-        template[trg + "definition"] = appdef_name
         template[trg + "program/@version"] \
-            = get_dct_value(self.yml, src + ":program__attr_version")
-        field_names = req_field_names + opt_field_names
+            = self.yml[src + ":program__attr_version"]
+        assert "experiment_identifier" in self.yml[src].keys(), \
+            "experiment_identifier is a required field but not found in ELN input!"
+        template[trg + "experiment_identifier"] \
+            = self.yml[src + ":experiment_identifier"]
+        field_names = [
+            "start_time", "end_time",
+            "experiment_description", "experiment_documentation"]
         for field_name in field_names:
             if field_name in self.yml[src].keys():
-                template[trg + field_name] \
-                    = get_dct_value(self.yml, src + ":" + field_name)
+                template[trg + field_name] = self.yml[src + ":" + field_name]
         return template
 
-    def parse_operator_section(self, template: dict) -> dict:
+    def parse_user_section(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
-        src = "operator"
+        print('Parsing user...')
+        src = "user"
         assert isinstance(self.yml[src], list), \
             "Facing an ELN schema instance with an incorrect operator section!"
         assert len(self.yml[src]) >= 1, \
             "Facing an ELN schema instance with an empty operator section!"
-        req_field_names = ["name", "email"]
-        opt_field_names = [
-            "affiliation", "address", "orcid", "telephone_number", "role",
-            "social_media_name", "social_media_platform"]
-        # there is a bug in NXem, it should not be operator but NXuser
-        # USER(NXuser) therefore we need to overwrite for now
-        # and take only the first entry
-        for operators in self.yml[src]:
-            for required in req_field_names:
-                assert required in operators.keys(), \
-                    required + " is a required field but not found in ELN input!"
+        user_id = 1
+        for user_list in self.yml[src]:
+            assert "name" in user_list.keys(), \
+                "name is a required field but not found in ELN input!"
+            trg = "/ENTRY[entry]/USER[user" + str(user_id) + "]/"
+            template[trg + "name"] = user_list["name"]
+            field_names = [
+                "email", "affiliation", "address", "orcid", "orcid_platform",
+                "telephone_number", "role",
+                "social_media_name", "social_media_platform"]
+            for field_name in field_names:
+                if field_name in user_list.keys():
+                    template[trg + field_name] = user_list[field_name]
+            user_id += 1
 
-        field_names = req_field_names + opt_field_names
-        # if there is only a single operator
-        trg = "/ENTRY[entry]/operator/"
-        for field_name in field_names:
-            if field_name in self.yml[src][0].keys():
-                template[trg + field_name] = self.yml[src][0][field_name]
-        # else ##MK::NXem appdef has to be fixed
-        # remove OPERATOR prefix to (NXuser) !
-        # user_id = 1
-        # for user in yml[src]:
-        #     trg = "/ENTRY[entry]/USER[user_" + str(user_id) + "]"
-        #     for field_name in field_names:
-        #         if field_name in user.keys():
-        #             print(user[field_name])
-        #             template[trg + field_name] = user[field_name]
-        #         user_id += 1
         return template
 
     def parse_sample_section(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
+        print('Parsing sample...')
         src = "sample"
+        trg = "/ENTRY[entry]/sample/"
+        assert isinstance(self.yml[src], fd.FlatDict), \
+            'Required section ' + src + ' does not exist!'
         assert isinstance(self.yml[src + ":atom_types"], list), \
             "Facing an ELN schema instance with an incorrect atom_types info!"
         assert len(self.yml[src + ":atom_types"]) >= 1, \
@@ -158,126 +141,198 @@ class NxEmNomadOasisElnSchemaParser:
                 "Facing an atom_types list entry which is not a string!"
             assert (symbol in chemical_symbols) & (symbol != 'X'), \
                 "Facing an atom_types list entry which is not an element!"
+        template[trg + "atom_types"] = self.yml[src + ":atom_types"]
         thickness_exists = ("thickness:value" in self.yml[src].keys()) \
             and ("thickness:unit" in self.yml[src].keys())
         assert thickness_exists is True, \
             "Required field thickness is available in the ELN data!"
+        template[trg + "thickness"] \
+            = np.float64(self.yml[src + ":thickness:value"])
+        template[trg + "thickness/@units"] = self.yml[src + ":thickness:unit"]
+        required_field_names = [
+            "method", "name", "sample_history", "preparation_date"]
+        for field_name in required_field_names:
+            assert field_name in self.yml[src].keys(), \
+                field_name + " is a required field but not found in ELN input!"
+            template[trg + field_name] = self.yml[src + ":" + field_name]
+
+        optional_field_names = ["short_title", "description"]
+        for field_name in optional_field_names:
+            if field_name in self.yml[src].keys():
+                template[trg + field_name] = self.yml[src + ":" + field_name]
+        # optional value fields
         density_exists = ("density:value" in self.yml[src].keys()) \
             and ("density:unit" in self.yml[src].keys())
-        req_field_names = [
-            "method", "name", "sample_history", "preparation_date"]
-        opt_field_names = [
-            "short_title", "description"]
-        for required in req_field_names:
-            assert required in self.yml[src].keys(), \
-                required + " is a required field but not found in ELN input!"
-
-        trg = "/ENTRY[entry]/SAMPLE/"
-        template[trg + "atom_types"] = self.yml[src + ":atom_types"]
-        template[trg + "thickness"] \
-            = np.float64(get_dct_value(self.yml, src + ":thickness:value"))
-        template[trg + "thickness/@units"] \
-            = get_dct_value(self.yml, src + ":thickness:unit")
-        field_names = req_field_names + opt_field_names
-        for field_name in field_names:
-            if field_name in self.yml[src].keys():
-                template[trg + field_name] \
-                    = get_dct_value(self.yml, src + ":" + field_name)
-        # optional value fields
         if density_exists is True:
-            template[trg + "density"] \
-                = np.float64(self.yml["sample:density:value"])
+            template[trg + "density"] = np.float64(self.yml["sample:density:value"])
             template[trg + "density/@units"] = self.yml["sample:density:unit"]
         return template
 
-    def parse_instrument_section(self, template: dict) -> dict:
+    def parse_instrument_header_section(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
+        print('Parsing instrument header...')
         src = "em_lab"
+        assert isinstance(self.yml[src], fd.FlatDict), \
+            'Required section ' + src + ' does not exist!'
         error_msg = " is a required field but not found in ELN input!"
+        trg = "/ENTRY[entry]/em_lab/"
         assert "instrument_name" in self.yml[src].keys(), \
             "instrument_name " + error_msg
-        assert "manufacturer:name" in self.yml[src].keys(), \
-            "manufacturer:name" + error_msg
-        assert "manufacturer:model" in self.yml[src].keys(), \
-            "manufacturer:model" + error_msg
-        voltage_exists = \
-            ("ebeam_column:electron_gun:voltage:unit" in self.yml[src].keys()) \
-            and ("ebeam_column:electron_gun:voltage:value" in self.yml[src].keys())
-        assert voltage_exists is True, \
-            "voltage" + error_msg
-        beam_current_exists = \
-            ("electro_magnetical_system_em:beam_current:unit" in self.yml[src].keys()) \
-            and ("electro_magnetical_system_em:beam_current:value" in self.yml[src].keys())
-        assert beam_current_exists is True, \
-            "beam_current" + error_msg
-        camera_length_exists = \
-            ("optical_system_em:camera_length:unit" in self.yml[src].keys()) \
-            and ("optical_system_em:camera_length:value" in self.yml[src].keys())
-        assert camera_length_exists is True, \
-            "camera_length" + error_msg
-        magnification_exists = \
-            ("optical_system_em:magnification:unit" in self.yml[src].keys()) \
-            and ("optical_system_em:magnification:value" in self.yml[src].keys())
-        assert magnification_exists is True, \
-            "magnification" + error_msg
-        src = "em_lab:aperture"
-        assert "em_lab:aperture" in self.yml.keys(), \
-            "aperture" + error_msg
-        assert len(self.yml[src]) >= 1, \
-            "At least one  aperture (the condenser) aperture has to be defined!"
-        assert "name" in self.yml[src][0].keys(), \
-            "aperture name" + error_msg
-        assert "value" in self.yml[src][0].keys(), \
-            "aperture value" + error_msg
-        aperture_size_exists = \
-            ("unit" in self.yml[src][0]["value"].keys()) \
-            and ("value" in self.yml[src][0]["value"].keys())
-        assert aperture_size_exists is True, \
-            "aperture value (size) " + error_msg
+        template[trg + "instrument_name"] = self.yml[src + ":instrument_name"]
+        if src + ":location" in self.yml.keys():
+            template[trg + "location"] = self.yml[src + ":location"]
 
-        trg = "/ENTRY[entry]/em_lab/"
-        src = "em_lab:"
-        template[trg + "instrument_name"] = self.yml[src + "instrument_name"]
-        template[trg + "location"] = self.yml[src + "location"]
+        src = "em_lab:manufacturer"
         trg = "/ENTRY[entry]/em_lab/MANUFACTURER[manufacturer]/"
-        src = "em_lab:manufacturer:"
-        field_names = ["name", "model"]
-        for field_name in field_names:
-            template[trg + field_name] = self.yml[src + field_name]
-            # this is why ideally the fields in the ELN should get the same
-            # name as in the application definition
-        trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]"
-        trg += "/SOURCE[electron_gun]/"
-        src = "em_lab:ebeam_column:electron_gun:"
-        template[trg + "voltage"] = np.float64(self.yml[src + "voltage:value"])
-        template[trg + "voltage/@units"] = self.yml[src + "voltage:unit"]
-        trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]"
-        trg += "/APERTURE_EM[aperture_em]/"
-        src = "em_lab:aperture"
-        template[trg + "name"] = self.yml[src][0]["name"]
-        template[trg + "value"] = np.float64(self.yml[src][0]["value"]["value"])
-        template[trg + "value/@units"] = self.yml[src][0]["value"]["unit"]
+        assert src in self.yml, \
+            "em_lab:manufacturer is a required group but not found in ELN input!"
+        required_field_names = ["name", "model"]
+        for field_name in required_field_names:
+            assert field_name in self.yml[src].keys(), \
+                field_name + error_msg
+            template[trg + field_name] = self.yml[src + ":" + field_name]
+
+        optional_field_names = ["identifier", "capabilities"]
+        for field_name in optional_field_names:
+            if field_name in self.yml[src].keys():
+                template[trg + field_name] = self.yml[src + ":" + field_name]
+        return template
+
+    def parse_ebeam_column_section(self, template: dict) -> dict:
+        """Copy data in ebeam_section."""
+        print('Parsing ebeam_column...')
+        src = "em_lab:ebeam_column:electron_gun"
+        assert isinstance(self.yml[src], fd.FlatDict), \
+            src + " is a required group but not found in ELN input"
+        trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_gun/"
+        error_msg = " is a required field but not found in ELN input!"
+        voltage_exists = ("voltage:unit" in self.yml[src].keys()) \
+            and ("voltage:value" in self.yml[src].keys())
+        assert voltage_exists is True, \
+            "voltage " + error_msg
+        template[trg + "voltage"] = np.float64(self.yml[src + ":voltage:value"])
+        template[trg + "voltage/@units"] = self.yml[src + ":voltage:unit"]
+        assert "emitter_type" in self.yml[src].keys(), \
+            "emitter_type" + error_msg
+        template[trg + "emitter_type"] = self.yml[src + ":" + "emitter_type"]
+
+        # apertures
+        src = "em_lab:ebeam_column:aperture_em"
+        assert isinstance(self.yml[src], list), \
+            'Required section ' + src + ' does not exist!'
+        assert len(self.yml[src]) >= 1, \
+            "At least one aperture has to be defined!"
+        aperture_id = 1
+        for aperture in self.yml[src]:
+            trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]/"
+            trg += "APERTURE_EM[aperture_em" + str(aperture_id) + "]/"
+            assert "value" in aperture.keys(), \
+                "value" + error_msg
+            template[trg + "value"] = np.float64(aperture["value"])
+            # template[trg + "value/@units"] = "NX_UNITLESS"
+            assert "name" in aperture.keys(), \
+                "name" + error_msg
+            template[trg + "name"] = aperture["name"]
+            if "description" in aperture.keys():
+                template[trg + "description"] = aperture["description"]
+            aperture_id += 1
+
+        # the above-mentioned snippet is a blue-print for lenses also...
+
+        # corrector
+        src = "em_lab:ebeam_column:aberration_correction"
+        trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]/"
+        trg += "aberration_correction/"
+        assert "applied" in self.yml[src].keys(), \
+            "applied" + error_msg
+        template[trg + "applied"] = self.yml[src + ":applied"]
+        return template
+
+    # def parse_ibeam_column_section(self, template: dict) -> dict:
+    #     """Copy data in ibeam_section."""
+    #     print('Parsing ibeam_column...')
+    #     return template
+
+    # def parse_ebeam_deflector_section(self, template: dict) -> dict:
+    #     """Copy data in ebeam_deflector section."""
+    #     print('Parsing ebeam_deflector...')
+    #     return template
+
+    # def parse_ibeam_deflector_section(self, template: dict) -> dict:
+    #     """Copy data in ebeam_deflector section."""
+    #     print('Parsing ibeam_deflector...')
+    #     return template
+
+    def parse_optics_section(self, template: dict) -> dict:
+        """Parse the during the session qualifiers of the optics."""
+        print('Parsing optics...')
+        src = "em_lab:optical_system_em"
+        assert isinstance(self.yml[src], fd.FlatDict), \
+            'Required section ' + src + ' does not exist!'
         trg = "/ENTRY[entry]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/"
-        src = "em_lab:optical_system_em:"
-        template[trg + "camera_length"] \
-            = np.float64(self.yml[src + "camera_length:value"])
-        template[trg + "camera_length/@units"] \
-            = self.yml[src + "camera_length:unit"]
-        template[trg + "magnification"] \
-            = np.float64(self.yml[src + "magnification:value"])
-        template[trg + "magnification/@units"] \
-            = self.yml[src + "magnification:unit"]
-        # beam current
-        trg = "/ENTRY[entry]/em_lab/DETECTOR[detector]/"
-        src = "em_lab:detector:"
-        template[trg + "type"] = self.yml[src + "type"]
+        optional_char_fields = ["beam_current_description"]
+        for field_name in optional_char_fields:
+            if field_name in self.yml[src].keys():
+                template[trg + field_name] = self.yml[src + ":" + field_name]
+        optional_ndata_fields = [
+            "camera_length", "magnification", "defocus",
+            "semi_convergence_angle", "working_distance", "beam_current"]
+        for field in optional_ndata_fields:
+            if (src + field + ":value" in self.yml[src]) \
+               and (src + field + ":unit" in self.yml[src]):
+                template[trg + field] \
+                    = np.float64(self.yml[src + ":" + field + ":value"])
+                template[trg + field + "/@units"] \
+                    = self.yml[src + ":" + field + ":unit"]
+        return template
+
+    def parse_detector_section(self, template: dict) -> dict:
+        """Copy data in detector section."""
+        print('Parsing detector...')
+        src = "em_lab:detector"
+        assert isinstance(self.yml[src], list), \
+            'Required section ' + src + ' does not exist!'
+        assert len(self.yml[src]) >= 1, \
+            'List section ' + src + ' needs to have at least one entry!'
+        error_msg = " is a required field but not found in ELN input!"
+        detector_id = 1
+        for detector in self.yml[src]:
+            assert isinstance(detector, dict), \
+                'Detector metadata from ELN have to be a list!'
+            trg = "/ENTRY[entry]/em_lab/DETECTOR[detector" \
+                + str(detector_id) + "]/"
+            assert "type" in detector.keys(), "type" + error_msg
+            template[trg + "type"] = detector["type"]
+            detector_id += 1
+        return template
+
+    def parse_stage_lab_section(self, template: dict) -> dict:
+        """Copy data in stage lab section."""
+        print('Parsing stage_lab...')
+        src = "em_lab:stage_lab"
+        trg = "/ENTRY[entry]/em_lab/stage_lab/"
+        assert isinstance(self.yml[src], fd.FlatDict), \
+            'Required section ' + src + ' does not exist!'
+        error_msg = " is a required field but not found in ELN input!"
+        required_char_fields = ["name"]
+        for field_name in required_char_fields:
+            assert field_name in self.yml[src].keys(), field_name + error_msg
+            template[trg + field_name] = self.yml[src + ":" + field_name]
         return template
 
     def report(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_entry_section(template)
-        self.parse_operator_section(template)
+        self.parse_user_section(template)
         self.parse_sample_section(template)
-        self.parse_instrument_section(template)
+        self.parse_instrument_header_section(template)
+        self.parse_ebeam_column_section(template)
+        # self.parse_ibeam_column_section(template)
+        # self.parse_ebeam_deflector_section(template)
+        # self.parse_ibeam_deflector_section(template)
+        self.parse_optics_section(template)
+        self.parse_detector_section(template)
+        self.parse_stage_lab_section(template)
+
         return template

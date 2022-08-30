@@ -232,6 +232,11 @@ class EmReader(BaseReader):
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary."""
+        template.clear()
+
+        # print(template)
+        # return template
+
         case = EmUseCaseSelector(file_paths)
         assert case.is_valid is True, \
             'Such a combination of input-file if any is not supported !'
@@ -253,15 +258,15 @@ class EmReader(BaseReader):
         else:
             print("No input file defined for eln data !")
 
-        if True is True:
-            # reporting of what has not been properly defined at the reader level
-            print('\n\nDebugging...')
-            for keyword in template.keys():
-                # if template[keyword] is None:
-                print(keyword + '...')
-                print(template[keyword])
-                # if template[keyword] is None:
-                #     print("Entry: '" + keyword + " is not properly defined yet!")
+        # if True is True:
+        # reporting of what has not been properly defined at the reader level
+        # print('\n\nDebugging...')
+        # for keyword in template.keys():
+        #     # if template[keyword] is None:
+        #     print(keyword + '...')
+        #     print(template[keyword])
+        #     # if template[keyword] is None:
+        #     #     print("Entry: '" + keyword + " is not properly defined yet!")
 
         print("Creating default plottable data...")
         create_default_plottable_data(template)
