@@ -1,0 +1,11 @@
+{
+    "/ENTRY[entry]/instrument/common_beam_mask/y_gap": 100,
+    "/ENTRY[entry]/instrument/common_beam_depolarizer": false,
+    "/ENTRY[entry]/instrument/polarizer": 0,
+    "/ENTRY[entry]/operator/name": "Test",
+    "/ENTRY[entry]/operator/affiliation": "Testinstitute",
+    "/ENTRY[entry]/operator/address": "My Adress 1",
+    "/ENTRY[entry]/operator/email": "test@test.org",
+    "/ENTRY[entry]/SAMPLE[sample]/name": "KTF-9_1_A",
+    "/ENTRY[entry]/experiment_identifier": "Transmission of KTF-9_1_A"
+}

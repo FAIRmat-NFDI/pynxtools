@@ -197,11 +197,13 @@ def test_mpes_writing(tmp_path):
     nexus_helper.process_nexus_master_file(None)
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
-    assert len(log) == 4574
+    with open(os.path.join(dirpath, 'Ref_nexus_mpes.log'), 'r') as logfile:
+        Ref_log = logfile.readlines()
+    assert log == Ref_log
     # parsing to NOMAD
     archive = EntryArchive()
     import structlog
     NexusParser().parse(example_data, archive, structlog.get_logger())
     assert archive.nexus.nx_application_mpes.\
         nx_group_ENTRY[0].nx_group_PROCESS[0].nx_group_energy_calibration.\
-        nx_field_calibrated_axis.nx_value[0] + 46.0315977 < 1e-6
+        nx_field_calibrated_axis.nx_value[0] == pytest.approx(-14.264604, rel=1e-6)
