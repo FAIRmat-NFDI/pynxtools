@@ -25,7 +25,7 @@ import sys
 import xml.etree.ElementTree as ET
 import textwrap
 
-from pprint import pprint
+# from pprint import pprint
 
 import yaml
 from yaml.composer import Composer
@@ -62,10 +62,12 @@ class LineLoader(Loader):
         node_pair_lst_for_appending = []
 
         for key_node, value_node in node_pair_lst:
-            shadow_key_node = ScalarNode(tag=BaseResolver.DEFAULT_SCALAR_TAG, value='__line__' + key_node.value)
-            shadow_value_node = ScalarNode(tag=BaseResolver.DEFAULT_SCALAR_TAG, value=key_node.__line__)
-            node_pair_lst_for_appending.append((shadow_key_node, shadow_value_node))
-            sys.stdout.write(f'{key_node.value}  at line  {shadow_value_node.value}\n')
+            shadow_key_node = ScalarNode(
+                tag=BaseResolver.DEFAULT_SCALAR_TAG, value='__line__' + key_node.value)
+            shadow_value_node = ScalarNode(
+                tag=BaseResolver.DEFAULT_SCALAR_TAG, value=key_node.__line__)
+            node_pair_lst_for_appending.append(
+                (shadow_key_node, shadow_value_node))
 
         node.value = node_pair_lst + node_pair_lst_for_appending
         mapping = Constructor.construct_mapping(self, node, deep=deep)
@@ -74,18 +76,23 @@ class LineLoader(Loader):
 
 def yml_reader(inputfile):
     """
-    Yaml module based reading of .yml file
+    This function launches the LineLoader class that parses the yaml in a dict and extends it with line tag keys.
+    """
+
+    plain_text_yaml = open(inputfile, "r").read()
+    loader = LineLoader(plain_text_yaml)
+    dict_yaml = loader.get_single_data()
+
+    return dict_yaml
+
+
+def yml_reader_nolinetag(inputfile):
+    """
+    pyyaml based parsing of yaml file in python dict
     """
     with open(inputfile, 'r') as stream:
         parsed_yaml = yaml.safe_load(stream)
-
-        # prints a line-numbered dict
-        pretty = open(inputfile, "r").read()
-        loader = LineLoader(pretty)
-        data = loader.get_single_data()
-        pprint(data)
-
-        return parsed_yaml
+    return parsed_yaml
 
 
 def nx_name_type_resolving(tmp):
@@ -144,11 +151,13 @@ def xml_handle_units(obj, value):
     obj.set('units', value)
 
 
-def xml_handle_exists(obj, value):
+def xml_handle_exists(dct, obj, keyword, value):
     """This function creates an 'exists' element instance, and appends it to an existing element
 
     """
-    assert value is not None, 'xml_handle_exists, value must not be None!'
+
+    line_number = f'__line__{keyword}'
+    assert value is not None, f'xml_handle_exists, value must not be None at line {dct[line_number]}!'
     if isinstance(value, list):
         if len(value) == 2 and value[0] == 'min':
             obj.set('minOccurs', str(value[1]))
@@ -161,11 +170,11 @@ def xml_handle_exists(obj, value):
             else:
                 obj.set('maxOccurs', 'unbounded')
         elif len(value) == 4 and (value[0] != 'min' or value[2] != 'max'):
-            raise ValueError('exists keyword needs to go either with an optional \
+            raise ValueError(f'exists keyword at line {dct[line_number]} needs to go either with an optional \
 [recommended] list with two entries either [min, <uint>] or \
 [max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
         else:
-            raise ValueError('exists keyword needs to go either with optional, \
+            raise ValueError(f'exists keyword at line {dct[line_number]} needs to go either with optional, \
 recommended, a list with two entries either [min, <uint>] or \
 [max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
     else:
@@ -191,28 +200,30 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
         recursive_build(grp, value, verbose)
 
 
-def xml_handle_dimensions(obj, value: dict):
+def xml_handle_dimensions(dct, obj, keyword, value: dict):
     """This function creates a 'dimensions' element instance, and appends it to an existing element
 
     """
-    assert 'dim' in value.keys(), 'xml_handle_dimensions \
-rank and/or dim not keys in value dict!'
+    line_number = f'__line__{keyword}'
+    assert 'dim' in value.keys(), f'dim is not a key in dimensions dict at line {dct[line_number]}!'
     dims = ET.SubElement(obj, 'dimensions')
     if 'rank' in value.keys():
         dims.set('rank', str(value['rank']))
     for element in value['dim']:
-        assert isinstance(element, list), f'{value} element is not a list!'
-        assert len(element) >= 2, f'{value} list element has less than two entries!'
+        line_number = f'__line__dim'
+        assert isinstance(element, list), f'dim argument at line {value[line_number]} is not a list!'
+        assert len(
+            element) >= 2, f'dim list at line {value[line_number]} has less than two entries!'
         dim = ET.SubElement(dims, 'dim')
         dim.set('index', str(element[0]))
         dim.set('value', str(element[1]))
         if len(element) == 3:
-            assert element[2] == 'optional', f'{value}, xml_handle_dimensions element is \
+            assert element[2] == 'optional', f'dim argument at line {value[line_number]} is \
 a list with unexpected number of entries!'
             dim.set('required', 'false')
 
 
-def xml_handle_enumeration(obj, value, verbose):
+def xml_handle_enumeration(dct, obj, keyword, value, verbose):
     """This function creates an 'enumeration' element instance.
 
 Two cases are handled:
@@ -221,59 +232,78 @@ Two cases are handled:
 
 """
     enum = ET.SubElement(obj, 'enumeration')
-    assert len(value) >= 1, 'xml_handle_enumeration, value must not be an empty list!'
+    line_number = f'__line__{keyword}'
+    assert len(
+        value) >= 1, f'enumeration at line {dct[line_number]} must not be an empty list!'
     if isinstance(value, list):
         for element in value:
             itm = ET.SubElement(enum, 'item')
             itm.set('value', str(element))
     if isinstance(value, dict) and value != {}:
         for element in value.keys():
-            itm = ET.SubElement(enum, 'item')
-            itm.set('value', str(element))
-            recursive_build(itm, value[str(element)], verbose)
+            if '__line__' not in element:
+                itm = ET.SubElement(enum, 'item')
+                itm.set('value', str(element))
+                recursive_build(itm, value[str(element)], verbose)
 
 
-def xml_handle_link(obj, keyword, value):
+def xml_handle_link(dct, obj, keyword, value):
     """If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
 
     """
-    if len(keyword[:-6]) >= 1 and isinstance(value, dict) and 'target' in value.keys():
-        if isinstance(value['target'], str) and len(value['target']) >= 1:
-            lnk = ET.SubElement(obj, 'link')
-            lnk.set('name', keyword[:-6])
-            lnk.set('target', value['target'])
+    if '__line__' not in keyword:
+        if len(keyword[:-6]) >= 1 and \
+           isinstance(value, dict) and \
+           'target' in value.keys():
+            if isinstance(value['target'], str) and len(value['target']) >= 1:
+                lnk = ET.SubElement(obj, 'link')
+                lnk.set('name', keyword[:-6])
+                lnk.set('target', value['target'])
+            else:
+                line_number = '__line__target'
+                raise ValueError(
+                    keyword + f' value for target of a link at line {value[line_number]} is invalid !')
         else:
-            raise ValueError(keyword + ' value for target member of a link is invalid !')
+            line_number = f'__line__{keyword}'
+            raise ValueError(
+                keyword + f' the link formatting at line {dct[line_number]} is invalid !')
     else:
-        raise ValueError(keyword + ' the link formatting is invalid in the yml file !')
+        pass
 
 
-def xml_handle_symbols(obj, value: dict):
+def xml_handle_symbols(dct, obj, keyword, value: dict):
     """Handle a set of NXDL symbols as a child to obj
 
     """
-    assert len(list(value.keys())) >= 1, 'xml_handle_symbols, symbols tables must not be empty!'
+    line_number = f'__line__{keyword}'
+    assert len(list(value.keys())
+               ) >= 1, f'symbols tables at line {dct[line_number]} must not be empty!'
     syms = ET.SubElement(obj, 'symbols')
     if 'doc' in value.keys():
         doctag = ET.SubElement(syms, 'doc')
         doctag.text = '\n' + textwrap.fill(value['doc'], width=70) + '\n'
     for kkeyword, vvalue in value.items():
-        if kkeyword != 'doc':
-            assert vvalue is not None and isinstance(vvalue, str), 'Put a comment in doc string!'
+        if kkeyword != 'doc' and '__line__' not in kkeyword:
+            line_number = f'__line__{kkeyword}'
+            assert vvalue is not None and isinstance(
+                vvalue, str), f'Put a comment in doc string at line {value[line_number]}!'
             sym = ET.SubElement(syms, 'symbol')
             sym.set('name', kkeyword)
             sym_doc = ET.SubElement(sym, 'doc')
             sym_doc.text = '\n' + textwrap.fill(vvalue, width=70) + '\n'
 
 
-def check_keyword_variable(verbose, keyword_name, keyword_type, value):
+def check_keyword_variable(verbose, dct, keyword, value):
     """Check whether both keyword_name and keyword_type are empty, and complains if it is the case
 
 """
+    keyword_name, keyword_type = nx_name_type_resolving(keyword)
     if verbose:
-        sys.stdout.write(f'{keyword_name}({keyword_type}): value type is {type(value)}\n')
+        sys.stdout.write(
+            f'{keyword_name}({keyword_type}): value type is {type(value)}\n')
     if keyword_name == '' and keyword_type == '':
-        raise ValueError('Found an improper YML key !')
+        line_number = f'__line__{keyword}'
+        raise ValueError(f'Found an improper YML key at line {dct[line_number]} !')
 
 
 def helper_keyword_type(kkeyword_type):
@@ -293,12 +323,12 @@ def verbose_flag(verbose, keyword, value):
         sys.stdout.write(f'  key:{keyword}; value type is {type(value)}\n')
 
 
-def second_nested_level_handle(verbose, fld, value):
+def second_nested_level_handle(verbose, dct, fld):
     """When a second dictionary is found inside a value, a new cycle of handlings is run
 
 """
-    if isinstance(value, dict):
-        for kkeyword, vvalue in iter(value.items()):
+    if isinstance(dct, dict):
+        for kkeyword, vvalue in iter(dct.items()):
             verbose_flag(verbose, kkeyword, vvalue)
             if kkeyword[0:2] == NX_ATTR_IDNT:
                 attr = ET.SubElement(fld, 'attribute')
@@ -311,48 +341,59 @@ def second_nested_level_handle(verbose, fld, value):
                 typ = helper_keyword_type(kkeyword_type) or 'NX_CHAR'
                 attr.set('type', typ)
                 if isinstance(vvalue, dict):
-                    for kkkeyword, vvvalue in iter(vvalue.items()):
-                        third_nested_level_handle(verbose, attr, kkeyword, kkkeyword, vvvalue)
+                    for third_level_item in iter(vvalue.items()):
+                        third_nested_level_handle(
+                            verbose, attr, kkeyword, vvalue, third_level_item)
             elif kkeyword == 'doc':
                 xml_handle_doc(fld, vvalue)
             elif kkeyword == NX_UNIT_IDNT:
                 xml_handle_units(fld, vvalue)
             elif kkeyword == 'exists':
-                xml_handle_exists(fld, vvalue)
+                xml_handle_exists(dct, fld, kkeyword, vvalue)
             elif kkeyword == 'dimensions':
-                xml_handle_dimensions(fld, vvalue)
+                xml_handle_dimensions(dct, fld, kkeyword, vvalue)
             elif kkeyword == 'enumeration':
-                xml_handle_enumeration(fld, vvalue, verbose)
+                xml_handle_enumeration(dct, fld, kkeyword, vvalue, verbose)
             elif kkeyword == 'link':
                 fld.set('link', '')
+            elif '__line__' in kkeyword:
+                pass
             else:
-                raise ValueError(kkeyword, ' faced unknown situation !')
+                line_number = f'__line__{kkeyword}'
+                raise ValueError(
+                    kkeyword, f' faced unknown situation at line {dct[line_number]}!')
 
 
-def third_nested_level_handle(verbose, attr, kkeyword, kkkeyword, vvvalue):
+def third_nested_level_handle(verbose, attr, kkeyword, vvalue_dct, third_level_item):
     """When a third dictionary is found inside a value, a new cycle of handlings is run
 
 """
+    kkkeyword = third_level_item[0]
+    vvvalue = third_level_item[1]
     verbose_flag(verbose, kkkeyword, vvvalue)
     if kkkeyword == 'doc':
         xml_handle_doc(attr, vvvalue)
     elif kkkeyword == 'exists':
-        xml_handle_exists(attr, vvvalue)
+        xml_handle_exists(vvalue_dct, attr, kkkeyword, vvvalue)
     elif kkkeyword == 'enumeration':
-        xml_handle_enumeration(attr, vvvalue, verbose)
+        xml_handle_enumeration(vvalue_dct, attr, kkkeyword, vvvalue, verbose)
+    elif '__line__' in kkkeyword:
+        pass
     else:
+        line_number = f'__line__{kkkeyword}'
         raise ValueError(
-            kkeyword, kkkeyword, ' attribute handling !')
+            kkkeyword, f' attribute handling error at line {vvalue_dct[line_number]} !')
 
 
-def attribute_attributes_handle(verbose, obj, value, keyword_name):
+def attribute_attributes_handle(verbose, dct, obj, value, keyword):
     """Handle the attributes found connected to attribute field"""
     # as an attribute identifier
+    keyword_name, keyword_type = nx_name_type_resolving(keyword)
+    line_number = f'__line__{keyword}'
     attr = ET.SubElement(obj, 'attribute')
     attr.set('name', keyword_name[2:])
     if value is not None:
-        assert isinstance(value, dict), 'the keyword is an attribute, \
-its value must be a dict!'
+        assert isinstance(value, dict), f'the attribute at line {dct[line_number]} must be a dict!'
         for kkeyword, vvalue in iter(value.items()):
             verbose_flag(verbose, kkeyword, vvalue)
             if kkeyword == 'name':
@@ -362,17 +403,20 @@ its value must be a dict!'
             elif kkeyword == 'type':
                 attr.set('type', vvalue.upper())
             elif kkeyword == 'enumeration':
-                xml_handle_enumeration(attr, vvalue, verbose)
+                xml_handle_enumeration(value, attr, kkeyword, vvalue, verbose)
             elif kkeyword == 'exists':
-                xml_handle_exists(attr, vvalue)
+                xml_handle_exists(value, attr, kkeyword, vvalue)
+            elif '__line__' in kkeyword:
+                pass
             else:
-                raise ValueError(kkeyword + ' facing an unknown situation \
-while processing attributes of an attribute ! Node tag:', obj.tag, 'Node content:', obj.attrib)
+                line_number = f'__line__{kkeyword}'
+                raise ValueError(kkeyword + f' facing an unknown situation \
+while processing attributes of an attribute at line {value[line_number]} !')
 # handle special keywords (symbols),
 # assumed that you do not encounter further symbols nested inside
 
 
-def second_level_attributes_handle(fld, keyword, value):
+def second_level_attributes_handle(dct, fld, keyword, value):
     """If value is not a dictionary, this function handles the attributes of a nested field
 
 """
@@ -382,13 +426,15 @@ def second_level_attributes_handle(fld, keyword, value):
         elif keyword == NX_UNIT_IDNT:
             xml_handle_units(fld, value)
         elif keyword[0:2] == NX_ATTR_IDNT:  # attribute of a field
-            raise ValueError(keyword, ' unknown attribute \
-    of a field case coming from no dict !')
+            line_number = f'__line__{keyword}'
+            raise ValueError(keyword, f' unknown attribute \
+    of a field case at line {dct[line_number]} !')
         elif keyword == 'exists':
-            xml_handle_exists(fld, value)
+            xml_handle_exists(dct, fld, keyword, value)
         elif keyword == 'dimensions':
-            raise ValueError(keyword, ' unknown dimensions \
-    of a field case coming from no dict !')
+            line_number = f'__line__{keyword}'
+            raise ValueError(keyword, f' unknown dimensions \
+    of a field case at line {dct[line_number]} !')
         else:
             pass
 
@@ -427,38 +473,41 @@ def recursive_build(obj, dct, verbose):
     """
     for keyword, value in iter(dct.items()):
         keyword_name, keyword_type = nx_name_type_resolving(keyword)
-        check_keyword_variable(verbose, keyword_name, keyword_type, value)
+        check_keyword_variable(verbose, dct, keyword, value)
         if verbose:
-            sys.stdout.write(f'keyword_name:{keyword_name} keyword_type {keyword_type}\n')
+            sys.stdout.write(
+                f'keyword_name:{keyword_name} keyword_type {keyword_type}\n')
         if keyword[-6:] == '(link)':
-            xml_handle_link(obj, keyword, value)
+            xml_handle_link(dct, obj, keyword, value)
 
         elif keyword_type == '' and keyword_name == 'symbols':
             # print(value.key(), type(value.key()), value.value(), type(value.value()))
-            xml_handle_symbols(obj, value)
+            xml_handle_symbols(dct, obj, keyword, value)
 
-        elif (keyword_type in NX_CLSS) or \
-             (keyword_type not in NX_TYPE_KEYS + [''] + NX_NEW_DEFINED_CLASSES):
+        elif ((keyword_type in NX_CLSS) or (keyword_type not in
+                                            NX_TYPE_KEYS + [''] + NX_NEW_DEFINED_CLASSES)) \
+                and '__line__' not in keyword_name:
             # we can be sure we need to instantiate a new group
             xml_handle_group(verbose, obj, value, keyword_name, keyword_type)
 
         elif keyword_name[0:2] == NX_ATTR_IDNT:  # check if obj qualifies
-            attribute_attributes_handle(verbose, obj, value, keyword_name)
+            attribute_attributes_handle(verbose, dct, obj, value, keyword)
         elif keyword == 'doc':
             xml_handle_doc(obj, value)
 
         elif keyword == 'enumeration':
-            xml_handle_enumeration(obj, value, verbose)
+            xml_handle_enumeration(dct, obj, keyword, value, verbose)
 
         elif keyword == 'dimensions':
-            xml_handle_dimensions(obj, value)
+            xml_handle_dimensions(dct, obj, keyword, value)
 
         elif keyword == 'exists':
-            xml_handle_exists(obj, value)
+            xml_handle_exists(dct, obj, keyword, value)
 
-        elif keyword_name != '':
-            fld = not_empty_keyword_name_handle(obj, keyword_type, keyword_name)
-            second_nested_level_handle(verbose, fld, value)
-            second_level_attributes_handle(fld, keyword, value)
+        elif keyword_name != '' and '__line__' not in keyword_name:
+            fld = not_empty_keyword_name_handle(
+                obj, keyword_type, keyword_name)
+            second_nested_level_handle(verbose, value, fld)
+            second_level_attributes_handle(dct, fld, keyword, value)
         else:
             pass

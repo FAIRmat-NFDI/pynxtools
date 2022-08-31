@@ -108,7 +108,7 @@ application and base are valid categories!'
         del yml_appdef['category']
 
     if 'symbols' in yml_appdef.keys():
-        yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        yaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef, xml_root, 'symbols', yml_appdef['symbols'])
         del yml_appdef['symbols']
 
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
@@ -119,9 +119,14 @@ has to be a non-empty string!'
 
     del yml_appdef['doc']
 
-    assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
+    root_keys = 0
+    for key in yml_appdef.keys():
+        if '__line__' not in key:
+            root_keys += 1
+
+    assert root_keys == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'
-    keyword = list(yml_appdef.keys())[0]  # which is the only one
+    keyword = list(yml_appdef.keys())[0]
     assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
 keyword has an invalid pattern, or is too short!'
     xml_root.set('name', keyword[1:-1])
