@@ -46,9 +46,14 @@ NX_UNIT_IDNT = 'unit'
 NX_UNIT_TYPS = nexus.get_nx_units()
 
 
-class LineLoader(Loader):
-    def __init__(self, stream):
-        super(LineLoader, self).__init__(stream)
+class LineLoader(Loader):  # pylint: disable=too-many-ancestors
+    """
+    LineLoader parses a yaml into a python dictionary extended with extra items.
+    The new items have as keys __line__<yaml_keyword> and as values the yaml file line number
+    """
+    # def __init__(self, stream):
+    #    super(LineLoader, self).__init__(stream)
+    # W0235: Useless super delegation in method '__init__' (useless-super-delegation)
 
     def compose_node(self, parent, index):
         # the line number where the previous token has ended (plus empty lines)
@@ -61,11 +66,11 @@ class LineLoader(Loader):
         node_pair_lst = node.value
         node_pair_lst_for_appending = []
 
-        for key_node, value_node in node_pair_lst:
+        for key_node in node_pair_lst:
             shadow_key_node = ScalarNode(
-                tag=BaseResolver.DEFAULT_SCALAR_TAG, value='__line__' + key_node.value)
+                tag=BaseResolver.DEFAULT_SCALAR_TAG, value='__line__' + key_node[0].value)
             shadow_value_node = ScalarNode(
-                tag=BaseResolver.DEFAULT_SCALAR_TAG, value=key_node.__line__)
+                tag=BaseResolver.DEFAULT_SCALAR_TAG, value=key_node[0].__line__)
             node_pair_lst_for_appending.append(
                 (shadow_key_node, shadow_value_node))
 
@@ -76,7 +81,8 @@ class LineLoader(Loader):
 
 def yml_reader(inputfile):
     """
-    This function launches the LineLoader class that parses the yaml in a dict and extends it with line tag keys.
+    This function launches the LineLoader class.
+    It parses the yaml in a dict and extends it with line tag keys for each key of the dict.
     """
 
     plain_text_yaml = open(inputfile, "r").read()
@@ -157,7 +163,7 @@ def xml_handle_exists(dct, obj, keyword, value):
     """
 
     line_number = f'__line__{keyword}'
-    assert value is not None, f'xml_handle_exists, value must not be None at line {dct[line_number]}!'
+    assert value is not None, f'Line {dct[line_number]}: exists argument must not be None !'
     if isinstance(value, list):
         if len(value) == 2 and value[0] == 'min':
             obj.set('minOccurs', str(value[1]))
@@ -170,13 +176,15 @@ def xml_handle_exists(dct, obj, keyword, value):
             else:
                 obj.set('maxOccurs', 'unbounded')
         elif len(value) == 4 and (value[0] != 'min' or value[2] != 'max'):
-            raise ValueError(f'exists keyword at line {dct[line_number]} needs to go either with an optional \
-[recommended] list with two entries either [min, <uint>] or \
-[max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
+            raise ValueError(f'Line {dct[line_number]}: exists keyword'
+                             f'needs to go either with an optional [recommended] list with two'
+                             f'entries either [min, <uint>] or [max, <uint>], or a list of four'
+                             f'entries [min, <uint>, max, <uint>] !')
         else:
-            raise ValueError(f'exists keyword at line {dct[line_number]} needs to go either with optional, \
-recommended, a list with two entries either [min, <uint>] or \
-[max, <uint>], or a list of four entries [min, <uint>, max, <uint>] !')
+            raise ValueError(f'Line {dct[line_number]}: exists keyword'
+                             f'needs to go either with optional, recommended, a list with two'
+                             f'entries either [min, <uint>] or [max, <uint>], or a list of four'
+                             f'entries [min, <uint>, max, <uint>] !')
     else:
         if value == 'optional':
             obj.set('optional', 'true')
@@ -205,21 +213,21 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
 
     """
     line_number = f'__line__{keyword}'
-    assert 'dim' in value.keys(), f'dim is not a key in dimensions dict at line {dct[line_number]}!'
+    assert 'dim' in value.keys(), f'Line {dct[line_number]}: dim is not a key in dimensions dict !'
     dims = ET.SubElement(obj, 'dimensions')
     if 'rank' in value.keys():
         dims.set('rank', str(value['rank']))
     for element in value['dim']:
         line_number = f'__line__dim'
-        assert isinstance(element, list), f'dim argument at line {value[line_number]} is not a list!'
+        assert isinstance(element, list), f'Line {value[line_number]}: dim argument not a list !'
         assert len(
-            element) >= 2, f'dim list at line {value[line_number]} has less than two entries!'
+            element) >= 2, f'Line {value[line_number]}: dim list has less than two entries !'
         dim = ET.SubElement(dims, 'dim')
         dim.set('index', str(element[0]))
         dim.set('value', str(element[1]))
         if len(element) == 3:
-            assert element[2] == 'optional', f'dim argument at line {value[line_number]} is \
-a list with unexpected number of entries!'
+            assert element[2] == 'optional', f'Line {value[line_number]}: dim argument \
+is a list with unexpected number of entries!'
             dim.set('required', 'false')
 
 
@@ -234,7 +242,7 @@ Two cases are handled:
     enum = ET.SubElement(obj, 'enumeration')
     line_number = f'__line__{keyword}'
     assert len(
-        value) >= 1, f'enumeration at line {dct[line_number]} must not be an empty list!'
+        value) >= 1, f'Line {dct[line_number]}: enumeration must not be an empty list!'
     if isinstance(value, list):
         for element in value:
             itm = ET.SubElement(enum, 'item')
@@ -262,11 +270,11 @@ def xml_handle_link(dct, obj, keyword, value):
             else:
                 line_number = '__line__target'
                 raise ValueError(
-                    keyword + f' value for target of a link at line {value[line_number]} is invalid !')
+                    keyword + f'Line {value[line_number]}: target argument of link is invalid !')
         else:
             line_number = f'__line__{keyword}'
             raise ValueError(
-                keyword + f' the link formatting at line {dct[line_number]} is invalid !')
+                keyword + f'Line {dct[line_number]}: the link formatting is invalid !')
     else:
         pass
 
@@ -277,7 +285,7 @@ def xml_handle_symbols(dct, obj, keyword, value: dict):
     """
     line_number = f'__line__{keyword}'
     assert len(list(value.keys())
-               ) >= 1, f'symbols tables at line {dct[line_number]} must not be empty!'
+               ) >= 1, f'Line {dct[line_number]}: symbols table must not be empty !'
     syms = ET.SubElement(obj, 'symbols')
     if 'doc' in value.keys():
         doctag = ET.SubElement(syms, 'doc')
@@ -286,7 +294,7 @@ def xml_handle_symbols(dct, obj, keyword, value: dict):
         if kkeyword != 'doc' and '__line__' not in kkeyword:
             line_number = f'__line__{kkeyword}'
             assert vvalue is not None and isinstance(
-                vvalue, str), f'Put a comment in doc string at line {value[line_number]}!'
+                vvalue, str), f'Line {value[line_number]}: put a comment in doc string !'
             sym = ET.SubElement(syms, 'symbol')
             sym.set('name', kkeyword)
             sym_doc = ET.SubElement(sym, 'doc')
@@ -303,7 +311,7 @@ def check_keyword_variable(verbose, dct, keyword, value):
             f'{keyword_name}({keyword_type}): value type is {type(value)}\n')
     if keyword_name == '' and keyword_type == '':
         line_number = f'__line__{keyword}'
-        raise ValueError(f'Found an improper YML key at line {dct[line_number]} !')
+        raise ValueError(f'Line {dct[line_number]}: found an improper yaml key !')
 
 
 def helper_keyword_type(kkeyword_type):
@@ -341,9 +349,7 @@ def second_nested_level_handle(verbose, dct, fld):
                 typ = helper_keyword_type(kkeyword_type) or 'NX_CHAR'
                 attr.set('type', typ)
                 if isinstance(vvalue, dict):
-                    for third_level_item in iter(vvalue.items()):
-                        third_nested_level_handle(
-                            verbose, attr, kkeyword, vvalue, third_level_item)
+                    third_nested_level_handle(verbose, attr, vvalue)
             elif kkeyword == 'doc':
                 xml_handle_doc(fld, vvalue)
             elif kkeyword == NX_UNIT_IDNT:
@@ -361,39 +367,38 @@ def second_nested_level_handle(verbose, dct, fld):
             else:
                 line_number = f'__line__{kkeyword}'
                 raise ValueError(
-                    kkeyword, f' faced unknown situation at line {dct[line_number]}!')
+                    kkeyword, f' Line {dct[line_number]}: faced unknown situation !')
 
 
-def third_nested_level_handle(verbose, attr, kkeyword, vvalue_dct, third_level_item):
+def third_nested_level_handle(verbose, attr, vvalue_dct):
     """When a third dictionary is found inside a value, a new cycle of handlings is run
 
 """
-    kkkeyword = third_level_item[0]
-    vvvalue = third_level_item[1]
-    verbose_flag(verbose, kkkeyword, vvvalue)
-    if kkkeyword == 'doc':
-        xml_handle_doc(attr, vvvalue)
-    elif kkkeyword == 'exists':
-        xml_handle_exists(vvalue_dct, attr, kkkeyword, vvvalue)
-    elif kkkeyword == 'enumeration':
-        xml_handle_enumeration(vvalue_dct, attr, kkkeyword, vvvalue, verbose)
-    elif '__line__' in kkkeyword:
-        pass
-    else:
-        line_number = f'__line__{kkkeyword}'
-        raise ValueError(
-            kkkeyword, f' attribute handling error at line {vvalue_dct[line_number]} !')
+    for kkkeyword, vvvalue in iter(vvalue_dct.items()):
+        verbose_flag(verbose, kkkeyword, vvvalue)
+        if kkkeyword == 'doc':
+            xml_handle_doc(attr, vvvalue)
+        elif kkkeyword == 'exists':
+            xml_handle_exists(vvalue_dct, attr, kkkeyword, vvvalue)
+        elif kkkeyword == 'enumeration':
+            xml_handle_enumeration(vvalue_dct, attr, kkkeyword, vvvalue, verbose)
+        elif '__line__' in kkkeyword:
+            pass
+        else:
+            line_number = f'__line__{kkkeyword}'
+            raise ValueError(
+                kkkeyword, f' Line {vvalue_dct[line_number]}: attribute handling error !')
 
 
 def attribute_attributes_handle(verbose, dct, obj, value, keyword):
     """Handle the attributes found connected to attribute field"""
     # as an attribute identifier
-    keyword_name, keyword_type = nx_name_type_resolving(keyword)
+    keyword_name = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
     attr = ET.SubElement(obj, 'attribute')
-    attr.set('name', keyword_name[2:])
+    attr.set('name', keyword_name[0][2:])
     if value is not None:
-        assert isinstance(value, dict), f'the attribute at line {dct[line_number]} must be a dict!'
+        assert isinstance(value, dict), f'Line {dct[line_number]}: the attribute must be a dict!'
         for kkeyword, vvalue in iter(value.items()):
             verbose_flag(verbose, kkeyword, vvalue)
             if kkeyword == 'name':
@@ -410,8 +415,8 @@ def attribute_attributes_handle(verbose, dct, obj, value, keyword):
                 pass
             else:
                 line_number = f'__line__{kkeyword}'
-                raise ValueError(kkeyword + f' facing an unknown situation \
-while processing attributes of an attribute at line {value[line_number]} !')
+                raise ValueError(kkeyword + f'Line {value[line_number]}: facing an unknown \
+situation while processing attributes of an attribute !')
 # handle special keywords (symbols),
 # assumed that you do not encounter further symbols nested inside
 
@@ -433,8 +438,8 @@ def second_level_attributes_handle(dct, fld, keyword, value):
             xml_handle_exists(dct, fld, keyword, value)
         elif keyword == 'dimensions':
             line_number = f'__line__{keyword}'
-            raise ValueError(keyword, f' unknown dimensions \
-    of a field case at line {dct[line_number]} !')
+            raise ValueError(keyword, f' Line {dct[line_number]}: unknown dimensions \
+    of a field case !')
         else:
             pass
 

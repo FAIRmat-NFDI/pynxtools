@@ -108,7 +108,10 @@ application and base are valid categories!'
         del yml_appdef['category']
 
     if 'symbols' in yml_appdef.keys():
-        yaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef, xml_root, 'symbols', yml_appdef['symbols'])
+        yaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef,
+                                                   xml_root,
+                                                   'symbols',
+                                                   yml_appdef['symbols'])
         del yml_appdef['symbols']
 
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
