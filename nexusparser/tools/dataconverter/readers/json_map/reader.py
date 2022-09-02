@@ -24,6 +24,7 @@ import xarray
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 from nexusparser.tools.dataconverter.template import Template
+from nexusparser.tools.dataconverter.helpers import ensure_all_required_fields_exist
 
 
 def parse_slice(slice_string):
@@ -90,11 +91,7 @@ def fill_documented(template, mapping, template_provided, data):
 
                 del mapping[path]
             except KeyError:
-                if req != "required":
-                    pass
-                else:
-                    raise Exception(f"Required map for, {path},"
-                                    f"doesn't exist in JSON map file.")
+                pass
 
 
 def convert_shapes_to_slice_objects(mapping):
@@ -149,6 +146,8 @@ class JsonMapReader(BaseReader):
         fill_documented(new_template, mapping, template, data)
 
         fill_undocumented(mapping, new_template, data)
+
+        ensure_all_required_fields_exist(template, new_template)
 
         return new_template
 
