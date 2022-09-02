@@ -208,12 +208,8 @@ def get_nexus_category(xml_node: ET.Element) -> str:
 def if_repeats(name: str, max_occurs: str) -> bool:
     repeats = any(char.isupper() for char in name) or max_occurs == 'unbounded'
 
-    dimension = max_occurs
-    try:
-        dimension = int(dimension)
-        repeats = repeats or dimension > 1
-    except ValueError:
-        pass
+    if max_occurs.isdigit():
+        repeats = repeats or int(max_occurs) > 1
 
     return repeats
 
@@ -360,7 +356,6 @@ def add_group_contents(xml_node: ET.Element, section: Section):
         if 'name' in group.attrib:
             name = f'nx_group_{group.attrib["name"]}'
         else:
-            # todo: additional underscore intended?
             name = f'nx_group_{group.attrib["type"].replace("NX", "").upper()}'
         repeats = if_repeats(name, group.attrib.get('maxOccurs', '0'))
         group_subsection = SubSection(
@@ -550,3 +545,6 @@ def init_nexus_metainfo():
     python_module = sys.modules[__name__]
     for section in nexus_metainfo_package.section_definitions:  # pylint: disable=not-an-iterable
         setattr(python_module, section.name, section.section_cls)
+
+
+init_nexus_metainfo()

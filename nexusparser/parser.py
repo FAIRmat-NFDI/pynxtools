@@ -1,6 +1,19 @@
 """parser doc
 
 """
+from typing import Optional
+import xml.etree.ElementTree as ET
+
+import numpy as np
+
+from nomad.datamodel import EntryArchive
+from nomad.metainfo import MSection, Quantity, MetainfoError
+from nomad.parsing import MatchingParser
+# from . import metainfo  # pylint: disable=unused-import
+from nexusparser.tools import nexus as read_nexus
+from nexusparser.metainfo import nexus
+
+
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,56 +32,67 @@
 # limitations under the License.
 #
 
-import numpy as np
-from nomad.datamodel import EntryArchive
-from nomad.parsing import MatchingParser
-# from . import metainfo  # pylint: disable=unused-import
-from nexusparser.tools import nexus as read_nexus
-from nexusparser.metainfo import nexus
+
+def to_group_name(nxdl_node: ET.Element):
+    return 'nx_group_' + nxdl_node.attrib.get('name', nxdl_node.attrib['type'][2:].upper())
 
 
-def get_to_new_subsection(hdf_name, nxdef, nxdl_node, act_section):
-    """hdf_name         name of the hdf group/field/attribute (None for definition)
-    nxdef           application definition
-    nxdl_node        node in the nxdl.xml
-    act_class       actual class
-    act_section     actual section in which the new entry needs to be picked up from
-                    Note that if the new element did not exists, it is created now
-    return          (new_class, new_section)
+# noinspection SpellCheckingInspection
+def to_new_section(
+        hdf_name: Optional[str],
+        nxdef: str,
+        nxdl_node: ET.Element,
+        act_section: MSection
+) -> MSection:
+    '''
+    Args:
+        hdf_name : name of the hdf group/field/attribute (None for definition)
+        nxdef : application definition
+        nxdl_node : node in the nxdl.xml
+        act_section : actual section in which the new entry needs to be picked up from
+
+    Note that if the new element did not exists, it is created now
+
+    Returns:
+        tuple: the new subsection
+
+    The strict mapping is available between metainfo and nexus:
+        Group <-> SubSection
+        Field <-> Quantity
+        Attribute <-> SubSection.Attribute or Quantity.Attribute
+
+    If the given nxdl_node is a Group, return the corresponding SubSection.
+    If the given nxdl_node is a Field, return the SubSection contains it.
+    If the given nxdl_node is a Attribute, return the associated SubSection or the SubSection contains
+        the associated Quantity.
+
     TODO:   try to find also in the base section???
+    '''
 
-"""
     if hdf_name is None:
         nomad_def_name = 'nx_application_' + nxdef[2:]
-        # nomad_class_name = nxdef
-    elif nxdl_node.tag.endswith('field'):
-        nxdl_f_a_name = nxdl_node.attrib['name'] if 'name' in nxdl_node.attrib else hdf_name
-        nomad_def_name = 'nx_field_' + nxdl_f_a_name
-        # nomad_class_name = self.get_nomad_classname(nxdl_f_a_name, None, "Field")
     elif nxdl_node.tag.endswith('group'):
-        nxdl_g_name = nxdl_node.attrib['name'] \
-            if 'name' in nxdl_node.attrib else nxdl_node.attrib['type'][2:].upper()
-        nomad_def_name = 'nx_group_' + nxdl_g_name
-        # nomad_class_name = self.get_nomad_classname(read_nexus.get_node_name(nxdl_node),
-        #                                             nxdl_node.attrib['type'], "Group")
+        # it is a new group
+        nomad_def_name = to_group_name(nxdl_node)
     else:
-        nxdl_f_a_name = nxdl_node.attrib['name'] if 'name' in nxdl_node.attrib else hdf_name
-        nomad_def_name = 'nx_attribute_' + nxdl_f_a_name
-        # nomad_class_name = self.get_nomad_classname(nxdl_f_a_name, None, "Attribute")
+        # no need to change section for quantities and attributes
+        return act_section
 
     new_def = act_section.m_def.all_sub_sections[nomad_def_name]
-    new_class = new_def.section_def.section_cls
-    new_section = None
+
+    new_section: MSection = None  # type:ignore
+
     for section in act_section.m_get_sub_sections(new_def):
-        if hdf_name is None or (getattr(section, "nx_name") and section.nx_name == hdf_name):
+        if hdf_name is None or getattr(section, 'nx_name', None) == hdf_name:
             new_section = section
             break
+
     if new_section is None:
-        act_section.m_create(new_class)
+        act_section.m_create(new_def.section_def.section_cls)
         new_section = act_section.m_get_sub_section(new_def, -1)
-        if hdf_name is not None:
-            new_section.nx_name = hdf_name
-    return (new_class, new_section)
+        new_section.__dict__['nx_name'] = hdf_name
+
+    return new_section
 
 
 def get_value(hdf_node):
@@ -82,23 +106,19 @@ def get_value(hdf_node):
         val = hdf_value
     else:
         try:
+            # todo: this may be an array of strings, need to convert properly
             val = str(hdf_value.astype(str))
         except UnicodeDecodeError:
             val = str(hdf_node[()].decode())
     return val
 
 
-def helper_nexus_populate(nxdl_attribute, act_section, val, logger):
-    """Handle info of units attribute, raise error if default or something else is found
+def _get_definition_by_name(name: str, section: MSection) -> Optional[Quantity]:
+    for quantity in section.m_def.all_properties.values():
+        if quantity.name == name or name in quantity.aliases:
+            return quantity
 
-"""
-    try:
-        if nxdl_attribute == "units":
-            act_section.nx_unit = val[0]
-        elif nxdl_attribute == "default":
-            Exception("Quantity 'default' is not yet added by default to groups in Nomad schema")
-    except Exception as exc:  # pylint: disable=broad-except
-        logger.debug("Problem with storage!!!\n" + str(exc))
+    return None
 
 
 def nexus_populate_helper(params):
@@ -106,45 +126,46 @@ def nexus_populate_helper(params):
     (path_level, nxdl_path, act_section, logstr, val, loglev, nxdef, hdf_node) = params
     if path_level < len(nxdl_path):
         nxdl_attribute = nxdl_path[path_level]
+        parent_node = nxdl_path[path_level - 1]
         if isinstance(nxdl_attribute, str):
-            # conventional attribute not in schema. Only necessary,
-            # if schema is not populated according
-            # helper_nexus_populate(nxdl_attribute, act_section, val, logger)
-            try:
-                if nxdl_attribute == "units":
-                    act_section.nx_unit = val[0]
-                elif nxdl_attribute == "default":
-                    Exception(
-                        "'default' is not yet added by default to groups in Nomad schema")
-            except Exception as exc:  # pylint: disable=broad-except
-                logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
-                loglev = 'error'
+            if nxdl_attribute == "units":
+                metainfo_def = _get_definition_by_name(parent_node.attrib['name'], act_section)
+                metainfo_def.dimensionality = val[0]
         else:
             # attribute in schema
-            act_section = \
-                get_to_new_subsection(nxdl_attribute.attrib['name'], nxdef,
-                                      nxdl_attribute, act_section)[1]
+            attribute_name = nxdl_attribute.get('name')
+            act_section = to_new_section(attribute_name, nxdef, nxdl_attribute, act_section)
+
+            parent_name = parent_node.get('name', parent_node.attrib['type'][2:].upper())
+
             try:
-                act_section.nx_value = val[0]
-            except (AttributeError, TypeError, ValueError) as exc:
-                logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
-                loglev = 'error'
+                act_section.m_set_attribute(parent_name, attribute_name, val[0])
+            except Exception:
+                logstr += f'{parent_name} --> {attribute_name}'
+                loglev = 'ERROR'
     else:
+        data_field = get_value(hdf_node)
+        if hdf_node[...].dtype.kind in 'iufc' and \
+                isinstance(data_field, np.ndarray) and \
+                data_field.size > 1:
+            data_field = np.array([
+                np.mean(data_field),
+                np.var(data_field),
+                np.min(data_field),
+                np.max(data_field)
+            ])
+        metainfo_def = _get_definition_by_name(nxdl_path[-1].attrib['name'], act_section)
+        unit = hdf_node.attrs.get('units', None)
+        if unit:
+            if unit == 'counts':
+                metainfo_def.unit = '1'
+            else:
+                metainfo_def.unit = unit
         try:
-            data_field = get_value(hdf_node)
-            if hdf_node[...].dtype.kind in 'iufc' and \
-                    isinstance(data_field, np.ndarray) and \
-                    data_field.size > 1:
-                data_field = np.array([
-                    np.mean(data_field),
-                    np.var(data_field),
-                    np.min(data_field),
-                    np.max(data_field)
-                ])
-            act_section.nx_value = data_field
-        except (TypeError, ValueError) as exc:
-            logstr += ("Problem with storage!!!\n" + str(exc)) + '\n'
-            loglev = 'error'
+            act_section.m_set(metainfo_def, data_field)
+        except Exception as e:
+            logstr += str(e)
+            loglev = 'ERROR'
     return [logstr, loglev]
 
 
@@ -176,6 +197,7 @@ class NexusParser(MatchingParser):
     """NesusParser doc
 
 """
+
     def __init__(self):
         super().__init__(
             name='parsers/nexus', code_name='NEXUS', code_homepage='https://www.nexus.eu/',
@@ -186,15 +208,15 @@ class NexusParser(MatchingParser):
         self.archive = None
         self.nxroot = None
 
-#     def get_nomad_classname(self, xml_name, xml_type, suffix):
-#         """Get nomad classname from xml file
+    #     def get_nomad_classname(self, xml_name, xml_type, suffix):
+    #         """Get nomad classname from xml file
 
-# """
-#         if suffix == 'Attribute' or suffix == 'Field' or xml_type[2:].upper() != xml_name:
-#             name = xml_name + suffix
-#         else:
-#             name = xml_type + suffix
-#         return name
+    # """
+    #         if suffix == 'Attribute' or suffix == 'Field' or xml_type[2:].upper() != xml_name:
+    #             name = xml_name + suffix
+    #         else:
+    #             name = xml_type + suffix
+    #         return name
 
     def nexus_populate(self, params, attr=None):
         """Walks through hdf_namelist and generate nxdl nodes
@@ -207,12 +229,11 @@ class NexusParser(MatchingParser):
             logstr = add_log(params, logstr)
             act_section = self.nxroot
             hdf_namelist = hdf_path.split('/')[1:]
-            act_section = get_to_new_subsection(None, params[1], None, act_section)[1]
+            act_section = to_new_section(None, params[1], None, act_section)
             path_level = 1
             for hdf_name in hdf_namelist:
                 nxdl_node = params[2][path_level] if path_level < len(params[2]) else hdf_name
-                act_section = get_to_new_subsection(hdf_name, params[1],
-                                                    nxdl_node, act_section)[1]
+                act_section = to_new_section(hdf_name, params[1], nxdl_node, act_section)
                 path_level += 1
             helper_params = (path_level, params[2], act_section, logstr, params[3],
                              loglev, params[1], hdf_node)
@@ -241,7 +262,7 @@ class NexusParser(MatchingParser):
 
         appdef = ""
         for var in dir(archive.nexus):
-            if var.startswith("nx_application") and getattr(archive.nexus, var) is not None:
+            if var.startswith("nx_application") and getattr(archive.nexus, var, None) is not None:
                 appdef = var[len("nx_application_"):]
 
         if archive.metadata is not None:
