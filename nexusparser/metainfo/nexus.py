@@ -272,13 +272,20 @@ def __create_attributes(xml_node: ET.Element, definition: Union[SubSection, Prop
     '''
     for attribute in xml_node.findall('nx:attribute', XML_NAMESPACES):
         name = attribute.get('name')
-        nx_type = attribute.attrib.get('type', 'NX_CHAR')
-        repeats = __if_repeats(name, attribute.attrib.get('maxOccurs', '0'))
+
+        nx_type = _NX_TYPES[attribute.attrib.get('type', 'NX_CHAR')]
+        nx_shape = ['0..*'] if __if_repeats(name, attribute.attrib.get('maxOccurs', '0')) else []
+
+        # check if the attribute exist
+        # if not create a new one and append to the list
+        for m_attribute in definition.attributes:
+            if m_attribute.name == name:
+                m_attribute.shape = nx_shape
+                m_attribute.type = nx_type
+                return
+
         definition.attributes.append(Attribute(
-            name=name,
-            variable=__if_template(name),
-            shape=['0..*'] if repeats else [],
-            type=_NX_TYPES[nx_type]))
+            name=name, variable=__if_template(name), shape=nx_shape, type=nx_type))
 
 
 def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
