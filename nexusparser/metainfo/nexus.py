@@ -16,13 +16,14 @@
 # limitations under the License.
 #
 
+
 '''This tool is reading the xml file'''
 
 import re
 import os
 import os.path
 import sys
-from typing import Dict, Any, Union, Optional
+from typing import Dict, Union, Optional
 import xml.etree.ElementTree as ET
 
 import numpy as np
@@ -46,6 +47,7 @@ _current_package: Package = None  # type: ignore
 _definition_sections: Dict[str, Section] = dict()
 
 VALIDATE = False
+
 _XML_PARENT_MAP: Dict[ET.Element, ET.Element] = None  # type: ignore
 _NX_DOC_BASE = 'https://manual.nexusformat.org/classes'
 _NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
@@ -65,17 +67,18 @@ _NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
 class NXUnitSet:
     # maps from `NX_` token to dimensionality
     # None -> disable dimensionality check
-    # 'dimensionless' -> dimensionless quantities
+    # '1' -> dimensionless quantities
+    # 'transformation' -> Specially handled in metainfo
     mapping: dict = {
-        'NX_ANGLE': 'radian',
+        'NX_ANGLE': '[angle]',
         'NX_ANY': None,
         'NX_AREA': '[area]',
         'NX_CHARGE': '[charge]',
-        'NX_COUNT': 'dimensionless',
+        'NX_COUNT': '1',
         'NX_CROSS_SECTION': '[area]',
-        'NX_CURRENT': 'ampere',
-        'NX_DIMENSIONLESS': 'dimensionless',
-        'NX_EMITTANCE': '[length] * radian',
+        'NX_CURRENT': '[current]',
+        'NX_DIMENSIONLESS': '1',
+        'NX_EMITTANCE': '[length] * [angle]',
         'NX_ENERGY': '[energy]',
         'NX_FLUX': '1 / [time] / [area]',
         'NX_FREQUENCY': '[frequency]',
@@ -88,22 +91,25 @@ class NXUnitSet:
         'NX_PER_LENGTH': '1 / [length]',
         'NX_POWER': '[power]',
         'NX_PRESSURE': '[pressure]',
-        'NX_PULSES': 'dimensionless',
+        'NX_PULSES': '1',
         'NX_SCATTERING_LENGTH_DENSITY': '1 / [area]',
-        'NX_SOLID_ANGLE': 'steradian',
-        'NX_TEMPERATURE': 'kelvin',
+        'NX_SOLID_ANGLE': '[angle] * [angle]',
+        'NX_TEMPERATURE': '[temperature]',
         'NX_TIME': '[time]',
         'NX_TIME_OF_FLIGHT': '[time]',
-        'NX_TRANSFORMATION': None,
-        'NX_UNITLESS': 'dimensionless',
-        'NX_VOLTAGE': 'volt',
+        'NX_TRANSFORMATION': 'transformation',
+        'NX_UNITLESS': '1',
+        'NX_VOLTAGE': '[energy] / [current] / [time]',
         'NX_VOLUME': '[volume]',
-        'NX_WAVELENGTH': 'angstrom',
-        'NX_WAVENUMBER': '1 / angstrom'
+        'NX_WAVELENGTH': '[length]',
+        'NX_WAVENUMBER': '1 / [length]'
     }
 
     @staticmethod
     def normalise(value: str) -> str:
+        '''
+        Normalise the given token
+        '''
         value = value.upper()
         if not value.startswith('NX_'):
             value = 'NX_' + value
@@ -111,14 +117,13 @@ class NXUnitSet:
 
     @staticmethod
     def is_nx_token(value: str) -> bool:
+        '''
+        Check if a given token is one of NX tokens
+        '''
         return NXUnitSet.normalise(value) in NXUnitSet.mapping.keys()
 
 
-def to_snake_case(camel_name: str) -> str:
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_name).lower()
-
-
-def to_camel_case(snake_str: str, upper: bool = False) -> str:
+def __to_camel_case(snake_str: str, upper: bool = False) -> str:
     '''
     Take as input a snake case variable and return a camel case one
     '''
@@ -130,7 +135,34 @@ def to_camel_case(snake_str: str, upper: bool = False) -> str:
     return components[0] + ''.join(x.capitalize() for x in components[1:])
 
 
-def nx_documentation_url(xml_node: ET.Element, nx_type: Optional[str]) -> Optional[str]:
+def __if_base(xml_node: ET.Element) -> bool:
+    '''
+    retrieves the category from the root element
+    '''
+    elem = xml_node
+    while True:
+        parent = _XML_PARENT_MAP.get(elem)
+        if parent is None:
+            break
+        elem = parent
+
+    return elem.attrib['category'] == 'base'
+
+
+def __if_repeats(name: str, max_occurs: str) -> bool:
+    repeats = any(char.isupper() for char in name) or max_occurs == 'unbounded'
+
+    if max_occurs.isdigit():
+        repeats = repeats or int(max_occurs) > 1
+
+    return repeats
+
+
+def __if_template(name: Optional[str]) -> bool:
+    return name is None or name.lower() != name
+
+
+def __get_documentation_url(xml_node: ET.Element, nx_type: Optional[str]) -> Optional[str]:
     '''
     Get documentation url
     '''
@@ -142,10 +174,8 @@ def nx_documentation_url(xml_node: ET.Element, nx_type: Optional[str]) -> Option
         anchor_segments.append(nx_type)
 
     while True:
-        if 'name' in xml_node.attrib:
-            anchor_segments.append(xml_node.attrib['name'].replace('_', '-'))
-        else:
-            anchor_segments.append(xml_node.attrib['type'][2:].replace('_', '-'))
+        segment = xml_node.get('name', xml_node.get('type'))
+        anchor_segments.append(segment.replace('NX', '').replace('_', '-'))
 
         xml_parent = xml_node
         xml_node = _XML_PARENT_MAP.get(xml_node)
@@ -157,7 +187,7 @@ def nx_documentation_url(xml_node: ET.Element, nx_type: Optional[str]) -> Option
     return f'{_NX_DOC_BASE}/{nx_package}/{anchor_segments[-1]}.html#{anchor}'
 
 
-def get_or_create_section(name: str, **kwargs) -> Section:
+def __go_to_section(name: str, **kwargs) -> Section:
     '''
     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
 
@@ -171,13 +201,14 @@ def get_or_create_section(name: str, **kwargs) -> Section:
         return section
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
+
     _current_package.section_definitions.append(section)
     _definition_sections[section.name] = section
 
     return section
 
 
-def get_enum(xml_node: ET.Element) -> Optional[MEnum]:
+def __get_enumeration(xml_node: ET.Element) -> Optional[MEnum]:
     '''
     Get the enumeration field from xml node
     '''
@@ -186,53 +217,15 @@ def get_enum(xml_node: ET.Element) -> Optional[MEnum]:
     if enumeration is None:
         return None
 
-    enum_values = []
+    enum_values: list = []
     for enum_value in enumeration.findall('nx:item', XML_NAMESPACES):
         enum_values.append(enum_value.attrib['value'])
     return MEnum(*enum_values)
 
 
-def get_nexus_category(xml_node: ET.Element) -> str:
+def __add_common_properties(xml_node: ET.Element, definition: Definition):
     '''
-    retrieves the category from the root element
-    '''
-    elem = xml_node
-    while True:
-        parent = _XML_PARENT_MAP.get(elem)
-        if parent is None:
-            break
-        elem = parent
-    return elem.attrib['category']
-
-
-def if_repeats(name: str, max_occurs: str) -> bool:
-    repeats = any(char.isupper() for char in name) or max_occurs == 'unbounded'
-
-    if max_occurs.isdigit():
-        repeats = repeats or int(max_occurs) > 1
-
-    return repeats
-
-
-def if_template(name: Optional[str]) -> bool:
-    return name is None or name.lower() != name
-
-
-def add_common_properties_helper(base_section: Definition, definition: Definition):
-    '''
-    Define definition var from base_section var
-    '''
-    if base_section.description:
-        definition.description = base_section.description
-    if base_section.deprecated:
-        definition.deprecated = base_section.deprecated
-    if base_section.more:
-        definition.more.update(**base_section.more)
-
-
-def add_common_properties(xml_node: ET.Element, definition: Definition):
-    '''
-    Adds general metainfo definition properties (e.g. deprecated, docs, optional, ...)
+    Adds general metainfo definition properties (e.g., deprecated, docs, optional, ...)
     from the given nexus XML node to the given metainfo definition.
     '''
     xml_attrs = xml_node.attrib
@@ -240,10 +233,15 @@ def add_common_properties(xml_node: ET.Element, definition: Definition):
     # Read properties from potential base section. Those are not inherited, but we
     # duplicate them for a nicer presentation
     if isinstance(definition, Section) and definition.base_sections:
-        add_common_properties_helper(definition.base_sections[0], definition)
+        if definition.base_sections[0].description:
+            definition.description = definition.base_sections[0].description
+        if definition.base_sections[0].deprecated:
+            definition.deprecated = definition.base_sections[0].deprecated
+        if definition.base_sections[0].more:
+            definition.more.update(**definition.base_sections[0].more)
 
     links = []
-    doc_url = nx_documentation_url(xml_node, definition.more.get('nx_kind'))
+    doc_url = __get_documentation_url(xml_node, definition.more.get('nx_kind'))
     if doc_url:
         links.append(doc_url)
 
@@ -259,13 +257,13 @@ def add_common_properties(xml_node: ET.Element, definition: Definition):
         if 'deprecated' == k:
             definition.deprecated = v
             continue
-        definition.more['nx_' + to_snake_case(k)] = v
+        definition.more['nx_' + k] = v
 
     if 'optional' not in xml_attrs:
-        definition.more['nx_optional'] = get_nexus_category(xml_node) == 'base'
+        definition.more['nx_optional'] = __if_base(xml_node)
 
 
-def add_attributes(xml_node: ET.Element, definition: Union[SubSection, Property]):
+def __create_attributes(xml_node: ET.Element, definition: Union[SubSection, Property]):
     '''
     Add all attributes in the given nexus XML node to the given
     Quantity or SubSection using the Attribute class (new mechanism).
@@ -273,24 +271,24 @@ def add_attributes(xml_node: ET.Element, definition: Union[SubSection, Property]
     todo: account for more attributes of attribute, e.g., default, minOccurs
     '''
     for attribute in xml_node.findall('nx:attribute', XML_NAMESPACES):
-        name = attribute.attrib["name"]
-        nx_type = attribute.attrib.get("type", "NX_CHAR")
-        repeats = if_repeats(name, attribute.attrib.get('maxOccurs', '0'))
+        name = attribute.get('name')
+        nx_type = attribute.attrib.get('type', 'NX_CHAR')
+        repeats = __if_repeats(name, attribute.attrib.get('maxOccurs', '0'))
         definition.attributes.append(Attribute(
             name=name,
-            variable=if_template(name),
+            variable=__if_template(name),
             shape=['0..*'] if repeats else [],
             type=_NX_TYPES[nx_type]))
 
 
-def create_field_quantity(xml_node: ET.Element, container: Section) -> Quantity:
+def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     '''
     Creates a metainfo quantity from the nexus field given as xml node.
     '''
     xml_attrs = xml_node.attrib
 
     # name
-    assert 'name' in xml_attrs, 'field has not name'
+    assert 'name' in xml_attrs, 'Expecting name to be present'
     name = xml_attrs['name']
 
     # type
@@ -300,80 +298,86 @@ def create_field_quantity(xml_node: ET.Element, container: Section) -> Quantity:
     metainfo_type = _NX_TYPES[nx_type]
 
     # enumeration
-    enum_type = get_enum(xml_node)
+    enum_type = __get_enumeration(xml_node)
 
     # dimensionality
     nx_dimensionality = xml_attrs.get('units', None)
     dimensionality = NXUnitSet.mapping[nx_dimensionality] if nx_dimensionality else None
 
     # shape
-    shape = []
+    shape: list = []
     dimensions = xml_node.find('nx:dimensions', XML_NAMESPACES)
     if dimensions is not None:
         for dimension in dimensions.findall('nx:dim', XML_NAMESPACES):
-            dimension_value: Any = dimension.attrib.get('value', '*')
-            try:
-                dimension_value = int(dimension_value)
-            except ValueError:
-                pass
+            dimension_value: str = dimension.attrib.get('value', '*')
+            if dimension_value.isdigit():
+                dimension_value: int = int(dimension_value)
+
             shape.append(dimension_value)
 
     value_quantity: Quantity = None  # type: ignore
 
     if container.base_sections is not None:
-        base_section: Section = container.base_sections[0]
-        base_quantity: Quantity = base_section.all_quantities.get(name)
+        base_quantity: Quantity = container.base_sections[0].all_quantities.get(name)
         if base_quantity:
-            value_quantity = base_quantity.m_copy()
+            value_quantity = base_quantity.m_copy(deep=True)
 
     if value_quantity is None:
         # create quantity
         value_quantity = Quantity(name=name)
 
-    value_quantity.variable = if_template(name)
+    value_quantity.variable = __if_template(name)
     value_quantity.type = enum_type if enum_type else metainfo_type
     value_quantity.dimensionality = dimensionality
     value_quantity.shape = shape
     value_quantity.more.update(dict(nx_kind='field', nx_type=nx_type))
 
-    add_common_properties(xml_node, value_quantity)
-    add_attributes(xml_node, value_quantity)
+    __add_common_properties(xml_node, value_quantity)
+    __create_attributes(xml_node, value_quantity)
 
     container.quantities.append(value_quantity)
 
     return value_quantity
 
 
-def add_group_contents(xml_node: ET.Element, section: Section):
+def __create_group(xml_node: ET.Element, section: Section):
     '''
     Adds all properties that can be generated from the given nexus group XML node to
     the given (empty) metainfo section definition.
     '''
     for group in xml_node.findall('nx:group', XML_NAMESPACES):
-        group_section = create_group_section(group, section)
+        xml_attrs = group.attrib
+
+        assert 'type' in xml_attrs, 'Expecting type to be present'
+        typ = xml_attrs['type']
+        name = xml_attrs.get('name', typ)
+
+        group_section = Section(validate=VALIDATE, nx_kind='group', name=name)
+        __attach_base_section(group_section, section, __go_to_section(typ))
+
+        __add_common_properties(group, group_section)
+
+        __create_group(group, group_section)
+
         section.inner_section_definitions.append(group_section)
 
-        if 'name' in group.attrib:
-            name = f'nx_group_{group.attrib["name"]}'
-        else:
-            name = f'nx_group_{group.attrib["type"].replace("NX", "").upper()}'
-        repeats = if_repeats(name, group.attrib.get('maxOccurs', '0'))
+        name = xml_attrs.get('name', typ.replace('NX', '').upper())
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind='group',
             name=name,
-            repeats=repeats,
-            variable=if_template(name))
+            repeats=__if_repeats(name, xml_attrs.get('maxOccurs', '0')),
+            variable=__if_template(name))
 
-        add_attributes(group, group_subsection)
+        __create_attributes(group, group_subsection)
 
         section.sub_sections.append(group_subsection)
 
     for field in xml_node.findall('nx:field', XML_NAMESPACES):
-        create_field_quantity(field, section)
+        __create_field(field, section)
 
 
-def add_base_section(section: Section, container: Section, default_base_section: Section = None):
+def __attach_base_section(section: Section, container: Section, default_base_section: Section = None):
     '''
     Potentially adds a base section to the given section, if the given container has
     a base-section with a suitable base.
@@ -388,27 +392,7 @@ def add_base_section(section: Section, container: Section, default_base_section:
         section.base_sections = [base_section]
 
 
-def create_group_section(xml_node: ET.Element, container: Section) -> Section:
-    '''
-    Creates a metainfo section from the nexus group given as xml node.
-    '''
-    xml_attrs = xml_node.attrib
-    assert 'type' in xml_attrs, 'Expecting type to be present'
-
-    typ = xml_attrs['type']
-
-    name = xml_attrs.get('name', typ)
-
-    group_section = Section(validate=VALIDATE, nx_kind='group', name=name)
-    add_base_section(group_section, container, get_or_create_section(typ))
-
-    add_common_properties(xml_node, group_section)
-    add_group_contents(xml_node, group_section)
-
-    return group_section
-
-
-def create_class_section(xml_node: ET.Element) -> Section:
+def __create_class_section(xml_node: ET.Element) -> Section:
     '''
     Creates a metainfo section from the top-level nexus definition given as xml node.
     '''
@@ -417,20 +401,20 @@ def create_class_section(xml_node: ET.Element) -> Section:
     assert 'type' in xml_attrs, 'Expecting type to be present'
     assert 'category' in xml_attrs, 'Expecting category to be present'
 
-    class_section = get_or_create_section(
+    class_section = __go_to_section(
         xml_attrs['name'], nx_kind=xml_attrs['type'], nx_category=xml_attrs['category'])
 
     if 'extends' in xml_attrs:
-        base_section = get_or_create_section(xml_attrs['extends'])
+        base_section = __go_to_section(xml_attrs['extends'])
         class_section.base_sections = [base_section]
 
-    add_common_properties(xml_node, class_section)
-    add_group_contents(xml_node, class_section)
+    __add_common_properties(xml_node, class_section)
+    __create_group(xml_node, class_section)
 
     return class_section
 
 
-def sort_nxdl_files(paths):
+def __sort_nxdl_files(paths):
     '''
     Sort all definitions based on dependencies
     '''
@@ -475,22 +459,22 @@ def sort_nxdl_files(paths):
     return list_of_nxdl
 
 
-def add_section_from_nxdl(xml_node):
+def __add_section_from_nxdl(xml_node):
     '''
-    Creates a metainfo section from an nxdl file.
+    Creates a metainfo section from a nxdl file.
     '''
     try:
         global _XML_PARENT_MAP  # pylint: disable=global-statement
         _XML_PARENT_MAP = {child: parent for parent in xml_node.iter() for child in parent}
 
         # The section gets already implicitly added to _current_package by get_or_create_section
-        create_class_section(xml_node)
+        __create_class_section(xml_node)
 
     except NotImplementedError as err:
         print('Exception while mapping ' + xml_node.attrib["name"] + ':', err, file=sys.stderr)
 
 
-def create_package_from_nxdl_directories(paths) -> Package:
+def __create_package_from_nxdl_directories(paths) -> Package:
     '''
     Creates a metainfo package from the given nexus directory. Will generate the respective
     metainfo definitions from all the nxdl files in that directory.
@@ -498,8 +482,8 @@ def create_package_from_nxdl_directories(paths) -> Package:
     global _current_package  # pylint: disable=global-statement
     _current_package = Package(name=f'nexus')
 
-    for nxdl_file in sort_nxdl_files(paths):
-        add_section_from_nxdl(nxdl_file)
+    for nxdl_file in __sort_nxdl_files(paths):
+        __add_section_from_nxdl(nxdl_file)
 
     return _current_package
 
@@ -517,7 +501,7 @@ def init_nexus_metainfo():
     directories = [os.path.join(
         nexus.get_nexus_definitions_path(), v) for v in ('base_classes', 'contributed_definitions', 'applications')]
 
-    nexus_metainfo_package = create_package_from_nxdl_directories(directories)
+    nexus_metainfo_package = __create_package_from_nxdl_directories(directories)
 
     # We take the application definitions and create a common parent section that allows to
     # include nexus in an EntryArchive.
@@ -527,7 +511,7 @@ def init_nexus_metainfo():
         if application_section.more.get('nx_category') == 'application':
             sub_section = SubSection(
                 section_def=application_section,
-                name=application_section.name.replace('NX', 'nx_application_'))
+                name=application_section.name.replace('NX', ''))
             nexus_section.sub_sections.append(sub_section)
 
     EntryArchive.nexus = SubSection(name='nexus', section_def=nexus_section)

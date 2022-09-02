@@ -23,15 +23,10 @@ from typing import cast, Any
 
 import pytest
 
-from nomad.metainfo import Definition, MSection, Section
+from nomad.metainfo import Definition, Section
 from nomad.datamodel import EntryArchive
 from nexusparser.metainfo import nexus
 from nexusparser import tools
-
-
-@pytest.fixture(scope='session', autouse=True)
-def nexus_metainfo():
-    nexus.init_nexus_metainfo()
 
 
 @pytest.mark.parametrize('path,value', [
@@ -43,22 +38,22 @@ def nexus_metainfo():
     pytest.param('nexus_metainfo_package.NXentry.NXdata', '*'),
     pytest.param('nexus_metainfo_package.NXdetector.real_time', '*'),
     pytest.param('nexus_metainfo_package.NXentry.NXdata.nx_optional', True),
-    pytest.param('nexus_metainfo_package.NXentry.nx_group_DATA.section_def.nx_kind', 'group'),
-    pytest.param('nexus_metainfo_package.NXentry.nx_group_DATA.section_def.nx_optional', True),
-    pytest.param('nexus_metainfo_package.NXentry.nx_group_DATA.section_def.name', 'NXdata'),
+    pytest.param('nexus_metainfo_package.NXentry.DATA.section_def.nx_kind', 'group'),
+    pytest.param('nexus_metainfo_package.NXentry.DATA.section_def.nx_optional', True),
+    pytest.param('nexus_metainfo_package.NXentry.DATA.section_def.name', 'NXdata'),
     pytest.param('nexus_metainfo_package.NXdetector.real_time.name', 'real_time'),
     pytest.param('nexus_metainfo_package.NXdetector.real_time.nx_type', 'NX_NUMBER'),
     pytest.param('nexus_metainfo_package.NXdetector.real_time.nx_units', 'NX_TIME'),
     # pytest.param('nexus_metainfo_package.NXdetector.real_time.unit', '*'),
-    # pytest.param('nexus_metainfo_package.NXdetector.real_time.nx_value', '*'),
     pytest.param('nexus_metainfo_package.NXarpes.NXentry.NXdata.nx_optional', False),
     pytest.param('nexus_metainfo_package.NXentry.nx_category', 'base'),
     pytest.param('nexus_metainfo_package.NXapm.nx_category', 'application')
 ])
 def test_assert_nexus_metainfo(path: str, value: Any):
-    """Test the existance of nexus metainfo
+    '''
+    Test the existence of nexus metainfo
+    '''
 
-"""
     segments = path.split('.')
     package, definition_names = segments[0], segments[1:]
 
@@ -89,17 +84,18 @@ def test_assert_nexus_metainfo(path: str, value: Any):
 
 
 def test_use_nexus_metainfo():
-    """Test on use of Nexus metainfo
+    '''
+    Test on use of Nexus metainfo
+    '''
 
-"""
     # pylint: disable=no-member
     archive = EntryArchive()
     archive.nexus = nexus.Nexus()
-    archive.nexus.nx_application_arpes = nexus.NXarpes()
-    archive.nexus.nx_application_arpes.m_create(nexus.NXarpes.NXentry)
-    archive.nexus.nx_application_arpes.nx_group_ENTRY[0].title = 'my_title'
+    archive.nexus.arpes = nexus.NXarpes()
+    archive.nexus.arpes.m_create(nexus.NXarpes.NXentry)
+    archive.nexus.arpes.ENTRY[0].title = 'my_title'
 
-    # Entry/default is not overwritten in NXarpes. Therefore technically,
+    # Entry/default is not overwritten in NXarpes. Therefore, technically,
     # there is no attribute section
     # nexus.NXarpes.NXentryGroup.DefaultAttribute. We artifically extented inheritence to
     # include inner section/classes. So both options work:
@@ -114,62 +110,7 @@ def test_use_nexus_metainfo():
     archive = EntryArchive.m_from_dict(archive.m_to_dict())
     # assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default.nx_value == \
     #     'my default'
-    assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].title == 'my title'
-
-
-@pytest.mark.skip
-@pytest.mark.parametrize('path', [
-    pytest.param('NXarpes:app/NXentry:group/title:field/my title:value', id='field'),
-    pytest.param('NXarpes:app/NXentry:group/default:attribute/my default:value', id='attribute')
-])
-def test_use_nexus_metainfo_reflectivly(path):
-    """Test of the use of nexus metainfo reflectivly
-
-"""
-    archive = EntryArchive()
-    archive.nexus = nexus.Nexus()  # pylint: disable=no-member
-    parent_object: MSection = archive.nexus
-    parent_definition: Section = nexus.Nexus.m_def  # pylint: disable=no-member
-
-    segments = path.split('/')
-    for segment in segments:
-        name_or_value, kind = segment.split(':')
-        if kind in ['app', 'group', 'field', 'attribute']:
-            if kind == 'app':
-                section_definition = nexus.nexus_metainfo_package.all_definitions[name_or_value]
-                sub_section_definition = \
-                    parent_definition.all_sub_sections[name_or_value.replace('NX', '\
-nx_application_')]
-
-            if kind == 'group':
-                section_definition = \
-                    parent_definition.all_inner_section_definitions[f'{name_or_value}Group']
-                sub_section_definition = \
-                    parent_definition.all_sub_sections[f'nx_group_{name_or_value.replace("NX", "").upper()}']
-
-            if kind == 'field':
-                section_definition = \
-                    parent_definition.all_inner_section_definitions[f'{name_or_value}Field']
-                sub_section_definition = \
-                    parent_definition.all_sub_sections[f'nx_field_{name_or_value}']
-
-            if kind == 'attribute':
-                section_definition = \
-                    parent_definition.all_inner_section_definitions[f'{name_or_value}Attribute']
-                sub_section_definition = \
-                    parent_definition.all_sub_sections[f'nx_attribute_{name_or_value}']
-
-            new_object = section_definition.section_cls()
-            parent_object.m_add_sub_section(sub_section_definition, new_object)
-
-        elif kind == 'value':
-            parent_object.m_set(parent_definition.all_quantities['nx_value'], name_or_value)
-
-        else:
-            assert False, 'kind does not exist'
-
-        parent_object = new_object
-        parent_definition = section_definition
+    assert archive.nexus.arpes.ENTRY[0].title == 'my_title'
 
 
 def test_get_nexus_classes_units_attributes():

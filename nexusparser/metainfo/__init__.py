@@ -1,6 +1,3 @@
-"""init file
-
-"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,3 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+from .nexus import nexus_metainfo_package
+from .nexus import init_nexus_metainfo
