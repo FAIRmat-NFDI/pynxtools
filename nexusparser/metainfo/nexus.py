@@ -273,8 +273,13 @@ def __create_attributes(xml_node: ET.Element, definition: Union[SubSection, Prop
     for attribute in xml_node.findall('nx:attribute', XML_NAMESPACES):
         name = attribute.get('name')
 
-        nx_type = _NX_TYPES[attribute.attrib.get('type', 'NX_CHAR')]
-        nx_shape = ['0..*'] if __if_repeats(name, attribute.attrib.get('maxOccurs', '0')) else []
+        nx_enum = __get_enumeration(xml_node)
+        if nx_enum:
+            nx_type = nx_enum
+            nx_shape = []
+        else:
+            nx_type = _NX_TYPES[attribute.attrib.get('type', 'NX_CHAR')]
+            nx_shape = ['0..*'] if __if_repeats(name, attribute.attrib.get('maxOccurs', '0')) else []
 
         # check if the attribute exist
         # if not create a new one and append to the list
