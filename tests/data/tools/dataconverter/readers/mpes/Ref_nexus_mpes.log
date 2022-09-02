@@ -4878,9 +4878,15 @@ DEBUG -
 DEBUG - ===== GROUP (//entry/user [NXmpes::/NXentry/NXuser]): <HDF5 group "/entry/user" (5 members)>
 DEBUG - classpath: ['NXentry', 'NXuser']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER
 NXentry.nxdl.xml:/USER
 NXuser.nxdl.xml:
-DEBUG - <<OPTIONAL>>
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER):
+DEBUG - 
+                 Contact information of at least the user of the instrument or the investigator
+                 who performed this experiment. Adding multiple users if relevant is recommended.
+            
 DEBUG - documentation (NXentry.nxdl.xml:/USER):
 DEBUG - 
 DEBUG - documentation (NXuser.nxdl.xml:):
@@ -4896,6 +4902,7 @@ DEBUG - ===== ATTRS (//entry/user@NX_class)
 DEBUG - value: NXuser 
 DEBUG - classpath: ['NXentry', 'NXuser']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER
 NXentry.nxdl.xml:/USER
 NXuser.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
@@ -4904,32 +4911,54 @@ DEBUG - ===== FIELD (//entry/user/address): <HDF5 dataset "address": shape (), t
 DEBUG - value: b'Faradayweg 4-6, 14195 Berlin' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/address
 NXuser.nxdl.xml:/address
-DEBUG - <<OPTIONAL>>
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/address):
+DEBUG - 
+                     Full address (street, street number, ZIP, city, country) of the user's
+                     affiliation.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/address):
 DEBUG - Address of user
 DEBUG - ===== FIELD (//entry/user/affiliation): <HDF5 dataset "affiliation": shape (), type "|O">
 DEBUG - value: b'Fritz Haber Institute of the Max Planck Society' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/affiliation
 NXuser.nxdl.xml:/affiliation
-DEBUG - <<OPTIONAL>>
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/affiliation):
+DEBUG - 
+                     Name of the affiliation of the user at the point in time when the experiment was
+                     performed.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/affiliation):
 DEBUG - Affiliation of user
 DEBUG - ===== FIELD (//entry/user/email): <HDF5 dataset "email": shape (), type "|O">
 DEBUG - value: b'beaulieu@fhi-berlin.mpg.de' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/email
 NXuser.nxdl.xml:/email
-DEBUG - <<OPTIONAL>>
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/email):
+DEBUG - 
+                     Email address of the user.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/email):
 DEBUG - Email of user
 DEBUG - ===== FIELD (//entry/user/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'Samuel Beaulieu' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/name
 NXuser.nxdl.xml:/name
-DEBUG - <<OPTIONAL>>
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/name):
+DEBUG - 
+                     Name of the user.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/name):
 DEBUG - Name of user responsible for this entry
 DEBUG - ===== FIELD (//entry/user/role): <HDF5 dataset "role": shape (), type "|O">
