@@ -32,22 +32,25 @@ import hyperspy.api as hs
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
-from nexusparser.tools.dataconverter.readers.em.utils.em_use_case_selector \
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.em_use_case_selector \
     import EmUseCaseSelector
 
-from nexusparser.tools.dataconverter.readers.em.utils.em_nexus_base_classes \
-    import NxObject, NxAppDefHeader
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.em_nexus_base_classes \
+    import NxObject
 
-from nexusparser.tools.dataconverter.readers.em.utils.em_nomad_oasis_eln \
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.em_nomad_oasis_eln \
     import NxEmNomadOasisElnSchemaParser
 
-from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_xray \
+# from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.oina.em_oina_xray \
+#     import NxOinaSpectrumSetEmXray
+
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_xray \
     import NxSpectrumSetEmXray
 
-from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_eels \
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_eels \
     import NxSpectrumSetEmEels
 
-from nexusparser.tools.dataconverter.readers.em.utils.hspy.em_hspy_adf \
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_adf \
     import NxImageSetEmAdf
 
 
@@ -86,12 +89,12 @@ class NxEventDataEm:
 
         # developers can here switch easily one and off certain sub-parsers
         if isinstance(hspy_objs, list):
-            print('Processing a list of hspy_objs...')
+            print("Processing a list of hspy_objs...")
             self.spectrum_set_em_xray = NxSpectrumSetEmXray(hspy_objs)
             self.spectrum_set_em_eels = NxSpectrumSetEmEels(hspy_objs)
             self.image_set_em_adf = NxImageSetEmAdf(hspy_objs)
         else:
-            print('Converting (a single hspy obj) into a list, processing it...')
+            print("Converting (a single hspy obj) into a list, processing it...")
             self.spectrum_set_em_xray = NxSpectrumSetEmXray([hspy_objs])
             self.spectrum_set_em_eels = NxSpectrumSetEmEels([hspy_objs])
             self.image_set_em_adf = NxImageSetEmAdf([hspy_objs])
@@ -215,7 +218,7 @@ def create_default_plottable_data(template: dict) -> dict:
     return template
 
 
-class EmReader(BaseReader):
+class EmSpctrscpyReader(BaseReader):
     """Parse content from community file formats.
 
     Specifically, electron microscopy
@@ -234,42 +237,43 @@ class EmReader(BaseReader):
         """Read data from given file, return filled template dictionary."""
         template.clear()
 
-        # print(template)
-        # return template
-
         case = EmUseCaseSelector(file_paths)
         assert case.is_valid is True, \
-            'Such a combination of input-file if any is not supported !'
+            "Such a combination of input-file(s, if any) is not supported !"
 
-        nx_em_header = NxAppDefHeader()
-        prefix = "/ENTRY[entry]"
-        nx_em_header.report(prefix, template)
+        # nx_em_header = NxEmAppDefHeader()
+        # prefix = "/ENTRY[entry]"
+        # nx_em_header.report(prefix, template)
 
         print("Parsing numerical data and metadata with hyperspy...")
-        if len(case.micr) == 1:
-            hyperspy_parser(case.micr[0], template)
+        if case.vendor_parser == 'oina':
+            # oina_parser(case.vendor[0], template)
+            return {}
+        elif case.vendor_parser == 'hspy':
+            hyperspy_parser(case.vendor[0], template)
         else:
-            print("No input-file defined for micr data !")
+            print("No input-file defined for vendor data !")
             return {}
 
         print("Parsing metadata as well as numerical data from NOMAD OASIS ELN...")
-        if len(case.eln) == 1:
+        if case.eln_parser == 'nomad-oasis':
             nomad_oasis_eln_parser(case.eln[0], template)
         else:
             print("No input file defined for eln data !")
-
-        # if True is True:
-        # reporting of what has not been properly defined at the reader level
-        # print('\n\nDebugging...')
-        # for keyword in template.keys():
-        #     # if template[keyword] is None:
-        #     print(keyword + '...')
-        #     print(template[keyword])
-        #     # if template[keyword] is None:
-        #     #     print("Entry: '" + keyword + " is not properly defined yet!")
+            return {}
 
         print("Creating default plottable data...")
         create_default_plottable_data(template)
+
+        # if True is True:
+        # reporting of what has not been properly defined at the reader level
+        # print("\n\nDebugging...")
+        # for keyword in template.keys():
+        #     # if template[keyword] is None:
+        #     print(keyword + "...")
+        #     print(template[keyword])
+        #     # if template[keyword] is None:
+        #     #     print("Entry: " + keyword + " is not properly defined yet!")
 
         print("Forwarding the instantiated template to the NXS writer...")
 
@@ -277,4 +281,4 @@ class EmReader(BaseReader):
 
 
 # This has to be set to allow the convert script to use this reader.
-READER = EmReader
+READER = EmSpctrscpyReader

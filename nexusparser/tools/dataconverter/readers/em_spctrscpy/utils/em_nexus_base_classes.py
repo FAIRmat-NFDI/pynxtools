@@ -24,7 +24,7 @@
 
 from typing import Dict
 
-from nexusparser.tools.dataconverter.readers.em.utils.em_versioning \
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.em_versioning \
     import NX_EM_ADEF_NAME, NX_EM_ADEF_VERSION, \
     NX_EM_EXEC_NAME, NX_EM_EXEC_VERSION
 
@@ -80,8 +80,8 @@ class NxObject:  # pylint: disable=R0903
 # test.print()
 
 
-class NxEmOperator:  # pylint: disable=R0903
-    """An object representing an operator, typically a human."""
+class NxEmUser:  # pylint: disable=R0903
+    """An object representing a user, typically a human."""
 
     def __init__(self):
         self.meta: Dict[str, NxObject] = {}
@@ -115,7 +115,7 @@ class NxEmOperator:  # pylint: disable=R0903
             = self.meta["telephone_number"].value
         return template
 
-# test = NxEmOperator()
+# test = NxEmUser()
 # test.name.value = 'NOMAD OASIS'
 # a = test.report("/ENTRY", {})
 
@@ -154,7 +154,7 @@ class NxEmSample:  # pylint: disable=R0903
 # test = NxEmSample()
 
 
-class NxAppDefHeader:  # pylint: disable=R0903
+class NxEmAppDefHeader:  # pylint: disable=R0903
     """An object representing the typical header of nexus-fairmat appdefs."""
 
     def __init__(self):
@@ -199,4 +199,4 @@ class NxAppDefHeader:  # pylint: disable=R0903
             = self.meta["thumbnail_type"].value
         return template
 
-# test = NxAppDefHeader()
+# test = NxEmAppDefHeader()
