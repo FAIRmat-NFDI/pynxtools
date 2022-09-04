@@ -28,6 +28,7 @@ from typing import Dict, Union, Optional, Tuple
 import xml.etree.ElementTree as ET
 
 import numpy as np
+from toposort import toposort_flatten
 
 from nomad.utils import strip
 from nomad.metainfo import Section, Package, SubSection, Definition, Datetime, Bytes, MEnum, Quantity, Property, \
@@ -45,7 +46,8 @@ __XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 # TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
 
-__definitions: Dict[str, Section] = dict()
+__section_definitions: Dict[str, Section] = dict()
+__subsection_definitions: Dict[str, SubSection] = dict()
 
 VALIDATE = False
 
@@ -203,14 +205,14 @@ def __go_to_section(name: str, **kwargs) -> Section:
     This allows to access the metainfo section even before it is generated from the base-class
     nexus definition.
     '''
-    if name in __definitions:
-        section = __definitions[name]
+    if name in __section_definitions:
+        section = __section_definitions[name]
         section.more.update(**kwargs)
         return section
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
 
-    __definitions[name] = section
+    __section_definitions[name] = section
 
     return section
 
@@ -260,6 +262,8 @@ def __add_common_properties(xml_node: ET.Element, definition: Definition):
     for k, v in xml_attrs.items():
         if 'deprecated' == k:
             definition.deprecated = v
+            continue
+        if 'nxdl_base' in k or 'schemaLocation' in k:
             continue
         definition.more['nx_' + k] = v
 
@@ -383,6 +387,7 @@ def __create_group(xml_node: ET.Element, section: Section, subsection: SubSectio
 
         __attach_base_section(group_section, section, __go_to_section(nx_type))
 
+        __copy_base_attributes(group_subsection, nx_type)
         __add_common_properties(group, group_section)
 
         section.inner_section_definitions.append(group_section)
@@ -409,10 +414,12 @@ def __attach_base_section(section: Section, container: Section, default_base_sec
     section.base_sections = [base_section]
 
 
-def __copy_base_attributes(destination: SubSection, source: SubSection):
+def __copy_base_attributes(destination: SubSection, source_name: str):
     '''
     Copy attributes from base subsection to derived subsection.
     '''
+    source: SubSection = __subsection_definitions.get(source_name)
+
     if not source or not destination or source is destination:
         return
 
@@ -437,16 +444,16 @@ def __create_class_section(xml_node: ET.Element) -> Tuple[Section, SubSection]:
     nx_type = xml_attrs['type']
     nx_category = xml_attrs['category']
 
-    class_section = __go_to_section(nx_name, nx_kind=nx_type, nx_category=nx_category)
+    class_section: Section = __go_to_section(nx_name, nx_kind=nx_type, nx_category=nx_category)
+    class_subsection: SubSection = SubSection(section_def=class_section, name=nx_name)
+    __subsection_definitions[nx_name] = class_subsection
 
     if 'extends' in xml_attrs:
         base_section = __go_to_section(xml_attrs['extends'])
         class_section.base_sections = [base_section]
-        # __copy_base_attributes(class_section.m_parent_sub_section, new_base.m_parent_sub_section)
+        __copy_base_attributes(class_subsection, base_section.name)
 
     __add_common_properties(xml_node, class_section)
-
-    class_subsection: SubSection = SubSection(section_def=class_section, name=nx_name)
 
     __create_group(xml_node, class_section, class_subsection)
 
@@ -458,47 +465,36 @@ def __sort_nxdl_files(paths):
     Sort all definitions based on dependencies
     '''
 
-    def compare_dependencies(nxdl1, nxdl2):
-        if 'extends' in nxdl1.attrib and nxdl1.attrib['extends'] == nxdl2.attrib['name']:
-            return True
-        for group1 in nxdl1.iter("*"):
-            if group1.tag[group1.tag.rindex("}") + 1:] == 'group' and \
-                    group1.attrib['type'] == nxdl2.attrib['name']:
-                break
-        else:
-            return False
-        for group2 in nxdl2.iter("*"):
-            if group2.tag[group2.tag.rindex("}") + 1:] == 'group' and \
-                    group2.attrib['type'] == nxdl1.attrib['name']:
-                return False
-        return True
-
-    list_of_nxdl = []
+    name_node_map = {}
+    name_dependency_map = {}
     for path in paths:
-        for nxdl_file in sorted(os.listdir(path)):
+        for nxdl_file in os.listdir(path):
             if not nxdl_file.endswith('.nxdl.xml'):
                 continue
             xml_tree = ET.parse(os.path.join(path, nxdl_file))
             xml_node = xml_tree.getroot()
             xml_node.set('nxdl_base', path)
-            assert xml_node.attrib.get('type') == 'group', 'definition is not a group'
-            list_of_nxdl.append(xml_node)
-    sorted_index = 0
-    while sorted_index < len(list_of_nxdl):
-        current_index = sorted_index + 1
-        while current_index < len(list_of_nxdl):
-            if compare_dependencies(list_of_nxdl[sorted_index], list_of_nxdl[current_index]):
-                list_of_nxdl.append(list_of_nxdl[sorted_index])
-                list_of_nxdl.__delitem__(sorted_index)
-                break
-            current_index = current_index + 1
-        if current_index == len(list_of_nxdl):
-            sorted_index = sorted_index + 1
-    # print('\n'.join([nxdl.attrib['name'] for nxdl in list_of_nxdl]))
-    return list_of_nxdl
+            assert xml_node.get('type') == 'group', 'definition is not a group'
+            xml_name = xml_node.get('name')
+            name_node_map[xml_name] = xml_node
+            dependency_list = []
+            if 'extends' in xml_node.attrib:
+                dependency_list.append(xml_node.get('extends'))
+            for child in xml_tree.iter():
+                if child.tag.endswith('group') and child.get('type') != xml_name:
+                    dependency_list.append(child.get('type'))
+            name_dependency_map[xml_name] = set(dependency_list)
+
+    # manually remove deprecated circular dependency
+    name_dependency_map['NXgeometry'].remove('NXorientation')
+    name_dependency_map['NXgeometry'].remove('NXtranslation')
+
+    sorted_list = toposort_flatten(name_dependency_map)
+
+    return [name_node_map[node] for node in sorted_list]
 
 
-def __add_section_from_nxdl(xml_node) -> Optional[Tuple[Section, SubSection]]:
+def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Tuple[Section, SubSection]]:
     '''
     Creates a metainfo section from a nxdl file.
     '''
