@@ -359,7 +359,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     if container.base_sections is not None:
         base_quantity: Quantity = container.base_sections[0].all_quantities.get(name)
         if base_quantity:
-            value_quantity = base_quantity.m_copy()
+            value_quantity = base_quantity.m_copy(deep=True)
 
     # create quantity
     if value_quantity is None:
