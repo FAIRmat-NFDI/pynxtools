@@ -1,4 +1,4 @@
-# EM reader
+# em_spctrscpy reader
 
 ## Purpose
 Translate diverse numerical data and metadata in vendor file from electron microscopy
@@ -35,12 +35,12 @@ If you are using a NOMAD OASIS you can use this tool as follows.
 2. Select EM example from the list of available options.
 3. Drag-and-drop your files in vendor-specific formats.
    Currently bcf, emd, and dm3 are supported.
-3. Edit the electron lab notebook (ELN) schema which inside the NOMAD OASIS and
+3. Edit the electronic lab notebook (ELN) schema inside the NOMAD OASIS and
    click the save button in the NOMAD OASIS GUI to save the data that you have
    entered in this ELN template. Clicking *save* will trigger the automatic generation
    of an eln_data.yaml utility file. Second, the clicking will trigger a run of the
    dataconverter/em parser which generates an NXem NeXus file based on the data
-   and the eln_data.yaml file. The file will be returned in the OASIS.
+   in the vendor files and the eln_data.yaml file. The file will be returned in the OASIS.
    By default the converter performs a strong loss-less compression on the input
    as many of the stack data store integers with a low entropy.
    The compression may take some time. You can inspect the progress of the conversion
@@ -59,7 +59,7 @@ customization functionalities offered through NOMAD OASIS.
 ## Getting started - standalone usage
 If you use this dataconverter/em parser as a standalone tool,
 1. You should follow the interactive jupyter notebook that is stored in *nomad-parser-nexus\tests\data\tools\dataconverter\readers\em*.
-2. As the standalone usage of this parser does not require a NOMAD OASIS instance
+2. As the standalone usage of this parser does not require a NOMAD OASIS instance,
    you have to edit the ELN manually. For this you can edit the example that
    comes shipped with the example. Alternatively, you can at this point copy or
    place your own datasets into the working directory of the jupyter instance.
@@ -179,7 +179,7 @@ scripts, they all interact with a restricted set of class instances and call met
 these instances to trigger certain processing tasks in their script.
 
 In summary, having these classes offers a possibility to develop more generic parsers
-like what is here exemplified with the dataconverter/em parser.
+like what is here exemplified with the dataconverter/em_spctrscpy parser.
 
 We can essentially understand this reader as a translator and mapping tool which
 takes members of class instances defined in some of the above-mentioned software tools

@@ -30,6 +30,9 @@ import yaml
 
 from ase.data import chemical_symbols
 
+from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.em_versioning \
+    import NX_EM_ADEF_NAME, NX_EM_ADEF_VERSION, NX_EM_EXEC_NAME, NX_EM_EXEC_VERSION
+
 
 class NxEmNomadOasisElnSchemaParser:
     """Parse eln_data.yaml dump file content generated from a NOMAD OASIS YAML.
@@ -67,9 +70,8 @@ class NxEmNomadOasisElnSchemaParser:
         src = "entry"
         assert isinstance(self.yml[src], fd.FlatDict), \
             'Required section ' + src + ' does not exist!'
-        appdef_version = "nexus-fairmat-proposal successor of "
-        appdef_version += "50433d9039b3f33299bab338998acb5335cd8951 NXem"
-        appdef_name = "NXem"
+        appdef_name = NX_EM_ADEF_NAME
+        appdef_version = NX_EM_ADEF_VERSION
 
         # check for required fields based on the above-mentioned NXem version
         assert self.yml[src + ":attr_version"] == appdef_version, \
@@ -81,11 +83,13 @@ class NxEmNomadOasisElnSchemaParser:
         assert "program" in self.yml[src].keys(), \
             "program is a required field but not found in ELN input!"
         template[trg + "program"] \
-            = self.yml[src + ":program"]
+            = "source: " + self.yml[src + ":program"] + ", parser: " \
+            + NX_EM_EXEC_NAME
         assert "program__attr_version" in self.yml[src].keys(), \
             "program__attr_version is a required field but not found in ELN input!"
         template[trg + "program/@version"] \
-            = self.yml[src + ":program__attr_version"]
+            = "source: " + self.yml[src + ":program__attr_version"] + ", parser: " \
+            + NX_EM_EXEC_VERSION
         assert "experiment_identifier" in self.yml[src].keys(), \
             "experiment_identifier is a required field but not found in ELN input!"
         template[trg + "experiment_identifier"] \

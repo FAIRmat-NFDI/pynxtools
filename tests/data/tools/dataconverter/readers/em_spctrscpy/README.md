@@ -69,7 +69,7 @@ use to interact with the tool.
 For the dataconverter, you can find the respective notebooks in
 
 ```
-tests/data/tools/dataconverter/readers/apm/
+tests/data/tools/dataconverter/readers/em-spctrscpy/
 ```
 
 Go one directory deeper to explore the specific

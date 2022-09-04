@@ -22,8 +22,8 @@
 
 # pylint: disable=E1101
 
-NX_EM_ADEF_NAME = 'NXem'
-NX_EM_ADEF_VERSION = '50433d9039b3f33299bab338998acb5335cd8951'
+NX_APM_ADEF_NAME = 'NXapm'
+NX_APM_ADEF_VERSION = 'nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951'
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
-NX_EM_EXEC_NAME = 'dataconverter/reader/em.py'
-NX_EM_EXEC_VERSION = 'add gitsha of parent repo automatically'
+NX_APM_EXEC_NAME = 'dataconverter/reader/apm.py'
+NX_APM_EXEC_VERSION = 'add gitsha of parent repo automatically'

@@ -142,11 +142,16 @@ Several cases can be encoutered:
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif 'compress' in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
+            strength = 9  # strongest compression is space efficient but can take long
+            if "strength" in data.keys():
+                if isinstance(data['strength'], int):
+                    if (data["strength"] >= 0) and (data["strength"] <= 9):
+                        strength = data["strength"]
             grp.create_dataset(entry_name,
                                data=data["compress"],
                                compression="gzip",
                                chunks=True,
-                               compression_opts=9)
+                               compression_opts=strength)
         else:
             grp.create_dataset(entry_name, data=data["compress"])
     return grp[entry_name]
