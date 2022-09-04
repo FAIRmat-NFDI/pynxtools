@@ -1,19 +1,3 @@
-"""parser doc
-
-"""
-from typing import Optional
-import xml.etree.ElementTree as ET
-
-import numpy as np
-
-from nomad.datamodel import EntryArchive
-from nomad.metainfo import MSection, Quantity, MetainfoError
-from nomad.parsing import MatchingParser
-# from . import metainfo  # pylint: disable=unused-import
-from nexusparser.tools import nexus as read_nexus
-from nexusparser.metainfo import nexus
-
-
 #
 # Copyright The NOMAD Authors.
 #
@@ -32,26 +16,38 @@ from nexusparser.metainfo import nexus
 # limitations under the License.
 #
 
+from typing import Optional, Tuple
+import xml.etree.ElementTree as ET
 
-def to_group_name(nxdl_node: ET.Element):
-    return 'nx_group_' + nxdl_node.attrib.get('name', nxdl_node.attrib['type'][2:].upper())
+import numpy as np
+
+from nomad.datamodel import EntryArchive
+from nomad.metainfo import MSection, Quantity
+from nomad.parsing import MatchingParser
+from nexusparser.tools import nexus as read_nexus
+from nexusparser.metainfo import nexus
+from nomad.units import ureg
+
+
+def _to_group_name(nx_node: ET.Element):
+    '''
+    Normalise the given group name
+    '''
+    return nx_node.attrib.get('name', nx_node.attrib['type'][2:].upper())
 
 
 # noinspection SpellCheckingInspection
-def to_new_section(
-        hdf_name: Optional[str],
-        nxdef: str,
-        nxdl_node: ET.Element,
-        act_section: MSection
-) -> MSection:
+def _to_section(
+        hdf_name: Optional[str], nx_def: str, nx_node: Optional[ET.Element],
+        current: MSection) -> MSection:
     '''
     Args:
         hdf_name : name of the hdf group/field/attribute (None for definition)
-        nxdef : application definition
-        nxdl_node : node in the nxdl.xml
-        act_section : actual section in which the new entry needs to be picked up from
+        nx_def : application definition
+        nx_node : node in the nxdl.xml
+        current : current section in which the new entry needs to be picked up from
 
-    Note that if the new element did not exists, it is created now
+    Note that if the new element did not exist, it will be created
 
     Returns:
         tuple: the new subsection
@@ -63,42 +59,42 @@ def to_new_section(
 
     If the given nxdl_node is a Group, return the corresponding SubSection.
     If the given nxdl_node is a Field, return the SubSection contains it.
-    If the given nxdl_node is a Attribute, return the associated SubSection or the SubSection contains
-        the associated Quantity.
-
-    TODO:   try to find also in the base section???
+    If the given nxdl_node is a Attribute, return the associated SubSection or the
+    SubSection contains the associated Quantity.
     '''
 
     if hdf_name is None:
-        nomad_def_name = 'nx_application_' + nxdef[2:]
-    elif nxdl_node.tag.endswith('group'):
+        nomad_def_name = nx_def
+    elif nx_node.tag.endswith('group'):
         # it is a new group
-        nomad_def_name = to_group_name(nxdl_node)
+        nomad_def_name = _to_group_name(nx_node)
     else:
         # no need to change section for quantities and attributes
-        return act_section
+        return current
 
-    new_def = act_section.m_def.all_sub_sections[nomad_def_name]
+    # for groups, get the definition from the package
+    new_def = current.m_def.all_sub_sections[nomad_def_name]
 
     new_section: MSection = None  # type:ignore
 
-    for section in act_section.m_get_sub_sections(new_def):
+    for section in current.m_get_sub_sections(new_def):
         if hdf_name is None or getattr(section, 'nx_name', None) == hdf_name:
             new_section = section
             break
 
     if new_section is None:
-        act_section.m_create(new_def.section_def.section_cls)
-        new_section = act_section.m_get_sub_section(new_def, -1)
+        current.m_create(new_def.section_def.section_cls)
+        new_section = current.m_get_sub_section(new_def, -1)
         new_section.__dict__['nx_name'] = hdf_name
 
     return new_section
 
 
-def get_value(hdf_node):
-    """Get value from hdl5 node
+def _get_value(hdf_node):
+    '''
+    Get value from hdl5 node
+    '''
 
-"""
     hdf_value = hdf_node[...]
     if str(hdf_value.dtype) == 'bool':
         val = bool(hdf_value)
@@ -106,164 +102,198 @@ def get_value(hdf_node):
         val = hdf_value
     else:
         try:
-            # todo: this may be an array of strings, need to convert properly
             val = str(hdf_value.astype(str))
         except UnicodeDecodeError:
             val = str(hdf_node[()].decode())
     return val
 
 
-def _get_definition_by_name(name: str, section: MSection) -> Optional[Quantity]:
+def _retrieve_definition(name: str, section: MSection) -> Quantity:
+    '''
+    Retrieve field definition by its name
+    '''
     for quantity in section.m_def.all_properties.values():
         if quantity.name == name or name in quantity.aliases:
             return quantity
 
-    return None
+    # this, by given both definition and data, should never happen
+    # if it raises, the data must be wrong
+    raise ValueError(f'Cannot find the given name {name} in the definition.')
 
 
-def nexus_populate_helper(params):
-    """helper for nexus_populate"""
-    (path_level, nxdl_path, act_section, logstr, val, loglev, nxdef, hdf_node) = params
-    if path_level < len(nxdl_path):
-        nxdl_attribute = nxdl_path[path_level]
-        parent_node = nxdl_path[path_level - 1]
-        if isinstance(nxdl_attribute, str):
-            if nxdl_attribute == "units":
-                metainfo_def = _get_definition_by_name(parent_node.attrib['name'], act_section)
-                metainfo_def.dimensionality = val[0]
+def _populate_data(
+        depth: int, nx_path: list, nx_def: str, hdf_node, val, current: MSection,
+        log_str: str, log_lvl: str) -> Tuple[str, str]:
+    '''
+    Populate attributes and fields
+    '''
+
+    if depth < len(nx_path):
+        # it is an attribute of either field or group
+        nx_attr = nx_path[depth]
+        nx_parent: ET.Element = nx_path[depth - 1]
+        if isinstance(nx_attr, str):
+            if nx_attr == "units":
+                metainfo_def = _retrieve_definition(nx_parent.get('name'), current)
+                if not metainfo_def.variable:
+                    metainfo_def.dimensionality = val[0]
         else:
-            # attribute in schema
-            attribute_name = nxdl_attribute.get('name')
-            act_section = to_new_section(attribute_name, nxdef, nxdl_attribute, act_section)
+            # get the name of parent (either field or group)
+            # which will be used to set attribute
+            # this is required by the syntax of metainfo mechanism
+            # due to variadic/template quantity names
+            parent_type = nx_parent.get('type').replace('NX', '').upper()
+            parent_name = nx_parent.get('name', parent_type)  # type: ignore
 
-            parent_name = parent_node.get('name', parent_node.attrib['type'][2:].upper())
+            attr_name = nx_attr.get('name')
+            # by default, we assume it is a 1D array
+            attr_value = [value for value in hdf_node.attrs[attr_name]]
+            if len(attr_value) == 1:
+                attr_value = attr_value[0]
+
+            current = _to_section(attr_name, nx_def, nx_attr, current)
 
             try:
-                act_section.m_set_attribute(parent_name, attribute_name, val[0])
-            except Exception:
-                logstr += f'{parent_name} --> {attribute_name}'
-                loglev = 'ERROR'
+                current.m_set_attribute(parent_name, attr_name, attr_value)
+            except Exception as exc:
+                log_str += f'Problem with storage!!!\n{str(exc)}\n'
+                log_lvl = 'error'
     else:
-        data_field = get_value(hdf_node)
-        if hdf_node[...].dtype.kind in 'iufc' and \
-                isinstance(data_field, np.ndarray) and \
-                data_field.size > 1:
-            data_field = np.array([
-                np.mean(data_field),
-                np.var(data_field),
-                np.min(data_field),
-                np.max(data_field)
-            ])
-        metainfo_def = _get_definition_by_name(nxdl_path[-1].attrib['name'], act_section)
+        # it is a field
+        field = _get_value(hdf_node)
+        # if hdf_node[...].dtype.kind in 'iufc' and isinstance(
+        #         field, np.ndarray) and field.size > 1:
+        #     field = np.array([
+        #         np.mean(field), np.var(field), np.min(field), np.max(field)])
+
+        # get the corresponding field name
+        metainfo_def = _retrieve_definition(nx_path[-1].get('name'), current)
+
+        if metainfo_def.variable:
+            new_def = metainfo_def.m_copy()
+            new_def.name = hdf_node.name.split('/')[-1]
+        else:
+            new_def = metainfo_def
+        # check if unit is given
         unit = hdf_node.attrs.get('units', None)
         if unit:
             if unit == 'counts':
-                metainfo_def.unit = '1'
+                new_def.unit = '1'
             else:
-                metainfo_def.unit = unit
+                new_def.unit = unit
+            field = ureg.Quantity(field, new_def.unit)
+
+        # may need to check if the given unit is in the allowable list
+
         try:
-            act_section.m_set(metainfo_def, data_field)
-        except Exception as e:
-            logstr += str(e)
-            loglev = 'ERROR'
-    return [logstr, loglev]
+            current.m_set(new_def, field, new_def.variable)
+        except Exception as exc:
+            log_str += f'Problem with storage!!!\n{str(exc)}\n'
+            log_lvl = 'error'
+
+    return log_str, log_lvl
 
 
-def add_log(params, logstr):
-    """adds log entry for the given node"""
-    if params[1] is not None:
-        logstr += params[1]
-    else:
-        logstr += '???'
-    logstr += ':'
+def _add_log(nx_def: Optional[str], nx_path: list, val, log_str: str) -> str:
+    '''
+    Add log entry for the given node
+    '''
+
+    log_str += '???' if nx_def is None else nx_def
+    log_str += ':'
+
     first = True
-    for p_node in params[2]:
+    for p_node in nx_path:
         if first:
             first = False
         else:
-            logstr += '.'
+            log_str += '.'
         if isinstance(p_node, str):
-            logstr += p_node
+            log_str += p_node
         else:
             read_nexus.get_node_name(p_node)
-    logstr += ' - ' + params[3][0]
-    if len(params[3]) > 1:
-        logstr += '...'
-    logstr += '\n'
-    return logstr
+
+    log_str += ' - ' + val[0]
+    if len(val) > 1:
+        log_str += '...'
+
+    return log_str + '\n'
 
 
 class NexusParser(MatchingParser):
-    """NesusParser doc
-
-"""
+    '''
+    NexusParser doc
+    '''
 
     def __init__(self):
         super().__init__(
-            name='parsers/nexus', code_name='NEXUS', code_homepage='https://www.nexus.eu/',
+            name='parsers/nexus', code_name='NEXUS',
+            code_homepage='https://www.nexus.eu/',
             mainfile_mime_re=r'(application/.*)|(text/.*)',
-            mainfile_name_re=(r'.*\.nxs'),
+            mainfile_name_re=r'.*\.nxs',
             supported_compressions=['gz', 'bz2', 'xz']
         )
-        self.archive = None
-        self.nxroot = None
+        self.archive: Optional[EntryArchive] = None
+        self.nx_root = None
 
-    #     def get_nomad_classname(self, xml_name, xml_type, suffix):
-    #         """Get nomad classname from xml file
+    def __nexus_populate(self, params, attr=None):
+        '''
+        Walks through name_list and generate nxdl nodes
+        (hdf_info, nx_def, nx_path, val, logger) = params
+        '''
 
-    # """
-    #         if suffix == 'Attribute' or suffix == 'Field' or xml_type[2:].upper() != xml_name:
-    #             name = xml_name + suffix
-    #         else:
-    #             name = xml_type + suffix
-    #         return name
+        hdf_info: dict
+        nx_def: str
+        nx_path: list
 
-    def nexus_populate(self, params, attr=None):
-        """Walks through hdf_namelist and generate nxdl nodes
-        (hdf_info, nxdef, nxdl_path, val, logger) = params"""
-        hdf_path = params[0]['hdf_path']
-        hdf_node = params[0]['hdf_node']
-        logstr = hdf_path + (("@" + attr) if attr else '') + '\n'
-        loglev = 'info'
-        if params[2] is not None:
-            logstr = add_log(params, logstr)
-            act_section = self.nxroot
-            hdf_namelist = hdf_path.split('/')[1:]
-            act_section = to_new_section(None, params[1], None, act_section)
-            path_level = 1
-            for hdf_name in hdf_namelist:
-                nxdl_node = params[2][path_level] if path_level < len(params[2]) else hdf_name
-                act_section = to_new_section(hdf_name, params[1], nxdl_node, act_section)
-                path_level += 1
-            helper_params = (path_level, params[2], act_section, logstr, params[3],
-                             loglev, params[1], hdf_node)
-            (logstr, loglev) = nexus_populate_helper(helper_params)
+        (hdf_info, nx_def, nx_path, val, logger) = params
+
+        hdf_path: str = hdf_info['hdf_path']
+        hdf_node = hdf_info['hdf_node']
+
+        log_str: str = f'{hdf_path}{f"@{attr}" if attr else ""}\n'
+        log_lvl: str = 'info'
+
+        if nx_path is None:
+            log_str += 'NOT IN SCHEMA - skipped\n'
+            log_lvl = 'warning'
         else:
-            logstr += ('NOT IN SCHEMA - skipped') + '\n'
-            loglev = 'warning'
-        if loglev == 'info':
-            params[4].info('Parsing', nexusparser=logstr)
-        elif loglev == 'warning':
-            params[4].warning('Parsing', nexusparser=logstr)
-        elif loglev == 'error':
-            params[4].error('Parsing', nexusparser=logstr)
+            log_str = _add_log(nx_def, nx_path, val, log_str)
+
+            current: MSection = _to_section(None, nx_def, None, self.nx_root)
+            depth: int = 1
+            for name in hdf_path.split('/')[1:]:
+                nx_node = nx_path[depth] if depth < len(nx_path) else name
+                current = _to_section(name, nx_def, nx_node, current)
+                depth += 1
+
+            log_str, log_lvl = _populate_data(
+                depth, nx_path, nx_def, hdf_node, val, current, log_str, log_lvl)
+
+        if log_lvl == 'info':
+            logger.info('Parsing', nexusparser=log_str)
+        elif log_lvl == 'warning':
+            logger.warning('Parsing', nexusparser=log_str)
+        elif log_lvl == 'error':
+            logger.error('Parsing', nexusparser=log_str)
         else:
-            params[4].critical('Parsing', nexusparser=logstr + 'NOT HANDLED\n')
+            logger.critical('Parsing', nexusparser=log_str + 'NOT HANDLED\n')
 
-    def parse(self, mainfile: str, archive: EntryArchive, logger=None, child_archives=None):
-        nexus.init_nexus_metainfo()
-
+    def parse(
+            self, mainfile: str, archive: EntryArchive, logger=None, child_archives=None):
         self.archive = archive
-        self.archive.m_create(nexus.Nexus)  # type: ignore[attr-defined] # pylint: disable=no-member
-        self.nxroot = self.archive.nexus
+        self.archive.m_create(nexus.NeXus)  # type: ignore # pylint: disable=no-member
+        self.nx_root = self.archive.nexus
 
         nexus_helper = read_nexus.HandleNexus(logger, [mainfile])
-        nexus_helper.process_nexus_master_file(self.nexus_populate)
+        nexus_helper.process_nexus_master_file(self.__nexus_populate)
 
-        appdef = ""
+        if archive.metadata is None:
+            return
+
+        app_def: str = ''
         for var in dir(archive.nexus):
-            if var.startswith("nx_application") and getattr(archive.nexus, var, None) is not None:
-                appdef = var[len("nx_application_"):]
+            if getattr(archive.nexus, var, None) is not None:
+                app_def = var
 
-        if archive.metadata is not None:
-            archive.metadata.entry_type = f"NX{appdef}"
+        archive.metadata.entry_type = app_def

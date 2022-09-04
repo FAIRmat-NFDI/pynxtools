@@ -23,21 +23,19 @@ import xml.etree.ElementTree as ET
 import sys
 import os
 import logging
+
 import pytest
+
 from nomad.datamodel import EntryArchive
 from nexusparser.tools import nexus  # noqa: E402
 from nexusparser.parser import NexusParser  # noqa: E402
+from nomad.units import ureg
+
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
 
-
-@pytest.fixture
-def parser():
-    """Helper function to launch NexusParser class
-
-"""
-    return NexusParser()
+local_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def test_nexus(tmp_path):
@@ -48,7 +46,7 @@ def test_nexus(tmp_path):
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    handler = logging.\
+    handler = logging. \
         FileHandler(os.path.join(tmp_path, 'nexus_test.log'), 'w')
     handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(levelname)s - %(message)s')
@@ -59,7 +57,8 @@ def test_nexus(tmp_path):
 
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
-    with open(os.path.join(local_dir, 'data/nexus_test_data/Ref_nexus_test.log'), 'r') as reffile:
+    with open(os.path.join(local_dir, 'data/nexus_test_data/Ref_nexus_test.log'),
+              'r') as reffile:
         ref = reffile.readlines()
 
     assert log == ref
@@ -74,7 +73,9 @@ def test_nexus(tmp_path):
 
 def test_get_node_at_nxdl_path():
     """Test to verify if we receive the right XML element for a given NXDL path"""
+
     nxdl_file_path = "tests/data/tools/dataconverter/NXtest.nxdl.xml"
+    nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name", elem=elem)
     assert node.attrib["type"] == "NXdata"
@@ -85,21 +86,25 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["name"] == "float_value"
 
     nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXellipsometry.nxdl.xml"
+    nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
     assert node.attrib["type"] == "NXcollection"
 
     nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXem_nion.nxdl.xml"
+    nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/em_lab/hadf/SCANBOX_EM", elem=elem)
     assert node.attrib["type"] == "NXscanbox_em"
 
     nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
+    nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/DATA/VARIABLE", elem=elem)
     assert node.attrib["name"] == "VARIABLE"
 
     nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
+    nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/USER/role", elem=elem)
     assert node.attrib["name"] == "role"
@@ -116,66 +121,39 @@ def test_example():
     # local_dir = os.path.abspath(os.path.dirname(__file__))
     # example_data = os.path.join(local_dir, 'data/nexus_test_data/em0001.test.nxs')
     # parser().parse(example_data, archive, structlog.get_logger())
-    # assert archive.nexus.nx_application_em_nion.\
-    #     nx_group_ENTRY[0].nx_group_operator.nx_field_affiliation.nx_value ==
+    # assert archive.nexus.NXem_nion.\
+    #     ENTRY[0].operator.affiliation.nx_value ==
     #     "Humboldt Universität zu Berlin"
 
     # local_dir = os.path.abspath(os.path.dirname(__file__))
     # example_data = os.path.join(local_dir, 'data/nexus_test_data/mpes2.test.nxs')
     # parser().parse(example_data, archive, structlog.get_logger())
-    # assert archive.nexus.nx_application_mpes.\
-    #     nx_group_ENTRY[0].nx_field_definition.nx_value == "NXmpes"
+    # assert archive.nexus.NXmpes.\
+    #     ENTRY[0].definition.nx_value == "NXmpes"
 
-    local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
-    parser().parse(example_data, archive, structlog.get_logger())
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_value == 3.27e-10
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_unit == "millibar"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.m_def.nx_units == "NX_PRESSURE"
-    # assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-    #     nx_group_monochromator.nx_field_energy.nx_value == 36.49699020385742
-    # assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_group_INSTRUMENT[0].\
-    #     nx_group_monochromator.nx_field_energy.nx_name == 'energy'
-    # # cannot store number 750 to a field expecting NX_CHAR
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_analyser.\
-    #     nx_field_entrance_slit_size.nx_value is None
-    # # good ENUM - x-ray
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
-    #     nx_field_probe.nx_value == 'x-ray'
-    # # wrong inherited ENUM - Burst
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
-    #     nx_field_mode.nx_value is None
-    # # wrong inherited ENUM for extended field - 'Free Electron Laser'
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_INSTRUMENT[0].nx_group_SOURCE[0].\
-    #     nx_field_type.nx_value is None
-    # # 1D datasets
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_name == "angles"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_name == "delays"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_name == "energies"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_unit == "1/Å"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[1].nx_unit == "fs"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[2].nx_unit == "eV"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_VARIABLE[0].nx_value[0] == 0.10033616393632831
+    NexusParser().parse(example_data, archive, structlog.get_logger())
+    assert archive.nexus.NXarpes.ENTRY[0].SAMPLE[0].pressure == ureg.Quantity(
+        '3.27e-10*millibar')
+    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[
+               0].monochromator.energy == ureg.Quantity(
+        '36.49699020385742*electron_volt')
+    # cannot store number 750 to a field expecting NX_CHAR
+    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[
+               0].analyser.entrance_slit_size == '750 micrometer'
+    # good ENUM - x-ray
+    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0].SOURCE[0].probe == 'x-ray'
+    # wrong inherited ENUM - Burst
+    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0].SOURCE[0].mode is None
+    # wrong inherited ENUM for extended field - 'Free Electron Laser'
+    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0].SOURCE[0].type is None
+    # 1D datasets
+    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].angles is not None
+    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].delays is not None
+    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].energies is not None
+    # assert archive.nexus.NXarpes.ENTRY[0].DATA[0].angles.check("1/Å")
+    # assert archive.nexus.NXarpes.ENTRY[0].DATA[0].delays.check("fs")
+    # assert archive.nexus.NXarpes.ENTRY[0].DATA[0].energies.check("eV")
+    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].angles[0] == -1.9673531356403755
     # # 2D datasets
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_DATA[0].nx_name == "data"
-    # assert archive.nexus.nx_application_arpes.\
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_DATA[0].nx_value[2] == 0.0
-    # assert pytest.approx(
-    #     archive.nexus.nx_application_arpes.
-    #     nx_group_ENTRY[0].nx_group_DATA[0].nx_field_DATA[0].nx_value[3] - 0.00078192557) \
-    #     == 0.0
+    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].data[2][0][0] == 0.0

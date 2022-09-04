@@ -33,8 +33,6 @@ from nexusparser import tools
     pytest.param('nexus_metainfo_package.name', 'nexus'),
     pytest.param('nexus_metainfo_package.NXobject.name', 'NXobject'),
     pytest.param('nexus_metainfo_package.NXentry.nx_kind', 'group'),
-    # pytest.param('nexus_metainfo_package.NXentry.defaultAttribute.nx_value.type', str),
-    # pytest.param('nexus_metainfo_package.NXentry.nx_attribute_default', '*'),
     pytest.param('nexus_metainfo_package.NXentry.NXdata', '*'),
     pytest.param('nexus_metainfo_package.NXdetector.real_time', '*'),
     pytest.param('nexus_metainfo_package.NXentry.NXdata.nx_optional', True),
@@ -44,7 +42,6 @@ from nexusparser import tools
     pytest.param('nexus_metainfo_package.NXdetector.real_time.name', 'real_time'),
     pytest.param('nexus_metainfo_package.NXdetector.real_time.nx_type', 'NX_NUMBER'),
     pytest.param('nexus_metainfo_package.NXdetector.real_time.nx_units', 'NX_TIME'),
-    # pytest.param('nexus_metainfo_package.NXdetector.real_time.unit', '*'),
     pytest.param('nexus_metainfo_package.NXarpes.NXentry.NXdata.nx_optional', False),
     pytest.param('nexus_metainfo_package.NXentry.nx_category', 'base'),
     pytest.param('nexus_metainfo_package.NXapm.nx_category', 'application')
@@ -90,27 +87,14 @@ def test_use_nexus_metainfo():
 
     # pylint: disable=no-member
     archive = EntryArchive()
-    archive.nexus = nexus.Nexus()
-    archive.nexus.arpes = nexus.NXarpes()
-    archive.nexus.arpes.m_create(nexus.NXarpes.NXentry)
-    archive.nexus.arpes.ENTRY[0].title = 'my_title'
-
-    # Entry/default is not overwritten in NXarpes. Therefore, technically,
-    # there is no attribute section
-    # nexus.NXarpes.NXentryGroup.DefaultAttribute. We artifically extented inheritence to
-    # include inner section/classes. So both options work:
-    # archive.nexus.nx_application_arpes.nx_group_ENTRY.nx_attribute_default =
-    # nexus.NXentry.DefaultAttribute()
-    # archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default = \
-    #     nexus.NXarpes.NXentryGroup.defaultAttribute()
-    # archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default.nx_value = \
-    #     'my default'
-    # pylint: enable=no-member
+    archive.nexus = nexus.NeXus()
+    archive.nexus.NXarpes = nexus.NXarpes()
+    archive.nexus.NXarpes.m_create(nexus.NXarpes.NXentry)
+    archive.nexus.NXarpes.ENTRY[0].title = 'my_title'
 
     archive = EntryArchive.m_from_dict(archive.m_to_dict())
-    # assert archive.nexus.nx_application_arpes.nx_group_ENTRY[0].nx_attribute_default.nx_value == \
-    #     'my default'
-    assert archive.nexus.arpes.ENTRY[0].title == 'my_title'
+
+    assert archive.nexus.NXarpes.ENTRY[0].title == 'my_title'
 
 
 def test_get_nexus_classes_units_attributes():
