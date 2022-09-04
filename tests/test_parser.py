@@ -135,25 +135,28 @@ def test_example():
     NexusParser().parse(example_data, archive, structlog.get_logger())
     assert archive.nexus.NXarpes.ENTRY[0].SAMPLE[0].pressure == ureg.Quantity(
         '3.27e-10*millibar')
-    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[
-               0].monochromator.energy == ureg.Quantity(
+
+    instrument = archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0]
+
+    assert instrument.monochromator.energy == ureg.Quantity(
         '36.49699020385742*electron_volt')
     # cannot store number 750 to a field expecting NX_CHAR
-    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[
-               0].analyser.entrance_slit_size == '750 micrometer'
+    assert instrument.analyser.entrance_slit_size == '750 micrometer'
     # good ENUM - x-ray
-    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0].SOURCE[0].probe == 'x-ray'
+    assert instrument.SOURCE[0].probe == 'x-ray'
     # wrong inherited ENUM - Burst
-    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0].SOURCE[0].mode is None
+    assert instrument.SOURCE[0].mode is None
     # wrong inherited ENUM for extended field - 'Free Electron Laser'
-    assert archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0].SOURCE[0].type is None
+    assert instrument.SOURCE[0].type is None
     # 1D datasets
-    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].angles is not None
-    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].delays is not None
-    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].energies is not None
-    # assert archive.nexus.NXarpes.ENTRY[0].DATA[0].angles.check("1/Å")
-    # assert archive.nexus.NXarpes.ENTRY[0].DATA[0].delays.check("fs")
-    # assert archive.nexus.NXarpes.ENTRY[0].DATA[0].energies.check("eV")
-    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].angles[0] == -1.9673531356403755
+
+    data = archive.nexus.NXarpes.ENTRY[0].DATA[0]
+    assert data.angles is not None
+    assert data.delays is not None
+    assert data.energies is not None
+    # assert data.angles.check("1/Å")
+    # assert data.delays.check("fs")
+    # assert data.energies.check("eV")
+    assert data.angles[0] == -1.9673531356403755
     # # 2D datasets
-    assert archive.nexus.NXarpes.ENTRY[0].DATA[0].data[2][0][0] == 0.0
+    assert data.data[2][0][0] == 0.0
