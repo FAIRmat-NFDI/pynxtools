@@ -103,7 +103,7 @@ class NxEmNomadOasisElnSchemaParser:
         return template
 
     def parse_user_section(self, template: dict) -> dict:
-        """Copy data in entry section."""
+        """Copy data in user section."""
         # check if required fields exists and are valid
         print('Parsing user...')
         src = "user"
@@ -129,7 +129,7 @@ class NxEmNomadOasisElnSchemaParser:
         return template
 
     def parse_sample_section(self, template: dict) -> dict:
-        """Copy data in entry section."""
+        """Copy data in sample section."""
         # check if required fields exists and are valid
         print('Parsing sample...')
         src = "sample"
@@ -173,7 +173,7 @@ class NxEmNomadOasisElnSchemaParser:
         return template
 
     def parse_instrument_header_section(self, template: dict) -> dict:
-        """Copy data in entry section."""
+        """Copy data in instrument header section."""
         # check if required fields exists and are valid
         print('Parsing instrument header...')
         src = "em_lab"
@@ -204,7 +204,7 @@ class NxEmNomadOasisElnSchemaParser:
         return template
 
     def parse_ebeam_column_section(self, template: dict) -> dict:
-        """Copy data in ebeam_section."""
+        """Copy data in ebeam_column section."""
         print('Parsing ebeam_column...')
         src = "em_lab:ebeam_column:electron_gun"
         assert isinstance(self.yml[src], fd.FlatDict), \
@@ -254,7 +254,7 @@ class NxEmNomadOasisElnSchemaParser:
         return template
 
     # def parse_ibeam_column_section(self, template: dict) -> dict:
-    #     """Copy data in ibeam_section."""
+    #     """Copy data in ibeam_column section."""
     #     print('Parsing ibeam_column...')
     #     return template
 
@@ -264,12 +264,12 @@ class NxEmNomadOasisElnSchemaParser:
     #     return template
 
     # def parse_ibeam_deflector_section(self, template: dict) -> dict:
-    #     """Copy data in ebeam_deflector section."""
+    #     """Copy data in ibeam_deflector section."""
     #     print('Parsing ibeam_deflector...')
     #     return template
 
     def parse_optics_section(self, template: dict) -> dict:
-        """Parse the during the session qualifiers of the optics."""
+        """Copy data in optical_system_em section."""
         print('Parsing optics...')
         src = "em_lab:optical_system_em"
         assert isinstance(self.yml[src], fd.FlatDict), \

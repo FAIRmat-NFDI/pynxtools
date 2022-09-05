@@ -204,6 +204,8 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
             template[trg + "field_of_view/@units"] \
                 = self.yml[src + ":" + "field_of_view:unit"]
 
+        return template
+
     def parse_manufacturer(self, template: dict) -> dict:
         """Copy data in manufacturer section."""
         print('Parsing manufacturer...')
@@ -313,6 +315,8 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
             template[trg + field_name.replace("stage_lab_", '') + "/@units"] \
                 = self.yml[src + ":" + field_name + ":unit"]
 
+        return template
+
     def parse_specimen_monitoring(self, template: dict) -> dict:
         """Copy data in specimen_monitoring section."""
         print('Parsing specimen_monitoring...')
@@ -393,8 +397,8 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
             and ("pulse_frequency:unit" in self.yml[src].keys())
         assert field_exists is True, \
             "pulse_frequency" + error_msg
-        template[trg + "pulse_frequency"] = np.float64(
-                self.yml[src + ":pulse_frequency:value"])
+        template[trg + "pulse_frequency"] \
+            = np.float64(self.yml[src + ":pulse_frequency:value"])
         template[trg + "pulse_frequency/@units"] \
             = self.yml[src + ":pulse_frequency:unit"]
 
