@@ -73,8 +73,8 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
             objects: Tuple[Any] = None):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
-    if nxdl == "NXtest":
-        nxdl_path = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
+    if nxdl in ("NXtest", "NXmpes_extended"):
+        nxdl_path = os.path.join("tests", "data", "tools", "dataconverter", f"{nxdl}.nxdl.xml")
     else:
         definitions_path = nexus.get_nexus_definitions_path()
         nxdl_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")

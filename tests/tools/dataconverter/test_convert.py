@@ -207,3 +207,30 @@ def test_mpes_writing(tmp_path):
     assert archive.nexus.nx_application_mpes.\
         nx_group_ENTRY[0].nx_group_PROCESS[0].nx_group_energy_calibration.\
         nx_field_calibrated_axis.nx_value[0] == pytest.approx(-14.264604, rel=1e-6)
+
+
+def test_inheritance(tmp_path):
+    """Checks that appdef inheritance is working correctly"""
+    dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes")
+
+    dataconverter.convert((os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
+                           os.path.join(dirpath, "config_file.json"),
+                           os.path.join(dirpath, "extended_data.json")),
+                          "mpes", "NXmpes_extended",
+                          os.path.join(tmp_path, "mpes.small_test.nxs"),
+                          False, False)
+
+    with pytest.raises(Exception) as e_info:
+        dataconverter.convert((os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
+                               os.path.join(dirpath, "config_file.json")),
+                              "mpes", "NXmpes_extended",
+                              os.path.join(tmp_path, "mpes.small_test.nxs"),
+                              False, False)
+
+        assert e_info == "The data entry corresponding to /ENTRY[entry]/test is required and hasn't been supplied by the reader."
+
+    with pytest.raises(Exception):
+        dataconverter.convert((os.path.join(dirpath, "extended_data.json")),
+                            "mpes", "NXmpes_extended",
+                            os.path.join(tmp_path, "mpes.small_test.nxs"),
+                            False, False)

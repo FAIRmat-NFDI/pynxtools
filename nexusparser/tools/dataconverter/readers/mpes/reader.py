@@ -257,7 +257,7 @@ class MPESReader(BaseReader):
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls = ["NXmpes"]
+    supported_nxdls = ["NXmpes", "NXmpes_extended"]
 
     def read(
             self,

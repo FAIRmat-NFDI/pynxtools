@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<definition category="application" extends="NXmpes" name="NXmpes_extended" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+    <doc>
+         An inheritance test
+    </doc>
+    <group type="NXentry">
+        <field name="test" type="NX_CHAR">
+            <doc>
+                 This is an additonal testfield
+            </doc>
+        </field>
+    </group>
+</definition>
