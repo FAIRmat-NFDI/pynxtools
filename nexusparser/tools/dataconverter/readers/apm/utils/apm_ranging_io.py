@@ -77,12 +77,13 @@ def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
         i = 0
         for hash_value in ivec:
             if hash_value != 0:
-                ZN = unhash_isotope(int(hash_value))
-                if ZN[1] > 0: # convention if only the element known
-                    nuclid_list[0, i] = ZN[0] + ZN[1]
+                n_protons_n_neutrons = unhash_isotope(int(hash_value))
+                if n_protons_n_neutrons[1] > 0:  # convention if only the element known
+                    nuclid_list[0, i] \
+                        = n_protons_n_neutrons[0] + n_protons_n_neutrons[1]
                 else:
                     nuclid_list[0, i] = 0
-                nuclid_list[1, i] = ZN[0]
+                nuclid_list[1, i] = n_protons_n_neutrons[0]
             i += 1
         template[path + "nuclid_list"] = nuclid_list
         template[path + "nuclid_list/@units"] = "NX_UNITLESS"
@@ -132,12 +133,13 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
         i = 0
         for hash_value in ivec:
             if hash_value != 0:
-                ZN = unhash_isotope(int(hash_value))
-                if ZN[1] > 0: # convention if only the element known
-                    nuclid_list[0, i] = ZN[0] + ZN[1]
+                n_protons_n_neutrons = unhash_isotope(int(hash_value))
+                if n_protons_n_neutrons[1] > 0:  # convention if only the element known
+                    nuclid_list[0, i] \
+                        = n_protons_n_neutrons[0] + n_protons_n_neutrons[1]
                 else:
                     nuclid_list[0, i] = 0
-                nuclid_list[1, i] = ZN[0]
+                nuclid_list[1, i] = n_protons_n_neutrons[0]
             i += 1
         template[path + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
         template[path + "nuclid_list/@units"] = "NX_UNITLESS"

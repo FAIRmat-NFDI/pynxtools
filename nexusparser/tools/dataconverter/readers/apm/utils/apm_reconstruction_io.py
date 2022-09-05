@@ -22,12 +22,7 @@
 
 # pylint: disable=E1101
 
-from typing import Dict
-
 import numpy as np
-
-from nexusparser.tools.dataconverter.readers.apm.utils.apm_nexus_base_classes \
-    import NxObject
 
 from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_reader \
     import ReadAptFileFormat
@@ -75,7 +70,7 @@ def extract_data_from_epos_file(file_name: str, prefix: str, template: dict) -> 
     trg = prefix + 'mass_to_charge_conversion/'
     m_z = eposfile.get_mass_to_charge()
     template[trg + 'mass_to_charge'] \
-        = {"compress":  np.array(m_z.value, np.float32), "strength": 1}
+        = {"compress": np.array(m_z.value, np.float32), "strength": 1}
     template[trg + 'mass_to_charge/@units'] = m_z.unit
     del m_z
 
@@ -166,18 +161,17 @@ class ApmReconstructionParser:  # pylint: disable=R0903
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_name: str):
-        self.meta: Dict[str, NxObject] = {}
-        self.meta["file_format"] = 'none'
-        self.meta["file_name"] = file_name
+        self.file_format = 'none'
+        self.file_name = file_name
         index = file_name.lower().rfind('.')
         if index >= 0:
             mime_type = file_name.lower()[index + 1::]
             if mime_type == 'pos':
-                self.meta["file_format"] = 'pos'
+                self.file_format = 'pos'
             if mime_type == 'epos':
-                self.meta["file_format"] = 'epos'
+                self.file_format = 'epos'
             if mime_type == 'apt':
-                self.meta["file_format"] = 'apt'
+                self.file_format = 'apt'
 
     def report(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -186,20 +180,14 @@ class ApmReconstructionParser:  # pylint: disable=R0903
         with the application definition.
         """
         prfx = '/ENTRY[entry]/atom_probe/'
-        if self.meta["file_name"] != '' and self.meta["file_format"] != 'none':
-            if self.meta["file_format"] == 'pos':
+        if self.file_name != '' and self.file_format != 'none':
+            if self.file_format == 'pos':
                 extract_data_from_pos_file(
-                    self.meta["file_name"],
-                    prfx,
-                    template)
-            if self.meta["file_format"] == 'epos':
+                    self.file_name, prfx, template)
+            if self.file_format == 'epos':
                 extract_data_from_epos_file(
-                    self.meta["file_name"],
-                    prfx,
-                    template)
-            if self.meta["file_format"] == 'apt':
+                    self.file_name, prfx, template)
+            if self.file_format == 'apt':
                 extract_data_from_apt_file(
-                    self.meta["file_name"],
-                    prfx,
-                    template)
+                    self.file_name, prfx, template)
         return template

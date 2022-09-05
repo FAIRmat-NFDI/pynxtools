@@ -22,8 +22,6 @@
 
 # pylint: disable=E1101
 
-from typing import Dict
-
 
 class NxObject:  # pylint: disable=R0903
     """An object in a graph e.g. a field or group in NeXus."""

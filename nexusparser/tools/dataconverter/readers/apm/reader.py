@@ -39,7 +39,7 @@ from nexusparser.tools.dataconverter.readers.apm.utils.apm_nomad_oasis_eln_io \
     import NxApmNomadOasisElnSchemaParser
 
 from nexusparser.tools.dataconverter.readers.apm.utils.apm_nexus_plots \
-    import ApmDefaultPlotGenerator
+    import apm_default_plot_generator
 
 # each reconstruction should be stored as an own file because for commercial
 # atom probe microscopes it is currently impossible to get less processed data
@@ -99,8 +99,7 @@ class ApmReader(BaseReader):
             return {}
 
         print("Creating default plottable data...")
-        nx_apm_plotter = ApmDefaultPlotGenerator()
-        nx_apm_plotter.report(template)
+        apm_default_plot_generator(template)
 
         # if True is True:
         # reporting of what has not been properly defined at the reader level

@@ -249,7 +249,7 @@ class EmSpctrscpyReader(BaseReader):
         if case.vendor_parser == 'oina':
             # oina_parser(case.vendor[0], template)
             return {}
-        elif case.vendor_parser == 'hspy':
+        if case.vendor_parser == 'hspy':
             hyperspy_parser(case.vendor[0], template)
         else:
             print("No input-file defined for vendor data !")
