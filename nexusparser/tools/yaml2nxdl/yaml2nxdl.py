@@ -98,8 +98,14 @@ nest of groups recursively and fields or (their) attributes as childs of the gro
 application and base are valid categories!'
     assert 'doc' in yml_appdef.keys(), 'Required root-level keyword doc is missing!'
 
-    xml_root.set('extends', 'NXobject')
     xml_root.set('type', 'group')
+
+    if 'extends' in yml_appdef.keys():
+        xml_root.set('extends', yml_appdef['extends'])
+        del yml_appdef['extends']
+    else:
+        xml_root.set('extends', 'NXobject')
+
     if yml_appdef['category'] == 'application':
         xml_root.set('category', 'application')
         del yml_appdef['category']

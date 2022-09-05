@@ -241,6 +241,7 @@ Two cases are handled:
 """
     enum = ET.SubElement(obj, 'enumeration')
     line_number = f'__line__{keyword}'
+    assert value is not None, f'Line {dct[line_number]}: enumeration must bear at least an argument !'
     assert len(
         value) >= 1, f'Line {dct[line_number]}: enumeration must not be an empty list!'
     if isinstance(value, list):
