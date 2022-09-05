@@ -227,10 +227,12 @@ def test_inheritance(tmp_path):
                               os.path.join(tmp_path, "mpes.small_test.nxs"),
                               False, False)
 
-        assert e_info == "The data entry corresponding to /ENTRY[entry]/test is required and hasn't been supplied by the reader."
+        assert e_info == \
+            "The data entry corresponding to /ENTRY[entry]/test " + \
+            "is required and hasn't been supplied by the reader."
 
     with pytest.raises(Exception):
         dataconverter.convert((os.path.join(dirpath, "extended_data.json")),
-                            "mpes", "NXmpes_extended",
-                            os.path.join(tmp_path, "mpes.small_test.nxs"),
-                            False, False)
+                              "mpes", "NXmpes_extended",
+                              os.path.join(tmp_path, "mpes.small_test.nxs"),
+                              False, False)
