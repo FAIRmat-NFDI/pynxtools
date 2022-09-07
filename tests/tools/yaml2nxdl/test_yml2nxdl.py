@@ -215,14 +215,14 @@ def test_extends():
     ref_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXattributes.nxdl.xml'
     test_yml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.yml'
     test_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml'
-    desired_matches = ['extends="my_test_extend"']
+    desired_matches = ['extends="my_test_extends"']
     compare_matches(
         ref_xml_attribute_file,
         test_yml_attribute_file,
         test_xml_attribute_file,
         desired_matches)
     os.remove('tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml')
-    sys.stdout.write('Test on attributes okay.\n')
+    sys.stdout.write('Test on extends keyword okay.\n')
 
 
 def test_symbols_and_enum_docs():
