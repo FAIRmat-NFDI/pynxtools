@@ -4,14 +4,14 @@ symbols:
   doc: documentation no. 1
   testnamesymbol: test description of symbol
 category: application
-extends: my_test_extends
+extends: my_test_extend
 (NXellipsometry_base_draft):
   (NXentry):
     \@entry:
       doc: attribute documentation 
     doc: documentation no. 2
     experiment_identifier:
-      exists: required
+      existsss: required
       doc: documentation no. 3
     experiment_description:
       exists: required
