@@ -320,7 +320,7 @@ def check_optionality_based_on_parent_group(
 
 
 def does_group_exist(path_to_group, data):
-
+    """Returns True if the group or any children are set"""
     for path in data:
         if path_to_group in path and data[path] is not None:
             return True
