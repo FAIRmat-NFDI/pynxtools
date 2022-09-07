@@ -198,8 +198,8 @@ def test_mpes_writing(tmp_path):
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
         log = logfile.readlines()
     with open(os.path.join(dirpath, 'Ref_nexus_mpes.log'), 'r') as logfile:
-        Ref_log = logfile.readlines()
-    assert log == Ref_log
+        ref_log = logfile.readlines()
+    assert log == ref_log
     # parsing to NOMAD
     archive = EntryArchive()
     import structlog
@@ -207,3 +207,19 @@ def test_mpes_writing(tmp_path):
     assert archive.nexus.nx_application_mpes.\
         nx_group_ENTRY[0].nx_group_PROCESS[0].nx_group_energy_calibration.\
         nx_field_calibrated_axis.nx_value[0] == pytest.approx(-14.264604, rel=1e-6)
+
+
+def test_check_failing_on_non_present_required_group(tmp_path):
+    """If there is an empty required group which is not filled the convert should
+    raise an exception."""
+
+    with pytest.raises(Exception):
+        dirpath = os.path.join(
+            os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes"
+        )
+        dataconverter.convert(
+            (os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
+             os.path.join(dirpath, "config_file_wo_preparation_desc.json")),
+            "mpes", "NXmpes",
+            os.path.join(tmp_path, "mpes.small_test.nxs"),
+            False, False)
