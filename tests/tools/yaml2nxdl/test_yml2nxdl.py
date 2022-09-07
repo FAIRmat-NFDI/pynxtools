@@ -98,7 +98,7 @@ and if test xml file is equal to reference xml file
 
 
 def test_links():
-    """First test: check the correct parsing of links
+    """Check the correct parsing of links
 
 """
     ref_xml_link_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXtest_links.nxdl.xml'
@@ -151,8 +151,30 @@ has not the same structure!!'
     sys.stdout.write('Test on xml -> yml doc formatting okay.\n')
 
 
+def test_fileline_error():
+    """In this test the yaml fileline in the error message is tested.
+
+    """
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXfilelineError1.yml'
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
+    assert result.exit_code == 1
+    assert '14' in str(result.exception)
+
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXfilelineError2.yml'
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
+    assert result.exit_code == 1
+    assert '22' in str(result.exception)
+
+    test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXfilelineError3.yml'
+    result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
+    assert result.exit_code == 1
+    assert '26' in str(result.exception)
+
+    sys.stdout.write('Test on xml -> yml fileline error handling okay.\n')
+
+
 def test_symbols():
-    """Second test: check the correct parsing of symbols
+    """Check the correct parsing of symbols
 
 """
     ref_xml_symbol_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXnested_symbols.nxdl.xml'
@@ -169,7 +191,7 @@ def test_symbols():
 
 
 def test_attributes():
-    """Third test: check the correct handling of empty attributes
+    """Check the correct handling of empty attributes
     or attributes fields, e.g. doc
 
 """
@@ -186,8 +208,25 @@ def test_attributes():
     sys.stdout.write('Test on attributes okay.\n')
 
 
+def test_extends():
+    """Check the correct handling of extends keyword
+
+"""
+    ref_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXattributes.nxdl.xml'
+    test_yml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.yml'
+    test_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml'
+    desired_matches = ['extends="my_test_extends"']
+    compare_matches(
+        ref_xml_attribute_file,
+        test_yml_attribute_file,
+        test_xml_attribute_file,
+        desired_matches)
+    os.remove('tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml')
+    sys.stdout.write('Test on extends keyword okay.\n')
+
+
 def test_symbols_and_enum_docs():
-    """Third test: check the correct handling of empty attributes
+    """Check the correct handling of empty attributes
     or attributes fields, e.g. doc
 
 """

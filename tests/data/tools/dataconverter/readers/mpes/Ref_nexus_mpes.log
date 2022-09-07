@@ -4056,22 +4056,6 @@ NXentry.nxdl.xml:/SAMPLE
 NXsample.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== FIELD (//entry/sample/bias): <HDF5 dataset "bias": shape (), type "<f8">
-DEBUG - value: 17.799719004221362 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXsample.nxdl.xml:/bias
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/bias):
-DEBUG - 
-             Voltage applied to sample and sample holder.
-        
-DEBUG - ===== ATTRS (//entry/sample/bias@units)
-DEBUG - value: V 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXsample.nxdl.xml:/bias
-DEBUG - @units [NX_VOLTAGE]
 DEBUG - ===== FIELD (//entry/sample/chemical_formula): <HDF5 dataset "chemical_formula": shape (), type "|O">
 DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
@@ -4243,31 +4227,6 @@ DEBUG -
              stored; the relevant components will be indicated by the entry in the
              sample_component member.
         
-DEBUG - ===== FIELD (//entry/sample/temperature): <HDF5 dataset "temperature": shape (), type "<f8">
-DEBUG - value: 23.050763803680983 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY/SAMPLE/temperature
-NXsample.nxdl.xml:/temperature
-DEBUG - <<REQUIRED>>
-DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/temperature):
-DEBUG - 
-                     In the case of a fixed temperature measurement this is the scalar temperature of
-                     the sample. In the case of an experiment in which the temperature is changed and
-                     recoded, this is an array of length m of temperatures. This should be a link to
-                     /entry/instrument/manipulator/sample_temperature.
-                
-DEBUG - documentation (NXsample.nxdl.xml:/temperature):
-DEBUG - 
-             Sample temperature. This could be a scanned variable
-        
-DEBUG - ===== ATTRS (//entry/sample/temperature@units)
-DEBUG - value: K 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY/SAMPLE/temperature
-NXsample.nxdl.xml:/temperature
-DEBUG - @units [NX_TEMPERATURE]
 DEBUG - ===== GROUP (//entry/sample/transformations [NXmpes::/NXentry/NXsample/NXtransformations]): <HDF5 group "/entry/sample/transformations" (7 members)>
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations']
 DEBUG - classes:
@@ -4919,9 +4878,15 @@ DEBUG -
 DEBUG - ===== GROUP (//entry/user [NXmpes::/NXentry/NXuser]): <HDF5 group "/entry/user" (5 members)>
 DEBUG - classpath: ['NXentry', 'NXuser']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER
 NXentry.nxdl.xml:/USER
 NXuser.nxdl.xml:
-DEBUG - <<OPTIONAL>>
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER):
+DEBUG - 
+                 Contact information of at least the user of the instrument or the investigator
+                 who performed this experiment. Adding multiple users if relevant is recommended.
+            
 DEBUG - documentation (NXentry.nxdl.xml:/USER):
 DEBUG - 
 DEBUG - documentation (NXuser.nxdl.xml:):
@@ -4937,6 +4902,7 @@ DEBUG - ===== ATTRS (//entry/user@NX_class)
 DEBUG - value: NXuser 
 DEBUG - classpath: ['NXentry', 'NXuser']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER
 NXentry.nxdl.xml:/USER
 NXuser.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
@@ -4945,32 +4911,54 @@ DEBUG - ===== FIELD (//entry/user/address): <HDF5 dataset "address": shape (), t
 DEBUG - value: b'Faradayweg 4-6, 14195 Berlin' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/address
 NXuser.nxdl.xml:/address
-DEBUG - <<OPTIONAL>>
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/address):
+DEBUG - 
+                     Full address (street, street number, ZIP, city, country) of the user's
+                     affiliation.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/address):
 DEBUG - Address of user
 DEBUG - ===== FIELD (//entry/user/affiliation): <HDF5 dataset "affiliation": shape (), type "|O">
 DEBUG - value: b'Fritz Haber Institute of the Max Planck Society' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/affiliation
 NXuser.nxdl.xml:/affiliation
-DEBUG - <<OPTIONAL>>
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/affiliation):
+DEBUG - 
+                     Name of the affiliation of the user at the point in time when the experiment was
+                     performed.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/affiliation):
 DEBUG - Affiliation of user
 DEBUG - ===== FIELD (//entry/user/email): <HDF5 dataset "email": shape (), type "|O">
 DEBUG - value: b'beaulieu@fhi-berlin.mpg.de' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/email
 NXuser.nxdl.xml:/email
-DEBUG - <<OPTIONAL>>
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/email):
+DEBUG - 
+                     Email address of the user.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/email):
 DEBUG - Email of user
 DEBUG - ===== FIELD (//entry/user/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'Samuel Beaulieu' 
 DEBUG - classpath: ['NXentry', 'NXuser', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/USER/name
 NXuser.nxdl.xml:/name
-DEBUG - <<OPTIONAL>>
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/USER/name):
+DEBUG - 
+                     Name of the user.
+                
 DEBUG - documentation (NXuser.nxdl.xml:/name):
 DEBUG - Name of user responsible for this entry
 DEBUG - ===== FIELD (//entry/user/role): <HDF5 dataset "role": shape (), type "|O">
