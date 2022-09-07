@@ -27,13 +27,21 @@ from nexusparser.tools import nexus
 from nexusparser.tools.nexus import NxdlAttributeError
 
 
-def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
+def is_a_lone_group(xml_element) -> bool:
+    """Checks whether a given group XML element has no field or attributes mentioned"""
+    if xml_element.get("type") == "NXentry":
+        return False
+    for child in xml_element.findall(".//"):
+        if remove_namespace_from_tag(child.tag) in ("field", "attribute"):
+            return False
+    return True
+
+
+def generate_template_from_nxdl(root, template, path="", nxdl_root=None):
     """Helper function to generate a template dictionary for given NXDL"""
     if nxdl_root is None:
         nxdl_root = root
         root = get_first_group(root)
-    if path is None:
-        path = ""
 
     tag = remove_namespace_from_tag(root.tag)
 
@@ -67,6 +75,9 @@ def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
         if tag == "field" \
            and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
             template[optionality][f"{path}/@units"] = None
+    elif tag == "group":
+        if is_a_lone_group(root):
+            template[get_required_string(root)][path] = None
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root)
