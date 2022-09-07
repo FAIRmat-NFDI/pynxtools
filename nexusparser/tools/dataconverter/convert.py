@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 """This script runs the conversion routine using a selected reader and write out a Nexus file."""
-
 import glob
 import importlib.machinery
 import importlib.util
@@ -64,7 +63,8 @@ def get_names_of_all_readers() -> List[str]:
     return all_readers
 
 
-def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-branches
+def convert(input_file: Tuple[str],
             reader: str,
             nxdl: str,
             output: str,
@@ -73,10 +73,12 @@ def convert(input_file: Tuple[str],  # pylint: disable=too-many-arguments
             objects: Tuple[Any] = None):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
+    definitions_path = nexus.get_nexus_definitions_path()
     if nxdl == "NXtest":
         nxdl_path = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
+    elif nxdl == "NXroot":
+        nxdl_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
     else:
-        definitions_path = nexus.get_nexus_definitions_path()
         nxdl_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")
         if not os.path.exists(nxdl_path):
             nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
