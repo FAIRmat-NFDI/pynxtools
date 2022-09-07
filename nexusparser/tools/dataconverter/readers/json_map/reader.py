@@ -19,9 +19,87 @@
 from typing import Tuple, Any
 import json
 import pickle
+import numpy as np
 import xarray
 
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+from nexusparser.tools.dataconverter.template import Template
+from nexusparser.tools.dataconverter.helpers import ensure_all_required_fields_exist
+
+
+def parse_slice(slice_string):
+    """Converts slice strings to actual tuple sets of slices for index syntax"""
+    slices = slice_string.split(",")
+    for index, item in enumerate(slices):
+        values = item.split(":")
+        if len(values) == 1:
+            slices[index] = int(values[0])
+        else:
+            if len(values) < 3:
+                values.append("")
+            slices[index] = slice(*tuple([int(x) if x != "" else None for x in values]))
+    return np.index_exp[tuple(slices)]
+
+
+def get_val_nested_keystring_from_dict(keystring, data):
+    """
+    Fetches data from the actual data dict using path strings without a leading '/':
+        'path/to/data/in/dict'
+    """
+    if isinstance(keystring, (list, dict)):
+        return keystring
+
+    current_key = keystring.split("/")[0]
+    if isinstance(data[current_key], dict):
+        return get_val_nested_keystring_from_dict(keystring[keystring.find("/") + 1:],
+                                                  data[current_key])
+    if isinstance(data[current_key], xarray.DataArray):
+        return data[current_key].values
+    if isinstance(data[current_key], xarray.core.dataset.Dataset):
+        raise Exception(f"Xarray datasets are not supported. "
+                        f"You can only use xarray dataarrays.")
+
+    return data[current_key]
+
+
+def is_path(keystring):
+    """Checks whether a given value in the mapping is a mapping path or just data"""
+    return isinstance(keystring, str) and keystring[0] == "/"
+
+
+def fill_undocumented(mapping, template, data):
+    """Fill the extra paths provided in the map file that are not in the NXDL"""
+    for path, value in mapping.items():
+        if is_path(value):
+            template["undocumented"][path] = get_val_nested_keystring_from_dict(value[1:],
+                                                                                data)
+        else:
+            template["undocumented"][path] = value
+
+
+def fill_documented(template, mapping, template_provided, data):
+    """Fill the needed paths that are explicitly mentioned in the NXDL"""
+    for req in ("required", "optional", "recommended"):
+        for path in template_provided[req]:
+            try:
+                map_str = mapping[path]
+                if is_path(map_str):
+                    template[path] = get_val_nested_keystring_from_dict(map_str[1:],
+                                                                        data)
+                else:
+                    template[path] = map_str
+
+                del mapping[path]
+            except KeyError:
+                pass
+
+
+def convert_shapes_to_slice_objects(mapping):
+    """Converts shape slice strings to slice objects for indexing"""
+    for key in mapping:
+        if isinstance(mapping[key], dict):
+            if "shape" in mapping[key]:
+                mapping[key]["shape"] = parse_slice(mapping[key]["shape"])
 
 
 class JsonMapReader(BaseReader):
@@ -62,30 +140,16 @@ class JsonMapReader(BaseReader):
                 with open(file_path, "rb") as input_file:  # type: ignore[assignment]
                     data = pickle.load(input_file)  # type: ignore[arg-type]
 
-        def get_val_nested_keystring_from_dict(keystring, data):
-            current_key = keystring.split("/")[0]
-            if isinstance(data[current_key], dict):
-                return get_val_nested_keystring_from_dict(keystring[keystring.find("/") + 1:],
-                                                          data[current_key])
-            if isinstance(data[current_key], xarray.DataArray):
-                return data[current_key].values
-            if isinstance(data[current_key], xarray.core.dataset.Dataset):
-                raise Exception(f"Xarray datasets are not supported. "
-                                f"You can only use xarray dataarrays.")
-            return data[current_key]
+        convert_shapes_to_slice_objects(mapping)
 
-        for req in ("required", "optional", "recommended"):
-            for path in template[req]:
-                try:
-                    template[path] = get_val_nested_keystring_from_dict(mapping[path], data)
-                except KeyError:
-                    if req != "required":
-                        pass
-                    else:
-                        raise Exception(f"Required map for, {path},"
-                                        f"doesn't exist in JSON map file.")
+        new_template = Template()
+        fill_documented(new_template, mapping, template, data)
 
-        return template
+        fill_undocumented(mapping, new_template, data)
+
+        ensure_all_required_fields_exist(template, new_template)
+
+        return new_template
 
 
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
