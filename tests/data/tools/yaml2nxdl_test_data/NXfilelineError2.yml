@@ -19,7 +19,7 @@ extends: my_test_extend
       exists: required
       unit: NX_TIME
     program_name:
-      doc: documentation no. 4
+      dochy: documentation no. 4
     program_version:
       doc: documentation no. 5
     time_zone(NX_DATE_TIME):

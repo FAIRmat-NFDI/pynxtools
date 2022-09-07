@@ -11,7 +11,7 @@ extends: my_test_extend
       doc: attribute documentation 
     doc: documentation no. 2
     experiment_identifier:
-      exists: required
+      existsss: required
       doc: documentation no. 3
     experiment_description:
       exists: required

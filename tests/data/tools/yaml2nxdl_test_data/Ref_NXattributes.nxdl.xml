@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
-<definition category="application" extends="NXobject" name="NXellipsometry_base_draft" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd" type="group" extends="my_test_extend" category="application" name="NXellipsometry_base_draft">
     <symbols>
         <doc>
              documentation no. 1
@@ -14,7 +14,7 @@
     <doc>
          documentation no. 0
     </doc>
-    <group minOccurs="1" type="NXentry">
+    <group type="NXentry">
         <attribute name="entry">
             <doc>
                  attribute documentation
@@ -23,13 +23,13 @@
         <doc>
              documentation no. 2
         </doc>
-        <field minOccurs="1" name="experiment_identifier" type="NX_CHAR">
+        <field name="experiment_identifier" type="NX_CHAR" minOccurs="1">
             <doc>
                  documentation no. 3
             </doc>
         </field>
-        <field minOccurs="1" name="experiment_description" type="NX_CHAR"/>
-        <field minOccurs="1" name="start_time" type="NX_DATE_TIME" units="NX_TIME"/>
+        <field name="experiment_description" type="NX_CHAR" minOccurs="1"/>
+        <field name="start_time" type="NX_DATE_TIME" minOccurs="1" units="NX_TIME"/>
         <field name="program_name" type="NX_CHAR">
             <doc>
                  documentation no. 4
@@ -40,7 +40,7 @@
                  documentation no. 5
             </doc>
         </field>
-        <field minOccurs="1" name="time_zone" type="NX_DATE_TIME">
+        <field name="time_zone" type="NX_DATE_TIME" minOccurs="1">
             <doc>
                  documentation no. 6
             </doc>

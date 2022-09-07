@@ -25,8 +25,6 @@ import sys
 import xml.etree.ElementTree as ET
 import textwrap
 
-# from pprint import pprint
-
 import yaml
 from yaml.composer import Composer
 from yaml.constructor import Constructor
@@ -43,7 +41,7 @@ NX_NEW_DEFINED_CLASSES = ['NX_COMPLEX']
 NX_TYPE_KEYS = nexus.get_nx_attribute_type()
 NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'
-NX_UNIT_TYPS = nexus.get_nx_units()
+NX_UNIT_TYPES = nexus.get_nx_units()
 
 
 class LineLoader(Loader):  # pylint: disable=too-many-ancestors
@@ -51,15 +49,11 @@ class LineLoader(Loader):  # pylint: disable=too-many-ancestors
     LineLoader parses a yaml into a python dictionary extended with extra items.
     The new items have as keys __line__<yaml_keyword> and as values the yaml file line number
     """
-    # def __init__(self, stream):
-    #    super(LineLoader, self).__init__(stream)
-    # W0235: Useless super delegation in method '__init__' (useless-super-delegation)
 
     def compose_node(self, parent, index):
         # the line number where the previous token has ended (plus empty lines)
-        line = self.line
         node = Composer.compose_node(self, parent, index)
-        node.__line__ = line + 1
+        node.__line__ = self.line + 1
         return node
 
     def construct_mapping(self, node, deep=False):
@@ -75,8 +69,7 @@ class LineLoader(Loader):  # pylint: disable=too-many-ancestors
                 (shadow_key_node, shadow_value_node))
 
         node.value = node_pair_lst + node_pair_lst_for_appending
-        mapping = Constructor.construct_mapping(self, node, deep=deep)
-        return mapping
+        return Constructor.construct_mapping(self, node, deep=deep)
 
 
 def yml_reader(inputfile):
@@ -87,9 +80,7 @@ def yml_reader(inputfile):
 
     plain_text_yaml = open(inputfile, "r").read()
     loader = LineLoader(plain_text_yaml)
-    dict_yaml = loader.get_single_data()
-
-    return dict_yaml
+    return loader.get_single_data()
 
 
 def yml_reader_nolinetag(inputfile):
@@ -516,5 +507,3 @@ def recursive_build(obj, dct, verbose):
                 obj, keyword_type, keyword_name)
             second_nested_level_handle(verbose, value, fld)
             second_level_attributes_handle(dct, fld, keyword, value)
-        else:
-            pass

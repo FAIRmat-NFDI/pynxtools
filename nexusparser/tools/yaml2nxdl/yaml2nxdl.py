@@ -108,10 +108,9 @@ application and base are valid categories!'
 
     if yml_appdef['category'] == 'application':
         xml_root.set('category', 'application')
-        del yml_appdef['category']
     else:
         xml_root.set('category', 'base')
-        del yml_appdef['category']
+    del yml_appdef['category']
 
     if 'symbols' in yml_appdef.keys():
         yaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef,
