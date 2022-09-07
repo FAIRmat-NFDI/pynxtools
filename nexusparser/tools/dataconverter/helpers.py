@@ -319,6 +319,14 @@ def check_optionality_based_on_parent_group(
                             f" all required ones.")
 
 
+def does_group_exist(path_to_group, data):
+
+    for path in data:
+        if path_to_group in path and data[path] is not None:
+            return True
+    return False
+
+
 def ensure_all_required_fields_exist(template, data):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
@@ -327,7 +335,7 @@ def ensure_all_required_fields_exist(template, data):
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
-        if path in template["lone_groups"]:
+        if path in template["lone_groups"] and does_group_exist(path, data):
             continue
 
         if not is_path_in_data_dict or data[renamed_path] is None:
