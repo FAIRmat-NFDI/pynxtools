@@ -21,7 +21,7 @@ def get_app_defs_names():
     contrib_def_path_glob = (f"{get_nexus_definitions_path()}{os.sep}"
                              f"contributed_definitions{os.sep}*.nxdl*")
     files = glob(app_def_path_glob) + glob(contrib_def_path_glob)
-    return [os.path.basename(file).split(".")[0] for file in files]
+    return [os.path.basename(file).split(".")[0] for file in files] + ["NXroot"]
 
 
 def get_nexus_definitions_path():

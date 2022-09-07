@@ -16,8 +16,10 @@
 # limitations under the License.
 #
 """Utility functions for the NeXus reader classes."""
-from typing import List, Any
+from typing import List, Any, Dict, Optional
 from collections.abc import Mapping
+import json
+import yaml
 
 
 def flatten_and_replace(
@@ -58,3 +60,39 @@ def flatten_and_replace(
             else:
                 items.append((new_key, val))
     return dict(items)
+
+
+def parse_yml(
+        file_path: str,
+        convert_dict: Optional[dict] = None,
+        replace_nested: Optional[dict] = None
+) -> Dict[str, Any]:
+    """Parses a metadata yaml file into a dictionary.
+
+    Args:
+        file_path (str): The file path of the yml file.
+
+    Returns:
+        Dict[str, Any]: The dictionary containing the data readout from the yml.
+    """
+    if convert_dict is None:
+        convert_dict = {}
+
+    if replace_nested is None:
+        replace_nested = {}
+
+    with open(file_path) as file:
+        return flatten_and_replace(yaml.safe_load(file), convert_dict, replace_nested)
+
+
+def parse_json(file_path: str) -> Dict[str, Any]:
+    """Parses a metadata json file into a dictionary.
+
+    Args:
+        file_path (str): The file path of the json file.
+
+    Returns:
+        Dict[str, Any]: The dictionary containing the data readout from the json.
+    """
+    with open(file_path, "r") as file:
+        return json.load(file)
