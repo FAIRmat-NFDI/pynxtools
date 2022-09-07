@@ -78,6 +78,7 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None):
     elif tag == "group":
         if is_a_lone_group(root):
             template[get_required_string(root)][path] = None
+            template["lone_groups"] = path
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root)
@@ -326,6 +327,9 @@ def ensure_all_required_fields_exist(template, data):
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
+        if path in template["lone_groups"]:
+            continue
+
         if not is_path_in_data_dict or data[renamed_path] is None:
             raise Exception(f"The data entry corresponding to {path} is required and"
                             f" hasn't been supplied by the reader.")
