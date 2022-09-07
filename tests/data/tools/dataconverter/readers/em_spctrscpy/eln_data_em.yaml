@@ -15,11 +15,11 @@ em_lab:
         value: 200000
   instrument_name: TALOS
   location: EPFL
-  manufacturer:
+  fabrication:
     capabilities: many
     identifier: undisclosed
     model: unknown
-    name: TALOS
+    vendor: TALOS
   optical_system_em:
     beam_current:
       unit: A

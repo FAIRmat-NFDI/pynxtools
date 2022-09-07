@@ -206,25 +206,25 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
         return template
 
-    def parse_manufacturer(self, template: dict) -> dict:
-        """Copy data in manufacturer section."""
-        print('Parsing manufacturer...')
+    def parse_fabrication(self, template: dict) -> dict:
+        """Copy data in fabrication section."""
+        print('Parsing fabrication...')
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/MANUFACTURER[manufacturer]/"
+        trg = "/ENTRY[entry]/atom_probe/FABRICATION[fabrication]/"
         error_msg = " is a required field but not found in ELN input!"
         required_field_names = [
-            "manufacturer_name", "manufacturer_model"]
+            "fabrication_vendor", "fabrication_model"]
         for field_name in required_field_names:
             assert field_name in self.yml[src].keys(), \
                 field_name + error_msg
-            template[trg + field_name.replace("manufacturer_", '')] \
+            template[trg + field_name.replace("fabrication_", '')] \
                 = self.yml[src + ":" + field_name]
 
         optional_field_names = [
-            "manufacturer_identifier", "manufacturer_capabilities"]
+            "fabrication_identifier", "fabrication_capabilities"]
         for field_name in optional_field_names:
             if field_name in self.yml[src].keys():
-                template[trg + field_name.replace("manufacturer_", '')] \
+                template[trg + field_name.replace("fabrication_", '')] \
                     = self.yml[src + ":" + field_name]
 
         return template
@@ -479,7 +479,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
         self.parse_user(template)
         self.parse_specimen(template)
         self.parse_instrument_header(template)
-        self.parse_manufacturer(template)
+        self.parse_fabrication(template)
         self.parse_analysis_chamber(template)
         self.parse_reflectron(template)
         self.parse_local_electrode(template)

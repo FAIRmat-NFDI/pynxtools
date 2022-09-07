@@ -295,14 +295,14 @@ definitions:
                   eln:
                     component: StringEditQuantity
             sub_sections:
-              manufacturer:
+              fabrication:
                 section:
-                  description: Details about the microscope manufacturer.
+                  description: Details about the microscope fabrication.
                   m_annotations:
                     eln:
                   quantities:
                   # sub_sections:
-                    name:
+                    vendor:
                       type: str
                       description: Company name of the manufacturer.
                       m_annotations:
