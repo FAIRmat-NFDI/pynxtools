@@ -309,7 +309,7 @@ definitions:
               location:
                 type: str
                 description: Location of the lab or place where the instrument is installed. Using GEOREF is preferred.
-              # (NXmanufacturer):
+              # (NXfabrication):
               flight_path_length:
                 type: np.float64
                 unit: meter
@@ -329,25 +329,25 @@ definitions:
                   The nominal diameter of the specimen ROI which is measured in the
                   experiment. Physically, the specimen cannot be measured completely
                   because ions may launch but not become detected or hit elsewhere.
-              manufacturer_name:
+              fabrication_vendor:
                 type: str
                 description: Name of the manufacturer/company, i.e. AMETEK/Cameca.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              manufacturer_model:
+              fabrication_model:
                 type: str
                 description: Model name of the instrument
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              manufacturer_identifier:
+              fabrication_identifier:
                 type: str
                 description: Serial number/identifier of the instrument as issued by the manufacturer
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              manufacturer_capabilities:
+              fabrication_capabilities:
                 type: str
                 description: Capabilities of the instrument
                 m_annotations:
@@ -404,7 +404,7 @@ definitions:
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              # manufacturer_name:
+              # fabrication_vendor:
               # signal_amplitude(NX_FLOAT):
               stage_lab_base_temperature:
                 type: np.float64

@@ -187,11 +187,11 @@ class NxEmNomadOasisElnSchemaParser:
         if src + ":location" in self.yml.keys():
             template[trg + "location"] = self.yml[src + ":location"]
 
-        src = "em_lab:manufacturer"
-        trg = "/ENTRY[entry]/em_lab/MANUFACTURER[manufacturer]/"
+        src = "em_lab:fabrication"
+        trg = "/ENTRY[entry]/em_lab/FABRICATION[fabrication]/"
         assert src in self.yml, \
-            "em_lab:manufacturer is a required group but not found in ELN input!"
-        required_field_names = ["name", "model"]
+            "em_lab:fabrication is a required group but not found in ELN input!"
+        required_field_names = ["vendor", "model"]
         for field_name in required_field_names:
             assert field_name in self.yml[src].keys(), \
                 field_name + error_msg

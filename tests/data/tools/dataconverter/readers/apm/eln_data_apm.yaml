@@ -32,10 +32,10 @@ atom_probe:
   field_of_view:
     unit: nm
     value: 30.0
-  manufacturer_name: AMETEK/Cameca
-  manufacturer_model: LEAP3000
-  manufacturer_identifier: n/a
-  manufacturer_capabilities: '-----'
+  fabrication_vendor: AMETEK/Cameca
+  fabrication_model: LEAP3000
+  fabrication_identifier: n/a
+  fabrication_capabilities: '-----'
   reflectron_applied: true
   local_electrode_name: electrode 1
   ion_detector_type: mcp_dld
