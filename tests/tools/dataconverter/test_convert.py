@@ -213,7 +213,7 @@ def test_check_failing_on_non_present_required_group(tmp_path):
     """If there is an empty required group which is not filled the convert should
     raise an exception."""
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception) as e_info:
         dirpath = os.path.join(
             os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes"
         )
@@ -226,3 +226,9 @@ def test_check_failing_on_non_present_required_group(tmp_path):
             "mpes", "NXmpes",
             os.path.join(tmp_path, "mpes.small_test.nxs"),
             False, False)
+
+    assert (
+        str(e_info.value) == "The data entry corresponding to "
+                             "/ENTRY[entry]/SAMPLE[sample]/preparation_description "
+                             "is required and hasn't been supplied by the reader."
+    )
