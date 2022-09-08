@@ -65,7 +65,8 @@ class ApmReader(BaseReader):
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary apm."""
-        template.clear()  # pylint: disable=duplicate-code
+        # pylint: disable=duplicate-code
+        template.clear()
 
         case = ApmUseCaseSelector(file_paths)
         assert case.is_valid is True, \
