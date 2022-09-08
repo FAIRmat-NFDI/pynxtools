@@ -230,13 +230,13 @@ class EmSpctrscpyReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXem"]
 
+    # pylint: disable=duplicate-code
     def read(self,
              template: dict = None,
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary em."""
-        # pylint: disable=R0801
-        template.clear()
+        template.clear()  # pylint: disable=duplicate-code
 
         case = EmUseCaseSelector(file_paths)
         assert case.is_valid is True, \

@@ -59,13 +59,13 @@ class ApmReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXapm"]
 
+    # pylint: disable=duplicate-code
     def read(self,
              template: dict = None,
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary apm."""
-        # pylint: disable=R0801
-        template.clear()
+        template.clear()  # pylint: disable=duplicate-code
 
         case = ApmUseCaseSelector(file_paths)
         assert case.is_valid is True, \
