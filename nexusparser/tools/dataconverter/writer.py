@@ -143,10 +143,12 @@ Several cases can be encoutered:
     elif 'compress' in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
             strength = 9  # strongest compression is space efficient but can take long
-            if "strength" in data.keys():
-                if isinstance(data['strength'], int):
-                    if (data["strength"] >= 0) and (data["strength"] <= 9):
-                        strength = data["strength"]
+            accept = ("strength" in data.keys()) \
+                and (isinstance(data['strength'], int)) \
+                and (data["strength"] >= 0) \
+                and (data["strength"] <= 9)
+            if accept is True:
+                strength = data["strength"]
             grp.create_dataset(entry_name,
                                data=data["compress"],
                                compression="gzip",

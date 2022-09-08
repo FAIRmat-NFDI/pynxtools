@@ -353,9 +353,9 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                 template[
                     trg + field_name.replace("specimen_monitoring_", '')] \
                     = np.float64(self.yml[src + ":" + field_name + ":value"])
-                template[
-                    trg + field_name.replace("specimen_monitoring_", '')
-                    + "/@units"] = self.yml[src + ":" + field_name + ":unit"]
+                template[trg + field_name.replace(
+                    "specimen_monitoring_", '') + "/@units"] = self.yml[
+                        src + ":" + field_name + ":unit"]
 
         return template
 

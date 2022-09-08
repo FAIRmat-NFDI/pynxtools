@@ -63,7 +63,8 @@ class ApmReader(BaseReader):
              template: dict = None,
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
-        """Read data from given file, return filled template dictionary."""
+        # pylint: disable=R0801
+        """Read data from given file, return filled template dictionary apm."""
         template.clear()
 
         case = ApmUseCaseSelector(file_paths)

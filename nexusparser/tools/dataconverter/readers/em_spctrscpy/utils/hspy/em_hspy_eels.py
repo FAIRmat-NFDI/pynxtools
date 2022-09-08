@@ -78,8 +78,8 @@ class HspyRectRoiEelsAllSpectra:
 
         print(np.sort(avail_axis_names))
         print(np.sort(['y', 'x', 'Energy loss']))
-        axes_as_expected = np.all(np.sort(avail_axis_names)
-                                  == np.sort(['y', 'x', 'Energy loss']))
+        axes_as_expected = np.all(
+            np.sort(avail_axis_names) == np.sort(['y', 'x', 'Energy loss']))
         if axes_as_expected is False:
             print(__name__ + ' as expected')
             self.is_valid = False
@@ -161,8 +161,8 @@ class HspyRectRoiEelsSummarySpectrum:
 
         print(np.sort(avail_axis_names))
         print(np.sort(['y', 'x', 'Energy loss']))
-        axes_as_expected = np.all(np.sort(avail_axis_names)
-                                  == np.sort(['y', 'x', 'Energy loss']))
+        axes_as_expected = np.all(
+            np.sort(avail_axis_names) == np.sort(['y', 'x', 'Energy loss']))
         if axes_as_expected is False:
             print(__name__ + ' as expected')
             self.is_valid = False
