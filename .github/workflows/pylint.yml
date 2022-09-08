@@ -31,7 +31,7 @@ jobs:
         python -m pycodestyle --ignore=E501,E701,E731 nexusparser tests --exclude=nexusparser/definitions
     - name: pylint
       run: |
-        python -m pylint --load-plugins=nomad.metainfo.pylint_plugin nexusparser tests
+         python -m pylint --load-plugins=pylint_mongoengine,nomad.metainfo.pylint_plugin nexusparser tests
     - name: mypy
       run: |
         python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional nexusparser tests
