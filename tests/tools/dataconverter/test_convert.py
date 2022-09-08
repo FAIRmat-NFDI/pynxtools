@@ -217,9 +217,12 @@ def test_check_failing_on_non_present_required_group(tmp_path):
         dirpath = os.path.join(
             os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes"
         )
+        inheritance_data_path = os.path.join(
+            os.path.dirname(__file__), "../../data/inheritance"
+        )
         dataconverter.convert(
             (os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
-             os.path.join(dirpath, "config_file_wo_preparation_desc.json")),
+             os.path.join(inheritance_data_path, "config_file_wo_preparation_desc.json")),
             "mpes", "NXmpes",
             os.path.join(tmp_path, "mpes.small_test.nxs"),
             False, False)
