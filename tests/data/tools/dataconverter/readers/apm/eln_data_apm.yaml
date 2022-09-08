@@ -1,0 +1,84 @@
+entry:
+  attr_version: nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951
+  definition: NXapm
+  experiment_identifier: R31-06365-v02
+  experiment_description: some details for nomad, ODS steel precipitates for testing a developmental clustering algorithm called OPTICS.
+  start_time: '2017-07-03T09:49:00+00:00'
+  end_time: '2017-07-03T10:23:00+00:00'
+  program: IVAS
+  program__attr_version: 3.6.4
+  run_number: '6365'
+  operation_mode: apt
+user:
+- name: Jing Wang
+- name: Daniel Schreiber
+specimen:
+  name: ODS-Specimen 1
+  sample_history: undocumented
+  preparation_date: '2017-06-13T09:52:00+00:00'
+  short_title: ODS
+  atom_types:
+  - Fe
+  - Cr
+  - Y
+  - O
+  description: ODS steel, i.e. material with Y2O3 dispersoids
+atom_probe:
+  instrument_name: LEAP 3000
+  location: PNNL, Portland
+  flight_path_length:
+    unit: m
+    value: 0.9
+  field_of_view:
+    unit: nm
+    value: 30.0
+  fabrication_vendor: AMETEK/Cameca
+  fabrication_model: LEAP3000
+  fabrication_identifier: n/a
+  fabrication_capabilities: '-----'
+  reflectron_applied: true
+  local_electrode_name: electrode 1
+  ion_detector_type: mcp_dld
+  ion_detector_name: unnamed
+  ion_detector_model: Cameca
+  ion_detector_serial_number: not disclosed
+  stage_lab_base_temperature:
+    unit: K
+    value: 30
+  analysis_chamber_pressure:
+    unit: torr
+    value: 1.0e-10
+  specimen_monitoring_initial_radius:
+    unit: nm
+    value: 30.000000000000004
+  specimen_monitoring_shank_angle:
+    unit: "\xB0"
+    value: 5
+  specimen_monitoring_detection_rate: 0.6
+  # reflectron_applied: false, in the ELN GUI the field was not ticked
+  # therefore the quantities is not picked up by this eln_data
+  control_software_program: IVAS
+  control_software_program__attr_version: 3.6.4
+  pulser:
+    pulse_fraction: 0.1
+    pulse_frequency:
+      unit: kHz
+      value: 250
+    pulse_mode: laser
+    laser_gun_name: Cameca
+    laser_gun_wavelength:
+      unit: nm
+      value: 480.
+    # laser_gun_power:
+    laser_gun_energy:
+      unit: pJ
+      value: 20.
+reconstruction:
+  program: IVAS
+  program__attr_version: 3.6.4
+  protocol_name: cameca
+  parameter: kf = 1.8, ICF = 1.02, Vat = 60 at/nm^3
+  crystallographic_calibration: n/a
+ranging:
+  program: IVAS
+  program__attr_version: 3.6.4
