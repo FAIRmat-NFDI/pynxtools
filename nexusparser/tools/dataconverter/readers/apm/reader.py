@@ -21,8 +21,6 @@
 #
 
 # pylint: disable=E1101
-# pylint: disable=duplicate-code
-# pylint: disable=R0801
 
 from typing import Tuple, Any
 
@@ -65,10 +63,9 @@ class ApmReader(BaseReader):
              template: dict = None,
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
-        # pylint: disable=duplicate-code
-        # pylint: disable=R0801
         """Read data from given file, return filled template dictionary apm."""
-        template.clear()  # pylint: disable=duplicate-code
+        # pylint: disable=R0801
+        template.clear()
 
         case = ApmUseCaseSelector(file_paths)
         assert case.is_valid is True, \
