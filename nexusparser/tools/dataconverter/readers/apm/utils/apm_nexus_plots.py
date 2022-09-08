@@ -103,6 +103,7 @@ def create_default_plot_reconstruction(template: dict) -> dict:
 
     return template
 
+
 def create_default_plot_mass_spectrum(template: dict) -> dict:
     """Compute on-the-fly, add, and give path to discretized reconstruction."""
     trg = "/ENTRY[entry]/atom_probe/mass_to_charge_conversion/"

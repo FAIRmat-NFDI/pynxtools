@@ -165,8 +165,8 @@ class HspyRectRoiXraySummarySpectrum:
                 keyword + ', this axis is not of type UniformDataAxis !'
             avail_axis_names.append(axes_dict[keyword]['name'])
 
-        axes_as_expected = np.all(np.sort(avail_axis_names)
-                                  == np.sort(['Energy']))
+        axes_as_expected = np.all(
+            np.sort(avail_axis_names) == np.sort(['Energy']))
         if axes_as_expected is False:
             print(__name__ + ' as expected')
             self.is_valid = False
@@ -238,8 +238,8 @@ class HspyRectRoiXrayMap:
                 keyword + ', this axis is not of type UniformDataAxis !'
             avail_axis_names.append(axes_dict[keyword]['name'])
 
-        axes_as_expected = np.all(np.sort(avail_axis_names)
-                                  == np.sort(['y', 'x']))
+        axes_as_expected = np.all(
+            np.sort(avail_axis_names) == np.sort(['y', 'x']))
         if axes_as_expected is False:
             print(__name__ + ' as expected')
             self.is_valid = False

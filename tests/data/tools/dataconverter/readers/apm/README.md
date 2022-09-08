@@ -1,6 +1,6 @@
 The tools of the NOMAD parser for [NEXUS](https://www.nexusformat.org/) can also be used
 without a NOMAD OASIS installation. There are two main use cases:
-- Use the DATACONVERTER/em_spctrscpy for transcoding vendor and community files to 
+- Use the DATACONVERTER/apm for transcoding vendor and community files to 
   NeXus files so that these are compliant with a specific NeXus application definition
   [NEXUS-FAIRMAT-PROPOSAL](https://fairmat-experimental.github.io/nexus-fairmat-proposal/).
   In this example NXapm.

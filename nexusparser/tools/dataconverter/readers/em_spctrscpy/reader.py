@@ -234,7 +234,8 @@ class EmSpctrscpyReader(BaseReader):
              template: dict = None,
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
-        """Read data from given file, return filled template dictionary."""
+        # pylint: disable=R0801
+        """Read data from given file, return filled template dictionary em."""
         template.clear()
 
         case = EmUseCaseSelector(file_paths)

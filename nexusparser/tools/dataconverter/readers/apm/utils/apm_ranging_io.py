@@ -29,9 +29,6 @@ import numpy as np
 from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_utils \
     import unhash_isotope  # , hash_isotope
 
-from nexusparser.tools.dataconverter.readers.apm.utils.apm_nexus_base_classes \
-    import NxObject
-
 from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_rng_reader \
     import ReadRngFileFormat
 
@@ -155,7 +152,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_name: str):
-        self.meta: Dict[str, NxObject] = {}
+        self.meta: Dict[str, str] = {}
         self.meta["file_format"] = 'none'
         self.meta["file_name"] = file_name
         index = file_name.lower().rfind('.')
