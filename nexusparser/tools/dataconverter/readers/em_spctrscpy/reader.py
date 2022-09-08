@@ -236,7 +236,8 @@ class EmSpctrscpyReader(BaseReader):
              file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary em."""
-        template.clear()  # pylint: disable=duplicate-code
+        # pylint: disable=duplicate-code
+        template.clear()
 
         case = EmUseCaseSelector(file_paths)
         assert case.is_valid is True, \
