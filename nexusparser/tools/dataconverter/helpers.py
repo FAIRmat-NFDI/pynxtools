@@ -78,7 +78,7 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None):
     elif tag == "group":
         if is_a_lone_group(root):
             template[get_required_string(root)][path] = None
-            template["lone_groups"] = path
+            template["lone_groups"].append(path)
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root)
@@ -319,11 +319,25 @@ def check_optionality_based_on_parent_group(
                             f" all required ones.")
 
 
+def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
+    """Returns true if a group is contained in a path"""
+    tokens_group = path_to_group.split("/")
+    tokens_entry = convert_data_converter_dict_to_nxdl_path(path_of_entry).split("/")
+
+    if len(tokens_entry) < len(tokens_group):
+        return False
+
+    for tog, toe in zip(tokens_group, tokens_entry):
+        if tog != toe:
+            return False
+    return True
+
+
 def does_group_exist(path_to_group, data):
     """Returns True if the group or any children are set"""
     path_to_group = convert_data_converter_dict_to_nxdl_path(path_to_group)
     for path in data:
-        if path_to_group in convert_data_converter_dict_to_nxdl_path(path) and data[path] is not None:
+        if is_group_part_of_path(path_to_group, path) and data[path] is not None:
             return True
     return False
 

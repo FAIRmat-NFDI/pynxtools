@@ -34,7 +34,7 @@ class Template(dict):
             self.required: dict = {}
             self.undocumented: dict = {}
             self.optional_parents: list = []
-            self.lone_groups: dict = {}
+            self.lone_groups: list = []
         else:
             self.optional: dict = copy.deepcopy(template["optional"])
             self.recommended: dict = copy.deepcopy(template["recommended"])
@@ -73,7 +73,7 @@ class Template(dict):
             else:
                 self.undocumented[k] = v
         elif k == "lone_groups":
-            self.lone_groups = v
+            self.lone_groups.append(v)
         else:
             raise KeyError("You cannot add non paths to the root template object. "
                            "Place them appropriately e.g. template[\"optional\"]"
