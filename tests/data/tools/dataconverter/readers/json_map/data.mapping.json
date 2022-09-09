@@ -11,7 +11,11 @@
     "/ENTRY[entry]/NXODD_name/type": "/type",
     "/ENTRY[entry]/definition": "/definition",
     "/ENTRY[entry]/definition/@version": "/definition_version",
-    "/ENTRY[entry]/optional_parent/optional_child": {"link":"/entry/optional_parent/required_child", "shape":"0"},
+    "/ENTRY[entry]/optional_parent/optional_child": {
+        "link": "/entry/optional_parent/required_child",
+        "shape": "0"
+    },
     "/ENTRY[entry]/optional_parent/required_child": "/required_child",
-    "/ENTRY[entry]/program_name": "Example for listing exact data in the map file: Nexus Parser"
+    "/ENTRY[entry]/program_name": "Example for listing exact data in the map file: Nexus Parser",
+    "/ENTRY[entry]/required_group/description": "An example description"
 }

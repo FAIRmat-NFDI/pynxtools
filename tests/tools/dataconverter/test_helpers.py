@@ -98,6 +98,8 @@ def fixture_filled_test_data(template, tmp_path):
     template["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
     template["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
                                                                       ":14:12.05018+00:00")
+    # From my understanding this line should also be required to pass the other tests?
+    # template["required"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
     template["undocumented"]["/ENTRY[my_entry]/does/not/exist"] = "random"
     template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {"link":
                                                                    f"{tmp_path}/"
@@ -124,6 +126,10 @@ TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+# This should fail:
+# TEMPLATE["required"]["/ENTRY[my_entry]/required_group"] = {}
+# This should pass:
+TEMPLATE["required"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
 TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
 
 
