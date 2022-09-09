@@ -20,12 +20,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import os
-import sys
-sys.path.insert(0, '..')
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-
-# from nexusparser.tools.yaml2nxdl import yaml2nxdl
-# from nexusparser.tools.yaml2nxdl import yaml2nxdl_recursive_build
-# from nexusparser.tools.yaml2nxdl import yaml2nxdl_read_yml_file
-# from nexusparser.tools.yaml2nxdl import yaml2nxdl_utils

@@ -27,13 +27,21 @@ from nexusparser.tools import nexus
 from nexusparser.tools.nexus import NxdlAttributeError
 
 
-def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
+def is_a_lone_group(xml_element) -> bool:
+    """Checks whether a given group XML element has no field or attributes mentioned"""
+    if xml_element.get("type") == "NXentry":
+        return False
+    for child in xml_element.findall(".//"):
+        if remove_namespace_from_tag(child.tag) in ("field", "attribute"):
+            return False
+    return True
+
+
+def generate_template_from_nxdl(root, template, path="", nxdl_root=None):
     """Helper function to generate a template dictionary for given NXDL"""
     if nxdl_root is None:
         nxdl_root = root
         root = get_first_group(root)
-    if path is None:
-        path = ""
 
     tag = remove_namespace_from_tag(root.tag)
 
@@ -67,6 +75,10 @@ def generate_template_from_nxdl(root, template, path=None, nxdl_root=None):
         if tag == "field" \
            and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
             template[optionality][f"{path}/@units"] = None
+    elif tag == "group":
+        if is_a_lone_group(root):
+            template[get_required_string(root)][path] = None
+            template["lone_groups"].append(path)
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root)
@@ -307,6 +319,29 @@ def check_optionality_based_on_parent_group(
                             f" all required ones.")
 
 
+def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
+    """Returns true if a group is contained in a path"""
+    tokens_group = path_to_group.split("/")
+    tokens_entry = convert_data_converter_dict_to_nxdl_path(path_of_entry).split("/")
+
+    if len(tokens_entry) < len(tokens_group):
+        return False
+
+    for tog, toe in zip(tokens_group, tokens_entry):
+        if tog != toe:
+            return False
+    return True
+
+
+def does_group_exist(path_to_group, data):
+    """Returns True if the group or any children are set"""
+    path_to_group = convert_data_converter_dict_to_nxdl_path(path_to_group)
+    for path in data:
+        if is_group_part_of_path(path_to_group, path) and data[path] is not None:
+            return True
+    return False
+
+
 def ensure_all_required_fields_exist(template, data):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
@@ -315,6 +350,9 @@ def ensure_all_required_fields_exist(template, data):
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
+        if path in template["lone_groups"] and does_group_exist(path, data):
+            continue
+
         if not is_path_in_data_dict or data[renamed_path] is None:
             raise Exception(f"The data entry corresponding to {path} is required and"
                             f" hasn't been supplied by the reader.")
