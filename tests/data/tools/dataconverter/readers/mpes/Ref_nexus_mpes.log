@@ -4028,7 +4028,7 @@ DEBUG -
 				increasing displacement. For general axes, an appropriate direction
 				should be chosen.
 			
-DEBUG - ===== GROUP (//entry/sample [NXmpes::/NXentry/NXsample]): <HDF5 group "/entry/sample" (11 members)>
+DEBUG - ===== GROUP (//entry/sample [NXmpes::/NXentry/NXsample]): <HDF5 group "/entry/sample" (12 members)>
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE
@@ -4152,6 +4152,43 @@ DEBUG - documentation (NXsample.nxdl.xml:/preparation_date):
 DEBUG - 
              Date of preparation of the sample
         
+DEBUG - ===== GROUP (//entry/sample/preparation_description [NXmpes::/NXentry/NXsample/NXnote]): <HDF5 group "/entry/sample/preparation_description" (1 members)>
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXnote']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/preparation_description
+NXnote.nxdl.xml:
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/preparation_description):
+DEBUG - 
+                     Description of the surface preparation technique for the XPS experiment, i.e.
+                     UHV cleaving, in-situ growth, sputtering/annealing etc. Ideally, a full report
+                     of the previous operations, in any format(NXnote allows to add pictures, audio,
+                     movies). Alternatively, a reference to the location or a unique identifier or
+                     other metadata file. In the case these are not available, free-text description.
+                
+DEBUG - documentation (NXnote.nxdl.xml:):
+DEBUG - 
+		Any additional freeform information not covered by the other base classes.
+		
+		This class can be used to store additional information in a 
+		NeXus file e.g. pictures, movies, audio, additional text logs
+	
+DEBUG - ===== ATTRS (//entry/sample/preparation_description@NX_class)
+DEBUG - value: NXnote 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXnote']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/preparation_description
+NXnote.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/sample/preparation_description/description): <HDF5 dataset "description": shape (), type "|O">
+DEBUG - value: b'Here should be a description of hte preparation procedure.' 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXnote', 'NX_CHAR']
+DEBUG - classes:
+NXnote.nxdl.xml:/description
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXnote.nxdl.xml:/description):
+DEBUG - Title of an image or other details of the note
 DEBUG - ===== GROUP (//entry/sample/sample_history [NXmpes::/NXentry/NXsample/NXnote]): <HDF5 group "/entry/sample/sample_history" (1 members)>
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXnote']
 DEBUG - classes:

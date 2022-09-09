@@ -32,12 +32,12 @@ sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
 
 
-@pytest.fixture
-def parser():
+@pytest.fixture(name="parser")
+def fixture_parser():
     """Helper function to launch NexusParser class
 
 """
-    return NexusParser()
+    yield NexusParser()
 
 
 def test_nexus(tmp_path):
@@ -105,7 +105,7 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["name"] == "role"
 
 
-def test_example():
+def test_example(parser):
     """Tests if parser can parse our example data
 
 """
@@ -128,7 +128,7 @@ def test_example():
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, 'data/nexus_test_data/201805_WSe2_arpes.nxs')
-    parser().parse(example_data, archive, structlog.get_logger())
+    parser.parse(example_data, archive, structlog.get_logger())
     assert archive.nexus.nx_application_arpes.\
         nx_group_ENTRY[0].nx_group_SAMPLE[0].nx_field_pressure.nx_value == 3.27e-10
     assert archive.nexus.nx_application_arpes.\

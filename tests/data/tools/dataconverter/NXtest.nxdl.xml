@@ -47,6 +47,12 @@
                 </enumeration>
             </field>
         </group>
+        <group type="NXnote" name="required_group">
+            <doc>This is a required yet empty group.</doc>
+        </group>
+        <group type="NXnote" name="required_group2">
+            <doc>This is a second required yet empty group.</doc>
+        </group>
         <group type="NXdata" name="optional_parent" optional="true">
             <field name="required_child" required="true" type="NX_INT">
                 <doc>A dummy entry to test optional parent check for required child.</doc>

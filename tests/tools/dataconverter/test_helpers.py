@@ -37,6 +37,16 @@ def alter_dict(data_dict: Template, key: str, value: object):
     return None
 
 
+def remove_from_dict(data_dict: Template, key: str, optionality: str = 'optional'):
+    """Helper function to remove a key from dict"""
+    if data_dict is not None and key in data_dict[optionality]:
+        internal_dict = Template(data_dict)
+        del internal_dict[optionality][key]
+        return internal_dict
+
+    return None
+
+
 def listify_template(data_dict: Template):
     """Helper function to turn most values in the Template into lists"""
     listified_template = Template()
@@ -98,6 +108,8 @@ def fixture_filled_test_data(template, tmp_path):
     template["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
     template["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
                                                                       ":14:12.05018+00:00")
+    template["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
+    template["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
     template["undocumented"]["/ENTRY[my_entry]/does/not/exist"] = "random"
     template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {"link":
                                                                    f"{tmp_path}/"
@@ -124,6 +136,8 @@ TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
+TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
 TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
 
 
@@ -213,6 +227,25 @@ TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
         TEMPLATE,
         "",
         id="valid-data-dict"),
+    pytest.param(
+        remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
+        ("The data entry corresponding to /ENTRY[entry]/required_group "
+         "is required and hasn't been supplied by the reader."),
+        id="missing-empty-yet-required-group"),
+    pytest.param(
+        remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
+        ("The data entry corresponding to /ENTRY[entry]/required_group2 "
+         "is required and hasn't been supplied by the reader."),
+        id="missing-empty-yet-required-group2"),
+    pytest.param(
+        alter_dict(
+            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
+            "/ENTRY[my_entry]/required_group",
+            {}
+        ),
+        (""),
+        id="allow-required-and-empty-group"
+    ),
 ])
 def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
     """Unit test for the data validation routine"""
@@ -223,7 +256,8 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
                                     "UTC-with-Z",
                                     "no-child-provided-optional-parent",
                                     "int-instead-of-chars",
-                                    "link-dict-instead-of-bool"):
+                                    "link-dict-instead-of-bool",
+                                    "allow-required-and-empty-group"):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:
