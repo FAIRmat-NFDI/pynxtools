@@ -136,8 +136,8 @@ TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[entry]/required_group/description"] = "An example description"
-TEMPLATE["optional"]["/ENTRY[entry]/required_group2/description"] = "An example description"
+TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
+TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
 TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
 
 
@@ -228,19 +228,19 @@ TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
         "",
         id="valid-data-dict"),
     pytest.param(
-        remove_from_dict(TEMPLATE, "/ENTRY[entry]/required_group/description"),
+        remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
         ("The data entry corresponding to /ENTRY[entry]/required_group "
          "is required and hasn't been supplied by the reader."),
         id="missing-empty-yet-required-group"),
     pytest.param(
-        remove_from_dict(TEMPLATE, "/ENTRY[entry]/required_group2/description"),
+        remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
         ("The data entry corresponding to /ENTRY[entry]/required_group2 "
          "is required and hasn't been supplied by the reader."),
         id="missing-empty-yet-required-group2"),
     pytest.param(
         alter_dict(
-            remove_from_dict(TEMPLATE, "/ENTRY[entry]/required_group/description"),
-            "/ENTRY[entry]/required_group",
+            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
+            "/ENTRY[my_entry]/required_group",
             {}
         ),
         (""),

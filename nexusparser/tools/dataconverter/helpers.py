@@ -321,8 +321,9 @@ def check_optionality_based_on_parent_group(
 
 def does_group_exist(path_to_group, data):
     """Returns True if the group or any children are set"""
+    path_to_group = convert_data_converter_dict_to_nxdl_path(path_to_group)
     for path in data:
-        if path_to_group in path and data[path] is not None:
+        if path_to_group in convert_data_converter_dict_to_nxdl_path(path) and data[path] is not None:
             return True
     return False
 
