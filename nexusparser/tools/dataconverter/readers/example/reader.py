@@ -51,7 +51,7 @@ class ExampleReader(BaseReader):
         for k in template.keys():
             # The entries in the template dict should correspond with what the dataconverter
             # outputs with --generate-template for a provided NXDL file
-            if k == "/ENTRY[entry]/required_group":
+            if k.startswith("/ENTRY[entry]/required_group"):
                 continue
 
             field_name = k[k.rfind("/") + 1:]
@@ -63,6 +63,7 @@ class ExampleReader(BaseReader):
         # Add non template key
         template["/ENTRY[entry]/does/not/exist"] = "None"
         template["/ENTRY[entry]/required_group/description"] = "A test description"
+        template["/ENTRY[entry]/required_group2/description"] = "A test description"
         template["/ENTRY[entry]/program_name"] = "None"
 
         # internal links
