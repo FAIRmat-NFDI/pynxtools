@@ -5,7 +5,7 @@ symbols:
   testnamesymbol: test description of symbol
 category: application
 extends: my_test_extend
-(NXellipsometry_base_draft):
+NXellipsometry_base_draft:
   (NXentry):
     \@entry:
       doc: attribute documentation 

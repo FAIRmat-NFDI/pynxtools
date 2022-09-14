@@ -215,12 +215,12 @@ def test_extends():
     ref_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/Ref_NXattributes.nxdl.xml'
     test_yml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.yml'
     test_xml_attribute_file = 'tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml'
-    desired_matches = ['extends="my_test_extends"']
-    compare_matches(
-        ref_xml_attribute_file,
-        test_yml_attribute_file,
-        test_xml_attribute_file,
-        desired_matches)
+    runner = CliRunner()
+    result = runner.invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_attribute_file])
+    assert result.exit_code == 0
+    ref_root_node = ET.parse(ref_xml_attribute_file).getroot()
+    test_root_node = ET.parse(test_xml_attribute_file).getroot()
+    assert ref_root_node.attrib == test_root_node.attrib
     os.remove('tests/data/tools/yaml2nxdl_test_data/NXattributes.nxdl.xml')
     sys.stdout.write('Test on extends keyword okay.\n')
 

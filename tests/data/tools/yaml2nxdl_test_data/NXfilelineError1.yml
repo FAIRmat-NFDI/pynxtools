@@ -1,14 +1,14 @@
-#test case for attributes 
+#test case for attributes
 doc: documentation no. 0
 symbols:
   doc: documentation no. 1
   testnamesymbol: test description of symbol
 category: application
 extends: my_test_extend
-(NXellipsometry_base_draft):
+NXellipsometry_base_draft:
   (NXentry):
     \@entry:
-      doc: attribute documentation 
+      doc: attribute documentation
     doc: documentation no. 2
     experiment_identifier:
       existsss: required
@@ -27,5 +27,5 @@ extends: my_test_extend
       doc: documentation no. 6
     definition_local:
       doc: documentation no. 7
-      \@version: 
+      \@version:
       # EMPTY ATTRIBUTES

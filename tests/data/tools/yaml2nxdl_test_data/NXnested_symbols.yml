@@ -6,7 +6,7 @@ symbols:
   ne: Number of points in the energy dispersion direction
 category: base
 doc: Test case for verifying handling of symbols inside a nexus class in nested layers of the hierarchy
-(NXentry):
+NXentry:
   (NXsample):
     symbols:
       doc: teststring
