@@ -158,17 +158,17 @@ def test_fileline_error():
     test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXfilelineError1.yml'
     result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 1
-    assert '14' in str(result.exception)
+    assert '13' in str(result.exception)
 
     test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXfilelineError2.yml'
     result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 1
-    assert '22' in str(result.exception)
+    assert '21' in str(result.exception)
 
     test_yml_file = 'tests/data/tools/yaml2nxdl_test_data/NXfilelineError3.yml'
     result = CliRunner().invoke(yml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 1
-    assert '26' in str(result.exception)
+    assert '25' in str(result.exception)
 
     sys.stdout.write('Test on xml -> yml fileline error handling okay.\n')
 

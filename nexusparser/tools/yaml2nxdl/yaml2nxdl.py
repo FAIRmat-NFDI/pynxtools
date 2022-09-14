@@ -100,12 +100,6 @@ application and base are valid categories!'
 
     xml_root.set('type', 'group')
 
-    if 'extends' in yml_appdef.keys():
-        xml_root.set('extends', yml_appdef['extends'])
-        del yml_appdef['extends']
-    else:
-        xml_root.set('extends', 'NXobject')
-
     if yml_appdef['category'] == 'application':
         xml_root.set('category', 'application')
     else:
@@ -134,6 +128,7 @@ has to be a non-empty string!'
 
     assert root_keys == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'
+
     keyword = list(yml_appdef.keys())[0]
     if "(" in keyword:
         extends = keyword[keyword.rfind("(") + 1:-1]
@@ -141,10 +136,13 @@ doc, symbols, and NX... at root-level!'
     else:
         name = keyword
         extends = "NXobject"
-    assert (keyword[0:2] == 'NX' and len(keyword) > 2), 'NX \
-keyword has an invalid pattern, or is too short!'
+
     xml_root.set('name', name)
     xml_root.set('extends', extends)
+
+    assert (keyword[0:2] == 'NX' and len(keyword) > 2), 'NX \
+keyword has an invalid pattern, or is too short!'
+
     yaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml')

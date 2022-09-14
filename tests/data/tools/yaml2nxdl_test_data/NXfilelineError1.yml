@@ -4,8 +4,7 @@ symbols:
   doc: documentation no. 1
   testnamesymbol: test description of symbol
 category: application
-extends: my_test_extend
-NXellipsometry_base_draft:
+NXellipsometry_base_draft(my_test_extend):
   (NXentry):
     \@entry:
       doc: attribute documentation
