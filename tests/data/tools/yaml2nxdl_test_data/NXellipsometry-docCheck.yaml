@@ -36,7 +36,7 @@ symbols:
   N_time: Number of time points measured
   # we can go on, but this is already an at least 4 dimensional data set to work with
 
-(NXellipsometry):
+NXellipsometry:
   (NXentry):
     # exists: required -- is the default
     # The first line of this doc is a summary; second line needs the indentation
@@ -186,12 +186,12 @@ symbols:
                 Arrays which provide the measured calibration data.
                 Multiple sets are possible, e.g. Psi and delta measured on an
                 e.g. silicon calibration waver, and the straight-through data.
-                
-                We 
-                recommend to 
-                
+
+                We
+                recommend to
+
                 provide data that is measured under the same settings
-                
+
                 as the measurement was performed, that is if Psi and delta are measured
                 for your data, also provide Psi and delta here.
                 And use the same wavelenghts as there."
