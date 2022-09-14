@@ -4089,7 +4089,7 @@ DEBUG -
              * This is the *Hill* system used by Chemical Abstracts.
         
 DEBUG - ===== FIELD (//entry/sample/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
-DEBUG - value: b'/entry/sample/transformations/offset_phi' 
+DEBUG - value: b'/entry/sample/transformations/corrected_phi' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
 NXsample.nxdl.xml:/depends_on
@@ -4366,8 +4366,8 @@ NXsample.nxdl.xml:/TRANSFORMATIONS
 NXtransformations.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== FIELD (//entry/sample/transformations/offset_phi): <HDF5 dataset "offset_phi": shape (), type "<f8">
-DEBUG - value: -90.0 
+DEBUG - ===== FIELD (//entry/sample/transformations/corrected_phi): <HDF5 dataset "corrected_phi": shape (), type "<f8">
+DEBUG - value: 90.0 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
 DEBUG - classes:
 NXtransformations.nxdl.xml:/AXISNAME
@@ -4384,7 +4384,7 @@ DEBUG -
 			The values given should be the start points of exposures for the corresponding
 			frames.  The end points should be given in ``AXISNAME_end``.
 		
-DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@depends_on)
+DEBUG - ===== ATTRS (//entry/sample/transformations/corrected_phi@depends_on)
 DEBUG - value: rot_omg 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
 DEBUG - classes:
@@ -4396,7 +4396,7 @@ DEBUG -
 				Points to the path to a field defining the axis on which this
 				depends or the string ".".
 			
-DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@transformation_type)
+DEBUG - ===== ATTRS (//entry/sample/transformations/corrected_phi@transformation_type)
 DEBUG - value: rotation 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
 DEBUG - classes:
@@ -4417,13 +4417,13 @@ DEBUG -
 				or the direction to the source, or a basis vector of a
 				coordinate frame.
 			
-DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@units)
+DEBUG - ===== ATTRS (//entry/sample/transformations/corrected_phi@units)
 DEBUG - value: degrees 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
 DEBUG - classes:
 NXtransformations.nxdl.xml:/AXISNAME
 DEBUG - @units [NX_TRANSFORMATION]
-DEBUG - ===== ATTRS (//entry/sample/transformations/offset_phi@vector)
+DEBUG - ===== ATTRS (//entry/sample/transformations/corrected_phi@vector)
 DEBUG - value: [0 1 0] 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations', 'NX_NUMBER']
 DEBUG - classes:
