@@ -8,7 +8,7 @@ symbols:
   N_p1: "Number of first sample parameters scanned"
   N_time: "Number of time points measured"
 category: application
-(NXellipsometry_base_draft):
+NXellipsometry_base_draft:
   (NXentry):
     exists: required 
     \@entry:
