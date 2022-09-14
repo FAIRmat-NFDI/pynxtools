@@ -100,12 +100,6 @@ application and base are valid categories!'
 
     xml_root.set('type', 'group')
 
-    if 'extends' in yml_appdef.keys():
-        xml_root.set('extends', yml_appdef['extends'])
-        del yml_appdef['extends']
-    else:
-        xml_root.set('extends', 'NXobject')
-
     if yml_appdef['category'] == 'application':
         xml_root.set('category', 'application')
     else:
@@ -134,10 +128,21 @@ has to be a non-empty string!'
 
     assert root_keys == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'
+
     keyword = list(yml_appdef.keys())[0]
-    assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
+    if "(" in keyword:
+        extends = keyword[keyword.rfind("(") + 1:-1]
+        name = keyword[0:keyword.rfind("(")]
+    else:
+        name = keyword
+        extends = "NXobject"
+
+    xml_root.set('name', name)
+    xml_root.set('extends', extends)
+
+    assert (keyword[0:2] == 'NX' and len(keyword) > 2), 'NX \
 keyword has an invalid pattern, or is too short!'
-    xml_root.set('name', keyword[1:-1])
+
     yaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml')
@@ -214,7 +219,8 @@ class Nxdl2yaml():
         """Handle definition group and its attributes
 
         """
-        for item in node.attrib:
+        attribs = node.attrib
+        for item in attribs:
             if 'schemaLocation' not in item \
                     and 'name' not in item \
                     and 'extends' not in item \
@@ -222,11 +228,14 @@ class Nxdl2yaml():
                 self.root_level_definition.append(
                     '{key}: {value}'.format(
                         key=item,
-                        value=node.attrib[item] or ''))
-        if 'name' in node.attrib.keys():
+                        value=attribs[item] or ''))
+        if 'name' in attribs.keys():
             self.root_level_definition.append(
-                '({value}):'.format(
-                    value=node.attrib['name'] or ''))
+                '{name}:'.format(
+                    name=attribs['name'] or ''))
+            if 'extends' in attribs.keys() and attribs["extends"] != "NXobject":
+                keyword = self.root_level_definition.pop()
+                self.root_level_definition.append(f"{keyword[0:-1]}({attribs['extends']}):")
 
     def handle_root_level_doc(self, node):
         """Handle the documentation field found at root level

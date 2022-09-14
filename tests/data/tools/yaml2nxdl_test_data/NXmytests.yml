@@ -7,7 +7,7 @@ symbols:
   n_pField: "number of values in applied pressure field"
   n_sField: "number of values in applied stress field"
 category: base
-(NXbeam):
+NXbeam:
   distance(NX_FLOAT):
     unit: NX_LENGTH
     doc: "Distance from sample"

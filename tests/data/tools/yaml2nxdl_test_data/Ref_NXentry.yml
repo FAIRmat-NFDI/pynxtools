@@ -2,7 +2,7 @@ doc: |
   my nice doc string in root level.
   my nice doc string in root level, line 2.
 category: base
-(NXentry):
+NXentry:
   \@default:
     doc: | 
       oki

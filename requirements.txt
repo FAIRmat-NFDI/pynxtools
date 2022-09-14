@@ -1,7 +1,5 @@
-click==7.1.2  # 7.1.2
-lxml==4.7.1  # 4.7.1
-mypy==0.750 # 0.730
-# matching pylint, pycodestyle, mypy as in nomad-FAIR
+click==7.1.2
+mypy==0.750
 pylint==2.3.1
 pylint_plugin_utils==0.5
 typed-ast==1.4.2
@@ -14,17 +12,17 @@ pytest-cov==2.7.1
 mongoengine==0.19.1
 pymongo==3.12.1
 
-h5py==3.6.0  # 3.6.0
+h5py==3.6.0
 python-json-logger==2.0.2
 xarray==0.20.2
 PyYAML==6.0
-numpy==1.21.2  # 1.21.2
-pandas==1.3.2  # 1.3.2
+numpy==1.21.2
+pandas==1.3.2
 odfpy==1.4.1
-ase==3.19.0  # 3.19.0
+ase==3.19.0
 structlog==21.5.0
 flatdict==4.0.1
-hyperspy==1.7.1  # wasnt required before
+hyperspy==1.7.1
 
 # [nomad]
 nomad-lab>=1.1.1
