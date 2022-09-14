@@ -223,12 +223,12 @@
   "/ENTRY[entry]/SAMPLE[sample]/bias": {
     "link": "/entry/instrument/manipulator/sample_bias"
   },
-  "/ENTRY[entry]/SAMPLE[sample]/depends_on": "/entry/sample/transformations/offset_phi",
-  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[offset_phi]/@depends_on": "rot_omg",
-  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[offset_phi]": -90.0,
-  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[offset_phi]/@units": "degrees",
-  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[offset_phi]/@transformation_type": "rotation",
-  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[offset_phi]/@vector": [
+  "/ENTRY[entry]/SAMPLE[sample]/depends_on": "/entry/sample/transformations/corrected_phi",
+  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[corrected_phi]/@depends_on": "rot_omg",
+  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[corrected_phi]": 90.0,
+  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[corrected_phi]/@units": "degrees",
+  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[corrected_phi]/@transformation_type": "rotation",
+  "/ENTRY[entry]/SAMPLE[sample]/TRANSFORMATIONS[transformations]/AXISNAME[corrected_phi]/@vector": [
     0,
     1,
     0
