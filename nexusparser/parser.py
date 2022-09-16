@@ -24,7 +24,7 @@ import os
 import pathlib
 import numpy as np
 from nomad.datamodel import EntryArchive
-from nomad.parsing import Parser
+from nomad.parsing import MatchingParser
 # from . import metainfo  # pylint: disable=unused-import
 from nexusparser.tools import nexus as read_nexus
 from nexusparser.metainfo import nexus
@@ -175,16 +175,20 @@ def add_log(params, logstr):
     return logstr
 
 
-class NexusParser(Parser):
-    """NesusParser doc
+class NexusParser(MatchingParser):
+    '''
+    NexusParser doc
+    '''
 
-"""
     def __init__(self):
-        super().__init__()
-        self.name = "parsers/nexus"
+        super().__init__(
+            metadata_path=f'{pathlib.Path(__file__).parents[1].resolve()}/metadata.yaml',
+            mainfile_mime_re=r'(application/.*)|(text/.*)',
+            mainfile_name_re=(r'.*\.nxs'),
+            supported_compressions=['gz', 'bz2', 'xz']
+        )
         self.archive = None
         self.nxroot = None
-        self.domain = 'ems'
 
     def is_mainfile(  # pylint: disable=too-many-arguments
             self, filename: str, mime: str, buffer: bytes, decoded_buffer: str,

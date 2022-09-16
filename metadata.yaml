@@ -1,6 +1,8 @@
 codeName: nexus
 codeLabel: NEXUS
 codeLabelStyle: All in capitals
+status: production
+codeCategory: Database manager
 codeUrl: https://www.nexus.eu/
 parserDirName: dependencies/parsers/nexus/
 parserGitUrl: https://github.com/nomad-coe/nomad-parser-nexus.git
