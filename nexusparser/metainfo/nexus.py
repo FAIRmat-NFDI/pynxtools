@@ -279,7 +279,7 @@ def __add_common_properties(xml_node: ET.Element, definition: Definition):
         definition.more['nx_optional'] = __if_base(xml_node)
 
 
-def __create_attributes(xml_node: ET.Element, definition: Union[SubSection, Property]):
+def __create_attributes(xml_node: ET.Element, definition: Union[Section, Property]):
     '''
     Add all attributes in the given nexus XML node to the given
     Quantity or SubSection using the Attribute class (new mechanism).
@@ -295,8 +295,11 @@ def __create_attributes(xml_node: ET.Element, definition: Union[SubSection, Prop
             nx_shape = []
         else:
             nx_type = __NX_TYPES[attribute.get('type', 'NX_CHAR')]  # type: ignore
-            nx_shape = ['0..*'] if __if_repeats(
-                name, attribute.get('maxOccurs', 'unbounded')) else []  # type: ignore
+            nx_min_occurs = attribute.get('minOccurs', '0')  # type: ignore
+            nx_max_occurs = attribute.get('maxOccurs', '*')  # type: ignore
+            if nx_max_occurs == 'unbounded':
+                nx_max_occurs = '*'
+            nx_shape = [f'{nx_min_occurs}..{nx_max_occurs}']
 
         # check if the attribute exist
         # if yes then modify directly
@@ -333,7 +336,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     # type
     nx_type = xml_attrs.get('type', 'NX_CHAR')
     if nx_type not in __NX_TYPES:
-        raise NotImplementedError(f'type {nx_type} is not supported for {name}')
+        raise NotImplementedError(f'Type {nx_type} is not supported for {name}')
 
     # enumeration
     enum_type = __get_enumeration(xml_node)
@@ -388,12 +391,12 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     return value_quantity
 
 
-def __create_group(xml_node: ET.Element, section: Section, subsection: SubSection):
+def __create_group(xml_node: ET.Element, root_section: Section):
     '''
     Adds all properties that can be generated from the given nexus group XML node to
     the given (empty) metainfo section definition.
     '''
-    __create_attributes(xml_node, subsection)
+    __create_attributes(xml_node, root_section)
 
     for group in xml_node.findall('nx:group', __XML_NAMESPACES):
         xml_attrs = group.attrib
@@ -404,6 +407,10 @@ def __create_group(xml_node: ET.Element, section: Section, subsection: SubSectio
         nx_name = xml_attrs.get('name', nx_type)
         group_section = Section(validate=VALIDATE, nx_kind='group', name=nx_name)
 
+        __attach_base_section(group_section, root_section, __to_section(nx_type))
+        __copy_base_attributes(group_section, nx_type)
+        __add_common_properties(group, group_section)
+
         nx_name = xml_attrs.get('name', nx_type.replace('NX', '').upper())
         group_subsection = SubSection(
             section_def=group_section,
@@ -412,19 +419,14 @@ def __create_group(xml_node: ET.Element, section: Section, subsection: SubSectio
             repeats=__if_repeats(nx_name, xml_attrs.get('maxOccurs', '0')),
             variable=__if_template(nx_name))
 
-        __attach_base_section(group_section, section, __to_section(nx_type))
+        root_section.inner_section_definitions.append(group_section)
 
-        __copy_base_attributes(group_subsection, nx_type)
-        __add_common_properties(group, group_section)
+        root_section.sub_sections.append(group_subsection)
 
-        section.inner_section_definitions.append(group_section)
-
-        section.sub_sections.append(group_subsection)
-
-        __create_group(group, group_section, group_subsection)
+        __create_group(group, group_section)
 
     for field in xml_node.findall('nx:field', __XML_NAMESPACES):
-        __create_field(field, section)
+        __create_field(field, root_section)
 
 
 def __attach_base_section(section: Section, container: Section, default: Section):
@@ -441,14 +443,14 @@ def __attach_base_section(section: Section, container: Section, default: Section
     section.base_sections = [base_section]
 
 
-def __copy_base_attributes(destination: SubSection, source_name: str):
+def __copy_base_attributes(destination: Section, source_name: str):
     '''
     Copy attributes from base subsection to derived subsection.
 
     Attributes are stored in `SubSection.attributes` list. They are not inherited
     thus need to be manually copied.
     '''
-    source: SubSection = __subsection_definitions.get(source_name)
+    source: Section = __section_definitions.get(source_name)
 
     if not source or not destination or source is destination:
         return
@@ -462,7 +464,7 @@ def __copy_base_attributes(destination: SubSection, source_name: str):
             **m_attribute.more))
 
 
-def __create_class_section(xml_node: ET.Element) -> Tuple[Section, SubSection]:
+def __create_class_section(xml_node: ET.Element) -> Section:
     '''
     Creates a metainfo section from the top-level nexus definition given as xml node.
     '''
@@ -477,22 +479,17 @@ def __create_class_section(xml_node: ET.Element) -> Tuple[Section, SubSection]:
 
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category)
-    class_subsection: SubSection = SubSection(section_def=class_section, name=nx_name)
-    # this is a base group, which may be inherited by other groups
-    # store the subsection that will be later retrieved by the derived groups
-    # to copy attributes from
-    __subsection_definitions[nx_name] = class_subsection
 
     if 'extends' in xml_attrs:
         base_section = __to_section(xml_attrs['extends'])
         class_section.base_sections = [base_section]
-        __copy_base_attributes(class_subsection, base_section.name)
+        __copy_base_attributes(class_section, base_section.name)
 
     __add_common_properties(xml_node, class_section)
 
-    __create_group(xml_node, class_section, class_subsection)
+    __create_group(xml_node, class_section)
 
-    return class_section, class_subsection
+    return class_section
 
 
 def __sort_nxdl_files(paths):
@@ -526,7 +523,7 @@ def __sort_nxdl_files(paths):
     return [name_node_map[node] for node in toposort_flatten(name_dependency_map)]
 
 
-def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Tuple[Section, SubSection]]:
+def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Section]:
     '''
     Creates a metainfo section from a nxdl file.
     '''
@@ -542,7 +539,7 @@ def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Tuple[Section, Sub
         return None
 
 
-def __create_package_from_nxdl_directories(nexus_section) -> Package:
+def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
     '''
     Creates a metainfo package from the given nexus directory. Will generate the
     respective metainfo definitions from all the nxdl files in that directory.
@@ -554,12 +551,12 @@ def __create_package_from_nxdl_directories(nexus_section) -> Package:
         nexus.get_nexus_definitions_path(), folder) for folder in folder_list]
 
     for nxdl_file in __sort_nxdl_files(paths):
-        result = __add_section_from_nxdl(nxdl_file)
-        if result is None:
+        section = __add_section_from_nxdl(nxdl_file)
+        if section is None:
             continue
-        section, subsection = result
         package.section_definitions.append(section)
-        nexus_section.sub_sections.append(subsection)
+        nexus_section.sub_sections.append(
+            SubSection(section_def=section, name=section.name))
 
     return package
 
