@@ -70,7 +70,7 @@ atom_probe:
       unit: nm
       value: 480.
     # laser_gun_power:
-    laser_gun_energy:
+    laser_gun_pulse_energy:
       unit: pJ
       value: 20.
 reconstruction:
