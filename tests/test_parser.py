@@ -84,26 +84,6 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
 
-    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXellipsometry.nxdl.xml"
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
-    assert node.attrib["type"] == "NXprocess"
-
-    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXem_nion.nxdl.xml"
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path("/ENTRY/em_lab/hadf/SCANBOX_EM", elem=elem)
-    assert node.attrib["type"] == "NXscanbox_em"
-
-    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path("/ENTRY/DATA/VARIABLE", elem=elem)
-    assert node.attrib["name"] == "VARIABLE"
-
-    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path("/ENTRY/USER/role", elem=elem)
-    assert node.attrib["name"] == "role"
-
 
 def test_example(parser):
     """Tests if parser can parse our example data
