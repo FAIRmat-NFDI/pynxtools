@@ -50,10 +50,15 @@ METADATA_MAP: Dict[str, Any] = {
 }
 # Dictionary to map value during the yaml eln reading
 # This is typically a mapping from ELN signifier to NeXus path
-CONVERT_DICT: Dict[str, str] = {}
+CONVERT_DICT: Dict[str, str] = {
+    'Sample': 'SAMPLE[sample]',
+    "unit": "@units"
+}
 # Dictionary to map nested values during the yaml eln reading
 # This is typically a mapping from nested ELN signifiers to NeXus group
-REPLACE_NESTED: Dict[str, str] = {}
+REPLACE_NESTED: Dict[str, str] = {
+    'Sample[sample]/experiment_identifier': 'experiment_identifier'
+}
 
 
 def data_to_template(data: pd.DataFrame) -> Dict[str, Any]:
