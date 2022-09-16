@@ -34,4 +34,4 @@ jobs:
       - name: Test with pytest
         if: ${{ always() }}
         run: |
-          python -m pytest -sv tests
+          python -m pytest -sv --show-capture=no tests
