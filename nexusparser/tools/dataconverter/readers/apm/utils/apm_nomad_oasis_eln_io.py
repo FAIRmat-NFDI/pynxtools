@@ -410,7 +410,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
             template[trg + "name"] = self.yml[src + ":laser_gun_name"]
             required_field_names = [
                 "laser_gun_wavelength",
-                "laser_gun_energy"]
+                "laser_gun_pulse_energy"]
             for field_name in required_field_names:
                 field_exists = (field_name + ":value" in self.yml[src].keys()) \
                     and (field_name + ":unit" in self.yml[src].keys())
