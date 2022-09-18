@@ -182,7 +182,7 @@ class NexusParser(MatchingParser):
 
     def __init__(self):
         super().__init__(
-            metadata_path=f'{pathlib.Path(__file__).parents[1].resolve()}/metadata.yaml',
+            metadata_path=f'{pathlib.Path(__file__).parent.resolve()}/metadata.yaml',
             mainfile_mime_re=r'(application/.*)|(text/.*)',
             mainfile_name_re=(r'.*\.nxs'),
             supported_compressions=['gz', 'bz2', 'xz']
