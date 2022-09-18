@@ -25,5 +25,5 @@ flatdict==4.0.1
 hyperspy==1.7.1
 
 # [nomad]
-nomad-lab>=1.1.1
+nomad-lab>=1.1.3
 
