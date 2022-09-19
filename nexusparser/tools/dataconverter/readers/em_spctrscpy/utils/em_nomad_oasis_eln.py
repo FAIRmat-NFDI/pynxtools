@@ -172,6 +172,44 @@ class NxEmNomadOasisElnSchemaParser:
             template[trg + "density/@units"] = self.yml["sample:density:unit"]
         return template
 
+    def parse_coordinate_system_section(self, template: dict) -> dict:
+        """Define the coordinate systems to be used."""
+        # ##MK::the COORDINATE_SYSTEM_SET section depends often on conventions
+        # which are neither explicitly documented in instances of
+        # files from vendor software nor via ELNs, take for instance the example
+        # of SEM/EBSD TSL, the specific coordinate system conventions use
+        # are defined in the famous "coin selector GUI window from TSL"
+        # these values are not stored in vendor files.
+        # Oxford nowadays stores coordinate systems implicitly as the
+        # standard defines the coordinate systems
+        # for now this source code is only to fix an issue
+        # with the current parser of handling optional parent group
+        # required fields cases, as soon as this has been fixed, this section
+        # should be moved out here
+        prefix = "/ENTRY[entry]/COORDINATE_SYSTEM_SET"
+        prefix += "[coordinate_system_set]/"
+        # this is likely not yet matching how it should be in NeXus
+        cs_xyz = np.asarray(
+            [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]], np.float64)
+        cs_names = ["x", "y", "z"]
+        for i in np.arange(0, 3):
+            trg = prefix + "NXtransformations[" + cs_names[i] + "]"
+            template[trg] = cs_xyz[:, i]
+            template[trg + "/@transformation_type"] = "translation"
+            template[trg + "/@offset"] = np.asarray([0., 0., 0.], np.float64)
+            template[trg + "/@offset_units"] = "m"
+            template[trg + "/@depends_on"] = "."
+
+        msg = "This way of defining coordinate systems is only a small "
+        msg += "example of what is possible and how it could be done. "
+        msg += "More discussion among members of FAIRmat Area B/A and the "
+        msg += "EM community is needed!"
+        template[prefix + "@comment"] = msg
+        empty_group = "/ENTRY[entry]/COORDINATE_SYSTEM_SET["
+        empty_group += "coordinate_system_set]/TRANSFORMATIONS"
+        template[empty_group] = "fix me because this should not work!"
+        return template
+
     def parse_instrument_header_section(self, template: dict) -> dict:
         """Copy data in instrument header section."""
         # check if required fields exists and are valid
@@ -330,6 +368,7 @@ class NxEmNomadOasisElnSchemaParser:
         self.parse_entry_section(template)
         self.parse_user_section(template)
         self.parse_sample_section(template)
+        self.parse_coordinate_system_section(template)
         self.parse_instrument_header_section(template)
         self.parse_ebeam_column_section(template)
         # self.parse_ibeam_column_section(template)
