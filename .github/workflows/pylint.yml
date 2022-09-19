@@ -30,7 +30,7 @@ jobs:
           python -m pylint --load-plugins=pylint_mongoengine,nomad.metainfo.pylint_plugin nexusparser tests
       - name: mypy
         run: |
-          python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional nexusparser tests
+          python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional --exclude='nexusparser/definitions/' tests
       - name: Test with pytest
         if: ${{ always() }}
         run: |
