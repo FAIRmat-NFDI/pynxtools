@@ -22,7 +22,8 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 from nomad.datamodel import EntryArchive
-from nomad.metainfo import MSection, Quantity
+from nomad.metainfo import MSection
+from nomad.metainfo.metainfo_utility import resolve_variadic_name, MQuantity
 from nomad.parsing import MatchingParser
 from nexusparser.tools import nexus as read_nexus
 from nexusparser.metainfo import nexus
@@ -57,10 +58,10 @@ def _to_section(
         Field <-> Quantity
         Attribute <-> SubSection.Attribute or Quantity.Attribute
 
-    If the given nxdl_node is a Group, return the corresponding SubSection.
-    If the given nxdl_node is a Field, return the SubSection contains it.
-    If the given nxdl_node is a Attribute, return the associated SubSection or the
-    SubSection contains the associated Quantity.
+    If the given nxdl_node is a Group, return the corresponding Section.
+    If the given nxdl_node is a Field, return the Section contains it.
+    If the given nxdl_node is an Attribute, return the associated Section or the
+    Section contains the associated Quantity.
     '''
 
     if hdf_name is None:
@@ -108,19 +109,6 @@ def _get_value(hdf_node):
     return val
 
 
-def _retrieve_definition(name: str, section: MSection) -> Quantity:
-    '''
-    Retrieve field definition by its name
-    '''
-    for quantity in section.m_def.all_properties.values():
-        if quantity.name == name or name in quantity.aliases:
-            return quantity
-
-    # this, by given both definition and data, should never happen
-    # if it raises, the data must be wrong
-    raise ValueError(f'Cannot find the given name {name} in the definition.')
-
-
 def _populate_data(
         depth: int, nx_path: list, nx_def: str, hdf_node, val, current: MSection,
         log_str: str, log_lvl: str) -> Tuple[str, str]:
@@ -132,11 +120,12 @@ def _populate_data(
         # it is an attribute of either field or group
         nx_attr = nx_path[depth]
         nx_parent: ET.Element = nx_path[depth - 1]
+
         if isinstance(nx_attr, str):
-            if nx_attr == "units":
-                metainfo_def = _retrieve_definition(nx_parent.get('name'), current)
-                if not metainfo_def.variable:
-                    metainfo_def.dimensionality = val[0]
+            if nx_attr != 'units':
+                # no need to handle units here
+                # as all quantities have flexible units
+                print(nx_attr)
         else:
             # get the name of parent (either field or group)
             # which will be used to set attribute
@@ -147,46 +136,56 @@ def _populate_data(
 
             attr_name = nx_attr.get('name')
             # by default, we assume it is a 1D array
-            attr_value = [value for value in hdf_node.attrs[attr_name]]
-            if len(attr_value) == 1:
-                attr_value = attr_value[0]
+            attr_value = hdf_node.attrs[attr_name]
+            if not isinstance(attr_value, str):
+                attr_value = [value for value in attr_value]
+                if len(attr_value) == 1:
+                    attr_value = attr_value[0]
 
             current = _to_section(attr_name, nx_def, nx_attr, current)
 
             try:
-                current.m_set_attribute(parent_name, attr_name, attr_value)
+                if nx_parent.tag.endswith('group'):
+                    current.m_set_section_attribute(attr_name, attr_value)
+                else:
+                    current.m_set_quantity_attribute(parent_name, attr_name, attr_value)
             except Exception as exc:
                 log_str += f'Problem with storage!!!\n{str(exc)}\n'
                 log_lvl = 'error'
     else:
         # it is a field
         field = _get_value(hdf_node)
-        # if hdf_node[...].dtype.kind in 'iufc' and isinstance(
-        #         field, np.ndarray) and field.size > 1:
-        #     field = np.array([
-        #         np.mean(field), np.var(field), np.min(field), np.max(field)])
+
+        # todo: need to remove
+        if hdf_node[...].dtype.kind in 'iufc' and isinstance(
+                field, np.ndarray) and field.size > 1:
+            field = np.array([
+                np.mean(field), np.var(field), np.min(field), np.max(field)])
 
         # get the corresponding field name
-        metainfo_def = _retrieve_definition(nx_path[-1].get('name'), current)
+        field_name = nx_path[-1].get('name')
+        metainfo_def = resolve_variadic_name(current.m_def.all_properties, field_name)
 
-        if metainfo_def.variable:
-            new_def = metainfo_def.m_copy()
-            new_def.name = hdf_node.name.split('/')[-1]
-        else:
-            new_def = metainfo_def
         # check if unit is given
         unit = hdf_node.attrs.get('units', None)
+
         if unit:
-            if unit == 'counts':
-                new_def.unit = '1'
-            else:
-                new_def.unit = unit
-            field = ureg.Quantity(field, new_def.unit)
+            try:
+                if unit != 'counts':
+                    pint_unit = ureg.parse_units(unit)
+                else:
+                    pint_unit = ureg.parse_units('1')
+                field = ureg.Quantity(field, pint_unit)
+            except ValueError:
+                pass
+
+        if metainfo_def.use_full_storage:
+            field = MQuantity.wrap(field, hdf_node.name.split('/')[-1])
 
         # may need to check if the given unit is in the allowable list
 
         try:
-            current.m_set(new_def, field, new_def.variable)
+            current.m_set(metainfo_def, field)
         except Exception as exc:
             log_str += f'Problem with storage!!!\n{str(exc)}\n'
             log_lvl = 'error'

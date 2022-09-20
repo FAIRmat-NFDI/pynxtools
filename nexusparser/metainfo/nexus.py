@@ -23,7 +23,7 @@ import re
 import os
 import os.path
 import sys
-from typing import Dict, Union, Optional, Tuple
+from typing import Dict, Union, Optional
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
 
@@ -56,14 +56,14 @@ VALIDATE = False
 __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
 __NX_DOC_BASE = 'https://manual.nexusformat.org/classes'
 __NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
-    'NX_COMPLEX': np.dtype(np.float64),
-    'NX_FLOAT': np.dtype(np.float64),
+    'NX_COMPLEX': np.float64,
+    'NX_FLOAT': np.float64,
     'NX_CHAR': str,
     'NX_BOOLEAN': bool,
-    'NX_INT': np.dtype(np.int64),
-    'NX_UINT': np.dtype(np.uint64),
-    'NX_NUMBER': np.dtype(np.number),
-    'NX_POSINT': np.dtype(np.uint64),
+    'NX_INT': np.int64,
+    'NX_UINT': np.uint64,
+    'NX_NUMBER': np.float64,
+    'NX_POSINT': np.uint64,
     'NX_BINARY': Bytes,
     'NX_DATE_TIME': Datetime
 }
@@ -267,13 +267,13 @@ def __add_common_properties(xml_node: ET.Element, definition: Definition):
     if links:
         definition.links = links
 
-    for k, v in xml_attrs.items():
-        if 'deprecated' == k:
-            definition.deprecated = v
+    for key, value in xml_attrs.items():
+        if 'deprecated' == key:
+            definition.deprecated = value
             continue
-        if 'nxdl_base' in k or 'schemaLocation' in k:
+        if 'nxdl_base' in key or 'schemaLocation' in key:
             continue
-        definition.more['nx_' + k] = v
+        definition.more['nx_' + key] = value
 
     if 'optional' not in xml_attrs:
         definition.more['nx_optional'] = __if_base(xml_node)
@@ -295,11 +295,17 @@ def __create_attributes(xml_node: ET.Element, definition: Union[Section, Propert
             nx_shape = []
         else:
             nx_type = __NX_TYPES[attribute.get('type', 'NX_CHAR')]  # type: ignore
-            nx_min_occurs = attribute.get('minOccurs', '0')  # type: ignore
-            nx_max_occurs = attribute.get('maxOccurs', '*')  # type: ignore
-            if nx_max_occurs == 'unbounded':
-                nx_max_occurs = '*'
-            nx_shape = [f'{nx_min_occurs}..{nx_max_occurs}']
+            has_bound = False
+            has_bound |= 'minOccurs' in attribute.attrib
+            has_bound |= 'maxOccurs' in attribute.attrib
+            if has_bound:
+                nx_min_occurs = attribute.get('minOccurs', '0')  # type: ignore
+                nx_max_occurs = attribute.get('maxOccurs', '*')  # type: ignore
+                if nx_max_occurs == 'unbounded':
+                    nx_max_occurs = '*'
+                nx_shape = [f'{nx_min_occurs}..{nx_max_occurs}']
+            else:
+                nx_shape = []
 
         # check if the attribute exist
         # if yes then modify directly
@@ -350,9 +356,11 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     dimensions = xml_node.find('nx:dimensions', __XML_NAMESPACES)
     if dimensions is not None:
         for dimension in dimensions.findall('nx:dim', __XML_NAMESPACES):
-            dimension_value: str = dimension.attrib.get('value', '*')
+            dimension_value: str = dimension.attrib.get('value', '0..*')
             if dimension_value.isdigit():
                 dimension_value: int = int(dimension_value)
+            elif dimension_value == 'n':
+                dimension_value = '0..*'
 
             shape.append(dimension_value)
 
@@ -366,7 +374,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     # create quantity
     if value_quantity is None:
-        value_quantity = Quantity(name=name)
+        value_quantity = Quantity(name=name, flexible_unit=True)
 
     value_quantity.variable = __if_template(name)
 
