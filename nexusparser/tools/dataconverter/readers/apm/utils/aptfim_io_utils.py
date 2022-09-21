@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Set of utility tools for parsing file formats used by atom probe."""
 
+# Also convenience functions are included which translate human-readable ion
+# names into the isotope_vector description proposed by Kuehbach et al. in
+# DOI: 10.1017/S1431927621012241 to the human-readable ion names which are use
+# in P. Felfer et al.'s atom probe toolbox
+
 # -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
@@ -22,13 +27,21 @@
 
 # pylint: disable=E1101
 
+import re
+
+import typing
+
 from typing import Tuple
 
 import mmap
 
 import numpy as np
 
+# import numpy.typing as npt
+
 from ase.data import atomic_numbers
+from ase.data import chemical_symbols
+from ase.data.isotopes import download_isotope_data
 
 # restrict the number distinguished ion types
 MAX_NUMBER_OF_ION_SPECIES = 256
@@ -45,26 +58,28 @@ def rchop(string: str = '', suffix: str = '') -> str:
     return string
 
 
-def hash_isotope(proton_number: np.uint8 = 0,
-                 neutron_number: np.uint8 = 0) -> np.uint16:
+def hash_isotope(proton_number: int = 0,
+                 neutron_number: int = 0) -> int:
     """Encode an isotope to a hashvalue."""
-    assert proton_number >= 0, 'Proton number >= 0 needed!'
-    assert proton_number < 256, 'Proton number < 256 needed!'
-    assert neutron_number >= 0, 'Neutron number >= 0 needed!'
-    assert neutron_number < 256, 'Neutron number < 256 needed!'
-    return np.uint16(proton_number) \
-        + np.uint16(256) * np.uint16(neutron_number)
+    n_protons = np.uint16(proton_number)
+    n_neutrons = np.uint16(neutron_number)
+    assert n_protons >= np.uint16(0), 'Proton number >= 0 needed!'
+    assert n_protons < np.uint16(256), 'Proton number < 256 needed!'
+    assert n_neutrons >= np.uint16(0), 'Neutron number >= 0 needed!'
+    assert n_neutrons < np.uint16(256), 'Neutron number < 256 needed!'
+    return int(n_protons + (np.uint16(256) * n_neutrons))
 
 
-def unhash_isotope(hashval: np.uint16 = 0) -> Tuple[np.uint8]:
+def unhash_isotope(hashval: int = 0) -> Tuple[int, int]:
     """Decode a hashvalue to an isotope."""
     assert isinstance(hashval, int), 'Hashval needs to be integer!'
-    assert hashval >= 0, 'Hashval needs to be an unsigned integer!'
-    assert hashval <= np.iinfo(np.uint16).max, \
+    val = np.uint16(hashval)
+    assert val >= np.uint16(0), 'Hashval needs to be an unsigned integer!'
+    assert val <= np.iinfo(np.uint16).max, \
         'Hashval needs to map on an uint16!'
-    neutron_number = np.uint16(hashval / np.uint16(256))
-    proton_number = np.uint16(hashval - neutron_number * np.uint16(256))
-    return (proton_number, neutron_number)
+    neutron_number = np.uint16(val / np.uint16(256))
+    proton_number = np.uint16(val - neutron_number * np.uint16(256))
+    return (int(proton_number), int(neutron_number))
 
 
 def create_isotope_vector(building_blocks: list) -> np.ndarray:
@@ -103,13 +118,112 @@ def create_isotope_vector(building_blocks: list) -> np.ndarray:
             return np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
 
     assert len(hashvector) <= MAX_NUMBER_OF_ATOMS_PER_ION, \
-        'More than ' + MAX_NUMBER_OF_ATOMS_PER_ION \
+        'More than ' + str(MAX_NUMBER_OF_ATOMS_PER_ION) \
         + ' atoms in the molecular ion!'
 
-    hashvector = np.asarray(hashvector, np.uint16)
-    hashvector = np.sort(hashvector, kind='stable')[::-1]
+    ivec = np.asarray(hashvector, np.uint16)
+    ivec = np.sort(ivec, kind='stable')[::-1]
     retval = np.zeros([1, MAX_NUMBER_OF_ATOMS_PER_ION], np.uint16)
-    retval[0, 0:len(hashvector)] = hashvector
+    retval[0, 0:len(ivec)] = ivec
+    return retval
+
+
+def charge_estimation_heuristics(ivec, mleft, mright) -> np.int32:
+    """Estimate molecular ion charge based on isotopes and associated range."""
+    # estimate the charge of a molecular ion given its range
+    # assume molecular ion mass is additive based on individual isotope mass
+    # assume mass-to-charge-state-ratio interval [mleft, mright] is reasonably
+    # centered to make an integer estimation
+
+    # the below code is too simplistic because in general a molecular ion
+    # is the following 1d array
+    # (a_i)^El_i, a_i is a positive integer for an isotope, El an element
+    # 2* \sum_i=0^i=j (a_i)^El_i ) / delta_mass \approximately an int \in [1, 7]
+    # with j number of isotopes/atoms in the molecular ion
+    # the problem is that this is underconstraint equation for j > 1
+    # so especially for atoms with different isotope combinations and hydrogen
+    # or small Z element isotopes added there is uncertainty and missing clarity
+
+    # a test case
+    # ivec = np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
+    # ivec[0] = hash_isotope(75, 185-75)
+    # ivec[1] = hash_isotope(75, 187-75)
+    # ivec[2] = hash_isotope(1, 3-1)
+    # mleft = 186.2510
+    # mright = 186.6570
+    # sign = 'positive'
+
+    isotopes = download_isotope_data()
+    accumulated_mass = 0.
+    for hashvalue in ivec:
+        if hashvalue != 0:
+            protons, neutrons = unhash_isotope(int(hashvalue))
+            # get the mass of this isotope
+            # print('Isotope ' + str(protons) + ', ' + str(neutrons))
+            # print('Mass ' + str(isotopes[int(protons)][int(protons + neutrons)]['mass']))
+            accumulated_mass += isotopes[int(protons)][int(protons + neutrons)]['mass']
+        else:
+            break  # ivec is always sorted in descending order
+    # print('accumulated mass ' + str(accumulated_mass))
+    charge = np.int32(round(2. * accumulated_mass / (mleft + mright)))
+    assert (charge >= 1) & (charge <= 7), \
+        'charge estimated out of reasonable bounds!'
+    return charge
+
+
+def ascii_to_paraprobe_iontype(building_blocks: list) -> np.ndarray:
+    """Create a formatted isotope hashvalue list for paraprobe."""
+    # equivalent to translating iontype names from felfer 2 paraprobe notation
+    assert isinstance(building_blocks, list), \
+        'Building blocks needs to be a list !'
+
+    if building_blocks == []:  # special case unknown ion type
+        return np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
+
+    hashvector = []
+    for block in building_blocks:
+        assert isinstance(block, str), \
+            'block needs to be a string !'
+        # check if the given string represents at all an element
+        tmp = re.findall(r"([A-Z]{1})([a-z]{1})?", block)
+        assert tmp != [], \
+            'block does not seem to specify a string representing an element !'
+        element_name = tmp[0][0] + tmp[0][1]
+        # check if a preceeding isotope number is present
+        tmp = re.findall(r"^(\d+)", block)
+        if tmp == []:
+            mass_number = int(0)
+        else:
+            mass_number = int(tmp[0])
+        # check for eventual preceeding multiplier e.g. H2 meaning two H atoms
+        tmp = re.findall(r"(\d+)$", block)
+        if tmp == []:
+            multiplier = 1
+        else:
+            multiplier = int(tmp[0])
+
+        if element_name in atomic_numbers.keys():
+            proton_number = atomic_numbers[element_name]
+            if mass_number == 0:
+                neutron_number = 0
+            else:
+                neutron_number = mass_number - proton_number
+            for _ in np.arange(0, multiplier):
+                hashvector.append(hash_isotope(proton_number, neutron_number))
+        else:
+            print('WARNING: Block does not specify a unique element name !')
+            print('WARNING: Importing user-defined iontypes not supported !')
+            # special case user_defined_type
+            return np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
+
+    assert len(hashvector) <= MAX_NUMBER_OF_ATOMS_PER_ION, \
+        'More than ' + str(MAX_NUMBER_OF_ATOMS_PER_ION) \
+        + ' atoms in the molecular ion is currently not supported !'
+
+    ivec = np.asarray(hashvector, np.uint16)
+    ivec = np.sort(ivec, kind='stable')[::-1]
+    retval = np.zeros([1, MAX_NUMBER_OF_ATOMS_PER_ION], np.uint16)
+    retval[0, 0:len(ivec)] = ivec
     return retval
 
 
@@ -122,7 +236,7 @@ def isotope_vector_to_dict_keyword(uint16_array: np.ndarray) -> str:
     return ','.join(lst)
 
 
-def significant_overlap(interval: np.float64,
+def significant_overlap(interval: np.ndarray,
                         interval_set: np.float64) -> bool:
     """Check if interval overlaps within with members of interval set."""
     assert np.shape(interval) == (2,), 'Interval needs to have two columns!'
@@ -152,8 +266,9 @@ def significant_range(left: np.float64, right: np.float64) -> bool:
     return False
 
 
+@typing.no_type_check
 def get_memory_mapped_data(filename: str, data_type: str, oset: int,
-                           strd: int, shp: int) -> np.ndarray:
+                           strd: int, shp: int):
     """Memory-maps file plus offset strided read of typed data."""
     # https://stackoverflow.com/questions/60493766/ \
     #       read-binary-flatfile-and-skip-bytes for I/O access details
@@ -167,7 +282,7 @@ def get_memory_mapped_data(filename: str, data_type: str, oset: int,
 class NxField():
     """Representative of a NeXus field."""
 
-    def __init__(self, value: str = None, unit: str = None):
+    def __init__(self, value=None, unit: str = None):
         self.parent = None
         self.isa = None  # ontology reference concept ID e.g.
         self.value = value
@@ -186,10 +301,38 @@ class NxField():
 class NxIon():
     """Representative of a NeXus base class NXion."""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.ion_type = NxField('', '')
-        self.isotope_vector = NxField(np.empty(0, np.uint16), '')
-        self.charge_state = NxField(np.int32(0), '')
+        self.isotope_vector = NxField(ascii_to_paraprobe_iontype([]), '')
+        if len(args) >= 1:
+            assert isinstance(args[0], list), 'args[0] needs to be a list !'
+            self.isotope_vector \
+                = NxField(ascii_to_paraprobe_iontype(args[0]), '')
+        elif 'isotope_vector' in kwargs.keys():
+            assert isinstance(kwargs['isotope_vector'], np.ndarray), \
+                'kwargs isotope_vector needs to be an np.ndarray !'
+            assert len(kwargs['isotope_vector']) \
+                == MAX_NUMBER_OF_ATOMS_PER_ION, \
+                'kwargs isotope_vector needs to have ' \
+                + str(MAX_NUMBER_OF_ATOMS_PER_ION) + ' entries !'
+            self.isotope_vector \
+                = NxField(np.asarray(kwargs['isotope_vector'], np.uint16), '')
+        # else:
+        #     assert True is False, \
+        #        'Give either a list of isotopes, \
+        #        or an isotope vector as a keyword argument !'
+        self.charge_state = NxField(np.int32(0), 'eV')
+        # if len(args) == 2:
+        #     assert isinstance(args[1], int), 'args[1] needs to be an integer !'
+        #    self.charge_state = NxField(np.int32(args[1], 'eV'))
+        if 'charge_state' in kwargs.keys():
+            assert isinstance(kwargs['charge_state'], int), \
+                'kwargs charge_state needs to be an int !'
+            assert kwargs['charge_state'] > -8, \
+                'kwargs charge_state needs to be at least -7 !'
+            assert kwargs['charge_state'] < +8, \
+                'kwargs charge_state needs to be at most +7 !'
+            self.charge_state = NxField(np.int32(kwargs['charge_state']), 'eV')
         self.name = NxField('', '')
         self.ranges = NxField(np.empty((0, 2), np.float64), 'amu')
 
@@ -205,11 +348,24 @@ class NxIon():
 
     def get_human_readable_name(self):
         """Get human-readable name from isotop_vector."""
+        # equivalent to paraprobe 2 felfer notation
         # NEW ISSUE: how to display the isotope_vector in LaTeX notation?
-        return self.name.value
-
-
-# a = NxIon()
-# a.add_range(1., 2.)
-# a.add_range(2.2, 3.)
-# a.add_range(0.1, 0.99)
+        human_readable = ''
+        for hash_value in self.isotope_vector.value:
+            if hash_value > 0:
+                protons, neutrons = unhash_isotope(int(hash_value))
+                if neutrons > 0:
+                    human_readable += str(protons + neutrons) \
+                        + chemical_symbols[protons]
+                else:
+                    human_readable += chemical_symbols[protons]
+                human_readable += ' '
+            else:
+                break
+        if self.charge_state.value > 0:
+            human_readable += '+' * self.charge_state.value
+        elif self.charge_state.value < 0:
+            human_readable += '-' * (-1 * self.charge_state.value)
+        else:
+            human_readable = human_readable[0:-1]
+        return human_readable

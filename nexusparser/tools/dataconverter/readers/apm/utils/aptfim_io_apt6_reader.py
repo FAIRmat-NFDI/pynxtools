@@ -57,10 +57,10 @@ class ReadAptFileFormat():
         print('Reading ' + self.filename + ' which is ' + str(self.filesize) + ' bytes')
 
         self.header_section = None
-        self.byte_offsets = {}
-        self.available_sections = {}
+        self.byte_offsets: dict = {}
+        self.available_sections: dict = {}
         # where do sections start bytes from beginning of the file?
-        self.apt = {}
+        self.apt: dict = {}
 
         self.parse_file_structure()
 
@@ -119,21 +119,33 @@ class ReadAptFileFormat():
                 keyword = np_uint16_to_string(
                     found_section['wcSectionType'][0])
 
+                print(keyword)
+                print(found_section)
                 assert keyword not in self.available_sections.keys(), \
                     'Found a duplicate of an already parsed section! Please \
                     contact the development team as we have never encountered \
                     an example of such a section duplication and here seems \
                     to be an example to inspect the matter.'
-                assert keyword in EXPECTED_SECTIONS.keys(), \
-                    'Found an unknown section, seems like an unknown/new \
-                    branch! Please contact the development team to enable us \
-                    to contact AMETEK and discuss the situation.'
 
-                metadata_section = EXPECTED_SECTIONS[keyword]
-                assert metadata_section.matches(found_section), \
-                    'Found an uninterpretable section! Please contact the \
-                    development team to help us fixing this.'
-                self.available_sections[keyword] = metadata_section
+                if keyword not in ['Delta Pulse', 'Epos ToF']:
+                    assert keyword in EXPECTED_SECTIONS.keys(), \
+                        'Found an unknown section, seems like an unknown/new \
+                        branch! Please contact the development team to enable us \
+                        to contact AMETEK and discuss the situation.'
+
+                    metadata_section = EXPECTED_SECTIONS[keyword]
+                    if metadata_section.matches(found_section) is True:
+                        # assert metadata_section.matches(found_section), \
+                        #     'Found an uninterpretable section! Please contact the \
+                        #     development team to help us fixing this.'
+                        self.available_sections[keyword] = metadata_section
+                else:
+                    print('WARNING:: Found an uninterpretable section!')
+                    print('WARNING:: This section was not be registered!')
+                    print('WARNING:: Please contact the development team!')
+                    print('WARNING::     to help us improving this!')
+                    print('WARNING:: Try to continue parsing though...!')
+                    print('llByteCount ' + str(found_section['llByteCount'][0]))
 
                 self.byte_offsets[keyword] = np.uint64(file_handle.tell())
                 if keyword == 'Position':
@@ -206,7 +218,7 @@ class ReadAptFileFormat():
 
             dtype = self.available_sections[keyword].get_ametek_type()
             offset = byte_position_start
-            stride = np.uint64(
+            stride = int(
                 self.available_sections[keyword].meta['i_data_type_size'] / 8)
             count = self.available_sections[keyword].get_ametek_count()
 

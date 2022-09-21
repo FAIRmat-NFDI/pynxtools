@@ -15,6 +15,15 @@ class NxdlAttributeError(Exception):
     """An exception for throwing an error when an Nxdl attribute is not found."""
 
 
+def get_app_defs_names():
+    """Returns all the AppDef names without their extension: .nxdl.xml"""
+    app_def_path_glob = f"{get_nexus_definitions_path()}{os.sep}applications{os.sep}*.nxdl*"
+    contrib_def_path_glob = (f"{get_nexus_definitions_path()}{os.sep}"
+                             f"contributed_definitions{os.sep}*.nxdl*")
+    files = glob(app_def_path_glob) + glob(contrib_def_path_glob)
+    return [os.path.basename(file).split(".")[0] for file in files]
+
+
 def get_nexus_definitions_path():
     """Check NEXUS_DEF_PATH variable.
 If it is empty, this function is filling it"""
@@ -104,7 +113,7 @@ If its category attribute is 'base', then it is added to the list. """
         tree = ET.parse(nexus_file)
         root = tree.getroot()
         if root.attrib['category'] == 'base':
-            nx_clss.append(str(nexus_file[nexus_file.rindex('/') + 1:])[:-9])
+            nx_clss.append(str(nexus_file[nexus_file.rindex(os.sep) + 1:])[:-9])
     nx_clss = sorted(nx_clss)
     return nx_clss
 
@@ -289,6 +298,19 @@ def get_own_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_ty
     return None
 
 
+def find_definition_file(bc_name):
+    """find the nxdl file corresponding to the name.
+    Note that it first checks in contributed and goes beyond only if no contributed found"""
+    bc_filename = None
+    for nxdl_folder in ['contributed_definitions', 'base_classes', 'applications']:
+        if os.path.exists(f"{get_nexus_definitions_path()}{os.sep}"
+                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
+            bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
+                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"
+            break
+    return bc_filename
+
+
 def get_nxdl_child(nxdl_elem, name, class_type=None, hdf_name=None, nexus_type=None, go_base=True):  # pylint: disable=too-many-arguments
     """Get the NXDL child node corresponding to a specific name
 (e.g. of an HDF5 node,or of a documentation) note that if child is not found in application
@@ -305,11 +327,7 @@ definition, it also checks for the base classes"""
         return None
     if bc_name == "group":  # Check if it is the root element. Then send to NXroot.nxdl.xml
         bc_name = "NXroot"
-    for nxdl_folder in ['base_classes', 'contributed_definitions', 'applications']:
-        if os.path.exists(f"{get_nexus_definitions_path()}{os.sep}"
-                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
-            bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
-                          f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"
+    bc_filename = find_definition_file(bc_name)
     if not bc_filename:
         raise ValueError('nxdl file not found in definitions folder!')
     bc_obj = ET.parse(bc_filename).getroot()
@@ -637,16 +655,15 @@ def add_base_classes(elist, nx_name=None, elem: ET.Element = None):
 elist is empty, a nxdl file with the name of nx_name or a rather room elem is used if provided"""
     if elist and nx_name is None:
         nx_name = get_nx_class(elist[-1])
-    if elist and nx_name and f"{nx_name}.nxdl.xml" in (e.get('nxdlbase') for e in elist):
-        return
+    # to support recursive defintions, like NXsample in NXsample, the following test is removed
+    # if elist and nx_name and f"{nx_name}.nxdl.xml" in (e.get('nxdlbase') for e in elist):
+    #     return
     if elem is None:
         if not nx_name:
             return
-        nxdl_file_path = f"{nx_name}.nxdl.xml"
-        for root, dirs, files in os.walk(get_nexus_definitions_path()):  # pylint: disable=unused-variable
-            if nxdl_file_path in files:
-                nxdl_file_path = os.path.join(root, nxdl_file_path)
-                break
+        nxdl_file_path = find_definition_file(nx_name)
+        if nxdl_file_path is None:
+            nxdl_file_path = f"{nx_name}.nxdl.xml"
         elem = ET.parse(nxdl_file_path).getroot()
         elem.set('nxdlbase', nxdl_file_path)
     else:
@@ -802,7 +819,11 @@ TODO:
                       get_nx_class_path(hdf_node), hdf_node))
     (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser([hdf_info, nxdef, nxdl_path, val, logger])
+        parser({"hdf_info": hdf_info,
+                "nxdef": nxdef,
+                "nxdl_path": nxdl_path,
+                "val": val,
+                "logger": logger})
     for key, value in hdf_node.attrs.items():
         logger.debug('===== ATTRS (/%s@%s)' % (hdf_path, key))
         val = str(value).split('\n')
@@ -810,7 +831,11 @@ TODO:
         (req_str, nxdef, nxdl_path) = \
             get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
-            parser([hdf_info, nxdef, nxdl_path, val, logger], attr=key)
+            parser({"hdf_info": hdf_info,
+                    "nxdef": nxdef,
+                    "nxdl_path": nxdl_path,
+                    "val": val,
+                    "logger": logger}, attr=key)
 
 
 def logger_auxiliary_signal(logger, nxdata):
@@ -1028,11 +1053,16 @@ class HandleNexus:
         self.in_file.close()
 
 
+def main():
+    """The main function to call when used as a script."""
+    logging_format = "%(levelname)s: %(message)s"
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setLevel(logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format=logging_format, handlers=[stdout_handler])
+    logger = logging.getLogger()
+    nexus_helper = HandleNexus(logger, sys.argv[1:])
+    nexus_helper.process_nexus_master_file(None)
+
+
 if __name__ == '__main__':
-    LOGGING_FORMAT = "%(levelname)s: %(message)s"
-    STDOUT_HANDLER = logging.StreamHandler(sys.stdout)
-    STDOUT_HANDLER.setLevel(logging.DEBUG)
-    logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT, handlers=[STDOUT_HANDLER])
-    LOGGER = logging.getLogger()
-    NEXUS_HELPER = HandleNexus(LOGGER, sys.argv[1:])
-    NEXUS_HELPER.process_nexus_master_file(None)
+    main()

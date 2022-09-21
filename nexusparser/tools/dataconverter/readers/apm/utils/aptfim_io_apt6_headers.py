@@ -24,9 +24,8 @@
 
 import numpy as np
 
-# from readers.nx_apm_utils.aptfim_io_apt6_utils import np_uint16_to_string
 from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_utils \
-    import string_to_typed_nparray
+    import string_to_typed_nparray  # , np_uint16_to_string
 
 
 class AptFileHeaderMetadata():

@@ -56,10 +56,6 @@ def get_all_readers() -> List[BaseReader]:
             readers.append(pytest.param(reader,
                                         marks=pytest.mark.skip(reason="Missing test data.")
                                         ))
-        elif reader.__name__ == "MPESReader":
-            readers.append(pytest.param(reader,
-                                        marks=pytest.mark.skip(reason="Missing base classes.")
-                                        ))
         else:
             readers.append(reader)
 

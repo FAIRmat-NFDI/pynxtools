@@ -46,8 +46,6 @@ class ReadPosFileFormat():
             'POS file is too large, currently only 2*32 supported!'
         self.number_of_events = np.uint32(self.filesize / (4 * 4))
 
-        self.pos = {}
-
         # https://doi.org/10.1007/978-1-4614-3436-8 for file format details
         # dtyp_names = ['Reconstructed position along the x-axis (nm)',
         #               'Reconstructed position along the y-axis (nm)',
@@ -56,7 +54,6 @@ class ReadPosFileFormat():
 
     def get_reconstructed_positions(self):  # pylint: disable=R0801
         """Read xyz columns."""  # pylint: disable=R0801
-        # self.pos['reconstructed_positions'] = NxField()
         xyz = NxField()  # pylint: disable=R0801
         xyz.value = np.zeros([self.number_of_events, 3], np.float32)  # pylint: disable=R0801
         xyz.unit = 'nm'  # pylint: disable=R0801
@@ -74,7 +71,6 @@ class ReadPosFileFormat():
 
     def get_mass_to_charge(self):  # pylint: disable=R0801
         """Read mass-to-charge column."""  # pylint: disable=R0801
-        # self.pos['mass_to_charge_state_ratios'] = NxField()
         m_n = NxField()  # pylint: disable=R0801
         m_n.value = np.zeros([self.number_of_events, 1], np.float32)  # pylint: disable=R0801
         m_n.unit = 'Da'  # pylint: disable=R0801

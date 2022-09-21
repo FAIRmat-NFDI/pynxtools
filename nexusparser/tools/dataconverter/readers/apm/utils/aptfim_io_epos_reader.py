@@ -46,8 +46,6 @@ class ReadEposFileFormat():
             'ePOS file is too large, currently only 2*32 supported!'
         self.number_of_events = np.uint32(self.filesize / (11 * 4))
 
-        self.epos = {}
-
         # https://doi.org/10.1007/978-1-4614-3436-8 for file format details
         # dtyp_names = ['Reconstructed position along the x-axis (nm)',
         #               'Reconstructed position along the y-axis (nm)',
@@ -65,7 +63,6 @@ class ReadEposFileFormat():
 
     def get_reconstructed_positions(self):  # pylint: disable=R0801
         """Read xyz columns."""  # pylint: disable=R0801
-        # self.epos['reconstructed_positions'] = NxField()
         xyz = NxField()  # pylint: disable=R0801
         xyz.value = np.zeros([self.number_of_events, 3], np.float32)  # pylint: disable=R0801
         xyz.unit = 'nm'  # pylint: disable=R0801

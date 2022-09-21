@@ -225,8 +225,9 @@ class Nxdl2yaml():
                 self.root_level_doc = '{indent}{tag}: | {text}\n'.format(
                     indent=0 * '  ',
                     tag=helpers.remove_namespace_from_tag(child.tag),
-                    text='\n'.join([f"{1 * '  '}{s.lstrip()}"
-                                    for s in child.text.split('\n')[:-1]] if child.text else ''))
+                    text='\n' + '  ' + '\n'.join([f"{1 * '  '}{s.lstrip()}"
+                                                  for s in child.text.split('\n')]
+                                                 if child.text else '').strip())
                 node.remove(child)
 
     def print_root_level_doc(self, file_out):

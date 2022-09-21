@@ -17,11 +17,11 @@
 #
 """An example reader implementation for the DataConverter."""
 import os
-from typing import Tuple
-import pyaml as yaml
+from typing import Tuple, Any
+import yaml
 import pandas as pd
 import numpy as np
-import h5py
+# import h5py
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
@@ -39,16 +39,24 @@ def load_header(filename, default):
             a dict containing the loaded information
     """
     with open(filename, 'rt', encoding='utf8') as file:
-        header = yaml.yaml.safe_load(file)
+        header = yaml.safe_load(file)
 
-    for attr in header:
-        if "@" in attr:
-            header[attr.replace("\\@", "@")] = header.pop(attr)
+    clean_header = {}
+    for key, val in header.items():
+        if "\\@" in key:
+            clean_header[key.replace("\\@", "@")] = val
+        elif key == 'sep':
+            clean_header[key] = val.encode("utf-8").decode("unicode_escape")
+        elif isinstance(val, dict):
+            clean_header[key] = val.get('value')
+            clean_header[f'{key}/@units'] = val.get('unit')
+        else:
+            clean_header[key] = val
 
     for key, value in default.items():
-        if key not in header:
-            header[key] = value
-    return header
+        if key not in clean_header:
+            clean_header[key] = value
+    return clean_header
 
 
 def load_as_pandas_array(my_file, header):
@@ -103,6 +111,10 @@ def populate_header_dict(file_paths):
                 raise KeyError("filename is missing from", file_path)
             data_file = os.path.join(os.path.split(file_path)[0], header["filename"])
 
+            # if the path is not right, try the path provided directly
+            if not os.path.isfile(data_file):
+                data_file = header["filename"]
+
     return header, data_file
 
 
@@ -137,7 +149,8 @@ two parts of the key in the application definition.
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXellipsometry"]
 
-    def populate_header_dict_with_datasets(self, file_paths):
+    @staticmethod
+    def populate_header_dict_with_datasets(file_paths):
         """This is an ellipsometry-specific processing of data.
 
     The procedure is the following:
@@ -155,6 +168,7 @@ two parts of the key in the application definition.
         if os.path.isfile(data_file):
             whole_data = load_as_pandas_array(data_file, header)
         else:
+            # this we have tried, we should throw an error...
             whole_data = load_as_pandas_array(header["filename"], header)
 
         # User defined variables to produce slices of the whole data set
@@ -173,64 +187,73 @@ two parts of the key in the application definition.
             block_idx.append(index)
 
         # array that will be allocated in a HDF5 file
-        my_numpy_array = np.empty([counts[0],
-                                   len(['psi', 'delta']),
-                                   len(unique_angles),
+        # counts[0] = N_wavelents*N_time*N_p1
+        my_numpy_array = np.empty([1,
                                    1,
-                                   1
+                                   len(unique_angles),
+                                   len(['psi', 'delta']),
+                                   counts[0]
                                    ])
 
         for index, unique_angle in enumerate(unique_angles):
-            my_numpy_array[:,
-                           :,
-                           index,
+            my_numpy_array[0,
                            0,
-                           0] = unique_angle
+                           index,
+                           :,
+                           :] = unique_angle
 
         for index in range(len(labels["psi"])):
-            my_numpy_array[:,
+            my_numpy_array[0,
                            0,
                            index,
                            0,
-                           0] = whole_data["psi"].to_numpy()[block_idx[index]:block_idx[index + 1]
+                           :] = whole_data["psi"].to_numpy()[block_idx[index]:block_idx[index + 1]
                                                              ].astype("float64")
 
         for index in range(len(labels["delta"])):
-            my_numpy_array[:,
-                           1,
-                           index,
+            my_numpy_array[0,
                            0,
-                           0] = whole_data["delta"].to_numpy()[block_idx[index]:block_idx[index + 1]
+                           index,
+                           1,
+                           :] = whole_data["delta"].to_numpy()[block_idx[index]:block_idx[index + 1]
                                                                ].astype("float64")
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
-        header["wavelength"] = whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
+        header["spectrometer/wavelength"] = (
+            whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
+        )
         header["angle_of_incidence"] = unique_angles
         return header, labels["psi"], labels["delta"]
 
-    def read(self, template: dict = None, file_paths: Tuple[str] = None) -> dict:  # pylint: disable=W0221
-        """Reads data from given file and returns a filled template dictionary.
+    def read(self,
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None) -> dict:
+        """ Reads data from given file and returns a filled template dictionary.
 
-A handlings of virtual datasets is implemented:
+            A handlings of virtual datasets is implemented:
 
-virtual dataset are created inside the final NeXus file.
+            virtual dataset are created inside the final NeXus file.
 
-The template entry is filled with a dictionary containing the following keys:
-- link: the path of the external data file and the path of desired dataset inside it
-- shape: numpy array slice object (according to array slice notation)
-"""
+            The template entry is filled with a dictionary containing the following keys:
+            - link: the path of the external data file and the path of desired dataset inside it
+            - shape: numpy array slice object (according to array slice notation)
+        """
+
         if not file_paths:
             raise Exception("No input files were given to Ellipsometry Reader.")
 
         # The header dictionary is filled with entries.
-        header, psilist, deltalist = self.populate_header_dict_with_datasets(file_paths)
+        header, psilist, deltalist = (
+            EllipsometryReader.populate_header_dict_with_datasets(file_paths)
+        )
 
         # The template dictionary is filled
         template = populate_template_dict(header, template)
 
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
-                                                     "/entry/sample/wavelength"
+                                                     "/entry/instrument/spectrometer/wavelength"
                                                      }
         template["/ENTRY[entry]/plot/wavelength/@units"] = "angstrom"
 
@@ -238,7 +261,7 @@ The template entry is filled with a dictionary containing the following keys:
             template[f"/ENTRY[entry]/plot/{psi}"] = {"link":
                                                      "/entry/sample/measured_data",
                                                      "shape":
-                                                     np.index_exp[:, 0, index, 0, 0]
+                                                     np.index_exp[0, 0, index, 0, :]
                                                      }
             template[f"/ENTRY[entry]/plot/{psi}/@units"] = "degrees"
 
@@ -246,7 +269,7 @@ The template entry is filled with a dictionary containing the following keys:
             template[f"/ENTRY[entry]/plot/{delta}"] = {"link":
                                                        "/entry/sample/measured_data",
                                                        "shape":
-                                                       np.index_exp[:, 1, index, 0, 0]
+                                                       np.index_exp[0, 0, index, 1, :]
                                                        }
             template[f"/ENTRY[entry]/plot/{delta}/@units"] = "degrees"
 

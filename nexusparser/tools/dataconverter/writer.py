@@ -81,6 +81,27 @@ If multiple datasets are provided, the function returns two lists"""
     return file, path
 
 
+def handle_shape_entries(data, file, path):
+    """slice generation via the key shape"""
+    new_shape = []
+    for dim, val in enumerate(data['shape']):
+        if isinstance(val, slice):
+            start = val.start if val.start is not None else 0
+            stop = val.stop if val.stop is not None else h5py.File(file, 'r')[path].shape[dim]
+            step = val.step if val.step is not None else 1
+            new_shape.append(int((stop - start) / step))
+    if not new_shape:
+        new_shape = [1]
+    layout = h5py.VirtualLayout(shape=tuple(new_shape),
+                                dtype=np.float64)
+    vsource = h5py.VirtualSource(file,
+                                 path,
+                                 shape=h5py.File(file, 'r')[path].shape
+                                 )[data['shape']]
+    layout[:] = vsource
+    return layout
+
+
 def handle_dicts_entries(data, grp, entry_name, output_path):
     """Handle function for dictionaries found as value of the nexus file.
 
@@ -95,22 +116,7 @@ Several cases can be encoutered:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
     if 'shape' in data.keys():
-        new_shape = []
-        for dim, val in enumerate(data['shape']):
-            if isinstance(val, slice):
-                start = val.start if val.start is not None else 0
-                stop = val.stop if val.stop is not None else h5py.File(file, 'r')[path].shape[dim]
-                step = val.step if val.step is not None else 1
-                new_shape.append(int((stop - start) / step))
-        if not new_shape:
-            new_shape = [1]
-        layout = h5py.VirtualLayout(shape=tuple(new_shape),
-                                    dtype=np.float64)
-        vsource = h5py.VirtualSource(file,
-                                     path,
-                                     shape=h5py.File(file, 'r')[path].shape
-                                     )[data['shape']]
-        layout[:] = vsource
+        layout = handle_shape_entries(data, file, path)
         grp.create_virtual_dataset(entry_name, layout)
     # multiple datasets to concatenate
     elif 'link' in data.keys() and isinstance(data['link'], list):
@@ -216,7 +222,10 @@ class Writer:
                     continue
 
                 entry_name = helpers.get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-                data = value if is_not_data_empty(value) else "NOT_PROVIDED"
+                if is_not_data_empty(value):
+                    data = value
+                else:
+                    continue
 
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
@@ -231,7 +240,7 @@ class Writer:
                     if units_key in self.data.keys() and self.data[units_key] is not None:
                         dataset.attrs["units"] = self.data[units_key]
                     else:
-                        dataset.attrs["units"] = "NOT_PROVIDED"
+                        continue
                 else:
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data
