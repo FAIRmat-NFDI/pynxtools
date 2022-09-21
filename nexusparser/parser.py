@@ -235,17 +235,16 @@ class NexusParser(MatchingParser):
         self.archive: Optional[EntryArchive] = None
         self.nx_root = None
 
-    def __nexus_populate(self, params, attr=None):
+    def __nexus_populate(self, params: dict, attr=None):
         '''
         Walks through name_list and generate nxdl nodes
         (hdf_info, nx_def, nx_path, val, logger) = params
         '''
 
-        hdf_info: dict
-        nx_def: str
-        nx_path: list
-
-        (hdf_info, nx_def, nx_path, val, logger) = params
+        hdf_info: dict = params['hdf_info']
+        nx_def: str = params['nxdef']
+        nx_path: list = params['nxdl_path']
+        logger = params['logger']
 
         hdf_path: str = hdf_info['hdf_path']
         hdf_node = hdf_info['hdf_node']
@@ -257,7 +256,7 @@ class NexusParser(MatchingParser):
             log_str += 'NOT IN SCHEMA - skipped\n'
             log_lvl = 'warning'
         else:
-            log_str = _add_log(nx_def, nx_path, val, log_str)
+            log_str = _add_log(nx_def, nx_path, params['val'], log_str)
 
             current: MSection = _to_section(None, nx_def, None, self.nx_root)
             depth: int = 1
@@ -267,7 +266,7 @@ class NexusParser(MatchingParser):
                 depth += 1
 
             log_str, log_lvl = _populate_data(
-                depth, nx_path, nx_def, hdf_node, val, current, log_str, log_lvl)
+                depth, nx_path, nx_def, hdf_node, params['val'], current, log_str, log_lvl)
 
         if log_lvl == 'info':
             logger.info('Parsing', nexusparser=log_str)
