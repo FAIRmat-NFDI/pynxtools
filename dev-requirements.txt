@@ -8,7 +8,7 @@ asciitree==0.3.3
     # via zarr
 ase==3.19.0
     # via nexusparser (pyproject.toml)
-astroid==2.12.10
+astroid==2.5.1
     # via
     #   nexusparser (pyproject.toml)
     #   pylint
@@ -319,7 +319,6 @@ typed-ast==1.4.2
     # via nexusparser (pyproject.toml)
 typing-extensions==4.3.0
     # via
-    #   astroid
     #   mypy
     #   numcodecs
 urllib3==1.26.12
@@ -328,7 +327,7 @@ wcwidth==0.2.5
     # via
     #   prettytable
     #   prompt-toolkit
-wrapt==1.14.1
+wrapt==1.12.1
     # via astroid
 xarray==2022.6.0
     # via nexusparser (pyproject.toml)
