@@ -24,10 +24,11 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 
-from nexusparser.parser import NexusParser  # noqa: E402
-from nexusparser.tools import nexus  # noqa: E402
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg
+
+from nexusparser.parser import NexusParser  # noqa: E402
+from nexusparser.tools import nexus  # noqa: E402
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
@@ -52,11 +53,11 @@ def test_nexus(tmp_path):
     nexus_helper = nexus.HandleNexus(logger, [example_data])
     nexus_helper.process_nexus_master_file(None)
 
-    with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
-        log = logfile.readlines()
-    with open(os.path.join(local_dir, 'data/nexus_test_data/Ref_nexus_test.log'),
-              'r') as reffile:
-        ref = reffile.readlines()
+    # with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
+    #     log = logfile.readlines()
+    # with open(os.path.join(local_dir, 'data/nexus_test_data/Ref_nexus_test.log'),
+    #           'r') as reffile:
+    #     ref = reffile.readlines()
 
     # assert log == ref
 

@@ -30,11 +30,13 @@ from typing import Dict, Optional, Union
 import numpy as np
 from toposort import toposort_flatten
 
-from nexusparser.tools import nexus
 from nomad.datamodel import EntryArchive
-from nomad.metainfo import Attribute, Bytes, Datetime, Definition, MEnum, Package, \
-    Property, Quantity, Section, SubSection  # pylint: disable=E0611
+from nomad.metainfo import Attribute  # pylint: disable=E0611
+from nomad.metainfo import Bytes, Datetime, Definition, MEnum, Package, \
+    Property, Quantity, Section, SubSection
 from nomad.utils import strip
+
+from nexusparser.tools import nexus
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -571,7 +573,7 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
     return package
 
 
-nexus_metainfo_package: Optional[Package] = None  # pylint: disable=invalid-name
+nexus_metainfo_package: Optional[Package] = None  # pylint: disable=C0103
 
 
 def init_nexus_metainfo():

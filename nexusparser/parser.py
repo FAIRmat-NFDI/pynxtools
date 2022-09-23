@@ -25,13 +25,15 @@ from typing import Optional, Tuple
 
 import numpy as np
 
-from nexusparser.metainfo import nexus
-from nexusparser.tools import nexus as read_nexus
 from nomad.datamodel import EntryArchive
 from nomad.metainfo import MSection
-from nomad.metainfo.metainfo_utility import MQuantity, resolve_variadic_name
+from nomad.metainfo.metainfo_utility import MQuantity, \
+    resolve_variadic_name  # pylint: disable=E0611,E0401
 from nomad.parsing import MatchingParser
 from nomad.units import ureg
+
+from nexusparser.metainfo import nexus
+from nexusparser.tools import nexus as read_nexus
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -113,8 +115,15 @@ def _get_value(hdf_node):
     return val
 
 
-def _populate_data(depth: int, nx_path: list, nx_def: str, hdf_node, current: MSection, log_str: str, log_lvl: str) -> \
-        Tuple[str, str]:  # pylint: disable=R0912, R0913, R0914
+def _populate_data(
+        depth: int,
+        nx_path: list,
+        nx_def: str,
+        hdf_node,
+        current: MSection,
+        log_str: str,
+        log_lvl: str
+) -> Tuple[str, str]:  # pylint: disable=R0912, R0913, R0914
     '''
     Populate attributes and fields
     '''
@@ -272,7 +281,8 @@ class NexusParser(MatchingParser):
                 current = _to_section(name, nx_def, nx_node, current)
                 depth += 1
 
-            log_str, log_lvl = _populate_data(depth, nx_path, nx_def, hdf_node, current, log_str, log_lvl)
+            log_str, log_lvl = _populate_data(
+                depth, nx_path, nx_def, hdf_node, current, log_str, log_lvl)
 
         if log_lvl == 'info':
             logger.info('Parsing', nexusparser=log_str)
