@@ -17,5 +17,9 @@
 # limitations under the License.
 #
 
+'''
+The NOMAD NeXus package.
+'''
+
 from .nexus import nexus_metainfo_package
 from .nexus import init_nexus_metainfo

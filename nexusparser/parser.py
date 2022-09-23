@@ -16,17 +16,21 @@
 # limitations under the License.
 #
 
-from typing import Optional, Tuple
+'''
+The NeXus parser
+'''
+
 import xml.etree.ElementTree as ET
+from typing import Optional, Tuple
 
 import numpy as np
 
+from nexusparser.metainfo import nexus
+from nexusparser.tools import nexus as read_nexus
 from nomad.datamodel import EntryArchive
 from nomad.metainfo import MSection
-from nomad.metainfo.metainfo_utility import resolve_variadic_name, MQuantity
+from nomad.metainfo.metainfo_utility import MQuantity, resolve_variadic_name
 from nomad.parsing import MatchingParser
-from nexusparser.tools import nexus as read_nexus
-from nexusparser.metainfo import nexus
 from nomad.units import ureg
 
 
@@ -109,9 +113,8 @@ def _get_value(hdf_node):
     return val
 
 
-def _populate_data(
-        depth: int, nx_path: list, nx_def: str, hdf_node, val, current: MSection,
-        log_str: str, log_lvl: str) -> Tuple[str, str]:
+def _populate_data(depth: int, nx_path: list, nx_def: str, hdf_node, current: MSection, log_str: str, log_lvl: str) -> \
+        Tuple[str, str]:  # pylint: disable=R0912, R0913, R0914
     '''
     Populate attributes and fields
     '''
@@ -149,14 +152,14 @@ def _populate_data(
                     current.m_set_section_attribute(attr_name, attr_value)
                 else:
                     current.m_set_quantity_attribute(parent_name, attr_name, attr_value)
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=W0703
                 log_str += f'Problem with storage!!!\n{str(exc)}\n'
                 log_lvl = 'error'
     else:
         # it is a field
         field = _get_value(hdf_node)
 
-        # todo: need to remove
+        # need to remove
         if hdf_node[...].dtype.kind in 'iufc' and isinstance(
                 field, np.ndarray) and field.size > 1:
             field = np.array([
@@ -168,6 +171,8 @@ def _populate_data(
 
         # check if unit is given
         unit = hdf_node.attrs.get('units', None)
+
+        pint_unit: Optional[ureg.Unit] = None
 
         if unit:
             try:
@@ -181,12 +186,14 @@ def _populate_data(
 
         if metainfo_def.use_full_storage:
             field = MQuantity.wrap(field, hdf_node.name.split('/')[-1])
+        elif metainfo_def.unit is None and pint_unit is not None:
+            metainfo_def.unit = pint_unit
 
         # may need to check if the given unit is in the allowable list
 
         try:
             current.m_set(metainfo_def, field)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=W0703
             log_str += f'Problem with storage!!!\n{str(exc)}\n'
             log_lvl = 'error'
 
@@ -265,8 +272,7 @@ class NexusParser(MatchingParser):
                 current = _to_section(name, nx_def, nx_node, current)
                 depth += 1
 
-            log_str, log_lvl = _populate_data(
-                depth, nx_path, nx_def, hdf_node, params['val'], current, log_str, log_lvl)
+            log_str, log_lvl = _populate_data(depth, nx_path, nx_def, hdf_node, current, log_str, log_lvl)
 
         if log_lvl == 'info':
             logger.info('Parsing', nexusparser=log_str)

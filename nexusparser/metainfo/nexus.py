@@ -19,22 +19,22 @@
 
 '''This tool is reading the xml file'''
 
-import re
 import os
 import os.path
+import re
 import sys
-from typing import Dict, Union, Optional
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
+from typing import Dict, Optional, Union
 
 import numpy as np
 from toposort import toposort_flatten
 
-from nomad.utils import strip
-from nomad.metainfo import Section, Package, SubSection, Definition, Datetime, Bytes, \
-    MEnum, Quantity, Property, Attribute
-from nomad.datamodel import EntryArchive
 from nexusparser.tools import nexus
+from nomad.datamodel import EntryArchive
+from nomad.metainfo import Attribute, Bytes, Datetime, Definition, MEnum, Package, \
+    Property, Quantity, Section, SubSection  # pylint: disable=E0611
+from nomad.utils import strip
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -70,10 +70,12 @@ __NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
 
 
 class NXUnitSet:
-    # maps from `NX_` token to dimensionality
-    # None -> disable dimensionality check
-    # '1' -> dimensionless quantities
-    # 'transformation' -> Specially handled in metainfo
+    '''
+    maps from `NX_` token to dimensionality
+    None -> disable dimensionality check
+    '1' -> dimensionless quantities
+    'transformation' -> Specially handled in metainfo
+    '''
     mapping: dict = {
         'NX_ANGLE': '[angle]',
         'NX_ANY': None,
@@ -268,7 +270,7 @@ def __add_common_properties(xml_node: ET.Element, definition: Definition):
         definition.links = links
 
     for key, value in xml_attrs.items():
-        if 'deprecated' == key:
+        if key == 'deprecated':
             definition.deprecated = value
             continue
         if 'nxdl_base' in key or 'schemaLocation' in key:
@@ -569,11 +571,14 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
     return package
 
 
-nexus_metainfo_package: Package = None  # type: ignore
+nexus_metainfo_package: Optional[Package] = None  # pylint: disable=invalid-name
 
 
 def init_nexus_metainfo():
-    global nexus_metainfo_package
+    '''
+    Initializes the metainfo package for the nexus definitions.
+    '''
+    global nexus_metainfo_package  # pylint: disable=global-statement
 
     if nexus_metainfo_package is not None:
         return
