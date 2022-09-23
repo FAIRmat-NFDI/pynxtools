@@ -2,6 +2,7 @@
 .pyenv
 *.pyc
 *.txt
+!requirements.txt
 !dev-requirements.txt
 build/
 nexusparser.egg-info/PKG-INFO
