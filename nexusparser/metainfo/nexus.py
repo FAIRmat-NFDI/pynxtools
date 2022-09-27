@@ -18,7 +18,7 @@
 
 
 '''This tool is reading the xml file'''
-
+import logging
 import os
 import os.path
 import re
@@ -30,13 +30,11 @@ from typing import Dict, Optional, Union
 import numpy as np
 from toposort import toposort_flatten
 
-from nomad.datamodel import EntryArchive
-from nomad.metainfo import Attribute  # pylint: disable=E0611
-from nomad.metainfo import Bytes, Datetime, Definition, MEnum, Package, \
-    Property, Quantity, Section, SubSection
-from nomad.utils import strip
-
 from nexusparser.tools import nexus
+from nomad.datamodel import EntryArchive
+from nomad.metainfo import Attribute, Bytes, Datetime, Definition, MEnum, Package, Property, Quantity, Section, \
+    SubSection
+from nomad.utils import strip
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -51,7 +49,6 @@ __XML_NAMESPACES = {'nx': 'http://definition.nexusformat.org/nxdl/3.1'}
 # dimensional fields with non number types, which the metainfo does not support
 
 __section_definitions: Dict[str, Section] = dict()
-__subsection_definitions: Dict[str, SubSection] = dict()
 
 VALIDATE = False
 
@@ -346,7 +343,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     # type
     nx_type = xml_attrs.get('type', 'NX_CHAR')
     if nx_type not in __NX_TYPES:
-        raise NotImplementedError(f'Type {nx_type} is not supported for {name}')
+        raise NotImplementedError(f'Type {nx_type} is not supported for the moment.')
 
     # enumeration
     enum_type = __get_enumeration(xml_node)
@@ -532,7 +529,20 @@ def __sort_nxdl_files(paths):
     name_dependency_map['NXgeometry'].remove('NXorientation')
     name_dependency_map['NXgeometry'].remove('NXtranslation')
 
-    return [name_node_map[node] for node in toposort_flatten(name_dependency_map)]
+    sorted_nodes = toposort_flatten(name_dependency_map)
+    validated_names = []
+    for node in sorted_nodes:
+        if node in name_node_map:
+            validated_names.append(name_node_map[node])
+        else:
+            parent_nodes = []
+            for name, dependencies in name_dependency_map.items():
+                if node in dependencies:
+                    parent_nodes.append(name)
+            logging.error(
+                'Type %s appears to be incorrect, please validate the following xml files: %s.', node, parent_nodes)
+
+    return validated_names
 
 
 def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Section]:
@@ -547,7 +557,7 @@ def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Section]:
         return __create_class_section(xml_node)
 
     except NotImplementedError as err:
-        print(f"Exception while mapping {xml_node.attrib['name']}:", err, file=sys.stderr)
+        logging.error('%s: %s', xml_node.attrib['name'], err)
         return None
 
 
