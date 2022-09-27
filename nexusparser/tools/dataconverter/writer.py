@@ -142,11 +142,18 @@ Several cases can be encoutered:
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif 'compress' in data.keys():
         if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
+            strength = 9  # strongest compression is space efficient but can take long
+            accept = ("strength" in data.keys()) \
+                and (isinstance(data['strength'], int)) \
+                and (data["strength"] >= 0) \
+                and (data["strength"] <= 9)
+            if accept is True:
+                strength = data["strength"]
             grp.create_dataset(entry_name,
                                data=data["compress"],
                                compression="gzip",
                                chunks=True,
-                               compression_opts=9)
+                               compression_opts=strength)
         else:
             grp.create_dataset(entry_name, data=data["compress"])
     return grp[entry_name]
@@ -216,6 +223,8 @@ class Writer:
 
     def write(self):
         """Writes the Nexus file with previously validated data from the reader with NXDL attrs."""
+        hdf5_links_for_later = []
+
         for path, value in self.data.items():
             try:
                 if path[path.rindex('/') + 1:] == '@units':
@@ -229,9 +238,8 @@ class Writer:
 
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
-
                     if isinstance(data, dict):
-                        dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
+                        hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
                     else:
                         dataset = grp.create_dataset(entry_name,
                                                      data=data
@@ -247,5 +255,8 @@ class Writer:
             except Exception as exception:
                 raise Exception(f"Unkown error occured writing the path: {path} "
                                 f"with the following message: {str(exception)}")
+
+        for links in hdf5_links_for_later:
+            dataset = handle_dicts_entries(*links)
 
         self.output_nexus.close()

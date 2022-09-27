@@ -19,7 +19,7 @@
 '''
 The NeXus parser
 '''
-
+import pathlib
 import xml.etree.ElementTree as ET
 from typing import Optional, Tuple
 
@@ -242,8 +242,7 @@ class NexusParser(MatchingParser):
 
     def __init__(self):
         super().__init__(
-            name='parsers/nexus', code_name='NEXUS',
-            code_homepage='https://www.nexus.eu/',
+            metadata_path=f'{pathlib.Path(__file__).parent.resolve()}/metadata.yaml',
             mainfile_mime_re=r'(application/.*)|(text/.*)',
             mainfile_name_re=r'.*\.nxs',
             supported_compressions=['gz', 'bz2', 'xz']

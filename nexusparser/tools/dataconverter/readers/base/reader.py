@@ -34,6 +34,8 @@ class BaseReader(ABC):
 
     # pylint: disable=too-few-public-methods
 
+    __name__ = "BaseReader"
+
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = [""]
 

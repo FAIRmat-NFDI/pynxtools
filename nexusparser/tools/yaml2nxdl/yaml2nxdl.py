@@ -34,9 +34,9 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
 
-from nexusparser.tools.dataconverter import helpers
-from nexusparser.tools.yaml2nxdl import yaml2nxdl_forward_tools
-from nexusparser.tools.yaml2nxdl import yaml2nxdl_backward_tools
+from ..dataconverter import helpers
+from . import yaml2nxdl_forward_tools
+from . import yaml2nxdl_backward_tools
 
 
 def pretty_print_xml(xml_root, output_xml):
@@ -98,17 +98,19 @@ nest of groups recursively and fields or (their) attributes as childs of the gro
 application and base are valid categories!'
     assert 'doc' in yml_appdef.keys(), 'Required root-level keyword doc is missing!'
 
-    xml_root.set('extends', 'NXobject')
     xml_root.set('type', 'group')
+
     if yml_appdef['category'] == 'application':
         xml_root.set('category', 'application')
-        del yml_appdef['category']
     else:
         xml_root.set('category', 'base')
-        del yml_appdef['category']
+    del yml_appdef['category']
 
     if 'symbols' in yml_appdef.keys():
-        yaml2nxdl_forward_tools.xml_handle_symbols(xml_root, yml_appdef['symbols'])
+        yaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef,
+                                                   xml_root,
+                                                   'symbols',
+                                                   yml_appdef['symbols'])
         del yml_appdef['symbols']
 
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
@@ -119,12 +121,28 @@ has to be a non-empty string!'
 
     del yml_appdef['doc']
 
-    assert len(yml_appdef.keys()) == 1, 'Accepting at most keywords: category, \
+    root_keys = 0
+    for key in yml_appdef.keys():
+        if '__line__' not in key:
+            root_keys += 1
+
+    assert root_keys == 1, 'Accepting at most keywords: category, \
 doc, symbols, and NX... at root-level!'
-    keyword = list(yml_appdef.keys())[0]  # which is the only one
-    assert (keyword[0:3] == '(NX' and keyword[-1:] == ')' and len(keyword) > 4), 'NX \
+
+    keyword = list(yml_appdef.keys())[0]
+    if "(" in keyword:
+        extends = keyword[keyword.rfind("(") + 1:-1]
+        name = keyword[0:keyword.rfind("(")]
+    else:
+        name = keyword
+        extends = "NXobject"
+
+    xml_root.set('name', name)
+    xml_root.set('extends', extends)
+
+    assert (keyword[0:2] == 'NX' and len(keyword) > 2), 'NX \
 keyword has an invalid pattern, or is too short!'
-    xml_root.set('name', keyword[1:-1])
+
     yaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml')
@@ -201,7 +219,8 @@ class Nxdl2yaml():
         """Handle definition group and its attributes
 
         """
-        for item in node.attrib:
+        attribs = node.attrib
+        for item in attribs:
             if 'schemaLocation' not in item \
                     and 'name' not in item \
                     and 'extends' not in item \
@@ -209,11 +228,14 @@ class Nxdl2yaml():
                 self.root_level_definition.append(
                     '{key}: {value}'.format(
                         key=item,
-                        value=node.attrib[item] or ''))
-        if 'name' in node.attrib.keys():
+                        value=attribs[item] or ''))
+        if 'name' in attribs.keys():
             self.root_level_definition.append(
-                '({value}):'.format(
-                    value=node.attrib['name'] or ''))
+                '{name}:'.format(
+                    name=attribs['name'] or ''))
+            if 'extends' in attribs.keys() and attribs["extends"] != "NXobject":
+                keyword = self.root_level_definition.pop()
+                self.root_level_definition.append(f"{keyword[0:-1]}({attribs['extends']}):")
 
     def handle_root_level_doc(self, node):
         """Handle the documentation field found at root level

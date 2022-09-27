@@ -1,0 +1,30 @@
+#test case for attributes
+doc: documentation no. 0
+symbols:
+  doc: documentation no. 1
+  testnamesymbol: test description of symbol
+category: application
+NXellipsometry_base_draft(my_test_extend):
+  (NXentry):
+    \@entry:
+      doc: attribute documentation
+    doc: documentation no. 2
+    experiment_identifier:
+      existsss: required
+      doc: documentation no. 3
+    experiment_description:
+      exists: required
+    start_time(NX_DATE_TIME):
+      exists: required
+      unit: NX_TIME
+    program_name:
+      doc: documentation no. 4
+    program_version:
+      doc: documentation no. 5
+    time_zone(NX_DATE_TIME):
+      exists: required
+      doc: documentation no. 6
+    definition_local:
+      doc: documentation no. 7
+      \@version:
+      # EMPTY ATTRIBUTES

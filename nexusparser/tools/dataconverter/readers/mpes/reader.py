@@ -307,18 +307,18 @@ class MPESReader(BaseReader):
 
                 # Filling in the metadata from xarray
                 elif precursor == "@attrs":
+                    if key not in eln_data_dict:
+                        try:  # Tries to fill the metadata
+                            template[key] = iterate_dictionary(
+                                x_array_loaded.attrs,
+                                value,
+                            )
 
-                    try:  # Tries to fill the metadata
-                        template[key] = iterate_dictionary(
-                            x_array_loaded.attrs,
-                            value,
-                        )
-
-                    except KeyError:
-                        print(
-                            f"[info]: Path {key} not found. "
-                            f"Skipping the entry.",
-                        )
+                        except KeyError:
+                            print(
+                                f"[info]: Path {key} not found. "
+                                f"Skipping the entry.",
+                            )
 
             else:
                 # Fills in the fixed metadata

@@ -16,17 +16,13 @@
 # limitations under the License.
 #
 """Perkin Ellmer transmission file reader implementation for the DataConverter."""
-
-import os
 from inspect import isfunction
-from typing import Callable, List, Tuple, Any, Dict
-import json
-import yaml
+from typing import Callable, List, Any, Dict
 import pandas as pd
 
-from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+from nexusparser.tools.dataconverter.readers.json_yml.reader import YamlJsonReader
 import nexusparser.tools.dataconverter.readers.transmission.metadata_parsers as mpars
-from nexusparser.tools.dataconverter.readers.utils import flatten_and_replace
+from nexusparser.tools.dataconverter.readers.utils import parse_json, parse_yml
 
 
 # Dictionary mapping metadata in the asc file to the paths in the NeXus file.
@@ -54,10 +50,15 @@ METADATA_MAP: Dict[str, Any] = {
 }
 # Dictionary to map value during the yaml eln reading
 # This is typically a mapping from ELN signifier to NeXus path
-CONVERT_DICT: Dict[str, str] = {}
+CONVERT_DICT: Dict[str, str] = {
+    'Sample': 'SAMPLE[sample]',
+    "unit": "@units"
+}
 # Dictionary to map nested values during the yaml eln reading
 # This is typically a mapping from nested ELN signifiers to NeXus group
-REPLACE_NESTED: Dict[str, str] = {}
+REPLACE_NESTED: Dict[str, str] = {
+    'Sample[sample]/experiment_identifier': 'experiment_identifier'
+}
 
 
 def data_to_template(data: pd.DataFrame) -> Dict[str, Any]:
@@ -70,7 +71,6 @@ def data_to_template(data: pd.DataFrame) -> Dict[str, Any]:
         Dict[str, Any]: The dict with the data paths inside NeXus.
     """
     template: Dict[str, Any] = {}
-    template["/ENTRY[entry]/data/@signal"] = "data"
     template["/ENTRY[entry]/data/@axes"] = "wavelength"
     template["/ENTRY[entry]/data/type"] = "transmission"
     template["/ENTRY[entry]/data/@signal"] = "transmission"
@@ -216,77 +216,33 @@ def parse_asc(file_path: str) -> Dict[str, Any]:
     return template
 
 
-def parse_json(file_path: str) -> Dict[str, Any]:
-    """Parses a metadata json file into a dictionary.
+def add_def_info() -> Dict[str, str]:
+    """Creates a template with definition version information"""
+    template: Dict[str, Any] = {}
+    template["/@default"] = "entry"
+    template["/ENTRY[entry]/@default"] = "data"
+    template["/ENTRY[entry]/definition"] = "NXtransmission"
+    template["/ENTRY[entry]/definition/@version"] = "v2022.06"
+    template["/ENTRY[entry]/definition/@url"] = \
+        "https://fairmat-experimental.github.io/nexus-fairmat-proposal/" + \
+        "50433d9039b3f33299bab338998acb5335cd8951/index.html"
 
-    Args:
-        file_path (str): The file path of the json file.
-
-    Returns:
-        Dict[str, Any]: The dictionary containing the data readout from the json.
-    """
-    with open(file_path, "r") as file:
-        return json.load(file)
-
-
-def parse_yml(file_path: str) -> Dict[str, Any]:
-    """Parses a metadata yaml file into a dictionary.
-
-    Args:
-        file_path (str): The file path of the yml file.
-
-    Returns:
-        Dict[str, Any]: The dictionary containing the data readout from the yml.
-    """
-    with open(file_path) as file:
-        return flatten_and_replace(yaml.safe_load(file), CONVERT_DICT, REPLACE_NESTED)
+    return template
 
 
 # pylint: disable=too-few-public-methods
-class TransmissionReader(BaseReader):
-    """MyDataReader implementation for the DataConverter
+class TransmissionReader(YamlJsonReader):
+    """TransmissionReader implementation for the DataConverter
     to convert transmission data to Nexus."""
 
     supported_nxdls = ["NXtransmission"]
-
-    def read(
-            self,
-            template: dict = None,
-            file_paths: Tuple[str] = None,
-            _: Tuple[Any] = None,
-    ) -> dict:
-        """Read transmission data from Perkin Ellmer measurement files"""
-        extensions = {
-            ".asc": parse_asc,
-            ".json": parse_json,
-            ".yml": parse_yml,
-            ".yaml": parse_yml,
-        }
-
-        template["/@default"] = "entry"
-        template["/ENTRY[entry]/@default"] = "data"
-        template["/ENTRY[entry]/definition"] = "NXtransmission"
-        template["/ENTRY[entry]/definition/@version"] = "v2022.06"
-        template["/ENTRY[entry]/definition/@url"] = \
-            "https://fairmat-experimental.github.io/nexus-fairmat-proposal/" + \
-            "50433d9039b3f33299bab338998acb5335cd8951/index.html"
-
-        sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
-        for file_path in sorted_paths:
-            extension = os.path.splitext(file_path)[1]
-            if extension not in extensions.keys():
-                print(
-                    f"WARNING: "
-                    f"File {file_path} has an unsupported extension, ignoring file."
-                )
-                continue
-            if not os.path.exists(file_path):
-                print(f"WARNING: File {file_path} does not exist, ignoring entry.")
-                continue
-
-            template.update(extensions.get(extension, lambda _: {})(file_path))
-
-        return template
+    extensions = {
+        ".asc": parse_asc,
+        ".json": parse_json,
+        ".yml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
+        ".yaml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
+        "default": lambda _: add_def_info()
+    }
 
 
 READER = TransmissionReader

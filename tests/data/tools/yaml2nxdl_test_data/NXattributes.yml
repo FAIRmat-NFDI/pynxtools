@@ -1,16 +1,13 @@
-#test case for attributes 
+#test case for attributes
 doc: documentation no. 0
 symbols:
   doc: documentation no. 1
   testnamesymbol: test description of symbol
 category: application
-(NXellipsometry_base_draft):
+NXellipsometry_base_draft(my_test_extends):
   (NXentry):
     \@entry:
-      doc: attribute documentation 
-      # ATTRIBUTE DOCUMENTATION
-    exists: required
-    #if the exists keyword is not used the default is exists optional
+      doc: attribute documentation
     doc: documentation no. 2
     experiment_identifier:
       exists: required
@@ -29,5 +26,5 @@ category: application
       doc: documentation no. 6
     definition_local:
       doc: documentation no. 7
-      \@version: 
+      \@version:
       # EMPTY ATTRIBUTES

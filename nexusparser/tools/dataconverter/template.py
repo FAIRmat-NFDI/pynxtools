@@ -34,12 +34,14 @@ class Template(dict):
             self.required: dict = {}
             self.undocumented: dict = {}
             self.optional_parents: list = []
+            self.lone_groups: list = []
         else:
             self.optional: dict = copy.deepcopy(template["optional"])
             self.recommended: dict = copy.deepcopy(template["recommended"])
             self.required: dict = copy.deepcopy(template["required"])
             self.undocumented: dict = copy.deepcopy(template["undocumented"])
             self.optional_parents: list = copy.deepcopy(template["optional_parents"])
+            self.lone_groups: dict = copy.deepcopy(template["lone_groups"])
 
     def get_accumulated_dict(self):
         """Returns a dictionary of all the optionalities merged into one."""
@@ -70,6 +72,8 @@ class Template(dict):
                 self.optional[k] = v
             else:
                 self.undocumented[k] = v
+        elif k == "lone_groups":
+            self.lone_groups.append(v)
         else:
             raise KeyError("You cannot add non paths to the root template object. "
                            "Place them appropriately e.g. template[\"optional\"]"
@@ -108,8 +112,8 @@ class Template(dict):
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
-        if k == "optional_parents":
-            return self.optional_parents
+        if k in ("optional_parents", "lone_groups"):
+            return getattr(self, k)
         if k.startswith("/"):
             try:
                 return self.optional[k]

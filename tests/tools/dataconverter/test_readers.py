@@ -52,7 +52,7 @@ def get_all_readers() -> List[BaseReader]:
 
     # Explicitly removing ApmReader and EmNionReader because we need to add test data
     for reader in [get_reader(x) for x in get_names_of_all_readers()]:
-        if reader.__name__ in ("ApmReader", "EmNionReader"):
+        if reader.__name__ in ("ApmReader", "EmNionReader", "EmSpctrscpyReader"):
             readers.append(pytest.param(reader,
                                         marks=pytest.mark.skip(reason="Missing test data.")
                                         ))
@@ -78,18 +78,19 @@ def test_has_correct_read_func(reader):
 
         reader_name = get_reader_name_from_reader_object(reader)
 
-        nexus_appdef_dir = os.path.join(os.getcwd(),
-                                        "nexusparser",
-                                        "definitions",
-                                        "contributed_definitions")
+        def_dir = os.path.join(os.getcwd(), "nexusparser", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "tools", "dataconverter")
 
         input_files = glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
         for supported_nxdl in reader.supported_nxdls:
             if supported_nxdl in ("NXtest", "*"):
                 nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")
+            elif supported_nxdl == "NXroot":
+                nxdl_file = os.path.join(def_dir, "base_classes", "NXroot.nxdl.xml")
             else:
-                nxdl_file = os.path.join(nexus_appdef_dir, f"{supported_nxdl}.nxdl.xml")
+                nxdl_file = os.path.join(
+                    def_dir, "contributed_definitions", f"{supported_nxdl}.nxdl.xml"
+                )
 
             root = ET.parse(nxdl_file).getroot()
             template = Template()
