@@ -24,11 +24,10 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 
-from nomad.datamodel import EntryArchive
-from nomad.units import ureg
-
-from nexusparser.parser import NexusParser  # noqa: E402
 from nexusparser.tools import nexus  # noqa: E402
+from nomad.datamodel import EntryArchive
+from nomad.parsing.nexus import NexusParser  # noqa: E402
+from nomad.units import ureg
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
@@ -87,19 +86,7 @@ def test_get_node_at_nxdl_path():
     nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/derived_parameters", elem=elem)
-    assert node.attrib["type"] == "NXcollection"
-
-    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXem_nion.nxdl.xml"
-    nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path("/ENTRY/em_lab/hadf/SCANBOX_EM", elem=elem)
-    assert node.attrib["type"] == "NXscanbox_em"
-
-    nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
-    nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path("/ENTRY/DATA/VARIABLE", elem=elem)
-    assert node.attrib["name"] == "VARIABLE"
+    assert node.attrib["type"] == "NXprocess"
 
     nxdl_file_path = "nexusparser/definitions/contributed_definitions/NXmpes.nxdl.xml"
     nxdl_file_path = os.path.join(local_dir, f'../{nxdl_file_path}')
@@ -139,7 +126,7 @@ def test_example():
     assert instrument.monochromator.energy == ureg.Quantity(
         '36.49699020385742*electron_volt')
     # cannot store number 750 to a field expecting NX_CHAR
-    assert instrument.analyser.entrance_slit_size == '750 micrometer'
+    assert instrument.analyser.entrance_slit_size == ureg.Quantity('750 micrometer')
     # good ENUM - x-ray
     assert instrument.SOURCE[0].probe == 'x-ray'
     # wrong inherited ENUM - Burst

@@ -25,7 +25,7 @@ import logging
 
 from nomad.utils import configure_logging
 from nomad.datamodel import EntryArchive
-from nexusparser.parser import NexusParser
+from nomad.parsing.nexus import NexusParser
 
 
 if __name__ == "__main__":

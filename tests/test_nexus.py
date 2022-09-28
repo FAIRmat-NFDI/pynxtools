@@ -25,7 +25,7 @@ import pytest
 
 from nomad.metainfo import Definition, Section
 from nomad.datamodel import EntryArchive
-from nexusparser.metainfo import nexus
+from nomad.metainfo import nexus
 from nexusparser import tools
 
 
