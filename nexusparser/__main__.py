@@ -18,18 +18,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-import sys
-import json
-import logging
-
-from nomad.utils import configure_logging
-from nomad.datamodel import EntryArchive
-from nomad.parsing.nexus import NexusParser
-
-
-if __name__ == "__main__":
-    configure_logging(console_log_level=logging.DEBUG)
-    ARCHIVE = EntryArchive()
-    NexusParser().parse(sys.argv[1], ARCHIVE, logging)
-    json.dump(ARCHIVE.m_to_dict(), sys.stdout, indent=2)

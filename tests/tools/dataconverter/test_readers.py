@@ -91,7 +91,8 @@ def test_has_correct_read_func(reader):
                 nxdl_file = os.path.join(
                     def_dir, "contributed_definitions", f"{supported_nxdl}.nxdl.xml"
                 )
-
+            if not os.path.exists(nxdl_file):
+                continue
             root = ET.parse(nxdl_file).getroot()
             template = Template()
             generate_template_from_nxdl(root, template)
