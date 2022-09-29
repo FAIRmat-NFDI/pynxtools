@@ -27,7 +27,7 @@ from nomad.datamodel import EntryArchive
 from nexusparser.tools import nexus  # noqa: E402
 import nexusparser.tools.dataconverter.convert as dataconverter
 from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
-from nexusparser.parser import NexusParser  # noqa: E402
+from nomad.parsing.nexus import NexusParser
 
 
 def move_xarray_file_to_tmp(tmp_path):
