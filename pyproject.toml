@@ -37,18 +37,14 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "mypy==0.971",
-    "pylint==2.3",
-    "pylint_plugin_utils==0.5",
-    "typed-ast==1.4",
-    "pylint_mongoengine==0.3",
-    "pycodestyle==2.8",
-    "pytest==3.10",
-    "pytest-timeout==1.4",
-    "pytest-cov==2.7",
-    "mongoengine==0.19",
-    "pymongo==3.12",
-    "structlog==21.5"
+    "mypy",
+    "pylint",
+    "pycodestyle",
+    "pytest",
+    "pytest-timeout",
+    "pytest-cov",
+    "structlog",
+    "types-pyyaml"
 ]
 
 [project.scripts]
