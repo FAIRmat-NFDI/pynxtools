@@ -25,7 +25,7 @@
 import re
 import numpy as np
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_utils \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_utils \
     import NxField, NxIon, significant_range, create_isotope_vector, \
     isotope_vector_to_dict_keyword
 

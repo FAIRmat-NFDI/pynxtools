@@ -23,8 +23,8 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 
-from nexusutils import nexus
-# from nexusutils.nexus import NxdlAttributeError
+from nexusutils.nexus import nexus
+from nexusutils.nexus.nexus import NxdlAttributeError
 
 
 def is_a_lone_group(xml_element) -> bool:

@@ -75,14 +75,14 @@ class ExampleReader(BaseReader):
         template[("/ENTRY"
                   "[entry]/test_link"
                   "/external_link")] = {"link":
-                                        f"{os.path.dirname(__file__)}/../../../../../tests/"
-                                        f"data/tools/dataconverter/readers/mpes/"
+                                        f"{os.path.dirname(__file__)}/../../../../tests/"
+                                        f"data/dataconverter/readers/mpes/"
                                         f"xarray_saved_small_calibration.h5:/axes/ax3"
                                         }
 
         # virtual datasets concatenation
-        my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
-                      f"data/tools/dataconverter/readers/mpes")
+        my_path = str(f"{os.path.dirname(__file__)}/../../../../tests/"
+                      f"data/dataconverter/readers/mpes")
         my_datasets = {"link":
                        [f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax0",
                         f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax1",
@@ -92,8 +92,8 @@ class ExampleReader(BaseReader):
         template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = my_datasets
 
         # virtual datasets slicing
-        my_path = str(f"{os.path.dirname(__file__)}/../../../../../tests/"
-                      f"data/tools/dataconverter/readers/mpes")
+        my_path = str(f"{os.path.dirname(__file__)}/../../../../tests/"
+                      f"data/dataconverter/readers/mpes")
         template[("/ENTRY[entry]"
                   "/test_virtual"
                   "_dataset/sliced"

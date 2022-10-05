@@ -26,7 +26,7 @@ import h5py
 import numpy as np
 
 from nexusutils.dataconverter import helpers
-from nexusutils import nexus
+from nexusutils.nexus import nexus
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)

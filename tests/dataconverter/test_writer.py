@@ -32,7 +32,7 @@ def fixture_writer(filled_test_data, tmp_path):
     """pytest fixture to setup Writer object to be used by tests with dummy data."""
     writer = Writer(
         filled_test_data,
-        os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml"),
+        os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml"),
         os.path.join(tmp_path, "test.nxs")
     )
     yield writer

@@ -62,14 +62,14 @@ def listify_template(data_dict: Template):
 @pytest.fixture(name="nxdl_root")
 def fixture_nxdl_root():
     """pytest fixture to load the same NXDL file for all tests."""
-    nxdl_file = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
+    nxdl_file = os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml")
     yield ET.parse(nxdl_file).getroot()
 
 
 @pytest.fixture(name="template")
 def fixture_template():
     """pytest fixture to use the same template in all tests"""
-    nxdl_root = ET.parse("tests/data/tools/dataconverter/NXtest.nxdl.xml").getroot()
+    nxdl_root = ET.parse("tests/data/dataconverter/NXtest.nxdl.xml").getroot()
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
     yield template
@@ -84,8 +84,8 @@ def fixture_filled_test_data(template, tmp_path):
     # because h5py.ExternalLink is modifying it while
     # linking the nxs file.
     file_util.copy_file(f"{os.path.dirname(__file__)}"
-                        f"/../../"
-                        f"data/tools/dataconverter/"
+                        f"/../"
+                        f"data/dataconverter/"
                         f"readers/mpes/"
                         f"xarray_saved_small_cali"
                         "bration.h5", tmp_path)

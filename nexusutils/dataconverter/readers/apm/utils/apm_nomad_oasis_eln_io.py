@@ -32,10 +32,10 @@ import yaml
 
 from ase.data import chemical_symbols
 
-# from nexusparser.tools.dataconverter.readers.apm.utils.apm_nexus_base_classes \
+# from nexusutils.dataconverter.readers.apm.utils.apm_nexus_base_classes \
 #     import NxObject
 
-from nexusparser.tools.dataconverter.readers.apm.utils.apm_versioning \
+from nexusutils.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
 
 

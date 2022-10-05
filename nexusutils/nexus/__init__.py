@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-"""Classes representing groups with NeXus-ish formatted data parsed from H5OINA."""
+"""init file
 
-# -*- coding: utf-8 -*-
+"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,12 +18,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# pylint: disable=E1101
-
-# from typing import Dict
-
-# import numpy as np
-
-# from nexusutils.dataconverter.readers.em.utils.em_nexus_base_classes \
-#     import NxObject

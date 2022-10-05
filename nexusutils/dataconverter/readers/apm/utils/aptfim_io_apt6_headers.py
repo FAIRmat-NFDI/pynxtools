@@ -24,7 +24,7 @@
 
 import numpy as np
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_utils \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_utils \
     import string_to_typed_nparray  # , np_uint16_to_string
 
 

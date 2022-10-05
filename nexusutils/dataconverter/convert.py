@@ -32,7 +32,7 @@ from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter import helpers
 from nexusutils.dataconverter.writer import Writer
 from nexusutils.dataconverter.template import Template
-from nexusutils import nexus
+from nexusutils.nexus import nexus
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
@@ -75,7 +75,7 @@ def convert(input_file: Tuple[str],
     # Reading in the NXDL and generating a template
     definitions_path = nexus.get_nexus_definitions_path()
     if nxdl == "NXtest":
-        nxdl_path = os.path.join("tests", "data", "tools", "dataconverter", "NXtest.nxdl.xml")
+        nxdl_path = os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml")
     elif nxdl == "NXroot":
         nxdl_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
     else:

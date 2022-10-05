@@ -43,7 +43,7 @@ def get_reader_name_from_reader_object(reader) -> str:
 
 def get_readers_file_names() -> List[str]:
     """Helper function to parametrize paths of all the reader Python files"""
-    return glob.glob("nexusparser/tools/dataconverter/readers/*/reader.py")
+    return glob.glob("nexusutils/dataconverter/readers/*/reader.py")
 
 
 def get_all_readers() -> List[BaseReader]:
@@ -78,8 +78,8 @@ def test_has_correct_read_func(reader):
 
         reader_name = get_reader_name_from_reader_object(reader)
 
-        def_dir = os.path.join(os.getcwd(), "nexusparser", "definitions")
-        dataconverter_data_dir = os.path.join("tests", "data", "tools", "dataconverter")
+        def_dir = os.path.join(os.getcwd(), "nexusutils", "definitions")
+        dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
         input_files = glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
         for supported_nxdl in reader.supported_nxdls:

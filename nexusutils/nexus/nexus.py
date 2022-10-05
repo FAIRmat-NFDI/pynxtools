@@ -1033,8 +1033,9 @@ class HandleNexus:
     """documentation"""
     def __init__(self, logger, args):
         self.logger = logger
+        local_dir = os.path.abspath(os.path.dirname(__file__))
         self.input_file_name = args[0] if len(
-            args) >= 1 else 'tests/data/nexus_test_data/201805_WSe2_arpes.nxs'
+            args) >= 1 else os.path.join(local_dir, '../../tests/data/nexus/201805_WSe2_arpes.nxs')
         self.parser = None
         self.in_file = None
 
@@ -1058,8 +1059,10 @@ def main():
     logging_format = "%(levelname)s: %(message)s"
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging.DEBUG)
-    logging.basicConfig(level=logging.DEBUG, format=logging_format, handlers=[stdout_handler])
-    logger = logging.getLogger()
+    logging.basicConfig(level=logging.INFO, format=logging_format, handlers=[stdout_handler])
+    logger = logging.getLogger(__name__)
+    logger.addHandler(stdout_handler)
+    logger.setLevel(logging.DEBUG)
     nexus_helper = HandleNexus(logger, sys.argv[1:])
     nexus_helper.process_nexus_master_file(None)
 

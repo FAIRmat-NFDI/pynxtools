@@ -28,7 +28,7 @@ import numpy as np
 
 import hyperspy.api as hs
 
-from nexusparser.tools.dataconverter.readers.em_spctrscpy.utils.em_nexus_base_classes \
+from nexusutils.dataconverter.readers.em_spctrscpy.utils.em_nexus_base_classes \
     import NxObject
 
 

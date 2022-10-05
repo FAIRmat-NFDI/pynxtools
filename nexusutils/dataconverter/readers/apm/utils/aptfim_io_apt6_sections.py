@@ -26,7 +26,7 @@ import numpy as np
 
 # from pint import UnitRegistry
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_utils \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_utils \
     import np_uint16_to_string, string_to_typed_nparray
 
 

@@ -22,7 +22,7 @@
 
 # pylint: disable=E1101
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_sections \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_sections \
     import AptFileSectionMetadata
 
 

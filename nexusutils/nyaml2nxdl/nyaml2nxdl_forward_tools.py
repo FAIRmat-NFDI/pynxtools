@@ -33,7 +33,7 @@ from yaml.nodes import ScalarNode
 from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
-from nexusutils import nexus
+from nexusutils.nexus import nexus
 
 
 NX_CLSS = nexus.get_nx_classes()

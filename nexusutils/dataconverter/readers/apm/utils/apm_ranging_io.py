@@ -26,13 +26,13 @@ from typing import Dict
 
 import numpy as np
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_utils \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_utils \
     import unhash_isotope  # , hash_isotope
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_rng_reader \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_rng_reader \
     import ReadRngFileFormat
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_rrng_reader \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_rrng_reader \
     import ReadRrngFileFormat
 
 

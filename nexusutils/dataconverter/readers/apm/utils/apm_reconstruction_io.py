@@ -24,13 +24,13 @@
 
 import numpy as np
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_reader \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_reader \
     import ReadAptFileFormat
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_pos_reader \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_pos_reader \
     import ReadPosFileFormat
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_epos_reader \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_epos_reader \
     import ReadEposFileFormat
 
 

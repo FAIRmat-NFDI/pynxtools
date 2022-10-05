@@ -32,15 +32,15 @@ import pandas as pd
 
 # from pint import UnitRegistry
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_utils \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_utils \
     import np_uint16_to_string
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_headers \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_headers \
     import AptFileHeaderMetadata
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_sections \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_sections \
     import AptFileSectionMetadata
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_apt6_sections_branches \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_apt6_sections_branches \
     import EXPECTED_SECTIONS
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_utils \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_utils \
     import NxField, get_memory_mapped_data
 
 

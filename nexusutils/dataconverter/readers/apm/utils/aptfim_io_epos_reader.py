@@ -26,7 +26,7 @@ import os
 
 import numpy as np
 
-from nexusparser.tools.dataconverter.readers.apm.utils.aptfim_io_utils \
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_utils \
     import NxField, get_memory_mapped_data
 
 

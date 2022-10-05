@@ -23,7 +23,7 @@ import logging
 from click.testing import CliRunner
 import pytest
 import h5py
-from nexusutils import nexus  # noqa: E402
+from nexusutils.nexus import nexus  # noqa: E402
 import nexusutils.dataconverter.convert as dataconverter
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 
@@ -31,7 +31,7 @@ from nexusutils.dataconverter.readers.base.reader import BaseReader
 def move_xarray_file_to_tmp(tmp_path):
     """Moves the xarray file, which is used to test linking into the tmp_path directory."""
     test_file_path = os.path.join(os.path.dirname(__file__),
-                                  "../../data/tools/dataconverter/readers/mpes")
+                                  "../data/dataconverter/readers/mpes")
     file_util.copy_file(os.path.join(test_file_path, "xarray_saved_small_calibration.h5"),
                         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"))
 
@@ -39,7 +39,7 @@ def move_xarray_file_to_tmp(tmp_path):
 def restore_xarray_file_from_tmp(tmp_path):
     """Restores the xarray file from the tmp_path directory."""
     test_file_path = os.path.join(os.path.dirname(__file__),
-                                  "../../data/tools/dataconverter/readers/mpes")
+                                  "../data/dataconverter/readers/mpes")
     os.remove(os.path.join(test_file_path, "xarray_saved_small_calibration.h5"))
     file_util.move_file(os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
                         os.path.join(test_file_path, "xarray_saved_small_calibration.h5"))
@@ -114,7 +114,7 @@ when  the template contains links."""
     move_xarray_file_to_tmp(tmp_path)
 
     dirpath = os.path.join(os.path.dirname(__file__),
-                           "../../data/tools/dataconverter/readers/example")
+                           "../data/dataconverter/readers/example")
     runner = CliRunner()
     result = runner.invoke(dataconverter.convert_cli, [
         "--nxdl",
@@ -152,7 +152,7 @@ def test_compression(tmp_path):
     """A test for the convert CLI to check whether a Dataset object is compressed."""
 
     dirpath = os.path.join(os.path.dirname(__file__),
-                           "../../data/tools/dataconverter/readers/example")
+                           "../data/dataconverter/readers/example")
 
     move_xarray_file_to_tmp(tmp_path)
 
@@ -175,7 +175,7 @@ def test_compression(tmp_path):
 def test_mpes_writing(tmp_path):
     """Check if mpes example can be reproduced"""
     # dataconverter
-    dirpath = os.path.join(os.path.dirname(__file__), "../../data/tools/dataconverter/readers/mpes")
+    dirpath = os.path.join(os.path.dirname(__file__), "../data/dataconverter/readers/mpes")
     dataconverter.convert((os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
                            os.path.join(dirpath, "config_file.json")),
                           "mpes", "NXmpes",
