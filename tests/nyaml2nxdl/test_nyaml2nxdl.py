@@ -31,11 +31,6 @@ from click.testing import CliRunner
 import nexusutils.nyaml2nxdl.nyaml2nxdl as nyml2nxdl
 from nexusutils.nyaml2nxdl import nyaml2nxdl_forward_tools
 
-## begin replace these with proper import management
-sys.path.insert(0, '../nexusutils')
-sys.path.insert(0, '../nexusutils.nyaml2nxdl')
-LOCALDIR = os.path.abspath(os.path.dirname(__file__))
-## end replace these with proper import management
 
 def delete_duplicates(list_of_matching_string):
     """Delete duplicate from lists

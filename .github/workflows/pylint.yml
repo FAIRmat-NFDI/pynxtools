@@ -24,13 +24,13 @@ jobs:
           python -m pip install -r dev-requirements.txt
       - name: pycodestyle
         run: |
-          python -m pycodestyle --ignore=E501,E701,E731 nexusparser tests --exclude=nexusparser/definitions
+          python -m pycodestyle --ignore=E501,E701,E731 nexusutils tests --exclude=nexusutils/definitions
       - name: pylint
         run: |
-          python -m pylint nexusparser tests
+          python -m pylint nexusutils tests
       - name: mypy
         run: |
-          python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional nexusparser tests
+          python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional nexusutils tests
       - name: Test with pytest
         if: ${{ always() }}
         run: |
