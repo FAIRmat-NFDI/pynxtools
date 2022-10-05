@@ -23,9 +23,9 @@ import logging
 from click.testing import CliRunner
 import pytest
 import h5py
-from nexusparser.tools import nexus  # noqa: E402
-import nexusparser.tools.dataconverter.convert as dataconverter
-from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
+from nexusutils import nexus  # noqa: E402
+import nexusutils.dataconverter.convert as dataconverter
+from nexusutils.dataconverter.readers.base.reader import BaseReader
 
 
 def move_xarray_file_to_tmp(tmp_path):

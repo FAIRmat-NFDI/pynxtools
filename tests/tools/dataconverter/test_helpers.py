@@ -23,8 +23,8 @@ from distutils import file_util
 import pytest
 import numpy as np
 
-import nexusparser.tools.dataconverter.helpers as helpers
-from nexusparser.tools.dataconverter.template import Template
+import nexusutils.dataconverter.helpers as helpers
+from nexusutils.dataconverter.template import Template
 
 
 def alter_dict(data_dict: Template, key: str, value: object):

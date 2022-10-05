@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nexusparser"
+name = "nexusutils"
 version = "0.0.1"
 authors = [
     { name = "The NOMAD Authors" },
 ]
-description = "NOMAD parser implementation for Nexus."
+description = "Extend NeXus for materials science experiment and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 requires-python = ">=3.7"
@@ -48,6 +48,6 @@ dev = [
 ]
 
 [project.scripts]
-read_nexus = "nexusparser.tools.nexus:main"
-dataconverter = "nexusparser.tools.dataconverter.convert:convert_cli"
-yaml2nxdl = "nexusparser.tools.yaml2nxdl.yaml2nxdl:launch_tool"
+read_nexus = "nexusutils.nexus:main"
+dataconverter = "nexusutils.dataconverter.convert:convert_cli"
+yaml2nxdl = "nexusutils.nyaml2nxdl.yaml2nxdl:launch_tool"

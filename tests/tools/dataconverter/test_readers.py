@@ -24,12 +24,12 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-from nexusparser.tools.dataconverter.readers.base.reader import BaseReader
-from nexusparser.tools.dataconverter.convert import \
+from nexusutils.dataconverter.readers.base.reader import BaseReader
+from nexusutils.dataconverter.convert import \
     get_names_of_all_readers, get_reader
-from nexusparser.tools.dataconverter.helpers import \
+from nexusutils.dataconverter.helpers import \
     validate_data_dict, generate_template_from_nxdl
-from nexusparser.tools.dataconverter.template import Template
+from nexusutils.dataconverter.template import Template
 
 
 def get_reader_name_from_reader_object(reader) -> str:
