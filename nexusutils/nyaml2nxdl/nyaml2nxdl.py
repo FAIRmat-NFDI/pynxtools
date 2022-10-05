@@ -108,9 +108,9 @@ application and base are valid categories!'
 
     if 'symbols' in yml_appdef.keys():
         nyaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef,
-                                                   xml_root,
-                                                   'symbols',
-                                                   yml_appdef['symbols'])
+                                                    xml_root,
+                                                    'symbols',
+                                                    yml_appdef['symbols'])
         del yml_appdef['symbols']
 
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
@@ -399,16 +399,16 @@ and print both an XML and YML file of the extended base class.
             break
     group = '{http://definition.nexusformat.org/nxdl/3.1}group'
     root_no_duplicates = nyaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
-                                                                      group,
-                                                                      root_no_duplicates)
+                                                                       group,
+                                                                       root_no_duplicates)
     field = '{http://definition.nexusformat.org/nxdl/3.1}field'
     root_no_duplicates = nyaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
-                                                                      field,
-                                                                      root_no_duplicates)
+                                                                       field,
+                                                                       root_no_duplicates)
     attribute = '{http://definition.nexusformat.org/nxdl/3.1}attribute'
     root_no_duplicates = nyaml2nxdl_backward_tools.compare_niac_and_my(tree, tree2, verbose,
-                                                                      attribute,
-                                                                      root_no_duplicates)
+                                                                       attribute,
+                                                                       root_no_duplicates)
     pretty_print_xml(root_no_duplicates, f"{input_file.replace('.nxdl.xml', '')}"
                      f"_appended.nxdl.xml")
     print_yml(input_file.replace('.nxdl.xml', '') + "_appended.nxdl.xml", verbose)

@@ -19,8 +19,6 @@
 # limitations under the License.
 #
 
-from typing import cast, Any
-import pytest
 import os
 import logging
 import xml.etree.ElementTree as ET

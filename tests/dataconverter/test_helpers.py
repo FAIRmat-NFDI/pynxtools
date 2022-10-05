@@ -138,7 +138,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint:
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
-TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
+# TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
 
 
 @pytest.mark.parametrize("data_dict,error_message", [
