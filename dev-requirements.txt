@@ -4,24 +4,38 @@
 #
 #    pip-compile --extra=dev --output-file=dev-requirements.txt pyproject.toml
 #
+anyio==3.6.1
+    # via jupyter-server
+argon2-cffi==21.3.0
+    # via jupyter-server
+argon2-cffi-bindings==21.2.0
+    # via argon2-cffi
 asciitree==0.3.3
     # via zarr
 ase==3.22.1
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 astroid==2.12.10
     # via
-    #   nexusparser (pyproject.toml)
+    #   nexusutils (pyproject.toml)
     #   pylint
 attrs==22.1.0
-    # via pytest
+    # via
+    #   jsonschema
+    #   pytest
 backcall==0.2.0
     # via ipython
+beautifulsoup4==4.11.1
+    # via nbconvert
+bleach==5.0.1
+    # via nbconvert
 certifi==2022.9.24
     # via requests
+cffi==1.15.1
+    # via argon2-cffi-bindings
 charset-normalizer==2.1.1
     # via requests
 click==8.1.3
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 cloudpickle==2.2.0
     # via dask
 coverage[toml]==6.5.0
@@ -36,6 +50,8 @@ decorator==5.1.1
     # via
     #   ipyparallel
     #   ipython
+defusedxml==0.7.1
+    # via nbconvert
 dill==0.3.5.1
     # via
     #   hyperspy
@@ -47,22 +63,29 @@ entrypoints==0.4
     #   numcodecs
 fasteners==0.18
     # via zarr
+fastjsonschema==2.16.2
+    # via nbformat
 flatdict==4.0.1
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 fonttools==4.37.4
     # via matplotlib
 fsspec==2022.8.2
     # via
     #   dask
     #   hyperspy
+h5grove==1.1.0
+    # via jupyterlab-h5web
 h5py==3.7.0
     # via
+    #   h5grove
     #   hyperspy
-    #   nexusparser (pyproject.toml)
+    #   nexusutils (pyproject.toml)
 hyperspy==1.7.2
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 idna==3.4
-    # via requests
+    # via
+    #   anyio
+    #   requests
 imageio==2.22.1
     # via
     #   hyperspy
@@ -71,12 +94,17 @@ importlib-metadata==5.0.0
     # via
     #   click
     #   hyperspy
+    #   jsonschema
+    #   nbconvert
+    #   nbformat
     #   numba
     #   pint
     #   pluggy
     #   prettytable
     #   pytest
     #   xarray
+importlib-resources==5.9.0
+    # via jsonschema
 iniconfig==1.1.1
     # via pytest
 ipykernel==6.16.0
@@ -93,14 +121,30 @@ isort==5.10.1
 jedi==0.18.1
     # via ipython
 jinja2==3.1.2
-    # via hyperspy
-# jupyter-client==7.3.5
-#     # via
-#     #   ipykernel
-#     #   ipyparallel
-# jupyter-core==4.11.1
-#     # via jupyter-client
-jupyterlab_h5web[full]==6.0.1
+    # via
+    #   hyperspy
+    #   jupyter-server
+    #   nbconvert
+jsonschema==4.16.0
+    # via nbformat
+jupyter-client==7.3.5
+    # via
+    #   ipykernel
+    #   ipyparallel
+    #   jupyter-server
+    #   nbclient
+jupyter-core==4.11.1
+    # via
+    #   jupyter-client
+    #   jupyter-server
+    #   nbconvert
+    #   nbformat
+jupyter-server==1.19.1
+    # via jupyterlab-h5web
+jupyterlab-h5web==6.0.1
+    # via nexusutils (pyproject.toml)
+jupyterlab-pygments==0.2.2
+    # via nbconvert
 kiwisolver==1.4.4
     # via matplotlib
 lazy-object-proxy==1.7.1
@@ -110,7 +154,9 @@ llvmlite==0.39.1
 locket==1.0.0
     # via partd
 markupsafe==2.1.1
-    # via jinja2
+    # via
+    #   jinja2
+    #   nbconvert
 matplotlib==3.5.3
     # via
     #   ase
@@ -121,18 +167,30 @@ matplotlib-inline==0.1.6
     #   ipython
 mccabe==0.7.0
     # via pylint
+mistune==2.0.4
+    # via nbconvert
 mpmath==1.2.1
     # via sympy
 mypy==0.982
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 mypy-extensions==0.4.3
     # via mypy
 natsort==8.2.0
     # via hyperspy
+nbclient==0.6.8
+    # via nbconvert
+nbconvert==7.1.0
+    # via jupyter-server
+nbformat==5.6.1
+    # via
+    #   jupyter-server
+    #   nbclient
+    #   nbconvert
 nest-asyncio==1.5.6
     # via
     #   ipykernel
     #   jupyter-client
+    #   nbclient
 networkx==2.6.3
     # via scikit-image
 numba==0.56.2
@@ -147,11 +205,12 @@ numpy==1.21.6
     # via
     #   ase
     #   dask
+    #   h5grove
     #   h5py
     #   hyperspy
     #   imageio
     #   matplotlib
-    #   nexusparser (pyproject.toml)
+    #   nexusutils (pyproject.toml)
     #   numba
     #   numcodecs
     #   numexpr
@@ -163,20 +222,26 @@ numpy==1.21.6
     #   tifffile
     #   xarray
     #   zarr
+orjson==3.8.0
+    # via h5grove
 packaging==21.3
     # via
     #   dask
     #   hyperspy
     #   ipykernel
+    #   jupyter-server
     #   matplotlib
+    #   nbconvert
     #   numexpr
     #   pint
     #   pytest
     #   scikit-image
 pandas==1.3.5
     # via
-    #   nexusparser (pyproject.toml)
+    #   nexusutils (pyproject.toml)
     #   xarray
+pandocfilters==1.5.0
+    # via nbconvert
 parso==0.8.3
     # via jedi
 partd==1.3.0
@@ -192,12 +257,16 @@ pillow==9.2.0
     #   scikit-image
 pint==0.18
     # via hyperspy
+pkgutil-resolve-name==1.3.10
+    # via jsonschema
 platformdirs==2.5.2
     # via pylint
 pluggy==1.0.0
     # via pytest
 prettytable==3.4.1
     # via hyperspy
+prometheus-client==0.14.1
+    # via jupyter-server
 prompt-toolkit==3.0.31
     # via ipython
 psutil==5.9.2
@@ -205,28 +274,36 @@ psutil==5.9.2
     #   ipykernel
     #   ipyparallel
 ptyprocess==0.7.0
-    # via pexpect
+    # via
+    #   pexpect
+    #   terminado
 py==1.11.0
     # via pytest
 pycodestyle==2.9.1
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
+pycparser==2.21
+    # via cffi
 pygments==2.13.0
-    # via ipython
+    # via
+    #   ipython
+    #   nbconvert
 pylint==2.15.3
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 pyparsing==3.0.9
     # via
     #   matplotlib
     #   packaging
+pyrsistent==0.18.1
+    # via jsonschema
 pytest==7.1.3
     # via
-    #   nexusparser (pyproject.toml)
+    #   nexusutils (pyproject.toml)
     #   pytest-cov
     #   pytest-timeout
 pytest-cov==4.0.0
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 pytest-timeout==2.1.0
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 python-dateutil==2.8.2
     # via
     #   hyperspy
@@ -242,12 +319,13 @@ pyyaml==6.0
     # via
     #   dask
     #   hyperspy
-    #   nexusparser (pyproject.toml)
+    #   nexusutils (pyproject.toml)
 pyzmq==24.0.1
     # via
     #   ipykernel
     #   ipyparallel
     #   jupyter-client
+    #   jupyter-server
 requests==2.28.1
     # via hyperspy
 scikit-image==0.19.3
@@ -258,18 +336,31 @@ scipy==1.7.3
     #   hyperspy
     #   scikit-image
     #   sparse
+send2trash==1.8.0
+    # via jupyter-server
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   bleach
+    #   python-dateutil
+sniffio==1.3.0
+    # via anyio
+soupsieve==2.3.2.post1
+    # via beautifulsoup4
 sparse==0.13.0
     # via hyperspy
 structlog==22.1.0
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 sympy==1.10.1
     # via hyperspy
+terminado==0.16.0
+    # via jupyter-server
 tifffile==2021.11.2
     # via
+    #   h5grove
     #   hyperspy
     #   scikit-image
+tinycss2==1.1.1
+    # via nbconvert
 tomli==2.0.1
     # via
     #   coverage
@@ -288,6 +379,8 @@ tornado==6.2
     #   ipykernel
     #   ipyparallel
     #   jupyter-client
+    #   jupyter-server
+    #   terminado
 tqdm==4.64.1
     # via
     #   hyperspy
@@ -298,20 +391,28 @@ traitlets==5.4.0
     #   ipyparallel
     #   ipython
     #   jupyter-client
+    #   jupyter-core
+    #   jupyter-server
     #   matplotlib-inline
+    #   nbclient
+    #   nbconvert
+    #   nbformat
 traits==6.4.1
     # via hyperspy
 typed-ast==1.5.4
     # via
     #   astroid
     #   mypy
-    #   nexusparser (pyproject.toml)
+    #   nexusutils (pyproject.toml)
 types-pyyaml==6.0.12
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 typing-extensions==4.3.0
     # via
+    #   anyio
+    #   argon2-cffi
     #   astroid
     #   importlib-metadata
+    #   jsonschema
     #   kiwisolver
     #   mypy
     #   numcodecs
@@ -324,14 +425,22 @@ wcwidth==0.2.5
     # via
     #   prettytable
     #   prompt-toolkit
+webencodings==0.5.1
+    # via
+    #   bleach
+    #   tinycss2
+websocket-client==1.4.1
+    # via jupyter-server
 wrapt==1.14.1
     # via astroid
 xarray==0.20.2
-    # via nexusparser (pyproject.toml)
+    # via nexusutils (pyproject.toml)
 zarr==2.12.0
     # via hyperspy
 zipp==3.8.1
-    # via importlib-metadata
+    # via
+    #   importlib-metadata
+    #   importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

@@ -28,7 +28,8 @@ dependencies = [
     "pandas>=1.3.2",
     "ase>=3.19.0",
     "flatdict>=4.0.1",
-    "hyperspy>=1.7.1"
+    "hyperspy>=1.7.1",
+    "jupyterlab_h5web>=6.0.1"
 ]
 
 [project.urls]

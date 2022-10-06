@@ -30,6 +30,7 @@ cd <your-brand-new-folder>
 pip install virtualenv
 virtualenv --python=python3.7 .pyenv
 source .pyenv/bin/activate
+pip install pip-tools
 ```
 
 This software can be used independently of a NOMAD or NOMAD Oasis instance.
