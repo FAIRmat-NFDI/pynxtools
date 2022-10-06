@@ -1,16 +1,16 @@
 This is a software for developing ontologies and instances of ontologies with 
-NeXus [NEXUS](https://www.nexusformat.org/). The software serves two aims.
+[NeXus](https://www.nexusformat.org/). The software serves two aims.
 
 First, it offers users a tool with which they can
 create specific data files packaging together numerical data and metadata from
-experiments which can from technology partners and/or text file output from
-an electronic lab notebook (ELN). This is an instance of the ontology.
+experiments which can originate from technology partners and/or text file output
+from an electronic lab notebook (ELN).
 
-Second, the software is used in the German national Research Data infrastructure
+Second, the software is used in the German National Research Data Infrastructure
 (German NFDI) project FAIRmat, here specifically in the NOMAD OASIS research data
-management (RDM) system to serve as a set of parsers which enable users of a NOMAD
+management (RDM) system, to serve as a set of parsers which enable users of a NOMAD
 Oasis instance to create data and metadata entries from experiments so that NOMAD Oasis
-understands the specific logic and terminology in the field.
+understands the specific logic and terminology of the scientific field.
 
 ## Getting started
 You should create a virtual environment. We tested with Python 3.7.
@@ -41,22 +41,21 @@ Now you have to decide your role. Are you a user or a developer?
 ### I want to use nexusutils as a user
 If you are a user you should install nexusutils as a standalone tool:
 ```
-pip install nexusutils --extra-index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
+pip install nomad-parser-nexus --extra-index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
 ```
 
-### I am a developer and want to explore or change contribute to nexusutils
+### I am a developer and want to explore or contribute
 
+Install package with its dependencies:
+
+<span style="color:red">Fix first two lines with correct repo names</span>
 ```
 git clone https://github.com/nomad-coe/nomad-parser-nexus.git --branch master --recursive nexusutils
 cd nexusutils
 git submodule sync --recursive
-git submodule update --init --recursive
-```
-
-Install the remaining dev dependencies and install the package with:
-```
-pip install -r requirements.txt
-pip install -e .[all]
+git submodule update --init --recursive --jobs=4
+python -m pip install --upgrade pip
+python -m pip install --no-deps .
 ```
 
 ## Test this software
@@ -82,9 +81,9 @@ editing and writing experience when they wish to explore, modified, i.e. work wi
 NeXus base classes and application definitions.
 
 ```console
-user@box:~$ yaml2nxdl --help
+user@box:~$ nyaml2nxdl --help
 
-Usage: yaml2nxdl.py [OPTIONS]
+Usage: nyaml2nxdl.py [OPTIONS]
 
 Options:
    --input-file TEXT     The path to the input data file to read.
