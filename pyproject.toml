@@ -49,6 +49,6 @@ dev = [
 ]
 
 [project.scripts]
-read_nexus = "nexusutils.nexus:main"
+read_nexus = "nexusutils.nexus.nexus:main"
 dataconverter = "nexusutils.dataconverter.convert:convert_cli"
-yaml2nxdl = "nexusutils.nyaml2nxdl.yaml2nxdl:launch_tool"
+nyaml2nxdl = "nexusutils.nyaml2nxdl.nyaml2nxdl:launch_tool"

@@ -49,14 +49,13 @@ pip install nomad-parser-nexus --extra-index-url https://gitlab.mpcdf.mpg.de/api
 
 Install package with its dependencies:
 
-<span style="color:red">Fix first two lines with correct repo names</span>
 ```
 git clone https://github.com/nomad-coe/nomad-parser-nexus.git --branch master --recursive nexusutils
 cd nexusutils
 git submodule sync --recursive
 git submodule update --init --recursive --jobs=4
 python -m pip install --upgrade pip
-python -m pip install --no-deps .
+python -m pip install .
 ```
 
 ## Test this software
