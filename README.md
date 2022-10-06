@@ -1,4 +1,4 @@
-This is a software for developing ontologies and instances of ontologies with 
+This is a software for developing ontologies and instances of ontologies with
 [NeXus](https://www.nexusformat.org/). The software serves two aims.
 
 First, it offers users a tool with which they can
@@ -12,8 +12,15 @@ management (RDM) system, to serve as a set of parsers which enable users of a NO
 Oasis instance to create data and metadata entries from experiments so that NOMAD Oasis
 understands the specific logic and terminology of the scientific field.
 
+The software tools are located inside the module subdirectory 'nexusutils'and they are
+shipped with unit tests located in the subdirectory 'tests'.
+Some examples with real datasets are also provided in the subdirectory 'examples'
+in which Jupyter Notebooks are guiding through the process of converting instrument raw
+data into the NeXus standard and then aloow the visualisation of the hierarchical contents
+of the generated NeXus file in JupyterLab.
+
 ## Getting started
-You should create a virtual environment. We tested with Python 3.7.
+You should create a virtual environment. We tested on Ubuntu with Python 3.7.
 
 If you don't have Python 3.7 installed on your computer, follow these commands:
 ```
@@ -42,7 +49,7 @@ Now you have to decide your role. Are you a user or a developer?
 ### I want to use nexusutils as a user
 If you are a user you should install nexusutils as a standalone tool:
 ```
-pip install nomad-parser-nexus --extra-index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
+pip install nexusutils --extra-index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
 ```
 
 ### I am a developer and want to explore or contribute
@@ -55,7 +62,15 @@ cd nexusutils
 git submodule sync --recursive
 git submodule update --init --recursive --jobs=4
 python -m pip install --upgrade pip
-python -m pip install .
+python -m pip install -e .
+python -m pip install -e .[dev]
+```
+
+To be able to run jupyerlab with the NeXus file viewer H5Web, you also need the foolwing packages
+
+```
+python -m pip install jupyterlab
+python -m pip install jupyterlab_h5web[full]==6.0.1
 ```
 
 ## Test this software
@@ -63,7 +78,7 @@ Especially relevant for developers, there exists a basic test framework written 
 [pytest](https://docs.pytest.org/en/stable/) which can be used as follows:
 
 ```
-pytest -sv tests
+python -m pytest -sv tests
 ```
 
 ## Individual modules of this software and their functions
@@ -106,7 +121,7 @@ and an experiment/technique-specific dataconverter (aka parser).
 The main purpose of these parsers is to create an instance of a NeXus/HDF5 file that is
 formatted in accordance with the respective NeXus application definition.
 This means the parser eventually transcodes and copies data and metadata within specifically
-formatted file and representations, like ELNs, of a scientific community and/or 
+formatted file and representations, like ELNs, of a scientific community and/or
 technology partner.
 
 The dataconverter implements a concept of a generic parser, which internally calls
@@ -145,22 +160,22 @@ Inspect also specific README.md of the respective parser(s) you wish to use
 or contribute to so that you can learn how these parser(s) work, which input data
 they expect, and what which output they yield.
 
-### **nexuschecker**
-<span style="color:red">Explain for what this tool is useful. Check call line !</span>
-Outputs a debug log for a given NeXus file.
+### **read_nexus**
+This utility outputs a debug log for a given NeXus file by annotating the data and
+metadata entries with the schema definitions from the respective base classes and
+application definitions the file content is referring to.
 
 ```console
-user@box:~$ python -m nexuschecker.nexus <path_to_nexus_file>
+user@box:~$ read_nexus <path_to_nexus_file>
 ```
 
-The module `nexus.py` reads HDF5 data file (i.e it is a user-specific data file,
-which contains numerical and metadata about the experiment).
-
-<span style="color:red">*The environmental variable called "NEXUS_DEF_PATH" should be set to the directory, which contains application definitions as XML files. If this environmental variable is not defined, then code will first clone a directory from GitHub, which contains application definitions.*</span>
+*The environmental variable called "NEXUS_DEF_PATH" can be set to
+a directory, which contains the NeXus definitions as XML files. If this environmental
+variable is not defined, the module will use the dinfitions in its bundle.*
 
 An environmental variable can be set as follows:
 ```
-export 'NEXUS_DEF_PATH'=<folder_path_that_contains_app_defs>
+export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
 ```
 
 ## Next steps
