@@ -1,7 +1,0 @@
-# NexusParser Parameter File - v0.0.1
-
-dataconverter:
-  reader: mpes
-  output: output.nxs
-  nxdl: NXmpes
-  input-file: ['config_file.json', 'ELN_metadata_example.yaml', 'xarray_saved_small_calibration.h5']
