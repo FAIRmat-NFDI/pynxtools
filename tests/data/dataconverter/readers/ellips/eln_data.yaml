@@ -1,0 +1,71 @@
+acquisition_program/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
+acquisition_program/program: WVASE
+acquisition_program/version: '3.882'
+address: Zum Großen Windkanal 2, 12489 Berlin, Germany
+affiliation: Humboldt-Universität zu Berlin
+angle_of_incidence_unit: degrees
+angular_spread:
+  unit: rad ** 2
+  value: 0.2
+atom_types: Si, O
+blocks:
+- type
+- angle_of_incidence
+calibration_status: no calibration
+colnames:
+- type
+- wavelength
+- angle_of_incidence
+- psi
+- delta
+- err.psi
+- err.delta
+column_names:
+- psi
+- delta
+company: J. A. Woollam Co.
+count_time:
+  unit: s
+  value: 1
+data_identifier: 1
+data_type: psi/delta
+definition: NXellipsometry
+definition/\@url: https://github.com/FAIRmat-Experimental/nexus_definitions/tree/fairmat-ellips/contributed_definitions/NXellipsometry.nxdl.xml
+definition/\@version: 0.0.2
+detector_type: CCD spectrometer
+ellipsometry_type: dual compensator
+email: surname.name@physik.hu-berlin.de
+err-var:
+- err.psi
+- err.delta
+experiment_description: RC2 scan on 2nm SiO2 on Si in air
+experiment_identifier: exp-ID
+filename: test-data.dat
+firmware: CompleteEASE
+firmware/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
+firmware/\@version: '6.37'
+focussing_probes: false
+integration_time:
+  unit: s
+  value: 0
+layer_structure: 2nm SiO2 on Si
+light_source: arc lamp
+medium: air
+model: RC2
+model/\@version: 0.0.1
+name: Name Surname
+parameters:
+- type
+- angle
+rotating_element: compensator (source side)
+sample_history: Commercially purchased sample
+sample_name: 2nm SiO2 on Si
+sep: \t
+skip: 3
+stage_type: manual stage
+start_time: '2022-01-27T04:35:00+00:00'
+wavelength_unit: angstrom
+x-var: wavelength
+y-var:
+- psi
+- delta
