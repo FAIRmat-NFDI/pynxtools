@@ -34,9 +34,9 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
 
-from ..dataconverter import helpers
-from . import nyaml2nxdl_forward_tools
-from . import nyaml2nxdl_backward_tools
+from nexusutils.dataconverter import helpers
+from nexusutils.nyaml2nxdl import nyaml2nxdl_forward_tools
+from nexusutils.nyaml2nxdl import nyaml2nxdl_backward_tools
 
 
 def pretty_print_xml(xml_root, output_xml):
