@@ -55,3 +55,6 @@ nyaml2nxdl = "nexusutils.nyaml2nxdl.nyaml2nxdl:launch_tool"
 
 [tool.setuptools.package-data]
 nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+
+[tool.setuptools.packages.find]
+exclude = ["nexusutils/definitions*"]
