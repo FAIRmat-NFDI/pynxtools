@@ -28,7 +28,7 @@ import xarray as xr
 import yaml
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
-from nexusutils.dataconverter.readers.utils import flatten_and_replace
+from nexusutils.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 
 DEFAULT_UNITS = {
     "X": "step",
@@ -225,7 +225,11 @@ def handle_h5_and_json_file(file_paths, objects):
         elif file_extension in [".yaml", ".yml"]:
             with open(file_path) as feln:
                 eln_data_dict = flatten_and_replace(
-                    yaml.safe_load(feln), CONVERT_DICT, REPLACE_NESTED
+                    FlattenSettings(
+                        dic=yaml.safe_load(feln),
+                        convert_dict=CONVERT_DICT,
+                        replace_nested=REPLACE_NESTED
+                    )
                 )
 
     if objects is not None:
