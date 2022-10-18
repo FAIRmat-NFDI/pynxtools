@@ -198,3 +198,23 @@ def test_mpes_writing(tmp_path):
     with open(os.path.join(dirpath, 'Ref_nexus_mpes.log'), 'r') as logfile:
         ref_log = logfile.readlines()
     assert log == ref_log
+
+
+def test_eln_data(tmp_path):
+    """Check if the subsections in the eln_data.yml file work."""
+    dirpath = os.path.join(os.path.dirname(__file__), "../data/dataconverter/readers/mpes")
+    dataconverter.convert((os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
+                           os.path.join(dirpath, "config_file.json"),
+                           os.path.join(dirpath, "eln_data.yaml")),
+                          "mpes", "NXmpes",
+                          os.path.join(tmp_path, "mpes.small_test.nxs"),
+                          False, False)
+
+
+def test_eln_data_subsections(tmp_path):
+    """Check if the subsections in the eln_data.yml file work."""
+    dirpath = os.path.join(os.path.dirname(__file__), "../data/dataconverter/readers/json_yml")
+    dataconverter.convert((os.path.join(dirpath, "eln_data_w_subsections.yaml",),),
+                          "hall", "NXroot",
+                          os.path.join(tmp_path, "hall.nxs"),
+                          False, False)
