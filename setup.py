@@ -16,6 +16,21 @@
 # limitations under the License.
 #
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
-setup()
+
+def main():
+    setup(
+        name='nexusparser',
+        version='1.0',
+        description='Collection of NOMAD tools to support neXus.',
+        author='The NOMAD Authors',
+        license='APACHE 2.0',
+        packages=find_packages(exclude=['tests']),
+        install_requires=['nomad-lab'],
+        include_package_data=True
+    )
+
+
+if __name__ == '__main__':
+    main()
