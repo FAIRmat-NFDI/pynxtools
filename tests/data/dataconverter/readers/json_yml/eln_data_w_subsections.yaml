@@ -1,0 +1,33 @@
+instrument:
+  amperemeter: Keithley 485 Autoranging Picoammeter
+  current_source: Keithley 220 Programmable current source
+  model: Lake Shore Hall Measurement System
+  software: Lake Shore Hall Measurement Software
+  switch_matrix: Keithley 7001 Switch System
+  voltmeter: Keithley 2182 Nanovoltmeter
+samples:
+  final_sample:
+    - contacts_grafting:
+        - metal_stack:
+            - empirical_formula: Ti
+            - empirical_formula: Au
+            - empirical_formula: Ra
+          process_steps:
+            - elapsed_time:
+                unit: minute
+                value: 1.0
+              step_comment: Was there a post-annealing step?
+              step_name: Post-annealing
+            - elapsed_time:
+                unit: minute
+                value: 5.0
+              step_comment: "Was there a pre-treatment of the surface? \n"
+              step_name: Pre-treatment
+            - step_comment: Was an implatation made for contact formation?
+              step_name: implantation
+            - step_comment: Was a regrowth made for contact formation?
+              step_name: regrowth
+  layer:
+    - components:
+        - ../upload/raw/Substrate1.data.archive.yaml#data
+      epitaxy_type: Homoepitaxy

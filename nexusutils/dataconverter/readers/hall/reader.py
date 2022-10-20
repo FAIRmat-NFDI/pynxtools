@@ -17,12 +17,12 @@
 #
 """Lake Shore Hall file reader implementation for the DataConverter."""
 import re
-from typing import Any, List, TextIO, Dict
+from typing import Any, List, TextIO, Dict, Optional
 import numpy as np
 import pandas as pd
 
 from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
-import nexusutils.dataconverter.readers.hall.helpers as helpers
+from nexusutils.dataconverter.readers.hall import helpers
 from nexusutils.dataconverter.readers.utils import parse_json, parse_yml
 
 # Replacement dict for section names
@@ -47,7 +47,7 @@ CONVERSION_FUNCTIONS = {
 MEASUREMENT_KEYS = ["Contact Sets"]
 
 
-def split_add_key(fobj: TextIO, dic: dict, prefix: str, expr: str) -> None:
+def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> None:
     """Splits a key value pair and adds it to the dictionary.
     It also checks for measurement headers and adds the full tabular data as a
     pandas array to the dictionary.
@@ -61,7 +61,7 @@ def split_add_key(fobj: TextIO, dic: dict, prefix: str, expr: str) -> None:
     key, *val = re.split(r"\s*[:|=]\s*", expr)
     jval = "".join(val).strip()
 
-    if key in MEASUREMENT_KEYS:
+    if fobj is not None and key in MEASUREMENT_KEYS:
         data = []
         for line in fobj:
             if not line.strip():
@@ -150,8 +150,8 @@ class HallReader(YamlJsonReader):
     extensions = {
         ".txt": lambda fname: parse_txt(fname, "iso-8859-1"),
         ".json": parse_json,
-        ".yml": lambda fname: parse_yml(fname, {}, {}),
-        ".yaml": lambda fname: parse_yml(fname, {}, {}),
+        ".yml": lambda fname: parse_yml(fname, None, None),
+        ".yaml": lambda fname: parse_yml(fname, None, None),
     }
 
 

@@ -16,21 +16,16 @@
 # limitations under the License.
 #
 """Utility functions for the NeXus reader classes."""
+from dataclasses import dataclass, replace
 from typing import List, Any, Dict, Optional
 from collections.abc import Mapping
 import json
 import yaml
 
 
-def flatten_and_replace(
-        dic: Mapping,
-        convert_dict: dict,
-        replace_nested: dict,
-        parent_key: str = "/ENTRY[entry]",
-        sep: str = "/"
-) -> dict:
-    """Flatten a nested dictionary, and replace the keys with the appropriate
-    paths in the nxs file.
+@dataclass
+class FlattenSettings():
+    """Settings for flattening operations.
 
     Args:
         dic (dict): Dictionary to flatten
@@ -39,26 +34,117 @@ def flatten_and_replace(
         parent_key (str, optional):
             Parent key of the dictionary. Defaults to "/ENTRY[entry]".
         sep (str, optional): Separator for the keys. Defaults to "/".
+    """
+    dic: Mapping
+    convert_dict: dict
+    replace_nested: dict
+    parent_key: str = "/ENTRY[entry]"
+    sep: str = "/"
+    is_in_section: bool = False
+
+
+def is_section(val: Any) -> bool:
+    """Checks whether a value is a section.
+
+    Args:
+        val (Any): A list or value.
+
+    Returns:
+        bool: True if val is a section.
+    """
+    return isinstance(val, list) and len(val) > 0 and isinstance(val[0], dict)
+
+
+def is_key_value_pair(val: Any) -> bool:
+    if not isinstance(val, dict):
+        return False
+
+    if len(val) == 2 and "value" in val and "unit" in val:
+        return True
+    return False
+
+
+def uniquify_keys(ldic: list) -> List[Any]:
+    """Uniquifys keys in a list of tuple lists containing key value pairs.
+
+    Args:
+        ldic (list): List of lists of length two, containing key value pairs.
+
+    Returns:
+        List[Any]: Uniquified list, where duplicate keys are appended with 1, 2, etc.
+    """
+    dic: dict = {}
+    for key, val in ldic:
+        suffix = 0
+        sstr = "" if suffix == 0 else str(suffix)
+        while f"{key}{sstr}" in dic.keys():
+            sstr = "" if suffix == 0 else str(suffix)
+            suffix += 1
+
+        if is_key_value_pair(val):
+            dic[f"{key}{sstr}"] = val["value"]
+            dic[f"{key}{sstr}/@units"] = val["unit"]
+            continue
+        dic[f"{key}{sstr}"] = val
+
+    return list(map(list, dic.items()))
+
+
+def parse_section(key: str, val: Any, settings: FlattenSettings) -> List[Any]:
+    """Parse a section, i.e. an entry containing a list of entries.
+
+    Args:
+        key (str): The key which is currently being checked.
+        val (Any): The value at the current key.
+        settings (FlattenSettings): The flattening settings.
+
+    Returns:
+        List[Any]: A list of list tuples containing key, value pairs.
+    """
+    if not is_section(val):
+        return [(key, val)]
+
+    groups: List[Any] = []
+    for group in val:
+        groups.extend(
+            flatten_and_replace(
+                replace(settings, dic=group, parent_key=key, is_in_section=True)
+            ).items()
+        )
+
+    return uniquify_keys(groups)
+
+
+def flatten_and_replace(settings: FlattenSettings) -> dict:
+    """Flatten a nested dictionary, and replace the keys with the appropriate
+    paths in the nxs file.
+
+    Args:
+        settings (FlattenSettings): Settings dataclass for flattening the data.
 
     Returns:
         dict: Flattened dictionary
     """
     items: List[Any] = []
-    for key, val in dic.items():
-        new_key = parent_key + sep + convert_dict.get(key, key)
+    for key, val in settings.dic.items():
+        new_key = settings.parent_key + settings.sep + settings.convert_dict.get(key, key)
         if isinstance(val, Mapping):
             items.extend(
-                flatten_and_replace(val, convert_dict, replace_nested, new_key, sep=sep)
+                flatten_and_replace(replace(settings, dic=val, parent_key=new_key))
                 .items()
+                if not (settings.is_in_section and is_key_value_pair(val))
+                else [[new_key, val]]
             )
-        else:
-            for old, new in replace_nested.items():
-                new_key = new_key.replace(old, new)
+            continue
 
-            if new_key.endswith("/value"):
-                items.append((new_key[:-6], val))
-            else:
-                items.append((new_key, val))
+        for old, new in settings.replace_nested.items():
+            new_key = new_key.replace(old, new)
+
+        if new_key.endswith("/value"):
+            items.append((new_key[:-6], val))
+        else:
+            items.extend(parse_section(new_key, val, settings))
+
     return dict(items)
 
 
@@ -81,8 +167,16 @@ def parse_yml(
     if replace_nested is None:
         replace_nested = {}
 
+    convert_dict["unit"] = "@units"
+
     with open(file_path) as file:
-        return flatten_and_replace(yaml.safe_load(file), convert_dict, replace_nested)
+        return flatten_and_replace(
+            FlattenSettings(
+                dic=yaml.safe_load(file),
+                convert_dict=convert_dict,
+                replace_nested=replace_nested
+            )
+        )
 
 
 def parse_json(file_path: str) -> Dict[str, Any]:
