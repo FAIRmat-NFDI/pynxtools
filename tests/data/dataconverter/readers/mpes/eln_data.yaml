@@ -1,0 +1,65 @@
+Instrument:
+  Analyzer:
+    energy_resolution: 110
+    momentum_resolution: 0.08
+    slow_axes: delay
+    spatial_resolution: 10
+  Beam:
+    Probe:
+      extent:
+        unit: m
+        value:
+          - 7.999999999999999e-05
+          - 7.999999999999999e-05
+      incident_energy:
+        unit: J
+        value: 3.4767232957799996e-18
+      incident_energy_spread:
+        unit: J
+        value: 1.7623942974e-20
+      incident_polarization:
+        - 1
+        - 1
+        - 0
+        - 0
+      pulse_duration:
+        unit: s
+        value: 2.0000000000000003e-14
+    Pump:
+      extent:
+        unit: m
+        value:
+          - 0.00022999999999999998
+          - 0.000265
+      incident_energy:
+        unit: J
+        value: 2.4833737826999997e-19
+      incident_energy_spread:
+        unit: J
+        value: 1.2817413071999999e-20
+      incident_polarization:
+        - 1
+        - -1
+        - 0
+        - 0
+      pulse_duration:
+        unit: s
+        value: 3.5e-14
+Sample:
+  chemical_formula: WSe2
+  description: Sample
+  name: WSe2 Single Crystal
+  preparation_date: "2019-01-13T09:00:00+00:00"
+  pressure:
+    unit: bar
+    value: 5.0e-14
+  sample_history: Cleaved
+  temperature:
+    unit: °C
+    value: 26.850000000000023
+User:
+  address: Faradayweg 4-6, 14915 Berlin
+  affiliation: Fritz Haber Institute of the Max Planck Society
+  email: maklar@fhi-berlin.mpg.de
+  name: Julian Maklar
+  role: Principal Investigator
