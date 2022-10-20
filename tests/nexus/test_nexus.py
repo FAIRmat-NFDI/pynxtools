@@ -65,9 +65,13 @@ def test_nexus(tmp_path):
     nexus_helper = nexus.HandleNexus(logger, [example_data])
     nexus_helper.process_nexus_master_file(None)
 
-    with open(os.path.join(tmp_path, 'nexus_test.log'), 'r') as logfile:
+    with open(os.path.join(tmp_path, 'nexus_test.log'), 'r', encoding='utf-8') as logfile:
         log = logfile.readlines()
-    with open(os.path.join(local_dir, '../data/nexus/Ref_nexus_test.log'), 'r') as reffile:
+    with open(
+        os.path.join(local_dir, '../data/nexus/Ref_nexus_test.log'),
+        'r',
+        encoding='utf-8'
+    ) as reffile:
         ref = reffile.readlines()
 
     assert log == ref

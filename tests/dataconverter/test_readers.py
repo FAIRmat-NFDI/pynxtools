@@ -23,6 +23,7 @@ from typing import List
 import xml.etree.ElementTree as ET
 
 import pytest
+from _pytest.mark.structures import ParameterSet
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.convert import \
@@ -46,7 +47,7 @@ def get_readers_file_names() -> List[str]:
     return glob.glob("nexusutils/dataconverter/readers/*/reader.py")
 
 
-def get_all_readers() -> List[BaseReader]:
+def get_all_readers() -> List[ParameterSet]:
     """Scans through the reader list and returns them for pytest parametrization"""
     readers = []
 
@@ -57,7 +58,7 @@ def get_all_readers() -> List[BaseReader]:
                                         marks=pytest.mark.skip(reason="Missing test data.")
                                         ))
         else:
-            readers.append(reader)
+            readers.append(pytest.param(reader))
 
     return readers
 

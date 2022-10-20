@@ -191,12 +191,12 @@ def convert_cli(input_file: Tuple[str],
     if params_file:
         try:
             convert(**parse_params_file(params_file))
-        except TypeError:
+        except TypeError as exc:
             sys.tracebacklimit = 0
             raise Exception(("Please make sure you have the following entries in your "
                              "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
                              "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
-                             "put-file: value"))
+                             "put-file: value")) from exc
     else:
         if nxdl is None:
             sys.tracebacklimit = 0

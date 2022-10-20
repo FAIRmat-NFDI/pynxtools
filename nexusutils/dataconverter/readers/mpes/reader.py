@@ -181,10 +181,10 @@ def handle_h5_and_json_file(file_paths, objects):
     for file_path in file_paths:
         try:
             file_extension = file_path[file_path.rindex("."):]
-        except ValueError:
+        except ValueError as exc:
             raise ValueError(
                 f"The file path {file_path} must have an extension.",
-            )
+            ) from exc
 
         extentions = [".h5", ".json", ".yaml", ".yml"]
         if file_extension not in extentions:
@@ -220,10 +220,10 @@ def handle_h5_and_json_file(file_paths, objects):
         if file_extension == ".h5":
             x_array_loaded = h5_to_xarray(file_path)
         elif file_extension == ".json":
-            with open(file_path) as file:
+            with open(file_path, encoding="utf-8") as file:
                 config_file_dict = json.load(file)
         elif file_extension in [".yaml", ".yml"]:
-            with open(file_path) as feln:
+            with open(file_path, encoding="utf-8") as feln:
                 eln_data_dict = flatten_and_replace(
                     FlattenSettings(
                         dic=yaml.safe_load(feln),

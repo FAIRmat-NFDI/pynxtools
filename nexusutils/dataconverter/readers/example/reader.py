@@ -45,7 +45,7 @@ class ExampleReader(BaseReader):
 
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex("."):]
-            with open(file_path, "r") as input_file:
+            with open(file_path, "r", encoding="utf-8") as input_file:
                 if file_extension == ".json":
                     data = json.loads(input_file.read())
 

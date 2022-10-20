@@ -23,7 +23,7 @@ from distutils import file_util
 import pytest
 import numpy as np
 
-import nexusutils.dataconverter.helpers as helpers
+from nexusutils.dataconverter import helpers
 from nexusutils.dataconverter.template import Template
 
 

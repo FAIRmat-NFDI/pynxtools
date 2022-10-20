@@ -22,10 +22,6 @@ which details a hierarchy of data/metadata elements
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# pylint: disable=E1101
-
-
 import os
 import sys
 from typing import List
@@ -51,11 +47,11 @@ using built-in libraries and add preceding XML processing instruction
     root = dom.firstChild
     dom.insertBefore(sibling, root)
     xml_string = dom.toprettyxml(indent='    ', newl='\n')
-    with open('tmp.xml', "w") as file_tmp:
+    with open('tmp.xml', "w", encoding="utf-8") as file_tmp:
         file_tmp.write(xml_string)
     flag = False
-    with open('tmp.xml', "r") as file_out:
-        with open(output_xml, "w") as file_out_mod:
+    with open('tmp.xml', "r", encoding="utf-8") as file_out:
+        with open(output_xml, "w", encoding="utf-8") as file_out_mod:
             for i in file_out.readlines():
                 if '<doc>' not in i and '</doc>' not in i and flag is False:
                     file_out_mod.write(i)
@@ -183,10 +179,11 @@ class Nxdl2yaml():
         """Handle symbols field and its childs
 
         """
-        self.root_level_symbols = '{indent}{tag}: {text}'.format(
-            indent=0 * '  ',
-            tag=helpers.remove_namespace_from_tag(node.tag),
-            text=node.text.strip() if node.text else '')
+        # pylint: disable=consider-using-f-string
+        self.root_level_symbols = (
+            f"{helpers.remove_namespace_from_tag(node.tag)}: "
+            f"{node.text.strip() if node.text else ''}"
+        )
         depth += 1
         for child in list(node):
             tag = helpers.remove_namespace_from_tag(child.tag)
@@ -219,6 +216,7 @@ class Nxdl2yaml():
         """Handle definition group and its attributes
 
         """
+        # pylint: disable=consider-using-f-string
         attribs = node.attrib
         for item in attribs:
             if 'schemaLocation' not in item \
@@ -238,9 +236,9 @@ class Nxdl2yaml():
                 self.root_level_definition.append(f"{keyword[0:-1]}({attribs['extends']}):")
 
     def handle_root_level_doc(self, node):
-        """Handle the documentation field found at root level
+        """Handle the documentation field found at root level"""
+        # pylint: disable=consider-using-f-string
 
-"""
         for child in list(node):
             tag = helpers.remove_namespace_from_tag(child.tag)
             if tag == ('doc'):
@@ -257,6 +255,7 @@ class Nxdl2yaml():
 the general documentation field found in XML file
 
  """
+        # pylint: disable=consider-using-f-string
         file_out.write(
             '{indent}{root_level_doc}'.format(
                 indent=0 * '  ',
@@ -268,6 +267,7 @@ the general documentation field found in XML file
 the information stored as definition attributes in the XML file
 
 """
+        # pylint: disable=consider-using-f-string
         if depth > 0 \
                 and [s for s in self.root_level_definition if "category: application" in s]\
                 or depth == 1 \
@@ -315,7 +315,7 @@ then prints recursively each level of the tree
         if verbose:
             sys.stdout.write(f'Node tag: {helpers.remove_namespace_from_tag(node.tag)}\n')
             sys.stdout.write(f'Attributes: {node.attrib}\n')
-        with open(output_yml, "a") as file_out:
+        with open(output_yml, "a", encoding="utf-8") as file_out:
             tag = helpers.remove_namespace_from_tag(node.tag)
             if tag == ('definition'):
                 self.found_definition = True

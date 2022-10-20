@@ -43,7 +43,7 @@ class YamlJsonReader(BaseReader):
         sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
         for file_path in sorted_paths:
             extension = os.path.splitext(file_path)[1]
-            if extension not in self.extensions.keys():
+            if extension not in self.extensions:
                 print(
                     f"WARNING: "
                     f"File {file_path} has an unsupported extension, ignoring file."

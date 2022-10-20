@@ -266,14 +266,14 @@ class EmNionReader(BaseReader):
         report_appdef_version(template)
 
         print('Add metadata which come from other sources...')
-        if 'json' in typed_files.keys():
+        if 'json' in typed_files:
             assert len(typed_files['json']) == 1, \
                 "List of json files is ambiguous!"
 
             extract_data_from_json_file(typed_files['json'][0], template)
 
         print('Add metadata/data from numpy array(s) representing scans...')
-        if 'npy' in typed_files.keys():
+        if 'npy' in typed_files:
             assert len(typed_files['npy']) == 1, \
                 "List of npy files is ambiguous!"
             assert len(typed_files['json']) == 1, \

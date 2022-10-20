@@ -55,7 +55,15 @@ def is_section(val: Any) -> bool:
     return isinstance(val, list) and len(val) > 0 and isinstance(val[0], dict)
 
 
-def is_key_value_pair(val: Any) -> bool:
+def is_value_unit_pair(val: Any) -> bool:
+    """Checks whether the value contains a dict of a value unit pair.
+
+    Args:
+        val (Any): The value to be checked.
+
+    Returns:
+        bool: True if val contains a value unit pair dict.
+    """
     if not isinstance(val, dict):
         return False
 
@@ -77,11 +85,11 @@ def uniquify_keys(ldic: list) -> List[Any]:
     for key, val in ldic:
         suffix = 0
         sstr = "" if suffix == 0 else str(suffix)
-        while f"{key}{sstr}" in dic.keys():
+        while f"{key}{sstr}" in dic:
             sstr = "" if suffix == 0 else str(suffix)
             suffix += 1
 
-        if is_key_value_pair(val):
+        if is_value_unit_pair(val):
             dic[f"{key}{sstr}"] = val["value"]
             dic[f"{key}{sstr}/@units"] = val["unit"]
             continue
@@ -132,7 +140,7 @@ def flatten_and_replace(settings: FlattenSettings) -> dict:
             items.extend(
                 flatten_and_replace(replace(settings, dic=val, parent_key=new_key))
                 .items()
-                if not (settings.is_in_section and is_key_value_pair(val))
+                if not (settings.is_in_section and is_value_unit_pair(val))
                 else [[new_key, val]]
             )
             continue
@@ -169,7 +177,7 @@ def parse_yml(
 
     convert_dict["unit"] = "@units"
 
-    with open(file_path) as file:
+    with open(file_path, encoding='utf-8') as file:
         return flatten_and_replace(
             FlattenSettings(
                 dic=yaml.safe_load(file),
@@ -188,5 +196,5 @@ def parse_json(file_path: str) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: The dictionary containing the data readout from the json.
     """
-    with open(file_path, "r") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)

@@ -20,16 +20,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# pylint: disable=E1101
-
 import sys
 
 
 def handle_group_or_field(depth, node, file_out):
-    """Handle all the possible attributes that come along a field or group
-
-"""
+    """Handle all the possible attributes that come along a field or group"""
+    # pylint: disable=consider-using-f-string
     if "name" in node.attrib and "type" in node.attrib:
         file_out.write(
             '{indent}{name}({value1}):\n'.format(
@@ -71,9 +67,9 @@ def handle_group_or_field(depth, node, file_out):
 
 
 def handle_dimension(depth, node, file_out):
-    """Handle the dimension field
+    """Handle the dimension field"""
+    # pylint: disable=consider-using-f-string
 
-"""
     file_out.write(
         '{indent}{tag}:\n'.format(
             indent=depth * '  ',
@@ -97,9 +93,9 @@ def handle_dimension(depth, node, file_out):
 
 
 def handle_attributes(depth, node, file_out):
-    """Handle the attributes parsed from the xml file
+    """Handle the attributes parsed from the xml file"""
+    # pylint: disable=consider-using-f-string
 
-"""
     file_out.write(
         '{indent}{escapesymbol}{key}:\n'.format(
             indent=depth * '  ',
@@ -117,6 +113,8 @@ If no doc are inherited in the enumeration items, a list of the items is given f
 enumeration list.
 
 """
+    # pylint: disable=consider-using-f-string
+
     check_doc = []
     for child in list(node):
         if list(child):
@@ -157,6 +155,8 @@ def handle_not_root_level_doc(depth, node, file_out):
     """Handle docs field along the yaml file
 
 """
+    # pylint: disable=consider-using-f-string
+
     if "\n" in node.text:
         file_out.write(
             '{indent}{tag}: | {text}\n'.format(
