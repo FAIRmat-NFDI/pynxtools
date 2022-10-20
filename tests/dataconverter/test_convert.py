@@ -137,6 +137,7 @@ when  the template contains links."""
     assert isinstance(test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset)
     assert 'entry/test_virtual_dataset/sliced_dataset' in test_nxs
     assert isinstance(test_nxs["entry/test_virtual_dataset/sliced_dataset"], h5py.Dataset)
+    # pylint: disable=no-member
     assert test_nxs["entry/test_virtual_dataset/sliced_dataset"].shape == (10, 10, 5)
     assert 'entry/test_virtual_dataset/sliced_dataset2' in test_nxs
     assert isinstance(test_nxs["entry/test_virtual_dataset/sliced_dataset2"], h5py.Dataset)
@@ -166,6 +167,7 @@ def test_compression(tmp_path):
     test_nxs = h5py.File(os.path.join(tmp_path, "test_output.h5"), "r")
     assert 'entry/test_compression/compressed_data' in test_nxs
     assert isinstance(test_nxs['/entry/test_compression/compressed_data'], h5py.Dataset)
+    # pylint: disable=no-member
     assert test_nxs['/entry/test_compression/compressed_data'].compression == 'gzip'
     assert test_nxs['/entry/test_compression/not_to_compress'].compression is None
 
@@ -193,9 +195,13 @@ def test_mpes_writing(tmp_path):
     logger.addHandler(handler)
     nexus_helper = nexus.HandleNexus(logger, [test_data])
     nexus_helper.process_nexus_master_file(None)
-    with open(os.path.join(tmp_path, 'mpes_test.log'), 'r') as logfile:
+    with open(os.path.join(tmp_path, 'mpes_test.log'), 'r', encoding='utf-8') as logfile:
         log = logfile.readlines()
-    with open(os.path.join(dirpath, 'Ref_nexus_mpes.log'), 'r') as logfile:
+    with open(
+        os.path.join(dirpath, 'Ref_nexus_mpes.log'),
+        'r',
+        encoding='utf-8'
+    ) as logfile:
         ref_log = logfile.readlines()
     assert log == ref_log
 

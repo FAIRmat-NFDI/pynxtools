@@ -105,7 +105,7 @@ def create_isotope_vector(building_blocks: list) -> np.ndarray:
         return np.array([0] * MAX_NUMBER_OF_ATOMS_PER_ION, dtype=np.uint16)
 
     for block in building_blocks:
-        if block in element_proton_number.keys():
+        if block in element_proton_number:
             proton_number = element_proton_number[block]
             neutron_number = 0
             # *.rng, *.rrng files do not resolve isotopes!
@@ -202,7 +202,7 @@ def ascii_to_paraprobe_iontype(building_blocks: list) -> np.ndarray:
         else:
             multiplier = int(tmp[0])
 
-        if element_name in atomic_numbers.keys():
+        if element_name in atomic_numbers:
             proton_number = atomic_numbers[element_name]
             if mass_number == 0:
                 neutron_number = 0
@@ -232,7 +232,7 @@ def isotope_vector_to_dict_keyword(uint16_array: np.ndarray) -> str:
     lst = []
     for value in uint16_array:
         lst.append(str(value))
-    assert lst != [], 'List from isotope_vector is empty!'
+    assert lst, 'List from isotope_vector is empty!'
     return ','.join(lst)
 
 
@@ -308,7 +308,7 @@ class NxIon():
             assert isinstance(args[0], list), 'args[0] needs to be a list !'
             self.isotope_vector \
                 = NxField(ascii_to_paraprobe_iontype(args[0]), '')
-        elif 'isotope_vector' in kwargs.keys():
+        elif 'isotope_vector' in kwargs:
             assert isinstance(kwargs['isotope_vector'], np.ndarray), \
                 'kwargs isotope_vector needs to be an np.ndarray !'
             assert len(kwargs['isotope_vector']) \
@@ -325,7 +325,7 @@ class NxIon():
         # if len(args) == 2:
         #     assert isinstance(args[1], int), 'args[1] needs to be an integer !'
         #    self.charge_state = NxField(np.int32(args[1], 'eV'))
-        if 'charge_state' in kwargs.keys():
+        if 'charge_state' in kwargs:
             assert isinstance(kwargs['charge_state'], int), \
                 'kwargs charge_state needs to be an int !'
             assert kwargs['charge_state'] > -8, \

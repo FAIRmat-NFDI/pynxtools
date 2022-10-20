@@ -81,7 +81,7 @@ class EmUseCaseSelector:  # pylint: disable=R0903
         eln_input = len(self.case['yaml']) + len(self.case['yml'])
         assert eln_input == 1, \
             "Currently the reader supports to have only one YAML input-file!"
-        self.eln: List[str] = []
+
         for mime_type in ['yaml', 'yml']:
             self.eln += self.case[mime_type]
             self.eln_parser = 'nomad-oasis'

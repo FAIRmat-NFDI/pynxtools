@@ -27,7 +27,7 @@ class Template(dict):
     """A Template object to control and separate template paths according to optionality"""
 
     def __init__(self, template=None, **kwargs):
-        super(Template, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if template is None:
             self.optional: dict = {}
             self.recommended: dict = {}

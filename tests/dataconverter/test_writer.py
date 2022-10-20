@@ -26,7 +26,7 @@ from nexusutils.dataconverter.writer import Writer
 from .test_helpers import fixture_filled_test_data, fixture_template  # pylint: disable=unused-import
 
 
-@pytest.mark.usefixtures(name="filled_test_data")
+@pytest.mark.usefixtures("filled_test_data")
 @pytest.fixture(name="writer")
 def fixture_writer(filled_test_data, tmp_path):
     """pytest fixture to setup Writer object to be used by tests with dummy data."""

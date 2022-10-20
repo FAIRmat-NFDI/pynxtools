@@ -93,7 +93,8 @@ def parse_detector_line(line: str, convert: Callable[[str], Any] = None) -> List
         List[Any]: The list of detector settings.
     """
     if convert is None:
-        convert = lambda x: x
+        def convert(val):
+            return val
     return [convert(s.split('/')[-1]) for s in line.split()]
 
 

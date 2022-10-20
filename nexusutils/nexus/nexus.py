@@ -407,13 +407,13 @@ def chk_nxdataaxis(hdf_node, name, logger):
             if name == j:
                 indices = parent.attrs.get(j + '_indices')
                 if indices is int:
-                    logger.debug("Dataset referenced as NXdata AXIS #%d" % indices)
+                    logger.debug(f"Dataset referenced as NXdata AXIS #{indices}")
                 else:
-                    logger.debug("Dataset referenced as NXdata AXIS #%d" % i)
+                    logger.debug(f"Dataset referenced as NXdata AXIS #{i}")
                 return None
     indices = parent.attrs.get(name + '_indices')  # check for alternative Axes
     if indices is int:
-        logger.debug("Dataset referenced as NXdata alternative AXIS #%d" % indices)
+        logger.debug(f"Dataset referenced as NXdata alternative AXIS #{indices}")
     return chk_nxdataaxis_v2(hdf_node, name, logger)  # check for older conventions
 
 
@@ -809,14 +809,16 @@ TODO:
 - NOMAD parser: store in NOMAD """
     hdf_info = {'hdf_path': hdf_path, 'hdf_node': hdf_node}
     if isinstance(hdf_node, h5py.Dataset):
-        logger.debug('===== FIELD (/%s): %s' % (hdf_path, hdf_node))
+        logger.debug(f'===== FIELD (/{hdf_path}): {hdf_node}')
         val = str(hdf_node[()]).split('\n') if len(hdf_node.shape) <= 1 else str(
             hdf_node[0]).split('\n')
-        logger.debug('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
+        logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
     else:
-        logger.debug('===== GROUP (/%s [%s::%s]): %s' %
-                     (hdf_path, get_nxdl_entry(hdf_node),
-                      get_nx_class_path(hdf_node), hdf_node))
+        logger.debug(
+            f"===== GROUP (/{hdf_path} "
+            f"[{get_nxdl_entry(hdf_node)}"
+            f"::{get_nx_class_path(hdf_node)}]): {hdf_node}"
+        )
     (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
         parser({"hdf_info": hdf_info,
@@ -825,9 +827,9 @@ TODO:
                 "val": val,
                 "logger": logger})
     for key, value in hdf_node.attrs.items():
-        logger.debug('===== ATTRS (/%s@%s)' % (hdf_path, key))
+        logger.debug(f'===== ATTRS (/{hdf_path}@{key})')
         val = str(value).split('\n')
-        logger.debug('value: %s %s' % (val[0], "..." if len(val) > 1 else ''))
+        logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
         (req_str, nxdef, nxdl_path) = \
             get_nxdl_doc(hdf_node, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
@@ -845,7 +847,7 @@ def logger_auxiliary_signal(logger, nxdata):
         if isinstance(aux, str):
             aux = [aux]
         for asig in aux:
-            logger.debug('Further auxiliary signal has been identified: %s' % (asig))
+            logger.debug(f'Further auxiliary signal has been identified: {asig}')
     return logger
 
 
@@ -1025,8 +1027,9 @@ def axis_helper(dim, nxdata, signal, axes, logger):
             find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list)
         axes.append(ax_list)
         logger.debug('')
-        logger.debug('For Axis #%d, %d axes have been identified: %s' %
-                     (a_item, len(ax_list), str(ax_list)))
+        logger.debug(
+            f'For Axis #{a_item}, {len(ax_list)} axes have been identified: {str(ax_list)}'
+        )
 
 
 class HandleNexus:

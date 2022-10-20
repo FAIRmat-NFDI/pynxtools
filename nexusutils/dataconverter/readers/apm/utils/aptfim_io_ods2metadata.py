@@ -53,7 +53,7 @@ def ods_to_json_metadata_template(file_name):
 
         if nxdl_use == 1:
             print(nxdl_path)
-            assert nxdl_dtype in DEFAULTS.keys(), \
+            assert nxdl_dtype in DEFAULTS, \
                 'Unresolvable nxdl_dtype ' + nxdl_dtype + ' !'
             if nxdl_enum == '':
                 other_data_sources[nxdl_path] = DEFAULTS[nxdl_dtype]
@@ -61,7 +61,7 @@ def ods_to_json_metadata_template(file_name):
                 other_data_sources[nxdl_path] = nxdl_enum
         else:
             print(nxdl_path)
-            assert nxdl_dtype in DEFAULTS.keys(), \
+            assert nxdl_dtype in DEFAULTS, \
                 'Unresolvable nxdl_dtype ' + nxdl_dtype + ' !'
             if nxdl_enum == '':
                 vendor_files_sources[nxdl_path] = DEFAULTS[nxdl_dtype]

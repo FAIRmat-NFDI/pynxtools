@@ -158,7 +158,7 @@ class ReadRrngFileFormat():
             obj = evaluate_rrng_range_line(
                 i + 1, txt_stripped[current_line_id + i], self.rrng['ionnames'])
 
-            assert obj != {}, \
+            assert obj, \
                 'Line ' + txt_stripped[current_line_id + i] + ' is corrupted!'
             self.rrng['ranges'][obj['identifier']] = obj
 
