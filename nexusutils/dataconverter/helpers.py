@@ -188,7 +188,8 @@ def is_valid_data_type(value, accepted_types):
 
 def is_positive_int(value):
     """Checks whether the given value or its children are positive."""
-    is_greater_than = lambda x: x.flat[0] > 0 if isinstance(x, np.ndarray) else x > 0
+    def is_greater_than(num):
+        return num.flat[0] > 0 if isinstance(num, np.ndarray) else num > 0
 
     if isinstance(value, list):
         return check_all_children_for_callable(value, is_greater_than)
@@ -227,9 +228,9 @@ def is_valid_data_field(value, nxdl_type, path):
                 if value is None:
                     raise ValueError
             return accepted_types[0](value)
-        except ValueError:
+        except ValueError as exc:
             raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
-                            f", as defined in the NXDL as {nxdl_type}.")
+                            f", as defined in the NXDL as {nxdl_type}.") from exc
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         raise Exception(f"The value at {path} should be a positive int.")
@@ -367,7 +368,8 @@ def try_undocumented(data, nxdl_root: ET.Element):
 
         if entry_name == "@units":
             continue
-        elif entry_name[0] == "@" and "@" in nxdl_path:
+
+        if entry_name[0] == "@" and "@" in nxdl_path:
             index_of_at = nxdl_path.rindex("@")
             nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
@@ -399,7 +401,8 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 
             if entry_name == "@units":
                 continue
-            elif entry_name[0] == "@" and "@" in nxdl_path:
+
+            if entry_name[0] == "@" and "@" in nxdl_path:
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 

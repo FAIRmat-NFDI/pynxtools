@@ -64,7 +64,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
     def __init__(self, file_name: str):
         # file_name = 'eln_data.yaml'
-        with open(file_name, 'r') as stream:
+        with open(file_name, 'r', encoding='utf-8') as stream:
             self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=':')
 
     def parse_entry(self, template: dict) -> dict:

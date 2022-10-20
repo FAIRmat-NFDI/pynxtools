@@ -37,7 +37,7 @@ def parse_slice(slice_string):
         else:
             if len(values) < 3:
                 values.append("")
-            slices[index] = slice(*tuple([int(x) if x != "" else None for x in values]))
+            slices[index] = slice(map(int, filter(lambda x: not x, values)))
     return np.index_exp[tuple(slices)]
 
 
@@ -56,8 +56,8 @@ def get_val_nested_keystring_from_dict(keystring, data):
     if isinstance(data[current_key], xarray.DataArray):
         return data[current_key].values
     if isinstance(data[current_key], xarray.core.dataset.Dataset):
-        raise Exception(f"Xarray datasets are not supported. "
-                        f"You can only use xarray dataarrays.")
+        raise Exception("Xarray datasets are not supported. "
+                        "You can only use xarray dataarrays.")
 
     return data[current_key]
 
@@ -131,7 +131,7 @@ class JsonMapReader(BaseReader):
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex("."):]
             if file_extension == ".json":
-                with open(file_path, "r") as input_file:
+                with open(file_path, "r", encoding='utf-8') as input_file:
                     if ".mapping" in file_path:
                         mapping = json.loads(input_file.read())
                     else:

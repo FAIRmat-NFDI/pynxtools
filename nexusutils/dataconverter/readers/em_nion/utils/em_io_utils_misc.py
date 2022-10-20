@@ -22,7 +22,7 @@
 
 # pylint: disable=E1101
 
-from typing import Tuple
+from typing import Tuple, Optional, Dict
 
 import numpy as np
 
@@ -71,7 +71,7 @@ ELAB_FILE_TYPES = ['dat']
 NION_ERROR_CODES = {-1: 'Invalid input', 0: 'Single Nion/NionSwift dataset'}
 
 
-def assess_situation_with_input_files(file_paths: Tuple[str] = None):
+def assess_situation_with_input_files(file_paths: Optional[Tuple[str, ...]] = None):
     """Different file formats contain different types of data.
 
     Identify how many files of specific type Tuple contains to judge if the
@@ -80,7 +80,7 @@ def assess_situation_with_input_files(file_paths: Tuple[str] = None):
 
     """
     file_paths = ('HAADF_01.json', 'HAADF_01.npy', 'HAADF_01.ELabFTW.dat')
-    filetype_dict = {}
+    filetype_dict: Dict[str, list] = {}
     for file_name in file_paths:
         index = file_name.lower().rfind('.')
         if index >= 0:

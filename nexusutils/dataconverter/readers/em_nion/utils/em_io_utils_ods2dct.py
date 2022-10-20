@@ -25,6 +25,7 @@
 # import json
 
 import os
+from typing import Dict, Any
 
 import pandas as pd
 
@@ -58,7 +59,7 @@ def ods_to_json_routing_dict() -> dict:  # file_name: str) -> dict:
                         skiprows=7,
                         keep_default_na=False, na_values=['_'])
 
-    dct = {}
+    dct: Dict[Any, Any] = {}
 
     for rowidx in np.arange(0, tmp.shape[0]):
         json_path = tmp.iloc[rowidx, 0]
@@ -71,7 +72,7 @@ def ods_to_json_routing_dict() -> dict:  # file_name: str) -> dict:
 
         if status in [1, 3] and nxdl_path != 'None':
             assert json_path not in dct.keys(), \
-                print(json_path + ' has already been added to routing table!')
+                print(f'{json_path} has already been added to routing table!')
 
             dct[json_path] = (nxdl_path, nxdl_unit)
 

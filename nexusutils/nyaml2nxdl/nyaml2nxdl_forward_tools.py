@@ -78,16 +78,16 @@ def yml_reader(inputfile):
     It parses the yaml in a dict and extends it with line tag keys for each key of the dict.
     """
 
-    plain_text_yaml = open(inputfile, "r").read()
-    loader = LineLoader(plain_text_yaml)
-    return loader.get_single_data()
+    with open(inputfile, "r", encoding="utf-8") as plain_text_yaml:
+        loader = LineLoader(plain_text_yaml)
+        return loader.get_single_data()
 
 
 def yml_reader_nolinetag(inputfile):
     """
     pyyaml based parsing of yaml file in python dict
     """
-    with open(inputfile, 'r') as stream:
+    with open(inputfile, 'r', encoding="utf-8") as stream:
         parsed_yaml = yaml.safe_load(stream)
     return parsed_yaml
 
@@ -116,7 +116,7 @@ def format_nxdl_doc(string):
     """NeXus format for doc string
     """
     formatted_doc = ''
-    formatted_doc += f"\n"
+    formatted_doc += "\n"
     if "\n" not in string:
         if len(string) > 80:
             wrapped = textwrap.TextWrapper(width=80,
@@ -129,7 +129,7 @@ def format_nxdl_doc(string):
     if string.endswith("\n"):
         pass
     else:
-        formatted_doc += f"\n"
+        formatted_doc += "\n"
     return formatted_doc
 
 
@@ -209,7 +209,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
     if 'rank' in value.keys():
         dims.set('rank', str(value['rank']))
     for element in value['dim']:
-        line_number = f'__line__dim'
+        line_number = '__line__dim'
         assert isinstance(element, list), f'Line {value[line_number]}: dim argument not a list !'
         assert len(
             element) >= 2, f'Line {value[line_number]}: dim list has less than two entries !'
