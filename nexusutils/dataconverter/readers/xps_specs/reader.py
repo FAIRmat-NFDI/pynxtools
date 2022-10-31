@@ -23,13 +23,13 @@
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from typing import Tuple
 
-import xml.etree.ElementTree as ET
-import os
 from typing import Any
 import numpy as np
 import sys
-from .reader_utils import XpsDataFileParser
+from nexusutils.dataconverter.readers.xps_specs import XpsDataFileParser
+
 np.set_printoptions(threshold=sys.maxsize)
+
 
 class XPS_Reader(BaseReader):
 
@@ -37,17 +37,20 @@ class XPS_Reader(BaseReader):
 
     def read(self,
              template: dict = None,
-             file_paths: Tuple[str] = None,
+             file_paths: str = None,
              objects: Tuple[Any] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
 
-        file = '/home/rubel/Nomad-FAIRmat/NomadGH/Nomad_work/XPS_Data_Analysis/copy_In-situ_PBTTT_XPS_SPECS.xml'
-        Xps_paser_object = XpsDataFileParser(file_path=file)
+        Xps_paser_object = XpsDataFileParser(file_paths)
         data_dict = Xps_paser_object.get_dict()
+
 
         if not template.items():
             # intended for NXroot
             for key, val in data_dict.items():
+                print(' key: ', key, 'and', ' val :', val, "\n")
+                if key[-1] == " ":
+                    print("got space")
                 if key[-1] == "/":
                     key = key[:-1]
                 if val not in ["None"]:
