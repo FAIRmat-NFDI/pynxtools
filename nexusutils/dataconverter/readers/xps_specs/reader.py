@@ -1,4 +1,3 @@
-#
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -16,8 +15,8 @@
 # limitations under the License.
 #
 
-"""A generic reader for loading XPS-specs (X-ray Photoelectron Spectroscopy) file
-    into XPS-specs data model.
+"""A generic reader for loading XPS (X-ray Photoelectron Spectroscopy) data
+ file into nxdl (NeXus Definition Language) template.
 """
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
