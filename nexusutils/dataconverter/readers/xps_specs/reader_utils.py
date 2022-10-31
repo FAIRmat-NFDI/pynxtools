@@ -1,23 +1,56 @@
-"""TODO: Here is licence"""
-"""TODO: here docstrings"""
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+"""
+Generic Classes for reading xml file into python dictionary.
+"""
 
 import xml.etree.ElementTree as EmtT
 import numpy as np
 
 
 class XmlSpecs(object):
+    """
+        Class for restructuring xml data file from
+        specs vendor into python dictionary.
+    """
 
-    def __init__(self, 
-                 root_element, 
-                 vendor_name):
+    def __init__(self,
+                 root_element: EmtT.Element,
+                 vendor_name: str = "specs") -> None:
+        """Collect mandatory inputs.
+
+        Parameters
+        ----------
+        root_element : Root element xml XPS data file
+        vendor_name :  Name of vendor of XPS machine
+        """
 
         self._root_element = root_element
 
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
         self.py_dict = dict()
 
-    def parse_xml(self):
-        """TODO: here docstrings"""
+    def parse_xml(self) -> None:
+        """Start parsing process
+
+        Parameters
+        ----------
+        """
 
         element = self._root_element
         child_num = len(element)
@@ -36,10 +69,23 @@ class XmlSpecs(object):
             child_elmt_ind += 1
 
     def pass_element_through_parsers(self,
-                                     element_,
-                                     parent_path,
-                                     child_elmt_ind,
-                                     skip_child):
+                                     element_: EmtT,
+                                     parent_path: str,
+                                     child_elmt_ind: int,
+                                     skip_child: int) -> None:
+        """
+        Parse the element to parser according to element tag.
+        Parameters
+        ----------
+        element_ : xml element to parse
+        parent_path : Xpath of the parent element where the element_ belongs
+        child_elmt_ind : Index of the child element to track the children.
+        skip_child : Tack the children who will be skipped to pass to
+                     the parser
+        Returns
+        -------
+        None
+        """
 
         name_val_elmt_tag = ['ulong',
                              'double',
@@ -83,8 +129,18 @@ class XmlSpecs(object):
 
     def parse_sequence(self,
                        element_: EmtT.Element,
-                       parent_path: str):
-        """TODO: here docstrings"""
+                       parent_path: str) -> None:
+        """
+
+        Parameters
+        ----------
+        element_ : Element with sequence tag
+        parent_path : Xpath of the parent element where the element_ belongs
+
+        Returns
+        -------
+        None
+        """
 
         child_num = len(element_)
         elmt_attr = element_.attrib
@@ -97,11 +153,6 @@ class XmlSpecs(object):
         if key_name in elmt_attr.keys():
             section_nm_reslvr = f'{elmt_attr[key_name]}'
             parent_path = f'{parent_path}/{section_nm_reslvr}'
-
-        # if child_num == 0:
-        #    elmt_text = element_.text
-        #    modified_data = self.restructure_value(elmt_text, elmt_tag)
-        #    self.py_dict[parent_path] = modified_data
 
         child_elmt_ind = 0
         while child_num > 0:
@@ -116,8 +167,18 @@ class XmlSpecs(object):
 
     def parse_struct(self, 
                      element_: EmtT.Element,
-                     parent_path: str):
-        """TODO: write docstring """
+                     parent_path: str) -> None:
+        """
+
+        Parameters
+        ----------
+        element_ : Element with struct tag
+        parent_path : Xpath of the parent element where the element_ belongs
+
+        Returns
+        -------
+        None
+        """
 
         units = ["mV", "deg", "W", "kV", "ns"]
         # TODO add add a parser for a string for string
@@ -184,9 +245,20 @@ class XmlSpecs(object):
             child_elmt_ind += 1
 
     def last_element_parser(self,
-                            element_,
-                            parent_path):
-        """TODO: write element """
+                            element_: EmtT.Element,
+                            parent_path: str) -> None:
+        """
+
+        Parameters
+        ----------
+        element_ : Element with a tag among 'ulong', 'double', 'string',
+                   'boolean', 'enum', 'any'
+        parent_path : Xpath of the parent element where the element_ belongs
+
+        Returns
+        -------
+        None
+        """
 
         child_num = len(element_)
         elmt_attr = element_.attrib
@@ -208,8 +280,20 @@ class XmlSpecs(object):
 
     @staticmethod
     def restructure_value(value_text: str,
-                      element_tag: str):
-        """Check and restructure the element text"""
+                          element_tag: str) -> str:
+        """
+
+        Parameters
+        ----------
+        value_text : text data that would be 'unsigned long', 'double', 'string',
+                    'boolean', 'enum/string'
+        element_tag : tag name among 'unsigned long', 'double', 'string',
+                    'boolean', 'enum/string'
+
+        Returns
+        -------
+
+        """
 
         data_ty = {
             "double": np.double,
@@ -234,23 +318,35 @@ class XmlSpecs(object):
             return numpy_value
 
     def cumulate_counts_series(self,
-                               scan_seq_elem,
-                               counts_length=None,
-                               cumulative_counts=None):
-        """Cumulative corresponding counts from all child ScanData over scans."""
+                               scan_seq_elem: EmtT.Element,
+                               counts_length: int =None,
+                               cumulative_counts: np.ndarray = None,) -> np.ndarray:
+        """
+        Sum the counts over different scans. Each ScanSeaq contains
+        multiple scans under the same physical environment. The
+        multiple scans are usually taken to make the peaks visible and
+        distinguishable.
+
+        Parameters
+        ----------
+        scan_seq_elem : Element with ScanSeq tag
+        counts_length : Number of count (length of 1D numpy array)
+                        contain in each scan
+        cumulative_counts : Cumulative counts up to last scan  from the
+                            same ScanSeq
+
+        Returns
+        -------
+        np.ndarray : Cumulative up to last scans from the same ScanSeq
+        """
 
         elmt_attr = scan_seq_elem.attrib
         child_num = len(scan_seq_elem)
         name = "count"
 
-        # if 'length' in elmt_attr:
-        #    if child_num != elmt_attr['length']:
-                # print("Add here report in the display that "
-                #      " found incompatibility in scan sequence.")
-
         child_elmt_ind = 0
         while child_num >= 0:
-            
+
             if scan_seq_elem.attrib['type_name'] == "CountsSeq":
                 num_of_counts = int(scan_seq_elem.attrib['length'])
                 if not counts_length:
@@ -281,7 +377,16 @@ class XmlSpecs(object):
         return name, cumulative_counts
 
     @property
-    def data_dict(self):
+    def data_dict(self) -> dict:
+        """
+            Getter property
+        Parameters
+        ----------
+
+        Returns
+        -------
+        python dictionary
+        """
 
         print("DEBUG : this is test get_dict_function")
         return self.py_dict
@@ -289,7 +394,8 @@ class XmlSpecs(object):
 
 class XpsDataFileParser(object):
     """
-    TODO: write socstring
+        Class intended for receiving any type of XPS data file. So far it
+        accepts xml file from specs vendor.
     """
 
     __prmt_file_ext__ = ['xml']
@@ -305,9 +411,13 @@ class XpsDataFileParser(object):
     __vndr_err_msg__ = (f'Need a xps data file from the following'
                         f'\n {__vendors__} vendors')
 
-    def __init__(self, file_paths: str = ""):
-        """Receive files confirms the file extension
-        and collect other initial data if needed."""
+    def __init__(self, file_paths: str = "") -> None:
+        """
+            Receive XPS file path.
+        Parameters
+        ----------
+        file_paths : XPS file path.
+        """
 
         self.files = file_paths
 
@@ -316,7 +426,12 @@ class XpsDataFileParser(object):
 
     def get_dict(self) -> dict:
 
-        """TODO: write docs for it."""
+        """
+            Return python dict fully filled data from xps file.
+        Returns
+        -------
+        python dictionary
+        """
 
         for file in self.files:
             file_ext = file.rsplit(".")[-1]
@@ -344,7 +459,16 @@ class XpsDataFileParser(object):
 
     @classmethod
     def check_for_vendors(cls, root_element: EmtT) -> str:
-        """Todo: arite doc strings"""
+        """
+            Check for the vendor name of the XPS data file.
+        Parameters
+        ----------
+        root_element : xml root element.
+
+        Returns
+        -------
+        Vendor name
+        """
 
         # check for "specs" vendor in xml file
         vendor = "specs"
