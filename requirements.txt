@@ -12,6 +12,7 @@ pytest-timeout==1.4.2
 pytest-cov==2.7.1
 mongoengine==0.19.1
 pymongo==3.12.1
+pytz==2021.1
 
 h5py==3.6.0
 python-json-logger==2.0.2
