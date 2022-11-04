@@ -40,7 +40,8 @@ MEASUREMENT_REPLACEMENTS = {
 # Dict for converting values for specific keys
 CONVERSION_FUNCTIONS = {
     "Start Time": helpers.convert_date,
-    "Time Completed": helpers.convert_date
+    "Time Completed": helpers.convert_date,
+    "Skipped at": helpers.convert_date
 }
 
 # Keys that indicate the start of measurement block
