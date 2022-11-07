@@ -41,6 +41,7 @@ class XmlSpecs(object):
         vendor_name :  Name of vendor of XPS machine
         """
 
+        self.debug_no = 0
         self._root_element = root_element
 
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
@@ -90,7 +91,6 @@ class XmlSpecs(object):
         -------
         None
         """
-        print("##################################")
 
         name_val_elmt_tag = ['ulong',
                              'double',
@@ -103,23 +103,15 @@ class XmlSpecs(object):
 
         element = parent_element[child_elmt_ind]
         element.attrib['__parent__'] = parent_element
+        element.attrib['__odr_siblings__'] = child_elmt_ind
         elmt_attr = element.attrib
         elmt_tag = element.tag
 
         if child_elmt_ind <= skip_child:
             pass
 
-        # elif elmt_tag == "sequence" and \
-        #        "ScanSeq" in elmt_attr.values():
-
-        #    data_name, data = self.cumulate_counts_series(element)
-        #    self.py_dict[f'{parent_path}/{data_name}'] = data
 
         elif elmt_tag == "sequence":
-            # TODO: Debug here delete
-            #if elmt_attr['name'] == "detectors":
-                #print("................")
-                #x = 100
 
             self.parse_sequence(element,
                                 parent_path)
@@ -155,10 +147,11 @@ class XmlSpecs(object):
         skip_child = -1
 
         section_nm_reslvr = ""
-
+        print("debug: print from pasrse_sequence : , child Num#####", elmt_attr)
         key_name = "name"
         if key_name in elmt_attr.keys():
             section_nm_reslvr = f'{elmt_attr[key_name]}'
+            print("DEBUG:before:\n     new_tail ", section_nm_reslvr, "    old_tail : ", self.tail_part_frm_seq)
             parent_path, self.tail_part_frm_seq = \
                 self.check_last_part_repetition(parent_path,
                                                 self.tail_part_frm_seq,
@@ -167,6 +160,10 @@ class XmlSpecs(object):
             # parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         child_elmt_ind = 0
+
+        if self.debug_no==47:
+            print("debug from parse_sequnce : child_num", child_num)
+
         while child_num > 0:
 
             self.pass_element_through_parsers(element_,
@@ -212,12 +209,12 @@ class XmlSpecs(object):
         key_type_name = 'type_name'
         if key_name in elmt_attr.keys():
             section_nm_reslvr = elmt_attr[key_name]
-            parent_path, self.tail_part_frm_struct = \
-                self.check_last_part_repetition(parent_path,
-                                                self.tail_part_frm_struct,
-                                                section_nm_reslvr)
+            #parent_path, self.tail_part_frm_struct = \
+            #    self.check_last_part_repetition(parent_path,
+            #                                    self.tail_part_frm_struct,
+            #                                    section_nm_reslvr)
 
-            # parent_path = f'{parent_path}/{section_nm_reslvr}'
+            parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         elif key_name not in elmt_attr.keys():
 
@@ -242,7 +239,8 @@ class XmlSpecs(object):
                     self.check_last_part_repetition(parent_path,
                                                     self.tail_part_frm_struct,
                                                     section_nm_reslvr)
-                # parent_path = f'{parent_path}/{section_nm_reslvr}'
+
+                #parent_path = f'{parent_path}/{section_nm_reslvr}'
 
             elif key_name in first_child.attrib.values() and \
                     first_child.tag == "string":
@@ -253,24 +251,30 @@ class XmlSpecs(object):
 
                 section_nm_reslvr = f'{elmt_attr[key_type_name]}_{child_txt}'
 
-                parent_path, self.tail_part_frm_struct = \
-                    self.check_last_part_repetition(parent_path,
-                                                    self.tail_part_frm_struct,
-                                                    section_nm_reslvr)
-                # parent_path = f'{parent_path}/{section_nm_reslvr}'
+                # parent_path, self.tail_part_frm_struct = \
+                #    self.check_last_part_repetition(parent_path,
+                #                                    self.tail_part_frm_struct,
+                #                                    section_nm_reslvr)
+
+                parent_path = f'{parent_path}/{section_nm_reslvr}'
 
             else:
-                section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name], "string")
-                parent_path, self.tail_part_frm_struct = \
-                    self.check_last_part_repetition(parent_path,
-                                                    self.tail_part_frm_struct,
-                                                    section_nm_reslvr)
+                # Check twin siblings
 
-        else:
-            parent_path, self.tail_part_frm_struct = \
-                self.check_last_part_repetition(parent_path,
-                                                self.tail_part_frm_struct,
-                                                section_nm_reslvr)
+                section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name],
+                                                           "string")
+                section_nm_reslvr = section_nm_reslvr + str(elmt_attr['__odr_siblings__'])
+                #parent_path, self.tail_part_frm_struct = \
+                #    self.check_last_part_repetition(parent_path,
+                #                                    self.tail_part_frm_struct,
+                #                                    section_nm_reslvr)
+                parent_path = f'{parent_path}/{section_nm_reslvr}'
+
+        #else:
+        #    parent_path, self.tail_part_frm_struct = \
+        #        self.check_last_part_repetition(parent_path,
+        #                                        self.tail_part_frm_struct,
+        #                                        section_nm_reslvr)
             # parent_path = f'{parent_path}{section_nm_reslvr}'
 
         child_elmt_ind = 0
@@ -300,6 +304,8 @@ class XmlSpecs(object):
 
         child_num = len(element_)
         elmt_attr = element_.attrib
+       # print("debug: print from OTHER OTHER: , child Num#####", elmt_attr)
+
         section_nm_reslvr = ""
         if child_num == 0:
             if "name" in elmt_attr.keys():
@@ -343,17 +349,20 @@ class XmlSpecs(object):
         parent_path : Newly obtained or replaced parent Xpath
         pre_tail_part : Newly obtained or replaced tail_path
         """
-
         if new_tail_part == pre_tail_part:
             previous_key = f'{parent_path}/{new_tail_part}'
-            previous_val = self.py_dict[previous_key]
-            self.py_dict[f'{parent_path}/{new_tail_part}_0'] = previous_val
-            pre_tail_part = f'{new_tail_part}_1'
-            parent_path = f'{parent_path}/{pre_tail_part}'
+            previous_val = self.py_dict.get(previous_key, None)
+            if previous_val:
+                self.py_dict[f'{parent_path}/{new_tail_part}_0'] = previous_val
+                pre_tail_part = f'{new_tail_part}_1'
+                parent_path = f'{parent_path}/{pre_tail_part}'
 
-            del self.py_dict[previous_key]
+                del self.py_dict[previous_key]
 
-            return parent_path, pre_tail_part
+                return parent_path, pre_tail_part
+            else:
+                parent_path = f'{parent_path}/{pre_tail_part}'
+                return parent_path, pre_tail_part
 
         if new_tail_part in pre_tail_part:
             try:
