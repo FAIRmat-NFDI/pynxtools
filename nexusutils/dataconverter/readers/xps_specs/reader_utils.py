@@ -21,6 +21,7 @@ Generic Classes for reading xml file into python dictionary.
 
 import xml.etree.ElementTree as EmtT
 import numpy as np
+from typing import Tuple
 
 
 class XmlSpecs(object):
@@ -44,8 +45,12 @@ class XmlSpecs(object):
 
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
         self.py_dict = dict()
+        self.tail_part_frm_seq = ""
+        self.tail_part_frm_struct = ""
+        self.tail_part_frm_othr = ""
 
-    def parse_xml(self) -> None:
+
+    def parse_xml(self) :
         """Start parsing process
 
         Parameters
@@ -59,14 +64,13 @@ class XmlSpecs(object):
 
         child_elmt_ind = 0
         while child_num > 0:
-
             self.pass_element_through_parsers(element,
                                               parent_path,
                                               child_elmt_ind,
                                               skip_child)
-
             child_num -= 1
             child_elmt_ind += 1
+        print("Debug: print from : .................................................")
 
     def pass_element_through_parsers(self,
                                      element_: EmtT,
@@ -79,13 +83,14 @@ class XmlSpecs(object):
         ----------
         element_ : xml element to parse
         parent_path : Xpath of the parent element where the element_ belongs
-        child_elmt_ind : Index of the child element to track the children.
+        child_elmt_ind : Index of child element to track the children.
         skip_child : Tack the children who will be skipped to pass to
                      the parser
         Returns
         -------
         None
         """
+        print("##################################")
 
         name_val_elmt_tag = ['ulong',
                              'double',
@@ -104,13 +109,18 @@ class XmlSpecs(object):
         if child_elmt_ind <= skip_child:
             pass
 
-        elif elmt_tag == "sequence" and \
-                "ScanSeq" in elmt_attr.values():
+        # elif elmt_tag == "sequence" and \
+        #        "ScanSeq" in elmt_attr.values():
 
-            data_name, data = self.cumulate_counts_series(element)
-            self.py_dict[f'{parent_path}/{data_name}'] = data
+        #    data_name, data = self.cumulate_counts_series(element)
+        #    self.py_dict[f'{parent_path}/{data_name}'] = data
 
         elif elmt_tag == "sequence":
+            # TODO: Debug here delete
+            #if elmt_attr['name'] == "detectors":
+                #print("................")
+                #x = 100
+
             self.parse_sequence(element,
                                 parent_path)
 
@@ -123,15 +133,12 @@ class XmlSpecs(object):
                                      parent_path)
 
         else:
-            print("Parent tag : ", elmt_tag)
-            print('check for parent tag', elmt_attr['__parent__'].tag)
             print("Needs to parse to different element tag parser")
 
     def parse_sequence(self,
                        element_: EmtT.Element,
                        parent_path: str) -> None:
         """
-
         Parameters
         ----------
         element_ : Element with sequence tag
@@ -152,7 +159,12 @@ class XmlSpecs(object):
         key_name = "name"
         if key_name in elmt_attr.keys():
             section_nm_reslvr = f'{elmt_attr[key_name]}'
-            parent_path = f'{parent_path}/{section_nm_reslvr}'
+            parent_path, self.tail_part_frm_seq = \
+                self.check_last_part_repetition(parent_path,
+                                                self.tail_part_frm_seq,
+                                                section_nm_reslvr)
+
+            # parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         child_elmt_ind = 0
         while child_num > 0:
@@ -200,7 +212,12 @@ class XmlSpecs(object):
         key_type_name = 'type_name'
         if key_name in elmt_attr.keys():
             section_nm_reslvr = elmt_attr[key_name]
-            parent_path = f'{parent_path}/{section_nm_reslvr}'
+            parent_path, self.tail_part_frm_struct = \
+                self.check_last_part_repetition(parent_path,
+                                                self.tail_part_frm_struct,
+                                                section_nm_reslvr)
+
+            # parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         elif key_name not in elmt_attr.keys():
 
@@ -216,13 +233,19 @@ class XmlSpecs(object):
                 for unit in units:
 
                     if f'_[{unit}]' in section_nm_reslvr:
+                        # TODO: think section_nm_reslvr have a few parts and take the last part as unit
                         section_nm_reslvr, _ = section_nm_reslvr.split('_')
                         self.py_dict[f'{parent_path}/'
                                      f'{section_nm_reslvr}@unit'] = unit
 
-                parent_path = f'{parent_path}/{section_nm_reslvr}'
+                parent_path, self.tail_part_frm_struct = \
+                    self.check_last_part_repetition(parent_path,
+                                                    self.tail_part_frm_struct,
+                                                    section_nm_reslvr)
+                # parent_path = f'{parent_path}/{section_nm_reslvr}'
 
-            elif key_name in first_child.attrib.values():
+            elif key_name in first_child.attrib.values() and \
+                    first_child.tag == "string":
 
                 skip_child += 1
                 child_txt = self.restructure_value(first_child.text,
@@ -230,10 +253,25 @@ class XmlSpecs(object):
 
                 section_nm_reslvr = f'{elmt_attr[key_type_name]}_{child_txt}'
 
-                parent_path = f'{parent_path}/{section_nm_reslvr}'
+                parent_path, self.tail_part_frm_struct = \
+                    self.check_last_part_repetition(parent_path,
+                                                    self.tail_part_frm_struct,
+                                                    section_nm_reslvr)
+                # parent_path = f'{parent_path}/{section_nm_reslvr}'
+
+            else:
+                section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name], "string")
+                parent_path, self.tail_part_frm_struct = \
+                    self.check_last_part_repetition(parent_path,
+                                                    self.tail_part_frm_struct,
+                                                    section_nm_reslvr)
 
         else:
-            parent_path = f'{parent_path}{section_nm_reslvr}'
+            parent_path, self.tail_part_frm_struct = \
+                self.check_last_part_repetition(parent_path,
+                                                self.tail_part_frm_struct,
+                                                section_nm_reslvr)
+            # parent_path = f'{parent_path}{section_nm_reslvr}'
 
         child_elmt_ind = 0
         while child_num > 0:
@@ -262,27 +300,90 @@ class XmlSpecs(object):
 
         child_num = len(element_)
         elmt_attr = element_.attrib
+        section_nm_reslvr = ""
         if child_num == 0:
             if "name" in elmt_attr.keys():
-                self.py_dict[f'{parent_path}/{element_.attrib["name"]}'] \
-                    = self.restructure_value(element_.text,
-                                             element_.tag)
+                section_nm_reslvr = f'{elmt_attr["name"]}'
+                value = self.restructure_value(element_.text,
+                                               element_.tag)
+
+                parent_path, self.tail_part_frm_othr = \
+                    self.check_last_part_repetition(parent_path,
+                                                    self.tail_part_frm_othr,
+                                                    section_nm_reslvr)
+                self.py_dict[f'{parent_path}'] = value
             else:
                 self.py_dict[f'{parent_path}'] \
                     = self.restructure_value(element_.text,
                                              element_.tag)
-        if child_num == 1 \
+        elif child_num == 1 \
                 and 'any' == element_.tag:
             child_elmt = element_[0]
             self.py_dict[f'{parent_path}'] \
                 = self.restructure_value(child_elmt.text,
                                          child_elmt.tag)
 
+    def check_last_part_repetition(self,
+                                   parent_path: str,
+                                   pre_tail_part: str,
+                                   new_tail_part: str) -> Tuple[str, str]:
+        """
+         Check for the data from the same group, for example repetition of the
+         experiments under the same physical circumstances, make number of
+         them with ..._1, ..._2.
+        Parameters
+        ----------
+        self : XmlSpecs object
+        parent_path : Xpath of the parent element
+        pre_tail_part : The tail part added in the previous step
+        new_tail_part : The tail part obtained from present element
+
+        Returns
+        -------
+        parent_path : Newly obtained or replaced parent Xpath
+        pre_tail_part : Newly obtained or replaced tail_path
+        """
+
+        if new_tail_part == pre_tail_part:
+            previous_key = f'{parent_path}/{new_tail_part}'
+            previous_val = self.py_dict[previous_key]
+            self.py_dict[f'{parent_path}/{new_tail_part}_0'] = previous_val
+            pre_tail_part = f'{new_tail_part}_1'
+            parent_path = f'{parent_path}/{pre_tail_part}'
+
+            del self.py_dict[previous_key]
+
+            return parent_path, pre_tail_part
+
+        if new_tail_part in pre_tail_part:
+            try:
+                ind = pre_tail_part[pre_tail_part.rindex("_"):]
+                ind = int(ind)
+                pre_tail_part = f'{new_tail_part}_{ind +1}'
+                parent_path = f'{parent_path}/{pre_tail_part}'
+                return parent_path, pre_tail_part
+            except ValueError:
+                parent_path = f'{parent_path}/{new_tail_part}'
+                pre_tail_part = new_tail_part
+
+                return parent_path, pre_tail_part
+            except TypeError:
+                parent_path = f'{parent_path}/{new_tail_part}'
+                pre_tail_part = new_tail_part
+
+                return parent_path, pre_tail_part
+
+        parent_path = f'{parent_path}/{new_tail_part}'
+        pre_tail_part = new_tail_part
+
+        return parent_path, pre_tail_part
+
     @staticmethod
     def restructure_value(value_text: str,
                           element_tag: str) -> str:
         """
-
+            Collect the value_text transform it to the data_type according
+            to the type name provided by element_tag.
         Parameters
         ----------
         value_text : text data that would be 'unsigned long', 'double', 'string',

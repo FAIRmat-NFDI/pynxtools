@@ -32,7 +32,7 @@ np.set_printoptions(threshold=sys.maxsize)
 
 class XPS_Reader(BaseReader):
 
-    supported_nxdls = ["NXtest", "NXroot"]
+    supported_nxdls = ["NXroot"]
 
     def read(self,
              template: dict = None,
@@ -43,7 +43,7 @@ class XPS_Reader(BaseReader):
         Xps_paser_object = XpsDataFileParser(file_paths)
         data_dict = Xps_paser_object.get_dict()
 
-
+        print("print data_dict : ", data_dict)
         if not template.items():
             # intended for NXroot
             for key, val in data_dict.items():
