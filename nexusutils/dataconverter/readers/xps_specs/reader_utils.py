@@ -21,7 +21,7 @@ Generic Classes for reading xml file into python dictionary.
 
 import xml.etree.ElementTree as EmtT
 import numpy as np
-from typing import Tuple
+from typing import Tuple, List
 
 
 class XmlSpecs(object):
@@ -50,7 +50,6 @@ class XmlSpecs(object):
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
 
-
     def parse_xml(self) :
         """Start parsing process
 
@@ -65,19 +64,18 @@ class XmlSpecs(object):
 
         child_elmt_ind = 0
         while child_num > 0:
-            self.pass_element_through_parsers(element,
-                                              parent_path,
-                                              child_elmt_ind,
-                                              skip_child)
+            self.pass_child_through_parsers(element,
+                                            parent_path,
+                                            child_elmt_ind,
+                                            skip_child)
             child_num -= 1
             child_elmt_ind += 1
-        print("Debug: print from : .................................................")
 
-    def pass_element_through_parsers(self,
-                                     element_: EmtT,
-                                     parent_path: str,
-                                     child_elmt_ind: int,
-                                     skip_child: int) -> None:
+    def pass_child_through_parsers(self,
+                                   element_: EmtT,
+                                   parent_path: str,
+                                   child_elmt_ind: int,
+                                   skip_child: int) -> None:
         """
         Parse the element to parser according to element tag.
         Parameters
@@ -104,12 +102,10 @@ class XmlSpecs(object):
         element = parent_element[child_elmt_ind]
         element.attrib['__parent__'] = parent_element
         element.attrib['__odr_siblings__'] = child_elmt_ind
-        elmt_attr = element.attrib
         elmt_tag = element.tag
 
         if child_elmt_ind <= skip_child:
             pass
-
 
         elif elmt_tag == "sequence":
 
@@ -125,7 +121,7 @@ class XmlSpecs(object):
                                      parent_path)
 
         else:
-            print("Needs to parse to different element tag parser")
+            raise TypeError("Needs to parse to different type of parser")
 
     def parse_sequence(self,
                        element_: EmtT.Element,
@@ -143,34 +139,21 @@ class XmlSpecs(object):
 
         child_num = len(element_)
         elmt_attr = element_.attrib
-        elmt_tag = element_.tag
         skip_child = -1
 
         section_nm_reslvr = ""
-        print("debug: print from pasrse_sequence : , child Num#####", elmt_attr)
         key_name = "name"
         if key_name in elmt_attr.keys():
             section_nm_reslvr = f'{elmt_attr[key_name]}'
-            print("DEBUG:before:\n     new_tail ", section_nm_reslvr, "    old_tail : ", self.tail_part_frm_seq)
-            parent_path, self.tail_part_frm_seq = \
-                self.check_last_part_repetition(parent_path,
-                                                self.tail_part_frm_seq,
-                                                section_nm_reslvr)
-
-            # parent_path = f'{parent_path}/{section_nm_reslvr}'
+            parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         child_elmt_ind = 0
-
-        if self.debug_no==47:
-            print("debug from parse_sequnce : child_num", child_num)
-
         while child_num > 0:
 
-            self.pass_element_through_parsers(element_,
-                                              parent_path,
-                                              child_elmt_ind,
-                                              skip_child)
-
+            self.pass_child_through_parsers(element_,
+                                            parent_path,
+                                            child_elmt_ind,
+                                            skip_child)
             child_num -= 1
             child_elmt_ind += 1
 
@@ -209,12 +192,10 @@ class XmlSpecs(object):
         key_type_name = 'type_name'
         if key_name in elmt_attr.keys():
             section_nm_reslvr = elmt_attr[key_name]
-            #parent_path, self.tail_part_frm_struct = \
-            #    self.check_last_part_repetition(parent_path,
-            #                                    self.tail_part_frm_struct,
-            #                                    section_nm_reslvr)
-
-            parent_path = f'{parent_path}/{section_nm_reslvr}'
+            self.check_last_part_repetition(parent_path,
+                                            self.tail_part_frm_struct,
+                                            section_nm_reslvr)
+            #parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         elif key_name not in elmt_attr.keys():
 
@@ -233,14 +214,12 @@ class XmlSpecs(object):
                         # TODO: think section_nm_reslvr have a few parts and take the last part as unit
                         section_nm_reslvr, _ = section_nm_reslvr.split('_')
                         self.py_dict[f'{parent_path}/'
-                                     f'{section_nm_reslvr}@unit'] = unit
+                                     f'{section_nm_reslvr}/@unit'] = unit
 
                 parent_path, self.tail_part_frm_struct = \
                     self.check_last_part_repetition(parent_path,
                                                     self.tail_part_frm_struct,
                                                     section_nm_reslvr)
-
-                #parent_path = f'{parent_path}/{section_nm_reslvr}'
 
             elif key_name in first_child.attrib.values() and \
                     first_child.tag == "string":
@@ -251,11 +230,6 @@ class XmlSpecs(object):
 
                 section_nm_reslvr = f'{elmt_attr[key_type_name]}_{child_txt}'
 
-                # parent_path, self.tail_part_frm_struct = \
-                #    self.check_last_part_repetition(parent_path,
-                #                                    self.tail_part_frm_struct,
-                #                                    section_nm_reslvr)
-
                 parent_path = f'{parent_path}/{section_nm_reslvr}'
 
             else:
@@ -263,23 +237,12 @@ class XmlSpecs(object):
 
                 section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name],
                                                            "string")
-                section_nm_reslvr = section_nm_reslvr + str(elmt_attr['__odr_siblings__'])
-                #parent_path, self.tail_part_frm_struct = \
-                #    self.check_last_part_repetition(parent_path,
-                #                                    self.tail_part_frm_struct,
-                #                                    section_nm_reslvr)
+                section_nm_reslvr = section_nm_reslvr + "_" + str(elmt_attr['__odr_siblings__'])
                 parent_path = f'{parent_path}/{section_nm_reslvr}'
-
-        #else:
-        #    parent_path, self.tail_part_frm_struct = \
-        #        self.check_last_part_repetition(parent_path,
-        #                                        self.tail_part_frm_struct,
-        #                                        section_nm_reslvr)
-            # parent_path = f'{parent_path}{section_nm_reslvr}'
 
         child_elmt_ind = 0
         while child_num > 0:
-            self.pass_element_through_parsers(element_,
+            self.pass_child_through_parsers(element_,
                                               parent_path,
                                               child_elmt_ind,
                                               skip_child)
@@ -304,9 +267,7 @@ class XmlSpecs(object):
 
         child_num = len(element_)
         elmt_attr = element_.attrib
-       # print("debug: print from OTHER OTHER: , child Num#####", elmt_attr)
 
-        section_nm_reslvr = ""
         if child_num == 0:
             if "name" in elmt_attr.keys():
                 section_nm_reslvr = f'{elmt_attr["name"]}'
@@ -498,7 +459,6 @@ class XmlSpecs(object):
         python dictionary
         """
 
-        print("DEBUG : this is test get_dict_function")
         return self.py_dict
 
 
@@ -521,13 +481,15 @@ class XpsDataFileParser(object):
     __vndr_err_msg__ = (f'Need a xps data file from the following'
                         f'\n {__vendors__} vendors')
 
-    def __init__(self, file_paths: str = "") -> None:
+    def __init__(self, file_paths: List = [""]) -> None:
         """
             Receive XPS file path.
         Parameters
         ----------
         file_paths : XPS file path.
         """
+        if isinstance(file_paths, str):
+            file_paths = [file_paths]
 
         self.files = file_paths
 
