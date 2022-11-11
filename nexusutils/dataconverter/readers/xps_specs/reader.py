@@ -43,13 +43,9 @@ class XPS_Reader(BaseReader):
         Xps_paser_object = XpsDataFileParser(file_paths)
         data_dict = Xps_paser_object.get_dict()
 
-        print("print data_dict : ", data_dict)
         if not template.items():
             # intended for NXroot
             for key, val in data_dict.items():
-                print(' key: ', key, 'and', ' val :', val, "\n")
-                if key[-1] == " ":
-                    print("got space")
                 if key[-1] == "/":
                     key = key[:-1]
                 if val not in ["None"]:
