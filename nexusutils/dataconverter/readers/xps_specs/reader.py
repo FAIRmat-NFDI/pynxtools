@@ -22,12 +22,46 @@
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from typing import Tuple
 
-from typing import Any
+from typing import Any, List
 import numpy as np
 import sys
 from nexusutils.dataconverter.readers.xps_specs import XpsDataFileParser
+import json
 
 np.set_printoptions(threshold=sys.maxsize)
+
+
+def find_entry_and_value(xps_data_dict,
+                         data_dest, #TODO rewrite the data dest as data_loc
+                         dest_type):
+
+    if dest_type in ["@region_data", "@parameters_data"]:
+        for key, val in xps_data_dict.items():
+            if data_dest in key:
+                components = key.split("/")
+                entry = (components[1] + ":" +
+                         components[2].split("_", 1)[1] + ":" +
+                         components[4].split("_", 1)[1]
+                         )
+            del data_dest[key]
+            entries_values = {entry: val}
+
+    if dest_type=="@data":
+        for key, val in xps_data_dict.items()():
+            if data_dest in key:
+                components = key.split("/")
+                entry = (components[1] + ":" +
+                         components[2].split("_", 1)[1] + ":" +
+                         components[4].split("_", 1)[1]
+                         )
+                _, last_part = key.split(data_dest)
+                scan_num, counts = last_part.split("/")[-2:]
+                # TODO use Xarray data type here
+            entries_values = {entry: {}}
+
+
+
+    return entries_values
 
 
 class XPS_Reader(BaseReader):
@@ -36,12 +70,93 @@ class XPS_Reader(BaseReader):
 
     def read(self,
              template: dict = None,
-             file_paths: str = None,
+             file_paths: List[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
 
-        Xps_paser_object = XpsDataFileParser(file_paths)
-        data_dict = Xps_paser_object.get_dict()
+        config_dict = {}
+        xps_data_dict = {}
+
+        for file in file_paths:
+            file_ext = file.rsplit(".", 1)[-1]
+            if file_ext == "json":
+                with open(file, encoding="utf-8", mode="r") as json_file:
+                    config_dict = json.load(json_file)
+
+            elif file_ext in ["yaml", "yml"]:
+                #TODO: yet to develop
+                pass
+
+            else:
+                Xps_paser_object = XpsDataFileParser(file_paths)
+                data_dict = Xps_paser_object.get_dict()
+                xps_data_dict = {**xps_data_dict, **data_dict}
+
+        for key, value in config_dict.items():
+
+            if "@region_data" in value:
+                data_dest = value.split("region_data:")[-1]
+                entries_values = find_entry_and_value(xps_data_dict,
+                                                      data_dest,
+                                                      dest_type=\
+                                                      "@region_data")
+
+                for entry, value in entries_values.items():
+                    modified_key = key.replace("entry", entry)
+                    template[modified_key] = value
+                    try:
+                        template[f"{modified_key}/@units"] = \
+                            config_dict[f"{key}/@units"]
+                    except KeyError:
+                        pass
+
+                try:
+                    del template[key]
+                except KeyError:
+                    pass
+
+            elif "@parameters_data" in value:
+                data_dest = value.split("parameters_data:")[-1]
+                entries_values = find_entry_and_value(xps_data_dict,
+                                                      data_dest,
+                                                      dest_type=\
+                                                      "@parameters_data")
+
+                for entry, value in entries_values.items():
+                    modified_key = key.replace("entry", entry)
+                    template[modified_key] = value
+                    try:
+                        template[f"{modified_key}/@units"] = \
+                            config_dict[f"{key}/@units"]
+                    except KeyError:
+                        pass
+
+                try:
+                    del template[key]
+                except KeyError:
+                    pass
+
+            elif "@invalid_value" in value:
+                pass
+
+            elif "@data" in value:
+                data_dest = value.split("data:")[-1]
+                entries_values = find_entry_and_value(xps_data_dict,
+                                                      data_dest,
+                                                      dest_type=\
+                                                      "@data")
+
+                for entry, value in entries_values.items():
+                    modified_key = key.replace("entry", entry)
+                    template[modified_key] = value
+                    # template[f"{modified_key}\@signal"] = TODO: Finishe it
+                    template[f"{modified_key}/@units"] = config_dict[f"{key}/@units"]
+                try:
+                    del template[f"{key}"]
+                    del template[f"{key}/signal"]
+                    del template[f"{key}/units"]
+                except KeyError:
+                    pass
 
         if not template.items():
             # intended for NXroot
