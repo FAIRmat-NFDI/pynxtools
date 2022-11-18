@@ -30,7 +30,7 @@
 "/ENTRY[entry]/SAMPLE[sample]/situation": "@invalid_value:SITUATION",
 "/ENTRY[entry]/SAMPLE[sample]/gas_pressure": "@invalid_value:GAS_PRESSURE",
 "/ENTRY[entry]/SAMPLE[sample]/gas_pressure/@units": "@invalid_value:GAS_PRESSURE_UNITS",
-"/ENTRY[entry]/DATA[data]/@signal": "@data:cycles/Cycle_",
+"/ENTRY[entry]/DATA[data]/@signal": "",
 "/ENTRY[entry]/DATA[data]/data": "@data:cycles/Cycle_",
 "/ENTRY[entry]/DATA[data]/data/@units": "counts"
 }
