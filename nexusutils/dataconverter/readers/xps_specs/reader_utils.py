@@ -49,6 +49,7 @@ class XmlSpecs(object):
         self.tail_part_frm_seq = ""
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
+        self.child_nm_reslvers = "__child_name_resolver__"
 
     def parse_xml(self):
         """Start parsing process
@@ -58,6 +59,7 @@ class XmlSpecs(object):
         """
 
         element = self._root_element
+        element.attrib[self.child_nm_reslvers] = list()
         child_num = len(element)
         parent_path = self._root_path
         skip_child = -1
@@ -102,6 +104,12 @@ class XmlSpecs(object):
         element = parent_element[child_elmt_ind]
         element.attrib['__parent__'] = parent_element
         element.attrib['__odr_siblings__'] = child_elmt_ind
+
+        if not self.child_nm_reslvers in parent_element.attrib.keys():
+            parent_element.attrib[self.child_nm_reslvers] = list()
+
+
+
         elmt_tag = element.tag
 
         if child_elmt_ind <= skip_child:
@@ -145,7 +153,12 @@ class XmlSpecs(object):
         key_name = "name"
         if key_name in elmt_attr.keys():
             section_nm_reslvr = f'{elmt_attr[key_name]}'
+            section_nm_reslvr = self.check_for_siblins_with_same_name(
+                section_nm_reslvr, element_
+            )
+
             parent_path = f'{parent_path}/{section_nm_reslvr}'
+
 
         child_elmt_ind = 0
         while child_num > 0:
@@ -192,6 +205,9 @@ class XmlSpecs(object):
         key_type_name = 'type_name'
         if key_name in elmt_attr.keys():
             section_nm_reslvr = elmt_attr[key_name]
+            section_nm_reslvr = self.check_for_siblins_with_same_name(
+                section_nm_reslvr, element_
+            )
             parent_path, self.tail_part_frm_struct = \
                 self.check_last_part_repetition(parent_path,
                                             self.tail_part_frm_struct,
@@ -205,6 +221,9 @@ class XmlSpecs(object):
                 section_nm_reslvr = self.restructure_value(
                                                first_child.text,
                                                first_child.tag)
+                section_nm_reslvr = self.check_for_siblins_with_same_name(
+                    section_nm_reslvr, element_
+                )
 
                 skip_child += 1
                 # Separating the units
@@ -229,6 +248,9 @@ class XmlSpecs(object):
                                                    first_child.tag)
 
                 section_nm_reslvr = f'{elmt_attr[key_type_name]}_{child_txt}'
+                section_nm_reslvr = self.check_for_siblins_with_same_name(
+                    section_nm_reslvr, element_
+                )
 
                 parent_path = f'{parent_path}/{section_nm_reslvr}'
 
@@ -238,6 +260,9 @@ class XmlSpecs(object):
                 section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name],
                                                            "string")
                 section_nm_reslvr = section_nm_reslvr + "_" + str(elmt_attr['__odr_siblings__'])
+                #section_nm_reslvr = self.check_for_siblins_with_same_name(
+                #    section_nm_reslvr, element_
+                #)
                 parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         child_elmt_ind = 0
@@ -290,6 +315,21 @@ class XmlSpecs(object):
                 = self.restructure_value(child_elmt.text,
                                          child_elmt.tag)
 
+    def check_for_siblins_with_same_name(self, reslv_name, new_sblings_elmt):
+        child_nm_reslvr_li = new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers]
+        if reslv_name not in child_nm_reslvr_li:
+            new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers].append(reslv_name)
+        else:
+            last_twin_sib_nm = child_nm_reslvr_li[-1]
+            try:
+                ind = last_twin_sib_nm.split("_")[-1]
+                reslv_name = f"{reslv_name}_{int(ind) + 1}"
+                new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers].append(reslv_name)
+            except ValueError:
+                reslv_name = f"{reslv_name}_1"
+                new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers].append(reslv_name)
+        return reslv_name
+
     def check_last_part_repetition(self,
                                    parent_path: str,
                                    pre_tail_part: str,
@@ -327,7 +367,7 @@ class XmlSpecs(object):
 
         if new_tail_part in pre_tail_part:
             try:
-                ind = pre_tail_part[pre_tail_part.rindex("_"):]
+                ind = pre_tail_part[pre_tail_part.rindex("_")+1:]
                 ind = int(ind)
                 pre_tail_part = f'{new_tail_part}_{ind +1}'
                 parent_path = f'{parent_path}/{pre_tail_part}'
