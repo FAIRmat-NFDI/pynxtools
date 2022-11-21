@@ -172,9 +172,9 @@ class Template(dict):
         if key in self.optional.keys():
             del self.optional[key]
 
-        elif key in self.required.keys():
+        if key in self.required.keys():
             del self.required[key]
 
-        elif key in self.recommended.keys():
+        if key in self.recommended.keys():
             del self.recommended[key]
 
