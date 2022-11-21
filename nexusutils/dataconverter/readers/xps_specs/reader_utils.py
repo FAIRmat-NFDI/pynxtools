@@ -50,7 +50,7 @@ class XmlSpecs(object):
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
 
-    def parse_xml(self) :
+    def parse_xml(self):
         """Start parsing process
 
         Parameters
@@ -192,10 +192,10 @@ class XmlSpecs(object):
         key_type_name = 'type_name'
         if key_name in elmt_attr.keys():
             section_nm_reslvr = elmt_attr[key_name]
-            self.check_last_part_repetition(parent_path,
+            parent_path, self.tail_part_frm_struct = \
+                self.check_last_part_repetition(parent_path,
                                             self.tail_part_frm_struct,
                                             section_nm_reslvr)
-            #parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         elif key_name not in elmt_attr.keys():
 
