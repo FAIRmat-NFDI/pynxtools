@@ -57,7 +57,7 @@ def find_entry_and_value(xps_data_dict,
             if data_dest in key:
                 components = key.split("/")
                 entry = (components[2] + "__" +
-                         components[3].split("_", 1)[1] + ":" +
+                         components[3].split("_", 1)[1] + "__" +
                          components[5].split("_", 1)[1]
                          )
 
@@ -123,6 +123,7 @@ class XPS_Reader(BaseReader):
                 Xps_paser_object = XpsDataFileParser(file_paths)
                 data_dict = Xps_paser_object.get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
+                
         for key, value in config_dict.items():
 
             if "@data" in value:
