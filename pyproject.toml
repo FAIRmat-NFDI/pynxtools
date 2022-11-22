@@ -30,7 +30,8 @@ dependencies = [
     "flatdict>=4.0.1",
     "hyperspy>=1.7.1",
     "jupyterlab_h5web>=6.0.1",
-    "hdfdict @ git+https://github.com/shabihsherjeel/hdfdict@f48a586"
+    "hdfdict @ git+https://github.com/shabihsherjeel/hdfdict@f48a586",
+    "pytz>=2021.1"
 ]
 
 [project.urls]
@@ -46,7 +47,8 @@ dev = [
     "pytest-timeout",
     "pytest-cov",
     "structlog",
-    "types-pyyaml"
+    "types-pyyaml",
+    "types-pytz"
 ]
 
 [project.scripts]
