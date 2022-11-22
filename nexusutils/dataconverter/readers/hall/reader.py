@@ -40,7 +40,8 @@ MEASUREMENT_REPLACEMENTS = {
 # Dict for converting values for specific keys
 CONVERSION_FUNCTIONS = {
     "Start Time": helpers.convert_date,
-    "Time Completed": helpers.convert_date
+    "Time Completed": helpers.convert_date,
+    "Skipped at": helpers.convert_date
 }
 
 # Keys that indicate the start of measurement block
@@ -83,7 +84,7 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
         if helpers.is_value_with_unit(jval):
             value, unit = helpers.split_value_with_unit(jval)
             dic[f"{prefix}/{key}"] = value
-            dic[f"{prefix}/{key}/@unit"] = unit
+            dic[f"{prefix}/{key}/@units"] = unit
         elif helpers.is_number(jval):
             dic[f"{prefix}/{key}"] = float(jval)
         else:
