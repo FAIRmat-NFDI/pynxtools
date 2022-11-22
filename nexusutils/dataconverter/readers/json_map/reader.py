@@ -33,7 +33,7 @@ def parse_slice(slice_string):
     slices = slice_string.split(",")
     for index, item in enumerate(slices):
         values = item.split(":")
-        slices[index] = slice(*[int(x) for x in values])
+        slices[index] = slice(*[None if x == '' else int(x) for x in values])
     return np.index_exp[tuple(slices)]
 
 
