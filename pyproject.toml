@@ -29,7 +29,8 @@ dependencies = [
     "ase>=3.19.0",
     "flatdict>=4.0.1",
     "hyperspy>=1.7.1",
-    "jupyterlab_h5web>=6.0.1"
+    "jupyterlab_h5web>=6.0.1",
+    "pytz>=2021.1"
 ]
 
 [project.urls]
@@ -45,7 +46,8 @@ dev = [
     "pytest-timeout",
     "pytest-cov",
     "structlog",
-    "types-pyyaml"
+    "types-pyyaml",
+    "types-pytz"
 ]
 
 [project.scripts]
