@@ -155,17 +155,17 @@ NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
 NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
-    "ISO8601": (str),
+    "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
     "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
     "NX_CHAR": (str, np.ndarray, np.chararray),
-    "NX_DATE_TIME": (str),
+    "NX_DATE_TIME": (str,),
     "NX_FLOAT": (float, np.ndarray, np.floating),
     "NX_INT": (int, np.ndarray, np.signedinteger),
     "NX_UINT": (np.ndarray, np.unsignedinteger),
     "NX_NUMBER": (int, float, np.ndarray, np.signedinteger, np.unsignedinteger, np.floating, dict),
     "NX_POSINT": (int, np.ndarray, np.signedinteger),  # > 0 is checked in is_valid_data_field()
-    "NXDL_TYPE_UNAVAILABLE": (str)  # Defaults to a string if a type is not provided.
+    "NXDL_TYPE_UNAVAILABLE": (str,)  # Defaults to a string if a type is not provided.
 }
 
 
