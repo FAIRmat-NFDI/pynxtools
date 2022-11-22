@@ -21,6 +21,7 @@ import re
 from datetime import datetime
 import numpy as np
 import pandas as pd
+import pytz
 
 
 def is_section(expr: str) -> bool:
@@ -214,18 +215,24 @@ def pandas_df_to_template(prefix: str, data: pd.DataFrame) -> Dict[str, Any]:
     return template
 
 
-def convert_date(datestr: str) -> str:
+def convert_date(datestr: str, timezone: str = "Europe/Berlin") -> str:
     """Converts a hall date formated string to isoformat string.
 
     Args:
         datestr (str): The hall date string
+        timezone (str): The timezone of the hall date string. Defaults to "Europe/Berlin"
 
     Returns:
         str: The iso formatted string.
     """
 
     try:
-        return datetime.strptime(datestr, r'%m/%d/%y %H%M%S').isoformat()
+        return (
+            datetime
+            .strptime(datestr, r'%m/%d/%y %H%M%S')
+            .astimezone(pytz.timezone(timezone))
+            .isoformat()
+        )
     except ValueError:
         print("Warning: datestring does not conform to date format. Skipping.")
         return datestr
