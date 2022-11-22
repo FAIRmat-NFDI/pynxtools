@@ -21,6 +21,7 @@ import json
 import pickle
 import numpy as np
 import xarray
+import hdfdict
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.template import Template
@@ -32,12 +33,7 @@ def parse_slice(slice_string):
     slices = slice_string.split(",")
     for index, item in enumerate(slices):
         values = item.split(":")
-        if len(values) == 1:
-            slices[index] = int(values[0])
-        else:
-            if len(values) < 3:
-                values.append("")
-            slices[index] = slice(map(int, filter(lambda x: not x, values)))
+        slices[index] = slice(*[None if x == '' else int(x) for x in values])
     return np.index_exp[tuple(slices)]
 
 
@@ -50,7 +46,7 @@ def get_val_nested_keystring_from_dict(keystring, data):
         return keystring
 
     current_key = keystring.split("/")[0]
-    if isinstance(data[current_key], dict):
+    if isinstance(data[current_key], (dict, hdfdict.hdfdict.LazyHdfDict)):
         return get_val_nested_keystring_from_dict(keystring[keystring.find("/") + 1:],
                                                   data[current_key])
     if isinstance(data[current_key], xarray.DataArray):
@@ -139,6 +135,21 @@ class JsonMapReader(BaseReader):
             elif file_extension == ".pickle":
                 with open(file_path, "rb") as input_file:  # type: ignore[assignment]
                     data = pickle.load(input_file)  # type: ignore[arg-type]
+            else:
+                is_hdf5 = False
+                with open(file_path, "rb") as input_file:
+                    if input_file.read(8) == b'\x89HDF\r\n\x1a\n':
+                        is_hdf5 = True
+                if is_hdf5:
+                    hdf = hdfdict.load(file_path)
+                    hdf.unlazy()
+                    data = dict(hdf)
+
+        if mapping is None:
+            template = Template({x: "/hierarchical/path/in/your/datafile" for x in template})
+            raise Exception(("Please supply a JSON mapping file: --input-file"
+                             " my_nxdl_map.mapping.json\n\n You can use this "
+                             "template for the required fields: \n" + str(template)))
 
         convert_shapes_to_slice_objects(mapping)
 
