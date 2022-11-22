@@ -27,7 +27,6 @@ from typing import Any, List
 import xarray as xr
 import numpy as np
 import sys
-from nexusutils.dataconverter.template import Template
 from nexusutils.dataconverter.readers.xps_specs import XpsDataFileParser
 import json
 
@@ -80,82 +79,6 @@ def find_entry_and_value(xps_data_dict,
 
     return entries_values
 
-def fill_out_plotting_data(entry_set,
-                           key,
-                           value,
-                           xps_data_dict,
-                           config_dict,
-                           template,
-                           dest_type="@data"
-                           ):
-
-    data_dest = value.split("data:")[-1]
-    entries_values = find_entry_and_value(xps_data_dict, data_dest, dest_type)
-
-    x_axis_length = 0
-    for entry, ent_value in entries_values.items():
-        entry_set.add(entry)
-        modified_key = key.replace("entry", entry)
-
-        # filling out the scan data separately
-
-        BE_coor = None
-        for data_var in ent_value.data_vars:
-            scan = "data"
-            key_indv_sgnl = modified_key.replace(f"[data]/data", f"[{scan}]/@signal")
-            key_indv_scn_dta = modified_key.replace(f"[data]/data", f"[{scan}]/data")
-            key_indv_BE_axes = modified_key.replace(f"[data]/data", f"[{scan}]/@axes")
-            key_indv_BE = modified_key.replace(f"[data]/data", f"[{scan}]/BE")
-            key_indv_BE_ind = modified_key.replace(f"[data]/data", f"[{scan}]/BE_indices")
-            #key_indv_scn_dta_unit = modified_key.replace(f"[data]/data", f"[{scan}]/@units")
-
-            BE_length = np.shape(ent_value[data_var])[-1]
-            BE_coor = np.arange(1000, BE_length + 100)
-
-            template[key_indv_sgnl] = "data"
-            template[key_indv_BE_axes] = "BE"
-            template[key_indv_scn_dta] = ent_value[data_var]
-            #template[key_indv_scn_dta_unit] = config_dict[f"{key}/@units"]
-            template[key_indv_BE] = np.arange(1000, BE_length + 100)
-            template[key_indv_BE_ind] = 0
-
-
-       # signal takes the sum of the counts along the scan axis
-       #  key_signal = modified_key.replace("[data]/data", "[scan]/@signal")
-       #  key_data = modified_key.replace("[data]/data", "[scan]/data")
-       #  key_BE = modified_key.replace("[data]/data", f"[scan]/BE")
-       #  key_BE_axes = modified_key.replace("[data]/data", f"[scan]/@axes")
-       #  key_BE_ind = modified_key.replace("[data]/data", f"[scan]/BE_indices")
-       #
-       # # print("key_BE_axis_indices", key_BE_x_axis)
-       #  template[key_signal] = "data"
-       #  template[key_data] = np.sum([ent_value[x_arr] for x_arr in ent_value.data_vars], axis=0)
-       #  template[key_BE] = BE_coor
-       #  template[key_BE_axes] = "BE"
-       #  template[key_BE_ind] = 0
-       #
-       #  template[f"{modified_key}/@units"] = \
-       #      config_dict[f"{key}/@units"]
-
-    try:
-        del template[key]
-    except KeyError:
-        pass
-
-    try:
-        key_signal = key
-        key_signal = key_signal.replace("/data", "/@signal")
-        del template[key_signal]
-    except KeyError:
-        pass
-
-    try:
-        del template[f"{key}/@units"]
-
-    except KeyError:
-        pass
-
-    return template
 
 class XPS_Reader(BaseReader):
 
@@ -204,61 +127,55 @@ class XPS_Reader(BaseReader):
         for key, value in config_dict.items():
             if "@data" in value:
 
-                # template = fill_out_plotting_data(entry_set,
-                #                                   key,
-                #                                   value,
-                #                                   xps_data_dict,
-                #                                   config_dict,
-                #                                   Template(template),
-                #                                   dest_type = "@data")
                 data_dest = value.split("data:")[-1]
                 dest_type = "@data"
                 entries_values = find_entry_and_value(xps_data_dict, data_dest, dest_type)
 
-                x_axis_length = 0
                 for entry, ent_value in entries_values.items():
                     entry_set.add(entry)
                     modified_key = key.replace("entry", entry)
 
                     # filling out the scan data separately
-
                     BE_coor = None
                     for data_var in ent_value.data_vars:
                         scan = data_var
                         key_indv_sgnl = modified_key.replace(f"[data]/data", f"[{scan}]/@signal")
                         key_indv_scn_dta = modified_key.replace(f"[data]/data", f"[{scan}]/data")
+                        key_indv_scn_dta_unit = modified_key.replace(f"[data]/data", f"[{scan}]/data/@units")
                         key_indv_BE_axes = modified_key.replace(f"[data]/data", f"[{scan}]/@axes")
                         key_indv_BE = modified_key.replace(f"[data]/data", f"[{scan}]/BE")
                         key_indv_BE_ind = modified_key.replace(f"[data]/data", f"[{scan}]/BE_indices")
-                        # key_indv_scn_dta_unit = modified_key.replace(f"[data]/data", f"[{scan}]/@units")
+                        key_indv_BE_unit = modified_key.replace(f"[data]/data", f"[{scan}]/BE/@units")
 
                         BE_length = np.shape(ent_value[data_var])[-1]
                         BE_coor = np.arange(1000, BE_length + 1000)
 
                         template[key_indv_sgnl] = "data"
-                        template[key_indv_BE_axes] = "BE"
                         template[key_indv_scn_dta] = np.array(ent_value[data_var])
-                        #template[key_indv_scn_dta_unit] = config_dict[f"{key}/@units"]
+                        template[key_indv_scn_dta_unit] = config_dict[f"{key}/@units"]
+                        template[key_indv_BE_axes] = "BE"
                         template[key_indv_BE] = BE_coor
                         template[key_indv_BE_ind] = 0
+                        template[key_indv_BE_unit] = "eV"
 
                     # signal takes the sum of the counts along the scan axis
                     key_signal = modified_key.replace("[data]/data", "[scan]/@signal")
                     key_data = modified_key.replace("[data]/data", "[scan]/data")
+                    key_data_unit = modified_key.replace(f"[data]/data", "[scan]/data/@units")
                     key_BE = modified_key.replace("[data]/data", f"[scan]/BE")
+                    key_BE_unit = modified_key.replace("[data]/data", f"[scan]/BE/@units")
                     key_BE_axes = modified_key.replace("[data]/data", f"[scan]/@axes")
                     key_BE_ind = modified_key.replace("[data]/data", f"[scan]/BE_indices")
 
-                    # print("key_BE_axis_indices", key_BE_x_axis)
                     template[key_signal] = "data"
                     template[key_data] = np.sum([np.array(ent_value[x_arr])
                                                  for x_arr in ent_value.data_vars], axis=0)
+                    template[key_data_unit] = \
+                        config_dict[f"{key}/@units"]
+                    template[key_BE_unit] = "eV"
                     template[key_BE] = BE_coor
                     template[key_BE_axes] = "BE"
                     template[key_BE_ind] = 0
-
-                    template[f"{modified_key}/@units"] = \
-                         config_dict[f"{key}/@units"]
 
                 try:
                     del template[key]
