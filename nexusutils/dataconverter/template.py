@@ -28,20 +28,22 @@ class Template(dict):
 
     def __init__(self, template=None, **kwargs):
         super().__init__(**kwargs)
-        if template is None:
-            self.optional: dict = {}
-            self.recommended: dict = {}
-            self.required: dict = {}
-            self.undocumented: dict = {}
-            self.optional_parents: list = []
-            self.lone_groups: list = []
-        else:
+        if isinstance(template, Template):
             self.optional: dict = copy.deepcopy(template["optional"])
             self.recommended: dict = copy.deepcopy(template["recommended"])
             self.required: dict = copy.deepcopy(template["required"])
             self.undocumented: dict = copy.deepcopy(template["undocumented"])
             self.optional_parents: list = copy.deepcopy(template["optional_parents"])
             self.lone_groups: dict = copy.deepcopy(template["lone_groups"])
+        else:
+            self.optional: dict = {}
+            self.recommended: dict = {}
+            self.required: dict = {}
+            self.undocumented: dict = {}
+            self.optional_parents: list = []
+            self.lone_groups: list = []
+            if isinstance(template, dict):
+                self.undocumented: dict = copy.deepcopy(template)
 
     def get_accumulated_dict(self):
         """Returns a dictionary of all the optionalities merged into one."""

@@ -73,13 +73,20 @@ fsspec==2022.8.2
     # via
     #   dask
     #   hyperspy
+future==0.18.2
+    # via h5py-wrapper
 h5grove==1.1.0
     # via jupyterlab-h5web
 h5py==3.7.0
     # via
     #   h5grove
+    #   h5py-wrapper
     #   hyperspy
     #   nexusutils (pyproject.toml)
+h5py-wrapper==1.1.0
+    # via hdfdict
+hdfdict @ git+https://github.com/shabihsherjeel/hdfdict@f48a586
+    # via nexusutils (pyproject.toml)
 hyperspy==1.7.2
     # via nexusutils (pyproject.toml)
 idna==3.4
@@ -302,6 +309,8 @@ pytest==7.1.3
     #   pytest-timeout
 pytest-cov==4.0.0
     # via nexusutils (pyproject.toml)
+pytest-runner==6.0.0
+    # via h5py-wrapper
 pytest-timeout==2.1.0
     # via nexusutils (pyproject.toml)
 python-dateutil==2.8.2
@@ -318,6 +327,7 @@ pywavelets==1.3.0
 pyyaml==6.0
     # via
     #   dask
+    #   hdfdict
     #   hyperspy
     #   nexusutils (pyproject.toml)
 pyzmq==24.0.1

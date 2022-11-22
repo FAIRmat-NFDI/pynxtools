@@ -29,7 +29,8 @@ dependencies = [
     "ase>=3.19.0",
     "flatdict>=4.0.1",
     "hyperspy>=1.7.1",
-    "jupyterlab_h5web>=6.0.1"
+    "jupyterlab_h5web>=6.0.1",
+    "hdfdict @ git+https://github.com/shabihsherjeel/hdfdict@f48a586"
 ]
 
 [project.urls]
