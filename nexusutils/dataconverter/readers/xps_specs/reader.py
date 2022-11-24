@@ -20,6 +20,8 @@
 """
 import os.path
 
+import yaml
+
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from typing import Tuple
 
@@ -28,10 +30,25 @@ import xarray as xr
 import numpy as np
 import sys
 from nexusutils.dataconverter.readers.xps_specs import XpsDataFileParser
+from nexusutils.dataconverter.readers.utils import flatten_and_replace
 import json
 
 np.set_printoptions(threshold=sys.maxsize)
 
+CONVERT_DICT = {
+    'Instrument': 'INSTRUMENT[instrument]',
+    'Analyser': 'ELECTRONANALYSER[electronanalyser]',
+    'Beam': 'BEAM[beam]',
+    'unit': '@units',
+    'Sample': 'SAMPLE[sample]',
+    'User': 'USER[user]',
+    'Data':'DATA[data]',
+    'Source': 'SOURCE[source]',
+    'Collectioncolumn' : 'COLLECTIONCOLUMN[collectioncolumn]',
+    'Energydispersion' : 'ENERGYDISPERSION[cnergydispersion]'
+}
+
+REPLACE_NESTED = {}
 
 def find_entry_and_value(xps_data_dict,
                          data_dest,#TODO rewrite the data dest as data_loc
@@ -91,18 +108,25 @@ class XPS_Reader(BaseReader):
         """Reads data from given file and returns a filled template dictionary"""
 
         # TODO: add the config file in example folder or intended folder
+        # TODO: Fix the file path for yaml file as it must be collect from
         # (if the is not eample folder) and add the path in con_file_path
         con_file_path = f'{os.path.dirname(__file__)}{os.path.sep}config_file.json'
+        eln_file_path = f'{os.path.dirname(__file__)}{os.path.sep}xps_eln.yaml'
+
         if isinstance(file_paths, list):
             file_paths.append(con_file_path)
+            file_paths.append(eln_file_path)
         elif isinstance(file_paths, tuple):
             file_paths = (*file_paths, con_file_path)
+            file_paths = (*file_paths, eln_file_path)
         else:
             file_paths = [file_paths]
             file_paths.append(con_file_path)
+            file_paths.append(eln_file_path)
 
         config_dict = {}
         xps_data_dict = {}
+        eln_data_dict = {}
         entry_set = set()
         searching_keys = ["@analyzer_info",
                           "@region_data",
@@ -116,8 +140,13 @@ class XPS_Reader(BaseReader):
                     config_dict = json.load(json_file)
 
             elif file_ext in ["yaml", "yml"]:
-                #TODO: yet to develop
-                pass
+                with open(file, mode = "r") as eln:
+                    #print("save file", yaml.safe_load(eln))
+                    eln_data_dict = flatten_and_replace(yaml.safe_load(eln),
+                                                        CONVERT_DICT,
+                                                        REPLACE_NESTED)
+
+                print("eln_data_dict : ", eln_data_dict)
 
             else:
                 Xps_paser_object = XpsDataFileParser(file_paths)
@@ -256,7 +285,18 @@ class XPS_Reader(BaseReader):
 
                 except KeyError:
                     pass
-        return template
 
+        # Fill slot or field data from eln yaml file
+        if eln_data_dict:
+            for eln_key, eln_val in eln_data_dict.items():
+                if eln_val == 'None':
+                    pass
+                elif eln_val:
+                    tail_part_eln_key = eln_key.split(f"[entry]")[-1]
+                    for tem_key, tem_value in template.items():
+                        if tail_part_eln_key in tem_key:
+                            template[tem_key] = eln_val
+
+        return template
 
 READER = XPS_Reader
