@@ -97,6 +97,147 @@ def find_entry_and_value(xps_data_dict,
     return entries_values
 
 
+def fill_template_with_xps_data(config_dict,
+                                xps_data_dict,
+                                template,
+                                searching_keys,
+                                entry_set):
+
+    for key, value in config_dict.items():
+        if "@data" in value:
+
+            data_dest = value.split("data:")[-1]
+            dest_type = "@data"
+            entries_values = find_entry_and_value(xps_data_dict, data_dest, dest_type)
+
+            for entry, ent_value in entries_values.items():
+                entry_set.add(entry)
+                modified_key = key.replace("entry", entry)
+
+                # filling out the scan data separately
+                BE_coor = None
+                for data_var in ent_value.data_vars:
+                    scan = data_var
+                    # key_indv_sgnl = modified_key.replace(f"[data]/data", f"[{scan}]/@signal")
+                    key_indv_scn_dta = modified_key.replace(f"[data]/data", f"[data]/{scan}")
+                    key_indv_scn_dta_unit = modified_key.replace(f"[data]/data", f"[data]/{scan}/@units")
+                    # key_indv_scn_dta_axes = modified_key.replace(f"[data]/data", f"[data]/@axes")
+                    # key_indv_BE_axes = modified_key.replace(f"[data]/data", f"[data]/@axes")
+                    # key_indv_BE = modified_key.replace(f"[data]/data", f"[data]/BE")
+                    # key_indv_BE_ind = modified_key.replace(f"[data]/data", f"[data]/BE_indices")
+                    # key_indv_BE_unit = modified_key.replace(f"[data]/data", f"[data]/BE/@units")
+
+                    BE_length = np.shape(ent_value[data_var])[-1]
+                    BE_coor = np.arange(1000, BE_length + 1000)
+
+                    # template[key_indv_sgnl] = "data"
+                    template[key_indv_scn_dta] = np.array(ent_value[data_var])
+                    template[key_indv_scn_dta_unit] = config_dict[f"{key}/@units"]
+                    # template[key_indv_BE_axes] = "BE"
+                    # template[key_indv_BE] = BE_coor
+                    # template[key_indv_BE_ind] = 0
+                    # template[key_indv_BE_unit] = "eV"
+
+                # signal takes the sum of the counts along the scan axis
+                key_signal = modified_key.replace("[data]/data", "[data]/@signal")
+                key_data = modified_key.replace("[data]/data", "[data]/data")
+                key_data_unit = modified_key.replace(f"[data]/data", "[data]/data/@units")
+                key_BE = modified_key.replace("[data]/data", f"[data]/BE")
+                key_BE_unit = modified_key.replace("[data]/data", f"[data]/BE/@units")
+                key_BE_axes = modified_key.replace("[data]/data", f"[data]/@axes")
+                key_BE_ind = modified_key.replace("[data]/data", f"[data]/BE_indices")
+
+                template[key_signal] = "data"
+                template[key_data] = np.sum([np.array(ent_value[x_arr])
+                                             for x_arr in ent_value.data_vars], axis=0)
+                template[key_data_unit] = \
+                    config_dict[f"{key}/@units"]
+                template[key_BE_unit] = "eV"
+                template[key_BE] = BE_coor
+                template[key_BE_axes] = "BE"
+                template[key_BE_ind] = 0
+
+            try:
+                del template[key]
+            except KeyError:
+                pass
+
+            try:
+                key_signal = key.replace("/data", "/@signal")
+                del template[key_signal]
+            except KeyError:
+                pass
+
+            try:
+                del template[f"{key}/@units"]
+            except KeyError:
+                pass
+
+        else:
+
+            for search_key in searching_keys:
+                if search_key in value:
+                    data_dest = value.split(f"{search_key}:")[-1]
+                    entries_values = find_entry_and_value(xps_data_dict,
+                                                          data_dest,
+                                                          dest_type= \
+                                                              search_key)
+                    for entry, ent_value in entries_values.items():
+                        entry_set.add(entry)
+                        modified_key = key.replace("[entry]", f"[{entry}]")
+
+                        template[modified_key] = ent_value
+                        try:
+                            template[f"{modified_key}/@units"] = \
+                                config_dict[f"{key}/@units"]
+                        except KeyError:
+                            pass
+
+                    try:
+                        del template[key]
+                    except KeyError:
+                        pass
+                    try:
+                        del template[f"{key}/@units"]
+                    except KeyError:
+                        pass
+
+    # Fill template by pre-defined value
+    for key, value in config_dict.items():
+
+        if "example_value" in value:
+            field_value = value.split("example_value:")[-1]
+            for entry in entry_set:
+                modified_key = key.replace("[entry]", f"[{entry}]")
+
+                try:
+                    field_value_ = float(field_value)
+                except ValueError:
+                    if isinstance(field_value, list):
+                        field_value_ = np.array(field_value)
+                    else:
+                        field_value_ = field_value
+
+                template[modified_key] = field_value_
+
+            try:
+                del template[key]
+            except KeyError:
+                pass
+
+        elif "entry_name" in value:
+            for entry in entry_set:
+                modified_key = key.replace("[entry]",
+                                           f"[{entry}]")
+                template[modified_key] = entry
+            template[key] = value
+            try:
+                del template[key]
+
+            except KeyError:
+                pass
+
+
 class XPS_Reader(BaseReader):
 
     supported_nxdls = ["NXmpes"]
@@ -153,138 +294,11 @@ class XPS_Reader(BaseReader):
                 data_dict = Xps_paser_object.get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
 
-        for key, value in config_dict.items():
-            if "@data" in value:
-
-                data_dest = value.split("data:")[-1]
-                dest_type = "@data"
-                entries_values = find_entry_and_value(xps_data_dict, data_dest, dest_type)
-
-                for entry, ent_value in entries_values.items():
-                    entry_set.add(entry)
-                    modified_key = key.replace("entry", entry)
-
-                    # filling out the scan data separately
-                    BE_coor = None
-                    for data_var in ent_value.data_vars:
-                        scan = data_var
-                        key_indv_sgnl = modified_key.replace(f"[data]/data", f"[{scan}]/@signal")
-                        key_indv_scn_dta = modified_key.replace(f"[data]/data", f"[{scan}]/data")
-                        key_indv_scn_dta_unit = modified_key.replace(f"[data]/data", f"[{scan}]/data/@units")
-                        key_indv_BE_axes = modified_key.replace(f"[data]/data", f"[{scan}]/@axes")
-                        key_indv_BE = modified_key.replace(f"[data]/data", f"[{scan}]/BE")
-                        key_indv_BE_ind = modified_key.replace(f"[data]/data", f"[{scan}]/BE_indices")
-                        key_indv_BE_unit = modified_key.replace(f"[data]/data", f"[{scan}]/BE/@units")
-
-                        BE_length = np.shape(ent_value[data_var])[-1]
-                        BE_coor = np.arange(1000, BE_length + 1000)
-
-                        template[key_indv_sgnl] = "data"
-                        template[key_indv_scn_dta] = np.array(ent_value[data_var])
-                        template[key_indv_scn_dta_unit] = config_dict[f"{key}/@units"]
-                        template[key_indv_BE_axes] = "BE"
-                        template[key_indv_BE] = BE_coor
-                        template[key_indv_BE_ind] = 0
-                        template[key_indv_BE_unit] = "eV"
-
-                    # signal takes the sum of the counts along the scan axis
-                    key_signal = modified_key.replace("[data]/data", "[scan]/@signal")
-                    key_data = modified_key.replace("[data]/data", "[scan]/data")
-                    key_data_unit = modified_key.replace(f"[data]/data", "[scan]/data/@units")
-                    key_BE = modified_key.replace("[data]/data", f"[scan]/BE")
-                    key_BE_unit = modified_key.replace("[data]/data", f"[scan]/BE/@units")
-                    key_BE_axes = modified_key.replace("[data]/data", f"[scan]/@axes")
-                    key_BE_ind = modified_key.replace("[data]/data", f"[scan]/BE_indices")
-
-                    template[key_signal] = "data"
-                    template[key_data] = np.sum([np.array(ent_value[x_arr])
-                                                 for x_arr in ent_value.data_vars], axis=0)
-                    template[key_data_unit] = \
-                        config_dict[f"{key}/@units"]
-                    template[key_BE_unit] = "eV"
-                    template[key_BE] = BE_coor
-                    template[key_BE_axes] = "BE"
-                    template[key_BE_ind] = 0
-
-                try:
-                    del template[key]
-                except KeyError:
-                    pass
-
-                try:
-                    key_signal = key.replace("/data", "/@signal")
-                    del template[key_signal]
-                except KeyError:
-                    pass
-
-                try:
-                    del template[f"{key}/@units"]
-                except KeyError:
-                    pass
-
-            else:
-
-                for search_key in searching_keys:
-                    if search_key in value:
-                        data_dest = value.split(f"{search_key}:")[-1]
-                        entries_values = find_entry_and_value(xps_data_dict,
-                                                              data_dest,
-                                                              dest_type= \
-                                                              search_key)
-                        for entry, ent_value in entries_values.items():
-                            entry_set.add(entry)
-                            modified_key = key.replace("[entry]", f"[{entry}]")
-
-                            template[modified_key] = ent_value
-                            try:
-                                template[f"{modified_key}/@units"] = \
-                                    config_dict[f"{key}/@units"]
-                            except KeyError:
-                                pass
-
-                        try:
-                            del template[key]
-                        except KeyError:
-                            pass
-                        try:
-                            del template[f"{key}/@units"]
-                        except KeyError:
-                            pass
-
-        # Fill template by pre-defined value
-        for key, value in config_dict.items():
-
-            if "example_value" in value:
-                field_value = value.split("example_value:")[-1]
-                for entry in entry_set:
-                    modified_key = key.replace("[entry]", f"[{entry}]")
-
-                    try:
-                        field_value_ = float(field_value)
-                    except ValueError:
-                        if isinstance(field_value, list):
-                            field_value_ = np.array(field_value)
-                        else:
-                            field_value_ = field_value
-
-                    template[modified_key] = field_value_
-
-                try:
-                    del template[key]
-                except KeyError:
-                    pass
-
-            elif "entry_name" in value:
-                for entry in entry_set:
-                    modified_key = key.replace("[entry]",
-                                               f"[{entry}]")
-                    template[modified_key] = entry
-                template[key] = value
-                try:
-                    del template[key]
-
-                except KeyError:
-                    pass
+        fill_template_with_xps_data(config_dict,
+                                    xps_data_dict,
+                                    template,
+                                    searching_keys,
+                                    entry_set)
 
         # Fill slot or field data from eln yaml file
         if eln_data_dict:
