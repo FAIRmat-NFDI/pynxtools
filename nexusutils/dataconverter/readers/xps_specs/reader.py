@@ -32,6 +32,7 @@ import sys
 from nexusutils.dataconverter.readers.xps_specs import XpsDataFileParser
 from nexusutils.dataconverter.readers.utils import flatten_and_replace
 import json
+import copy
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -50,8 +51,9 @@ CONVERT_DICT = {
 
 REPLACE_NESTED = {}
 
+
 def find_entry_and_value(xps_data_dict,
-                         data_dest,#TODO rewrite the data dest as data_loc
+                         dt_colct_loc,#TODO rewrite the data dest as data_loc
                          dest_type):
 
     entries_values = dict()
@@ -61,7 +63,7 @@ def find_entry_and_value(xps_data_dict,
                      "@source_info"]:
 
         for key, val in xps_data_dict.items():
-            if data_dest in key:
+            if dt_colct_loc in key:
                 components = key.split("/")
                 entry = (components[2] + "__" +
                          components[3].split("_", 1)[1] + "__" +
@@ -70,29 +72,170 @@ def find_entry_and_value(xps_data_dict,
                 entries_values = {entry: val}
 
     elif dest_type == "@data":
+
+        # var needs to construct BE axis
+        attr_dict = {"mcd_num": 0,
+                     "curves_per_scan": 0,
+                     "values_per_curve": 0,
+                     "mcd_head": 0,
+                     "mcd_tail": 0,
+                     "excitation_energy": 0,
+                     "kinetic_energy": 0,
+                     "effective_workfunction": 0,
+                     "scan_delta": 0,
+                     "pass_energy": 0,
+                     "mcd_shifts": [],
+                     "mcd_poss": [],
+                     "mcd_gains": []}
+
         for key, val in xps_data_dict.items():
-            if data_dest in key:
-                components = key.split("/")
+            components = key.split("/")
+            try:
                 entry = (components[2] + "__" +
                          components[3].split("_", 1)[1] + "__" +
                          components[5].split("_", 1)[1]
                          )
+            except IndexError:
+                continue
 
-                if entry not in entries_values.keys():
-                    entries_values[entry] = xr.Dataset()
+            if entry not in entries_values.keys():
+                entries_values[entry] = {}
+                entries_values[entry]["data"] = {}
+                entries_values[entry]["attrb"] = copy.deepcopy(attr_dict)
 
-                # data_dest -> cycles/Cycle_
-                _, last_part = key.split(data_dest)
+            if "region/curves_per_scan" in key:
+                entries_values[entry]["attrb"]["curves_per_scan"] = val
+            elif "region/values_per_curve" in key:
+                entries_values[entry]["attrb"]["values_per_curve"] = val
+
+            elif "region/excitation_energy" in key:
+                entries_values[entry]["attrb"]["excitation_energy"] = val
+
+            elif "region/kinetic_energy" in key:
+                entries_values[entry]["attrb"]["kinetic_energy"] = val
+
+            elif "region/effective_workfunction" in key:
+                entries_values[entry]["attrb"]["effective_workfunction"] = val
+
+            elif "region/scan_delta" in key:
+                entries_values[entry]["attrb"]["scan_delta"] = val
+
+            elif "region/pass_energy" in key:
+                entries_values[entry]["attrb"]["pass_energy"] = val
+
+            elif "mcd_head" in key:
+                entries_values[entry]["attrb"]["mcd_head"] = val
+
+            elif "mcd_tail" in key:
+                entries_values[entry]["attrb"]["mcd_tail"] = val
+
+            elif "shift" in key:
+                entries_values[entry]["attrb"]["mcd_shifts"].append(val)
+                entries_values[entry]["attrb"]["mcd_num"] += 1
+
+            elif "gain" in key:
+                entries_values[entry]["attrb"]["mcd_gains"].append(val)
+
+            elif "position" in key:
+                entries_values[entry]["attrb"]["mcd_poss"].append(val)
+
+            if dt_colct_loc in key:
+
+                # dt_colct_loc -> cycles/Cycle_
+                _, last_part = key.split(dt_colct_loc)
                 if "/time" in last_part:
                     continue
                 parts = last_part.split("/")
                 cycle_num, scan_num = parts[0], parts[-2].split("_")[1]
-                da_name = f"cycle{cycle_num}_scan{scan_num}"
+                da_name = f"cycle{cycle_num}_scan{scan_num}_"
 
                 # data_array = (name, data, dimension,
-                entries_values[entry][da_name] = ("counts", val)
+                counts = val
+                entries_values[entry]["data"][da_name] = counts
 
-                # TODO add x-coordinate if the the BE can be calculated later
+        def construct_BE_axis_and_corresponding_counts(entries_values):
+
+            entries_values_items = copy.deepcopy(tuple(entries_values.items()))
+            for entry_key, entry_val in entries_values_items:
+
+                data = copy.deepcopy(entry_val["data"])
+                #print(data)
+                entries_values[entry_key]["data"] = None
+                attrb = entry_val["attrb"]
+
+                mcd_num = attrb["mcd_num"]
+                curves_per_scan = attrb["curves_per_scan"]
+                values_per_curve = attrb["values_per_curve"]
+                values_per_scan = curves_per_scan * values_per_curve
+                mcd_head = attrb["mcd_head"]
+                mcd_tail = attrb["mcd_tail"]
+                eng_points_per_mcd = values_per_scan + mcd_head + mcd_tail
+                total_x_eng_points = mcd_num * eng_points_per_mcd
+
+                excitation_energy = attrb["excitation_energy"]
+                kinetic_energy = attrb["kinetic_energy"]
+                effective_workfunction = attrb["effective_workfunction"]
+                scan_delta = attrb["scan_delta"]
+                pass_energy = attrb["pass_energy"]
+                BE_energy_uper_level = excitation_energy - effective_workfunction - kinetic_energy
+
+                mcd_energy_shift = attrb["mcd_shifts"]
+                mcd_energy_offset = np.array(mcd_energy_shift) * pass_energy
+                if not mcd_energy_offset.any():
+                    del entries_values[entry_key]
+                    continue
+
+                # consider offset with respect to position at +16 which is usually large and positive value
+                mcd_energy_offset = mcd_energy_offset - mcd_energy_offset[-1]
+
+                starting_energy_points = BE_energy_uper_level - mcd_energy_offset
+                # considering mcd_head
+                starting_energy_points = starting_energy_points - mcd_head * scan_delta
+                # considering counts mcd_tail
+                ending_energy_points = starting_energy_points - (mcd_tail + values_per_scan) * scan_delta
+
+                channeltron_eng_axes = np.zeros((mcd_num, eng_points_per_mcd))
+                channeltron_counts_on_axes = np.zeros((mcd_num,
+                                                       eng_points_per_mcd))
+                for ind in np.arange(len(channeltron_eng_axes)):
+                    channeltron_eng_axes[ind, :] = np.linspace(starting_energy_points[ind],
+                                                               ending_energy_points[ind],
+                                                               eng_points_per_mcd)
+
+                # construct ultimate or incorporated energy axis
+                BE_eng_axis = []
+                for i in np.arange(np.shape(channeltron_eng_axes)[1]):
+                    BE_eng_axis = BE_eng_axis + list(channeltron_eng_axes[:, i])
+                BE_eng_axis = np.array(BE_eng_axis)
+
+                # channeltron counts on the ultimate energy axis
+                # the extra 1 dim is for the energy axis for the matching curve
+                channeltron_counts_on_BE = np.zeros((mcd_num +1,
+                                                     int(eng_points_per_mcd*mcd_num)))
+
+                scans = data.keys()
+                entries_values[entry_key]["data"] = xr.Dataset()
+
+                for scan_nm in scans:
+                    # values for scan_nm corresponds to the data for each "scan" in individual scan region
+                    scan_counts = data[scan_nm]
+                    for row in np.arange(mcd_num):
+                        count_on_row = scan_counts[row::5]
+                        channeltron_counts_on_BE[row + 1, row::5] = count_on_row
+                        entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
+                            xr.DataArray(data=channeltron_counts_on_BE[row + 1, :],
+                                         coords={"BE": BE_eng_axis})
+
+                        # adding all the counts to the first pick
+                        channeltron_counts_on_BE[0, 0::5] += count_on_row
+                        if row == mcd_num-1:
+                            entries_values[entry_key]["data"][f"{scan_nm[:-1]}"] = \
+                               xr.DataArray(data=channeltron_counts_on_BE[0, :],
+                                            coords={"BE": BE_eng_axis})
+            #print(entries_values.items())
+                print("entry values : ", entries_values[entry_key]["data"].data_vars)
+        construct_BE_axis_and_corresponding_counts(entries_values)
+        #print("entries #####: ", entries_values)
 
     return entries_values
 
@@ -106,40 +249,31 @@ def fill_template_with_xps_data(config_dict,
     for key, value in config_dict.items():
         if "@data" in value:
 
-            data_dest = value.split("data:")[-1]
+            dt_colct_loc = value.split("data:")[-1]
             dest_type = "@data"
-            entries_values = find_entry_and_value(xps_data_dict, data_dest, dest_type)
+            entries_values = find_entry_and_value(xps_data_dict, dt_colct_loc, dest_type)
 
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("entry", entry)
 
                 # filling out the scan data separately
+                data = ent_value["data"]
+                attr = ent_value["attrb"]
                 BE_coor = None
-                for data_var in ent_value.data_vars:
+                for data_var in data.data_vars:
                     scan = data_var
-                    # key_indv_sgnl = modified_key.replace(f"[data]/data", f"[{scan}]/@signal")
                     key_indv_scn_dta = modified_key.replace(f"[data]/data", f"[data]/{scan}")
                     key_indv_scn_dta_unit = modified_key.replace(f"[data]/data", f"[data]/{scan}/@units")
-                    # key_indv_scn_dta_axes = modified_key.replace(f"[data]/data", f"[data]/@axes")
-                    # key_indv_BE_axes = modified_key.replace(f"[data]/data", f"[data]/@axes")
-                    # key_indv_BE = modified_key.replace(f"[data]/data", f"[data]/BE")
-                    # key_indv_BE_ind = modified_key.replace(f"[data]/data", f"[data]/BE_indices")
-                    # key_indv_BE_unit = modified_key.replace(f"[data]/data", f"[data]/BE/@units")
 
-                    BE_length = np.shape(ent_value[data_var])[-1]
-                    BE_coor = np.arange(1000, BE_length + 1000)
+                    BE_coor = list(data[data_var].coords)[0]
+                    BE_coor = np.array(data[data_var][BE_coor])
 
-                    # template[key_indv_sgnl] = "data"
-                    template[key_indv_scn_dta] = np.array(ent_value[data_var])
+                    template[key_indv_scn_dta] = ent_value["data"][data_var].data
                     template[key_indv_scn_dta_unit] = config_dict[f"{key}/@units"]
-                    # template[key_indv_BE_axes] = "BE"
-                    # template[key_indv_BE] = BE_coor
-                    # template[key_indv_BE_ind] = 0
-                    # template[key_indv_BE_unit] = "eV"
 
                 # signal takes the sum of the counts along the scan axis
-                key_signal = modified_key.replace("[data]/data", "[data]/@signal")
+                key_signal = modified_key.replace("[data]/data", "[data]/@signal") # TODO
                 key_data = modified_key.replace("[data]/data", "[data]/data")
                 key_data_unit = modified_key.replace(f"[data]/data", "[data]/data/@units")
                 key_BE = modified_key.replace("[data]/data", f"[data]/BE")
@@ -148,10 +282,9 @@ def fill_template_with_xps_data(config_dict,
                 key_BE_ind = modified_key.replace("[data]/data", f"[data]/BE_indices")
 
                 template[key_signal] = "data"
-                template[key_data] = np.sum([np.array(ent_value[x_arr])
-                                             for x_arr in ent_value.data_vars], axis=0)
-                template[key_data_unit] = \
-                    config_dict[f"{key}/@units"]
+                template[key_data] = np.sum([data[x_arr].data
+                                             for x_arr in data.data_vars if "_chan" not in x_arr], axis=0)
+                template[key_data_unit] = config_dict[f"{key}/@units"]
                 template[key_BE_unit] = "eV"
                 template[key_BE] = BE_coor
                 template[key_BE_axes] = "BE"
@@ -177,9 +310,9 @@ def fill_template_with_xps_data(config_dict,
 
             for search_key in searching_keys:
                 if search_key in value:
-                    data_dest = value.split(f"{search_key}:")[-1]
+                    dt_colct_loc = value.split(f"{search_key}:")[-1]
                     entries_values = find_entry_and_value(xps_data_dict,
-                                                          data_dest,
+                                                          dt_colct_loc,
                                                           dest_type= \
                                                               search_key)
                     for entry, ent_value in entries_values.items():
@@ -287,8 +420,6 @@ class XPS_Reader(BaseReader):
                                                         CONVERT_DICT,
                                                         REPLACE_NESTED)
 
-                print("eln_data_dict : ", eln_data_dict)
-
             else:
                 Xps_paser_object = XpsDataFileParser(file_paths)
                 data_dict = Xps_paser_object.get_dict()
@@ -312,5 +443,6 @@ class XPS_Reader(BaseReader):
                             template[tem_key] = eln_val
 
         return template
+
 
 READER = XPS_Reader
