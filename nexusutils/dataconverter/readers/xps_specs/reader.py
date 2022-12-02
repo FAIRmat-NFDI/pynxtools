@@ -112,7 +112,10 @@ def find_entry_and_value(xps_data_dict,
                 entries_values[entry]["attrb"]["excitation_energy"] = val
 
             elif "region/kinetic_energy" in key:
-                entries_values[entry]["attrb"]["kinetic_energy"] = val
+                if "region/kinetic_energy_base" not in key:
+                    entries_values[entry]["attrb"]["kinetic_energy"] = val
+                else:
+                    continue
 
             elif "region/effective_workfunction" in key:
                 entries_values[entry]["attrb"]["effective_workfunction"] = val
@@ -159,18 +162,17 @@ def find_entry_and_value(xps_data_dict,
             for entry_key, entry_val in entries_values_items:
 
                 data = copy.deepcopy(entry_val["data"])
-                #print(data)
                 entries_values[entry_key]["data"] = None
                 attrb = entry_val["attrb"]
 
-                mcd_num = attrb["mcd_num"]
+                mcd_num = int(attrb["mcd_num"])
                 curves_per_scan = attrb["curves_per_scan"]
                 values_per_curve = attrb["values_per_curve"]
                 values_per_scan = curves_per_scan * values_per_curve
                 mcd_head = attrb["mcd_head"]
                 mcd_tail = attrb["mcd_tail"]
-                eng_points_per_mcd = values_per_scan + mcd_head + mcd_tail
-                total_x_eng_points = mcd_num * eng_points_per_mcd
+                values_per_scan = int(values_per_scan + mcd_tail + mcd_head)
+                total_x_eng_points = mcd_num * values_per_scan
 
                 excitation_energy = attrb["excitation_energy"]
                 kinetic_energy = attrb["kinetic_energy"]
@@ -180,62 +182,99 @@ def find_entry_and_value(xps_data_dict,
                 BE_energy_uper_level = excitation_energy - effective_workfunction - kinetic_energy
 
                 mcd_energy_shift = attrb["mcd_shifts"]
-                mcd_energy_offset = np.array(mcd_energy_shift) * pass_energy
-                if not mcd_energy_offset.any():
+                mcd_energy_offset = []
+                offset_ids = []
+                for s in mcd_energy_shift:
+                    # consider offset with respect to position at +16 which is usually large and positive value
+                    s = s - mcd_energy_shift[-1]
+                    s = s*pass_energy
+                    mcd_energy_offset.append(s)
+                    id = s / scan_delta
+                    id = id
+                    id = id//1
+                    # as shift value comes in integer and starts counting from 0
+                    if id<0:
+                        id = id + 1
+
+                    id = id + (mcd_head + mcd_tail)
+                    id = int(id)
+                    offset_ids.append(id)
+                # Skiping entry without count data
+                if not mcd_energy_offset:
                     del entries_values[entry_key]
                     continue
-
-                # consider offset with respect to position at +16 which is usually large and positive value
-                mcd_energy_offset = mcd_energy_offset - mcd_energy_offset[-1]
-
+                mcd_energy_offset = np.array(mcd_energy_offset)
+                # TODO: check with + and -
                 starting_energy_points = BE_energy_uper_level - mcd_energy_offset
                 # considering mcd_head
-                starting_energy_points = starting_energy_points - mcd_head * scan_delta
+                starting_energy_points = starting_energy_points + mcd_head * scan_delta
                 # considering counts mcd_tail
                 ending_energy_points = starting_energy_points - (mcd_tail + values_per_scan) * scan_delta
 
-                channeltron_eng_axes = np.zeros((mcd_num, eng_points_per_mcd))
+                channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
                 channeltron_counts_on_axes = np.zeros((mcd_num,
-                                                       eng_points_per_mcd))
+                                                       values_per_scan))
                 for ind in np.arange(len(channeltron_eng_axes)):
                     channeltron_eng_axes[ind, :] = np.linspace(starting_energy_points[ind],
                                                                ending_energy_points[ind],
-                                                               eng_points_per_mcd)
+                                                               values_per_scan)
 
+                channeltron_eng_axes = np.round_(channeltron_eng_axes, decimals=8)
                 # construct ultimate or incorporated energy axis
-                BE_eng_axis = []
-                for i in np.arange(np.shape(channeltron_eng_axes)[1]):
-                    BE_eng_axis = BE_eng_axis + list(channeltron_eng_axes[:, i])
-                BE_eng_axis = np.array(BE_eng_axis)
+                BE_eng_axis = np.sort(channeltron_eng_axes.reshape(-1))[::-1]
 
-                # channeltron counts on the ultimate energy axis
-                # the extra 1 dim is for the energy axis for the matching curve
                 channeltron_counts_on_BE = np.zeros((mcd_num +1,
-                                                     int(eng_points_per_mcd*mcd_num)))
+                                                     int(values_per_scan*mcd_num)))
 
                 scans = data.keys()
                 entries_values[entry_key]["data"] = xr.Dataset()
 
                 for scan_nm in scans:
+                    channeltron_counts_on_BE = np.zeros((mcd_num + 1,
+                                                         int(values_per_scan * mcd_num)))
                     # values for scan_nm corresponds to the data for each "scan" in individual scan region
                     scan_counts = data[scan_nm]
+                    max = np.argmax(scan_counts)
+                    print("highest scan value : ", scan_counts[max])
                     for row in np.arange(mcd_num):
-                        count_on_row = scan_counts[row::5]
-                        channeltron_counts_on_BE[row + 1, row::5] = count_on_row
+
+                        start_id = offset_ids[row]
+                        count_len = len(scan_counts)
+                        nominal_all_ids = np.arange(count_len)
+                        nominal_ids = nominal_all_ids[start_id::mcd_num]
+
+                        count_on_row = scan_counts[nominal_ids]
+
+                        channeltron_counts_on_BE[row + 1, nominal_ids] = count_on_row
+
+                        # shifting and adding all the curves over the left curve.
+                        id_0 = offset_ids[0]
+                        nominal_ids = nominal_ids - nominal_ids[0] + id_0
+                        channeltron_counts_on_BE[0, nominal_ids] += count_on_row
+
+                        if "PBTTT_1.2_V__C1s" in entry_key:
+                            data = channeltron_counts_on_BE[row + 1, :]
+                            key = f"{scan_nm}chan{row+1}"
+
+                            print("key : ", key)
+                            print("data : ", data[600:800])
+                            print("data from counts: ", count_on_row)
                         entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
                             xr.DataArray(data=channeltron_counts_on_BE[row + 1, :],
                                          coords={"BE": BE_eng_axis})
 
-                        # adding all the counts to the first pick
-                        channeltron_counts_on_BE[0, 0::5] += count_on_row
-                        if row == mcd_num-1:
-                            entries_values[entry_key]["data"][f"{scan_nm[:-1]}"] = \
+                        if row == (mcd_num-1):
+                            data_var = f"{scan_nm[:-1]}"
+                            if "PBTTT_1.2_V__C1s" in entry_key:
+                                print("## entry_key", entry_key)
+                                print("## data_var : ", data_var)
+                                max = np.argmax(channeltron_counts_on_BE[0,:])
+                                print("## data : ", channeltron_counts_on_BE[0, :][max])
+                            entries_values[entry_key]["data"][data_var] = \
                                xr.DataArray(data=channeltron_counts_on_BE[0, :],
                                             coords={"BE": BE_eng_axis})
-            #print(entries_values.items())
-                print("entry values : ", entries_values[entry_key]["data"].data_vars)
+
         construct_BE_axis_and_corresponding_counts(entries_values)
-        #print("entries #####: ", entries_values)
 
     return entries_values
 
@@ -256,7 +295,6 @@ def fill_template_with_xps_data(config_dict,
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("entry", entry)
-
                 # filling out the scan data separately
                 data = ent_value["data"]
                 attr = ent_value["attrb"]
@@ -268,7 +306,7 @@ def fill_template_with_xps_data(config_dict,
 
                     BE_coor = list(data[data_var].coords)[0]
                     BE_coor = np.array(data[data_var][BE_coor])
-
+                    #print(key_indv_scn_dta)
                     template[key_indv_scn_dta] = ent_value["data"][data_var].data
                     template[key_indv_scn_dta_unit] = config_dict[f"{key}/@units"]
 
