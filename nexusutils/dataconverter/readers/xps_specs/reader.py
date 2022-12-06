@@ -189,9 +189,9 @@ def find_entry_and_value(xps_data_dict,
                     s = s - mcd_energy_shift[-1]
                     s = s*pass_energy
                     mcd_energy_offset.append(s)
-                    id = s / scan_delta
-                    id = id + 0.5
-                    id = id//1
+                    id = s // scan_delta
+                    #% id = id
+                    #% id = id//1
                     # as shift value comes in integer and starts counting from 0
                     if id<0:
                         id = id + 1
@@ -221,17 +221,21 @@ def find_entry_and_value(xps_data_dict,
 
                 channeltron_eng_axes = np.round_(channeltron_eng_axes, decimals=8)
                 # construct ultimate or incorporated energy axis
-                BE_eng_axis = np.sort(channeltron_eng_axes.reshape(-1))[::-1]
+                #% BE_eng_axis = np.sort(channeltron_eng_axes.reshape(-1))[::-1]
 
-                channeltron_counts_on_BE = np.zeros((mcd_num +1,
-                                                     int(values_per_scan*mcd_num)))
+                BE_eng_axis = channeltron_eng_axes[-1, :]
+
+                #% channeltron_counts_on_BE = np.zeros((mcd_num +1,
+                #%                                      int(values_per_scan*mcd_num)))
 
                 scans = data.keys()
                 entries_values[entry_key]["data"] = xr.Dataset()
 
                 for scan_nm in scans:
-                    channeltron_counts_on_BE = np.zeros((mcd_num + 1,
-                                                         int(values_per_scan * mcd_num)))
+                    #% channeltron_counts_on_BE = np.zeros((mcd_num + 1,
+                    #%                                     int(values_per_scan * mcd_num)))
+                    #% print("data type : ", type(values_per_scan))
+                    channeltron_counts_on_BE = np.zeros((mcd_num + 1, values_per_scan))
                     # values for scan_nm corresponds to the data for each "scan" in individual scan region
                     scan_counts = data[scan_nm]
                     #max = np.argmax(scan_counts)
@@ -245,20 +249,10 @@ def find_entry_and_value(xps_data_dict,
 
                         count_on_row = scan_counts[nominal_ids]
 
-                        channeltron_counts_on_BE[row + 1, nominal_ids] = count_on_row
+                        channeltron_counts_on_BE[row + 1, 0:len(count_on_row)] = count_on_row
 
                         # shifting and adding all the curves over the left curve.
-                        id_0 = offset_ids[0]
-                        nominal_ids = nominal_ids - nominal_ids[0] + id_0
-                        channeltron_counts_on_BE[0, nominal_ids] += count_on_row
-
-                        # if "PBTTT_1.2_V__C1s" in entry_key:
-                        #     data = channeltron_counts_on_BE[row + 1, :]
-                        #     key = f"{scan_nm}chan{row+1}"
-                        #
-                        #     print("key : ", key)
-                        #     print("data : ", data[600:800])
-                        #     print("data from counts: ", count_on_row)
+                        channeltron_counts_on_BE[0, 0:len(count_on_row)] += count_on_row
 
                         entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
                             xr.DataArray(data=channeltron_counts_on_BE[row + 1, :],
@@ -266,13 +260,9 @@ def find_entry_and_value(xps_data_dict,
 
                         if row == (mcd_num-1):
                             data_var = f"{scan_nm[:-1]}"
-                            # if "PBTTT_1.2_V__C1s" in entry_key:
-                            #     print("## entry_key", entry_key)
-                            #     print("## data_var : ", data_var)
-                            #     max = np.argmax(channeltron_counts_on_BE[0,:])
-                            #     print("## data : ", channeltron_counts_on_BE[0, :][max])
+
                             entries_values[entry_key]["data"][data_var] = \
-                               xr.DataArray(data=channeltron_counts_on_BE[0, :],
+                                xr.DataArray(data=channeltron_counts_on_BE[0, :],
                                             coords={"BE": BE_eng_axis})
 
         construct_BE_axis_and_corresponding_counts(entries_values)
