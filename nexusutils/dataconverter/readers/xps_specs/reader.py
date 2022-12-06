@@ -172,7 +172,7 @@ def find_entry_and_value(xps_data_dict,
                 mcd_head = attrb["mcd_head"]
                 mcd_tail = attrb["mcd_tail"]
                 values_per_scan = int(values_per_scan + mcd_tail + mcd_head)
-                total_x_eng_points = mcd_num * values_per_scan
+                #total_x_eng_points = mcd_num * values_per_scan
 
                 excitation_energy = attrb["excitation_energy"]
                 kinetic_energy = attrb["kinetic_energy"]
@@ -190,7 +190,7 @@ def find_entry_and_value(xps_data_dict,
                     s = s*pass_energy
                     mcd_energy_offset.append(s)
                     id = s / scan_delta
-                    id = id
+                    id = id + 0.5
                     id = id//1
                     # as shift value comes in integer and starts counting from 0
                     if id<0:
@@ -205,7 +205,7 @@ def find_entry_and_value(xps_data_dict,
                     continue
                 mcd_energy_offset = np.array(mcd_energy_offset)
                 # TODO: check with + and -
-                starting_energy_points = BE_energy_uper_level - mcd_energy_offset
+                starting_energy_points = BE_energy_uper_level + mcd_energy_offset
                 # considering mcd_head
                 starting_energy_points = starting_energy_points + mcd_head * scan_delta
                 # considering counts mcd_tail
@@ -234,8 +234,8 @@ def find_entry_and_value(xps_data_dict,
                                                          int(values_per_scan * mcd_num)))
                     # values for scan_nm corresponds to the data for each "scan" in individual scan region
                     scan_counts = data[scan_nm]
-                    max = np.argmax(scan_counts)
-                    print("highest scan value : ", scan_counts[max])
+                    #max = np.argmax(scan_counts)
+                    #print("highest scan value : ", scan_counts[max])
                     for row in np.arange(mcd_num):
 
                         start_id = offset_ids[row]
@@ -252,24 +252,25 @@ def find_entry_and_value(xps_data_dict,
                         nominal_ids = nominal_ids - nominal_ids[0] + id_0
                         channeltron_counts_on_BE[0, nominal_ids] += count_on_row
 
-                        if "PBTTT_1.2_V__C1s" in entry_key:
-                            data = channeltron_counts_on_BE[row + 1, :]
-                            key = f"{scan_nm}chan{row+1}"
+                        # if "PBTTT_1.2_V__C1s" in entry_key:
+                        #     data = channeltron_counts_on_BE[row + 1, :]
+                        #     key = f"{scan_nm}chan{row+1}"
+                        #
+                        #     print("key : ", key)
+                        #     print("data : ", data[600:800])
+                        #     print("data from counts: ", count_on_row)
 
-                            print("key : ", key)
-                            print("data : ", data[600:800])
-                            print("data from counts: ", count_on_row)
                         entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
                             xr.DataArray(data=channeltron_counts_on_BE[row + 1, :],
                                          coords={"BE": BE_eng_axis})
 
                         if row == (mcd_num-1):
                             data_var = f"{scan_nm[:-1]}"
-                            if "PBTTT_1.2_V__C1s" in entry_key:
-                                print("## entry_key", entry_key)
-                                print("## data_var : ", data_var)
-                                max = np.argmax(channeltron_counts_on_BE[0,:])
-                                print("## data : ", channeltron_counts_on_BE[0, :][max])
+                            # if "PBTTT_1.2_V__C1s" in entry_key:
+                            #     print("## entry_key", entry_key)
+                            #     print("## data_var : ", data_var)
+                            #     max = np.argmax(channeltron_counts_on_BE[0,:])
+                            #     print("## data : ", channeltron_counts_on_BE[0, :][max])
                             entries_values[entry_key]["data"][data_var] = \
                                xr.DataArray(data=channeltron_counts_on_BE[0, :],
                                             coords={"BE": BE_eng_axis})
