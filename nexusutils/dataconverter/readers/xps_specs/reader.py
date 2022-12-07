@@ -190,8 +190,6 @@ def find_entry_and_value(xps_data_dict,
                     s = s*pass_energy
                     mcd_energy_offset.append(s)
                     id = s // scan_delta
-                    #% id = id
-                    #% id = id//1
                     # as shift value comes in integer and starts counting from 0
                     if id<0:
                         id = id + 1
@@ -209,7 +207,7 @@ def find_entry_and_value(xps_data_dict,
                 # considering mcd_head
                 starting_energy_points = starting_energy_points + mcd_head * scan_delta
                 # considering counts mcd_tail
-                ending_energy_points = starting_energy_points - (mcd_tail + values_per_scan) * scan_delta
+                ending_energy_points = starting_energy_points - (values_per_scan) * scan_delta
 
                 channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
                 channeltron_counts_on_axes = np.zeros((mcd_num,
@@ -221,25 +219,16 @@ def find_entry_and_value(xps_data_dict,
 
                 channeltron_eng_axes = np.round_(channeltron_eng_axes, decimals=8)
                 # construct ultimate or incorporated energy axis
-                #% BE_eng_axis = np.sort(channeltron_eng_axes.reshape(-1))[::-1]
 
                 BE_eng_axis = channeltron_eng_axes[-1, :]
-
-                #% channeltron_counts_on_BE = np.zeros((mcd_num +1,
-                #%                                      int(values_per_scan*mcd_num)))
 
                 scans = data.keys()
                 entries_values[entry_key]["data"] = xr.Dataset()
 
                 for scan_nm in scans:
-                    #% channeltron_counts_on_BE = np.zeros((mcd_num + 1,
-                    #%                                     int(values_per_scan * mcd_num)))
-                    #% print("data type : ", type(values_per_scan))
                     channeltron_counts_on_BE = np.zeros((mcd_num + 1, values_per_scan))
                     # values for scan_nm corresponds to the data for each "scan" in individual scan region
                     scan_counts = data[scan_nm]
-                    #max = np.argmax(scan_counts)
-                    #print("highest scan value : ", scan_counts[max])
                     for row in np.arange(mcd_num):
 
                         start_id = offset_ids[row]
@@ -283,9 +272,24 @@ def fill_template_with_xps_data(config_dict,
             dest_type = "@data"
             entries_values = find_entry_and_value(xps_data_dict, dt_colct_loc, dest_type)
 
+            survey_count_ = 0
+            count = 0
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("entry", entry)
+                ###
+                modified_root = key[0]
+                modifid_entry = key[0:13]
+                modifid_entry = modifid_entry.replace("entry", entry)
+                #template[f"{modifid_entry}/@NX_class"] = "NXentry"
+                template[f"{modifid_entry}/@default"] = "data"
+                if "Survey" in entry and survey_count_ == 0:
+                    survey_count_ = survey_count_ + 1
+                    template[f"{modified_root}/@default"] = entry
+                if survey_count_ == 0 and count == 0:
+                    count = count + 1
+                    template[f"{modified_root}/@default"] = entry
+                ####
                 # filling out the scan data separately
                 data = ent_value["data"]
                 attr = ent_value["attrb"]
@@ -308,7 +312,9 @@ def fill_template_with_xps_data(config_dict,
                 key_BE = modified_key.replace("[data]/data", f"[data]/BE")
                 key_BE_unit = modified_key.replace("[data]/data", f"[data]/BE/@units")
                 key_BE_axes = modified_key.replace("[data]/data", f"[data]/@axes")
-                key_BE_ind = modified_key.replace("[data]/data", f"[data]/BE_indices")
+                key_BE_ind = modified_key.replace("[data]/data", f"[data]/@BE_indices")
+                ####
+                key_nxclass = modified_key.replace("[data]/data", f"[data]/@NX_class")
 
                 template[key_signal] = "data"
                 template[key_data] = np.sum([data[x_arr].data
@@ -318,6 +324,7 @@ def fill_template_with_xps_data(config_dict,
                 template[key_BE] = BE_coor
                 template[key_BE_axes] = "BE"
                 template[key_BE_ind] = 0
+                template[key_nxclass] = "NXdata"
 
             try:
                 del template[key]
@@ -470,7 +477,13 @@ class XPS_Reader(BaseReader):
                     for tem_key, tem_value in template.items():
                         if tail_part_eln_key in tem_key:
                             template[tem_key] = eln_val
+        print("##### Template : \n", template)
 
+        ###
+        str_entry = "/ENTRY[entry]"
+        for key, val in template.items():
+            if str_entry in key:
+                del template[key]
         return template
 
 
