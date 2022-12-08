@@ -225,7 +225,9 @@ def find_entry_and_value(xps_data_dict,
                 scans = data.keys()
                 entries_values[entry_key]["data"] = xr.Dataset()
 
+                scan_num = 0
                 for scan_nm in scans:
+                    scan_num = scan_num + 1
                     channeltron_counts_on_BE = np.zeros((mcd_num + 1, values_per_scan))
                     # values for scan_nm corresponds to the data for each "scan" in individual scan region
                     scan_counts = data[scan_nm]
@@ -253,6 +255,7 @@ def find_entry_and_value(xps_data_dict,
                             entries_values[entry_key]["data"][data_var] = \
                                 xr.DataArray(data=channeltron_counts_on_BE[0, :],
                                             coords={"BE": BE_eng_axis})
+
 
         construct_BE_axis_and_corresponding_counts(entries_values)
 
@@ -294,7 +297,9 @@ def fill_template_with_xps_data(config_dict,
                 data = ent_value["data"]
                 attr = ent_value["attrb"]
                 BE_coor = None
+                scan_num = 0
                 for data_var in data.data_vars:
+                    scan_num = scan_num + 1
                     scan = data_var
                     key_indv_scn_dta = modified_key.replace(f"[data]/data", f"[data]/{scan}")
                     key_indv_scn_dta_unit = modified_key.replace(f"[data]/data", f"[data]/{scan}/@units")
@@ -317,8 +322,10 @@ def fill_template_with_xps_data(config_dict,
                 key_nxclass = modified_key.replace("[data]/data", f"[data]/@NX_class")
 
                 template[key_signal] = "data"
-                template[key_data] = np.sum([data[x_arr].data
+                template[key_data] = np.mean([data[x_arr].data
                                              for x_arr in data.data_vars if "_chan" not in x_arr], axis=0)
+                template[f"{key_data}_errors"] = np.std([data[x_arr].data
+                                              for x_arr in data.data_vars if "_chan" not in x_arr], axis=0)
                 template[key_data_unit] = config_dict[f"{key}/@units"]
                 template[key_BE_unit] = "eV"
                 template[key_BE] = BE_coor
@@ -477,7 +484,6 @@ class XPS_Reader(BaseReader):
                     for tem_key, tem_value in template.items():
                         if tail_part_eln_key in tem_key:
                             template[tem_key] = eln_val
-        print("##### Template : \n", template)
 
         ###
         str_entry = "/ENTRY[entry]"
