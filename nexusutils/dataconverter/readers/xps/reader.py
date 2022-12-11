@@ -25,11 +25,11 @@ import yaml
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from typing import Tuple
 
-from typing import Any, List
+from typing import Any, List, Union
 import xarray as xr
 import numpy as np
 import sys
-from nexusutils.dataconverter.readers.xps_specs import XpsDataFileParser
+from nexusutils.dataconverter.readers.xps import XpsDataFileParser
 from nexusutils.dataconverter.readers.utils import flatten_and_replace
 import json
 import copy
@@ -305,7 +305,8 @@ def fill_template_with_xps_data(config_dict,
 
             key_part = value.split("data:")[-1]
             dt_typ = "@data"
-            entries_values = find_entry_and_value(xps_data_dict, key_part, dt_typ)
+            entries_values = find_entry_and_value(xps_data_dict,
+                                                  key_part, dt_typ)
 
             survey_count_ = 0
             count = 0
@@ -368,10 +369,10 @@ def fill_template_with_xps_data(config_dict,
                                              for x_arr in data.data_vars
                                               if "_chan" not in x_arr],
                                              axis=0)
-                template[f"{key_data}_errors"] = np.std([data[x_arr].data
-                                              for x_arr in data.data_vars
-                                                         if "_chan" not in x_arr],
-                                                        axis=0)
+                template[f"{key_data}_errors"] = \
+                    np.std([data[x_arr].data
+                            for x_arr in data.data_vars
+                            if "_chan" not in x_arr], axis=0)
                 template[key_data_unit] = config_dict[f"{key}/@units"]
                 template[key_BE_unit] = "eV"
                 template[key_BE] = BE_coor
@@ -460,6 +461,62 @@ def fill_template_with_xps_data(config_dict,
                 pass
 
 
+def check_and_add_enl_and_conf(file_paths, eln, conf) -> \
+        Union[List[str], Tuple[str]]:
+    """
+    Check for eln and config files where config file is a mandatory
+    file to parse the xps data in to template.
+
+    Parameters
+    ----------
+    file_paths : Path container for all the required inputs or config files.
+    eln : ELN (electronic lab notebook)
+    conf : File for separating data for different region
+
+    Returns
+    -------
+    file_path
+    """
+    eln_found = False
+    config_found = False
+
+    if isinstance(file_paths, list):
+
+        for file_path in file_paths:
+            file = file_path.rsplit("/")[-1]
+            nm, ext = file.rsplit(".")
+            if ext == "json":
+                if nm == "config_file":
+                    config_found = True
+            if ext == "yaml":
+                eln_found = True
+
+        if not eln_found:
+            file_paths.append(eln)
+        if not config_found:
+            file_paths.append(conf)
+
+        return file_paths
+
+    if isinstance(file_paths, tuple):
+
+        for file_path in file_paths:
+            file = file_path.rsplit("/")[-1]
+            nm, ext = file.rsplit(".")
+            if ext == "json":
+                if nm == "config_file":
+                    config_found = True
+            if ext == "yaml":
+                eln_found = True
+
+        if not eln_found:
+            file_paths = (*file_paths, eln)
+        if not config_found:
+            file_paths = (*file_paths, conf)
+
+        return file_paths
+
+
 class XPS_Reader(BaseReader):
 
     supported_nxdls = ["NXmpes"]
@@ -468,24 +525,26 @@ class XPS_Reader(BaseReader):
              template: dict = None,
              file_paths: List[str] = None,
              objects: Tuple[Any] = None) -> dict:
-        """Reads data from given file and returns a filled template dictionary"""
+        """Reads data from given file and returns
+        a filled template dictionary"""
 
-        # TODO: add the config file in example folder or intended folder
-        # TODO: Fix the file path for yaml file as it must be collect from
-        # (if the is not eample folder) and add the path in con_file_path
-        con_file_path = f'{os.path.dirname(__file__)}{os.path.sep}config_file.json'
-        eln_file_path = f'{os.path.dirname(__file__)}{os.path.sep}xps_eln.yaml'
-
-        if isinstance(file_paths, list):
-            file_paths.append(con_file_path)
-            file_paths.append(eln_file_path)
-        elif isinstance(file_paths, tuple):
-            file_paths = (*file_paths, con_file_path)
-            file_paths = (*file_paths, eln_file_path)
-        else:
-            file_paths = [file_paths]
-            file_paths.append(con_file_path)
-            file_paths.append(eln_file_path)
+        reader_dir = f'{os.path.dirname(__file__)}{os.path.sep}'
+        proj_rt_dir = os.path.join(reader_dir,
+                                   '..',
+                                   '..',
+                                   '..',
+                                   '..',)
+        xps_test_dir = os.path.join(proj_rt_dir,
+                                    "tests",
+                                    "data",
+                                    "dataconverter",
+                                    "readers",
+                                    "xps")
+        config_file = os.path.join(reader_dir, "config_file.json")
+        eln_file = os.path.join(xps_test_dir, "xps_eln.yaml")
+        file_paths = check_and_add_enl_and_conf(file_paths,
+                                                eln_file,
+                                                config_file)
 
         config_dict = {}
         xps_data_dict = {}
