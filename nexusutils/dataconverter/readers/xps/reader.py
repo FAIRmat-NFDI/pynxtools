@@ -234,13 +234,13 @@ def find_entry_and_value(xps_data_dict,
                     del entries_values[entry_key]
                     continue
                 # Sorting in descending order
-                BE_eng_axis = channeltron_eng_axes[-1, :][::-1]
+                BE_eng_axis = channeltron_eng_axes[-1, :]
 
                 entries_values[entry_key]["data"] = xr.Dataset()
 
                 for scan_nm in scans:
                     chentrn_cnt_on_BE = np.zeros((mcd_num + 1, 
-                                                         values_per_scan))
+                                                  values_per_scan))
                     # values for scan_nm corresponds to the data for each 
                     # "scan" in individual CountsSeq
                     scan_counts = data[scan_nm]
@@ -252,7 +252,7 @@ def find_entry_and_value(xps_data_dict,
                             # Reverse counts from lower BE to higher 
                             # BE as in BE_eng_axis
                             count_on_row = \
-                                count_on_row[mcd_head:-mcd_tail][::-1]
+                                count_on_row[mcd_head:-mcd_tail]
 
                             chentrn_cnt_on_BE[row + 1, :] = count_on_row
                             chentrn_cnt_on_BE[0, :] += count_on_row
@@ -287,7 +287,7 @@ def find_entry_and_value(xps_data_dict,
 
                                 entries_values[entry_key]["data"][data_var] = \
                                     xr.DataArray(data=chentrn_cnt_on_BE[0, :],
-                                                coords={"BE": BE_eng_axis})
+                                                 coords={"BE": BE_eng_axis})
 
         construct_be_axis_and_corresponding_counts(entries_values)
 
