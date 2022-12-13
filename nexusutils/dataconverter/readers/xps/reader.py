@@ -55,6 +55,9 @@ REPLACE_NESTED = {}
 def find_entry_and_value(xps_data_dict,
                          key_part,
                          dt_typ):
+    """Construct the entry name and pick up the corresponding data for
+        that for that entry.
+    """
 
     entries_values = dict()
     if dt_typ in ["@region_data",
@@ -65,11 +68,11 @@ def find_entry_and_value(xps_data_dict,
         for key, val in xps_data_dict.items():
             if key_part in key:
                 components = key.split("/")
-                entry = (components[2]
-                         + "__"
-                         + components[3].split("_", 1)[1]
-                         + "__"
-                         + components[5].split("_", 1)[1]
+                entry = (f'{components[2]}'
+                         f'__'
+                         f'{components[3].split("_", 1)[1]}'
+                         f'__'
+                         f'{components[5].split("_", 1)[1]}'
                          )
                 entries_values = {entry: val}
 
@@ -93,11 +96,11 @@ def find_entry_and_value(xps_data_dict,
         for key, val in xps_data_dict.items():
             components = key.split("/")
             try:
-                entry = (components[2] \
-                         + "__" \
-                         + components[3].split("_", 1)[1]  \
-                         + "__" \
-                         + components[5].split("_", 1)[1]
+                entry = (f'components[2]'
+                         f'__'
+                         f'components[3].split("_", 1)[1]'
+                         f'__'
+                         f'components[5].split("_", 1)[1]'
                          )
             except IndexError:
                 continue
@@ -215,8 +218,8 @@ def find_entry_and_value(xps_data_dict,
                 mcd_energy_offset = np.array(mcd_energy_offset)
                 # Putting energy of the last detector as a highest energy
                 starting_eng_pnts = BE_energy_uper_level - mcd_energy_offset
-                ending_eng_pnts = (starting_eng_pnts -
-                                   values_per_scan * scan_delta)
+                ending_eng_pnts = \
+                    (starting_eng_pnts - values_per_scan * scan_delta)
 
                 channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
                 for ind in np.arange(len(channeltron_eng_axes)):
@@ -407,8 +410,7 @@ def fill_template_with_xps_data(config_dict,
                     key_part = value.split(f"{search_key}:")[-1]
                     entries_values = find_entry_and_value(xps_data_dict,
                                                           key_part,
-                                                          dt_typ=
-                                                          search_key)
+                                                          dt_typ=search_key)
                     for entry, ent_value in entries_values.items():
                         entry_set.add(entry)
                         modified_key = key.replace("[entry]", f"[{entry}]")
