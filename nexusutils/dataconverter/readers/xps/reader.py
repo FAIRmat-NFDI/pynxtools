@@ -65,9 +65,11 @@ def find_entry_and_value(xps_data_dict,
         for key, val in xps_data_dict.items():
             if key_part in key:
                 components = key.split("/")
-                entry = (components[2] + "__" + \
-                         components[3].split("_", 1)[1] + "__" + \
-                         components[5].split("_", 1)[1]
+                entry = (components[2] 
+                         + "__"
+                         + components[3].split("_", 1)[1] 
+                         + "__"
+                         + components[5].split("_", 1)[1]
                          )
                 entries_values = {entry: val}
 
@@ -91,9 +93,11 @@ def find_entry_and_value(xps_data_dict,
         for key, val in xps_data_dict.items():
             components = key.split("/")
             try:
-                entry = (components[2] + "__" +
-                         components[3].split("_", 1)[1] + "__" +
-                         components[5].split("_", 1)[1]
+                entry = (components[2] 
+                         + "__"
+                         + components[3].split("_", 1)[1] 
+                         + "__"
+                         + components[5].split("_", 1)[1]
                          )
             except IndexError:
                 continue
@@ -194,11 +198,11 @@ def find_entry_and_value(xps_data_dict,
                 # and positive value
                 for s in mcd_energy_shifts:
                     s = mcd_energy_shifts[-1] - s
-                    s = s*pass_energy
+                    s = s * pass_energy
                     mcd_energy_offset.append(s)
                     id = round(s / scan_delta)
                     # as shift value comes in integer and starts counting from 0
-                    if id>0:
+                    if id > 0:
                         id = id - 1
                     id = id
                     id = int(id)
@@ -211,8 +215,8 @@ def find_entry_and_value(xps_data_dict,
                 mcd_energy_offset = np.array(mcd_energy_offset)
                 # Putting energy of the last detector as a highest energy
                 starting_eng_pnts = BE_energy_uper_level - mcd_energy_offset
-                ending_eng_pnts = starting_eng_pnts - \
-                                       values_per_scan * scan_delta
+                ending_eng_pnts = (starting_eng_pnts - \
+                                   values_per_scan * scan_delta)
 
                 channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
                 for ind in np.arange(len(channeltron_eng_axes)):
@@ -239,9 +243,9 @@ def find_entry_and_value(xps_data_dict,
                 entries_values[entry_key]["data"] = xr.Dataset()
 
                 for scan_nm in scans:
-                    chentrn_cnt_on_BE = np.zeros((mcd_num + 1, 
+                    chentrn_cnt_on_BE = np.zeros((mcd_num + 1,
                                                   values_per_scan))
-                    # values for scan_nm corresponds to the data for each 
+                    # values for scan_nm corresponds to the data for each
                     # "scan" in individual CountsSeq
                     scan_counts = data[scan_nm]
 
@@ -249,7 +253,7 @@ def find_entry_and_value(xps_data_dict,
                         for row in np.arange(mcd_num):
 
                             count_on_row = scan_counts[row::mcd_num]
-                            # Reverse counts from lower BE to higher 
+                            # Reverse counts from lower BE to higher
                             # BE as in BE_eng_axis
                             count_on_row = \
                                 count_on_row[mcd_head:-mcd_tail]
@@ -282,7 +286,7 @@ def find_entry_and_value(xps_data_dict,
                                 xr.DataArray(data=chentrn_cnt_on_BE[row + 1, :],
                                              coords={"BE": BE_eng_axis})
 
-                            if row == (mcd_num-1):
+                            if row == (mcd_num - 1):
                                 data_var = f"{scan_nm[:-1]}"
 
                                 entries_values[entry_key]["data"][data_var] = \
@@ -403,8 +407,8 @@ def fill_template_with_xps_data(config_dict,
                     key_part = value.split(f"{search_key}:")[-1]
                     entries_values = find_entry_and_value(xps_data_dict,
                                                           key_part,
-                                                          dt_typ= \
-                                                              search_key)
+                                                          dt_typ =
+                                                          search_key)
                     for entry, ent_value in entries_values.items():
                         entry_set.add(entry)
                         modified_key = key.replace("[entry]", f"[{entry}]")
@@ -562,7 +566,7 @@ class XPS_Reader(BaseReader):
                     config_dict = json.load(json_file)
 
             elif file_ext in ["yaml", "yml"]:
-                with open(file, mode = "r") as eln:
+                with open(file, mode="r") as eln:
                     eln_data_dict = flatten_and_replace(yaml.safe_load(eln),
                                                         CONVERT_DICT,
                                                         REPLACE_NESTED)

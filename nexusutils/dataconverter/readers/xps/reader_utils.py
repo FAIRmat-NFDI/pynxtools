@@ -105,10 +105,8 @@ class XmlSpecs(object):
         element.attrib['__parent__'] = parent_element
         element.attrib['__odr_siblings__'] = child_elmt_ind
 
-        if not self.child_nm_reslvers in parent_element.attrib.keys():
+        if self.child_nm_reslvers not in parent_element.attrib.keys():
             parent_element.attrib[self.child_nm_reslvers] = list()
-
-
 
         elmt_tag = element.tag
 
@@ -159,7 +157,6 @@ class XmlSpecs(object):
 
             parent_path = f'{parent_path}/{section_nm_reslvr}'
 
-
         child_elmt_ind = 0
         while child_num > 0:
 
@@ -170,7 +167,7 @@ class XmlSpecs(object):
             child_num -= 1
             child_elmt_ind += 1
 
-    def parse_struct(self, 
+    def parse_struct(self,
                      element_: EmtT.Element,
                      parent_path: str) -> None:
         """
@@ -210,17 +207,16 @@ class XmlSpecs(object):
             )
             parent_path, self.tail_part_frm_struct = \
                 self.check_last_part_repetition(parent_path,
-                                            self.tail_part_frm_struct,
-                                            section_nm_reslvr)
+                                                self.tail_part_frm_struct,
+                                                section_nm_reslvr)
 
         elif key_name not in elmt_attr.keys():
 
             if key_name in first_child.attrib.values() and \
                     key_value in second_child.attrib.values():
 
-                section_nm_reslvr = self.restructure_value(
-                                               first_child.text,
-                                               first_child.tag)
+                section_nm_reslvr = self.restructure_value(first_child.text,
+                                                           first_child.tag)
                 section_nm_reslvr = self.check_for_siblins_with_same_name(
                     section_nm_reslvr, element_
                 )
@@ -260,17 +256,17 @@ class XmlSpecs(object):
                 section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name],
                                                            "string")
                 section_nm_reslvr = section_nm_reslvr + "_" + str(elmt_attr['__odr_siblings__'])
-                #section_nm_reslvr = self.check_for_siblins_with_same_name(
+                # section_nm_reslvr = self.check_for_siblins_with_same_name(
                 #    section_nm_reslvr, element_
-                #)
+                # )
                 parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         child_elmt_ind = 0
         while child_num > 0:
             self.pass_child_through_parsers(element_,
-                                              parent_path,
-                                              child_elmt_ind,
-                                              skip_child)
+                                            parent_path,
+                                            child_elmt_ind,
+                                            skip_child)
             child_num -= 1
             child_elmt_ind += 1
 
@@ -367,7 +363,7 @@ class XmlSpecs(object):
 
         if new_tail_part in pre_tail_part:
             try:
-                ind = pre_tail_part[pre_tail_part.rindex("_")+1:]
+                ind = pre_tail_part[pre_tail_part.rindex("_") + 1:]
                 ind = int(ind)
                 pre_tail_part = f'{new_tail_part}_{ind +1}'
                 parent_path = f'{parent_path}/{pre_tail_part}'
@@ -430,7 +426,7 @@ class XmlSpecs(object):
 
     def cumulate_counts_series(self,
                                scan_seq_elem: EmtT.Element,
-                               counts_length: int =None,
+                               counts_length: int = None,
                                cumulative_counts: np.ndarray = None,) -> np.ndarray:
         """
         Sum the counts over different scans. Each ScanSeaq contains
@@ -477,10 +473,10 @@ class XmlSpecs(object):
 
             if child_num > 0:
                 child_element = scan_seq_elem[child_elmt_ind]
-                name, cumulative_counts = self.cumulate_counts_series(
-                                                        child_element,
-                                                        counts_length,
-                                                        cumulative_counts)
+                name, cumulative_counts = \
+                        self.cumulate_counts_series(child_element,
+                                                    counts_length,
+                                                    cumulative_counts)
 
             child_num = child_num - 1
             child_elmt_ind = child_elmt_ind + 1
@@ -511,8 +507,8 @@ class XpsDataFileParser(object):
     __prmt_file_ext__ = ['xml']
     __vendors__ = ['specs']
     __prmt_vndr_cls = {'xml': {
-                                'specs': XmlSpecs
-                               }
+                               'specs': XmlSpecs
+                              }
                        }
 
     __file_err_msg__ = (f'Need a xps data file with the following'
@@ -591,5 +587,3 @@ class XpsDataFileParser(object):
             if vendor in child_attr[key]:
                 return vendor
         raise None
-
-
