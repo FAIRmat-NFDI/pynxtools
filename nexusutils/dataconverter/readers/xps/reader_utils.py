@@ -507,7 +507,7 @@ class XpsDataFileParser(object):
     __prmt_file_ext__ = ['xml']
     __vendors__ = ['specs']
     __prmt_vndr_cls = {'xml': {'specs': XmlSpecs}
-                      }
+                       }
 
     __file_err_msg__ = (f'Need a xps data file with the following'
                         f'\n extension {__prmt_file_ext__}')
