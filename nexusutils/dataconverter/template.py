@@ -177,4 +177,3 @@ class Template(dict):
 
         if key in self.recommended.keys():
             del self.recommended[key]
-            
