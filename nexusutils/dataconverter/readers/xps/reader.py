@@ -65,10 +65,10 @@ def find_entry_and_value(xps_data_dict,
         for key, val in xps_data_dict.items():
             if key_part in key:
                 components = key.split("/")
-                entry = (components[2] \
-                         + "__" \
-                         + components[3].split("_", 1)[1] \
-                         + "__" \
+                entry = (components[2]
+                         + "__"
+                         + components[3].split("_", 1)[1]
+                         + "__"
                          + components[5].split("_", 1)[1]
                          )
                 entries_values = {entry: val}
