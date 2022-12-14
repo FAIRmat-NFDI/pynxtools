@@ -20,11 +20,12 @@ Generic Classes for reading xml file into python dictionary.
 """
 
 import xml.etree.ElementTree as EmtT
-import numpy as np
 from typing import Tuple, List
+import numpy as np
 
 
-class XmlSpecs(object):
+# pylint: disable=too-many-instance-attributes
+class XmlSpecs():
     """
         Class for restructuring xml data file from
         specs vendor into python dictionary.
@@ -45,7 +46,7 @@ class XmlSpecs(object):
         self._root_element = root_element
 
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
-        self.py_dict = dict()
+        self.py_dict = {}
         self.tail_part_frm_seq = ""
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
@@ -59,7 +60,7 @@ class XmlSpecs(object):
         """
 
         element = self._root_element
-        element.attrib[self.child_nm_reslvers] = list()
+        element.attrib[self.child_nm_reslvers] = []
         child_num = len(element)
         parent_path = self._root_path
         skip_child = -1
@@ -106,7 +107,7 @@ class XmlSpecs(object):
         element.attrib['__odr_siblings__'] = child_elmt_ind
 
         if self.child_nm_reslvers not in parent_element.attrib.keys():
-            parent_element.attrib[self.child_nm_reslvers] = list()
+            parent_element.attrib[self.child_nm_reslvers] = []
 
         elmt_tag = element.tag
 
@@ -167,11 +168,11 @@ class XmlSpecs(object):
             child_num -= 1
             child_elmt_ind += 1
 
+    # pylint: disable=too-many-locals
     def parse_struct(self,
                      element_: EmtT.Element,
                      parent_path: str) -> None:
         """
-
         Parameters
         ----------
         element_ : Element with struct tag
@@ -183,17 +184,16 @@ class XmlSpecs(object):
         """
 
         units = ["mV", "deg", "W", "kV", "ns"]
-        # TODO add add a parser for a string for string
 
         child_num = len(element_)
-        elmt_tag = element_.tag
+        # elmt_tag = element_.tag
         elmt_attr = element_.attrib
 
         # Resolving struct name section is here
         skip_child = -1
         section_nm_reslvr = ""
-        parent_element = elmt_attr['__parent__']
-        parent_attr = parent_element.attrib
+        # parent_element = elmt_attr['__parent__']
+        # parent_attr = parent_element.attrib
         first_child = element_[0]
         second_child = element_[1]
 
@@ -226,7 +226,6 @@ class XmlSpecs(object):
                 for unit in units:
 
                     if f'_[{unit}]' in section_nm_reslvr:
-                        # TODO: think section_nm_reslvr have a few parts and take the last part as unit
                         section_nm_reslvr, _ = section_nm_reslvr.split('_')
                         self.py_dict[f'{parent_path}/'
                                      f'{section_nm_reslvr}/@unit'] = unit
@@ -312,18 +311,25 @@ class XmlSpecs(object):
                                          child_elmt.tag)
 
     def check_for_siblins_with_same_name(self, reslv_name, new_sblings_elmt):
+        """Check for the same name in the same level. For elments with the same
+        write the name _1, _2... .
+        """
+        # pylint: disable=invalid-name
         child_nm_reslvr_li = new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers]
         if reslv_name not in child_nm_reslvr_li:
-            new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers].append(reslv_name)
+            p = new_sblings_elmt.attrib["__parent__"]
+            p.attrib[self.child_nm_reslvers].append(reslv_name)
         else:
             last_twin_sib_nm = child_nm_reslvr_li[-1]
             try:
                 ind = last_twin_sib_nm.split("_")[-1]
                 reslv_name = f"{reslv_name}_{int(ind) + 1}"
-                new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers].append(reslv_name)
+                p = new_sblings_elmt.attrib["__parent__"]
+                p.attrib[self.child_nm_reslvers].append(reslv_name)
             except ValueError:
                 reslv_name = f"{reslv_name}_1"
-                new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers].append(reslv_name)
+                p = new_sblings_elmt.attrib["__parent__"]
+                p.attrib[self.child_nm_reslvers].append(reslv_name)
         return reslv_name
 
     def check_last_part_repetition(self,
@@ -357,9 +363,9 @@ class XmlSpecs(object):
                 del self.py_dict[previous_key]
 
                 return parent_path, pre_tail_part
-            else:
-                parent_path = f'{parent_path}/{pre_tail_part}'
-                return parent_path, pre_tail_part
+
+            parent_path = f'{parent_path}/{pre_tail_part}'
+            return parent_path, pre_tail_part
 
         if new_tail_part in pre_tail_part:
             try:
@@ -385,6 +391,7 @@ class XmlSpecs(object):
         return parent_path, pre_tail_part
 
     @staticmethod
+    # pylint: disable=inconsistent-return-statements
     def restructure_value(value_text: str,
                           element_tag: str) -> str:
         """
@@ -401,7 +408,6 @@ class XmlSpecs(object):
         -------
 
         """
-
         data_ty = {
             "double": np.double,
             "ulong": np.uint,
@@ -410,19 +416,20 @@ class XmlSpecs(object):
         string_ty = ["string", "enum"]
 
         if not value_text:
-            return None
+            return ""
 
-        elif element_tag in string_ty:
+        if element_tag in string_ty:
             value_text = ' '.join(value_text.split()
                                   ).replace(' ', '_')
             return value_text
 
-        elif element_tag in data_ty.keys():
-            value_text = value_text.split()
-            numpy_value = data_ty[element_tag](value_text)[...]
-            if np.shape(numpy_value) == (1,):
-                return numpy_value[0]
-            return numpy_value
+        for key_, _ in data_ty.items():
+            if key_ == element_tag:
+                value_text = value_text.split()
+                numpy_value = data_ty[element_tag](value_text)[...]
+                if np.shape(numpy_value) == (1,):
+                    return numpy_value[0]
+                return numpy_value
 
     def cumulate_counts_series(self,
                                scan_seq_elem: EmtT.Element,
@@ -447,7 +454,7 @@ class XmlSpecs(object):
         np.ndarray : Cumulative up to last scans from the same ScanSeq
         """
 
-        elmt_attr = scan_seq_elem.attrib
+        # elmt_attr = scan_seq_elem.attrib
         child_num = len(scan_seq_elem)
         name = "count"
 
@@ -459,8 +466,8 @@ class XmlSpecs(object):
                 if not counts_length:
                     counts_length = num_of_counts
                 if counts_length != num_of_counts:
-                    raise ValueError(f'Count number from all the '
-                                     f'scans must be equals!!')
+                    raise ValueError('Count number from all the '
+                                     'scans must be equals!!')
 
             if scan_seq_elem.attrib['type_name'] == 'Counts':
                 counts_data = self.restructure_value(scan_seq_elem.text,
@@ -498,7 +505,7 @@ class XmlSpecs(object):
         return self.py_dict
 
 
-class XpsDataFileParser(object):
+class XpsDataFileParser():
     """
         Class intended for receiving any type of XPS data file. So far it
         accepts xml file from specs vendor.
@@ -515,7 +522,7 @@ class XpsDataFileParser(object):
     __vndr_err_msg__ = (f'Need a xps data file from the following'
                         f'\n {__vendors__} vendors')
 
-    def __init__(self, file_paths: List = [""]) -> None:
+    def __init__(self, file_paths: List) -> None:
         """
             Receive XPS file path.
         Parameters
@@ -526,6 +533,7 @@ class XpsDataFileParser(object):
             file_paths = [file_paths]
 
         self.files = file_paths
+        self.root_element = None
 
         if not self.files:
             raise ValueError(XpsDataFileParser.__file_err_msg__)
@@ -538,7 +546,6 @@ class XpsDataFileParser(object):
         -------
         python dictionary
         """
-
         for file in self.files:
             file_ext = file.rsplit(".")[-1]
             if file_ext in XpsDataFileParser.__prmt_file_ext__:
@@ -562,6 +569,7 @@ class XpsDataFileParser(object):
                         KeyError(XpsDataFileParser.__vndr_err_msg__)
             else:
                 raise ValueError(XpsDataFileParser.__file_err_msg__)
+        return {}
 
     @classmethod
     def check_for_vendors(cls, root_element: EmtT) -> str:
@@ -584,4 +592,4 @@ class XpsDataFileParser(object):
         for key in child_attr.keys():
             if vendor in child_attr[key]:
                 return vendor
-        raise None
+        return None
