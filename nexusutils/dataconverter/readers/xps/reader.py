@@ -96,11 +96,11 @@ def find_entry_and_value(xps_data_dict,
         for key, val in xps_data_dict.items():
             components = key.split("/")
             try:
-                entry = (f'components[2]'
+                entry = (f'{components[2]}'
                          f'__'
-                         f'components[3].split("_", 1)[1]'
+                         f'{components[3].split("_", 1)[1]}'
                          f'__'
-                         f'components[5].split("_", 1)[1]'
+                         f'{components[5].split("_", 1)[1]}'
                          )
             except IndexError:
                 continue
