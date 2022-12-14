@@ -54,6 +54,9 @@ CONVERT_DICT = {
 REPLACE_NESTED = {}
 
 
+# pylint: disable=too-many-locals
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-statements
 def find_entry_and_value(xps_data_dict,
                          key_part,
                          dt_typ):
@@ -61,7 +64,7 @@ def find_entry_and_value(xps_data_dict,
         that for that entry.
     """
 
-    entries_values = dict()
+    entries_values = {}
     if dt_typ in ["@region_data",
                   "@parameters_data",
                   "@analyzer_info",
@@ -107,6 +110,7 @@ def find_entry_and_value(xps_data_dict,
             except IndexError:
                 continue
 
+            # pylint: disable=consider-iterating-dictionary
             if entry not in entries_values.keys():
                 entries_values[entry] = {}
                 entries_values[entry]["data"] = {}
@@ -168,12 +172,13 @@ def find_entry_and_value(xps_data_dict,
                 counts = val
                 entries_values[entry]["data"][da_name] = counts
 
+        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-statements
         def construct_be_and_counts():
             """Construct the Binding Energy and separate the counts for
                different detectors and finally sum up all the counts for
                to find total electron counts.
             """
-
             ents_vals_items = copy.deepcopy(tuple(entries_values.items()))
             for entry_key, entry_val in ents_vals_items:
 
@@ -193,7 +198,7 @@ def find_entry_and_value(xps_data_dict,
                 kinetic_energy = attrb["kinetic_energy"]
                 scan_delta = attrb["scan_delta"]
                 pass_energy = attrb["pass_energy"]
-                
+
                 # pylint: disable=invalid-name
                 BE_energy_uper_level = excitation_energy - kinetic_energy
 
@@ -242,7 +247,7 @@ def find_entry_and_value(xps_data_dict,
                 if not scans:
                     del entries_values[entry_key]
                     continue
-                elif not data[scans[0]].any():
+                if not data[scans[0]].any():
                     del entries_values[entry_key]
                     continue
                 # Sorting in descending order
@@ -305,6 +310,7 @@ def find_entry_and_value(xps_data_dict,
 
     return entries_values
 
+
 def fill_template_with_xps_data(config_dict,
                                 xps_data_dict,
                                 template,
@@ -315,7 +321,10 @@ def fill_template_with_xps_data(config_dict,
         for separating the data from xps_data_dict.
     """
 
+    # pylint: disable=too-many-nested-blocks
+    # pylint: disable=too-many-statements
     for key, value in config_dict.items():
+
         if "@data" in value:
 
             key_part = value.split("data:")[-1]
@@ -497,6 +506,7 @@ def check_and_add_enl_and_conf(file_paths, eln, conf) -> \
 
         for file_path in file_paths:
             file = file_path.rsplit("/")[-1]
+            # pylint: disable=invalid-name
             nm, ext = file.rsplit(".")
             if ext == "json":
                 if nm == "config_file":
@@ -509,12 +519,11 @@ def check_and_add_enl_and_conf(file_paths, eln, conf) -> \
         if not config_found:
             file_paths.append(conf)
 
-        return file_paths
-
     if isinstance(file_paths, tuple):
 
         for file_path in file_paths:
             file = file_path.rsplit("/")[-1]
+            # pylint: disable=invalid-name
             nm, ext = file.rsplit(".")
             if ext == "json":
                 if nm == "config_file":
@@ -527,12 +536,13 @@ def check_and_add_enl_and_conf(file_paths, eln, conf) -> \
         if not config_found:
             file_paths = (*file_paths, conf)
 
-        return file_paths
+    return file_paths
 
 
 # pylint: disable=invalid-name
+# pylint: disable=too-few-public-methods
 class XPS_Reader(BaseReader):
-    """ Reader for XPS
+    """ Reader for XPS.
     """
 
     supported_nxdls = ["NXmpes"]
