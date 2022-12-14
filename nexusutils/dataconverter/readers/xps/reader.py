@@ -18,21 +18,23 @@
 """A generic reader for loading XPS (X-ray Photoelectron Spectroscopy) data
  file into mpes nxdl (NeXus Definition Language) template.
 """
+# pylint: disable=wrong-import-order
 import os.path
-
-import yaml
-
+from typing import Any, List, Union
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from typing import Tuple
-
-from typing import Any, List, Union
-import xarray as xr
-import numpy as np
 import sys
+import json
+
+# pylint: disable=import-error
+import xarray as xr
+import yaml
+import numpy as np
+import copy
+
+# pylint: disable=ungrouped-imports
 from nexusutils.dataconverter.readers.xps import XpsDataFileParser
 from nexusutils.dataconverter.readers.utils import flatten_and_replace
-import json
-import copy
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -166,7 +168,7 @@ def find_entry_and_value(xps_data_dict,
                 counts = val
                 entries_values[entry]["data"][da_name] = counts
 
-        def construct_be_axis_and_corresponding_counts(entries_values_):
+        def construct_be_and_counts():
             """Construct the Binding Energy and separate the counts for
                different detectors and finally sum up all the counts for
                to find total electron counts.
@@ -191,6 +193,8 @@ def find_entry_and_value(xps_data_dict,
                 kinetic_energy = attrb["kinetic_energy"]
                 scan_delta = attrb["scan_delta"]
                 pass_energy = attrb["pass_energy"]
+                
+                # pylint: disable=invalid-name
                 BE_energy_uper_level = excitation_energy - kinetic_energy
 
                 mcd_energy_shifts = attrb["mcd_shifts"]
@@ -199,17 +203,18 @@ def find_entry_and_value(xps_data_dict,
                 # consider offset values for detector with respect to
                 # position at +16 which is usually large
                 # and positive value
+
+                # pylint: disable=invalid-name
                 for s in mcd_energy_shifts:
                     s = mcd_energy_shifts[-1] - s
                     s = s * pass_energy
                     mcd_energy_offset.append(s)
-                    id = round(s / scan_delta)
+                    id_ = round(s / scan_delta)
                     # as shift value comes in integer and starts counting from 0
-                    if id > 0:
-                        id = id - 1
-                    id = id
-                    id = int(id)
-                    offset_ids.append(id)
+                    if id_ > 0:
+                        id_ = id_ - 1
+                    id_ = int(id_)
+                    offset_ids.append(id_)
 
                 # Skiping entry without count data
                 if not mcd_energy_offset:
@@ -296,16 +301,19 @@ def find_entry_and_value(xps_data_dict,
                                     xr.DataArray(data=chentrn_cnt_on_BE[0, :],
                                                  coords={"BE": BE_eng_axis})
 
-        construct_be_axis_and_corresponding_counts(entries_values)
+        construct_be_and_counts()
 
     return entries_values
-
 
 def fill_template_with_xps_data(config_dict,
                                 xps_data_dict,
                                 template,
                                 searching_keys,
                                 entry_set):
+    """Collect the xps data from xps_data_dict
+        and store them into template. We use searching_keys
+        for separating the data from xps_data_dict.
+    """
 
     for key, value in config_dict.items():
         if "@data" in value:
@@ -318,10 +326,10 @@ def fill_template_with_xps_data(config_dict,
             survey_count_ = 0
             count = 0
 
+            # pylint: disable=invalid-name
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("entry", entry)
-                ###
                 modified_root = key[0]
                 modifid_entry = key[0:13]
                 modifid_entry = modifid_entry.replace("entry", entry)
@@ -334,16 +342,16 @@ def fill_template_with_xps_data(config_dict,
                     template[f"{modified_root}/@default"] = entry
                 # Filling out the scan data separately
                 data = ent_value["data"]
-                attr = ent_value["attrb"]
+                # attr = ent_value["attrb"]
                 BE_coor = None
                 scan_num = 0
                 for data_var in data.data_vars:
                     scan_num = scan_num + 1
                     scan = data_var
-                    key_indv_scn_dta = modified_key.replace(f"[data]/data",
+                    key_indv_scn_dta = modified_key.replace("[data]/data",
                                                             f"[data]/{scan}")
                     key_indv_scn_dta_unit = \
-                        modified_key.replace(f"[data]/data",
+                        modified_key.replace("[data]/data",
                                              f"[data]/{scan}/@units")
 
                     BE_coor = list(data[data_var].coords)[0]
@@ -358,18 +366,17 @@ def fill_template_with_xps_data(config_dict,
                                                   "[data]/@signal")
                 key_data = modified_key.replace("[data]/data",
                                                 "[data]/data")
-                key_data_unit = modified_key.replace(f"[data]/data",
+                key_data_unit = modified_key.replace("[data]/data",
                                                      "[data]/data/@units")
-                key_BE = modified_key.replace("[data]/data", f"[data]/BE")
+                key_BE = modified_key.replace("[data]/data", "[data]/BE")
                 key_BE_unit = modified_key.replace("[data]/data",
-                                                   f"[data]/BE/@units")
+                                                   "[data]/BE/@units")
                 key_BE_axes = modified_key.replace("[data]/data",
-                                                   f"[data]/@axes")
+                                                   "[data]/@axes")
                 key_BE_ind = modified_key.replace("[data]/data",
-                                                  f"[data]/@BE_indices")
-                ####
+                                                  "[data]/@BE_indices")
                 key_nxclass = modified_key.replace("[data]/data",
-                                                   f"[data]/@NX_class")
+                                                   "[data]/@NX_class")
 
                 template[key_signal] = "data"
                 template[key_data] = np.mean([data[x_arr].data
@@ -523,7 +530,10 @@ def check_and_add_enl_and_conf(file_paths, eln, conf) -> \
         return file_paths
 
 
+# pylint: disable=invalid-name
 class XPS_Reader(BaseReader):
+    """ Reader for XPS
+    """
 
     supported_nxdls = ["NXmpes"]
 
@@ -561,6 +571,7 @@ class XPS_Reader(BaseReader):
                           "@parameters_data",
                           "@source_info"]
 
+        # pylint: disable=invalid-name
         for file in file_paths:
             file_ext = file.rsplit(".", 1)[-1]
             if file_ext == "json":
@@ -568,7 +579,7 @@ class XPS_Reader(BaseReader):
                     config_dict = json.load(json_file)
 
             elif file_ext in ["yaml", "yml"]:
-                with open(file, mode="r") as eln:
+                with open(file, mode="r", encoding="utf-8") as eln:
                     eln_data_dict = flatten_and_replace(yaml.safe_load(eln),
                                                         CONVERT_DICT,
                                                         REPLACE_NESTED)
@@ -590,14 +601,13 @@ class XPS_Reader(BaseReader):
                 if eln_val == 'None':
                     pass
                 elif eln_val:
-                    tail_part_eln_key = eln_key.split(f"[entry]")[-1]
-                    for tem_key, tem_value in template.items():
+                    tail_part_eln_key = eln_key.split("[entry]")[-1]
+                    for tem_key, _ in template.items():
                         if tail_part_eln_key in tem_key:
                             template[tem_key] = eln_val
 
-        ###
         str_entry = "/ENTRY[entry]"
-        for key, val in template.items():
+        for key, _ in template.items():
             if str_entry in key:
                 del template[key]
         return template
