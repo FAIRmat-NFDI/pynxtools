@@ -97,7 +97,7 @@ def test_has_correct_read_func(reader):
             template = Template()
             generate_template_from_nxdl(root, template)
 
-            read_data = reader().read(template=Template(template), file_paths=tuple(input_files))
+            read_data = reader().read(template=Template(template), file_paths=list(input_files))
 
             assert isinstance(read_data, Template)
             assert validate_data_dict(template, read_data, root)
