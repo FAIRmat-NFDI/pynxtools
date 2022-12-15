@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import os
 from pathlib import Path
 from typing import Any, List
 from typing import Tuple
@@ -514,12 +515,12 @@ class XPS_Reader(BaseReader):
 
         # pylint: disable=invalid-name
         for file in file_paths:
-            file_ext = file.rsplit(".", 1)[-1]
-            if file_ext == "json":
+            file_ext = os.path.splitext(file)[1]
+            if file_ext == ".json":
                 with open(file, encoding="utf-8", mode="r") as json_file:
                     config_dict = json.load(json_file)
 
-            elif file_ext in ["yaml", "yml"]:
+            elif file_ext in [".yaml", ".yml"]:
                 with open(file, mode="r", encoding="utf-8") as eln:
                     eln_data_dict = flatten_and_replace(
                         FlattenSettings(
@@ -529,9 +530,8 @@ class XPS_Reader(BaseReader):
                         )
                     )
 
-            else:
-                Xps_paser_object = XpsDataFileParser(file_paths)
-                data_dict = Xps_paser_object.get_dict()
+            elif file_ext == ".xml":
+                data_dict = XpsDataFileParser([file]).get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
 
         fill_template_with_xps_data(config_dict,
