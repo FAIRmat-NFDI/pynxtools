@@ -57,7 +57,7 @@ dataconverter = "nexusutils.dataconverter.convert:convert_cli"
 nyaml2nxdl = "nexusutils.nyaml2nxdl.nyaml2nxdl:launch_tool"
 
 [tool.setuptools.package-data]
-nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd", "nexusutils/dataconverter/readers/xps/config_file.json"]
 
 [tool.setuptools.packages.find]
 exclude = ["nexusutils/definitions*"]
