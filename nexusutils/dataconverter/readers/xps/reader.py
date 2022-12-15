@@ -18,7 +18,6 @@
 """A generic reader for loading XPS (X-ray Photoelectron Spectroscopy) data
  file into mpes nxdl (NeXus Definition Language) template.
 """
-# pylint: disable=wrong-import-order
 from pathlib import Path
 from typing import Any, List
 from nexusutils.dataconverter.readers.base.reader import BaseReader
@@ -26,13 +25,11 @@ from typing import Tuple
 import sys
 import json
 
-# pylint: disable=import-error
 import xarray as xr
 import yaml
 import numpy as np
 import copy
 
-# pylint: disable=ungrouped-imports
 from nexusutils.dataconverter.readers.xps import XpsDataFileParser
 from nexusutils.dataconverter.readers.utils import flatten_and_replace
 
