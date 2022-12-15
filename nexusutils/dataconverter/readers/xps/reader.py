@@ -19,8 +19,8 @@
  file into mpes nxdl (NeXus Definition Language) template.
 """
 # pylint: disable=wrong-import-order
-import os.path
-from typing import Any, List, Union
+from pathlib import Path
+from typing import Any, List
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from typing import Tuple
 import sys
@@ -483,62 +483,6 @@ def fill_template_with_xps_data(config_dict,
                 pass
 
 
-def check_and_add_enl_and_conf(file_paths, eln, conf) -> \
-        Union[List[str], Tuple[str]]:
-    """
-    Check for eln and config files where config file is a mandatory
-    file to parse the xps data in to template.
-
-    Parameters
-    ----------
-    file_paths : Path container for all the required inputs or config files.
-    eln : ELN (electronic lab notebook)
-    conf : File for separating data for different region
-
-    Returns
-    -------
-    file_path
-    """
-    eln_found = False
-    config_found = False
-
-    if isinstance(file_paths, list):
-
-        for file_path in file_paths:
-            file = file_path.rsplit("/")[-1]
-            # pylint: disable=invalid-name
-            nm, ext = file.rsplit(".")
-            if ext == "json":
-                if nm == "config_file":
-                    config_found = True
-            if ext == "yaml":
-                eln_found = True
-
-        if not eln_found:
-            file_paths.append(eln)
-        if not config_found:
-            file_paths.append(conf)
-
-    if isinstance(file_paths, tuple):
-
-        for file_path in file_paths:
-            file = file_path.rsplit("/")[-1]
-            # pylint: disable=invalid-name
-            nm, ext = file.rsplit(".")
-            if ext == "json":
-                if nm == "config_file":
-                    config_found = True
-            if ext == "yaml":
-                eln_found = True
-
-        if not eln_found:
-            file_paths = (*file_paths, eln)
-        if not config_found:
-            file_paths = (*file_paths, conf)
-
-    return file_paths
-
-
 # pylint: disable=invalid-name
 # pylint: disable=too-few-public-methods
 class XPS_Reader(BaseReader):
@@ -554,23 +498,14 @@ class XPS_Reader(BaseReader):
         """Reads data from given file and returns
         a filled template dictionary"""
 
-        reader_dir = f'{os.path.dirname(__file__)}{os.path.sep}'
-        proj_rt_dir = os.path.join(reader_dir,
-                                   '..',
-                                   '..',
-                                   '..',
-                                   '..',)
-        xps_test_dir = os.path.join(proj_rt_dir,
-                                    "tests",
-                                    "data",
-                                    "dataconverter",
-                                    "readers",
-                                    "xps")
-        config_file = os.path.join(reader_dir, "config_file.json")
-        eln_file = os.path.join(xps_test_dir, "xps_eln.yaml")
-        file_paths = check_and_add_enl_and_conf(file_paths,
-                                                eln_file,
-                                                config_file)
+        reader_dir = Path(__file__).parent
+
+        # TODO: I kept the check for the config file, but
+        # should it not always be loaded but just be overriden
+        # if the user supplies the data which is already in this file??
+        config_file = reader_dir.joinpath("config_file.json")
+        if not "config_file.json" in file_paths:
+            file_paths.append(str(config_file))
 
         config_dict = {}
         xps_data_dict = {}
