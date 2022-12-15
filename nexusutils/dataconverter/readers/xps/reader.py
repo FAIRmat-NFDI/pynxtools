@@ -30,7 +30,7 @@ import numpy as np
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.readers.xps.reader_utils import XpsDataFileParser
-from nexusutils.dataconverter.readers.utils import flatten_and_replace
+from nexusutils.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -521,9 +521,13 @@ class XPS_Reader(BaseReader):
 
             elif file_ext in ["yaml", "yml"]:
                 with open(file, mode="r", encoding="utf-8") as eln:
-                    eln_data_dict = flatten_and_replace(yaml.safe_load(eln),
-                                                        CONVERT_DICT,
-                                                        REPLACE_NESTED)
+                    eln_data_dict = flatten_and_replace(
+                        FlattenSettings(
+                            yaml.safe_load(eln),
+                            CONVERT_DICT,
+                            REPLACE_NESTED
+                        )
+                    )
 
             else:
                 Xps_paser_object = XpsDataFileParser(file_paths)
