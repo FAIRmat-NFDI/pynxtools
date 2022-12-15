@@ -1,3 +1,6 @@
+"""A generic reader for loading XPS (X-ray Photoelectron Spectroscopy) data
+ file into mpes nxdl (NeXus Definition Language) template.
+"""
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -14,23 +17,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-"""A generic reader for loading XPS (X-ray Photoelectron Spectroscopy) data
- file into mpes nxdl (NeXus Definition Language) template.
-"""
 from pathlib import Path
 from typing import Any, List
-from nexusutils.dataconverter.readers.base.reader import BaseReader
 from typing import Tuple
 import sys
 import json
+import copy
 
 import xarray as xr
 import yaml
 import numpy as np
-import copy
 
-from nexusutils.dataconverter.readers.xps import XpsDataFileParser
+from nexusutils.dataconverter.readers.base.reader import BaseReader
+from nexusutils.dataconverter.readers.xps.reader_utils import XpsDataFileParser
 from nexusutils.dataconverter.readers.utils import flatten_and_replace
 
 np.set_printoptions(threshold=sys.maxsize)
@@ -501,7 +500,7 @@ class XPS_Reader(BaseReader):
         # should it not always be loaded but just be overriden
         # if the user supplies the data which is already in this file??
         config_file = reader_dir.joinpath("config_file.json")
-        if not "config_file.json" in file_paths:
+        if "config_file.json" not in file_paths:
             file_paths.append(str(config_file))
 
         config_dict = {}
