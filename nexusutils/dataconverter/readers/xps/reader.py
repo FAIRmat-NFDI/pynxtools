@@ -19,7 +19,7 @@
 #
 import os
 from pathlib import Path
-from typing import Any, List
+from typing import Any, Dict, Set
 from typing import Tuple
 import sys
 import json
@@ -48,7 +48,7 @@ CONVERT_DICT = {
     'Energydispersion': 'ENERGYDISPERSION[cnergydispersion]'
 }
 
-REPLACE_NESTED = {}
+REPLACE_NESTED: Dict[str, str] = {}
 
 
 # pylint: disable=too-many-locals
@@ -490,7 +490,7 @@ class XPS_Reader(BaseReader):
 
     def read(self,
              template: dict = None,
-             file_paths: List[str] = None,
+             file_paths: Tuple[str] = None,
              objects: Tuple[Any] = None) -> dict:
         """Reads data from given file and returns
         a filled template dictionary"""
@@ -501,9 +501,9 @@ class XPS_Reader(BaseReader):
         with open(config_file, encoding="utf-8", mode="r") as cfile:
             config_dict = json.load(cfile)
 
-        xps_data_dict = {}
-        eln_data_dict = {}
-        entry_set = set()
+        xps_data_dict: Dict[str, Any] = {}
+        eln_data_dict: Dict[str, Any] = {}
+        entry_set: Set[str] = set()
         searching_keys = ["@analyzer_info",
                           "@region_data",
                           "@parameters_data",

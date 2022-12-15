@@ -20,7 +20,7 @@ Generic Classes for reading xml file into python dictionary.
 """
 
 import xml.etree.ElementTree as EmtT
-from typing import Tuple, List
+from typing import Tuple, List, Any
 import numpy as np
 
 
@@ -46,7 +46,7 @@ class XmlSpecs():
         self._root_element = root_element
 
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
-        self.py_dict = {}
+        self.py_dict: dict = {}
         self.tail_part_frm_seq = ""
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
@@ -75,7 +75,7 @@ class XmlSpecs():
             child_elmt_ind += 1
 
     def pass_child_through_parsers(self,
-                                   element_: EmtT,
+                                   element_: EmtT.Element,
                                    parent_path: str,
                                    child_elmt_ind: int,
                                    skip_child: int) -> None:
@@ -101,13 +101,12 @@ class XmlSpecs():
                              'any']
 
         parent_element = element_
-
         element = parent_element[child_elmt_ind]
-        element.attrib['__parent__'] = parent_element
-        element.attrib['__odr_siblings__'] = child_elmt_ind
+        element.attrib['__parent__'] = parent_element  # type: ignore[assignment]
+        element.attrib['__odr_siblings__'] = child_elmt_ind  # type: ignore[assignment]
 
         if self.child_nm_reslvers not in parent_element.attrib.keys():
-            parent_element.attrib[self.child_nm_reslvers] = []
+            parent_element.attrib[self.child_nm_reslvers] = []  # type: ignore[assignment]
 
         elmt_tag = element.tag
 
@@ -369,9 +368,10 @@ class XmlSpecs():
 
         if new_tail_part in pre_tail_part:
             try:
-                ind = pre_tail_part[pre_tail_part.rindex("_") + 1:]
-                ind = int(ind)
-                pre_tail_part = f'{new_tail_part}_{ind +1}'
+                # ind = pre_tail_part[int(pre_tail_part.rindex("_")) + 1:]
+                ind_ = pre_tail_part.split("_")[-1]
+                ind = int(ind_)
+                pre_tail_part = f'{new_tail_part}_{ind + 1}'
                 parent_path = f'{parent_path}/{pre_tail_part}'
                 return parent_path, pre_tail_part
             except ValueError:
@@ -393,7 +393,7 @@ class XmlSpecs():
     @staticmethod
     # pylint: disable=inconsistent-return-statements
     def restructure_value(value_text: str,
-                          element_tag: str) -> str:
+                          element_tag: str) -> Any:
         """
             Collect the value_text transform it to the data_type according
             to the type name provided by element_tag.
@@ -408,10 +408,20 @@ class XmlSpecs():
         -------
 
         """
+
+        def double_(para):
+            return np.double(para)
+
+        def ulong_(para):
+            return np.uint(para)
+
+        def bool_(para):
+            return np.bool_(para)
+
         data_ty = {
-            "double": np.double,
-            "ulong": np.uint,
-            "boolean": np.bool_
+            "double": double_,
+            "ulong": ulong_,
+            "boolean": bool_
         }
         string_ty = ["string", "enum"]
 
@@ -419,14 +429,14 @@ class XmlSpecs():
             return ""
 
         if element_tag in string_ty:
-            value_text = ' '.join(value_text.split()
-                                  ).replace(' ', '_')
-            return value_text
+            value_text_: Any = ' '.join(value_text.split()
+                                        ).replace(' ', '_')
+            return value_text_
 
         for key_, _ in data_ty.items():
             if key_ == element_tag:
-                value_text = value_text.split()
-                numpy_value = data_ty[element_tag](value_text)[...]
+                value_text_ = value_text.split()
+                numpy_value = data_ty[element_tag](value_text_)[...]
                 if np.shape(numpy_value) == (1,):
                     return numpy_value[0]
                 return numpy_value
@@ -434,7 +444,7 @@ class XmlSpecs():
     def cumulate_counts_series(self,
                                scan_seq_elem: EmtT.Element,
                                counts_length: int = None,
-                               cumulative_counts: np.ndarray = None,) -> np.ndarray:
+                               cumulative_counts: np.ndarray = None,) -> Tuple[str, np.ndarray]:
         """
         Sum the counts over different scans. Each ScanSeaq contains
         multiple scans under the same physical environment. The
@@ -488,7 +498,7 @@ class XmlSpecs():
             child_num = child_num - 1
             child_elmt_ind = child_elmt_ind + 1
 
-        return name, cumulative_counts
+        return (name, cumulative_counts)
 
     @property
     def data_dict(self) -> dict:
@@ -533,7 +543,7 @@ class XpsDataFileParser():
             file_paths = [file_paths]
 
         self.files = file_paths
-        self.root_element = None
+        self.root_element: EmtT.Element
 
         if not self.files:
             raise ValueError(XpsDataFileParser.__file_err_msg__)
@@ -572,7 +582,7 @@ class XpsDataFileParser():
         return {}
 
     @classmethod
-    def check_for_vendors(cls, root_element: EmtT) -> str:
+    def check_for_vendors(cls, root_element: EmtT.Element) -> str:
         """
             Check for the vendor name of the XPS data file.
         Parameters
