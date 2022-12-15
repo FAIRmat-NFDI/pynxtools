@@ -497,14 +497,10 @@ class XPS_Reader(BaseReader):
 
         reader_dir = Path(__file__).parent
 
-        # TODO: I kept the check for the config file, but
-        # should it not always be loaded but just be overriden
-        # if the user supplies the data which is already in this file??
         config_file = reader_dir.joinpath("config_file.json")
-        if "config_file.json" not in file_paths:
-            file_paths.append(str(config_file))
+        with open(config_file, encoding="utf-8", mode="r") as cfile:
+            config_dict = json.load(cfile)
 
-        config_dict = {}
         xps_data_dict = {}
         eln_data_dict = {}
         entry_set = set()
@@ -513,12 +509,11 @@ class XPS_Reader(BaseReader):
                           "@parameters_data",
                           "@source_info"]
 
-        # pylint: disable=invalid-name
         for file in file_paths:
             file_ext = os.path.splitext(file)[1]
             if file_ext == ".json":
                 with open(file, encoding="utf-8", mode="r") as json_file:
-                    config_dict = json.load(json_file)
+                    config_dict = {**config_dict, **json.load(json_file)}
 
             elif file_ext in [".yaml", ".yml"]:
                 with open(file, mode="r", encoding="utf-8") as eln:
