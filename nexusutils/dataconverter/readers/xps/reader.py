@@ -51,9 +51,6 @@ CONVERT_DICT = {
 REPLACE_NESTED: Dict[str, str] = {}
 
 
-# pylint: disable=too-many-locals
-# pylint: disable=too-many-branches
-# pylint: disable=too-many-statements
 def find_entry_and_value(xps_data_dict,
                          key_part,
                          dt_typ):
@@ -107,8 +104,7 @@ def find_entry_and_value(xps_data_dict,
             except IndexError:
                 continue
 
-            # pylint: disable=consider-iterating-dictionary
-            if entry not in entries_values.keys():
+            if entry not in entries_values:
                 entries_values[entry] = {}
                 entries_values[entry]["data"] = {}
                 entries_values[entry]["attrb"] = copy.deepcopy(attr_dict)
@@ -169,8 +165,6 @@ def find_entry_and_value(xps_data_dict,
                 counts = val
                 entries_values[entry]["data"][da_name] = counts
 
-        # pylint: disable=too-many-branches
-        # pylint: disable=too-many-statements
         def construct_be_and_counts():
             """Construct the Binding Energy and separate the counts for
                different detectors and finally sum up all the counts for
@@ -196,35 +190,28 @@ def find_entry_and_value(xps_data_dict,
                 scan_delta = attrb["scan_delta"]
                 pass_energy = attrb["pass_energy"]
 
-                # pylint: disable=invalid-name
-                BE_energy_uper_level = excitation_energy - kinetic_energy
+                binding_energy_upper = excitation_energy - kinetic_energy
 
                 mcd_energy_shifts = attrb["mcd_shifts"]
-                mcd_energy_offset = []
+                mcd_energy_offsets = []
                 offset_ids = []
                 # consider offset values for detector with respect to
                 # position at +16 which is usually large
                 # and positive value
 
-                # pylint: disable=invalid-name
-                for s in mcd_energy_shifts:
-                    s = mcd_energy_shifts[-1] - s
-                    s = s * pass_energy
-                    mcd_energy_offset.append(s)
-                    id_ = round(s / scan_delta)
-                    # as shift value comes in integer and starts counting from 0
-                    if id_ > 0:
-                        id_ = id_ - 1
-                    id_ = int(id_)
-                    offset_ids.append(id_)
+                for mcd_shift in mcd_energy_shifts:
+                    mcd_energy_offset = (mcd_energy_shifts[-1] - mcd_shift) * pass_energy
+                    mcd_energy_offsets.append(mcd_energy_offset)
+                    offset_id = round(mcd_energy_offset / scan_delta)
+                    offset_ids.append(int(offset_id - 1 if offset_id > 0 else offset_id))
 
                 # Skiping entry without count data
-                if not mcd_energy_offset:
+                if not mcd_energy_offsets:
                     del entries_values[entry_key]
                     continue
-                mcd_energy_offset = np.array(mcd_energy_offset)
+                mcd_energy_offsets = np.array(mcd_energy_offsets)
                 # Putting energy of the last detector as a highest energy
-                starting_eng_pnts = BE_energy_uper_level - mcd_energy_offset
+                starting_eng_pnts = binding_energy_upper - mcd_energy_offsets
                 ending_eng_pnts = \
                     (starting_eng_pnts - values_per_scan * scan_delta)
 
@@ -248,13 +235,13 @@ def find_entry_and_value(xps_data_dict,
                     del entries_values[entry_key]
                     continue
                 # Sorting in descending order
-                BE_eng_axis = channeltron_eng_axes[-1, :]
+                binding_energy = channeltron_eng_axes[-1, :]
 
                 entries_values[entry_key]["data"] = xr.Dataset()
 
                 for scan_nm in scans:
-                    chentrn_cnt_on_BE = np.zeros((mcd_num + 1,
-                                                  values_per_scan))
+                    channel_counts = np.zeros((mcd_num + 1,
+                                               values_per_scan))
                     # values for scan_nm corresponds to the data for each
                     # "scan" in individual CountsSeq
                     scan_counts = data[scan_nm]
@@ -268,40 +255,40 @@ def find_entry_and_value(xps_data_dict,
                             count_on_row = \
                                 count_on_row[mcd_head:-mcd_tail]
 
-                            chentrn_cnt_on_BE[row + 1, :] = count_on_row
-                            chentrn_cnt_on_BE[0, :] += count_on_row
+                            channel_counts[row + 1, :] = count_on_row
+                            channel_counts[0, :] += count_on_row
 
                             entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
-                                xr.DataArray(data=chentrn_cnt_on_BE[row + 1, :],
-                                             coords={"BE": BE_eng_axis})
+                                xr.DataArray(data=channel_counts[row + 1, :],
+                                             coords={"BE": binding_energy})
 
                             if row == (mcd_num - 1):
                                 data_var = f"{scan_nm[:-1]}"
 
                                 entries_values[entry_key]["data"][data_var] = \
-                                    xr.DataArray(data=chentrn_cnt_on_BE[0, :],
-                                                 coords={"BE": BE_eng_axis})
+                                    xr.DataArray(data=channel_counts[0, :],
+                                                 coords={"BE": binding_energy})
                     else:
                         for row in np.arange(mcd_num):
 
                             start_id = offset_ids[row]
                             count_on_row = scan_counts[start_id::mcd_num]
                             count_on_row = count_on_row[0:values_per_scan]
-                            chentrn_cnt_on_BE[row + 1, :] = count_on_row
+                            channel_counts[row + 1, :] = count_on_row
 
                             # shifting and adding all the curves over the left curve.
-                            chentrn_cnt_on_BE[0, :] += count_on_row
+                            channel_counts[0, :] += count_on_row
 
                             entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
-                                xr.DataArray(data=chentrn_cnt_on_BE[row + 1, :],
-                                             coords={"BE": BE_eng_axis})
+                                xr.DataArray(data=channel_counts[row + 1, :],
+                                             coords={"BE": binding_energy})
 
                             if row == (mcd_num - 1):
                                 data_var = f"{scan_nm[:-1]}"
 
                                 entries_values[entry_key]["data"][data_var] = \
-                                    xr.DataArray(data=chentrn_cnt_on_BE[0, :],
-                                                 coords={"BE": BE_eng_axis})
+                                    xr.DataArray(data=channel_counts[0, :],
+                                                 coords={"BE": binding_energy})
 
         construct_be_and_counts()
 
@@ -318,8 +305,6 @@ def fill_template_with_xps_data(config_dict,
         for separating the data from xps_data_dict.
     """
 
-    # pylint: disable=too-many-nested-blocks
-    # pylint: disable=too-many-statements
     for key, value in config_dict.items():
 
         if "@data" in value:
@@ -332,7 +317,6 @@ def fill_template_with_xps_data(config_dict,
             survey_count_ = 0
             count = 0
 
-            # pylint: disable=invalid-name
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("entry", entry)
@@ -349,7 +333,7 @@ def fill_template_with_xps_data(config_dict,
                 # Filling out the scan data separately
                 data = ent_value["data"]
                 # attr = ent_value["attrb"]
-                BE_coor = None
+                binding_energy_coord = None
                 scan_num = 0
                 for data_var in data.data_vars:
                     scan_num = scan_num + 1
@@ -360,8 +344,8 @@ def fill_template_with_xps_data(config_dict,
                         modified_key.replace("[data]/data",
                                              f"[data]/{scan}/@units")
 
-                    BE_coor = list(data[data_var].coords)[0]
-                    BE_coor = np.array(data[data_var][BE_coor])
+                    binding_energy_coord = list(data[data_var].coords)[0]
+                    binding_energy_coord = np.array(data[data_var][binding_energy_coord])
                     template[key_indv_scn_dta] = \
                         ent_value["data"][data_var].data
                     template[key_indv_scn_dta_unit] = \
@@ -374,12 +358,12 @@ def fill_template_with_xps_data(config_dict,
                                                 "[data]/data")
                 key_data_unit = modified_key.replace("[data]/data",
                                                      "[data]/data/@units")
-                key_BE = modified_key.replace("[data]/data", "[data]/BE")
-                key_BE_unit = modified_key.replace("[data]/data",
+                key_binding_energy = modified_key.replace("[data]/data", "[data]/BE")
+                key_binding_energy_unit = modified_key.replace("[data]/data",
                                                    "[data]/BE/@units")
-                key_BE_axes = modified_key.replace("[data]/data",
+                key_binding_energy_axes = modified_key.replace("[data]/data",
                                                    "[data]/@axes")
-                key_BE_ind = modified_key.replace("[data]/data",
+                key_binding_energy_ind = modified_key.replace("[data]/data",
                                                   "[data]/@BE_indices")
                 key_nxclass = modified_key.replace("[data]/data",
                                                    "[data]/@NX_class")
@@ -394,10 +378,10 @@ def fill_template_with_xps_data(config_dict,
                             for x_arr in data.data_vars
                             if "_chan" not in x_arr], axis=0)
                 template[key_data_unit] = config_dict[f"{key}/@units"]
-                template[key_BE_unit] = "eV"
-                template[key_BE] = BE_coor
-                template[key_BE_axes] = "BE"
-                template[key_BE_ind] = 0
+                template[key_binding_energy_unit] = "eV"
+                template[key_binding_energy] = binding_energy_coord
+                template[key_binding_energy_axes] = "BE"
+                template[key_binding_energy_ind] = 0
                 template[key_nxclass] = "NXdata"
 
             try:
@@ -480,9 +464,8 @@ def fill_template_with_xps_data(config_dict,
                 pass
 
 
-# pylint: disable=invalid-name
 # pylint: disable=too-few-public-methods
-class XPS_Reader(BaseReader):
+class XPSReader(BaseReader):
     """ Reader for XPS.
     """
 
@@ -553,4 +536,4 @@ class XPS_Reader(BaseReader):
         return template
 
 
-READER = XPS_Reader
+READER = XPSReader
