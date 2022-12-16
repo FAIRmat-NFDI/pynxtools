@@ -24,7 +24,6 @@ from typing import Tuple, List, Any
 import numpy as np
 
 
-# pylint: disable=too-many-instance-attributes
 class XmlSpecs():
     """
         Class for restructuring xml data file from
@@ -167,7 +166,6 @@ class XmlSpecs():
             child_num -= 1
             child_elmt_ind += 1
 
-    # pylint: disable=too-many-locals
     def parse_struct(self,
                      element_: EmtT.Element,
                      parent_path: str) -> None:
@@ -313,22 +311,21 @@ class XmlSpecs():
         """Check for the same name in the same level. For elments with the same
         write the name _1, _2... .
         """
-        # pylint: disable=invalid-name
         child_nm_reslvr_li = new_sblings_elmt.attrib["__parent__"].attrib[self.child_nm_reslvers]
         if reslv_name not in child_nm_reslvr_li:
-            p = new_sblings_elmt.attrib["__parent__"]
-            p.attrib[self.child_nm_reslvers].append(reslv_name)
+            parent = new_sblings_elmt.attrib["__parent__"]
+            parent.attrib[self.child_nm_reslvers].append(reslv_name)
         else:
             last_twin_sib_nm = child_nm_reslvr_li[-1]
             try:
                 ind = last_twin_sib_nm.split("_")[-1]
                 reslv_name = f"{reslv_name}_{int(ind) + 1}"
-                p = new_sblings_elmt.attrib["__parent__"]
-                p.attrib[self.child_nm_reslvers].append(reslv_name)
+                parent = new_sblings_elmt.attrib["__parent__"]
+                parent.attrib[self.child_nm_reslvers].append(reslv_name)
             except ValueError:
                 reslv_name = f"{reslv_name}_1"
-                p = new_sblings_elmt.attrib["__parent__"]
-                p.attrib[self.child_nm_reslvers].append(reslv_name)
+                parent = new_sblings_elmt.attrib["__parent__"]
+                parent.attrib[self.child_nm_reslvers].append(reslv_name)
         return reslv_name
 
     def check_last_part_repetition(self,
@@ -391,7 +388,6 @@ class XmlSpecs():
         return parent_path, pre_tail_part
 
     @staticmethod
-    # pylint: disable=inconsistent-return-statements
     def restructure_value(value_text: str,
                           element_tag: str) -> Any:
         """
