@@ -360,11 +360,11 @@ def fill_template_with_xps_data(config_dict,
                                                      "[data]/data/@units")
                 key_binding_energy = modified_key.replace("[data]/data", "[data]/BE")
                 key_binding_energy_unit = modified_key.replace("[data]/data",
-                                                   "[data]/BE/@units")
+                                                               "[data]/BE/@units")
                 key_binding_energy_axes = modified_key.replace("[data]/data",
-                                                   "[data]/@axes")
+                                                               "[data]/@axes")
                 key_binding_energy_ind = modified_key.replace("[data]/data",
-                                                  "[data]/@BE_indices")
+                                                              "[data]/@BE_indices")
                 key_nxclass = modified_key.replace("[data]/data",
                                                    "[data]/@NX_class")
 
