@@ -20,7 +20,7 @@ def get_app_defs_names():
     app_def_path_glob = f"{get_nexus_definitions_path()}{os.sep}applications{os.sep}*.nxdl*"
     contrib_def_path_glob = (f"{get_nexus_definitions_path()}{os.sep}"
                              f"contributed_definitions{os.sep}*.nxdl*")
-    files = glob(app_def_path_glob) + glob(contrib_def_path_glob)
+    files = sorted(glob(app_def_path_glob)) + sorted(glob(contrib_def_path_glob))
     return [os.path.basename(file).split(".")[0] for file in files] + ["NXroot"]
 
 
@@ -102,12 +102,12 @@ def get_nx_classes():
     """Read base classes from the NeXus definition folder.
 Check each file in base_classes, applications, contributed_definitions.
 If its category attribute is 'base', then it is added to the list. """
-    base_classes = glob(os.path.join(get_nexus_definitions_path(),
-                                     'base_classes', '*.nxdl.xml'))
-    applications = glob(os.path.join(get_nexus_definitions_path(),
-                                     'applications', '*.nxdl.xml'))
-    contributed = glob(os.path.join(get_nexus_definitions_path(),
-                                    'contributed_definitions', '*.nxdl.xml'))
+    base_classes = sorted(glob(os.path.join(get_nexus_definitions_path(),
+                               'base_classes', '*.nxdl.xml')))
+    applications = sorted(glob(os.path.join(get_nexus_definitions_path(),
+                               'applications', '*.nxdl.xml')))
+    contributed = sorted(glob(os.path.join(get_nexus_definitions_path(),
+                              'contributed_definitions', '*.nxdl.xml')))
     nx_clss = []
     for nexus_file in base_classes + applications + contributed:
         tree = ET.parse(nexus_file)
