@@ -103,11 +103,11 @@ def get_nx_classes():
 Check each file in base_classes, applications, contributed_definitions.
 If its category attribute is 'base', then it is added to the list. """
     base_classes = sorted(glob(os.path.join(get_nexus_definitions_path(),
-                                     'base_classes', '*.nxdl.xml')))
+                               'base_classes', '*.nxdl.xml')))
     applications = sorted(glob(os.path.join(get_nexus_definitions_path(),
-                                     'applications', '*.nxdl.xml')))
+                               'applications', '*.nxdl.xml')))
     contributed = sorted(glob(os.path.join(get_nexus_definitions_path(),
-                                    'contributed_definitions', '*.nxdl.xml')))
+                              'contributed_definitions', '*.nxdl.xml')))
     nx_clss = []
     for nexus_file in base_classes + applications + contributed:
         tree = ET.parse(nexus_file)
