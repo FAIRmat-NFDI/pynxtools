@@ -21,6 +21,7 @@ Generic Classes for reading xml file into python dictionary.
 
 import xml.etree.ElementTree as EmtT
 from typing import Tuple, List, Any
+import xarray as xr
 import numpy as np
 import copy
 
@@ -59,7 +60,6 @@ class XmlSpecs():
         Parameters
         ----------
         """
-
         element = self._root_element
         element.attrib[self.child_nm_reslvers] = []
         child_num = len(element)
@@ -72,14 +72,12 @@ class XmlSpecs():
                                             parent_path,
                                             child_elmt_ind,
                                             skip_child)
+
             child_num -= 1
             child_elmt_ind += 1
 
         self.Collect_raw_data_to_construct_data()
         self.construct_data()
-
-        # Store the constructed data dict in xps final dict for later usages
-        self._xps_dict["entry_to_data_dict"] = self.entry_to_data
 
     def pass_child_through_parsers(self,
                                    element_: EmtT.Element,
@@ -522,7 +520,7 @@ class XmlSpecs():
         """TODO: add Docstring"""
         components = key.split("/")
         try:
-            #entry: vendor__sample__name_of_scan_rerion
+            # entry: vendor__sample__name_of_scan_rerion
             entry_name = (f'{components[2]}'
                           f'__'
                           f'{components[3].split("_", 1)[1]}'
@@ -537,6 +535,7 @@ class XmlSpecs():
         """Collect the raw data about detectors so that the binding energy and
             and counts for the corresponding nominal
         """
+
         entry_list: List = []
         raw_dict = {"mcd_num": 0,
                     "curves_per_scan": 0,
@@ -553,14 +552,14 @@ class XmlSpecs():
                     "mcd_gains": [],
                     "time": 0,
                     "scans": {}}
-
+        # xps_dict = copy.deepcopy(self._xps_dict)
         for key, val in self._xps_dict.items():
             entry = self.construct_entry_name(key)
 
-            if entry and entry not in entry_list:
-                self.entry_to_data[entry]: dict = {}
-                self.entry_to_data[entry]["data"]: dict = {}
-                self.entry_to_data[entry]["raw_data"] = copy.deepcopy(raw_dict)
+            if entry and (entry not in entry_list):
+
+                self.entry_to_data[entry] = {"raw_data": copy.deepcopy(raw_dict)}
+                entry_list.append(entry)
 
             if "region/curves_per_scan" in key:
                 self.entry_to_data[entry]["raw_data"]["curves_per_scan"] = val
@@ -622,12 +621,15 @@ class XmlSpecs():
         to find total electron counts.
         """
         copy_entry_to_data = copy.deepcopy(self.entry_to_data)
-        for entry, val in copy_entry_to_data.items():
-            # val={data:{}, raw_data:{}}
-            raw_data = self.entry_to_data[entry]["raw_data"]
-            data = self.entry_to_data[entry]["data"]
+        self._xps_dict["data"]: dict = {}
 
+        for entry, val in copy_entry_to_data.items():
+
+            self._xps_dict["data"][entry] = {}
+            raw_data = self.entry_to_data[entry]["raw_data"]
+            # data = self.entry_to_data[entry]["data"]
             mcd_num = int(raw_data["mcd_num"])
+
             curves_per_scan = raw_data["curves_per_scan"]
             values_per_curve = raw_data["values_per_curve"]
             values_per_scan = int(curves_per_scan * values_per_curve)
@@ -638,7 +640,6 @@ class XmlSpecs():
             kinetic_energy = raw_data["kinetic_energy"]
             scan_delta = raw_data["scan_delta"]
             pass_energy = raw_data["pass_energy"]
-
             binding_energy_upper = excitation_energy - kinetic_energy
 
             mcd_energy_shifts = raw_data["mcd_shifts"]
@@ -674,12 +675,12 @@ class XmlSpecs():
                                              decimals=8)
             # construct ultimate or incorporated energy axis from
             # lower to higher energy
-            scans = list(raw_data["scans"])
+            scans = list(raw_data["scans"].keys())
 
             # Check whether array is empty or not
             if not scans:
                 continue
-            if not data[scans[0]].any():
+            if not raw_data["scans"][scans[0]].any():
                 continue
             # Sorting in descending order
             binding_energy = channeltron_eng_axes[-1, :]
@@ -706,11 +707,11 @@ class XmlSpecs():
                         channel_counts[row + 1, :] = count_on_row
                         channel_counts[0, :] += count_on_row
 
-                        self.entry_to_data[entry]["data"][f"{scan_nm}chan_{row}"] = \
+                        self._xps_dict["data"][entry][f"{scan_nm}chan_{row}"] = \
                             xr.DataArray(data=channel_counts[row + 1, :],
                                          coords={"BE": binding_energy})
 
-                        self.entry_to_data[entry]["data"][scan_nm] = \
+                        self._xps_dict["data"][entry][scan_nm] = \
                             xr.DataArray(data=channel_counts[0, :],
                                          coords={"BE": binding_energy})
                 # For FRR (Fix Retard Ratio) scan mode
@@ -725,11 +726,11 @@ class XmlSpecs():
                         # shifting and adding all the curves over the left curve.
                         channel_counts[0, :] += count_on_row
 
-                        self.entry_to_data[entry]["data"][f"{scan_nm}chan{row}"] = \
+                        self._xps_dict["data"][entry][f"{scan_nm}chan{row}"] = \
                             xr.DataArray(data=channel_counts[row + 1, :],
                                          coords={"BE": binding_energy})
 
-                        self.entry_to_data[entry]["data"][scan_nm] = \
+                        self._xps_dict["data"][entry][scan_nm] = \
                             xr.DataArray(data=channel_counts[0, :],
                                          coords={"BE": binding_energy})
 
