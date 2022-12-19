@@ -479,10 +479,7 @@ class XPSReader(BaseReader):
         a filled template dictionary"""
 
         reader_dir = Path(__file__).parent
-
         config_file = reader_dir.joinpath("config_file.json")
-        with open(config_file, encoding="utf-8", mode="r") as cfile:
-            config_dict = json.load(cfile)
 
         xps_data_dict: Dict[str, Any] = {}
         eln_data_dict: Dict[str, Any] = {}
@@ -494,11 +491,8 @@ class XPSReader(BaseReader):
 
         for file in file_paths:
             file_ext = os.path.splitext(file)[1]
-            if file_ext == ".json":
-                with open(file, encoding="utf-8", mode="r") as json_file:
-                    config_dict = {**config_dict, **json.load(json_file)}
 
-            elif file_ext in [".yaml", ".yml"]:
+            if file_ext in [".yaml", ".yml"]:
                 with open(file, mode="r", encoding="utf-8") as eln:
                     eln_data_dict = flatten_and_replace(
                         FlattenSettings(
@@ -511,6 +505,9 @@ class XPSReader(BaseReader):
             elif file_ext == ".xml":
                 data_dict = XpsDataFileParser([file]).get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
+
+        with open(config_file, encoding="utf-8", mode="r") as cfile:
+            config_dict = json.load(cfile)
 
         fill_template_with_xps_data(config_dict,
                                     xps_data_dict,
