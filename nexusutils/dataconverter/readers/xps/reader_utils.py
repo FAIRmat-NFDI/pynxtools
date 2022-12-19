@@ -22,6 +22,7 @@ Generic Classes for reading xml file into python dictionary.
 import xml.etree.ElementTree as EmtT
 from typing import Tuple, List, Any
 import numpy as np
+import copy
 
 
 class XmlSpecs():
@@ -45,7 +46,8 @@ class XmlSpecs():
         self._root_element = root_element
 
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
-        self.py_dict: dict = {}
+        self._xps_dict: dict = {}
+        self.entry_to_data: dict = {}
         self.tail_part_frm_seq = ""
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
@@ -72,6 +74,12 @@ class XmlSpecs():
                                             skip_child)
             child_num -= 1
             child_elmt_ind += 1
+
+        self.Collect_raw_data_to_construct_data()
+        self.construct_data()
+
+        # Store the constructed data dict in xps final dict for later usages
+        self._xps_dict["entry_to_data_dict"] = self.entry_to_data
 
     def pass_child_through_parsers(self,
                                    element_: EmtT.Element,
@@ -224,7 +232,7 @@ class XmlSpecs():
 
                     if f'_[{unit}]' in section_nm_reslvr:
                         section_nm_reslvr, _ = section_nm_reslvr.split('_')
-                        self.py_dict[f'{parent_path}/'
+                        self._xps_dict[f'{parent_path}/'
                                      f'{section_nm_reslvr}/@unit'] = unit
 
                 parent_path, self.tail_part_frm_struct = \
@@ -295,15 +303,15 @@ class XmlSpecs():
                     self.check_last_part_repetition(parent_path,
                                                     self.tail_part_frm_othr,
                                                     section_nm_reslvr)
-                self.py_dict[f'{parent_path}'] = value
+                self._xps_dict[f'{parent_path}'] = value
             else:
-                self.py_dict[f'{parent_path}'] \
+                self._xps_dict[f'{parent_path}'] \
                     = self.restructure_value(element_.text,
                                              element_.tag)
         elif child_num == 1 \
                 and 'any' == element_.tag:
             child_elmt = element_[0]
-            self.py_dict[f'{parent_path}'] \
+            self._xps_dict[f'{parent_path}'] \
                 = self.restructure_value(child_elmt.text,
                                          child_elmt.tag)
 
@@ -350,13 +358,13 @@ class XmlSpecs():
         """
         if new_tail_part == pre_tail_part:
             previous_key = f'{parent_path}/{new_tail_part}'
-            previous_val = self.py_dict.get(previous_key, None)
+            previous_val = self._xps_dict.get(previous_key, None)
             if previous_val:
-                self.py_dict[f'{parent_path}/{new_tail_part}_0'] = previous_val
+                self._xps_dict[f'{parent_path}/{new_tail_part}_0'] = previous_val
                 pre_tail_part = f'{new_tail_part}_1'
                 parent_path = f'{parent_path}/{pre_tail_part}'
 
-                del self.py_dict[previous_key]
+                del self._xps_dict[previous_key]
 
                 return parent_path, pre_tail_part
 
@@ -508,7 +516,222 @@ class XmlSpecs():
         python dictionary
         """
 
-        return self.py_dict
+        return self._xps_dict
+
+    def construct_entry_name(self, key):
+        """TODO: add Docstring"""
+        components = key.split("/")
+        try:
+            #entry: vendor__sample__name_of_scan_rerion
+            entry_name = (f'{components[2]}'
+                          f'__'
+                          f'{components[3].split("_", 1)[1]}'
+                          f'__'
+                          f'{components[5].split("_", 1)[1]}'
+                          )
+        except IndexError:
+            entry_name = ""
+        return entry_name
+
+    def Collect_raw_data_to_construct_data(self):
+        """Collect the raw data about detectors so that the binding energy and
+            and counts for the corresponding nominal
+        """
+        entry_list: List = []
+        raw_dict = {"mcd_num": 0,
+                    "curves_per_scan": 0,
+                    "values_per_curve": 0,
+                    "mcd_head": 0,
+                    "mcd_tail": 0,
+                    "excitation_energy": 0,
+                    "kinetic_energy": 0,
+                    "effective_workfunction": 0,
+                    "scan_delta": 0,
+                    "pass_energy": 0,
+                    "mcd_shifts": [],
+                    "mcd_poss": [],
+                    "mcd_gains": [],
+                    "time": 0,
+                    "scans": {}}
+
+        for key, val in self._xps_dict.items():
+            entry = self.construct_entry_name(key)
+
+            if entry and entry not in entry_list:
+                self.entry_to_data[entry]: dict = {}
+                self.entry_to_data[entry]["data"]: dict = {}
+                self.entry_to_data[entry]["raw_data"] = copy.deepcopy(raw_dict)
+
+            if "region/curves_per_scan" in key:
+                self.entry_to_data[entry]["raw_data"]["curves_per_scan"] = val
+            elif "region/values_per_curve" in key:
+                self.entry_to_data[entry]["raw_data"]["values_per_curve"] = val
+
+            elif "region/excitation_energy" in key:
+                self.entry_to_data[entry]["raw_data"]["excitation_energy"] = val
+
+            elif "region/scan_mode/name" in key:
+                self.entry_to_data[entry]["raw_data"]["scan_mode"] = val
+
+            elif "region/kinetic_energy" in key:
+                if "region/kinetic_energy_base" not in key:
+                    self.entry_to_data[entry]["raw_data"]["kinetic_energy"] = val
+                else:
+                    continue
+
+            elif "region/effective_workfunction" in key:
+                self.entry_to_data[entry]["raw_data"]["effective_workfunction"] = val
+
+            elif "region/scan_delta" in key:
+                self.entry_to_data[entry]["raw_data"]["scan_delta"] = val
+
+            elif "region/pass_energy" in key:
+                self.entry_to_data[entry]["raw_data"]["pass_energy"] = val
+
+            elif "mcd_head" in key:
+                self.entry_to_data[entry]["raw_data"]["mcd_head"] = val
+
+            elif "mcd_tail" in key:
+                self.entry_to_data[entry]["raw_data"]["mcd_tail"] = val
+
+            elif "shift" in key:
+                self.entry_to_data[entry]["raw_data"]["mcd_shifts"].append(val)
+                self.entry_to_data[entry]["raw_data"]["mcd_num"] += 1
+
+            elif "gain" in key:
+                self.entry_to_data[entry]["raw_data"]["mcd_gains"].append(val)
+
+            elif "position" in key:
+                self.entry_to_data[entry]["raw_data"]["mcd_poss"].append(val)
+
+            # construct scan names e.g cycles2_scan0
+            if "cycles/Cycle_" in key:
+                _, last_part = key.split("cycles/Cycle_")
+                if "/time" in last_part:
+                    self.entry_to_data[entry]["raw_data"]["time"] = val
+                    continue
+                parts = last_part.split("/")
+                cycle_num, scan_num = parts[0], parts[-2].split("_")[1]
+                scan_name = f"cycle{cycle_num}_scan{scan_num}"
+
+                self.entry_to_data[entry]["raw_data"]["scans"][scan_name] = val
+
+    def construct_data(self):
+        """Construct the Binding Energy and separate the counts for
+        different detectors and finally sum up all the counts for
+        to find total electron counts.
+        """
+        copy_entry_to_data = copy.deepcopy(self.entry_to_data)
+        for entry, val in copy_entry_to_data.items():
+            # val={data:{}, raw_data:{}}
+            raw_data = self.entry_to_data[entry]["raw_data"]
+            data = self.entry_to_data[entry]["data"]
+
+            mcd_num = int(raw_data["mcd_num"])
+            curves_per_scan = raw_data["curves_per_scan"]
+            values_per_curve = raw_data["values_per_curve"]
+            values_per_scan = int(curves_per_scan * values_per_curve)
+            mcd_head = int(raw_data["mcd_head"])
+            mcd_tail = int(raw_data["mcd_tail"])
+            excitation_energy = raw_data["excitation_energy"]
+            scan_mode = raw_data["scan_mode"]
+            kinetic_energy = raw_data["kinetic_energy"]
+            scan_delta = raw_data["scan_delta"]
+            pass_energy = raw_data["pass_energy"]
+
+            binding_energy_upper = excitation_energy - kinetic_energy
+
+            mcd_energy_shifts = raw_data["mcd_shifts"]
+            mcd_energy_offsets = []
+            offset_ids = []
+            # consider offset values for detector with respect to
+            # position at +16 which is usually large
+            # and positive value
+
+            for mcd_shift in mcd_energy_shifts:
+                mcd_energy_offset = (mcd_energy_shifts[-1] - mcd_shift) * pass_energy
+                mcd_energy_offsets.append(mcd_energy_offset)
+                offset_id = round(mcd_energy_offset / scan_delta)
+                offset_ids.append(int(offset_id - 1 if offset_id > 0 else offset_id))
+
+            # Skiping entry without count data
+            if not mcd_energy_offsets:
+                continue
+            mcd_energy_offsets = np.array(mcd_energy_offsets)
+            # Putting energy of the last detector as a highest energy
+            starting_eng_pnts = binding_energy_upper - mcd_energy_offsets
+            ending_eng_pnts = \
+                (starting_eng_pnts - values_per_scan * scan_delta)
+
+            channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
+            for ind in np.arange(len(channeltron_eng_axes)):
+                channeltron_eng_axes[ind, :] = \
+                    np.linspace(starting_eng_pnts[ind],
+                                ending_eng_pnts[ind],
+                                values_per_scan)
+
+            channeltron_eng_axes = np.round_(channeltron_eng_axes,
+                                             decimals=8)
+            # construct ultimate or incorporated energy axis from
+            # lower to higher energy
+            scans = list(raw_data["scans"])
+
+            # Check whether array is empty or not
+            if not scans:
+                continue
+            if not data[scans[0]].any():
+                continue
+            # Sorting in descending order
+            binding_energy = channeltron_eng_axes[-1, :]
+
+            self.entry_to_data[entry]["data"] = xr.Dataset()
+
+            # Filing up [entry]["data"]
+            for scan_nm in scans:
+                channel_counts = np.zeros((mcd_num + 1,
+                                           values_per_scan))
+                # values for scan_nm corresponds to the data for each
+                # "scan" in individual CountsSeq
+                scan_counts = raw_data["scans"][scan_nm]
+
+                if scan_mode == "FixedAnalyzerTransmission":
+                    for row in np.arange(mcd_num):
+
+                        count_on_row = scan_counts[row::mcd_num]
+                        # Reverse counts from lower to higher
+                        # BE as in BE_eng_axis
+                        count_on_row = \
+                            count_on_row[mcd_head:-mcd_tail]
+
+                        channel_counts[row + 1, :] = count_on_row
+                        channel_counts[0, :] += count_on_row
+
+                        self.entry_to_data[entry]["data"][f"{scan_nm}chan_{row}"] = \
+                            xr.DataArray(data=channel_counts[row + 1, :],
+                                         coords={"BE": binding_energy})
+
+                        self.entry_to_data[entry]["data"][scan_nm] = \
+                            xr.DataArray(data=channel_counts[0, :],
+                                         coords={"BE": binding_energy})
+                # For FRR (Fix Retard Ratio) scan mode
+                else:
+                    for row in np.arange(mcd_num):
+
+                        start_id = offset_ids[row]
+                        count_on_row = scan_counts[start_id::mcd_num]
+                        count_on_row = count_on_row[0:values_per_scan]
+                        channel_counts[row + 1, :] = count_on_row
+
+                        # shifting and adding all the curves over the left curve.
+                        channel_counts[0, :] += count_on_row
+
+                        self.entry_to_data[entry]["data"][f"{scan_nm}chan{row}"] = \
+                            xr.DataArray(data=channel_counts[row + 1, :],
+                                         coords={"BE": binding_energy})
+
+                        self.entry_to_data[entry]["data"][scan_nm] = \
+                            xr.DataArray(data=channel_counts[0, :],
+                                         coords={"BE": binding_energy})
 
 
 class XpsDataFileParser():
