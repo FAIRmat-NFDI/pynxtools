@@ -496,7 +496,11 @@ class XPSReader(BaseReader):
             file_ext = os.path.splitext(file)[1]
             if file_ext == ".json":
                 with open(file, encoding="utf-8", mode="r") as json_file:
-                    config_dict = {**config_dict, **json.load(json_file)}
+                    for key, val in json.load(json_file).items():
+                        if val.startswith("@example_value:"):
+                            config_dict[key] = val
+                            continue
+                        config_dict[key] = f"@example_value:{val}"
 
             elif file_ext in [".yaml", ".yml"]:
                 with open(file, mode="r", encoding="utf-8") as eln:
