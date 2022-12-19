@@ -508,6 +508,7 @@ class XPSReader(BaseReader):
 
         with open(config_file, encoding="utf-8", mode="r") as cfile:
             config_dict = json.load(cfile)
+            print("config_files####", config_dict, "\n################")
 
         fill_template_with_xps_data(config_dict,
                                     xps_data_dict,
