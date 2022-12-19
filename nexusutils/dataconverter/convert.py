@@ -53,7 +53,7 @@ def get_reader(reader_name) -> BaseReader:
 def get_names_of_all_readers() -> List[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
-    files = glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py"))
+    files = sorted(glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py")))
     all_readers = []
     for file in files:
         if f"{os.sep}base{os.sep}" not in file:
