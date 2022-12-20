@@ -344,7 +344,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                 any_required_fields[0] + error_msg
             template[trg + "detection_rate"] \
                 = np.float64(self.yml[src + ":" + any_required_fields[0]])
-            template[trg + "detection_rate/@units"] = "NX_DIMENSIONLESS"
+            template[trg + "detection_rate/@units"] = ""
             for field_name in any_required_value_fields:
                 field_exists = (field_name + ":value" in self.yml[src].keys()) \
                     and (field_name + ":unit" in self.yml[src].keys())
@@ -392,7 +392,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
         assert "pulse_fraction" in self.yml[src].keys(), \
             "pulse_fraction" + error_msg
         template[trg + "pulse_fraction"] = self.yml[src + ":" + "pulse_fraction"]
-        template[trg + "pulse_fraction/@units"] = "NX_DIMENSIONLESS"
+        template[trg + "pulse_fraction/@units"] = ""
         field_exists = ("pulse_frequency:value" in self.yml[src].keys()) \
             and ("pulse_frequency:unit" in self.yml[src].keys())
         assert field_exists is True, \
