@@ -73,7 +73,7 @@ def find_entry_and_value(xps_data_dict,
                          f'__'
                          f'{components[5].split("_", 1)[1]}'
                          )
-                entries_values = {entry: val}
+                entries_values[entry] = val
 
     elif dt_typ == "@data":
 
