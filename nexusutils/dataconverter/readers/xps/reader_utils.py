@@ -533,7 +533,7 @@ class XmlSpecs():
 
     def Collect_raw_data_to_construct_data(self):
         """Collect the raw data about detectors so that the binding energy and
-            and counts for the corresponding nominal
+            and counts for the corresponding nominal.
         """
 
         entry_list: List = []
@@ -625,7 +625,7 @@ class XmlSpecs():
 
         for entry, val in copy_entry_to_data.items():
 
-            self._xps_dict["data"][entry] = {}
+            #self._xps_dict["data"][entry] = {}
             raw_data = self.entry_to_data[entry]["raw_data"]
             # data = self.entry_to_data[entry]["data"]
             mcd_num = int(raw_data["mcd_num"])
@@ -685,7 +685,7 @@ class XmlSpecs():
             # Sorting in descending order
             binding_energy = channeltron_eng_axes[-1, :]
 
-            self.entry_to_data[entry]["data"] = xr.Dataset()
+            self._xps_dict["data"][entry] = xr.Dataset()
 
             # Filing up [entry]["data"]
             for scan_nm in scans:
