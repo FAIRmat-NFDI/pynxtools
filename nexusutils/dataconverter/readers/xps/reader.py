@@ -93,6 +93,87 @@ def find_entry_and_value(xps_data_dict,
     return entries_values
 
 
+def fill_data_class(key,
+                            value,
+                            config_dict,
+                            xps_data_dict,
+                            template,
+                            entry_set):
+
+    key_part = value.split("data:")[-1]
+    dt_typ = "@data"
+    entries_values = find_entry_and_value(xps_data_dict,
+                                          key_part, dt_typ)
+
+    survey_count_ = 0
+    count = 0
+
+    for entry, xr_data in entries_values.items():
+        entry_set.add(entry)
+        modified_key = key.replace("entry", entry)
+        root = key[0]
+        modifid_entry = key[0:13]
+        modifid_entry = modifid_entry.replace("entry", entry)
+        template[f"{modifid_entry}/@default"] = "data"
+
+        # Set first Survey as default for .nxs file
+        if "Survey" in entry and survey_count_ == 0:
+            survey_count_ = survey_count_ + 1
+            template[f"{root}@default"] = entry
+
+        # If no Survey set any scan for default
+        if survey_count_ == 0 and count == 0:
+            count = count + 1
+            template[f"{root}@default"] = entry
+
+        binding_energy_coord = None
+        for data_var in xr_data.data_vars:
+            scan = data_var
+            key_indv_scn_dt = modified_key.replace("[data]/data",
+                                                   f"[data]/{scan}")
+            key_indv_scn_dt_unit = modified_key.replace("[data]/data",
+                                                        f"[data]/{scan}/@units")
+
+            cord_nm = list(xr_data[data_var].coords)[0]
+            binding_energy_coord = np.array(xr_data[data_var][cord_nm])
+            template[key_indv_scn_dt] = \
+                np.array(xr_data[data_var].data)
+            template[key_indv_scn_dt_unit] = \
+                config_dict[f"{key}/@units"]
+
+        key_data = modified_key.replace("[data]/data", "[data]/data")
+        key_data_unit = f"{key_data}/@units"
+
+        key_signal = modified_key.replace("[data]/data",
+                                        "[data]/@signal")
+        BE_nm = "BE"
+        key_BE = modified_key.replace("[data]/data", f"[data]/{BE_nm}")
+        key_BE_unit = f"{key_BE}/@units"
+        key_BE_axes = modified_key.replace("[data]/data", "[data]/@axes")
+        key_BE_ind = modified_key.replace("[data]/data",
+                                          f"[data]/@{BE_nm}_indices")
+
+        key_nxclass = modified_key.replace("[data]/data",
+                                           "[data]/@NX_class")
+
+        template[key_signal] = "data"
+        template[key_data] = np.mean([xr_data[x_arr].data
+                                     for x_arr in xr_data.data_vars
+                                     if "_chan" not in x_arr],
+                                     axis=0)
+
+        template[f"{key_data}_errors"] = \
+            np.std([xr_data[x_arr].data
+                    for x_arr in xr_data.data_vars
+                    if "_chan" not in x_arr], axis=0)
+        template[key_data_unit] = config_dict[f"{key}/@units"]
+        template[key_BE_unit] = "eV"
+        template[key_BE] = binding_energy_coord
+        template[key_BE_axes] = BE_nm
+        template[key_BE_ind] = 0
+        template[key_nxclass] = "NXdata"
+
+
 def fill_template_with_xps_data(config_dict,
                                 xps_data_dict,
                                 template,
@@ -104,84 +185,12 @@ def fill_template_with_xps_data(config_dict,
     """
 
     for key, value in config_dict.items():
-
+        print("## Before : ", entry_set)
         if "@data" in value:
-
-            key_part = value.split("data:")[-1]
-            dt_typ = "@data"
-            entries_values = find_entry_and_value(xps_data_dict,
-                                                  key_part, dt_typ)
-
-            survey_count_ = 0
-            count = 0
-
-            for entry, xr_data in entries_values.items():
-                entry_set.add(entry)
-                modified_key = key.replace("entry", entry)
-                root = key[0]
-                modifid_entry = key[0:13]
-                modifid_entry = modifid_entry.replace("entry", entry)
-                template[f"{modifid_entry}/@default"] = "data"
-
-                # Set first Survey as default for .nxs file
-                if "Survey" in entry and survey_count_ == 0:
-                    survey_count_ = survey_count_ + 1
-                    template[f"{root}@default"] = entry
-
-                # If no Survey set any scan for default
-                if survey_count_ == 0 and count == 0:
-                    count = count + 1
-                    template[f"{root}@default"] = entry
-
-                binding_energy_coord = None
-                for data_var in xr_data.data_vars:
-                    scan = data_var
-                    key_indv_scn_dt = modified_key.replace("[data]/data",
-                                                           f"[data]/{scan}")
-                    key_indv_scn_dt_unit = modified_key.replace("[data]/data",
-                                                                f"[data]/{scan}/@units")
-
-                    cord_nm = list(xr_data[data_var].coords)[0]
-                    binding_energy_coord = np.array(xr_data[data_var][cord_nm])
-                    template[key_indv_scn_dt] = \
-                        np.array(xr_data[data_var].data)
-                    template[key_indv_scn_dt_unit] = \
-                        config_dict[f"{key}/@units"]
-
-                key_data = modified_key.replace("[data]/data", "[data]/data")
-                key_data_unit = f"{key_data}/@units"
-
-                key_signal = modified_key.replace("[data]/data",
-                                                  "[data]/@signal")
-                BE_nm = "BE"
-                key_BE = modified_key.replace("[data]/data", f"[data]/{BE_nm}")
-                key_BE_unit = f"{key_BE}/@units"
-                key_BE_axes = modified_key.replace("[data]/data", "[data]/@axes")
-                key_BE_ind = modified_key.replace("[data]/data",
-                                                  f"[data]/@{BE_nm}_indices")
-
-                key_nxclass = modified_key.replace("[data]/data",
-                                                   "[data]/@NX_class")
-
-                template[key_signal] = "data"
-                template[key_data] = np.mean([xr_data[x_arr].data
-                                             for x_arr in xr_data.data_vars
-                                             if "_chan" not in x_arr],
-                                             axis=0)
-
-                template[f"{key_data}_errors"] = \
-                    np.std([xr_data[x_arr].data
-                            for x_arr in xr_data.data_vars
-                            if "_chan" not in x_arr], axis=0)
-                template[key_data_unit] = config_dict[f"{key}/@units"]
-                template[key_BE_unit] = "eV"
-                template[key_BE] = binding_energy_coord
-                template[key_BE_axes] = BE_nm
-                template[key_BE_ind] = 0
-                template[key_nxclass] = "NXdata"
-
+            fill_data_class(key, value, config_dict,
+                                    xps_data_dict, template, entry_set)
+            print("#### After : ", entry_set)
         else:
-
             for search_key in searching_keys:
                 if search_key in value:
                     key_part = value.split(f"{search_key}:")[-1]
