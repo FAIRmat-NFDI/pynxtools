@@ -155,8 +155,8 @@ def fill_template_with_xps_data(config_dict,
                                                   "[data]/@signal")
                 BE_nm = "BE"
                 key_BE = modified_key.replace("[data]/data", f"[data]/{BE_nm}")
-                key_BE_unit = f"{key_BE}/units"
-                key_BE_axes = f"{key_BE}/@axes"
+                key_BE_unit = f"{key_BE}/@units"
+                key_BE_axes = modified_key.replace("[data]/data", "[data]/@axes")
                 key_BE_ind = modified_key.replace("[data]/data",
                                                   f"[data]/@{BE_nm}_indices")
 
@@ -176,25 +176,9 @@ def fill_template_with_xps_data(config_dict,
                 template[key_data_unit] = config_dict[f"{key}/@units"]
                 template[key_BE_unit] = "eV"
                 template[key_BE] = binding_energy_coord
-                template[key_BE_axes] = "BE"
+                template[key_BE_axes] = BE_nm
                 template[key_BE_ind] = 0
                 template[key_nxclass] = "NXdata"
-
-            # try:
-            #     del template[key]
-            # except KeyError:
-            #     pass
-
-            # try:
-            #     key_signal = key.replace("/data", "/@signal")
-            #     del template[key_signal]
-            # except KeyError:
-            #     pass
-
-            # try:
-            #     del template[f"{key}/@units"]
-            # except KeyError:
-            #     pass
 
         else:
 
@@ -214,15 +198,6 @@ def fill_template_with_xps_data(config_dict,
                                 config_dict[f"{key}/@units"]
                         except KeyError:
                             pass
-
-                    try:
-                        del template[key]
-                    except KeyError:
-                        pass
-                    try:
-                        del template[f"{key}/@units"]
-                    except KeyError:
-                        pass
 
     # Fill template by pre-defined value
     for key, value in config_dict.items():
@@ -327,7 +302,6 @@ class XPSReader(BaseReader):
             if str_entry in key:
                 del template[key]
 
-        print(" #### templare : ", template)
         return template
 
 

@@ -707,7 +707,7 @@ class XmlSpecs():
                         channel_counts[row + 1, :] = count_on_row
                         channel_counts[0, :] += count_on_row
 
-                        self._xps_dict["data"][entry][f"{scan_nm}chan_{row}"] = \
+                        self._xps_dict["data"][entry][f"{scan_nm}_chan_{row}"] = \
                             xr.DataArray(data=channel_counts[row + 1, :],
                                          coords={"BE": binding_energy})
 
@@ -726,7 +726,7 @@ class XmlSpecs():
                         # shifting and adding all the curves over the left curve.
                         channel_counts[0, :] += count_on_row
 
-                        self._xps_dict["data"][entry][f"{scan_nm}chan{row}"] = \
+                        self._xps_dict["data"][entry][f"{scan_nm}_chan{row}"] = \
                             xr.DataArray(data=channel_counts[row + 1, :],
                                          coords={"BE": binding_energy})
 
