@@ -51,6 +51,23 @@ CONVERT_DICT = {
 REPLACE_NESTED: Dict[str, str] = {}
 
 
+# This function must be same as that in reader_utils.py
+def construct_entry_name(key):
+        """TODO: add Docstring"""
+        components = key.split("/")
+        try:
+            # entry: vendor__sample__name_of_scan_rerion
+            entry_name = (f'{components[2]}'
+                          f'__'
+                          f'{components[3].split("_", 1)[1]}'
+                          f'__'
+                          f'{components[5].split("_", 1)[1]}'
+                          )
+        except IndexError:
+            entry_name = ""
+        return entry_name
+
+
 def find_entry_and_value(xps_data_dict,
                          key_part,
                          dt_typ):
@@ -66,231 +83,12 @@ def find_entry_and_value(xps_data_dict,
 
         for key, val in xps_data_dict.items():
             if key_part in key:
-                components = key.split("/")
-                entry = (f'{components[2]}'
-                         f'__'
-                         f'{components[3].split("_", 1)[1]}'
-                         f'__'
-                         f'{components[5].split("_", 1)[1]}'
-                         )
-                entries_values = {entry: val}
+                entry = construct_entry_name(key)
+                entries_values[entry] = val
 
     elif dt_typ == "@data":
-
-        # var needs to construct BE axis
-        attr_dict = {"mcd_num": 0,
-                     "curves_per_scan": 0,
-                     "values_per_curve": 0,
-                     "mcd_head": 0,
-                     "mcd_tail": 0,
-                     "excitation_energy": 0,
-                     "kinetic_energy": 0,
-                     "effective_workfunction": 0,
-                     "scan_delta": 0,
-                     "pass_energy": 0,
-                     "mcd_shifts": [],
-                     "mcd_poss": [],
-                     "mcd_gains": []}
-
-        for key, val in xps_data_dict.items():
-            components = key.split("/")
-            try:
-                entry = (f'{components[2]}'
-                         f'__'
-                         f'{components[3].split("_", 1)[1]}'
-                         f'__'
-                         f'{components[5].split("_", 1)[1]}'
-                         )
-            except IndexError:
-                continue
-
-            if entry not in entries_values:
-                entries_values[entry] = {}
-                entries_values[entry]["data"] = {}
-                entries_values[entry]["attrb"] = copy.deepcopy(attr_dict)
-
-            if "region/curves_per_scan" in key:
-                entries_values[entry]["attrb"]["curves_per_scan"] = val
-            elif "region/values_per_curve" in key:
-                entries_values[entry]["attrb"]["values_per_curve"] = val
-
-            elif "region/excitation_energy" in key:
-                entries_values[entry]["attrb"]["excitation_energy"] = val
-
-            elif "region/scan_mode/name" in key:
-                entries_values[entry]["attrb"]["scan_mode"] = val
-
-            elif "region/kinetic_energy" in key:
-                if "region/kinetic_energy_base" not in key:
-                    entries_values[entry]["attrb"]["kinetic_energy"] = val
-                else:
-                    continue
-
-            elif "region/effective_workfunction" in key:
-                entries_values[entry]["attrb"]["effective_workfunction"] = val
-
-            elif "region/scan_delta" in key:
-                entries_values[entry]["attrb"]["scan_delta"] = val
-
-            elif "region/pass_energy" in key:
-                entries_values[entry]["attrb"]["pass_energy"] = val
-
-            elif "mcd_head" in key:
-                entries_values[entry]["attrb"]["mcd_head"] = val
-
-            elif "mcd_tail" in key:
-                entries_values[entry]["attrb"]["mcd_tail"] = val
-
-            elif "shift" in key:
-                entries_values[entry]["attrb"]["mcd_shifts"].append(val)
-                entries_values[entry]["attrb"]["mcd_num"] += 1
-
-            elif "gain" in key:
-                entries_values[entry]["attrb"]["mcd_gains"].append(val)
-
-            elif "position" in key:
-                entries_values[entry]["attrb"]["mcd_poss"].append(val)
-
-            if key_part in key:
-
-                # key_part -> cycles/Cycle_
-                _, last_part = key.split(key_part)
-                if "/time" in last_part:
-                    continue
-                parts = last_part.split("/")
-                cycle_num, scan_num = parts[0], parts[-2].split("_")[1]
-                da_name = f"cycle{cycle_num}_scan{scan_num}_"
-
-                # data_array = (name, data, dimension,
-                counts = val
-                entries_values[entry]["data"][da_name] = counts
-
-        def construct_be_and_counts():
-            """Construct the Binding Energy and separate the counts for
-               different detectors and finally sum up all the counts for
-               to find total electron counts.
-            """
-            ents_vals_items = copy.deepcopy(tuple(entries_values.items()))
-            for entry_key, entry_val in ents_vals_items:
-
-                data = copy.deepcopy(entry_val["data"])
-                entries_values[entry_key]["data"] = None
-                attrb = entry_val["attrb"]
-
-                mcd_num = int(attrb["mcd_num"])
-                curves_per_scan = attrb["curves_per_scan"]
-                values_per_curve = attrb["values_per_curve"]
-                values_per_scan = curves_per_scan * values_per_curve
-                mcd_head = int(attrb["mcd_head"])
-                mcd_tail = int(attrb["mcd_tail"])
-                values_per_scan = int(values_per_scan)
-                excitation_energy = attrb["excitation_energy"]
-                scan_mode = attrb["scan_mode"]
-                kinetic_energy = attrb["kinetic_energy"]
-                scan_delta = attrb["scan_delta"]
-                pass_energy = attrb["pass_energy"]
-
-                binding_energy_upper = excitation_energy - kinetic_energy
-
-                mcd_energy_shifts = attrb["mcd_shifts"]
-                mcd_energy_offsets = []
-                offset_ids = []
-                # consider offset values for detector with respect to
-                # position at +16 which is usually large
-                # and positive value
-
-                for mcd_shift in mcd_energy_shifts:
-                    mcd_energy_offset = (mcd_energy_shifts[-1] - mcd_shift) * pass_energy
-                    mcd_energy_offsets.append(mcd_energy_offset)
-                    offset_id = round(mcd_energy_offset / scan_delta)
-                    offset_ids.append(int(offset_id - 1 if offset_id > 0 else offset_id))
-
-                # Skiping entry without count data
-                if not mcd_energy_offsets:
-                    del entries_values[entry_key]
-                    continue
-                mcd_energy_offsets = np.array(mcd_energy_offsets)
-                # Putting energy of the last detector as a highest energy
-                starting_eng_pnts = binding_energy_upper - mcd_energy_offsets
-                ending_eng_pnts = \
-                    (starting_eng_pnts - values_per_scan * scan_delta)
-
-                channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
-                for ind in np.arange(len(channeltron_eng_axes)):
-                    channeltron_eng_axes[ind, :] = \
-                        np.linspace(starting_eng_pnts[ind],
-                                    ending_eng_pnts[ind],
-                                    values_per_scan)
-
-                channeltron_eng_axes = np.round_(channeltron_eng_axes,
-                                                 decimals=8)
-                # construct ultimate or incorporated energy axis from
-                # lower to higher energy
-                scans = list(data.keys())
-                # Check whether array is empty or not
-                if not scans:
-                    del entries_values[entry_key]
-                    continue
-                if not data[scans[0]].any():
-                    del entries_values[entry_key]
-                    continue
-                # Sorting in descending order
-                binding_energy = channeltron_eng_axes[-1, :]
-
-                entries_values[entry_key]["data"] = xr.Dataset()
-
-                for scan_nm in scans:
-                    channel_counts = np.zeros((mcd_num + 1,
-                                               values_per_scan))
-                    # values for scan_nm corresponds to the data for each
-                    # "scan" in individual CountsSeq
-                    scan_counts = data[scan_nm]
-
-                    if scan_mode == "FixedAnalyzerTransmission":
-                        for row in np.arange(mcd_num):
-
-                            count_on_row = scan_counts[row::mcd_num]
-                            # Reverse counts from lower BE to higher
-                            # BE as in BE_eng_axis
-                            count_on_row = \
-                                count_on_row[mcd_head:-mcd_tail]
-
-                            channel_counts[row + 1, :] = count_on_row
-                            channel_counts[0, :] += count_on_row
-
-                            entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
-                                xr.DataArray(data=channel_counts[row + 1, :],
-                                             coords={"BE": binding_energy})
-
-                            if row == (mcd_num - 1):
-                                data_var = f"{scan_nm[:-1]}"
-
-                                entries_values[entry_key]["data"][data_var] = \
-                                    xr.DataArray(data=channel_counts[0, :],
-                                                 coords={"BE": binding_energy})
-                    else:
-                        for row in np.arange(mcd_num):
-
-                            start_id = offset_ids[row]
-                            count_on_row = scan_counts[start_id::mcd_num]
-                            count_on_row = count_on_row[0:values_per_scan]
-                            channel_counts[row + 1, :] = count_on_row
-
-                            # shifting and adding all the curves over the left curve.
-                            channel_counts[0, :] += count_on_row
-
-                            entries_values[entry_key]["data"][f"{scan_nm}chan{row}"] = \
-                                xr.DataArray(data=channel_counts[row + 1, :],
-                                             coords={"BE": binding_energy})
-
-                            if row == (mcd_num - 1):
-                                data_var = f"{scan_nm[:-1]}"
-
-                                entries_values[entry_key]["data"][data_var] = \
-                                    xr.DataArray(data=channel_counts[0, :],
-                                                 coords={"BE": binding_energy})
-
-        construct_be_and_counts()
+        # entries_values = entry:{cycle0_scan0_chan0:xr.data}
+        entries_values = xps_data_dict["data"]
 
     return entries_values
 
@@ -317,88 +115,86 @@ def fill_template_with_xps_data(config_dict,
             survey_count_ = 0
             count = 0
 
-            for entry, ent_value in entries_values.items():
+            for entry, xr_data in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("entry", entry)
-                modified_root = key[0]
+                root = key[0]
                 modifid_entry = key[0:13]
                 modifid_entry = modifid_entry.replace("entry", entry)
                 template[f"{modifid_entry}/@default"] = "data"
+
+                # Set first Survey as default for .nxs file
                 if "Survey" in entry and survey_count_ == 0:
                     survey_count_ = survey_count_ + 1
-                    template[f"{modified_root}/@default"] = entry
+                    template[f"{root}@default"] = entry
+
+                # If no Survey set any scan for default
                 if survey_count_ == 0 and count == 0:
                     count = count + 1
-                    template[f"{modified_root}/@default"] = entry
-                # Filling out the scan data separately
-                data = ent_value["data"]
-                # attr = ent_value["attrb"]
-                binding_energy_coord = None
-                scan_num = 0
-                for data_var in data.data_vars:
-                    scan_num = scan_num + 1
-                    scan = data_var
-                    key_indv_scn_dta = modified_key.replace("[data]/data",
-                                                            f"[data]/{scan}")
-                    key_indv_scn_dta_unit = \
-                        modified_key.replace("[data]/data",
-                                             f"[data]/{scan}/@units")
+                    template[f"{root}@default"] = entry
 
-                    binding_energy_coord = list(data[data_var].coords)[0]
-                    binding_energy_coord = np.array(data[data_var][binding_energy_coord])
-                    template[key_indv_scn_dta] = \
-                        ent_value["data"][data_var].data
-                    template[key_indv_scn_dta_unit] = \
+                binding_energy_coord = None
+                for data_var in xr_data.data_vars:
+                    scan = data_var
+                    key_indv_scn_dt = modified_key.replace("[data]/data",
+                                                           f"[data]/{scan}")
+                    key_indv_scn_dt_unit = modified_key.replace("[data]/data",
+                                                                f"[data]/{scan}/@units")
+
+                    cord_nm = list(xr_data[data_var].coords)[0]
+                    binding_energy_coord = np.array(xr_data[data_var][cord_nm])
+                    template[key_indv_scn_dt] = \
+                        np.array(xr_data[data_var].data)
+                    template[key_indv_scn_dt_unit] = \
                         config_dict[f"{key}/@units"]
 
-                # signal takes the sum of the counts along the scan axis
+                key_data = modified_key.replace("[data]/data", "[data]/data")
+                key_data_unit = f"{key_data}/@units"
+
                 key_signal = modified_key.replace("[data]/data",
                                                   "[data]/@signal")
-                key_data = modified_key.replace("[data]/data",
-                                                "[data]/data")
-                key_data_unit = modified_key.replace("[data]/data",
-                                                     "[data]/data/@units")
-                key_binding_energy = modified_key.replace("[data]/data", "[data]/BE")
-                key_binding_energy_unit = modified_key.replace("[data]/data",
-                                                               "[data]/BE/@units")
-                key_binding_energy_axes = modified_key.replace("[data]/data",
-                                                               "[data]/@axes")
-                key_binding_energy_ind = modified_key.replace("[data]/data",
-                                                              "[data]/@BE_indices")
+                BE_nm = "BE"
+                key_BE = modified_key.replace("[data]/data", f"[data]/{BE_nm}")
+                key_BE_unit = f"{key_BE}/units"
+                key_BE_axes = f"{key_BE}/@axes"
+                key_BE_ind = modified_key.replace("[data]/data",
+                                                  f"[data]/@{BE_nm}_indices")
+
                 key_nxclass = modified_key.replace("[data]/data",
                                                    "[data]/@NX_class")
 
                 template[key_signal] = "data"
-                template[key_data] = np.mean([data[x_arr].data
-                                             for x_arr in data.data_vars
-                                              if "_chan" not in x_arr],
+                template[key_data] = np.mean([xr_data[x_arr].data
+                                             for x_arr in xr_data.data_vars
+                                             if "_chan" not in x_arr],
                                              axis=0)
+
                 template[f"{key_data}_errors"] = \
-                    np.std([data[x_arr].data
-                            for x_arr in data.data_vars
+                    np.std([xr_data[x_arr].data
+                            for x_arr in xr_data.data_vars
                             if "_chan" not in x_arr], axis=0)
                 template[key_data_unit] = config_dict[f"{key}/@units"]
-                template[key_binding_energy_unit] = "eV"
-                template[key_binding_energy] = binding_energy_coord
-                template[key_binding_energy_axes] = "BE"
-                template[key_binding_energy_ind] = 0
+                template[key_BE_unit] = "eV"
+                template[key_BE] = binding_energy_coord
+                template[key_BE_axes] = "BE"
+                template[key_BE_ind] = 0
                 template[key_nxclass] = "NXdata"
 
-            try:
-                del template[key]
-            except KeyError:
-                pass
+            # try:
+            #     del template[key]
+            # except KeyError:
+            #     pass
 
-            try:
-                key_signal = key.replace("/data", "/@signal")
-                del template[key_signal]
-            except KeyError:
-                pass
+            # try:
+            #     key_signal = key.replace("/data", "/@signal")
+            #     del template[key_signal]
+            # except KeyError:
+            #     pass
 
-            try:
-                del template[f"{key}/@units"]
-            except KeyError:
-                pass
+            # try:
+            #     del template[f"{key}/@units"]
+            # except KeyError:
+            #     pass
 
         else:
 
@@ -530,6 +326,8 @@ class XPSReader(BaseReader):
         for key, _ in template.items():
             if str_entry in key:
                 del template[key]
+
+        print(" #### templare : ", template)
         return template
 
 
