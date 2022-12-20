@@ -205,7 +205,7 @@ class NxImageSetEmAdf:
             template[prfx + "@ypos_indices"] = 0
             template[prfx + "intensity"] \
                 = {"compress": self.data[0].meta["intensity"].value}
-            template[prfx + "intensity/@units"] = "NX_UNITLESS"
+            template[prfx + "intensity/@units"] = ""
             # but should be a 1 * n_y * n_x array and not a n_y * n_x array !!
             template[prfx + "image_id"] = np.uint32(frame_id)
             template[prfx + "xpos"] \

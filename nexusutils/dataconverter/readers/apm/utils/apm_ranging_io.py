@@ -63,7 +63,7 @@ def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
 
         template[path + 'isotope_vector'] \
             = np.array(ion_obj.isotope_vector.value, np.uint16)
-        template[path + 'isotope_vector/@units'] = 'NX_UNITLESS'
+        template[path + 'isotope_vector/@units'] = ''
         template[path + 'charge_state'] = np.int8(ion_obj.charge_state.value)
         template[path + 'charge_state/@units'] = 'eV'
         template[path + 'mass_to_charge_range'] \
@@ -83,7 +83,7 @@ def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
                 nuclid_list[1, i] = n_protons_n_neutrons[0]
             i += 1
         template[path + "nuclid_list"] = nuclid_list
-        template[path + "nuclid_list/@units"] = "NX_UNITLESS"
+        template[path + "nuclid_list/@units"] = ""
         # template[path + 'ion_type'] = np.uint8(ion_id)
         # template[path + 'name'] = ion_obj.name.value
         # charge_state and name is not included in rng rangefiles
@@ -119,7 +119,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
 
         template[path + 'isotope_vector'] \
             = np.array(ion_obj.isotope_vector.value, np.uint16)
-        template[path + 'isotope_vector/@units'] = 'NX_UNITLESS'
+        template[path + 'isotope_vector/@units'] = ''
         template[path + 'charge_state'] = np.int8(ion_obj.charge_state.value)
         template[path + 'charge_state/@units'] = 'eV'
         template[path + 'mass_to_charge_range'] \
@@ -139,7 +139,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
                 nuclid_list[1, i] = n_protons_n_neutrons[0]
             i += 1
         template[path + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-        template[path + "nuclid_list/@units"] = "NX_UNITLESS"
+        template[path + "nuclid_list/@units"] = ""
         # template[path + 'ion_type'] = np.uint8(ion_id)
         # template[path + 'name'] = ion_obj.name.value
         # charge_state and name is not included in rrng rangefiles
@@ -179,10 +179,10 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
             + " does not document with which program version it was generated!"
         template[trg + "number_of_ion_types"] = 0
         template[trg + "number_of_ion_types/@units"] \
-            = "NX_UNITLESS"
+            = ""
         template[trg + "maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
         template[trg + 'maximum_number_of_atoms_per_molecular_ion/@units'] \
-            = 'NX_UNITLESS'
+            = ''
 
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
@@ -199,7 +199,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
         path = trg + "ION[ion0]/"
         template[path + 'isotope_vector'] \
             = np.reshape(np.asarray(([0] * 32), np.uint16), (1, 32))
-        template[path + 'isotope_vector/@units'] = "NX_UNITLESS"
+        template[path + 'isotope_vector/@units'] = ""
         template[path + 'charge_state'] = np.int8(0)
         template[path + 'charge_state/@units'] = 'eV'
         template[path + 'mass_to_charge_range'] \
@@ -207,7 +207,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
         template[path + 'mass_to_charge_range/@units'] = "Da"
         nuclid_list = np.zeros([2, 32], np.uint16)
         template[path + "nuclid_list"] = nuclid_list
-        template[path + "nuclid_list/@units"] = "NX_UNITLESS"
+        template[path + "nuclid_list/@units"] = ""
 
         if self.meta["file_name"] != '' and self.meta["file_format"] != 'none':
             if self.meta["file_format"] == 'rng':

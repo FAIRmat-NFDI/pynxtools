@@ -32,7 +32,7 @@
     "/ENTRY[entry]/em_lab/APERTURE[aperture]/serial_number": "The JSON metadata file which nionswift generated at the point in time when the example dataset was composed did not contain this piece of information.",
     "/ENTRY[entry]/em_lab/APERTURE[aperture]/manufacturer_name": "The JSON metadata file which nionswift generated at the point in time when the example dataset was composed did not contain this piece of information.",
     "/ENTRY[entry]/em_lab/APERTURE[aperture]/value": 0,
-    "/ENTRY[entry]/em_lab/APERTURE[aperture]/value/@units": "NX_UNITLESS",
+    "/ENTRY[entry]/em_lab/APERTURE[aperture]/value/@units": "",
     "/ENTRY[entry]/em_lab/APERTURE[aperture]/description": "The JSON metadata file which nionswift generated at the point in time when the example dataset was composed did not contain this piece of information.",
     "/ENTRY[entry]/em_lab/LENS_EM[lens_em]/type": "double",
     "/ENTRY[entry]/em_lab/LENS_EM[lens_em]/name": "The JSON metadata file which nionswift generated at the point in time when the example dataset was composed did not contain this information. Instead, these data could be stored in a lab-maintained config file which gets then parsed equivalently like this file, e.g. or a spreadsheet document.",
