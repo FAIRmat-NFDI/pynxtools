@@ -1,36 +1,47 @@
 Instrument:
   Analyser:
     Collectioncolumn:
-      scheme: None
-    description: None
-    name: None
+      scheme: "Angular dispersive"
+    description: "hemispherical"
+    name: null
     Energydispersion:
-      entrance_slit: None
-      scheme: None
+      entrance_slit:
+      scheme: "hemispherical"
+      pass_energy:
+        unit: null
   Beam:
     distance:
-      unit: None
-      value: None
+      unit: "mm"
+      value: 0.0
   energy_resolution:
-    unit: None
-    value: None
+    unit: null
+    value: null
   Source:
-    type: None
-    probe: None
+    type: "Synchrotron X-ray Source"
+    probe: "x-ray"
 Sample:
-  name: None
-  preparation_description: None
+  name: null
+  preparation_description: "From third party"
   temperature:
-    unit: None
-    value: None
-  situation: None
+    unit: "K"
+    value: 298.0
+  situation: "vacuum"
   gas_pressure:
-    unit: None
-    value: None
-start_time: None
+    unit: "Pa"
+    value: 101325.0
+start_time: null
 definition:
-  version: None
-  value: None
+  version: null
+  value: null
+title: "XPS Experiment"
+start_time: "2022-04-08T11:47:02.0200Z"
+definition:
+  value: "NXmpes"
+  version: 1.0
 User:
-  name: None
-  email: None
+  name: "Ahmed Mansour"
+  email: "amansour@physik.hu-berlin.de"
+Data:
+  BE:
+    unit: null
+

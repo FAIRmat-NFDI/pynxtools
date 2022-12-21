@@ -37,18 +37,20 @@ np.set_printoptions(threshold=sys.maxsize)
 
 xps_tocken = "@xps_tocken:"
 xps_data_tocken = "@data:"
+eln_tocken = "@eln"
 
 CONVERT_DICT = {
     'Instrument': 'INSTRUMENT[instrument]',
     'Analyser': 'ELECTRONANALYSER[electronanalyser]',
     'Beam': 'BEAM[beam]',
     'unit': '@units',
+    'version': '@version',
     'Sample': 'SAMPLE[sample]',
     'User': 'USER[user]',
     'Data': 'DATA[data]',
     'Source': 'SOURCE[source]',
     'Collectioncolumn': 'COLLECTIONCOLUMN[collectioncolumn]',
-    'Energydispersion': 'ENERGYDISPERSION[cnergydispersion]'
+    'Energydispersion': 'ENERGYDISPERSION[energydispersion]'
 }
 
 REPLACE_NESTED: Dict[str, str] = {}
@@ -140,7 +142,7 @@ def fill_data_class(key,
         key_data_unit = f"{key_data}/@units"
 
         key_signal = modified_key.replace("[data]/data",
-                                        "[data]/@signal")
+                                          "[data]/@signal")
         BE_nm = "BE"
         key_BE = modified_key.replace("[data]/data", f"[data]/{BE_nm}")
         key_BE_unit = f"{key_BE}/@units"
@@ -197,7 +199,6 @@ def fill_template_with_xps_data(config_dict,
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("[entry]", f"[{entry}]")
-                print(modified_key, "\n", ent_value)
                 template[modified_key] = ent_value
                 try:
                     template[f"{modified_key}/@units"] = \
@@ -205,40 +206,35 @@ def fill_template_with_xps_data(config_dict,
                 except KeyError:
                     pass
 
-    # Fill template by pre-defined value
-    for key, value in config_dict.items():
 
-        if "example_value" in value:
-            field_value = value.split("example_value:")[-1]
+# Fill template by pre-defined value
+def fill_template_with_eln_data(eln_data_dict,
+                                config_dict,
+                                template,
+                                entry_set):
+
+    for key, val in config_dict.items():
+
+        if eln_tocken in val:
+            field_value = eln_data_dict[key]
+            if field_value is None:
+                continue
             for entry in entry_set:
                 modified_key = key.replace("[entry]", f"[{entry}]")
 
                 try:
-                    field_value_ = float(field_value)
+                    field_value = float(field_value)
                 except ValueError:
                     if isinstance(field_value, list):
-                        field_value_ = np.array(field_value)
-                    else:
-                        field_value_ = field_value
+                        field_value = np.array(field_value)
+                template[modified_key] = field_value
 
-                template[modified_key] = field_value_
-
-            try:
-                del template[key]
-            except KeyError:
-                pass
-
-        elif "entry_name" in value:
-            for entry in entry_set:
-                modified_key = key.replace("[entry]",
-                                           f"[{entry}]")
-                template[modified_key] = entry
-            template[key] = value
-            try:
-                del template[key]
-
-            except KeyError:
-                pass
+        elif key in list(eln_data_dict.keys()):
+            field_value = eln_data_dict[key]
+            if field_value is not None:
+                for entry in entry_set:
+                    modified_key = key.replace("[entry]", f"[{entry}]")
+                    template[modified_key] = field_value
 
 
 # pylint: disable=too-few-public-methods
@@ -286,22 +282,22 @@ class XPSReader(BaseReader):
                                     xps_data_dict,
                                     template,
                                     entry_set)
-
-        # Fill slot or field data from eln yaml file
         if eln_data_dict:
-            for eln_key, eln_val in eln_data_dict.items():
-                if eln_val == 'None':
-                    pass
-                elif eln_val:
-                    tail_part_eln_key = eln_key.split("[entry]")[-1]
-                    for tem_key, _ in template.items():
-                        if tail_part_eln_key in tem_key:
-                            template[tem_key] = eln_val
+            fill_template_with_eln_data(eln_data_dict,
+                                        config_dict,
+                                        template,
+                                        entry_set)
+        # TODO: add here warnings instead of error
+        else:
+            raise ValueError("Eln file must be submit with some required filed and attribute.")
 
         str_entry = "/ENTRY[entry]"
         for key, _ in template.items():
             if str_entry in key:
                 del template[key]
+
+        for key, val in template.items():
+            print("#### : ", key)
 
         return template
 
