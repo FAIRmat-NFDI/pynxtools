@@ -35,6 +35,9 @@ from nexusutils.dataconverter.readers.utils import flatten_and_replace, FlattenS
 
 np.set_printoptions(threshold=sys.maxsize)
 
+xps_tocken = "@xps_tocken:"
+xps_data_tocken = "@data:"
+
 CONVERT_DICT = {
     'Instrument': 'INSTRUMENT[instrument]',
     'Analyser': 'ELECTRONANALYSER[electronanalyser]',
@@ -71,22 +74,20 @@ def construct_entry_name(key):
 def find_entry_and_value(xps_data_dict,
                          key_part,
                          dt_typ):
+
     """Construct the entry name and pick up the corresponding data for
-        that for that entry.
+       that for that entry.
     """
 
     entries_values = {}
-    if dt_typ in ["@region_data",
-                  "@parameters_data",
-                  "@analyzer_info",
-                  "@source_info"]:
+    if dt_typ == xps_tocken:
 
         for key, val in xps_data_dict.items():
             if key_part in key:
                 entry = construct_entry_name(key)
                 entries_values[entry] = val
 
-    elif dt_typ == "@data":
+    elif dt_typ == xps_data_tocken:
         # entries_values = entry:{cycle0_scan0_chan0:xr.data}
         entries_values = xps_data_dict["data"]
 
@@ -94,16 +95,10 @@ def find_entry_and_value(xps_data_dict,
 
 
 def fill_data_class(key,
-                            value,
-                            config_dict,
-                            xps_data_dict,
-                            template,
-                            entry_set):
-
-    key_part = value.split("data:")[-1]
-    dt_typ = "@data"
-    entries_values = find_entry_and_value(xps_data_dict,
-                                          key_part, dt_typ)
+                    entries_values,
+                    config_dict,
+                    template,
+                    entry_set):
 
     survey_count_ = 0
     count = 0
@@ -177,7 +172,6 @@ def fill_data_class(key,
 def fill_template_with_xps_data(config_dict,
                                 xps_data_dict,
                                 template,
-                                searching_keys,
                                 entry_set):
     """Collect the xps data from xps_data_dict
         and store them into template. We use searching_keys
@@ -185,28 +179,31 @@ def fill_template_with_xps_data(config_dict,
     """
 
     for key, value in config_dict.items():
-        print("## Before : ", entry_set)
-        if "@data" in value:
-            fill_data_class(key, value, config_dict,
-                                    xps_data_dict, template, entry_set)
-            print("#### After : ", entry_set)
-        else:
-            for search_key in searching_keys:
-                if search_key in value:
-                    key_part = value.split(f"{search_key}:")[-1]
-                    entries_values = find_entry_and_value(xps_data_dict,
-                                                          key_part,
-                                                          dt_typ=search_key)
-                    for entry, ent_value in entries_values.items():
-                        entry_set.add(entry)
-                        modified_key = key.replace("[entry]", f"[{entry}]")
 
-                        template[modified_key] = ent_value
-                        try:
-                            template[f"{modified_key}/@units"] = \
-                                config_dict[f"{key}/@units"]
-                        except KeyError:
-                            pass
+        if xps_data_tocken in value:
+            key_part = value.split(xps_data_tocken)[-1]
+            entries_values = find_entry_and_value(xps_data_dict,
+                                                  key_part,
+                                                  dt_typ=xps_data_tocken)
+
+            fill_data_class(key, entries_values, config_dict,
+                            template, entry_set)
+
+        if xps_tocken in value:
+            tocken = value.split(xps_tocken)[-1]
+            entries_values = find_entry_and_value(xps_data_dict,
+                                                  tocken,
+                                                  dt_typ=xps_tocken)
+            for entry, ent_value in entries_values.items():
+                entry_set.add(entry)
+                modified_key = key.replace("[entry]", f"[{entry}]")
+                print(modified_key, "\n", ent_value)
+                template[modified_key] = ent_value
+                try:
+                    template[f"{modified_key}/@units"] = \
+                        config_dict[f"{key}/@units"]
+                except KeyError:
+                    pass
 
     # Fill template by pre-defined value
     for key, value in config_dict.items():
@@ -264,10 +261,6 @@ class XPSReader(BaseReader):
         xps_data_dict: Dict[str, Any] = {}
         eln_data_dict: Dict[str, Any] = {}
         entry_set: Set[str] = set()
-        searching_keys = ["@analyzer_info",
-                          "@region_data",
-                          "@parameters_data",
-                          "@source_info"]
 
         for file in file_paths:
             file_ext = os.path.splitext(file)[1]
@@ -292,7 +285,6 @@ class XPSReader(BaseReader):
         fill_template_with_xps_data(config_dict,
                                     xps_data_dict,
                                     template,
-                                    searching_keys,
                                     entry_set)
 
         # Fill slot or field data from eln yaml file
