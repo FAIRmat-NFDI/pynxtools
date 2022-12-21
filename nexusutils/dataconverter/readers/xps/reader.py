@@ -32,6 +32,7 @@ import numpy as np
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.readers.xps.reader_utils import XpsDataFileParser
 from nexusutils.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
+from nexusutils.dataconverter.template import Template
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -291,15 +292,13 @@ class XPSReader(BaseReader):
         else:
             raise ValueError("Eln file must be submit with some required filed and attribute.")
 
+        final_template = Template()
         str_entry = "/ENTRY[entry]"
-        for key, _ in template.items():
-            if str_entry in key:
-                del template[key]
-
         for key, val in template.items():
-            print("#### : ", key)
+            if (str_entry in key) and (val is not None):
+                final_template[key] = val
 
-        return template
+        return final_template
 
 
 READER = XPSReader
