@@ -173,6 +173,7 @@ class XmlSpecs():
                                             skip_child)
             child_num -= 1
             child_elmt_ind += 1
+
     # pylint disable=too-many-branches
     def parse_struct(self,
                      element_: EmtT.Element,
