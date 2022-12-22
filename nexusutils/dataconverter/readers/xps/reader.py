@@ -57,9 +57,9 @@ CONVERT_DICT = {
 REPLACE_NESTED: Dict[str, str] = {}
 
 
-# This function must be same as that in reader_utils.py
 def construct_entry_name(key):
-        """TODO: add Docstring"""
+        """Construct entry name from vendor, sample_name and region name"""
+
         components = key.split("/")
         try:
             # entry: vendor__sample__name_of_scan_rerion
@@ -109,9 +109,11 @@ def fill_data_group(key,
     for entry, xr_data in entries_values.items():
         entry_set.add(entry)
         modified_key = key.replace("entry", entry)
+        modified_key = modified_key.replace("[data]/data", "[data]")
         root = key[0]
         modifid_entry = key[0:13]
         modifid_entry = modifid_entry.replace("entry", entry)
+
         template[f"{modifid_entry}/@default"] = "data"
 
         # Set first Survey as default for .nxs file
@@ -127,32 +129,28 @@ def fill_data_group(key,
         binding_energy_coord = None
         for data_var in xr_data.data_vars:
             scan = data_var
-            key_indv_scn_dt = modified_key.replace("[data]/data",
-                                                   f"[data]/{scan}")
-            key_indv_scn_dt_unit = modified_key.replace("[data]/data",
-                                                        f"[data]/{scan}/@units")
+            key_indv_scn_dt = f"{modified_key}/{scan}"
+
+            key_indv_scn_dt_unit = f"{key_indv_scn_dt}/@units"
 
             cord_nm = list(xr_data[data_var].coords)[0]
             binding_energy_coord = np.array(xr_data[data_var][cord_nm])
-            template[key_indv_scn_dt] = \
-                np.array(xr_data[data_var].data)
+            template[key_indv_scn_dt] = xr_data[data_var].data
             template[key_indv_scn_dt_unit] = \
                 config_dict[f"{key}/@units"]
 
-        key_data = modified_key.replace("[data]/data", "[data]/data")
+        key_data = f"{modified_key}/data"
         key_data_unit = f"{key_data}/@units"
 
-        key_signal = modified_key.replace("[data]/data",
-                                          "[data]/@signal")
-        BE_nm = "BE"
-        key_BE = modified_key.replace("[data]/data", f"[data]/{BE_nm}")
-        key_BE_unit = f"{key_BE}/@units"
-        key_BE_axes = modified_key.replace("[data]/data", "[data]/@axes")
-        key_BE_ind = modified_key.replace("[data]/data",
-                                          f"[data]/@{BE_nm}_indices")
+        key_signal = f"{modified_key}/@signal"
 
-        key_nxclass = modified_key.replace("[data]/data",
-                                           "[data]/@NX_class")
+        BE_nm = "BE"
+        key_BE = f"{modified_key}/{BE_nm}"
+        key_BE_unit = f"{key_BE}/@units"
+        key_BE_axes = f"{modified_key}/@axes"
+        key_BE_ind = f"{modified_key}/@{BE_nm}_indices"
+
+        key_nxclass = f"{modified_key}/@NX_class"
 
         template[key_signal] = "data"
         template[key_data] = np.mean([xr_data[x_arr].data
