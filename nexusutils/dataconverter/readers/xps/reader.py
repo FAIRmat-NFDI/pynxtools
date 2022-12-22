@@ -23,9 +23,7 @@ from typing import Any, Dict, Set
 from typing import Tuple
 import sys
 import json
-import copy
 
-import xarray as xr
 import yaml
 import numpy as np
 
@@ -36,9 +34,9 @@ from nexusutils.dataconverter.template import Template
 
 np.set_printoptions(threshold=sys.maxsize)
 
-xps_tocken = "@xps_tocken:"
-xps_data_tocken = "@data:"
-eln_tocken = "@eln"
+XPS_TOCKEN = "@xps_tocken:"
+XPS_DATA_TOCKEN = "@data:"
+ELN_TOCKEN = "@eln"
 
 CONVERT_DICT = {
     'Instrument': 'INSTRUMENT[instrument]',
@@ -83,25 +81,27 @@ def find_entry_and_value(xps_data_dict,
     """
 
     entries_values = {}
-    if dt_typ == xps_tocken:
+    if dt_typ == XPS_TOCKEN:
 
         for key, val in xps_data_dict.items():
             if key_part in key:
                 entry = construct_entry_name(key)
                 entries_values[entry] = val
 
-    elif dt_typ == xps_data_tocken:
+    elif dt_typ == XPS_DATA_TOCKEN:
         # entries_values = entry:{cycle0_scan0_chan0:xr.data}
         entries_values = xps_data_dict["data"]
 
     return entries_values
 
 
+# pylint: disable=too-many-locals
 def fill_data_group(key,
                     entries_values,
                     config_dict,
                     template,
                     entry_set):
+    """Fill out fileds and attributes for NXdata"""
 
     survey_count_ = 0
     count = 0
@@ -144,11 +144,11 @@ def fill_data_group(key,
 
         key_signal = f"{modified_key}/@signal"
 
-        BE_nm = "BE"
-        key_BE = f"{modified_key}/{BE_nm}"
-        key_BE_unit = f"{key_BE}/@units"
-        key_BE_axes = f"{modified_key}/@axes"
-        key_BE_ind = f"{modified_key}/@{BE_nm}_indices"
+        be_nm = "BE"
+        key_be = f"{modified_key}/{be_nm}"
+        key_be_unit = f"{key_be}/@units"
+        key_be_axes = f"{modified_key}/@axes"
+        key_be_ind = f"{modified_key}/@{be_nm}_indices"
 
         key_nxclass = f"{modified_key}/@NX_class"
 
@@ -163,10 +163,10 @@ def fill_data_group(key,
                     for x_arr in xr_data.data_vars
                     if "_chan" not in x_arr], axis=0)
         template[key_data_unit] = config_dict[f"{key}/@units"]
-        template[key_BE_unit] = "eV"
-        template[key_BE] = binding_energy_coord
-        template[key_BE_axes] = BE_nm
-        template[key_BE_ind] = 0
+        template[key_be_unit] = "eV"
+        template[key_be] = binding_energy_coord
+        template[key_be_axes] = be_nm
+        template[key_be_ind] = 0
         template[key_nxclass] = "NXdata"
 
 
@@ -181,20 +181,20 @@ def fill_template_with_xps_data(config_dict,
 
     for key, value in config_dict.items():
 
-        if xps_data_tocken in value:
-            key_part = value.split(xps_data_tocken)[-1]
+        if XPS_DATA_TOCKEN in value:
+            key_part = value.split(XPS_DATA_TOCKEN)[-1]
             entries_values = find_entry_and_value(xps_data_dict,
                                                   key_part,
-                                                  dt_typ=xps_data_tocken)
+                                                  dt_typ=XPS_DATA_TOCKEN)
 
             fill_data_group(key, entries_values, config_dict,
                             template, entry_set)
 
-        if xps_tocken in value:
-            tocken = value.split(xps_tocken)[-1]
+        if XPS_TOCKEN in value:
+            tocken = value.split(XPS_TOCKEN)[-1]
             entries_values = find_entry_and_value(xps_data_dict,
                                                   tocken,
-                                                  dt_typ=xps_tocken)
+                                                  dt_typ=XPS_TOCKEN)
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("[entry]", f"[{entry}]")
@@ -211,10 +211,11 @@ def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
                                 template,
                                 entry_set):
+    """Fill the template from provided eln data"""
 
     for key, val in config_dict.items():
 
-        if eln_tocken in val:
+        if ELN_TOCKEN in val:
             field_value = eln_data_dict[key]
             if field_value is None:
                 continue
@@ -286,14 +287,12 @@ class XPSReader(BaseReader):
                                         config_dict,
                                         template,
                                         entry_set)
-        # TODO: add here warnings instead of error
         else:
-            raise ValueError("Eln file must be submit with some required filed and attribute.")
+            raise ValueError("Eln file must be submited with some required fileds and attributes.")
 
         final_template = Template()
-        str_entry = "/ENTRY[entry]"
         for key, val in template.items():
-            if (str_entry not in key) and (val is not None):
+            if ("/ENTRY[entry]" not in key) and (val is not None):
                 final_template[key] = val
 
         return final_template

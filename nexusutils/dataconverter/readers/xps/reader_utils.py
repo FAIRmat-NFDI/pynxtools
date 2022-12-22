@@ -21,9 +21,9 @@ Generic Classes for reading xml file into python dictionary.
 
 import xml.etree.ElementTree as EmtT
 from typing import Tuple, List, Any
+import copy
 import xarray as xr
 import numpy as np
-import copy
 
 
 class XmlSpecs():
@@ -32,6 +32,7 @@ class XmlSpecs():
         specs vendor into python dictionary.
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(self,
                  root_element: EmtT.Element,
                  vendor_name: str = "specs") -> None:
@@ -55,7 +56,7 @@ class XmlSpecs():
         self.child_nm_reslvers = "__child_name_resolver__"
 
     def parse_xml(self):
-        """Start parsing process
+        """Start parsing process and parse children recursively.
 
         Parameters
         ----------
@@ -76,7 +77,7 @@ class XmlSpecs():
             child_num -= 1
             child_elmt_ind += 1
 
-        self.Collect_raw_data_to_construct_data()
+        self.collect_raw_data_to_construct_data()
         self.construct_data()
 
     def pass_child_through_parsers(self,
@@ -134,6 +135,7 @@ class XmlSpecs():
         else:
             raise TypeError("Needs to parse to different type of parser")
 
+    # pylint: disable=too-many-locals
     def parse_sequence(self,
                        element_: EmtT.Element,
                        parent_path: str) -> None:
@@ -171,7 +173,7 @@ class XmlSpecs():
                                             skip_child)
             child_num -= 1
             child_elmt_ind += 1
-
+    # pylint disable=too-many-branches
     def parse_struct(self,
                      element_: EmtT.Element,
                      parent_path: str) -> None:
@@ -531,7 +533,8 @@ class XmlSpecs():
             entry_name = ""
         return entry_name
 
-    def Collect_raw_data_to_construct_data(self):
+    # pylint: disable=too-many-branches
+    def collect_raw_data_to_construct_data(self):
         """Collect the raw data about detectors so that the binding energy and
             and counts for the corresponding nominal.
         """
@@ -615,6 +618,8 @@ class XmlSpecs():
 
                 self.entry_to_data[entry]["raw_data"]["scans"][scan_name] = val
 
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-statements
     def construct_data(self):
         """Construct the Binding Energy and separate the counts for
         different detectors and finally sum up all the counts for
@@ -623,11 +628,9 @@ class XmlSpecs():
         copy_entry_to_data = copy.deepcopy(self.entry_to_data)
         self._xps_dict["data"]: dict = {}
 
-        for entry, val in copy_entry_to_data.items():
+        for entry, _ in copy_entry_to_data.items():
 
-            # self._xps_dict["data"][entry] = {}
             raw_data = self.entry_to_data[entry]["raw_data"]
-            # data = self.entry_to_data[entry]["data"]
             mcd_num = int(raw_data["mcd_num"])
 
             curves_per_scan = raw_data["curves_per_scan"]
@@ -645,10 +648,9 @@ class XmlSpecs():
             mcd_energy_shifts = raw_data["mcd_shifts"]
             mcd_energy_offsets = []
             offset_ids = []
-            # consider offset values for detector with respect to
-            # position at +16 which is usually large
-            # and positive value
 
+            # consider offset values for detector with respect to
+            # position at +16 which is usually large and positive value
             for mcd_shift in mcd_energy_shifts:
                 mcd_energy_offset = (mcd_energy_shifts[-1] - mcd_shift) * pass_energy
                 mcd_energy_offsets.append(mcd_energy_offset)
@@ -661,8 +663,7 @@ class XmlSpecs():
             mcd_energy_offsets = np.array(mcd_energy_offsets)
             # Putting energy of the last detector as a highest energy
             starting_eng_pnts = binding_energy_upper - mcd_energy_offsets
-            ending_eng_pnts = \
-                (starting_eng_pnts - values_per_scan * scan_delta)
+            ending_eng_pnts = (starting_eng_pnts - values_per_scan * scan_delta)
 
             channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
             for ind in np.arange(len(channeltron_eng_axes)):
@@ -687,7 +688,6 @@ class XmlSpecs():
 
             self._xps_dict["data"][entry] = xr.Dataset()
 
-            # Filing up [entry]["data"]
             for scan_nm in scans:
                 channel_counts = np.zeros((mcd_num + 1,
                                            values_per_scan))
@@ -714,7 +714,6 @@ class XmlSpecs():
                         self._xps_dict["data"][entry][scan_nm] = \
                             xr.DataArray(data=channel_counts[0, :],
                                          coords={"BE": binding_energy})
-                # For FRR (Fix Retard Ratio) scan mode
                 else:
                     for row in np.arange(mcd_num):
 
