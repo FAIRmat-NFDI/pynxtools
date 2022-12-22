@@ -97,7 +97,7 @@ def find_entry_and_value(xps_data_dict,
     return entries_values
 
 
-def fill_data_class(key,
+def fill_data_group(key,
                     entries_values,
                     config_dict,
                     template,
@@ -189,7 +189,7 @@ def fill_template_with_xps_data(config_dict,
                                                   key_part,
                                                   dt_typ=xps_data_tocken)
 
-            fill_data_class(key, entries_values, config_dict,
+            fill_data_group(key, entries_values, config_dict,
                             template, entry_set)
 
         if xps_tocken in value:
@@ -208,7 +208,7 @@ def fill_template_with_xps_data(config_dict,
                     pass
 
 
-# Fill template by pre-defined value
+# Fill template from eln
 def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
                                 template,
@@ -295,7 +295,7 @@ class XPSReader(BaseReader):
         final_template = Template()
         str_entry = "/ENTRY[entry]"
         for key, val in template.items():
-            if (str_entry in key) and (val is not None):
+            if (str_entry not in key) and (val is not None):
                 final_template[key] = val
 
         return final_template
