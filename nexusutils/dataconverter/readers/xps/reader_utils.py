@@ -32,7 +32,6 @@ class XmlSpecs():
         specs vendor into python dictionary.
     """
 
-    # pylint: disable=too-many-instance-attributes
     def __init__(self,
                  root_element: EmtT.Element,
                  vendor_name: str = "specs") -> None:
@@ -44,13 +43,12 @@ class XmlSpecs():
         vendor_name :  Name of vendor of XPS machine
         """
 
-        self.debug_no = 0
         self._root_element = root_element
 
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
         self._xps_dict: dict = {}
         self.entry_to_data: dict = {}
-        self.tail_part_frm_seq = ""
+        # self.tail_part_frm_seq = ""
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
         self.child_nm_reslvers = "__child_name_resolver__"
@@ -520,15 +518,15 @@ class XmlSpecs():
         return self._xps_dict
 
     def construct_entry_name(self, key):
-        """TODO: add Docstring"""
-        components = key.split("/")
+        """Construction entry name."""
+        key_parts = key.split("/")
         try:
             # entry: vendor__sample__name_of_scan_rerion
-            entry_name = (f'{components[2]}'
+            entry_name = (f'{key_parts[2]}'
                           f'__'
-                          f'{components[3].split("_", 1)[1]}'
+                          f'{key_parts[3].split("_", 1)[1]}'
                           f'__'
-                          f'{components[5].split("_", 1)[1]}'
+                          f'{key_parts[5].split("_", 1)[1]}'
                           )
         except IndexError:
             entry_name = ""
