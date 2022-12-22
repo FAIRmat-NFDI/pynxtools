@@ -58,20 +58,20 @@ REPLACE_NESTED: Dict[str, str] = {}
 
 
 def construct_entry_name(key):
-        """Construct entry name from vendor, sample_name and region name"""
+    """Construct entry name from vendor, sample_name and region name"""
 
-        components = key.split("/")
-        try:
-            # entry: vendor__sample__name_of_scan_rerion
-            entry_name = (f'{components[2]}'
-                          f'__'
-                          f'{components[3].split("_", 1)[1]}'
-                          f'__'
-                          f'{components[5].split("_", 1)[1]}'
-                          )
-        except IndexError:
-            entry_name = ""
-        return entry_name
+    components = key.split("/")
+    try:
+        # entry: vendor__sample__name_of_scan_rerion
+        entry_name = (f'{components[2]}'
+                      f'__'
+                      f'{components[3].split("_", 1)[1]}'
+                      f'__'
+                      f'{components[5].split("_", 1)[1]}'
+                      )
+    except IndexError:
+        entry_name = ""
+    return entry_name
 
 
 def find_entry_and_value(xps_data_dict,
