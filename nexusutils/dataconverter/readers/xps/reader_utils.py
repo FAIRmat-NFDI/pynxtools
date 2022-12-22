@@ -231,7 +231,7 @@ class XmlSpecs():
                     if f'_[{unit}]' in section_nm_reslvr:
                         section_nm_reslvr, _ = section_nm_reslvr.split('_')
                         self._xps_dict[f'{parent_path}/'
-                                     f'{section_nm_reslvr}/@unit'] = unit
+                                       f'{section_nm_reslvr}/@unit'] = unit
 
                 parent_path, self.tail_part_frm_struct = \
                     self.check_last_part_repetition(parent_path,
@@ -625,7 +625,7 @@ class XmlSpecs():
 
         for entry, val in copy_entry_to_data.items():
 
-            #self._xps_dict["data"][entry] = {}
+            # self._xps_dict["data"][entry] = {}
             raw_data = self.entry_to_data[entry]["raw_data"]
             # data = self.entry_to_data[entry]["data"]
             mcd_num = int(raw_data["mcd_num"])
