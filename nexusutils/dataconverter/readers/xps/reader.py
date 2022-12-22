@@ -136,8 +136,7 @@ def fill_data_group(key,
             cord_nm = list(xr_data[data_var].coords)[0]
             binding_energy_coord = np.array(xr_data[data_var][cord_nm])
             template[key_indv_scn_dt] = xr_data[data_var].data
-            template[key_indv_scn_dt_unit] = \
-                config_dict[f"{key}/@units"]
+            template[key_indv_scn_dt_unit] = config_dict[f"{key}/@units"]
 
         key_data = f"{modified_key}/data"
         key_data_unit = f"{key_data}/@units"
@@ -200,8 +199,7 @@ def fill_template_with_xps_data(config_dict,
                 modified_key = key.replace("[entry]", f"[{entry}]")
                 template[modified_key] = ent_value
                 try:
-                    template[f"{modified_key}/@units"] = \
-                        config_dict[f"{key}/@units"]
+                    template[f"{modified_key}/@units"] = config_dict[f"{key}/@units"]
                 except KeyError:
                     pass
 
