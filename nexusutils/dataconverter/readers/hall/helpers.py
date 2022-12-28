@@ -145,6 +145,31 @@ def split_value_with_unit(expr: str) -> Tuple[Union[float, str], str]:
     return value, unit
 
 
+def clean(unit: str) -> str:
+    """Cleans an unit string, e.g. converts `VS` to `volt * seconds`.
+    If the unit is not in the conversion dict the input string is
+    returned without modification.
+
+    Args:
+        unit (str): The dirty unit string.
+
+    Returns:
+        str: The cleaned unit string.
+    """
+    conversions = {
+        'VS': "volt * second",
+        'Sec': "s",
+        '²': "^2",
+        '³': "^3",
+        'ohm cm': "ohm * cm",
+    }
+
+    for old, new in conversions.items():
+        unit = unit.replace(old, new)
+
+    return unit
+
+
 def get_unique_dkey(dic: dict, dkey: str) -> str:
     """Checks whether a data key is already contained in a dictionary
     and returns a unique key if it is not.
@@ -186,7 +211,7 @@ def pandas_df_to_template(prefix: str, data: pd.DataFrame) -> Dict[str, Any]:
 
         if is_value_with_unit(header):
             name, unit = split_str_with_unit(header)
-            template[f'{prefix}/{name}/@units'] = unit
+            template[f'{prefix}/{name}/@units'] = clean(unit)
         else:
             name = header.lower()
 
