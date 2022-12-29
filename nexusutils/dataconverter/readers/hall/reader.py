@@ -87,6 +87,8 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
             dic[f"{prefix}/{key}/@units"] = helpers.clean(unit)
         elif helpers.is_number(jval):
             dic[f"{prefix}/{key}"] = float(jval)
+        elif helpers.is_boolean(jval):
+            dic[f"{prefix}/{key}"] = helpers.to_bool(jval)
         else:
             dic[f"{prefix}/{key}"] = CONVERSION_FUNCTIONS.get(key, lambda v: v)(jval)
 
