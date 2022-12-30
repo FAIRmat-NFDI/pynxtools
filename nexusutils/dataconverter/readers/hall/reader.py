@@ -16,8 +16,10 @@
 # limitations under the License.
 #
 """Lake Shore Hall file reader implementation for the DataConverter."""
+from pathlib import Path
 import re
 from typing import Any, List, TextIO, Dict, Optional
+import logging
 import numpy as np
 import pandas as pd
 
@@ -47,6 +49,13 @@ CONVERSION_FUNCTIONS = {
 # Keys that indicate the start of measurement block
 MEASUREMENT_KEYS = ["Contact Sets"]
 
+reader_dir = Path(__file__).parent
+config_file = reader_dir.joinpath("enum_map.json")
+ENUM_FIELDS = parse_json(str(config_file))
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARN)
+
 
 def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> None:
     """Splits a key value pair and adds it to the dictionary.
@@ -62,11 +71,32 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
     key, *val = re.split(r"\s*[:|=]\s*", expr)
     jval = "".join(val).strip()
 
+    def parse_enum() -> bool:
+        sprefix = prefix.strip("/")
+        w_trailing_num = re.search(r"(.*) \d+$", sprefix)
+        if w_trailing_num:
+            sprefix = w_trailing_num.group(1)
+
+        if (
+            sprefix in ENUM_FIELDS
+            and key in ENUM_FIELDS[sprefix]
+            and helpers.is_integer(jval)
+        ):
+            if jval not in ENUM_FIELDS[sprefix][key]:
+                logger.warning("Option `%s` not in `%s, %s`", jval, sprefix, key)
+            dic[f"{prefix}/{key}"] = ENUM_FIELDS[sprefix][key].get(jval, "UNKNOWN")
+            return True
+
+        return False
+
     def parse_field():
         if helpers.is_value_with_unit(jval):
             value, unit = helpers.split_value_with_unit(jval)
             dic[f"{prefix}/{key}"] = value
             dic[f"{prefix}/{key}/@units"] = helpers.clean(unit)
+            return
+
+        if parse_enum():
             return
 
         if helpers.is_integer(jval):
@@ -161,7 +191,7 @@ def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
             return parse_measurement(line, current_section, current_measurement)
 
         if line.strip():
-            print(f"Warning: line `{line.strip()}` ignored")
+            logger.warning("Line `%s` ignored", line.strip())
 
         return current_section, current_measurement
 
