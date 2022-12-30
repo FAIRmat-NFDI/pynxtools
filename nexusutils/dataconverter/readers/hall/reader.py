@@ -19,6 +19,7 @@
 from pathlib import Path
 import re
 from typing import Any, List, TextIO, Dict, Optional
+import logging
 import numpy as np
 import pandas as pd
 
@@ -52,6 +53,9 @@ reader_dir = Path(__file__).parent
 config_file = reader_dir.joinpath("enum_map.json")
 ENUM_FIELDS = parse_json(str(config_file))
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARN)
+
 
 def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> None:
     """Splits a key value pair and adds it to the dictionary.
@@ -84,7 +88,7 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
             and helpers.is_integer(jval)
         ):
             if jval not in ENUM_FIELDS[sprefix][key]:
-                print(f"Warning: option `{jval}` not in `{sprefix, key}`")
+                logger.warning("Option `%s` not in `%s, %s`", jval, sprefix, key)
             dic[f"{prefix}/{key}"] = ENUM_FIELDS[sprefix][key].get(jval, "UNKNOWN")
             return
 
@@ -180,7 +184,7 @@ def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
             return parse_measurement(line, current_section, current_measurement)
 
         if line.strip():
-            print(f"Warning: line `{line.strip()}` ignored")
+            logger.warning("Line `%s` ignored", line.strip())
 
         return current_section, current_measurement
 
