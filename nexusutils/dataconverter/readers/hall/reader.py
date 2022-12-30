@@ -48,6 +48,46 @@ CONVERSION_FUNCTIONS = {
 MEASUREMENT_KEYS = ["Contact Sets"]
 
 
+ENUM_FIELDS = {
+    ("Measurement State Machine", "System Model"): {
+        0: "75XX-LVWR(-HS)",
+        1: "75XX-LVWR-SWT(-HS), 77XX-LVWR",
+        2: "75XX-HVWR(-HS), 77XX-HVWR",
+        3: "76XX",
+        4: "95XX-LVWR(-HS)",
+        5: "95XX-LVWR-SWT(-HS), 97XX-LVWR",
+        6: "95XX-HVWR(-HS), 97XX-HVWR",
+        7: "77XXA",
+        8: "97XXA",
+    },
+    ("Measurement State Machine", "Wiring"): {
+        0: "van der Pauw",
+        1: "Hall Bar",
+    },
+    ("Measurement State Machine", "ElectroMeter"): {
+        0: "Keithley 6512",
+        1: "Keithley 6514",
+    },
+    ("Measurement State Machine", "VoltMeter"): {
+        0: "Keithley 2000",
+        1: "Keithley 2182",
+        2: "Keithley 182",
+    },
+    ("Measurement State Machine", "CurrentMeter"): {
+        0: "Keithley 6485",
+        1: "Keithley 485/6/7",
+    },
+    ("Measurement State Machine", "Current Source"): {
+        0: "Keithley 220",
+        1: "Keithley 6220",
+    },
+    ("Measurement State Machine", "AC Hall type"): {
+        0: "AC Current only",
+        1: "AC Field and Current",
+    },
+}
+
+
 def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> None:
     """Splits a key value pair and adds it to the dictionary.
     It also checks for measurement headers and adds the full tabular data as a
@@ -67,6 +107,13 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
             value, unit = helpers.split_value_with_unit(jval)
             dic[f"{prefix}/{key}"] = value
             dic[f"{prefix}/{key}/@units"] = helpers.clean(unit)
+            return
+
+        sprefix = prefix.strip("/")
+        if (sprefix, key) in ENUM_FIELDS and helpers.is_integer(jval):
+            if int(jval) not in ENUM_FIELDS[(sprefix, key)]:
+                print(f"Warning: option `{jval}` not in `{sprefix, key}`")
+            dic[f"{prefix}/{key}"] = ENUM_FIELDS[(sprefix, key)].get(int(jval), "UNKNOWN")
             return
 
         if helpers.is_integer(jval):
