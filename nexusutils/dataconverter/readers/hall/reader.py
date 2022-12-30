@@ -62,7 +62,28 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
     key, *val = re.split(r"\s*[:|=]\s*", expr)
     jval = "".join(val).strip()
 
-    if fobj is not None and key in MEASUREMENT_KEYS:
+    def parse_field():
+        if helpers.is_value_with_unit(jval):
+            value, unit = helpers.split_value_with_unit(jval)
+            dic[f"{prefix}/{key}"] = value
+            dic[f"{prefix}/{key}/@units"] = helpers.clean(unit)
+            return
+
+        if helpers.is_integer(jval):
+            dic[f"{prefix}/{key}"] = int(jval)
+            return
+
+        if helpers.is_number(jval):
+            dic[f"{prefix}/{key}"] = float(jval)
+            return
+
+        if helpers.is_boolean(jval):
+            dic[f"{prefix}/{key}"] = helpers.to_bool(jval)
+            return
+
+        dic[f"{prefix}/{key}"] = CONVERSION_FUNCTIONS.get(key, lambda v: v)(jval)
+
+    def parse_data():
         data = []
         for line in fobj:
             if not line.strip():
@@ -75,22 +96,16 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
                     f"{prefix}/{key}/{jval}",
                     line,
                 )
-            else:
-                data.append(list(map(lambda x: x.strip(), re.split("\t+", line))))
+                continue
+            data.append(list(map(lambda x: x.strip(), re.split("\t+", line))))
 
         dkey = helpers.get_unique_dkey(dic, f"{prefix}/{key}/{jval}/data")
         dic[dkey] = pd.DataFrame(np.array(data[1:], dtype=np.float64), columns=data[0])
+
+    if fobj is not None and key in MEASUREMENT_KEYS:
+        parse_data()
     else:
-        if helpers.is_value_with_unit(jval):
-            value, unit = helpers.split_value_with_unit(jval)
-            dic[f"{prefix}/{key}"] = value
-            dic[f"{prefix}/{key}/@units"] = helpers.clean(unit)
-        elif helpers.is_number(jval):
-            dic[f"{prefix}/{key}"] = float(jval)
-        elif helpers.is_boolean(jval):
-            dic[f"{prefix}/{key}"] = helpers.to_bool(jval)
-        else:
-            dic[f"{prefix}/{key}"] = CONVERSION_FUNCTIONS.get(key, lambda v: v)(jval)
+        parse_field()
 
 
 def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
@@ -103,43 +118,61 @@ def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
     Returns:
         dict: Dict containing the data and metadata of the measurement
     """
+    def parse_measurement(line: str, current_section: str, current_measurement: str):
+        data = []
+        for mline in fobj:
+            if not mline.strip():
+                break
+            data.append(list(map(lambda x: x.strip(), re.split("\t+", mline))))
+
+        header = list(map(lambda x: x.strip(), re.split("\t+", line)))
+        dkey = helpers.get_unique_dkey(
+            template, f"{current_section}{current_measurement}/data"
+        )
+        template.update(helpers.pandas_df_to_template(
+            dkey,
+            pd.DataFrame(
+                np.array(data, dtype=np.float64), columns=header
+            )
+        ))
+
+        return current_section, current_measurement
+
+    def parse(line: str, current_section: str, current_measurement: str):
+        if helpers.is_section(line):
+            sline = line.strip()[1:-1]
+            current_section = f"/{SECTION_REPLACEMENTS.get(sline, sline)}"
+            current_measurement = ""
+            return current_section, current_measurement
+
+        if helpers.is_measurement(line):
+            step, _, *meas = line.partition(":")
+            sline = f"{step[6:]}_" + "".join(meas).strip()[:-1]
+            current_measurement = f"/{MEASUREMENT_REPLACEMENTS.get(sline, sline)}"
+            return current_section, current_measurement
+
+        if helpers.is_key(line):
+            split_add_key(
+                fobj, template, f"{current_section}{current_measurement}", line
+            )
+            return current_section, current_measurement
+
+        if helpers.is_meas_header(line):
+            return parse_measurement(line, current_section, current_measurement)
+
+        if line.strip():
+            print(f"Warning: line `{line.strip()}` ignored")
+
+        return current_section, current_measurement
+
     template: Dict[str, Any] = {}
     current_section = "/entry"
     current_measurement = ""
     with open(fname, encoding=encoding) as fobj:
         for line in fobj:
-            if helpers.is_section(line):
-                sline = line.strip()[1:-1]
-                current_section = f"/{SECTION_REPLACEMENTS.get(sline, sline)}"
-                current_measurement = ""
-            elif helpers.is_measurement(line):
-                step, _, *meas = line.partition(":")
-                sline = f"{step[6:]}_" + "".join(meas).strip()[:-1]
-                current_measurement = f"/{MEASUREMENT_REPLACEMENTS.get(sline, sline)}"
-            elif helpers.is_key(line):
-                split_add_key(
-                    fobj, template, f"{current_section}{current_measurement}", line
-                )
-            elif helpers.is_meas_header(line):
-                data = []
-                for mline in fobj:
-                    if not mline.strip():
-                        break
-                    data.append(list(map(lambda x: x.strip(), re.split("\t+", mline))))
-
-                header = list(map(lambda x: x.strip(), re.split("\t+", line)))
-                dkey = helpers.get_unique_dkey(
-                    template, f"{current_section}{current_measurement}/data"
-                )
-                template.update(helpers.pandas_df_to_template(
-                    dkey,
-                    pd.DataFrame(
-                        np.array(data, dtype=np.float64), columns=header
-                    )
-                ))
-            else:
-                if line.strip():
-                    print(f"Warning: line `{line.strip()}` ignored")
+            current_section, current_measurement = parse(
+                line, current_section, current_measurement
+            )
 
     return template
 

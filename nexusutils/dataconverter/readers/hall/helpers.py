@@ -89,6 +89,19 @@ def is_value_with_unit(expr: str) -> bool:
     return bool(re.search(r"^.+\s\[.+\]$", expr))
 
 
+def is_integer(expr: str) -> bool:
+    """Checks whether an expression is an integer number,
+    i.e. 3, +3 or -3. Also supports numbers in the form of 003.
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is an integer number
+    """
+    return bool(re.search(r"^[+-]?\d+$", expr))
+
+
 def is_number(expr: str) -> bool:
     """Checks whether an expression is a number,
     i.e. is of the form 0.3, 3, 1e-3, 1E5 etc.
