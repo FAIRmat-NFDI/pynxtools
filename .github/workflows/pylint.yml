@@ -24,7 +24,7 @@ jobs:
           python -m pip install -r dev-requirements.txt
       - name: pycodestyle
         run: |
-          python -m pycodestyle --ignore=E501,E701,E731 nexusutils tests --exclude=nexusutils/definitions
+          python -m pycodestyle --ignore=E501,E701,E731,W503 nexusutils tests --exclude=nexusutils/definitions
       - name: pylint
         run: |
           python -m pylint nexusutils tests
