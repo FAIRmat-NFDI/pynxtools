@@ -71,17 +71,12 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
     key, *val = re.split(r"\s*[:|=]\s*", expr)
     jval = "".join(val).strip()
 
-    def parse_field():
-        if helpers.is_value_with_unit(jval):
-            value, unit = helpers.split_value_with_unit(jval)
-            dic[f"{prefix}/{key}"] = value
-            dic[f"{prefix}/{key}/@units"] = helpers.clean(unit)
-            return
-
+    def parse_enum() -> bool:
         sprefix = prefix.strip("/")
-        wo_trailing_num = re.search(r"(.*) \d+$", sprefix)
-        if wo_trailing_num:
-            sprefix = wo_trailing_num.group(1)
+        w_trailing_num = re.search(r"(.*) \d+$", sprefix)
+        if w_trailing_num:
+            sprefix = w_trailing_num.group(1)
+
         if (
             sprefix in ENUM_FIELDS
             and key in ENUM_FIELDS[sprefix]
@@ -90,6 +85,18 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
             if jval not in ENUM_FIELDS[sprefix][key]:
                 logger.warning("Option `%s` not in `%s, %s`", jval, sprefix, key)
             dic[f"{prefix}/{key}"] = ENUM_FIELDS[sprefix][key].get(jval, "UNKNOWN")
+            return True
+
+        return False
+
+    def parse_field():
+        if helpers.is_value_with_unit(jval):
+            value, unit = helpers.split_value_with_unit(jval)
+            dic[f"{prefix}/{key}"] = value
+            dic[f"{prefix}/{key}/@units"] = helpers.clean(unit)
+            return
+
+        if parse_enum():
             return
 
         if helpers.is_integer(jval):
