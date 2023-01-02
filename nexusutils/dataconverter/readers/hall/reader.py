@@ -73,9 +73,10 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
 
     def parse_enum() -> bool:
         sprefix = prefix.strip("/")
-        w_trailing_num = re.search(r"(.*) \d+$", sprefix)
-        if w_trailing_num:
-            sprefix = w_trailing_num.group(1)
+        if 'Keithley' not in sprefix:
+            w_trailing_num = re.search(r"(.*) \d+$", sprefix)
+            if w_trailing_num:
+                sprefix = w_trailing_num.group(1)
 
         if (
             sprefix in ENUM_FIELDS
