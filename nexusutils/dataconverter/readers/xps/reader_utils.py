@@ -546,6 +546,7 @@ class XmlSpecs():
                     "mcd_tail": 0,
                     "excitation_energy": 0,
                     "kinetic_energy": 0,
+                    "kinetic_energy_base": 0,
                     "effective_workfunction": 0,
                     "scan_delta": 0,
                     "pass_energy": 0,
@@ -577,7 +578,9 @@ class XmlSpecs():
             elif "region/kinetic_energy" in key:
                 if "region/kinetic_energy_base" not in key:
                     self.entry_to_data[entry]["raw_data"]["kinetic_energy"] = val
-                else:
+                    continue
+                if "region/kinetic_energy_base" in key:
+                    self.entry_to_data[entry]["raw_data"]["kinetic_energy_base"] = val
                     continue
 
             elif "region/effective_workfunction" in key:
@@ -642,7 +645,10 @@ class XmlSpecs():
             kinetic_energy = raw_data["kinetic_energy"]
             scan_delta = raw_data["scan_delta"]
             pass_energy = raw_data["pass_energy"]
-            binding_energy_upper = excitation_energy - kinetic_energy
+            kinetic_energy_base = raw_data["kinetic_energy_base"]
+            # Adding one unit to the binding_energy_upper is added as
+            # electron comes out if energy is one unit higher
+            binding_energy_upper = excitation_energy - kinetic_energy + kinetic_energy_base + 1
 
             mcd_energy_shifts = raw_data["mcd_shifts"]
             mcd_energy_offsets = []
@@ -706,13 +712,16 @@ class XmlSpecs():
                         channel_counts[row + 1, :] = count_on_row
                         channel_counts[0, :] += count_on_row
 
+                        # Storing detector's raw counts
                         self._xps_dict["data"][entry][f"{scan_nm}_chan_{row}"] = \
                             xr.DataArray(data=channel_counts[row + 1, :],
                                          coords={"BE": binding_energy})
 
-                        self._xps_dict["data"][entry][scan_nm] = \
-                            xr.DataArray(data=channel_counts[0, :],
-                                         coords={"BE": binding_energy})
+                        # Storing callibrated and after accumulated each scan counts
+                        if row == mcd_num - 1:
+                            self._xps_dict["data"][entry][scan_nm] = \
+                                xr.DataArray(data=channel_counts[0, :],
+                                             coords={"BE": binding_energy})
                 else:
                     for row in np.arange(mcd_num):
 
@@ -721,16 +730,19 @@ class XmlSpecs():
                         count_on_row = count_on_row[0:values_per_scan]
                         channel_counts[row + 1, :] = count_on_row
 
-                        # shifting and adding all the curves over the left curve.
+                        # shifting and adding all the curves.
                         channel_counts[0, :] += count_on_row
 
+                        # Storing detector's raw counts
                         self._xps_dict["data"][entry][f"{scan_nm}_chan{row}"] = \
                             xr.DataArray(data=channel_counts[row + 1, :],
                                          coords={"BE": binding_energy})
 
-                        self._xps_dict["data"][entry][scan_nm] = \
-                            xr.DataArray(data=channel_counts[0, :],
-                                         coords={"BE": binding_energy})
+                        # Storing callibrated and after accumulated each scan counts
+                        if row == mcd_num - 1:
+                            self._xps_dict["data"][entry][scan_nm] = \
+                                xr.DataArray(data=channel_counts[0, :],
+                                             coords={"BE": binding_energy})
 
 
 class XpsDataFileParser():
