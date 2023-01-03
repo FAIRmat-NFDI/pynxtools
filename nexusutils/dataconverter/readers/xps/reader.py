@@ -36,6 +36,7 @@ np.set_printoptions(threshold=sys.maxsize)
 
 XPS_TOCKEN = "@xps_tocken:"
 XPS_DATA_TOCKEN = "@data:"
+XPS_DETECTOR_TOCKEN = "@detector_data:"
 ELN_TOCKEN = "@eln"
 
 CONVERT_DICT = {
@@ -88,7 +89,7 @@ def find_entry_and_value(xps_data_dict,
                 entry = construct_entry_name(key)
                 entries_values[entry] = val
 
-    elif dt_typ == XPS_DATA_TOCKEN:
+    elif (dt_typ == XPS_DATA_TOCKEN) or (dt_typ == XPS_DETECTOR_TOCKEN):
         # entries_values = entry:{cycle0_scan0_chan0:xr.data}
         entries_values = xps_data_dict["data"]
 
@@ -127,16 +128,20 @@ def fill_data_group(key,
             template[f"{root}@default"] = entry
 
         binding_energy_coord = None
+        chan_count = "_chan"
         for data_var in xr_data.data_vars:
             scan = data_var
-            key_indv_scn_dt = f"{modified_key}/{scan}"
+            # Collecting only accumulated counts
+            # indivisual channeltron counts goes to detector data section
+            if chan_count not in scan:
+                key_indv_scn_dt = f"{modified_key}/{scan}"
 
-            key_indv_scn_dt_unit = f"{key_indv_scn_dt}/@units"
+                key_indv_scn_dt_unit = f"{key_indv_scn_dt}/@units"
 
-            cord_nm = list(xr_data[data_var].coords)[0]
-            binding_energy_coord = np.array(xr_data[data_var][cord_nm])
-            template[key_indv_scn_dt] = xr_data[data_var].data
-            template[key_indv_scn_dt_unit] = config_dict[f"{key}/@units"]
+                coord_nm = list(xr_data[data_var].coords)[0]
+                binding_energy_coord = np.array(xr_data[data_var][coord_nm])
+                template[key_indv_scn_dt] = xr_data[data_var].data
+                template[key_indv_scn_dt_unit] = config_dict[f"{key}/@units"]
 
         key_data = f"{modified_key}/data"
         key_data_unit = f"{key_data}/@units"
@@ -169,6 +174,37 @@ def fill_data_group(key,
         template[key_nxclass] = "NXdata"
 
 
+def fill_detector_group(key,
+                        entries_values,
+                        config_dict,
+                        template,
+                        entry_set):
+    """Fill out fileds and attributes for NXdetector/NXdata"""
+
+    for entry, xr_data in entries_values.items():
+        entry_set.add(entry)
+
+        chan_count = "_chan"
+
+        # Iteration over scan
+        for data_var in xr_data.data_vars:
+
+            if chan_count in data_var:
+                detector_num = data_var.split("_chan")[-1]
+                scan_num = data_var.split("_scan")[-1].split("_chan")[0]
+                modified_key = key.replace("entry", entry)
+                modified_key = modified_key.replace("[detector]", f"[detector{detector_num}]")
+                modified_key = modified_key.replace("[data]", f"[scan_{scan_num}]")
+                # key_nxclass = modified_key.replace("/raw", "/@NX_class")
+                modified_key_unit = modified_key + "/@units"
+
+                template[modified_key] = xr_data[data_var].data
+                key_indv_chan_sginal = modified_key.replace("/raw", "/@signal")
+                template[key_indv_chan_sginal] = "raw"
+                # template[key_nxclass] = "NXdata"
+                template[modified_key_unit] = config_dict[f"{key}/@units"]
+
+
 def fill_template_with_xps_data(config_dict,
                                 xps_data_dict,
                                 template,
@@ -177,7 +213,6 @@ def fill_template_with_xps_data(config_dict,
         and store them into template. We use searching_keys
         for separating the data from xps_data_dict.
     """
-
     for key, value in config_dict.items():
 
         if XPS_DATA_TOCKEN in value:
@@ -186,8 +221,15 @@ def fill_template_with_xps_data(config_dict,
                                                   key_part,
                                                   dt_typ=XPS_DATA_TOCKEN)
 
-            fill_data_group(key, entries_values, config_dict,
-                            template, entry_set)
+            fill_data_group(key, entries_values, config_dict, template, entry_set)
+
+        if XPS_DETECTOR_TOCKEN in value:
+            key_part = value.split(XPS_DATA_TOCKEN)[-1]
+            entries_values = find_entry_and_value(xps_data_dict,
+                                                  key_part,
+                                                  dt_typ=XPS_DETECTOR_TOCKEN)
+
+            fill_detector_group(key, entries_values, config_dict, template, entry_set)
 
         if XPS_TOCKEN in value:
             tocken = value.split(XPS_TOCKEN)[-1]
@@ -254,6 +296,7 @@ class XPSReader(BaseReader):
 
         xps_data_dict: Dict[str, Any] = {}
         eln_data_dict: Dict[str, Any] = {}
+        # Track entries for using for eln data
         entry_set: Set[str] = set()
 
         for file in file_paths:
