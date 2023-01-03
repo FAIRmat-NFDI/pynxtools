@@ -284,12 +284,14 @@ def fill_template_with_eln_data(eln_data_dict,
                 # Do for all entries
                 for entry in ENTRY_SET:
                     modified_key = key.replace("[entry]", f"[{entry}]")
-                    template[modified_key] = field_value
                     # Do for all detector
-                    if "detector" in key:
+                    if "[detector]" in key:
                         for detector in DETECTOR_SET:
                             detr_key = modified_key.replace("[detector]", f"[{detector}]")
                             template[detr_key] = field_value
+                    else:
+                        template[modified_key] = field_value
+
 
 
 # pylint: disable=too-few-public-methods
