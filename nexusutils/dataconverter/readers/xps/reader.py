@@ -38,6 +38,11 @@ XPS_TOCKEN = "@xps_tocken:"
 XPS_DATA_TOCKEN = "@data:"
 XPS_DETECTOR_TOCKEN = "@detector_data:"
 ELN_TOCKEN = "@eln"
+# Track entries for using for eln data
+ENTRY_SET: Set[str] = set()
+DETECTOR_SET: Set[str] = set()
+POSSIBLE_ENTRY_PATH: Dict = {}
+
 
 CONVERT_DICT = {
     'Instrument': 'INSTRUMENT[instrument]',
@@ -50,7 +55,8 @@ CONVERT_DICT = {
     'Data': 'DATA[data]',
     'Source': 'SOURCE[source]',
     'Collectioncolumn': 'COLLECTIONCOLUMN[collectioncolumn]',
-    'Energydispersion': 'ENERGYDISPERSION[energydispersion]'
+    'Energydispersion': 'ENERGYDISPERSION[energydispersion]',
+    'Detector': 'DETECTOR[detector]'
 }
 
 REPLACE_NESTED: Dict[str, str] = {}
@@ -101,14 +107,14 @@ def fill_data_group(key,
                     entries_values,
                     config_dict,
                     template,
-                    entry_set):
+                    ENTRY_SET):
     """Fill out fileds and attributes for NXdata"""
 
     survey_count_ = 0
     count = 0
 
     for entry, xr_data in entries_values.items():
-        entry_set.add(entry)
+        ENTRY_SET.add(entry)
         modified_key = key.replace("entry", entry)
         modified_key = modified_key.replace("[data]/data", "[data]")
         root = key[0]
@@ -178,11 +184,11 @@ def fill_detector_group(key,
                         entries_values,
                         config_dict,
                         template,
-                        entry_set):
+                        ENTRY_SET):
     """Fill out fileds and attributes for NXdetector/NXdata"""
 
     for entry, xr_data in entries_values.items():
-        entry_set.add(entry)
+        ENTRY_SET.add(entry)
 
         chan_count = "_chan"
 
@@ -191,10 +197,13 @@ def fill_detector_group(key,
 
             if chan_count in data_var:
                 detector_num = data_var.split("_chan")[-1]
+                detector_nm = f"detector{detector_num}"
+                DETECTOR_SET.add(detector_nm)
                 scan_num = data_var.split("_scan")[-1].split("_chan")[0]
+                scan_nm = f"scan_{scan_num}"
                 modified_key = key.replace("entry", entry)
-                modified_key = modified_key.replace("[detector]", f"[detector{detector_num}]")
-                modified_key = modified_key.replace("[data]", f"[scan_{scan_num}]")
+                modified_key = modified_key.replace("[detector]", f"[{detector_nm}]")
+                modified_key = modified_key.replace("[data]", f"[{scan_nm}]")
                 # key_nxclass = modified_key.replace("/raw", "/@NX_class")
                 modified_key_unit = modified_key + "/@units"
 
@@ -208,7 +217,7 @@ def fill_detector_group(key,
 def fill_template_with_xps_data(config_dict,
                                 xps_data_dict,
                                 template,
-                                entry_set):
+                                ENTRY_SET):
     """Collect the xps data from xps_data_dict
         and store them into template. We use searching_keys
         for separating the data from xps_data_dict.
@@ -221,7 +230,7 @@ def fill_template_with_xps_data(config_dict,
                                                   key_part,
                                                   dt_typ=XPS_DATA_TOCKEN)
 
-            fill_data_group(key, entries_values, config_dict, template, entry_set)
+            fill_data_group(key, entries_values, config_dict, template, ENTRY_SET)
 
         if XPS_DETECTOR_TOCKEN in value:
             key_part = value.split(XPS_DATA_TOCKEN)[-1]
@@ -229,7 +238,7 @@ def fill_template_with_xps_data(config_dict,
                                                   key_part,
                                                   dt_typ=XPS_DETECTOR_TOCKEN)
 
-            fill_detector_group(key, entries_values, config_dict, template, entry_set)
+            fill_detector_group(key, entries_values, config_dict, template, ENTRY_SET)
 
         if XPS_TOCKEN in value:
             tocken = value.split(XPS_TOCKEN)[-1]
@@ -237,7 +246,7 @@ def fill_template_with_xps_data(config_dict,
                                                   tocken,
                                                   dt_typ=XPS_TOCKEN)
             for entry, ent_value in entries_values.items():
-                entry_set.add(entry)
+                ENTRY_SET.add(entry)
                 modified_key = key.replace("[entry]", f"[{entry}]")
                 template[modified_key] = ent_value
                 try:
@@ -250,7 +259,7 @@ def fill_template_with_xps_data(config_dict,
 def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
                                 template,
-                                entry_set):
+                                ENTRY_SET):
     """Fill the template from provided eln data"""
 
     for key, val in config_dict.items():
@@ -259,7 +268,7 @@ def fill_template_with_eln_data(eln_data_dict,
             field_value = eln_data_dict[key]
             if field_value is None:
                 continue
-            for entry in entry_set:
+            for entry in ENTRY_SET:
                 modified_key = key.replace("[entry]", f"[{entry}]")
 
                 try:
@@ -272,9 +281,15 @@ def fill_template_with_eln_data(eln_data_dict,
         elif key in list(eln_data_dict.keys()):
             field_value = eln_data_dict[key]
             if field_value is not None:
-                for entry in entry_set:
+                # Do for all entries
+                for entry in ENTRY_SET:
                     modified_key = key.replace("[entry]", f"[{entry}]")
                     template[modified_key] = field_value
+                    # Do for all detector
+                    if "detector" in key:
+                        for detector in DETECTOR_SET:
+                            detr_key = modified_key.replace("[detector]", f"[{detector}]")
+                            template[detr_key] = field_value
 
 
 # pylint: disable=too-few-public-methods
@@ -296,8 +311,6 @@ class XPSReader(BaseReader):
 
         xps_data_dict: Dict[str, Any] = {}
         eln_data_dict: Dict[str, Any] = {}
-        # Track entries for using for eln data
-        entry_set: Set[str] = set()
 
         for file in file_paths:
             file_ext = os.path.splitext(file)[1]
@@ -311,7 +324,6 @@ class XPSReader(BaseReader):
                             REPLACE_NESTED
                         )
                     )
-
             elif file_ext == ".xml":
                 data_dict = XpsDataFileParser([file]).get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
@@ -322,12 +334,12 @@ class XPSReader(BaseReader):
         fill_template_with_xps_data(config_dict,
                                     xps_data_dict,
                                     template,
-                                    entry_set)
+                                    ENTRY_SET)
         if eln_data_dict:
             fill_template_with_eln_data(eln_data_dict,
                                         config_dict,
                                         template,
-                                        entry_set)
+                                        ENTRY_SET)
         else:
             raise ValueError("Eln file must be submited with some required fileds and attributes.")
 
