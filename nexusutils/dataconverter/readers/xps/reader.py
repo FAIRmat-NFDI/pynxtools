@@ -95,7 +95,7 @@ def find_entry_and_value(xps_data_dict,
                 entry = construct_entry_name(key)
                 entries_values[entry] = val
 
-    elif (dt_typ == XPS_DATA_TOCKEN) or (dt_typ == XPS_DETECTOR_TOCKEN):
+    elif dt_typ in (XPS_DATA_TOCKEN, XPS_DETECTOR_TOCKEN):
         # entries_values = entry:{cycle0_scan0_chan0:xr.data}
         entries_values = xps_data_dict["data"]
 
@@ -107,14 +107,14 @@ def fill_data_group(key,
                     entries_values,
                     config_dict,
                     template,
-                    ENTRY_SET):
+                    entry_set):
     """Fill out fileds and attributes for NXdata"""
 
     survey_count_ = 0
     count = 0
 
     for entry, xr_data in entries_values.items():
-        ENTRY_SET.add(entry)
+        entry_set.add(entry)
         modified_key = key.replace("entry", entry)
         modified_key = modified_key.replace("[data]/data", "[data]")
         root = key[0]
@@ -184,11 +184,11 @@ def fill_detector_group(key,
                         entries_values,
                         config_dict,
                         template,
-                        ENTRY_SET):
+                        entry_set):
     """Fill out fileds and attributes for NXdetector/NXdata"""
 
     for entry, xr_data in entries_values.items():
-        ENTRY_SET.add(entry)
+        entry_set.add(entry)
 
         chan_count = "_chan"
 
@@ -217,7 +217,7 @@ def fill_detector_group(key,
 def fill_template_with_xps_data(config_dict,
                                 xps_data_dict,
                                 template,
-                                ENTRY_SET):
+                                entry_set):
     """Collect the xps data from xps_data_dict
         and store them into template. We use searching_keys
         for separating the data from xps_data_dict.
@@ -230,7 +230,7 @@ def fill_template_with_xps_data(config_dict,
                                                   key_part,
                                                   dt_typ=XPS_DATA_TOCKEN)
 
-            fill_data_group(key, entries_values, config_dict, template, ENTRY_SET)
+            fill_data_group(key, entries_values, config_dict, template, entry_set)
 
         if XPS_DETECTOR_TOCKEN in value:
             key_part = value.split(XPS_DATA_TOCKEN)[-1]
@@ -238,7 +238,7 @@ def fill_template_with_xps_data(config_dict,
                                                   key_part,
                                                   dt_typ=XPS_DETECTOR_TOCKEN)
 
-            fill_detector_group(key, entries_values, config_dict, template, ENTRY_SET)
+            fill_detector_group(key, entries_values, config_dict, template, entry_set)
 
         if XPS_TOCKEN in value:
             tocken = value.split(XPS_TOCKEN)[-1]
@@ -246,7 +246,7 @@ def fill_template_with_xps_data(config_dict,
                                                   tocken,
                                                   dt_typ=XPS_TOCKEN)
             for entry, ent_value in entries_values.items():
-                ENTRY_SET.add(entry)
+                entry_set.add(entry)
                 modified_key = key.replace("[entry]", f"[{entry}]")
                 template[modified_key] = ent_value
                 try:
@@ -259,7 +259,7 @@ def fill_template_with_xps_data(config_dict,
 def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
                                 template,
-                                ENTRY_SET):
+                                entry_set):
     """Fill the template from provided eln data"""
 
     for key, val in config_dict.items():
@@ -268,7 +268,7 @@ def fill_template_with_eln_data(eln_data_dict,
             field_value = eln_data_dict[key]
             if field_value is None:
                 continue
-            for entry in ENTRY_SET:
+            for entry in entry_set:
                 modified_key = key.replace("[entry]", f"[{entry}]")
 
                 try:
@@ -282,7 +282,7 @@ def fill_template_with_eln_data(eln_data_dict,
             field_value = eln_data_dict[key]
             if field_value is not None:
                 # Do for all entries
-                for entry in ENTRY_SET:
+                for entry in entry_set:
                     modified_key = key.replace("[entry]", f"[{entry}]")
                     # Do for all detector
                     if "[detector]" in key:
@@ -291,7 +291,6 @@ def fill_template_with_eln_data(eln_data_dict,
                             template[detr_key] = field_value
                     else:
                         template[modified_key] = field_value
-
 
 
 # pylint: disable=too-few-public-methods
