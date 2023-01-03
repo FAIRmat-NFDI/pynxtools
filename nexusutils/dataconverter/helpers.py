@@ -389,6 +389,10 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
+    # nxdl_path_set helps to skip valisation check on same type of nxdl signiture
+    # This reduces huge runing time
+    nxdl_path_set = set()
+
     # Make sure all required fields exist.
     ensure_all_required_fields_exist(template, data)
 
@@ -406,6 +410,9 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
+            if nxdl_path in nxdl_path_set:
+                continue
+
             elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
             # Only check for validation in the NXDL if we did find the entry
@@ -422,6 +429,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 if not is_valid_enum:
                     raise Exception(f"The value at {path} should be"
                                     f" one of the following strings: {enums}")
+            nxdl_path_set.add(nxdl_path)
 
     return True
 
