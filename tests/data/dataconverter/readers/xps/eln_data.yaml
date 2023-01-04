@@ -2,10 +2,11 @@ Instrument:
   Analyser:
     Collectioncolumn:
       scheme: "Angular dispersive"
+      mode: "Unknown"
     description: "hemispherical"
     name: null
     Energydispersion:
-      entrance_slit:
+      entrance_slit: "Unknown"
       scheme: "hemispherical"
       pass_energy:
         unit: null
