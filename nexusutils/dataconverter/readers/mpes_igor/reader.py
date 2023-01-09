@@ -16,11 +16,13 @@
 #
 """Igor binarywave file reader into NXmpes implementation for the DataConverter."""
 from typing import List, Dict, Any
+from igor import binarywave
+
 from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
 from nexusutils.dataconverter.readers.utils import parse_json, parse_yml
 
 
-def read_igw(fname: str) -> Dict[str, Any]:
+def read_ibw(fname: str) -> Dict[str, Any]:
     """Parses igor binarywave files into a data template.
 
     Args:
@@ -29,7 +31,11 @@ def read_igw(fname: str) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: The template filled with the values from the igw file.
     """
-    return {}
+    template: Dict[str, Any] = {}
+    ibw = binarywave.load(fname)
+
+    template["/entry/data"] = ibw['wave']['wData']
+    return template
 
 
 # pylint: disable=too-few-public-methods
@@ -37,9 +43,9 @@ class MpesIgorReader(YamlJsonReader):
     """HallReader implementation for the DataConverter
     to convert Hall data to Nexus."""
 
-    supported_nxdls: List[str] = ["NXmpes"]
+    supported_nxdls: List[str] = ["NXroot"]
     extensions = {
-        ".igw": read_igw,
+        ".ibw": read_ibw,
         ".json": parse_json,
         ".yml": lambda fname: parse_yml(fname, None, None),
         ".yaml": lambda fname: parse_yml(fname, None, None),
