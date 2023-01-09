@@ -97,6 +97,8 @@ idna==3.4
     # via
     #   anyio
     #   requests
+igor==0.3
+    # via nexusutils (pyproject.toml)
 imageio==2.22.1
     # via
     #   hyperspy
