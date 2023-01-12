@@ -41,7 +41,7 @@ title: "XPS Experiment"
 start_time: "2022-04-08T11:47:02.0200Z"
 definition:
   value: "NXmpes"
-  version: 1.0
+  version: "1.0"
 User:
   name: "Ahmed Mansour"
   email: "amansour@physik.hu-berlin.de"
