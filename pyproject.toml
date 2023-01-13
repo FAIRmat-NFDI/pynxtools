@@ -46,7 +46,9 @@ dev = [
     "pytest-cov",
     "structlog",
     "types-pyyaml",
-    "types-pytz"
+    "types-pytz",
+    "typed-ast>=1.4.2",
+    "astroid>=2.5.1"
 ]
 
 [project.scripts]
