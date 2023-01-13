@@ -19,8 +19,6 @@ classifiers = [
 ]
 dependencies = [
     "click>=7.1.2",
-    "typed-ast>=1.4.2",
-    "astroid>=2.5.1",
     "h5py>=3.6.0",
     "xarray>=0.20.2",
     "PyYAML>=6.0",
