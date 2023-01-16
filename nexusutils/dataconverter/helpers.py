@@ -389,13 +389,12 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
-    # nxdl_path_set helps to skip valisation check on same type of nxdl signiture
-    # This reduces huge runing time
+    # nxdl_path_set helps to skip validation check on the same type of nxdl signiture
+    # This reduces huge amount of runing time
     nxdl_path_set = set()
 
     # Make sure all required fields exist.
     ensure_all_required_fields_exist(template, data)
-
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
