@@ -162,10 +162,13 @@ CONVERT_DICT = {
     'Beam': 'BEAM[beam]',
     'unit': '@units',
     'Sample': 'SAMPLE[sample]',
+    'Source': 'SOURCE[source]',
     'User': 'USER[user]'
 }
 
 REPLACE_NESTED = {
+    'SOURCE[source]/Probe': 'SOURCE[source]',
+    'SOURCE[source]/Pump': 'SOURCE[source_pump]',
     'BEAM[beam]/Probe': 'BEAM[beam]',
     'BEAM[beam]/Pump': 'BEAM[beam_pump]',
     'sample_history': 'sample_history/description'
@@ -201,10 +204,8 @@ def handle_h5_and_json_file(file_paths, objects):
                 "..",
                 "..",
                 "..",
-                "..",
                 "tests",
                 "data",
-                "tools",
                 "dataconverter",
                 "readers",
                 "mpes",
