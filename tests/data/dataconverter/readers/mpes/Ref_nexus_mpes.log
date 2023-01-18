@@ -2208,7 +2208,7 @@ DEBUG -
              hemispherics, drift energy for tofs.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/energydispersion/pass_energy@units)
-DEBUG - value: ev 
+DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXenergydispersion', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/ENERGYDISPERSION/pass_energy
