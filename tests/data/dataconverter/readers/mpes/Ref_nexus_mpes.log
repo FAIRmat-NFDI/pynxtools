@@ -3431,7 +3431,7 @@ DEBUG -
 
                 .. _symmetry-guided distortion correction: https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub
         
-DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (6 members)>
+DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
@@ -3481,18 +3481,6 @@ DEBUG - documentation (NXcalibration.nxdl.xml:/calibrated_axis):
 DEBUG - 
              A vector representing the axis after calibration, matching the data length
         
-DEBUG - ===== FIELD (//entry/process/energy_calibration/coefficients): <HDF5 dataset "coefficients": shape (3,), type "<f8">
-DEBUG - value: [ 6.33783929e-01  8.68180227e-07 -2.41647784e+01] 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/coefficients
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/coefficients):
-DEBUG - 
-             For non-linear energy calibrations, e.g. in a TOF, a polynomial function is fit
-             to a set of features (peaks) at well defined energy positions to determine
-             E(TOF). Here we can store the array of fit coefficients.
-        
 DEBUG - ===== FIELD (//entry/process/energy_calibration/fit_function): <HDF5 dataset "fit_function": shape (), type "|O">
 DEBUG - value: b'(a0/(x0-a1))**2 + a2' 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_CHAR']
@@ -3509,16 +3497,6 @@ DEBUG -
              Use x0, x1, ..., xn for the variables.
              
              The formula should be numpy compliant.
-        
-DEBUG - ===== FIELD (//entry/process/energy_calibration/offset): <HDF5 dataset "offset": shape (), type "<f8">
-DEBUG - value: -24.164778378162257 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/offset
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
-DEBUG - 
-             For linear calibration. Offset parameter.
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/original_axis): <HDF5 dataset "original_axis": shape (900,), type "<f8">
 DEBUG - value: [ 60027.77777778  60083.33333333  60138.88888889  60194.44444444 ...
@@ -4182,7 +4160,7 @@ NXnote.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/preparation_description/description): <HDF5 dataset "description": shape (), type "|O">
-DEBUG - value: b'Here should be a description of hte preparation procedure.' 
+DEBUG - value: b'Here should be a description of the preparation procedure.' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXnote', 'NX_CHAR']
 DEBUG - classes:
 NXnote.nxdl.xml:/description
