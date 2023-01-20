@@ -7,8 +7,8 @@ Instrument:
     spatial_resolution: 10.0
   Manipulator:
     sample_temperature:
-      unit: K
-      value: 300.0
+      unit: °C
+      value: 26.850000000000023
   Source:
     Probe:
       frequency:
