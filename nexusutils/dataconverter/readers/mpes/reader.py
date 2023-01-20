@@ -159,6 +159,7 @@ def iterate_dictionary(dic, key_string):
 CONVERT_DICT = {
     'Instrument': 'INSTRUMENT[instrument]',
     'Analyzer': 'ELECTRONANALYSER[electronanalyser]',
+    'Manipulator': 'MANIPULATOR[manipulator]',
     'Beam': 'BEAM[beam]',
     'unit': '@units',
     'Sample': 'SAMPLE[sample]',
