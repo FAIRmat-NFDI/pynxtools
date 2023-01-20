@@ -5,6 +5,10 @@ Instrument:
     momentum_resolution: 0.08
     slow_axes: delay
     spatial_resolution: 10.0
+  Manipulator:
+    sample_temperature:
+      unit: K
+      value: 300.0
   Source:
     Probe:
       frequency:
@@ -82,9 +86,6 @@ Sample:
     unit: bar
     value: 5.0e-14
   sample_history: Cleaved
-  temperature:
-    unit: °C
-    value: 26.850000000000023
 User:
   address: Faradayweg 4-6, 14915 Berlin
   affiliation: Fritz Haber Institute of the Max Planck Society
