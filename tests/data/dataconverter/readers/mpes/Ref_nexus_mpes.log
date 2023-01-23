@@ -513,7 +513,7 @@ DEBUG - documentation (NXentry.nxdl.xml:/experiment_laboratory):
 DEBUG - 
              Name of the laboratory or beamline
         
-DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (8 members)>
+DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (10 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT
@@ -2128,7 +2128,7 @@ DEBUG -
              Number of raw active elements in each dimension. Important for swept scans.
         
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<f8">
-DEBUG - value: 0.14 
+DEBUG - value: 110.0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution
@@ -2144,7 +2144,7 @@ DEBUG -
              Energy resolution of the electron analyser (FWHM of gaussian broadening)
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/energy_resolution@units)
-DEBUG - value: eV 
+DEBUG - value: meV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution
@@ -2558,7 +2558,7 @@ DEBUG -
 				should be chosen.
 			
 DEBUG - ===== FIELD (//entry/instrument/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<f8">
-DEBUG - value: 0.14 
+DEBUG - value: 140.0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/energy_resolution
@@ -2571,7 +2571,7 @@ DEBUG -
              Energy resolution of the experiment (FWHM or gaussian broadening)
         
 DEBUG - ===== ATTRS (//entry/instrument/energy_resolution@units)
-DEBUG - value: eV 
+DEBUG - value: meV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/energy_resolution
@@ -3312,6 +3312,22 @@ DEBUG - documentation (NXsource.nxdl.xml:/type):
 DEBUG - 
              Type of radiation source (pick one from the enumerated list and spell exactly)
         
+DEBUG - ===== FIELD (//entry/instrument/temporal_resolution): <HDF5 dataset "temporal_resolution": shape (), type "<f8">
+DEBUG - value: 35.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/temporal_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXinstrument.nxdl.xml:/temporal_resolution):
+DEBUG - 
+             Temporal resolution of the experiment (FWHM)
+        
+DEBUG - ===== ATTRS (//entry/instrument/temporal_resolution@units)
+DEBUG - value: fs 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/temporal_resolution
+DEBUG - @units [NX_TIME]
 DEBUG - ===== GROUP (//entry/process [NXmpes::/NXentry/NXprocess]): <HDF5 group "/entry/process" (5 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess']
 DEBUG - classes:
