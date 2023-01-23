@@ -4,6 +4,7 @@
 
 import os
 import xml.etree.ElementTree as ET
+from functools import lru_cache
 from glob import glob
 import sys
 import logging
@@ -22,6 +23,14 @@ def get_app_defs_names():
                              f"contributed_definitions{os.sep}*.nxdl*")
     files = glob(app_def_path_glob) + glob(contrib_def_path_glob)
     return [os.path.basename(file).split(".")[0] for file in files] + ["NXroot"]
+
+
+@lru_cache(maxsize=None)
+def get_xml_root(file_path):
+    """Reducing I/O time by caching technique"""
+
+    root = ET.parse(file_path).getroot()
+    return root
 
 
 def get_nexus_definitions_path():
@@ -110,8 +119,7 @@ If its category attribute is 'base', then it is added to the list. """
                                     'contributed_definitions', '*.nxdl.xml'))
     nx_clss = []
     for nexus_file in base_classes + applications + contributed:
-        tree = ET.parse(nexus_file)
-        root = tree.getroot()
+        root = get_xml_root(nexus_file)
         if root.attrib['category'] == 'base':
             nx_clss.append(str(nexus_file[nexus_file.rindex(os.sep) + 1:])[:-9])
     nx_clss = sorted(nx_clss)
@@ -121,8 +129,7 @@ If its category attribute is 'base', then it is added to the list. """
 def get_nx_units():
     """Read unit kinds from the NeXus definition/nxdlTypes.xsd file"""
     filepath = f"{get_nexus_definitions_path()}{os.sep}nxdlTypes.xsd"
-    tree = ET.parse(filepath)
-    root = tree.getroot()
+    root = get_xml_root(filepath)
     units_and_type_list = []
     for child in root:
         for i in child.attrib.values():
@@ -144,8 +151,7 @@ def get_nx_units():
 def get_nx_attribute_type():
     """Read attribute types from the NeXus definition/nxdlTypes.xsd file"""
     filepath = get_nexus_definitions_path() + '/nxdlTypes.xsd'
-    tree = ET.parse(filepath)
-    root = tree.getroot()
+    root = get_xml_root(filepath)
     units_and_type_list = []
     for child in root:
         for i in child.attrib.values():
@@ -746,6 +752,7 @@ def helper_get_inherited_nodes(hdf_info, elist, pind, attr):
     return hdf_path, hdf_node, hdf_class_path, elist, pind, attr, html_name
 
 
+@lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,
                         nx_name: str = None, elem: ET.Element = None,
                         hdf_node=None, attr=False):
