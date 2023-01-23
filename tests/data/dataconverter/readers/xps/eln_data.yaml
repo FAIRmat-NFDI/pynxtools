@@ -24,7 +24,13 @@ Instrument:
     type: "Synchrotron X-ray Source"
     probe: "x-ray"
 Sample:
-  name: null
+  name: "PBTTT"
+  chemical_formula: "(C42H62S4)n"
+  Sample_Component:
+    name: null
+    chemical_formula: null
+    density: null
+    description: null
   preparation_description: "From third party"
   temperature:
     unit: "K"
@@ -33,6 +39,8 @@ Sample:
   gas_pressure:
     unit: "Pa"
     value: 101325.0
+  density: null
+  description: "A polymer material called PBTTT with chemical name  poly[2,5-bis(3-dodecylthiophen-2-yl)thieno[3,2-b]thiophene]."
 start_time: null
 definition:
   version: null

@@ -51,6 +51,7 @@ CONVERT_DICT = {
     'unit': '@units',
     'version': '@version',
     'Sample': 'SAMPLE[sample]',
+    'Sample_Component': 'SAMPLE_COMPONENT[sample_component]',
     'User': 'USER[user]',
     'Data': 'DATA[data]',
     'Source': 'SOURCE[source]',
