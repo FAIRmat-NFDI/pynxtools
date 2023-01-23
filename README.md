@@ -66,13 +66,6 @@ python -m pip install -e .
 python -m pip install -e .[dev]
 ```
 
-To be able to run jupyerlab with the NeXus file viewer H5Web, you also need the foolwing packages
-
-```
-python -m pip install jupyterlab
-python -m pip install jupyterlab_h5web[full]==6.0.1
-```
-
 ## Test this software
 Especially relevant for developers, there exists a basic test framework written in
 [pytest](https://docs.pytest.org/en/stable/) which can be used as follows:

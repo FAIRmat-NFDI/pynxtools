@@ -22,8 +22,11 @@
 
 # pylint: disable=E1101
 
+import git
+
+
 NX_APM_ADEF_NAME = 'NXapm'
 NX_APM_ADEF_VERSION = 'nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951'
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
 NX_APM_EXEC_NAME = 'dataconverter/reader/apm.py'
-NX_APM_EXEC_VERSION = 'add gitsha of parent repo automatically'
+NX_APM_EXEC_VERSION = get_repo_last_commit()  # 'add gitsha of parent repo automatically'

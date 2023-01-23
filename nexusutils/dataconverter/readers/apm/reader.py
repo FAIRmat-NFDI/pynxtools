@@ -41,6 +41,9 @@ from nexusutils.dataconverter.readers.apm.utils.apm_nomad_oasis_eln_io \
 from nexusutils.dataconverter.readers.apm.utils.apm_nexus_plots \
     import apm_default_plot_generator
 
+from nexusutils.dataconverter.readers.apm.utils.apm_example_data \
+    import ApmCreateExampleData
+
 # each reconstruction should be stored as an own file because for commercial
 # atom probe microscopes it is currently impossible to get less processed data
 # from the microscopes
@@ -65,6 +68,25 @@ class ApmReader(BaseReader):
              objects: Tuple[Any] = None) -> dict:
         """Read data from given file, return filled template dictionary apm."""
         template.clear()
+
+        create_example_data_for_dev_purposes = True
+
+        if create_example_data_for_dev_purposes is True:
+            print('Creating a synthesized dataset...')
+            synthetic = ApmCreateExampleData()
+            synthetic.composition_to_ranging_definitions(template)
+            synthetic.report(template)
+            print("Creating default plottable data...")
+            apm_default_plot_generator(template)
+
+            # reporting of what has not been properly defined at the reader level
+            # print("\n\nDebugging...")
+            # for keyword in template.keys():
+            #     print(keyword + "...")
+            #     print(template[keyword])
+
+            return template
+        # else usual way parsing actual data
 
         case = ApmUseCaseSelector(file_paths)
         assert case.is_valid is True, \

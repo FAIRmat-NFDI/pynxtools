@@ -24,6 +24,18 @@
 
 import numpy as np
 
+import git
+
+
+def get_repo_last_commit() -> str:
+    """Identify the last commit to the repository."""
+    try:
+        repo = git.Repo(search_parent_directories=True)
+        sha = repo.head.object.hexsha
+        return str(sha)
+    except Exception:
+        return "unknown commit id"
+
 
 def create_default_plot_reconstruction(template: dict) -> dict:
     """Compute on-the-fly, add, and give path to discretized reconstruction."""
@@ -39,23 +51,21 @@ def create_default_plot_reconstruction(template: dict) -> dict:
         bounds[i, 0] = np.min(xyz[:, i])
         bounds[i, 1] = np.max(xyz[:, i])
     # make the bounding box a quadric prism
-    xymax = np.ceil(np.max(np.array(
-        np.fabs(bounds[0:1, 0])[0],
-        np.fabs(bounds[0:1, 1])[0])))
-    zmin = np.floor(bounds[2, 0])
-    zmax = np.ceil(bounds[2, 1])
-
-    xedges = np.linspace(-1.0 * xymax, +1.0 * xymax,
-                         num=int(np.ceil(2.0 * xymax / resolution)) + 1,
+    # xymax = np.ceil(np.max(np.array(
+    #     np.fabs(bounds[0:1, 0])[0],
+    #     np.fabs(bounds[0:1, 1])[0])))
+    xmi = np.floor(bounds[0, 0])
+    xmx = np.ceil(bounds[0, 1])
+    xedges = np.linspace(xmi, xmx, num=int(np.ceil((xmx - xmi) / resolution)) + 1,
                          endpoint=True)
-    # for debugging correct cuboidal storage order make prism a cuboid
-    # yedges = np.linspace(-9 + -1.0 * xymax, +9 + +1.0 * xymax,
-    #                      num=int(np.ceil((+9 +xymax - (-xymax -9))
-    #                                      / resolution))+1,
-    #                      endpoint=True)
-    yedges = xedges
-    zedges = np.linspace(zmin, zmax,
-                         num=int(np.ceil((zmax - zmin) / resolution)) + 1,
+    ymi = np.floor(bounds[1, 0])
+    ymx = np.ceil(bounds[1, 1])
+    yedges = np.linspace(ymi, ymx, num=int(np.ceil((ymx - ymi) / resolution)) + 1,
+                         endpoint=True)
+    zmi = np.floor(bounds[2, 0])
+    zmx = np.ceil(bounds[2, 1])
+    zedges = np.linspace(zmi, zmx,
+                         num=int(np.ceil((zmx - zmi) / resolution)) + 1,
                          endpoint=True)
 
     hist3d = np.histogramdd((xyz[:, 0], xyz[:, 1], xyz[:, 2]),
@@ -74,7 +84,7 @@ def create_default_plot_reconstruction(template: dict) -> dict:
     template[trg + "program"] \
         = "nomad-parser-nexus/apm/reader.py"
     template[trg + "program/@version"] \
-        = "add current GitCommit message"  # NEW ISSUE
+        = get_repo_last_commit()
 
     trg += "DATA[data]/"
     template[trg + "@signal"] = "counts"
