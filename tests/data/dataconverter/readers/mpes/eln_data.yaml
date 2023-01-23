@@ -1,14 +1,29 @@
 title: Valence Band Dynamics - 1030 nm linear p-polarized pump, 0.6 mJ/cm2 absorbed fluence
 Instrument:
+  energy_resolution:
+    unit: meV
+    value: 140.0
+  momentum_resolution:
+    unit: 1/angstrom
+    value: 0.08
+  temporal_resolution:
+    unit: fs
+    value: 35.0
   Analyzer:
-    energy_resolution: 110.0
-    momentum_resolution: 0.08
+    energy_resolution:
+      unit: eV
+      value: 110.0
+    momentum_resolution:
+      unit: 1/angstrom
+      value: 0.08
     slow_axes: delay
-    spatial_resolution: 10.0
+    spatial_resolution:
+      unit: µm
+      value: 10.0
   Manipulator:
     sample_temperature:
-      unit: °C
-      value: 26.850000000000023
+      unit: K
+      value: 300.0
   Source:
     Probe:
       frequency:
@@ -27,36 +42,36 @@ Instrument:
   Beam:
     Probe:
       extent:
-        unit: m
+        unit: µm
         value:
-          - 7.999999999999999e-05
-          - 7.999999999999999e-05
+        - 80.0
+        - 80.0
       incident_energy:
-        unit: J
-        value: 3.4767232957799996e-18
+        unit: eV
+        value: 21.7
       incident_energy_spread:
-        unit: J
-        value: 1.7623942974e-20
+        unit: eV
+        value: 0.11
       incident_polarization:
         - 1
         - 1
         - 0
         - 0
       pulse_duration:
-        unit: s
-        value: 2.0000000000000003e-14
+        unit: fs
+        value: 20.0
     Pump:
       extent:
-        unit: m
+        unit: µm
         value:
-          - 0.00022999999999999998
-          - 0.000265
+        - 230.0
+        - 265.0
       incident_energy:
-        unit: J
-        value: 2.4833737826999997e-19
+        unit: eV
+        value: 1.55
       incident_energy_spread:
-        unit: J
-        value: 1.2817413071999999e-20
+        unit: eV
+        value: 0.08
       incident_polarization:
         - 1
         - -1
@@ -72,11 +87,11 @@ Instrument:
         unit: µJ
         value: 0.6
       fluence:
-        unit: mJ/cm^2
+        unit: mJ / cm ** 2
         value: 0.15
       pulse_duration:
-        unit: s
-        value: 3.5e-14
+        unit: fs
+        value: 35.0
 Sample:
   chemical_formula: WSe2
   description: Sample
