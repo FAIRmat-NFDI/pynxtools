@@ -103,6 +103,7 @@ def find_entry_and_value(xps_data_dict,
 
 
 # pylint: disable=too-many-locals
+# pylint: disable=too-many-statements
 def fill_data_group(key,
                     entries_values,
                     config_dict,
@@ -155,10 +156,17 @@ def fill_data_group(key,
         key_signal = f"{modified_key}/@signal"
 
         be_nm = "BE"
+        be_index = 0
         key_be = f"{modified_key}/{be_nm}"
         key_be_unit = f"{key_be}/@units"
         key_be_axes = f"{modified_key}/@axes"
         key_be_ind = f"{modified_key}/@{be_nm}_indices"
+
+        # setting up AXISNAME
+        axisname = "AXISNAME"
+        long_name = "Binding Energy"
+        key_ax_mn = f"{modified_key}/{axisname}"
+        key_ax_ln_nm = f"{modified_key}/{axisname}/@long_name"
 
         key_nxclass = f"{modified_key}/@NX_class"
 
@@ -176,8 +184,10 @@ def fill_data_group(key,
         template[key_be_unit] = "eV"
         template[key_be] = binding_energy_coord
         template[key_be_axes] = be_nm
-        template[key_be_ind] = 0
+        template[key_be_ind] = be_index
         template[key_nxclass] = "NXdata"
+        template[key_ax_ln_nm] = long_name
+        template[key_ax_mn] = be_index
 
 
 def fill_detector_group(key,
