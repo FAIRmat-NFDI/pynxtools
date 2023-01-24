@@ -24,17 +24,8 @@
 
 import numpy as np
 
-import git
-
-
-def get_repo_last_commit() -> str:
-    """Identify the last commit to the repository."""
-    try:
-        repo = git.Repo(search_parent_directories=True)
-        sha = repo.head.object.hexsha
-        return str(sha)
-    except Exception:
-        return "unknown commit id"
+from nexusutils.dataconverter.readers.apm.utils.aptfim_io_utils \
+    import get_repo_last_commit
 
 
 def create_default_plot_reconstruction(template: dict) -> dict:
@@ -54,18 +45,18 @@ def create_default_plot_reconstruction(template: dict) -> dict:
     # xymax = np.ceil(np.max(np.array(
     #     np.fabs(bounds[0:1, 0])[0],
     #     np.fabs(bounds[0:1, 1])[0])))
-    xmi = np.floor(bounds[0, 0])
-    xmx = np.ceil(bounds[0, 1])
-    xedges = np.linspace(xmi, xmx, num=int(np.ceil((xmx - xmi) / resolution)) + 1,
+    imi = np.floor(bounds[0, 0])
+    imx = np.ceil(bounds[0, 1])
+    xedges = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1,
                          endpoint=True)
-    ymi = np.floor(bounds[1, 0])
-    ymx = np.ceil(bounds[1, 1])
-    yedges = np.linspace(ymi, ymx, num=int(np.ceil((ymx - ymi) / resolution)) + 1,
+    imi = np.floor(bounds[1, 0])
+    imx = np.ceil(bounds[1, 1])
+    yedges = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1,
                          endpoint=True)
-    zmi = np.floor(bounds[2, 0])
-    zmx = np.ceil(bounds[2, 1])
-    zedges = np.linspace(zmi, zmx,
-                         num=int(np.ceil((zmx - zmi) / resolution)) + 1,
+    imi = np.floor(bounds[2, 0])
+    imx = np.ceil(bounds[2, 1])
+    zedges = np.linspace(imi, imx,
+                         num=int(np.ceil((imx - imi) / resolution)) + 1,
                          endpoint=True)
 
     hist3d = np.histogramdd((xyz[:, 0], xyz[:, 1], xyz[:, 2]),
@@ -145,7 +136,7 @@ def create_default_plot_mass_spectrum(template: dict) -> dict:
     template[trg + "program"] \
         = "nomad-parser-nexus/apm/reader.py"
     template[trg + "program/@version"] \
-        = "Add current GitCommit message"  # NEW ISSUE
+        = get_repo_last_commit()
 
     template[trg + "range_increment"] = mqincr
     template[trg + "range_increment/@units"] = "Da"

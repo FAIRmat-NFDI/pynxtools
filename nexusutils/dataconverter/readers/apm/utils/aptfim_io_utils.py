@@ -35,6 +35,8 @@ from typing import Tuple
 
 import mmap
 
+import git
+
 import numpy as np
 
 # import numpy.typing as npt
@@ -49,6 +51,15 @@ MAX_NUMBER_OF_ION_SPECIES = 256
 MAX_NUMBER_OF_ATOMS_PER_ION = 32
 # Da or atomic mass unit (amu)
 MQ_EPSILON = np.float32(1.0e-4)
+
+
+def get_repo_last_commit() -> str:
+    """Identify the last commit to the repository."""
+    repo = git.Repo(search_parent_directories=True)
+    sha = str(repo.head.object.hexsha)
+    if sha != "":
+        return sha
+    return "unknown git commit id or unable to parse git reverse head"
 
 
 def rchop(string: str = '', suffix: str = '') -> str:
