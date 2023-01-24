@@ -164,7 +164,7 @@ def fill_data_group(key,
         key_be_ind = f"{modified_key}/@{be_nm}_indices"
 
         # setting up AXISNAME
-        axisname = "AXISNAME"
+        axisname = "AXISNAME[axisname]"
         long_name = "Binding Energy"
         key_ax_mn = f"{modified_key}/{axisname}"
         key_ax_ln_nm = f"{modified_key}/{axisname}/@long_name"
