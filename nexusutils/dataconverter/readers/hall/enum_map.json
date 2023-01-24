@@ -37,10 +37,68 @@
             "1": "AC Field and Current"
         }
     },
-    "Keithley 7001": {
+    "Keithley 182": {
+        "Integration Time": {
+            "0": "1 line cycle",
+            "1": "3 ms",
+            "2": "100 ms"
+        },
+        "Digital Filter": {
+            "0": "Off",
+            "1": "Fast",
+            "2": "Medium",
+            "3": "Slow"
+        }
+    },
+    "Keithley 2000": {
+        "Reading Rate": {
+            "0": "Slow",
+            "1": "Medium",
+            "2": "Fast"
+        },
+        "Digital Filter Type": {
+            "0": "Repeat",
+            "1": "Moving"
+        }
+    },
+    "Keithley 2182": {
+        "Reading Rate": {
+            "0": "Slow",
+            "1": "Medium",
+            "2": "Fast"
+        },
+        "Digital Filter Type": {
+            "0": "Repeat",
+            "1": "Moving"
+        },
+        "Digital Filter Window": {
+            "0": "0",
+            "1": "0.01",
+            "2": "0.1",
+            "3": "1",
+            "4": "10"
+        }
+    },
+    "Keithley 2700": {
+        "Reading Rate": {
+            "0": "Slow",
+            "1": "Medium",
+            "2": "Fast"
+        },
         "Resting State": {
-            "0": "Closed",
-            "1": "Open"
+            "0": "closed",
+            "1": "open"
+        },
+        "Digital Filter Type": {
+            "0": "Repeat",
+            "1": "Moving"
+        },
+        "Digital Filter Window": {
+            "0": "0",
+            "1": "0.01",
+            "2": "0.1",
+            "3": "1",
+            "4": "10"
         }
     },
     "Keithley 6485": {
@@ -52,6 +110,12 @@
         "Digital Filter Type": {
             "0": "Repeat",
             "1": "Moving"
+        }
+    },
+    "Keithley 7001": {
+        "Resting State": {
+            "0": "Closed",
+            "1": "Open"
         }
     },
     "Field Controller": {
@@ -107,6 +171,9 @@
         "Sample Space Evacuation Valve After Ramp": {
             "0": "Open",
             "1": "Closed"
+        },
+        "Loop 2 Heater": {
+            "0": "off",
+            "1": "on"
         }
-    }
 }
