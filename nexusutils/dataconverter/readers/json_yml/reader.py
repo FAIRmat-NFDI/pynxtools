@@ -29,12 +29,12 @@ class YamlJsonReader(BaseReader):
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: List[str] = []
-    extensions: Dict[str, Callable[[str], dict]] = {}
+    extensions: Dict[str, Callable[[Any], dict]] = {}
 
     def read(self,
              template: dict = None,
              file_paths: Tuple[str] = None,
-             _: Tuple[Any] = None) -> dict:
+             objects: Tuple[Any] = None) -> dict:
         """
         Reads data from multiple files and passes them to the appropriate functions
         in the extensions dict.
@@ -56,6 +56,7 @@ class YamlJsonReader(BaseReader):
             template.update(self.extensions.get(extension, lambda _: {})(file_path))
 
         template.update(self.extensions.get("default", lambda _: {})(""))
+        template.update(self.extensions.get("objects", lambda _: {})(objects))
 
         return template
 
