@@ -20,7 +20,7 @@
 # limitations under the License.
 #
 
-# pylint: disable=E1101
+# pylint: disable=E1101, R0801
 
 import numpy as np
 
@@ -59,7 +59,7 @@ class NxEmNomadOasisElnSchemaParser:
 
     def __init__(self, file_name: str):
         # file_name = 'eln_data.yaml'
-        with open(file_name, 'r') as stream:
+        with open(file_name, 'r', encoding="utf-8") as stream:
             self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=':')
 
     def parse_entry_section(self, template: dict) -> dict:

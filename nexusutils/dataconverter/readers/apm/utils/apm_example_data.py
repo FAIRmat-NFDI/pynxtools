@@ -41,6 +41,9 @@ from ifes_apt_tc_data_modeling.utils.definitions \
 from nexusutils.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
 
+from nexusutils.dataconverter.readers.apm.utils.apm_ranging_io \
+    import add_unknown_iontype
+
 isotopes = download_isotope_data()
 
 # parameter affecting reconstructed positions and size
@@ -57,6 +60,7 @@ MAX_ATOMS = 10
 MULTIPLES_FACTOR = 0.6
 MAX_CHARGE = 4  # highest allowed charge of ion
 MAX_ATOMIC_NUMBER = 94  # do not include heavier atoms than Plutonium
+MAX_USERS = 4
 
 
 class ApmCreateExampleData:
@@ -263,28 +267,15 @@ class ApmCreateExampleData:
         template[trg + "program"] = "synthetic"
         template[trg + "program/@version"] = "synthetic"
 
-        # add unknown iontype
-        path = trg + "ION[ion0]/"
-        ivec = create_isotope_vector([])
-        template[path + "isotope_vector"] \
-            = np.reshape(np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION))
-        # template[path + "isotope_vector/@units"] = ""
-        template[path + "charge_state"] = np.int8(0)
-        template[path + "charge_state/@units"] = "eV"
-        template[path + "mass_to_charge_range"] \
-            = np.reshape(np.asarray([0.0, 0.001], np.float32), (1, 2))
-        template[path + "mass_to_charge_range/@units"] = "Da"
-        nuclid_list = isotope_vector_to_nuclid_list(ivec)  # np.zeros([2, 32], np.uint16)
-        template[path + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-        # template[path + "nuclid_list/@units"] = ""
-        template[path + "name"] = isotope_vector_to_human_readable_name(ivec, 0)
+        add_unknown_iontype(template)
 
         ion_id = 1
         for tpl in self.nrm_composition:
             path = trg + "ION[ion" + str(ion_id) + "]/"
             ivec = create_isotope_vector(tpl[0])
             template[path + "isotope_vector"] \
-                = np.reshape(np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION))
+                = np.reshape(np.asarray(ivec, np.uint16),
+                             (1, MAX_NUMBER_OF_ATOMS_PER_ION))
             # template[path + "isotope_vector/@units"] = ""
             template[path + "charge_state"] = np.int8(tpl[1])
             template[path + "charge_state/@units"] = "eV"
@@ -296,36 +287,12 @@ class ApmCreateExampleData:
             nuclid_list = isotope_vector_to_nuclid_list(ivec)
             template[path + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
             # template[path + "nuclid_list/@units"] = ""
-            template[path + "name"] = isotope_vector_to_human_readable_name(ivec, 0)
+            template[path + "name"] = isotope_vector_to_human_readable_name(ivec, tpl[1])
             ion_id += 1
 
         trg = "/ENTRY[entry]/atom_probe/ranging/"
         template[trg + "number_of_ion_types"] = np.uint32(ion_id)
         # template[trg + "number_of_ion_types/@units"] = ""
-        return template
-
-    def emulate_random_input_from_eln(self, template: dict) -> dict:
-        """Emulate random input as could come from an ELN."""
-        self.emulate_entry(template)
-        self.emulate_user(template)
-        self.emulate_specimen(template)
-
-        self.emulate_control_software(template)
-        # above call will set program and program/@version used later
-
-        self.emulate_instrument_header(template)
-        self.emulate_fabrication(template)
-        self.emulate_analysis_chamber(template)
-        self.emulate_reflectron(template)
-        self.emulate_local_electrode(template)
-        self.emulate_detector(template)
-        self.emulate_stage_lab(template)
-        self.emulate_specimen_monitoring(template)
-
-        self.emulate_pulser(template)
-        self.emulate_reconstruction(template)
-        self.emulate_ranging(template)
-
         return template
 
     def emulate_entry(self, template: dict) -> dict:
@@ -355,6 +322,7 @@ class ApmCreateExampleData:
     def emulate_user(self, template: dict) -> dict:
         """Copy data in user section."""
         # check if required fields exists and are valid
+        print("Parsing user...")
         prefix = "/ENTRY[entry]/"
         user_names = np.unique(
             np.random.choice(["Sherjeel", "MarkusK", "Dierk", "Baptiste",
@@ -362,8 +330,7 @@ class ApmCreateExampleData:
                               "Katharina", "Florian", "Daniel", "Sandor",
                               "Carola", "Andrea", "Hampus", "Pepe", "Lauri",
                               "MarkusS", "Christoph", "Claudia"],
-                             1 + np.random.choice(4, 1)))
-        # pick at most four scientists as users in this experiment
+                             1 + np.random.choice(MAX_USERS, 1)))
         user_id = 1
         for name in user_names:
             trg = prefix + "USER[user" + str(user_id) + "]/"
@@ -374,6 +341,7 @@ class ApmCreateExampleData:
     def emulate_specimen(self, template: dict) -> dict:
         """Copy data in specimen section."""
         # check if required fields exists and are valid
+        print("Parsing specimen...")
         trg = "/ENTRY[entry]/specimen/"
         assert len(self.nrm_composition) > 0, "Composition list is empty!"
         unique_elements = set()
@@ -400,6 +368,7 @@ class ApmCreateExampleData:
 
     def emulate_control_software(self, template: dict) -> dict:
         """Copy data in control software section."""
+        print("Parsing control software...")
         trg = "/ENTRY[entry]/atom_probe/control_software/"
         template[trg + "program"] = "IVAS"
         template[trg + "program/@version"] = "3." \
@@ -410,6 +379,7 @@ class ApmCreateExampleData:
     def emulate_instrument_header(self, template: dict) -> dict:
         """Copy data in instrument_header section."""
         # check if required fields exists and are valid
+        print("Parsing instrument header...")
         trg = "/ENTRY[entry]/atom_probe/"
         template[trg + "instrument_name"] \
             = "test instrument " + str(np.random.choice(100, 1)[0])
@@ -420,6 +390,7 @@ class ApmCreateExampleData:
 
     def emulate_fabrication(self, template: dict) -> dict:
         """Copy data in fabrication section."""
+        print("Parsing fabrication...")
         trg = "/ENTRY[entry]/atom_probe/FABRICATION[fabrication]/"
         template[trg + "vendor"] \
             = str(np.random.choice(["AMETEK/Cameca", "customized"], 1)[0])
@@ -433,6 +404,7 @@ class ApmCreateExampleData:
 
     def emulate_analysis_chamber(self, template: dict) -> dict:
         """Copy data in analysis_chamber section."""
+        print("Parsing analysis chamber...")
         trg = "/ENTRY[entry]/atom_probe/analysis_chamber/"
         template[trg + "pressure"] = np.float64(
             np.random.normal(loc=1.0e-10, scale=0.2e-11))
@@ -441,12 +413,14 @@ class ApmCreateExampleData:
 
     def emulate_reflectron(self, template: dict) -> dict:
         """Copy data in reflectron section."""
+        print("Parsing reflectron...")
         trg = "/ENTRY[entry]/atom_probe/REFLECTRON[reflectron]/"
         template[trg + "applied"] = bool(np.random.choice([0, 1], 1)[0])
         return template
 
     def emulate_local_electrode(self, template: dict) -> dict:
         """Copy data in local_electrode section."""
+        print("Parsing local electrode...")
         trg = "/ENTRY[entry]/atom_probe/local_electrode/"
         template[trg + "name"] \
             = "electrode " + str(np.random.choice(1000, 1)[0])
@@ -454,6 +428,7 @@ class ApmCreateExampleData:
 
     def emulate_detector(self, template: dict) -> dict:
         """Copy data in ion_detector section."""
+        print("Parsing detector...")
         trg = "/ENTRY[entry]/atom_probe/ion_detector/"
         detector_model_type = str(np.random.choice(["cameca", "mcp", "custom"], 1)[0])
         template[trg + "type"] = detector_model_type
@@ -465,6 +440,7 @@ class ApmCreateExampleData:
 
     def emulate_stage_lab(self, template: dict) -> dict:
         """Copy data in stage lab section."""
+        print("Parsing stage lab...")
         trg = "/ENTRY[entry]/atom_probe/stage_lab/"
         template[trg + "base_temperature"] = np.float64(10 + np.random.choice(50, 1)[0])
         template[trg + "base_temperature/@units"] = "K"
@@ -472,8 +448,9 @@ class ApmCreateExampleData:
 
     def emulate_specimen_monitoring(self, template: dict) -> dict:
         """Copy data in specimen_monitoring section."""
+        print("Parsing specimen monitoring...")
         trg = "/ENTRY[entry]/atom_probe/specimen_monitoring/"
-        eta = np.min(np.random.normal(loc=0.6, scale=0.1), 1.)
+        eta = np.min((np.random.normal(loc=0.6, scale=0.1), 1.))
         template[trg + "detection_rate"] = np.float64(eta)
         # template[trg + "detection_rate/@units"] = ""
         template[trg + "initial_radius"] = np.float64(RECON_RADIUS * 0.1)
@@ -484,6 +461,7 @@ class ApmCreateExampleData:
 
     def emulate_pulser(self, template: dict) -> dict:
         """Copy data in pulser section."""
+        print("Parsing pulser...")
         trg = "/ENTRY[entry]/atom_probe/pulser/"
         pulse_mode = str(np.random.choice(
             ["laser", "voltage", "laser_and_voltage"], 1)[0])
@@ -510,6 +488,7 @@ class ApmCreateExampleData:
 
     def emulate_reconstruction(self, template: dict) -> dict:
         """Copy data in reconstruction section."""
+        print("Parsing reconstruction...")
         trg = "/ENTRY[entry]/atom_probe/reconstruction/"
         src = "/ENTRY[entry]/atom_probe/control_software/"
         template[trg + "program"] = template[src + "program"]
@@ -527,6 +506,30 @@ class ApmCreateExampleData:
         src = "/ENTRY[entry]/atom_probe/control_software/"
         template[trg + "program"] = template[src + "program"]
         template[trg + "program/@version"] = template[src + "program/@version"]
+        return template
+
+    def emulate_random_input_from_eln(self, template: dict) -> dict:
+        """Emulate random input as could come from an ELN."""
+        self.emulate_entry(template)
+        self.emulate_user(template)
+        self.emulate_specimen(template)
+
+        self.emulate_control_software(template)
+        # above call will set program and program/@version used later
+
+        self.emulate_instrument_header(template)
+        self.emulate_fabrication(template)
+        self.emulate_analysis_chamber(template)
+        self.emulate_reflectron(template)
+        self.emulate_local_electrode(template)
+        self.emulate_detector(template)
+        self.emulate_stage_lab(template)
+        self.emulate_specimen_monitoring(template)
+
+        self.emulate_pulser(template)
+        self.emulate_reconstruction(template)
+        self.emulate_ranging(template)
+
         return template
 
     def report(self, template: dict) -> dict:

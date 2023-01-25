@@ -183,7 +183,7 @@ class NxImageSetEmAdf:
         print('\t' + __name__ + ' reporting...')
         assert (len(self.data) >= 0) and (len(self.data) <= 1), \
             'More than one spectrum stack is currently not supported!'
-        trg = prefix + "NX_IMAGE_SET_EM_ADF[image_set_em_adf_" + str(frame_id) + "]/"
+        trg = prefix + "NX_IMAGE_SET_EM_ADF[image_set_em_adf" + str(frame_id) + "]/"
 
         # template[trg + "program"] = 'hyperspy'
         # template[trg + "program/@version"] = hs.__version__

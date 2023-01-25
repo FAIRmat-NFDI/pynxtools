@@ -360,7 +360,7 @@ class NxSpectrumSetEmXray:
         #     print('np.shape(obj.counts.value')
         #     print(np.shape(obj.counts.value))
 
-        trg = prefix + "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray_" \
+        trg = prefix + "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray" \
             + str(frame_id) + "]/"
         # template[trg + "program"] = 'hyperspy'
         # template[trg + "program/@version"] = hs.__version__

@@ -62,7 +62,7 @@ class NxObject:  # pylint: disable=R0903
         else:
             self.value = None
         # value should be a numpy scalar, tensor, or string if possible
-        if 'is_attr' in kwargs.keys():
+        if 'is_attr' in kwargs:
             assert isinstance(kwargs['is_attr'], bool), \
                 'Kwarg is_attr needs to be a boolean !'
             self.is_attr = kwargs['is_attr']

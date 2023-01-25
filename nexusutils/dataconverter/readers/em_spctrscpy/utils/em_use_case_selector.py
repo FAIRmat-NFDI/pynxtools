@@ -51,9 +51,10 @@ class EmUseCaseSelector:  # pylint: disable=R0903
             index = file_name.lower().rfind('.')
             if index >= 0:
                 suffix = file_name.lower()[index + 1::]
-                if suffix in self.supported_mime_types:
-                    if file_name not in self.case[suffix]:
-                        self.case[suffix].append(file_name)
+                add = (suffix in self.supported_mime_types) \
+                    and (file_name not in self.case[suffix])
+                if add is True:
+                    self.case[suffix].append(file_name)
         # the em reader currently supports a combination of one vendor file and one ELN/YAML file
         # vendor files can come from different microscope vendors which requires
         # to distinguish which reader has to be used

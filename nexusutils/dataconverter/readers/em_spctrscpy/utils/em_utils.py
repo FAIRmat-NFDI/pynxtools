@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Utility tool constants and versioning."""
+"""Set of utility tools for parsing file formats used by electron microscopy."""
 
 # -*- coding: utf-8 -*-
 #
@@ -22,13 +22,13 @@
 
 # pylint: disable=E1101
 
-from nexusutils.dataconverter.readers.em_spctrscpy.utils.em_utils \
-    import get_repo_last_commit
+import git
 
 
-NX_EM_ADEF_NAME = "NXem"
-NX_EM_ADEF_VERSION = "nexus-fairmat-proposal successor of "
-NX_EM_ADEF_VERSION += "50433d9039b3f33299bab338998acb5335cd8951"
-# based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
-NX_EM_EXEC_NAME = "dataconverter/reader/em_sptrscpy/reader.py"
-NX_EM_EXEC_VERSION = get_repo_last_commit()
+def get_repo_last_commit() -> str:
+    """Identify the last commit to the repository."""
+    repo = git.Repo(search_parent_directories=True)
+    sha = str(repo.head.object.hexsha)
+    if sha != "":
+        return sha
+    return "unknown git commit id or unable to parse git reverse head"

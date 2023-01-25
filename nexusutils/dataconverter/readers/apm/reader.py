@@ -26,17 +26,25 @@ from typing import Tuple, Any
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 
+# this apm parser combines multiple sub-parsers
+# so we need the following input:
+# logical analysis which use case
+# data input from an ELN (e.g. NOMAD OASIS)
+# data input from technology partner files
+# functionalities for creating default plots
+# developer functionalities for creating synthetic data
+
 from nexusutils.dataconverter.readers.apm.utils.apm_use_case_selector \
     import ApmUseCaseSelector
+
+from nexusutils.dataconverter.readers.apm.utils.apm_generic_eln_io \
+    import NxApmNomadOasisElnSchemaParser
 
 from nexusutils.dataconverter.readers.apm.utils.apm_reconstruction_io \
     import ApmReconstructionParser
 
 from nexusutils.dataconverter.readers.apm.utils.apm_ranging_io \
     import ApmRangingDefinitionsParser
-
-from nexusutils.dataconverter.readers.apm.utils.apm_nomad_oasis_eln_io \
-    import NxApmNomadOasisElnSchemaParser
 
 from nexusutils.dataconverter.readers.apm.utils.apm_nexus_plots \
     import apm_default_plot_generator
@@ -70,71 +78,50 @@ class ApmReader(BaseReader):
         template.clear()
 
         create_example_data_for_dev_purposes = True
-
         if create_example_data_for_dev_purposes is True:
-            print('Creating a synthesized dataset...')
+            print("Create synthetic data...")
             synthetic = ApmCreateExampleData()
             synthetic.composition_to_ranging_definitions(template)
             synthetic.report(template)
-            print("Creating default plottable data...")
-            apm_default_plot_generator(template)
-
-            # reporting of what has not been properly defined at the reader level
-            # print("\n\nDebugging...")
-            # for keyword in template.keys():
-            #     print(keyword + "...")
-            #     print(template[keyword])
-
-            return template
-        # else usual way parsing actual data
-
-        case = ApmUseCaseSelector(file_paths)
-        assert case.is_valid is True, \
-            "Such a combination of input-file(s, if any) is not supported !"
-
-        # nx_apm_header = NxApmAppDefHeader()
-        # prefix = "/ENTRY[entry]"
-        # nx_apm_header.report(prefix, template)
-
-        print("Parsing numerical data and metadata from reconstructed dataset...")
-        if len(case.reconstruction) == 1:
-            nx_apm_recon = ApmReconstructionParser(case.reconstruction[0])
-            nx_apm_recon.report(template)
         else:
-            print("No input-file defined for reconstructed dataset!")
-            return {}
+            print("Identify case...")
+            case = ApmUseCaseSelector(file_paths)
+            assert case.is_valid is True, \
+                "Such a combination of input-file(s, if any) is not supported !"
 
-        print("Parsing numerical data and metadata from ranging definitions file...")
-        if len(case.ranging) == 1:
-            nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0])
-            nx_apm_range.report(template)
-        else:
-            print("No input-file defined for ranging definitions!")
-            return {}
+            print("Parse (meta)data coming from an ELN...")
+            if len(case.eln) == 1:
+                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0])
+                nx_apm_eln.report(template)
+            else:
+                print("No input file defined for eln data !")
+                return {}
 
-        print("Parsing metadata as well as numerical data from NOMAD OASIS ELN...")
-        if len(case.eln) == 1:
-            nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0])
-            nx_apm_eln.report(template)
-        else:
-            print("No input file defined for eln data !")
-            return {}
+            print("Parse (numerical) data and metadata from ranging definitions file...")
+            if len(case.reconstruction) == 1:
+                nx_apm_recon = ApmReconstructionParser(case.reconstruction[0])
+                nx_apm_recon.report(template)
+            else:
+                print("No input-file defined for reconstructed dataset!")
+                return {}
+            if len(case.ranging) == 1:
+                nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0])
+                nx_apm_range.report(template)
+            else:
+                print("No input-file defined for ranging definitions!")
+                return {}
 
-        print("Creating default plottable data...")
+        print("Create NeXus default plottable data...")
         apm_default_plot_generator(template)
 
-        # if True is True:
-        # reporting of what has not been properly defined at the reader level
-        # print("\n\nDebugging...")
-        # for keyword in template.keys():
-        #     # if template[keyword] is None:
-        #     print(keyword + "...")
-        #     print(template[keyword])
-        #     # if template[keyword] is None:
-        #     #     print("Entry: " + keyword + " is not properly defined yet!")
+        debugging = False
+        if debugging is True:
+            print("Reporting state of template before passing to HDF5 writing...")
+            for keyword in template.keys():
+                print(keyword)
+                print(template[keyword])
 
-        print("Forwarding the instantiated template to the NXS writer...")
-
+        print("Forward instantiated template to the NXS writer...")
         return template
 
 

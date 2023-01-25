@@ -24,7 +24,7 @@
 
 import numpy as np
 
-from nexusutils.dataconverter.readers.apm.utils.aptfim_io_utils \
+from nexusutils.dataconverter.readers.apm.utils.apm_utils \
     import get_repo_last_commit
 
 
@@ -33,7 +33,7 @@ def create_default_plot_reconstruction(template: dict) -> dict:
     trg = "/ENTRY[entry]/atom_probe/reconstruction"
     xyz = template[trg + "/reconstructed_positions"]["compress"]
 
-    print('--> Enter histogram computation ')
+    print("--> Enter histogram computation ")
     print(np.shape(xyz))
 
     resolution = 1.0  # in nm
@@ -63,12 +63,12 @@ def create_default_plot_reconstruction(template: dict) -> dict:
                             bins=(xedges, yedges, zedges))
     del xyz
     assert isinstance(hist3d[0], np.ndarray), \
-        'Hist3d computation from the reconstruction failed!'
+        "Hist3d computation from the reconstruction failed!"
     assert len(np.shape(hist3d[0])) == 3, \
-        'Hist3d computation from the reconstruction failed!'
+        "Hist3d computation from the reconstruction failed!"
     for i in np.arange(0, 3):
         assert np.shape(hist3d[0])[i] > 0, \
-            'Dimensions ' + str(i) + ' has no length!'
+            "Dimensions " + str(i) + " has no length!"
 
     trg = "/ENTRY[entry]/atom_probe/reconstruction/"
     trg += "naive_point_cloud_density_map/"
@@ -99,7 +99,7 @@ def create_default_plot_reconstruction(template: dict) -> dict:
     template[trg + "zpos/@units"] = "nm"
     template[trg + "@zpos_indices"] = 2  # "my z axis"
     template[trg + "@long_name"] = "hist3d tomographic reconstruction"
-    print('Default plot 3D discretized reconstruction at 1nm binning.')
+    print("Default plot 3D discretized reconstruction at 1nm binning.")
     del hist3d
 
     return template
@@ -110,7 +110,7 @@ def create_default_plot_mass_spectrum(template: dict) -> dict:
     trg = "/ENTRY[entry]/atom_probe/mass_to_charge_conversion/"
     m_z = template[trg + "mass_to_charge"]["compress"]
 
-    print('--> Enter mass spectrum computation ')
+    print("--> Enter mass spectrum computation ")
     print(np.shape(m_z))
 
     mqmin = 0.0  # in Da, do not plot unphysical values < 0.0
@@ -124,12 +124,12 @@ def create_default_plot_mass_spectrum(template: dict) -> dict:
                     endpoint=True))
     del m_z
     assert isinstance(hist1d[0], np.ndarray), \
-        'Hist1d computation from the mass spectrum failed!'
+        "Hist1d computation from the mass spectrum failed!"
     assert len(np.shape(hist1d[0])) == 1, \
-        'Hist1d computation from the mass spectrum failed!'
+        "Hist1d computation from the mass spectrum failed!"
     for i in np.arange(0, 1):
         assert np.shape(hist1d[0])[i] > 0, \
-            'Dimensions ' + str(i) + ' has no length!'
+            "Dimensions " + str(i) + " has no length!"
 
     trg = "/ENTRY[entry]/atom_probe/ranging/"
     trg += "mass_to_charge_distribution/"
@@ -154,7 +154,7 @@ def create_default_plot_mass_spectrum(template: dict) -> dict:
         = {"compress": np.array(hist1d[1][1::], np.float32), "strength": 9}
     template[trg + "bin_ends/@units"] = "Da"
     template[trg + "@bin_ends_indices"] = 0
-    print('Plot mass spectrum at 0.01Da binning was created.')
+    print("Plot mass spectrum at 0.01Da binning was created.")
     del hist1d
 
     return template
@@ -162,7 +162,7 @@ def create_default_plot_mass_spectrum(template: dict) -> dict:
 
 def apm_default_plot_generator(template: dict) -> dict:
     """Copy data from self into template the appdef instance."""
-    print('Create default plots on-the-fly...')
+    print("Create default plots on-the-fly...")
     # now the reader implements what is effectively the task of a normalizer step
     # adding plot (discretized representation of the dataset), for now the default plot
     # adding plot mass-to-charge-state ratio histogram, termed mass spectrum in APM community
@@ -188,7 +188,7 @@ def apm_default_plot_generator(template: dict) -> dict:
 
     has_default_data = has_valid_xyz | has_valid_m_z
     assert has_default_data is True, \
-        'Having no recon or mass-to-charge data is inacceptable at the moment!'
+        "Having no recon or mass-to-charge data is inacceptable at the moment!"
 
     # NEW ISSUE: fall-back solution to plot something else, however
     # currently POS, EPOS and APT provide always xyz, and m_z data

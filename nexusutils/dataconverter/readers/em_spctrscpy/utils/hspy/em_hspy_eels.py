@@ -264,7 +264,7 @@ class NxSpectrumSetEmEels:
         assert (len(self.summary_data) >= 0) and (len(self.summary_data) <= 1), \
             'More than one sum spectrum stack is currently not supported!'
 
-        trg = prefix + "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels_" \
+        trg = prefix + "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels" \
             + str(frame_id) + "]/"
         if len(self.stack_data) == 1:
             # template[trg + "program"] = 'hyperspy'
