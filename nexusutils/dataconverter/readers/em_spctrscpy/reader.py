@@ -22,13 +22,7 @@
 
 # pylint: disable=E1101
 
-import datetime
-
-from typing import Tuple, Any, Dict
-
-import numpy as np
-
-import hyperspy.api as hs
+from typing import Tuple, Any
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 
