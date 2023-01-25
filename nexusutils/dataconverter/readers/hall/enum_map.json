@@ -67,7 +67,7 @@
             "1": "Medium",
             "2": "Fast"
         },
-        "Digital Filter Type": {
+        "Digital_Filter_Type": {
             "0": "Repeat",
             "1": "Moving"
         },
