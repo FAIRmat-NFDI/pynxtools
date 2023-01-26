@@ -97,17 +97,17 @@ class EmSpctrscpyReader(BaseReader):
                 "Such a combination of input-file(s, if any) is not supported !"
 
             print("Parse (meta)data coming from an ELN...")
-            if case.eln_parser == 'nomad-oasis':
+            if case.eln_parser == "nomad-oasis":
                 nomad_oasis_eln_parser(case.eln[0], template)
             else:
                 print("No input file defined for eln data !")
                 return {}
 
             print("Parse (numerical) data and metadata from technology partner files...")
-            if case.vendor_parser == 'oina':
+            if case.vendor_parser == "oina":
                 # oina_parser(case.vendor[0], template)
                 return {}
-            if case.vendor_parser == 'hspy':
+            if case.vendor_parser == "hspy":
                 hyperspy_parser(case.vendor[0], template)
             else:
                 print("No input-file defined for technology partner data !")
@@ -116,12 +116,16 @@ class EmSpctrscpyReader(BaseReader):
         print("Create NeXus default plottable data...")
         em_spctrscpy_default_plot_generator(template)
 
-        debugging = False
+        debugging = True
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():
                 print(keyword)
-                print(template[keyword])
+                if "compress" in template[keyword]:
+                    print("--> Is compressed " + type(template[keyword["compress"]]))
+                else:
+                    print("--> Not compressed")
+                # print(template[keyword])
 
         print("Forward instantiated template to the NXS writer...")
         return template

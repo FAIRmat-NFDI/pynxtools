@@ -54,7 +54,7 @@
 
 # from datetime import datetime
 # import pytz
-# timezone = pytz.timezone(dct['General']['time_zone'])
+# timezone = pytz.timezone(dct["General"]['time_zone'])
 # from dateutil import tz
 # from dateutil.tz import *
 # from datetime import *

@@ -6,24 +6,27 @@
 #
 anyio==3.6.1
     # via jupyter-server
-appnope==0.1.3
-    # via
-    #   ipykernel
-    #   ipython
 argon2-cffi==21.3.0
-    # via jupyter-server
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
 argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 asciitree==0.3.3
     # via zarr
 ase==3.22.1
-    # via nexusutils (pyproject.toml)
+    # via
+    #   ifes-apt-tc-data-modeling
+    #   nexusutils (pyproject.toml)
 astroid==2.12.10
     # via pylint
 attrs==22.1.0
     # via
     #   jsonschema
     #   pytest
+babel==2.11.0
+    # via jupyterlab-server
 backcall==0.2.0
     # via ipython
 beautifulsoup4==4.11.1
@@ -77,24 +80,32 @@ fsspec==2022.8.2
     #   hyperspy
 future==0.18.2
     # via h5py-wrapper
-h5grove==1.1.0
+gitdb==4.0.10
+    # via gitpython
+gitpython==3.1.30
+    # via nexusutils (pyproject.toml)
+h5grove==1.2.0
     # via jupyterlab-h5web
 h5py==3.7.0
     # via
     #   h5grove
     #   h5py-wrapper
     #   hyperspy
+    #   ifes-apt-tc-data-modeling
+    #   jupyterlab-h5web
     #   nexusutils (pyproject.toml)
 h5py-wrapper==1.1.0
     # via hdfdict
 hdfdict @ git+https://github.com/shabihsherjeel/hdfdict@f48a586
     # via nexusutils (pyproject.toml)
-hyperspy==1.7.2
+hyperspy==1.7.3
     # via nexusutils (pyproject.toml)
 idna==3.4
     # via
     #   anyio
     #   requests
+ifes-apt-tc-data-modeling==0.0.1
+    # via nexusutils (pyproject.toml)
 imageio==2.22.1
     # via
     #   hyperspy
@@ -102,14 +113,20 @@ imageio==2.22.1
 importlib-metadata==5.0.0
     # via
     #   hyperspy
+    #   jupyterlab-server
     #   nbconvert
     #   numba
 importlib-resources==5.9.0
-    # via jsonschema
+    # via
+    #   jsonschema
+    #   radioactivedecay
 iniconfig==1.1.1
     # via pytest
 ipykernel==6.16.0
-    # via ipyparallel
+    # via
+    #   ipyparallel
+    #   nbclassic
+    #   notebook
 ipyparallel==8.4.1
     # via hyperspy
 ipython==7.34.0
@@ -117,6 +134,11 @@ ipython==7.34.0
     #   hyperspy
     #   ipykernel
     #   ipyparallel
+    #   jupyterlab
+ipython-genutils==0.2.0
+    # via
+    #   nbclassic
+    #   notebook
 isort==5.10.1
     # via pylint
 jedi==0.18.1
@@ -125,27 +147,53 @@ jinja2==3.1.2
     # via
     #   hyperspy
     #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
+    #   nbclassic
     #   nbconvert
-jsonschema==4.16.0
-    # via nbformat
+    #   notebook
+json5==0.9.11
+    # via jupyterlab-server
+jsonschema==4.17.3
+    # via
+    #   jupyterlab-server
+    #   nbformat
 jupyter-client==7.3.5
     # via
     #   ipykernel
     #   ipyparallel
     #   jupyter-server
+    #   nbclassic
     #   nbclient
-jupyter-core==4.11.1
+    #   notebook
+jupyter-core==5.1.5
     # via
     #   jupyter-client
     #   jupyter-server
+    #   jupyterlab
+    #   nbclassic
     #   nbconvert
     #   nbformat
-jupyter-server==1.19.1
-    # via jupyterlab-h5web
-jupyterlab-h5web==6.0.1
-    # via nexusutils (pyproject.toml)
+    #   notebook
+jupyter-server==1.23.5
+    # via
+    #   jupyterlab
+    #   jupyterlab-h5web
+    #   jupyterlab-server
+    #   nbclassic
+    #   notebook-shim
+jupyterlab==3.5.3
+    # via
+    #   ifes-apt-tc-data-modeling
+    #   nexusutils (pyproject.toml)
+jupyterlab-h5web==6.6.1
+    # via
+    #   ifes-apt-tc-data-modeling
+    #   nexusutils (pyproject.toml)
 jupyterlab-pygments==0.2.2
     # via nbconvert
+jupyterlab-server==2.19.0
+    # via jupyterlab
 kiwisolver==1.4.4
     # via matplotlib
 lazy-object-proxy==1.7.1
@@ -162,6 +210,7 @@ matplotlib==3.5.3
     # via
     #   ase
     #   hyperspy
+    #   radioactivedecay
 matplotlib-inline==0.1.6
     # via
     #   ipykernel
@@ -178,22 +227,39 @@ mypy-extensions==0.4.3
     # via mypy
 natsort==8.2.0
     # via hyperspy
+nbclassic==0.4.8
+    # via
+    #   jupyterlab
+    #   notebook
 nbclient==0.6.8
     # via nbconvert
 nbconvert==7.1.0
-    # via jupyter-server
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
 nbformat==5.6.1
     # via
     #   jupyter-server
+    #   nbclassic
     #   nbclient
     #   nbconvert
+    #   notebook
 nest-asyncio==1.5.6
     # via
     #   ipykernel
     #   jupyter-client
+    #   nbclassic
     #   nbclient
+    #   notebook
 networkx==2.6.3
-    # via scikit-image
+    # via
+    #   radioactivedecay
+    #   scikit-image
+notebook==6.5.2
+    # via jupyterlab
+notebook-shim==0.2.2
+    # via nbclassic
 numba==0.56.2
     # via
     #   hyperspy
@@ -209,6 +275,7 @@ numpy==1.21.6
     #   h5grove
     #   h5py
     #   hyperspy
+    #   ifes-apt-tc-data-modeling
     #   imageio
     #   matplotlib
     #   nexusutils (pyproject.toml)
@@ -217,6 +284,7 @@ numpy==1.21.6
     #   numexpr
     #   pandas
     #   pywavelets
+    #   radioactivedecay
     #   scikit-image
     #   scipy
     #   sparse
@@ -231,6 +299,8 @@ packaging==21.3
     #   hyperspy
     #   ipykernel
     #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
     #   matplotlib
     #   nbconvert
     #   numexpr
@@ -239,6 +309,7 @@ packaging==21.3
     #   scikit-image
 pandas==1.3.5
     # via
+    #   ifes-apt-tc-data-modeling
     #   nexusutils (pyproject.toml)
     #   xarray
 pandocfilters==1.5.0
@@ -261,13 +332,18 @@ pint==0.18
 pkgutil-resolve-name==1.3.10
     # via jsonschema
 platformdirs==2.5.2
-    # via pylint
+    # via
+    #   jupyter-core
+    #   pylint
 pluggy==1.0.0
     # via pytest
 prettytable==3.4.1
     # via hyperspy
 prometheus-client==0.14.1
-    # via jupyter-server
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
 prompt-toolkit==3.0.31
     # via ipython
 psutil==5.9.2
@@ -316,6 +392,7 @@ python-dateutil==2.8.2
     #   pandas
 pytz==2022.4
     # via
+    #   babel
     #   nexusutils (pyproject.toml)
     #   pandas
 pywavelets==1.3.0
@@ -332,22 +409,34 @@ pyzmq==24.0.1
     #   ipyparallel
     #   jupyter-client
     #   jupyter-server
+    #   nbclassic
+    #   notebook
+radioactivedecay==0.4.16
+    # via ifes-apt-tc-data-modeling
 requests==2.28.1
-    # via hyperspy
+    # via
+    #   hyperspy
+    #   jupyterlab-server
 scikit-image==0.19.3
     # via hyperspy
 scipy==1.7.3
     # via
     #   ase
     #   hyperspy
+    #   radioactivedecay
     #   scikit-image
     #   sparse
 send2trash==1.8.0
-    # via jupyter-server
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
 six==1.16.0
     # via
     #   bleach
     #   python-dateutil
+smmap==5.0.0
+    # via gitdb
 sniffio==1.3.0
     # via anyio
 soupsieve==2.3.2.post1
@@ -357,9 +446,14 @@ sparse==0.13.0
 structlog==22.1.0
     # via nexusutils (pyproject.toml)
 sympy==1.10.1
-    # via hyperspy
+    # via
+    #   hyperspy
+    #   radioactivedecay
 terminado==0.16.0
-    # via jupyter-server
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
 tifffile==2021.11.2
     # via
     #   h5grove
@@ -370,6 +464,7 @@ tinycss2==1.1.1
 tomli==2.0.1
     # via
     #   coverage
+    #   jupyterlab
     #   mypy
     #   pylint
     #   pytest
@@ -386,6 +481,9 @@ tornado==6.2
     #   ipyparallel
     #   jupyter-client
     #   jupyter-server
+    #   jupyterlab
+    #   nbclassic
+    #   notebook
     #   terminado
 tqdm==4.64.1
     # via
@@ -400,9 +498,11 @@ traitlets==5.4.0
     #   jupyter-core
     #   jupyter-server
     #   matplotlib-inline
+    #   nbclassic
     #   nbclient
     #   nbconvert
     #   nbformat
+    #   notebook
 traits==6.4.1
     # via hyperspy
 types-pytz==2022.6.0.1

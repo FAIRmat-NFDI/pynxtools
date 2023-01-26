@@ -54,8 +54,8 @@ class NxEventDataEm:
 
     def __init__(self, file_name: str):
         self.meta: Dict[str, NxObject] = {}
-        self.meta["start_time"] = NxObject('non_recoverable')
-        self.meta["end_time"] = NxObject('non_recoverable')
+        self.meta["start_time"] = NxObject("non_recoverable")
+        self.meta["end_time"] = NxObject("non_recoverable")
         self.meta["event_identifier"] = NxObject()
         self.meta["event_type"] = NxObject()
         self.meta["detector_identifier"] = NxObject()

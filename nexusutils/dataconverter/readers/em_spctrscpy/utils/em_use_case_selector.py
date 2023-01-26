@@ -39,16 +39,16 @@ class EmUseCaseSelector:  # pylint: disable=R0903
         eln injects additional metadata and eventually numerical data.
         """
         self.case: Dict[str, list] = {}
-        self.vendor_parser = 'none'
+        self.vendor_parser = "none"
         self.vendor: List[str] = []
         self.eln: List[str] = []
-        self.eln_parser = 'none'
+        self.eln_parser = "none"
         self.is_valid = False
-        self.supported_mime_types = ['bcf', 'emd', 'dm3', 'h5oina', 'yaml', 'yml']
+        self.supported_mime_types = ["bcf", "emd", "dm3", "h5oina", "yaml", "yml"]
         for mime_type in self.supported_mime_types:
             self.case[mime_type] = []
         for file_name in file_paths:
-            index = file_name.lower().rfind('.')
+            index = file_name.lower().rfind(".")
             if index >= 0:
                 suffix = file_name.lower()[index + 1::]
                 add = (suffix in self.supported_mime_types) \
@@ -62,31 +62,31 @@ class EmUseCaseSelector:  # pylint: disable=R0903
         # or the HyperSpy reader for Bruker BCF, Velox EMD, or Digital Micrograph DM3
         oina_input = 0
         for mime_type, value in self.case.items():
-            if mime_type in ['h5oina']:
+            if mime_type in ["h5oina"]:
                 oina_input += len(value)
         hspy_input = 0
         for mime_type, value in self.case.items():
-            if mime_type in ['bcf', 'dm3', 'emd']:
+            if mime_type in ["bcf", "dm3", "emd"]:
                 hspy_input += len(value)
 
         assert (oina_input == 1) or (hspy_input == 1), \
             "Currently the reader supports to have only one vendor input file!"
         if oina_input == 1:
-            self.vendor += self.case['h5oina']
-            self.vendor_parser = 'oina'
+            self.vendor += self.case["h5oina"]
+            self.vendor_parser = "oina"
         if hspy_input == 1:
-            for mime_type in ['bcf', 'emd', 'dm3']:
+            for mime_type in ["bcf", "emd", "dm3"]:
                 self.vendor += self.case[mime_type]
-                self.vendor_parser = 'hspy'
+                self.vendor_parser = "hspy"
 
-        eln_input = len(self.case['yaml']) + len(self.case['yml'])
+        eln_input = len(self.case["yaml"]) + len(self.case["yml"])
         assert eln_input == 1, \
             "Currently the reader supports to have only one YAML input-file!"
 
-        for mime_type in ['yaml', 'yml']:
+        for mime_type in ["yaml", "yml"]:
             self.eln += self.case[mime_type]
-            self.eln_parser = 'nomad-oasis'
+            self.eln_parser = "nomad-oasis"
 
         self.is_valid = True
 
-# test = EmUseCaseSelector(('a.bcf', 'b.yaml', 'c.apt', 'd.h5oina'))
+# test = EmUseCaseSelector(("a.bcf", "b.yaml", "c.apt", "d.h5oina"))

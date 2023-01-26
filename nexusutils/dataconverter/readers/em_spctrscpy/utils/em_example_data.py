@@ -232,7 +232,7 @@ class EmSpctrscpyCreateExampleData:
 
     def emulate_optics(self, template: dict) -> dict:
         """Copy data in optical_system_em section."""
-        print('Parsing optics...')
+        print("Parsing optics...")
         trg = "/ENTRY[entry]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/"
         template[trg + "beam_current_description"] = "undefined"
         template[trg + "camera_length"] \
@@ -316,14 +316,14 @@ class EmSpctrscpyCreateExampleData:
             # symbols.append(symbol)
             xray_lines = hs.material.elements[symbol].Atomic_properties.Xray_lines
             for xray_line_name, xray_line_props in xray_lines.as_dictionary().items():
-                # print(key + ', ' + str(value['weight']))
+                # print(key + ", " + str(value["weight"]))
                 signal_contributions.append(
                     (atomic_number,
                      symbol,
                      composition[idx],
                      xray_line_name,
-                     xray_line_props['energy (keV)'],
-                     xray_line_props['weight']))
+                     xray_line_props["energy (keV)"],
+                     xray_line_props["weight"]))
             idx += 1
         # self.elements_observed = np.unique(symbols)
 
@@ -355,9 +355,9 @@ class EmSpctrscpyCreateExampleData:
                        * (tpl[4] - (XRAY_ENERGY_DELTA + idx * XRAY_ENERGY_DELTA))))
             self.cnts_summary = np.add(self.cnts_summary, cnts_tpl)
         # plt.plot(self.e_axis, self.cnts_summary)
-        # plt.xlabel('energy (keV)')
-        # plt.ylabel('cnts')
-        # plt.xscale('log')
+        # plt.xlabel("energy (keV)")
+        # plt.ylabel("cnts")
+        # plt.xscale("log")
 
         trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]/"
         trg += "EVENT_DATA_EM[event_data_em1]/"

@@ -58,18 +58,18 @@ class NxEmNomadOasisElnSchemaParser:
     """
 
     def __init__(self, file_name: str):
-        # file_name = 'eln_data.yaml'
-        with open(file_name, 'r', encoding="utf-8") as stream:
-            self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=':')
+        # file_name = "eln_data.yaml"
+        with open(file_name, "r", encoding="utf-8") as stream:
+            self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
 
     def parse_entry_section(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
-        print('Parsing entry...')
+        print("Parsing entry...")
         trg = "/ENTRY[entry]/"
         src = "entry"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         appdef_name = NX_EM_ADEF_NAME
         appdef_version = NX_EM_ADEF_VERSION
 
@@ -105,7 +105,7 @@ class NxEmNomadOasisElnSchemaParser:
     def parse_user_section(self, template: dict) -> dict:
         """Copy data in user section."""
         # check if required fields exists and are valid
-        print('Parsing user...')
+        print("Parsing user...")
         src = "user"
         assert isinstance(self.yml[src], list), \
             "Facing an ELN schema instance with an incorrect operator section!"
@@ -131,11 +131,11 @@ class NxEmNomadOasisElnSchemaParser:
     def parse_sample_section(self, template: dict) -> dict:
         """Copy data in sample section."""
         # check if required fields exists and are valid
-        print('Parsing sample...')
+        print("Parsing sample...")
         src = "sample"
         trg = "/ENTRY[entry]/sample/"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         assert isinstance(self.yml[src + ":atom_types"], list), \
             "Facing an ELN schema instance with an incorrect atom_types info!"
         assert len(self.yml[src + ":atom_types"]) >= 1, \
@@ -143,7 +143,7 @@ class NxEmNomadOasisElnSchemaParser:
         for symbol in self.yml[src + ":atom_types"]:
             assert isinstance(symbol, str), \
                 "Facing an atom_types list entry which is not a string!"
-            assert (symbol in chemical_symbols) & (symbol != 'X'), \
+            assert (symbol in chemical_symbols) & (symbol != "X"), \
                 "Facing an atom_types list entry which is not an element!"
         template[trg + "atom_types"] = self.yml[src + ":atom_types"]
         thickness_exists = ("thickness:value" in self.yml[src].keys()) \
@@ -213,10 +213,10 @@ class NxEmNomadOasisElnSchemaParser:
     def parse_instrument_header_section(self, template: dict) -> dict:
         """Copy data in instrument header section."""
         # check if required fields exists and are valid
-        print('Parsing instrument header...')
+        print("Parsing instrument header...")
         src = "em_lab"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
         trg = "/ENTRY[entry]/em_lab/"
         assert "instrument_name" in self.yml[src].keys(), \
@@ -243,7 +243,7 @@ class NxEmNomadOasisElnSchemaParser:
 
     def parse_ebeam_column_section(self, template: dict) -> dict:
         """Copy data in ebeam_column section."""
-        print('Parsing ebeam_column...')
+        print("Parsing ebeam_column...")
         src = "em_lab:ebeam_column:electron_gun"
         assert isinstance(self.yml[src], fd.FlatDict), \
             src + " is a required group but not found in ELN input"
@@ -262,7 +262,7 @@ class NxEmNomadOasisElnSchemaParser:
         # apertures
         src = "em_lab:ebeam_column:aperture_em"
         assert isinstance(self.yml[src], list), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         assert len(self.yml[src]) >= 1, \
             "At least one aperture has to be defined!"
         aperture_id = 1
@@ -293,25 +293,25 @@ class NxEmNomadOasisElnSchemaParser:
 
     # def parse_ibeam_column_section(self, template: dict) -> dict:
     #     """Copy data in ibeam_column section."""
-    #     print('Parsing ibeam_column...')
+    #     print("Parsing ibeam_column...")
     #     return template
 
     # def parse_ebeam_deflector_section(self, template: dict) -> dict:
     #     """Copy data in ebeam_deflector section."""
-    #     print('Parsing ebeam_deflector...')
+    #     print("Parsing ebeam_deflector...")
     #     return template
 
     # def parse_ibeam_deflector_section(self, template: dict) -> dict:
     #     """Copy data in ibeam_deflector section."""
-    #     print('Parsing ibeam_deflector...')
+    #     print("Parsing ibeam_deflector...")
     #     return template
 
     def parse_optics_section(self, template: dict) -> dict:
         """Copy data in optical_system_em section."""
-        print('Parsing optics...')
+        print("Parsing optics...")
         src = "em_lab:optical_system_em"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         trg = "/ENTRY[entry]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/"
         optional_char_fields = ["beam_current_description"]
         for field_name in optional_char_fields:
@@ -331,17 +331,17 @@ class NxEmNomadOasisElnSchemaParser:
 
     def parse_detector_section(self, template: dict) -> dict:
         """Copy data in detector section."""
-        print('Parsing detector...')
+        print("Parsing detector...")
         src = "em_lab:detector"
         assert isinstance(self.yml[src], list), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         assert len(self.yml[src]) >= 1, \
-            'List section ' + src + ' needs to have at least one entry!'
+            "List section " + src + " needs to have at least one entry!"
         error_msg = " is a required field but not found in ELN input!"
         detector_id = 1
         for detector in self.yml[src]:
             assert isinstance(detector, dict), \
-                'Detector metadata from ELN have to be a list!'
+                "Detector metadata from ELN have to be a list!"
             trg = "/ENTRY[entry]/em_lab/DETECTOR[detector" \
                 + str(detector_id) + "]/"
             assert "type" in detector.keys(), "type" + error_msg
@@ -351,11 +351,11 @@ class NxEmNomadOasisElnSchemaParser:
 
     def parse_stage_lab_section(self, template: dict) -> dict:
         """Copy data in stage lab section."""
-        print('Parsing stage_lab...')
+        print("Parsing stage_lab...")
         src = "em_lab:stage_lab"
         trg = "/ENTRY[entry]/em_lab/stage_lab/"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
         required_char_fields = ["name"]
         for field_name in required_char_fields:
