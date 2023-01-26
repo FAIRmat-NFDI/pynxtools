@@ -917,7 +917,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_energy
 DEBUG - @units [NX_ENERGY]
-DEBUG - ===== GROUP (//entry/instrument/electronanalyser [NXmpes::/NXentry/NXinstrument/NXelectronanalyser]): <HDF5 group "/entry/instrument/electronanalyser" (10 members)>
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser [NXmpes::/NXentry/NXinstrument/NXelectronanalyser]): <HDF5 group "/entry/instrument/electronanalyser" (11 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER
@@ -2307,6 +2307,22 @@ DEBUG -
              List of the axes that are acquired by scanning a physical parameter, listed in
              order of decreasing speed. See fast_axes for examples.
         
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/spatial_resolution): <HDF5 dataset "spatial_resolution": shape (), type "<f8">
+DEBUG - value: 10.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
+DEBUG - classes:
+NXelectronanalyser.nxdl.xml:/spatial_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXelectronanalyser.nxdl.xml:/spatial_resolution):
+DEBUG - 
+             Spatial resolution of the electron analyser (Airy disk radius)
+        
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/spatial_resolution@units)
+DEBUG - value: µm 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
+DEBUG - classes:
+NXelectronanalyser.nxdl.xml:/spatial_resolution
+DEBUG - @units [NX_LENGTH]
 DEBUG - ===== GROUP (//entry/instrument/electronanalyser/transformations [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXtransformations]): <HDF5 group "/entry/instrument/electronanalyser/transformations" (2 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations']
 DEBUG - classes:

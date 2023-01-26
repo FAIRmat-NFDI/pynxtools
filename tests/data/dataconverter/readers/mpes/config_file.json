@@ -33,6 +33,8 @@
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/description": "SPECS Metis 1000 Momentum Microscope",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution": 110.0,
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution/@units": "meV",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/spatial_resolution": "@attrs:metadata/instrument/analyzer/spatial_resolution",
+  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/spatial_resolution/@units": "µm",
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/fast_axes": [
     "kx",
     "ky",
