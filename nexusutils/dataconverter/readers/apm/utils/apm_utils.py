@@ -35,7 +35,7 @@
 
 # import mmap
 
-import git
+# import git
 
 # import numpy as np
 
@@ -53,13 +53,13 @@ import git
 # MQ_EPSILON = np.float32(1.0e-4)
 
 
-def get_repo_last_commit() -> str:
-    """Identify the last commit to the repository."""
-    repo = git.Repo(search_parent_directories=True)
-    sha = str(repo.head.object.hexsha)
-    if sha != "":
-        return sha
-    return "unknown git commit id or unable to parse git reverse head"
+# def get_repo_last_commit() -> str:
+#     """Identify the last commit to the repository."""
+#     repo = git.Repo(search_parent_directories=True)
+#     sha = str(repo.head.object.hexsha)
+#     if sha != "":
+#         return sha
+#     return "unknown git commit id or unable to parse git reverse head"
 
 
 # def rchop(string: str = "", suffix: str = "") -> str:

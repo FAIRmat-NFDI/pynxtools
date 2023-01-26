@@ -20,7 +20,7 @@
 # limitations under the License.
 #
 
-# pylint: disable=E1101
+# pylint: disable=E1101, R0801
 
 import hashlib
 

@@ -21,14 +21,3 @@
 #
 
 # pylint: disable=E1101
-
-import git
-
-
-def get_repo_last_commit() -> str:
-    """Identify the last commit to the repository."""
-    repo = git.Repo(search_parent_directories=True)
-    sha = str(repo.head.object.hexsha)
-    if sha != "":
-        return sha
-    return "unknown git commit id or unable to parse git reverse head"

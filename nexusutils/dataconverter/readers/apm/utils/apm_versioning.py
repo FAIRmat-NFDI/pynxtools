@@ -22,7 +22,7 @@
 
 # pylint: disable=E1101
 
-from nexusutils.dataconverter.readers.apm.utils.apm_utils \
+from nexusutils.dataconverter.readers.shared.shared_utils \
     import get_repo_last_commit
 
 
