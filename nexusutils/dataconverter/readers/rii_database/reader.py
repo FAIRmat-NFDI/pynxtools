@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 """Convert refractiveindex.info yaml files to nexus"""
-from typing import Callable, List, Tuple, Any, Dict
+from typing import List, Tuple, Any, Dict
 import logging
 import pandas as pd
 import yaml
@@ -88,41 +88,23 @@ def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str
     yml_file = read_yml_file(filename)
     dispersion_path = f'/ENTRY[entry]/{identifier}'
 
-    supported_tabular_parsers = [
-        'tabulated nk',
-        'tabulated n',
-        'tabulated k',
-    ]
-
-    formula_parsers: Dict[str, Callable[[dispersion.ModelInput], None]] = {
-        'formula 1': dispersion.sellmeier_squared,
-        'formula 2': dispersion.sellmeier,
-        'formula 3': dispersion.polynomial,
-        'formula 4': dispersion.sellmeier_polynomial,
-        'formula 5': dispersion.cauchy,
-        'formula 6': dispersion.gases,
-        'formula 7': dispersion.herzberger,
-        'formula 8': dispersion.retro,
-        'formula 9': dispersion.exotic,
-    }
-
     model_input = dispersion.ModelInput(
         dispersion_path, [],
         add_model_name, add_model_info, add_single_param, add_rep_param
     )
     table_input = dispersion.TableInput(dispersion_path, '', '', '', add_table)
     for dispersion_relation in yml_file["DATA"]:
-        if dispersion_relation['type'] in supported_tabular_parsers:
+        if dispersion_relation['type'] in dispersion.SUPPORTED_TABULAR_PARSERS:
             table_input.table_type = dispersion_relation['type']
             table_input.data = dispersion_relation['data']
             table_input.nx_name = 'dispersion_table'
             dispersion.tabulated(table_input)
             continue
 
-        if dispersion_relation['type'] in formula_parsers:
+        if dispersion_relation['type'] in dispersion.FORMULA_PARSERS:
             coeffs = list(map(float, dispersion_relation['coefficients'].split()))
             model_input.coeffs = coeffs
-            formula_parsers[dispersion_relation['type']](model_input)
+            dispersion.FORMULA_PARSERS[dispersion_relation['type']](model_input)
             continue
 
         raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')

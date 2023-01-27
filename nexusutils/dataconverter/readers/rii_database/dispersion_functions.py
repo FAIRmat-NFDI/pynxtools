@@ -18,7 +18,7 @@
 """Implementation for refractiveindex.info dispersion functions"""
 from io import StringIO
 from dataclasses import dataclass
-from typing import Callable, List
+from typing import Callable, Dict, List
 import pandas as pd
 
 ModelNameCallback = Callable[[str, str], None]
@@ -286,3 +286,19 @@ def exotic(model_input: ModelInput):
 
     for name, coeff, unit in zip(names, model_input.coeffs, units):
         model_input.add_single_param(path, name, coeff, unit)
+
+
+SUPPORTED_TABULAR_PARSERS = [f'tabulated {t}' for t in ['nk', 'n', 'k']]
+
+
+FORMULA_PARSERS: Dict[str, Callable[[ModelInput], None]] = {
+    'formula 1': sellmeier_squared,
+    'formula 2': sellmeier,
+    'formula 3': polynomial,
+    'formula 4': sellmeier_polynomial,
+    'formula 5': cauchy,
+    'formula 6': gases,
+    'formula 7': herzberger,
+    'formula 8': retro,
+    'formula 9': exotic,
+}
