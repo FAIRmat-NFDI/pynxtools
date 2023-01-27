@@ -83,7 +83,7 @@ def read_dispersion(filename: str) -> Dict[str, Any]:
             entries[f'{path}/REPEATED_PARAMS[{name}]/units'] = units
         entries[f'{path}/REPEATED_PARAMS[{name}]/values/@units'] = units[0]
 
-    yml_file =read_yml_file(filename)
+    yml_file = read_yml_file(filename)
     dispersion_path = '/ENTRY[entry]/dispersion_x'
 
     supported_tabular_parsers = [
