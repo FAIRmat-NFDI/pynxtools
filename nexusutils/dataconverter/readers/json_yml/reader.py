@@ -20,6 +20,7 @@ from typing import Tuple, Any, Callable, Dict, List
 import os
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
+from nexusutils.dataconverter.template import Template
 
 
 class YamlJsonReader(BaseReader):
@@ -39,6 +40,7 @@ class YamlJsonReader(BaseReader):
         Reads data from multiple files and passes them to the appropriate functions
         in the extensions dict.
         """
+        template = Template()
 
         sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
         for file_path in sorted_paths:

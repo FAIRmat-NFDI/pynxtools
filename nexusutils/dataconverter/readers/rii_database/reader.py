@@ -22,6 +22,7 @@ import yaml
 
 from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
 import nexusutils.dataconverter.readers.rii_database.dispersion_functions as dispersion
+from nexusutils.dataconverter.readers.utils import parse_json
 
 
 def read_dispersion(filename: str) -> Dict[str, Any]:
@@ -72,15 +73,16 @@ def read_dispersion(filename: str) -> Dict[str, Any]:
             entries[f'{path}/REPEATED_PARAMS[{name}]/units'] = units
         entries[f'{path}/REPEATED_PARAMS[{name}]/values/@units'] = units[0]
 
-    yml_file = yaml.load(
-        filename,
-        yaml.SafeLoader,
-    )
+    with open(filename, 'r') as yml:
+        yml_file = yaml.load(
+            yml,
+            yaml.SafeLoader,
+        )
 
     dispersion_path = '/ENTRY[entry]/dispersion_x'
 
     supported_tabular_parsers = [
-        'tabluated nk',
+        'tabulated nk',
         'tabulated n',
         'tabulated k',
     ]
@@ -133,9 +135,9 @@ def appdef_defaults() -> Dict[str, Any]:
     definition. Like appdef version and name"""
     entries: Dict[str, Any] = {}
 
-    entries['/entry/definition/@version'] = '0.0.1'
-    entries['/entry/definition/@url'] = ''
-    entries['/entry/definition/'] = 'NXdispersive_material'
+    entries['/ENTRY[entry]/definition/@version'] = '0.0.1'
+    entries['/ENTRY[entry]/definition/@url'] = ''
+    entries['/ENTRY[entry]/definition'] = 'NXdispersive_material'
 
     return entries
 
@@ -150,6 +152,7 @@ class RiiReader(YamlJsonReader):
     extensions = {
         ".yml": read_dispersion,
         ".yaml": read_dispersion,
+        ".json": parse_json,
         "default": lambda _: appdef_defaults(),
         "objects": handle_objects
     }
