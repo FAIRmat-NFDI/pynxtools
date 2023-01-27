@@ -71,19 +71,19 @@ def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str
         return disp_path
 
     def add_single_param(path: str, name: str, value: float, unit: str):
-        entries[f'{path}/SINGLE_PARAMS[{name}]/name'] = name
-        entries[f'{path}/SINGLE_PARAMS[{name}]/value'] = value
-        entries[f'{path}/SINGLE_PARAMS[{name}]/value/@units'] = unit
+        entries[f'{path}/DISPERSION_SINGLE_PARAMETER[{name}]/name'] = name
+        entries[f'{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value'] = value
+        entries[f'{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value/@units'] = unit
 
     def add_rep_param(path: str, name: str, values: List[float], units: List[str]):
         if not units:
             raise ValueError('Units must be specified')
 
-        entries[f'{path}/REPEATED_PARAMS[{name}]/name'] = name
-        entries[f'{path}/REPEATED_PARAMS[{name}]/values'] = values
+        entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/name'] = name
+        entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values'] = values
         if len(units) > 1:
-            entries[f'{path}/REPEATED_PARAMS[{name}]/units'] = units
-        entries[f'{path}/REPEATED_PARAMS[{name}]/values/@units'] = units[0]
+            entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/units'] = units
+        entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values/@units'] = units[0]
 
     yml_file = read_yml_file(filename)
     dispersion_path = f'/ENTRY[entry]/{identifier}'
