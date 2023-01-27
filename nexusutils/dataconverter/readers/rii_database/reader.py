@@ -121,6 +121,7 @@ def read_dispersion(filename: str) -> Dict[str, Any]:
     return entries
 
 
+# pylint: disable=unused-argument
 def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:
     """Handle objects and generate template entries from them"""
 
