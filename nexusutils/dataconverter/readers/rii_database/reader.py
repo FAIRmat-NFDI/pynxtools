@@ -16,215 +16,61 @@
 # limitations under the License.
 #
 """Convert refractiveindex.info yaml files to nexus"""
-from typing import List, Tuple, Any, Dict
-from io import StringIO
+from typing import Callable, List, Tuple, Any, Dict
 import pandas as pd
 import yaml
+
 from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
+import nexusutils.dataconverter.readers.rii_database.dispersion_functions as dispersion
 
 
 def read_dispersion(filename: str) -> Dict[str, Any]:
     """Reads rii dispersions from yaml files"""
     entries: Dict[str, Any] = {}
 
-    def tabulated_nk(data: str):
-        daf = pd.read_table(
-            StringIO(data),
-            sep='\\s+',
-            names=['Wavelength', 'n', 'k']
-        )
-        daf["Wavelength"] = daf["Wavelength"] * 1000
-        daf.set_index("Wavelength", inplace=True)
+    def add_table(path: str, nx_name: str, daf: pd.DataFrame):
+        disp_path = f'{path}/DISPERSION_TABLE[{nx_name}]'
 
-        bpath = f'{dispersion_path}/DISPERSION_TABLE[dispersion_table]'
+        if f'{path}/model_name' in entries:
+            entries[f'{disp_path}/refractive_index'] += daf['refractive_index'].values
+            return
 
-        entries[f'{dispersion_path}/model_name'] = 'Table'
-        entries[f'{bpath}/model_name'] = 'Table'
-        entries[f'{bpath}/convention'] = 'n + ik'
-        entries[f'{bpath}/wavelength'] = daf.index
-        entries[f'{bpath}/wavelength/@units'] = 'micrometer'
-        entries[f'{bpath}/refractive_index'] = daf['n'] + 1j * daf['k']
+        entries[f'{path}/model_name'] = 'Table'
+        entries[f'{disp_path}/model_name'] = 'Table'
+        entries[f'{disp_path}/convention'] = 'n + ik'
+        entries[f'{disp_path}/wavelength'] = daf.index
+        entries[f'{disp_path}/wavelength/@units'] = 'micrometer'
+        entries[f'{disp_path}/refractive_index'] = daf['refractive_index'].values
 
-    def tabulated_n(data: str):
-        daf = pd.read_table(
-            StringIO(data),
-            sep="\\s+",
-            names=["Wavelength", "n"],
-        )
-        daf["Wavelength"] = daf["Wavelength"] * 1000
-        daf.set_index("Wavelength", inplace=True)
+    def add_model_name(path: str, name: str):
+        entries[f'{path}/model_name'] = name
 
-        bpath = f'{dispersion_path}/DISPERSION_TABLE[dispersion_table]'
+    def add_model_info(path: str, name: str, representation: str, formula: str):
+        disp_path = f'{path}/DISPERSION_FUNCTION[{name.lower()}]'
 
-        entries[f'{dispersion_path}/model_name'] = 'Table'
-        entries[f'{bpath}/model_name'] = 'Table'
-        entries[f'{bpath}/convention'] = 'n + ik'
-        entries[f'{bpath}/wavelength'] = daf.index
-        entries[f'{bpath}/wavelength/@units'] = 'micrometer'
-        entries[f'{bpath}/refractive_index'] = daf['n']
+        entries[f'{disp_path}/model_name'] = name
+        entries[f'{disp_path}/formula'] = formula
+        entries[f'{disp_path}/representation'] = representation
+        entries[f'{disp_path}/convention'] = 'n + ik'
+        entries[f'{disp_path}/wavelength_identifier'] = 'lambda'
+        entries[f'{disp_path}/wavelength_identifier/@units'] = 'micrometer'
 
-    def tabulated_k(data: str):
-        daf = pd.read_table(
-            StringIO(data),
-            sep="\\s+",
-            names=["Wavelength", "k"],
-        )
-        daf["Wavelength"] = daf["Wavelength"] * 1000
-        daf.set_index("Wavelength", inplace=True)
+        return disp_path
 
-        bpath = f'{dispersion_path}/DISPERSION_TABLE[dispersion_table]'
+    def add_single_param(path: str, name: str, value: float, unit: str):
+        entries[f'{path}/SINGLE_PARAMS[{name}]/name'] = name
+        entries[f'{path}/SINGLE_PARAMS[{name}]/value'] = value
+        entries[f'{path}/SINGLE_PARAMS[{name}]/value/@units'] = unit
 
-        entries[f'{dispersion_path}/model_name'] = 'Table'
-        entries[f'{bpath}/model_name'] = 'Table'
-        entries[f'{bpath}/convention'] = 'n + ik'
-        entries[f'{bpath}/wavelength'] = daf.index
-        entries[f'{bpath}/wavelength/@units'] = 'micrometer'
-        entries[f'{bpath}/refractive_index'] = 1j * daf['k']
+    def add_rep_param(path: str, name: str, values: List[float], units: List[str]):
+        if not units:
+            raise ValueError('Units must be specified')
 
-    def sellmeier_squared(coeffs: List[float]):
-        squared_coeffs = list(map(lambda x: x**2, coeffs[2::2]))
-        sellmeier(squared_coeffs)
-
-    def sellmeier(coeffs: List[float]):
-        bpath = f'{dispersion_path}/DISPERSION_FUNCTION[sellmeier]'
-
-        entries[f'{dispersion_path}/model_name'] = 'Sellmeier'
-        entries[f'{bpath}/formula'] = (
-            'eps = eps_inf + 1 + sum[A * lambda ** 2 / (lambda ** 2 - B)]'
-        )
-        entries[f'{bpath}/model_name'] = 'Sellmeier'
-        entries[f'{bpath}/convention'] = 'n + ik'
-        entries[f'{bpath}/wavelength_identifier'] = 'lambda'
-        entries[f'{bpath}/wavelength_identifier/@units'] = 'micrometer'
-        entries[f'{bpath}/representation'] = 'eps'
-        entries[f'{bpath}/SINGLE_PARAMS[eps_inf]/name'] = ['eps_inf']
-        entries[f'{bpath}/SINGLE_PARAMS[eps_inf]/value'] = coeffs[0]
-        entries[f'{bpath}/SINGLE_PARAMS[eps_inf]/value/@units'] = ['']
-        entries[f'{bpath}/REPEATED_PARAMS[A]/name'] = 'A'
-        entries[f'{bpath}/REPEATED_PARAMS[A]/values'] = coeffs[1::2]
-        entries[f'{bpath}/REPEATED_PARAMS[A]/values/@units'] = ''
-        entries[f'{bpath}/REPEATED_PARAMS[B]/name'] = 'B'
-        entries[f'{bpath}/REPEATED_PARAMS[B]/values'] = coeffs[2::2]
-        entries[f'{bpath}/REPEATED_PARAMS[B]/values/@units'] = 'micrometer**2'
-
-    def polynomial(coeffs: List[float]):
-        bpath = f'{dispersion_path}/DISPERSION_FUNCTION[polynomial]'
-
-        entries[f'{dispersion_path}/model_name'] = 'Polynomial'
-        entries[f'{bpath}/formula'] = 'eps = eps_inf + sum[f * lambda ** e]'
-        entries[f'{bpath}/model_name'] = 'Polynomial'
-        entries[f'{bpath}/convention'] = 'n + ik'
-        entries[f'{bpath}/wavelength_identifier'] = 'lambda'
-        entries[f'{bpath}/wavelength_identifier/@units'] = 'micrometer'
-        entries[f'{bpath}/representation'] = 'eps'
-        entries[f'{bpath}/SINGLE_PARAMS[eps_inf]/name'] = ['eps_inf']
-        entries[f'{bpath}/SINGLE_PARAMS[eps_inf]/value'] = coeffs[0]
-        entries[f'{bpath}/SINGLE_PARAMS[eps_inf]/value/@units'] = ['']
-        entries[f'{bpath}/REPEATED_PARAMS[f]/name'] = 'f'
-        entries[f'{bpath}/REPEATED_PARAMS[f]/values'] = coeffs[1::2]
-        entries[f'{bpath}/REPEATED_PARAMS[f]/units'] = (
-            [f'1/micrometer^{e}' for e in coeffs[2::2]]
-        )
-        entries[f'{bpath}/REPEATED_PARAMS[f]/values/@units'] = (
-            entries[f'{bpath}/REPEATED_PARAMS[f]/units']
-        )
-        entries[f'{bpath}/REPEATED_PARAMS[e]/name'] = 'e'
-        entries[f'{bpath}/REPEATED_PARAMS[e]/values'] = coeffs[2::2]
-        entries[f'{bpath}/REPEATED_PARAMS[e]/values/@units'] = ''
-
-    def sellmeier_polynomial(coeffs: List[float]):
-        bpath_poly = f'{dispersion_path}/DISPERSION_FUNCTION[polynomial]'
-        bpath_sellmeier = f'{dispersion_path}/DISPERSION_FUNCTION[sellmeier]'
-
-        entries[f'{dispersion_path}/model_name'] = (
-            'Polynomial + Sellmeier (from RefractiveIndex.Info)'
-        )
-        entries[f'{bpath_poly}/formula'] = 'eps_inf + sum[f * lambda ** e]'
-        entries[f'{bpath_poly}/model_name'] = 'Polynomial'
-        entries[f'{bpath_poly}/convention'] = 'n + ik'
-        entries[f'{bpath_poly}/wavelength_identifier'] = 'lambda'
-        entries[f'{bpath_poly}/wavelength_identifier/@units'] = 'micrometer'
-        entries[f'{bpath_poly}/representation'] = 'eps'
-        entries[f'{bpath_poly}/SINGLE_PARAMS[eps_inf]/name'] = ['eps_inf']
-        entries[f'{bpath_poly}/SINGLE_PARAMS[eps_inf]/value'] = coeffs[0]
-        entries[f'{bpath_poly}/SINGLE_PARAMS[eps_inf]/value/@units'] = ['']
-        entries[f'{bpath_poly}/REPEATED_PARAMS[f]/name'] = 'f'
-        entries[f'{bpath_poly}/REPEATED_PARAMS[f]/values'] = coeffs[9::2]
-        entries[f'{bpath_poly}/REPEATED_PARAMS[f]/units'] = (
-            [f'1/micrometer^{e}' for e in coeffs[10::2]]
-        )
-        entries[f'{bpath_poly}/REPEATED_PARAMS[f]/values/@units'] = (
-            entries[f'{bpath_poly}/REPEATED_PARAMS[f]/units']
-        )
-        entries[f'{bpath_poly}/REPEATED_PARAMS[e]/name'] = 'e'
-        entries[f'{bpath_poly}/REPEATED_PARAMS[e]/values'] = coeffs[10::2]
-        entries[f'{bpath_poly}/REPEATED_PARAMS[e]/values/@units'] = ''
-
-        # TODO: This model doesn't make to much sense. e1 should be restricted
-        # to 0 or 2, otherwise the units do not match. The formula should be
-        # corrected to reflect this.
-        entries[f'{bpath_sellmeier}/formula'] = (
-            'eps = sum[A * lambda ** e1 / (lambda ** 2 - B**e2)]'
-        )
-        entries[f'{bpath_sellmeier}/model_name'] = 'Sellmeier'
-        entries[f'{bpath_sellmeier}/convention'] = 'n + ik'
-        entries[f'{bpath_sellmeier}/wavelength_identifier'] = 'lambda'
-        entries[f'{bpath_sellmeier}/wavelength_identifier/@units'] = 'micrometer'
-        entries[f'{bpath_sellmeier}/representation'] = 'eps'
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[A]/name'] = 'A'
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[A]/values'] = coeffs[1:6:4]
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[A]/values/@units'] = ''
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[B]/name'] = 'B'
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[B]/values'] = coeffs[3:8:4]
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[B]/units'] = (
-            [f'1/micrometer^(2/{e2})' for e2 in coeffs[4:9:4]]
-        )
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[B]/values/@units'] = (
-            entries[f'{bpath_sellmeier}/REPEATED_PARAMS[B]/units'][0]
-        )
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[e1]/name'] = 'e1'
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[e1]/values'] = coeffs[2:7:4]
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[e1]/values/@units'] = ''
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[e2]/name'] = 'e2'
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[e2]/values'] = coeffs[4:9:4]
-        entries[f'{bpath_sellmeier}/REPEATED_PARAMS[e2]/values/@units'] = ''
-
-    def cauchy(coeffs: List[float]):
-        bpath = f'{dispersion_path}/DISPERSION_FUNCTION[cauchy]'
-
-        entries[f'{dispersion_path}/model_name'] = 'Cauchy'
-        entries[f'{bpath}/formula'] = (
-            'n = n_inf + sum[f * lambda ** e]'
-        )
-        entries[f'{bpath}/model_name'] = 'Cauchy'
-        entries[f'{bpath}/convention'] = 'n + ik'
-        entries[f'{bpath}/wavelength_identifier'] = 'lambda'
-        entries[f'{bpath}/wavelength_identifier/@units'] = 'micrometer'
-        entries[f'{bpath}/representation'] = 'eps'
-        entries[f'{bpath}/SINGLE_PARAMS[n_inf]/name'] = ['n_inf']
-        entries[f'{bpath}/SINGLE_PARAMS[n_inf]/value'] = coeffs[0]
-        entries[f'{bpath}/SINGLE_PARAMS[n_inf]/value/@units'] = ['']
-        entries[f'{bpath}/REPEATED_PARAMS[f]/name'] = 'f'
-        entries[f'{bpath}/REPEATED_PARAMS[f]/values'] = coeffs[1::2]
-        entries[f'{bpath}/REPEATED_PARAMS[f]/units'] = (
-            [f'1/micrometer^{e}' for e in coeffs[1::2]]
-        )
-        entries[f'{bpath}/REPEATED_PARAMS[f]/values/@units'] = '1/micrometer'
-        entries[f'{bpath}/REPEATED_PARAMS[e]/name'] = 'e'
-        entries[f'{bpath}/REPEATED_PARAMS[e]/values'] = coeffs[2::2]
-        entries[f'{bpath}/REPEATED_PARAMS[e]/values/@units'] = ''
-
-    def gases(coeffs: List[float]):
-        pass
-
-    def herzberger(coeffs: List[float]):
-        pass
-
-    def retro(coeffs: List[float]):
-        pass
-
-    def exotic(coeffs: List[float]):
-        pass
+        entries[f'{path}/REPEATED_PARAMS[{name}]/name'] = name
+        entries[f'{path}/REPEATED_PARAMS[{name}]/values'] = values
+        if len(units) > 1:
+            entries[f'{path}/REPEATED_PARAMS[{name}]/units'] = units
+        entries[f'{path}/REPEATED_PARAMS[{name}]/values/@units'] = units[0]
 
     yml_file = yaml.load(
         filename,
@@ -233,32 +79,41 @@ def read_dispersion(filename: str) -> Dict[str, Any]:
 
     dispersion_path = '/ENTRY[entry]/dispersion_x'
 
-    tabular_parsers = {
-        'tabluated nk': tabulated_nk,
-        'tabulated n': tabulated_n,
-        'tabulated k': tabulated_k,
+    supported_tabular_parsers = [
+        'tabluated nk',
+        'tabulated n',
+        'tabulated k',
+    ]
+
+    formula_parsers: Dict[str, Callable[[dispersion.ModelInput], None]] = {
+        'formula 1': dispersion.sellmeier_squared,
+        'formula 2': dispersion.sellmeier,
+        'formula 3': dispersion.polynomial,
+        'formula 4': dispersion.sellmeier_polynomial,
+        'formula 5': dispersion.cauchy,
+        'formula 6': dispersion.gases,
+        'formula 7': dispersion.herzberger,
+        'formula 8': dispersion.retro,
+        'formula 9': dispersion.exotic,
     }
 
-    formula_parsers = {
-        'formula 1': sellmeier_squared,
-        'formula 2': sellmeier,
-        'formula 3': polynomial,
-        'formula 4': sellmeier_polynomial,
-        'formula 5': cauchy,
-        'formula 6': gases,
-        'formula 7': herzberger,
-        'formula 8': retro,
-        'formula 9': exotic,
-    }
-
+    model_input = dispersion.ModelInput(
+        dispersion_path, [],
+        add_model_name, add_model_info, add_single_param, add_rep_param
+    )
+    table_input = dispersion.TableInput(dispersion_path, '', '', '', add_table)
     for dispersion_relation in yml_file["DATA"]:
-        if dispersion_relation['type'] in tabular_parsers:
-            tabular_parsers[dispersion_relation['type']](dispersion_relation['data'])
+        if dispersion_relation['type'] in supported_tabular_parsers:
+            table_input.table_type = dispersion_relation['type']
+            table_input.data = dispersion_relation['data']
+            table_input.nx_name = 'dispersion_table'
+            dispersion.tabulated(table_input)
             continue
 
         if dispersion_relation['type'] in formula_parsers:
             coeffs = list(map(float, dispersion_relation['coefficients'].split()))
-            formula_parsers[dispersion_relation['type']](coeffs)
+            model_input.coeffs = coeffs
+            formula_parsers[dispersion_relation['type']](model_input)
             continue
 
         raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
