@@ -24,6 +24,7 @@ from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
 import nexusutils.dataconverter.readers.rii_database.dispersion_functions as dispersion
 from nexusutils.dataconverter.readers.utils import parse_json
 
+
 def read_yml_file(filename: str) -> Dict[Any, Any]:
     """Reads a yml file from disk"""
     with open(filename, 'r', encoding='utf-8') as yml:
