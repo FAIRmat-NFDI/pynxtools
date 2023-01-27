@@ -70,7 +70,7 @@ def tabulated(table_input: TableInput):
     if 'n' in daf:
         daf.loc[:, 'refractive_index'] += daf['n']
     if 'k' in daf:
-        daf.loc[:, 'refractive_index'] += 1j * daf['n']
+        daf.loc[:, 'refractive_index'] += 1j * daf['k']
 
     table_input.add_table(table_input.dispersion_path, table_input.nx_name, daf)
 
@@ -135,21 +135,8 @@ def sellmeier_polynomial(model_input: ModelInput):
     """
     model_input.add_model_name(
         model_input.dispersion_path,
-        'Polynomial + Sellmeier (from RefractiveIndex.Info)'
+        'Sellmeier'
     )
-    path = model_input.add_model_info(
-        model_input.dispersion_path,
-        'Polynomial',
-        'eps',
-        'eps = eps_inf + sum[f * lambda ** e]'
-    )
-
-    model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
-    model_input.add_rep_param(
-        path, 'f', model_input.coeffs[9::2],
-        [f'1/micrometer^{e}' for e in model_input.coeffs[10::2]]
-    )
-    model_input.add_rep_param(path, 'e', model_input.coeffs[10::2], [''])
 
     # Check for valid parameters
     for exp1 in model_input.coeffs[2:7:4]:
@@ -170,6 +157,27 @@ def sellmeier_polynomial(model_input: ModelInput):
     )
     model_input.add_rep_param(path, 'e1', model_input.coeffs[2:7:4], [''])
     model_input.add_rep_param(path, 'e2', model_input.coeffs[4:9:4], [''])
+
+    if not model_input.coeffs[9::]:
+        return
+
+    model_input.add_model_name(
+        model_input.dispersion_path,
+        'Polynomial + Sellmeier (from RefractiveIndex.Info)'
+    )
+    path = model_input.add_model_info(
+        model_input.dispersion_path,
+        'Polynomial',
+        'eps',
+        'eps = eps_inf + sum[f * lambda ** e]'
+    )
+
+    model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
+    model_input.add_rep_param(
+        path, 'f', model_input.coeffs[9::2],
+        [f'1/micrometer^{e}' for e in model_input.coeffs[10::2]]
+    )
+    model_input.add_rep_param(path, 'e', model_input.coeffs[10::2], [''])
 
 
 def cauchy(model_input: ModelInput):

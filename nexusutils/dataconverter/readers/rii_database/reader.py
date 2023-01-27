@@ -17,6 +17,7 @@
 #
 """Convert refractiveindex.info yaml files to nexus"""
 from typing import Callable, List, Tuple, Any, Dict
+import logging
 import pandas as pd
 import yaml
 
@@ -36,21 +37,21 @@ def read_yml_file(filename: str) -> Dict[Any, Any]:
     return yml_file
 
 
-def read_dispersion(filename: str) -> Dict[str, Any]:
+def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str, Any]:
     """Reads rii dispersions from yaml files"""
     entries: Dict[str, Any] = {}
 
     def add_table(path: str, nx_name: str, daf: pd.DataFrame):
         disp_path = f'{path}/DISPERSION_TABLE[{nx_name}]'
 
-        if f'{path}/model_name' in entries:
+        if f'{path}/refractive_index' in entries:
             entries[f'{disp_path}/refractive_index'] += daf['refractive_index'].values
             return
 
         entries[f'{path}/model_name'] = 'Table'
         entries[f'{disp_path}/model_name'] = 'Table'
         entries[f'{disp_path}/convention'] = 'n + ik'
-        entries[f'{disp_path}/wavelength'] = daf.index
+        entries[f'{disp_path}/wavelength'] = daf.index.values
         entries[f'{disp_path}/wavelength/@units'] = 'micrometer'
         entries[f'{disp_path}/refractive_index'] = daf['refractive_index'].values
 
@@ -85,7 +86,7 @@ def read_dispersion(filename: str) -> Dict[str, Any]:
         entries[f'{path}/REPEATED_PARAMS[{name}]/values/@units'] = units[0]
 
     yml_file = read_yml_file(filename)
-    dispersion_path = '/ENTRY[entry]/dispersion_x'
+    dispersion_path = f'/ENTRY[entry]/{identifier}'
 
     supported_tabular_parsers = [
         'tabulated nk',
@@ -129,11 +130,47 @@ def read_dispersion(filename: str) -> Dict[str, Any]:
     return entries
 
 
-# pylint: disable=unused-argument
+def fill_dispersion_in(template: Dict[str, Any]):
+    """
+    Replaces dispersion_x and dispersion_y keys with filenames as their value
+    with the parsed dispersion values.
+    """
+    keys = [f'dispersion_{axis}' for axis in ['x', 'y']]
+
+    for key in keys:
+        if key in template:
+            template.update(read_dispersion(template[key], identifier=key))
+            del template[key]
+
+
+def parse_json_w_fileinfo(filename: str) -> Dict[str, Any]:
+    """
+    Reads json key/value pairs and additionally replaces dispersion_x and _y keys
+    with their parsed dispersion values.
+    """
+    template = parse_json(filename)
+    fill_dispersion_in(template)
+
+    return template
+
+
 def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:
     """Handle objects and generate template entries from them"""
+    if objects is None:
+        return {}
 
-    return {}
+    template = {}
+
+    for obj in objects:
+        if not isinstance(obj, dict):
+            logging.warning("Ignoring unknown object of type %s", type(obj))
+            continue
+
+        template.update(obj)
+
+    fill_dispersion_in(template)
+
+    return template
 
 
 def appdef_defaults() -> Dict[str, Any]:
@@ -158,7 +195,7 @@ class RiiReader(YamlJsonReader):
     extensions = {
         ".yml": read_dispersion,
         ".yaml": read_dispersion,
-        ".json": parse_json,
+        ".json": parse_json_w_fileinfo,
         "default": lambda _: appdef_defaults(),
         "objects": handle_objects
     }
