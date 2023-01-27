@@ -38,6 +38,7 @@ class ModelInput:
     add_single_param: SingleParamCallback
     add_rep_param: RepeatedParamCallback
 
+
 @dataclass
 class TableInput:
     """The input data and callbacks for tabular dispersions"""
@@ -73,6 +74,7 @@ def tabulated(table_input: TableInput):
 
     table_input.add_table(table_input.dispersion_path, table_input.nx_name, daf)
 
+
 def sellmeier_squared(model_input: ModelInput):
     """
     The Sellmeier-2 formula (2) from refractiveindex.info
@@ -83,13 +85,14 @@ def sellmeier_squared(model_input: ModelInput):
         model_input.coeffs[i] = model_input.coeffs[i] ** 2
     sellmeier(model_input)
 
+
 def sellmeier(model_input: ModelInput):
     """
     The Sellmeier formula (1) from refractiveindex.info
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Sellmeier')
+    model_input.add_model_name(model_input.dispersion_path, 'Sellmeier')
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Sellmeier',
@@ -101,13 +104,14 @@ def sellmeier(model_input: ModelInput):
     model_input.add_rep_param(path, 'A', model_input.coeffs[1::2], [''])
     model_input.add_rep_param(path, 'B', model_input.coeffs[2::2], ['micrometer**2'])
 
+
 def polynomial(model_input: ModelInput):
     """
     The Polynomial formula (3) from refractiveindex.info
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Polynomial')
+    model_input.add_model_name(model_input.dispersion_path, 'Polynomial')
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Polynomial',
@@ -117,9 +121,11 @@ def polynomial(model_input: ModelInput):
 
     model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
     model_input.add_rep_param(
-        path, 'f', model_input.coeffs[1::2], [f'1/micrometer^{e}' for e in model_input.coeffs[2::2]]
+        path, 'f', model_input.coeffs[1::2],
+        [f'1/micrometer^{e}' for e in model_input.coeffs[2::2]]
     )
     model_input.add_rep_param(path, 'e', model_input.coeffs[2::2], [''])
+
 
 def sellmeier_polynomial(model_input: ModelInput):
     """
@@ -127,7 +133,10 @@ def sellmeier_polynomial(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Polynomial + Sellmeier (from RefractiveIndex.Info)')
+    model_input.add_model_name(
+        model_input.dispersion_path,
+        'Polynomial + Sellmeier (from RefractiveIndex.Info)'
+    )
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Polynomial',
@@ -162,13 +171,14 @@ def sellmeier_polynomial(model_input: ModelInput):
     model_input.add_rep_param(path, 'e1', model_input.coeffs[2:7:4], [''])
     model_input.add_rep_param(path, 'e2', model_input.coeffs[4:9:4], [''])
 
+
 def cauchy(model_input: ModelInput):
     """
     The Cauchy formula (5) from refractiveindex.info
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Cauchy')
+    model_input.add_model_name(model_input.dispersion_path, 'Cauchy')
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Cauchy',
@@ -178,9 +188,11 @@ def cauchy(model_input: ModelInput):
 
     model_input.add_single_param(path, 'n_inf', model_input.coeffs[0], '')
     model_input.add_rep_param(
-        path, 'f', model_input.coeffs[1::2], [f'1/micrometer^{e}' for e in model_input.coeffs[2::2]]
+        path, 'f', model_input.coeffs[1::2],
+        [f'1/micrometer^{e}' for e in model_input.coeffs[2::2]]
     )
     model_input.add_rep_param(path, 'e', model_input.coeffs[2::2], [''])
+
 
 def gases(model_input: ModelInput):
     """
@@ -188,7 +200,7 @@ def gases(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Gases')
+    model_input.add_model_name(model_input.dispersion_path, 'Gases')
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Gases',
@@ -200,13 +212,14 @@ def gases(model_input: ModelInput):
     model_input.add_rep_param(path, 'A', model_input.coeffs[1::2], ['1/micrometer^2'])
     model_input.add_rep_param(path, 'B', model_input.coeffs[2::2], ['1/micrometer^2'])
 
+
 def herzberger(model_input: ModelInput):
     """
     The Herzberger dispersion formula (6) from refractiveindex.info
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Herzberger')
+    model_input.add_model_name(model_input.dispersion_path, 'Herzberger')
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Herzberger',
@@ -222,13 +235,14 @@ def herzberger(model_input: ModelInput):
     )
     model_input.add_rep_param(path, 'e', [2, 4, 6], [''])
 
+
 def retro(model_input: ModelInput):
     """
     The exotic formula (8) from refractiveindex.info
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Retro')
+    model_input.add_model_name(model_input.dispersion_path, 'Retro')
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Retro',
@@ -250,7 +264,7 @@ def exotic(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name('Exotic')
+    model_input.add_model_name(model_input.dispersion_path, 'Exotic')
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Exotic',
