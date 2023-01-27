@@ -24,6 +24,16 @@ from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
 import nexusutils.dataconverter.readers.rii_database.dispersion_functions as dispersion
 from nexusutils.dataconverter.readers.utils import parse_json
 
+def read_yml_file(filename: str) -> Dict[Any, Any]:
+    """Reads a yml file from disk"""
+    with open(filename, 'r', encoding='utf-8') as yml:
+        yml_file = yaml.load(
+            yml,
+            yaml.SafeLoader,
+        )
+
+    return yml_file
+
 
 def read_dispersion(filename: str) -> Dict[str, Any]:
     """Reads rii dispersions from yaml files"""
@@ -73,12 +83,7 @@ def read_dispersion(filename: str) -> Dict[str, Any]:
             entries[f'{path}/REPEATED_PARAMS[{name}]/units'] = units
         entries[f'{path}/REPEATED_PARAMS[{name}]/values/@units'] = units[0]
 
-    with open(filename, 'r') as yml:
-        yml_file = yaml.load(
-            yml,
-            yaml.SafeLoader,
-        )
-
+    yml_file =read_yml_file(filename)
     dispersion_path = '/ENTRY[entry]/dispersion_x'
 
     supported_tabular_parsers = [
