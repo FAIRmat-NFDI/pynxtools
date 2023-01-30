@@ -149,14 +149,12 @@ Several cases can be encoutered:
                 and (data["strength"] <= 9)
             if accept is True:
                 strength = data["strength"]
-            print("> not compress > " + entry_name)
             grp.create_dataset(entry_name,
                                data=data["compress"],
                                compression="gzip",
                                chunks=True,
                                compression_opts=strength)
         else:
-            print("> compress > " + entry_name)
             grp.create_dataset(entry_name, data=data["compress"])
     return grp[entry_name]
 
@@ -212,20 +210,15 @@ class Writer:
         """Returns the parent if it exists for a given path else creates the parent group."""
         parent_path = path[0:path.rindex('/')] or '/'
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
-        parent_undocumented_paths = [path[0:path.rindex("/")] or "/" for path in undocumented_paths]
-        # print(">>>> " + path)
-        # print("> par > " + parent_path)
-        # print("> hdf > " + parent_path_hdf5)
-        # print(str(does_path_exist(parent_path, self.output_nexus)))
-        # print(undocumented_paths)
         if not does_path_exist(parent_path, self.output_nexus):
-            parent = self.ensure_and_get_parent_node(parent_path, parent_undocumented_paths)
+            parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
-            if path not in undocumented_paths:
-                # print("not in undocumented")
+            try:
                 attrs = self.__nxdl_to_attrs(parent_path)
                 if attrs is not None:
                     grp.attrs['NX_class'] = attrs["type"]
+            except:
+                pass
             return grp
         return self.output_nexus[parent_path_hdf5]
 
@@ -234,14 +227,11 @@ class Writer:
         hdf5_links_for_later = []
 
         for path, value in self.data.items():
-            print("--> " + path)
             try:
                 if path[path.rindex('/') + 1:] == '@units':
                     continue
 
-                print("entry_name -in-> " + path[path.rindex('/') + 1:])
                 entry_name = helpers.get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-                print("entry_name -out-> " + entry_name)
                 if is_not_data_empty(value):
                     data = value
                 else:
@@ -255,7 +245,6 @@ class Writer:
                         else:
                             hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
                     else:
-                        print("> ! @ >", entry_name)
                         dataset = grp.create_dataset(entry_name,
                                                      data=data
                                                      )

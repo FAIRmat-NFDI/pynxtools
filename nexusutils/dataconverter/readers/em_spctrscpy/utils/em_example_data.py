@@ -378,8 +378,13 @@ class EmSpctrscpyCreateExampleData:
         # plt.ylabel("cnts")
         # plt.xscale("log")
 
+        template["/" + "@default"] = "entry"
+        template["/ENTRY[entry]/" + "@default"] = "measurement"
+        template["/ENTRY[entry]/measurement/" + "@default"] = "event_data_em1"
         trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
+        template[trg + "@default"] = "spectrum_set_em_xray" + str(1)
         trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray" + str(1) + "]/"
+        template[trg + "@default"] = "summary"
         # trg += "DATA[summary]/"
         trg += "summary/"
         # template[trg + "@NX_class"] = "NXdata"
@@ -389,13 +394,13 @@ class EmSpctrscpyCreateExampleData:
         template[trg + "@axes"] = ["axis_photon_energy"]
         # template[trg + "@AXISNAME_indices[axis_photon_energy_indices]"] = 0
         template[trg + "@AXISNAME_indices[axis_photon_energy_indices]"] = 0
-        template[trg + "data_counts"] \
+        template[trg + "DATA[data_counts]"] \
             = {"compress": self.cnts_summary, "strength": 9}
-        template[trg + "data_counts/@units"] = ""
+        template[trg + "DATA[data_counts]/@units"] = ""
         # template[trg + "data_counts/@long_name"] = "counts long name"
-        template[trg + "axis_photon_energy"] \
+        template[trg + "AXISNAME[axis_photon_energy]"] \
             = {"compress": self.e_axis, "strength": 9}
-        template[trg + "axis_photon_energy/@units"] = "keV"
+        template[trg + "AXISNAME[axis_photon_energy]/@units"] = "keV"
         # template[trg + "axis_photon_energy/@long_name"] = "axis photon energy long name"
         return template
 

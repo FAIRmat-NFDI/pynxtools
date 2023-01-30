@@ -137,5 +137,5 @@ def em_spctrscpy_default_plot_generator(template: dict) -> dict:
 
     # generic image
 
-    print("WARNING: No relevant endpoint found which could point to a default plot!")
+    # print("WARNING: No relevant endpoint found which could point to a default plot!")
     return template

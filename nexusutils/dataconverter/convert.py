@@ -120,20 +120,20 @@ def convert(input_file: Tuple[str],
         return
 
     for path in data.undocumented.keys():
-        if path == "/@default":
+        if "/@default" in path:
             continue
         logger.warning("The path, %s, is being written but has no documentation.", path)
 
     # Writing the data to output file
-
-    print('recommended')
-    print(data.recommended.keys())
-    print('optional')
-    print(data.optional.keys())
-    print('undocumented')
-    print(data.undocumented.keys())
-    print('required')
-    print(data.required.keys())
+    if False:
+        print('recommended ==================')
+        print(data.recommended.keys())
+        print('optional ==================')
+        print(data.optional.keys())
+        print('undocumented ==================')
+        print(data.undocumented.keys())
+        print('required ==================')
+        print(data.required.keys())
 
 
     Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
