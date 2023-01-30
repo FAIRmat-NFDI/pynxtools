@@ -127,7 +127,13 @@ def get_name_from_data_dict_entry(entry) -> str:
     """
     regex = re.compile(r'(?<=\[)(.*?)(?=\])')
     results = regex.search(entry)
-    return entry if results is None else results.group(1)
+    # return entry if results is None else results.group(1)
+    if results is None:
+        return entry
+    else:
+        if entry[0] == "@":
+            return "@" + results.group(1)
+    return results.group(1)
 
 
 def convert_data_dict_path_to_hdf5_path(path) -> str:

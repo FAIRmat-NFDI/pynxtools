@@ -152,16 +152,26 @@ class EmSpctrscpyCreateExampleData:
         print("Parsing coordinate system...")
         prefix = "/ENTRY[entry]/COORDINATE_SYSTEM_SET[coordinate_system_set]/"
         # this is likely not yet matching how it should be in NeXus
+        # systemA
+        grpnm = prefix + "TRANSFORMATIONS[lab]/"
         cs_xyz = np.asarray(
             [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]], np.float64)
         cs_names = ["x", "y", "z"]
         for i in np.arange(0, 3):
-            trg = prefix + "TRANSFORMATIONS[" + cs_names[i] + "]"
+            trg = grpnm + "AXISNAME[" + cs_names[i] + "]"
             template[trg] = cs_xyz[:, i]
             template[trg + "/@transformation_type"] = "translation"
             template[trg + "/@offset"] = np.asarray([0., 0., 0.], np.float64)
             template[trg + "/@offset_units"] = "m"
             template[trg + "/@depends_on"] = "."
+        # coordinate/TRANSFORMATIONS[systemA]/AXISNAME[x]/@translation_type
+        # systemA_x
+        # systemA_y
+        # systemA_z
+        # systemB_x
+        # systemB_y
+        # system
+        # systemB
 
         msg = "This way of defining coordinate systems is only a small "
         msg += "example of what is possible and how it could be done. "
@@ -370,22 +380,23 @@ class EmSpctrscpyCreateExampleData:
 
         trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
         trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray" + str(1) + "]/"
-        trg += "DATA[summary]/"
+        # trg += "DATA[summary]/"
+        trg += "summary/"
         # template[trg + "@NX_class"] = "NXdata"
+        template[trg + "title"] = "title for the plot"
         template[trg + "@long_name"] = "Xray"
         template[trg + "@signal"] = "data_counts"
         template[trg + "@axes"] = ["axis_photon_energy"]
-        template[trg + "@axis_photon_energy_indices"] = 0
-        template[trg + "DATA[data_counts]"] \
+        # template[trg + "@AXISNAME_indices[axis_photon_energy_indices]"] = 0
+        template[trg + "@AXISNAME_indices[axis_photon_energy_indices]"] = 0
+        template[trg + "data_counts"] \
             = {"compress": self.cnts_summary, "strength": 9}
-        template[trg + "DATA[data_counts]/@units"] = ""
-        template[trg + "DATA[data_counts]/@long_name"] = "counts long name"
-        template[trg + "AXISNAME[axis_photon_energy]"] \
+        template[trg + "data_counts/@units"] = ""
+        # template[trg + "data_counts/@long_name"] = "counts long name"
+        template[trg + "axis_photon_energy"] \
             = {"compress": self.e_axis, "strength": 9}
-        template[trg + "AXISNAME[axis_photon_energy]/@units"] = "keV"
-        template[trg + "AXISNAME[axis_photon_energy]/@long_name"] = "X-ray energy"
-        template[trg + "title"] = "Synthetic Xray"
-
+        template[trg + "axis_photon_energy/@units"] = "keV"
+        # template[trg + "axis_photon_energy/@long_name"] = "axis photon energy long name"
         return template
 
     def report(self, template: dict) -> dict:

@@ -41,13 +41,13 @@ import numpy as np
 def get_preferred_xray_endpoint(template: dict) -> str:
     """Choose a preferred NXdata/data instance for Xray."""
     trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
-    trg += "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/DATA"
-    if trg + "[stack]/counts" in template.keys():
-        assert isinstance(template[trg + "[stack]/counts"]["compress"], np.ndarray), \
+    trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/DATA"
+    if trg + "[stack]/data_counts" in template.keys():
+        assert isinstance(template[trg + "[stack]/data_counts"]["compress"], np.ndarray), \
             "EDS data stack not existent!"
         return "stack"
-    if trg + "[summary]/counts" in template.keys():
-        assert isinstance(template[trg + "[summary]/counts"]["compress"], np.ndarray), \
+    if trg + "[summary]/data_counts" in template.keys():
+        assert isinstance(template[trg + "[summary]/data_counts"]["compress"], np.ndarray), \
             "EDS data summary not existent!"
         return "summary"
     return ""
@@ -56,7 +56,7 @@ def get_preferred_xray_endpoint(template: dict) -> str:
 def get_preferred_eels_endpoint(template: dict) -> str:
     """Choose a preferred NXdata/data instance for EELS."""
     trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
-    trg += "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/DATA"
+    trg += "SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/DATA"
     if trg + "[stack]/counts" in template.keys():
         assert isinstance(template[trg + "[stack]/counts"]["compress"], np.ndarray), \
             "EELS data stack not existent!"
@@ -71,13 +71,23 @@ def get_preferred_eels_endpoint(template: dict) -> str:
 def get_preferred_adf_endpoint(template: dict) -> str:
     """Choose a preferred NXdata/data instance for ADF."""
     trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
-    trg += "NX_IMAGE_SET_EM_ADF[image_set_em_adf1]/DATA"
+    trg += "IMAGE_SET_EM_ADF[image_set_em_adf1]/DATA"
     if trg + "[adf]/intensity" in template.keys():
         assert isinstance(template[trg + "[adf]/intensity"]["compress"], np.ndarray), \
             "ADF data intensity not existent!"
         return "intensity"
     return ""
 
+
+def get_preferred_image_endpoint(template: dict) -> str:
+    """Choose a preferred NXdata/data instance for generic image."""
+    trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
+    trg += "IMAGE_SET_EM[image_set_em1]/DATA"
+    if trg + "/intensity" in template.keys():
+        assert isinstance(template[trg + "[adf]/intensity"]["compress"], np.ndarray), \
+            "ADF data intensity not existent!"
+        return "intensity"
+    return ""
 
 def em_spctrscpy_default_plot_generator(template: dict) -> dict:
     """For a valid NXS file at least one default plot is required."""
@@ -124,6 +134,8 @@ def em_spctrscpy_default_plot_generator(template: dict) -> dict:
         return template
 
     # bse, se
+
+    # generic image
 
     print("WARNING: No relevant endpoint found which could point to a default plot!")
     return template
