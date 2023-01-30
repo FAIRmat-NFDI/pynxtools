@@ -117,7 +117,7 @@ def fill_dispersion_in(template: Dict[str, Any]):
     Replaces dispersion_x and dispersion_y keys with filenames as their value
     with the parsed dispersion values.
     """
-    keys = [f'dispersion_{axis}' for axis in ['x', 'y']]
+    keys = [f'dispersion_{axis}' for axis in ['y', 'z']]
 
     for key in keys:
         if key in template:
