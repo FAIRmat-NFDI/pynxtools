@@ -89,6 +89,7 @@ class EmSpctrscpyCreateExampleData:
     def emulate_user(self, template: dict) -> dict:
         """Copy data in user section."""
         # check if required fields exists and are valid
+        print("Parsing user...")
         prefix = "/ENTRY[entry]/"
         user_names = np.unique(
             np.random.choice(["Sherjeel", "MarkusK", "Benedikt", "Johannes",
@@ -110,6 +111,7 @@ class EmSpctrscpyCreateExampleData:
     def emulate_sample(self, template: dict) -> dict:
         """Copy data in specimen section."""
         # check if required fields exists and are valid
+        print("Parsing sample...")
         trg = "/ENTRY[entry]/sample/"
         template[trg + "method"] = "simulation"
 
@@ -147,6 +149,7 @@ class EmSpctrscpyCreateExampleData:
 
     def emulate_coordinate_system(self, template: dict) -> dict:
         """Define the coordinate systems to be used."""
+        print("Parsing coordinate system...")
         prefix = "/ENTRY[entry]/COORDINATE_SYSTEM_SET[coordinate_system_set]/"
         # this is likely not yet matching how it should be in NeXus
         cs_xyz = np.asarray(
@@ -169,8 +172,8 @@ class EmSpctrscpyCreateExampleData:
 
     def emulate_instrument_header(self, template: dict) -> dict:
         """Copy data in instrument header section."""
+        print("Parsing instrument header...")
         trg = "/ENTRY[entry]/em_lab/"
-
         instrument_name = np.random.choice(
             ["Some ThermoFisher", "Some JEOL", "Some Zeiss",
              "Some TEscan", "Some Hitachi"], 1 + np.random.choice(1, 1))[0]
@@ -178,7 +181,6 @@ class EmSpctrscpyCreateExampleData:
         template[trg + "location"] = str(np.random.choice(
             ["Berlin", "Leipzig", "Dresden", "Düsseldorf", "Aachen", "Garching",
              "Aachen", "Leoben", "Jülich"], 1 + np.random.choice(1, 1))[0])
-
         trg = "/ENTRY[entry]/em_lab/FABRICATION[fabrication]/"
         template[trg + "vendor"] = instrument_name.replace("Some ", "")
         template[trg + "model"] = "n/a"
@@ -189,6 +191,7 @@ class EmSpctrscpyCreateExampleData:
 
     def emulate_ebeam_column(self, template: dict) -> dict:
         """Copy data in ebeam_column section."""
+        print("Parsing ebeam column...")
         prefix = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]/"
         trg = prefix + "electron_gun/"
 
@@ -218,17 +221,20 @@ class EmSpctrscpyCreateExampleData:
         template[trg + "applied"] = bool(np.random.choice([0, 1], 1)[0])
         return template
 
-    # def emulate_ibeam_column(self, template: dict) -> dict:
-    #     """Copy data in ibeam_column section."""
-    #     return template
+    def emulate_ibeam_column(self, template: dict) -> dict:
+         """Copy data in ibeam_column section."""
+         print("Parsing ibeam column...")
+         return template
 
-    # def emulate_ebeam_deflector(self, template: dict) -> dict:
-    #     """Copy data in ebeam_deflector section."""
-    #     return template
+    def emulate_ebeam_deflector(self, template: dict) -> dict:
+        """Copy data in ebeam_deflector section."""
+        print("Parsing ebeam deflector...")
+        return template
 
-    # def emulate_ibeam_deflector(self, template: dict) -> dict:
-    #     """Copy data in ibeam_deflector section."""
-    #     return template
+    def emulate_ibeam_deflector(self, template: dict) -> dict:
+        """Copy data in ibeam_deflector section."""
+        print("Parsing ibeam deflector...")
+        return template
 
     def emulate_optics(self, template: dict) -> dict:
         """Copy data in optical_system_em section."""
@@ -260,6 +266,7 @@ class EmSpctrscpyCreateExampleData:
 
     def emulate_detector(self, template: dict) -> dict:
         """Copy data in detector section."""
+        print("Parsing detector...")
         detectors = np.unique(np.random.choice(
             ["SE", "BSE", "EBSD", "EDX", "INLINE"],
             1 + np.random.choice(5, 1)))
@@ -273,6 +280,7 @@ class EmSpctrscpyCreateExampleData:
 
     def emulate_stage_lab(self, template: dict) -> dict:
         """Copy data in stage lab section."""
+        print("Parsing stage lab...")
         trg = "/ENTRY[entry]/em_lab/stage_lab/"
         stage_name = np.random.choice(
             ["side_entry", "top_entry", "single_tilt", "quick_change", "multiple_specimen",
@@ -283,15 +291,16 @@ class EmSpctrscpyCreateExampleData:
 
     def emulate_random_input_from_eln(self, template: dict) -> dict:
         """Emulate random input as could come from an ELN."""
+        print("Parsing random input from ELN...")
         self.emulate_entry(template)
         self.emulate_user(template)
         self.emulate_sample(template)
         self.emulate_coordinate_system(template)
         self.emulate_instrument_header(template)
         self.emulate_ebeam_column(template)
-        # self.emulate_ibeam_column(template)
-        # self.emulate_ebeam_deflector(template)
-        # self.emulate_ibeam_deflector(template)
+        self.emulate_ibeam_column(template)
+        self.emulate_ebeam_deflector(template)
+        self.emulate_ibeam_deflector(template)
         self.emulate_optics(template)
         self.emulate_detector(template)
         self.emulate_stage_lab(template)
@@ -359,20 +368,22 @@ class EmSpctrscpyCreateExampleData:
         # plt.ylabel("cnts")
         # plt.xscale("log")
 
-        trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]/"
-        trg += "EVENT_DATA_EM[event_data_em1]/"
+        trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
         trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray" + str(1) + "]/"
         trg += "DATA[summary]/"
-        template[trg + "@NX_class"] = "NXdata"
+        # template[trg + "@NX_class"] = "NXdata"
         template[trg + "@long_name"] = "Xray"
-        template[trg + "@signal"] = "counts"
-        template[trg + "@axes"] = ["photon_energy"]
-        template[trg + "@photon_energy_indices"] = 0
-        template[trg + "counts"] \
+        template[trg + "@signal"] = "data_counts"
+        template[trg + "@axes"] = ["axis_photon_energy"]
+        template[trg + "@axis_photon_energy_indices"] = 0
+        template[trg + "DATA[data_counts]"] \
             = {"compress": self.cnts_summary, "strength": 9}
-        template[trg + "photon_energy"] \
+        template[trg + "DATA[data_counts]/@units"] = ""
+        template[trg + "DATA[data_counts]/@long_name"] = "counts long name"
+        template[trg + "AXISNAME[axis_photon_energy]"] \
             = {"compress": self.e_axis, "strength": 9}
-        template[trg + "photon_energy/@units"] = "keV"
+        template[trg + "AXISNAME[axis_photon_energy]/@units"] = "keV"
+        template[trg + "AXISNAME[axis_photon_energy]/@long_name"] = "X-ray energy"
         template[trg + "title"] = "Synthetic Xray"
 
         return template

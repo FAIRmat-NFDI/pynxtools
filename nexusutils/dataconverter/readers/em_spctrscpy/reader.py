@@ -121,10 +121,7 @@ class EmSpctrscpyReader(BaseReader):
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():
                 print(keyword)
-                if "compress" in template[keyword]:
-                    print("--> Is compressed " + type(template[keyword["compress"]]))
-                else:
-                    print("--> Not compressed")
+                print(type(template[keyword]))
                 # print(template[keyword])
 
         print("Forward instantiated template to the NXS writer...")

@@ -40,8 +40,7 @@ import numpy as np
 
 def get_preferred_xray_endpoint(template: dict) -> str:
     """Choose a preferred NXdata/data instance for Xray."""
-    trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
-    trg += "/EVENT_DATA_EM[event_data_em1]/"
+    trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
     trg += "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/DATA"
     if trg + "[stack]/counts" in template.keys():
         assert isinstance(template[trg + "[stack]/counts"]["compress"], np.ndarray), \
@@ -56,8 +55,7 @@ def get_preferred_xray_endpoint(template: dict) -> str:
 
 def get_preferred_eels_endpoint(template: dict) -> str:
     """Choose a preferred NXdata/data instance for EELS."""
-    trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
-    trg += "/EVENT_DATA_EM[event_data_em1]/"
+    trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
     trg += "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/DATA"
     if trg + "[stack]/counts" in template.keys():
         assert isinstance(template[trg + "[stack]/counts"]["compress"], np.ndarray), \
@@ -72,8 +70,7 @@ def get_preferred_eels_endpoint(template: dict) -> str:
 
 def get_preferred_adf_endpoint(template: dict) -> str:
     """Choose a preferred NXdata/data instance for ADF."""
-    trg = "/ENTRY[entry]/EVENT_DATA_EM_SET[measurement]"
-    trg += "/EVENT_DATA_EM[event_data_em1]/"
+    trg = "/ENTRY[entry]/measurement/EVENT_DATA_EM[event_data_em1]/"
     trg += "NX_IMAGE_SET_EM_ADF[image_set_em_adf1]/DATA"
     if trg + "[adf]/intensity" in template.keys():
         assert isinstance(template[trg + "[adf]/intensity"]["compress"], np.ndarray), \
@@ -92,11 +89,11 @@ def em_spctrscpy_default_plot_generator(template: dict) -> dict:
         print("Found xray default data plot endpoint named " + endpoint)
         trg = "/ENTRY[entry]/"
         template[trg + "@default"] = "measurement"
-        trg += "EVENT_DATA_EM_SET[measurement]/"
+        trg += "measurement/"
         template[trg + "@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
         template[trg + "@default"] = "spectrum_set_em_xray1"
-        trg += "NX_SPECTRUM_SET_EM[spectrum_set_em_xray1]/"
+        trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/"
         template[trg + "@default"] = endpoint
         return template
 
@@ -105,11 +102,11 @@ def em_spctrscpy_default_plot_generator(template: dict) -> dict:
         print("Found eels default data plot endpoint named " + endpoint)
         trg = "/ENTRY[entry]/"
         template[trg + "@default"] = "measurement"
-        trg += "EVENT_DATA_EM_SET[measurement]/"
+        trg += "measurement/"
         template[trg + "@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
         template[trg + "@default"] = "spectrum_set_em_eels1"
-        trg += "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/"
+        trg += "SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/"
         template[trg + "@default"] = endpoint
         return template
 
@@ -118,11 +115,11 @@ def em_spctrscpy_default_plot_generator(template: dict) -> dict:
         print("Found adf default data plot endpoint named " + endpoint)
         trg = "/ENTRY[entry]/"
         template[trg + "@default"] = "measurement"
-        trg += "EVENT_DATA_EM_SET[measurement]/"
+        trg += "measurement/"
         template[trg + "@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
         template[trg + "@default"] = "image_set_em_adf1"
-        trg += "NX_IMAGE_SET_EM_ADF[image_set_em_adf1]/"
+        trg += "IMAGE_SET_EM_ADF[image_set_em_adf1]/"
         template[trg + "@default"] = endpoint
         return template
 
