@@ -239,7 +239,10 @@ class Writer:
                 if entry_name[0] != "@":
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     if isinstance(data, dict):
-                        hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
+                        if "compress" in data.keys():
+                            dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
+                        else:
+                            hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
                     else:
                         dataset = grp.create_dataset(entry_name,
                                                      data=data
