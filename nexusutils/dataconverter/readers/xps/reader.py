@@ -51,7 +51,6 @@ CONVERT_DICT = {
     'unit': '@units',
     'version': '@version',
     'Sample': 'SAMPLE[sample]',
-    'Sample_Component': 'SAMPLE_COMPONENT[sample_component]',
     'User': 'USER[user]',
     'Data': 'DATA[data]',
     'Source': 'SOURCE[source]',
@@ -215,13 +214,11 @@ def fill_detector_group(key,
                 modified_key = key.replace("entry", entry)
                 modified_key = modified_key.replace("[detector]", f"[{detector_nm}]")
                 modified_key = modified_key.replace("[data]", f"[{scan_nm}]")
-                # key_nxclass = modified_key.replace("/raw", "/@NX_class")
                 modified_key_unit = modified_key + "/@units"
 
                 template[modified_key] = xr_data[data_var].data
                 key_indv_chan_sginal = modified_key.replace("/raw", "/@signal")
                 template[key_indv_chan_sginal] = "raw"
-                # template[key_nxclass] = "NXdata"
                 template[modified_key_unit] = config_dict[f"{key}/@units"]
 
 
@@ -347,7 +344,7 @@ class XPSReader(BaseReader):
                                         template,
                                         ENTRY_SET)
         else:
-            raise ValueError("Eln file must be submited with some required fileds and attributes.")
+            raise ValueError("Eln file must be submited with some required fields and attributes.")
 
         final_template = Template()
         for key, val in template.items():

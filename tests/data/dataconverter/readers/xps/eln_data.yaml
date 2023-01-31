@@ -26,11 +26,7 @@ Instrument:
 Sample:
   name: "PBTTT"
   chemical_formula: "(C42H62S4)n"
-  Sample_Component:
-    name: null
-    chemical_formula: null
-    density: null
-    description: null
+  atom_types: ['C', 'H', 'S']
   preparation_description: "From third party"
   temperature:
     unit: "K"
