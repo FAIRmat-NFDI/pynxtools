@@ -86,7 +86,7 @@ DEBUG -
 		
 		It is strongly recommended that there is at least one :ref:`NXdata`
 		group in each :ref:`NXentry` group.
-		Note that the fields named ``VARIABLE`` and ``DATA`` 
+		Note that the fields named ``AXISNAME`` and ``DATA``
 		can be defined with different names.  
 		(Upper case is used to indicate that the actual name is left to the user.)
 		The ``signal`` and ``axes`` attributes of the 
@@ -212,16 +212,19 @@ DEBUG - documentation (NXdata.nxdl.xml:/axes):
 DEBUG - 
 			.. index:: plotting
 			
-			String array that defines the independent data fields used in 
-			the default plot for all of the dimensions of the *signal* field
-			(the *signal* field is the field in this group that is named by
-			the ``signal`` attribute of this group). 
-			One entry is provided for every dimension in the *signal* field.
+			Array of strings holding the :ref:`names <validItemName>` of
+			the independent data fields used in the default plot for all of
+			the dimensions of the :ref:`signal </NXdata@signal-attribute>`
+			as well as any :ref:`auxiliary signals </NXdata@auxiliary_signals-attribute>`.
 			
-			The field(s) named as values (known as "axes") of this attribute 
-			*must* exist. An axis slice is specified using a field named 
-			``AXISNAME_indices`` as described below (where the text shown here
-			as ``AXISNAME`` is to be replaced by the actual field name).
+			One name is provided for every dimension in the *signal* or *auxiliary signal* fields.
+			
+			The *axes* values are the names of fields or links that *must* exist and be direct
+			children of this NXdata group.
+
+			An axis slice is specified using a field named ``AXISNAME_indices``
+			as described below (where the text shown here as ``AXISNAME`` is to be
+			replaced by the actual field name).
 			
 			When no default axis is available for a particular dimension 
 			of the plottable data, use a "." in that position.  
@@ -229,8 +232,8 @@ DEBUG -
 			
 				@axes=["time", ".", "."]
 			
-			Since there are three items in the list, the the *signal* field
-			must must be a three-dimensional array (rank=3).  The first dimension
+			Since there are three items in the list, the *signal* field
+			must be a three-dimensional array (rank=3). The first dimension
 			is described by the values of a one-dimensional array named ``time``
 			while the other two dimensions have no fields to be used as dimension scales.
 			
@@ -256,9 +259,8 @@ DEBUG -
 			.. index:: signal attribute value
 			
 			Declares which NeXus field is the default. 
-			The value is the name of the NeXus field to be plotted.
-			(The value :ref:`names <validItemName>` an existing child
-			of this group. The child group must itself be a NeXus group.)
+			The value is the :ref:`name <validItemName>` of the data field to be plotted.
+			This field or link *must* exist and be a direct child of this NXdata group.
 			
 			It is recommended (as of NIAC2014) to use this attribute
 			rather than adding a signal attribute to the field.
@@ -269,10 +271,10 @@ DEBUG - ===== FIELD (//entry/data/angles): <HDF5 dataset "angles": shape (80,), 
 DEBUG - value: [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031 ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - <<OPTIONAL>>
 DEBUG - Dataset referenced as NXdata AXIS #0
-DEBUG - documentation (NXdata.nxdl.xml:/VARIABLE):
+DEBUG - documentation (NXdata.nxdl.xml:/AXISNAME):
 DEBUG - 
 	 		Dimension scale defining an axis of the data.
 	 		Client is responsible for defining the dimensions of the data.
@@ -284,14 +286,14 @@ DEBUG - ===== ATTRS (//entry/data/angles@target)
 DEBUG - value: /entry/instrument/analyser/angles 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data/angles@units)
 DEBUG - value: 1/Å 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - @units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
 DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
@@ -328,10 +330,10 @@ DEBUG - ===== FIELD (//entry/data/delays): <HDF5 dataset "delays": shape (195,),
 DEBUG - value: [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186 ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - <<OPTIONAL>>
 DEBUG - Dataset referenced as NXdata AXIS #2
-DEBUG - documentation (NXdata.nxdl.xml:/VARIABLE):
+DEBUG - documentation (NXdata.nxdl.xml:/AXISNAME):
 DEBUG - 
 	 		Dimension scale defining an axis of the data.
 	 		Client is responsible for defining the dimensions of the data.
@@ -343,23 +345,23 @@ DEBUG - ===== ATTRS (//entry/data/delays@target)
 DEBUG - value: /entry/instrument/analyser/delays 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data/delays@units)
 DEBUG - value: fs 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - @units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/data/energies): <HDF5 dataset "energies": shape (146,), type "<f8">
 DEBUG - value: [ 2.5         2.46917808  2.43835616  2.40753425  2.37671233  2.34589041 ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - <<OPTIONAL>>
 DEBUG - Dataset referenced as NXdata AXIS #1
-DEBUG - documentation (NXdata.nxdl.xml:/VARIABLE):
+DEBUG - documentation (NXdata.nxdl.xml:/AXISNAME):
 DEBUG - 
 	 		Dimension scale defining an axis of the data.
 	 		Client is responsible for defining the dimensions of the data.
@@ -371,14 +373,14 @@ DEBUG - ===== ATTRS (//entry/data/energies@target)
 DEBUG - value: /entry/instrument/analyser/energies 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - @target - IS NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data/energies@units)
 DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
-NXdata.nxdl.xml:/VARIABLE
+NXdata.nxdl.xml:/AXISNAME
 DEBUG - @units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/definition): <HDF5 dataset "definition": shape (), type "|O">
 DEBUG - value: b'NXarpes' 

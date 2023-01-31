@@ -1,0 +1,180 @@
+{
+    "Measurement State Machine": {
+        "System Model": {
+            "0": "75XX-LVWR(-HS)",
+            "1": "75XX-LVWR-SWT(-HS), 77XX-LVWR",
+            "2": "75XX-HVWR(-HS), 77XX-HVWR",
+            "3": "76XX",
+            "4": "95XX-LVWR(-HS)",
+            "5": "95XX-LVWR-SWT(-HS), 97XX-LVWR",
+            "6": "95XX-HVWR(-HS), 97XX-HVWR",
+            "7": "77XXA",
+            "8": "97XXA"
+        },
+        "Wiring": {
+            "0": "van der Pauw",
+            "1": "Hall Bar"
+        },
+        "ElectroMeter": {
+            "0": "Keithley 6512",
+            "1": "Keithley 6514"
+        },
+        "VoltMeter": {
+            "0": "Keithley 2000",
+            "1": "Keithley 2182",
+            "2": "Keithley 182"
+        },
+        "CurrentMeter": {
+            "0": "Keithley 6485",
+            "1": "Keithley 485/6/7"
+        },
+        "Current Source": {
+            "0": "Keithley 220",
+            "1": "Keithley 6220"
+        },
+        "AC Hall type": {
+            "0": "AC Current only",
+            "1": "AC Field and Current"
+        }
+    },
+    "Keithley 182": {
+        "Integration Time": {
+            "0": "1 line cycle",
+            "1": "3 ms",
+            "2": "100 ms"
+        },
+        "Digital Filter": {
+            "0": "Off",
+            "1": "Fast",
+            "2": "Medium",
+            "3": "Slow"
+        }
+    },
+    "Keithley 2000": {
+        "Reading Rate": {
+            "0": "Slow",
+            "1": "Medium",
+            "2": "Fast"
+        },
+        "Digital Filter Type": {
+            "0": "Repeat",
+            "1": "Moving"
+        }
+    },
+    "Keithley 2182": {
+        "Reading_Rate": {
+            "0": "Slow",
+            "1": "Medium",
+            "2": "Fast"
+        },
+        "Digital_Filter_Type": {
+            "0": "Repeat",
+            "1": "Moving"
+        },
+        "Digital Filter Window": {
+            "0": "0",
+            "1": "0.01",
+            "2": "0.1",
+            "3": "1",
+            "4": "10"
+        }
+    },
+    "Keithley 2700": {
+        "Reading Rate": {
+            "0": "Slow",
+            "1": "Medium",
+            "2": "Fast"
+        },
+        "Resting State": {
+            "0": "closed",
+            "1": "open"
+        },
+        "Digital Filter Type": {
+            "0": "Repeat",
+            "1": "Moving"
+        },
+        "Digital Filter Window": {
+            "0": "0",
+            "1": "0.01",
+            "2": "0.1",
+            "3": "1",
+            "4": "10"
+        }
+    },
+    "Keithley 6485": {
+        "Reading Rate": {
+            "0": "Slow",
+            "1": "Medium",
+            "2": "Fast"
+        },
+        "Digital Filter Type": {
+            "0": "Repeat",
+            "1": "Moving"
+        }
+    },
+    "Keithley 7001": {
+        "Resting State": {
+            "0": "Closed",
+            "1": "Open"
+        }
+    },
+    "Field Controller": {
+        "Gaussmeter": {
+            "0": "LS450",
+            "1": "LS475",
+            "2": "LS736"
+        },
+        "Power Supply": {
+            "0": "642,643, or 662 (Max. 70 Amp)",
+            "1": "665 (Max. 100 Amp)",
+            "2": "648 or 668 (Max. 135 Amp)",
+            "3": "647 (Max. 72 Amp Must be controlled via EXT input terminal)"
+        },
+        "LS450 Display Unit": {
+            "0": "Gauss",
+            "1": "Tesla"
+        }
+    },
+    "Temperature Controller": {
+        "Sample Sensor Type": {
+            "0": "Silicon diode",
+            "1": "GaAlAs diode",
+            "2": "Platinum 100/200",
+            "3": "Platinum 100/500",
+            "4": "Platinum 1000",
+            "5": "Rhodium Iron",
+            "6": "Carbon-glass",
+            "7": "Cernox",
+            "8": "RuOx",
+            "9": "Germanium",
+            "10": "Thermocouple"
+        }
+    },
+    "Temperature Domain": {
+        "Direction": {
+            "0": "Both",
+            "1": "Ascending",
+            "2": "Descending"
+        },
+        "Heater Range": {
+            "0": "Heater off",
+            "1": "4.9 mW",
+            "2": "49 mW",
+            "3": "490 mW",
+            "4": "4.9 W",
+            "5": "49.0W"
+        },
+        "Sample Space Evacuation Valve During Ramp": {
+            "0": "Open",
+            "1": "Closed"
+        },
+        "Sample Space Evacuation Valve After Ramp": {
+            "0": "Open",
+            "1": "Closed"
+        },
+        "Loop 2 Heater": {
+            "0": "off",
+            "1": "on"
+        }
+    }
+}

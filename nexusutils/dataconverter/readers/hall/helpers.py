@@ -89,6 +89,19 @@ def is_value_with_unit(expr: str) -> bool:
     return bool(re.search(r"^.+\s\[.+\]$", expr))
 
 
+def is_integer(expr: str) -> bool:
+    """Checks whether an expression is an integer number,
+    i.e. 3, +3 or -3. Also supports numbers in the form of 003.
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is an integer number
+    """
+    return bool(re.search(r"^[+-]?\d+$", expr))
+
+
 def is_number(expr: str) -> bool:
     """Checks whether an expression is a number,
     i.e. is of the form 0.3, 3, 1e-3, 1E5 etc.
@@ -102,6 +115,42 @@ def is_number(expr: str) -> bool:
     return bool(
         re.search(r"^[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)$", expr)
     )
+
+
+def is_boolean(expr: str) -> bool:
+    """Checks whether an expression is a boolean,
+    i.e. is equal to True or False (upper or lower case).
+
+    Args:
+        expr (str): The expression to check.
+
+    Returns:
+        bool: Returns true if the expr is a boolean
+    """
+    return bool(re.search(r"True|False|true|false|On|Off|Yes|No", expr))
+
+
+def to_bool(expr: str) -> bool:
+    """Converts boolean representations in strings to python booleans.
+
+    Args:
+        expr (str): The string to convert to boolean.
+
+    Returns:
+        bool: The boolean value.
+    """
+    replacements = {
+        'On': True,
+        'Off': False,
+        'Yes': True,
+        'No': False,
+        'True': True,
+        'False': False,
+        'true': True,
+        'false': False,
+    }
+
+    return replacements.get(expr)
 
 
 def split_str_with_unit(expr: str, lower: bool = True) -> Tuple[str, str]:
@@ -145,6 +194,31 @@ def split_value_with_unit(expr: str) -> Tuple[Union[float, str], str]:
     return value, unit
 
 
+def clean(unit: str) -> str:
+    """Cleans an unit string, e.g. converts `VS` to `volt * seconds`.
+    If the unit is not in the conversion dict the input string is
+    returned without modification.
+
+    Args:
+        unit (str): The dirty unit string.
+
+    Returns:
+        str: The cleaned unit string.
+    """
+    conversions = {
+        'VS': "volt * second",
+        'Sec': "s",
+        '²': "^2",
+        '³': "^3",
+        'ohm cm': "ohm * cm",
+    }
+
+    for old, new in conversions.items():
+        unit = unit.replace(old, new)
+
+    return unit
+
+
 def get_unique_dkey(dic: dict, dkey: str) -> str:
     """Checks whether a data key is already contained in a dictionary
     and returns a unique key if it is not.
@@ -186,7 +260,7 @@ def pandas_df_to_template(prefix: str, data: pd.DataFrame) -> Dict[str, Any]:
 
         if is_value_with_unit(header):
             name, unit = split_str_with_unit(header)
-            template[f'{prefix}/{name}/@units'] = unit
+            template[f'{prefix}/{name}/@units'] = clean(unit)
         else:
             name = header.lower()
 

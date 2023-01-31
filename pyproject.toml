@@ -19,8 +19,6 @@ classifiers = [
 ]
 dependencies = [
     "click>=7.1.2",
-    "typed-ast>=1.4.2",
-    "astroid>=2.5.1",
     "h5py>=3.6.0",
     "xarray>=0.20.2",
     "PyYAML>=6.0",
@@ -59,6 +57,7 @@ nyaml2nxdl = "nexusutils.nyaml2nxdl.nyaml2nxdl:launch_tool"
 [tool.setuptools.package-data]
 nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 "nexusutils.dataconverter.readers.xps" = ["*.json"]
+"nexusutils.dataconverter.readers.hall" = ["enum_map.json"]
 
 [tool.setuptools.packages.find]
 exclude = ["nexusutils/definitions*"]
