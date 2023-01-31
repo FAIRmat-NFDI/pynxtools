@@ -19,6 +19,7 @@
 from io import StringIO
 from dataclasses import dataclass
 from typing import Callable, Dict, List
+from numpy import sqrt
 import pandas as pd
 
 ModelNameCallback = Callable[[str, str], None]
@@ -82,7 +83,7 @@ def sellmeier_squared(model_input: ModelInput):
     for a reference.
     """
     for i in range(2, len(model_input.coeffs), 2):
-        model_input.coeffs[i] = model_input.coeffs[i] ** 2
+        model_input.coeffs[i] = sqrt(model_input.coeffs[i])
     sellmeier(model_input)
 
 
@@ -97,12 +98,12 @@ def sellmeier(model_input: ModelInput):
         model_input.dispersion_path,
         'Sellmeier',
         'eps',
-        'eps = eps_inf + 1 + sum[A * lambda ** 2 / (lambda ** 2 - B)]'
+        'eps = eps_inf + 1 + sum[A * lambda ** 2 / (lambda ** 2 - B ** 2)]'
     )
 
     model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
     model_input.add_rep_param(path, 'A', model_input.coeffs[1::2], [''])
-    model_input.add_rep_param(path, 'B', model_input.coeffs[2::2], ['micrometer**2'])
+    model_input.add_rep_param(path, 'B', model_input.coeffs[2::2], ['micrometer'])
 
 
 def polynomial(model_input: ModelInput):
@@ -138,26 +139,30 @@ def sellmeier_polynomial(model_input: ModelInput):
         'Sellmeier'
     )
 
+    a_units = []
     # Check for valid parameters
     for exp1 in model_input.coeffs[2:7:4]:
         if exp1 not in [0, 2]:
             raise ValueError(f'e1 may only be 0 or 1 but is {exp1}')
+        a_units.append('' if exp1 == 0 else '1/micrometer^2')
 
     path = model_input.add_model_info(
         model_input.dispersion_path,
         'Sellmeier',
         'eps',
-        'eps = sum[A * lambda ** e1 / (lambda ** 2 - B**e2)]'
+        'eps = eps_inf + sum[A * lambda ** e1 / (lambda ** 2 - B**e2)]'
     )
 
-    model_input.add_rep_param(path, 'A', model_input.coeffs[1:6:4], [''])
+    model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
+    model_input.add_rep_param(path, 'A', model_input.coeffs[1:6:4], a_units)
     model_input.add_rep_param(
         path, 'B', model_input.coeffs[3:8:4],
-        [f'1/micrometer^(2/{e2})' for e2 in model_input.coeffs[4:9:4]]
+        [f'micrometer^(2/{e2})' for e2 in model_input.coeffs[4:9:4]]
     )
     model_input.add_rep_param(path, 'e1', model_input.coeffs[2:7:4], [''])
     model_input.add_rep_param(path, 'e2', model_input.coeffs[4:9:4], [''])
 
+    # If there are just 9 parameters don't append polynomial part
     if not model_input.coeffs[9::]:
         return
 
@@ -169,10 +174,9 @@ def sellmeier_polynomial(model_input: ModelInput):
         model_input.dispersion_path,
         'Polynomial',
         'eps',
-        'eps = eps_inf + sum[f * lambda ** e]'
+        'eps = sum[f * lambda ** e]'
     )
 
-    model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
     model_input.add_rep_param(
         path, 'f', model_input.coeffs[9::2],
         [f'1/micrometer^{e}' for e in model_input.coeffs[10::2]]
@@ -232,12 +236,16 @@ def herzberger(model_input: ModelInput):
         model_input.dispersion_path,
         'Herzberger',
         'n',
-        'n = 1 + n_inf + sum[A / (B - lambda ** (-2))]'
+        'n = n_inf + C2 / (lambda ** 2 - B1) + '
+        'C3 * (lambda ** 2 - B2) ** (-2) + '
+        'sum[f * lambda ** e]'
     )
 
     model_input.add_single_param(path, 'n_inf', model_input.coeffs[0], '')
     model_input.add_single_param(path, 'C2', model_input.coeffs[1], 'micrometer^2')
     model_input.add_single_param(path, 'C3', model_input.coeffs[2], 'micrometer^4')
+    model_input.add_single_param(path, 'B1', 0.028, 'micrometer^2')
+    model_input.add_single_param(path, 'B2', 0.028, 'micrometer^2')
     model_input.add_rep_param(
         path, 'f', model_input.coeffs[3:6], [f'1/micrometer^{e}' for e in [2, 4, 6]]
     )
@@ -255,11 +263,11 @@ def retro(model_input: ModelInput):
         model_input.dispersion_path,
         'Retro',
         'eps',
-        '(eps ** 2 - 1) / (eps + 2) = '
+        '(eps - 1) / (eps + 2) = '
         'eps_inf + C2 * lambda ** 2 / (lambda ** 2 - C3) + C4 * lambda ** 2'
     )
 
-    names = ['eps_inf'] + [f'C{i}' for i in range(1, 5)]
+    names = ['eps_inf'] + [f'C{i}' for i in range(1, 4)]
     units = ['', '', 'micrometer^2', 'micrometer^(-2)']
 
     for name, coeff, unit in zip(names, model_input.coeffs, units):
@@ -281,8 +289,8 @@ def exotic(model_input: ModelInput):
         'C4 * (lambda - C5) / ((lambda - C5) ** 2 + C6)'
     )
 
-    names = ['eps_inf'] + [f'C{i}' for i in range(1, 7)]
-    units = [''] + [f'micrometer{e}' for e in ['^2', '^2', '', '', '^2']]
+    names = ['eps_inf'] + [f'C{i}' for i in range(1, 6)]
+    units = ['', 'micrometer^2', 'micrometer^2', '', 'micrometer', 'micrometer^2']
 
     for name, coeff, unit in zip(names, model_input.coeffs, units):
         model_input.add_single_param(path, name, coeff, unit)
