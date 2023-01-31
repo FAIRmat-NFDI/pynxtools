@@ -82,7 +82,7 @@ def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str
         entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/name'] = name
         entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values'] = values
         if len(units) > 1:
-            entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/units'] = units
+            entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/parameter_units'] = units
         entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values/@units'] = units[0]
 
     yml_file = read_yml_file(filename)
