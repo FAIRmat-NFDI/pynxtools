@@ -267,24 +267,24 @@ def extract_atom_types(formula: str) -> Set:
     """Extract atom types form chemical formula."""
 
     atom_types: set = set()
-    Element: str = ""
+    element: str = ""
     # tested with "(C38H54S4)n(NaO2)5(CH4)NH3"
-    for s in formula:
-        if s.isalpha():
-            if s.isupper() and Element == "":
-                Element = s
-            elif s.isupper() and Element != "" and Element.isupper():
-                atom_types.add(Element)
-                Element = s
-            elif s.islower() and Element.isupper():
-                Element = Element + s
-                atom_types.add(Element)
-                Element = ""
+    for sym in formula:
+        if sym.isalpha():
+            if sym.isupper() and element == "":
+                element = sym
+            elif sym.isupper() and element != "" and element.isupper():
+                atom_types.add(element)
+                element = sym
+            elif sym.islower() and element.isupper():
+                element = element + sym
+                atom_types.add(element)
+                element = ""
 
         else:
-            if Element.isupper():
-                atom_types.add(Element)
-            Element = ""
+            if element.isupper():
+                atom_types.add(element)
+            element = ""
 
     return atom_types
 
@@ -297,7 +297,7 @@ def check_for_valid_atom_types(atom_list: List):
                              f"check for correct element name")
 
 
-# Fill template from eln
+# pylint: disable=too-many-branches
 def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
                                 template,
