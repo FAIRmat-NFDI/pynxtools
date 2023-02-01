@@ -78,8 +78,6 @@ def test_has_correct_read_func(reader):
         assert hasattr(reader, "supported_nxdls")
 
         reader_name = get_reader_name_from_reader_object(reader)
-        if reader_name == "mpes":
-            xx = "mpes_reader"
         def_dir = os.path.join(os.getcwd(), "nexusutils", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 

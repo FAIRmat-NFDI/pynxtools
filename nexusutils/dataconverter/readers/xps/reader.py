@@ -274,25 +274,22 @@ def extract_atom_types(formula: str) -> Set:
             if char.isupper() and element == "":
                 element = char
             elif char.isupper() and element != "" and element.isupper():
-                check_for_valid_atom_types(element)
                 atom_types.add(element)
                 element = char
             elif char.islower() and element.isupper():
                 element = element + char
-                check_for_valid_atom_types(element)
                 atom_types.add(element)
                 element = ""
 
         else:
             if element.isupper():
-                check_for_valid_atom_types(element)
                 atom_types.add(element)
             element = ""
 
     return atom_types
 
 
-def check_for_valid_atom_types(atom_list: List):
+def check_for_valid_atom_types(atom_list: str):
     """Check for whether atom exists in periodic table. """
     for elm in atom_list:
         if elm not in chemical_symbols:
@@ -307,43 +304,47 @@ def fill_template_with_eln_data(eln_data_dict,
                                 entry_set):
     """Fill the template from provided eln data"""
 
-    atom_types: List = []
+    def fill_from_file(key):
+        atom_types: List = []
+        field_value = eln_data_dict[key]
+
+        if "chemical_formula" in key:
+            atom_types = list(extract_atom_types(field_value))
+
+        if "atom_types" in key:
+            if field_value:
+                pass
+            else:
+                field_value = atom_types
+            check_for_valid_atom_types(field_value)
+
+        if field_value is None:
+            return
+
+        for entry in entry_set:
+            modified_key = key.replace("[entry]", f"[{entry}]")
+            template[modified_key] = field_value
+
+    def fill_from_value(key):
+        field_value = eln_data_dict[key]
+        if field_value is None:
+            return
+        # Do for all entry name
+        for entry in entry_set:
+            modified_key = key.replace("[entry]", f"[{entry}]")
+            # Do for all detector
+            if "[detector]" in key:
+                for detector in DETECTOR_SET:
+                    detr_key = modified_key.replace("[detector]", f"[{detector}]")
+                    template[detr_key] = field_value
+            else:
+                template[modified_key] = field_value
 
     for key, val in config_dict.items():
         if ELN_TOCKEN in val:
-            field_value = eln_data_dict[key]
-
-            if "chemical_formula" in key:
-                atom_types = list(extract_atom_types(field_value))
-
-            if "atom_types" in key:
-                if field_value:
-                    pass
-                else:
-                    field_value = atom_types
-                check_for_valid_atom_types(field_value)
-
-            if field_value is None:
-                continue
-
-            for entry in entry_set:
-                modified_key = key.replace("[entry]", f"[{entry}]")
-                template[modified_key] = field_value
-
+            fill_from_file(key)
         elif key in list(eln_data_dict.keys()):
-            field_value = eln_data_dict[key]
-            if field_value is None:
-                continue
-            # Do for all entry name
-            for entry in entry_set:
-                modified_key = key.replace("[entry]", f"[{entry}]")
-                # Do for all detector
-                if "[detector]" in key:
-                    for detector in DETECTOR_SET:
-                        detr_key = modified_key.replace("[detector]", f"[{detector}]")
-                        template[detr_key] = field_value
-                else:
-                    template[modified_key] = field_value
+            fill_from_value(key)
 
 
 # pylint: disable=too-few-public-methods

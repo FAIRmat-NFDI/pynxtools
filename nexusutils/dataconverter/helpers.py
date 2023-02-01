@@ -409,11 +409,11 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
-            if nxdl_path in nxdl_path_to_type \
-               and isinstance(data[path], nxdl_path_to_type[nxdl_path]):
-                continue
-
-            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+            if nxdl_path in nxdl_path_to_type:
+                elem = nxdl_path_to_type[nxdl_path]
+            else:
+                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+                nxdl_path_to_type[nxdl_path] = elem
 
             # Only check for validation in the NXDL if we did find the entry
             # otherwise we just pass it along
@@ -429,7 +429,6 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 if not is_valid_enum:
                     raise Exception(f"The value at {path} should be"
                                     f" one of the following strings: {enums}")
-            nxdl_path_to_type[nxdl_path] = type(data[path])
 
     return True
 
