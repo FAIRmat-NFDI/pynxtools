@@ -269,15 +269,15 @@ def extract_atom_types(formula: str) -> Set:
     atom_types: set = set()
     element: str = ""
     # tested with "(C38H54S4)n(NaO2)5(CH4)NH3"
-    for sym in formula:
-        if sym.isalpha():
-            if sym.isupper() and element == "":
-                element = sym
-            elif sym.isupper() and element != "" and element.isupper():
+    for char in formula:
+        if char.isalpha():
+            if char.isupper() and element == "":
+                element = char
+            elif char.isupper() and element != "" and element.isupper():
                 atom_types.add(element)
-                element = sym
-            elif sym.islower() and element.isupper():
-                element = element + sym
+                element = char
+            elif char.islower() and element.isupper():
+                element = element + char
                 atom_types.add(element)
                 element = ""
 
