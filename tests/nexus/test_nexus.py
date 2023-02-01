@@ -96,3 +96,17 @@ def test_get_node_at_nxdl_path():
     node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name/float_value", elem=elem)
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
+
+    node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name/AXISNAME/long_name", elem=elem)
+    assert node.attrib["name"] == "long_name"
+
+    nxdl_file_path = os.path.join(
+        local_dir,
+        "../../nexusutils/definitions/contributed_definitions/NXem.nxdl.xml"
+    )
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/measurement/EVENT_DATA_EM/USER/affiliation",
+        elem=elem
+    )
+    assert node.attrib["name"] == "affiliation"
