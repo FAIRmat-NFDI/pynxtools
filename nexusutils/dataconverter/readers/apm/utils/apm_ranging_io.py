@@ -22,7 +22,7 @@
 
 # pylint: disable=E1101
 
-from typing import Dict
+from typing import Dict, Any
 
 import numpy as np
 
@@ -37,36 +37,36 @@ from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
 
 
-def add_unknown_iontype(template: dict) -> dict:
+def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on this type.
-    trg = "/ENTRY[entry]/atom_probe/ranging/peak_identification/"
-    path = trg + "ION[ion0]/"
+    trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/"
+    trg += "ranging/peak_identification/ION[ion0]/"
     ivec = create_isotope_vector([])
-    template[path + "isotope_vector"] \
+    template[trg + "isotope_vector"] \
         = np.reshape(np.asarray(ivec, np.uint16),
                      (1, MAX_NUMBER_OF_ATOMS_PER_ION))
-    # template[path + "isotope_vector/@units"] = ""
-    template[path + "charge_state"] = np.int8(0)
-    template[path + "charge_state/@units"] = "eV"
-    template[path + "mass_to_charge_range"] \
+    # template[trg + "isotope_vector/@units"] = ""
+    template[trg + "charge_state"] = np.int8(0)
+    template[trg + "charge_state/@units"] = "eV"
+    template[trg + "mass_to_charge_range"] \
         = np.reshape(np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2))
-    template[path + "mass_to_charge_range/@units"] = "Da"
+    template[trg + "mass_to_charge_range/@units"] = "Da"
     nuclid_list = isotope_vector_to_nuclid_list(ivec)
-    template[path + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-    # template[path + "nuclid_list/@units"] = ""
-    template[path + "name"] = isotope_vector_to_human_readable_name(ivec, 0)
+    template[trg + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
+    # template[trg + "nuclid_list/@units"] = ""
+    template[trg + "name"] = isotope_vector_to_human_readable_name(ivec, 0)
 
     return template
 
 
-def add_standardize_molecular_ions(ion_lst: list, template: dict) -> dict:
+def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int) -> dict:
     """Added standard formatted molecular ion entries."""
-    trg = "/ENTRY[entry]/atom_probe/ranging/"
+    trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/ranging/"
     template[trg + "number_of_ion_types"] = np.int32(len(ion_lst))
 
     ion_id = 1
-    trg = "/ENTRY[entry]/atom_probe/ranging/peak_identification/"
+    trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/ranging/peak_identification/"
     for ion in ion_lst:
         path = trg + "ION[ion" + str(ion_id) + "]/"
 
@@ -100,7 +100,7 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict) -> dict:
     return template
 
 
-def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
+def extract_data_from_rng_file(file_name: str, template: dict, entry_id: int) -> dict:
     """Add those required information which an RNG file has."""
     # modify the template to take into account ranging
     # ranging is currently not resolved recursively because
@@ -115,12 +115,12 @@ def extract_data_from_rng_file(file_name: str, template: dict) -> dict:
         "Current implementation does not support more than 256 ion types"
 
     add_standardize_molecular_ions(
-        rangefile.rng["molecular_ions"], template)
+        rangefile.rng["molecular_ions"], template, entry_id)
 
     return template
 
 
-def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
+def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dict:
     """Add those required information which an RRNG file has."""
     # modify the template to take into account ranging
     # ranging is currently not resolved recursively because
@@ -136,7 +136,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
         "Current implementation does not support more than 256 ion types"
 
     add_standardize_molecular_ions(
-        rangefile.rrng["molecular_ions"], template)
+        rangefile.rrng["molecular_ions"], template, entry_id)
 
     return template
 
@@ -144,10 +144,11 @@ def extract_data_from_rrng_file(file_name: str, template: dict) -> dict:
 class ApmRangingDefinitionsParser:  # pylint: disable=R0903
     """Wrapper for multiple parsers for vendor specific files."""
 
-    def __init__(self, file_name: str):
-        self.meta: Dict[str, str] = {}
+    def __init__(self, file_name: str, entry_id: int):
+        self.meta: Dict[str, Any] = {}
         self.meta["file_format"] = "none"
         self.meta["file_name"] = file_name
+        self.meta["entry_id"] = entry_id
         index = file_name.lower().rfind(".")
         if index >= 0:
             mime_type = file_name.lower()[index + 1::]
@@ -163,7 +164,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
         with the application definition.
         """
         # resolve the next two program references more informatively
-        trg = "/ENTRY[entry]/atom_probe/ranging/"
+        trg = "/ENTRY[entry" + str(self.meta["entry_id"]) + "]/atom_probe/ranging/"
         template[trg + "program"] \
             = "unclear, " + self.meta["file_format"] + " range file format" \
             + " does not document with which program it was generated!"
@@ -181,7 +182,8 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
 
-        trg = "/ENTRY[entry]/atom_probe/ranging/peak_identification/"
+        trg = "/ENTRY[entry" + str(self.meta["entry_id"]) + "]/atom_probe/"
+        trg += "ranging/peak_identification/"
         template[trg + "program"] \
             = "unclear, " + self.meta["file_format"] + " range file format" \
             + " does not document which program was used for peak_identification!"
@@ -189,15 +191,17 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
             = "unclear, " + self.meta["file_format"] + " range file format" \
             + " does not document which program version was used for peak_identification!"
 
-        add_unknown_iontype(template)
+        add_unknown_iontype(template, self.meta["entry_id"])
 
         if self.meta["file_name"] != "" and self.meta["file_format"] != "none":
             if self.meta["file_format"] == "rng":
                 extract_data_from_rng_file(
                     self.meta["file_name"],
-                    template)
+                    template,
+                    self.meta["entry_id"])
             if self.meta["file_format"] == "rrng":
                 extract_data_from_rrng_file(
                     self.meta["file_name"],
-                    template)
+                    template,
+                    self.meta["entry_id"])
         return template

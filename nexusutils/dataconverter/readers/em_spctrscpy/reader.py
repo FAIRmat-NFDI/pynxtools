@@ -50,16 +50,16 @@ from nexusutils.dataconverter.readers.em_spctrscpy.utils.em_example_data \
     import EmSpctrscpyCreateExampleData
 
 
-def hyperspy_parser(file_name: str, template: dict) -> dict:
+def hyperspy_parser(file_name: str, template: dict, entry_id: int) -> dict:
     """Parse content from electron microscopy vendor files."""
-    test = NxEventDataEm(file_name)
+    test = NxEventDataEm(file_name, entry_id)
     test.report(template)
     return template
 
 
-def nomad_oasis_eln_parser(file_name: str, template: dict) -> dict:
+def nomad_oasis_eln_parser(file_name: str, template: dict, entry_id: int) -> dict:
     """Parse out output from a YAML file from a NOMAD OASIS YAML."""
-    test = NxEmNomadOasisElnSchemaParser(file_name)
+    test = NxEmNomadOasisElnSchemaParser(file_name, entry_id)
     test.report(template)
     return template
 
@@ -85,43 +85,49 @@ class EmSpctrscpyReader(BaseReader):
         # pylint: disable=duplicate-code
         template.clear()
 
-        create_example_data_for_dev_purposes = True
-        if create_example_data_for_dev_purposes is True:
-            print("Create synthetic data...")
-            synthetic = EmSpctrscpyCreateExampleData()
-            synthetic.report(template)
+        n_entries = 0
+        if len(file_paths) == 0:
+            n_entries = 2  # 10
+            print("Create " + str(n_entries) + " synthetic datasets in one NeXus file...")
+            synthetic = EmSpctrscpyCreateExampleData(n_entries)
+            synthetic.synthesize(template)
+        elif len(file_paths) == 1:
+            print("Insufficient input-files, at least one ELN and one partner file!")
+            return template
         else:
-            print("Identify case...")
+            n_entries = 1
+            entry_id = 1
+            print("Parse ELN and technology partner file(s)...")
             case = EmUseCaseSelector(file_paths)
             assert case.is_valid is True, \
                 "Such a combination of input-file(s, if any) is not supported !"
 
             print("Parse (meta)data coming from an ELN...")
             if case.eln_parser == "nomad-oasis":
-                nomad_oasis_eln_parser(case.eln[0], template)
+                nomad_oasis_eln_parser(case.eln[0], template, entry_id)
             else:
                 print("No input file defined for eln data !")
                 return {}
 
             print("Parse (numerical) data and metadata from technology partner files...")
             if case.vendor_parser == "oina":
-                # oina_parser(case.vendor[0], template)
+                # oina_parser(case.vendor[0], template, entry_id)
                 return {}
             if case.vendor_parser == "hspy":
-                hyperspy_parser(case.vendor[0], template)
+                hyperspy_parser(case.vendor[0], template, entry_id)
             else:
                 print("No input-file defined for technology partner data !")
                 return {}
 
         print("Create NeXus default plottable data...")
-        em_spctrscpy_default_plot_generator(template)
+        em_spctrscpy_default_plot_generator(template, n_entries)
 
         debugging = False
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():
                 print(keyword)
-                print(type(template[keyword]))
+                # print(type(template[keyword]))
                 # print(template[keyword])
 
         print("Forward instantiated template to the NXS writer...")

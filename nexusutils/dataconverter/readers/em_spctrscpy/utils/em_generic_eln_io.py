@@ -57,16 +57,20 @@ class NxEmNomadOasisElnSchemaParser:
     to create an extra blocker in sprint 9, we carry the values hardcoded
     """
 
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: str, entry_id: int):
+        assert "eln_data" in file_name, \
+            "Argument file_name should be eln_data* YAML !"
+        assert entry_id > 0, "Argument entry_id has to be > 0 !"
         # file_name = "eln_data.yaml"
         with open(file_name, "r", encoding="utf-8") as stream:
             self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
+        self.entry_id = entry_id
 
     def parse_entry_section(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
         print("Parsing entry...")
-        trg = "/ENTRY[entry]/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
         src = "entry"
         assert isinstance(self.yml[src], fd.FlatDict), \
             "Required section " + src + " does not exist!"
@@ -115,7 +119,8 @@ class NxEmNomadOasisElnSchemaParser:
         for user_list in self.yml[src]:
             assert "name" in user_list.keys(), \
                 "name is a required field but not found in ELN input!"
-            trg = "/ENTRY[entry]/USER[user" + str(user_id) + "]/"
+            trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
+            trg += "USER[user" + str(user_id) + "]/"
             template[trg + "name"] = user_list["name"]
             field_names = [
                 "email", "affiliation", "address", "orcid", "orcid_platform",
@@ -133,7 +138,7 @@ class NxEmNomadOasisElnSchemaParser:
         # check if required fields exists and are valid
         print("Parsing sample...")
         src = "sample"
-        trg = "/ENTRY[entry]/sample/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/sample/"
         assert isinstance(self.yml[src], fd.FlatDict), \
             "Required section " + src + " does not exist!"
         assert isinstance(self.yml[src + ":atom_types"], list), \
@@ -186,14 +191,16 @@ class NxEmNomadOasisElnSchemaParser:
         # with the current parser of handling optional parent group
         # required fields cases, as soon as this has been fixed, this section
         # should be moved out here
-        prefix = "/ENTRY[entry]/COORDINATE_SYSTEM_SET"
-        prefix += "[coordinate_system_set]/"
+        print("Parsing coordinate system...")
+        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/"
+        prefix += "COORDINATE_SYSTEM_SET[coordinate_system_set]/"
         # this is likely not yet matching how it should be in NeXus
+        grpnm = prefix + "TRANSFORMATIONS[laboratory]/"
         cs_xyz = np.asarray(
             [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]], np.float64)
         cs_names = ["x", "y", "z"]
         for i in np.arange(0, 3):
-            trg = prefix + "NXtransformations[" + cs_names[i] + "]"
+            trg = grpnm + "AXISNAME[" + cs_names[i] + "]"
             template[trg] = cs_xyz[:, i]
             template[trg + "/@transformation_type"] = "translation"
             template[trg + "/@offset"] = np.asarray([0., 0., 0.], np.float64)
@@ -201,13 +208,10 @@ class NxEmNomadOasisElnSchemaParser:
             template[trg + "/@depends_on"] = "."
 
         msg = "This way of defining coordinate systems is only a small "
-        msg += "example of what is possible and how it could be done. "
+        msg += "example of what is possible and how it can be done. "
         msg += "More discussion among members of FAIRmat Area B/A and the "
         msg += "EM community is needed!"
         template[prefix + "@comment"] = msg
-        empty_group = "/ENTRY[entry]/COORDINATE_SYSTEM_SET["
-        empty_group += "coordinate_system_set]/TRANSFORMATIONS"
-        template[empty_group] = "fix me because this should not work!"
         return template
 
     def parse_instrument_header_section(self, template: dict) -> dict:
@@ -218,7 +222,7 @@ class NxEmNomadOasisElnSchemaParser:
         assert isinstance(self.yml[src], fd.FlatDict), \
             "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
-        trg = "/ENTRY[entry]/em_lab/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/"
         assert "instrument_name" in self.yml[src].keys(), \
             "instrument_name " + error_msg
         template[trg + "instrument_name"] = self.yml[src + ":instrument_name"]
@@ -226,7 +230,7 @@ class NxEmNomadOasisElnSchemaParser:
             template[trg + "location"] = self.yml[src + ":location"]
 
         src = "em_lab:fabrication"
-        trg = "/ENTRY[entry]/em_lab/FABRICATION[fabrication]/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/FABRICATION[fabrication]/"
         assert src in self.yml, \
             "em_lab:fabrication is a required group but not found in ELN input!"
         required_field_names = ["vendor", "model"]
@@ -247,7 +251,8 @@ class NxEmNomadOasisElnSchemaParser:
         src = "em_lab:ebeam_column:electron_gun"
         assert isinstance(self.yml[src], fd.FlatDict), \
             src + " is a required group but not found in ELN input"
-        trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_gun/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/"
+        trg += "EBEAM_COLUMN[ebeam_column]/electron_gun/"
         error_msg = " is a required field but not found in ELN input!"
         voltage_exists = ("voltage:unit" in self.yml[src].keys()) \
             and ("voltage:value" in self.yml[src].keys())
@@ -267,7 +272,8 @@ class NxEmNomadOasisElnSchemaParser:
             "At least one aperture has to be defined!"
         aperture_id = 1
         for aperture in self.yml[src]:
-            trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]/"
+            trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/"
+            trg += "EBEAM_COLUMN[ebeam_column]/"
             trg += "APERTURE_EM[aperture_em" + str(aperture_id) + "]/"
             assert "value" in aperture.keys(), \
                 "value" + error_msg
@@ -279,32 +285,31 @@ class NxEmNomadOasisElnSchemaParser:
             if "description" in aperture.keys():
                 template[trg + "description"] = aperture["description"]
             aperture_id += 1
-
         # the above-mentioned snippet is a blue-print for lenses also...
 
         # corrector
         src = "em_lab:ebeam_column:aberration_correction"
-        trg = "/ENTRY[entry]/em_lab/EBEAM_COLUMN[ebeam_column]/"
-        trg += "aberration_correction/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/"
+        trg += "EBEAM_COLUMN[ebeam_column]/aberration_correction/"
         assert "applied" in self.yml[src].keys(), \
             "applied" + error_msg
         template[trg + "applied"] = self.yml[src + ":applied"]
         return template
 
-    # def parse_ibeam_column_section(self, template: dict) -> dict:
-    #     """Copy data in ibeam_column section."""
-    #     print("Parsing ibeam_column...")
-    #     return template
+    def parse_ibeam_column_section(self, template: dict) -> dict:
+        """Copy data in ibeam_column section."""
+        print("Parsing ibeam_column...")
+        return template
 
-    # def parse_ebeam_deflector_section(self, template: dict) -> dict:
-    #     """Copy data in ebeam_deflector section."""
-    #     print("Parsing ebeam_deflector...")
-    #     return template
+    def parse_ebeam_deflector_section(self, template: dict) -> dict:
+        """Copy data in ebeam_deflector section."""
+        print("Parsing ebeam_deflector...")
+        return template
 
-    # def parse_ibeam_deflector_section(self, template: dict) -> dict:
-    #     """Copy data in ibeam_deflector section."""
-    #     print("Parsing ibeam_deflector...")
-    #     return template
+    def parse_ibeam_deflector_section(self, template: dict) -> dict:
+        """Copy data in ibeam_deflector section."""
+        print("Parsing ibeam_deflector...")
+        return template
 
     def parse_optics_section(self, template: dict) -> dict:
         """Copy data in optical_system_em section."""
@@ -312,7 +317,8 @@ class NxEmNomadOasisElnSchemaParser:
         src = "em_lab:optical_system_em"
         assert isinstance(self.yml[src], fd.FlatDict), \
             "Required section " + src + " does not exist!"
-        trg = "/ENTRY[entry]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/"
+        trg += "OPTICAL_SYSTEM_EM[optical_system_em]/"
         optional_char_fields = ["beam_current_description"]
         for field_name in optional_char_fields:
             if field_name in self.yml[src].keys():
@@ -342,8 +348,8 @@ class NxEmNomadOasisElnSchemaParser:
         for detector in self.yml[src]:
             assert isinstance(detector, dict), \
                 "Detector metadata from ELN have to be a list!"
-            trg = "/ENTRY[entry]/em_lab/DETECTOR[detector" \
-                + str(detector_id) + "]/"
+            trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/"
+            trg += "DETECTOR[detector" + str(detector_id) + "]/"
             assert "type" in detector.keys(), "type" + error_msg
             template[trg + "type"] = detector["type"]
             detector_id += 1
@@ -353,7 +359,7 @@ class NxEmNomadOasisElnSchemaParser:
         """Copy data in stage lab section."""
         print("Parsing stage_lab...")
         src = "em_lab:stage_lab"
-        trg = "/ENTRY[entry]/em_lab/stage_lab/"
+        trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/stage_lab/"
         assert isinstance(self.yml[src], fd.FlatDict), \
             "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
@@ -371,9 +377,9 @@ class NxEmNomadOasisElnSchemaParser:
         self.parse_coordinate_system_section(template)
         self.parse_instrument_header_section(template)
         self.parse_ebeam_column_section(template)
-        # self.parse_ibeam_column_section(template)
-        # self.parse_ebeam_deflector_section(template)
-        # self.parse_ibeam_deflector_section(template)
+        self.parse_ibeam_column_section(template)
+        self.parse_ebeam_deflector_section(template)
+        self.parse_ibeam_deflector_section(template)
         self.parse_optics_section(template)
         self.parse_detector_section(template)
         self.parse_stage_lab_section(template)

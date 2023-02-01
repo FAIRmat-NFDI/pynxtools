@@ -130,9 +130,8 @@ def get_name_from_data_dict_entry(entry) -> str:
     # return entry if results is None else results.group(1)
     if results is None:
         return entry
-    else:
-        if entry[0] == "@":
-            return "@" + results.group(1)
+    if entry[0] == "@":
+        return "@" + results.group(1)
     return results.group(1)
 
 
@@ -283,7 +282,11 @@ def is_node_required(nxdl_key, nxdl_root):
         return False
     if nxdl_key[nxdl_key.rindex("/") + 1] == "@":
         nxdl_key = nxdl_key[0:nxdl_key.rindex("/") + 1] + nxdl_key[nxdl_key.rindex("/") + 2:]
-    node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root)
+    node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root, exc=False)
+    # if node is not None:
+    #     return nexus.get_required_string(node) == "<<REQUIRED>>"
+    # else:
+    #     return False
     return nexus.get_required_string(node) == "<<REQUIRED>>"
 
 

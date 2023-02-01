@@ -77,21 +77,26 @@ class ApmReader(BaseReader):
         """Read data from given file, return filled template dictionary apm."""
         template.clear()
 
-        create_example_data_for_dev_purposes = True
-        if create_example_data_for_dev_purposes is True:
-            print("Create synthetic data...")
-            synthetic = ApmCreateExampleData()
-            synthetic.composition_to_ranging_definitions(template)
-            synthetic.report(template)
-        else:
-            print("Identify case...")
+        n_entries = 0
+        if len(file_paths) == 0:
+            n_entries = 2  # 10
+            print("Create " + str(n_entries) + " synthetic datasets in one NeXus file...")
+            synthetic = ApmCreateExampleData(n_entries)
+            synthetic.synthesize(template)
+        elif len(file_paths) == 1:
+            print("Insufficient input-files, at least one ELN and one partner file!")
+            return template
+        else:  # eln_data, and ideal recon and ranging definition technology partner file
+            n_entries = 1
+            entry_id = 1
+            print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
             assert case.is_valid is True, \
                 "Such a combination of input-file(s, if any) is not supported !"
 
             print("Parse (meta)data coming from an ELN...")
             if len(case.eln) == 1:
-                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0])
+                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
                 nx_apm_eln.report(template)
             else:
                 print("No input file defined for eln data !")
@@ -99,27 +104,28 @@ class ApmReader(BaseReader):
 
             print("Parse (numerical) data and metadata from ranging definitions file...")
             if len(case.reconstruction) == 1:
-                nx_apm_recon = ApmReconstructionParser(case.reconstruction[0])
+                nx_apm_recon = ApmReconstructionParser(case.reconstruction[0], entry_id)
                 nx_apm_recon.report(template)
             else:
                 print("No input-file defined for reconstructed dataset!")
                 return {}
             if len(case.ranging) == 1:
-                nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0])
+                nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0], entry_id)
                 nx_apm_range.report(template)
             else:
                 print("No input-file defined for ranging definitions!")
                 return {}
 
         print("Create NeXus default plottable data...")
-        apm_default_plot_generator(template)
+        apm_default_plot_generator(template, n_entries)
 
-        debugging = False
+        debugging = True
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():
                 print(keyword)
-                print(template[keyword])
+                # print(type(template[keyword]))
+                # print(template[keyword])
 
         print("Forward instantiated template to the NXS writer...")
         return template

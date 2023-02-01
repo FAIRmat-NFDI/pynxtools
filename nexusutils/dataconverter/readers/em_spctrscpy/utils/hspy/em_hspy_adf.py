@@ -183,7 +183,7 @@ class NxImageSetEmAdf:
         print("\t" + __name__ + " reporting...")
         assert (len(self.data) >= 0) and (len(self.data) <= 1), \
             "More than one spectrum stack is currently not supported!"
-        trg = prefix + "NX_IMAGE_SET_EM_ADF[image_set_em_adf" + str(frame_id) + "]/"
+        trg = prefix + "IMAGE_SET_EM_ADF[image_set_em_adf" + str(frame_id) + "]/"
 
         # template[trg + "program"] = "hyperspy"
         # template[trg + "program/@version"] = hs.__version__
@@ -195,27 +195,39 @@ class NxImageSetEmAdf:
         # template[trg + "adf_inner_half_angle"] = np.float64(0.)
         # template[trg + "adf_inner_half_angle/@units"] = "rad"
         if len(self.data) == 1:
-            prfx = trg + "DATA[adf]/"
-            template[prfx + "@NX_class"] = "NXdata"
-            # ##MK::usually this should be added by the dataconverter automatically
-            template[prfx + "@long_name"] = self.data[0].meta["long_name"].value
-            template[prfx + "@signal"] = "intensity"
-            template[prfx + "@axes"] = ["ypos", "xpos"]
-            template[prfx + "@xpos_indices"] = 1
-            template[prfx + "@ypos_indices"] = 0
-            template[prfx + "intensity"] \
-                = {"compress": self.data[0].meta["intensity"].value}
-            template[prfx + "intensity/@units"] = ""
-            # but should be a 1 * n_y * n_x array and not a n_y * n_x array !!
-            template[prfx + "image_id"] = np.uint32(frame_id)
-            template[prfx + "xpos"] \
-                = {"compress": self.data[0].meta["xpos"].value}
-            template[prfx + "xpos/@units"] \
-                = self.data[0].meta["xpos"].unit
-            template[prfx + "ypos"] \
-                = {"compress": self.data[0].meta["ypos"].value}
-            template[prfx + "ypos/@units"] \
-                = self.data[0].meta["ypos"].unit
-            # template[prfx + "title"] = "ADF"
+            prfx = trg + "stack/"
+            template[prfx + "title"] = "Annular dark field image stack"
+            # template[prfx + "@long_name"] = self.data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "data_counts"
+            template[prfx + "@axes"] = ["axis_image_identifier", "axis_y", "axis_x"]
+            template[prfx + "@AXISNAME[axis_x_indices]"] = 2
+            template[prfx + "@AXISNAME[axis_y_indices]"] = 1
+            template[prfx + "@AXISNAME[axis_image_identifier]"] = 0
+            template[prfx + "DATA[data_counts]"] \
+                = {"compress": np.reshape(
+                    np.atleast_3d(self.data[0].meta["intensity"].value),
+                    (1,
+                     np.shape(self.data[0].meta["intensity"].value)[0],
+                     np.shape(self.data[0].meta["intensity"].value)[1])),
+                    "strength": 1}
+            # ##MK::is the data layout correct? I am pretty sure the last two have
+            # to be swopped also!!
+            template[prfx + "DATA[data_counts]/@units"] = ""
+            template[prfx + "DATA[data_counts]/@long_name"] = "Counts (a.u.)"
+            template[prfx + "AXISNAME[axis_x]"] \
+                = {"compress": self.data[0].meta["xpos"].value, "strength": 1}
+            template[prfx + "AXISNAME[axis_x]/@units"] = self.data[0].meta["xpos"].unit
+            template[prfx + "AXISNAME[axis_x]/@long_name"] \
+                = "x (" + self.data[0].meta["xpos"].unit + ")"
+            template[prfx + "AXISNAME[axis_y]"] \
+                = {"compress": self.data[0].meta["ypos"].value, "strength": 1}
+            template[prfx + "AXISNAME[axis_y]/@units"] = self.data[0].meta["ypos"].unit
+            template[prfx + "AXISNAME[axis_y]/@long_name"] \
+                = "y (" + self.data[0].meta["ypos"].unit + ")"
+            template[prfx + "AXISNAME[axis_image_identifier]"] \
+                = np.atleast_1d(np.uint32(frame_id))
+            template[prfx + "AXISNAME[axis_image_identifier]/@units"] = ""
+            template[prfx + "AXISNAME[axis_image_identifier]/@long_name"] \
+                = "image identifier"
 
         return template

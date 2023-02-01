@@ -125,16 +125,14 @@ def convert(input_file: Tuple[str],
         logger.warning("The path, %s, is being written but has no documentation.", path)
 
     # Writing the data to output file
-    if False:
-        print('recommended ==================')
-        print(data.recommended.keys())
-        print('optional ==================')
-        print(data.optional.keys())
-        print('undocumented ==================')
-        print(data.undocumented.keys())
-        print('required ==================')
-        print(data.required.keys())
-
+    # print('recommended ==================')
+    # print(data.recommended.keys())
+    # print('optional ==================')
+    # print(data.optional.keys())
+    # print('undocumented ==================')
+    # print(data.undocumented.keys())
+    # print('required ==================')
+    # print(data.required.keys())
 
     Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
 

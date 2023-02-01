@@ -264,54 +264,67 @@ class NxSpectrumSetEmEels:
         assert (len(self.summary_data) >= 0) and (len(self.summary_data) <= 1), \
             "More than one sum spectrum stack is currently not supported!"
 
-        trg = prefix + "NX_SPECTRUM_SET_EM_EELS[spectrum_set_em_eels" \
-            + str(frame_id) + "]/"
+        trg = prefix + "SPECTRUM_SET_EM_EELS[spectrum_set_em_eels" + str(frame_id) + "]/"
         if len(self.stack_data) == 1:
             # template[trg + "program"] = "hyperspy"
             # template[trg + "program/@version"] = hs.__version__
-            prfx = trg + "DATA[stack]/"
-            template[prfx + "@NX_class"] = "NXdata"
-            # ##MK::usually this should be added by the dataconverter automatically
-            template[prfx + "@long_name"] \
-                = self.stack_data[0].meta["long_name"].value
-            template[prfx + "@signal"] = "counts"
-            template[prfx + "@axes"] = ["ypos", "xpos", "energy_loss"]
-            template[prfx + "@energy_loss_indices"] = 2
-            template[prfx + "@xpos_indices"] = 1
-            template[prfx + "@ypos_indices"] = 0
-            template[prfx + "counts"] \
-                = {"compress": self.stack_data[0].meta["counts"].value}
-            template[prfx + "energy_loss"] \
-                = {"compress": self.stack_data[0].meta["energy_loss"].value}
-            template[prfx + "energy_loss/@units"] \
+            prfx = trg + "stack/"
+            template[prfx + "title"] = "EELS spectra stack"
+            # template[prfx + "@long_name"] \
+            #     = self.stack_data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "data_counts"
+            template[prfx + "@axes"] = ["axis_y", "axis_x", "axis_energy_loss"]
+            template[prfx + "@AXISNAME[axis_energy_loss_indices]"] = 2
+            template[prfx + "@AXISNAME[axis_x_indices]"] = 1
+            template[prfx + "@AXISNAME[axis_y_indices]"] = 0
+            template[prfx + "DATA[data_counts]"] \
+                = {"compress": self.stack_data[0].meta["counts"].value,
+                   "strength": 1}
+            template[prfx + "DATA[data_counts]/@units"] = ""
+            template[prfx + "DATA[data_counts]/@long_name"] = "Signal (a.u.)"
+            template[prfx + "AXISNAME[axis_energy_loss]"] \
+                = {"compress": self.stack_data[0].meta["energy_loss"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_energy_loss]/@units"] \
                 = self.stack_data[0].meta["energy_loss"].unit
-            template[prfx + "xpos"] \
-                = {"compress": self.stack_data[0].meta["xpos"].value}
-            template[prfx + "xpos/@units"] \
+            template[prfx + "AXISNAME[axis_energy_loss]/@long_name"] \
+                = "Electron energy loss (" \
+                  + self.stack_data[0].meta["energy_loss"].unit + ")"
+            template[prfx + "AXISNAME[axis_x]"] \
+                = {"compress": self.stack_data[0].meta["xpos"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_x]/@units"] \
                 = self.stack_data[0].meta["xpos"].unit
-            template[prfx + "ypos"] \
-                = {"compress": self.stack_data[0].meta["ypos"].value}
-            template[prfx + "ypos/@units"] \
+            template[prfx + "AXISNAME[axis_x]/@long_name"] \
+                = "x (" + self.stack_data[0].meta["xpos"].unit + ")"
+            template[prfx + "AXISNAME[axis_y]"] \
+                = {"compress": self.stack_data[0].meta["ypos"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_y]/@units"] \
                 = self.stack_data[0].meta["ypos"].unit
-            template[prfx + "title"] \
-                = self.stack_data[0].meta["long_name"].value
+            template[prfx + "AXISNAME[axis_y]/@long_name"] \
+                = "y (" + self.stack_data[0].meta["ypos"].unit + ")"
 
         if len(self.summary_data) == 1:
-            prfx = trg + "DATA[summary]/"
-            template[prfx + "@NX_class"] = "NXdata"
-            # ##MK::usually this should be added by the dataconverter automatically
-            template[prfx + "@long_name"] \
-                = self.summary_data[0].meta["long_name"].value
-            template[prfx + "@signal"] = "counts"
-            template[prfx + "@axes"] = ["energy_loss"]
-            template[prfx + "@energy_loss_indices"] = 0
-            template[prfx + "counts"] \
-                = {"compress": self.summary_data[0].meta["counts"].value}
-            template[prfx + "energy_loss"] \
-                = {"compress": self.summary_data[0].meta["energy_loss"].value}
-            template[prfx + "energy_loss/@units"] \
+            prfx = trg + "summary/"
+            template[prfx + "title"] = "Accumulated EELS spectrum"
+            # template[prfx + "@long_name"] \
+            #     = self.summary_data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "data_counts"
+            template[prfx + "@axes"] = ["axis_energy_loss"]
+            template[prfx + "@AXISNAME[axis_energy_loss_indices]"] = 0
+            template[prfx + "DATA[data_counts]"] \
+                = {"compress": self.summary_data[0].meta["counts"].value,
+                   "strength": 1}
+            template[prfx + "DATA[data_counts]/@units"] = ""
+            template[prfx + "DATA[data_counts]/@long_name"] = "Signal (a.u.)"
+            template[prfx + "AXISNAME[axis_energy_loss]"] \
+                = {"compress": self.summary_data[0].meta["energy_loss"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_energy_loss]/@units"] \
                 = self.summary_data[0].meta["energy_loss"].unit
-            template[prfx + "title"] \
-                = self.summary_data[0].meta["long_name"].value
+            template[prfx + "AXISNAME[axis_energy_loss]/@long_name"] \
+                = "Electron energy loss (" \
+                  + self.summary_data[0].meta["energy_loss"].unit + ")"
 
         return template

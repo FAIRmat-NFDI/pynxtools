@@ -157,7 +157,7 @@ def extract_data_from_apt_file(file_name: str, prefix: str, template: dict) -> d
 class ApmReconstructionParser:  # pylint: disable=R0903
     """Wrapper for multiple parsers for vendor specific files."""
 
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: str, entry_id: int):
         self.file_format = "none"
         self.file_name = file_name
         index = file_name.lower().rfind(".")
@@ -169,6 +169,7 @@ class ApmReconstructionParser:  # pylint: disable=R0903
                 self.file_format = "epos"
             if mime_type == "apt":
                 self.file_format = "apt"
+        self.entry_id = entry_id
 
     def report(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -176,7 +177,7 @@ class ApmReconstructionParser:  # pylint: disable=R0903
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        prfx = "/ENTRY[entry]/atom_probe/"
+        prfx = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/"
         if self.file_name != "" and self.file_format != "none":
             if self.file_format == "pos":
                 extract_data_from_pos_file(

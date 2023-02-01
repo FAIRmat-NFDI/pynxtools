@@ -360,8 +360,7 @@ class NxSpectrumSetEmXray:
         #     print("np.shape(obj.counts.value")
         #     print(np.shape(obj.counts.value))
 
-        trg = prefix + "NX_SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray" \
-            + str(frame_id) + "]/"
+        trg = prefix + "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray" + str(frame_id) + "]/"
         # template[trg + "program"] = "hyperspy"
         # template[trg + "program/@version"] = hs.__version__
         # MISSING_DATA_MSG = "not in hspy metadata case specifically in original_metadata"
@@ -372,75 +371,97 @@ class NxSpectrumSetEmXray:
         # template[trg + "adf_inner_half_angle"] = np.float64(0.)
         # template[trg + "adf_inner_half_angle/@units"] = "rad"
         if len(self.stack_data) == 1:
-            prfx = trg + "DATA[stack]/"
-            template[prfx + "@NX_class"] = "NXdata"
-            # ##MK::usually this should be added by the dataconverter automatically
-            template[prfx + "@long_name"] \
-                = self.stack_data[0].meta["long_name"].value
-            template[prfx + "@signal"] = "counts"
-            template[prfx + "@axes"] = ["ypos", "xpos", "photon_energy"]
-            template[prfx + "@photon_energy_indices"] = 2
-            template[prfx + "@xpos_indices"] = 1
-            template[prfx + "@ypos_indices"] = 0
-            template[prfx + "counts"] \
-                = {"compress": self.stack_data[0].meta["counts"].value}
-            template[prfx + "photon_energy"] \
-                = {"compress": self.stack_data[0].meta["photon_energy"].value}
-            template[prfx + "photon_energy/@units"] \
+            prfx = trg + "stack/"
+            template[prfx + "title"] = "Xray spectra stack"
+            #    = self.stack_data[0].meta["long_name"].value
+            # template[prfx + "@long_name"] \
+            #     = self.stack_data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "data_counts"
+            template[prfx + "@axes"] \
+                = ["axis_y", "axis_x", "axis_photon_energy"]
+            template[prfx + "@AXISNAME_indices[axis_photon_energy_indices]"] = 2
+            template[prfx + "@AXISNAME_indices[axis_x_indices]"] = 1
+            template[prfx + "@AXISNAME_indices[axis_y_indices]"] = 0
+            template[prfx + "DATA[data_counts]"] \
+                = {"compress": self.stack_data[0].meta["counts"].value,
+                   "strength": 1}
+            template[prfx + "DATA[data_counts]/@units"] = ""
+            template[prfx + "DATA[data_counts]/@long_name"] = "Photon counts (1)"
+            template[prfx + "AXISNAME[axis_photon_energy]"] \
+                = {"compress": self.stack_data[0].meta["photon_energy"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_photon_energy]/@units"] \
                 = self.stack_data[0].meta["photon_energy"].unit
-            template[prfx + "xpos"] \
-                = {"compress": self.stack_data[0].meta["xpos"].value}
-            template[prfx + "xpos/@units"] \
+            template[prfx + "AXISNAME[axis_photon_energy]/@long_name"] \
+                = "Photon energy (" + self.stack_data[0].meta["photon_energy"].unit + ")"
+            template[prfx + "AXISNAME[axis_x]"] \
+                = {"compress": self.stack_data[0].meta["xpos"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_x]/@units"] \
                 = self.stack_data[0].meta["xpos"].unit
-            template[prfx + "ypos"] \
-                = {"compress": self.stack_data[0].meta["ypos"].value}
-            template[prfx + "ypos/@units"] \
+            template[prfx + "AXISNAME[axis_x]/@long_name"] \
+                = "x (" + self.stack_data[0].meta["xpos"].unit + ")"
+            template[prfx + "AXISNAME[axis_y]"] \
+                = {"compress": self.stack_data[0].meta["ypos"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_y]/@units"] \
                 = self.stack_data[0].meta["ypos"].unit
-            template[prfx + "title"] \
-                = self.stack_data[0].meta["long_name"].value
-            # "X-ray spectra"
+            template[prfx + "AXISNAME[axis_y]/@long_name"] \
+                = "y (" + self.stack_data[0].meta["ypos"].unit + ")"
 
         if len(self.summary_data) == 1:
-            prfx = trg + "DATA[summary]/"
-            template[prfx + "@NX_class"] = "NXdata"
-            # ##MK::usually this should be added by the dataconverter automatically
-            template[prfx + "@long_name"] \
-                = self.summary_data[0].meta["long_name"].value
-            template[prfx + "@signal"] = "counts"
-            template[prfx + "@axes"] = ["photon_energy"]
-            template[prfx + "@photon_energy_indices"] = 0
-            template[prfx + "counts"] \
-                = {"compress": self.summary_data[0].meta["counts"].value}
-            template[prfx + "photon_energy"] \
-                = {"compress": self.summary_data[0].meta["photon_energy"].value}
-            template[prfx + "photon_energy/@units"] \
+            prfx = trg + "summary/"
+            template[prfx + "title"] = "Accumulated X-ray spectrum"
+            # = self.summary_data[0].meta["long_name"].value
+            # template[prfx + "@long_name"] \
+            #     = self.summary_data[0].meta["long_name"].value
+            template[prfx + "@signal"] = "data_counts"
+            template[prfx + "@axes"] = ["axis_photon_energy"]
+            template[prfx + "@AXISNAME_indices[axis_photon_energy_indices]"] = 0
+            template[prfx + "DATA[data_counts]"] \
+                = {"compress": self.summary_data[0].meta["counts"].value,
+                   "strength": 1}
+            template[prfx + "DATA[data_counts]/@units"] = ""
+            template[prfx + "DATA[data_counts]/@long_name"] = "Photon counts (1)"
+            template[prfx + "AXISNAME[axis_photon_energy]"] \
+                = {"compress": self.summary_data[0].meta["photon_energy"].value,
+                   "strength": 1}
+            template[prfx + "AXISNAME[axis_photon_energy]/@units"] \
                 = self.summary_data[0].meta["photon_energy"].unit
-            template[prfx + "title"] \
-                = self.summary_data[0].meta["long_name"].value
-            # "Accumulated X-ray spectrum over ROI"
+            template[prfx + "AXISNAME[axis_photon_energy]/@long_name"] \
+                = "Photon energy (" \
+                  + self.summary_data[0].meta["photon_energy"].unit + ")"
 
         # template[prfx + "program"] = self.program.value
         # template[prfx + "program/@version"] = self.program_version.value
-        for keyword, xray_map in self.composition_map.items():
-            prfx = trg + "PROCESS[indexing]/DATA[" + keyword.lower() + "]/"
-            template[prfx + "@NX_class"] = "NXdata"
-            # ##MK::usually this should be added by the dataconverter automatically
-            template[prfx + "@long_name"] = xray_map.meta["long_name"].value
-            template[prfx + "@signal"] = "counts"
-            template[prfx + "@axes"] = ["ypos", "xpos"]
-            template[prfx + "@xpos_indices"] = 1
-            template[prfx + "@ypos_indices"] = 0
-            template[prfx + "counts"] \
-                = {"compress": xray_map.meta["counts"].value}
-            template[prfx + "xpos"] \
-                = {"compress": xray_map.meta["xpos"].value}
-            template[prfx + "xpos/@units"] = xray_map.meta["xpos"].unit
-            template[prfx + "ypos"] \
-                = {"compress": xray_map.meta["ypos"].value}
-            template[prfx + "ypos/@units"] \
-                = xray_map.meta["ypos"].unit
-            template[prfx + "title"] \
-                = xray_map.meta["long_name"].value
-            # xray_map.meta["title"].value
 
         return template
+
+        """
+        # skip the composition maps for the search sprint
+        for keyword, xray_map in self.composition_map.items():
+            prfx = trg + "PROCESS[indexing]/PROCESS[" + keyword.lower() + "]/summary/"
+            template[prfx + "title"] = "X-ray mapping for " + keyword
+            # = xray_map.meta["long_name"].value
+            # template[prfx + "@long_name"] = xray_map.meta["long_name"].value
+            template[prfx + "@signal"] = "data_counts"
+            template[prfx + "@axes"] = ["axis_y", "axis_x"]
+            template[prfx + "@AXISNAME[axis_x_indices]"] = 1
+            template[prfx + "@AXISNAME[axis_y_indices]"] = 0
+            template[prfx + "DATA[data_counts]"] \
+                = {"compress": xray_map.meta["counts"].value, "strength": 1}
+            template[prfx + "DATA[data_counts]/@units"] = ""
+            template[prfx + "DATA[data_counts]/@long_name"] = "Counts (1)"
+            template[prfx + "AXISNAME[axis_x]"] \
+                = {"compress": xray_map.meta["xpos"].value, "strength": 1}
+            template[prfx + "AXISNAME[axis_x]/@units"] = xray_map.meta["xpos"].unit
+            template[prfx + "AXISNAME[axis_x]/@long_name"] \
+                = "x (" + xray_map.meta["xpos"].unit + ")"
+            template[prfx + "AXISNAME[axis_y]"] \
+                = {"compress": xray_map.meta["ypos"].value, "strength": 1}
+            template[prfx + "AXISNAME[axis_y]/@units"] = xray_map.meta["ypos"].unit
+            template[prfx + "AXISNAME[axis_y]/@long_name"] \
+                = "y (" + xray_map.meta["ypos"].unit + ")"
+
+        return template
+        """

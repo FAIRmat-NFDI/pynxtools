@@ -17,6 +17,8 @@
 #
 """The writer class for writing a NeXus file in accordance with a given NXDL."""
 
+# pylint: disable=R0912
+
 import copy
 import logging
 import sys
@@ -191,7 +193,10 @@ class Writer:
         the required attribute values that were requested in the NXDL from the data.
         """
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
-        elem = copy.deepcopy(nexus.get_node_at_nxdl_path(nxdl_path, elem=self.nxdl_data))
+
+        elem = nexus.get_node_at_nxdl_path(
+            nxdl_path, elem=copy.deepcopy(self.nxdl_data), exc=False)
+
         if elem is None:
             raise Exception(f"Attributes were not found for {path}. "
                             "Please check this entry in the template dictionary.")
@@ -202,7 +207,11 @@ class Writer:
 
         # Fetch values for required attributes requested by the NXDL
         for attr_name in elem.findall(f"{self.nxs_namespace}attribute"):
-            elem.attrib[attr_name.get('name')] = self.data[f"{path}/@{attr_name.get('name')}"] or ''
+            key = f"{path}/@{attr_name.get('name')}"
+            if key in self.data:
+                elem.attrib[attr_name.get('name')] = self.data[key]
+            else:
+                elem.attrib[attr_name.get('name')] = ''
 
         return elem.attrib
 
@@ -217,8 +226,8 @@ class Writer:
                 attrs = self.__nxdl_to_attrs(parent_path)
                 if attrs is not None:
                     grp.attrs['NX_class'] = attrs["type"]
-            except:
-                pass
+            except Exception as exc:
+                raise exc
             return grp
         return self.output_nexus[parent_path_hdf5]
 
@@ -245,18 +254,16 @@ class Writer:
                         else:
                             hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
                     else:
-                        dataset = grp.create_dataset(entry_name,
-                                                     data=data
-                                                     )
+                        dataset = grp.create_dataset(entry_name, data=data)
                     units_key = f"{path}/@units"
                     if units_key in self.data.keys() and self.data[units_key] is not None:
                         dataset.attrs["units"] = self.data[units_key]
                     else:
                         continue
                 else:
+                    # consider changing the name here the lvalue can also be group!
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data
-                    # h5py dataset not created?
             except Exception as exc:
                 raise Exception(f"Unkown error occured writing the path: {path} "
                                 f"with the following message: {str(exc)}") from exc
