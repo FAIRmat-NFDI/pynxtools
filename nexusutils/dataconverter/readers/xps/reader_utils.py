@@ -150,7 +150,6 @@ class XmlSpecs():
 
         child_num = len(element_)
         elmt_attr = element_.attrib
-        skip_child = -1
 
         section_nm_reslvr = ""
         key_name = "name"
@@ -168,9 +167,63 @@ class XmlSpecs():
             self.pass_child_through_parsers(element_,
                                             parent_path,
                                             child_elmt_ind,
-                                            skip_child)
+                                            skip_child=-1)
             child_num -= 1
             child_elmt_ind += 1
+
+    def struct_fc_name_sc_value(self,
+                                element_,
+                                first_child,
+                                parent_path,
+                                skip_child):
+        """Struct representing parameter with first child (fc) 'name'
+           and second child(sc) 'value'."""
+        section_nm_reslvr = ""
+        units = ["mV", "deg", "W", "kV", "ns"]
+
+        section_nm_reslvr = self.restructure_value(first_child.text,
+                                                   first_child.tag)
+        section_nm_reslvr = self.check_for_siblins_with_same_name(
+            section_nm_reslvr, element_
+        )
+        skip_child += 1
+        # Separating the units
+        for unit in units:
+
+            if f'_[{unit}]' in section_nm_reslvr:
+                section_nm_reslvr, _ = section_nm_reslvr.split('_')
+                self._xps_dict[f'{parent_path}/'
+                               f'{section_nm_reslvr}/@unit'] = unit
+
+        parent_path, self.tail_part_frm_struct = \
+            self.check_last_part_repetition(parent_path,
+                                            self.tail_part_frm_struct,
+                                            section_nm_reslvr)
+
+        return parent_path, skip_child
+
+    def struct_fc_name_sc_string(self,
+                                 element_,
+                                 first_child,
+                                 parent_path,
+                                 skip_child):
+        """Struct representing parameter with first child(fc) 'name'
+           and first child(fc) having 'string'."""
+
+        elmt_attr = element_.attrib
+        key_type_name = "type_name"
+        skip_child += 1
+        child_txt = self.restructure_value(first_child.text,
+                                           first_child.tag)
+
+        section_nm_reslvr = f'{elmt_attr[key_type_name]}_{child_txt}'
+        section_nm_reslvr = self.check_for_siblins_with_same_name(
+            section_nm_reslvr, element_
+        )
+
+        parent_path = f'{parent_path}/{section_nm_reslvr}'
+
+        return parent_path, skip_child
 
     # pylint disable=too-many-branches
     def parse_struct(self,
@@ -187,17 +240,12 @@ class XmlSpecs():
         None
         """
 
-        units = ["mV", "deg", "W", "kV", "ns"]
-
         child_num = len(element_)
-        # elmt_tag = element_.tag
         elmt_attr = element_.attrib
 
         # Resolving struct name section is here
         skip_child = -1
         section_nm_reslvr = ""
-        # parent_element = elmt_attr['__parent__']
-        # parent_attr = parent_element.attrib
         first_child = element_[0]
         second_child = element_[1]
 
@@ -219,49 +267,25 @@ class XmlSpecs():
             if key_name in first_child.attrib.values() and \
                     key_value in second_child.attrib.values():
 
-                section_nm_reslvr = self.restructure_value(first_child.text,
-                                                           first_child.tag)
-                section_nm_reslvr = self.check_for_siblins_with_same_name(
-                    section_nm_reslvr, element_
-                )
-
-                skip_child += 1
-                # Separating the units
-                for unit in units:
-
-                    if f'_[{unit}]' in section_nm_reslvr:
-                        section_nm_reslvr, _ = section_nm_reslvr.split('_')
-                        self._xps_dict[f'{parent_path}/'
-                                       f'{section_nm_reslvr}/@unit'] = unit
-
-                parent_path, self.tail_part_frm_struct = \
-                    self.check_last_part_repetition(parent_path,
-                                                    self.tail_part_frm_struct,
-                                                    section_nm_reslvr)
-
+                parent_path, skip_child = \
+                    self.struct_fc_name_sc_value(element_,
+                                                 first_child,
+                                                 parent_path,
+                                                 skip_child)
             elif key_name in first_child.attrib.values() and \
                     first_child.tag == "string":
 
-                skip_child += 1
-                child_txt = self.restructure_value(first_child.text,
-                                                   first_child.tag)
-
-                section_nm_reslvr = f'{elmt_attr[key_type_name]}_{child_txt}'
-                section_nm_reslvr = self.check_for_siblins_with_same_name(
-                    section_nm_reslvr, element_
-                )
-
-                parent_path = f'{parent_path}/{section_nm_reslvr}'
+                parent_path, skip_child = \
+                    self.struct_fc_name_sc_string(element_,
+                                                  first_child,
+                                                  parent_path,
+                                                  skip_child)
 
             else:
                 # Check twin siblings
-
                 section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name],
                                                            "string")
                 section_nm_reslvr = section_nm_reslvr + "_" + str(elmt_attr['__odr_siblings__'])
-                # section_nm_reslvr = self.check_for_siblins_with_same_name(
-                #    section_nm_reslvr, element_
-                # )
                 parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         child_elmt_ind = 0
