@@ -84,7 +84,7 @@ def create_default_plot_reconstruction(template: dict) -> dict:
 
     template[trg + "counts"] \
         = {"compress": np.array(hist3d[0], np.uint32), "strength": 9}
-    template[trg + "counts/@units"] = "NX_UNITLESS"
+    template[trg + "counts/@units"] = ""
     template[trg + "xpos"] \
         = {"compress": np.array(hist3d[1][0][1::], np.float32), "strength": 9}
     template[trg + "xpos/@units"] = "nm"
@@ -147,7 +147,7 @@ def create_default_plot_mass_spectrum(template: dict) -> dict:
     template[trg + "@axes"] = "bin_ends"
     template[trg + "counts"] \
         = {"compress": np.array(hist1d[0], np.uint32), "strength": 9}
-    template[trg + "counts/@units"] = "NX_UNITLESS"
+    template[trg + "counts/@units"] = ""
     template[trg + "@long_name"] = "hist1d mass-to-charge-state ratios"
     template[trg + "bin_ends"] \
         = {"compress": np.array(hist1d[1][1::], np.float32), "strength": 9}

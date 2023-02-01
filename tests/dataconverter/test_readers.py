@@ -44,7 +44,7 @@ def get_reader_name_from_reader_object(reader) -> str:
 
 def get_readers_file_names() -> List[str]:
     """Helper function to parametrize paths of all the reader Python files"""
-    return glob.glob("nexusutils/dataconverter/readers/*/reader.py")
+    return sorted(glob.glob("nexusutils/dataconverter/readers/*/reader.py"))
 
 
 def get_all_readers() -> List[ParameterSet]:
@@ -82,7 +82,9 @@ def test_has_correct_read_func(reader):
         def_dir = os.path.join(os.getcwd(), "nexusutils", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
-        input_files = glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
+        input_files = sorted(
+            glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
+        )
         for supported_nxdl in reader.supported_nxdls:
             if supported_nxdl in ("NXtest", "*"):
                 nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")
