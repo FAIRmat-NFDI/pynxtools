@@ -19,13 +19,14 @@
 #
 import os
 from pathlib import Path
-from typing import Any, Dict, Set
+from typing import Any, Dict, Set, List
 from typing import Tuple
 import sys
 import json
 
 import yaml
 import numpy as np
+from ase.data import chemical_symbols
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.readers.xps.reader_utils import XpsDataFileParser
@@ -262,6 +263,40 @@ def fill_template_with_xps_data(config_dict,
                     pass
 
 
+def extract_atom_types(formula: str) -> Set:
+    """Extract atom types form chemical formula."""
+
+    atom_types: set = set()
+    Element: str = ""
+    # tested with "(C38H54S4)n(NaO2)5(CH4)NH3"
+    for s in formula:
+        if s.isalpha():
+            if s.isupper() and Element == "":
+                Element = s
+            elif s.isupper() and Element != "" and Element.isupper():
+                atom_types.add(Element)
+                Element = s
+            elif s.islower() and Element.isupper():
+                Element = Element + s
+                atom_types.add(Element)
+                Element = ""
+
+        else:
+            if Element.isupper():
+                atom_types.add(Element)
+            Element = ""
+
+    return atom_types
+
+
+def check_for_valid_atom_types(atom_list: List):
+    """Check for whether atom exists in periodic table. """
+    for elm in atom_list:
+        if elm not in chemical_symbols:
+            raise ValueError(f"The element {elm} is not found in periodictable, "
+                             f"check for correct element name")
+
+
 # Fill template from eln
 def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
@@ -269,14 +304,27 @@ def fill_template_with_eln_data(eln_data_dict,
                                 entry_set):
     """Fill the template from provided eln data"""
 
+    atom_types: List = []
+
     for key, val in config_dict.items():
         if ELN_TOCKEN in val:
             field_value = eln_data_dict[key]
+
+            if "chemical_formula" in key:
+                atom_types = list(extract_atom_types(field_value))
+
+            if "atom_types" in key:
+                if field_value:
+                    pass
+                else:
+                    field_value = atom_types
+                check_for_valid_atom_types(field_value)
+
             if field_value is None:
                 continue
+
             for entry in entry_set:
                 modified_key = key.replace("[entry]", f"[{entry}]")
-
                 template[modified_key] = field_value
 
         elif key in list(eln_data_dict.keys()):
