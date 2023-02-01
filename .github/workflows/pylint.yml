@@ -27,7 +27,7 @@ jobs:
           python -m pycodestyle --ignore=E501,E701,E731,W503 nexusutils tests --exclude=nexusutils/definitions
       - name: pylint
         run: |
-          python -m pylint nexusutils tests
+          python -m pylint nexusutils tests --ignore definitions
       - name: mypy
         run: |
           python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional --exclude=nexusutils/definitions nexusutils tests
