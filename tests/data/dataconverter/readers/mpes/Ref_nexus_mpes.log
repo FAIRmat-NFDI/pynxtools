@@ -516,7 +516,7 @@ DEBUG - documentation (NXentry.nxdl.xml:/experiment_laboratory):
 DEBUG - 
              Name of the laboratory or beamline
         
-DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (8 members)>
+DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (10 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT
@@ -920,7 +920,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
 DEBUG - classes:
 NXbeam.nxdl.xml:/pulse_energy
 DEBUG - @units [NX_ENERGY]
-DEBUG - ===== GROUP (//entry/instrument/electronanalyser [NXmpes::/NXentry/NXinstrument/NXelectronanalyser]): <HDF5 group "/entry/instrument/electronanalyser" (10 members)>
+DEBUG - ===== GROUP (//entry/instrument/electronanalyser [NXmpes::/NXentry/NXinstrument/NXelectronanalyser]): <HDF5 group "/entry/instrument/electronanalyser" (11 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER
@@ -2131,7 +2131,7 @@ DEBUG -
              Number of raw active elements in each dimension. Important for swept scans.
         
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<f8">
-DEBUG - value: 0.14 
+DEBUG - value: 110.0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution
@@ -2147,7 +2147,7 @@ DEBUG -
              Energy resolution of the electron analyser (FWHM of gaussian broadening)
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/energy_resolution@units)
-DEBUG - value: eV 
+DEBUG - value: meV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution
@@ -2211,7 +2211,7 @@ DEBUG -
              hemispherics, drift energy for tofs.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/energydispersion/pass_energy@units)
-DEBUG - value: ev 
+DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXenergydispersion', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/ENERGYDISPERSION/pass_energy
@@ -2310,6 +2310,22 @@ DEBUG -
              List of the axes that are acquired by scanning a physical parameter, listed in
              order of decreasing speed. See fast_axes for examples.
         
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/spatial_resolution): <HDF5 dataset "spatial_resolution": shape (), type "<f8">
+DEBUG - value: 10.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
+DEBUG - classes:
+NXelectronanalyser.nxdl.xml:/spatial_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXelectronanalyser.nxdl.xml:/spatial_resolution):
+DEBUG - 
+             Spatial resolution of the electron analyser (Airy disk radius)
+        
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/spatial_resolution@units)
+DEBUG - value: µm 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NX_FLOAT']
+DEBUG - classes:
+NXelectronanalyser.nxdl.xml:/spatial_resolution
+DEBUG - @units [NX_LENGTH]
 DEBUG - ===== GROUP (//entry/instrument/electronanalyser/transformations [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXtransformations]): <HDF5 group "/entry/instrument/electronanalyser/transformations" (2 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXtransformations']
 DEBUG - classes:
@@ -2561,7 +2577,7 @@ DEBUG -
 				should be chosen.
 			
 DEBUG - ===== FIELD (//entry/instrument/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<f8">
-DEBUG - value: 0.14 
+DEBUG - value: 140.0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/energy_resolution
@@ -2574,7 +2590,7 @@ DEBUG -
              Energy resolution of the experiment (FWHM or gaussian broadening)
         
 DEBUG - ===== ATTRS (//entry/instrument/energy_resolution@units)
-DEBUG - value: eV 
+DEBUG - value: meV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/energy_resolution
@@ -3315,6 +3331,22 @@ DEBUG - documentation (NXsource.nxdl.xml:/type):
 DEBUG - 
              Type of radiation source (pick one from the enumerated list and spell exactly)
         
+DEBUG - ===== FIELD (//entry/instrument/temporal_resolution): <HDF5 dataset "temporal_resolution": shape (), type "<f8">
+DEBUG - value: 35.0 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/temporal_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXinstrument.nxdl.xml:/temporal_resolution):
+DEBUG - 
+             Temporal resolution of the experiment (FWHM)
+        
+DEBUG - ===== ATTRS (//entry/instrument/temporal_resolution@units)
+DEBUG - value: fs 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/temporal_resolution
+DEBUG - @units [NX_TIME]
 DEBUG - ===== GROUP (//entry/process [NXmpes::/NXentry/NXprocess]): <HDF5 group "/entry/process" (5 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess']
 DEBUG - classes:
@@ -3434,7 +3466,7 @@ DEBUG -
 
                 .. _symmetry-guided distortion correction: https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub
         
-DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (6 members)>
+DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
@@ -3484,18 +3516,6 @@ DEBUG - documentation (NXcalibration.nxdl.xml:/calibrated_axis):
 DEBUG - 
              A vector representing the axis after calibration, matching the data length
         
-DEBUG - ===== FIELD (//entry/process/energy_calibration/coefficients): <HDF5 dataset "coefficients": shape (3,), type "<f8">
-DEBUG - value: [ 6.33783929e-01  8.68180227e-07 -2.41647784e+01] 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/coefficients
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/coefficients):
-DEBUG - 
-             For non-linear energy calibrations, e.g. in a TOF, a polynomial function is fit
-             to a set of features (peaks) at well defined energy positions to determine
-             E(TOF). Here we can store the array of fit coefficients.
-        
 DEBUG - ===== FIELD (//entry/process/energy_calibration/fit_function): <HDF5 dataset "fit_function": shape (), type "|O">
 DEBUG - value: b'(a0/(x0-a1))**2 + a2' 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_CHAR']
@@ -3512,16 +3532,6 @@ DEBUG -
              Use x0, x1, ..., xn for the variables.
              
              The formula should be numpy compliant.
-        
-DEBUG - ===== FIELD (//entry/process/energy_calibration/offset): <HDF5 dataset "offset": shape (), type "<f8">
-DEBUG - value: -24.164778378162257 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/offset
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
-DEBUG - 
-             For linear calibration. Offset parameter.
         
 DEBUG - ===== FIELD (//entry/process/energy_calibration/original_axis): <HDF5 dataset "original_axis": shape (900,), type "<f8">
 DEBUG - value: [ 60027.77777778  60083.33333333  60138.88888889  60194.44444444 ...
@@ -4185,7 +4195,7 @@ NXnote.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/preparation_description/description): <HDF5 dataset "description": shape (), type "|O">
-DEBUG - value: b'Here should be a description of hte preparation procedure.' 
+DEBUG - value: b'Here should be a description of the preparation procedure.' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXnote', 'NX_CHAR']
 DEBUG - classes:
 NXnote.nxdl.xml:/description

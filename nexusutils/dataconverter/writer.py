@@ -233,6 +233,11 @@ class Writer:
         """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
         hdf5_links_for_later = []
 
+        def add_units_key(dataset, path):
+            units_key = f"{path}/@units"
+            if units_key in self.data.keys() and self.data[units_key] is not None:
+                dataset.attrs["units"] = self.data[units_key]
+
         for path, value in self.data.items():
             try:
                 if path[path.rindex('/') + 1:] == '@units':
@@ -253,11 +258,7 @@ class Writer:
                             hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
-                    units_key = f"{path}/@units"
-                    if units_key in self.data.keys() and self.data[units_key] is not None:
-                        dataset.attrs["units"] = self.data[units_key]
-                    else:
-                        continue
+                    add_units_key(dataset, path)
                 else:
                     # consider changing the name here the lvalue can also be group!
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())

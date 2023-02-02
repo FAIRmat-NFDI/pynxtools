@@ -119,7 +119,7 @@ def test_get_node_at_nxdl_path():
 
     node = nexus.get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/DATA", elem=elem)
-    assert node.attrib["type"] == "NX_NUMBER"
+    assert node.attrib["type"] == "NXdata"
 
     node = nexus.get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/AXISNAME_indices",
