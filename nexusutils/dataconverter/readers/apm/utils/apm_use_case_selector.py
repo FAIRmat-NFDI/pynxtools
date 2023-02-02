@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Utility class to analyze which vendor/community files are passed to em reader."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Utility class to analyze which vendor/community files are passed to em reader."""
 
 # pylint: disable=E1101, R0801
 
@@ -70,5 +67,3 @@ class ApmUseCaseSelector:  # pylint: disable=R0903
             self.eln: List[str] = []
             for mime_type in ["yaml", "yml"]:
                 self.eln += self.case[mime_type]
-
-# test = ApmUseCaseSelector(("a.pos", "b.RNG", "c.yml"))

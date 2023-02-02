@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Parser for loading generic X-ray spectroscopy and EELS data into NXem via hyperspy."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Parser for loading generic X-ray spectroscopy and EELS data into NXem via hyperspy."""
 
 # pylint: disable=E1101
 
@@ -26,13 +23,6 @@ from typing import Tuple, Any
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 
-# this em_spctrscpy parser combines multiple sub-parsers
-# so we need the following input:
-# logical analysis which use case
-# data input from an ELN (e.g. NOMAD OASIS)
-# data input from technology partner files
-# functionalities for creating default plots
-# developer functionalities for creating synthetic data
 
 from nexusutils.dataconverter.readers.em_spctrscpy.utils.em_use_case_selector \
     import EmUseCaseSelector
@@ -84,6 +74,14 @@ class EmSpctrscpyReader(BaseReader):
         """Read data from given file, return filled template dictionary em."""
         # pylint: disable=duplicate-code
         template.clear()
+
+        # this em_spctrscpy parser combines multiple sub-parsers
+        # so we need the following input:
+        # logical analysis which use case
+        # data input from an ELN (e.g. NOMAD OASIS)
+        # data input from technology partner files
+        # functionalities for creating default plots
+        # developer functionalities for creating synthetic data
 
         n_entries = 0
         if len(file_paths) == 0:

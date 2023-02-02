@@ -210,8 +210,6 @@ class Writer:
             key = f"{path}/@{attr_name.get('name')}"
             if key in self.data:
                 elem.attrib[attr_name.get('name')] = self.data[key]
-            else:
-                elem.attrib[attr_name.get('name')] = ''
 
         return elem.attrib
 
@@ -224,10 +222,11 @@ class Writer:
             grp = parent.create_group(parent_path_hdf5)
             try:
                 attrs = self.__nxdl_to_attrs(parent_path)
-                if attrs is not None:
-                    grp.attrs['NX_class'] = attrs["type"]
             except Exception as exc:
-                raise exc
+                attrs = None
+
+            if attrs is not None:
+                grp.attrs['NX_class'] = attrs["type"]
             return grp
         return self.output_nexus[parent_path_hdf5]
 

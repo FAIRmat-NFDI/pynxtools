@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Utility functions for generation of EM NeXus datasets for dev purposes."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Utility functions for generation of EM NeXus datasets for dev purposes."""
 
 # pylint: disable=E1101, R0801
 
@@ -40,11 +37,11 @@ from nexusutils.dataconverter.readers.em_spctrscpy.utils.em_versioning \
     import NX_EM_ADEF_NAME, NX_EM_ADEF_VERSION, NX_EM_EXEC_NAME, NX_EM_EXEC_VERSION
 
 # parameter affecting reconstructed positions and size
-# ##MK default parameter
+# default parameter
 MAX_USERS = 4
 # compose hypothetical spectrum (ignoring background)
-XRAY_ENERGY_DELTA = 0.01  # keV
-PEAK_WIDTH_SIGMA = 0.1  # stddev assumed the same for all peaks (keV)
+XRAY_ENERGY_DELTA = 0.01  # in keV
+PEAK_WIDTH_SIGMA = 0.1  # stddev in keV assumed the same for all peaks
 SIGNAL_YIELD = 1000.  # arbitrarily assumed signal intensity
 
 
@@ -82,8 +79,10 @@ class EmSpctrscpyCreateExampleData:
         template[trg + "program/@version"] = NX_EM_EXEC_VERSION
         template[trg + "start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[trg + "end_time"] = datetime.datetime.now().astimezone().isoformat()
-        msg = "warning these are mocked data !! meant to be used exclusively !! "
-        msg += "for verifying NOMAD OASIS search capabilities"
+        msg = '''WARNING: These are mocked data !!
+              These are meant to be used exclusively
+              for verifying NOMAD search capabilities.
+              '''
         template[trg + "experiment_description"] = msg
         template[trg + "experiment_documentation"] = "free text field"
         experiment_identifier \
@@ -96,7 +95,7 @@ class EmSpctrscpyCreateExampleData:
         """Copy data in user section."""
         # check if required fields exists and are valid
         # print("Parsing user...")
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/"
         user_names = np.unique(
             np.random.choice(["Sherjeel", "MarkusK", "Benedikt", "Johannes",
                               "Gerardo", "Kristiane", "Sabine", "Sophie", "Tom",
@@ -156,7 +155,7 @@ class EmSpctrscpyCreateExampleData:
     def emulate_coordinate_system(self, template: dict) -> dict:
         """Define the coordinate systems to be used."""
         # print("Parsing coordinate system...")
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/"
         prefix += "COORDINATE_SYSTEM_SET[coordinate_system_set]/"
         # this is likely not yet matching how it should be in NeXus
         grpnm = prefix + "TRANSFORMATIONS[laboratory]/"
@@ -171,10 +170,13 @@ class EmSpctrscpyCreateExampleData:
             template[trg + "/@offset_units"] = "m"
             template[trg + "/@depends_on"] = "."
 
-        msg = "This way of defining coordinate systems is only a small "
-        msg += "example of what is possible and how it can be done. "
-        msg += "More discussion among members of FAIRmat Area B/A and the "
-        msg += "EM community is needed!"
+        msg = '''
+              This way of defining coordinate systems is an example
+              how these can be defined. More discussion among members
+              of FAIRmat Area A/B/C and members of the EM community
+              plus more examples should be used to test how this
+              feature of NeXus can be used.
+              '''
         template[prefix + "@comment"] = msg
         return template
 
@@ -189,8 +191,7 @@ class EmSpctrscpyCreateExampleData:
         template[trg + "location"] = str(np.random.choice(
             ["Berlin", "Leipzig", "Dresden", "Düsseldorf", "Aachen", "Garching",
              "Aachen", "Leoben", "Jülich"], 1 + np.random.choice(1, 1))[0])
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
-        trg += "em_lab/FABRICATION[fabrication]/"
+        trg = f"/ENTRY[entry{self.entry_id}]/em_lab/FABRICATION[fabrication]/"
         template[trg + "vendor"] = instrument_name.replace("Some ", "")
         template[trg + "model"] = "n/a"
         template[trg + "identifier"] = str(hashlib.sha256(
@@ -201,8 +202,7 @@ class EmSpctrscpyCreateExampleData:
     def emulate_ebeam_column(self, template: dict) -> dict:
         """Copy data in ebeam_column section."""
         # print("Parsing ebeam column...")
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/"
-        prefix += "em_lab/EBEAM_COLUMN[ebeam_column]/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/em_lab/EBEAM_COLUMN[ebeam_column]/"
         trg = prefix + "electron_gun/"
 
         template[trg + "voltage"] \
@@ -249,8 +249,7 @@ class EmSpctrscpyCreateExampleData:
     def emulate_optics(self, template: dict) -> dict:
         """Copy data in optical_system_em section."""
         # print("Parsing optics...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
-        trg += "em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/"
+        trg = f"/ENTRY[entry{self.entry_id}]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/"
         template[trg + "beam_current_description"] = "undefined"
         template[trg + "camera_length"] \
             = np.float64(np.random.normal(loc=1.0, scale=0.05))
@@ -283,8 +282,7 @@ class EmSpctrscpyCreateExampleData:
             1 + np.random.choice(5, 1)))
         detector_id = 1
         for detector in detectors:
-            trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
-            trg += "em_lab/DETECTOR[detector" + str(detector_id) + "]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/em_lab/DETECTOR[detector{detector_id}]/"
             template[trg + "type"] = str(detector)
             detector_id += 1
         return template
@@ -292,8 +290,7 @@ class EmSpctrscpyCreateExampleData:
     def emulate_stage_lab(self, template: dict) -> dict:
         """Copy data in stage lab section."""
         # print("Parsing stage lab...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
-        trg += "em_lab/stage_lab/"
+        trg = f"/ENTRY[entry{self.entry_id}]/em_lab/stage_lab/"
         stage_name = np.random.choice(
             ["side_entry", "top_entry", "single_tilt", "quick_change",
              "multiple_specimen", "bulk_specimen", "double_tilt", "tilt_rotate",
@@ -323,19 +320,15 @@ class EmSpctrscpyCreateExampleData:
     def emulate_random_xray_spectrum(self, template: dict) -> dict:
         """Emulate one event data group for Xray spectroscopy."""
         # !! data meant exclusively to be used for verification purposes !!
-        # for idx in np.arange(0, 1):
         assert len(self.elements_observed > 0), "No elements were observed !"
         composition = np.random.uniform(
             low=0., high=1., size=(len(self.elements_observed),))
         composition = composition / np.sum(composition)
-        # print(composition)
         signal_contributions = []
         idx = 0
-        # symbols = []
         # sample hypothetically X-ray lines for each element observed
         for atomic_number in self.elements_observed:
             symbol = chemical_symbols[atomic_number]
-            # symbols.append(symbol)
             if symbol in hs.material.elements:
                 if 'Atomic_properties' in hs.material.elements[symbol]:
                     if 'Xray_lines' in hs.material.elements[symbol].Atomic_properties:
@@ -359,12 +352,10 @@ class EmSpctrscpyCreateExampleData:
         n_bins = int(np.ceil(
             (xray_energy_max + 3. * XRAY_ENERGY_DELTA + 1.)
             / XRAY_ENERGY_DELTA))  # covering [0., n_bins * XRAY_ENERGY_DELTA]
-        # print(n_bins)
         self.e_axis = np.linspace(
             0.5 * XRAY_ENERGY_DELTA,
             0.5 * XRAY_ENERGY_DELTA + n_bins * XRAY_ENERGY_DELTA,
             num=n_bins, endpoint=True)
-        # print(self.e_axis)
 
         self.cnts_summary = np.zeros((n_bins,), np.float64)
         for tpl in signal_contributions:

@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Generator for NXapm default plots."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Generator for NXapm default plots."""
 
 # pylint: disable=E1101
 
@@ -42,9 +39,6 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         bounds[i, 0] = np.min(xyz[:, i])
         bounds[i, 1] = np.max(xyz[:, i])
     # make the bounding box a quadric prism
-    # xymax = np.ceil(np.max(np.array(
-    #     np.fabs(bounds[0:1, 0])[0],
-    #     np.fabs(bounds[0:1, 1])[0])))
     imi = np.floor(bounds[0, 0])
     imx = np.ceil(bounds[0, 1])
     xedges = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1,
@@ -147,7 +141,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[trg + "range_minmax"] = np.array([mqmin, mqmax], np.float32)
     template[trg + "range_minmax/@units"] = "Da"
 
-    trg += "mass_spectrum/"  # "DATA[mass_spectrum]/"
+    trg += "mass_spectrum/"
     template[trg + "title"] = "Mass spectrum (0.01 Da binning)"
     template[trg + "@signal"] = "data_counts"
     template[trg + "@axes"] = "axis_mass_to_charge"
@@ -172,7 +166,8 @@ def apm_default_plot_generator(template: dict, n_entries: int) -> dict:
     print("Create default plots on-the-fly...")
     # now the reader implements what is effectively the task of a normalizer step
     # adding plot (discretized representation of the dataset), for now the default plot
-    # adding plot mass-to-charge-state ratio histogram, termed mass spectrum in APM community
+    # adding plot mass-to-charge-state ratio histogram,
+    # termed mass spectrum in APM community
 
     # NEW ISSUE: add path to default plottable data
 

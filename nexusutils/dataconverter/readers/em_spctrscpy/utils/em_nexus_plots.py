@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Parser for adding default plots and path to them to template."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Parser for adding default plots and path to them to template."""
 
 # pylint: disable=E1101
 

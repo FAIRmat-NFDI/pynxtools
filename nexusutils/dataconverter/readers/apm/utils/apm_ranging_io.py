@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Wrapping multiple parsers for vendor files with ranging definition files."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Wrapping multiple parsers for vendor files with ranging definition files."""
 
 # pylint: disable=E1101
 
@@ -39,7 +36,7 @@ from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
 
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
-    # all unidentifiable ions are mapped on this type.
+    # all unidentifiable ions are mapped on the unknown type
     trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/"
     trg += "ranging/peak_identification/ION[ion0]/"
     ivec = create_isotope_vector([])
@@ -79,22 +76,8 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
         template[path + "mass_to_charge_range"] \
             = np.array(ion.ranges.typed_value, np.float32)
         template[path + "mass_to_charge_range/@units"] = ion.ranges.unit
-        # nuclid_list = np.zeros([2, 32], np.uint16)
-        # ivec = ion_obj.isotope_vector.value.flatten()
-        # i = 0
-        # for hash_value in ivec:
-        #     if hash_value != 0:
-        #         n_protons_n_neutrons = hash_to_isotope(int(hash_value))
-        #         if n_protons_n_neutrons[1] > 0:  # convention if only the element known
-        #             nuclid_list[0, i] \
-        #                 = n_protons_n_neutrons[0] + n_protons_n_neutrons[1]
-        #         else:
-        #             nuclid_list[0, i] = 0
-        #         nuclid_list[1, i] = n_protons_n_neutrons[0]
-        #     i += 1
         template[path + "nuclid_list"] = ion.nuclid_list.typed_value
         # template[path + "nuclid_list/@units"] = ""
-        # template[path + "ion_type"] = np.uint8(ion_id)
         template[path + "name"] = ion.name.typed_value
         ion_id += 1
     return template
@@ -110,7 +93,7 @@ def extract_data_from_rng_file(file_name: str, template: dict, entry_id: int) ->
     print("Extracting data from RNG file: " + file_name)
     rangefile = ReadRngFileFormat(file_name)
 
-    # ion indices are on the interval [1, 256]
+    # ion indices are on the interval [0, 256)
     assert len(rangefile.rng["molecular_ions"].keys()) <= np.iinfo(np.uint8).max + 1, \
         "Current implementation does not support more than 256 ion types"
 
@@ -131,7 +114,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dic
     rangefile = ReadRrngFileFormat(file_name)
     # rangefile.read_rrng()
 
-    # ion indices are on the interval [1, 256]
+    # ion indices are on the interval [0, 256)
     assert len(rangefile.rrng["molecular_ions"]) <= np.iinfo(np.uint8).max + 1, \
         "Current implementation does not support more than 256 ion types"
 

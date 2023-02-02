@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Utility functions for generation of atom probe NeXus datasets for dev purposes."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Utility functions for generation of atom probe NeXus datasets for dev purposes."""
 
 # pylint: disable=E1101, R0801, R0902, W0201
 
@@ -57,8 +54,8 @@ RECON_HEIGHT = 300.  # angstroem
 RECON_RADIUS = 50.  # angstroem
 MAX_COMPONENTS = 5  # how many different molecular ions in one dataset/entry
 MAX_ATOMS = 10  # determine power-law fraction of n_atoms per ion
+MULTIPLES_FACTOR = 0.6  # controls how likely multiple ions are synthesized
 # the higher this factor the more uniformly and more likely multiplicity > 1
-MULTIPLES_FACTOR = 0.6
 MAX_CHARGE = 4  # highest allowed charge of ion
 MAX_ATOMIC_NUMBER = 94  # do not include heavier atoms than Plutonium
 MAX_USERS = 4
@@ -82,16 +79,19 @@ class ApmCreateExampleData:
         self.m_z: List[float] = []
 
         # synthesizing realistic datasets for atom probe tomography
-        # would require a physical model of the field evaporation process
-        # the detector and the reconstruction and ranging algorithm
-        # the cutting edge of one part of such simulations is described
-        # here https://arxiv.org/abs/2209.05997, this demands very costly HPC computing
-        # as this goes beyond what is numerically feasible, strong assumptions are made:
+        # would require a physical model of the field evaporation process,
+        # a model of the detector, and the reconstruction and ranging algorithms.
+        # A cutting edge view of such simulations is described here
+        # https://arxiv.org/abs/2209.05997, this demands very costly HPC computing
+        # As this goes beyond what is numerically feasible, strong assumptions are made:
         # we are interested in having positions on a grid (real specimen geometry)
         #     details do not matter, positions are assumed exact without noise
         # reflect that signal comes from elementary and molecular ions
         #     details do not matter but sample from the entire periodic table
-        # no tails in peaks are modelled
+        # we wish to have a histogram of mass-to-charge-state ratio values
+        # this is called a mass spectrum in the field of atom probe microscopy
+        #     no tails in peaks are modelled as this depends on the pulser, physics
+        #     and is in fact not yet well understood physically for general materials
 
     def create_reconstructed_positions(self):
         """Create aggregate of specifically oriented
@@ -100,7 +100,7 @@ class ApmCreateExampleData:
         in this lattice to carve out a portion of the
         point cloud representing the reconstruction positions."""
         # https://wiki.fysik.dtu.dk/ase/ase/lattice.html#module-ase.lattice
-        # ase length units in angstrom!
+        # ase length units in angstroem!
         # https://wiki.fysik.dtu.dk/ase/ase/units.html#units
 
         # assumptions:
@@ -110,34 +110,29 @@ class ApmCreateExampleData:
                                            latticeconstant=RECON_ATOM_SPACING,
                                            pbc=(0, 0, 0)).get_positions(), np.float32)
         # Cu will be ignored, only the lattice with positions is relevant
-        print(np.shape(xyz))
-        print(xyz.dtype)
         centre_of_mass = np.asarray([np.mean(xyz[:, 0]),
                                      np.mean(xyz[:, 1]),
                                      np.mean(xyz[:, 2])], np.float32)
-        print("Centre of mass of ASE lattice is (with coordinates in angstroem)")
-        print(centre_of_mass)
-        # relocate
+        # print("Centre of mass of ASE lattice is (with coordinates in angstroem)")
+        # print(centre_of_mass)
         xyz = xyz - centre_of_mass
         centre_of_mass = np.asarray([np.mean(xyz[:, 0]),
                                      np.mean(xyz[:, 1]),
                                      np.mean(xyz[:, 2])], np.float32)
-        print("Updated centre of mass")
-        print(centre_of_mass)
+        # print("Updated centre of mass")
+        # print(centre_of_mass)
         # axis_aligned_bbox = np.asarray([np.min(xyz[:, 0]), np.max(xyz[:, 0]),
         #                                 np.min(xyz[:, 1]), np.max(xyz[:, 1]),
         #                                 np.min(xyz[:, 2]), np.max(xyz[:, 2])])
-        # print(axis_aligned_bbox)
         # displace origin
         origin = centre_of_mass
-        print("Building a cylinder of radius " + str(RECON_RADIUS * 0.1) + " nm"
-              + " and height " + str(RECON_HEIGHT * 0.1) + " nm")
+        # print("Building a cylinder of radius " + str(RECON_RADIUS * 0.1) + " nm"
+        #       + " and height " + str(RECON_HEIGHT * 0.1) + " nm")
         mask = None
         mask = xyz[:, 2] <= (origin[2] + 0.5 * RECON_HEIGHT)
         mask &= xyz[:, 2] >= (origin[2] - 0.5 * RECON_HEIGHT)
         mask &= ((xyz[:, 0] - origin[0])**2
                  + (xyz[:, 1] - origin[1])**2) <= RECON_RADIUS**2
-        # print(np.sum(mask))
         self.xyz = xyz[mask]
         shift = [0., 0., 0.5 * RECON_HEIGHT]
         for idx in np.arange(0, 3):
@@ -148,7 +143,6 @@ class ApmCreateExampleData:
         # self.aabb3d = np.asarray([np.min(self.xyz[:, 0]), np.max(self.xyz[:, 0]),
         #                           np.min(self.xyz[:, 1]), np.max(self.xyz[:, 1]),
         #                           np.min(self.xyz[:, 2]), np.max(self.xyz[:, 2])])
-        # print(self.aabb3d)
 
     def place_atoms_from_periodic_table(self):
         """Sample elements from the periodic table
@@ -170,16 +164,13 @@ class ApmCreateExampleData:
                                              endpoint=True), np.float64)
         accept_reject = MULTIPLES_FACTOR**self.n_ivec
         accept_reject = np.cumsum(accept_reject) / np.sum(accept_reject)
-        # print(accept_reject)
         unifrnd = np.random.uniform(low=0., high=1., size=(self.n_components,))
         self.multiplicity = np.ones((self.n_components,))
-        # self.multiplicity[:] = 1
         for idx in np.arange(0, len(accept_reject) - 1):
             mask = unifrnd[:] >= accept_reject[idx]
             mask &= unifrnd[:] < accept_reject[idx + 1]
             self.multiplicity[mask] = self.n_ivec[idx]
         self.multiplicity = np.asarray(self.multiplicity, np.uint32)
-        # print(self.multiplicity)
 
         # uniform model for distribution of charge states
         # !! warning: for real world datasets actual ion charge depends
@@ -188,13 +179,13 @@ class ApmCreateExampleData:
                                                          high=MAX_CHARGE,
                                                          size=(self.n_components,)),
                                        np.uint32)
-        # print(self.charge_state)
 
-        # compose for each component a randomly sampled hypothetical molecular ions
-        # uniform random model which elements to pick from periodic table
-        # !! warning: for real world datasets depends on research interest
+        # compose for each component randomly sampled hypothetical molecular ions
+        # uniform random model which elements to pick from periodic table of elements
+        # !! warning: for real world datasets molecular ions found research dependant
         # !! often research in many groups is strongly focused on specific
-        # materials and abundance, toxicity of elements, also reason for synthetic data
+        # materials and abundance, toxic nature of some elements forbids
+        # experiments with these, like Plutonium or, also reason for synthetic data
         value_to_pse_symbol_lookup = {}
         for key, val in atomic_numbers.items():
             if key != "X":
@@ -208,11 +199,12 @@ class ApmCreateExampleData:
             sampled_elements = np.asarray(
                 np.random.uniform(low=1, high=MAX_ATOMIC_NUMBER,
                                   size=(self.multiplicity[idx],)), np.uint32)
-            # print(sampled_elements)
+
             for val in sampled_elements:
                 symbol = value_to_pse_symbol_lookup[val]
                 isotope_vector.append(symbol)
                 mass_sum += atomic_masses[atomic_numbers[symbol]]
+
             composition.append((isotope_vector,
                                 self.charge_state[idx],
                                 mass_sum / self.charge_state[idx],
@@ -223,27 +215,25 @@ class ApmCreateExampleData:
             weighting_factor_sum += composition[idx][3]
 
         # normalize all compositions
-        print(weighting_factor_sum)
+        # (weighting_factor_sum)
         self.nrm_composition = []
-        print(composition)
+        # print(composition)
         for idx in np.arange(0, self.n_components):
             self.nrm_composition.append((
                 composition[idx][0],
                 composition[idx][1],
                 composition[idx][2],
                 composition[idx][3] / weighting_factor_sum))
-        print("Composition was sampled as follows")
 
-        self.nrm_composition.sort(key=lambda a: a[3])  # sort tuples ascendingly for composition
-        # print(self.nrm_composition)
+        self.nrm_composition.sort(key=lambda a: a[3])  # sort asc. for composition
         accept_reject = [0.]
         for idx in self.nrm_composition:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
         assert self.xyz != [], \
             "self.xyz must not be an empty dataset, create a geometry first!"
-        print("Accept/reject sampling m/q values for "
-              + str(np.shape(self.xyz)[0]) + " ions")
+        # print("Accept/reject sampling m/q values for "
+        #       + str(np.shape(self.xyz)[0]) + " ions")
 
         unifrnd = np.random.uniform(low=0., high=1., size=(np.shape(self.xyz)[0],))
         self.m_z = np.empty((np.shape(self.xyz)[0],))
@@ -252,9 +242,9 @@ class ApmCreateExampleData:
             mask = unifrnd[:] >= accept_reject[idx]
             mask &= unifrnd[:] < accept_reject[idx + 1]
             self.m_z[mask] = self.nrm_composition[idx][2]
-            print(self.nrm_composition[idx])
-            print(np.sum(mask) / np.shape(self.xyz)[0])
-        print(np.shape(self.m_z))
+            # print(self.nrm_composition[idx])
+            # print(np.sum(mask) / np.shape(self.xyz)[0])
+        # print(np.shape(self.m_z))
         # assert np.sum(self.m_z == np.nan) == 0, "Not all m/q values defined!"
 
     def composition_to_ranging_definitions(self, template: dict) -> dict:
@@ -303,7 +293,7 @@ class ApmCreateExampleData:
     def emulate_entry(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
-        print("Parsing entry...")
+        # print("Parsing entry...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
         template[trg + "definition"] = NX_APM_ADEF_NAME
         template[trg + "@version"] = NX_APM_ADEF_VERSION
@@ -311,8 +301,11 @@ class ApmCreateExampleData:
         template[trg + "program/@version"] = NX_APM_EXEC_VERSION
         template[trg + "start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[trg + "end_time"] = datetime.datetime.now().astimezone().isoformat()
-        msg = "warning these are mocked data !! meant to be used exclusively !! "
-        msg += "for verifying NOMAD OASIS search capabilities"
+        msg = '''
+              WARNING: These are mocked data !!
+              They are meant to be used exclusively
+              for verifying NOMAD search capabilities.
+              '''
         template[trg + "experiment_description"] = msg
         experiment_identifier \
             = "R" + str(np.random.choice(100, 1)[0]) \
@@ -327,7 +320,7 @@ class ApmCreateExampleData:
     def emulate_user(self, template: dict) -> dict:
         """Copy data in user section."""
         # check if required fields exists and are valid
-        print("Parsing user...")
+        # print("Parsing user...")
         prefix = "/ENTRY[entry" + str(self.entry_id) + "]/"
         user_names = np.unique(
             np.random.choice(["Sherjeel", "MarkusK", "Dierk", "Baptiste",
@@ -346,7 +339,7 @@ class ApmCreateExampleData:
     def emulate_specimen(self, template: dict) -> dict:
         """Copy data in specimen section."""
         # check if required fields exists and are valid
-        print("Parsing specimen...")
+        # print("Parsing specimen...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/specimen/"
         assert len(self.nrm_composition) > 0, "Composition list is empty!"
         unique_elements = set()
@@ -373,7 +366,7 @@ class ApmCreateExampleData:
 
     def emulate_control_software(self, template: dict) -> dict:
         """Copy data in control software section."""
-        print("Parsing control software...")
+        # print("Parsing control software...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/control_software/"
         template[trg + "program"] = "IVAS"
         template[trg + "program/@version"] = "3." \
@@ -384,7 +377,7 @@ class ApmCreateExampleData:
     def emulate_instrument_header(self, template: dict) -> dict:
         """Copy data in instrument_header section."""
         # check if required fields exists and are valid
-        print("Parsing instrument header...")
+        # print("Parsing instrument header...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/"
         template[trg + "instrument_name"] \
             = "test instrument " + str(np.random.choice(100, 1)[0])
@@ -395,7 +388,7 @@ class ApmCreateExampleData:
 
     def emulate_fabrication(self, template: dict) -> dict:
         """Copy data in fabrication section."""
-        print("Parsing fabrication...")
+        # print("Parsing fabrication...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/FABRICATION[fabrication]/"
         template[trg + "vendor"] \
             = str(np.random.choice(["AMETEK/Cameca", "customized"], 1)[0])
@@ -409,7 +402,7 @@ class ApmCreateExampleData:
 
     def emulate_analysis_chamber(self, template: dict) -> dict:
         """Copy data in analysis_chamber section."""
-        print("Parsing analysis chamber...")
+        # print("Parsing analysis chamber...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/analysis_chamber/"
         template[trg + "pressure"] = np.float64(
             np.random.normal(loc=1.0e-10, scale=0.2e-11))
@@ -418,14 +411,14 @@ class ApmCreateExampleData:
 
     def emulate_reflectron(self, template: dict) -> dict:
         """Copy data in reflectron section."""
-        print("Parsing reflectron...")
+        # print("Parsing reflectron...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/REFLECTRON[reflectron]/"
         template[trg + "applied"] = bool(np.random.choice([0, 1], 1)[0])
         return template
 
     def emulate_local_electrode(self, template: dict) -> dict:
         """Copy data in local_electrode section."""
-        print("Parsing local electrode...")
+        # print("Parsing local electrode...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/local_electrode/"
         template[trg + "name"] \
             = "electrode " + str(np.random.choice(1000, 1)[0])
@@ -433,7 +426,7 @@ class ApmCreateExampleData:
 
     def emulate_detector(self, template: dict) -> dict:
         """Copy data in ion_detector section."""
-        print("Parsing detector...")
+        # print("Parsing detector...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/ion_detector/"
         detector_model_type = str(np.random.choice(["cameca", "mcp", "custom"], 1)[0])
         template[trg + "type"] = detector_model_type
@@ -445,7 +438,7 @@ class ApmCreateExampleData:
 
     def emulate_stage_lab(self, template: dict) -> dict:
         """Copy data in stage lab section."""
-        print("Parsing stage lab...")
+        # print("Parsing stage lab...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/stage_lab/"
         template[trg + "base_temperature"] = np.float64(10 + np.random.choice(50, 1)[0])
         template[trg + "base_temperature/@units"] = "K"
@@ -453,7 +446,7 @@ class ApmCreateExampleData:
 
     def emulate_specimen_monitoring(self, template: dict) -> dict:
         """Copy data in specimen_monitoring section."""
-        print("Parsing specimen monitoring...")
+        # print("Parsing specimen monitoring...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/specimen_monitoring/"
         eta = np.min((np.random.normal(loc=0.6, scale=0.1), 1.))
         template[trg + "detection_rate"] = np.float64(eta)
@@ -466,7 +459,7 @@ class ApmCreateExampleData:
 
     def emulate_pulser(self, template: dict) -> dict:
         """Copy data in pulser section."""
-        print("Parsing pulser...")
+        # print("Parsing pulser...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/pulser/"
         pulse_mode = str(np.random.choice(
             ["laser", "voltage", "laser_and_voltage"], 1)[0])
@@ -493,7 +486,7 @@ class ApmCreateExampleData:
 
     def emulate_reconstruction(self, template: dict) -> dict:
         """Copy data in reconstruction section."""
-        print("Parsing reconstruction...")
+        # print("Parsing reconstruction...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/reconstruction/"
         src = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/control_software/"
         template[trg + "program"] = template[src + "program"]
@@ -506,7 +499,7 @@ class ApmCreateExampleData:
 
     def emulate_ranging(self, template: dict) -> dict:
         """Copy data in ranging section."""
-        print("Parsing ranging...")
+        # print("Parsing ranging...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/ranging/"
         src = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/control_software/"
         template[trg + "program"] = template[src + "program"]

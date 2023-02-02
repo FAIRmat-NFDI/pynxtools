@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Parse metadata in specific custom NOMAD OASIS ELN schema to an NXem NXS."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Parse metadata in specific custom NOMAD OASIS ELN schema to an NXem NXS."""
 
 # pylint: disable=E1101, R0801
 
@@ -61,7 +58,6 @@ class NxEmNomadOasisElnSchemaParser:
         assert "eln_data" in file_name, \
             "Argument file_name should be eln_data* YAML !"
         assert entry_id > 0, "Argument entry_id has to be > 0 !"
-        # file_name = "eln_data.yaml"
         with open(file_name, "r", encoding="utf-8") as stream:
             self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
         self.entry_id = entry_id
@@ -69,7 +65,7 @@ class NxEmNomadOasisElnSchemaParser:
     def parse_entry_section(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
-        print("Parsing entry...")
+        # print("Parsing entry...")
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
         src = "entry"
         assert isinstance(self.yml[src], fd.FlatDict), \
@@ -109,7 +105,7 @@ class NxEmNomadOasisElnSchemaParser:
     def parse_user_section(self, template: dict) -> dict:
         """Copy data in user section."""
         # check if required fields exists and are valid
-        print("Parsing user...")
+        # print("Parsing user...")
         src = "user"
         assert isinstance(self.yml[src], list), \
             "Facing an ELN schema instance with an incorrect operator section!"
@@ -119,8 +115,7 @@ class NxEmNomadOasisElnSchemaParser:
         for user_list in self.yml[src]:
             assert "name" in user_list.keys(), \
                 "name is a required field but not found in ELN input!"
-            trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
-            trg += "USER[user" + str(user_id) + "]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]/"
             template[trg + "name"] = user_list["name"]
             field_names = [
                 "email", "affiliation", "address", "orcid", "orcid_platform",
@@ -136,7 +131,7 @@ class NxEmNomadOasisElnSchemaParser:
     def parse_sample_section(self, template: dict) -> dict:
         """Copy data in sample section."""
         # check if required fields exists and are valid
-        print("Parsing sample...")
+        # print("Parsing sample...")
         src = "sample"
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/sample/"
         assert isinstance(self.yml[src], fd.FlatDict), \
@@ -148,7 +143,7 @@ class NxEmNomadOasisElnSchemaParser:
         for symbol in self.yml[src + ":atom_types"]:
             assert isinstance(symbol, str), \
                 "Facing an atom_types list entry which is not a string!"
-            assert (symbol in chemical_symbols) & (symbol != "X"), \
+            assert (symbol in chemical_symbols) and (symbol != "X"), \
                 "Facing an atom_types list entry which is not an element!"
         template[trg + "atom_types"] = self.yml[src + ":atom_types"]
         thickness_exists = ("thickness:value" in self.yml[src].keys()) \
@@ -182,17 +177,19 @@ class NxEmNomadOasisElnSchemaParser:
         # ##MK::the COORDINATE_SYSTEM_SET section depends often on conventions
         # which are neither explicitly documented in instances of
         # files from vendor software nor via ELNs, take for instance the example
-        # of SEM/EBSD TSL, the specific coordinate system conventions use
-        # are defined in the famous "coin selector GUI window from TSL"
-        # these values are not stored in vendor files.
+        # of SEM/EBSD TSL, the specific coordinate system conventions used
+        # are defined in the famous "coin selector GUI window from TSL e.g."
+        # but these values are not stored in vendor files.
         # Oxford nowadays stores coordinate systems implicitly as the
         # standard defines the coordinate systems
         # for now this source code is only to fix an issue
         # with the current parser of handling optional parent group
         # required fields cases, as soon as this has been fixed, this section
         # should be moved out here
-        print("Parsing coordinate system...")
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/"
+        # a more complete approach to document coordinate system conventions
+        # completely will be made with the em_oim_ms parser
+        # print("Parsing coordinate system...")
+        prefix = f"/ENTRY[entry{self.entry_id}]/"
         prefix += "COORDINATE_SYSTEM_SET[coordinate_system_set]/"
         # this is likely not yet matching how it should be in NeXus
         grpnm = prefix + "TRANSFORMATIONS[laboratory]/"
@@ -207,10 +204,11 @@ class NxEmNomadOasisElnSchemaParser:
             template[trg + "/@offset_units"] = "m"
             template[trg + "/@depends_on"] = "."
 
-        msg = "This way of defining coordinate systems is only a small "
-        msg += "example of what is possible and how it can be done. "
-        msg += "More discussion among members of FAIRmat Area B/A and the "
-        msg += "EM community is needed!"
+        msg = '''
+              This way of defining coordinate systems is only a small example of what
+              is possible and how it can be done. More discussion among members of
+              FAIRmat Area B/A and the EM community is needed!
+              '''
         template[prefix + "@comment"] = msg
         return template
 
@@ -247,7 +245,7 @@ class NxEmNomadOasisElnSchemaParser:
 
     def parse_ebeam_column_section(self, template: dict) -> dict:
         """Copy data in ebeam_column section."""
-        print("Parsing ebeam_column...")
+        # print("Parsing ebeam_column...")
         src = "em_lab:ebeam_column:electron_gun"
         assert isinstance(self.yml[src], fd.FlatDict), \
             src + " is a required group but not found in ELN input"
@@ -298,22 +296,22 @@ class NxEmNomadOasisElnSchemaParser:
 
     def parse_ibeam_column_section(self, template: dict) -> dict:
         """Copy data in ibeam_column section."""
-        print("Parsing ibeam_column...")
+        # print("Parsing ibeam_column...")
         return template
 
     def parse_ebeam_deflector_section(self, template: dict) -> dict:
         """Copy data in ebeam_deflector section."""
-        print("Parsing ebeam_deflector...")
+        # print("Parsing ebeam_deflector...")
         return template
 
     def parse_ibeam_deflector_section(self, template: dict) -> dict:
         """Copy data in ibeam_deflector section."""
-        print("Parsing ibeam_deflector...")
+        # print("Parsing ibeam_deflector...")
         return template
 
     def parse_optics_section(self, template: dict) -> dict:
         """Copy data in optical_system_em section."""
-        print("Parsing optics...")
+        # print("Parsing optics...")
         src = "em_lab:optical_system_em"
         assert isinstance(self.yml[src], fd.FlatDict), \
             "Required section " + src + " does not exist!"
@@ -337,7 +335,7 @@ class NxEmNomadOasisElnSchemaParser:
 
     def parse_detector_section(self, template: dict) -> dict:
         """Copy data in detector section."""
-        print("Parsing detector...")
+        # print("Parsing detector...")
         src = "em_lab:detector"
         assert isinstance(self.yml[src], list), \
             "Required section " + src + " does not exist!"
@@ -348,8 +346,7 @@ class NxEmNomadOasisElnSchemaParser:
         for detector in self.yml[src]:
             assert isinstance(detector, dict), \
                 "Detector metadata from ELN have to be a list!"
-            trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/"
-            trg += "DETECTOR[detector" + str(detector_id) + "]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/em_lab/DETECTOR[detector{detector_id}]/"
             assert "type" in detector.keys(), "type" + error_msg
             template[trg + "type"] = detector["type"]
             detector_id += 1
@@ -357,7 +354,7 @@ class NxEmNomadOasisElnSchemaParser:
 
     def parse_stage_lab_section(self, template: dict) -> dict:
         """Copy data in stage lab section."""
-        print("Parsing stage_lab...")
+        # print("Parsing stage_lab...")
         src = "em_lab:stage_lab"
         trg = "/ENTRY[entry" + str(self.entry_id) + "]/em_lab/stage_lab/"
         assert isinstance(self.yml[src], fd.FlatDict), \

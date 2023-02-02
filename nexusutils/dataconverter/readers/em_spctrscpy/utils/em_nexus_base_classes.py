@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""General metadata object connecting units and values for a quantity."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""General metadata object connecting units and values for a quantity."""
 
 # pylint: disable=E1101
 
@@ -67,17 +64,9 @@ class NxObject:  # pylint: disable=R0903
                 "Kwarg is_attr needs to be a boolean !"
             self.is_attr = kwargs["is_attr"]
 
-    def print(self):
+    def __repr__(self):
         """Report values."""
-        print("name: ")
-        print(str(self.name))
-        print("unit:")
-        print(str(self.unit))
-        print("dtype: ")
-        print(self.dtype)
-
-# test = NxObject(name="test", unit="baud", dtype=np.uint32, value=32000)
-# test.print()
+        return f'''Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}'''
 
 
 class NxEmUser:  # pylint: disable=R0903
@@ -115,10 +104,6 @@ class NxEmUser:  # pylint: disable=R0903
             = self.meta["telephone_number"].value
         return template
 
-# test = NxEmUser()
-# test.name.value = "NOMAD OASIS"
-# a = test.report("/ENTRY", {})
-
 
 class NxEmSample:  # pylint: disable=R0903
     """An object representing a sample."""
@@ -150,8 +135,6 @@ class NxEmSample:  # pylint: disable=R0903
         template[prefix + "/thickness/@units"] = self.meta["thickness"].unit
         template[prefix + "/description"] = self.meta["description"].value
         return template
-
-# test = NxEmSample()
 
 
 class NxEmAppDefHeader:  # pylint: disable=R0903
@@ -198,5 +181,3 @@ class NxEmAppDefHeader:  # pylint: disable=R0903
         template[prefix + "/thumbnail/@type"] \
             = self.meta["thumbnail_type"].value
         return template
-
-# test = NxEmAppDefHeader()

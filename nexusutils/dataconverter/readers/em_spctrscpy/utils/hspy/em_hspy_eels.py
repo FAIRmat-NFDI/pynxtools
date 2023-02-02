@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Classes representing groups with NeXus-ish formatted data parsed from hspy."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Classes representing groups with NeXus-ish formatted data parsed from hspy."""
 
 # pylint: disable=E1101
 
@@ -189,8 +186,8 @@ class HspyRectRoiEelsSummarySpectrum:
             for x_pixel in np.arange(1, shape[1]):
                 self.meta["counts"].value \
                     += np.asarray(hspy_s3d.data[y_pixel, x_pixel, :], np.uint32)
-        # ##MK::it seems that hspy is adaptive, uses numpy under the hood
-        # though, so the .data instance is already a proper numpy dtype
+        # seems that hspy is adaptive, uses numpy under the hood
+        # though, so a hspy signal's .data member is already a proper numpy dtype
         # therefore, an explicit call like this
         # np.asarray(hspy_s1d.data, np.uint32) is not necessary
         # ##MK::on the contrary the above-mentioned observed cast to float32
@@ -214,10 +211,6 @@ class NxSpectrumSetEmEels:
     def __init__(self, hspy_list):
         self.stack_data = []  # the HspyRectRoiEelsAllSpectra
         self.summary_data = []  # the HspyRectRoiEelsSummarySpectrum
-        # ##MK::self.program = NxObject()
-        # ##MK::self.program_version = NxObject(is_attr=True)
-        # ##MK::self.element_names = NxObject()
-        # ##MK::self.peak = {}
         self.is_valid = True
 
         self.is_an_implemented_case(hspy_list)

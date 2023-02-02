@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Wrapping multiple parsers for vendor files with reconstructed dataset files."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Wrapping multiple parsers for vendor files with reconstructed dataset files."""
 
 # pylint: disable=E1101
 
@@ -149,8 +146,7 @@ def extract_data_from_apt_file(file_name: str, prefix: str, template: dict) -> d
     # be accessed via the aptfile.get_named_quantity function
     # but it needs to be checked if this returns reasonable values
     # and specifically what these values logically mean, interaction with
-    # cameca as well as the community is vital here
-    # optional quantities with apt files
+    # Cameca as well as the community is vital here
     return template
 
 

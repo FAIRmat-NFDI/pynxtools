@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Representation of an NXevent_data_em class."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,12 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Representation of an NXevent_data_em class."""
 
 # pylint: disable=E1101
-
-
-# from nexusutils.dataconverter.readers.em_spctrscpy.utils.oina.em_oina_xray \
-#     import NxOinaSpectrumSetEmXray
 
 import datetime
 
@@ -63,11 +56,11 @@ class NxEventDataEm:
         self.meta["event_identifier"] = NxObject()
         self.meta["event_type"] = NxObject()
         self.meta["detector_identifier"] = NxObject()
-        # ##MK::the following list is not complete
+        # the following list is not complete
         # but brings an example how NXem can be used disentangle
         # data and processing when, at a given point in time,
         # multiple detectors have been used
-        self.spectrum_set_em_xray = NxSpectrumSetEmXray([])  # make rather and args
+        self.spectrum_set_em_xray = NxSpectrumSetEmXray([])
         self.spectrum_set_em_eels = NxSpectrumSetEmEels([])
         self.image_set_em_adf = NxImageSetEmAdf([])
 
@@ -79,7 +72,7 @@ class NxEventDataEm:
         Route these respective classes of an NxEventDataEm instance.
         """
         hspy_objs = hs.load(self.file_name)
-        # ##MK::this logic is too simplistic e.g. what if the dataset is TBs?
+        # this logic is too simplistic e.g. what if the dataset is TBs?
         # because file_name is usually the file from the microscope session...
 
         # developers can here switch easily one and off certain sub-parsers
@@ -100,50 +93,39 @@ class NxEventDataEm:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/measurement/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
         prefix += "EVENT_DATA_EM[event_data_em1]/"
 
-        # ##MK::dummies for now
+        # dummies for now
         now = datetime.datetime.now().astimezone().isoformat()
         template[prefix + "detector_identifier"] = now
-        # self.meta["detector_identifier"].value
-        # ##MK::hyperspy cannot implement per-event time stamping especially
+        # hyperspy cannot implement per-event time stamping especially
         # not for time-zones because time data are vendor-specifically formatted
         # not always reported in which case hspy replaces missing vendor timestamps
         # with system time at runtime of the script !
         template[prefix + "start_time"] = now
-        # self.meta["start_time"].value
         template[prefix + "end_time"] = now
-        # self.meta["end_time"].value
         template[prefix + "event_identifier"] = now
-        # self.meta["event_identifier"].value
         template[prefix + "event_type"] = now
-        # self.meta["event_type"].value
-        # ##MK::dummies for now end
 
-        # if True is False:
-        # could go out here and return template
-        # if one wishes to reduce the size of the NeXus file as it skips
-        # writing the optional measurement section
-
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/measurement/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
         prefix += "EVENT_DATA_EM[event_data_em1]/"
-        # ##MK::connect and compare frame_id with that of hspy
+        # connect and compare frame_id with that of hspy
         if self.spectrum_set_em_xray is not None:
             if isinstance(self.spectrum_set_em_xray,
                           NxSpectrumSetEmXray) is True:
                 self.spectrum_set_em_xray.report(prefix, 1, template)
 
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/measurement/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
         prefix += "EVENT_DATA_EM[event_data_em1]/"
         if self.spectrum_set_em_eels is not None:
             if isinstance(self.spectrum_set_em_eels,
                           NxSpectrumSetEmEels) is True:
                 self.spectrum_set_em_eels.report(prefix, 1, template)
 
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/measurement/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
         prefix += "EVENT_DATA_EM[event_data_em1]/"
-        # ##MK::connect and compare frame_id with that of hspy
+        # connect and compare frame_id with that of hspy
         if self.image_set_em_adf is not None:
             if isinstance(self.image_set_em_adf,
                           NxImageSetEmAdf) is True:

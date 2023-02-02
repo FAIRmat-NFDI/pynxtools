@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Utility class to analyze which vendor/community files are passed to em reader."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Utility class to analyze which vendor/community files are passed to em reader."""
 
 # pylint: disable=E1101, R0801
 
@@ -55,9 +52,9 @@ class EmUseCaseSelector:  # pylint: disable=R0903
                     and (file_name not in self.case[suffix])
                 if add is True:
                     self.case[suffix].append(file_name)
-        # the em reader currently supports a combination of one vendor file and one ELN/YAML file
-        # vendor files can come from different microscope vendors which requires
-        # to distinguish which reader has to be used
+        # the em reader currently supports a combination of one vendor file and
+        # one ELN/YAML file, vendor files can come from different microscopes
+        # which requires to distinguish between which reader has to be used
         # the OxfordInstrument reader for H5OINA
         # or the HyperSpy reader for Bruker BCF, Velox EMD, or Digital Micrograph DM3
         oina_input = 0

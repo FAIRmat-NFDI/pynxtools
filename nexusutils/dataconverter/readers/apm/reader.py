@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Generic parser for loading atom probe microscopy data into NXapm."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,20 +15,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Generic parser for loading atom probe microscopy data into NXapm."""
 
 # pylint: disable=E1101
 
 from typing import Tuple, Any
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
-
-# this apm parser combines multiple sub-parsers
-# so we need the following input:
-# logical analysis which use case
-# data input from an ELN (e.g. NOMAD OASIS)
-# data input from technology partner files
-# functionalities for creating default plots
-# developer functionalities for creating synthetic data
 
 from nexusutils.dataconverter.readers.apm.utils.apm_use_case_selector \
     import ApmUseCaseSelector
@@ -52,9 +41,21 @@ from nexusutils.dataconverter.readers.apm.utils.apm_nexus_plots \
 from nexusutils.dataconverter.readers.apm.utils.apm_example_data \
     import ApmCreateExampleData
 
+# this apm parser combines multiple sub-parsers
+# so we need the following input:
+# logical analysis which use case
+# data input from an ELN (e.g. NOMAD OASIS)
+# data input from technology partner files
+# functionalities for creating default plots
+# developer functionalities for creating synthetic data
+
 # each reconstruction should be stored as an own file because for commercial
 # atom probe microscopes it is currently impossible to get less processed data
 # from the microscopes
+# for development purposes synthetic datasets can be created which are
+# for now stored all in the same file. As these use the same dictionary
+# the template variable analyses of files larger than the physical main memory
+# can currently not be handled
 
 
 class ApmReader(BaseReader):
@@ -119,7 +120,7 @@ class ApmReader(BaseReader):
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, n_entries)
 
-        debugging = True
+        debugging = False
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():

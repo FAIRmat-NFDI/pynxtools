@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Classes representing groups with NeXus-ish formatted data parsed from hspy."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Classes representing groups with NeXus-ish formatted data parsed from hspy."""
 
 # pylint: disable=E1101
 
@@ -40,7 +37,7 @@ class HspyRectRoiXrayAllSpectra:
         self.meta["program"] = NxObject(value="hyperspy")
         self.meta["program_version"] = NxObject(value=hs.__version__)
         self.meta["title"] = NxObject()
-        self.meta["long_name"] = NxObject()  # value="X-ray photon counts")
+        self.meta["long_name"] = NxObject()
         self.meta["counts"] = NxObject()
         self.meta["xpos"] = NxObject()
         self.meta["xpos_long_name"] = NxObject()
@@ -134,7 +131,7 @@ class HspyRectRoiXraySummarySpectrum:
         self.meta["program"] = NxObject(value="hyperspy")
         self.meta["program_version"] = NxObject(value=hs.__version__)
         self.meta["title"] = NxObject()
-        self.meta["long_name"] = NxObject()  # value="X-ray photon counts")
+        self.meta["long_name"] = NxObject()
         self.meta["counts"] = NxObject()
         self.meta["photon_energy"] = NxObject()
         self.meta["photon_energy_long_name"] = NxObject()
@@ -283,10 +280,6 @@ class NxSpectrumSetEmXray:
     def __init__(self, hspy_list):
         self.stack_data = []  # the HspyRectRoiXrayAllSpectra
         self.summary_data = []  # the HspyRectRoiXraySummarySpectrum
-        # ##MK::self.program = NxObject()
-        # ##MK::self.program_version = NxObject(is_attr=True)
-        # ##MK::self.element_names = NxObject()
-        # ##MK::self.peak = {}
         self.composition_map = {}  # instances of HspyRectRoiXrayMap
         self.is_valid = True
 
@@ -315,7 +308,7 @@ class NxSpectrumSetEmXray:
                     cardinality_stack += 1
                 else:
                     continue
-        if cardinality_stack != 1:  # a stack is always needed ) or (cardinality_summary == 1):
+        if cardinality_stack != 1:  # stack needed or (cardinality_summary == 1)
             self.is_valid = False
 
     def parse_hspy_instances(self, hspy_list):
@@ -355,7 +348,6 @@ class NxSpectrumSetEmXray:
         assert (len(self.summary_data) >= 0) and (len(self.summary_data) <= 1), \
             "More than one sum spectrum stack is currently not supported!"
         # for keyword, obj in self.composition_map.items():
-        #     print("keyword")
         #     print(keyword)
         #     print("np.shape(obj.counts.value")
         #     print(np.shape(obj.counts.value))
@@ -373,7 +365,6 @@ class NxSpectrumSetEmXray:
         if len(self.stack_data) == 1:
             prfx = trg + "stack/"
             template[prfx + "title"] = "Xray spectra stack"
-            #    = self.stack_data[0].meta["long_name"].value
             # template[prfx + "@long_name"] \
             #     = self.stack_data[0].meta["long_name"].value
             template[prfx + "@signal"] = "data_counts"
@@ -412,7 +403,6 @@ class NxSpectrumSetEmXray:
         if len(self.summary_data) == 1:
             prfx = trg + "summary/"
             template[prfx + "title"] = "Accumulated X-ray spectrum"
-            # = self.summary_data[0].meta["long_name"].value
             # template[prfx + "@long_name"] \
             #     = self.summary_data[0].meta["long_name"].value
             template[prfx + "@signal"] = "data_counts"
@@ -437,31 +427,27 @@ class NxSpectrumSetEmXray:
 
         return template
 
-        """
         # skip the composition maps for the search sprint
-        for keyword, xray_map in self.composition_map.items():
-            prfx = trg + "PROCESS[indexing]/PROCESS[" + keyword.lower() + "]/summary/"
-            template[prfx + "title"] = "X-ray mapping for " + keyword
-            # = xray_map.meta["long_name"].value
-            # template[prfx + "@long_name"] = xray_map.meta["long_name"].value
-            template[prfx + "@signal"] = "data_counts"
-            template[prfx + "@axes"] = ["axis_y", "axis_x"]
-            template[prfx + "@AXISNAME[axis_x_indices]"] = 1
-            template[prfx + "@AXISNAME[axis_y_indices]"] = 0
-            template[prfx + "DATA[data_counts]"] \
-                = {"compress": xray_map.meta["counts"].value, "strength": 1}
-            template[prfx + "DATA[data_counts]/@units"] = ""
-            template[prfx + "DATA[data_counts]/@long_name"] = "Counts (1)"
-            template[prfx + "AXISNAME[axis_x]"] \
-                = {"compress": xray_map.meta["xpos"].value, "strength": 1}
-            template[prfx + "AXISNAME[axis_x]/@units"] = xray_map.meta["xpos"].unit
-            template[prfx + "AXISNAME[axis_x]/@long_name"] \
-                = "x (" + xray_map.meta["xpos"].unit + ")"
-            template[prfx + "AXISNAME[axis_y]"] \
-                = {"compress": xray_map.meta["ypos"].value, "strength": 1}
-            template[prfx + "AXISNAME[axis_y]/@units"] = xray_map.meta["ypos"].unit
-            template[prfx + "AXISNAME[axis_y]/@long_name"] \
-                = "y (" + xray_map.meta["ypos"].unit + ")"
-
-        return template
-        """
+        # for keyword, xray_map in self.composition_map.items():
+        #     prfx = trg + "PROCESS[indexing]/PROCESS[" + keyword.lower() + "]/summary/"
+        #     template[prfx + "title"] = "X-ray mapping for " + keyword
+        #     # = xray_map.meta["long_name"].value
+        #     # template[prfx + "@long_name"] = xray_map.meta["long_name"].value
+        #     template[prfx + "@signal"] = "data_counts"
+        #     template[prfx + "@axes"] = ["axis_y", "axis_x"]
+        #     template[prfx + "@AXISNAME[axis_x_indices]"] = 1
+        #     template[prfx + "@AXISNAME[axis_y_indices]"] = 0
+        #     template[prfx + "DATA[data_counts]"] \
+        #         = {"compress": xray_map.meta["counts"].value, "strength": 1}
+        #     template[prfx + "DATA[data_counts]/@units"] = ""
+        #     template[prfx + "DATA[data_counts]/@long_name"] = "Counts (1)"
+        #     template[prfx + "AXISNAME[axis_x]"] \
+        #         = {"compress": xray_map.meta["xpos"].value, "strength": 1}
+        #     template[prfx + "AXISNAME[axis_x]/@units"] = xray_map.meta["xpos"].unit
+        #     template[prfx + "AXISNAME[axis_x]/@long_name"] \
+        #         = "x (" + xray_map.meta["xpos"].unit + ")"
+        #     template[prfx + "AXISNAME[axis_y]"] \
+        #         = {"compress": xray_map.meta["ypos"].value, "strength": 1}
+        #     template[prfx + "AXISNAME[axis_y]/@units"] = xray_map.meta["ypos"].unit
+        #     template[prfx + "AXISNAME[axis_y]/@long_name"] \
+        #         = "y (" + xray_map.meta["ypos"].unit + ")"

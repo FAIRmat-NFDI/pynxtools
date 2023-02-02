@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Classes representing groups with NeXus-ish formatted data parsed from hspy."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Classes representing groups with NeXus-ish formatted data parsed from hspy."""
 
 # pylint: disable=E1101
 
@@ -76,13 +73,13 @@ class HspyRectRoiAdfImage:
             = np.all(np.sort(avail_axis_names) == np.sort(["height", "width"]))
         # ##MK::Adrien/Cecile"s BCF and EMD example contains at least one
         # such case where the hyperspy created view in metadata is not
-        # consistent across representations generated with different parses
-        # which demands adaptive strategies like the one above
+        # consistent across representations generated with different parsers
+        # this demands adaptive strategies like the one above
         # in the example e.g. the Bruker HAADF image stores dimensions
-        # as height and width, where digital micrograph and Velox EMD store
+        # as height and width, while digital micrograph and Velox EMD store
         # y and x... both names are useless without a coordinate system
         # so here discussions with vendors, hspy developers and community are
-        # needed
+        # needed!
         if (axes_as_expected_emd is False) and (axes_as_expected_bcf is False):
             print(__name__ + " as expected")
             self.is_valid = False
@@ -143,9 +140,8 @@ class NxImageSetEmAdf:
 
     def is_an_implemented_case(self, hspy_list):
         """Check if signal instances in a list is a supported combination."""
-        # an Xray analysis which this implementation supports should consist of
-        # a rectangular ROI are currently supported, this ROI should have
-        # one HAADF overview image
+        # an Xray analysis which this implementation can support needs to be
+        # a rectangular ROI. This ROI should have one HAADF overview image
         # one SpectraStack cnts = f(y, x, energy)
         # one accumulated "sum" spectra cnts = f(energy)
         # an arbitrary number of single element X-ray maps cnts = f(y, x)
@@ -210,8 +206,8 @@ class NxImageSetEmAdf:
                      np.shape(self.data[0].meta["intensity"].value)[0],
                      np.shape(self.data[0].meta["intensity"].value)[1])),
                     "strength": 1}
-            # ##MK::is the data layout correct? I am pretty sure the last two have
-            # to be swopped also!!
+            # is the data layout correct?
+            # I am pretty sure the last two have to be swopped also!!
             template[prfx + "DATA[data_counts]/@units"] = ""
             template[prfx + "DATA[data_counts]/@long_name"] = "Counts (a.u.)"
             template[prfx + "AXISNAME[axis_x]"] \

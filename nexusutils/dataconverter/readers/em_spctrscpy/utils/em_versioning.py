@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Utility tool constants and versioning."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Utility tool constants and versioning."""
 
 # pylint: disable=E1101
 
