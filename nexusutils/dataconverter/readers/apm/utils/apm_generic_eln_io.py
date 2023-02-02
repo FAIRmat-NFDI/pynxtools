@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Wrapping multiple parsers for vendor files with NOMAD OASIS/ELN/YAML metadata."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,10 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Wrapping multiple parsers for vendor files with NOMAD OASIS/ELN/YAML metadata."""
 
 # pylint: disable=E1101
-
-# from typing import Dict
 
 import flatdict as fd
 
@@ -31,9 +26,6 @@ import numpy as np
 import yaml
 
 from ase.data import chemical_symbols
-
-# from nexusutils.dataconverter.readers.apm.utils.apm_nexus_base_classes \
-#     import NxObject
 
 from nexusutils.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
@@ -62,19 +54,22 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
     to create an extra blocker in sprint 9, we carry the values hardcoded
     """
 
-    def __init__(self, file_name: str):
-        # file_name = 'eln_data.yaml'
-        with open(file_name, 'r', encoding='utf-8') as stream:
-            self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=':')
+    def __init__(self, file_name: str, entry_id: int):
+        assert "eln_data" in file_name, \
+            "Argument file_name should be eln_data* YAML !"
+        assert entry_id > 0, "Argument entry_id has to be > 0 !"
+        self.file_name = file_name
+        self.entry_id = entry_id
+        with open(self.file_name, "r", encoding="utf-8") as stream:
+            self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
 
     def parse_entry(self, template: dict) -> dict:
         """Copy data in entry section."""
-        # check if required fields exists and are valid
-        print('Parsing entry...')
-        trg = "/ENTRY[entry]/"
+        # print("Parsing entry...")
+        trg = f"/ENTRY[entry{self.entry_id}]/"
         src = "entry"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         appdef_name = NX_APM_ADEF_NAME
         appdef_version = NX_APM_ADEF_VERSION
 
@@ -116,8 +111,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
     def parse_user(self, template: dict) -> dict:
         """Copy data in user section."""
-        # check if required fields exists and are valid
-        print('Parsing user...')
+        # print("Parsing user...")
         src = "user"
         assert isinstance(self.yml[src], list), \
             "Facing an ELN schema instance with an incorrect operator section!"
@@ -125,7 +119,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
             "Facing an ELN schema instance with an empty operator section!"
         user_id = 1
         for user_list in self.yml[src]:
-            trg = "/ENTRY[entry]/USER[user" + str(user_id) + "]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]/"
             assert "name" in user_list.keys(), \
                 "name is a required field but not found in ELN input!"
             template[trg + "name"] = user_list["name"]
@@ -143,12 +137,11 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
     def parse_specimen(self, template: dict) -> dict:
         """Copy data in specimen section."""
-        # check if required fields exists and are valid
-        print('Parsing sample...')
+        # print("Parsing sample...")
         src = "specimen"
-        trg = "/ENTRY[entry]/specimen/"
+        trg = f"/ENTRY[entry{self.entry_id}]/specimen/"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         assert isinstance(self.yml[src + ":atom_types"], list), \
             "Facing an ELN schema instance with an incorrect atom_types info!"
         assert len(self.yml[src + ":atom_types"]) >= 1, \
@@ -156,7 +149,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
         for symbol in self.yml[src + ":atom_types"]:
             assert isinstance(symbol, str), \
                 "Facing an atom_types list entry which is not a string!"
-            assert (symbol in chemical_symbols) & (symbol != 'X'), \
+            assert (symbol in chemical_symbols) & (symbol != "X"), \
                 "Facing an atom_types list entry which is not an element!"
         template[trg + "atom_types"] = self.yml[src + ":atom_types"]
 
@@ -175,13 +168,12 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
     def parse_instrument_header(self, template: dict) -> dict:
         """Copy data in instrument_header section."""
-        # check if required fields exists and are valid
-        print('Parsing instrument header...')
+        # print("Parsing instrument header...")
         src = "atom_probe"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
-        trg = "/ENTRY[entry]/atom_probe/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
         assert "instrument_name" in self.yml[src].keys(), \
             "instrument_name " + error_msg
         template[trg + "instrument_name"] = self.yml[src + ":instrument_name"]
@@ -208,32 +200,32 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
     def parse_fabrication(self, template: dict) -> dict:
         """Copy data in fabrication section."""
-        print('Parsing fabrication...')
+        # print("Parsing fabrication...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/FABRICATION[fabrication]/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/FABRICATION[fabrication]/"
         error_msg = " is a required field but not found in ELN input!"
         required_field_names = [
             "fabrication_vendor", "fabrication_model"]
         for field_name in required_field_names:
             assert field_name in self.yml[src].keys(), \
                 field_name + error_msg
-            template[trg + field_name.replace("fabrication_", '')] \
+            template[trg + field_name.replace("fabrication_", "")] \
                 = self.yml[src + ":" + field_name]
 
         optional_field_names = [
             "fabrication_identifier", "fabrication_capabilities"]
         for field_name in optional_field_names:
             if field_name in self.yml[src].keys():
-                template[trg + field_name.replace("fabrication_", '')] \
+                template[trg + field_name.replace("fabrication_", "")] \
                     = self.yml[src + ":" + field_name]
 
         return template
 
     def parse_analysis_chamber(self, template: dict) -> dict:
         """Copy data in analysis_chamber section."""
-        print('Parsing analysis chamber...')
+        # print("Parsing analysis chamber...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/analysis_chamber/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/analysis_chamber/"
         error_msg = " is a required field but not found in ELN input!"
         required_value_fields = ["analysis_chamber_pressure"]
         for field_name in required_value_fields:
@@ -241,48 +233,48 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                 and (field_name + ":unit" in self.yml[src].keys())
             assert field_exists is True, \
                 field_name + error_msg
-            template[trg + field_name.replace("analysis_chamber_", '')] \
+            template[trg + field_name.replace("analysis_chamber_", "")] \
                 = np.float64(self.yml[src + ":" + field_name + ":value"])
-            template[trg + field_name.replace("analysis_chamber_", '') + "/@units"] \
+            template[trg + field_name.replace("analysis_chamber_", "") + "/@units"] \
                 = self.yml[src + ":" + field_name + ":unit"]
 
         return template
 
     def parse_reflectron(self, template: dict) -> dict:
         """Copy data in reflectron section."""
-        print('Parsing reflectron...')
+        # print("Parsing reflectron...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/REFLECTRON[reflectron]/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/REFLECTRON[reflectron]/"
         error_msg = " is a required field but not found in ELN input!"
         required_field_names = ["reflectron_applied"]
         for field_name in required_field_names:
             assert field_name in self.yml[src].keys(), \
                 field_name + error_msg
-            template[trg + field_name.replace("reflectron_", '')] \
+            template[trg + field_name.replace("reflectron_", "")] \
                 = self.yml[src + ":" + field_name]
 
         return template
 
     def parse_local_electrode(self, template: dict) -> dict:
         """Copy data in local_electrode section."""
-        print('Parsing local electrode...')
+        # print("Parsing local electrode...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/local_electrode/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/local_electrode/"
         error_msg = " is a required field but not found in ELN input!"
         required_field_names = ["local_electrode_name"]
         for field_name in required_field_names:
             assert field_name in self.yml[src].keys(), \
                 field_name + error_msg
-            template[trg + field_name.replace("local_electrode_", '')] \
+            template[trg + field_name.replace("local_electrode_", "")] \
                 = self.yml[src + ":" + field_name]
 
         return template
 
     def parse_detector(self, template: dict) -> dict:
         """Copy data in ion_detector section."""
-        print('Parsing detector...')
+        # print("Parsing detector...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/ion_detector/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ion_detector/"
         error_msg = " is a required field but not found in ELN input!"
         required_field_names = [
             "ion_detector_type",
@@ -292,17 +284,17 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
         for field_name in required_field_names:
             assert field_name in self.yml[src].keys(), \
                 field_name + error_msg
-            template[trg + field_name.replace("ion_detector_", '')] \
+            template[trg + field_name.replace("ion_detector_", "")] \
                 = self.yml[src + ":" + field_name]
         return template
 
     def parse_stage_lab(self, template: dict) -> dict:
         """Copy data in stage lab section."""
-        print('Parsing stage_lab...')
+        # print("Parsing stage_lab...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/stage_lab/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/stage_lab/"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
         required_value_fields = ["stage_lab_base_temperature"]
         for field_name in required_value_fields:
@@ -310,20 +302,20 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                 and (field_name + ":unit" in self.yml[src].keys())
             assert field_exists is True, \
                 field_name + error_msg
-            template[trg + field_name.replace("stage_lab_", '')] \
+            template[trg + field_name.replace("stage_lab_", "")] \
                 = np.float64(self.yml[src + ":" + field_name + ":value"])
-            template[trg + field_name.replace("stage_lab_", '') + "/@units"] \
+            template[trg + field_name.replace("stage_lab_", "") + "/@units"] \
                 = self.yml[src + ":" + field_name + ":unit"]
 
         return template
 
     def parse_specimen_monitoring(self, template: dict) -> dict:
         """Copy data in specimen_monitoring section."""
-        print('Parsing specimen_monitoring...')
+        # print("Parsing specimen_monitoring...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/specimen_monitoring/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/specimen_monitoring/"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
         any_required_fields = [
             "specimen_monitoring_detection_rate"]
@@ -351,21 +343,21 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                 assert field_exists is True, \
                     field_name + error_msg
                 template[
-                    trg + field_name.replace("specimen_monitoring_", '')] \
+                    trg + field_name.replace("specimen_monitoring_", "")] \
                     = np.float64(self.yml[src + ":" + field_name + ":value"])
                 template[trg + field_name.replace(
-                    "specimen_monitoring_", '') + "/@units"] = self.yml[
+                    "specimen_monitoring_", "") + "/@units"] = self.yml[
                         src + ":" + field_name + ":unit"]
 
         return template
 
     def parse_control_software(self, template: dict) -> dict:
         """Copy data in control software section."""
-        print('Parsing control software...')
+        # print("Parsing control software...")
         src = "atom_probe"
-        trg = "/ENTRY[entry]/atom_probe/control_software/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
         assert isinstance(self.yml[src], fd.FlatDict), \
-            'Required section ' + src + ' does not exist!'
+            "Required section " + src + " does not exist!"
         error_msg = " is a required field but not found in ELN input!"
         assert "control_software_program" in self.yml[src].keys(), \
             "control_software_program " + error_msg
@@ -380,9 +372,9 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
     def parse_pulser(self, template: dict) -> dict:
         """Copy data in pulser section."""
-        print('Parsing pulser...')
+        # print("Parsing pulser...")
         src = "atom_probe:pulser"
-        trg = "/ENTRY[entry]/atom_probe/pulser/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/"
         error_msg = " is a required field but not found in ELN input!"
         # decisions depend on pulse_mode
         assert "pulse_mode" in self.yml[src].keys(), \
@@ -403,8 +395,8 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
             = self.yml[src + ":pulse_frequency:unit"]
 
         # additionally required data for laser and laser_and_voltage runs
-        if pulse_mode != 'voltage':
-            trg = "/ENTRY[entry]/atom_probe/pulser/laser_gun/"
+        if pulse_mode != "voltage":
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/laser_gun/"
             assert "laser_gun_name" in self.yml[src].keys(), \
                 "laser_gun_name" + error_msg
             template[trg + "name"] = self.yml[src + ":laser_gun_name"]
@@ -416,9 +408,9 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                     and (field_name + ":unit" in self.yml[src].keys())
                 assert field_exists is True, \
                     field_name + error_msg
-                template[trg + field_name.replace("laser_gun_", '')] \
+                template[trg + field_name.replace("laser_gun_", "")] \
                     = np.float64(self.yml[src + ":" + field_name + ":value"])
-                template[trg + field_name.replace("laser_gun_", '') + "/@units"] \
+                template[trg + field_name.replace("laser_gun_", "") + "/@units"] \
                     = self.yml[src + ":" + field_name + ":unit"]
             optional_field_names = ["laser_gun_power"]
             for field_name in optional_field_names:
@@ -426,19 +418,19 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                     and (field_name + ":unit" in self.yml[src].keys())
                 if field_exists is True:
                     template[
-                        trg + field_name.replace("laser_gun_", '')] \
+                        trg + field_name.replace("laser_gun_", "")] \
                         = np.float64(self.yml[src + ":" + field_name + ":value"])
                     template[
-                        trg + field_name.replace("laser_gun_", '') + "/@units"] \
+                        trg + field_name.replace("laser_gun_", "") + "/@units"] \
                         = self.yml[src + ":" + field_name + ":unit"]
 
         return template
 
     def parse_reconstruction(self, template: dict) -> dict:
         """Copy data in reconstruction section."""
-        print('Parsing reconstruction...')
+        # print("Parsing reconstruction...")
         src = "reconstruction"
-        trg = "/ENTRY[entry]/atom_probe/reconstruction/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/reconstruction/"
         error_msg = " is a required field but not found in ELN input!"
         assert "program" in self.yml[src].keys(), \
             "program" + error_msg
@@ -460,9 +452,9 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
 
     def parse_ranging(self, template: dict) -> dict:
         """Copy data in ranging section."""
-        print('Parsing ranging...')
+        # print("Parsing ranging...")
         src = "ranging"
-        trg = "/ENTRY[entry]/atom_probe/ranging/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
         error_msg = " is a required field but not found in ELN input!"
         assert "program" in self.yml[src].keys(), \
             "program" + error_msg

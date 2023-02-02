@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""General metadata object connecting units and values for a quantity."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""General metadata object connecting units and values for a quantity."""
 
 # pylint: disable=E1101
 
@@ -39,45 +36,37 @@ class NxObject:  # pylint: disable=R0903
                  value=None,
                  **kwargs):
         if name is not None:
-            assert name != '', 'Argument name needs to be a non-empty string !'
+            assert name != "", "Argument name needs to be a non-empty string !"
         if unit is not None:
-            assert unit != '', 'Argument unit needs to be a non-empty string !'
-        assert dtype is not None, 'Argument dtype must not be None !'
+            assert unit != "", "Argument unit needs to be a non-empty string !"
+        assert dtype is not None, "Argument dtype must not be None !"
         if dtype is not None:
             assert isinstance(dtype, type), \
-                'Argument dtype needs a valid, ideally numpy, datatype !'
+                "Argument dtype needs a valid, ideally numpy, datatype !"
         # ##MK::if value is not None:
-        self.is_a = 'NXobject'
+        self.is_a = "NXobject"
         self.is_attr = False  # if True indicates object is attribute
-        self.doc = ''  # docstring
+        self.doc = ""  # docstring
         self.name = name  # name of the field
         self.unit = unit  # not unit category but actual unit
-        # use special values 'unitless' for NX_UNITLESS (e.g. 1) and
-        # 'dimensionless' for NX_DIMENSIONLESS (e.g. 1m / 1m)
+        # use special values "unitless" for NX_UNITLESS (e.g. 1) and
+        # "dimensionless" for NX_DIMENSIONLESS (e.g. 1m / 1m)
         self.dtype = dtype  # use np.dtype if possible
         if value is None or dtype is str:
-            self.unit = 'unitless'
+            self.unit = "unitless"
         if value is not None:
             self.value = value
         else:
             self.value = None
         # value should be a numpy scalar, tensor, or string if possible
-        if 'is_attr' in kwargs.keys():
-            assert isinstance(kwargs['is_attr'], bool), \
-                'Kwarg is_attr needs to be a boolean !'
-            self.is_attr = kwargs['is_attr']
+        if "is_attr" in kwargs:
+            assert isinstance(kwargs["is_attr"], bool), \
+                "Kwarg is_attr needs to be a boolean !"
+            self.is_attr = kwargs["is_attr"]
 
-    def print(self):
+    def __repr__(self):
         """Report values."""
-        print('name: ')
-        print(str(self.name))
-        print('unit:')
-        print(str(self.unit))
-        print('dtype: ')
-        print(self.dtype)
-
-# test = NxObject(name='test', unit='baud', dtype=np.uint32, value=32000)
-# test.print()
+        return f'''Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}'''
 
 
 class NxEmUser:  # pylint: disable=R0903
@@ -115,17 +104,13 @@ class NxEmUser:  # pylint: disable=R0903
             = self.meta["telephone_number"].value
         return template
 
-# test = NxEmUser()
-# test.name.value = 'NOMAD OASIS'
-# a = test.report("/ENTRY", {})
-
 
 class NxEmSample:  # pylint: disable=R0903
     """An object representing a sample."""
 
     def __init__(self):
         self.meta: Dict[str, NxObject] = {}
-        self.meta["method"] = NxObject(value='experimental')
+        self.meta["method"] = NxObject(value="experimental")
         self.meta["name"] = NxObject()
         self.meta["sample_history"] = NxObject()
         self.meta["preparation_date"] = NxObject()
@@ -150,8 +135,6 @@ class NxEmSample:  # pylint: disable=R0903
         template[prefix + "/thickness/@units"] = self.meta["thickness"].unit
         template[prefix + "/description"] = self.meta["description"].value
         return template
-
-# test = NxEmSample()
 
 
 class NxEmAppDefHeader:  # pylint: disable=R0903
@@ -198,5 +181,3 @@ class NxEmAppDefHeader:  # pylint: disable=R0903
         template[prefix + "/thumbnail/@type"] \
             = self.meta["thumbnail_type"].value
         return template
-
-# test = NxEmAppDefHeader()
