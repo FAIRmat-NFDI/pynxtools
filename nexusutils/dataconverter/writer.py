@@ -191,15 +191,16 @@ class Writer:
         """
         Return a dictionary of all the attributes at the given path in the NXDL and
         the required attribute values that were requested in the NXDL from the data.
+
+        If an NXDL attribute was not found, it returns None.
         """
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
 
-        elem = nexus.get_node_at_nxdl_path(
-            nxdl_path, elem=copy.deepcopy(self.nxdl_data), exc=False)
-
-        if elem is None:
-            raise Exception(f"Attributes were not found for {path}. "
-                            "Please check this entry in the template dictionary.")
+        try:
+            elem = nexus.get_node_at_nxdl_path(
+                nxdl_path, elem=copy.deepcopy(self.nxdl_data))
+        except nexus.NxdlAttributeError:
+            return None
 
         # Remove the name attribute as we only use it to name the HDF5 entry
         if "name" in elem.attrib.keys():
@@ -220,10 +221,8 @@ class Writer:
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
-            try:
-                attrs = self.__nxdl_to_attrs(parent_path)
-            except:
-                attrs = None
+
+            attrs = self.__nxdl_to_attrs(parent_path)
 
             if attrs is not None:
                 grp.attrs['NX_class'] = attrs["type"]

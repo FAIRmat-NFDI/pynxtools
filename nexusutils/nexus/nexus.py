@@ -789,7 +789,14 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
     This function either takes the name for the NeXus Application Definition
     we are looking for or the root elem from a previously loaded NXDL file
     and finds the corresponding XML element with the needed attributes."""
-    (class_path, nxdlpath, elist) = get_inherited_nodes(nxdl_path, nx_name, elem)
+    try:
+        (class_path, nxdlpath, elist) = get_inherited_nodes(nxdl_path, nx_name, elem)
+    except ValueError as value_error:
+        if exc:
+            raise NxdlAttributeError(f"Attributes were not found for {nxdl_path}. "
+                                     "Please check this entry in the template dictionary.") \
+                from value_error
+        return None
     if class_path and nxdlpath and elist:
         elem = elist[0]
     else:
