@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Generic parser for loading atom probe microscopy data into NXapm."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Generic parser for loading atom probe microscopy data into NXapm."""
 
 # pylint: disable=E1101
 
@@ -29,21 +26,36 @@ from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.readers.apm.utils.apm_use_case_selector \
     import ApmUseCaseSelector
 
+from nexusutils.dataconverter.readers.apm.utils.apm_generic_eln_io \
+    import NxApmNomadOasisElnSchemaParser
+
 from nexusutils.dataconverter.readers.apm.utils.apm_reconstruction_io \
     import ApmReconstructionParser
 
 from nexusutils.dataconverter.readers.apm.utils.apm_ranging_io \
     import ApmRangingDefinitionsParser
 
-from nexusutils.dataconverter.readers.apm.utils.apm_nomad_oasis_eln_io \
-    import NxApmNomadOasisElnSchemaParser
-
 from nexusutils.dataconverter.readers.apm.utils.apm_nexus_plots \
     import apm_default_plot_generator
+
+from nexusutils.dataconverter.readers.apm.utils.apm_example_data \
+    import ApmCreateExampleData
+
+# this apm parser combines multiple sub-parsers
+# so we need the following input:
+# logical analysis which use case
+# data input from an ELN (e.g. NOMAD OASIS)
+# data input from technology partner files
+# functionalities for creating default plots
+# developer functionalities for creating synthetic data
 
 # each reconstruction should be stored as an own file because for commercial
 # atom probe microscopes it is currently impossible to get less processed data
 # from the microscopes
+# for development purposes synthetic datasets can be created which are
+# for now stored all in the same file. As these use the same dictionary
+# the template variable analyses of files larger than the physical main memory
+# can currently not be handled
 
 
 class ApmReader(BaseReader):
@@ -66,53 +78,57 @@ class ApmReader(BaseReader):
         """Read data from given file, return filled template dictionary apm."""
         template.clear()
 
-        case = ApmUseCaseSelector(file_paths)
-        assert case.is_valid is True, \
-            "Such a combination of input-file(s, if any) is not supported !"
+        n_entries = 0
+        if len(file_paths) == 0:
+            n_entries = 2  # 10
+            print("Create " + str(n_entries) + " synthetic datasets in one NeXus file...")
+            synthetic = ApmCreateExampleData(n_entries)
+            synthetic.synthesize(template)
+        elif len(file_paths) == 1:
+            print("Insufficient input-files, at least one ELN and one partner file!")
+            return template
+        else:  # eln_data, and ideal recon and ranging definition technology partner file
+            n_entries = 1
+            entry_id = 1
+            print("Parse ELN and technology partner file(s)...")
+            case = ApmUseCaseSelector(file_paths)
+            assert case.is_valid is True, \
+                "Such a combination of input-file(s, if any) is not supported !"
 
-        # nx_apm_header = NxApmAppDefHeader()
-        # prefix = "/ENTRY[entry]"
-        # nx_apm_header.report(prefix, template)
+            print("Parse (meta)data coming from an ELN...")
+            if len(case.eln) == 1:
+                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
+                nx_apm_eln.report(template)
+            else:
+                print("No input file defined for eln data !")
+                return {}
 
-        print("Parsing numerical data and metadata from reconstructed dataset...")
-        if len(case.reconstruction) == 1:
-            nx_apm_recon = ApmReconstructionParser(case.reconstruction[0])
-            nx_apm_recon.report(template)
-        else:
-            print("No input-file defined for reconstructed dataset!")
-            return {}
+            print("Parse (numerical) data and metadata from ranging definitions file...")
+            if len(case.reconstruction) == 1:
+                nx_apm_recon = ApmReconstructionParser(case.reconstruction[0], entry_id)
+                nx_apm_recon.report(template)
+            else:
+                print("No input-file defined for reconstructed dataset!")
+                return {}
+            if len(case.ranging) == 1:
+                nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0], entry_id)
+                nx_apm_range.report(template)
+            else:
+                print("No input-file defined for ranging definitions!")
+                return {}
 
-        print("Parsing numerical data and metadata from ranging definitions file...")
-        if len(case.ranging) == 1:
-            nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0])
-            nx_apm_range.report(template)
-        else:
-            print("No input-file defined for ranging definitions!")
-            return {}
+        print("Create NeXus default plottable data...")
+        apm_default_plot_generator(template, n_entries)
 
-        print("Parsing metadata as well as numerical data from NOMAD OASIS ELN...")
-        if len(case.eln) == 1:
-            nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0])
-            nx_apm_eln.report(template)
-        else:
-            print("No input file defined for eln data !")
-            return {}
+        debugging = False
+        if debugging is True:
+            print("Reporting state of template before passing to HDF5 writing...")
+            for keyword in template.keys():
+                print(keyword)
+                # print(type(template[keyword]))
+                # print(template[keyword])
 
-        print("Creating default plottable data...")
-        apm_default_plot_generator(template)
-
-        # if True is True:
-        # reporting of what has not been properly defined at the reader level
-        # print("\n\nDebugging...")
-        # for keyword in template.keys():
-        #     # if template[keyword] is None:
-        #     print(keyword + "...")
-        #     print(template[keyword])
-        #     # if template[keyword] is None:
-        #     #     print("Entry: " + keyword + " is not properly defined yet!")
-
-        print("Forwarding the instantiated template to the NXS writer...")
-
+        print("Forward instantiated template to the NXS writer...")
         return template
 
 

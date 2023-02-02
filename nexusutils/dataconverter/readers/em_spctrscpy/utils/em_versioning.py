@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Utility tool constants and versioning."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,11 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Utility tool constants and versioning."""
 
 # pylint: disable=E1101
 
-NX_EM_ADEF_NAME = 'NXem'
-NX_EM_ADEF_VERSION = 'nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951'
+from nexusutils.dataconverter.readers.shared.shared_utils \
+    import get_repo_last_commit
+
+
+NX_EM_ADEF_NAME = "NXem"
+NX_EM_ADEF_VERSION = "nexus-fairmat-proposal successor of "
+NX_EM_ADEF_VERSION += "50433d9039b3f33299bab338998acb5335cd8951"
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
-NX_EM_EXEC_NAME = 'dataconverter/reader/em_spctrscpy.py'
-NX_EM_EXEC_VERSION = 'add gitsha of parent repo automatically'
+NX_EM_EXEC_NAME = "dataconverter/reader/em_sptrscpy/reader.py"
+NX_EM_EXEC_VERSION = get_repo_last_commit()

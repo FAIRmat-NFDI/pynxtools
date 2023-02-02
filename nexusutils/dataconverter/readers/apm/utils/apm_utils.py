@@ -15,8 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Classes representing groups with NeXus-ish formatted data parsed from H5OINA."""
+"""Set of utility tools for parsing file formats used by atom probe."""
 
 # pylint: disable=E1101
 
-# place where to place code for loading Oxford Instrument H5OINA files
+# ifes_apt_tc_data_modeling replaces now the previously here stored
+# convenience functions which translated human-readable ion names into
+# isotope_vector descriptions and vice versa as proposed by M. Kuehbach et al. in
+# DOI: 10.1017/S1431927621012241 to the human-readable ion names which are use
+# in P. Felfer et al."s atom probe toolbox

@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""Utility class to analyze which vendor/community files are passed to em reader."""
-
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -19,8 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Utility class to analyze which vendor/community files are passed to em reader."""
 
-# pylint: disable=E1101
+# pylint: disable=E1101, R0801
 
 from typing import Tuple, Dict, List
 
@@ -41,11 +38,11 @@ class ApmUseCaseSelector:  # pylint: disable=R0903
         self.case: Dict[str, list] = {}
         self.is_valid = False
         self.supported_mime_types = [
-            'pos', 'epos', 'apt', 'rrng', 'rng', 'yaml', 'yml']
+            "pos", "epos", "apt", "rrng", "rng", "yaml", "yml"]
         for mime_type in self.supported_mime_types:
             self.case[mime_type] = []
         for file_name in file_paths:
-            index = file_name.lower().rfind('.')
+            index = file_name.lower().rfind(".")
             if index >= 0:
                 suffix = file_name.lower()[index + 1::]
                 if suffix in self.supported_mime_types:
@@ -54,21 +51,19 @@ class ApmUseCaseSelector:  # pylint: disable=R0903
         recon_input = 0
         range_input = 0
         for mime_type, value in self.case.items():
-            if mime_type in ['pos', 'epos', 'apt']:
+            if mime_type in ["pos", "epos", "apt"]:
                 recon_input += len(value)
-            if mime_type in ['rrng', 'rng']:
+            if mime_type in ["rrng", "rng"]:
                 range_input += len(value)
-        eln_input = len(self.case['yaml']) + len(self.case['yml'])
+        eln_input = len(self.case["yaml"]) + len(self.case["yml"])
         if (recon_input == 1) and (range_input == 1) and (eln_input == 1):
             self.is_valid = True
             self.reconstruction: List[str] = []
             self.ranging: List[str] = []
-            for mime_type in ['pos', 'epos', 'apt']:
+            for mime_type in ["pos", "epos", "apt"]:
                 self.reconstruction += self.case[mime_type]
-            for mime_type in ['rrng', 'rng']:
+            for mime_type in ["rrng", "rng"]:
                 self.ranging += self.case[mime_type]
             self.eln: List[str] = []
-            for mime_type in ['yaml', 'yml']:
+            for mime_type in ["yaml", "yml"]:
                 self.eln += self.case[mime_type]
-
-# test = ApmUseCaseSelector(('a.pos', 'b.RNG', 'c.yml'))

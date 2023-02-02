@@ -17,6 +17,8 @@
 #
 """The writer class for writing a NeXus file in accordance with a given NXDL."""
 
+# pylint: disable=R0912
+
 import copy
 import logging
 import sys
@@ -189,12 +191,16 @@ class Writer:
         """
         Return a dictionary of all the attributes at the given path in the NXDL and
         the required attribute values that were requested in the NXDL from the data.
+
+        If an NXDL attribute was not found, it returns None.
         """
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
-        elem = copy.deepcopy(nexus.get_node_at_nxdl_path(nxdl_path, elem=self.nxdl_data))
-        if elem is None:
-            raise Exception(f"Attributes were not found for {path}. "
-                            "Please check this entry in the template dictionary.")
+
+        try:
+            elem = nexus.get_node_at_nxdl_path(
+                nxdl_path, elem=copy.deepcopy(self.nxdl_data))
+        except nexus.NxdlAttributeError:
+            return None
 
         # Remove the name attribute as we only use it to name the HDF5 entry
         if "name" in elem.attrib.keys():
@@ -202,7 +208,9 @@ class Writer:
 
         # Fetch values for required attributes requested by the NXDL
         for attr_name in elem.findall(f"{self.nxs_namespace}attribute"):
-            elem.attrib[attr_name.get('name')] = self.data[f"{path}/@{attr_name.get('name')}"] or ''
+            key = f"{path}/@{attr_name.get('name')}"
+            if key in self.data:
+                elem.attrib[attr_name.get('name')] = self.data[key]
 
         return elem.attrib
 
@@ -210,14 +218,14 @@ class Writer:
         """Returns the parent if it exists for a given path else creates the parent group."""
         parent_path = path[0:path.rindex('/')] or '/'
         parent_path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(parent_path)
-        parent_undocumented_paths = [path[0:path.rindex("/")] or "/" for path in undocumented_paths]
         if not does_path_exist(parent_path, self.output_nexus):
-            parent = self.ensure_and_get_parent_node(parent_path, parent_undocumented_paths)
+            parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
-            if path not in undocumented_paths:
-                attrs = self.__nxdl_to_attrs(parent_path)
-                if attrs is not None:
-                    grp.attrs['NX_class'] = attrs["type"]
+
+            attrs = self.__nxdl_to_attrs(parent_path)
+
+            if attrs is not None:
+                grp.attrs['NX_class'] = attrs["type"]
             return grp
         return self.output_nexus[parent_path_hdf5]
 
@@ -249,12 +257,10 @@ class Writer:
                         else:
                             hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
                     else:
-                        dataset = grp.create_dataset(entry_name,
-                                                     data=data
-                                                     )
-
+                        dataset = grp.create_dataset(entry_name, data=data)
                     add_units_key(dataset, path)
                 else:
+                    # consider changing the name here the lvalue can also be group!
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     dataset.attrs[entry_name[1:]] = data
             except Exception as exc:

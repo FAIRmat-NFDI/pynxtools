@@ -107,45 +107,37 @@ def test_get_node_at_nxdl_path():
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/USER/affiliation",
-        elem=elem
-    )
+        elem=elem)
     assert node.attrib["name"] == "affiliation"
 
     node = nexus.get_node_at_nxdl_path("/ENTRY/measurement", elem=elem)
     assert node.attrib["type"] == "NXevent_data_em_set"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary",
-        elem=elem
-    )
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary", elem=elem)
     assert node.attrib["type"] == "NXdata"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/DATA",
-        elem=elem
-    )
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/DATA", elem=elem)
     assert node.attrib["type"] == "NX_NUMBER"
 
     node = nexus.get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/AXISNAME_indices",
-        elem=elem
-    )
+        elem=elem)
     assert node.attrib["name"] == "AXISNAME_indices"
 
     node = nexus.get_node_at_nxdl_path("/ENTRY/COORDINATE_SYSTEM_SET", elem=elem)
     assert node.attrib["type"] == "NXcoordinate_system_set"
 
-    node = nexus.get_node_at_nxdl_path("/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS", elem=elem)
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS", elem=elem)
     assert node.attrib["type"] == "NXtransformations"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME",
-        elem=elem
-    )
+        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME", elem=elem)
     assert node.attrib["type"] == "NX_NUMBER"
 
     node = nexus.get_node_at_nxdl_path(
         "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME/transformation_type",
-        elem=elem
-    )
+        elem=elem)
     assert node.attrib["name"] == "transformation_type"
