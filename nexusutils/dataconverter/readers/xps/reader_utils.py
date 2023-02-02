@@ -48,7 +48,6 @@ class XmlSpecs():
         self._root_path = f'/ENTRY[entry]/{vendor_name}'
         self._xps_dict: dict = {}
         self.entry_to_data: dict = {}
-        # self.tail_part_frm_seq = ""
         self.tail_part_frm_struct = ""
         self.tail_part_frm_othr = ""
         self.child_nm_reslvers = "__child_name_resolver__"
@@ -118,7 +117,6 @@ class XmlSpecs():
             pass
 
         elif elmt_tag == "sequence":
-
             self.parse_sequence(element,
                                 parent_path)
 
@@ -133,7 +131,6 @@ class XmlSpecs():
         else:
             raise TypeError("Needs to parse to different type of parser")
 
-    # pylint: disable=too-many-locals
     def parse_sequence(self,
                        element_: EmtT.Element,
                        parent_path: str) -> None:
@@ -225,7 +222,6 @@ class XmlSpecs():
 
         return parent_path, skip_child
 
-    # pylint disable=too-many-branches
     def parse_struct(self,
                      element_: EmtT.Element,
                      parent_path: str) -> None:
@@ -396,7 +392,6 @@ class XmlSpecs():
 
         if new_tail_part in pre_tail_part:
             try:
-                # ind = pre_tail_part[int(pre_tail_part.rindex("_")) + 1:]
                 ind_ = pre_tail_part.split("_")[-1]
                 ind = int(ind_)
                 pre_tail_part = f'{new_tail_part}_{ind + 1}'
@@ -491,7 +486,6 @@ class XmlSpecs():
         np.ndarray : Cumulative up to last scans from the same ScanSeq
         """
 
-        # elmt_attr = scan_seq_elem.attrib
         child_num = len(scan_seq_elem)
         name = "count"
 
@@ -545,7 +539,7 @@ class XmlSpecs():
         """Construction entry name."""
         key_parts = key.split("/")
         try:
-            # entry: vendor__sample__name_of_scan_rerion
+            # entry example : vendor__sample__name_of_scan_rerion
             entry_name = (f'{key_parts[2]}'
                           f'__'
                           f'{key_parts[3].split("_", 1)[1]}'
