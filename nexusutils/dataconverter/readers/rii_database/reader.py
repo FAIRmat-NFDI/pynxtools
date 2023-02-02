@@ -37,8 +37,19 @@ def read_yml_file(filename: str) -> Dict[Any, Any]:
     return yml_file
 
 
+def read_metadata(yml_file: dict) -> Dict[str, Any]:
+    """Reads metadata from a dispersion yaml file"""
+    entries: Dict[str, Any] = {}
+    if "REFERENCES" in yml_file:
+        pass
+
+    if "COMMENTS" in yml_file:
+        pass
+    return {}
+
+
 def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str, Any]:
-    """Reads rii dispersions from yaml files"""
+    """Reads a rii dispersion from a yaml file"""
     entries: Dict[str, Any] = {}
 
     def add_table(path: str, nx_name: str, daf: pd.DataFrame):
@@ -108,6 +119,11 @@ def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str
             continue
 
         raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
+
+    # Only read metadata for the ordinary axis
+    # as this should be the same for all axes
+    if identifier == 'dispersion_x':
+        entries.update(read_metadata(yml_file))
 
     return entries
 
