@@ -56,6 +56,7 @@ nyaml2nxdl = "nexusutils.nyaml2nxdl.nyaml2nxdl:launch_tool"
 
 [tool.setuptools.package-data]
 nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+"nexusutils.dataconverter.readers.xps" = ["*.json"]
 "nexusutils.dataconverter.readers.hall" = ["enum_map.json"]
 
 [tool.setuptools.packages.find]

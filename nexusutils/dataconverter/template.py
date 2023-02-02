@@ -165,3 +165,15 @@ class Template(dict):
         template = Template(self)
         template.rename_entry("entry", entry_name, False)
         self.update(template)
+
+    def __delitem__(self, key):
+        """Delete a dictionary key or template key"""
+
+        if key in self.optional.keys():
+            del self.optional[key]
+
+        if key in self.required.keys():
+            del self.required[key]
+
+        if key in self.recommended.keys():
+            del self.recommended[key]
