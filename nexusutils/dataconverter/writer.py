@@ -222,7 +222,7 @@ class Writer:
             grp = parent.create_group(parent_path_hdf5)
             try:
                 attrs = self.__nxdl_to_attrs(parent_path)
-            except Exception as exc:
+            except:
                 attrs = None
 
             if attrs is not None:
