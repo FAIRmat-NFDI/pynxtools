@@ -528,12 +528,11 @@ DEBUG - ===== FIELD (//entry/instrument/analyser/amplifier_type): <HDF5 dataset 
 DEBUG - value: b'MCP' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
-NXdetector.nxdl.xml:/type
+NXdetector.nxdl.xml:/amplifier_type
 DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXdetector.nxdl.xml:/type):
+DEBUG - documentation (NXdetector.nxdl.xml:/amplifier_type):
 DEBUG - 
-             Description of type such as He3 gas cylinder, He3 PSD, scintillator, fission
-             chamber, proportion counter, ion chamber, ccd, pixel, image plate, CMOS, ...
+             Type of electron amplifier, MCP, channeltron, etc.
         
 DEBUG - ===== FIELD (//entry/instrument/analyser/contrast_aperture): <HDF5 dataset "contrast_aperture": shape (), type "|O">
 DEBUG - value: b'Out' 
@@ -544,12 +543,11 @@ DEBUG - ===== FIELD (//entry/instrument/analyser/detector_type): <HDF5 dataset "
 DEBUG - value: b'DLD' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
-NXdetector.nxdl.xml:/type
+NXdetector.nxdl.xml:/detector_type
 DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXdetector.nxdl.xml:/type):
+DEBUG - documentation (NXdetector.nxdl.xml:/detector_type):
 DEBUG - 
-             Description of type such as He3 gas cylinder, He3 PSD, scintillator, fission
-             chamber, proportion counter, ion chamber, ccd, pixel, image plate, CMOS, ...
+             Description of the detector type, DLD, Phosphor+CCD, CMOS.
         
 DEBUG - ===== FIELD (//entry/instrument/analyser/dispersion_scheme): <HDF5 dataset "dispersion_scheme": shape (), type "|O">
 DEBUG - value: b'Time of flight' 
@@ -701,23 +699,14 @@ NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/time_per_channel
 DEBUG - @units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/analyser/working_distance): <HDF5 dataset "working_distance": shape (), type "<i8">
 DEBUG - value: 4 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_FLOAT']
-DEBUG - classes:
-NXdetector.nxdl.xml:/distance
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXdetector.nxdl.xml:/distance):
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             This is the distance to the previous component in the instrument; most often the
-             sample. The usage depends on the nature of the detector: Most often it is the
-             distance of the detector assembly. But there are irregular detectors. In this
-             case the distance must be specified for each detector pixel.
-        
 DEBUG - ===== ATTRS (//entry/instrument/analyser/working_distance@units)
 DEBUG - value: mm 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_FLOAT']
-DEBUG - classes:
-NXdetector.nxdl.xml:/distance
-DEBUG - @units [NX_LENGTH]
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== GROUP (//entry/instrument/beam_probe_0 [NXarpes::/NXentry/NXinstrument/NXbeam]): <HDF5 group "/entry/instrument/beam_probe_0" (7 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - classes:
@@ -1232,19 +1221,18 @@ DEBUG - ===== FIELD (//entry/instrument/source/bunch_distance): <HDF5 dataset "b
 DEBUG - value: 1 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/distance
+NXsource.nxdl.xml:/bunch_distance
 DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/distance):
+DEBUG - documentation (NXsource.nxdl.xml:/bunch_distance):
 DEBUG - 
-             Effective distance from sample Distance as seen by radiation from sample. This
-             number should be negative to signify that it is upstream of the sample.
+             For storage rings, time between bunches
         
 DEBUG - ===== ATTRS (//entry/instrument/source/bunch_distance@units)
 DEBUG - value: us 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/distance
-DEBUG - @units [NX_LENGTH]
+NXsource.nxdl.xml:/bunch_distance
+DEBUG - @units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source/bunch_length): <HDF5 dataset "bunch_length": shape (), type "<i8">
 DEBUG - value: 100 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1263,21 +1251,14 @@ NXsource.nxdl.xml:/bunch_length
 DEBUG - @units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source/burst_distance): <HDF5 dataset "burst_distance": shape (), type "<f8">
 DEBUG - value: 199.5 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/distance
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/distance):
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Effective distance from sample Distance as seen by radiation from sample. This
-             number should be negative to signify that it is upstream of the sample.
-        
 DEBUG - ===== ATTRS (//entry/instrument/source/burst_distance@units)
 DEBUG - value: ms 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/distance
-DEBUG - @units [NX_LENGTH]
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/burst_length): <HDF5 dataset "burst_length": shape (), type "<i8">
 DEBUG - value: 500 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1480,19 +1461,18 @@ DEBUG - ===== FIELD (//entry/instrument/source_pump/bunch_distance): <HDF5 datas
 DEBUG - value: 1 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/distance
+NXsource.nxdl.xml:/bunch_distance
 DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/distance):
+DEBUG - documentation (NXsource.nxdl.xml:/bunch_distance):
 DEBUG - 
-             Effective distance from sample Distance as seen by radiation from sample. This
-             number should be negative to signify that it is upstream of the sample.
+             For storage rings, time between bunches
         
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/bunch_distance@units)
 DEBUG - value: us 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/distance
-DEBUG - @units [NX_LENGTH]
+NXsource.nxdl.xml:/bunch_distance
+DEBUG - @units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/bunch_length): <HDF5 dataset "bunch_length": shape (), type "<i8">
 DEBUG - value: 50 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1511,21 +1491,14 @@ NXsource.nxdl.xml:/bunch_length
 DEBUG - @units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/burst_distance): <HDF5 dataset "burst_distance": shape (), type "<f8">
 DEBUG - value: 199.6 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/distance
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/distance):
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Effective distance from sample Distance as seen by radiation from sample. This
-             number should be negative to signify that it is upstream of the sample.
-        
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/burst_distance@units)
 DEBUG - value: ms 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/distance
-DEBUG - @units [NX_LENGTH]
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/burst_length): <HDF5 dataset "burst_length": shape (), type "<i8">
 DEBUG - value: 400 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1741,14 +1714,11 @@ DEBUG - ===== FIELD (//entry/sample/chemical_name): <HDF5 dataset "chemical_name
 DEBUG - value: b'Tungsten diselenide' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
-NXarpes.nxdl.xml:/ENTRY/SAMPLE/name
-NXsample.nxdl.xml:/name
-DEBUG - <<REQUIRED>>
-DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/SAMPLE/name):
-DEBUG - Descriptive name of sample
-DEBUG - documentation (NXsample.nxdl.xml:/name):
+NXsample.nxdl.xml:/chemical_name
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXsample.nxdl.xml:/chemical_name):
 DEBUG - 
-             Descriptive name of sample
+             Full chemical name of the sample
         
 DEBUG - ===== FIELD (//entry/sample/growth_method): <HDF5 dataset "growth_method": shape (), type "|O">
 DEBUG - value: b'Chemical Vapor Deposition' 
@@ -1827,14 +1797,9 @@ DEBUG -
         
 DEBUG - ===== FIELD (//entry/sample/surface_orientation): <HDF5 dataset "surface_orientation": shape (), type "|O">
 DEBUG - value: b'0001' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/orientation
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/orientation):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Surface termination of the sample (if crystalline)
-        
 DEBUG - ===== FIELD (//entry/sample/thickness): <HDF5 dataset "thickness": shape (), type "<f8">
 DEBUG - value: 0.5 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
