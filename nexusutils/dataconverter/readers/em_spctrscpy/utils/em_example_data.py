@@ -48,16 +48,13 @@ SIGNAL_YIELD = 1000.  # arbitrarily assumed signal intensity
 class EmSpctrscpyCreateExampleData:
     """A synthesized dataset meant to be used for development purposes only!."""
 
-    def __init__(self, n_entries):
+    def __init__(self, synthesis_id):
         # assure deterministic behaviour of the PRNG
-        np.random.seed(seed=10)
+        np.random.seed(seed=synthesis_id)
 
         self.n_entries = 1
-        if n_entries >= 1:
-            if n_entries <= 1000:
-                self.n_entries = n_entries
-        print("Generating " + str(self.n_entries) + " random example NXem entries...")
-        self.entry_id = 0
+        print("Generating one random example NXem entry...")
+        self.entry_id = 1
         self.elements_observed = []
         self.e_axis = []
         self.cnts_summary = []

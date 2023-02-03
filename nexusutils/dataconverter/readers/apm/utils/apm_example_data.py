@@ -64,17 +64,15 @@ MAX_USERS = 4
 class ApmCreateExampleData:
     """A synthesized dataset meant to be used for development purposes only!."""
 
-    def __init__(self, n_entries: int):
+    def __init__(self, synthesis_id):
         # assure deterministic behaviour of the PRNG
-        np.random.seed(seed=10)
+        np.random.seed(seed=synthesis_id)
+
+        self.n_entries = 1
+        print("Generating one random example NXem entry...")
+        self.entry_id = 1
         # reconstructed dataset and mass-to-charge state ratio values
         # like what is traditionally available via the POS file format
-        self.n_entries = 1
-        if n_entries >= 1:
-            if n_entries <= 1000:
-                self.n_entries = n_entries
-        print("Generating " + str(self.n_entries) + " random example NXapm entries...")
-        self.entry_id = 0
         self.xyz: List[float] = []
         self.m_z: List[float] = []
 
