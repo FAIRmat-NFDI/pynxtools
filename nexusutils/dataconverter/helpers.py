@@ -169,6 +169,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "NX_UINT": (np.ndarray, np.unsignedinteger),
     "NX_NUMBER": (int, float, np.ndarray, np.signedinteger, np.unsignedinteger, np.floating, dict),
     "NX_POSINT": (int, np.ndarray, np.signedinteger),  # > 0 is checked in is_valid_data_field()
+    "NX_COMPLEX": (complex, np.ndarray, np.complex128),
     "NXDL_TYPE_UNAVAILABLE": (str,)  # Defaults to a string if a type is not provided.
 }
 
