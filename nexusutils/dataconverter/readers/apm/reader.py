@@ -78,18 +78,18 @@ class ApmReader(BaseReader):
         """Read data from given file, return filled template dictionary apm."""
         template.clear()
 
-        n_entries = 0
-        if len(file_paths) == 0:
-            n_entries = 25
-            print("Create " + str(n_entries) + " synthetic datasets in one NeXus file...")
-            synthetic = ApmCreateExampleData(n_entries)
+        n_entries = 1
+        entry_id = 1
+        if len(file_paths) == 1:
+            if file_paths[0].startswith("synthesize"):
+                synthesis_id = int(file_paths[0].replace("synthesize", ""))
+                print(f"synthesis_id {synthesis_id}")
+            else:
+                synthesis_id = 1
+            print("Create one synthetic entry in one NeXus file...")
+            synthetic = ApmCreateExampleData(synthesis_id)
             synthetic.synthesize(template)
-        elif len(file_paths) == 1:
-            print("Insufficient input-files, at least one ELN and one partner file!")
-            return template
         else:  # eln_data, and ideal recon and ranging definition technology partner file
-            n_entries = 1
-            entry_id = 1
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
             assert case.is_valid is True, \

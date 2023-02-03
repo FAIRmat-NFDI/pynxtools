@@ -83,18 +83,18 @@ class EmSpctrscpyReader(BaseReader):
         # functionalities for creating default plots
         # developer functionalities for creating synthetic data
 
-        n_entries = 0
-        if len(file_paths) == 0:
-            n_entries = 25
-            print("Create " + str(n_entries) + " synthetic datasets in one NeXus file...")
-            synthetic = EmSpctrscpyCreateExampleData(n_entries)
+        n_entries = 1
+        entry_id = 1
+        if len(file_paths) == 1:
+            if file_paths[0].startswith("synthesize"):
+                synthesis_id = int(file_paths[0].replace("synthesize", ""))
+                print(f"synthesis_id {synthesis_id}")
+            else:
+                synthesis_id = 1
+            print("Create one synthetic entry in one NeXus file...")
+            synthetic = EmSpctrscpyCreateExampleData(synthesis_id)
             synthetic.synthesize(template)
-        elif len(file_paths) == 1:
-            print("Insufficient input-files, at least one ELN and one partner file!")
-            return template
         else:
-            n_entries = 1
-            entry_id = 1
             print("Parse ELN and technology partner file(s)...")
             case = EmUseCaseSelector(file_paths)
             assert case.is_valid is True, \
