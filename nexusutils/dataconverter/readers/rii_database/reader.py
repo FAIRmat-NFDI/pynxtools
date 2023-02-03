@@ -45,7 +45,7 @@ def read_metadata(yml_file: dict) -> Dict[str, Any]:
 
     if "COMMENTS" in yml_file:
         pass
-    return {}
+    return entries
 
 
 def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str, Any]:
