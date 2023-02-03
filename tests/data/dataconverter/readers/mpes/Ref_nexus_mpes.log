@@ -3092,18 +3092,18 @@ DEBUG - ===== FIELD (//entry/instrument/source/photon_energy): <HDF5 dataset "ph
 DEBUG - value: 21.7 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/energy
+NXsource.nxdl.xml:/photon_energy
 DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/energy):
+DEBUG - documentation (NXsource.nxdl.xml:/photon_energy):
 DEBUG - 
-             Source energy. For storage rings, this would be the particle beam energy. For
-             X-ray tubes, this would be the excitation voltage.
+             The center photon energy of the source, before it is monochromatized or
+             converted
         
 DEBUG - ===== ATTRS (//entry/instrument/source/photon_energy@units)
 DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/energy
+NXsource.nxdl.xml:/photon_energy
 DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/source/probe): <HDF5 dataset "probe": shape (), type "|O">
 DEBUG - value: b'ultraviolet' 
@@ -3249,18 +3249,18 @@ DEBUG - ===== FIELD (//entry/instrument/source_pump/photon_energy): <HDF5 datase
 DEBUG - value: 1.2 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/energy
+NXsource.nxdl.xml:/photon_energy
 DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/energy):
+DEBUG - documentation (NXsource.nxdl.xml:/photon_energy):
 DEBUG - 
-             Source energy. For storage rings, this would be the particle beam energy. For
-             X-ray tubes, this would be the excitation voltage.
+             The center photon energy of the source, before it is monochromatized or
+             converted
         
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/photon_energy@units)
 DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
 DEBUG - classes:
-NXsource.nxdl.xml:/energy
+NXsource.nxdl.xml:/photon_energy
 DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/probe): <HDF5 dataset "probe": shape (), type "|O">
 DEBUG - value: b'visible light' 

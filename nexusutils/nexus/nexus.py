@@ -84,16 +84,19 @@ def get_nx_class(nxdl_elem):
         return 'NX_CHAR'
 
 
-def get_nx_namefit(hdf_name, name):
+def get_nx_namefit(hdf_name, name, name_any=False):
     """Checks if an HDF5 node name corresponds to a child of the NXDL element
 uppercase letters in front can be replaced by arbitraty name, but
 uppercase to lowercase match is preferred,
 so such match is counted as a measure of the fit"""
+    if name == hdf_name:
+        return len(name)*2
     # count leading capitals
     counting = 0
     while counting < len(name) and name[counting].upper() == name[counting]:
         counting += 1
-    if counting == len(name) or hdf_name.endswith(name[counting:]):  # if potential fit
+    if name_any or counting == len(name) or \
+       (counting > 0 and hdf_name.endswith(name[counting:])):  # if potential fit
         # count the matching chars
         fit = 0
         for i in range(min(counting, len(hdf_name))):
@@ -210,7 +213,8 @@ def belongs_to_capital(params):
     # or starts with capital and no reserved words used
     if (name_any or 'A' <= act_htmlname[0] <= 'Z') and \
             name != 'doc' and name != 'enumeration':
-        fit = get_nx_namefit(chk_name, act_htmlname)  # check if name fits
+        name_any = "nameType" in nxdl_elem.attrib.keys() and "any" == child.attrib["nameType"]
+        fit = get_nx_namefit(chk_name, act_htmlname, name_any)  # check if name fits
         if fit < 0:
             return False
         for child2 in nxdl_elem:
@@ -218,7 +222,8 @@ def belongs_to_capital(params):
                     get_local_name_from_xml(child2) or get_node_name(child2) == act_htmlname:
                 continue
             # check if the name of another sibling fits better
-            fit2 = get_nx_namefit(chk_name, get_node_name(child2))
+            name_any = "nameType" in nxdl_elem.attrib.keys() and "any" == child2.attrib["nameType"]
+            fit2 = get_nx_namefit(chk_name, get_node_name(child2),name_any)
             if fit2 > fit:
                 return False
         # accept this fit
@@ -710,7 +715,8 @@ def get_best_child(nxdl_elem, hdf_name, hdf_class_name, nexus_type):
         fit = -2
         if get_local_name_from_xml(child) == nexus_type and \
                 (nexus_type != 'group' or get_nx_class(child) == hdf_class_name):
-            fit = get_nx_namefit(hdf_name, get_node_name(child))
+            name_any = "nameType" in nxdl_elem.attrib.keys() and "any" == child.attrib["nameType"]
+            fit = get_nx_namefit(hdf_name, get_node_name(child), name_any)
         if fit > bestfit:
             bestfit = fit
             bestchild = child
