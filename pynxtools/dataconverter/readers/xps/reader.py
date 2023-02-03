@@ -415,10 +415,9 @@ class XPSReader(BaseReader):
             if ("/ENTRY[entry]" not in key) and (val is not None):
                 final_template[key] = val
 
-        isMock = False
+        isMock = True
         if isMock:
             final_template = self.mock_template(final_template)
-
 
         return final_template
 

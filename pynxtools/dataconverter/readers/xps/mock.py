@@ -39,7 +39,8 @@ class MockXPS():
     def mock_one_dot_six(self) -> None:
         """Generating mock data for specs verions 1.6."""
 
-        self.sample_list = ["(C12H6N4)", "(C12H6N4)SO4"]
+        self.sample_list = ["(C12H6N4)", "(C12H6N4)SO4",
+                            "(C20H60Na4)", "(C30H60K5)"]
         self.entry_list = ["specs__PBY__C1s", "specs__PBY__F1s",
                            "specs__PBY__S_2p", "specs__PBY__survey",
                            "specs__PTBY__C1s", "specs__PTBY__F1s",
@@ -80,7 +81,7 @@ class MockXPS():
         return self.template
 
     # For detector raw value and scan values
-    def mock_array(self, key, value) -> Tuple(str, Any):
+    def mock_array(self, key, value) -> Tuple[str, Any]:
         "add sum random noise in numpy array."
 
         # skip BE binding energy value
