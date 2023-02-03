@@ -351,7 +351,7 @@ class ApmCreateExampleData:
                     unique_elements.add(str(symbol))
         print("Unique elements are")
         print(list(unique_elements))
-        template[trg + "atom_types"] = list(unique_elements)
+        template[trg + "atom_types"] = ", ".join(list(unique_elements))
 
         specimen_name = "Mocked atom probe specimen " \
             + str(np.random.choice(1000, 1)[0])

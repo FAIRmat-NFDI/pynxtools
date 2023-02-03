@@ -145,7 +145,8 @@ class NxEmNomadOasisElnSchemaParser:
                 "Facing an atom_types list entry which is not a string!"
             assert (symbol in chemical_symbols) and (symbol != "X"), \
                 "Facing an atom_types list entry which is not an element!"
-        template[trg + "atom_types"] = self.yml[src + ":atom_types"]
+        template[trg + "atom_types"] \
+            = ", ".join(list(self.yml[src + ":atom_types"]))
         thickness_exists = ("thickness:value" in self.yml[src].keys()) \
             and ("thickness:unit" in self.yml[src].keys())
         assert thickness_exists is True, \

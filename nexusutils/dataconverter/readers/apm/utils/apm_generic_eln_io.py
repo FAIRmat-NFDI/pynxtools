@@ -149,9 +149,10 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
         for symbol in self.yml[src + ":atom_types"]:
             assert isinstance(symbol, str), \
                 "Facing an atom_types list entry which is not a string!"
-            assert (symbol in chemical_symbols) & (symbol != "X"), \
+            assert (symbol in chemical_symbols) and (symbol != "X"), \
                 "Facing an atom_types list entry which is not an element!"
-        template[trg + "atom_types"] = self.yml[src + ":atom_types"]
+        template[trg + "atom_types"] \
+            = ", ".join(list(self.yml[src + ":atom_types"]))
 
         required_field_names = ["name", "sample_history", "preparation_date"]
         for field_name in required_field_names:

@@ -173,14 +173,6 @@ def apm_default_plot_generator(template: dict, n_entries: int) -> dict:
 
     # check if reconstructed ion positions have been stored
     for entry_id in np.arange(1, n_entries + 1):
-        trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/reconstruction/"
-        has_valid_xyz = False
-        path = trg + "reconstructed_positions"
-        if isinstance(template[path], dict):
-            if "compress" in template[path].keys():
-                if isinstance(template[path]["compress"], np.ndarray):
-                    has_valid_xyz = True
-
         trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/mass_to_charge_conversion/"
         has_valid_m_z = False
         path = trg + "mass_to_charge"
@@ -189,7 +181,15 @@ def apm_default_plot_generator(template: dict, n_entries: int) -> dict:
                 if isinstance(template[path]["compress"], np.ndarray):
                     has_valid_m_z = True
 
-        has_default_data = has_valid_xyz | has_valid_m_z
+        trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/reconstruction/"
+        has_valid_xyz = False
+        path = trg + "reconstructed_positions"
+        if isinstance(template[path], dict):
+            if "compress" in template[path].keys():
+                if isinstance(template[path]["compress"], np.ndarray):
+                    has_valid_xyz = True
+
+        has_default_data = has_valid_m_z or has_valid_xyz
         assert has_default_data is True, \
             "Having no recon or mass-to-charge data is inacceptable at the moment!"
 
@@ -202,27 +202,26 @@ def apm_default_plot_generator(template: dict, n_entries: int) -> dict:
         trg += "ENTRY[entry" + str(entry_id) + "]/"
         template[trg + "@default"] = "atom_probe"
 
-        if has_valid_xyz is True:
-            create_default_plot_reconstruction(template, entry_id)
-            # generate path to the default plottable
-            trg += "atom_probe/"
-            template[trg + "@default"] = "reconstruction"
-            trg += "reconstruction/"
-            template[trg + "@default"] = "naive_point_cloud_density_map"
-            trg += "naive_point_cloud_density_map/"
-            template[trg + "@default"] = "data"
-            # to instruct h5web of which class this is
-
         if has_valid_m_z is True:
             create_default_plot_mass_spectrum(template, entry_id)
-            # tomographic reconstruction is the default plot unless...
-            if has_valid_xyz is False:
-                # ... the mass_spectrum has to take this role
+            # mass_spectrum main default...
+            trg += "atom_probe/"
+            template[trg + "@default"] = "ranging"
+            trg += "ranging/"
+            template[trg + "@default"] = "mass_to_charge_distribution"
+            trg += "mass_to_charge_distribution/"
+            template[trg + "@default"] = "mass_spectrum"
+
+        if has_valid_xyz is True:
+            # ... discretized naive tomographic reconstruction as fallback...
+            create_default_plot_reconstruction(template, entry_id)
+            # generate path to the default plottable
+            if has_valid_m_z is False:
                 trg += "atom_probe/"
-                template[trg + "@default"] = "ranging"
-                trg += "ranging/"
-                template[trg + "@default"] = "mass_to_charge_distribution"
-                trg += "mass_to_charge_distribution/"
-                template[trg + "@default"] = "mass_spectrum"
+                template[trg + "@default"] = "reconstruction"
+                trg += "reconstruction/"
+                template[trg + "@default"] = "naive_point_cloud_density_map"
+                trg += "naive_point_cloud_density_map/"
+                template[trg + "@default"] = "data"
 
     return template

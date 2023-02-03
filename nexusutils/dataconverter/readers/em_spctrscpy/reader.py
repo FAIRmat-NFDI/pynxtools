@@ -85,7 +85,7 @@ class EmSpctrscpyReader(BaseReader):
 
         n_entries = 0
         if len(file_paths) == 0:
-            n_entries = 2  # 10
+            n_entries = 25
             print("Create " + str(n_entries) + " synthetic datasets in one NeXus file...")
             synthetic = EmSpctrscpyCreateExampleData(n_entries)
             synthetic.synthesize(template)

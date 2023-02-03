@@ -133,7 +133,7 @@ class EmSpctrscpyCreateExampleData:
                 unique_elements.add(symbol)
         print("Unique elements are")
         print(list(unique_elements))
-        template[trg + "atom_types"] = list(unique_elements)
+        template[trg + "atom_types"] = ", ".join(list(unique_elements))
 
         specimen_name = "Mocked electron microscopy specimen " \
             + str(np.random.choice(1000, 1)[0])
