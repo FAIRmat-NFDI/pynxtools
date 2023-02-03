@@ -453,10 +453,11 @@ def try_find_units(logger, elem, nxdl_path, doc, attr):
     return logger, elem, nxdl_path, doc, attr
 
 
-def check_attr_name_nxdl(logger, elem, nxdl_path, doc, attr):
+def check_attr_name_nxdl(param):
     """Check for ATTRIBUTENAME_units in NXDL (normal).
 If not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE
 is in the SCHEMA, but no units category were defined. """
+    (logger, elem, nxdl_path, doc, attr, req_str) = param
     elem2 = get_nxdl_child(elem, attr, nexus_type='attribute')
     if elem2 is not None:  # check for ATTRIBUTENAME_units in NXDL (normal)
         elem = elem2
@@ -562,11 +563,12 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
                                                                 attr)
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith('_units'):
-            logger, elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl(logger,
+            logger, elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl((logger,
                                                                                elem,
                                                                                nxdl_path,
                                                                                doc,
-                                                                               attr)
+                                                                               attr,
+                                                                               req_str))
         # default is allowed for groups
         elif attr == 'default' and not isinstance(hdf_node, h5py.Dataset):
             req_str = "<<RECOMMENDED>>"
