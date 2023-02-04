@@ -90,7 +90,7 @@ uppercase letters in front can be replaced by arbitraty name, but
 uppercase to lowercase match is preferred,
 so such match is counted as a measure of the fit"""
     if name == hdf_name:
-        return len(name)*2
+        return len(name) * 2
     # count leading capitals
     counting = 0
     while counting < len(name) and name[counting].upper() == name[counting]:
@@ -213,7 +213,6 @@ def belongs_to_capital(params):
     # or starts with capital and no reserved words used
     if (name_any or 'A' <= act_htmlname[0] <= 'Z') and \
             name != 'doc' and name != 'enumeration':
-        name_any = "nameType" in nxdl_elem.attrib.keys() and "any" == child.attrib["nameType"]
         fit = get_nx_namefit(chk_name, act_htmlname, name_any)  # check if name fits
         if fit < 0:
             return False
@@ -222,8 +221,8 @@ def belongs_to_capital(params):
                     get_local_name_from_xml(child2) or get_node_name(child2) == act_htmlname:
                 continue
             # check if the name of another sibling fits better
-            name_any = "nameType" in nxdl_elem.attrib.keys() and "any" == child2.attrib["nameType"]
-            fit2 = get_nx_namefit(chk_name, get_node_name(child2),name_any)
+            name_any2 = "nameType" in child2.attrib.keys() and "any" == child2.attrib["nameType"]
+            fit2 = get_nx_namefit(chk_name, get_node_name(child2), name_any2)
             if fit2 > fit:
                 return False
         # accept this fit
