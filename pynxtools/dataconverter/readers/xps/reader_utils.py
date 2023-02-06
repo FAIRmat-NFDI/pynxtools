@@ -23,7 +23,7 @@ Generic Classes for reading XPS files into python dictionary.
 
 import re
 import xml.etree.ElementTree as EmtT
-from typing import Tuple, List, Any, Dict
+from typing import Tuple, List, Any, Union
 import copy
 import sqlite3
 import xarray as xr
@@ -640,13 +640,13 @@ class XmlSpecs():
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-statements
-    def construct_data(self) -> None:
+    def construct_data(self):
         """Construct the Binding Energy and separate the counts for
         different detectors and finally sum up all the counts for
         to find total electron counts.
         """
         copy_entry_to_data = copy.deepcopy(self.entry_to_data)
-        self._xps_dict["data"]: Dict[str, Any] = {}
+        self._xps_dict["data"]: dict = {}
 
         for entry, _ in copy_entry_to_data.items():
 
@@ -670,7 +670,7 @@ class XmlSpecs():
                 kinetic_energy + kinetic_energy_base + 1
 
             mcd_energy_shifts = raw_data["mcd_shifts"]
-            mcd_energy_offsets = []
+            mcd_energy_offsets: Union[Any, List] = []
             offset_ids = []
 
             # consider offset values for detector with respect to
