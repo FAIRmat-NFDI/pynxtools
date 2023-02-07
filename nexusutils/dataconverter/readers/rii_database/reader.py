@@ -16,13 +16,18 @@
 # limitations under the License.
 #
 """Convert refractiveindex.info yaml files to nexus"""
+import re
 from typing import List, Tuple, Any, Dict
 import logging
+import numpy as np
 import pandas as pd
 import yaml
 
 from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
 import nexusutils.dataconverter.readers.rii_database.dispersion_functions as dispersion
+from nexusutils.dataconverter.readers.rii_database.formula_parser.parser import (
+    transformation_formula_parser,
+)
 from nexusutils.dataconverter.readers.utils import parse_json
 
 
@@ -69,10 +74,15 @@ def write_dispersion(
     model_input: dispersion.ModelInput,
 ):
     """Writes a given dispersion relation into the entries dict"""
+    type_to_nx_name = {
+        "tabulated k": "dispersion_table_k",
+        "tabulated n": "dispersion_table_n",
+        "tabulated nk": "dispersion_table_nk",
+    }
     if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
         table_input.table_type = dispersion_relation["type"]
         table_input.data = dispersion_relation["data"]
-        table_input.nx_name = "dispersion_table"
+        table_input.nx_name = type_to_nx_name[table_input.table_type]
         dispersion.tabulated(table_input)
         return
 
@@ -85,17 +95,100 @@ def write_dispersion(
     raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
 
 
-def write_nx_data(entries: Dict[str, Any]):
+def write_nx_data(
+    entries: Dict[str, Any],
+    dispersion_path: str,
+    single_params: Dict[str, float],
+    repeated_params: Dict[str, np.ndarray],
+):
     """Calculates and adds dispersions and writes it to a NXdata group."""
+
+    def get_dispersion_names(group_name: str):
+        names = set()
+        for entry in entries:
+            if entry.startswith(f"{dispersion_path}/{group_name}"):
+                names.add(re.search(rf"{group_name}\[(.*)\]", entry).group(1))
+
+        return names
+
+    def get_wavelength_index(table_dispersion: str):
+        wavelength = entries[
+            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/wavelength"
+        ]
+        refractive_index = entries[
+            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refactive_index"
+        ]
+
+        return wavelength, refractive_index
+
+    def get_index(wavelength: np.ndarray, func_dispersion: str):
+        x_axis_name = f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]/wavelength_identifier"
+        dfpath = f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
+        formula = entries[f"{dfpath}/formula"]
+
+        return transformation_formula_parser(
+            x_axis_name, wavelength, single_params[dfpath], repeated_params[dfpath]
+        ).parse(formula)
+
+    # 1. If there is only a tabular dispersion: Link it into NXdata
+    # 2. If there are multiple tabular dispersions: Add them and write this into NXdata
+    # 3. If there is only a formula: Calculate formula in a default range 400 nm to 1000 nm
+    # 4. If there is a tabular-formula combination:
+    #    Take the wavelength from tabular and calculate n from it,
+    #    write the resulting data into the NXdata
+    table_dispersions = get_dispersion_names("DISPERSION_TABLE")
+    func_dispersions = get_dispersion_names("DISPERSION_FUNCTION")
+
+    if len(table_dispersions) == 1 and func_dispersions:
+        wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
+        return entries
+
+    if len(table_dispersions) == 0 and func_dispersions:
+        wavelength = np.linspace(0.4, 1, 500)
+        representation, index = get_index(wavelength, func_dispersions.pop())
+        for func_dispersion in func_dispersions:
+            repr2, index2 = get_index(wavelength, func_dispersion)
+            if repr2 != representation:
+                raise ValueError("Incompatible dispersions")
+            index += index2
+
+        if representation == "eps":
+            index = np.sqrt(index)
+        return entries
+
+    if func_dispersions:
+        raise ValueError("Unexpected number of dispersions.")
+
+    if not table_dispersions:
+        raise ValueError("No valid dispersions found.")
+
+    wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
+    for table_dispersion in table_dispersions:
+        refractive_index += entries[
+            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refractive_index"
+        ]
+
+    entries[f"{dispersion_path}/plot/@axes"] = "wavelength"
+    entries[f"{dispersion_path}/plot/@signal"] = "refractive_index"
+    entries[f"{dispersion_path}/plot/@auxiliary_signals"] = "extinction"
+    entries[f"{dispersion_path}/plot/wavelength"] = wavelength
+    entries[f"{dispersion_path}/plot/wavelength/@units"] = "micrometer"
+    entries[f"{dispersion_path}/plot/refractive_index"] = refractive_index.real
+    entries[f"{dispersion_path}/plot/extinction"] = refractive_index.imag
+
     return entries
 
 
 def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str, Any]:
     """Reads a rii dispersion from a yaml file"""
     entries: Dict[str, Any] = {}
+    single_params: Dict[str, Dict[str, float]] = {}
+    repeated_params: Dict[str, Dict[str, np.ndarray]] = []
 
     def add_table(path: str, nx_name: str, daf: pd.DataFrame):
         disp_path = f"{path}/DISPERSION_TABLE[{nx_name}]"
+        while f"{disp_path}/model_name" in entries:
+            disp_path = f"{path}/DISPERSION_TABLE[{nx_name}]"
 
         if f"{path}/refractive_index" in entries:
             entries[f"{disp_path}/refractive_index"] += daf["refractive_index"].values
@@ -139,6 +232,8 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
         entries[f"{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value"] = value
         entries[f"{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value/@units"] = unit
 
+        single_params[path][name] = value
+
     def add_rep_param(path: str, name: str, values: List[float], units: List[str]):
         if not units:
             raise ValueError("Units must be specified")
@@ -152,6 +247,8 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
         entries[f"{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values/@units"] = units[
             0
         ]
+
+        repeated_params[path][name] = np.array(values)
 
     yml_file = read_yml_file(filename)
     dispersion_path = f"/ENTRY[entry]/{identifier}"
@@ -177,7 +274,7 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
     for dispersion_relation in yml_file["DATA"]:
         write_dispersion(dispersion_relation, table_input, model_input)
 
-    write_nx_data(entries)
+    write_nx_data(entries, dispersion_path, single_params, repeated_params)
 
     return entries
 
