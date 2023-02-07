@@ -32,8 +32,10 @@ TableCallback = Callable[[str, str, pd.DataFrame], None]
 @dataclass
 class ModelInput:
     """The input data and callbacks for the model functions"""
+
     dispersion_path: str
     coeffs: List[float]
+    convert_to_n: bool
     add_model_name: ModelNameCallback
     add_model_info: ModelInfoCallback
     add_single_param: SingleParamCallback
@@ -43,6 +45,7 @@ class ModelInput:
 @dataclass
 class TableInput:
     """The input data and callbacks for tabular dispersions"""
+
     dispersion_path: str
     nx_name: str
     table_type: str
@@ -55,23 +58,21 @@ def tabulated(table_input: TableInput):
     Parsing for tabulated dispersions from refractiveindex.info
     """
     index_from = {
-        'tabulated nk': ['Wavelength', 'n', 'k'],
-        'tabulated n': ["Wavelength", "n"],
-        'tabulated k': ["Wavelength", "k"],
+        "tabulated nk": ["Wavelength", "n", "k"],
+        "tabulated n": ["Wavelength", "n"],
+        "tabulated k": ["Wavelength", "k"],
     }
 
     daf = pd.read_table(
-        StringIO(table_input.data),
-        sep='\\s+',
-        names=index_from[table_input.table_type]
+        StringIO(table_input.data), sep="\\s+", names=index_from[table_input.table_type]
     )
     daf.set_index("Wavelength", inplace=True)
 
-    daf['refractive_index'] = 0 + 0j
-    if 'n' in daf:
-        daf.loc[:, 'refractive_index'] += daf['n']
-    if 'k' in daf:
-        daf.loc[:, 'refractive_index'] += 1j * daf['k']
+    daf["refractive_index"] = 0 + 0j
+    if "n" in daf:
+        daf.loc[:, "refractive_index"] += daf["n"]
+    if "k" in daf:
+        daf.loc[:, "refractive_index"] += 1j * daf["k"]
 
     table_input.add_table(table_input.dispersion_path, table_input.nx_name, daf)
 
@@ -93,17 +94,18 @@ def sellmeier(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(model_input.dispersion_path, 'Sellmeier')
+    model_input.add_model_name(model_input.dispersion_path, "Sellmeier")
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Sellmeier',
-        'eps',
-        'eps = eps_inf + 1 + sum[A * lambda ** 2 / (lambda ** 2 - B ** 2)]'
+        "Sellmeier",
+        "eps",
+        "eps_inf + 1 + sum[A * lambda ** 2 / (lambda ** 2 - B ** 2)]",
+        model_input.convert_to_n,
     )
 
-    model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
-    model_input.add_rep_param(path, 'A', model_input.coeffs[1::2], [''])
-    model_input.add_rep_param(path, 'B', model_input.coeffs[2::2], ['micrometer'])
+    model_input.add_single_param(path, "eps_inf", model_input.coeffs[0], "")
+    model_input.add_rep_param(path, "A", model_input.coeffs[1::2], [""])
+    model_input.add_rep_param(path, "B", model_input.coeffs[2::2], ["micrometer"])
 
 
 def polynomial(model_input: ModelInput):
@@ -112,20 +114,23 @@ def polynomial(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(model_input.dispersion_path, 'Polynomial')
+    model_input.add_model_name(model_input.dispersion_path, "Polynomial")
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Polynomial',
-        'eps',
-        'eps = eps_inf + sum[f * lambda ** e]'
+        "Polynomial",
+        "eps",
+        "eps_inf + sum[f * lambda ** e]",
+        model_input.convert_to_n,
     )
 
-    model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
+    model_input.add_single_param(path, "eps_inf", model_input.coeffs[0], "")
     model_input.add_rep_param(
-        path, 'f', model_input.coeffs[1::2],
-        [f'1/micrometer^{e}' for e in model_input.coeffs[2::2]]
+        path,
+        "f",
+        model_input.coeffs[1::2],
+        [f"1/micrometer^{e}" for e in model_input.coeffs[2::2]],
     )
-    model_input.add_rep_param(path, 'e', model_input.coeffs[2::2], [''])
+    model_input.add_rep_param(path, "e", model_input.coeffs[2::2], [""])
 
 
 def sellmeier_polynomial(model_input: ModelInput):
@@ -134,33 +139,33 @@ def sellmeier_polynomial(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(
-        model_input.dispersion_path,
-        'Sellmeier'
-    )
+    model_input.add_model_name(model_input.dispersion_path, "Sellmeier")
 
     a_units = []
     # Check for valid parameters
     for exp1 in model_input.coeffs[2:7:4]:
         if exp1 not in [0, 2]:
-            raise ValueError(f'e1 may only be 0 or 1 but is {exp1}')
-        a_units.append('' if exp1 == 0 else '1/micrometer^2')
+            raise ValueError(f"e1 may only be 0 or 1 but is {exp1}")
+        a_units.append("" if exp1 == 0 else "1/micrometer^2")
 
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Sellmeier',
-        'eps',
-        'eps = eps_inf + sum[A * lambda ** e1 / (lambda ** 2 - B**e2)]'
+        "Sellmeier",
+        "eps",
+        "eps_inf + sum[A * lambda ** e1 / (lambda ** 2 - B**e2)]",
+        model_input.convert_to_n,
     )
 
-    model_input.add_single_param(path, 'eps_inf', model_input.coeffs[0], '')
-    model_input.add_rep_param(path, 'A', model_input.coeffs[1:6:4], a_units)
+    model_input.add_single_param(path, "eps_inf", model_input.coeffs[0], "")
+    model_input.add_rep_param(path, "A", model_input.coeffs[1:6:4], a_units)
     model_input.add_rep_param(
-        path, 'B', model_input.coeffs[3:8:4],
-        [f'micrometer^(2/{e2})' for e2 in model_input.coeffs[4:9:4]]
+        path,
+        "B",
+        model_input.coeffs[3:8:4],
+        [f"micrometer^(2/{e2})" for e2 in model_input.coeffs[4:9:4]],
     )
-    model_input.add_rep_param(path, 'e1', model_input.coeffs[2:7:4], [''])
-    model_input.add_rep_param(path, 'e2', model_input.coeffs[4:9:4], [''])
+    model_input.add_rep_param(path, "e1", model_input.coeffs[2:7:4], [""])
+    model_input.add_rep_param(path, "e2", model_input.coeffs[4:9:4], [""])
 
     # If there are just 9 parameters don't append polynomial part
     if not model_input.coeffs[9::]:
@@ -168,20 +173,23 @@ def sellmeier_polynomial(model_input: ModelInput):
 
     model_input.add_model_name(
         model_input.dispersion_path,
-        'Polynomial + Sellmeier (from RefractiveIndex.Info)'
+        "Polynomial + Sellmeier (from RefractiveIndex.Info)",
     )
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Polynomial',
-        'eps',
-        'eps = sum[f * lambda ** e]'
+        "Polynomial",
+        "eps",
+        "sum[f * lambda ** e]",
+        model_input.convert_to_n,
     )
 
     model_input.add_rep_param(
-        path, 'f', model_input.coeffs[9::2],
-        [f'1/micrometer^{e}' for e in model_input.coeffs[10::2]]
+        path,
+        "f",
+        model_input.coeffs[9::2],
+        [f"1/micrometer^{e}" for e in model_input.coeffs[10::2]],
     )
-    model_input.add_rep_param(path, 'e', model_input.coeffs[10::2], [''])
+    model_input.add_rep_param(path, "e", model_input.coeffs[10::2], [""])
 
 
 def cauchy(model_input: ModelInput):
@@ -190,20 +198,19 @@ def cauchy(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(model_input.dispersion_path, 'Cauchy')
+    model_input.add_model_name(model_input.dispersion_path, "Cauchy")
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        'Cauchy',
-        'n',
-        'n = n_inf + sum[f * lambda ** e]'
+        model_input.dispersion_path, "Cauchy", "n", "n_inf + sum[f * lambda ** e]"
     )
 
-    model_input.add_single_param(path, 'n_inf', model_input.coeffs[0], '')
+    model_input.add_single_param(path, "n_inf", model_input.coeffs[0], "")
     model_input.add_rep_param(
-        path, 'f', model_input.coeffs[1::2],
-        [f'1/micrometer^{e}' for e in model_input.coeffs[2::2]]
+        path,
+        "f",
+        model_input.coeffs[1::2],
+        [f"1/micrometer^{e}" for e in model_input.coeffs[2::2]],
     )
-    model_input.add_rep_param(path, 'e', model_input.coeffs[2::2], [''])
+    model_input.add_rep_param(path, "e", model_input.coeffs[2::2], [""])
 
 
 def gases(model_input: ModelInput):
@@ -212,17 +219,17 @@ def gases(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(model_input.dispersion_path, 'Gases')
+    model_input.add_model_name(model_input.dispersion_path, "Gases")
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Gases',
-        'n',
-        'n = 1 + n_inf + sum[A / (B - lambda ** (-2))]'
+        "Gases",
+        "n",
+        "1 + n_inf + sum[A / (B - lambda ** (-2))]",
     )
 
-    model_input.add_single_param(path, 'n_inf', model_input.coeffs[0], '')
-    model_input.add_rep_param(path, 'A', model_input.coeffs[1::2], ['1/micrometer^2'])
-    model_input.add_rep_param(path, 'B', model_input.coeffs[2::2], ['1/micrometer^2'])
+    model_input.add_single_param(path, "n_inf", model_input.coeffs[0], "")
+    model_input.add_rep_param(path, "A", model_input.coeffs[1::2], ["1/micrometer^2"])
+    model_input.add_rep_param(path, "B", model_input.coeffs[2::2], ["1/micrometer^2"])
 
 
 def herzberger(model_input: ModelInput):
@@ -231,25 +238,25 @@ def herzberger(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(model_input.dispersion_path, 'Herzberger')
+    model_input.add_model_name(model_input.dispersion_path, "Herzberger")
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Herzberger',
-        'n',
-        'n = n_inf + C2 / (lambda ** 2 - B1) + '
-        'C3 * (lambda ** 2 - B2) ** (-2) + '
-        'sum[f * lambda ** e]'
+        "Herzberger",
+        "n",
+        "n_inf + C2 / (lambda ** 2 - B1) + "
+        "C3 * (lambda ** 2 - B2) ** (-2) + "
+        "sum[f * lambda ** e]",
     )
 
-    model_input.add_single_param(path, 'n_inf', model_input.coeffs[0], '')
-    model_input.add_single_param(path, 'C2', model_input.coeffs[1], 'micrometer^2')
-    model_input.add_single_param(path, 'C3', model_input.coeffs[2], 'micrometer^4')
-    model_input.add_single_param(path, 'B1', 0.028, 'micrometer^2')
-    model_input.add_single_param(path, 'B2', 0.028, 'micrometer^2')
+    model_input.add_single_param(path, "n_inf", model_input.coeffs[0], "")
+    model_input.add_single_param(path, "C2", model_input.coeffs[1], "micrometer^2")
+    model_input.add_single_param(path, "C3", model_input.coeffs[2], "micrometer^4")
+    model_input.add_single_param(path, "B1", 0.028, "micrometer^2")
+    model_input.add_single_param(path, "B2", 0.028, "micrometer^2")
     model_input.add_rep_param(
-        path, 'f', model_input.coeffs[3:6], [f'1/micrometer^{e}' for e in [2, 4, 6]]
+        path, "f", model_input.coeffs[3:6], [f"1/micrometer^{e}" for e in [2, 4, 6]]
     )
-    model_input.add_rep_param(path, 'e', [2, 4, 6], [''])
+    model_input.add_rep_param(path, "e", [2, 4, 6], [""])
 
 
 def retro(model_input: ModelInput):
@@ -258,17 +265,20 @@ def retro(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(model_input.dispersion_path, 'Retro')
+    model_input.add_model_name(model_input.dispersion_path, "Retro")
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Retro',
-        'eps',
-        '(eps - 1) / (eps + 2) = '
-        'eps_inf + C2 * lambda ** 2 / (lambda ** 2 - C3) + C4 * lambda ** 2'
+        "Retro",
+        "eps",
+        "(lambda ** 2 * (2 * A + 2 * B + 2 * D * lambda ** 2 + 1) "
+        "- C * (2 * A + 2 * D * lambda ** 2 + 1)) "
+        "/ (C * (A + D * lambda ** 2 - 1) - "
+        "lambda ** 2 * (A + B + D * lambda ** 2 - 1))",
+        model_input.convert_to_n,
     )
 
-    names = ['eps_inf'] + [f'C{i}' for i in range(1, 4)]
-    units = ['', '', 'micrometer^2', 'micrometer^(-2)']
+    names = ["eps_inf"] + [f"C{i}" for i in range(1, 4)]
+    units = ["", "", "micrometer^2", "micrometer^(-2)"]
 
     for name, coeff, unit in zip(names, model_input.coeffs, units):
         model_input.add_single_param(path, name, coeff, unit)
@@ -280,33 +290,34 @@ def exotic(model_input: ModelInput):
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
     """
-    model_input.add_model_name(model_input.dispersion_path, 'Exotic')
+    model_input.add_model_name(model_input.dispersion_path, "Exotic")
     path = model_input.add_model_info(
         model_input.dispersion_path,
-        'Exotic',
-        'eps',
-        'eps = eps_inf + C2 / (lambda ** 2 - C3) + '
-        'C4 * (lambda - C5) / ((lambda - C5) ** 2 + C6)'
+        "Exotic",
+        "eps",
+        "eps_inf + C2 / (lambda ** 2 - C3) + "
+        "C4 * (lambda - C5) / ((lambda - C5) ** 2 + C6)",
+        model_input.convert_to_n,
     )
 
-    names = ['eps_inf'] + [f'C{i}' for i in range(1, 6)]
-    units = ['', 'micrometer^2', 'micrometer^2', '', 'micrometer', 'micrometer^2']
+    names = ["eps_inf"] + [f"C{i}" for i in range(1, 6)]
+    units = ["", "micrometer^2", "micrometer^2", "", "micrometer", "micrometer^2"]
 
     for name, coeff, unit in zip(names, model_input.coeffs, units):
         model_input.add_single_param(path, name, coeff, unit)
 
 
-SUPPORTED_TABULAR_PARSERS = [f'tabulated {t}' for t in ['nk', 'n', 'k']]
+SUPPORTED_TABULAR_PARSERS = [f"tabulated {t}" for t in ["nk", "n", "k"]]
 
 
 FORMULA_PARSERS: Dict[str, Callable[[ModelInput], None]] = {
-    'formula 1': sellmeier_squared,
-    'formula 2': sellmeier,
-    'formula 3': polynomial,
-    'formula 4': sellmeier_polynomial,
-    'formula 5': cauchy,
-    'formula 6': gases,
-    'formula 7': herzberger,
-    'formula 8': retro,
-    'formula 9': exotic,
+    "formula 1": sellmeier_squared,
+    "formula 2": sellmeier,
+    "formula 3": polynomial,
+    "formula 4": sellmeier_polynomial,
+    "formula 5": cauchy,
+    "formula 6": gases,
+    "formula 7": herzberger,
+    "formula 8": retro,
+    "formula 9": exotic,
 }

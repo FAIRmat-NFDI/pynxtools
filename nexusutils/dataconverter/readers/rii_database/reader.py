@@ -28,13 +28,28 @@ from nexusutils.dataconverter.readers.utils import parse_json
 
 def read_yml_file(filename: str) -> Dict[Any, Any]:
     """Reads a yml file from disk"""
-    with open(filename, 'r', encoding='utf-8') as yml:
+    with open(filename, "r", encoding="utf-8") as yml:
         yml_file = yaml.load(
             yml,
             yaml.SafeLoader,
         )
 
     return yml_file
+
+
+def is_table_k_formula_n_disp(dispersion1: dict, dispersion2: dict):
+    """Checks if the two dispersions are one tabular k formula and one formula n"""
+    if "tabulated k" == dispersion1["type"] and dispersion2["type"].startswith(
+        "formula"
+    ):
+        return True
+
+    if "tabulated k" == dispersion2["type"] and dispersion1["type"].startswith(
+        "formula"
+    ):
+        return True
+
+    return False
 
 
 def read_metadata(yml_file: dict) -> Dict[str, Any]:
@@ -48,82 +63,103 @@ def read_metadata(yml_file: dict) -> Dict[str, Any]:
     return entries
 
 
-def read_dispersion(filename: str, identifier: str = 'dispersion_x') -> Dict[str, Any]:
+def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str, Any]:
     """Reads a rii dispersion from a yaml file"""
     entries: Dict[str, Any] = {}
 
     def add_table(path: str, nx_name: str, daf: pd.DataFrame):
-        disp_path = f'{path}/DISPERSION_TABLE[{nx_name}]'
+        disp_path = f"{path}/DISPERSION_TABLE[{nx_name}]"
 
-        if f'{path}/refractive_index' in entries:
-            entries[f'{disp_path}/refractive_index'] += daf['refractive_index'].values
+        if f"{path}/refractive_index" in entries:
+            entries[f"{disp_path}/refractive_index"] += daf["refractive_index"].values
             return
 
-        entries[f'{path}/model_name'] = 'Table'
-        entries[f'{disp_path}/model_name'] = 'Table'
-        entries[f'{disp_path}/convention'] = 'n + ik'
-        entries[f'{disp_path}/wavelength'] = daf.index.values
-        entries[f'{disp_path}/wavelength/@units'] = 'micrometer'
-        entries[f'{disp_path}/refractive_index'] = daf['refractive_index'].values
+        entries[f"{path}/model_name"] = "Table"
+        entries[f"{disp_path}/model_name"] = "Table"
+        entries[f"{disp_path}/convention"] = "n + ik"
+        entries[f"{disp_path}/wavelength"] = daf.index.values
+        entries[f"{disp_path}/wavelength/@units"] = "micrometer"
+        entries[f"{disp_path}/refractive_index"] = daf["refractive_index"].values
 
     def add_model_name(path: str, name: str):
-        entries[f'{path}/model_name'] = name
+        entries[f"{path}/model_name"] = name
 
-    def add_model_info(path: str, name: str, representation: str, formula: str):
-        disp_path = f'{path}/DISPERSION_FUNCTION[{name.lower()}]'
+    def add_model_info(
+        path: str,
+        name: str,
+        representation: str,
+        formula: str,
+        convert_to_n: bool = False,
+    ):
+        disp_path = f"{path}/DISPERSION_FUNCTION[{name.lower()}]"
 
-        entries[f'{disp_path}/model_name'] = name
-        entries[f'{disp_path}/formula'] = formula
-        entries[f'{disp_path}/representation'] = representation
-        entries[f'{disp_path}/convention'] = 'n + ik'
-        entries[f'{disp_path}/wavelength_identifier'] = 'lambda'
-        entries[f'{disp_path}/wavelength_identifier/@units'] = 'micrometer'
+        entries[f"{disp_path}/model_name"] = name
+        if representation == "eps" and convert_to_n:
+            representation = "n"
+            formula = f"sqrt({formula})"
+        entries[f"{disp_path}/formula"] = f"{representation} = sqrt({formula})"
+        entries[f"{disp_path}/representation"] = representation
+        entries[f"{disp_path}/convention"] = "n + ik"
+        entries[f"{disp_path}/wavelength_identifier"] = "lambda"
+        entries[f"{disp_path}/wavelength_identifier/@units"] = "micrometer"
 
         return disp_path
 
     def add_single_param(path: str, name: str, value: float, unit: str):
-        entries[f'{path}/DISPERSION_SINGLE_PARAMETER[{name}]/name'] = name
-        entries[f'{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value'] = value
-        entries[f'{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value/@units'] = unit
+        entries[f"{path}/DISPERSION_SINGLE_PARAMETER[{name}]/name"] = name
+        entries[f"{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value"] = value
+        entries[f"{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value/@units"] = unit
 
     def add_rep_param(path: str, name: str, values: List[float], units: List[str]):
         if not units:
-            raise ValueError('Units must be specified')
+            raise ValueError("Units must be specified")
 
-        entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/name'] = name
-        entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values'] = values
+        entries[f"{path}/DISPERSION_REPEATED_PARAMETER[{name}]/name"] = name
+        entries[f"{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values"] = values
         if len(units) > 1:
-            entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/parameter_units'] = units
-        entries[f'{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values/@units'] = units[0]
+            entries[
+                f"{path}/DISPERSION_REPEATED_PARAMETER[{name}]/parameter_units"
+            ] = units
+        entries[f"{path}/DISPERSION_REPEATED_PARAMETER[{name}]/values/@units"] = units[
+            0
+        ]
 
     yml_file = read_yml_file(filename)
-    dispersion_path = f'/ENTRY[entry]/{identifier}'
-
-    model_input = dispersion.ModelInput(
-        dispersion_path, [],
-        add_model_name, add_model_info, add_single_param, add_rep_param
-    )
-    table_input = dispersion.TableInput(dispersion_path, '', '', '', add_table)
-    for dispersion_relation in yml_file["DATA"]:
-        if dispersion_relation['type'] in dispersion.SUPPORTED_TABULAR_PARSERS:
-            table_input.table_type = dispersion_relation['type']
-            table_input.data = dispersion_relation['data']
-            table_input.nx_name = 'dispersion_table'
-            dispersion.tabulated(table_input)
-            continue
-
-        if dispersion_relation['type'] in dispersion.FORMULA_PARSERS:
-            coeffs = list(map(float, dispersion_relation['coefficients'].split()))
-            model_input.coeffs = coeffs
-            dispersion.FORMULA_PARSERS[dispersion_relation['type']](model_input)
-            continue
-
-        raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
+    dispersion_path = f"/ENTRY[entry]/{identifier}"
 
     # Only read metadata for the ordinary axis
     # as this should be the same for all axes
-    if identifier == 'dispersion_x':
+    if identifier == "dispersion_x":
         entries.update(read_metadata(yml_file))
+
+    model_input = dispersion.ModelInput(
+        dispersion_path,
+        [],
+        False,
+        add_model_name,
+        add_model_info,
+        add_single_param,
+        add_rep_param,
+    )
+    table_input = dispersion.TableInput(dispersion_path, "", "", "", add_table)
+    if len(yml_file["DATA"]) == 2 and is_table_k_formula_n_disp(**yml_file["DATA"]):
+        model_input.convert_to_n = True
+
+    for dispersion_relation in yml_file["DATA"]:
+        if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
+            table_input.table_type = dispersion_relation["type"]
+            table_input.data = dispersion_relation["data"]
+            table_input.nx_name = "dispersion_table"
+            dispersion.tabulated(table_input)
+            continue
+
+        if dispersion_relation["type"] in dispersion.FORMULA_PARSERS:
+            coeffs = list(map(float, dispersion_relation["coefficients"].split()))
+            model_input.coeffs = coeffs
+            dispersion.FORMULA_PARSERS[dispersion_relation["type"]](model_input)
+            continue
+
+        raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
 
     return entries
 
@@ -133,7 +169,7 @@ def fill_dispersion_in(template: Dict[str, Any]):
     Replaces dispersion_x and dispersion_y keys with filenames as their value
     with the parsed dispersion values.
     """
-    keys = [f'dispersion_{axis}' for axis in ['y', 'z']]
+    keys = [f"dispersion_{axis}" for axis in ["y", "z"]]
 
     for key in keys:
         if key in template:
@@ -176,9 +212,9 @@ def appdef_defaults() -> Dict[str, Any]:
     definition. Like appdef version and name"""
     entries: Dict[str, Any] = {}
 
-    entries['/ENTRY[entry]/definition/@version'] = '0.0.1'
-    entries['/ENTRY[entry]/definition/@url'] = ''
-    entries['/ENTRY[entry]/definition'] = 'NXdispersive_material'
+    entries["/ENTRY[entry]/definition/@version"] = "0.0.1"
+    entries["/ENTRY[entry]/definition/@url"] = ""
+    entries["/ENTRY[entry]/definition"] = "NXdispersive_material"
 
     return entries
 
@@ -195,7 +231,7 @@ class RiiReader(YamlJsonReader):
         ".yaml": read_dispersion,
         ".json": parse_json_w_fileinfo,
         "default": lambda _: appdef_defaults(),
-        "objects": handle_objects
+        "objects": handle_objects,
     }
 
 
