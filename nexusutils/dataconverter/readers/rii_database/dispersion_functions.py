@@ -23,7 +23,7 @@ from numpy import sqrt
 import pandas as pd
 
 ModelNameCallback = Callable[[str, str], None]
-ModelInfoCallback = Callable[[str, str, str, str], str]
+ModelInfoCallback = Callable[["DispersionInfo", "ModelInput"], str]
 SingleParamCallback = Callable[[str, str, float, str], None]
 RepeatedParamCallback = Callable[[str, str, List[float], List[str]], None]
 TableCallback = Callable[[str, str, pd.DataFrame], None]
@@ -40,6 +40,15 @@ class ModelInput:
     add_model_info: ModelInfoCallback
     add_single_param: SingleParamCallback
     add_rep_param: RepeatedParamCallback
+
+
+@dataclass
+class DispersionInfo:
+    """Holds information about a dispersion"""
+
+    name: str
+    representation: str
+    formula: str
 
 
 @dataclass
@@ -96,11 +105,12 @@ def sellmeier(model_input: ModelInput):
     """
     model_input.add_model_name(model_input.dispersion_path, "Sellmeier")
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Sellmeier",
-        "eps",
-        "eps_inf + 1 + sum[A * lambda ** 2 / (lambda ** 2 - B ** 2)]",
-        model_input.convert_to_n,
+        DispersionInfo(
+            "Sellmeier",
+            "eps",
+            "eps_inf + 1 + sum[A * lambda ** 2 / (lambda ** 2 - B ** 2)]",
+        ),
+        model_input,
     )
 
     model_input.add_single_param(path, "eps_inf", model_input.coeffs[0], "")
@@ -116,11 +126,8 @@ def polynomial(model_input: ModelInput):
     """
     model_input.add_model_name(model_input.dispersion_path, "Polynomial")
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Polynomial",
-        "eps",
-        "eps_inf + sum[f * lambda ** e]",
-        model_input.convert_to_n,
+        DispersionInfo("Polynomial", "eps", "eps_inf + sum[f * lambda ** e]"),
+        model_input,
     )
 
     model_input.add_single_param(path, "eps_inf", model_input.coeffs[0], "")
@@ -149,11 +156,12 @@ def sellmeier_polynomial(model_input: ModelInput):
         a_units.append("" if exp1 == 0 else "1/micrometer^2")
 
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Sellmeier",
-        "eps",
-        "eps_inf + sum[A * lambda ** e1 / (lambda ** 2 - B**e2)]",
-        model_input.convert_to_n,
+        DispersionInfo(
+            "Sellmeier",
+            "eps",
+            "eps_inf + sum[A * lambda ** e1 / (lambda ** 2 - B**e2)]",
+        ),
+        model_input,
     )
 
     model_input.add_single_param(path, "eps_inf", model_input.coeffs[0], "")
@@ -176,11 +184,8 @@ def sellmeier_polynomial(model_input: ModelInput):
         "Polynomial + Sellmeier (from RefractiveIndex.Info)",
     )
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Polynomial",
-        "eps",
-        "sum[f * lambda ** e]",
-        model_input.convert_to_n,
+        DispersionInfo("Polynomial", "eps", "sum[f * lambda ** e]"),
+        model_input,
     )
 
     model_input.add_rep_param(
@@ -200,7 +205,7 @@ def cauchy(model_input: ModelInput):
     """
     model_input.add_model_name(model_input.dispersion_path, "Cauchy")
     path = model_input.add_model_info(
-        model_input.dispersion_path, "Cauchy", "n", "n_inf + sum[f * lambda ** e]"
+        DispersionInfo("Cauchy", "n", "n_inf + sum[f * lambda ** e]"), model_input
     )
 
     model_input.add_single_param(path, "n_inf", model_input.coeffs[0], "")
@@ -221,10 +226,8 @@ def gases(model_input: ModelInput):
     """
     model_input.add_model_name(model_input.dispersion_path, "Gases")
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Gases",
-        "n",
-        "1 + n_inf + sum[A / (B - lambda ** (-2))]",
+        DispersionInfo("Gases", "n", "1 + n_inf + sum[A / (B - lambda ** (-2))]"),
+        model_input,
     )
 
     model_input.add_single_param(path, "n_inf", model_input.coeffs[0], "")
@@ -240,12 +243,14 @@ def herzberger(model_input: ModelInput):
     """
     model_input.add_model_name(model_input.dispersion_path, "Herzberger")
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Herzberger",
-        "n",
-        "n_inf + C2 / (lambda ** 2 - B1) + "
-        "C3 * (lambda ** 2 - B2) ** (-2) + "
-        "sum[f * lambda ** e]",
+        DispersionInfo(
+            "Herzberger",
+            "n",
+            "n_inf + C2 / (lambda ** 2 - B1) + "
+            "C3 * (lambda ** 2 - B2) ** (-2) + "
+            "sum[f * lambda ** e]",
+        ),
+        model_input,
     )
 
     model_input.add_single_param(path, "n_inf", model_input.coeffs[0], "")
@@ -267,14 +272,15 @@ def retro(model_input: ModelInput):
     """
     model_input.add_model_name(model_input.dispersion_path, "Retro")
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Retro",
-        "eps",
-        "(lambda ** 2 * (2 * A + 2 * B + 2 * D * lambda ** 2 + 1) "
-        "- C * (2 * A + 2 * D * lambda ** 2 + 1)) "
-        "/ (C * (A + D * lambda ** 2 - 1) - "
-        "lambda ** 2 * (A + B + D * lambda ** 2 - 1))",
-        model_input.convert_to_n,
+        DispersionInfo(
+            "Retro",
+            "eps",
+            "(lambda ** 2 * (2 * A + 2 * B + 2 * D * lambda ** 2 + 1) "
+            "- C * (2 * A + 2 * D * lambda ** 2 + 1)) "
+            "/ (C * (A + D * lambda ** 2 - 1) - "
+            "lambda ** 2 * (A + B + D * lambda ** 2 - 1))",
+        ),
+        model_input,
     )
 
     names = ["eps_inf"] + [f"C{i}" for i in range(1, 4)]
@@ -292,12 +298,13 @@ def exotic(model_input: ModelInput):
     """
     model_input.add_model_name(model_input.dispersion_path, "Exotic")
     path = model_input.add_model_info(
-        model_input.dispersion_path,
-        "Exotic",
-        "eps",
-        "eps_inf + C2 / (lambda ** 2 - C3) + "
-        "C4 * (lambda - C5) / ((lambda - C5) ** 2 + C6)",
-        model_input.convert_to_n,
+        DispersionInfo(
+            "Exotic",
+            "eps",
+            "eps_inf + C2 / (lambda ** 2 - C3) + "
+            "C4 * (lambda - C5) / ((lambda - C5) ** 2 + C6)",
+        ),
+        model_input,
     )
 
     names = ["eps_inf"] + [f"C{i}" for i in range(1, 6)]

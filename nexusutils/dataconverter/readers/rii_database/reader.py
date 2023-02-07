@@ -63,6 +63,33 @@ def read_metadata(yml_file: dict) -> Dict[str, Any]:
     return entries
 
 
+def write_dispersion(
+    dispersion_relation: Dict[str, Any],
+    table_input: dispersion.TableInput,
+    model_input: dispersion.ModelInput,
+):
+    """Writes a given dispersion relation into the entries dict"""
+    if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
+        table_input.table_type = dispersion_relation["type"]
+        table_input.data = dispersion_relation["data"]
+        table_input.nx_name = "dispersion_table"
+        dispersion.tabulated(table_input)
+        return
+
+    if dispersion_relation["type"] in dispersion.FORMULA_PARSERS:
+        coeffs = list(map(float, dispersion_relation["coefficients"].split()))
+        model_input.coeffs = coeffs
+        dispersion.FORMULA_PARSERS[dispersion_relation["type"]](model_input)
+        return
+
+    raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
+
+
+def write_nx_data(entries: Dict[str, Any]):
+    """Calculates and adds dispersions and writes it to a NXdata group."""
+    return entries
+
+
 def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str, Any]:
     """Reads a rii dispersion from a yaml file"""
     entries: Dict[str, Any] = {}
@@ -85,19 +112,21 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
         entries[f"{path}/model_name"] = name
 
     def add_model_info(
-        path: str,
-        name: str,
-        representation: str,
-        formula: str,
-        convert_to_n: bool = False,
+        dispersion_info: dispersion.DispersionInfo,
+        model_input: dispersion.ModelInput,
     ):
-        disp_path = f"{path}/DISPERSION_FUNCTION[{name.lower()}]"
+        disp_path = (
+            f"{model_input.dispersion_path}/"
+            f"DISPERSION_FUNCTION[{dispersion_info.name.lower()}]"
+        )
 
-        entries[f"{disp_path}/model_name"] = name
-        if representation == "eps" and convert_to_n:
+        entries[f"{disp_path}/model_name"] = dispersion_info.name
+        representation = dispersion_info.representation
+        formula = dispersion_info.formula
+        if dispersion_info.representation == "eps" and model_input.convert_to_n:
             representation = "n"
-            formula = f"sqrt({formula})"
-        entries[f"{disp_path}/formula"] = f"{representation} = sqrt({formula})"
+            formula = f"sqrt({dispersion_info.formula})"
+        entries[f"{disp_path}/formula"] = f"{representation} = {formula}"
         entries[f"{disp_path}/representation"] = representation
         entries[f"{disp_path}/convention"] = "n + ik"
         entries[f"{disp_path}/wavelength_identifier"] = "lambda"
@@ -142,24 +171,13 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
         add_rep_param,
     )
     table_input = dispersion.TableInput(dispersion_path, "", "", "", add_table)
-    if len(yml_file["DATA"]) == 2 and is_table_k_formula_n_disp(**yml_file["DATA"]):
+    if len(yml_file["DATA"]) == 2 and is_table_k_formula_n_disp(*yml_file["DATA"]):
         model_input.convert_to_n = True
 
     for dispersion_relation in yml_file["DATA"]:
-        if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
-            table_input.table_type = dispersion_relation["type"]
-            table_input.data = dispersion_relation["data"]
-            table_input.nx_name = "dispersion_table"
-            dispersion.tabulated(table_input)
-            continue
+        write_dispersion(dispersion_relation, table_input, model_input)
 
-        if dispersion_relation["type"] in dispersion.FORMULA_PARSERS:
-            coeffs = list(map(float, dispersion_relation["coefficients"].split()))
-            model_input.coeffs = coeffs
-            dispersion.FORMULA_PARSERS[dispersion_relation["type"]](model_input)
-            continue
-
-        raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
+    write_nx_data(entries)
 
     return entries
 
