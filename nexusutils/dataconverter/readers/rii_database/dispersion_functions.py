@@ -72,18 +72,20 @@ def tabulated(table_input: TableInput):
         "tabulated k": ["Wavelength", "k"],
     }
 
-    daf = pd.read_table(
+    refractive_index = pd.read_table(
         StringIO(table_input.data), sep="\\s+", names=index_from[table_input.table_type]
     )
-    daf.set_index("Wavelength", inplace=True)
+    refractive_index.set_index("Wavelength", inplace=True)
 
-    daf["refractive_index"] = 0 + 0j
-    if "n" in daf:
-        daf.loc[:, "refractive_index"] += daf["n"]
-    if "k" in daf:
-        daf.loc[:, "refractive_index"] += 1j * daf["k"]
+    refractive_index["refractive_index"] = 0 + 0j
+    if "n" in refractive_index:
+        refractive_index.loc[:, "refractive_index"] += refractive_index["n"]
+    if "k" in refractive_index:
+        refractive_index.loc[:, "refractive_index"] += 1j * refractive_index["k"]
 
-    table_input.add_table(table_input.dispersion_path, table_input.nx_name, daf)
+    table_input.add_table(
+        table_input.dispersion_path, table_input.nx_name, refractive_index
+    )
 
 
 def sellmeier_squared(model_input: ModelInput):
@@ -150,10 +152,10 @@ def sellmeier_polynomial(model_input: ModelInput):
 
     a_units = []
     # Check for valid parameters
-    for exp1 in model_input.coeffs[2:7:4]:
-        if exp1 not in [0, 2]:
-            raise ValueError(f"e1 may only be 0 or 1 but is {exp1}")
-        a_units.append("" if exp1 == 0 else "1/micrometer^2")
+    for exponent1 in model_input.coeffs[2:7:4]:
+        if exponent1 not in [0, 2]:
+            raise ValueError(f"e1 may only be 0 or 1 but is {exponent1}")
+        a_units.append("" if exponent1 == 0 else "1/micrometer^2")
 
     path = model_input.add_model_info(
         DispersionInfo(
