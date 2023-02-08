@@ -17,7 +17,7 @@
 #
 """Convert refractiveindex.info yaml files to nexus"""
 import re
-from typing import List, Tuple, Any, Dict
+from typing import List, Set, Tuple, Any, Dict
 import logging
 import numpy as np
 import pandas as pd
@@ -74,15 +74,10 @@ def write_dispersion(
     model_input: dispersion.ModelInput,
 ):
     """Writes a given dispersion relation into the entries dict"""
-    type_to_nx_name = {
-        "tabulated k": "dispersion_table_k",
-        "tabulated n": "dispersion_table_n",
-        "tabulated nk": "dispersion_table_nk",
-    }
     if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
         table_input.table_type = dispersion_relation["type"]
         table_input.data = dispersion_relation["data"]
-        table_input.nx_name = type_to_nx_name[table_input.table_type]
+        table_input.nx_name = "dispersion_table"
         dispersion.tabulated(table_input)
         return
 
@@ -98,8 +93,8 @@ def write_dispersion(
 def write_nx_data(
     entries: Dict[str, Any],
     dispersion_path: str,
-    single_params: Dict[str, float],
-    repeated_params: Dict[str, np.ndarray],
+    single_params: Dict[str, Dict[str, float]],
+    repeated_params: Dict[str, Dict[str, np.ndarray]],
 ):
     """Calculates and adds dispersions and writes it to a NXdata group."""
 
@@ -116,13 +111,16 @@ def write_nx_data(
             f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/wavelength"
         ]
         refractive_index = entries[
-            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refactive_index"
+            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refractive_index"
         ]
 
         return wavelength, refractive_index
 
     def get_index(wavelength: np.ndarray, func_dispersion: str):
-        x_axis_name = f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]/wavelength_identifier"
+        x_axis_name = (
+            f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
+            "/wavelength_identifier"
+        )
         dfpath = f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
         formula = entries[f"{dfpath}/formula"]
 
@@ -130,30 +128,65 @@ def write_nx_data(
             x_axis_name, wavelength, single_params[dfpath], repeated_params[dfpath]
         ).parse(formula)
 
-    # 1. If there is only a tabular dispersion: Link it into NXdata
-    # 2. If there are multiple tabular dispersions: Add them and write this into NXdata
-    # 3. If there is only a formula: Calculate formula in a default range 400 nm to 1000 nm
-    # 4. If there is a tabular-formula combination:
-    #    Take the wavelength from tabular and calculate n from it,
-    #    write the resulting data into the NXdata
+    def add_func_dispersions(wavelength: np.ndarray, func_dispersions: Set[str]):
+        disp_type, refractive_index = get_index(wavelength, func_dispersions.pop())
+        for func_dispersion in func_dispersions:
+            disp_type2, refractive_index2 = get_index(wavelength, func_dispersion)
+            if disp_type2 != disp_type:
+                raise ValueError("Incompatible dispersions")
+            refractive_index += refractive_index2
+
+        return disp_type, refractive_index
+
+    def write_nx_data_entry(wavelength: np.ndarray, refractive_index: np.ndarray):
+        entries[f"{dispersion_path}/plot/@axes"] = "wavelength"
+        entries[f"{dispersion_path}/plot/@signal"] = "refractive_index"
+        entries[f"{dispersion_path}/plot/@auxiliary_signals"] = "extinction"
+        entries[f"{dispersion_path}/plot/wavelength"] = wavelength
+        entries[f"{dispersion_path}/plot/wavelength/@units"] = "micrometer"
+        entries[f"{dispersion_path}/plot/refractive_index"] = refractive_index.real
+        entries[f"{dispersion_path}/plot/extinction"] = refractive_index.imag
+
+    def add_func_dispersions_entries():
+        wavelength = np.linspace(0.4, 1, 500)
+        disp_type, refractive_index = add_func_dispersions(wavelength, func_dispersions)
+
+        if disp_type == "eps":
+            refractive_index = np.sqrt(refractive_index)
+
+        write_nx_data_entry(wavelength, refractive_index)
+
+    def add_table_func_dispersions_entries():
+        wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
+        disp_type, refractive_index_func = add_func_dispersions(
+            wavelength, func_dispersions
+        )
+
+        if disp_type == "eps":
+            raise ValueError(
+                "Incompatible dispersions detected: Tabular and eps-based function"
+            )
+
+        write_nx_data_entry(wavelength, refractive_index + refractive_index_func)
+
+    def add_table_dispersions_entries():
+        wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
+        for table_dispersion in table_dispersions:
+            refractive_index += entries[
+                f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refractive_index"
+            ]
+
+        write_nx_data_entry(wavelength, refractive_index)
+
     table_dispersions = get_dispersion_names("DISPERSION_TABLE")
     func_dispersions = get_dispersion_names("DISPERSION_FUNCTION")
 
     if len(table_dispersions) == 1 and func_dispersions:
-        wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
+        add_table_func_dispersions_entries()
         return entries
 
     if len(table_dispersions) == 0 and func_dispersions:
-        wavelength = np.linspace(0.4, 1, 500)
-        representation, index = get_index(wavelength, func_dispersions.pop())
-        for func_dispersion in func_dispersions:
-            repr2, index2 = get_index(wavelength, func_dispersion)
-            if repr2 != representation:
-                raise ValueError("Incompatible dispersions")
-            index += index2
-
-        if representation == "eps":
-            index = np.sqrt(index)
+        add_func_dispersions_entries()
         return entries
 
     if func_dispersions:
@@ -162,20 +195,7 @@ def write_nx_data(
     if not table_dispersions:
         raise ValueError("No valid dispersions found.")
 
-    wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
-    for table_dispersion in table_dispersions:
-        refractive_index += entries[
-            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refractive_index"
-        ]
-
-    entries[f"{dispersion_path}/plot/@axes"] = "wavelength"
-    entries[f"{dispersion_path}/plot/@signal"] = "refractive_index"
-    entries[f"{dispersion_path}/plot/@auxiliary_signals"] = "extinction"
-    entries[f"{dispersion_path}/plot/wavelength"] = wavelength
-    entries[f"{dispersion_path}/plot/wavelength/@units"] = "micrometer"
-    entries[f"{dispersion_path}/plot/refractive_index"] = refractive_index.real
-    entries[f"{dispersion_path}/plot/extinction"] = refractive_index.imag
-
+    add_table_dispersions_entries()
     return entries
 
 
@@ -183,14 +203,16 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
     """Reads a rii dispersion from a yaml file"""
     entries: Dict[str, Any] = {}
     single_params: Dict[str, Dict[str, float]] = {}
-    repeated_params: Dict[str, Dict[str, np.ndarray]] = []
+    repeated_params: Dict[str, Dict[str, np.ndarray]] = {}
 
     def add_table(path: str, nx_name: str, daf: pd.DataFrame):
         disp_path = f"{path}/DISPERSION_TABLE[{nx_name}]"
-        while f"{disp_path}/model_name" in entries:
-            disp_path = f"{path}/DISPERSION_TABLE[{nx_name}]"
 
-        if f"{path}/refractive_index" in entries:
+        if f"{disp_path}/refractive_index" in entries:
+            if not np.array_equal(entries[f"{disp_path}/wavelength"], daf.index.values):
+                raise ValueError(
+                    "Trying to add tabular dispersions with different wavelength ranges"
+                )
             entries[f"{disp_path}/refractive_index"] += daf["refractive_index"].values
             return
 
