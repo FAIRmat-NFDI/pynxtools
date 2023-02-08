@@ -69,31 +69,62 @@ def read_metadata(yml_file: dict) -> Dict[str, Any]:
     return entries
 
 
-def write_dispersion(
-    dispersion_relation: Dict[str, Any],
+def write_dispersions(
+    yml_file: dict,
     table_input: dispersion.TableInput,
     model_input: dispersion.ModelInput,
 ):
-    """Writes a given dispersion relation into the entries dict"""
-    type_to_nx_name = {
-        "tabulated k": "dispersion_table_k",
-        "tabulated n": "dispersion_table_n",
-        "tabulated nk": "dispersion_table_nk",
-    }
-    if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
-        table_input.table_type = dispersion_relation["type"]
-        table_input.data = dispersion_relation["data"]
-        table_input.nx_name = type_to_nx_name[dispersion_relation["type"]]
-        dispersion.tabulated(table_input)
-        return
+    """Writes all dispersions from the dict into the entries dict"""
 
-    if dispersion_relation["type"] in dispersion.FORMULA_PARSERS:
-        coeffs = list(map(float, dispersion_relation["coefficients"].split()))
-        model_input.coeffs = coeffs
-        dispersion.FORMULA_PARSERS[dispersion_relation["type"]](model_input)
-        return
+    def write_dispersion(
+        dispersion_relation: Dict[str, Any],
+        table_input: dispersion.TableInput,
+        model_input: dispersion.ModelInput,
+    ):
+        """Writes a given dispersion relation into the entries dict"""
 
-    raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
+        type_to_nx_name = {
+            "tabulated k": "dispersion_table_k",
+            "tabulated n": "dispersion_table_n",
+            "tabulated nk": "dispersion_table_nk",
+        }
+        if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
+            table_input.table_type = dispersion_relation["type"]
+            table_input.data = dispersion_relation["data"]
+            table_input.nx_name = type_to_nx_name[dispersion_relation["type"]]
+            dispersion.tabulated(table_input)
+            return
+
+        if dispersion_relation["type"] in dispersion.FORMULA_PARSERS:
+            coeffs = list(map(float, dispersion_relation["coefficients"].split()))
+            model_input.coeffs = coeffs
+            dispersion.FORMULA_PARSERS[dispersion_relation["type"]](model_input)
+            return
+
+        raise NotImplementedError(f'No parser for type {dispersion_relation["type"]}')
+
+    if len(yml_file["DATA"]) == 2 and is_table_k_formula_n_disp(*yml_file["DATA"]):
+        model_input.convert_to_n = True
+
+    for dispersion_relation in yml_file["DATA"]:
+        write_dispersion(dispersion_relation, table_input, model_input)
+
+
+def write_nx_data_to(
+    entries: Dict[str, Any],
+    path: str,
+    wavelength: np.ndarray,
+    refractive_index: np.ndarray,
+):
+    """Writes an NXdata group"""
+    entries[f"{path}/@default"] = "plot"
+    entries[f"{path}/plot/@axes"] = "wavelength"
+    entries[f"{path}/plot/@signal"] = "refractive_index"
+    entries[f"{path}/plot/@auxiliary_signals"] = "extinction"
+    entries[f"{path}/plot/wavelength"] = wavelength
+    entries[f"{path}/plot/wavelength/@units"] = "micrometer"
+    entries[f"{path}/plot/refractive_index"] = refractive_index.real
+    entries[f"{path}/plot/extinction"] = refractive_index.imag
 
 
 def write_nx_data(
@@ -149,16 +180,6 @@ def write_nx_data(
 
         return disp_type, refractive_index
 
-    def write_nx_data_entry(wavelength: np.ndarray, refractive_index: np.ndarray):
-        entries[f"{dispersion_path}/@default"] = "plot"
-        entries[f"{dispersion_path}/plot/@axes"] = "wavelength"
-        entries[f"{dispersion_path}/plot/@signal"] = "refractive_index"
-        entries[f"{dispersion_path}/plot/@auxiliary_signals"] = "extinction"
-        entries[f"{dispersion_path}/plot/wavelength"] = wavelength
-        entries[f"{dispersion_path}/plot/wavelength/@units"] = "micrometer"
-        entries[f"{dispersion_path}/plot/refractive_index"] = refractive_index.real
-        entries[f"{dispersion_path}/plot/extinction"] = refractive_index.imag
-
     def add_func_dispersions_entries():
         wavelength = np.linspace(0.4, 1, 500)
         disp_type, refractive_index = add_func_dispersions(wavelength, func_dispersions)
@@ -166,7 +187,7 @@ def write_nx_data(
         if disp_type == "eps":
             refractive_index = np.sqrt(refractive_index)
 
-        write_nx_data_entry(wavelength, refractive_index)
+        write_nx_data_to(entries, dispersion_path, wavelength, refractive_index)
 
     def add_table_func_dispersions_entries():
         wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
@@ -179,7 +200,12 @@ def write_nx_data(
                 "Incompatible dispersions detected: Tabular and eps-based function"
             )
 
-        write_nx_data_entry(wavelength, refractive_index + refractive_index_func)
+        write_nx_data_to(
+            entries,
+            dispersion_path,
+            wavelength,
+            refractive_index + refractive_index_func,
+        )
 
     def add_table_dispersions_entries():
         wlen, rindex = get_wavelength_index(table_dispersions.pop())
@@ -197,7 +223,7 @@ def write_nx_data(
         for interp in interpolations:
             refractive_index += interp(wavelength)
 
-        write_nx_data_entry(wavelength, refractive_index)
+        write_nx_data_to(entries, dispersion_path, wavelength, refractive_index)
 
     table_dispersions = get_dispersion_names("DISPERSION_TABLE")
     func_dispersions = get_dispersion_names("DISPERSION_FUNCTION")
@@ -303,21 +329,19 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
     if identifier == "dispersion_x":
         entries.update(read_metadata(yml_file))
 
-    model_input = dispersion.ModelInput(
-        dispersion_path,
-        [],
-        False,
-        add_model_name,
-        add_model_info,
-        add_single_param,
-        add_rep_param,
+    write_dispersions(
+        yml_file,
+        dispersion.TableInput(dispersion_path, "", "", "", add_table),
+        dispersion.ModelInput(
+            dispersion_path,
+            [],
+            False,
+            add_model_name,
+            add_model_info,
+            add_single_param,
+            add_rep_param,
+        ),
     )
-    table_input = dispersion.TableInput(dispersion_path, "", "", "", add_table)
-    if len(yml_file["DATA"]) == 2 and is_table_k_formula_n_disp(*yml_file["DATA"]):
-        model_input.convert_to_n = True
-
-    for dispersion_relation in yml_file["DATA"]:
-        write_dispersion(dispersion_relation, table_input, model_input)
 
     write_nx_data(entries, dispersion_path, single_params, repeated_params)
 
