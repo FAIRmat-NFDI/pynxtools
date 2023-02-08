@@ -253,13 +253,15 @@ def herzberger(model_input: ModelInput):
         model_input,
     )
 
+    f_coeffs = model_input.coeffs[3:6] + [0.0] * (3 - len(model_input.coeffs[3:6]))
+
     model_input.add_single_param(path, "n_inf", model_input.coeffs[0], "")
     model_input.add_single_param(path, "C2", model_input.coeffs[1], "micrometer^2")
     model_input.add_single_param(path, "C3", model_input.coeffs[2], "micrometer^4")
     model_input.add_single_param(path, "B1", 0.028, "micrometer^2")
     model_input.add_single_param(path, "B2", 0.028, "micrometer^2")
     model_input.add_rep_param(
-        path, "f", model_input.coeffs[3:6], [f"1/micrometer^{e}" for e in [2, 4, 6]]
+        path, "f", f_coeffs, [f"1/micrometer^{e}" for e in [2, 4, 6]]
     )
     model_input.add_rep_param(path, "e", [2, 4, 6], [""])
 
@@ -283,8 +285,10 @@ def retro(model_input: ModelInput):
         model_input,
     )
 
-    names = ["eps_inf"] + [f"C{i}" for i in range(1, 4)]
-    units = ["", "", "micrometer^2", "micrometer^(-2)"]
+    names = ["eps_inf", "A", "B", "C", "D"]
+    units = ["", "", "", "micrometer^2", "micrometer^(-2)"]
+
+    model_input.coeffs += [0.0] * (len(names) - len(model_input.coeffs))
 
     for name, coeff, unit in zip(names, model_input.coeffs, units):
         model_input.add_single_param(path, name, coeff, unit)
@@ -307,8 +311,9 @@ def exotic(model_input: ModelInput):
         model_input,
     )
 
-    names = ["eps_inf"] + [f"C{i}" for i in range(1, 6)]
+    names = ["eps_inf"] + [f"C{i}" for i in range(2, 7)]
     units = ["", "micrometer^2", "micrometer^2", "", "micrometer", "micrometer^2"]
+    model_input.coeffs += [0.0] * (len(names) - len(model_input.coeffs))
 
     for name, coeff, unit in zip(names, model_input.coeffs, units):
         model_input.add_single_param(path, name, coeff, unit)

@@ -21,6 +21,7 @@ from typing import List, Set, Tuple, Any, Dict
 import logging
 import numpy as np
 import pandas as pd
+from scipy.interpolate import interp1d
 import yaml
 
 from nexusutils.dataconverter.readers.json_yml.reader import YamlJsonReader
@@ -74,10 +75,15 @@ def write_dispersion(
     model_input: dispersion.ModelInput,
 ):
     """Writes a given dispersion relation into the entries dict"""
+    type_to_nx_name = {
+        "tabulated k": "dispersion_table_k",
+        "tabulated n": "dispersion_table_n",
+        "tabulated nk": "dispersion_table_nk",
+    }
     if dispersion_relation["type"] in dispersion.SUPPORTED_TABULAR_PARSERS:
         table_input.table_type = dispersion_relation["type"]
         table_input.data = dispersion_relation["data"]
-        table_input.nx_name = "dispersion_table"
+        table_input.nx_name = type_to_nx_name[dispersion_relation["type"]]
         dispersion.tabulated(table_input)
         return
 
@@ -102,7 +108,7 @@ def write_nx_data(
         names = set()
         for entry in entries:
             if entry.startswith(f"{dispersion_path}/{group_name}"):
-                names.add(re.search(rf"{group_name}\[(.*)\]", entry).group(1))
+                names.add(re.search(rf"{group_name}\[([^\]]+)\]", entry).group(1))
 
         return names
 
@@ -117,15 +123,20 @@ def write_nx_data(
         return wavelength, refractive_index
 
     def get_index(wavelength: np.ndarray, func_dispersion: str):
-        x_axis_name = (
-            f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
-            "/wavelength_identifier"
-        )
+        x_axis_name = entries[
+            (
+                f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
+                "/wavelength_identifier"
+            )
+        ]
         dfpath = f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
         formula = entries[f"{dfpath}/formula"]
 
         return transformation_formula_parser(
-            x_axis_name, wavelength, single_params[dfpath], repeated_params[dfpath]
+            x_axis_name,
+            wavelength,
+            single_params.get(dfpath, {}),
+            repeated_params.get(dfpath, {}),
         ).parse(formula)
 
     def add_func_dispersions(wavelength: np.ndarray, func_dispersions: Set[str]):
@@ -139,6 +150,7 @@ def write_nx_data(
         return disp_type, refractive_index
 
     def write_nx_data_entry(wavelength: np.ndarray, refractive_index: np.ndarray):
+        entries[f"{dispersion_path}/@default"] = "plot"
         entries[f"{dispersion_path}/plot/@axes"] = "wavelength"
         entries[f"{dispersion_path}/plot/@signal"] = "refractive_index"
         entries[f"{dispersion_path}/plot/@auxiliary_signals"] = "extinction"
@@ -170,11 +182,20 @@ def write_nx_data(
         write_nx_data_entry(wavelength, refractive_index + refractive_index_func)
 
     def add_table_dispersions_entries():
-        wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
+        wlen, rindex = get_wavelength_index(table_dispersions.pop())
+        min_wlen = min(wlen)
+        max_wlen = max(wlen)
+        interpolations = [interp1d(wlen, rindex)]
         for table_dispersion in table_dispersions:
-            refractive_index += entries[
-                f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refractive_index"
-            ]
+            wlen, rindex = get_wavelength_index(table_dispersion)
+            min_wlen = min(wlen) if min(wlen) > min_wlen else min_wlen
+            max_wlen = max(wlen) if max(wlen) < max_wlen else max_wlen
+            interpolations.append(interp1d(wlen, rindex))
+
+        wavelength = np.linspace(min_wlen, max_wlen, 500)
+        refractive_index = np.zeros(wavelength.shape, np.complex128)
+        for interp in interpolations:
+            refractive_index += interp(wavelength)
 
         write_nx_data_entry(wavelength, refractive_index)
 
@@ -254,7 +275,8 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
         entries[f"{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value"] = value
         entries[f"{path}/DISPERSION_SINGLE_PARAMETER[{name}]/value/@units"] = unit
 
-        single_params[path][name] = value
+        single_param_path = single_params.setdefault(path, {})
+        single_param_path[name] = value
 
     def add_rep_param(path: str, name: str, values: List[float], units: List[str]):
         if not units:
@@ -270,7 +292,8 @@ def read_dispersion(filename: str, identifier: str = "dispersion_x") -> Dict[str
             0
         ]
 
-        repeated_params[path][name] = np.array(values)
+        repeated_param_path = repeated_params.setdefault(path, {})
+        repeated_param_path[name] = np.array(values)
 
     yml_file = read_yml_file(filename)
     dispersion_path = f"/ENTRY[entry]/{identifier}"
@@ -352,6 +375,9 @@ def appdef_defaults() -> Dict[str, Any]:
     entries["/ENTRY[entry]/definition/@version"] = "0.0.1"
     entries["/ENTRY[entry]/definition/@url"] = ""
     entries["/ENTRY[entry]/definition"] = "NXdispersive_material"
+
+    entries["/@default"] = "entry"
+    entries["/ENTRY[entry]/@default"] = "dispersion_x"
 
     return entries
 
