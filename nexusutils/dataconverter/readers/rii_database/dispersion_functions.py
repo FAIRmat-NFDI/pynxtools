@@ -178,7 +178,7 @@ def sellmeier_polynomial(model_input: ModelInput):
     model_input.add_rep_param(path, "e2", model_input.coeffs[4:9:4], [""])
 
     # If there are just 9 parameters don't append polynomial part
-    if not model_input.coeffs[9::]:
+    if len(model_input.coeffs) < 9:
         return
 
     model_input.add_model_name(

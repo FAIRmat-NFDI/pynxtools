@@ -219,7 +219,7 @@ def write_nx_data(
             interpolations.append(interp1d(wlen, rindex))
 
         wavelength = np.linspace(min_wlen, max_wlen, 500)
-        refractive_index = np.zeros(wavelength.shape, np.complex128)
+        refractive_index = np.zeros(wavelength.shape, np.cdouble)
         for interp in interpolations:
             refractive_index += interp(wavelength)
 
