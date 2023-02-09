@@ -32,7 +32,9 @@ dependencies = [
     "hdfdict @ git+https://github.com/shabihsherjeel/hdfdict@f48a586",
     "ifes_apt_tc_data_modeling>=0.0.1",
     "gitpython>=3.1.24",
-    "pytz>=2021.1"
+    "pytz>=2021.1",
+    "scipy>=1.7.3",
+    "lark>=1.1.5",
 ]
 
 #     "h5web @ git+https://github.com/silx-kit/h5web@3e21159",
@@ -63,6 +65,7 @@ nyaml2nxdl = "nexusutils.nyaml2nxdl.nyaml2nxdl:launch_tool"
 nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 "nexusutils.dataconverter.readers.xps" = ["*.json"]
 "nexusutils.dataconverter.readers.hall" = ["enum_map.json"]
+"nexusutils.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
 [tool.setuptools.packages.find]
 exclude = ["nexusutils/definitions*"]
