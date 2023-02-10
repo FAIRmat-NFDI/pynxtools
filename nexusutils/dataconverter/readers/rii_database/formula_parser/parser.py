@@ -91,7 +91,7 @@ class FormulaTransformer(Transformer):
             "sin": np.sin,
             "cos": np.cos,
             "tan": np.tan,
-            "sqrt": np.sqrt,
+            "sqrt": np.emath.sqrt,
             "dawsn": dawsn,
             "ln": np.log,
             "log": np.log10,

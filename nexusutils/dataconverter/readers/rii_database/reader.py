@@ -75,72 +75,118 @@ def write_nx_data_to(
     entries[f"{path}/plot/extinction"] = refractive_index.imag
 
 
-def write_nx_data(
-    entries: Dict[str, Any],
-    dispersion_path: str,
-    single_params: Dict[str, Dict[str, float]],
-    repeated_params: Dict[str, Dict[str, np.ndarray]],
-):
-    """Calculates and adds dispersions and writes it to a NXdata group."""
+class NXdataWriter:
+    """Extracts/calculates data and writes it to the NXdata entry"""
 
-    def get_dispersion_names(group_name: str):
+    def __init__(
+        self,
+        entries: Dict[str, Any],
+        dispersion_path: str,
+        single_params: Dict[str, Dict[str, float]],
+        repeated_params: Dict[str, Dict[str, np.ndarray]],
+    ):
+        self.entries = entries
+        self.dispersion_path = dispersion_path
+        self.single_params = single_params
+        self.repeated_params = repeated_params
+
+        self.table_dispersions = self.get_dispersion_names("DISPERSION_TABLE")
+        self.func_dispersions = self.get_dispersion_names("DISPERSION_FUNCTION")
+
+    def get_dispersion_names(self, group_name: str):
+        """Get all dispersion names of a group"""
         names = set()
-        for entry in entries:
-            if entry.startswith(f"{dispersion_path}/{group_name}"):
+        for entry in self.entries:
+            if entry.startswith(f"{self.dispersion_path}/{group_name}"):
                 names.add(re.search(rf"{group_name}\[([^\]]+)\]", entry).group(1))
 
         return names
 
-    def get_wavelength_index(table_dispersion: str):
-        wavelength = entries[
-            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/wavelength"
+    def get_wavelength_index(self, table_dispersion: str):
+        """Get the wavelength and refractive index for a tabular dispersion"""
+        wavelength = self.entries[
+            f"{self.dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/wavelength"
         ]
-        refractive_index = entries[
-            f"{dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refractive_index"
+        refractive_index = self.entries[
+            f"{self.dispersion_path}/DISPERSION_TABLE[{table_dispersion}]/refractive_index"
         ]
 
         return wavelength, refractive_index
 
-    def get_index(wavelength: np.ndarray, func_dispersion: str):
-        x_axis_name = entries[
+    def get_index(self, wavelength: np.ndarray, func_dispersion: str):
+        """
+        Get the refractive index of a functional dispersion for a given wavelength array
+        """
+        x_axis_name = self.entries[
             (
-                f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
+                f"{self.dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
                 "/wavelength_identifier"
             )
         ]
-        dfpath = f"{dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
-        formula = entries[f"{dfpath}/formula"]
+        dfpath = f"{self.dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
+        formula = self.entries[f"{dfpath}/formula"]
 
         return transformation_formula_parser(
             x_axis_name,
             wavelength,
-            single_params.get(dfpath, {}),
-            repeated_params.get(dfpath, {}),
+            self.single_params.get(dfpath, {}),
+            self.repeated_params.get(dfpath, {}),
         ).parse(formula)
 
-    def add_func_dispersions(wavelength: np.ndarray, func_dispersions: Set[str]):
-        disp_type, refractive_index = get_index(wavelength, func_dispersions.pop())
+    def add_func_dispersions(self, wavelength: np.ndarray, func_dispersions: Set[str]):
+        """Sum the refractive indices of functional dispersions"""
+        disp_type, refractive_index = self.get_index(wavelength, func_dispersions.pop())
         for func_dispersion in func_dispersions:
-            disp_type2, refractive_index2 = get_index(wavelength, func_dispersion)
+            disp_type2, refractive_index2 = self.get_index(wavelength, func_dispersion)
             if disp_type2 != disp_type:
                 raise ValueError("Incompatible dispersions")
             refractive_index += refractive_index2
 
         return disp_type, refractive_index
 
-    def add_func_dispersions_entries():
-        wavelength = np.linspace(0.4, 1, 500)
-        disp_type, refractive_index = add_func_dispersions(wavelength, func_dispersions)
+    def get_wavelength_range(
+        self, func_dispersions: Set[str], no_points: int = 500
+    ) -> np.ndarray:
+        """Get the provided or default wavelength range for a functional dispersion"""
+        min_wavelength = -np.inf
+        max_wavelength = np.inf
+        for func_dispersion in func_dispersions:
+            base_path = f"{self.dispersion_path}/DISPERSION_FUNCTION[{func_dispersion}]"
+            if f"{base_path}/wavelength_min" in self.entries:
+                new_min = self.entries[f"{base_path}/wavelength_min"]
+                min_wavelength = new_min if new_min > min_wavelength else min_wavelength
+
+            if f"{base_path}/wavelength_max" in self.entries:
+                new_max = self.entries[f"{base_path}/wavelength_max"]
+                max_wavelength = new_max if new_max < max_wavelength else max_wavelength
+
+        return np.linspace(
+            0.4 if min_wavelength < 0 else min_wavelength,
+            1.0 if max_wavelength == np.inf else max_wavelength,
+            no_points,
+        )
+
+    def write_func_dispersions_entries(self):
+        """Write the functional dispersion entries to the dict"""
+        wavelength = self.get_wavelength_range(self.func_dispersions)
+        disp_type, refractive_index = self.add_func_dispersions(
+            wavelength, self.func_dispersions
+        )
 
         if disp_type == "eps":
-            refractive_index = np.sqrt(refractive_index)
+            refractive_index = np.emath.sqrt(refractive_index)
 
-        write_nx_data_to(entries, dispersion_path, wavelength, refractive_index)
+        write_nx_data_to(
+            self.entries, self.dispersion_path, wavelength, refractive_index
+        )
 
-    def add_table_func_dispersions_entries():
-        wavelength, refractive_index = get_wavelength_index(table_dispersions.pop())
-        disp_type, refractive_index_func = add_func_dispersions(
-            wavelength, func_dispersions
+    def write_table_func_dispersions_entries(self):
+        """Write the tabular and functional dispersion entries to the dict"""
+        wavelength, refractive_index = self.get_wavelength_index(
+            self.table_dispersions.pop()
+        )
+        disp_type, refractive_index_func = self.add_func_dispersions(
+            wavelength, self.func_dispersions
         )
 
         if disp_type == "eps":
@@ -149,19 +195,20 @@ def write_nx_data(
             )
 
         write_nx_data_to(
-            entries,
-            dispersion_path,
+            self.entries,
+            self.dispersion_path,
             wavelength,
             refractive_index + refractive_index_func,
         )
 
-    def add_table_dispersions_entries():
-        wlen, rindex = get_wavelength_index(table_dispersions.pop())
+    def write_table_dispersions_entries(self):
+        """Write tabular dispersion entries to the dict"""
+        wlen, rindex = self.get_wavelength_index(self.table_dispersions.pop())
         min_wlen = min(wlen)
         max_wlen = max(wlen)
         interpolations = [interp1d(wlen, rindex)]
-        for table_dispersion in table_dispersions:
-            wlen, rindex = get_wavelength_index(table_dispersion)
+        for table_dispersion in self.table_dispersions:
+            wlen, rindex = self.get_wavelength_index(table_dispersion)
             min_wlen = min(wlen) if min(wlen) > min_wlen else min_wlen
             max_wlen = max(wlen) if max(wlen) < max_wlen else max_wlen
             interpolations.append(interp1d(wlen, rindex))
@@ -171,27 +218,28 @@ def write_nx_data(
         for interp in interpolations:
             refractive_index += interp(wavelength)
 
-        write_nx_data_to(entries, dispersion_path, wavelength, refractive_index)
+        write_nx_data_to(
+            self.entries, self.dispersion_path, wavelength, refractive_index
+        )
 
-    table_dispersions = get_dispersion_names("DISPERSION_TABLE")
-    func_dispersions = get_dispersion_names("DISPERSION_FUNCTION")
+    def write_entries(self):
+        """Write the NXdata entries to the dict"""
+        if len(self.table_dispersions) == 1 and self.func_dispersions:
+            self.write_table_func_dispersions_entries()
+            return self.entries
 
-    if len(table_dispersions) == 1 and func_dispersions:
-        add_table_func_dispersions_entries()
-        return entries
+        if len(self.table_dispersions) == 0 and self.func_dispersions:
+            self.write_func_dispersions_entries()
+            return self.entries
 
-    if len(table_dispersions) == 0 and func_dispersions:
-        add_func_dispersions_entries()
-        return entries
+        if self.func_dispersions:
+            raise ValueError("Unexpected number of dispersions.")
 
-    if func_dispersions:
-        raise ValueError("Unexpected number of dispersions.")
+        if not self.table_dispersions:
+            raise ValueError("No valid dispersions found.")
 
-    if not table_dispersions:
-        raise ValueError("No valid dispersions found.")
-
-    add_table_dispersions_entries()
-    return entries
+        self.write_table_dispersions_entries()
+        return self.entries
 
 
 class DispersionReader:
@@ -382,9 +430,9 @@ class DispersionReader:
             ),
         )
 
-        write_nx_data(
+        self.entries = NXdataWriter(
             self.entries, dispersion_path, self.single_params, self.repeated_params
-        )
+        ).write_entries()
 
         return self.entries
 
