@@ -19,7 +19,10 @@
 from dataclasses import dataclass, field
 import re
 from typing import Any, Dict, Optional
+import requests_cache
 import requests
+
+requests_cache.install_cache("rii_bibtex")
 
 
 @dataclass
@@ -36,16 +39,18 @@ class Citation:
     bibtex: Optional[str] = None
 
     @staticmethod
-    def parse_citations(reference: str, get_bibtex: bool = False):
+    def parse_citations(reference: str, download_bibtex: bool = False):
         """Parses a reference string into its components"""
         cites = re.split(r"<br\s*\/?\s*>", reference)
 
         clean_cites = []
         for cite in cites:
-            clean_cites.append(Citation(cite, get_bibtex))
+            clean_cites.append(Citation(cite, download_bibtex))
         return clean_cites
 
-    def __init__(self, ref_str: str, get_bibtex: bool = False):
+    def __init__(
+        self, ref_str: str, download_bibtex: bool = False, desc: Optional[str] = None
+    ):
         self._raw_str = ref_str
         self.ref_str = re.sub(
             r"\<\/?[^\<\>]*\>",
@@ -55,10 +60,15 @@ class Citation:
         self.get_non_doi_url()
         self.get_doi()
 
-        if get_bibtex:
-            self.get_bibtex()
+        if desc:
+            self.description = desc
+        else:
+            self.description = "Literature reference from which this dispersion function was extracted."
 
-    def get_bibtex(self):
+        if download_bibtex:
+            self.download_bibtex()
+
+    def download_bibtex(self):
         """Requests the bibtext entry for a given doi"""
         if not self.doi:
             return
@@ -98,6 +108,4 @@ class Citation:
             template[f"{base_path}/bibtex"] = self.bibtex
 
         template[f"{base_path}/text"] = self.ref_str
-        template[
-            f"{base_path}/description"
-        ] = "Literature reference from which this dispersion function was extracted."
+        template[f"{base_path}/description"] = self.description

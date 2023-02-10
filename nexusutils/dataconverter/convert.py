@@ -70,7 +70,9 @@ def convert(input_file: Tuple[str],
             output: str,
             generate_template: bool = False,
             fair: bool = False,
-            objects: Tuple[Any] = None):
+            objects: Tuple[Any] = None,
+            *args,
+            **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
     definitions_path = nexus.get_nexus_definitions_path()
@@ -106,11 +108,11 @@ def convert(input_file: Tuple[str],
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
 
     if objects is not None:
-        data = data_reader().read(template=Template(template),  # type: ignore[operator]
+        data = data_reader(*args, **kwargs).read(template=Template(template),  # type: ignore[operator]
                                   file_paths=input_file,
                                   objects=objects)
     else:
-        data = data_reader().read(template=Template(template),  # type: ignore[operator]
+        data = data_reader(*args, **kwargs).read(template=Template(template),  # type: ignore[operator]
                                   file_paths=input_file)
 
     helpers.validate_data_dict(template, data, nxdl_root)

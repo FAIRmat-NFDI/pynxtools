@@ -22,16 +22,18 @@ import pandas as pd
 import yaml
 
 from nexusutils.dataconverter.readers.rii_database.nx_data_writer import NXdataWriter
+from nexusutils.dataconverter.readers.rii_database.citation_parser import Citation
 import nexusutils.dataconverter.readers.rii_database.dispersion_functions as dispersion
 
 
 class DispersionReader:
     """Reads a rii dispersion from a yml file"""
 
-    def __init__(self):
+    def __init__(self, download_bibtex: bool = False):
         self.entries: Dict[str, Any] = {}
         self.single_params: Dict[str, Dict[str, float]] = {}
         self.repeated_params: Dict[str, Dict[str, np.ndarray]] = {}
+        self.download_bibtex = download_bibtex
 
     def add_table(self, path: str, nx_name: str, tabular_data: pd.DataFrame):
         """Adds a tabular dataframe to the nexus entries dict"""
@@ -133,10 +135,31 @@ class DispersionReader:
         self.entries[f"{path}/wavelength_max"] = upper
         self.entries[f"{path}/wavelength_max/@units"] = "micrometer"
 
-    def read_metadata(self, yml_file: dict):
+    def read_metadata(self, yml_file: dict, path: str):
         """Reads metadata from a dispersion yaml file"""
+        refs = [
+            Citation(
+                'M. N. Polyanskiy, "Refractive index database," '
+                '<a href="https://refractiveindex.info">https://refractiveindex.info<\\a>. '
+                "Accessed on 2023-02-10.",
+                desc="This entry is part of the refractiveindex.info database.",
+            )
+        ]
+        refs[0].bibtex = (
+            "@misc{rii,\n"
+            "    author = {Mikhail N. Polyanskiy},\n"
+            "    title = {Refractive index database},\n"
+            "    howpublished = {\\url{https://refractiveindex.info}},\n"
+            "    note = {Accessed on 2023-02-10}\n"
+            "}"
+        )
         if "REFERENCES" in yml_file:
-            pass
+            refs += Citation.parse_citations(
+                yml_file["REFERENCES"], download_bibtex=self.download_bibtex
+            )
+
+        for ref in refs:
+            ref.write_entries(self.entries, path)
 
         if "COMMENTS" in yml_file:
             pass
@@ -213,7 +236,7 @@ class DispersionReader:
         # Only read metadata for the ordinary axis
         # as this should be the same for all axes
         if identifier == "dispersion_x":
-            self.read_metadata(yml_file)
+            self.read_metadata(yml_file, dispersion_path)
 
         self.write_dispersions(
             yml_file,
