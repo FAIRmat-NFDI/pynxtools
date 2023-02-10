@@ -32,49 +32,6 @@ from nexusutils.dataconverter.readers.rii_database.formula_parser.parser import 
 from nexusutils.dataconverter.readers.utils import parse_json
 
 
-def read_yml_file(filename: str) -> Dict[Any, Any]:
-    """Reads a yml file from disk"""
-    with open(filename, "r", encoding="utf-8") as yml:
-        yml_file = yaml.load(
-            yml,
-            yaml.SafeLoader,
-        )
-
-    return yml_file
-
-
-def is_table_k_formula_n_disp(dispersion1: dict, dispersion2: dict):
-    """Checks if the two dispersions are one tabular k formula and one formula n"""
-    if "tabulated k" == dispersion1["type"] and dispersion2["type"].startswith(
-        "formula"
-    ):
-        return True
-
-    if "tabulated k" == dispersion2["type"] and dispersion1["type"].startswith(
-        "formula"
-    ):
-        return True
-
-    return False
-
-
-def write_nx_data_to(
-    entries: Dict[str, Any],
-    path: str,
-    wavelength: np.ndarray,
-    refractive_index: np.ndarray,
-):
-    """Writes an NXdata group"""
-    entries[f"{path}/@default"] = "plot"
-    entries[f"{path}/plot/@axes"] = "wavelength"
-    entries[f"{path}/plot/@signal"] = "refractive_index"
-    entries[f"{path}/plot/@auxiliary_signals"] = "extinction"
-    entries[f"{path}/plot/wavelength"] = wavelength
-    entries[f"{path}/plot/wavelength/@units"] = "micrometer"
-    entries[f"{path}/plot/refractive_index"] = refractive_index.real
-    entries[f"{path}/plot/extinction"] = refractive_index.imag
-
-
 class NXdataWriter:
     """Extracts/calculates data and writes it to the NXdata entry"""
 
@@ -166,6 +123,18 @@ class NXdataWriter:
             no_points,
         )
 
+    def write_nx_data(self, wavelength: np.ndarray, refractive_index: np.ndarray):
+        """Writes an NXdata group"""
+        path = self.dispersion_path
+        self.entries[f"{path}/@default"] = "plot"
+        self.entries[f"{path}/plot/@axes"] = "wavelength"
+        self.entries[f"{path}/plot/@signal"] = "refractive_index"
+        self.entries[f"{path}/plot/@auxiliary_signals"] = "extinction"
+        self.entries[f"{path}/plot/wavelength"] = wavelength
+        self.entries[f"{path}/plot/wavelength/@units"] = "micrometer"
+        self.entries[f"{path}/plot/refractive_index"] = refractive_index.real
+        self.entries[f"{path}/plot/extinction"] = refractive_index.imag
+
     def write_func_dispersions_entries(self):
         """Write the functional dispersion entries to the dict"""
         wavelength = self.get_wavelength_range(self.func_dispersions)
@@ -176,9 +145,7 @@ class NXdataWriter:
         if disp_type == "eps":
             refractive_index = np.emath.sqrt(refractive_index)
 
-        write_nx_data_to(
-            self.entries, self.dispersion_path, wavelength, refractive_index
-        )
+        self.write_nx_data(wavelength, refractive_index)
 
     def write_table_func_dispersions_entries(self):
         """Write the tabular and functional dispersion entries to the dict"""
@@ -194,12 +161,7 @@ class NXdataWriter:
                 "Incompatible dispersions detected: Tabular and eps-based function"
             )
 
-        write_nx_data_to(
-            self.entries,
-            self.dispersion_path,
-            wavelength,
-            refractive_index + refractive_index_func,
-        )
+        self.write_nx_data(wavelength, refractive_index + refractive_index_func)
 
     def write_table_dispersions_entries(self):
         """Write tabular dispersion entries to the dict"""
@@ -218,9 +180,7 @@ class NXdataWriter:
         for interp in interpolations:
             refractive_index += interp(wavelength)
 
-        write_nx_data_to(
-            self.entries, self.dispersion_path, wavelength, refractive_index
-        )
+        self.write_nx_data(wavelength, refractive_index)
 
     def write_entries(self):
         """Write the NXdata entries to the dict"""
@@ -398,6 +358,20 @@ class DispersionReader:
                 f'No parser for type {dispersion_relation["type"]}'
             )
 
+        def is_table_k_formula_n_disp(dispersion1: dict, dispersion2: dict):
+            """Checks if the two dispersions are one tabular k formula and one formula n"""
+            if "tabulated k" == dispersion1["type"] and dispersion2["type"].startswith(
+                "formula"
+            ):
+                return True
+
+            if "tabulated k" == dispersion2["type"] and dispersion1["type"].startswith(
+                "formula"
+            ):
+                return True
+
+            return False
+
         if len(yml_file["DATA"]) == 2 and is_table_k_formula_n_disp(*yml_file["DATA"]):
             model_input.convert_to_n = True
 
@@ -406,7 +380,11 @@ class DispersionReader:
 
     def read_dispersion(self, filename: str, identifier: str = "dispersion_x"):
         """Reads a dispersion from a yml input file"""
-        yml_file = read_yml_file(filename)
+        with open(filename, "r", encoding="utf-8") as yml:
+            yml_file = yaml.load(
+                yml,
+                yaml.SafeLoader,
+            )
         dispersion_path = f"/ENTRY[entry]/{identifier}"
 
         # Only read metadata for the ordinary axis
