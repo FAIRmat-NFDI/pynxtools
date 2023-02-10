@@ -17,6 +17,8 @@
 #
 """A dispersion reader for reading dispersion data from a rii yaml file"""
 from typing import List, Any, Dict
+import re
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import yaml
@@ -142,7 +144,7 @@ class DispersionReader:
             Citation(
                 'M. N. Polyanskiy, "Refractive index database," '
                 '<a href="https://refractiveindex.info">https://refractiveindex.info<\\a>. '
-                "Accessed on 2023-02-10.",
+                f"Accessed on {datetime.today().strftime('%Y-%m-%d')}.",
                 desc="This entry is part of the refractiveindex.info database.",
             )
         ]
@@ -151,7 +153,7 @@ class DispersionReader:
             "    author = {Mikhail N. Polyanskiy},\n"
             "    title = {Refractive index database},\n"
             "    howpublished = {\\url{https://refractiveindex.info}},\n"
-            "    note = {Accessed on 2023-02-10}\n"
+            f"    note = {{Accessed on {datetime.today().strftime('%Y-%m-%d')}}}\n"
             "}"
         )
         if "REFERENCES" in yml_file:
@@ -163,7 +165,13 @@ class DispersionReader:
             ref.write_entries(self.entries, path)
 
         if "COMMENTS" in yml_file:
-            pass
+            self.entries[f"{path}/refractiveindex_info_comment"] = yml_file["COMMENTS"]
+
+            temp = re.search(r"(\d+(?:\.\d*)?)\s+(℃|°C|℉|°F|K)", yml_file["COMMENTS"])
+            if temp:
+                clean_unit = temp.group(2).replace("℃", "°C").replace("℉", "°F")
+                self.entries["/ENTRY[entry]/sample/temperature"] = temp.group(1)
+                self.entries["/ENTRY[entry]/sample/temperature/@units"] = clean_unit
 
     def write_dispersions(
         self,
