@@ -20,9 +20,6 @@ from dataclasses import dataclass, field
 import re
 from typing import Any, Dict, Optional
 import requests_cache
-import requests
-
-requests_cache.install_cache("rii_bibtex")
 
 
 @dataclass
@@ -33,9 +30,7 @@ class Citation:
     ref_str: str
     url: Optional[str]
     doi: Optional[str]
-
-    reference_identifier: str = field(default="REFERENCES", repr=False)
-    basename: str = field(default="reference", repr=False)
+    session: Optional[requests_cache.CachedSession] = None
     bibtex: Optional[str] = None
 
     @staticmethod
@@ -63,7 +58,10 @@ class Citation:
         if desc:
             self.description = desc
         else:
-            self.description = "Literature reference from which this dispersion function was extracted."
+            self.description = (
+                "Literature reference from which this "
+                "dispersion function was extracted."
+            )
 
         if download_bibtex:
             self.download_bibtex()
@@ -73,7 +71,10 @@ class Citation:
         if not self.doi:
             return
 
-        req = requests.get(
+        if self.session is None:
+            self.session = requests_cache.CachedSession("rii_bibtex")
+
+        req = self.session.get(
             f"https://doi.org/{self.doi}",
             timeout=30,
             headers={"Accept": "application/x-bibtex"},
@@ -93,13 +94,14 @@ class Citation:
 
     def write_entries(self, template: Dict[str, Any], path: str):
         """Write entries to nexusutils template"""
-        name = self.basename
+        reference_identifier = "REFERENCES"
+        name = basename = "reference"
 
-        while f"{path}/{self.reference_identifier}[{name}]/text" in template:
+        while f"{path}/{reference_identifier}[{name}]/text" in template:
             count = locals().get("count", 0) + 1
-            name = f"{self.basename}{count}"
+            name = f"{basename}{count}"
 
-        base_path = f"{path}/{self.reference_identifier}[{name}]"
+        base_path = f"{path}/{reference_identifier}[{name}]"
         if self.url:
             template[f"{base_path}/url"] = self.url
         if self.doi:

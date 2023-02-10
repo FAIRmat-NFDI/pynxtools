@@ -33,7 +33,7 @@ class RiiReader(YamlJsonReader):
 
     supported_nxdls = ["NXdispersive_material"]
 
-    def __init__(self, download_bibtex: bool = False, *args, **kwargs):
+    def __init__(self, *args, download_bibtex: bool = False, **kwargs):
         super().__init__(*args, **kwargs)
         self.extensions = {
             ".yml": DispersionReader(download_bibtex).read_dispersion,

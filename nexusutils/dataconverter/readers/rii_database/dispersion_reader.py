@@ -88,7 +88,8 @@ class DispersionReader:
         self.entries[f"{disp_path}/representation"] = representation
         self.entries[f"{disp_path}/convention"] = "n + ik"
         self.entries[f"{disp_path}/wavelength_identifier"] = "lambda"
-        self.entries[f"{disp_path}/wavelength_identifier/@units"] = "micrometer"
+        self.entries[f"{disp_path}/wavelength_unit"] = 1
+        self.entries[f"{disp_path}/wavelength_unit/@units"] = "micrometer"
 
         return disp_path
 

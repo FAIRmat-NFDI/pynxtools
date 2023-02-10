@@ -63,7 +63,7 @@ def get_names_of_all_readers() -> List[str]:
     return all_readers
 
 
-# pylint: disable=too-many-arguments,too-many-branches
+# pylint: disable=too-many-arguments,too-many-branches,too-many-locals
 def convert(input_file: Tuple[str],
             reader: str,
             nxdl: str,
@@ -71,7 +71,6 @@ def convert(input_file: Tuple[str],
             generate_template: bool = False,
             fair: bool = False,
             objects: Tuple[Any] = None,
-            *args,
             **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
@@ -108,12 +107,16 @@ def convert(input_file: Tuple[str],
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
 
     if objects is not None:
-        data = data_reader(*args, **kwargs).read(template=Template(template),  # type: ignore[operator]
-                                  file_paths=input_file,
-                                  objects=objects)
+        data = data_reader(**kwargs).read(  # type: ignore[operator]
+            template=Template(template),
+            file_paths=input_file,
+            objects=objects
+        )
     else:
-        data = data_reader(*args, **kwargs).read(template=Template(template),  # type: ignore[operator]
-                                  file_paths=input_file)
+        data = data_reader(**kwargs).read(  # type: ignore[operator]
+            template=Template(template),
+            file_paths=input_file
+        )
 
     helpers.validate_data_dict(template, data, nxdl_root)
 
