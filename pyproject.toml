@@ -54,7 +54,8 @@ dev = [
     "pytest-cov",
     "structlog",
     "types-pyyaml",
-    "types-pytz"
+    "types-pytz",
+    "types-requests",
 ]
 
 [project.scripts]
