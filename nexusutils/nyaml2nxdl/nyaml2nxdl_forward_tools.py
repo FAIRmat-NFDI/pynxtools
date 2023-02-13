@@ -245,7 +245,8 @@ bear at least an argument !'
             if '__line__' not in element:
                 itm = ET.SubElement(enum, 'item')
                 itm.set('value', str(element))
-                recursive_build(itm, value[str(element)], verbose)
+                if isinstance(value[element], dict):
+                    recursive_build(itm, value[element], verbose)
 
 
 def xml_handle_link(dct, obj, keyword, value):
