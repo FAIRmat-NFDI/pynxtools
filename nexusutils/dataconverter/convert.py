@@ -22,7 +22,7 @@ import importlib.util
 import logging
 import os
 import sys
-from typing import List, Tuple, Any
+from typing import List, Tuple
 import xml.etree.ElementTree as ET
 
 import click
@@ -63,7 +63,7 @@ def get_names_of_all_readers() -> List[str]:
     return all_readers
 
 
-# pylint: disable=too-many-arguments,too-many-branches,too-many-locals
+# pylint: disable=too-many-arguments
 def convert(input_file: Tuple[str],
             reader: str,
             nxdl: str,
