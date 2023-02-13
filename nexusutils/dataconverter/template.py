@@ -66,6 +66,9 @@ class Template(dict):
     def __setitem__(self, k, v):
         """Handles how values are set within the Template object."""
         if k.startswith("/"):
+            if v is None:
+                return
+
             if k in self.recommended:
                 self.recommended[k] = v
             elif k in self.required:
