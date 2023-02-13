@@ -33,15 +33,21 @@ class RiiReader(YamlJsonReader):
 
     supported_nxdls = ["NXdispersive_material"]
 
-    def __init__(self, *args, download_bibtex: bool = False, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.extensions = {
-            ".yml": DispersionReader(download_bibtex).read_dispersion,
-            ".yaml": DispersionReader(download_bibtex).read_dispersion,
+            ".yml": self.read_dispersion,
+            ".yaml": self.read_dispersion,
             ".json": self.parse_json_w_fileinfo,
             "default": lambda _: self.appdef_defaults(),
             "objects": self.handle_objects,
         }
+
+    def read_dispersion(self, filename: str):
+        """Reads the dispersion from the give filename"""
+        download_bibtex = self.kwargs.get('download_bibtex', False)
+        return DispersionReader(download_bibtex).read_dispersion(filename)
+
 
     def appdef_defaults(self) -> Dict[str, Any]:
         """Fills default entries which are comment for the application

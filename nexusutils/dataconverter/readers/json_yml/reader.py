@@ -61,7 +61,7 @@ class YamlJsonReader(BaseReader):
                 continue
 
             template.update(
-                self.extensions.get(extension, lambda *_: {})(file_path, **kwargs)
+                self.extensions.get(extension, lambda _: {})(file_path)
             )
 
         template.update(self.extensions.get("default", lambda _: {})(""))
