@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 """A dispersion reader for reading dispersion data from a rii yaml file"""
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Optional
 import re
 from datetime import datetime
 import numpy as np
@@ -233,7 +233,12 @@ class DispersionReader:
         for dispersion_relation in yml_file["DATA"]:
             write_dispersion(dispersion_relation, table_input, model_input)
 
-    def read_dispersion(self, filename: str, identifier: str = "dispersion_x"):
+    def read_dispersion(
+        self,
+        filename: str,
+        identifier: str = "dispersion_x",
+        download_bibtex: Optional[bool] = None,
+    ):
         """Reads a dispersion from a yml input file"""
         with open(filename, "r", encoding="utf-8") as yml:
             yml_file = yaml.load(
@@ -241,6 +246,9 @@ class DispersionReader:
                 yaml.SafeLoader,
             )
         dispersion_path = f"/ENTRY[entry]/{identifier}"
+
+        if download_bibtex is not None:
+            self.download_bibtex = download_bibtex
 
         # Only read metadata for the ordinary axis
         # as this should be the same for all axes

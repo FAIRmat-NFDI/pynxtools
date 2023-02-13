@@ -31,16 +31,21 @@ class YamlJsonReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: List[str] = []
     extensions: Dict[str, Callable[[Any], dict]] = {}
+    kwargs: Dict[str, Any] = None
 
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+        **kwargs,
+    ) -> dict:
         """
         Reads data from multiple files and passes them to the appropriate functions
         in the extensions dict.
         """
         template = Template()
+        self.kwargs = kwargs
 
         sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
         for file_path in sorted_paths:
@@ -55,7 +60,9 @@ class YamlJsonReader(BaseReader):
                 print(f"WARNING: File {file_path} does not exist, ignoring entry.")
                 continue
 
-            template.update(self.extensions.get(extension, lambda _: {})(file_path))
+            template.update(
+                self.extensions.get(extension, lambda *_: {})(file_path, **kwargs)
+            )
 
         template.update(self.extensions.get("default", lambda _: {})(""))
         template.update(self.extensions.get("objects", lambda _: {})(objects))
