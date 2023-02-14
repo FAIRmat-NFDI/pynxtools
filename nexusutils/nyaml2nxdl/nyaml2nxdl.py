@@ -36,9 +36,9 @@ from nexusutils.nyaml2nxdl import nyaml2nxdl_backward_tools
 
 
 def pretty_print_xml(xml_root, output_xml):
-    """Print better human-readable indented and formatted xml file
-using built-in libraries and add preceding XML processing instruction
-
+    """
+    Print better human-readable indented and formatted xml file using
+    built-in libraries and add preceding XML processing instruction
     """
     dom = minidom.parseString(ET.tostring(
         xml_root, encoding='utf-8', method='xml'))
@@ -70,10 +70,10 @@ using built-in libraries and add preceding XML processing instruction
 
 
 def nyaml2nxdl(input_file: str, verbose: bool):
-    """Main of the nyaml2nxdl converter, creates XML tree,
-namespace and schema, then evaluates a dictionary
-nest of groups recursively and fields or (their) attributes as childs of the groups
-
+    """
+    Main of the nyaml2nxdl converter, creates XML tree, namespace and
+    schema, then evaluates a dictionary nest of groups recursively and
+    fields or (their) attributes as childs of the groups
     """
     yml_appdef = nyaml2nxdl_forward_tools.yml_reader(input_file)
 
@@ -147,9 +147,10 @@ keyword has an invalid pattern, or is too short!'
 
 
 def get_node_parent_info(tree, node):
-    """Return tuple of (parent, index) where:
-        parent = node of parent within tree
-        index = index of node under parent"""
+    """
+    Return tuple of (parent, index) where: parent = node of parent within tree
+    index = index of node under parent
+    """
 
     parent_map = {c: p for p in tree.iter() for c in p}
     parent = parent_map[node]
@@ -187,30 +188,19 @@ class Nxdl2yaml():
         depth += 1
         for child in list(node):
             tag = helpers.remove_namespace_from_tag(child.tag)
-            if tag == ('doc'):
-                self.symbol_list.append(
-                    '{indent}{tag}: | {text}'.format(
-                        indent=1 * '  ',
-                        tag=helpers.remove_namespace_from_tag(child.tag),
-                        text='\n'.join([f"{2 * '  '}{s.lstrip()}"
-                                        for s in child.text.split('\n')[:-1]]
-                                       if child.text else '')))
-            elif tag == ('symbol'):
+            if tag == 'doc':
+                self.symbol_list.append(nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth,
+                                                                                            text=child.text))
+            elif tag == 'symbol':
                 if 'doc' in child.attrib:
-                    self.symbol_list.append(
-                        '{indent}{key}: "{value}"'.format(
-                            indent=1 * '  ',
-                            key=child.attrib['name'],
-                            value=child.attrib['doc'] or ''))
+                    self.symbol_list.append(nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth,
+                                                                                                text=child.attrib['doc']))
                 else:
                     for symbol_doc in list(child):
-                        tag = symbol_doc.tag.split("}", 1)[1]
-                        if tag == ('doc'):
-                            self.symbol_list.append(
-                                '{indent}{key}: "{text}"'.format(
-                                    indent=1 * '  ',
-                                    key=child.attrib['name'],
-                                    text=symbol_doc.text.strip().replace('\"', '\'')))
+                        tag = helpers.remove_namespace_from_tag(symbol_doc.tag)
+                        if tag == 'doc':
+                            self.symbol_list.append(nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth,
+                                                                                                        text=symbol_doc.text))
 
     def handle_definition(self, node):
         """Handle definition group and its attributes
@@ -251,10 +241,10 @@ class Nxdl2yaml():
                 node.remove(child)
 
     def print_root_level_doc(self, file_out):
-        """Print at the root level of YML file \
-the general documentation field found in XML file
-
- """
+        """
+        Print at the root level of YML file \
+        the general documentation field found in XML file
+        """
         # pylint: disable=consider-using-f-string
         file_out.write(
             '{indent}{root_level_doc}'.format(
@@ -263,10 +253,10 @@ the general documentation field found in XML file
         self.root_level_doc = ''
 
     def print_root_level_info(self, depth, file_out):
-        """Print at the root level of YML file \
-the information stored as definition attributes in the XML file
-
-"""
+        """
+        Print at the root level of YML file \
+        the information stored as definition attributes in the XML file
+        """
         # pylint: disable=consider-using-f-string
         if depth > 0 \
                 and [s for s in self.root_level_definition if "category: application" in s]\
@@ -326,7 +316,9 @@ then prints recursively each level of the tree
                 parent = get_node_parent_info(tree, node)[0]
                 doc_parent = helpers.remove_namespace_from_tag(parent.tag)
                 if doc_parent != 'item':
-                    nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth, node, file_out)
+                    nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth, node.text,
+                                                                        tag=node.tag,
+                                                                        file_out=file_out )
             if tag == ('symbols'):
                 Nxdl2yaml.handle_symbols(self, depth, node)
                 self.jump_symbol_child = True
@@ -355,7 +347,7 @@ def print_yml(input_file, verbose):
     """Parse an XML file provided as input and print a YML file
 
 """
-    output_yml = input_file[:-9] + '_parsed.yml'
+    output_yml = input_file[:-9] + '_parsed.yaml'
     if os.path.isfile(output_yml):
         os.remove(output_yml)
     my_file = Nxdl2yaml([], [])
@@ -379,7 +371,7 @@ and print both an XML and YML file of the extended base class.
     # warning: tmp files are printed on disk and removed at the ends!!
     pretty_print_xml(root, 'tmp.nxdl.xml')
     print_yml('tmp.nxdl.xml', verbose)
-    nyaml2nxdl('tmp_parsed.yml', verbose)
+    nyaml2nxdl('tmp_parsed.yaml', verbose)
     tree = ET.parse('tmp_parsed.nxdl.xml')
     tree2 = ET.parse(input_file)
     root_no_duplicates = ET.Element(
@@ -412,13 +404,13 @@ and print both an XML and YML file of the extended base class.
     pretty_print_xml(root_no_duplicates, f"{input_file.replace('.nxdl.xml', '')}"
                      f"_appended.nxdl.xml")
     print_yml(input_file.replace('.nxdl.xml', '') + "_appended.nxdl.xml", verbose)
-    nyaml2nxdl(input_file.replace('.nxdl.xml', '') + "_appended_parsed.yml", verbose)
-    os.rename(f"{input_file.replace('.nxdl.xml', '')}_appended_parsed.yml",
-              f"{input_file.replace('.nxdl.xml', '')}_appended.yml")
+    nyaml2nxdl(input_file.replace('.nxdl.xml', '') + "_appended_parsed.yaml", verbose)
+    os.rename(f"{input_file.replace('.nxdl.xml', '')}_appended_parsed.yaml",
+              f"{input_file.replace('.nxdl.xml', '')}_appended.yaml")
     os.rename(f"{input_file.replace('.nxdl.xml', '')}_appended_parsed.nxdl.xml",
               f"{input_file.replace('.nxdl.xml', '')}_appended.nxdl.xml")
     os.remove('tmp.nxdl.xml')
-    os.remove('tmp_parsed.yml')
+    os.remove('tmp_parsed.yaml')
     os.remove('tmp_parsed.nxdl.xml')
 
 
@@ -442,9 +434,9 @@ of an existing base class'
 possible issues in yaml files'
 )
 def launch_tool(input_file, verbose, append):
-    """Main function that distiguishes the input file format and launches the tools.
-
-"""
+    """
+    Main function that distiguishes the input file format and launches the tools.
+    """
     if input_file.rsplit(".", 1)[1] in ('yml', 'yaml'):
         nyaml2nxdl(input_file, verbose)
         if append:
