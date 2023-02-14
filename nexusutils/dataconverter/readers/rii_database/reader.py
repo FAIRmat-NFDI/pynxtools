@@ -48,7 +48,6 @@ class RiiReader(YamlJsonReader):
         download_bibtex = self.kwargs.get('download_bibtex', False)
         return DispersionReader(download_bibtex).read_dispersion(filename)
 
-
     def appdef_defaults(self) -> Dict[str, Any]:
         """Fills default entries which are comment for the application
         definition. Like appdef version and name"""
