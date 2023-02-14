@@ -194,12 +194,14 @@ class Nxdl2yaml():
             elif tag == 'symbol':
                 if 'doc' in child.attrib:
                     self.symbol_list.append(nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth,
+                                                                                                tag=child.attrib['name'],
                                                                                                 text=child.attrib['doc']))
                 else:
                     for symbol_doc in list(child):
                         tag = helpers.remove_namespace_from_tag(symbol_doc.tag)
                         if tag == 'doc':
                             self.symbol_list.append(nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth,
+                                                                                                        tag=child.attrib['name'],
                                                                                                         text=symbol_doc.text))
 
     def handle_definition(self, node):
