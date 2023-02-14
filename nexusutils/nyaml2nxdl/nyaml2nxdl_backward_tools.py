@@ -21,6 +21,38 @@
 # limitations under the License.
 #
 import sys
+from nexusutils.dataconverter import helpers
+
+
+def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
+    """
+    Handle docs field along the yaml file
+    """
+    # pylint: disable=consider-using-f-string
+    if "\n" in text:
+        text = '\n' + (depth + 1) * '  ' + '\n'.join([f"{(depth + 1) * '  '}{s.lstrip()}"
+                                                            for s in text.split('\n')]
+                                                           ).strip()
+        if "}" in tag:
+            tag = helpers.remove_namespace_from_tag(tag)
+        indent = depth * '  '
+    elif text:
+        text = '\n' + (depth + 1) * '  ' + text.strip()
+        if "}" in tag:
+            tag = helpers.remove_namespace_from_tag(tag)
+        indent = depth * '  '
+    else:
+        text = ""
+        if "}" in tag:
+            tag = helpers.remove_namespace_from_tag(tag)
+        indent = depth * '  '
+
+
+    doc_str = f"{indent}{tag}: |{text}\n"
+    if file_out:
+        file_out.write(doc_str)
+    else:
+        return doc_str
 
 
 def handle_group_or_field(depth, node, file_out):
@@ -134,7 +166,8 @@ enumeration list.
                 if list(child):
                     for item_doc in list(child):
                         item_doc_depth = depth + 2
-                        handle_not_root_level_doc(item_doc_depth, item_doc, file_out)
+                        handle_not_root_level_doc(item_doc_depth, item_doc.text,
+                                                  item_doc.tag, file_out)
     else:
         file_out.write(
             '{indent}{tag}:'.format(
@@ -149,28 +182,6 @@ enumeration list.
         file_out.write(
             ' [{enum_list}]\n'.format(
                 enum_list=enum_list[:-2] or ''))
-
-
-def handle_not_root_level_doc(depth, node, file_out):
-    """Handle docs field along the yaml file
-
-"""
-    # pylint: disable=consider-using-f-string
-
-    if "\n" in node.text:
-        file_out.write(
-            '{indent}{tag}: | {text}\n'.format(
-                indent=depth * '  ',
-                tag=node.tag.split("}", 1)[1],
-                text='\n' + (depth + 1) * '  ' + '\n'.join([f"{(depth + 1) * '  '}{s.lstrip()}"
-                                                            for s in node.text.split('\n')]
-                                                           ).strip()))
-    else:
-        file_out.write(
-            '{indent}{tag}: "{text}"\n'.format(
-                indent=depth * '  ',
-                tag=node.tag.split("}", 1)[1],
-                text=node.text.strip().replace('\"', '\'') if node.text else ''))
 
 
 def get_node_parent_info(tree, node):
