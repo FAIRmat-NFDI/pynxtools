@@ -37,6 +37,16 @@ def alter_dict(data_dict: Template, key: str, value: object):
     return None
 
 
+def set_to_none_in_dict(data_dict: Template, key: str, optionality: str):
+    """Helper function to forcefully set path to 'None'"""
+    if data_dict is not None:
+        internal_dict = Template(data_dict)
+        internal_dict[optionality][key] = None
+        return internal_dict
+
+    return None
+
+
 def remove_from_dict(data_dict: Template, key: str, optionality: str = 'optional'):
     """Helper function to remove a key from dict"""
     if data_dict is not None and key in data_dict[optionality]:
@@ -175,7 +185,7 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An examp
         "",
         id="empty-optional-field"),
     pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/bool_value", None),
+        set_to_none_in_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/bool_value", "required"),
         ("The data entry corresponding to /ENTRY[entry]/NXODD_name/bool_value is"
          " required and hasn't been supplied by the reader."),
         id="empty-required-field"),
@@ -209,7 +219,9 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An examp
          " strings: [1st type,2nd type,3rd type,4th type]"),
         id="wrong-enum-choice"),
     pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", None),
+        set_to_none_in_dict(TEMPLATE,
+                            "/ENTRY[my_entry]/optional_parent/required_child",
+                            "optional"),
         ("The data entry, /ENTRY[my_entry]/optional_parent/optional_child, has an "
          "optional parent, /ENTRY[entry]/optional_parent, with required children set"
          ". Either provide no children for /ENTRY[entry]/optional_parent or provide "
