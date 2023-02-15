@@ -35,6 +35,8 @@ dependencies = [
     "pytz>=2021.1",
     "scipy>=1.7.3",
     "lark>=1.1.5",
+    "requests",
+    "requests_cache",
 ]
 
 #     "h5web @ git+https://github.com/silx-kit/h5web@3e21159",
@@ -53,7 +55,8 @@ dev = [
     "pytest-cov",
     "structlog",
     "types-pyyaml",
-    "types-pytz"
+    "types-pytz",
+    "types-requests",
 ]
 
 [project.scripts]

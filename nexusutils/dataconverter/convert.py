@@ -22,7 +22,7 @@ import importlib.util
 import logging
 import os
 import sys
-from typing import List, Tuple, Any
+from typing import List, Tuple
 import xml.etree.ElementTree as ET
 
 import click
@@ -63,14 +63,14 @@ def get_names_of_all_readers() -> List[str]:
     return all_readers
 
 
-# pylint: disable=too-many-arguments,too-many-branches
+# pylint: disable=too-many-arguments
 def convert(input_file: Tuple[str],
             reader: str,
             nxdl: str,
             output: str,
             generate_template: bool = False,
             fair: bool = False,
-            objects: Tuple[Any] = None):
+            **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
     definitions_path = nexus.get_nexus_definitions_path()
@@ -105,13 +105,11 @@ def convert(input_file: Tuple[str],
     if not (nxdl in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
         raise Exception("The chosen NXDL isn't supported by the selected reader.")
 
-    if objects is not None:
-        data = data_reader().read(template=Template(template),  # type: ignore[operator]
-                                  file_paths=input_file,
-                                  objects=objects)
-    else:
-        data = data_reader().read(template=Template(template),  # type: ignore[operator]
-                                  file_paths=input_file)
+    data = data_reader().read(  # type: ignore[operator]
+        template=Template(template),
+        file_paths=input_file,
+        **kwargs,
+    )
 
     helpers.validate_data_dict(template, data, nxdl_root)
 
