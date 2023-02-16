@@ -802,7 +802,7 @@ def helper_get_inherited_nodes(hdf_info, elist, pind, attr):
     return hdf_path, hdf_node, hdf_class_path, elist, pind, attr, html_name
 
 
-@lru_cache(maxsize=None)
+#@lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,
                         nx_name: str = None, elem: ET.Element = None,
                         hdf_node=None, attr=False):
