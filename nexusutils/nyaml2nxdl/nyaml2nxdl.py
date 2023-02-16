@@ -35,10 +35,13 @@ from nexusutils.nyaml2nxdl import nyaml2nxdl_forward_tools
 from nexusutils.nyaml2nxdl import nyaml2nxdl_backward_tools
 
 
+DEPTH_SIZE = "  "
+
+
 def pretty_print_xml(xml_root, output_xml):
     """
     Print better human-readable indented and formatted xml file using
-    built-in libraries and add preceding XML processing instruction
+    built-in libraries and preceding XML processing instruction
     """
     dom = minidom.parseString(ET.tostring(
         xml_root, encoding='utf-8', method='xml'))
@@ -46,8 +49,8 @@ def pretty_print_xml(xml_root, output_xml):
         'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
     root = dom.firstChild
     dom.insertBefore(sibling, root)
-    xml_string = dom.toprettyxml(indent='    ', newl='\n')
-    with open('tmp.xml', "w", encoding="utf-8") as file_tmp:
+    xml_string = dom.toprettyxml(indent=1*DEPTH_SIZE, newl='\n', encoding='UTF-8')
+    with open('tmp.xml', "wb") as file_tmp:
         file_tmp.write(xml_string)
     flag = False
     with open('tmp.xml', "r", encoding="utf-8") as file_out:
@@ -320,7 +323,7 @@ then prints recursively each level of the tree
                 if doc_parent != 'item':
                     nyaml2nxdl_backward_tools.handle_not_root_level_doc(depth, node.text,
                                                                         tag=node.tag,
-                                                                        file_out=file_out )
+                                                                        file_out=file_out)
             if tag == ('symbols'):
                 Nxdl2yaml.handle_symbols(self, depth, node)
                 self.jump_symbol_child = True

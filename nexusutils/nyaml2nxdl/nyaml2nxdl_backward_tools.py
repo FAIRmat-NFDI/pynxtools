@@ -24,6 +24,9 @@ import sys
 from nexusutils.dataconverter import helpers
 
 
+DEPTH_SIZE = "  "
+
+
 def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
     """
     Handle docs field along the yaml file
@@ -31,8 +34,7 @@ def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
     # pylint: disable=consider-using-f-string
     if "\n" in text:
         text = '\n' + (depth + 1) * '  ' + '\n'.join([f"{(depth + 1) * '  '}{s.lstrip()}"
-                                                            for s in text.split('\n')]
-                                                           ).strip()
+                                                      for s in text.split('\n')]).strip()
         if "}" in tag:
             tag = helpers.remove_namespace_from_tag(tag)
         indent = depth * '  '
@@ -47,8 +49,7 @@ def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
             tag = helpers.remove_namespace_from_tag(tag)
         indent = depth * '  '
 
-
-    doc_str = f"{indent}{tag}: |{text}\n"
+    doc_str = f"{indent}{tag}: | {text}\n"
     if file_out:
         file_out.write(doc_str)
     else:
