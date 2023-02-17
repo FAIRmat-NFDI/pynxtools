@@ -24,8 +24,22 @@ import sys
 from nexusutils.dataconverter import helpers
 
 
-DEPTH_SIZE = "  "
+DEPTH_SIZE = "   "
 
+def check_escape_sequence_in_text(text):
+    """Check for escape sequence and """
+    special_char_track = {'\"':[]}
+    text_ch = []
+    last_char = ""
+    for ch in text:
+
+        if last_char != "\\" and ch in special_char_track:
+            text_ch.append("\\")
+        text_ch.append(ch)
+        last_char = ch
+
+    text = ''.join(text_ch)
+    return text
 
 def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
     """
@@ -33,21 +47,23 @@ def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
     """
     # pylint: disable=consider-using-f-string
     if "\n" in text:
-        text = '\n' + (depth + 1) * '  ' + '\n'.join([f"{(depth + 1) * '  '}{s.lstrip()}"
+        text = check_escape_sequence_in_text(text)
+        text = '\n' + (depth + 1) * DEPTH_SIZE + '\n'.join([f"{(depth + 1) * DEPTH_SIZE}{s.lstrip()}"
                                                       for s in text.split('\n')]).strip()
         if "}" in tag:
             tag = helpers.remove_namespace_from_tag(tag)
-        indent = depth * '  '
+        indent = depth * DEPTH_SIZE
     elif text:
-        text = '\n' + (depth + 1) * '  ' + text.strip()
+        text = check_escape_sequence_in_text(text)
+        text = '\n' + (depth + 1) * DEPTH_SIZE + text.strip()
         if "}" in tag:
             tag = helpers.remove_namespace_from_tag(tag)
-        indent = depth * '  '
+        indent = depth * DEPTH_SIZE
     else:
         text = ""
         if "}" in tag:
             tag = helpers.remove_namespace_from_tag(tag)
-        indent = depth * '  '
+        indent = depth * DEPTH_SIZE
 
     doc_str = f"{indent}{tag}: | {text}\n"
     if file_out:
