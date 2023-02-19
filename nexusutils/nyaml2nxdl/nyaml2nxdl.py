@@ -78,6 +78,9 @@ def nyaml2nxdl(input_file: str, verbose: bool):
     schema, then evaluates a dictionary nest of groups recursively and
     fields or (their) attributes as childs of the groups
     """
+
+    rare_def_attributes = ['deprecated', 'ignoreExtraGroups',
+                           'ignoreExtraFields', 'ignoreExtraAttributes']
     yml_appdef = nyaml2nxdl_forward_tools.yml_reader(input_file)
 
     if verbose:
@@ -104,6 +107,13 @@ application and base are valid categories!'
     else:
         xml_root.set('category', 'base')
     del yml_appdef['category']
+
+    # check for rare attributes
+    for attr in rare_def_attributes:
+        if attr in yml_appdef:
+            attr_val = str(yml_appdef[attr])
+            xml_root.set(attr, attr_val)
+            del yml_appdef[attr]
 
     if 'symbols' in yml_appdef.keys():
         nyaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef,
@@ -141,8 +151,9 @@ doc, symbols, and NX... at root-level!'
 
     assert (keyword[0:2] == 'NX' and len(keyword) > 2), 'NX \
 keyword has an invalid pattern, or is too short!'
-
-    nyaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
+    # Taking care if definition has empty content
+    if yml_appdef[keyword]:
+        nyaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
 
     pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml')
     if verbose:
@@ -263,10 +274,9 @@ class Nxdl2yaml():
         the information stored as definition attributes in the XML file
         """
         # pylint: disable=consider-using-f-string
-        if depth > 0 \
-                and [s for s in self.root_level_definition if "category: application" in s]\
-                or depth == 1 \
-                and [s for s in self.root_level_definition if "category: base" in s]:
+        if depth >= 0 \
+                and ([s for s in self.root_level_definition if "category: application" in s]\
+                or [s for s in self.root_level_definition if "category: base" in s]):
             if self.root_level_symbols:
                 file_out.write(
                     '{indent}{root_level_symbols}\n'.format(

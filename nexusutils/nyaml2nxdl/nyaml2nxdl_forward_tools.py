@@ -42,6 +42,8 @@ NX_TYPE_KEYS = nexus.get_nx_attribute_type()
 NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'
 NX_UNIT_TYPES = nexus.get_nx_units()
+rare_def_attributes = ['deprecated', 'ignoreExtraGroups','ignoreExtraFields',
+                       'ignoreExtraAttributes']
 
 
 class LineLoader(Loader):  # pylint: disable=too-many-ancestors
@@ -248,7 +250,7 @@ bear at least an argument !'
                 if isinstance(value[element], dict):
                     recursive_build(itm, value[element], verbose)
 
-
+# TODO change obj in xml_obj
 def xml_handle_link(dct, obj, keyword, value):
     """If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
 
@@ -269,10 +271,11 @@ def xml_handle_link(dct, obj, keyword, value):
             line_number = f'__line__{keyword}'
             raise ValueError(
                 keyword + f'Line {dct[line_number]}: the link formatting is invalid !')
+    # TODO: remove else: pass clause
     else:
         pass
 
-
+# TODO Change doc string here as it is!
 def xml_handle_symbols(dct, obj, keyword, value: dict):
     """Handle a set of NXDL symbols as a child to obj
 
@@ -340,6 +343,7 @@ def second_nested_level_handle(verbose, dct, fld):
                     nx_name_type_resolving(kkeyword[2:])
                 attr.set('name', kkeyword_name)
                 # typ = 'NX_CHAR'
+                # TODO remove NX_CHAR as it is resolved
                 typ = helper_keyword_type(kkeyword_type) or 'NX_CHAR'
                 attr.set('type', typ)
                 if isinstance(vvalue, dict):
@@ -434,6 +438,7 @@ def second_level_attributes_handle(dct, fld, keyword, value):
             line_number = f'__line__{keyword}'
             raise ValueError(keyword, f' Line {dct[line_number]}: unknown dimensions \
     of a field case !')
+        # TODO remove else pass
         else:
             pass
 
