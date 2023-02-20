@@ -22,24 +22,11 @@
 #
 import sys
 from nexusutils.dataconverter import helpers
+from . import check_escape_sequence_in_text
 
 
-DEPTH_SIZE = "   "
-
-def check_escape_sequence_in_text(text):
-    """Check for escape sequence and """
-    special_char_track = {'\"':[]}
-    text_ch = []
-    last_char = ""
-    for ch in text:
-
-        if last_char != "\\" and ch in special_char_track:
-            text_ch.append("\\")
-        text_ch.append(ch)
-        last_char = ch
-
-    text = ''.join(text_ch)
-    return text
+OPSSIBLE_DIM_ATTRS = ['dim', 'ref', 'optional', 'recommended']
+DEPTH_SIZE = "  "
 
 def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
     """
@@ -114,7 +101,7 @@ def handle_group_or_field(depth, node, file_out):
                 indent=(depth + 1) * '  ',
                 value=node.attrib['units'] or ''))
 
-
+# TODO make code radable by moving rank in a rank variable
 def handle_dimension(depth, node, file_out):
     """Handle the dimension field"""
     # pylint: disable=consider-using-f-string
@@ -123,22 +110,32 @@ def handle_dimension(depth, node, file_out):
         '{indent}{tag}:\n'.format(
             indent=depth * '  ',
             tag=node.tag.split("}", 1)[1]))
-    if 'rank' in node.attrib:
-        file_out.write(
-            '{indent}rank: {rank}\n'.format(
-                indent=(depth + 1) * '  ',
-                rank=node.attrib['rank']))
+
+    node_attrs = node.attrib
+    for attr, value in node_attrs.items():
+        indent = (depth + 1) * '  '
+        file_out.write(f'{indent}{attr}: {value}\n')
     dim_list = ''
     for child in list(node):
         tag = child.tag.split("}", 1)[1]
+        child_attrs = child.attrib
         if tag == ('dim'):
+            # taking care of index and value in format [[index, value]]
             dim_list = dim_list + '[{index}, {value}], '.format(
-                index=child.attrib['index'],
-                value=child.attrib['value'])
-    file_out.write(
-        '{indent}dim: [{value}]\n'.format(
-            indent=(depth + 1) * '  ',
-            value=dim_list[:-2] or ''))
+                index=child_attrs['index'] if "index" in child_attrs else '',
+                value=child_attrs['value'] if "value" in child_attrs else '')
+            file_out.write(
+                '{indent}dim: [{value}]\n'.format(
+                    indent=(depth + 1) * '  ',
+                    value=dim_list[:-2] or ''))
+            if "index" in child_attrs:
+                del child_attrs["index"]
+            if "value" in child_attrs:
+                del child_attrs["value"]
+        indent = (depth +1) * "  "
+        for attr, value in child_attrs.items():
+            if attr in OPSSIBLE_DIM_ATTRS:
+                file_out.write(f"{indent}{attr}: {value}\n")
 
 
 def handle_attributes(depth, node, file_out):
