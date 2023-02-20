@@ -20,3 +20,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+DEPTH_SIZE = "  "
+OPSSIBLE_DIM_ATTRS = ['ref']
+
+
+def check_escape_sequence_in_text(text):
+    """Check for escape sequence and """
+    special_char_track = {'\"':[]}
+    text_ch = []
+    last_char = ""
+    for ch in text:
+
+        if last_char != "\\" and ch in special_char_track:
+            text_ch.append("\\")
+        text_ch.append(ch)
+        last_char = ch
+
+    text = ''.join(text_ch)
+    return text

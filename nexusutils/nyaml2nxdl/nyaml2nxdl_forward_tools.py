@@ -34,7 +34,7 @@ from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
-
+from . import check_escape_sequence_in_text
 
 NX_CLSS = nexus.get_nx_classes()
 NX_NEW_DEFINED_CLASSES = ['NX_COMPLEX']
@@ -42,8 +42,12 @@ NX_TYPE_KEYS = nexus.get_nx_attribute_type()
 NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'
 NX_UNIT_TYPES = nexus.get_nx_units()
+# Attributes for definition attributs
 rare_def_attributes = ['deprecated', 'ignoreExtraGroups','ignoreExtraFields',
                        'ignoreExtraAttributes']
+# Keep the order as it is NIAC branch
+# TODO try to move in one place as it is in for forward and backward
+OPSSIBLE_DIM_ATTRS = ['dim', 'ref', 'optional', 'recommended']
 
 
 class LineLoader(Loader):  # pylint: disable=too-many-ancestors
@@ -210,18 +214,35 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
     dims = ET.SubElement(obj, 'dimensions')
     if 'rank' in value.keys():
         dims.set('rank', str(value['rank']))
-    for element in value['dim']:
-        line_number = '__line__dim'
-        assert isinstance(element, list), f'Line {value[line_number]}: dim argument not a list !'
-        assert len(
-            element) >= 2, f'Line {value[line_number]}: dim list has less than two entries !'
-        dim = ET.SubElement(dims, 'dim')
-        dim.set('index', str(element[0]))
-        dim.set('value', str(element[1]))
-        if len(element) == 3:
-            assert element[2] == 'optional', f'Line {value[line_number]}: dim argument \
-is a list with unexpected number of entries!'
+    line_number = '__line__dim'
+
+    # Consider all the childs under dimension is dim element and
+    # its attributes
+    val_attrs = list(value.keys())
+    for attr in OPSSIBLE_DIM_ATTRS:
+        if attr not in val_attrs:
+            continue
+        if attr == 'dim':
+            dim = ET.SubElement(dims, 'dim')
+            assert isinstance(value[attr], list), (f'Line {value[line_number]}: dim'
+                                                   f'argument not a list !')
+            dim.set('index', str(value[attr][0][0]) if len(value[attr][0]) >= 1 else '')
+            dim.set('value', str(value[attr][0][1]) if len(value[attr][0]) == 2 else '')
+            val_attrs.remove(attr)
+
+        elif attr == 'optional' and attr in OPSSIBLE_DIM_ATTRS:
             dim.set('required', 'false')
+            val_attrs.remove(attr)
+        else:
+            dim.set(attr, value[attr])
+            val_attrs.remove(attr)
+
+        line_attr = f'__line__{attr}'
+        if line_attr in val_attrs:
+            val_attrs.remove(line_attr)
+
+    assert len(val_attrs) == 0, (f'Line {value[line_number]}: dim argument '
+                                 f'is a list with unexpected number of entries!')
 
 
 def xml_handle_enumeration(dct, obj, keyword, value, verbose):
