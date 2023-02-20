@@ -26,6 +26,7 @@ from . import check_escape_sequence_in_text
 
 
 OPSSIBLE_DIM_ATTRS = ['dim', 'ref', 'optional', 'recommended']
+OPSSIBLE_DIMENSION_ATTRS = ['rank', 'doc']
 DEPTH_SIZE = "  "
 
 def handle_not_root_level_doc(depth, text, tag='doc', file_out=None):
