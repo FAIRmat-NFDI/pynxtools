@@ -65,10 +65,10 @@ def handle_group_or_field(depth, node, file_out):
     # pylint: disable=consider-using-f-string
     if "name" in node.attrib and "type" in node.attrib:
         file_out.write(
-            '{indent}{name}({value1}):\n'.format(
+            '{indent}{name}({type}):\n'.format(
                 indent=depth * '  ',
                 name=node.attrib['name'] or '',
-                value1=node.attrib['type'] or ''))
+                type=node.attrib['type'] or ''))
     if "name" in node.attrib and "type" not in node.attrib:
         file_out.write(
             '{indent}{name}:\n'.format(
@@ -92,10 +92,21 @@ def handle_group_or_field(depth, node, file_out):
             '{indent}{name}: required \n'.format(
                 indent=(depth + 1) * '  ',
                 name='exists'))
+    if "maxOccurs" in node.attrib:
+        file_out.write(
+            '{indent}exists: [max, {value1}]\n'.format(
+                indent=(depth + 1) * '  ',
+                value1=node.attrib['maxOccurs'] or ''))
     if "recommended" in node.attrib and node.attrib['recommended'] == "true":
         file_out.write(
             '{indent}exists: recommended\n'.format(
                 indent=(depth + 1) * '  '))
+    if 'nameType' in node.attrib:
+        file_out.write(
+            '{indent}nameType: {value}\n'.format(
+                indent=(depth + 1) * '  ',
+                value=node.attrib['nameType'] or '')
+                )
     if "units" in node.attrib:
         file_out.write(
             '{indent}unit: {value}\n'.format(
