@@ -468,8 +468,12 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     line_number = f'__line__{keyword}'
     elemt_obj = ET.SubElement(obj, 'attribute')
     elemt_obj.set('name', keyword_name[0][2:])
-    val_attr = list(value.keys())
     if value:
+        val_attr = list(value.keys())
+    else:
+        val_attr = []
+
+    if value and val_attr:
         # taking care of attributes of attributes
         for attr in attr_list:
             line_number = f'__line__{attr}'
@@ -534,29 +538,47 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
 
 # Rename it as xml_handle_filed
 def xml_handle_fields(obj, keyword, value, verbose):
-    """Handle a field in yaml file.
-When a keyword is NOT:
-symbol,
-NX baseclass member,
-attribute (\\@),
-doc,
-enumerations,
-dimension,
-exists,
-then the not empty keyword_name is a field!
-This simple function will define a new node of xml tree
+    """
+    Handle a field in yaml file.
+        When a keyword is NOT:
+            symbol,
+            NX baseclass member,
+            attribute (\\@),
+            doc,
+            enumerations,
+            dimension,
+            exists,
+    then the not empty keyword_name is a field!
+    This simple function will define a new node of xml tree
+    """
 
-"""
+    # List of possible attributes of xml elements
+    field_attr = ['name', 'type', 'nameType', 'units']
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
     typ = 'NX_CHAR'
     if keyword_type in NX_TYPE_KEYS + NX_NEW_DEFINED_CLASSES:
         typ = keyword_type
     # assume type is NX_CHAR, a NeXus default assumption if in doubt
-    fld = ET.SubElement(obj, 'field')
-    fld.set('name', keyword_name)
-    fld.set('type', typ)
+    elemt_obj = ET.SubElement(obj, 'field')
+    elemt_obj.set('name', keyword_name)
+    elemt_obj.set('type', typ)
     if isinstance(value, dict):
-        recursive_build(obj=fld, dct=value, verbose=verbose)
+        val_attr = list(value.keys())
+    else:
+        val_attr = []
+
+    for attr in field_attr:
+        line_number = f'__line__{attr}'
+        if attr in ['name', 'type'] and attr in val_attr:
+            del value[attr]
+            del value[line_number]
+        elif attr in val_attr and line_number in val_attr:
+            elemt_obj.set(attr, value[attr])
+            del value[attr]
+            del value[line_number]
+
+    if isinstance(value, dict) and value:
+        recursive_build(obj=elemt_obj, dct=value, verbose=verbose)
     # return fld
 
 
