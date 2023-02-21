@@ -114,17 +114,6 @@ def nx_name_type_resolving(tmp):
         typ = tmp[index_start + 1:index_end]
         nam = tmp.replace('(' + typ + ')', '')
         return nam, typ
-    if "\@" in tmp:
-        if "(" in tmp:
-            rnd_brack_ind =tmp.index("(")
-            nam = tmp[2:rnd_brack_ind + 1]
-            typ = tmp[rnd_brack_ind:tmp.index(")")]
-            return nam, typ
-        else:
-            nam = tmp[2:]
-            # by default NX_CHAR
-            typ = ''
-            return nam, typ
 
     # or a name for a member
     typ = ''
@@ -472,31 +461,50 @@ def verbose_flag(verbose, keyword, value):
 
 def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     """Handle the attributes found connected to attribute field"""
+    # list of possible attribute of xml attribute elementsa
+    attr_list = ['name', 'type', 'units', 'nameType']
     # as an attribute identifier
     keyword_name = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
-    attr = ET.SubElement(obj, 'attribute')
-    attr.set('name', keyword_name[0][2:])
-    if value is not None:
-        assert isinstance(value, dict), f'Line {dct[line_number]}: the attribute must be a dict!'
-        for kkeyword, vvalue in iter(value.items()):
-            verbose_flag(verbose, kkeyword, vvalue)
-            if kkeyword == 'name':
-                attr.set('name', vvalue)
-            elif kkeyword == 'doc':
-                xml_handle_doc(attr, vvalue)
-            elif kkeyword == 'type':
-                attr.set('type', vvalue.upper())
-            elif kkeyword == 'enumeration':
-                xml_handle_enumeration(value, attr, kkeyword, vvalue, verbose)
-            elif kkeyword == 'exists':
-                xml_handle_exists(value, attr, kkeyword, vvalue)
-            elif '__line__' in kkeyword:
-                pass
-            else:
-                line_number = f'__line__{kkeyword}'
-                raise ValueError(kkeyword + f'Line {value[line_number]}: facing an unknown \
-situation while processing attributes of an attribute !')
+    elemt_obj = ET.SubElement(obj, 'attribute')
+    elemt_obj.set('name', keyword_name[0][2:])
+    val_attr = list(value.keys())
+    if value:
+        # taking care of attributes of attributes
+        for attr in attr_list:
+            line_number = f'__line__{attr}'
+            if attr in val_attr:
+                elemt_obj.set(attr, value[attr])
+                del value[attr]
+                del value[line_number]
+        if value:
+            recursive_build(elemt_obj, value, verbose)
+
+#     if value is not None:
+#         assert isinstance(value, dict), f'Line {dct[line_number]}: the attribute must be a dict!'
+#         for kkeyword, vvalue in iter(value.items()):
+#             verbose_flag(verbose, kkeyword, vvalue)
+#             # stting attributes of attributes
+#             if kkeyword == 'name':
+#                 elemt_obj.set('name', vvalue)
+#             elif kkeyword == 'type':
+#                 elemt_obj.set('type', vvalue.upper())
+
+#             elif kkeyword == 'doc':
+#                 xml_handle_doc(elemt_obj, vvalue)
+#             elif kkeyword == 'enumeration':
+#                 xml_handle_enumeration(value, elemt_obj, kkeyword, vvalue, verbose)
+#             elif kkeyword == 'exists':
+#                 xml_handle_exists(value, elemt_obj, kkeyword, vvalue)
+#             elif '__line__' in kkeyword:
+#                 pass
+#             elif
+#             else:
+#                 line_number = f'__line__{kkeyword}'
+#                 raise ValueError(kkeyword + f'Line {value[line_number]}: facing an unknown \
+# situation while processing attributes of an attribute !')
+
+
 # handle special keywords (symbols),
 # assumed that you do not encounter further symbols nested inside
 
@@ -580,7 +588,7 @@ def recursive_build(obj, dct, verbose):
             xml_handle_group(verbose, obj, value, keyword_name, keyword_type)
 
         elif keyword_name[0:2] == NX_ATTR_IDNT:  # check if obj qualifies
-            attribute_attributes_handle(verbose, dct, obj, value, keyword)
+            attribute_attributes_handle(dct, obj, keyword, value, verbose )
         elif keyword == 'doc':
             xml_handle_doc(obj, value)
         elif keyword == NX_UNIT_IDNT:
