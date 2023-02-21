@@ -120,12 +120,12 @@ def handle_dimension(depth, node, file_out):
 
     file_out.write(
         '{indent}{tag}:\n'.format(
-            indent=depth * '  ',
+            indent=depth * DEPTH_SIZE,
             tag=node.tag.split("}", 1)[1]))
 
     node_attrs = node.attrib
     for attr, value in node_attrs.items():
-        indent = (depth + 1) * '  '
+        indent = (depth + 1) * DEPTH_SIZE
         file_out.write(f'{indent}{attr}: {value}\n')
     dim_list = ''
     for child in list(node):
@@ -138,13 +138,13 @@ def handle_dimension(depth, node, file_out):
                 value=child_attrs['value'] if "value" in child_attrs else '')
             file_out.write(
                 '{indent}dim: [{value}]\n'.format(
-                    indent=(depth + 1) * '  ',
+                    indent=(depth + 1) * DEPTH_SIZE,
                     value=dim_list[:-2] or ''))
             if "index" in child_attrs:
                 del child_attrs["index"]
             if "value" in child_attrs:
                 del child_attrs["value"]
-        indent = (depth +1) * "  "
+        indent = (depth +1) * DEPTH_SIZE
         for attr, value in child_attrs.items():
             if attr in OPSSIBLE_DIM_ATTRS:
                 file_out.write(f"{indent}{attr}: {value}\n")
