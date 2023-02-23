@@ -24,7 +24,7 @@ import numpy as np
 import random
 # import h5py
 from nexusutils.dataconverter.readers.base.reader import BaseReader
-from nexusutils.dataconverter.readers.ellips.mock3 import MockEllips
+from nexusutils.dataconverter.readers.ellips.mock import MockEllips
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
@@ -139,11 +139,6 @@ def populate_template_dict(header, template):
         elif short_k in header:
             template[k] = header.pop(short_k)
     return template
-
-def mock_Ellips_data(header):
-    """Create mocked nxdl template from provided filled nxdl template"""
-    #MockEllips.get_mock_data(header)
-    return header
 
 class EllipsometryReader(BaseReader):
     """An example reader implementation for the DataConverter.
