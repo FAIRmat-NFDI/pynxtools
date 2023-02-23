@@ -20,7 +20,7 @@ from typing import Tuple, Any
 import random
 import numpy as np
 import ase
-from nexusutils.dataconverter.readers.xps.reader_utils import extract_atom_types
+from nexusutils.dataconverter.readers.ellips.reader_utils import extract_atom_types
 
 class MockEllips():
     """ A generic class for generating duplicate outputs for ELLIPSOMETRY
