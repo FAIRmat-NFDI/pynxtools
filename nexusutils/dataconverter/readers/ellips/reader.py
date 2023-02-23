@@ -21,11 +21,12 @@ from typing import Tuple, Any
 import yaml
 import pandas as pd
 import numpy as np
+import random
 # import h5py
 from nexusutils.dataconverter.readers.base.reader import BaseReader
+from nexusutils.dataconverter.readers.ellips.mock3 import MockEllips
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
-
 
 def load_header(filename, default):
     """ load the yaml description file, and apply defaults from
@@ -38,6 +39,7 @@ def load_header(filename, default):
         Returns:
             a dict containing the loaded information
     """
+
     with open(filename, 'rt', encoding='utf8') as file:
         header = yaml.safe_load(file)
 
@@ -138,13 +140,16 @@ def populate_template_dict(header, template):
             template[k] = header.pop(short_k)
     return template
 
+def mock_Ellips_data(header):
+    """Create mocked nxdl template from provided filled nxdl template"""
+    #MockEllips.get_mock_data(header)
+    return header
 
 class EllipsometryReader(BaseReader):
     """An example reader implementation for the DataConverter.
-
-Importing metadata from the yaml file based on the last
-two parts of the key in the application definition.
-"""
+    Importing metadata from the yaml file based on the last
+    two parts of the key in the application definition.
+    """
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXellipsometry"]
@@ -153,16 +158,16 @@ two parts of the key in the application definition.
     def populate_header_dict_with_datasets(file_paths):
         """This is an ellipsometry-specific processing of data.
 
-    The procedure is the following:
-    - the header dictionary is initialized reading a yaml file
-    - the data are read from header["filename"] and saved in a pandas object
-    - an array is shaped according to application definition in a 5D array (numpy array)
-    - the array is saved in a HDF5 file as a dataset
-    - virtual datasets instances are created in the header dictionary,
-      referencing to data in the created HDF5 file.
-    - the header is finally returned, ready to be parsed in the final template dictionary
+        The procedure is the following:
+        - the header dictionary is initialized reading a yaml file
+        - the data are read from header["filename"] and saved in a pandas object
+        - an array is shaped according to application definition in a 5D array (numpy array)
+        - the array is saved in a HDF5 file as a dataset
+        - virtual datasets instances are created in the header dictionary,
+        referencing to data in the created HDF5 file.
+        - the header is finally returned, ready to be parsed in the final template dictionary
 
-    """
+        """
         header, data_file = populate_header_dict(file_paths)
 
         if os.path.isfile(data_file):
@@ -178,6 +183,7 @@ two parts of the key in the application definition.
                                           return_counts=True
                                           )
         labels = {"psi": [], "delta": []}
+
         block_idx = [np.int64(0)]
         index = 0
         for angle in enumerate(unique_angles):
@@ -223,7 +229,15 @@ two parts of the key in the application definition.
         header["spectrometer/wavelength"] = (
             whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
         )
+
         header["angle_of_incidence"] = unique_angles
+
+        """ Create mocked ellipsometry data template: """
+        is_mock = True
+        if is_mock:
+            mock_header = MockEllips(header)
+            mock_header.mock_template(header)
+
         return header, labels["psi"], labels["delta"]
 
     def read(self,
@@ -284,7 +298,6 @@ two parts of the key in the application definition.
             template["/ENTRY[entry]/plot/@auxiliary_signals"] = deltalist
 
         return template
-
 
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
 READER = EllipsometryReader
