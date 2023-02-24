@@ -66,6 +66,7 @@ class MockEllips():
         dict["sample_name"] = self.name
         dict["atom_types"] = self.atom_types
         dict["layer_structure"] = f"{self.name} bulk"
+        dict["experiment_description"] = f"RC2 scan on {self.name} bulk"
 
     def choose_data_type(self, dict) -> None:
         """ Chooses random entry from data_types
