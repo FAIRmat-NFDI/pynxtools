@@ -108,9 +108,9 @@ class Nxdl2yaml():
         tag = remove_namespace_from_tag(node.tag)
         if tag == ('doc'):
             self.root_level_doc = '{indent}{tag}: | {text}'.format(
-                indent=0 * '  ',
+                indent=0 * DEPTH_SIZE,
                 tag=remove_namespace_from_tag(node.tag),
-                text='\n' + '  ' + '\n'.join([f"{1 * '  '}{s.lstrip()}"
+                text='\n' + DEPTH_SIZE + '\n'.join([f"{1 * DEPTH_SIZE}{s.lstrip()}"
                                                 for s in node.text.split('\n')]
                                                 if node.text else '').strip())
 
@@ -150,7 +150,7 @@ class Nxdl2yaml():
         # pylint: disable=consider-using-f-string
         file_out.write(
             '{indent}{root_level_doc}\n'.format(
-                indent=0 * '  ',
+                indent=0 * DEPTH_SIZE,
                 root_level_doc=self.root_level_doc))
         self.root_level_doc = ''
 
@@ -166,87 +166,86 @@ class Nxdl2yaml():
             if self.root_level_symbols:
                 file_out.write(
                     '{indent}{root_level_symbols}\n'.format(
-                        indent=0 * '  ',
+                        indent=0 * DEPTH_SIZE,
                         root_level_symbols=self.root_level_symbols))
                 for symbol in self.symbol_list:
                     file_out.write(
                         '{indent}{symbol}\n'.format(
-                            indent=0 * '  ',
+                            indent=0 * DEPTH_SIZE,
                             symbol=symbol))
             if self.root_level_definition:
                 for defs in self.root_level_definition:
                     file_out.write(
                         '{indent}{defs}\n'.format(
-                            indent=0 * '  ',
+                            indent=0 * DEPTH_SIZE,
                             defs=defs))
             self.found_definition = False
 
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
-        # pylint: disable=consider-using-f-string
-        if "name" in node.attrib and "type" in node.attrib:
-            type = node.attrib['type'] or ''
+
+        def type_check(type):
             if type == 'NX_CHAR':
                 type = ''
             else:
                 type = f"({type})"
+            return type
+
+        node_attr = node.attrib
+        # pylint: disable=consider-using-f-string
+        if "name" in node_attr and "type" in node_attr:
             file_out.write(
                 '{indent}{name}{type}:\n'.format(
-                    indent=depth * '  ',
-                    name=node.attrib['name'] or '',
-                    type=type))
+                    indent=depth * DEPTH_SIZE,
+                    name=node_attr['name'] or '',
+                    type=type_check(node_attr['type'])))
 
-        if "name" in node.attrib and "type" not in node.attrib:
+        if "name" in node_attr and "type" not in node_attr:
             file_out.write(
                 '{indent}{name}:\n'.format(
-                    indent=depth * '  ',
-                    name=node.attrib['name'] or ''))
+                    indent=depth * DEPTH_SIZE,
+                    name=node_attr['name'] or ''))
 
-        if "name" not in node.attrib and "type" in node.attrib:
-            type = node.attrib['type'] or ''
-            if type == 'NX_CHAR':
-                type = ''
-            else:
-                type = f"({type})"
+        if "name" not in node_attr and "type" in node_attr:
             file_out.write(
                 '{indent}{type}:\n'.format(
-                    indent=depth * '  ',
-                    type=type))
+                    indent=depth * DEPTH_SIZE,
+                    type=type_check(node_attr['type'])))
 
-        if "minOccurs" in node.attrib and "maxOccurs" in node.attrib:
+        if "minOccurs" in node_attr and "maxOccurs" in node_attr:
             file_out.write(
                 '{indent}exists: [min, {value1}, max, {value2}]\n'.format(
-                    indent=(depth + 1) * '  ',
-                    value1=node.attrib['minOccurs'] or '',
-                    value2=node.attrib['maxOccurs'] or ''))
-        elif "minOccurs" in node.attrib \
-                and "maxOccurs" not in node.attrib \
-                and node.attrib['minOccurs'] == "1":
+                    indent=(depth + 1) * DEPTH_SIZE,
+                    value1=node_attr['minOccurs'] or '',
+                    value2=node_attr['maxOccurs'] or ''))
+        elif "minOccurs" in node_attr \
+                and "maxOccurs" not in node_attr \
+                and node_attr['minOccurs'] == "1":
             file_out.write(
                 '{indent}{name}: required \n'.format(
-                    indent=(depth + 1) * '  ',
+                    indent=(depth + 1) * DEPTH_SIZE,
                     name='exists'))
-        elif "maxOccurs" in node.attrib:
+        elif "maxOccurs" in node_attr:
             file_out.write(
                 '{indent}exists: [max, {value1}]\n'.format(
-                    indent=(depth + 1) * '  ',
-                    value1=node.attrib['maxOccurs'] or ''))
+                    indent=(depth + 1) * DEPTH_SIZE,
+                    value1=node_attr['maxOccurs'] or ''))
 
-        if "recommended" in node.attrib and node.attrib['recommended'] == "true":
+        if "recommended" in node_attr and node_attr['recommended'] == "true":
             file_out.write(
                 '{indent}exists: recommended\n'.format(
-                    indent=(depth + 1) * '  '))
-        if 'nameType' in node.attrib:
+                    indent=(depth + 1) * DEPTH_SIZE))
+        if 'nameType' in node_attr:
             file_out.write(
                 '{indent}nameType: {value}\n'.format(
-                    indent=(depth + 1) * '  ',
-                    value=node.attrib['nameType'] or '')
+                    indent=(depth + 1) * DEPTH_SIZE,
+                    value=node_attr['nameType'] or '')
                     )
-        if "units" in node.attrib:
+        if "units" in node_attr:
             file_out.write(
                 '{indent}unit: {value}\n'.format(
-                    indent=(depth + 1) * '  ',
-                    value=node.attrib['units'] or ''))
+                    indent=(depth + 1) * DEPTH_SIZE,
+                    value=node_attr['units'] or ''))
 
     # TODO make code radable by moving rank in a rank variable
     def handle_dimension(self, depth, node, file_out):
@@ -314,14 +313,14 @@ class Nxdl2yaml():
         if check_doc:
             file_out.write(
                 '{indent}{tag}: \n'.format(
-                    indent=depth * '  ',
+                    indent=depth * DEPTH_SIZE,
                     tag=node.tag.split("}", 1)[1]))
             for child in list(node):
                 tag = child.tag.split("}", 1)[1]
                 if tag == ('item'):
                     file_out.write(
                         '{indent}{value}: \n'.format(
-                            indent=(depth + 1) * '  ',
+                            indent=(depth + 1) * DEPTH_SIZE,
                             value=child.attrib['value']))
                     if list(child):
                         for item_doc in list(child):
@@ -331,7 +330,7 @@ class Nxdl2yaml():
         else:
             file_out.write(
                 '{indent}{tag}:'.format(
-                    indent=depth * '  ',
+                    indent=depth * DEPTH_SIZE,
                     tag=node.tag.split("}", 1)[1]))
             enum_list = ''
             for child in list(node):
@@ -349,7 +348,7 @@ class Nxdl2yaml():
 
         file_out.write(
             '{indent}{escapesymbol}{key}:\n'.format(
-                indent=depth * '  ',
+                indent=depth * DEPTH_SIZE,
                 escapesymbol=r'\@',
                 key=node.attrib['name']))
 
