@@ -185,21 +185,33 @@ class Nxdl2yaml():
         """Handle all the possible attributes that come along a field or group"""
         # pylint: disable=consider-using-f-string
         if "name" in node.attrib and "type" in node.attrib:
+            type = node.attrib['type'] or ''
+            if type == 'NX_CHAR':
+                type = ''
+            else:
+                type = f"({type})"
             file_out.write(
-                '{indent}{name}({type}):\n'.format(
+                '{indent}{name}{type}:\n'.format(
                     indent=depth * '  ',
                     name=node.attrib['name'] or '',
-                    type=node.attrib['type'] or ''))
+                    type=type))
+
         if "name" in node.attrib and "type" not in node.attrib:
             file_out.write(
                 '{indent}{name}:\n'.format(
                     indent=depth * '  ',
                     name=node.attrib['name'] or ''))
+
         if "name" not in node.attrib and "type" in node.attrib:
+            type = node.attrib['type'] or ''
+            if type == 'NX_CHAR':
+                type = ''
+            else:
+                type = f"({type})"
             file_out.write(
-                '{indent}({type}):\n'.format(
+                '{indent}{type}:\n'.format(
                     indent=depth * '  ',
-                    type=node.attrib['type'] or ''))
+                    type=type))
 
         if "minOccurs" in node.attrib and "maxOccurs" in node.attrib:
             file_out.write(
@@ -250,19 +262,16 @@ class Nxdl2yaml():
         for attr, value in node_attrs.items():
             indent = (depth + 1) * DEPTH_SIZE
             file_out.write(f'{indent}{attr}: {value}\n')
-        dim_list = ''
+        dim_index_value = ''
+        dim_other_attr = {}
         for child in list(node):
             tag = child.tag.split("}", 1)[1]
             child_attrs = child.attrib
             if tag == ('dim'):
                 # taking care of index and value in format [[index, value]]
-                dim_list = dim_list + '[{index}, {value}], '.format(
+                dim_index_value = dim_index_value + '[{index}, {value}], '.format(
                     index=child_attrs['index'] if "index" in child_attrs else '',
                     value=child_attrs['value'] if "value" in child_attrs else '')
-                file_out.write(
-                    '{indent}dim: [{value}]\n'.format(
-                        indent=(depth + 1) * DEPTH_SIZE,
-                        value=dim_list[:-2] or ''))
                 if "index" in child_attrs:
                     del child_attrs["index"]
                 if "value" in child_attrs:
@@ -270,7 +279,21 @@ class Nxdl2yaml():
             indent = (depth +1) * DEPTH_SIZE
             for attr, value in child_attrs.items():
                 if attr in OPSSIBLE_DIM_ATTRS:
-                    file_out.write(f"{indent}{attr}: {value}\n")
+                    if attr not in dim_other_attr:
+                        dim_other_attr[attr] = []
+                    dim_other_attr[attr] = dim_other_attr[attr].append(value)
+
+        # index and value attributes of dim elements
+        file_out.write(
+            '{indent}dim: [{value}]\n'.format(
+                indent=(depth + 1) * DEPTH_SIZE,
+                value=dim_index_value[:-2] or ''))
+        # other attributes, except index and vale and doc of dim and write as child of dim
+        # doc or attributes for each dim come in list
+        indent = depth + 2
+        for key, value in dim_other_attr.items():
+            file_out.write(f"{indent}{key}: {value}\n")
+
     def handle_enumeration(self, depth, node, file_out):
         """
             Handle the enumeration field parsed from the xml file.
