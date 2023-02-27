@@ -184,13 +184,6 @@ class Nxdl2yaml():
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
 
-        def type_check(type):
-            if type == 'NX_CHAR':
-                type = ''
-            else:
-                type = f"({type})"
-            return type
-
         node_attr = node.attrib
         # pylint: disable=consider-using-f-string
         if "name" in node_attr and "type" in node_attr:
@@ -235,17 +228,16 @@ class Nxdl2yaml():
             file_out.write(
                 '{indent}exists: recommended\n'.format(
                     indent=(depth + 1) * DEPTH_SIZE))
-        if 'nameType' in node_attr:
-            file_out.write(
-                '{indent}nameType: {value}\n'.format(
-                    indent=(depth + 1) * DEPTH_SIZE,
-                    value=node_attr['nameType'] or '')
-                    )
-        if "units" in node_attr:
-            file_out.write(
-                '{indent}unit: {value}\n'.format(
-                    indent=(depth + 1) * DEPTH_SIZE,
-                    value=node_attr['units'] or ''))
+
+        other_similar_attr = ['nameType', 'axis', 'signal', 'units']
+        for attr in other_similar_attr:
+            if attr in node_attr:
+                file_out.write(
+                    '{indent}{attr}: {value}\n'.format(
+                        indent=(depth + 1) * DEPTH_SIZE,
+                        attr=attr,
+                        value=node_attr[attr] or '')
+                        )
 
     # TODO make code radable by moving rank in a rank variable
     def handle_dimension(self, depth, node, file_out):
@@ -345,12 +337,36 @@ class Nxdl2yaml():
     def handle_attributes(self, depth, node, file_out):
         """Handle the attributes parsed from the xml file"""
         # pylint: disable=consider-using-f-string
+        attr_list = ['name', 'type', 'units', 'nameType']
+        node_attr = node.attrib
 
+        if 'name' in node_attr:
+            name = node_attr['name']
+        else:
+            raise ValueError("Attribute must have an name key.")
+
+        type = type_check(node_attr['type'] or '')
         file_out.write(
-            '{indent}{escapesymbol}{key}:\n'.format(
+            '{indent}{escapesymbol}{key}{type}:\n'.format(
                 indent=depth * DEPTH_SIZE,
                 escapesymbol=r'\@',
-                key=node.attrib['name']))
+                key=name,
+                type=f'{type}' or ''))
+
+        for attr in attr_list:
+            if attr == 'units':
+                attr = 'unit'
+            if attr in ['name', 'type']:
+                continue
+            if attr not in node_attr:
+                continue
+
+            file_out.write('{indent}{key}: {value}\n'.format(
+                indent=depth * DEPTH_SIZE,
+                key=attr,
+                value=node_attr[attr])
+                )
+
 
     def handel_link(self, depth, node, file_out):
         # TODO bring the list of attributes or name in upper case inside their corresponding function
@@ -480,3 +496,11 @@ union of the two initial trees.
     if verbose:
         sys.stdout.write('     \n')
     return root_no_duplicates
+
+
+def type_check(type):
+    if type in ['NX_CHAR', '']:
+        type = ''
+    else:
+        type = f"({type})"
+    return type

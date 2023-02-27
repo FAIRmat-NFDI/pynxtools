@@ -404,10 +404,11 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     # list of possible attribute of xml attribute elementsa
     attr_list = ['name', 'type', 'units', 'nameType']
     # as an attribute identifier
-    keyword_name = nx_name_type_resolving(keyword)
+    keyword_name, keyword_typ = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
     elemt_obj = ET.SubElement(obj, 'attribute')
-    elemt_obj.set('name', keyword_name[0][2:])
+    elemt_obj.set('name', keyword_name[2:])
+    elemt_obj.set('type', keyword_typ)
     if value:
         val_attr = list(value.keys())
     else:
@@ -442,7 +443,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
     """
 
     # List of possible attributes of xml elements
-    field_attr = ['name', 'type', 'nameType', 'units']
+    field_attr = ['name', 'type', 'nameType', 'units', 'axis', 'signal']
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
     # Consider by default type is NX_CHAR
     typ = ''
@@ -464,7 +465,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
             del value[attr]
             del value[line_number]
         elif attr in val_attr and line_number in val_attr:
-            elemt_obj.set(attr, value[attr])
+            elemt_obj.set(attr, str(value[attr]))
             del value[attr]
             del value[line_number]
 
