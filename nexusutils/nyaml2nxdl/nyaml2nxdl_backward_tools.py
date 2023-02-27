@@ -352,6 +352,24 @@ class Nxdl2yaml():
                 escapesymbol=r'\@',
                 key=node.attrib['name']))
 
+    def handel_link(self, depth, node, file_out):
+        # TODO bring the list of attributes or name in upper case inside their corresponding function
+        possible_link_attrs = ['doc', 'name', 'target', 'napimount']
+        node_attr = node.attrib
+        if 'name' in node_attr:
+            file_out.write('{indent}{name}(link):\n'.format(
+                indent = depth * DEPTH_SIZE,
+                name=node_attr['name'] or ''))
+        depth_ = depth + 1
+
+        for attr_key in possible_link_attrs:
+            if attr_key in node_attr and attr_key not in ['name']:
+                file_out.write('{indent}{attr}: {value}\n'.format(
+                    indent=(depth_ + 1) * DEPTH_SIZE,
+                    attr=attr_key,
+                    value=node_attr[attr_key])
+                    )
+
     def recursion_in_xml_tree(self, depth, xml_tree, output_yml, verbose):
         """
             Descend lower level in xml tree. If we are in the symbols branch, the recursive
@@ -413,11 +431,11 @@ class Nxdl2yaml():
                 self.handle_attributes(depth, node, file_out)
             if tag == ('dimensions'):
                 self.handle_dimension(depth, node, file_out)
+            if tag == ('link'):
+                self.handel_link(depth, node, file_out)
         depth += 1
         # Write nested nodes
         self.recursion_in_xml_tree(depth, xml_tree, output_yml, verbose)
-
-
 def get_node_parent_info(tree, node):
     """Return tuple of (parent, index) where:
         parent = node of parent within tree

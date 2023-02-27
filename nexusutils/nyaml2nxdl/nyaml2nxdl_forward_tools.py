@@ -444,13 +444,15 @@ def xml_handle_fields(obj, keyword, value, verbose):
     # List of possible attributes of xml elements
     field_attr = ['name', 'type', 'nameType', 'units']
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
-    typ = 'NX_CHAR'
-    if keyword_type in NX_TYPE_KEYS + NX_NEW_DEFINED_CLASSES:
+    # Consider by default type is NX_CHAR
+    typ = ''
+    if keyword_type in NX_TYPE_KEYS + NX_NEW_DEFINED_CLASSES and keyword_type != 'NX_CHAR':
         typ = keyword_type
     # assume type is NX_CHAR, a NeXus default assumption if in doubt
     elemt_obj = ET.SubElement(obj, 'field')
     elemt_obj.set('name', keyword_name)
-    elemt_obj.set('type', typ)
+    if typ:
+        elemt_obj.set('type', typ)
     if isinstance(value, dict):
         val_attr = list(value.keys())
     else:
