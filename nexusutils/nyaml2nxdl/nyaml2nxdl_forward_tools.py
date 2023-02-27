@@ -232,40 +232,43 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
 
         # dim comes in precedence
         if attr == 'dim':
-            assert isinstance(value[attr], list), (f'Line {value[line_number]}: dim'
+            # dim consists of list of [index, value]
+            llist_ind_value = value[attr]
+            assert isinstance(llist_ind_value, list), (f'Line {value[line_number]}: dim'
                                         f'argument not a list !')
             if isinstance(rank, int) and rank>0 :
-                assert rank == len(value[attr]), (f"Line {[value[line_number]]} rank value {rank} "
+                assert rank == len(llist_ind_value), (f"Line {[value[line_number]]} rank value {rank} "
                                                   f"is not the same as dim array "
-                                                  f"{len(value[attr])}")
-                for dim_no in range(rank):
-                    dim = ET.SubElement(dims, 'dim')
-                    dim_list.append(dim)
+                                                  f"{len(llist_ind_value)}")
+            for dim_ind_val in llist_ind_value:
+                dim = ET.SubElement(dims, 'dim')
+                dim_list.append(dim)
 
-                    # Taking care of multidimensions or rank
-                    dim.set('index', str(value[attr][dim_no][0])
-                            if len(value[attr][dim_no]) >= 1 else '')
-                    dim.set('value', str(value[attr][dim_no][1])
-                            if len(value[attr][dim_no]) == 2 else '')
+                # Taking care of multidimensions or rank
+                dim.set('index', str(dim_ind_val[0])
+                        if len(dim_ind_val) >= 1 else '')
+                dim.set('value', str(dim_ind_val[1])
+                        if len(dim_ind_val) == 2 else '')
             assert attr in val_attrs and line_number in val_attrs, (f"Line {value[line_number]} does not"
                                                                   f" have attribute {val_attrs}.")
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
-        elif attr == 'optional'and not dim_list:
+
+        elif attr == 'optional'and dim_list:
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
                 bool_ = value[attr][i] if isinstance(value[attr], list) else value[attr]
                 dim.set('required', 'false' if bool_=='true' else 'true' )
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
-        elif attr == 'doc' and not dim_list:
+        elif attr == 'doc' and dim_list:
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
                 doc = value[attr][i] if isinstance(value[attr],  list) else value[attr]
                 xml_handle_doc(dim, doc)
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
-        elif not dim_list:
+        elif dim_list:
             for i, dim in enumerate(dim_list):
                 val = value[attr][i] if isinstance(value[attr], list) else value[attr]
                 # value[attr] is list for multiple elements or single value
@@ -277,15 +280,15 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
         if attr not in val_attrs:
             continue
         line_number = f'__line__{attr}'
-        if isinstance(rank, str):
-        # Rank could be undefined means it might have different patterns,
-        # different ranks or dynamic
-            val_attrs.remove(attr)
-            val_attrs.remove(line_number)
-            break
-        if attr == 'rank':
-            rank = value[attr]
-        line_number = f'__line__{attr}'
+        # if isinstance(rank, str):
+        # # Rank could be undefined means it might have different patterns,
+        # # different ranks or dynamic
+        #     val_attrs.remove(attr)
+        #     val_attrs.remove(line_number)
+        #     break
+        # if attr == 'rank':
+        #     rank = value[attr]
+        # line_number = f'__line__{attr}'
         dims.set(attr, str(value[attr]))
         val_attrs.remove(attr)
         val_attrs.remove(line_number)
@@ -408,7 +411,8 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     line_number = f'__line__{keyword}'
     elemt_obj = ET.SubElement(obj, 'attribute')
     elemt_obj.set('name', keyword_name[2:])
-    elemt_obj.set('type', keyword_typ)
+    if keyword_typ:
+        elemt_obj.set('type', keyword_typ)
     if value:
         val_attr = list(value.keys())
     else:

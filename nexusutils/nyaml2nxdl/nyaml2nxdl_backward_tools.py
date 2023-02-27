@@ -344,8 +344,10 @@ class Nxdl2yaml():
             name = node_attr['name']
         else:
             raise ValueError("Attribute must have an name key.")
-
-        type = type_check(node_attr['type'] or '')
+        if 'type' in node_attr:
+            type = type_check(node_attr['type'] or '')
+        else:
+            type = ''
         file_out.write(
             '{indent}{escapesymbol}{key}{type}:\n'.format(
                 indent=depth * DEPTH_SIZE,
@@ -370,7 +372,7 @@ class Nxdl2yaml():
 
     def handel_link(self, depth, node, file_out):
         # TODO bring the list of attributes or name in upper case inside their corresponding function
-        possible_link_attrs = ['doc', 'name', 'target', 'napimount']
+        possible_link_attrs = ['name', 'target', 'napimount']
         node_attr = node.attrib
         if 'name' in node_attr:
             file_out.write('{indent}{name}(link):\n'.format(
@@ -381,7 +383,7 @@ class Nxdl2yaml():
         for attr_key in possible_link_attrs:
             if attr_key in node_attr and attr_key not in ['name']:
                 file_out.write('{indent}{attr}: {value}\n'.format(
-                    indent=(depth_ + 1) * DEPTH_SIZE,
+                    indent=depth_  * DEPTH_SIZE,
                     attr=attr_key,
                     value=node_attr[attr_key])
                     )
