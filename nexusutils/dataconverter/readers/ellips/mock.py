@@ -32,14 +32,15 @@ class MockEllips():
         - mock_chemical_formula:
             Creates a list of chemical formulas consisting of two atom types
         - modify_spectral_range:
-            Change spectral range (i.e. wavlength array) and step size,
-            while length of the wavelength array remains the same.
+            Change spectral range (i.e. wavelength array) and step size.
         - mock_angles:
             Change value and number of incident angles
+        - choose_data_type:
+            Chooses random entry from data_types
         - mock_signals:
-            Change data array according to the (new) number of incident angles
-        - mock_psi_delta:
-            Distorts psi and delta, adds noise, and overwrites measured_data
+            Mock data if data_type is psi/delta or tan(psi)/cos(delta)
+        - mock_Mueller_matrix:
+            Mock data if data_type is Mueller matrix
         - mock_template:
             Creates mock ellipsometry data (by calling the above routines)
     """
@@ -75,12 +76,8 @@ class MockEllips():
         dict["data_type"] = self.data_type
         if self.data_type == "Mueller matrix":
             self.number_of_signals = 16
-        elif self.data_type == "psi/delta":
+        elif self.data_type == "psi/delta" or "tan(psi)/cos(delta)":
             self.number_of_signals = 2
-            dict["colnames"] = ["psi", "delta"]
-        elif self.data_type == "tan(psi)/cos(delta)":
-            self.number_of_signals = 2
-            dict["colnames"] = ["tan(psi)", "cos(delta)"]
 
     def mock_chemical_formula(self) -> None:
         """ Creates a list of chemical formulas consisting of two atom types """
@@ -110,7 +107,8 @@ class MockEllips():
             self.mock_Mueller_matrix(dict)
 
     def mock_signals(self, dict) -> None:
-        """ Change data array according to the (new) number of incident angles
+        """ Mock data if data_type is psi/delta or tan(psi)/cos(delta)
+            considering the (new) number of incident angles
         """
         my_numpy_array = np.empty([1,
                             1,
@@ -125,8 +123,9 @@ class MockEllips():
         dict["measured_data"] = my_numpy_array
 
     def mock_Mueller_matrix(self, dict) -> None:
-        """ Create Mueller matrix elements
-        # """
+        """ Mock data if data_type is Mueller matrix (i.e. 16 elements/signals)
+            considering the (new) number of incident angles
+        """
         my_numpy_array = np.empty([1,
                             1,
                             len(self.angles),
@@ -146,22 +145,9 @@ class MockEllips():
         """
         dict["spectrometer/wavelength"] = random.uniform(0.25,23)*dict["spectrometer/wavelength"]
 
-    def mock_psi_delta(self, dict) -> None:
-        """ Distorts psi and delta, adds noise, and overwrites measured_data
-        """
-        noise=np.random.normal(0,0.5,self.data[0,0,0,0,:].size)
-        rand_psi=random.uniform(0.5,1.5)
-        rand_delta=random.uniform(0.5,1.)
-        number_of_angles = self.data[0,0,:,0,0].size
-        for index in range(number_of_angles):
-            self.data[0, 0, index, 0, :] = self.data[0, 0, index, 0,:]*rand_psi + noise
-            self.data[0, 0, index, 1, :] = self.data[0, 0, index, 1,:]*rand_delta + noise
-        dict["measured_data"] = self.data
-
     def mock_template(self, dict) -> None:
         """ Creates a mock ellipsometry template """
         self.mock_sample(dict)
         self.modify_spectral_range(dict)
         self.choose_data_type(dict)
         self.mock_angles(dict)
-        #self.mock_psi_delta(dict) --> redundant, now done by mock_signals
