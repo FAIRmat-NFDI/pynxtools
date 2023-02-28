@@ -21,11 +21,12 @@
 # limitations under the License.
 #
 import sys
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check
 from nexusutils.dataconverter.helpers import remove_namespace_from_tag
 from typing import List
 
 
-OPSSIBLE_DIM_ATTRS = ['dim', 'ref', 'optional', 'recommended']
+OPSSIBLE_DIM_ATTRS = ['ref', 'optional', 'recommended']
 OPSSIBLE_DIMENSION_ATTRS = ['rank', 'doc']
 DEPTH_SIZE = "  "
 
@@ -118,6 +119,10 @@ class Nxdl2yaml():
         """
         Handle docs field along the yaml file
         """
+
+        # Handling empty doc
+        if not text:
+            text = ""
         # pylint: disable=consider-using-f-string
         if "\n" in text:
             text = '\n' + (depth + 1) * DEPTH_SIZE + '\n'.join([f"{(depth + 1) * DEPTH_SIZE}{s.lstrip()}"
@@ -229,7 +234,7 @@ class Nxdl2yaml():
                 '{indent}exists: recommended\n'.format(
                     indent=(depth + 1) * DEPTH_SIZE))
 
-        other_similar_attr = ['nameType', 'axis', 'signal', 'units']
+        other_similar_attr = ['nameType', 'axis', 'signal', 'units', 'deprecated']
         for attr in other_similar_attr:
             if attr in node_attr:
                 file_out.write(
@@ -250,14 +255,17 @@ class Nxdl2yaml():
                 tag=node.tag.split("}", 1)[1]))
 
         node_attrs = node.attrib
+        # Taking care of dimension attributes
         for attr, value in node_attrs.items():
             indent = (depth + 1) * DEPTH_SIZE
             file_out.write(f'{indent}{attr}: {value}\n')
         dim_index_value = ''
         dim_other_attr = {}
+        # taking care of dim attributes
         for child in list(node):
             tag = child.tag.split("}", 1)[1]
             child_attrs = child.attrib
+            # taking care of index and value attributes
             if tag == ('dim'):
                 # taking care of index and value in format [[index, value]]
                 dim_index_value = dim_index_value + '[{index}, {value}], '.format(
@@ -268,20 +276,21 @@ class Nxdl2yaml():
                 if "value" in child_attrs:
                     del child_attrs["value"]
             indent = (depth +1) * DEPTH_SIZE
+            # taking care of other attributes except index and value
             for attr, value in child_attrs.items():
                 if attr in OPSSIBLE_DIM_ATTRS:
                     if attr not in dim_other_attr:
                         dim_other_attr[attr] = []
-                    dim_other_attr[attr] = dim_other_attr[attr].append(value)
+                    dim_other_attr[attr].append(value)
 
         # index and value attributes of dim elements
         file_out.write(
             '{indent}dim: [{value}]\n'.format(
                 indent=(depth + 1) * DEPTH_SIZE,
                 value=dim_index_value[:-2] or ''))
-        # other attributes, except index and vale and doc of dim and write as child of dim
+        # other attributes, except index and value and doc of dim and write as child of dim
         # doc or attributes for each dim come in list
-        indent = depth + 2
+        indent = (depth + 1) * DEPTH_SIZE
         for key, value in dim_other_attr.items():
             file_out.write(f"{indent}{key}: {value}\n")
 
@@ -498,11 +507,3 @@ union of the two initial trees.
     if verbose:
         sys.stdout.write('     \n')
     return root_no_duplicates
-
-
-def type_check(type):
-    if type in ['NX_CHAR', '']:
-        type = ''
-    else:
-        type = f"({type})"
-    return type
