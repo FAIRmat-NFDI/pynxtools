@@ -98,17 +98,6 @@ def tabulated(table_input: TableInput):
 
 def sellmeier_squared(model_input: ModelInput):
     """
-    The Sellmeier-2 formula (2) from refractiveindex.info
-    See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
-    for a reference.
-    """
-    for i in range(2, len(model_input.coeffs), 2):
-        model_input.coeffs[i] = sqrt(model_input.coeffs[i])
-    sellmeier(model_input)
-
-
-def sellmeier(model_input: ModelInput):
-    """
     The Sellmeier formula (1) from refractiveindex.info
     See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
     for a reference.
@@ -128,6 +117,17 @@ def sellmeier(model_input: ModelInput):
     model_input.callbacks.add_rep_param(
         path, "B", model_input.coeffs[2::2], ["micrometer"]
     )
+
+
+def sellmeier(model_input: ModelInput):
+    """
+    The Sellmeier-2 formula (2) from refractiveindex.info
+    See https://refractiveindex.info/database/doc/Dispersion%20formulas.pdf
+    for a reference.
+    """
+    for i in range(2, len(model_input.coeffs), 2):
+        model_input.coeffs[i] = sqrt(model_input.coeffs[i])
+    sellmeier_squared(model_input)
 
 
 def polynomial(model_input: ModelInput):
