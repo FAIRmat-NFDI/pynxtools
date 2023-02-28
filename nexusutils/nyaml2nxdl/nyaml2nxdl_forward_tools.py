@@ -34,6 +34,7 @@ from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check
 from . import check_escape_sequence_in_text
 
 NX_CLSS = nexus.get_nx_classes()
@@ -200,10 +201,17 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
     """The function deals with group instances
 
 """
+    list_of_attr = ['name', 'type', 'nameType', 'deprecated']
     grp = ET.SubElement(obj, 'group')
     if keyword_name != '':  # use the custom name for the group
         grp.set('name', keyword_name)
     grp.set('type', keyword_type)
+    for attr in list_of_attr:
+        if attr in ['name', 'type'] or not value:
+            continue
+        if attr in value and not isinstance(value[attr], dict):
+            grp.set(attr, value[attr])
+            del value[attr]
     if isinstance(value, dict) and value != {}:
         recursive_build(grp, value, verbose)
 
@@ -447,7 +455,8 @@ def xml_handle_fields(obj, keyword, value, verbose):
     """
 
     # List of possible attributes of xml elements
-    field_attr = ['name', 'type', 'nameType', 'units', 'axis', 'signal']
+    field_attr = ['name', 'type', 'nameType', 'units',
+                  'axis', 'signal', 'deprecated']
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
     # Consider by default type is NX_CHAR
     typ = ''
