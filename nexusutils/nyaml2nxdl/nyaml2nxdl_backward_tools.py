@@ -65,19 +65,21 @@ class Nxdl2yaml():
             tag = remove_namespace_from_tag(child.tag)
             if tag == 'doc':
                 self.symbol_list.append(self.handle_not_root_level_doc(depth,
-                                                                  text=child.text))
+                                                                       text=child.text))
             elif tag == 'symbol':
                 if 'doc' in child.attrib:
-                    self.symbol_list.append(self.handle_not_root_level_doc(depth,
-                                                                      tag=child.attrib['name'],
-                                                                      text=child.attrib['doc']))
+                    self.symbol_list.append(
+                        self.handle_not_root_level_doc(depth,
+                                                       tag=child.attrib['name'],
+                                                       text=child.attrib['doc']))
                 else:
                     for symbol_doc in list(child):
                         tag = remove_namespace_from_tag(symbol_doc.tag)
                         if tag == 'doc':
-                            self.symbol_list.append(self.handle_not_root_level_doc(depth,
-                                                                              tag=child.attrib['name'],
-                                                                              text=symbol_doc.text))
+                            self.symbol_list.append(
+                                self.handle_not_root_level_doc(depth,
+                                                               tag=child.attrib['name'],
+                                                               text=symbol_doc.text))
 
     def handle_definition(self, node):
         """Handle definition group and its attributes
@@ -103,7 +105,9 @@ class Nxdl2yaml():
                 self.root_level_definition.append(f"{keyword[0:-1]}({attribs['extends']}):")
 
     def handle_root_level_doc(self, node):
-        """Handle the documentation field found at root level"""
+        """
+            Handle the documentation field found at root level.
+        """
         # pylint: disable=consider-using-f-string
 
         tag = remove_namespace_from_tag(node.tag)
@@ -112,8 +116,8 @@ class Nxdl2yaml():
                 indent=0 * DEPTH_SIZE,
                 tag=remove_namespace_from_tag(node.tag),
                 text='\n' + DEPTH_SIZE + '\n'.join([f"{1 * DEPTH_SIZE}{s.lstrip()}"
-                                                for s in node.text.split('\n')]
-                                                if node.text else '').strip())
+                                                    for s in node.text.split('\n')]
+                                                   if node.text else '').strip())
 
     def handle_not_root_level_doc(self, depth, text, tag='doc', file_out=None):
         """
@@ -125,8 +129,9 @@ class Nxdl2yaml():
             text = ""
         # pylint: disable=consider-using-f-string
         if "\n" in text:
-            text = '\n' + (depth + 1) * DEPTH_SIZE + '\n'.join([f"{(depth + 1) * DEPTH_SIZE}{s.lstrip()}"
-                                                        for s in text.split('\n')]).strip()
+            text = '\n' + (depth + 1) * DEPTH_SIZE + \
+                   '\n'.join([f"{(depth + 1) * DEPTH_SIZE}{s.lstrip()}"
+                              for s in text.split('\n')]).strip()
             if "}" in tag:
                 tag = remove_namespace_from_tag(tag)
             indent = depth * DEPTH_SIZE
@@ -166,8 +171,9 @@ class Nxdl2yaml():
         """
         # pylint: disable=consider-using-f-string
         if depth >= 0 \
-                and ([s for s in self.root_level_definition if "category: application" in s]\
-                or [s for s in self.root_level_definition if "category: base" in s]):
+                and ([s for s in self.root_level_definition if "category: application" in s]
+                     or [s for s in self.root_level_definition if "category: base" in s]):
+
             if self.root_level_symbols:
                 file_out.write(
                     '{indent}{root_level_symbols}\n'.format(
@@ -224,10 +230,9 @@ class Nxdl2yaml():
                     indent=(depth + 1) * DEPTH_SIZE,
                     name='exists'))
         elif "maxOccurs" in node_attr:
-            file_out.write(
-                '{indent}exists: [max, {value1}]\n'.format(
-                    indent=(depth + 1) * DEPTH_SIZE,
-                    value1=node_attr['maxOccurs'] or ''))
+            file_out.write('{indent}exists: [max, {value1}]\n'.
+                           format(indent=(depth + 1) * DEPTH_SIZE,
+                                  value1=node_attr['maxOccurs'] or ''))
 
         if "recommended" in node_attr and node_attr['recommended'] == "true":
             file_out.write(
@@ -235,14 +240,14 @@ class Nxdl2yaml():
                     indent=(depth + 1) * DEPTH_SIZE))
 
         other_similar_attr = ['nameType', 'axis', 'signal', 'units', 'deprecated']
+
         for attr in other_similar_attr:
             if attr in node_attr:
                 file_out.write(
                     '{indent}{attr}: {value}\n'.format(
                         indent=(depth + 1) * DEPTH_SIZE,
                         attr=attr,
-                        value=node_attr[attr] or '')
-                        )
+                        value=node_attr[attr] or ''))
 
     # TODO make code radable by moving rank in a rank variable
     def handle_dimension(self, depth, node, file_out):
@@ -275,7 +280,7 @@ class Nxdl2yaml():
                     del child_attrs["index"]
                 if "value" in child_attrs:
                     del child_attrs["value"]
-            indent = (depth +1) * DEPTH_SIZE
+            indent = (depth + 1) * DEPTH_SIZE
             # taking care of other attributes except index and value
             for attr, value in child_attrs.items():
                 if attr in OPSSIBLE_DIM_ATTRS:
@@ -327,7 +332,7 @@ class Nxdl2yaml():
                         for item_doc in list(child):
                             item_doc_depth = depth + 2
                             self.handle_not_root_level_doc(item_doc_depth, item_doc.text,
-                                                    item_doc.tag, file_out)
+                                                           item_doc.tag, file_out)
         else:
             file_out.write(
                 '{indent}{tag}:'.format(
@@ -375,9 +380,7 @@ class Nxdl2yaml():
             file_out.write('{indent}{key}: {value}\n'.format(
                 indent=depth * DEPTH_SIZE,
                 key=attr,
-                value=node_attr[attr])
-                )
-
+                value=node_attr[attr]))
 
     def handel_link(self, depth, node, file_out):
         # TODO bring the list of attributes or name in upper case inside their corresponding function
@@ -385,17 +388,16 @@ class Nxdl2yaml():
         node_attr = node.attrib
         if 'name' in node_attr:
             file_out.write('{indent}{name}(link):\n'.format(
-                indent = depth * DEPTH_SIZE,
+                indent=depth * DEPTH_SIZE,
                 name=node_attr['name'] or ''))
         depth_ = depth + 1
 
         for attr_key in possible_link_attrs:
             if attr_key in node_attr and attr_key not in ['name']:
                 file_out.write('{indent}{attr}: {value}\n'.format(
-                    indent=depth_  * DEPTH_SIZE,
+                    indent=depth_ * DEPTH_SIZE,
                     attr=attr_key,
-                    value=node_attr[attr_key])
-                    )
+                    value=node_attr[attr_key]))
 
     def recursion_in_xml_tree(self, depth, xml_tree, output_yml, verbose):
         """
@@ -424,7 +426,7 @@ class Nxdl2yaml():
             tag = remove_namespace_from_tag(node.tag)
             if tag == ('definition'):
                 self.found_definition = True
-                self.handle_definition( node)
+                self.handle_definition(node)
                 for child in list(node):
                     tag_tmp = remove_namespace_from_tag(child.tag)
                     if tag_tmp == 'doc':
@@ -439,8 +441,8 @@ class Nxdl2yaml():
                 doc_parent = remove_namespace_from_tag(parent.tag)
                 if doc_parent != 'item':
                     self.handle_not_root_level_doc(depth, text=node.text,
-                                              tag=node.tag,
-                                              file_out=file_out)
+                                                   tag=node.tag,
+                                                   file_out=file_out)
             # End of root level definition parsing. Print root-level definitions in file
             # TODO: remove unecessary append_flag
             if self.root_level_doc \
@@ -463,6 +465,8 @@ class Nxdl2yaml():
         depth += 1
         # Write nested nodes
         self.recursion_in_xml_tree(depth, xml_tree, output_yml, verbose)
+
+
 def get_node_parent_info(tree, node):
     """Return tuple of (parent, index) where:
         parent = node of parent within tree

@@ -35,7 +35,6 @@ from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
 from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check
-from . import check_escape_sequence_in_text
 
 NX_CLSS = nexus.get_nx_classes()
 NX_NEW_DEFINED_CLASSES = ['NX_COMPLEX']
