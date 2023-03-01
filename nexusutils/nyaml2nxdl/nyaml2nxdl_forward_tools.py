@@ -47,9 +47,6 @@ rare_def_attributes = ['deprecated', 'ignoreExtraGroups', 'ignoreExtraFields',
 # Keep the order as it is NIAC branch
 # TODO try to move in one place as it is in for forward and backward
 # dim should precedent
-OPSSIBLE_DIM_ATTRS = ['dim', 'ref', 'optional', 'recommended', 'doc']
-POSSIBLE_DIMENSION_ATTRS = ['doc', 'rank']
-
 
 class LineLoader(Loader):  # pylint: disable=too-many-ancestors
     """
@@ -214,35 +211,24 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
         recursive_build(grp, value, verbose)
 
 
-def xml_handle_dimensions(dct, obj, keyword, value: dict):
-    """
-    This function creates a 'dimensions' element instance, and appends it to an existing element
-    """
+def xml_handle_dimfrom_dimension_dict(dct, dims_obj, keyword, value, rank):
 
-    line_number = f'__line__{keyword}'
-    assert 'dim' in value.keys(), f'Line {dct[line_number]}: dim is not a key in dimensions dict !'
-    dims = ET.SubElement(obj, 'dimensions')
-    # Consider all the childs under dimension is dim element and
-    # its attributes
+    header_line_number = f"__line__{keyword}"
+    possible_dim_attrs = ['ref', 'optional', 'recommended', 'required', 'incr', 'refindex']
     val_attrs = list(value.keys())
-    if 'rank' in value:
-        rank = value['rank']
-    else:
-        rank = -1
-    # TODO create another function for dim element
-    # taking care of dim elements
+
     dim_list = []
-    for attr in OPSSIBLE_DIM_ATTRS:
-        line_number = f'__line__{attr}'
+    for attr in ['dim', 'doc', *possible_dim_attrs]:
         if attr not in val_attrs:
             continue
 
+        line_number = f"__line__{attr}"
         # dim comes in precedence
         if attr == 'dim':
             # dim consists of list of [index, value]
             llist_ind_value = value[attr]
-            assert isinstance(llist_ind_value, list), (f'Line {value[line_number]}: dim'
-                                                       f'argument not a list !')
+            assert isinstance(llist_ind_value, list), (f'Line {dct[line_number]}: dim'
+                                                        f'argument not a list !')
             if isinstance(rank, int) and rank > 0:
                 assert rank == len(llist_ind_value), (
                     f"check around Line {dct[line_number]}.\n"
@@ -250,7 +236,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
                     f"is not the same as dim array "
                     f"{len(llist_ind_value)}.")
             for dim_ind_val in llist_ind_value:
-                dim = ET.SubElement(dims, 'dim')
+                dim = ET.SubElement(dims_obj, 'dim')
                 dim_list.append(dim)
 
                 # Taking care of multidimensions or rank
@@ -259,7 +245,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
                 dim.set('value', str(dim_ind_val[1])
                         if len(dim_ind_val) == 2 else '')
             assert attr in val_attrs and line_number in val_attrs, (
-                f"Line {value[line_number]} does not"
+                f"Line {dct[line_number]} does not"
                 f" have attribute {val_attrs}.")
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
@@ -271,7 +257,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
                 dim.set('required', 'false' if bool_ == 'true' else 'true')
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
-        elif attr == 'doc' and dim_list:
+        elif attr == 'doc' and dim_list and isinstance(value[attr], list):
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
                 doc = value[attr][i] if isinstance(value[attr], list) else value[attr]
@@ -285,27 +271,65 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
                 dim.set(attr, val)
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
+
+    for attr in value.keys():
+        if '__line__' not in attr and attr in val_attrs:
+            raise ValueError(f"An attribute of dimension or dim (\'{attr}\') has been found"
+                             f" that has not been parsed."
+                             f"plese check arround Line {dct[header_line_number]}.")
+
+
+def xml_handle_dimensions(dct, obj, keyword, value: dict):
+    """
+    This function creates a 'dimensions' element instance, and appends it to an existing element
+
+    NOTE: we could create xml_handle_dim() function.
+        But, the dim elements in yaml file is defined as dim =[[index, value]]
+        but dim has other attributes such as 'ref' and also might have doc as chlid.
+        so in that sense dim should have come as dict keeping attributes and child as members of
+        dict.
+        Regarding this situation all the attributes and child doc has been included here.
+    """
+
+    possible_dimension_attrs = ['rank']
+    line_number = f'__line__{keyword}'
+    assert 'dim' in value.keys(), f'Line {dct[line_number]}: dim is not a key in dimensions dict !'
+    dims = ET.SubElement(obj, 'dimensions')
+    # Consider all the childs under dimension is dim element and
+    # its attributes
+    val_attrs = list(value.keys())
+    if 'rank' in value:
+        rank = value['rank']
+    else:
+        rank = -1
+    if isinstance(rank, int) and rank < 0:
+        (f"Dimension must have some info about rank which is not available"
+         f"Please check arround Line: {line_number}")
+    # value keys might contain two 'doc's the doc that contains list of doc
+    # this is registred for dim's doc according to order in dim = [[index, value], ...]
+    # so check for the doc with string
+
+    for attr in val_attrs:
+        line_number = f'__line__{attr}'
+        if attr == 'doc' and not isinstance(value[attr], list):
+            xml_handle_doc(dims, value[attr])
+            del value['doc']
+            del value[line_number]
+
     # Takeing care dimention element
-    for attr in POSSIBLE_DIMENSION_ATTRS:
+    for attr in possible_dimension_attrs:
         if attr not in val_attrs:
             continue
         line_number = f'__line__{attr}'
-        # if isinstance(rank, str):
-        # # Rank could be undefined means it might have different patterns,
-        # # different ranks or dynamic
-        #     val_attrs.remove(attr)
-        #     val_attrs.remove(line_number)
-        #     break
-        # if attr == 'rank':
-        #     rank = value[attr]
-        # line_number = f'__line__{attr}'
         dims.set(attr, str(value[attr]))
         val_attrs.remove(attr)
         val_attrs.remove(line_number)
+        del value[attr]
+        del value[line_number]
+    xml_handle_dimfrom_dimension_dict(dct, dims, keyword, value, rank)
+    # TODO create another function for dim element
+    # taking care of dim elements
 
-    line_number = '__line__dim'
-    assert len(val_attrs) == 0, (f'Line {value[line_number]}: dim argument '
-                                 f'is a list with unexpected number of entries!')
 
 
 def xml_handle_enumeration(dct, obj, keyword, value, verbose):
