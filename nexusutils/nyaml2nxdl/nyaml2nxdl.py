@@ -34,9 +34,12 @@ from nexusutils.nyaml2nxdl.nyaml2nxdl_backward_tools import (Nxdl2yaml,
                                                              compare_niac_and_my)
 
 
-DEPTH_SIZE = "  "
+DEPTH_SIZE = "    "
 
 
+# TODO check for units written as unit in yaml file
+# TODO check for empty docs in both yaml and nxdl so that
+# no empty doc can be allowed
 def pretty_print_xml(xml_root, output_xml):
     """
     Print better human-readable indented and formatted xml file using

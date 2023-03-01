@@ -27,10 +27,10 @@ which details a hierarchy of data/metadata elements
 def type_check(nx_type):
     """
         Check for nexus type if type is NX_CHAR get '' or get as it is.
-    """
+        """
 
     if nx_type in ['NX_CHAR', '']:
         nx_type = ''
     else:
-        nx_type = f"({type})"
+        nx_type = f"({nx_type})"
     return nx_type
