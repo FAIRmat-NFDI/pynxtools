@@ -248,13 +248,13 @@ class Nxdl2yaml():
                         attr=attr,
                         value=node_attr[attr] or ''))
 
-    # TODO make code radable by moving rank in a rank variable
     def handle_dimension(self, depth, node, file_out):
         """Handle the dimension field"""
         # pylint: disable=consider-using-f-string
         possible_dim_attrs = ['ref', 'optional', 'recommended',
                               'required', 'incr', 'refindex']
-        #possible_dimension_attrs = ['rank', 'doc']
+
+        # taking care of Dimension tag
         file_out.write(
             '{indent}{tag}:\n'.format(
                 indent=depth * DEPTH_SIZE,
@@ -387,8 +387,7 @@ class Nxdl2yaml():
         """
             Handle link elements of nxdl
         """
-        # TODO bring the list of attributes or name in upper case inside
-        # their corresponding function
+
         possible_link_attrs = ['name', 'target', 'napimount']
         node_attr = node.attrib
         if 'name' in node_attr:
@@ -424,7 +423,7 @@ class Nxdl2yaml():
         """
         tree = xml_tree['tree']
         node = xml_tree['node']
-        # TODO remove Nxdl2yaml with self object
+
         if verbose:
             sys.stdout.write(f'Node tag: {remove_namespace_from_tag(node.tag)}\n')
             sys.stdout.write(f'Attributes: {node.attrib}\n')
@@ -450,7 +449,6 @@ class Nxdl2yaml():
                                                    tag=node.tag,
                                                    file_out=file_out)
             # End of root level definition parsing. Print root-level definitions in file
-            # TODO: remove unecessary append_flag
             if self.root_level_doc \
                     and self.append_flag is True \
                     and (depth in (0, 1)):
