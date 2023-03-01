@@ -11,9 +11,11 @@ NXentry:
       my nice doc string.
       my nice doc string, line 2.
   \@IDF_Version:
-    doc: "my nice single line doc string"
+    doc: | 
+      my nice single line doc string
   title:
-    doc: "Extended title for entry"
+    doc: | 
+      Extended title for entry
   collection_description:
     doc: | 
       My not very proper doc string, it is supported though
@@ -23,7 +25,8 @@ NXentry:
       my not very proper doc string, line2 
       my not very proper doc string, line3
   experiment_description:
-    doc: "My single line doc string."
+    doc: | 
+      My single line doc string.
   experiment_documentation(NXnote):
     doc: | 
       My single line doc string, with doc tags in different lines
@@ -35,7 +38,8 @@ NXentry:
       Yet another doc string not very proper but supported
       Yet another doc string not very proper but supported, line2
     \@version:
-      doc: "Version of UUID used"
+      doc: | 
+        Version of UUID used
   entry_identifier:
     doc: | 
       Trailing line doc stringy. Trailing lines are removed
