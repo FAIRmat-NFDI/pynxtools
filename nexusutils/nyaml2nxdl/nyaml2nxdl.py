@@ -50,7 +50,7 @@ def pretty_print_xml(xml_root, output_xml):
         'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
     root = dom.firstChild
     dom.insertBefore(sibling, root)
-    xml_string = dom.toprettyxml(indent=1*DEPTH_SIZE, newl='\n', encoding='UTF-8')
+    xml_string = dom.toprettyxml(indent=1 * DEPTH_SIZE, newl='\n', encoding='UTF-8')
     with open('tmp.xml', "wb") as file_tmp:
         file_tmp.write(xml_string)
     flag = False
@@ -221,16 +221,16 @@ and print both an XML and YML file of the extended base class.
             break
     group = '{http://definition.nexusformat.org/nxdl/3.1}group'
     root_no_duplicates = compare_niac_and_my(tree, tree2, verbose,
-                                                                       group,
-                                                                       root_no_duplicates)
+                                             group,
+                                             root_no_duplicates)
     field = '{http://definition.nexusformat.org/nxdl/3.1}field'
     root_no_duplicates = compare_niac_and_my(tree, tree2, verbose,
-                                                                       field,
-                                                                       root_no_duplicates)
+                                             field,
+                                             root_no_duplicates)
     attribute = '{http://definition.nexusformat.org/nxdl/3.1}attribute'
     root_no_duplicates = compare_niac_and_my(tree, tree2, verbose,
-                                                                       attribute,
-                                                                       root_no_duplicates)
+                                             attribute,
+                                             root_no_duplicates)
     pretty_print_xml(root_no_duplicates, f"{input_file.replace('.nxdl.xml', '')}"
                      f"_appended.nxdl.xml")
     print_yml(input_file.replace('.nxdl.xml', '') + "_appended.nxdl.xml", verbose)

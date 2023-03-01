@@ -43,7 +43,7 @@ NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'
 NX_UNIT_TYPES = nexus.get_nx_units()
 # Attributes for definition attributs
-rare_def_attributes = ['deprecated', 'ignoreExtraGroups','ignoreExtraFields',
+rare_def_attributes = ['deprecated', 'ignoreExtraGroups', 'ignoreExtraFields',
                        'ignoreExtraAttributes']
 # Keep the order as it is NIAC branch
 # TODO try to move in one place as it is in for forward and backward
@@ -242,11 +242,12 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
             # dim consists of list of [index, value]
             llist_ind_value = value[attr]
             assert isinstance(llist_ind_value, list), (f'Line {value[line_number]}: dim'
-                                        f'argument not a list !')
-            if isinstance(rank, int) and rank>0 :
-                assert rank == len(llist_ind_value), (f"Line {[value[line_number]]} rank value {rank} "
-                                                  f"is not the same as dim array "
-                                                  f"{len(llist_ind_value)}")
+                                                       f'argument not a list !')
+            if isinstance(rank, int) and rank > 0:
+                assert rank == len(llist_ind_value), (
+                    f"Line {[value[line_number]]} rank value {rank} "
+                    f"is not the same as dim array "
+                    f"{len(llist_ind_value)}")
             for dim_ind_val in llist_ind_value:
                 dim = ET.SubElement(dims, 'dim')
                 dim_list.append(dim)
@@ -257,21 +258,21 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
                 dim.set('value', str(dim_ind_val[1])
                         if len(dim_ind_val) == 2 else '')
             assert attr in val_attrs and line_number in val_attrs, (f"Line {value[line_number]} does not"
-                                                                  f" have attribute {val_attrs}.")
+                                                                    f" have attribute {val_attrs}.")
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
 
-        elif attr == 'optional'and dim_list:
+        elif attr == 'optional' and dim_list:
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
                 bool_ = value[attr][i] if isinstance(value[attr], list) else value[attr]
-                dim.set('required', 'false' if bool_=='true' else 'true' )
+                dim.set('required', 'false' if bool_ == 'true' else 'true')
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
         elif attr == 'doc' and dim_list:
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
-                doc = value[attr][i] if isinstance(value[attr],  list) else value[attr]
+                doc = value[attr][i] if isinstance(value[attr], list) else value[attr]
                 xml_handle_doc(dim, doc)
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
@@ -331,6 +332,7 @@ bear at least an argument !'
                 if isinstance(value[element], dict):
                     recursive_build(itm, value[element], verbose)
 
+
 # TODO change obj in xml_obj
 def xml_handle_link(dct, obj, keyword, value):
     """If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
@@ -355,6 +357,7 @@ def xml_handle_link(dct, obj, keyword, value):
     # TODO: remove else: pass clause
     else:
         pass
+
 
 # TODO Change doc string here as it is!
 def xml_handle_symbols(dct, obj, keyword, value: dict):
@@ -512,11 +515,11 @@ def recursive_build(obj, dct, verbose):
             xml_handle_group(verbose, obj, value, keyword_name, keyword_type)
 
         elif keyword_name[0:2] == NX_ATTR_IDNT:  # check if obj qualifies
-            attribute_attributes_handle(dct, obj, keyword, value, verbose )
+            attribute_attributes_handle(dct, obj, keyword, value, verbose)
         elif keyword == 'doc':
             xml_handle_doc(obj, value)
         elif keyword == NX_UNIT_IDNT:
-             xml_handle_units(obj, value)
+            xml_handle_units(obj, value)
         elif keyword == 'enumeration':
             xml_handle_enumeration(dct, obj, keyword, value, verbose)
 
