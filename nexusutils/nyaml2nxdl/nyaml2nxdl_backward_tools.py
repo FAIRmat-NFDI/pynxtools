@@ -21,9 +21,10 @@
 # limitations under the License.
 #
 import sys
+from typing import List
+
 from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check
 from nexusutils.dataconverter.helpers import remove_namespace_from_tag
-from typing import List
 
 
 OPSSIBLE_DIM_ATTRS = ['ref', 'optional', 'recommended']
@@ -149,8 +150,8 @@ class Nxdl2yaml():
         doc_str = f"{indent}{tag}: | {text}\n"
         if file_out:
             file_out.write(doc_str)
-        else:
-            return doc_str
+            return None
+        return doc_str
 
     def print_root_level_doc(self, file_out):
         """
@@ -192,11 +193,11 @@ class Nxdl2yaml():
                             defs=defs))
             self.found_definition = False
 
+    # pylint: disable=consider-using-f-string
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
 
         node_attr = node.attrib
-        # pylint: disable=consider-using-f-string
         if "name" in node_attr and "type" in node_attr:
             file_out.write(
                 '{indent}{name}{type}:\n'.format(
@@ -359,15 +360,15 @@ class Nxdl2yaml():
         else:
             raise ValueError("Attribute must have an name key.")
         if 'type' in node_attr:
-            type = type_check(node_attr['type'] or '')
+            nx_type = type_check(node_attr['type'] or '')
         else:
-            type = ''
+            nx_type = ''
         file_out.write(
-            '{indent}{escapesymbol}{key}{type}:\n'.format(
+            '{indent}{escapesymbol}{key}{nx_type}:\n'.format(
                 indent=depth * DEPTH_SIZE,
                 escapesymbol=r'\@',
                 key=name,
-                type=f'{type}' or ''))
+                nx_type=f'{nx_type}' or ''))
 
         for attr in attr_list:
             if attr == 'units':
@@ -383,7 +384,11 @@ class Nxdl2yaml():
                 value=node_attr[attr]))
 
     def handel_link(self, depth, node, file_out):
-        # TODO bring the list of attributes or name in upper case inside their corresponding function
+        """
+            Handle link elements of nxdl
+        """
+        # TODO bring the list of attributes or name in upper case inside
+        # their corresponding function
         possible_link_attrs = ['name', 'target', 'napimount']
         node_attr = node.attrib
         if 'name' in node_attr:
@@ -411,6 +416,7 @@ class Nxdl2yaml():
             xml_tree_children = {'tree': tree, 'node': child}
             self.xmlparse(output_yml, xml_tree_children, depth, verbose)
 
+    # pylint: disable=too-many-branches
     def xmlparse(self, output_yml, xml_tree, depth, verbose):
         """
         Main of the nxdl2yaml converter.

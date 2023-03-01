@@ -34,7 +34,6 @@ from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
-from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check
 
 NX_CLSS = nexus.get_nx_classes()
 NX_NEW_DEFINED_CLASSES = ['NX_COMPLEX']
@@ -216,9 +215,10 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
 
 
 def xml_handle_dimensions(dct, obj, keyword, value: dict):
-    """This function creates a 'dimensions' element instance, and appends it to an existing element
-
     """
+    This function creates a 'dimensions' element instance, and appends it to an existing element
+    """
+
     line_number = f'__line__{keyword}'
     assert 'dim' in value.keys(), f'Line {dct[line_number]}: dim is not a key in dimensions dict !'
     dims = ET.SubElement(obj, 'dimensions')
@@ -229,7 +229,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
         rank = value['rank']
     else:
         rank = -1
-
+    # TODO create another function for dim element
     # taking care of dim elements
     dim_list = []
     for attr in OPSSIBLE_DIM_ATTRS:
@@ -245,9 +245,10 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
                                                        f'argument not a list !')
             if isinstance(rank, int) and rank > 0:
                 assert rank == len(llist_ind_value), (
+                    f"check around Line {dct[line_number]}.\n"
                     f"Line {[value[line_number]]} rank value {rank} "
                     f"is not the same as dim array "
-                    f"{len(llist_ind_value)}")
+                    f"{len(llist_ind_value)}.")
             for dim_ind_val in llist_ind_value:
                 dim = ET.SubElement(dims, 'dim')
                 dim_list.append(dim)
@@ -257,8 +258,9 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
                         if len(dim_ind_val) >= 1 else '')
                 dim.set('value', str(dim_ind_val[1])
                         if len(dim_ind_val) == 2 else '')
-            assert attr in val_attrs and line_number in val_attrs, (f"Line {value[line_number]} does not"
-                                                                    f" have attribute {val_attrs}.")
+            assert attr in val_attrs and line_number in val_attrs, (
+                f"Line {value[line_number]} does not"
+                f" have attribute {val_attrs}.")
             val_attrs.remove(attr)
             val_attrs.remove(line_number)
 
@@ -412,6 +414,7 @@ def verbose_flag(verbose, keyword, value):
         sys.stdout.write(f'  key:{keyword}; value type is {type(value)}\n')
 
 
+# TODO Try to add more assertion for debuging purpose
 def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     """Handle the attributes found connected to attribute field"""
     # list of possible attribute of xml attribute elementsa
@@ -419,6 +422,8 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     # as an attribute identifier
     keyword_name, keyword_typ = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
+    if keyword_name == '' and keyword_typ == '':
+        raise ValueError(f'Line {dct[line_number]}: found an improper yaml key !')
     elemt_obj = ET.SubElement(obj, 'attribute')
     elemt_obj.set('name', keyword_name[2:])
     if keyword_typ:
