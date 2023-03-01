@@ -27,8 +27,6 @@ from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check
 from nexusutils.dataconverter.helpers import remove_namespace_from_tag
 
 
-OPSSIBLE_DIM_ATTRS = ['ref', 'optional', 'recommended']
-OPSSIBLE_DIMENSION_ATTRS = ['rank', 'doc']
 DEPTH_SIZE = "  "
 
 
@@ -254,7 +252,9 @@ class Nxdl2yaml():
     def handle_dimension(self, depth, node, file_out):
         """Handle the dimension field"""
         # pylint: disable=consider-using-f-string
-
+        possible_dim_attrs = ['ref', 'optional', 'recommended',
+                              'required', 'incr', 'refindex']
+        #possible_dimension_attrs = ['rank', 'doc']
         file_out.write(
             '{indent}{tag}:\n'.format(
                 indent=depth * DEPTH_SIZE,
@@ -284,7 +284,7 @@ class Nxdl2yaml():
             indent = (depth + 1) * DEPTH_SIZE
             # taking care of other attributes except index and value
             for attr, value in child_attrs.items():
-                if attr in OPSSIBLE_DIM_ATTRS:
+                if attr in possible_dim_attrs:
                     if attr not in dim_other_attr:
                         dim_other_attr[attr] = []
                     dim_other_attr[attr].append(value)
