@@ -409,9 +409,10 @@ def xml_handle_symbols(dct, obj, keyword, value: dict):
 
 
 def check_keyword_variable(verbose, dct, keyword, value):
-    """Check whether both keyword_name and keyword_type are empty, and complains if it is the case
-
-"""
+    """
+    Check whether both keyword_name and keyword_type are empty,
+        and complains if it is the case
+    """
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
     if verbose:
         sys.stdout.write(
@@ -422,18 +423,18 @@ def check_keyword_variable(verbose, dct, keyword, value):
 
 
 def helper_keyword_type(kkeyword_type):
-    """This function is returning a value of keyword_type if it belong to NX_TYPE_KEYS
-
-"""
+    """
+        This function is returning a value of keyword_type if it belong to NX_TYPE_KEYS
+    """
     if kkeyword_type in NX_TYPE_KEYS:
         return kkeyword_type
     return None
 
 
 def verbose_flag(verbose, keyword, value):
-    """Verbose stdout printing for nested levels of yaml file, if verbose flag is active
-
-"""
+    """
+        Verbose stdout printing for nested levels of yaml file, if verbose flag is active
+    """
     if verbose:
         sys.stdout.write(f'  key:{keyword}; value type is {type(value)}\n')
 
@@ -485,9 +486,13 @@ def xml_handle_fields(obj, keyword, value, verbose):
     """
 
     # List of possible attributes of xml elements
-    field_attr = ['name', 'type', 'nameType', 'units',
-                  'axis', 'signal', 'deprecated']
+    field_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs',
+                  'axis', 'signal', 'deprecated', 'axes', 'exists'
+                  'data_offset', 'interpretation', 'maxOccurs',
+                  'primary', 'recommended', 'optional', 'stride',
+                  ]
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
+    line_number = f"__line__{keyword}"
     # Consider by default type is NX_CHAR
     typ = ''
     if keyword_type in NX_TYPE_KEYS + NX_NEW_DEFINED_CLASSES and keyword_type != 'NX_CHAR':
@@ -497,7 +502,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
     elemt_obj.set('name', keyword_name)
     if typ:
         elemt_obj.set('type', typ)
-    if isinstance(value, dict):
+    if isinstance(value, dict) and value:
         val_attr = list(value.keys())
     else:
         val_attr = []
@@ -507,10 +512,32 @@ def xml_handle_fields(obj, keyword, value, verbose):
         if attr in ['name', 'type'] and attr in val_attr:
             del value[attr]
             del value[line_number]
+        elif attr == 'optional' and attr in val_attr:
+            if value[attr] == 'false':
+                elemt_obj.set('required', 'true')
+            del value[attr]
+            del value[line_number]
+        elif attr == 'minOccurs' and attr in value:
+            if value[attr] == '0':
+                pass
+            else:
+                elemt_obj.set(attr, value[attr])
+            del value[attr]
+            del value[line_number]
         elif attr in val_attr and line_number in val_attr:
             elemt_obj.set(attr, str(value[attr]))
             del value[attr]
             del value[line_number]
+    # check for any invalid attrinbutes comes with yaml
+    for attr in val_attr:
+        line_number = f'__line__{attr}'
+
+        if ('__line__' not in attr
+            and attr not in ['doc', *field_attr]
+                and not isinstance(value[attr], dict)):
+
+            raise ValueError(f"invalid attribute ('{attr}') has been found."
+                             f" Please check around line {value, [line_number]}")
 
     if isinstance(value, dict) and value:
         recursive_build(obj=elemt_obj, dct=value, verbose=verbose)
