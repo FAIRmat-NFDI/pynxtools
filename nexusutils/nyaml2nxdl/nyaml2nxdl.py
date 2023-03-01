@@ -24,13 +24,11 @@ which details a hierarchy of data/metadata elements
 #
 import os
 import sys
-from typing import List
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import click
 
-from nexusutils.dataconverter import helpers
 from nexusutils.nyaml2nxdl import nyaml2nxdl_forward_tools
 from nexusutils.nyaml2nxdl.nyaml2nxdl_backward_tools import (Nxdl2yaml,
                                                              compare_niac_and_my)

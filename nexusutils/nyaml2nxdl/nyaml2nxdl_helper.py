@@ -24,9 +24,13 @@ which details a hierarchy of data/metadata elements
 #
 
 
-def type_check(type):
-    if type in ['NX_CHAR', '']:
-        type = ''
+def type_check(nx_type):
+    """
+        Check for nexus type if type is NX_CHAR get '' or get as it is.
+    """
+
+    if nx_type in ['NX_CHAR', '']:
+        nx_type = ''
     else:
-        type = f"({type})"
-    return type
+        nx_type = f"({type})"
+    return nx_type
