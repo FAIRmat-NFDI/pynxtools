@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="base" extends="NXobject" name="NXbeam" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
     <symbols>
@@ -48,7 +48,7 @@
             <dim index="1" value="i"/>
         </dimensions>
     </field>
-    <field name="mode" type="NX_CHAR">
+    <field name="mode">
         <doc>
              source operating mode
         </doc>
@@ -72,7 +72,7 @@
         <dimensions>
             <dim index="1" value="n_eField"/>
         </dimensions>
-        <attribute name="direction" type="NX_CHAR">
+        <attribute name="direction">
             <enumeration>
                 <item value="x"/>
                 <item value="y"/>
