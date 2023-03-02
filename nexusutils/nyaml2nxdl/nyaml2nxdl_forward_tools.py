@@ -454,7 +454,7 @@ def verbose_flag(verbose, keyword, value):
 def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     """Handle the attributes found connected to attribute field"""
     # list of possible attribute of xml attribute elementsa
-    attr_attr_list = ['name', 'type', 'units', 'nameType']
+    attr_attr_list = ['name', 'type', 'unit', 'nameType']
     # as an attribute identifier
     keyword_name, keyword_typ = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
@@ -473,7 +473,11 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
         # taking care of attributes of attributes
         for attr in attr_attr_list:
             line_number = f'__line__{attr}'
-            if attr in val_attr:
+            if attr == 'unit' and attr in val_attr:
+                elemt_obj.set(f"{attr}s", value[attr])
+                del value[attr]
+                del value[line_number]
+            elif attr in val_attr:
                 elemt_obj.set(attr, value[attr])
                 del value[attr]
                 del value[line_number]
@@ -563,6 +567,11 @@ def xml_handle_fields(obj, keyword, value, verbose):
                 pass
             else:
                 elemt_obj.set(attr, value[attr])
+            del value[attr]
+            del value[line_number]
+        elif attr == 'unit' and attr in val_attr:
+            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
+            elemt_obj.set(f"{attr}s", str(value[attr]))
             del value[attr]
             del value[line_number]
         elif attr in val_attr:
