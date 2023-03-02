@@ -191,21 +191,33 @@ def xml_handle_exists(dct, obj, keyword, value):
             obj.set('minOccurs', '0')
 
 
+# TODO if possible please try to create definition from defintion not by
+# hard coding
+# TODO change the valriable name of possible attributes
 def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
-    """The function deals with group instances
+    """
+    The function deals with group instances
 
-"""
-    list_of_attr = ['name', 'type', 'nameType', 'deprecated']
+    """
+    list_of_attr = ['name', 'type', 'nameType', 'deprecated', 'exists']
     grp = ET.SubElement(obj, 'group')
     if keyword_name != '':  # use the custom name for the group
         grp.set('name', keyword_name)
     grp.set('type', keyword_type)
     for attr in list_of_attr:
+        line_number = f"__line__{attr}"
         if attr in ['name', 'type'] or not value:
             continue
         if attr in value and not isinstance(value[attr], dict):
+            validate_field_attribute_and_value(attr, value[attr], list_of_attr, value)
             grp.set(attr, value[attr])
             del value[attr]
+            del value[line_number]
+
+    # Check for any invalid attributes or child is there or not and raise exception
+    for attr, vvalue in value.items():
+        validate_field_attribute_and_value(attr, vvalue, list_of_attr, value)
+
     if isinstance(value, dict) and value != {}:
         recursive_build(grp, value, verbose)
 
@@ -469,6 +481,31 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
             recursive_build(elemt_obj, value, verbose)
 
 
+def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
+    """
+    Check for any attributes that comes with invalid name,
+        and invalid value.
+    """
+
+    # check for empty val
+    if (v_attr in allowed_attribute
+        and not isinstance(vval, dict)
+            and not vval):  # check for empty value
+        line_number = f"__line__{v_attr}"
+        raise ValueError(f"In a filed a valid attrbute ('{v_attr}') found. Please"
+                         f"check arround line {value[line_number]}")
+
+    # check for invalid key or attributes
+    if (v_attr not in ['doc', 'dimension', *allowed_attribute]
+        and '__line__' not in v_attr
+        and not isinstance(vval, dict)
+        and '(' not in v_attr           # skip only groups and field that has name and type
+            and '\\@' not in v_attr):     # skip nexus attributes
+        line_number = f"__line__{v_attr}"
+        raise ValueError(f"In a filed a invalid attribute ('{v_attr}') or child has found."
+                         f" Please check arround line {value[line_number]}.")
+
+
 # Rename it as xml_handle_filed
 def xml_handle_fields(obj, keyword, value, verbose):
     """
@@ -486,11 +523,11 @@ def xml_handle_fields(obj, keyword, value, verbose):
     """
 
     # List of possible attributes of xml elements
-    field_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs',
-                  'axis', 'signal', 'deprecated', 'axes', 'exists'
-                  'data_offset', 'interpretation', 'maxOccurs',
-                  'primary', 'recommended', 'optional', 'stride',
-                  ]
+    allowed_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs',
+                    'axis', 'signal', 'deprecated', 'axes', 'exists',
+                    'data_offset', 'interpretation', 'maxOccurs',
+                    'primary', 'recommended', 'optional', 'stride',
+                    ]
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
     line_number = f"__line__{keyword}"
     # Consider by default type is NX_CHAR
@@ -507,37 +544,34 @@ def xml_handle_fields(obj, keyword, value, verbose):
     else:
         val_attr = []
 
-    for attr in field_attr:
+    for attr in allowed_attr:
         line_number = f'__line__{attr}'
         if attr in ['name', 'type'] and attr in val_attr:
             del value[attr]
             del value[line_number]
         elif attr == 'optional' and attr in val_attr:
+            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
             if value[attr] == 'false':
                 elemt_obj.set('required', 'true')
             del value[attr]
             del value[line_number]
-        elif attr == 'minOccurs' and attr in value:
+        elif attr == 'minOccurs' and attr in val_attr:
+            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
             if value[attr] == '0':
                 pass
             else:
                 elemt_obj.set(attr, value[attr])
             del value[attr]
             del value[line_number]
-        elif attr in val_attr and line_number in val_attr:
+        elif attr in val_attr:
+            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
             elemt_obj.set(attr, str(value[attr]))
             del value[attr]
             del value[line_number]
-    # check for any invalid attrinbutes comes with yaml
-    for attr in val_attr:
-        line_number = f'__line__{attr}'
 
-        if ('__line__' not in attr
-            and attr not in ['doc', *field_attr]
-                and not isinstance(value[attr], dict)):
-
-            raise ValueError(f"invalid attribute ('{attr}') has been found."
-                             f" Please check around line {value, [line_number]}")
+    # check for any invalid name of attrinbutes or child come with yaml
+    for attr, vvalue in value.items():
+        validate_field_attribute_and_value(attr, vvalue, allowed_attr, value)
 
     if isinstance(value, dict) and value:
         recursive_build(obj=elemt_obj, dct=value, verbose=verbose)
