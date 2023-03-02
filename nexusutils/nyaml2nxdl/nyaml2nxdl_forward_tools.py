@@ -215,8 +215,9 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
             del value[line_number]
 
     # Check for any invalid attributes or child is there or not and raise exception
-    for attr, vvalue in value.items():
-        validate_field_attribute_and_value(attr, vvalue, list_of_attr, value)
+    if value:
+        for attr, vvalue in value.items():
+            validate_field_attribute_and_value(attr, vvalue, list_of_attr, value)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(grp, value, verbose)
@@ -495,11 +496,12 @@ def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
     if (v_attr in allowed_attribute
         and not isinstance(vval, dict)
             and not vval):  # check for empty value
+
         line_number = f"__line__{v_attr}"
         raise ValueError(f"In a filed a valid attrbute ('{v_attr}') found. Please"
                          f"check arround line {value[line_number]}")
 
-    # The bellow element might come as child element
+    # The bellow elements might come as child element
     some_child_name = ['doc', 'dimension', 'enumeration', 'choice']
     # check for invalid key or attributes
     if (v_attr not in [*some_child_name, *allowed_attribute]
@@ -507,6 +509,7 @@ def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
         and not isinstance(vval, dict)
         and '(' not in v_attr           # skip only groups and field that has name and type
             and '\\@' not in v_attr):     # skip nexus attributes
+
         line_number = f"__line__{v_attr}"
         raise ValueError(f"In a field or group a invalid attribute ('{v_attr}') or child has found."
                          f" Please check arround line {value[line_number]}.")

@@ -232,13 +232,19 @@ class Nxdl2yaml():
             file_out.write('{indent}exists: [max, {value1}]\n'.
                            format(indent=(depth + 1) * DEPTH_SIZE,
                                   value1=node_attr['maxOccurs'] or ''))
+        if 'calibration_data' in node.attrib:
+            ss = 'aes'
+        if "units" in node_attr:
+            file_out.write('{indent}unit: {value}\n'.
+                           format(indent=(depth + 1) * DEPTH_SIZE,
+                                  value=node_attr['units'] or ''))
 
         if "recommended" in node_attr and node_attr['recommended'] == "true":
             file_out.write(
                 '{indent}exists: recommended\n'.format(
                     indent=(depth + 1) * DEPTH_SIZE))
 
-        other_similar_attr = ['nameType', 'axis', 'signal', 'units', 'deprecated']
+        other_similar_attr = ['nameType', 'axis', 'signal', 'deprecated']
 
         for attr in other_similar_attr:
             if attr in node_attr:
@@ -359,6 +365,7 @@ class Nxdl2yaml():
             name = node_attr['name']
         else:
             raise ValueError("Attribute must have an name key.")
+
         if 'type' in node_attr:
             nx_type = type_check(node_attr['type'] or '')
         else:
@@ -370,10 +377,16 @@ class Nxdl2yaml():
                 key=name,
                 nx_type=f'{nx_type}' or ''))
 
+        if 'units' in node_attr:
+            if not node_attr['units']:
+                raise ValueError(f"The 'value' of 'units' in attribute"
+                                 f" is empty which is forbiden.")
+            file_out.write('{indent}unit: {value}\n'.format(
+                indent=depth * DEPTH_SIZE,
+                value=node_attr['units']))
+
         for attr in attr_list:
-            if attr == 'units':
-                attr = 'unit'
-            if attr in ['name', 'type']:
+            if attr in ['name', 'type', 'units']:
                 continue
             if attr not in node_attr:
                 continue
