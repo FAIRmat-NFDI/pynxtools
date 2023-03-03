@@ -232,8 +232,7 @@ class Nxdl2yaml():
             file_out.write('{indent}exists: [max, {value1}]\n'.
                            format(indent=(depth + 1) * DEPTH_SIZE,
                                   value1=node_attr['maxOccurs'] or ''))
-        if 'calibration_data' in node.attrib:
-            ss = 'aes'
+
         if "units" in node_attr:
             file_out.write('{indent}unit: {value}\n'.
                            format(indent=(depth + 1) * DEPTH_SIZE,
