@@ -23,7 +23,7 @@
 import sys
 from typing import List
 
-from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check, get_node_parent_info
 from nexusutils.dataconverter.helpers import remove_namespace_from_tag
 
 
@@ -482,16 +482,6 @@ class Nxdl2yaml():
         depth += 1
         # Write nested nodes
         self.recursion_in_xml_tree(depth, xml_tree, output_yml, verbose)
-
-
-def get_node_parent_info(tree, node):
-    """Return tuple of (parent, index) where:
-        parent = node of parent within tree
-        index = index of node under parent"""
-
-    parent_map = {c: p for p in tree.iter() for c in p}
-    parent = parent_map[node]
-    return parent, list(parent).index(node)
 
 
 def compare_niac_and_my(tree, tree2, verbose, node, root_no_duplicates):

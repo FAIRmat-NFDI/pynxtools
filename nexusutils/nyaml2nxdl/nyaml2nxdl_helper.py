@@ -34,3 +34,15 @@ def type_check(nx_type):
     else:
         nx_type = f"({nx_type})"
     return nx_type
+
+
+def get_node_parent_info(tree, node):
+    """
+    Return tuple of (parent, index) where:
+    parent = node of parent within tree
+    index = index of node under parent
+    """
+
+    parent_map = {c: p for p in tree.iter() for c in p}
+    parent = parent_map[node]
+    return parent, list(parent).index(node)
