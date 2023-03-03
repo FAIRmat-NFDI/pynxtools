@@ -26,10 +26,9 @@ import os
 import sys
 
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
 import click
 
-from nexusutils.nyaml2nxdl import nyaml2nxdl_forward_tools
+from nexusutils.nyaml2nxdl.nyaml2nxdl_forward_tools import nyaml2nxdl
 from nexusutils.nyaml2nxdl.nyaml2nxdl_backward_tools import (Nxdl2yaml,
                                                              compare_niac_and_my)
 
@@ -40,138 +39,6 @@ DEPTH_SIZE = "    "
 # TODO check for units written as unit in yaml file
 # TODO check for empty docs in both yaml and nxdl so that
 # no empty doc can be allowed
-def pretty_print_xml(xml_root, output_xml):
-    """
-    Print better human-readable indented and formatted xml file using
-    built-in libraries and preceding XML processing instruction
-    """
-    dom = minidom.parseString(ET.tostring(
-        xml_root, encoding='utf-8', method='xml'))
-    sibling = dom.createProcessingInstruction(
-        'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
-    root = dom.firstChild
-    dom.insertBefore(sibling, root)
-    xml_string = dom.toprettyxml(indent=1 * DEPTH_SIZE, newl='\n', encoding='UTF-8')
-    with open('tmp.xml', "wb") as file_tmp:
-        file_tmp.write(xml_string)
-    flag = False
-    with open('tmp.xml', "r", encoding="utf-8") as file_out:
-        with open(output_xml, "w", encoding="utf-8") as file_out_mod:
-            for i in file_out.readlines():
-                if '<doc>' not in i and '</doc>' not in i and flag is False:
-                    file_out_mod.write(i)
-                elif '<doc>' in i and '</doc>' in i:
-                    file_out_mod.write(i)
-                elif '<doc>' in i and '</doc>' not in i:
-                    flag = True
-                    white_spaces = len(i) - len(i.lstrip())
-                    file_out_mod.write(i)
-                elif '<doc>' not in i and '</doc>' not in i and flag is True:
-                    file_out_mod.write((white_spaces + 5) * ' ' + i)
-                elif '<doc>' not in i and '</doc>' in i and flag is True:
-                    file_out_mod.write(white_spaces * ' ' + i)
-                    flag = False
-    os.remove('tmp.xml')
-
-
-def nyaml2nxdl(input_file: str, verbose: bool):
-    """
-    Main of the nyaml2nxdl converter, creates XML tree, namespace and
-    schema, then evaluates a dictionary nest of groups recursively and
-    fields or (their) attributes as childs of the groups
-    """
-
-    rare_def_attributes = ['deprecated', 'ignoreExtraGroups',
-                           'ignoreExtraFields', 'ignoreExtraAttributes']
-    yml_appdef = nyaml2nxdl_forward_tools.yml_reader(input_file)
-
-    if verbose:
-        sys.stdout.write(f'input-file: {input_file}\n')
-        sys.stdout.write('application/base contains the following root-level entries:\n')
-        sys.stdout.write(str(yml_appdef.keys()))
-    xml_root = ET.Element(
-        'definition', {
-            'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
-            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-            'xsi:schemaLocation': 'http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd'
-        }
-    )
-    assert 'category' in yml_appdef.keys(
-    ), 'Required root-level keyword category is missing!'
-    assert yml_appdef['category'] in ['application', 'base'], 'Only \
-application and base are valid categories!'
-    assert 'doc' in yml_appdef.keys(), 'Required root-level keyword doc is missing!'
-
-    xml_root.set('type', 'group')
-
-    if yml_appdef['category'] == 'application':
-        xml_root.set('category', 'application')
-    else:
-        xml_root.set('category', 'base')
-    del yml_appdef['category']
-
-    # check for rare attributes
-    for attr in rare_def_attributes:
-        if attr in yml_appdef:
-            attr_val = str(yml_appdef[attr])
-            xml_root.set(attr, attr_val)
-            del yml_appdef[attr]
-
-    if 'symbols' in yml_appdef.keys():
-        nyaml2nxdl_forward_tools.xml_handle_symbols(yml_appdef,
-                                                    xml_root,
-                                                    'symbols',
-                                                    yml_appdef['symbols'])
-
-        del yml_appdef['symbols']
-
-    assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
-has to be a non-empty string!'
-
-    doctag = ET.SubElement(xml_root, 'doc')
-    doctag.text = nyaml2nxdl_forward_tools.format_nxdl_doc(yml_appdef['doc'])
-
-    del yml_appdef['doc']
-
-    root_keys = 0
-    for key in yml_appdef.keys():
-        if '__line__' not in key:
-            root_keys += 1
-
-    assert root_keys == 1, 'Accepting at most keywords: category, \
-doc, symbols, and NX... at root-level!'
-
-    keyword = list(yml_appdef.keys())[0]
-    if "(" in keyword:
-        extends = keyword[keyword.rfind("(") + 1:-1]
-        name = keyword[0:keyword.rfind("(")]
-    else:
-        name = keyword
-        extends = "NXobject"
-
-    xml_root.set('name', name)
-    xml_root.set('extends', extends)
-
-    assert (keyword[0:2] == 'NX' and len(keyword) > 2), 'NX \
-keyword has an invalid pattern, or is too short!'
-    # Taking care if definition has empty content
-    if yml_appdef[keyword]:
-        nyaml2nxdl_forward_tools.recursive_build(xml_root, yml_appdef[keyword], verbose)
-
-    pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml')
-    if verbose:
-        sys.stdout.write('Parsed YAML to NXDL successfully\n')
-
-
-def get_node_parent_info(tree, node):
-    """
-    Return tuple of (parent, index) where: parent = node of parent within tree
-    index = index of node under parent
-    """
-
-    parent_map = {c: p for p in tree.iter() for c in p}
-    parent = parent_map[node]
-    return parent, list(parent).index(node)
 
 
 def print_yml(input_file, verbose):
