@@ -46,7 +46,7 @@ DEPTH_SIZE = "    "
 NX_UNIT_TYPES = nexus.get_nx_units()
 # Attributes for definition attributs
 rare_def_attributes = ['deprecated', 'ignoreExtraGroups', 'ignoreExtraFields',
-                       'ignoreExtraAttributes']
+                       'ignoreExtraAttributes', 'restricts']
 # Keep the order as it is NIAC branch
 
 
@@ -399,6 +399,43 @@ def xml_handle_link(dct, obj, keyword, value):
                 keyword + f'Line {dct[line_number]}: the link formatting is invalid !')
 
 
+# TODO replace dct by parent dict
+def xml_handle_choice(dct, obj, keyword, value):
+    """
+        Build choice xml elements. That consists of groups.
+    """
+    possible_attr = []
+    choice_obj = ET.SubElement(obj, 'choice')
+    # take care of special attributes
+    name = keyword[:-8]
+    choice_obj.set('name', name)
+
+    if value and len(name) >= 1 and \
+       isinstance(value, dict):
+        for kkey, vvalue in value.items():
+            if '__line__' in kkey:
+                continue
+            line_number = f"__line__{kkey}"
+            if not isinstance(vvalue, dict) and \
+               kkey in possible_attr:
+                choice_obj.set(kkey, vvalue)
+
+                del value[kkey]
+                del value[line_number]
+
+            elif not isinstance(vvalue, dict) and \
+                    kkey not in possible_attr:
+                raise ValueError(f"A attribute has been found in choice section, that is"
+                                 f"not familiar. Please check arround line {value[line_number]}")
+    else:
+        line_number = f"__line__{keyword}"
+        raise ValueError(f"A choice must have name attibute. Please check choice aound"
+                         f" line {dct[line_number]}")
+
+    if isinstance(value, dict) and value != {}:
+        recursive_build(choice_obj, value, verbose=None)
+
+
 def xml_handle_symbols(dct, obj, keyword, value: dict):
     """Handle a set of NXDL symbols as a child to obj
 
@@ -601,6 +638,9 @@ def recursive_build(obj, dct, verbose):
 
     """
     for keyword, value in iter(dct.items()):
+        if '__line__' in keyword:
+            continue
+        line_number = f"__line__{keyword}"
         keyword_name, keyword_type = nx_name_type_resolving(keyword)
         check_keyword_variable(verbose, dct, keyword, value)
         if verbose:
@@ -609,13 +649,13 @@ def recursive_build(obj, dct, verbose):
 
         if keyword[-6:] == '(link)':
             xml_handle_link(dct, obj, keyword, value)
-
+        elif keyword[-8:] == '(choice)':
+            xml_handle_choice(dct, obj, keyword, value)
         elif keyword_type == '' and keyword_name == 'symbols':
             xml_handle_symbols(dct, obj, keyword, value)
 
         elif ((keyword_type in NX_CLSS) or (keyword_type not in
-                                            [*NX_TYPE_KEYS, '', *NX_NEW_DEFINED_CLASSES])) \
-                and '__line__' not in keyword_name:
+                                            [*NX_TYPE_KEYS, '', *NX_NEW_DEFINED_CLASSES])):
             # we can be sure we need to instantiate a new group
             xml_handle_group(verbose, obj, value, keyword_name, keyword_type)
 
@@ -636,6 +676,9 @@ def recursive_build(obj, dct, verbose):
         # Handles fileds e.g. AXISNAME
         elif keyword_name != '' and '__line__' not in keyword_name:
             xml_handle_fields(obj, keyword, value, verbose)
+        else:
+            raise ValueError(f"An unfamiliar type of element {keyword} has been found which is "
+                             f"not be able to be resolved. Chekc arround line {dct[line_number]}")
 
 
 def pretty_print_xml(xml_root, output_xml):
@@ -680,7 +723,7 @@ def nyaml2nxdl(input_file: str, verbose: bool):
     """
 
     rare_def_attributes = ['deprecated', 'ignoreExtraGroups',
-                           'ignoreExtraFields', 'ignoreExtraAttributes']
+                           'ignoreExtraFields', 'ignoreExtraAttributes', 'restricts']
     yml_appdef = yml_reader(input_file)
 
     if verbose:
@@ -735,9 +778,10 @@ has to be a non-empty string!'
     for key in yml_appdef.keys():
         if '__line__' not in key:
             root_keys += 1
+            extra_key = key
 
-    assert root_keys == 1, 'Accepting at most keywords: category, \
-doc, symbols, and NX... at root-level!'
+    assert root_keys == 1, (f"Accepting at most keywords: category, doc, symbols, and NX... "
+                            f"at root-level! check key at root level {extra_key}")
 
     keyword = list(yml_appdef.keys())[0]
     if "(" in keyword:
