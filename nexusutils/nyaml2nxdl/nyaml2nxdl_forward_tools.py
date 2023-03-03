@@ -42,6 +42,7 @@ NX_NEW_DEFINED_CLASSES = ['NX_COMPLEX']
 NX_TYPE_KEYS = nexus.get_nx_attribute_type()
 NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'
+DEPTH_SIZE = "    "
 NX_UNIT_TYPES = nexus.get_nx_units()
 # Attributes for definition attributs
 rare_def_attributes = ['deprecated', 'ignoreExtraGroups', 'ignoreExtraFields',
@@ -201,7 +202,7 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
     The function deals with group instances
 
     """
-    list_of_attr = ['name', 'type', 'nameType', 'deprecated', 'exists']
+    list_of_attr = ['name', 'type', 'nameType', 'deprecated']
     grp = ET.SubElement(obj, 'group')
     if keyword_name != '':  # use the custom name for the group
         grp.set('name', keyword_name)
@@ -215,11 +216,6 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
             grp.set(attr, value[attr])
             del value[attr]
             del value[line_number]
-
-    # Check for any invalid attributes or child is there or not and raise exception
-    if value:
-        for attr, vvalue in value.items():
-            validate_field_attribute_and_value(attr, vvalue, list_of_attr, value)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(grp, value, verbose)
@@ -504,9 +500,9 @@ def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
                          f"check arround line {value[line_number]}")
 
     # The bellow elements might come as child element
-    some_child_name = ['doc', 'dimension', 'enumeration', 'choice']
+    skipped_child_name = ['doc', 'dimension', 'enumeration', 'choice', 'exists']
     # check for invalid key or attributes
-    if (v_attr not in [*some_child_name, *allowed_attribute]
+    if (v_attr not in [*skipped_child_name, *allowed_attribute]
         and '__line__' not in v_attr
         and not isinstance(vval, dict)
         and '(' not in v_attr           # skip only groups and field that has name and type
@@ -535,7 +531,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
 
     # List of possible attributes of xml elements
     allowed_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs',
-                    'axis', 'signal', 'deprecated', 'axes', 'exists',
+                    'axis', 'signal', 'deprecated', 'axes',
                     'data_offset', 'interpretation', 'maxOccurs',
                     'primary', 'recommended', 'optional', 'stride',
                     ]
@@ -586,8 +582,9 @@ def xml_handle_fields(obj, keyword, value, verbose):
             del value[line_number]
 
     # check for any invalid name of attrinbutes or child come with yaml
-    for attr, vvalue in value.items():
-        validate_field_attribute_and_value(attr, vvalue, allowed_attr, value)
+    if value:
+        for attr, vvalue in value.items():
+            validate_field_attribute_and_value(attr, vvalue, allowed_attr, value)
 
     if isinstance(value, dict) and value:
         recursive_build(obj=elemt_obj, dct=value, verbose=verbose)
@@ -607,6 +604,7 @@ def recursive_build(obj, dct, verbose):
         if verbose:
             sys.stdout.write(
                 f'keyword_name:{keyword_name} keyword_type {keyword_type}\n')
+
         if keyword[-6:] == '(link)':
             xml_handle_link(dct, obj, keyword, value)
 
@@ -614,7 +612,7 @@ def recursive_build(obj, dct, verbose):
             xml_handle_symbols(dct, obj, keyword, value)
 
         elif ((keyword_type in NX_CLSS) or (keyword_type not in
-                                            NX_TYPE_KEYS + [''] + NX_NEW_DEFINED_CLASSES)) \
+                                            [*NX_TYPE_KEYS, '', *NX_NEW_DEFINED_CLASSES])) \
                 and '__line__' not in keyword_name:
             # we can be sure we need to instantiate a new group
             xml_handle_group(verbose, obj, value, keyword_name, keyword_type)
@@ -675,7 +673,7 @@ def pretty_print_xml(xml_root, output_xml):
 def nyaml2nxdl(input_file: str, verbose: bool):
     """
     Main of the nyaml2nxdl converter, creates XML tree, namespace and
-    schema, then evaluates a dictionary nest of groups recursively and
+    schema, definitions then evaluates a dictionary nest of groups recursively and
     fields or (their) attributes as childs of the groups
     """
 
