@@ -191,6 +191,11 @@ class Nxdl2yaml():
                             defs=defs))
             self.found_definition = False
 
+# TODO: sEPARATE GROUP AND ATTRIBUTES
+# This is list of attributes for field
+#        attr_list = ['name', 'type', 'units', 'nameType', 'axes', 'stride',
+#                     'data_offset', 'interpretation', 'long_name', 'primary']
+
     # pylint: disable=consider-using-f-string
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
@@ -271,7 +276,7 @@ class Nxdl2yaml():
             indent = (depth + 1) * DEPTH_SIZE
             file_out.write(f'{indent}{attr}: {value}\n')
         dim_index_value = ''
-        dim_other_attr = {}
+        dim_other_parts = {}
         # taking care of dim attributes
         for child in list(node):
             tag = child.tag.split("}", 1)[1]
@@ -286,13 +291,23 @@ class Nxdl2yaml():
                     del child_attrs["index"]
                 if "value" in child_attrs:
                     del child_attrs["value"]
-            indent = (depth + 1) * DEPTH_SIZE
+
+                # Taking care of doc as child of dim
+                for cchild in list(child):
+                    ttag = cchild.tag.split("}", 1)[1]
+                    if ttag == ('doc'):
+                        if ttag not in dim_other_parts:
+                            dim_other_parts[ttag] = []
+                        text = cchild.text
+                        dim_other_parts[ttag].append(text.strip())
+                        child.remove(cchild)
+                        continue
             # taking care of other attributes except index and value
             for attr, value in child_attrs.items():
                 if attr in possible_dim_attrs:
-                    if attr not in dim_other_attr:
-                        dim_other_attr[attr] = []
-                    dim_other_attr[attr].append(value)
+                    if attr not in dim_other_parts:
+                        dim_other_parts[attr] = []
+                    dim_other_parts[attr].append(value)
 
         # index and value attributes of dim elements
         file_out.write(
@@ -300,10 +315,14 @@ class Nxdl2yaml():
                 indent=(depth + 1) * DEPTH_SIZE,
                 value=dim_index_value[:-2] or ''))
         # other attributes, except index and value and doc of dim and write as child of dim
-        # doc or attributes for each dim come in list
+        # doc or attributes for each dim come inside list
         indent = (depth + 1) * DEPTH_SIZE
-        for key, value in dim_other_attr.items():
-            file_out.write(f"{indent}{key}: {value}\n")
+        for key, value in dim_other_parts.items():
+            if key == 'doc':
+                value = self.handle_not_root_level_doc(depth + 1, str(value))
+                file_out.write(value)
+            else:
+                file_out.write(f"{indent}{key}: {value}\n")
 
     def handle_enumeration(self, depth, node, file_out):
         """
@@ -402,18 +421,46 @@ class Nxdl2yaml():
 
         possible_link_attrs = ['name', 'target', 'napimount']
         node_attr = node.attrib
+        # Handle special cases
         if 'name' in node_attr:
             file_out.write('{indent}{name}(link):\n'.format(
                 indent=depth * DEPTH_SIZE,
                 name=node_attr['name'] or ''))
         depth_ = depth + 1
 
+        # Handle general cases
         for attr_key in possible_link_attrs:
             if attr_key in node_attr and attr_key not in ['name']:
                 file_out.write('{indent}{attr}: {value}\n'.format(
                     indent=depth_ * DEPTH_SIZE,
                     attr=attr_key,
                     value=node_attr[attr_key]))
+
+    def handel_choice(self, depth, node, file_out):
+        """
+            Handle choice element which is a parent node of group.
+        """
+
+        possible_attr = []
+
+        node_attr = node.attrib
+        # Handle special casees
+        if 'name' in node_attr:
+            file_out.write('{indent}{attr}(choice): \n'.format(
+                indent=depth * DEPTH_SIZE,
+                attr=node_attr['name']))
+
+        depth_ = depth
+        # Taking care of general attrinutes. Though, still no attrinutes have found,
+        # but could be used for future
+        for attr in possible_attr:
+            if attr in ['name']:
+                continue
+            if attr in node_attr:
+                file_out.write('{indent}{attr}: {value}\n'.format(
+                    indent=depth_ * DEPTH_SIZE,
+                    attr=attr,
+                    value=node_attr[attr]))
 
     def recursion_in_xml_tree(self, depth, xml_tree, output_yml, verbose):
         """
@@ -478,6 +525,8 @@ class Nxdl2yaml():
                 self.handle_dimension(depth, node, file_out)
             if tag == ('link'):
                 self.handel_link(depth, node, file_out)
+            if tag == ('choice'):
+                self.handel_choice(depth, node, file_out)
         depth += 1
         # Write nested nodes
         self.recursion_in_xml_tree(depth, xml_tree, output_yml, verbose)

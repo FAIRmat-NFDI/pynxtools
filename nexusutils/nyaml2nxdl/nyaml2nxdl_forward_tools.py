@@ -194,6 +194,8 @@ def xml_handle_exists(dct, obj, keyword, value):
             obj.set('minOccurs', '0')
 
 
+# TODO Rearrage function all helper function send to the helper.py
+# and all xml_handle_...  together
 # TODO if possible please try to create definition from defintion not by
 # hard coding
 # TODO change the valriable name of possible attributes
