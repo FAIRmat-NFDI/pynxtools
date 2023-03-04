@@ -119,6 +119,22 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
+def check_for_skiped_attributes(component, value, allowed_attr=None):
+    if value:
+        for attr, val in value.items():
+            if '__line__' in attr:
+                continue
+            line_number = f'__line__{attr}'
+            if not isinstance(val, dict) \
+                and '(' not in attr \
+                and ')' not in attr\
+                    and 'NX' not in attr:
+
+                raise ValueError(f"An attribute '{attr}' in part '{component}' has been found"
+                                 f". Please check arround line '{line_number}. At this moment"
+                                 f"The allowed attrbutes are {allowed_attr}")
+
+
 def format_nxdl_doc(string):
     """NeXus format for doc string
     """
@@ -273,6 +289,9 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
         del value[line_number]
     xml_handle_dim_from_dimension_dict(dct, dims, keyword, value, rank)
 
+    if isinstance(value, dict) and value != {}:
+        recursive_build(dims, value, verbose=None)
+
 
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
@@ -352,11 +371,7 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
 #            val_attrs.remove(attr)
 #            val_attrs.remove(line_number)
 
-    for attr in value.keys():
-        if '__line__' not in attr and attr in val_attrs:
-            raise ValueError(f"An attribute of dimension or dim (\'{attr}\') has been found"
-                             f" that has not been parsed."
-                             f"plese check arround Line {dct[header_line_number]}.")
+    check_for_skiped_attributes('dim', value, possible_dim_attrs)
 
 
 def xml_handle_enumeration(dct, obj, keyword, value, verbose):
@@ -387,25 +402,26 @@ bear at least an argument !'
 
 
 def xml_handle_link(dct, obj, keyword, value):
-    """If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
-
     """
-    if '__line__' not in keyword:
-        if len(keyword[:-6]) >= 1 and \
-           isinstance(value, dict) and \
-           'target' in value.keys():
-            if isinstance(value['target'], str) and len(value['target']) >= 1:
-                lnk = ET.SubElement(obj, 'link')
-                lnk.set('name', keyword[:-6])
-                lnk.set('target', value['target'])
-            else:
-                line_number = '__line__target'
-                raise ValueError(
-                    keyword + f'Line {value[line_number]}: target argument of link is invalid !')
-        else:
-            line_number = f'__line__{keyword}'
-            raise ValueError(
-                keyword + f'Line {dct[line_number]}: the link formatting is invalid !')
+        If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
+    """
+
+    possible_attrs = ['target', 'napimount']
+
+    val_attr = list(value.keys())
+    name = keyword[:-6]
+    link_obj = ET.SubElement(obj, 'link')
+    link_obj.set('name', name)
+
+    for attr in possible_attrs:
+        line_number = f"__line__{attr}"
+        if attr in val_attr and not isinstance(value[attr], dict):
+            link_obj.set(attr, value[attr])
+            del value[attr]
+            del value[line_number]
+
+    # Check for skipped attrinutes
+    check_for_skiped_attributes('link', value, possible_attrs)
 
 
 # TODO replace dct by parent dict
@@ -440,6 +456,8 @@ def xml_handle_choice(dct, obj, keyword, value):
         line_number = f"__line__{keyword}"
         raise ValueError(f"A choice must have name attibute. Please check choice aound"
                          f" line {dct[line_number]}")
+
+    check_for_skiped_attributes('choice', value, possible_attr)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(choice_obj, value, verbose=None)
@@ -529,8 +547,8 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
                 elemt_obj.set(attr, value[attr])
                 del value[attr]
                 del value[line_number]
-        if value:
-            recursive_build(elemt_obj, value, verbose)
+    if value:
+        recursive_build(elemt_obj, value, verbose)
 
 
 def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
