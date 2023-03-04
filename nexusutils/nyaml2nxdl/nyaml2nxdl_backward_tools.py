@@ -259,10 +259,16 @@ class Nxdl2yaml():
                         value=node_attr[attr] or ''))
 
     def handle_dimension(self, depth, node, file_out):
-        """Handle the dimension field"""
+        """
+        Handle the dimension field.
+            NOTE: Usually we take care of any xml element in xmlparse(...) and
+        recursion_in_xml_tree(...) functions. But Here it is a bit different. The doc of dim
+        hass been handled here.
+        """
         # pylint: disable=consider-using-f-string
         possible_dim_attrs = ['ref', 'optional', 'recommended',
                               'required', 'incr', 'refindex']
+        possible_dimemsion_attrs = ['rank']
 
         # taking care of Dimension tag
         file_out.write(
@@ -273,11 +279,17 @@ class Nxdl2yaml():
         node_attrs = node.attrib
         # Taking care of dimension attributes
         for attr, value in node_attrs.items():
-            indent = (depth + 1) * DEPTH_SIZE
-            file_out.write(f'{indent}{attr}: {value}\n')
+            if attr in possible_dimemsion_attrs and not isinstance(value, dict):
+                indent = (depth + 1) * DEPTH_SIZE
+                file_out.write(f'{indent}{attr}: {value}\n')
+            else:
+                raise ValueError(f"Dimension has got a attributes that is not valid."
+                                 f"Current the allowd atributes are {possible_dimemsion_attrs}."
+                                 f" Please have a look")
+
         dim_index_value = ''
         dim_other_parts = {}
-        # taking care of dim attributes
+        # taking care of dim and doc childs of dimension
         for child in list(node):
             tag = child.tag.split("}", 1)[1]
             child_attrs = child.attrib
@@ -292,30 +304,31 @@ class Nxdl2yaml():
                 if "value" in child_attrs:
                     del child_attrs["value"]
 
-                # Taking care of doc as child of dim
+                # Taking care of doc comes as child of dim
                 for cchild in list(child):
                     ttag = cchild.tag.split("}", 1)[1]
                     if ttag == ('doc'):
+                        ttag = f"dim_{ttag}"
                         if ttag not in dim_other_parts:
                             dim_other_parts[ttag] = []
                         text = cchild.text
                         dim_other_parts[ttag].append(text.strip())
                         child.remove(cchild)
                         continue
-            # taking care of other attributes except index and value
-            for attr, value in child_attrs.items():
-                if attr in possible_dim_attrs:
-                    if attr not in dim_other_parts:
-                        dim_other_parts[attr] = []
-                    dim_other_parts[attr].append(value)
+                # taking care of other attributes except index and value
+                for attr, value in child_attrs.items():
+                    if attr in possible_dim_attrs:
+                        if attr not in dim_other_parts:
+                            dim_other_parts[attr] = []
+                        dim_other_parts[attr].append(value)
 
         # index and value attributes of dim elements
         file_out.write(
             '{indent}dim: [{value}]\n'.format(
                 indent=(depth + 1) * DEPTH_SIZE,
                 value=dim_index_value[:-2] or ''))
-        # other attributes, except index and value and doc of dim and write as child of dim
-        # doc or attributes for each dim come inside list
+        # Write the attributes, except index and value, and doc of dim as sibling of dim.
+        # But tthe doc or attributes for each dim come inside list according to the order of dim.
         indent = (depth + 1) * DEPTH_SIZE
         for key, value in dim_other_parts.items():
             if key == 'doc':
@@ -376,7 +389,7 @@ class Nxdl2yaml():
     def handle_attributes(self, depth, node, file_out):
         """Handle the attributes parsed from the xml file"""
         # pylint: disable=consider-using-f-string
-        attr_list = ['name', 'type', 'units', 'nameType']
+        attr_list = ['name', 'type', 'units', 'nameType', 'recommended', 'optional']
         node_attr = node.attrib
 
         if 'name' in node_attr:
@@ -410,7 +423,7 @@ class Nxdl2yaml():
                 continue
 
             file_out.write('{indent}{key}: {value}\n'.format(
-                indent=depth * DEPTH_SIZE,
+                indent=(depth + 1) * DEPTH_SIZE,
                 key=attr,
                 value=node_attr[attr]))
 
