@@ -258,7 +258,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
         line_number = f'__line__{attr}'
         if attr == 'doc' and not isinstance(value[attr], list):
             xml_handle_doc(dims, value[attr])
-            del value['doc']
+            del value[attr]
             del value[line_number]
 
     # Takeing care dimention element
@@ -271,12 +271,12 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
         val_attrs.remove(line_number)
         del value[attr]
         del value[line_number]
-    xml_handle_dimfrom_dimension_dict(dct, dims, keyword, value, rank)
+    xml_handle_dim_from_dimension_dict(dct, dims, keyword, value, rank)
 
 
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
-def xml_handle_dimfrom_dimension_dict(dct, dims_obj, keyword, value, rank):
+def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
     """
         Handling dim element.
         NOTE: The inputs 'keyword' and 'value' are as input for xml_handle_dimensions
@@ -288,7 +288,8 @@ def xml_handle_dimfrom_dimension_dict(dct, dims_obj, keyword, value, rank):
     val_attrs = list(value.keys())
 
     dim_list = []
-    for attr in ['dim', 'doc', *possible_dim_attrs]:
+    # NOTE: dim_doc is a list of docs that come from dim
+    for attr in ['dim', 'dim_doc', *possible_dim_attrs]:
         if attr not in val_attrs:
             continue
 
@@ -318,30 +319,38 @@ def xml_handle_dimfrom_dimension_dict(dct, dims_obj, keyword, value, rank):
             assert attr in val_attrs and line_number in val_attrs, (
                 f"Line {dct[line_number]} does not"
                 f" have attribute {val_attrs}.")
-            val_attrs.remove(attr)
-            val_attrs.remove(line_number)
+            del value[attr]
+            del value[line_number]
+#            val_attrs.remove(attr)
+#            val_attrs.remove(line_number)
 
         elif attr == 'optional' and dim_list:
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
                 bool_ = value[attr][i] if isinstance(value[attr], list) else value[attr]
                 dim.set('required', 'false' if bool_ == 'true' else 'true')
-            val_attrs.remove(attr)
-            val_attrs.remove(line_number)
-        elif attr == 'doc' and dim_list and isinstance(value[attr], list):
+            del value[attr]
+            del value[line_number]
+#            val_attrs.remove(attr)
+#            val_attrs.remove(line_number)
+        elif attr == 'dim_doc' and dim_list and isinstance(value[attr], list):
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
-                doc = value[attr][i] if isinstance(value[attr], list) else value[attr]
+                doc = value[attr][i]  # if isinstance(value[attr], list) else value[attr]
                 xml_handle_doc(dim, doc)
-            val_attrs.remove(attr)
-            val_attrs.remove(line_number)
+            del value[attr]
+            del value[line_number]
+#            val_attrs.remove(attr)
+#            val_attrs.remove(line_number)
         elif dim_list:
             for i, dim in enumerate(dim_list):
                 val = value[attr][i] if isinstance(value[attr], list) else value[attr]
                 # value[attr] is list for multiple elements or single value
                 dim.set(attr, val)
-            val_attrs.remove(attr)
-            val_attrs.remove(line_number)
+            del value[attr]
+            del value[line_number]
+#            val_attrs.remove(attr)
+#            val_attrs.remove(line_number)
 
     for attr in value.keys():
         if '__line__' not in attr and attr in val_attrs:
@@ -492,7 +501,8 @@ def verbose_flag(verbose, keyword, value):
 def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     """Handle the attributes found connected to attribute field"""
     # list of possible attribute of xml attribute elementsa
-    attr_attr_list = ['name', 'type', 'unit', 'nameType']
+    attr_attr_list = ['name', 'type', 'unit', 'nameType',
+                      'optional', 'recommended']
     # as an attribute identifier
     keyword_name, keyword_typ = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
