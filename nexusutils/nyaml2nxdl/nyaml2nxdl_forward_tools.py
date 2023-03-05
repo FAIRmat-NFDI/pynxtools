@@ -421,7 +421,6 @@ def xml_handle_link(dct, obj, keyword, value):
     """
 
     possible_attrs = ['target', 'napimount']
-    header_line = f'__line__{keyword}'
     val_attr = list(value.keys())
     name = keyword[:-6]
     link_obj = ET.SubElement(obj, 'link')
