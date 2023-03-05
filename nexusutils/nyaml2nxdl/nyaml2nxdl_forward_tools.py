@@ -175,12 +175,26 @@ def format_nxdl_doc(string):
     return formatted_doc
 
 
+def check_for_mapping_char(text):
+    """
+    Check for mapping char \':\' which does not be passed through yaml library.
+    Then replace it by ':'.
+    """
+
+    if '\':\'' in str(text):
+        text = text.replace('\':\'', ':')
+    return text
+
+
 def xml_handle_doc(obj, value: str):
     """This function creates a 'doc' element instance, and appends it to an existing element
 
     """
+
+    # remove "':'" which come because of : is used as sseparator in yaml file.
+
     doctag = ET.SubElement(obj, 'doc')
-    doctag.text = format_nxdl_doc(value)
+    doctag.text = format_nxdl_doc(check_for_mapping_char(value))
 
 
 def xml_handle_units(obj, value):
@@ -245,7 +259,7 @@ def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
             continue
         if attr in value and not isinstance(value[attr], dict):
             validate_field_attribute_and_value(attr, value[attr], list_of_attr, value)
-            grp.set(attr, value[attr])
+            grp.set(attr, check_for_mapping_char(value[attr]))
             del value[attr]
             del value[line_number]
 
@@ -334,9 +348,9 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
                                                        f'argument not a list !')
             if isinstance(rank, int) and rank > 0:
                 assert rank == len(llist_ind_value), (
-                    f"check around Line {dct[line_number]}.\n"
-                    f"Line {[value[line_number]]} rank value {rank} "
-                    f"is not the same as dim array "
+                    f"Wrong dimension rank check around Line {dct[header_line_number]}.\n"
+                    f"Line {[dct[header_line_number]]} rank value {rank} "
+                    f"is not the same as dim array = "
                     f"{len(llist_ind_value)}.")
             # Taking care of ind and value that comes as list of list
             for dim_ind_val in llist_ind_value:
@@ -567,7 +581,7 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
                 del value[attr]
                 del value[line_number]
             elif attr in val_attr:
-                elemt_obj.set(attr, str(value[attr]))
+                elemt_obj.set(attr, check_for_mapping_char(value[attr]))
                 del value[attr]
                 del value[line_number]
     if value:
@@ -660,7 +674,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
             del value[line_number]
         elif attr in val_attr:
             validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
-            elemt_obj.set(attr, str(value[attr]))
+            elemt_obj.set(attr, check_for_mapping_char(value[attr]))
             del value[attr]
             del value[line_number]
 

@@ -30,6 +30,20 @@ from nexusutils.dataconverter.helpers import remove_namespace_from_tag
 DEPTH_SIZE = "  "
 
 
+def handle_mapping_char(text):
+    """Check for ':' char and replace it by \':\'. """
+
+    # Skip colon ':' that comes in text because it is used as separator for yaml.
+    if ':' in text:
+        index = [ind for ind, ch in enumerate(text) if ch == ':']
+
+        ch_rep = 0
+        for ind in index:
+            text = text[0:ind + ch_rep] + '\'' + text[ind + ch_rep] + '\'' + text[ch_rep + ind + 1:]
+            ch_rep = ch_rep + 2
+    return text
+
+
 class Nxdl2yaml():
     """
         Parse XML file and print a YML file
@@ -145,6 +159,7 @@ class Nxdl2yaml():
                 tag = remove_namespace_from_tag(tag)
             indent = depth * DEPTH_SIZE
 
+        text = handle_mapping_char(text)
         doc_str = f"{indent}{tag}: | {text}\n"
         if file_out:
             file_out.write(doc_str)
@@ -247,11 +262,12 @@ class Nxdl2yaml():
 
         for attr in other_similar_attr:
             if attr in node_attr:
+                val_ = handle_mapping_char(node_attr[attr])
                 file_out.write(
                     '{indent}{attr}: {value}\n'.format(
                         indent=(depth + 1) * DEPTH_SIZE,
                         attr=attr,
-                        value=node_attr[attr] or ''))
+                        value=val_ or ''))
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
@@ -417,11 +433,11 @@ class Nxdl2yaml():
                 continue
             if attr not in node_attr:
                 continue
-
+            val_ = handle_mapping_char(node_attr[attr])
             file_out.write('{indent}{key}: {value}\n'.format(
                 indent=(depth + 1) * DEPTH_SIZE,
                 key=attr,
-                value=node_attr[attr]))
+                value=val_))
 
     def handel_link(self, depth, node, file_out):
         """
