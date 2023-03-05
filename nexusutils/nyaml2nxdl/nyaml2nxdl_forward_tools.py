@@ -120,8 +120,14 @@ def nx_name_type_resolving(tmp):
 
 
 def check_for_skiped_attributes(component, value, allowed_attr=None):
+    """
+        Check for any attributes have been skipped or not.
+        NOTE: We should we should keep in mind about 'doc'
+    """
     if value:
         for attr, val in value.items():
+            if attr in ['doc']:
+                continue
             if '__line__' in attr:
                 continue
             line_number = f'__line__{attr}'
@@ -133,6 +139,20 @@ def check_for_skiped_attributes(component, value, allowed_attr=None):
                 raise ValueError(f"An attribute '{attr}' in part '{component}' has been found"
                                  f". Please check arround line '{line_number}. At this moment"
                                  f"The allowed attrbutes are {allowed_attr}")
+
+
+def check_for_optionality(obj, opl_key, opl_val):
+    """
+    Taking care of optinality.
+    """
+    if opl_key == 'optional':
+        if opl_val == 'false':
+            obj.set('required', 'true')
+    elif opl_key == 'minOccurs':
+        if opl_val == '0':
+            pass
+        else:
+            obj.set(opl_key, str(opl_val))
 
 
 def format_nxdl_doc(string):
@@ -210,11 +230,6 @@ def xml_handle_exists(dct, obj, keyword, value):
             obj.set('minOccurs', '0')
 
 
-# TODO Rearrage function all helper function send to the helper.py
-# and all xml_handle_...  together
-# TODO if possible please try to create definition from defintion not by
-# hard coding
-# TODO change the valriable name of possible attributes
 def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
     """
     The function deals with group instances
@@ -311,7 +326,6 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
     for attr in ['dim', 'dim_doc', *possible_dim_attrs]:
         if attr not in val_attrs:
             continue
-
         line_number = f"__line__{attr}"
         # dim comes in precedence
         if attr == 'dim':
@@ -340,8 +354,6 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
                 f" have attribute {val_attrs}.")
             del value[attr]
             del value[line_number]
-#            val_attrs.remove(attr)
-#            val_attrs.remove(line_number)
 
         elif attr == 'optional' and dim_list:
             for i, dim in enumerate(dim_list):
@@ -350,26 +362,27 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
                 dim.set('required', 'false' if bool_ == 'true' else 'true')
             del value[attr]
             del value[line_number]
-#            val_attrs.remove(attr)
-#            val_attrs.remove(line_number)
-        elif attr == 'dim_doc' and dim_list and isinstance(value[attr], list):
+        elif attr == 'dim_doc' and dim_list:
+            # doc example '['doc_1', 'doc_2']
+            doc_list = value[attr][1:-1]
+            doc_list = [doc.strip()[1:-1] for doc in doc_list.split(',')]
             for i, dim in enumerate(dim_list):
                 # value[attr] is list for multiple elements or single value
-                doc = value[attr][i]  # if isinstance(value[attr], list) else value[attr]
+                doc = doc_list[i]  # if isinstance(value[attr], list) else value[attr]
                 xml_handle_doc(dim, doc)
             del value[attr]
             del value[line_number]
-#            val_attrs.remove(attr)
-#            val_attrs.remove(line_number)
         elif dim_list:
             for i, dim in enumerate(dim_list):
-                val = value[attr][i] if isinstance(value[attr], list) else value[attr]
+                try:
+                    val = value[attr][i] if isinstance(value[attr], list) else value[attr]
                 # value[attr] is list for multiple elements or single value
-                dim.set(attr, val)
+                    dim.set(attr, val)
+                except Exception as ex:
+                    raise IndexError(f"Each of the dimensions ('dim') should contain all "
+                                     f"the same type of attributes.")
             del value[attr]
             del value[line_number]
-#            val_attrs.remove(attr)
-#            val_attrs.remove(line_number)
 
     check_for_skiped_attributes('dim', value, possible_dim_attrs)
 
@@ -423,8 +436,10 @@ def xml_handle_link(dct, obj, keyword, value):
     # Check for skipped attrinutes
     check_for_skiped_attributes('link', value, possible_attrs)
 
+    if isinstance(value, dict) and value != {}:
+        recursive_build(link_obj, value, verbose=None)
 
-# TODO replace dct by parent dict
+
 def xml_handle_choice(dct, obj, keyword, value):
     """
         Build choice xml elements. That consists of groups.
@@ -520,7 +535,8 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     """Handle the attributes found connected to attribute field"""
     # list of possible attribute of xml attribute elementsa
     attr_attr_list = ['name', 'type', 'unit', 'nameType',
-                      'optional', 'recommended']
+                      'optional', 'recommended', 'minOccurs',
+                      'maxOccurs']
     # as an attribute identifier
     keyword_name, keyword_typ = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
@@ -540,11 +556,17 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
         for attr in attr_attr_list:
             line_number = f'__line__{attr}'
             if attr == 'unit' and attr in val_attr:
-                elemt_obj.set(f"{attr}s", value[attr])
+                elemt_obj.set(f"{attr}s", str(value[attr]))
+                del value[attr]
+                del value[line_number]
+            elif attr in ['minOccurs', 'optional'] and attr in val_attr:
+                if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
+                    continue
+                check_for_optionality(elemt_obj, attr, value[attr])
                 del value[attr]
                 del value[line_number]
             elif attr in val_attr:
-                elemt_obj.set(attr, value[attr])
+                elemt_obj.set(attr, str(value[attr]))
                 del value[attr]
                 del value[line_number]
     if value:
@@ -580,7 +602,6 @@ def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
                          f" Please check arround line {value[line_number]}.")
 
 
-# Rename it as xml_handle_filed
 def xml_handle_fields(obj, keyword, value, verbose):
     """
     Handle a field in yaml file.
@@ -623,18 +644,11 @@ def xml_handle_fields(obj, keyword, value, verbose):
         if attr in ['name', 'type'] and attr in val_attr:
             del value[attr]
             del value[line_number]
-        elif attr == 'optional' and attr in val_attr:
+        elif attr in ['optional', 'minOccurs'] and attr in val_attr:
             validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
-            if value[attr] == 'false':
-                elemt_obj.set('required', 'true')
-            del value[attr]
-            del value[line_number]
-        elif attr == 'minOccurs' and attr in val_attr:
-            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
-            if value[attr] == '0':
-                pass
-            else:
-                elemt_obj.set(attr, value[attr])
+            if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
+                continue
+            check_for_optionality(elemt_obj, attr, value[attr])
             del value[attr]
             del value[line_number]
         elif attr == 'unit' and attr in val_attr:
