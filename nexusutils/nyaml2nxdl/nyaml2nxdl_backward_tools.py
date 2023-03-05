@@ -191,11 +191,6 @@ class Nxdl2yaml():
                             defs=defs))
             self.found_definition = False
 
-# TODO: sEPARATE GROUP AND ATTRIBUTES
-# This is list of attributes for field
-#        attr_list = ['name', 'type', 'units', 'nameType', 'axes', 'stride',
-#                     'data_offset', 'interpretation', 'long_name', 'primary']
-
     # pylint: disable=consider-using-f-string
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
@@ -331,9 +326,8 @@ class Nxdl2yaml():
         # But tthe doc or attributes for each dim come inside list according to the order of dim.
         indent = (depth + 1) * DEPTH_SIZE
         for key, value in dim_other_parts.items():
-            if key == 'doc':
-                value = self.handle_not_root_level_doc(depth + 1, str(value))
-                file_out.write(value)
+            if key == 'dim_doc':
+                value = self.handle_not_root_level_doc(depth + 1, str(value), key, file_out)
             else:
                 file_out.write(f"{indent}{key}: {value}\n")
 
