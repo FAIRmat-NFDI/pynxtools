@@ -253,6 +253,8 @@ class Nxdl2yaml():
                         attr=attr,
                         value=node_attr[attr] or ''))
 
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
     def handle_dimension(self, depth, node, file_out):
         """
         Handle the dimension field.
@@ -404,8 +406,8 @@ class Nxdl2yaml():
 
         if 'units' in node_attr:
             if not node_attr['units']:
-                raise ValueError(f"The 'value' of 'units' in attribute"
-                                 f" is empty which is forbiden.")
+                raise ValueError("The 'value' of 'units' in attribute"
+                                 " is empty which is forbiden.")
             file_out.write('{indent}unit: {value}\n'.format(
                 indent=depth * DEPTH_SIZE,
                 value=node_attr['units']))

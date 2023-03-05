@@ -44,9 +44,8 @@ NX_ATTR_IDNT = '\\@'
 NX_UNIT_IDNT = 'unit'
 DEPTH_SIZE = "    "
 NX_UNIT_TYPES = nexus.get_nx_units()
+
 # Attributes for definition attributs
-rare_def_attributes = ['deprecated', 'ignoreExtraGroups', 'ignoreExtraFields',
-                       'ignoreExtraAttributes', 'restricts']
 # Keep the order as it is NIAC branch
 
 
@@ -379,8 +378,9 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
                 # value[attr] is list for multiple elements or single value
                     dim.set(attr, val)
                 except Exception as ex:
-                    raise IndexError(f"Each of the dimensions ('dim') should contain all "
-                                     f"the same type of attributes.")
+                    raise IndexError(f"Each of the dimensions ('dim') must contain all "
+                                     f" the same types of attributes."
+                                     f" Check line {header_line_number}") from ex
             del value[attr]
             del value[line_number]
 
@@ -414,13 +414,14 @@ bear at least an argument !'
                     recursive_build(itm, value[element], verbose)
 
 
+# pylint: disable=unused-argument
 def xml_handle_link(dct, obj, keyword, value):
     """
         If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
     """
 
     possible_attrs = ['target', 'napimount']
-
+    header_line = f'__line__{keyword}'
     val_attr = list(value.keys())
     name = keyword[:-6]
     link_obj = ET.SubElement(obj, 'link')
@@ -560,6 +561,7 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
                 del value[attr]
                 del value[line_number]
             elif attr in ['minOccurs', 'optional'] and attr in val_attr:
+                # If both minOccurs and myxOccurs are found than keep both of them
                 if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
                     continue
                 check_for_optionality(elemt_obj, attr, value[attr])
@@ -646,6 +648,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
             del value[line_number]
         elif attr in ['optional', 'minOccurs'] and attr in val_attr:
             validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
+            # If both minOccurs and myxOccurs are found than keep both of them
             if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
                 continue
             check_for_optionality(elemt_obj, attr, value[attr])
