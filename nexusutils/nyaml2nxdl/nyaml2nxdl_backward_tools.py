@@ -95,27 +95,46 @@ class Nxdl2yaml():
                                                                text=symbol_doc.text))
 
     def handle_definition(self, node):
-        """Handle definition group and its attributes
-
+        """
+            Handle definition group and its attributes
+            NOTE: Here we tried to store the order of the xml element attributes. So that we get
+            exactly the same file in nxdl from yaml.
         """
         # pylint: disable=consider-using-f-string
+        # self.root_level_definition[0] = ''
+        keyword = ''
+        # sign word for reseving the location
+        sign_word = " #xx# "
         attribs = node.attrib
+        # for tracking the order of name and type
+        keyword_order = -1
         for item in attribs:
-            if 'schemaLocation' not in item \
-                    and 'name' not in item \
-                    and 'extends' not in item \
-                    and 'type' not in item:
-                self.root_level_definition.append(
-                    '{key}: {value}'.format(
-                        key=item,
-                        value=attribs[item] or ''))
-        if 'name' in attribs.keys():
-            self.root_level_definition.append(
-                '{name}:'.format(
-                    name=attribs['name'] or ''))
-            if 'extends' in attribs.keys() and attribs["extends"] != "NXobject":
-                keyword = self.root_level_definition.pop()
-                self.root_level_definition.append(f"{keyword[0:-1]}({attribs['extends']}):")
+            if "name" in item:
+                keyword = keyword + attribs[item]
+                if keyword_order == -1:
+                    self.root_level_definition.append(sign_word)
+                    keyword_order = self.root_level_definition.index(sign_word)
+            elif "extends" in item and attribs[item] != "NXobject":
+                keyword = f"{keyword}({attribs[item]})"
+                if keyword_order == -1:
+                    self.root_level_definition.append(sign_word)
+                    keyword_order = self.root_level_definition.index(sign_word)
+            elif 'schemaLocation' not in item \
+                    and 'type' != item \
+                    and 'extends' != item:
+                text = f"{item}: {attribs[item]}"
+                self.root_level_definition.append(text)
+        self.root_level_definition[keyword_order] = f"{keyword}:"
+
+        # if 'name' in attribs.keys():
+        #     name = f"{attribs['name']}:"
+        #     # self.root_level_definition.append(
+        #     #     '{name}:'.format(
+        #     #         name=attribs['name'] or ''))
+        #     if 'extends' in attribs.keys() and attribs["extends"] != "NXobject":
+        #         keyword = f"{name[0:-1]}({attribs['extends']}):"
+        #         # keyword = self.root_level_definition.pop()
+        #         # self.root_level_definition.append(f"{keyword[0:-1]}({attribs['extends']}):")
 
     def handle_root_level_doc(self, node):
         """
