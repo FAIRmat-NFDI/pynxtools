@@ -1,8 +1,9 @@
 doc: | 
   my nice doc string in root level.
   my nice doc string in root level, line 2.
+type: group
 category: base
-NXentry:
+NXentry(NXobject):
   \@default:
     doc: | 
       oki
