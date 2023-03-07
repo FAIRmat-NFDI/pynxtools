@@ -37,6 +37,27 @@ from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
 
+
+DOM_COMMENT = ("\n"
+               "# NeXus - Neutron and X-ray Common Data Format\n"
+               "# \n"
+               "# Copyright (C) 2014-2022 NeXus International Advisory Committee (NIAC)\n"
+               "# \n"
+               "# This library is free software; you can redistribute it and/or\n"
+               "# modify it under the terms of the GNU Lesser General Public\n"
+               "# License as published by the Free Software Foundation; either\n"
+               "# version 2 of the License, or (at your option) any later version.\n"
+               "#\n"
+               "# This library is distributed in the hope that it will be useful,\n"
+               "# but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+               "# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n"
+               "# Lesser General Public License for more details.\n"
+               "#\n"
+               "# You should have received a copy of the GNU Lesser General Public\n"
+               "# License along with this library; if not, write to the Free Software\n"
+               "# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
+               "#\n"
+               "# For further information, see http://www.nexusformat.org\n")
 NX_CLSS = nexus.get_nx_classes()
 NX_NEW_DEFINED_CLASSES = ['NX_COMPLEX']
 NX_TYPE_KEYS = nexus.get_nx_attribute_type()
@@ -140,7 +161,7 @@ def check_for_skiped_attributes(component, value, allowed_attr=None):
                                  f"The allowed attrbutes are {allowed_attr}")
 
 
-def check_for_optionality(obj, opl_key, opl_val):
+def check_optionality_and_write(obj, opl_key, opl_val):
     """
     Taking care of optinality.
     """
@@ -183,7 +204,7 @@ def check_for_mapping_char(text):
 
     if '\':\'' in str(text):
         text = text.replace('\':\'', ':')
-    return text
+    return str(text)
 
 
 def xml_handle_doc(obj, value: str):
@@ -577,7 +598,7 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
                 # If both minOccurs and myxOccurs are found than keep both of them
                 if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
                     continue
-                check_for_optionality(elemt_obj, attr, value[attr])
+                check_optionality_and_write(elemt_obj, attr, value[attr])
                 del value[attr]
                 del value[line_number]
             elif attr in val_attr:
@@ -664,7 +685,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
             # If both minOccurs and myxOccurs are found than keep both of them
             if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
                 continue
-            check_for_optionality(elemt_obj, attr, value[attr])
+            check_optionality_and_write(elemt_obj, attr, value[attr])
             del value[attr]
             del value[line_number]
         elif attr == 'unit' and attr in val_attr:
@@ -746,10 +767,12 @@ def pretty_print_xml(xml_root, output_xml):
     """
     dom = minidom.parseString(ET.tostring(
         xml_root, encoding='utf-8', method='xml'))
-    sibling = dom.createProcessingInstruction(
+    proc_instractionn = dom.createProcessingInstruction(
         'xml-stylesheet', 'type="text/xsl" href="nxdlformat.xsl"')
+    dom_comment = dom.createComment(DOM_COMMENT)
     root = dom.firstChild
-    dom.insertBefore(sibling, root)
+    dom.insertBefore(proc_instractionn, root)
+    dom.insertBefore(dom_comment, root)
     xml_string = dom.toprettyxml(indent=1 * DEPTH_SIZE, newl='\n', encoding='UTF-8')
     with open('tmp.xml', "wb") as file_tmp:
         file_tmp.write(xml_string)
@@ -780,8 +803,8 @@ def nyaml2nxdl(input_file: str, verbose: bool):
     fields or (their) attributes as childs of the groups
     """
 
-    rare_def_attributes = ['deprecated', 'ignoreExtraGroups',
-                           'ignoreExtraFields', 'ignoreExtraAttributes', 'restricts']
+    def_attributes = ['deprecated', 'ignoreExtraGroups', 'category', 'type',
+                      'ignoreExtraFields', 'ignoreExtraAttributes', 'restricts']
     yml_appdef = yml_reader(input_file)
 
     if verbose:
@@ -801,20 +824,43 @@ def nyaml2nxdl(input_file: str, verbose: bool):
 application and base are valid categories!'
     assert 'doc' in yml_appdef.keys(), 'Required root-level keyword doc is missing!'
 
-    xml_root.set('type', 'group')
+    name_extends = ''
+    yml_appdef_copy = yml_appdef.copy()
+    for kkey, vvalue in yml_appdef_copy.items():
+        if '__line__' in kkey:
+            continue
+        line_number = f"__line__{kkey}"
+        if not isinstance(vvalue, dict) and kkey in def_attributes:
+            xml_root.set(kkey, vvalue or '')
+            del yml_appdef[line_number]
+            del yml_appdef[kkey]
+        # Taking care or name and extends
+        elif 'NX' in kkey and isinstance(vvalue, dict):
+            # Tacking the attribute order but the correct value will be stored later
+            # check for name first or type first if (NXobject)NXname then type first
+            l_bracket_ind = kkey.rfind('(')
+            r_bracket_ind = kkey.rfind(')')
+            if l_bracket_ind == 0:
+                extend = kkey[1:r_bracket_ind]
+                name = kkey[r_bracket_ind + 1:]
+                xml_root.set('extends', extend)
+                xml_root.set('name', name)
+            elif l_bracket_ind > 0:
+                name = kkey[0:l_bracket_ind]
+                extend = kkey[l_bracket_ind + 1: r_bracket_ind]
+                xml_root.set('name', name)
+                xml_root.set('extends', extend)
+            else:
+                name = kkey
+                xml_root.set('name', name)
+                xml_root.set('extends', 'NXobject')
+            name_extends = kkey
+        else:
+            ValueError(f"Unable to find contend under definition. "
+                       f"Definition has the following {line_number}")
 
-    if yml_appdef['category'] == 'application':
-        xml_root.set('category', 'application')
-    else:
-        xml_root.set('category', 'base')
-    del yml_appdef['category']
-
-    # check for rare attributes
-    for attr in rare_def_attributes:
-        if attr in yml_appdef:
-            attr_val = str(yml_appdef[attr])
-            xml_root.set(attr, attr_val)
-            del yml_appdef[attr]
+    if 'type' not in xml_root.attrib:
+        xml_root.set('type', "group")
 
     if 'symbols' in yml_appdef.keys():
         xml_handle_symbols(yml_appdef,
@@ -823,6 +869,7 @@ application and base are valid categories!'
                            yml_appdef['symbols'])
 
         del yml_appdef['symbols']
+#        del yml_appdef["__line__symbols"]
 
     assert isinstance(yml_appdef['doc'], str) and yml_appdef['doc'] != '', 'Doc \
 has to be a non-empty string!'
@@ -841,22 +888,11 @@ has to be a non-empty string!'
     assert root_keys == 1, (f"Accepting at most keywords: category, doc, symbols, and NX... "
                             f"at root-level! check key at root level {extra_key}")
 
-    keyword = list(yml_appdef.keys())[0]
-    if "(" in keyword:
-        extends = keyword[keyword.rfind("(") + 1:-1]
-        name = keyword[0:keyword.rfind("(")]
-    else:
-        name = keyword
-        extends = "NXobject"
-
-    xml_root.set('name', name)
-    xml_root.set('extends', extends)
-
-    assert (keyword[0:2] == 'NX' and len(keyword) > 2), 'NX \
+    assert ('NX' in name_extends and len(name_extends) > 2), 'NX \
 keyword has an invalid pattern, or is too short!'
     # Taking care if definition has empty content
-    if yml_appdef[keyword]:
-        recursive_build(xml_root, yml_appdef[keyword], verbose)
+    if yml_appdef[name_extends]:
+        recursive_build(xml_root, yml_appdef[name_extends], verbose)
 
     pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml')
     if verbose:

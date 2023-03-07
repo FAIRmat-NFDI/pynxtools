@@ -114,13 +114,12 @@ class Nxdl2yaml():
                 if keyword_order == -1:
                     self.root_level_definition.append(sign_word)
                     keyword_order = self.root_level_definition.index(sign_word)
-            elif "extends" in item and attribs[item] != "NXobject":
+            elif "extends" in item:
                 keyword = f"{keyword}({attribs[item]})"
                 if keyword_order == -1:
                     self.root_level_definition.append(sign_word)
                     keyword_order = self.root_level_definition.index(sign_word)
             elif 'schemaLocation' not in item \
-                    and 'type' != item \
                     and 'extends' != item:
                 text = f"{item}: {attribs[item]}"
                 self.root_level_definition.append(text)
@@ -218,11 +217,20 @@ class Nxdl2yaml():
                             indent=0 * DEPTH_SIZE,
                             symbol=symbol))
             if self.root_level_definition:
+                # Soring NXname for writting end of the definition attributes
+                NXname = ''
                 for defs in self.root_level_definition:
+                    if 'NX' in defs:
+                        NXname = defs
+                        continue
                     file_out.write(
                         '{indent}{defs}\n'.format(
                             indent=0 * DEPTH_SIZE,
                             defs=defs))
+                file_out.write(
+                    '{indent}{defs}\n'.format(
+                        indent=0 * DEPTH_SIZE,
+                        defs=NXname))
             self.found_definition = False
 
     # pylint: disable=consider-using-f-string
