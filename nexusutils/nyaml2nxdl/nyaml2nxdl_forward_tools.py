@@ -811,13 +811,7 @@ def nyaml2nxdl(input_file: str, verbose: bool):
         sys.stdout.write(f'input-file: {input_file}\n')
         sys.stdout.write('application/base contains the following root-level entries:\n')
         sys.stdout.write(str(yml_appdef.keys()))
-    xml_root = ET.Element(
-        'definition', {
-            'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
-            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-            'xsi:schemaLocation': 'http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd'
-        }
-    )
+    xml_root = ET.Element('definition', {})
     assert 'category' in yml_appdef.keys(
     ), 'Required root-level keyword category is missing!'
     assert yml_appdef['category'] in ['application', 'base'], 'Only \
@@ -861,7 +855,12 @@ application and base are valid categories!'
 
     if 'type' not in xml_root.attrib:
         xml_root.set('type', "group")
-
+    # Taking care of namespaces
+    namespaces = {'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
+                  'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                  'xsi:schemaLocation': 'http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd'}
+    for key, ns in namespaces.items():
+        xml_root.attrib[key] = ns
     if 'symbols' in yml_appdef.keys():
         xml_handle_symbols(yml_appdef,
                            xml_root,
