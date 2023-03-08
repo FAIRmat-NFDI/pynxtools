@@ -31,7 +31,7 @@ DEPTH_SIZE = "  "
 
 
 def handle_mapping_char(text):
-    """Check for ':' char and replace it by \':\'. """
+    """Check for ":" char and replace it by "':'". """
 
     # Skip colon ':' that comes in text because it is used as separator for yaml.
     if ':' in text:
@@ -65,9 +65,8 @@ class Nxdl2yaml():
         self.symbol_list = symbol_list
 
     def handle_symbols(self, depth, node):
-        """Handle symbols field and its childs
+        """Handle symbols field and its childs symbol"""
 
-        """
         # pylint: disable=consider-using-f-string
         self.root_level_symbols = (
             f"{remove_namespace_from_tag(node.tag)}: "
@@ -124,16 +123,6 @@ class Nxdl2yaml():
                 text = f"{item}: {attribs[item]}"
                 self.root_level_definition.append(text)
         self.root_level_definition[keyword_order] = f"{keyword}:"
-
-        # if 'name' in attribs.keys():
-        #     name = f"{attribs['name']}:"
-        #     # self.root_level_definition.append(
-        #     #     '{name}:'.format(
-        #     #         name=attribs['name'] or ''))
-        #     if 'extends' in attribs.keys() and attribs["extends"] != "NXobject":
-        #         keyword = f"{name[0:-1]}({attribs['extends']}):"
-        #         # keyword = self.root_level_definition.pop()
-        #         # self.root_level_definition.append(f"{keyword[0:-1]}({attribs['extends']}):")
 
     def handle_root_level_doc(self, node):
         """
@@ -237,64 +226,109 @@ class Nxdl2yaml():
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
 
+        allowed_attr = ['optional', 'recommended', 'name', 'type', 'axes', 'axis', 'data_offset',
+                        'interpretation', 'long_name', 'maxOccurs', 'minOccurs', 'nameType',
+                        'optional', 'primary', 'signal', 'stride', 'units', 'required']
+
+        name_type = " "
         node_attr = node.attrib
-        if "name" in node_attr and "type" in node_attr:
-            file_out.write(
-                '{indent}{name}{type}:\n'.format(
-                    indent=depth * DEPTH_SIZE,
-                    name=node_attr['name'] or '',
-                    type=type_check(node_attr['type'])))
+        rm_key_list = []
+        # Maintain order: name and type in form name(type) or (type)name that come first
+        for key, val in node_attr.items():
+            if key == 'name':
+                name_type = name_type + val
+                rm_key_list.append(key)
+            if key == 'type':
+                name_type = name_type + "(%s)" % val
+                rm_key_list.append(key)
 
-        if "name" in node_attr and "type" not in node_attr:
-            file_out.write(
-                '{indent}{name}:\n'.format(
-                    indent=depth * DEPTH_SIZE,
-                    name=node_attr['name'] or ''))
+        file_out.write('{indent}{name_type}:\n'.format(
+            indent=depth * DEPTH_SIZE,
+            name_type=name_type))
 
-        if "name" not in node_attr and "type" in node_attr:
-            file_out.write(
-                '{indent}{type}:\n'.format(
-                    indent=depth * DEPTH_SIZE,
-                    type=type_check(node_attr['type'])))
+        for key in rm_key_list:
+            del node_attr[key]
+        # TODO remove comments
+        # if "name" in node_attr and "type" in node_attr:
+        #     file_out.write(
+        #         '{indent}{name}{type}:\n'.format(
+        #             indent=depth * DEPTH_SIZE,
+        #             name=node_attr['name'] or '',
+        #             type=type_check(node_attr['type'])))
 
-        if "minOccurs" in node_attr and "maxOccurs" in node_attr:
-            file_out.write(
-                '{indent}exists: [min, {value1}, max, {value2}]\n'.format(
-                    indent=(depth + 1) * DEPTH_SIZE,
-                    value1=node_attr['minOccurs'] or '',
-                    value2=node_attr['maxOccurs'] or ''))
-        elif "minOccurs" in node_attr \
-                and "maxOccurs" not in node_attr \
-                and node_attr['minOccurs'] == "1":
-            file_out.write(
-                '{indent}{name}: required \n'.format(
-                    indent=(depth + 1) * DEPTH_SIZE,
-                    name='exists'))
-        elif "maxOccurs" in node_attr:
-            file_out.write('{indent}exists: [max, {value1}]\n'.
-                           format(indent=(depth + 1) * DEPTH_SIZE,
-                                  value1=node_attr['maxOccurs'] or ''))
+        # if "name" in node_attr and "type" not in node_attr:
+        #     file_out.write(
+        #         '{indent}{name}:\n'.format(
+        #             indent=depth * DEPTH_SIZE,
+        #             name=node_attr['name'] or ''))
 
-        if "units" in node_attr:
-            file_out.write('{indent}unit: {value}\n'.
-                           format(indent=(depth + 1) * DEPTH_SIZE,
-                                  value=node_attr['units'] or ''))
+        # if "name" not in node_attr and "type" in node_attr:
+        #     file_out.write(
+        #         '{indent}{type}:\n'.format(
+        #             indent=depth * DEPTH_SIZE,
+        #             type=type_check(node_attr['type'])))
 
-        if "recommended" in node_attr and node_attr['recommended'] == "true":
-            file_out.write(
-                '{indent}exists: recommended\n'.format(
-                    indent=(depth + 1) * DEPTH_SIZE))
+        # tmp_dict intended to persevere order of attribnutes
+        tmp_dict = {}
+        for key, val in node_attr.items():
+            if key in ['minOccurs', 'maxOccurs']:
+                if 'exists' not in tmp_dict:
+                    tmp_dict['exists'] = '[]'
+                exists = tmp_dict['exists'].replace(']', '')
+                exists = exists + (f"{key[0:3]}, {val}, ]")
+                tmp_dict['exists'] = exists
+            elif key == 'units':
+                tmp_dict['unit'] = val
+            else:
+                tmp_dict[key] = val
+            if key not in allowed_attr:
+                raise ValueError(f"An attribute ({key}) has been found that is not allowed."
+                                 f"The allowed attr is {allowed_attr}.")
 
-        other_similar_attr = ['nameType', 'axis', 'signal', 'deprecated']
+        depth_ = depth + 1
+        for key, val in tmp_dict.items():
+            file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
 
-        for attr in other_similar_attr:
-            if attr in node_attr:
-                val_ = handle_mapping_char(node_attr[attr])
-                file_out.write(
-                    '{indent}{attr}: {value}\n'.format(
-                        indent=(depth + 1) * DEPTH_SIZE,
-                        attr=attr,
-                        value=val_ or ''))
+        # TODO Remove comments
+        #     tmp_dict[key] =
+        # if "minOccurs" in node_attr and "maxOccurs" in node_attr:
+        #     file_out.write(
+        #         '{indent}exists: [min, {value1}, max, {value2}]\n'.format(
+        #             indent=(depth + 1) * DEPTH_SIZE,
+        #             value1=node_attr['minOccurs'] or '',
+        #             value2=node_attr['maxOccurs'] or ''))
+        # elif "minOccurs" in node_attr \
+        #         and "maxOccurs" not in node_attr \
+        #         and node_attr['minOccurs'] == "1":
+        #     file_out.write(
+        #         '{indent}{name}: required \n'.format(
+        #             indent=(depth + 1) * DEPTH_SIZE,
+        #             name='exists'))
+        # elif "maxOccurs" in node_attr:
+        #     file_out.write('{indent}exists: [max, {value1}]\n'.
+        #                    format(indent=(depth + 1) * DEPTH_SIZE,
+        #                           value1=node_attr['maxOccurs'] or ''))
+
+        # if "units" in node_attr:
+        #     file_out.write('{indent}unit: {value}\n'.
+        #                    format(indent=(depth + 1) * DEPTH_SIZE,
+        #                           value=node_attr['units'] or ''))
+
+        # if "recommended" in node_attr and node_attr['recommended'] == "true":
+        #     file_out.write(
+        #         '{indent}exists: recommended\n'.format(
+        #             indent=(depth + 1) * DEPTH_SIZE))
+
+        # other_similar_attr = ['nameType', 'axis', 'signal', 'deprecated']
+
+        # for attr in other_similar_attr:
+        #     if attr in node_attr:
+        #         val_ = handle_mapping_char(node_attr[attr])
+        #         file_out.write(
+        #             '{indent}{attr}: {value}\n'.format(
+        #                 indent=(depth + 1) * DEPTH_SIZE,
+        #                 attr=attr,
+        #                value=val_ or ''))
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
@@ -302,8 +336,8 @@ class Nxdl2yaml():
         """
         Handle the dimension field.
             NOTE: Usually we take care of any xml element in xmlparse(...) and
-        recursion_in_xml_tree(...) functions. But Here it is a bit different. The doc of dim
-        hass been handled here.
+        recursion_in_xml_tree(...) functions. But Here it is a bit different. The doc dimension
+          and attributes of dim has been handled inside this function here.
         """
         # pylint: disable=consider-using-f-string
         possible_dim_attrs = ['ref', 'optional', 'recommended',
@@ -315,6 +349,7 @@ class Nxdl2yaml():
             '{indent}{tag}:\n'.format(
                 indent=depth * DEPTH_SIZE,
                 tag=node.tag.split("}", 1)[1]))
+        node_attrs = node.attrib
 
         node_attrs = node.attrib
         # Taking care of dimension attributes
@@ -323,9 +358,16 @@ class Nxdl2yaml():
                 indent = (depth + 1) * DEPTH_SIZE
                 file_out.write(f'{indent}{attr}: {value}\n')
             else:
-                raise ValueError(f"Dimension has got a attributes that is not valid."
+                raise ValueError(f"Dimension has got an attribute {attr} that is not valid."
                                  f"Current the allowd atributes are {possible_dimemsion_attrs}."
                                  f" Please have a look")
+        # taking carew of dimension doc
+        for child in list(node):
+            tag = remove_namespace_from_tag(child.tag)
+            if tag == 'doc':
+                text = self.handle_not_root_level_doc(depth + 1, child.text)
+                file_out.write(text)
+                node.remove(child)
 
         dim_index_value = ''
         dim_other_parts = {}
@@ -348,7 +390,7 @@ class Nxdl2yaml():
                 for cchild in list(child):
                     ttag = cchild.tag.split("}", 1)[1]
                     if ttag == ('doc'):
-                        ttag = f"dim_{ttag}"
+#TODO remove                        ttag = f"dim_{ttag}"
                         if ttag not in dim_other_parts:
                             dim_other_parts[ttag] = []
                         text = cchild.text
@@ -367,14 +409,20 @@ class Nxdl2yaml():
             '{indent}dim: [{value}]\n'.format(
                 indent=(depth + 1) * DEPTH_SIZE,
                 value=dim_index_value[:-2] or ''))
-        # Write the attributes, except index and value, and doc of dim as sibling of dim.
+        # Write the attributes, except index and value, and doc of dim as child of dim_parameter.
         # But tthe doc or attributes for each dim come inside list according to the order of dim.
-        indent = (depth + 1) * DEPTH_SIZE
-        for key, value in dim_other_parts.items():
-            if key == 'dim_doc':
-                value = self.handle_not_root_level_doc(depth + 1, str(value), key, file_out)
-            else:
-                file_out.write(f"{indent}{key}: {value}\n")
+        if dim_other_parts:
+            file_out.write(
+                '{indent}dim_parameters:\n'.format(
+                    indent=(depth + 1) * DEPTH_SIZE,
+                    value=dim_index_value[:-2] or ''))
+            # depth = depth + 2 dim_paramerter has child such as doc of dim
+            indent = (depth + 2) * DEPTH_SIZE
+            for key, value in dim_other_parts.items():
+                if key == 'doc':
+                    value = self.handle_not_root_level_doc(depth + 2, str(value), key, file_out)
+                else:
+                    file_out.write(f"{indent}{key}: {handle_mapping_char(value)}\n")
 
     def handle_enumeration(self, depth, node, file_out):
         """
@@ -427,44 +475,89 @@ class Nxdl2yaml():
 
     def handle_attributes(self, depth, node, file_out):
         """Handle the attributes parsed from the xml file"""
-        # pylint: disable=consider-using-f-string
-        attr_list = ['name', 'type', 'units', 'nameType', 'recommended', 'optional']
-        node_attr = node.attrib
 
+        allowed_attr = ['name', 'type', 'units', 'nameType', 'recommended', 'optional',
+                        'minOccurs', 'maxOccurs']
+
+        name = ""
+        node_attr = node.attrib
         if 'name' in node_attr:
-            name = node_attr['name']
+            pass
         else:
             raise ValueError("Attribute must have an name key.")
+        rm_key_list = []
+        # Maintain order: name and type in form name(type) or (type)name that come first
+        for key, val in node_attr.items():
+            if key == 'name':
+                name = val
+                rm_key_list.append(key)
 
-        if 'type' in node_attr:
-            nx_type = type_check(node_attr['type'] or '')
-        else:
-            nx_type = ''
-        file_out.write(
-            '{indent}{escapesymbol}{key}{nx_type}:\n'.format(
-                indent=depth * DEPTH_SIZE,
-                escapesymbol=r'\@',
-                key=name,
-                nx_type=f'{nx_type}' or ''))
+        for key in rm_key_list:
+            del node_attr[key]
 
-        if 'units' in node_attr:
-            if not node_attr['units']:
-                raise ValueError("The 'value' of 'units' in attribute"
-                                 " is empty which is forbiden.")
-            file_out.write('{indent}unit: {value}\n'.format(
-                indent=depth * DEPTH_SIZE,
-                value=node_attr['units']))
+        file_out.write('{indent}{escapesymbol}{name}:\n'.format(
+            indent=depth * DEPTH_SIZE,
+            escapesymbol=r'\@',
+            name=name))
 
-        for attr in attr_list:
-            if attr in ['name', 'type', 'units']:
-                continue
-            if attr not in node_attr:
-                continue
-            val_ = handle_mapping_char(node_attr[attr])
-            file_out.write('{indent}{key}: {value}\n'.format(
-                indent=(depth + 1) * DEPTH_SIZE,
-                key=attr,
-                value=val_))
+        # pylint: disable=consider-using-f-string
+        # attr_list = ['name', 'type', 'units', 'nameType', 'recommended', 'optional']
+        # node_attr = node.attrib
+
+        # if 'name' in node_attr:
+        #     name = node_attr['name']
+        # else:
+        #     raise ValueError("Attribute must have an name key.")
+
+        # if 'type' in node_attr:
+        #     nx_type = type_check(node_attr['type'] or '')
+        # else:
+        #     nx_type = ''
+        # file_out.write(
+        #     '{indent}{escapesymbol}{key}{nx_type}:\n'.format(
+        #         indent=depth * DEPTH_SIZE,
+        #         escapesymbol=r'\@',
+        #         key=name,
+        #         nx_type=f'{nx_type}' or ''))
+
+        tmp_dict = {}
+        for key, val in node_attr.items():
+            if key in ['minOccurs', 'maxOccurs']:
+                if 'exists' not in tmp_dict:
+                    tmp_dict['exists'] = '[]'
+                exists = tmp_dict['exists'].replace(']', '')
+                exists = exists + (f"{key[0:3]}, {val}, ]")
+                tmp_dict['exists'] = exists
+            elif key == 'units':
+                tmp_dict['unit'] = val
+            else:
+                tmp_dict[key] = val
+            if key not in allowed_attr:
+                raise ValueError(f"An attribute ({key}) has been found that is not allowed."
+                                 f"The allowed attr is {allowed_attr}.")
+
+        depth_ = depth + 1
+        for key, val in tmp_dict.items():
+            file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
+
+        # if 'units' in node_attr:
+        #     if not node_attr['units']:
+        #         raise ValueError("The 'value' of 'units' in attribute"
+        #                          " is empty which is forbiden.")
+        #     file_out.write('{indent}unit: {value}\n'.format(
+        #         indent=depth * DEPTH_SIZE,
+        #         value=node_attr['units']))
+
+        # for attr in attr_list:
+        #     if attr in ['name', 'type', 'units']:
+        #         continue
+        #     if attr not in node_attr:
+        #         continue
+        #     val_ = handle_mapping_char(node_attr[attr])
+        #     file_out.write('{indent}{key}: {value}\n'.format(
+        #         indent=(depth + 1) * DEPTH_SIZE,
+        #         key=attr,
+        #         value=val_))
 
     def handel_link(self, depth, node, file_out):
         """
@@ -474,19 +567,23 @@ class Nxdl2yaml():
         possible_link_attrs = ['name', 'target', 'napimount']
         node_attr = node.attrib
         # Handle special cases
-        if 'name' in node_attr:
+        if 'name' in node_attr.items():
             file_out.write('{indent}{name}(link):\n'.format(
                 indent=depth * DEPTH_SIZE,
                 name=node_attr['name'] or ''))
-        depth_ = depth + 1
+            del node_attr['name']
 
+        depth_ = depth + 1
         # Handle general cases
-        for attr_key in possible_link_attrs:
-            if attr_key in node_attr and attr_key not in ['name']:
+        for attr_key, val in node_attr.items():
+            if attr_key in possible_link_attrs:
                 file_out.write('{indent}{attr}: {value}\n'.format(
                     indent=depth_ * DEPTH_SIZE,
                     attr=attr_key,
-                    value=node_attr[attr_key]))
+                    value=val))
+            else:
+                raise ValueError(f"An anexpected attribute '{attr_key}' of link has found."
+                                 f"At this moment the alloed keys are {possible_link_attrs}")
 
     def handel_choice(self, depth, node, file_out):
         """
@@ -501,18 +598,20 @@ class Nxdl2yaml():
             file_out.write('{indent}{attr}(choice): \n'.format(
                 indent=depth * DEPTH_SIZE,
                 attr=node_attr['name']))
+            del node_attr['name']
 
-        depth_ = depth
+        depth_ = depth + 1
         # Taking care of general attrinutes. Though, still no attrinutes have found,
         # but could be used for future
-        for attr in possible_attr:
-            if attr in ['name']:
-                continue
-            if attr in node_attr:
+        for attr in node_attr.items():
+            if attr in possible_attr:
                 file_out.write('{indent}{attr}: {value}\n'.format(
                     indent=depth_ * DEPTH_SIZE,
                     attr=attr,
                     value=node_attr[attr]))
+            else:
+                raise ValueError(f"An unexpected attribute '{attr}' of 'choice' has been found."
+                                 f"At this moment attributes for choice {possible_attr}")
 
     def recursion_in_xml_tree(self, depth, xml_tree, output_yml, verbose):
         """
