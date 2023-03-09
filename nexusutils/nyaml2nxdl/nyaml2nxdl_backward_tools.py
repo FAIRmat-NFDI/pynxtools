@@ -230,7 +230,7 @@ class Nxdl2yaml():
                         'interpretation', 'long_name', 'maxOccurs', 'minOccurs', 'nameType',
                         'optional', 'primary', 'signal', 'stride', 'units', 'required']
 
-        name_type = " "
+        name_type = ""
         node_attr = node.attrib
         rm_key_list = []
         # Maintain order: name and type in form name(type) or (type)name that come first
@@ -241,7 +241,9 @@ class Nxdl2yaml():
             if key == 'type':
                 name_type = name_type + "(%s)" % val
                 rm_key_list.append(key)
-
+        if not name_type:
+            raise ValueError(f"No 'name' or 'type' hase been found. But, 'group' or 'field' "
+                             f"must have at list a nme.We got attributes:  {node_attr}")
         file_out.write('{indent}{name_type}:\n'.format(
             indent=depth * DEPTH_SIZE,
             name_type=name_type))
@@ -270,13 +272,16 @@ class Nxdl2yaml():
 
         # tmp_dict intended to persevere order of attribnutes
         tmp_dict = {}
+        min_l = []
+        max_l = []
         for key, val in node_attr.items():
             if key in ['minOccurs', 'maxOccurs']:
                 if 'exists' not in tmp_dict:
-                    tmp_dict['exists'] = '[]'
-                exists = tmp_dict['exists'].replace(']', '')
-                exists = exists + (f"{key[0:3]}, {val}, ]")
-                tmp_dict['exists'] = exists
+                    tmp_dict['exists'] = []
+                if key == 'minOccurs':
+                    min_l = ['min', str(val)]
+                if key == 'maxOccurs':
+                    max_l = ['max', str(val)]
             elif key == 'units':
                 tmp_dict['unit'] = val
             else:
@@ -284,7 +289,7 @@ class Nxdl2yaml():
             if key not in allowed_attr:
                 raise ValueError(f"An attribute ({key}) has been found that is not allowed."
                                  f"The allowed attr is {allowed_attr}.")
-
+        tmp_dict['exists'] = min_l + max_l
         depth_ = depth + 1
         for key, val in tmp_dict.items():
             file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
@@ -567,7 +572,7 @@ class Nxdl2yaml():
         possible_link_attrs = ['name', 'target', 'napimount']
         node_attr = node.attrib
         # Handle special cases
-        if 'name' in node_attr.items():
+        if 'name' in node_attr:
             file_out.write('{indent}{name}(link):\n'.format(
                 indent=depth * DEPTH_SIZE,
                 name=node_attr['name'] or ''))

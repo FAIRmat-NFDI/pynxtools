@@ -154,6 +154,7 @@ def check_for_skiped_attributes(component, value, allowed_attr=None):
             if not isinstance(val, dict) \
                 and '(' not in attr \
                 and ')' not in attr\
+                and attr not in allowed_attr\
                     and 'NX' not in attr:
 
                 raise ValueError(f"An attribute '{attr}' in part '{component}' has been found"
@@ -215,7 +216,8 @@ def xml_handle_doc(obj, value: str):
     # remove "':'" which come because of : is used as sseparator in yaml file.
 
     doctag = ET.SubElement(obj, 'doc')
-    doctag.text = format_nxdl_doc(check_for_mapping_char(value))
+    text = format_nxdl_doc(check_for_mapping_char(value)).strip()
+    doctag.text = f"\n{text}\n"
 
 
 def xml_handle_units(obj, value):
@@ -264,26 +266,62 @@ def xml_handle_exists(dct, obj, keyword, value):
             obj.set('minOccurs', '0')
 
 
-def xml_handle_group(verbose, obj, value, keyword_name, keyword_type):
+def xml_handle_group(verbose, obj, keyword, value):
     """
     The function deals with group instances
-
     """
-    list_of_attr = ['name', 'type', 'nameType', 'deprecated']
-    grp = ET.SubElement(obj, 'group')
-    if keyword_name != '':  # use the custom name for the group
-        grp.set('name', keyword_name)
-    grp.set('type', keyword_type)
-    for attr in list_of_attr:
-        line_number = f"__line__{attr}"
-        if attr in ['name', 'type'] or not value:
-            continue
-        if attr in value and not isinstance(value[attr], dict):
-            validate_field_attribute_and_value(attr, value[attr], list_of_attr, value)
-            grp.set(attr, check_for_mapping_char(value[attr]))
-            del value[attr]
-            del value[line_number]
 
+    list_of_attr = ['name', 'type', 'nameType', 'deprecated', 'optional', 'recommended', 'exists']
+    l_bracket = -1
+    r_bracket = -1
+    if keyword.count('(') == 1:
+        l_bracket = keyword.index('(')
+    if keyword.count(')') == 1:
+        r_bracket = keyword.index(')')
+
+    keyword_name, keyword_type = nx_name_type_resolving(keyword)
+    if not keyword_name and not keyword_type:
+        raise ValueError("A group must have both value and name. Check for group.")
+    grp = ET.SubElement(obj, 'group')
+# TODO remove comment
+#    if keyword_name != '':  # use the custom name for the group
+#        grp.set('name', keyword_name)
+    # type come first
+    if l_bracket == 0 and r_bracket > 0:
+        grp.set('type', keyword_type)
+        if keyword_name:
+            grp.set('name', keyword_name)
+    elif l_bracket > 0:
+        grp.set('name', keyword_name)
+        if keyword_type:
+            grp.set('type', keyword_type)
+    else:
+        grp.set('name', keyword_name)
+
+    if value:
+        rm_key_list = []
+        for attr, vval in value.items():
+            if '__line__' in attr:
+                continue
+            line_number = f"__line__{attr}"
+            if attr == 'doc':
+                xml_handle_doc(grp, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
+            elif attr == 'exists' and isinstance(vval, list):
+                xml_handle_exists(value, grp, attr, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
+            elif attr in list_of_attr and not isinstance(vval, dict):
+                validate_field_attribute_and_value(attr, vval, list_of_attr, value)
+                grp.set(attr, check_for_mapping_char(vval))
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
+
+        for key in rm_key_list:
+            del value[key]
+        # Check for skipped attrinutes
+        check_for_skiped_attributes('group', value, list_of_attr)
     if isinstance(value, dict) and value != {}:
         recursive_build(grp, value, verbose)
 
@@ -302,40 +340,50 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
 
     possible_dimension_attrs = ['rank']
     line_number = f'__line__{keyword}'
-    assert 'dim' in value.keys(), f'Line {dct[line_number]}: dim is not a key in dimensions dict !'
+    assert 'dim' in value.keys(), (f"Line {dct[line_number]}: No dim as child of dimension has "
+                                   f"been found.")
     dims = ET.SubElement(obj, 'dimensions')
     # Consider all the childs under dimension is dim element and
     # its attributes
     val_attrs = list(value.keys())
-    if 'rank' in value:
-        rank = value['rank']
-    else:
-        rank = ''
-
-    if isinstance(rank, int) and rank < 0:
-        raise ValueError(f"Dimension must have some info about rank which is not available"
-                         f". Please check arround Line: {dct[line_number]}")
-    # value keys might contain two 'doc's the doc that contains list of doc
-    # this is registred for dim's doc according to order in dim = [[index, value], ...]
-    # so check for the doc with string
-
-    for attr in val_attrs:
-        line_number = f'__line__{attr}'
-        if attr == 'doc' and not isinstance(value[attr], list):
-            xml_handle_doc(dims, value[attr])
-            del value[attr]
-            del value[line_number]
-
-    # Takeing care dimention element
-    for attr in possible_dimension_attrs:
-        if attr not in val_attrs or not value[attr]:
+    rm_key_list = []
+    for key, val in value.items():
+        if '__line__' in key:
             continue
-        line_number = f'__line__{attr}'
-        dims.set(attr, str(value[attr]))
-        val_attrs.remove(attr)
-        val_attrs.remove(line_number)
-        del value[attr]
-        del value[line_number]
+        else:
+            line_number = f"__line__{key}"
+
+        if key == 'rank':
+            rank = val or ''
+            if isinstance(rank, int) and rank < 0:
+                raise ValueError(f"Dimension must have some info about rank which is not "
+                                 f"available. Please check arround Line: {dct[line_number]}")
+            dims.set(key, val)
+            rm_key_list.append(key)
+            rm_key_list.append(line_number)
+        # Check dimension doc and handle it
+        elif key == 'doc' and isinstance(val, str):
+            xml_handle_doc(dims, val)
+            rm_key_list.append(key)
+            rm_key_list.append(line_number)
+        elif key in possible_dimension_attrs:
+            dims.set(key, val)
+            rm_key_list.append(key)
+            rm_key_list.append(line_number)
+
+    for key in rm_key_list:
+        del value[key]
+
+    # # Takeing care dim element
+    # for attr in possible_dimension_attrs:
+    #     if attr not in val_attrs or not value[attr]:
+    #         continue
+    #     line_number = f'__line__{attr}'
+    #     dims.set(attr, str(value[attr]))
+    #     val_attrs.remove(attr)
+    #     val_attrs.remove(line_number)
+    #     del value[attr]
+    #     del value[line_number]
     xml_handle_dim_from_dimension_dict(dct, dims, keyword, value, rank)
 
     if isinstance(value, dict) and value != {}:
@@ -351,16 +399,20 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
         function. please also read note in xml_handle_dimensions.
     """
 
-    header_line_number = f"__line__{keyword}"
     possible_dim_attrs = ['ref', 'optional', 'recommended', 'required', 'incr', 'refindex']
+    header_line_number = f"__line__{keyword}"
     val_attrs = list(value.keys())
 
     dim_list = []
-    # NOTE: dim_doc is a list of docs that come from dim
-    for attr in ['dim', 'dim_doc', *possible_dim_attrs]:
-        if attr not in val_attrs:
+    rm_key_list = []
+    # NOTE: dim doc and other attributes except 'index' and 'value' will come as list of value
+    # under dim_parameters
+    for attr, vvalue in value.items():
+        if '__line__' in attr:
             continue
-        line_number = f"__line__{attr}"
+        else:
+            line_number = f"__line__{attr}"
+
         # dim comes in precedence
         if attr == 'dim':
             # dim consists of list of [index, value]
@@ -386,38 +438,54 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
             assert attr in val_attrs and line_number in val_attrs, (
                 f"Line {dct[line_number]} does not"
                 f" have attribute {val_attrs}.")
-            del value[attr]
-            del value[line_number]
 
-        elif attr == 'optional' and dim_list:
-            for i, dim in enumerate(dim_list):
-                # value[attr] is list for multiple elements or single value
-                bool_ = value[attr][i] if isinstance(value[attr], list) else value[attr]
-                dim.set('required', 'false' if bool_ == 'true' else 'true')
-            del value[attr]
-            del value[line_number]
-        elif attr == 'dim_doc' and dim_list:
-            # doc example '['doc_1', 'doc_2']
-            doc_list = value[attr][1:-1]
-            doc_list = [doc.strip()[1:-1] for doc in doc_list.split(',')]
-            for i, dim in enumerate(dim_list):
-                # value[attr] is list for multiple elements or single value
-                doc = doc_list[i]  # if isinstance(value[attr], list) else value[attr]
-                xml_handle_doc(dim, doc)
-            del value[attr]
-            del value[line_number]
-        elif dim_list:
-            for i, dim in enumerate(dim_list):
-                try:
-                    val = value[attr][i] if isinstance(value[attr], list) else value[attr]
-                # value[attr] is list for multiple elements or single value
-                    dim.set(attr, val)
-                except Exception as ex:
-                    raise IndexError(f"Each of the dimensions ('dim') must contain all "
-                                     f" the same types of attributes."
-                                     f" Check line {header_line_number}") from ex
-            del value[attr]
-            del value[line_number]
+            rm_key_list.append(attr)
+            rm_key_list.append(line_number)
+        elif attr == 'dim_parameters' and isinstance(vvalue, dict):
+            for kkkey, vvval in vvalue.items():
+                if '__line__' in kkkey:
+                    continue
+                if kkkey == 'doc' and dim_list:
+                    # doc comes as list of doc
+                    for i, dim in enumerate(dim_list):
+                        if isinstance(vvval, list) and i < len(vvval):
+                            tmp_val = vvval[i]
+                            xml_handle_doc(dim, vvval[i])
+                        # Check all the dim have doc if not skip
+                        elif isinstance(vvval, list) and i >= len(vvval):
+                            pass
+                else:
+                    for i, dim in enumerate(dim_list):
+                        # all atribute of dims comes as list
+                        if isinstance(vvval, list) and i < len(vvval):
+                            tmp_val = vvval[i]
+                            dim.set(kkkey, tmp_val)
+
+                        # Check all the dim have doc if not skip
+                        elif isinstance(vvval, list) and i >= len(vvval):
+                            pass
+                        # All dim might have the same value for the same attribute
+                        elif not isinstance(vvval, list):
+                            tmp_val = value
+                            dim.set(kkkey, tmp_val)
+            rm_key_list.append(attr)
+            rm_key_list.append(line_number)
+
+        # elif dim_list:
+        #     for i, dim in enumerate(dim_list):
+        #         try:
+        #             val = value[attr][i] if isinstance(value[attr], list) else value[attr]
+        #         # value[attr] is list for multiple elements or single value
+        #             dim.set(attr, val)
+        #         except Exception as ex:
+        #             raise IndexError(f"Each of the dimensions ('dim') must contain all "
+        #                              f" the same types of attributes."
+        #                              f" Check line {header_line_number}") from ex
+            # del value[attr]
+            # del value[line_number]
+
+    for key in rm_key_list:
+        del value[key]
 
     check_for_skiped_attributes('dim', value, possible_dim_attrs)
 
@@ -455,21 +523,31 @@ def xml_handle_link(dct, obj, keyword, value):
         If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
     """
 
-    possible_attrs = ['target', 'napimount']
-    val_attr = list(value.keys())
+    possible_attrs = ['name', 'target', 'napimount']
     name = keyword[:-6]
     link_obj = ET.SubElement(obj, 'link')
     link_obj.set('name', name)
 
-    for attr in possible_attrs:
-        line_number = f"__line__{attr}"
-        if attr in val_attr and not isinstance(value[attr], dict):
-            link_obj.set(attr, value[attr])
-            del value[attr]
-            del value[line_number]
+    if value:
+        rm_key_list = []
+        for attr, vval in value.items():
+            if '__line__' in attr:
+                continue
+            line_number = f"__line__{attr}"
+            if attr == 'doc':
+                xml_handle_doc(link_obj, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
+            elif attr in possible_attrs and not isinstance(vval, dict):
+                if vval:
+                    link_obj.set(attr, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
 
-    # Check for skipped attrinutes
-    check_for_skiped_attributes('link', value, possible_attrs)
+        for key in rm_key_list:
+            del value[key]
+        # Check for skipped attrinutes
+        check_for_skiped_attributes('link', value, possible_attrs)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(link_obj, value, verbose=None)
@@ -485,29 +563,50 @@ def xml_handle_choice(dct, obj, keyword, value):
     name = keyword[:-8]
     choice_obj.set('name', name)
 
-    if value and len(name) >= 1 and \
-       isinstance(value, dict):
-        for kkey, vvalue in value.items():
-            if '__line__' in kkey:
+    if value:
+        rm_key_list = []
+        for attr, vval in value.items():
+            if '__line__' in attr:
                 continue
-            line_number = f"__line__{kkey}"
-            if not isinstance(vvalue, dict) and \
-               kkey in possible_attr:
-                choice_obj.set(kkey, vvalue)
+            line_number = f"__line__{attr}"
+            if attr == 'doc':
+                xml_handle_doc(choice_obj, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
+            elif attr in possible_attr and not isinstance(vval, dict):
+                if vval:
+                    choice_obj.set(attr, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
 
-                del value[kkey]
-                del value[line_number]
+        for key in rm_key_list:
+            del value[key]
+        # Check for skipped attrinutes
+        check_for_skiped_attributes('choice', value, possible_attr)
 
-            elif not isinstance(vvalue, dict) and \
-                    kkey not in possible_attr:
-                raise ValueError(f"A attribute has been found in choice section, that is"
-                                 f"not familiar. Please check arround line {value[line_number]}")
-    else:
-        line_number = f"__line__{keyword}"
-        raise ValueError(f"A choice must have name attibute. Please check choice aound"
-                         f" line {dct[line_number]}")
+    # if value and len(name) >= 1 and \
+    #    isinstance(value, dict):
+    #     for kkey, vvalue in value.items():
+    #         if '__line__' in kkey:
+    #             continue
+    #         line_number = f"__line__{kkey}"
+    #         if not isinstance(vvalue, dict) and \
+    #            kkey in possible_attr:
+    #             choice_obj.set(kkey, vvalue)
 
-    check_for_skiped_attributes('choice', value, possible_attr)
+    #             del value[kkey]
+    #             del value[line_number]
+
+    #         elif not isinstance(vvalue, dict) and \
+    #                 kkey not in possible_attr:
+    #             raise ValueError(f"A attribute has been found in choice section, that is"
+    #                              f"not familiar. Please check arround line {value[line_number]}")
+    # else:
+    #     line_number = f"__line__{keyword}"
+    #     raise ValueError(f"A choice must have name attibute. Please check choice aound"
+    #                      f" line {dct[line_number]}")
+
+    # check_for_skiped_attributes('choice', value, possible_attr)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(choice_obj, value, verbose=None)
@@ -581,30 +680,38 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     elemt_obj.set('name', keyword_name[2:])
     if keyword_typ:
         elemt_obj.set('type', keyword_typ)
-    if value:
-        val_attr = list(value.keys())
-    else:
-        val_attr = []
 
-    if value and val_attr:
+    rm_key_list = []
+    if value and value:
         # taking care of attributes of attributes
-        for attr in attr_attr_list:
+        for attr, attr_val in value.items():
+            if '__line__' in attr:
+                continue
             line_number = f'__line__{attr}'
-            if attr == 'unit' and attr in val_attr:
-                elemt_obj.set(f"{attr}s", str(value[attr]))
-                del value[attr]
-                del value[line_number]
-            elif attr in ['minOccurs', 'optional'] and attr in val_attr:
-                # If both minOccurs and myxOccurs are found than keep both of them
-                if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
-                    continue
-                check_optionality_and_write(elemt_obj, attr, value[attr])
-                del value[attr]
-                del value[line_number]
-            elif attr in val_attr:
-                elemt_obj.set(attr, check_for_mapping_char(value[attr]))
-                del value[attr]
-                del value[line_number]
+
+            if attr in ['doc', *attr_attr_list] and not isinstance(attr_val, dict):
+                if attr == 'unit':
+                    elemt_obj.set(f"{attr}s", str(value[attr]))
+                    rm_key_list.append(attr)
+                    rm_key_list.append(line_number)
+                elif attr == 'exists':
+                    xml_handle_exists(value, elemt_obj, attr, attr_val)
+                    rm_key_list.append(attr)
+                    rm_key_list.append(line_number)
+                elif attr == 'doc':
+                    xml_handle_doc(elemt_obj, format_nxdl_doc(attr_val))
+                    rm_key_list.append(attr)
+                    rm_key_list.append(line_number)
+                else:
+                    elemt_obj.set(attr, check_for_mapping_char(attr_val))
+                    rm_key_list.append(attr)
+                    rm_key_list.append(line_number)
+            # Handleing other element like group, field or link etc
+            elif not isinstance(attr_val, dict) and attr not in attr_attr_list:
+                raise ValueError(f"Unexpected attribute '{attr}' has been found. At this "
+                                 f"moment allowed attributes are {attr_attr_list}")
+    for key in rm_key_list:
+        del value[key]
     if value:
         recursive_build(elemt_obj, value, verbose)
 
@@ -616,13 +723,12 @@ def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
     """
 
     # check for empty val
-    if (v_attr in allowed_attribute
-        and not isinstance(vval, dict)
-            and not vval):  # check for empty value
+    if (not isinstance(vval, dict)
+            and not str(vval)):  # check for empty value
 
         line_number = f"__line__{v_attr}"
-        raise ValueError(f"In a filed a valid attrbute ('{v_attr}') found. Please"
-                         f"check arround line {value[line_number]}")
+        raise ValueError(f"In a field a valid attrbute ('{v_attr}') found that is not stored."
+                         f" Please check arround line {value[line_number]}")
 
     # The bellow elements might come as child element
     skipped_child_name = ['doc', 'dimension', 'enumeration', 'choice', 'exists']
@@ -654,58 +760,111 @@ def xml_handle_fields(obj, keyword, value, verbose):
     """
 
     # List of possible attributes of xml elements
-    allowed_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs',
+    allowed_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs', 'long_name',
                     'axis', 'signal', 'deprecated', 'axes',
                     'data_offset', 'interpretation', 'maxOccurs',
-                    'primary', 'recommended', 'optional', 'stride',
-                    ]
+                    'primary', 'recommended', 'optional', 'stride']
+
+    l_bracket = -1
+    r_bracket = -1
+    if keyword.count('(') == 1:
+        l_bracket = keyword.index('(')
+    if keyword.count(')') == 1:
+        r_bracket = keyword.index(')')
+
     keyword_name, keyword_type = nx_name_type_resolving(keyword)
-    line_number = f"__line__{keyword}"
-    # Consider by default type is NX_CHAR
-    typ = ''
-    if keyword_type in NX_TYPE_KEYS + NX_NEW_DEFINED_CLASSES and keyword_type != 'NX_CHAR':
-        typ = keyword_type
-    # assume type is NX_CHAR, a NeXus default assumption if in doubt
+    if not keyword_type and not keyword_name:
+        raise ValueError("Check for name or type in field.")
     elemt_obj = ET.SubElement(obj, 'field')
-    elemt_obj.set('name', keyword_name)
-    if typ:
-        elemt_obj.set('type', typ)
-    if isinstance(value, dict) and value:
-        val_attr = list(value.keys())
+# TODO remove comment
+#    if keyword_name != '':  # use the custom name for the group
+#        elemt_obj.set('name', keyword_name)
+    # type come first
+    if l_bracket == 0 and r_bracket > 0:
+        elemt_obj.set('type', keyword_type)
+        if keyword_name:
+            elemt_obj.set('name', keyword_name)
+    elif l_bracket > 0:
+        elemt_obj.set('name', keyword_name)
+        if keyword_type:
+            elemt_obj.set('type', keyword_type)
     else:
-        val_attr = []
-
-    for attr in allowed_attr:
-        line_number = f'__line__{attr}'
-        if attr in ['name', 'type'] and attr in val_attr:
-            del value[attr]
-            del value[line_number]
-        elif attr in ['optional', 'minOccurs'] and attr in val_attr:
-            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
-            # If both minOccurs and myxOccurs are found than keep both of them
-            if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
-                continue
-            check_optionality_and_write(elemt_obj, attr, value[attr])
-            del value[attr]
-            del value[line_number]
-        elif attr == 'unit' and attr in val_attr:
-            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
-            elemt_obj.set(f"{attr}s", str(value[attr]))
-            del value[attr]
-            del value[line_number]
-        elif attr in val_attr:
-            validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
-            elemt_obj.set(attr, check_for_mapping_char(value[attr]))
-            del value[attr]
-            del value[line_number]
-
-    # check for any invalid name of attrinbutes or child come with yaml
+        elemt_obj.set('name', keyword_name)
+# TODO remove comments
+    # keyword_name, keyword_type = nx_name_type_resolving(keyword)
+    # line_number = f"__line__{keyword}"
+    # # Consider by default type is NX_CHAR
+    # typ = ''
+    # if keyword_type in NX_TYPE_KEYS + NX_NEW_DEFINED_CLASSES and keyword_type != 'NX_CHAR':
+    #     typ = keyword_type
+    # # assume type is NX_CHAR, a NeXus default assumption if in doubt
+    # elemt_obj = ET.SubElement(obj, 'field')
+    # elemt_obj.set('name', keyword_name)
+    # if typ:
+    #     elemt_obj.set('type', typ)
+    # if isinstance(value, dict) and value:
+    #     val_attr = list(value.keys())
+    # else:
+    #     val_attr = []
     if value:
-        for attr, vvalue in value.items():
-            validate_field_attribute_and_value(attr, vvalue, allowed_attr, value)
+        rm_key_list = []
+        for attr, vval in value.items():
+            if '__line__' in attr:
+                continue
+            line_number = f"__line__{attr}"
+            if attr == 'doc':
+                xml_handle_doc(elemt_obj, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
+            elif attr == 'exists' and isinstance(vval, list):
+                xml_handle_exists(value, elemt_obj, attr, vval)
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
+            elif attr in allowed_attr and not isinstance(vval, dict):
+                validate_field_attribute_and_value(attr, vval, allowed_attr, value)
+                elemt_obj.set(attr, check_for_mapping_char(vval))
+                rm_key_list.append(attr)
+                rm_key_list.append(line_number)
 
-    if isinstance(value, dict) and value:
-        recursive_build(obj=elemt_obj, dct=value, verbose=verbose)
+        for key in rm_key_list:
+            del value[key]
+        # Check for skipped attrinutes
+        check_for_skiped_attributes('field', value, allowed_attr)
+
+    if isinstance(value, dict) and value != {}:
+        recursive_build(elemt_obj, value, verbose)
+
+    # for attr in allowed_attr:
+    #     line_number = f'__line__{attr}'
+    #     if attr in ['name', 'type'] and attr in val_attr:
+    #         del value[attr]
+    #         del value[line_number]
+    #     elif attr in ['optional', 'minOccurs'] and attr in val_attr:
+    #         validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
+    #         # If both minOccurs and myxOccurs are found than keep both of them
+    #         if 'minOccurs' in val_attr and 'maxOccurs' in val_attr:
+    #             continue
+    #         check_optionality_and_write(elemt_obj, attr, value[attr])
+    #         del value[attr]
+    #         del value[line_number]
+    #     elif attr == 'unit' and attr in val_attr:
+    #         validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
+    #         elemt_obj.set(f"{attr}s", str(value[attr]))
+    #         del value[attr]
+    #         del value[line_number]
+    #     elif attr in val_attr:
+    #         validate_field_attribute_and_value(attr, value[attr], allowed_attr, value)
+    #         elemt_obj.set(attr, check_for_mapping_char(value[attr]))
+    #         del value[attr]
+    #         del value[line_number]
+
+    # # check for any invalid name of attrinbutes or child come with yaml
+    # if value:
+    #     for attr, vvalue in value.items():
+    #         validate_field_attribute_and_value(attr, vvalue, allowed_attr, value)
+
+    # if isinstance(value, dict) and value:
+    #     recursive_build(obj=elemt_obj, dct=value, verbose=verbose)
 
 
 def recursive_build(obj, dct, verbose):
@@ -736,7 +895,7 @@ def recursive_build(obj, dct, verbose):
         elif ((keyword_type in NX_CLSS) or (keyword_type not in
                                             [*NX_TYPE_KEYS, '', *NX_NEW_DEFINED_CLASSES])):
             # we can be sure we need to instantiate a new group
-            xml_handle_group(verbose, obj, value, keyword_name, keyword_type)
+            xml_handle_group(verbose, obj, keyword, value)
 
         elif keyword_name[0:2] == NX_ATTR_IDNT:  # check if obj qualifies
             attribute_attributes_handle(dct, obj, keyword, value, verbose)
