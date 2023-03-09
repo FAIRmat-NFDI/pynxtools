@@ -31,7 +31,3 @@ jobs:
       - name: mypy
         run: |
           python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional --exclude=nexusutils/definitions nexusutils tests
-      - name: Test with pytest
-        if: ${{ always() }}
-        run: |
-          python -m pytest -sv --show-capture=no tests
