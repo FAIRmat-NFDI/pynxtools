@@ -10,7 +10,7 @@ on:
     branches: [master]
 
 jobs:
-  test_python:
+  pytest:
     runs-on: ubuntu-latest
     strategy:
       matrix:
