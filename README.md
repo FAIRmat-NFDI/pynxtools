@@ -20,10 +20,12 @@ data into the NeXus standard and then aloow the visualisation of the hierarchica
 of the generated NeXus file in JupyterLab.
 
 ## Getting started
+
 You should create a virtual environment. We tested on Ubuntu with Python 3.7 and Python 3.8.
 We recommend to use Python 3.8 but acknowledge that NOMAD uses still Python 3.7.
 
 If you don't have Python 3.8 installed on your computer, follow these commands:
+
 ```
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt install python3.8 python3-dev libpython3.8-dev python3.8-venv
@@ -39,7 +41,7 @@ mkdir <your-brand-new-folder>
 cd <your-brand-new-folder>
 pip install virtualenv
 virtualenv --python=python3.8 .py38
-source .pyenv/bin/activate
+source .py38/bin/activate
 pip install pip-tools
 ```
 
@@ -48,6 +50,7 @@ version specifier with 3.7, keep in mind though that installing python-numpy is
 required also.
 
 ## Does this software require NOMAD or NOMAD OASIS ?
+
 No because the tools here allow you to parse data from generic descriptions
 that can work with different electronic lab notebooks and files from different
 technology partners into a NeXus/HDF5-based format. Using NOMAD OASIS though
@@ -61,12 +64,24 @@ Go into the cloned directory and directly run the parser from there:
 Now you have to decide your role. Are you a user or a developer?
 
 ### I want to use nexusutils as a user
+
 If you are a user you should install nexusutils as a standalone tool:
+
 ```
 pip install nexusutils --extra-index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
 ```
 
+### I want to use the latest development version of nexusutils
+
+If you are a user and want to install the latest nexusutils development version without
+cloning the repository you can it with pip via git:
+
+```
+pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
+```
+
 ### I am a developer and want to explore or contribute
+
 Install the package with its dependencies:
 
 ```
@@ -80,6 +95,7 @@ python -m pip install -e .[dev]
 ```
 
 ## Test this software
+
 Especially relevant for developers, there exists a basic test framework written in
 [pytest](https://docs.pytest.org/en/stable/) which can be used as follows:
 
@@ -90,6 +106,7 @@ python -m pytest -sv tests
 ## Individual modules of this software and their functions
 
 ### **nyaml2nxdl**
+
 This module is a tool which automatically converts YAML files containing specifications for NeXus
 base classes and application definitions, i.e. data schemes, into specifically formatted XML files
 required by NeXus as it is maintained by the NeXus International Advisory Committee.
@@ -119,8 +136,8 @@ Options:
 
 Further documentation: [README.md](nyaml2nxdl/README.md)
 
-
 ### **dataconverter**
+
 This module is a tool which enables users to create instances of NeXus/HDF5 files.
 The instances are specific for the experiment and technique.
 Each instance supports a combination of specifically-versioned software components:
@@ -166,12 +183,13 @@ Options:
 
 Further documentation: [README.md](dataconverter/README.md)
 
-Inspect also the specific README.md files of the respective parser(s) which you wish 
+Inspect also the specific README.md files of the respective parser(s) which you wish
 to use or contribute developing to. This will help you to learn how these parser(s) work,
 which input data they expect, which output they return, and which limitations they
 have and which assumptions are made.
 
 ### **read_nexus**
+
 This utility outputs a debug log for a given NeXus file by annotating the data and
 metadata entries with the schema definitions from the respective NeXus base classes
 and application definitions to which the file refers to.
@@ -180,11 +198,12 @@ and application definitions to which the file refers to.
 user@box:~$ read_nexus <path_to_nexus_file>
 ```
 
-*The environmental variable called "NEXUS_DEF_PATH" can be set to
+_The environmental variable called "NEXUS_DEF_PATH" can be set to
 a directory, which contains the NeXus definitions as XML files. If this environmental
-variable is not defined, the module will use the definitions in its bundle.*
+variable is not defined, the module will use the definitions in its bundle._
 
 An environmental variable can be set as follows:
+
 ```
 export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
 ```
@@ -192,6 +211,7 @@ export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
 ## Next steps
 
 Our documentation provides several resources that might be interesting for developers of NOMAD (Oasis):
+
 - [How to write a parser](https://nomad-lab.eu/prod/rae/docs/parser.html).
   Provides a more detailed tutorial on how to write a parser for NOMAD.
 - [Introduction to the NOMAD Metainfo](https://nomad-lab.eu/prod/rae/docs/metainfo.html).
@@ -200,10 +220,11 @@ Our documentation provides several resources that might be interesting for devel
   in the scientific literature https://doi.org/10.1038/s41524-017-0048-5.
 
 ## Questions, suggestions?
+
 To ask further questions, to make suggestions how we can improve these tools, to get advice
 on how to build on this work, or to get your parser included into NOMAD, you can:
+
 - Open an issue on the [nexus-parser GitHub project](https://github.com/nomad-coe/nomad-parser-nexus/issues)
 - Use our forums at [matsci.org](https://matsci.org/c/nomad/32)
 - Write to [support@nomad-lab.eu](mailto:support@nomad-lab.eu)
 - Contact directly the lead developers of the individual parsers.
-
