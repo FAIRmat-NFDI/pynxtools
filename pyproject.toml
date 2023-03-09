@@ -72,3 +72,7 @@ nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 
 [tool.setuptools.packages.find]
 exclude = ["nexusutils/definitions*"]
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "node-and-date"
