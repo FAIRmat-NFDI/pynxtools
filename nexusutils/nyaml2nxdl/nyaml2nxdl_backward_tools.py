@@ -228,7 +228,8 @@ class Nxdl2yaml():
 
         allowed_attr = ['optional', 'recommended', 'name', 'type', 'axes', 'axis', 'data_offset',
                         'interpretation', 'long_name', 'maxOccurs', 'minOccurs', 'nameType',
-                        'optional', 'primary', 'signal', 'stride', 'units', 'required']
+                        'optional', 'primary', 'signal', 'stride', 'units', 'required',
+                        'deprecated']
 
         name_type = ""
         node_attr = node.attrib
@@ -250,25 +251,6 @@ class Nxdl2yaml():
 
         for key in rm_key_list:
             del node_attr[key]
-        # TODO remove comments
-        # if "name" in node_attr and "type" in node_attr:
-        #     file_out.write(
-        #         '{indent}{name}{type}:\n'.format(
-        #             indent=depth * DEPTH_SIZE,
-        #             name=node_attr['name'] or '',
-        #             type=type_check(node_attr['type'])))
-
-        # if "name" in node_attr and "type" not in node_attr:
-        #     file_out.write(
-        #         '{indent}{name}:\n'.format(
-        #             indent=depth * DEPTH_SIZE,
-        #             name=node_attr['name'] or ''))
-
-        # if "name" not in node_attr and "type" in node_attr:
-        #     file_out.write(
-        #         '{indent}{type}:\n'.format(
-        #             indent=depth * DEPTH_SIZE,
-        #             type=type_check(node_attr['type'])))
 
         # tmp_dict intended to persevere order of attribnutes
         tmp_dict = {}
@@ -287,53 +269,13 @@ class Nxdl2yaml():
             else:
                 tmp_dict[key] = val
             if key not in allowed_attr:
-                raise ValueError(f"An attribute ({key}) has been found that is not allowed."
-                                 f"The allowed attr is {allowed_attr}.")
-        tmp_dict['exists'] = min_l + max_l
+                raise ValueError(f"An attribute ({key}) in 'field' or 'group' has been found "
+                                 f"that is not allowed. The allowed attr is {allowed_attr}.")
+        if min_l or max_l:
+            tmp_dict['exists'] = min_l + max_l
         depth_ = depth + 1
         for key, val in tmp_dict.items():
             file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
-
-        # TODO Remove comments
-        #     tmp_dict[key] =
-        # if "minOccurs" in node_attr and "maxOccurs" in node_attr:
-        #     file_out.write(
-        #         '{indent}exists: [min, {value1}, max, {value2}]\n'.format(
-        #             indent=(depth + 1) * DEPTH_SIZE,
-        #             value1=node_attr['minOccurs'] or '',
-        #             value2=node_attr['maxOccurs'] or ''))
-        # elif "minOccurs" in node_attr \
-        #         and "maxOccurs" not in node_attr \
-        #         and node_attr['minOccurs'] == "1":
-        #     file_out.write(
-        #         '{indent}{name}: required \n'.format(
-        #             indent=(depth + 1) * DEPTH_SIZE,
-        #             name='exists'))
-        # elif "maxOccurs" in node_attr:
-        #     file_out.write('{indent}exists: [max, {value1}]\n'.
-        #                    format(indent=(depth + 1) * DEPTH_SIZE,
-        #                           value1=node_attr['maxOccurs'] or ''))
-
-        # if "units" in node_attr:
-        #     file_out.write('{indent}unit: {value}\n'.
-        #                    format(indent=(depth + 1) * DEPTH_SIZE,
-        #                           value=node_attr['units'] or ''))
-
-        # if "recommended" in node_attr and node_attr['recommended'] == "true":
-        #     file_out.write(
-        #         '{indent}exists: recommended\n'.format(
-        #             indent=(depth + 1) * DEPTH_SIZE))
-
-        # other_similar_attr = ['nameType', 'axis', 'signal', 'deprecated']
-
-        # for attr in other_similar_attr:
-        #     if attr in node_attr:
-        #         val_ = handle_mapping_char(node_attr[attr])
-        #         file_out.write(
-        #             '{indent}{attr}: {value}\n'.format(
-        #                 indent=(depth + 1) * DEPTH_SIZE,
-        #                 attr=attr,
-        #                value=val_ or ''))
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
@@ -395,7 +337,6 @@ class Nxdl2yaml():
                 for cchild in list(child):
                     ttag = cchild.tag.split("}", 1)[1]
                     if ttag == ('doc'):
-#TODO remove                        ttag = f"dim_{ttag}"
                         if ttag not in dim_other_parts:
                             dim_other_parts[ttag] = []
                         text = cchild.text
@@ -482,7 +423,7 @@ class Nxdl2yaml():
         """Handle the attributes parsed from the xml file"""
 
         allowed_attr = ['name', 'type', 'units', 'nameType', 'recommended', 'optional',
-                        'minOccurs', 'maxOccurs']
+                        'minOccurs', 'maxOccurs', 'deprecated']
 
         name = ""
         node_attr = node.attrib
