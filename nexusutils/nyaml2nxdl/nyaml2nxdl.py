@@ -105,7 +105,6 @@ and print both an XML and YML file of the extended base class.
     os.remove('tmp_parsed.yaml')
     os.remove('tmp_parsed.nxdl.xml')
 
-
 @click.command()
 @click.option(
     '--input-file',

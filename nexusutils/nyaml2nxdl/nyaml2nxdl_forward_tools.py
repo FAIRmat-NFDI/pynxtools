@@ -158,8 +158,8 @@ def check_for_skiped_attributes(component, value, allowed_attr=None):
                     and 'NX' not in attr:
 
                 raise ValueError(f"An attribute '{attr}' in part '{component}' has been found"
-                                 f". Please check arround line '{value[line_number]}. At this moment"
-                                 f"The allowed attrbutes are {allowed_attr}")
+                                 f". Please check arround line '{value[line_number]}. At this "
+                                 f"moment. The allowed attrbutes are {allowed_attr}")
 
 
 def check_optionality_and_write(obj, opl_key, opl_val):
@@ -197,12 +197,16 @@ def format_nxdl_doc(string):
     return formatted_doc
 
 
-def check_for_mapping_char(text):
+def check_for_mapping_char_other(text):
     """
     Check for mapping char \':\' which does not be passed through yaml library.
     Then replace it by ':'.
     """
 
+    if str(text) == 'True':
+        text = 'true'
+    if str(text) == 'False':
+        text = 'false'
     if '\':\'' in str(text):
         text = text.replace('\':\'', ':')
     return str(text)
@@ -214,7 +218,7 @@ def xml_handle_doc(obj, value: str):
     """
 
     doctag = ET.SubElement(obj, 'doc')
-    text = format_nxdl_doc(check_for_mapping_char(value)).strip()
+    text = format_nxdl_doc(check_for_mapping_char_other(value)).strip()
     # To keep the doc middle of doc tag.
     doctag.text = f"\n{text}\n"
 
@@ -265,12 +269,14 @@ def xml_handle_exists(dct, obj, keyword, value):
             obj.set('minOccurs', '0')
 
 
+# pylint: disable=too-many-branches
 def xml_handle_group(verbose, obj, keyword, value):
     """
     The function deals with group instances
     """
 
-    list_of_attr = ['name', 'type', 'nameType', 'deprecated', 'optional', 'recommended', 'exists']
+    list_of_attr = ['name', 'type', 'nameType', 'deprecated', 'optional', 'recommended',
+                    'exists']
     l_bracket = -1
     r_bracket = -1
     if keyword.count('(') == 1:
@@ -311,7 +317,7 @@ def xml_handle_group(verbose, obj, keyword, value):
                 rm_key_list.append(line_number)
             elif attr in list_of_attr and not isinstance(vval, dict):
                 validate_field_attribute_and_value(attr, vval, list_of_attr, value)
-                grp.set(attr, check_for_mapping_char(vval))
+                grp.set(attr, check_for_mapping_char_other(vval))
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
 
@@ -348,8 +354,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
     for key, val in value.items():
         if '__line__' in key:
             continue
-        else:
-            line_number = f"__line__{key}"
+        line_number = f"__line__{key}"
 
         if key == 'rank':
             rank = val or ''
@@ -397,7 +402,7 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
     if not value:
         return
     rank = ''
-#     val_attrs = list(value.keys())
+    # pylint: disable=too-many-nested-blocks
     for attr, vvalue in value.items():
         if '__line__' in attr:
             continue
@@ -457,6 +462,9 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
                             dim.set(kkkey, str(tmp_val))
             rm_key_list.append(attr)
             rm_key_list.append(line_number)
+        else:
+            raise ValueError(f"Got unexpected block except 'dim' and 'dim_parameters'."
+                             f"Please check arround line {line_number}")
 
     for key in rm_key_list:
         del value[key]
@@ -648,12 +656,14 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
                     xml_handle_exists(value, elemt_obj, attr, attr_val)
                     rm_key_list.append(attr)
                     rm_key_list.append(line_number)
+                elif attr == 'unit':
+                    xml_handle_units(elemt_obj, attr_val)
                 elif attr == 'doc':
                     xml_handle_doc(elemt_obj, format_nxdl_doc(attr_val))
                     rm_key_list.append(attr)
                     rm_key_list.append(line_number)
                 else:
-                    elemt_obj.set(attr, check_for_mapping_char(attr_val))
+                    elemt_obj.set(attr, check_for_mapping_char_other(attr_val))
                     rm_key_list.append(attr)
                     rm_key_list.append(line_number)
 
@@ -752,9 +762,11 @@ def xml_handle_fields(obj, keyword, value, verbose):
                 xml_handle_exists(value, elemt_obj, attr, vval)
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
+            elif attr == 'unit':
+                xml_handle_units(elemt_obj, vval)
             elif attr in allowed_attr and not isinstance(vval, dict):
                 validate_field_attribute_and_value(attr, vval, allowed_attr, value)
-                elemt_obj.set(attr, check_for_mapping_char(vval))
+                elemt_obj.set(attr, check_for_mapping_char_other(vval))
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
 
@@ -854,7 +866,7 @@ def pretty_print_xml(xml_root, output_xml):
                     flag = False
     os.remove('tmp.xml')
 
-
+# pylint: disable=too-many-statements
 def nyaml2nxdl(input_file: str, verbose: bool):
     """
     Main of the nyaml2nxdl converter, creates XML tree, namespace and
@@ -909,8 +921,8 @@ application and base are valid categories!'
                 xml_root.set('extends', 'NXobject')
             name_extends = kkey
         else:
-            ValueError(f"Unable to find contend under definition. "
-                       f"Definition has the following {line_number}")
+            raise ValueError(f"Unable to find contend under definition. "
+                             f"Definition has the following {line_number}")
 
     if 'type' not in xml_root.attrib:
         xml_root.set('type', "group")
@@ -918,8 +930,8 @@ application and base are valid categories!'
     namespaces = {'xmlns': 'http://definition.nexusformat.org/nxdl/3.1',
                   'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
                   'xsi:schemaLocation': 'http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd'}
-    for key, ns in namespaces.items():
-        xml_root.attrib[key] = ns
+    for key, ns_ in namespaces.items():
+        xml_root.attrib[key] = ns_
     if 'symbols' in yml_appdef.keys():
         xml_handle_symbols(yml_appdef,
                            xml_root,

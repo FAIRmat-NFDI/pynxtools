@@ -23,7 +23,7 @@
 import sys
 from typing import List
 
-from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import type_check, get_node_parent_info
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import get_node_parent_info
 from nexusutils.dataconverter.helpers import remove_namespace_from_tag
 
 
@@ -207,10 +207,10 @@ class Nxdl2yaml():
                             symbol=symbol))
             if self.root_level_definition:
                 # Soring NXname for writting end of the definition attributes
-                NXname = ''
+                nx_name = ''
                 for defs in self.root_level_definition:
                     if 'NX' in defs:
-                        NXname = defs
+                        nx_name = defs
                         continue
                     file_out.write(
                         '{indent}{defs}\n'.format(
@@ -219,10 +219,11 @@ class Nxdl2yaml():
                 file_out.write(
                     '{indent}{defs}\n'.format(
                         indent=0 * DEPTH_SIZE,
-                        defs=NXname))
+                        defs=nx_name))
             self.found_definition = False
 
     # pylint: disable=consider-using-f-string
+    # pylint: disable=too-many-branches
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
 
@@ -257,6 +258,7 @@ class Nxdl2yaml():
         min_l = []
         max_l = []
         for key, val in node_attr.items():
+            # As both 'minOccurs' and 'maxOccurs' move to the 'exists'
             if key in ['minOccurs', 'maxOccurs']:
                 if 'exists' not in tmp_dict:
                     tmp_dict['exists'] = []
@@ -265,9 +267,9 @@ class Nxdl2yaml():
                 if key == 'maxOccurs':
                     max_l = ['max', str(val)]
             elif key == 'units':
-                tmp_dict['unit'] = val
+                tmp_dict['unit'] = str(val)
             else:
-                tmp_dict[key] = val
+                tmp_dict[key] = str(val)
             if key not in allowed_attr:
                 raise ValueError(f"An attribute ({key}) in 'field' or 'group' has been found "
                                  f"that is not allowed. The allowed attr is {allowed_attr}.")
@@ -360,8 +362,7 @@ class Nxdl2yaml():
         if dim_other_parts:
             file_out.write(
                 '{indent}dim_parameters:\n'.format(
-                    indent=(depth + 1) * DEPTH_SIZE,
-                    value=dim_index_value[:-2] or ''))
+                    indent=(depth + 1) * DEPTH_SIZE))
             # depth = depth + 2 dim_paramerter has child such as doc of dim
             indent = (depth + 2) * DEPTH_SIZE
             for key, value in dim_other_parts.items():
