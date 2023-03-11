@@ -866,6 +866,7 @@ def pretty_print_xml(xml_root, output_xml):
                     flag = False
     os.remove('tmp.xml')
 
+
 # pylint: disable=too-many-statements
 def nyaml2nxdl(input_file: str, verbose: bool):
     """
@@ -920,9 +921,6 @@ application and base are valid categories!'
                 xml_root.set('name', name)
                 xml_root.set('extends', 'NXobject')
             name_extends = kkey
-        else:
-            raise ValueError(f"Unable to find contend under definition. "
-                             f"Definition has the following {line_number}")
 
     if 'type' not in xml_root.attrib:
         xml_root.set('type', "group")
