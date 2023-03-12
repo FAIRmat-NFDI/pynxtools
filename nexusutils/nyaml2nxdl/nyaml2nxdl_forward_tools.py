@@ -250,13 +250,13 @@ def xml_handle_exists(dct, obj, keyword, value):
                 obj.set('maxOccurs', 'unbounded')
         elif len(value) == 4 and (value[0] != 'min' or value[2] != 'max'):
             raise ValueError(f'Line {dct[line_number]}: exists keyword'
-                             f'needs to go either with an optional [recommended] list with two'
-                             f'entries either [min, <uint>] or [max, <uint>], or a list of four'
+                             f'needs to go either with an optional [recommended] list with two '
+                             f'entries either [min, <uint>] or [max, <uint>], or a list of four '
                              f'entries [min, <uint>, max, <uint>] !')
         else:
-            raise ValueError(f'Line {dct[line_number]}: exists keyword'
-                             f'needs to go either with optional, recommended, a list with two'
-                             f'entries either [min, <uint>] or [max, <uint>], or a list of four'
+            raise ValueError(f'Line {dct[line_number]}: exists keyword '
+                             f'needs to go either with optional, recommended, a list with two '
+                             f'entries either [min, <uint>] or [max, <uint>], or a list of four '
                              f'entries [min, <uint>, max, <uint>] !')
     else:
         if value == 'optional':
@@ -628,7 +628,7 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     # list of possible attribute of xml attribute elementsa
     attr_attr_list = ['name', 'type', 'unit', 'nameType',
                       'optional', 'recommended', 'minOccurs',
-                      'maxOccurs', 'deprecated']
+                      'maxOccurs', 'deprecated', 'exists']
     # as an attribute identifier
     keyword_name, keyword_typ = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
