@@ -102,8 +102,8 @@ class Nxdl2yaml():
         # pylint: disable=consider-using-f-string
         # self.root_level_definition[0] = ''
         keyword = ''
-        # sign word for reseving the location
-        sign_word = " #xx# "
+        # tmp_word for reseving the location
+        tmp_word = "#xx#"
         attribs = node.attrib
         # for tracking the order of name and type
         keyword_order = -1
@@ -111,13 +111,13 @@ class Nxdl2yaml():
             if "name" in item:
                 keyword = keyword + attribs[item]
                 if keyword_order == -1:
-                    self.root_level_definition.append(sign_word)
-                    keyword_order = self.root_level_definition.index(sign_word)
+                    self.root_level_definition.append(tmp_word)
+                    keyword_order = self.root_level_definition.index(tmp_word)
             elif "extends" in item:
                 keyword = f"{keyword}({attribs[item]})"
                 if keyword_order == -1:
-                    self.root_level_definition.append(sign_word)
-                    keyword_order = self.root_level_definition.index(sign_word)
+                    self.root_level_definition.append(tmp_word)
+                    keyword_order = self.root_level_definition.index(tmp_word)
             elif 'schemaLocation' not in item \
                     and 'extends' != item:
                 text = f"{item}: {attribs[item]}"
@@ -209,7 +209,7 @@ class Nxdl2yaml():
                 # Soring NXname for writting end of the definition attributes
                 nx_name = ''
                 for defs in self.root_level_definition:
-                    if 'NX' in defs:
+                    if 'NX' in defs and defs[-1] == ':':
                         nx_name = defs
                         continue
                     file_out.write(
@@ -221,6 +221,31 @@ class Nxdl2yaml():
                         indent=0 * DEPTH_SIZE,
                         defs=nx_name))
             self.found_definition = False
+
+    def handle_exists(self, exists_dict, key, val):
+        """
+            Create exist component as folows:
+
+            {'min' : value for min,
+             'max' : value for max,
+             'optional' : value for optional}
+
+            This is created separately so that the keys stays in order.
+        """
+        if not val:
+            val = ''
+        else:
+            val = str(val)
+        if 'minOccurs' == key:
+            exists_dict['minOccurs'] = ['min', val]
+        if 'maxOccurs' == key:
+            exists_dict['maxOccurs'] = ['max', val]
+        if 'optional' == key:
+            exists_dict['optional'] = ['optional', val]
+        if 'recommended' == key:
+            exists_dict['recommended'] = ['recommended', val]
+        if 'required' == key:
+            exists_dict['required'] = ['required', val]
 
     # pylint: disable=consider-using-f-string
     # pylint: disable=too-many-branches
@@ -255,17 +280,13 @@ class Nxdl2yaml():
 
         # tmp_dict intended to persevere order of attribnutes
         tmp_dict = {}
-        min_l = []
-        max_l = []
+        exists_dict = {}
         for key, val in node_attr.items():
-            # As both 'minOccurs' and 'maxOccurs' move to the 'exists'
-            if key in ['minOccurs', 'maxOccurs']:
+            # As both 'minOccurs', 'maxOccurs' and optionality move to the 'exists'
+            if key in ['minOccurs', 'maxOccurs', 'optional', 'recommended', 'required']:
                 if 'exists' not in tmp_dict:
                     tmp_dict['exists'] = []
-                if key == 'minOccurs':
-                    min_l = ['min', str(val)]
-                if key == 'maxOccurs':
-                    max_l = ['max', str(val)]
+                self.handle_exists(exists_dict, key, val)
             elif key == 'units':
                 tmp_dict['unit'] = str(val)
             else:
@@ -273,8 +294,22 @@ class Nxdl2yaml():
             if key not in allowed_attr:
                 raise ValueError(f"An attribute ({key}) in 'field' or 'group' has been found "
                                  f"that is not allowed. The allowed attr is {allowed_attr}.")
-        if min_l or max_l:
-            tmp_dict['exists'] = min_l + max_l
+        has_min_max = False
+        has_opt_reco_requ = False
+        if exists_dict:
+            for key, val in exists_dict.items():
+                if key in ['minOccurs', 'maxOccurs']:
+                    tmp_dict['exists'] = tmp_dict['exists'] + val
+                    has_min_max = True
+                elif key in ['optional', 'recommended', 'required']:
+                    tmp_dict['exists'] = key
+                    has_opt_reco_requ = True
+        if has_min_max and has_opt_reco_requ:
+            raise ValueError("Optionality 'exists' can take only either from ['minOccurs',"
+                             " 'maxOccurs'] or from ['optional', 'recommended', 'required']"
+                             ". But not from both of the groups together. Please check in"
+                             " Groups or Fields.")
+
         depth_ = depth + 1
         for key, val in tmp_dict.items():
             file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
@@ -447,34 +482,14 @@ class Nxdl2yaml():
             escapesymbol=r'\@',
             name=name))
 
-        # pylint: disable=consider-using-f-string
-        # attr_list = ['name', 'type', 'units', 'nameType', 'recommended', 'optional']
-        # node_attr = node.attrib
-
-        # if 'name' in node_attr:
-        #     name = node_attr['name']
-        # else:
-        #     raise ValueError("Attribute must have an name key.")
-
-        # if 'type' in node_attr:
-        #     nx_type = type_check(node_attr['type'] or '')
-        # else:
-        #     nx_type = ''
-        # file_out.write(
-        #     '{indent}{escapesymbol}{key}{nx_type}:\n'.format(
-        #         indent=depth * DEPTH_SIZE,
-        #         escapesymbol=r'\@',
-        #         key=name,
-        #         nx_type=f'{nx_type}' or ''))
-
         tmp_dict = {}
+        exists_dict = {}
         for key, val in node_attr.items():
-            if key in ['minOccurs', 'maxOccurs']:
+            # As both 'minOccurs', 'maxOccurs' and optionality move to the 'exists'
+            if key in ['minOccurs', 'maxOccurs', 'optional', 'recommended', 'required']:
                 if 'exists' not in tmp_dict:
-                    tmp_dict['exists'] = '[]'
-                exists = tmp_dict['exists'].replace(']', '')
-                exists = exists + (f"{key[0:3]}, {val}, ]")
-                tmp_dict['exists'] = exists
+                    tmp_dict['exists'] = []
+                self.handle_exists(exists_dict, key, val)
             elif key == 'units':
                 tmp_dict['unit'] = val
             else:
@@ -483,28 +498,25 @@ class Nxdl2yaml():
                 raise ValueError(f"An attribute ({key}) has been found that is not allowed."
                                  f"The allowed attr is {allowed_attr}.")
 
+        has_min_max = False
+        has_opt_reco_requ = False
+        if exists_dict:
+            for key, val in exists_dict.items():
+                if key in ['minOccurs', 'maxOccurs']:
+                    tmp_dict['exists'] = tmp_dict['exists'] + val
+                    has_min_max = True
+                elif key in ['optional', 'recommended', 'required']:
+                    tmp_dict['exists'] = key
+                    has_opt_reco_requ = True
+        if has_min_max and has_opt_reco_requ:
+            raise ValueError("Optionality 'exists' can take only either from ['minOccurs',"
+                             " 'maxOccurs'] or from ['optional', 'recommended', 'required']"
+                             ". But not from both of the groups together. Please check in"
+                             " attributes")
+
         depth_ = depth + 1
         for key, val in tmp_dict.items():
             file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
-
-        # if 'units' in node_attr:
-        #     if not node_attr['units']:
-        #         raise ValueError("The 'value' of 'units' in attribute"
-        #                          " is empty which is forbiden.")
-        #     file_out.write('{indent}unit: {value}\n'.format(
-        #         indent=depth * DEPTH_SIZE,
-        #         value=node_attr['units']))
-
-        # for attr in attr_list:
-        #     if attr in ['name', 'type', 'units']:
-        #         continue
-        #     if attr not in node_attr:
-        #         continue
-        #     val_ = handle_mapping_char(node_attr[attr])
-        #     file_out.write('{indent}{key}: {value}\n'.format(
-        #         indent=(depth + 1) * DEPTH_SIZE,
-        #         key=attr,
-        #         value=val_))
 
     def handel_link(self, depth, node, file_out):
         """
