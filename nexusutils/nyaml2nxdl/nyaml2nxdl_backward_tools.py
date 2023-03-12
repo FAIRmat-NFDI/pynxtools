@@ -255,7 +255,7 @@ class Nxdl2yaml():
         allowed_attr = ['optional', 'recommended', 'name', 'type', 'axes', 'axis', 'data_offset',
                         'interpretation', 'long_name', 'maxOccurs', 'minOccurs', 'nameType',
                         'optional', 'primary', 'signal', 'stride', 'units', 'required',
-                        'deprecated']
+                        'deprecated', 'exists']
 
         name_type = ""
         node_attr = node.attrib
