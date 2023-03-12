@@ -155,7 +155,7 @@ def check_for_skiped_attributes(component, value, allowed_attr=None):
             if not isinstance(val, dict) \
                 and '\\@' not in attr\
                 and attr not in allowed_attr\
-                    and 'NX' not in attr:
+                    and 'NX' not in attr and val:
 
                 raise ValueError(f"An attribute '{attr}' in part '{component}' has been found"
                                  f". Please check arround line '{value[line_number]}. At this "
@@ -276,7 +276,7 @@ def xml_handle_group(verbose, obj, keyword, value):
     """
 
     list_of_attr = ['name', 'type', 'nameType', 'deprecated', 'optional', 'recommended',
-                    'exists']
+                    'exists', 'unit']
     l_bracket = -1
     r_bracket = -1
     if keyword.count('(') == 1:
@@ -315,6 +315,8 @@ def xml_handle_group(verbose, obj, keyword, value):
                 xml_handle_exists(value, grp, attr, vval)
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
+            elif attr == 'unit':
+                xml_handle_units(grp, vval)
             elif attr in list_of_attr and not isinstance(vval, dict):
                 validate_field_attribute_and_value(attr, vval, list_of_attr, value)
                 grp.set(attr, check_for_mapping_char_other(vval))
@@ -720,7 +722,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
 
     # List of possible attributes of xml elements
     allowed_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs', 'long_name',
-                    'axis', 'signal', 'deprecated', 'axes',
+                    'axis', 'signal', 'deprecated', 'axes', 'exists',
                     'data_offset', 'interpretation', 'maxOccurs',
                     'primary', 'recommended', 'optional', 'stride']
 
