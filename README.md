@@ -1,6 +1,6 @@
-<img src="https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg?event=push">
-<img src="https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pylint.yml/badge.svg?event=push">
-<img src="https://img.shields.io/badge/python-3.8-green.svg">
+![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg?event=push)
+![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pylint.yml/badge.svg?event=push)
+![](https://img.shields.io/badge/python-3.8-green.svg)
 
 <br/>
 
