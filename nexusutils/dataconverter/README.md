@@ -1,42 +1,47 @@
 # Dataconverter
 
+This tool contains a set of [readers](readers/) to convert supported data files into a compliant NeXus file.
+
+You can read specific Readme's of the readers and find usage examples [here](../../examples/).
+
+## Installation
+
+```console
+user@box:~$ pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
+```
+
+## Usage
+
 Converts experimental data to NeXus/HDF5 files based on any provided NXDL.
 
 ```console
-user@box:~$ python convert.py
-Usage: convert.py [OPTIONS]
+user@box:~$ dataconverter --help
+Usage: dataconverter [OPTIONS]
+
+  The CLI entrypoint for the convert function
 
 Options:
-  --input-file TEXT    The path to the input data file to read. (Repeat for
-                       more than one file.)
-
-  --reader TEXT        The reader to use.
-  --nxdl TEXT          The name of the NXDL file to use without extension.  [required]
-  --output TEXT        The path to the output NeXus file to be generated.
-  --generate-template  Just print out the template generated from given NXDL
-                       file.
-
-  --help               Show this message and exit.
+  --input-file TEXT               The path to the input data file to read.
+                                  (Repeat for more than one file.)
+  --reader [apm|ellips|em_nion|em_spctrscpy|example|hall|json_map|json_yml|mpes|rii_database|transmission|xps]
+                                  The reader to use. default="example"
+  --nxdl TEXT                     The name of the NXDL file to use without
+                                  extension.
+  --output TEXT                   The path to the output NeXus file to be
+                                  generated.
+  --generate-template             Just print out the template generated from
+                                  given NXDL file.
+  --fair                          Let the converter know to be stricter in
+                                  checking the documentation.
+  --params-file FILENAME          Allows to pass a .yaml file with all the
+                                  parameters the converter supports.
+  --help                          Show this message and exit.
 ```
 
 #### Use with multiple input files
 
 ```console
-user@box:~$ python convert.py --nxdl nxdl --input_file metadata --input_file data.raw --input_file otherfile
-```
-
-## Installation
-
-1, Clone the repo using: `git clone https://github.com/nomad-coe/nomad-parser-nexus.git --recursive`\
-2. From the root folder where the setup.py exists, run: pip install -e .
-
-<span style="color:red">Sherjeel, check here the correct repo to checkout, should not be data-converter as this may no longer exist</span>
-```console
-user@box:~$ git clone https://github.com/nomad-coe/nomad-parser-nexus.git --recursive
-user@box:~$ cd nomad-parser-nexus
-user@box:~$ git checkout data-converter
-user@box:~$ pip install -e .
-user@box:~$ cd nexusparser/tools/dataconverter
+user@box:~$ dataconverter --nxdl nxdl --input_file metadata --input_file data.raw --input_file otherfile
 ```
 
 ## Writing a Reader
@@ -47,7 +52,7 @@ against a chosen NeXus Application Definition.
 
 Readers have to be placed in the **readers** folder in there own subfolder.
 The reader folder should be named with the reader's name and contain a `reader.py`.\
-For example: The reader `Example Reader` is placed under `dataconverter/readers/example/reader.py`.
+For example: The reader `Example Reader` is placed under [`readers/example/reader.py`](readers/example/reader.py).
 
 Copy and rename `readers/example/reader.py` to your own `readers/mydatareader/reader.py`.
 

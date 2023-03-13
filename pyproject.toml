@@ -11,7 +11,7 @@ authors = [
 description = "Extend NeXus for materials science experiment and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
 license = { file = "LICENSE.txt" }
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
