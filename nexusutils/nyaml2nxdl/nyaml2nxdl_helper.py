@@ -24,10 +24,30 @@ which details a hierarchy of data/metadata elements
 #
 
 
+# Yaml library does not except the keys (escape char and yaml separator)
+# So the corresponding value is to skip them and
+ESCAPE_CHAR_DICT = {":": "\':\'",
+                    "\t": "    ",
+                    "\'\':\'\'": "\':\'"}
+
+
+def get_yaml_escape_char_dict():
+    """Get escape char and the way to hide them."""
+    return ESCAPE_CHAR_DICT
+
+
+def get_yaml_escape_char_reverter_dict():
+    """To revert yaml escape char in xml constructor from yaml."""
+    temp_dict = {}
+    for key, val in ESCAPE_CHAR_DICT.items():
+        temp_dict[val] = key
+    return temp_dict
+
+
 def type_check(nx_type):
     """
         Check for nexus type if type is NX_CHAR get '' or get as it is.
-        """
+    """
 
     if nx_type in ['NX_CHAR', '']:
         nx_type = ''

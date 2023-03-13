@@ -23,7 +23,7 @@
 import sys
 from typing import List
 
-from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import get_node_parent_info
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import get_node_parent_info, get_yaml_escape_char_dict
 from nexusutils.dataconverter.helpers import remove_namespace_from_tag
 
 
@@ -33,14 +33,11 @@ DEPTH_SIZE = "  "
 def handle_mapping_char(text):
     """Check for ":" char and replace it by "':'". """
 
-    # Skip colon ':' that comes in text because it is used as separator for yaml.
-    if ':' in text:
-        index = [ind for ind, ch in enumerate(text) if ch == ':']
-
-        ch_rep = 0
-        for ind in index:
-            text = text[0:ind + ch_rep] + '\'' + text[ind + ch_rep] + '\'' + text[ch_rep + ind + 1:]
-            ch_rep = ch_rep + 2
+    # This escape chars and sepeerator ':' is not allowed in yaml library
+    escape_char = get_yaml_escape_char_dict()
+    for esc_key, val in escape_char.items():
+        if esc_key in text:
+            text = text.replace(esc_key, val)
     return text
 
 
@@ -130,28 +127,72 @@ class Nxdl2yaml():
         """
         # pylint: disable=consider-using-f-string
 
-        tag = remove_namespace_from_tag(node.tag)
-        if tag == ('doc'):
-            self.root_level_doc = '{indent}{tag}: | {text}'.format(
-                indent=0 * DEPTH_SIZE,
-                tag=remove_namespace_from_tag(node.tag),
-                text='\n' + DEPTH_SIZE + '\n'.join([f"{1 * DEPTH_SIZE}{s.lstrip()}"
-                                                    for s in node.text.split('\n')]
-                                                   if node.text else '').strip())
+        # tag = remove_namespace_from_tag(node.tag)
+        text = node.text
+        text = self.handle_not_root_level_doc(depth=0, text=text)
+        self.root_level_doc = text
+        # text = handle_mapping_char(text)
+        # if tag == ('doc'):
+        #     self.root_level_doc = '{indent}{tag}: | {text}'.format(
+        #         indent=0 * DEPTH_SIZE,
+        #         tag=tag,
+        #         text='\n' + DEPTH_SIZE + '\n'.join([f"{1 * DEPTH_SIZE}{s}"
+        #                                             for s in text.split('\n')]
+        #                                            if text else '').strip())
 
     def handle_not_root_level_doc(self, depth, text, tag='doc', file_out=None):
         """
-        Handle docs field along the yaml file
+        Handle docs field along the yaml file. In this function we also tried to keep
+        the track of intended indentation. E.g. the bollow doc block.
+            * Topic name
+              DEscription of topic
+
+
         """
 
         # Handling empty doc
         if not text:
             text = ""
+        else:
+            text = handle_mapping_char(text)
         # pylint: disable=consider-using-f-string
         if "\n" in text:
-            text = '\n' + (depth + 1) * DEPTH_SIZE + \
-                   '\n'.join([f"{(depth + 1) * DEPTH_SIZE}{s.lstrip()}"
-                              for s in text.split('\n')]).strip()
+            # To remove '\n' character as it will be added before text.
+            text = text.split('\n')
+            text_tmp = []
+            yaml_indent_n = len((depth + 1) * DEPTH_SIZE)
+            # Find indent for empty space in the first line that have valid alphabat
+            tmp_i = 0
+            while tmp_i != -1:
+                first_line_indent_n = 0
+                for ch_ in text[tmp_i]:
+                    if ch_ == ' ':
+                        first_line_indent_n = first_line_indent_n + 1
+                    elif ch_ != '':
+                        tmp_i = -2
+                        break
+                tmp_i = tmp_i + 1
+            # for indent_diff -ve all lines will move left by the same ammout
+            # for indect_diff +ve all lines will move right the same amount
+            indent_diff = yaml_indent_n - first_line_indent_n
+            text_tmp.append(yaml_indent_n * ' ' + text[0].strip())
+
+            for ind, line in enumerate(text):
+                line_indent_n = 0
+                # Collect first empty space without alphabate
+                for ch_ in line:
+                    if ch_ == ' ':
+                        line_indent_n = line_indent_n + 1
+                    else:
+                        break
+                line_indent_n = line_indent_n + indent_diff
+                if line_indent_n < yaml_indent_n:
+                    # if line still under yaml identation
+                    text_tmp.append(yaml_indent_n * ' ' + text[ind].strip())
+                else:
+                    text_tmp.append(line_indent_n * ' ' + text[ind].strip())
+
+            text = '\n'.join(text_tmp)
             if "}" in tag:
                 tag = remove_namespace_from_tag(tag)
             indent = depth * DEPTH_SIZE
@@ -166,7 +207,6 @@ class Nxdl2yaml():
                 tag = remove_namespace_from_tag(tag)
             indent = depth * DEPTH_SIZE
 
-        text = handle_mapping_char(text)
         doc_str = f"{indent}{tag}: | {text}\n"
         if file_out:
             file_out.write(doc_str)

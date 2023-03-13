@@ -36,6 +36,7 @@ from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import get_yaml_escape_char_reverter_dict
 
 
 DOM_COMMENT = ("\n"
@@ -207,8 +208,11 @@ def check_for_mapping_char_other(text):
         text = 'true'
     if str(text) == 'False':
         text = 'false'
-    if '\':\'' in str(text):
-        text = text.replace('\':\'', ':')
+
+    escape_reverter = get_yaml_escape_char_reverter_dict()
+    for key, val in escape_reverter.items():
+        if key in text:
+            text = text.replace(key, val)
     return str(text)
 
 
