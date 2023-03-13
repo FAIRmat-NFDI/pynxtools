@@ -1,3 +1,7 @@
+<img src="https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg">
+
+<br/>
+
 This is a software for developing ontologies and instances of ontologies with
 [NeXus](https://www.nexusformat.org/). The software serves two aims.
 
