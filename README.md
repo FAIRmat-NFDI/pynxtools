@@ -1,6 +1,8 @@
-![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg?event=push)
-![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pylint.yml/badge.svg?event=push)
+![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg)
+![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pylint.yml/badge.svg)
 ![](https://img.shields.io/badge/python-3.8-green.svg)
+![](https://img.shields.io/badge/python-3.9-green.svg)
+![](https://img.shields.io/badge/python-3.10-green.svg)
 
 <br/>
 
@@ -21,24 +23,13 @@ pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
 
 <br/>
 
-# Individual modules of this software and their functions
+# Individual modules in this repo
 
-### **nyaml2nxdl**
+### [**nyaml2nxdl**](nexusutils/nyaml2nxdl/README.md)
 
-This is a tool which converts, easy to read, YAML NeXus schemas into NXDL NeXus schemas. [NeXus Schemas](https://nexusformat.org)
+### [**dataconverter**](nexusutils/dataconverter/README.md)
 
-Further documentation: [README.md](nexusutils/nyaml2nxdl/README.md)
-
-### **dataconverter**
-
-This is a tool which enables users to create compliant instances of NeXus/HDF5 files to [NeXus Schemas](https://nexusformat.org).
-
-Further documentation: [README.md](nexusutils/dataconverter/README.md)
-
-### **read_nexus**
-This utility outputs a debug log for a given NeXus file.
-
-Further documentation: [README.md](nexusutils/nexus/README.md)
+### [**read_nexus**](nexusutils/nexus/README.md)
 
 <br/>
 
