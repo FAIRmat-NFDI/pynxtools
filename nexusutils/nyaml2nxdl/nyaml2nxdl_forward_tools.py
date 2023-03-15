@@ -140,7 +140,7 @@ def nx_name_type_resolving(tmp):
     return nam, typ
 
 
-def check_for_skiped_attributes(component, value, allowed_attr=None):
+def check_for_skiped_attributes(component, value, allowed_attr=None, verbose=False):
     """
         Check for any attributes have been skipped or not.
         NOTE: We should we should keep in mind about 'doc'
@@ -153,6 +153,8 @@ def check_for_skiped_attributes(component, value, allowed_attr=None):
             if '__line__' in attr or attr in block_tag:
                 continue
             line_number = f'__line__{attr}'
+            if verbose:
+                print(f"__line__ : {value[line_number]}")
             if not isinstance(val, dict) \
                 and '\\@' not in attr\
                 and attr not in allowed_attr\
@@ -180,8 +182,8 @@ def check_optionality_and_write(obj, opl_key, opl_val):
 def format_nxdl_doc(string):
     """NeXus format for doc string
     """
+    string = check_for_mapping_char_other(string)
     formatted_doc = ''
-    formatted_doc += "\n"
     if "\n" not in string:
         if len(string) > 80:
             wrapped = textwrap.TextWrapper(width=80,
@@ -190,6 +192,7 @@ def format_nxdl_doc(string):
             string = '\n'.join(wrapped.wrap(string))
         formatted_doc += f"{string}"
     else:
+        formatted_doc += "\n"
         formatted_doc += f"{string}"
     if string.endswith("\n"):
         pass
@@ -203,12 +206,14 @@ def check_for_mapping_char_other(text):
     Check for mapping char \':\' which does not be passed through yaml library.
     Then replace it by ':'.
     """
-
+    if not text:
+        print('#### : text:', text)
     if str(text) == 'True':
         text = 'true'
     if str(text) == 'False':
         text = 'false'
-
+    # Some escape char is not valid in yaml libray which is written while writting
+    # yaml file. In the time of writting nxdl revert to that escape char.
     escape_reverter = get_yaml_escape_char_reverter_dict()
     for key, val in escape_reverter.items():
         if key in text:
@@ -268,13 +273,13 @@ def xml_handle_exists(dct, obj, keyword, value):
         elif value == 'recommended':
             obj.set('recommended', 'true')
         elif value == 'required':
-            obj.set('minOccurs', '1')
+            obj.set('required', 'true')
         else:
             obj.set('minOccurs', '0')
 
 
 # pylint: disable=too-many-branches
-def xml_handle_group(verbose, obj, keyword, value):
+def xml_handle_group(obj, keyword, value, verbose=False):
     """
     The function deals with group instances
     """
@@ -315,13 +320,13 @@ def xml_handle_group(verbose, obj, keyword, value):
                 xml_handle_doc(grp, vval)
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
-            elif attr == 'exists' and isinstance(vval, list):
+            elif attr == 'exists' and vval:
                 xml_handle_exists(value, grp, attr, vval)
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
             elif attr == 'unit':
                 xml_handle_units(grp, vval)
-            elif attr in list_of_attr and not isinstance(vval, dict):
+            elif attr in list_of_attr and not isinstance(vval, dict) and vval:
                 validate_field_attribute_and_value(attr, vval, list_of_attr, value)
                 grp.set(attr, check_for_mapping_char_other(vval))
                 rm_key_list.append(attr)
@@ -330,7 +335,7 @@ def xml_handle_group(verbose, obj, keyword, value):
         for key in rm_key_list:
             del value[key]
         # Check for skipped attrinutes
-        check_for_skiped_attributes('group', value, list_of_attr)
+        check_for_skiped_attributes('group', value, list_of_attr, verbose)
     if isinstance(value, dict) and value != {}:
         recursive_build(grp, value, verbose)
 
@@ -383,7 +388,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
     for key in rm_key_list:
         del value[key]
 
-    xml_handle_dim_from_dimension_dict(dct, dims, keyword, value, rank)
+    xml_handle_dim_from_dimension_dict(dct, dims, keyword, value, rank=False)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(dims, value, verbose=None)
@@ -391,7 +396,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
 
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
-def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
+def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verbose=False):
     """
         Handling dim element.
         NOTE: The inputs 'keyword' and 'value' are as input for xml_handle_dimensions
@@ -431,10 +436,10 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
                 dim = ET.SubElement(dims_obj, 'dim')
 
                 # Taking care of multidimensions or rank
-                dim.set('index', str(dim_ind_val[0])
-                        if len(dim_ind_val) >= 1 else '')
-                dim.set('value', str(dim_ind_val[1])
-                        if len(dim_ind_val) == 2 else '')
+                if len(dim_ind_val) >= 1 and dim_ind_val[0]:
+                    dim.set('index', str(dim_ind_val[0]))
+                if len(dim_ind_val) == 2 and dim_ind_val[1]:
+                    dim.set('value', str(dim_ind_val[1]))
                 dim_list.append(dim)
             rm_key_list.append(attr)
             rm_key_list.append(line_number)
@@ -475,7 +480,7 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank):
     for key in rm_key_list:
         del value[key]
 
-    check_for_skiped_attributes('dim', value, possible_dim_attrs)
+    check_for_skiped_attributes('dim', value, possible_dim_attrs, verbose)
 
 
 def xml_handle_enumeration(dct, obj, keyword, value, verbose):
@@ -506,7 +511,7 @@ bear at least an argument !'
 
 
 # pylint: disable=unused-argument
-def xml_handle_link(dct, obj, keyword, value):
+def xml_handle_link(dct, obj, keyword, value, verbose):
     """
         If we have an NXDL link we decode the name attribute from <optional string>(link)[:-6]
     """
@@ -535,13 +540,13 @@ def xml_handle_link(dct, obj, keyword, value):
         for key in rm_key_list:
             del value[key]
         # Check for skipped attrinutes
-        check_for_skiped_attributes('link', value, possible_attrs)
+        check_for_skiped_attributes('link', value, possible_attrs, verbose)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(link_obj, value, verbose=None)
 
 
-def xml_handle_choice(dct, obj, keyword, value):
+def xml_handle_choice(dct, obj, keyword, value, verbose=False):
     """
         Build choice xml elements. That consists of groups.
     """
@@ -570,7 +575,7 @@ def xml_handle_choice(dct, obj, keyword, value):
         for key in rm_key_list:
             del value[key]
         # Check for skipped attrinutes
-        check_for_skiped_attributes('choice', value, possible_attr)
+        check_for_skiped_attributes('choice', value, possible_attr, verbose)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(choice_obj, value, verbose=None)
@@ -587,15 +592,23 @@ def xml_handle_symbols(dct, obj, keyword, value: dict):
     if 'doc' in value.keys():
         doctag = ET.SubElement(syms, 'doc')
         doctag.text = '\n' + textwrap.fill(value['doc'], width=70) + '\n'
+    rm_key_list = []
     for kkeyword, vvalue in value.items():
-        if kkeyword != 'doc' and '__line__' not in kkeyword:
+        if '__line__' in kkeyword:
+            continue
+        if kkeyword != 'doc':
             line_number = f'__line__{kkeyword}'
             assert vvalue is not None and isinstance(
                 vvalue, str), f'Line {value[line_number]}: put a comment in doc string !'
             sym = ET.SubElement(syms, 'symbol')
             sym.set('name', str(kkeyword))
-            sym_doc = ET.SubElement(sym, 'doc')
-            sym_doc.text = '\n' + textwrap.fill(vvalue, width=70) + '\n'
+            # sym_doc = ET.SubElement(sym, 'doc')
+            xml_handle_doc(sym, vvalue)
+            rm_key_list.append(kkeyword)
+            rm_key_list.append(line_number)
+            # sym_doc.text = '\n' + textwrap.fill(vvalue, width=70) + '\n'
+    for key in rm_key_list:
+        del value[key]
 
 
 def check_keyword_variable(verbose, dct, keyword, value):
@@ -629,7 +642,7 @@ def verbose_flag(verbose, keyword, value):
         sys.stdout.write(f'  key:{keyword}; value type is {type(value)}\n')
 
 
-def attribute_attributes_handle(dct, obj, keyword, value, verbose):
+def attribute_handle_attributes(dct, obj, keyword, value, verbose):
     """Handle the attributes found connected to attribute field"""
     # list of possible attribute of xml attribute elementsa
     attr_attr_list = ['name', 'type', 'unit', 'nameType',
@@ -638,6 +651,8 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
     # as an attribute identifier
     keyword_name, keyword_typ = nx_name_type_resolving(keyword)
     line_number = f'__line__{keyword}'
+    if verbose:
+        print(f"__line__ : {dct[line_number]}")
     if keyword_name == '' and keyword_typ == '':
         raise ValueError(f'Line {dct[line_number]}: found an improper yaml key !')
     elemt_obj = ET.SubElement(obj, 'attribute')
@@ -651,14 +666,14 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
         for attr, attr_val in value.items():
             if '__line__' in attr:
                 continue
-            line_number = f'__line__{attr}'
+            line_number = f"__line__{attr}"
 
             if attr in ['doc', *attr_attr_list] and not isinstance(attr_val, dict):
                 if attr == 'unit':
                     elemt_obj.set(f"{attr}s", str(value[attr]))
                     rm_key_list.append(attr)
                     rm_key_list.append(line_number)
-                elif attr == 'exists':
+                elif attr == 'exists' and attr_val:
                     xml_handle_exists(value, elemt_obj, attr, attr_val)
                     rm_key_list.append(attr)
                     rm_key_list.append(line_number)
@@ -676,7 +691,7 @@ def attribute_attributes_handle(dct, obj, keyword, value, verbose):
         for key in rm_key_list:
             del value[key]
         # Check cor skiped attribute
-        check_for_skiped_attributes('Attribute', value, attr_attr_list)
+        check_for_skiped_attributes('Attribute', value, attr_attr_list, verbose)
     if value:
         recursive_build(elemt_obj, value, verbose)
 
@@ -709,7 +724,7 @@ def validate_field_attribute_and_value(v_attr, vval, allowed_attribute, value):
                          f" Please check arround line {value[line_number]}.")
 
 
-def xml_handle_fields(obj, keyword, value, verbose):
+def xml_handle_fields(obj, keyword, value, verbose=False):
     """
     Handle a field in yaml file.
         When a keyword is NOT:
@@ -764,13 +779,13 @@ def xml_handle_fields(obj, keyword, value, verbose):
                 xml_handle_doc(elemt_obj, vval)
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
-            elif attr == 'exists' and isinstance(vval, list):
+            elif attr == 'exists' and vval:
                 xml_handle_exists(value, elemt_obj, attr, vval)
                 rm_key_list.append(attr)
                 rm_key_list.append(line_number)
             elif attr == 'unit':
                 xml_handle_units(elemt_obj, vval)
-            elif attr in allowed_attr and not isinstance(vval, dict):
+            elif attr in allowed_attr and not isinstance(vval, dict) and vval:
                 validate_field_attribute_and_value(attr, vval, allowed_attr, value)
                 elemt_obj.set(attr, check_for_mapping_char_other(vval))
                 rm_key_list.append(attr)
@@ -779,7 +794,7 @@ def xml_handle_fields(obj, keyword, value, verbose):
         for key in rm_key_list:
             del value[key]
         # Check for skipped attrinutes
-        check_for_skiped_attributes('field', value, allowed_attr)
+        check_for_skiped_attributes('field', value, allowed_attr, verbose)
 
     if isinstance(value, dict) and value != {}:
         recursive_build(elemt_obj, value, verbose)
@@ -813,10 +828,10 @@ def recursive_build(obj, dct, verbose):
         elif ((keyword_type in NX_CLSS) or (keyword_type not in
                                             [*NX_TYPE_KEYS, '', *NX_NEW_DEFINED_CLASSES])):
             # we can be sure we need to instantiate a new group
-            xml_handle_group(verbose, obj, keyword, value)
+            xml_handle_group(obj, keyword, value, verbose)
 
         elif keyword_name[0:2] == NX_ATTR_IDNT:  # check if obj qualifies
-            attribute_attributes_handle(dct, obj, keyword, value, verbose)
+            attribute_handle_attributes(dct, obj, keyword, value, verbose)
         elif keyword == 'doc':
             xml_handle_doc(obj, value)
         elif keyword == NX_UNIT_IDNT:
