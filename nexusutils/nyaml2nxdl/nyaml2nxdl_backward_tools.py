@@ -131,14 +131,6 @@ class Nxdl2yaml():
         text = node.text
         text = self.handle_not_root_level_doc(depth=0, text=text)
         self.root_level_doc = text
-        # text = handle_mapping_char(text)
-        # if tag == ('doc'):
-        #     self.root_level_doc = '{indent}{tag}: | {text}'.format(
-        #         indent=0 * DEPTH_SIZE,
-        #         tag=tag,
-        #         text='\n' + DEPTH_SIZE + '\n'.join([f"{1 * DEPTH_SIZE}{s}"
-        #                                             for s in text.split('\n')]
-        #                                            if text else '').strip())
 
     def handle_not_root_level_doc(self, depth, text, tag='doc', file_out=None):
         """
@@ -146,8 +138,6 @@ class Nxdl2yaml():
         the track of intended indentation. E.g. the bollow doc block.
             * Topic name
               DEscription of topic
-
-
         """
 
         # Handling empty doc
@@ -175,7 +165,10 @@ class Nxdl2yaml():
             # for indent_diff -ve all lines will move left by the same ammout
             # for indect_diff +ve all lines will move right the same amount
             indent_diff = yaml_indent_n - first_line_indent_n
-            text_tmp.append(yaml_indent_n * ' ' + text[0].strip())
+            # CHeck for first line empty if not keep first line empty
+            empty_line = ''
+            if text[0].strip():
+                empty_line = '\n'
 
             for ind, line in enumerate(text):
                 line_indent_n = 0
@@ -192,7 +185,12 @@ class Nxdl2yaml():
                 else:
                     text_tmp.append(line_indent_n * ' ' + text[ind].strip())
 
-            text = '\n'.join(text_tmp)
+            for last_line in text_tmp[::-1]:
+                if last_line.strip():
+                    break
+                text_tmp.pop()
+
+            text = empty_line + '\n'.join(text_tmp)
             if "}" in tag:
                 tag = remove_namespace_from_tag(tag)
             indent = depth * DEPTH_SIZE
@@ -231,36 +229,46 @@ class Nxdl2yaml():
         the information stored as definition attributes in the XML file
         """
         # pylint: disable=consider-using-f-string
-        if depth >= 0 \
-                and ([s for s in self.root_level_definition if "category: application" in s]
-                     or [s for s in self.root_level_definition if "category: base" in s]):
+        if depth < 0:
+            raise ValueError("Somthing wrong with indentaion in root level.")
 
-            if self.root_level_symbols:
+        has_categoty = False
+        for def_line in self.root_level_definition:
+            if def_line == "category: application" or def_line == "category: base":
+                file_out.write(f"{def_line}\n")
+                has_categoty = True
+
+        if not has_categoty:
+            raise ValueError("Definition dose not get any category from 'base or application'.")
+        self.print_root_level_doc(file_out)
+        if self.root_level_symbols:
+            file_out.write(
+                '{indent}{root_level_symbols}\n'.format(
+                    indent=0 * DEPTH_SIZE,
+                    root_level_symbols=self.root_level_symbols))
+            for symbol in self.symbol_list:
                 file_out.write(
-                    '{indent}{root_level_symbols}\n'.format(
+                    '{indent}{symbol}\n'.format(
                         indent=0 * DEPTH_SIZE,
-                        root_level_symbols=self.root_level_symbols))
-                for symbol in self.symbol_list:
-                    file_out.write(
-                        '{indent}{symbol}\n'.format(
-                            indent=0 * DEPTH_SIZE,
-                            symbol=symbol))
-            if self.root_level_definition:
-                # Soring NXname for writting end of the definition attributes
-                nx_name = ''
-                for defs in self.root_level_definition:
-                    if 'NX' in defs and defs[-1] == ':':
-                        nx_name = defs
-                        continue
-                    file_out.write(
-                        '{indent}{defs}\n'.format(
-                            indent=0 * DEPTH_SIZE,
-                            defs=defs))
+                        symbol=symbol))
+        if self.root_level_definition:
+            # Soring NXname for writting end of the definition attributes
+            nx_name = ''
+            for defs in self.root_level_definition:
+                if 'NX' in defs and defs[-1] == ':':
+                    nx_name = defs
+                    continue
+                if defs == "category: application" or defs == "category: base":
+                    continue
                 file_out.write(
                     '{indent}{defs}\n'.format(
                         indent=0 * DEPTH_SIZE,
-                        defs=nx_name))
-            self.found_definition = False
+                        defs=defs))
+            file_out.write(
+                '{indent}{defs}\n'.format(
+                    indent=0 * DEPTH_SIZE,
+                    defs=nx_name))
+        self.found_definition = False
 
     def handle_exists(self, exists_dict, key, val):
         """
@@ -658,11 +666,10 @@ class Nxdl2yaml():
                                                    tag=node.tag,
                                                    file_out=file_out)
             # End of root level definition parsing. Print root-level definitions in file
-            if self.root_level_doc \
-                    and self.append_flag is True \
-                    and (depth in (0, 1)):
-                self.print_root_level_doc(file_out)
-            if self.found_definition is True and self.append_flag is True:
+            # if self.root_level_doc \
+            #         and (depth in (0, 1)):
+            #     self.print_root_level_doc(file_out)
+            if self.found_definition is True and self.root_level_doc:
                 self.print_root_level_info(depth, file_out)
             # End of print root-level definitions in file
             if tag in ('field', 'group') and depth != 0:

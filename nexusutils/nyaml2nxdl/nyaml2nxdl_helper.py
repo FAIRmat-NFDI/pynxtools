@@ -24,11 +24,11 @@ which details a hierarchy of data/metadata elements
 #
 
 
-# Yaml library does not except the keys (escape char and yaml separator)
+# Yaml library does not except the keys (escapechar "\t" and yaml separator ":")
 # So the corresponding value is to skip them and
+# and also carefull about this order
 ESCAPE_CHAR_DICT = {":": "\':\'",
-                    "\t": "    ",
-                    "\'\':\'\'": "\':\'"}
+                    "\t": "    "}
 
 
 def get_yaml_escape_char_dict():
