@@ -1,8 +1,6 @@
 ![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg)
 ![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pylint.yml/badge.svg)
-![](https://img.shields.io/badge/python-3.8-green.svg)
-![](https://img.shields.io/badge/python-3.9-green.svg)
-![](https://img.shields.io/badge/python-3.10-green.svg)
+![](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-green)
 
 `nexusustils` is a tool towards making your experimental data FAIR.
 It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
