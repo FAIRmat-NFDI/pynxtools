@@ -352,11 +352,6 @@ class Nxdl2yaml():
                 elif key in ['optional', 'recommended', 'required']:
                     tmp_dict['exists'] = key
                     has_opt_reco_requ = True
-        if has_min_max and has_opt_reco_requ:
-            raise ValueError("Optionality 'exists' can take only either from ['minOccurs',"
-                             " 'maxOccurs'] or from ['optional', 'recommended', 'required']"
-                             ". But not from both of the groups together. Please check in"
-                             " Groups or Fields.")
 
         depth_ = depth + 1
         for key, val in tmp_dict.items():
