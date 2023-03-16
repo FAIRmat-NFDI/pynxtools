@@ -6,8 +6,8 @@
 
 <br/>
 
-This is a software for developing ontologies and instances of ontologies with
-[NeXus](https://www.nexusformat.org/).
+`nexusustils` is a tool towards making your experimental data FAIR.
+It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
 
 # Installation
 
@@ -17,42 +17,34 @@ It is also recommended to use a fresh virtual environment to install all depende
 
 Install this package:
 
-```console
+```shell
 pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
 ```
 
 <br/>
 
-# Individual modules in this repo
+# Command line tools
 
-### [**nyaml2nxdl**](nexusutils/nyaml2nxdl/README.md)
+- [**nyaml2nxdl**](nexusutils/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
+- [**dataconverter**](nexusutils/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
+- [**read_nexus**](nexusutils/nexus/README.md): Outputs a debug log for a given NeXus file.
 
-### [**dataconverter**](nexusutils/dataconverter/README.md)
+<br />
 
-### [**read_nexus**](nexusutils/nexus/README.md)
+# Scope
 
-<br/>
+`nexusustils` is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
 
-# Details
-The software serves two aims.
+Additionally, the software is used in the research data management system NOMAD for
+making experimental data searchable and publishable.
+NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
+(NFDI).
 
-First, it offers users a tool with which users can
-create specific data files packaging together numerical data and metadata from
-experiments which can originate from technology partners and/or text file output
-from an electronic lab notebook (ELN).
-
-Second, the software is used in the German National Research Data Infrastructure
-(German NFDI) project FAIRmat, here specifically in the NOMAD OASIS research data
-management (RDM) system, to serve as a set of parsers which enable users of a NOMAD
-Oasis instance to create data and metadata entries from experiments so that NOMAD Oasis
-understands the specific logic and terminology of the scientific field.
-
-The software tools are located inside the module subdirectory [nexusutils](nexusutils/) and they are
-shipped with unit tests located in the subdirectory [tests](tests/).
-Some examples with real datasets are also provided in the subdirectory [examples](examples/)
-in which Jupyter Notebooks are guiding through the process of converting instrument raw
-data into the NeXus standard and then aloow the visualisation of the hierarchical contents
-of the generated NeXus file in JupyterLab.
+The software tools are located inside [`nexusutils`](nexusutils/) and they are
+shipped with unit tests located in [`tests`](tests/).
+Some examples with real datasets are provided in [`examples`](examples/).
+It guides you through the process of converting instrument raw
+data into the NeXus standard and visualising the files content.
 
 <br/>
 
@@ -60,7 +52,7 @@ of the generated NeXus file in JupyterLab.
 
 Install the package with its dependencies:
 
-```
+```shell
 git clone https://github.com/nomad-coe/nomad-parser-nexus.git --branch master --recursive nexusutils
 cd nexusutils
 git submodule sync --recursive
@@ -69,6 +61,7 @@ python -m pip install --upgrade pip
 python -m pip install -e .
 python -m pip install -e .[dev]
 ```
+
 <br/>
 
 # Test this software
@@ -76,7 +69,7 @@ python -m pip install -e .[dev]
 Especially relevant for developers, there exists a basic test framework written in
 [pytest](https://docs.pytest.org/en/stable/) which can be used as follows:
 
-```
+```shell
 python -m pytest -sv tests
 ```
 
