@@ -115,11 +115,11 @@ def get_nx_classes():
 Check each file in base_classes, applications, contributed_definitions.
 If its category attribute is 'base', then it is added to the list. """
     base_classes = sorted(glob(os.path.join(get_nexus_definitions_path(),
-                               'base_classes', '*.nxdl.xml')))
+                                            'base_classes', '*.nxdl.xml')))
     applications = sorted(glob(os.path.join(get_nexus_definitions_path(),
-                               'applications', '*.nxdl.xml')))
+                                            'applications', '*.nxdl.xml')))
     contributed = sorted(glob(os.path.join(get_nexus_definitions_path(),
-                              'contributed_definitions', '*.nxdl.xml')))
+                                           'contributed_definitions', '*.nxdl.xml')))
     nx_clss = []
     for nexus_file in base_classes + applications + contributed:
         root = get_xml_root(nexus_file)
@@ -221,7 +221,7 @@ def belongs_to_capital(params):
                     get_local_name_from_xml(child2) or get_node_name(child2) == act_htmlname:
                 continue
             # check if the name of another sibling fits better
-            name_any2 = "nameType" in child2.attrib.keys() and "any" == child2.attrib["nameType"]
+            name_any2 = "nameType" in child2.attrib.keys() and child2.attrib["nameType"] == "any"
             fit2 = get_nx_namefit(chk_name, get_node_name(child2), name_any2)
             if fit2 > fit:
                 return False
@@ -568,11 +568,11 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith('_units'):
             logger, elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl((logger,
-                                                                               elem,
-                                                                               nxdl_path,
-                                                                               doc,
-                                                                               attr,
-                                                                               req_str))
+                                                                                elem,
+                                                                                nxdl_path,
+                                                                                doc,
+                                                                                attr,
+                                                                                req_str))
         # default is allowed for groups
         elif attr == 'default' and not isinstance(hdf_node, h5py.Dataset):
             req_str = "<<RECOMMENDED>>"
@@ -705,6 +705,47 @@ def get_direct_child(nxdl_elem, html_name):
     return None
 
 
+def get_field_child(nxdl_elem, html_name):
+    """ returns the child of nxdl_elem which has a name
+        corresponding to the html documentation name html_name"""
+    data_child = None
+    for child in nxdl_elem:
+        if get_local_name_from_xml(child) != 'field':
+            continue
+        if get_node_name(child) == html_name:
+            data_child = child
+            break
+    return data_child
+
+
+def get_best_nxdata_child(nxdl_elem, hdf_node, hdf_name):
+    """ returns the child of an NXdata nxdl_elem which has a name
+        corresponding to the hdf_name"""
+    nxdata = hdf_node.parent
+    signals = []
+    if 'signal' in nxdata.attrs.keys():
+        signals.append(nxdata.attrs.get("signal"))
+    if "auxiliary_signals" in nxdata.attrs.keys():
+        for aux_signal in nxdata.attrs.get("auxiliary_signals"):
+            signals.append(aux_signal)
+    data_child = get_field_child(nxdl_elem, 'DATA')
+    data_error_child = get_field_child(nxdl_elem, 'FIELDNAME_errors')
+    for signal in signals:
+        if signal == hdf_name:
+            return (data_child, 100)
+        if hdf_name.endswith('_errors') and signal == hdf_name[:-7]:
+            return (data_error_child, 100)
+    axes = []
+    if "axes" in nxdata.attrs.keys():
+        for axis in nxdata.attrs.get("axes"):
+            axes.append(axis)
+    axis_child = get_field_child(nxdl_elem, 'AXISNAME')
+    for axis in axes:
+        if axis == hdf_name:
+            return (axis_child, 100)
+    return (None, 0)
+
+
 def get_best_child(nxdl_elem, hdf_node, hdf_name, hdf_class_name, nexus_type):
     """ returns the child of nxdl_elem which has a name
         corresponding to the the html documentation name html_name"""
@@ -713,51 +754,14 @@ def get_best_child(nxdl_elem, hdf_node, hdf_name, hdf_class_name, nexus_type):
     if 'name' in nxdl_elem.attrib.keys() and nxdl_elem.attrib['name'] == 'NXdata' and \
             hdf_node is not None and hdf_node.parent is not None and \
             hdf_node.parent.attrs.get('NX_class') == 'NXdata':
-        nxdata = hdf_node.parent
-        signals = []
-        if 'signal' in nxdata.attrs.keys():
-            signals.append(nxdata.attrs.get("signal"))
-        if "auxiliary_signals" in nxdata.attrs.keys():
-            for aux_signal in nxdata.attrs.get("auxiliary_signals"):
-                signals.append(aux_signal)
-        data_child = None
-        for child in nxdl_elem:
-            if get_local_name_from_xml(child) != 'field':
-                continue
-            if get_node_name(child) == 'DATA':
-                data_child = child
-                break
-        data_error_child = None
-        for child in nxdl_elem:
-            if get_local_name_from_xml(child) != 'field':
-                continue
-            if get_node_name(child) == 'FIELDNAME_errors':
-                data_error_child = child
-                break
-        for signal in signals:
-            if signal == hdf_name:
-                return (data_child, 100)
-            if hdf_name.endswith('_errors') and signal == hdf_name[:-7]:
-                return (data_error_child, 100)
-        axes = []
-        if "axes" in nxdata.attrs.keys():
-            for axis in nxdata.attrs.get("axes"):
-                axes.append(axis)
-        axis_child = None
-        for child in nxdl_elem:
-            if get_local_name_from_xml(child) != 'field':
-                continue
-            if get_node_name(child) == 'AXISNAME':
-                axis_child = child
-                break
-        for axis in axes:
-            if axis == hdf_name:
-                return (axis_child, 100)
+        (fnd_child, fit) = get_best_nxdata_child(nxdl_elem, hdf_node, hdf_name)
+        if fnd_child is not None:
+            return (fnd_child, fit)
     for child in nxdl_elem:
         fit = -2
         if get_local_name_from_xml(child) == nexus_type and \
                 (nexus_type != 'group' or get_nx_class(child) == hdf_class_name):
-            name_any = "nameType" in nxdl_elem.attrib.keys() and "any" == child.attrib["nameType"]
+            name_any = "nameType" in nxdl_elem.attrib.keys() and child.attrib["nameType"] == "any"
             fit = get_nx_namefit(hdf_name, get_node_name(child), name_any)
         if fit > bestfit:
             bestfit = fit
@@ -796,7 +800,11 @@ def helper_get_inherited_nodes(hdf_info, elist, pind, attr):
     bestfit = -1
     html_name = None
     for ind in range(len(elist) - 1, -1, -1):
-        newelem, fit = get_best_child(elist[ind], hdf_node, hdf_name, hdf_class_name, act_nexus_type)
+        newelem, fit = get_best_child(elist[ind],
+                                      hdf_node,
+                                      hdf_name,
+                                      hdf_class_name,
+                                      act_nexus_type)
         if fit >= bestfit and newelem is not None:
             html_name = get_node_name(newelem)
     return hdf_path, hdf_node, hdf_class_path, elist, pind, attr, html_name
