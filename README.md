@@ -7,8 +7,8 @@ It allows to develop ontologies and to create ontological instances based on the
 
 # Installation
 
-It is recommended to use Python 3.8 with a dedicated virtual environment for this package.
-Learn how to manage [Python versions](https://github.com/pyenv/pyenv) and
+It is recommended to use python 3.8 with a dedicated virtual environment for this package.
+Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
 Install this package with
@@ -47,7 +47,9 @@ data into the NeXus standard and visualising the files content.
 Install the package with its dependencies:
 
 ```shell
-git clone https://github.com/nomad-coe/nomad-parser-nexus.git --branch master --recursive nexusutils
+git clone https://github.com/nomad-coe/nomad-parser-nexus.git \\
+    --branch master \\
+    --recursive nexusutils
 cd nexusutils
 git submodule sync --recursive
 git submodule update --init --recursive --jobs=4
