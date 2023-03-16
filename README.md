@@ -7,15 +7,17 @@ It allows to develop ontologies and to create ontological instances based on the
 
 # Installation
 
-It is recommended to use Python version 3.8 with this package. You can learn how to manage Python versions [here](https://github.com/pyenv/pyenv).
+It is recommended to use Python 3.8 with a dedicated virtual environment for this package.
+Learn how to manage [Python versions](https://github.com/pyenv/pyenv) and
+[virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
-It is also recommended to use a fresh virtual environment to install all dependencies. You can learn more [here](https://realpython.com/python-virtual-environments-a-primer/).
-
-Install this package:
+Install this package with
 
 ```shell
 pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
 ```
+
+for the latest development version.
 
 # Scope
 
