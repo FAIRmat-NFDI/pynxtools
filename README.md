@@ -4,8 +4,6 @@
 ![](https://img.shields.io/badge/python-3.9-green.svg)
 ![](https://img.shields.io/badge/python-3.10-green.svg)
 
-<br/>
-
 `nexusustils` is a tool towards making your experimental data FAIR.
 It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
 
@@ -20,16 +18,6 @@ Install this package:
 ```shell
 pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
 ```
-
-<br/>
-
-# Command line tools
-
-- [**nyaml2nxdl**](nexusutils/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
-- [**dataconverter**](nexusutils/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](nexusutils/nexus/README.md): Outputs a debug log for a given NeXus file.
-
-<br />
 
 # Scope
 
@@ -46,9 +34,15 @@ Some examples with real datasets are provided in [`examples`](examples/).
 It guides you through the process of converting instrument raw
 data into the NeXus standard and visualising the files content.
 
-<br/>
+# Command line tools
 
-# I am a developer and want to explore or contribute
+- [**nyaml2nxdl**](nexusutils/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
+- [**dataconverter**](nexusutils/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
+- [**read_nexus**](nexusutils/nexus/README.md): Outputs a debug log for a given NeXus file.
+
+# Contributing
+
+## Development install
 
 Install the package with its dependencies:
 
@@ -59,12 +53,10 @@ git submodule sync --recursive
 git submodule update --init --recursive --jobs=4
 python -m pip install --upgrade pip
 python -m pip install -e .
-python -m pip install -e .[dev]
+python -m pip install -e ".[dev]"
 ```
 
-<br/>
-
-# Test this software
+## Test this software
 
 Especially relevant for developers, there exists a basic test framework written in
 [pytest](https://docs.pytest.org/en/stable/) which can be used as follows:
@@ -72,8 +64,6 @@ Especially relevant for developers, there exists a basic test framework written 
 ```shell
 python -m pytest -sv tests
 ```
-
-<br/>
 
 # Questions, suggestions?
 
@@ -84,8 +74,6 @@ on how to build on this work, or to get your parser included into NOMAD, you can
 - Use our forums at [matsci.org](https://matsci.org/c/nomad/32)
 - Write to [support@nomad-lab.eu](mailto:support@nomad-lab.eu)
 - Contact directly the lead developers of the individual parsers.
-
-<br/>
 
 ### Does this software require NOMAD or NOMAD OASIS ?
 
