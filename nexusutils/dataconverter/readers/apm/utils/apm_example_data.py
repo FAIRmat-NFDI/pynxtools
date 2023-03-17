@@ -29,7 +29,6 @@ import numpy as np
 
 from ase.lattice.cubic import FaceCenteredCubic
 from ase.data import atomic_numbers, atomic_masses, chemical_symbols
-from ase.data.isotopes import download_isotope_data
 
 from ifes_apt_tc_data_modeling.utils.utils \
     import create_isotope_vector, isotope_vector_to_nuclid_list, \
@@ -42,8 +41,6 @@ from nexusutils.dataconverter.readers.apm.utils.apm_versioning \
 
 from nexusutils.dataconverter.readers.apm.utils.apm_ranging_io \
     import add_unknown_iontype
-
-isotopes = download_isotope_data()
 
 # parameter affecting reconstructed positions and size
 CRYSTAL_ORIENTATION = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
