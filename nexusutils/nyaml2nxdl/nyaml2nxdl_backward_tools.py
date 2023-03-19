@@ -23,7 +23,9 @@
 import sys
 from typing import List
 
-from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import get_node_parent_info, get_yaml_escape_char_dict
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import (get_node_parent_info,
+                                                     get_yaml_escape_char_dict,
+                                                     cleaning_empty_lines)
 from nexusutils.dataconverter.helpers import remove_namespace_from_tag
 
 
@@ -149,9 +151,10 @@ class Nxdl2yaml():
         if "\n" in text:
             # To remove '\n' character as it will be added before text.
             text = text.split('\n')
+            text = cleaning_empty_lines(text)
             text_tmp = []
             yaml_indent_n = len((depth + 1) * DEPTH_SIZE)
-            # Find indent for empty space in the first line that have valid alphabat
+            # Find indentaion in the first valid line with alphabet
             tmp_i = 0
             while tmp_i != -1:
                 first_line_indent_n = 0
@@ -166,9 +169,6 @@ class Nxdl2yaml():
             # for indect_diff +ve all lines will move right the same amount
             indent_diff = yaml_indent_n - first_line_indent_n
             # CHeck for first line empty if not keep first line empty
-            empty_line = ''
-            if text[0].strip():
-                empty_line = '\n'
 
             for ind, line in enumerate(text):
                 line_indent_n = 0
@@ -185,12 +185,7 @@ class Nxdl2yaml():
                 else:
                     text_tmp.append(line_indent_n * ' ' + text[ind].strip())
 
-            for last_line in text_tmp[::-1]:
-                if last_line.strip():
-                    break
-                text_tmp.pop()
-
-            text = empty_line + '\n'.join(text_tmp)
+            text = '\n' + '\n'.join(text_tmp)
             if "}" in tag:
                 tag = remove_namespace_from_tag(tag)
             indent = depth * DEPTH_SIZE
@@ -660,10 +655,7 @@ class Nxdl2yaml():
                     self.handle_not_root_level_doc(depth, text=node.text,
                                                    tag=node.tag,
                                                    file_out=file_out)
-            # End of root level definition parsing. Print root-level definitions in file
-            # if self.root_level_doc \
-            #         and (depth in (0, 1)):
-            #     self.print_root_level_doc(file_out)
+
             if self.found_definition is True and self.root_level_doc:
                 self.print_root_level_info(depth, file_out)
             # End of print root-level definitions in file

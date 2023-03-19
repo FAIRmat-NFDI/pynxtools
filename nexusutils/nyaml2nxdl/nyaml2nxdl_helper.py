@@ -66,3 +66,22 @@ def get_node_parent_info(tree, node):
     parent_map = {c: p for p in tree.iter() for c in p}
     parent = parent_map[node]
     return parent, list(parent).index(node)
+
+
+def cleaning_empty_lines(line_list):
+
+    if not isinstance(line_list, list):
+        line_list = line_list.split('\n') if '\n' in line_list else ['']
+
+    # Clining up top empty lines
+    while True:
+        if line_list[0].strip():
+            break
+        line_list = line_list[1:]
+    # Clining bottom empty lines
+    while True:
+        if line_list[-1].strip():
+            break
+        line_list = line_list[0:-1]
+
+    return line_list
