@@ -36,7 +36,8 @@ from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
-from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import get_yaml_escape_char_reverter_dict
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import (get_yaml_escape_char_reverter_dict,
+                                                     cleaning_empty_lines)
 
 
 DOM_COMMENT = ("\n"
@@ -190,13 +191,12 @@ def format_nxdl_doc(string):
                                            break_long_words=False,
                                            replace_whitespace=False)
             string = '\n'.join(wrapped.wrap(string))
-        formatted_doc += f"{string}"
+        formatted_doc = '\n' + f"{string}"
     else:
-        formatted_doc += "\n"
-        formatted_doc += f"{string}"
-    if string.endswith("\n"):
-        pass
-    else:
+        text_lines = string.split('\n')
+        text_lines = cleaning_empty_lines(text_lines)
+        formatted_doc += "\n" + "\n".join(text_lines)
+    if not formatted_doc.endswith("\n"):
         formatted_doc += "\n"
     return formatted_doc
 
@@ -207,10 +207,11 @@ def check_for_mapping_char_other(text):
     Then replace it by ':'.
     """
     if not text:
-        print('#### : text:', text)
-    if str(text) == 'True':
+        text = ''
+    text = str(text)
+    if text == 'True':
         text = 'true'
-    if str(text) == 'False':
+    if text == 'False':
         text = 'false'
     # Some escape char is not valid in yaml libray which is written while writting
     # yaml file. In the time of writting nxdl revert to that escape char.
@@ -819,7 +820,7 @@ def recursive_build(obj, dct, verbose):
                 f'keyword_name:{keyword_name} keyword_type {keyword_type}\n')
 
         if keyword[-6:] == '(link)':
-            xml_handle_link(dct, obj, keyword, value)
+            xml_handle_link(dct, obj, keyword, value, verbose)
         elif keyword[-8:] == '(choice)':
             xml_handle_choice(dct, obj, keyword, value)
         elif keyword_type == '' and keyword_name == 'symbols':
