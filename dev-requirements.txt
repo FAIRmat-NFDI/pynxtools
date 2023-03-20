@@ -112,7 +112,7 @@ idna==3.4
     # via
     #   anyio
     #   requests
-ifes-apt-tc-data-modeling @ git+https://github.com/atomprobe-tc/ifes_apt_tc_data_modeling@589503e
+ifes-apt-tc-data-modeling==0.0.5
     # via nexusutils (pyproject.toml)
 imageio==2.22.1
     # via
