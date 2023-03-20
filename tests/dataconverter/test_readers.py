@@ -74,7 +74,7 @@ def test_if_readers_are_children_of_base_reader(reader):
 def test_has_correct_read_func(reader):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
-    if reader.__name__ not in ["BaseReader", "XPSReader"]:
+    if reader.__name__ not in ["BaseReader"]:
         assert hasattr(reader, "supported_nxdls")
 
         reader_name = get_reader_name_from_reader_object(reader)
