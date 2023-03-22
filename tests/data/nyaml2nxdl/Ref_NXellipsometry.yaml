@@ -1,3 +1,4 @@
+category: application
 doc: "draft application definition for ellipsometry measurements, including complex systems up to variable angle spectroscopic ellipsometry."
 symbols: 
   doc: "Variables used throughout the document, e.g. dimensions and important parameters"
@@ -7,13 +8,13 @@ symbols:
   N_angles: "Number of incident angles used"
   N_p1: "Number of first sample parameters scanned"
   N_time: "Number of time points measured"
-category: application
-NXellipsometry_base_draft:
+type: group
+NXellipsometry_base_draft(NXobject):
   (NXentry):
+    doc: "to be defined"
     exists: required 
     \@entry:
       doc: "NeXus convention is to use entry1, entry2, for analysis software to locate each entry."
-    doc: "to be defined"
     experiment_identifier(NX_CHAR):
       exists: required 
       doc: "Unique identifier of the experiment, such as a (globally persistent) unique identifier. The identifier is usually defined by the facility or principle investigator. The identifier enables to link experiments to e.g. proposals."

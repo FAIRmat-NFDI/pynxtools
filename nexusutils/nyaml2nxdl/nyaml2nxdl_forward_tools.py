@@ -240,9 +240,10 @@ def xml_handle_units(obj, value):
     obj.set('units', str(value))
 
 
+# pylint: disable=too-many-branches
 def xml_handle_exists(dct, obj, keyword, value):
-    """This function creates an 'exists' element instance, and appends it to an existing element
-
+    """
+    This function creates an 'exists' element instance, and appends it to an existing element
     """
 
     line_number = f'__line__{keyword}'
@@ -255,6 +256,12 @@ def xml_handle_exists(dct, obj, keyword, value):
         elif len(value) == 4 and value[0] == 'min' and value[2] == 'max':
             obj.set('minOccurs', str(value[1]))
             if str(value[3]) != 'infty':
+                obj.set('maxOccurs', str(value[3]))
+            else:
+                obj.set('maxOccurs', 'unbounded')
+        elif len(value) == 4 and value[0] == 'max' and value[2] == 'min':
+            obj.set('minOccurs', str(value[3]))
+            if str(value[1]) != 'infty':
                 obj.set('maxOccurs', str(value[3]))
             else:
                 obj.set('maxOccurs', 'unbounded')
@@ -395,8 +402,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
         recursive_build(dims, value, verbose=None)
 
 
-# pylint: disable=too-many-locals
-# pylint: disable=too-many-branches
+# pylint: disable=too-many-locals, too-many-arguments
 def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verbose=False):
     """
         Handling dim element.

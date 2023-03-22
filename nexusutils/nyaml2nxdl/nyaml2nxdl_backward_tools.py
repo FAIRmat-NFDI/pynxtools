@@ -127,13 +127,12 @@ class Nxdl2yaml():
         """
             Handle the documentation field found at root level.
         """
-        # pylint: disable=consider-using-f-string
-
         # tag = remove_namespace_from_tag(node.tag)
         text = node.text
         text = self.handle_not_root_level_doc(depth=0, text=text)
         self.root_level_doc = text
 
+    # pylint: disable=too-many-branches
     def handle_not_root_level_doc(self, depth, text, tag='doc', file_out=None):
         """
         Handle docs field along the yaml file. In this function we also tried to keep
@@ -147,7 +146,7 @@ class Nxdl2yaml():
             text = ""
         else:
             text = handle_mapping_char(text)
-        # pylint: disable=consider-using-f-string
+        # pylintxxxxx: disable=consider-using-f-string
         if "\n" in text:
             # To remove '\n' character as it will be added before text.
             text = text.split('\n')
@@ -165,12 +164,20 @@ class Nxdl2yaml():
                         tmp_i = -2
                         break
                 tmp_i = tmp_i + 1
+            # Taking care of doc like bellow:
+            # <doc>Text liness
+            # text continues</doc>
+            # So no indentaion at the staring or doc. So doc group will come along general
+            # alignment
+            if first_line_indent_n == 0:
+                first_line_indent_n = yaml_indent_n
+
             # for indent_diff -ve all lines will move left by the same ammout
             # for indect_diff +ve all lines will move right the same amount
             indent_diff = yaml_indent_n - first_line_indent_n
             # CHeck for first line empty if not keep first line empty
 
-            for ind, line in enumerate(text):
+            for _, line in enumerate(text):
                 line_indent_n = 0
                 # Collect first empty space without alphabate
                 for ch_ in line:
@@ -181,9 +188,9 @@ class Nxdl2yaml():
                 line_indent_n = line_indent_n + indent_diff
                 if line_indent_n < yaml_indent_n:
                     # if line still under yaml identation
-                    text_tmp.append(yaml_indent_n * ' ' + text[ind].strip())
+                    text_tmp.append(yaml_indent_n * ' ' + line.strip())
                 else:
-                    text_tmp.append(line_indent_n * ' ' + text[ind].strip())
+                    text_tmp.append(line_indent_n * ' ' + line.strip())
 
             text = '\n' + '\n'.join(text_tmp)
             if "}" in tag:
@@ -229,7 +236,7 @@ class Nxdl2yaml():
 
         has_categoty = False
         for def_line in self.root_level_definition:
-            if def_line == "category: application" or def_line == "category: base":
+            if def_line in ("category: application", "category: base"):
                 file_out.write(f"{def_line}\n")
                 has_categoty = True
 
@@ -253,7 +260,7 @@ class Nxdl2yaml():
                 if 'NX' in defs and defs[-1] == ':':
                     nx_name = defs
                     continue
-                if defs == "category: application" or defs == "category: base":
+                if defs in ("category: application", "category: base"):
                     continue
                 file_out.write(
                     '{indent}{defs}\n'.format(
@@ -337,16 +344,13 @@ class Nxdl2yaml():
             if key not in allowed_attr:
                 raise ValueError(f"An attribute ({key}) in 'field' or 'group' has been found "
                                  f"that is not allowed. The allowed attr is {allowed_attr}.")
-        has_min_max = False
-        has_opt_reco_requ = False
+
         if exists_dict:
             for key, val in exists_dict.items():
                 if key in ['minOccurs', 'maxOccurs']:
                     tmp_dict['exists'] = tmp_dict['exists'] + val
-                    has_min_max = True
                 elif key in ['optional', 'recommended', 'required']:
                     tmp_dict['exists'] = key
-                    has_opt_reco_requ = True
 
         depth_ = depth + 1
         for key, val in tmp_dict.items():

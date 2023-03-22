@@ -69,6 +69,9 @@ def get_node_parent_info(tree, node):
 
 
 def cleaning_empty_lines(line_list):
+    """
+        Cleaning up empty lines on top and bottom.
+    """
 
     if not isinstance(line_list, list):
         line_list = line_list.split('\n') if '\n' in line_list else ['']
