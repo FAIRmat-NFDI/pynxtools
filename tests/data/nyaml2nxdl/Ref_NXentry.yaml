@@ -1,8 +1,9 @@
+category: base
 doc: | 
   my nice doc string in root level.
   my nice doc string in root level, line 2.
+
 type: group
-category: base
 NXentry(NXobject):
   \@default:
     doc: | 
@@ -10,7 +11,7 @@ NXentry(NXobject):
   (NXdata):
     doc: | 
       my nice doc string.
-      my nice doc string, line 2.
+            my nice doc string, line 2.
   \@IDF_Version:
     doc: | 
       my nice single line doc string
@@ -23,12 +24,13 @@ NXentry(NXobject):
   experiment_identifier:
     doc: | 
       My not very proper doc string, it is supported though
-      my not very proper doc string, line2 
+         Point-1':'
+              my not very proper doc string, line2
       my not very proper doc string, line3
   experiment_description:
     doc: | 
       My single line doc string.
-  experiment_documentation(NXnote):
+  (NXnote)experiment_documentation:
     doc: | 
       My single line doc string, with doc tags in different lines
   collection_identifier:

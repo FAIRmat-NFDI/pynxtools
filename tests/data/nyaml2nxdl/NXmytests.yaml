@@ -1,3 +1,4 @@
+category: base
 doc: "This is a test file for checking the correct parsing of several fields and attributes in nxdl files"
 symbols: 
   doc: "symbolic array lengths to be coordinated between various fields"
@@ -6,7 +7,6 @@ symbols:
   n_mField: "number of values in applied magnetic field"
   n_pField: "number of values in applied pressure field"
   n_sField: "number of values in applied stress field"
-category: base
 NXbeam:
   distance(NX_FLOAT):
     unit: NX_LENGTH
