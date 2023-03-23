@@ -1,6 +1,8 @@
 # YAML to NXDL converter and NXDL to YAML converter
 
-**Tools purpose**: Offer a simple YAML-based schema and a XML-based schema to describe NeXus instances. These can be NeXus application definitions or classes 
+**NOTE: Please use python3.8 or above to run this converter**
+
+**Tools purpose**: Offer a simple YAML-based schema and a XML-based schema to describe NeXus instances. These can be NeXus application definitions or classes
 such as base or contributed classes. Users either create NeXus instances by writing a YAML file or a XML file which details a hierarchy of data/metadata elements.
 The forward (YAML -> NXDL.XML) and backward (NXDL.XML -> YAML) conversions are implemented.
 
@@ -34,16 +36,28 @@ Options:
 
 **Rule set**: From transcoding YAML files we need to follow several rules.
 * Named NeXus groups, which are instances of NeXus classes especially base or contributed classes. Creating (NXbeam) is a simple example of a request to define a group named according to NeXus default rules. mybeam1(NXbeam) or mybeam2(NXbeam) are examples how to create multiple named instances at the same hierarchy level.
-* Members of groups so-called fields. A simple example of a member is voltage. Here the datatype is implied automatically as the default NeXus NX_CHAR type.  By contrast, voltage(NX_FLOAT) can be used to instantiate a member of class which should be of NeXus type NX_FLOAT.
-* And attributes or either groups or fields. Names of attributes have to be preceeded by \@ to mark them as attributes.
+* Members of groups so-called fields or attributes. A simple example of a member is voltage. Here the datatype is implied automatically as the default NeXus NX_CHAR type.  By contrast, voltage(NX_FLOAT) can be used to instantiate a member of class which should be of NeXus type NX_FLOAT.
+* And attributes of either groups or fields. Names of attributes have to be preceeded by \@ to mark them as attributes.
+* Optionality: For all fields, groups and attributes in `application definitions` are `required` by default, except anything (`recommended` or `optional`) mentioned.
 
 **Special keywords**: Several keywords can be used as childs of groups, fields, and attributes to specify the members of these. Groups, fields and attributes are nodes of the XML tree.
-* *doc*: A human-readable description/docstring
-* *exists* A statement if an entry is more than optional. Options are recommended, required, [min, 1, max, infty] numbers like here 1 can be replaced by uint or infty to indicate no restriction on how frequently the entry can occur inside the NXDL schema at the same hierarchy level.
-* *link* Define links between nodes.
-* *units* A statement introducing NeXus-compliant NXDL units arguments, like NX_VOLTAGE
-* *dimensions* Details which dimensional arrays to expect
-* *enumeration* Python list of strings which are considered as recommended entries to choose from.
+* **doc**: A human-readable description/docstring
+* **exists** Options are recommended, required, [min, 1, max, infty] numbers like here 1 can be replaced by any uint, or infty to indicate no restriction on how frequently the entry can occur inside the NXDL schema at the same hierarchy level.
+* **link** Define links between nodes.
+* **units** A statement introducing NeXus-compliant NXDL units arguments, like NX_VOLTAGE
+* **dimensions** Details which dimensional arrays to expect
+* **enumeration** Python list of strings which are considered as recommended entries to choose from.
+* **dim_parameters** `dim` which is a child of `dimension` and the `dim` might have several attributes `ref`,
+`incr` including `index` and `value`. So while writting `yaml` file schema definition please following structure:
+```
+dimensions:
+   rank: integer value
+   dim: [[ind_1, val_1], [ind_2, val_2], ...]
+   dim_parameters:
+      ref: [ref_value_1, ref_value_2, ...]
+      incr: [incr_value_1, incr_value_2, ...]
+```
+Keep in mind that length of all the lists must be same.
 
 ## Next steps
 
