@@ -29,6 +29,7 @@ jobs:
           git submodule sync --recursive
           git submodule update --init --recursive --jobs=4
           python -m pip install --upgrade pip
+          python -m pip install coverage coverage-badge
       - name: Install package
         run: |
           python -m pip install --no-deps .
@@ -37,4 +38,9 @@ jobs:
           python -m pip install -r dev-requirements.txt
       - name: Test with pytest
         run: |
-          python -m pytest -sv --show-capture=no tests
+          coverage run -m pytest -sv --show-capture=no tests
+      - name: Submit to coveralls
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            coveralls --service=github
