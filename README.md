@@ -75,7 +75,7 @@ python -m pytest -sv tests
 To ask further questions, to make suggestions how we can improve these tools, to get advice
 on how to build on this work, or to get your parser included into NOMAD, you can:
 
-- Open an issue on the [nexus-parser GitHub project](https://github.com/nomad-coe/nomad-parser-nexus/issues)
+- Open an issue on the [nexusutils GitHub](https://github.com/nomad-coe/nomad-parser-nexus/issues)
 - Use our forums at [matsci.org](https://matsci.org/c/nomad/32)
 - Write to [support@nomad-lab.eu](mailto:support@nomad-lab.eu)
 - Contact directly the lead developers of the individual parsers.
