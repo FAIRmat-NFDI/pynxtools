@@ -1,0 +1,19 @@
+# What is NXellipsometry?
+
+The [NXellipsometry](https://fairmat-experimental.github.io/nexus-fairmat-proposal/1c3806dba40111f36a16d0205cc39a5b7d52ca2e/classes/contributed_definitions/NXellipsometry.html#nxellipsometry) application definition is a standard for converting ellipsometry data to make it FAIR.
+
+# How to use it?
+
+First you need to install nexusutuils, please follow the [install instructions](https://github.com/nomad-coe/nomad-parser-nexus) to set it up.
+This is an example to use the dataconvert with the `ellips` reader and the `NXellipsometry` application definition.
+Just execute
+
+```shell
+dataconverter --reader ellips --nxdl NXellipsometry --input-file eln_data.yaml --output SiO2onSi.nxs
+```
+
+in this directory.
+
+# Are there detailed examples?
+
+Yes, [here](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/ellips) you can find an exhaustive example how to use `nexusutils` for your ellipsometry research data pipeline.
