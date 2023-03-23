@@ -1,6 +1,6 @@
 # What is MPES?
 
-The [NXmpes](https://fairmat-experimental.github.io/nexus-fairmat-proposal/1c3806dba40111f36a16d0205cc39a5b7d52ca2e/classes/contributed_definitions/NXmpes.html#nxmpes) application definition is an umbrella definition for all photo-emission related techniques, such as ARPES or XPS.
+The [NXmpes](https://fairmat-experimental.github.io/nexus-fairmat-proposal/9636feecb79bb32b828b1a9804269573256d7696/classes/contributed_definitions/NXmpes.html#nxmpes) application definition is an umbrella definition for all photo-emission related techniques, such as ARPES or XPS.
 
 # How to use it?
 
