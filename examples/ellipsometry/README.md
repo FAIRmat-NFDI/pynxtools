@@ -1,6 +1,6 @@
 # What is NXellipsometry?
 
-The [NXellipsometry](https://fairmat-experimental.github.io/nexus-fairmat-proposal/1c3806dba40111f36a16d0205cc39a5b7d52ca2e/classes/contributed_definitions/NXellipsometry.html#nxellipsometry) application definition is a standard for converting ellipsometry data to make it FAIR.
+The [NXellipsometry](https://fairmat-experimental.github.io/nexus-fairmat-proposal/9636feecb79bb32b828b1a9804269573256d7696/ellipsometry-structure.html#ellipsometry) application definition is a standard for converting ellipsometry data to make it FAIR.
 
 # How to use it?
 
