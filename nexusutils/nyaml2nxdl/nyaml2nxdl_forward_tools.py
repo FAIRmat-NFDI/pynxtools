@@ -28,16 +28,11 @@ import os
 import textwrap
 
 import yaml
-from yaml.composer import Composer
-from yaml.constructor import Constructor
-
-from yaml.nodes import ScalarNode
-from yaml.resolver import BaseResolver
-from yaml.loader import Loader
 
 from nexusutils.nexus import nexus
 from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import (get_yaml_escape_char_reverter_dict,
-                                                     cleaning_empty_lines)
+                                                     nx_name_type_resolving,
+                                                     cleaning_empty_lines, LineLoader)
 
 
 DOM_COMMENT = ("\n"
@@ -68,37 +63,6 @@ NX_UNIT_IDNT = 'unit'
 DEPTH_SIZE = "    "
 NX_UNIT_TYPES = nexus.get_nx_units()
 
-# Attributes for definition attributs
-# Keep the order as it is NIAC branch
-
-
-class LineLoader(Loader):  # pylint: disable=too-many-ancestors
-    """
-    LineLoader parses a yaml into a python dictionary extended with extra items.
-    The new items have as keys __line__<yaml_keyword> and as values the yaml file line number
-    """
-
-    def compose_node(self, parent, index):
-        # the line number where the previous token has ended (plus empty lines)
-        node = Composer.compose_node(self, parent, index)
-        node.__line__ = self.line + 1
-        return node
-
-    def construct_mapping(self, node, deep=False):
-        node_pair_lst = node.value
-        node_pair_lst_for_appending = []
-
-        for key_node in node_pair_lst:
-            shadow_key_node = ScalarNode(
-                tag=BaseResolver.DEFAULT_SCALAR_TAG, value='__line__' + key_node[0].value)
-            shadow_value_node = ScalarNode(
-                tag=BaseResolver.DEFAULT_SCALAR_TAG, value=key_node[0].__line__)
-            node_pair_lst_for_appending.append(
-                (shadow_key_node, shadow_value_node))
-
-        node.value = node_pair_lst + node_pair_lst_for_appending
-        return Constructor.construct_mapping(self, node, deep=deep)
-
 
 def yml_reader(inputfile):
     """
@@ -118,27 +82,6 @@ def yml_reader_nolinetag(inputfile):
     with open(inputfile, 'r', encoding="utf-8") as stream:
         parsed_yaml = yaml.safe_load(stream)
     return parsed_yaml
-
-
-def nx_name_type_resolving(tmp):
-    """
-    extracts the eventually custom name {optional_string}
-    and type {nexus_type} from a YML section string.
-    YML section string syntax: optional_string(nexus_type)
-    """
-    if tmp.count('(') == 1 and tmp.count(')') == 1:
-        # we can safely assume that every valid YML key resolves
-        # either an nx_ (type, base, candidate) class contains only 1 '(' and ')'
-        index_start = tmp.index('(')
-        index_end = tmp.index(')', index_start + 1)
-        typ = tmp[index_start + 1:index_end]
-        nam = tmp.replace('(' + typ + ')', '')
-        return nam, typ
-
-    # or a name for a member
-    typ = ''
-    nam = tmp
-    return nam, typ
 
 
 def check_for_skiped_attributes(component, value, allowed_attr=None, verbose=False):
