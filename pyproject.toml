@@ -29,7 +29,7 @@ dependencies = [
     "ase>=3.19.0",
     "flatdict>=4.0.1",
     "hyperspy>=1.7.3",
-    "jupyterlab>=3.5.2,!=3.6.2",
+    "jupyterlab>=3.5.2,<3.6.0",
     "jupyterlab_h5web>=6.6.1",
     "hdfdict @ git+https://github.com/shabihsherjeel/hdfdict@f48a586",
     "ifes_apt_tc_data_modeling>=0.0.6",
