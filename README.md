@@ -31,17 +31,17 @@ making experimental data searchable and publishable.
 NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
 (NFDI).
 
-The software tools are located inside [`nexusutils`](nexusutils/) and they are
-shipped with unit tests located in [`tests`](tests/).
-Some examples with real datasets are provided in [`examples`](examples/).
+The software tools are located inside [`nexusutils`](https://github.com/nomad-coe/nomad-parser-nexus/tree/master/nexusutils) and they are
+shipped with unit tests located in [`tests`](https://github.com/nomad-coe/nomad-parser-nexus/tree/master/tests).
+Some examples with real datasets are provided in [`examples`](https://github.com/nomad-coe/nomad-parser-nexus/tree/master/examples).
 It guides you through the process of converting instrument raw
 data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**nyaml2nxdl**](nexusutils/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
-- [**dataconverter**](nexusutils/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](nexusutils/nexus/README.md): Outputs a debug log for a given NeXus file.
+- [**nyaml2nxdl**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/nexusutils/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
+- [**dataconverter**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/nexusutils/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
+- [**read_nexus**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/nexusutils/nexus/README.md): Outputs a debug log for a given NeXus file.
 
 # Contributing
 
