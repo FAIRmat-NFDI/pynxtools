@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <definition category="application" extends="NXobject" name="NXellipsometry_base_draft" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
     <doc>
@@ -52,22 +52,22 @@
         <doc>
              to be defined
         </doc>
-        <field minOccurs="1" name="experiment_identifier" type="NX_CHAR">
+        <field minOccurs="1" name="experiment_identifier">
             <doc>
                  Unique identifier of the experiment, such as a (globally persistent) unique identifier.
                  The identifier is usually defined by the facility or principle investigator. The
                  identifier enables to link experiments to e.g. proposals.
             </doc>
         </field>
-        <field minOccurs="1" name="experiment_description" type="NX_CHAR"/>
+        <field minOccurs="1" name="experiment_description"/>
         <field minOccurs="1" name="start_time" type="NX_DATE_TIME" units="NX_TIME"/>
-        <field name="program_name" type="NX_CHAR">
+        <field name="program_name">
             <doc>
                  Commercial or otherwise defined given name to the program that was used to generate the
                  results file(s) with measured data and metadata.
             </doc>
         </field>
-        <field name="program_version" type="NX_CHAR">
+        <field name="program_version">
             <doc>
                  Either version with build number, commit hash, or description of a (online) repository
                  where the source code of the program and build instructions can be found so that the
@@ -80,18 +80,18 @@
                  ISO 8601 time_zone offset from UTC.
             </doc>
         </field>
-        <field name="definition_local" type="NX_CHAR">
+        <field name="definition_local">
             <doc>
                  FAIRmat-specific candidate proposal for an application definition exemplifying
                  ellipsometry.
             </doc>
-            <attribute name="version" type="NX_CHAR">
+            <attribute name="version">
                 <doc>
                      Ideally version with build number are commit hash of the application definition. If not
                      available a free-text description.
                 </doc>
             </attribute>
-            <attribute name="url" type="NX_CHAR">
+            <attribute name="url">
                 <doc>
                      URL where to find further material (documentation, examples) relevant to the application
                      definition
@@ -103,29 +103,29 @@
                  Contact information of at least the user of the instrument or the principal investigator
                  who performed this experiment. Adding multiple users if relevant is recommended.
             </doc>
-            <field minOccurs="1" name="name" type="NX_CHAR"/>
-            <field name="affiliation" recommended="true" type="NX_CHAR">
+            <field minOccurs="1" name="name"/>
+            <field name="affiliation" recommended="true">
                 <doc>
                      Name of the affiliation of the user at the point in time when the experiment was
                      performed.
                 </doc>
             </field>
-            <field name="address" recommended="true" type="NX_CHAR"/>
-            <field minOccurs="1" name="email" type="NX_CHAR"/>
-            <field name="orcid" recommended="true" type="NX_CHAR"/>
-            <field name="telephone_number" recommended="true" type="NX_CHAR"/>
+            <field name="address" recommended="true"/>
+            <field minOccurs="1" name="email"/>
+            <field name="orcid" recommended="true"/>
+            <field name="telephone_number" recommended="true"/>
         </group>
         <group type="NXmonitor"/>
         <group minOccurs="1" name="instrument" type="NXinstrument">
             <doc>
                  General properties of the ellipsometry equipment
             </doc>
-            <field name="model" type="NX_CHAR">
+            <field name="model">
                 <doc>
                      The name of the instrument
                 </doc>
             </field>
-            <field name="company" type="NX_CHAR">
+            <field name="company">
                 <doc>
                      Name of the company
                 </doc>
@@ -135,17 +135,17 @@
                      ISO8601 date when the instrument was constructed
                 </doc>
             </field>
-            <field name="hardware_version" type="NX_CHAR">
+            <field name="hardware_version">
                 <doc>
                      The used version of the hardware if available
                 </doc>
             </field>
-            <field name="software_name" type="NX_CHAR">
+            <field name="software_name">
                 <doc>
                      Name (e.g. commercial) of the software that was used for the measurement
                 </doc>
             </field>
-            <field name="software_version" type="NX_CHAR">
+            <field name="software_version">
                 <doc>
                      Version and build number or commit hash of the software source code
                 </doc>
@@ -155,7 +155,7 @@
                      Specify the bandwidth of the light
                 </doc>
             </field>
-            <field name="light_source" type="NX_CHAR">
+            <field name="light_source">
                 <doc>
                      Specify the used light source
                 </doc>
@@ -175,7 +175,7 @@
                      Specify the angular spread caused by the focussing probes
                 </doc>
             </field>
-            <field name="ellipsometry_type" type="NX_CHAR">
+            <field name="ellipsometry_type">
                 <doc>
                      What type of ellipsometry was used? See Fujiwara Table 4.2.
                 </doc>
@@ -214,7 +214,7 @@
                          Arrays which provide the measured calibration data. Multiple sets are possible, e.g. Psi
                          and delta measured on an e.g. silicon calibration waver, and the straight-through data.
                     </doc>
-                    <field name="data" type="NX_CHAR">
+                    <field name="data">
                         <doc>
                              to be defined
                         </doc>
@@ -243,7 +243,7 @@
                              to be defined
                         </doc>
                     </field>
-                    <field name="calibration_sample" type="NX_CHAR">
+                    <field name="calibration_sample">
                         <doc>
                              Free-text to describe which sample was used for calibration, e.g. silicon wafer with 25 nm
                              thermal oxide layer
@@ -254,7 +254,7 @@
                     <doc>
                          the incident angle of the beam vs. the normal of the sample surface
                     </doc>
-                    <attribute name="target" type="NX_CHAR"/>
+                    <attribute name="target"/>
                     <dimensions rank="1">
                         <dim index="1" value="N_angles"/>
                     </dimensions>
@@ -301,7 +301,7 @@
                          to be defined
                     </doc>
                 </field>
-                <field name="calibration_sample" type="NX_CHAR">
+                <field name="calibration_sample">
                     <doc>
                          Which sample was used to calibrate the window effect?
                     </doc>
@@ -313,7 +313,7 @@
                      photomultiplier (PMT), a CCD in a camera, an array in a spectrometer. If so, the whole
                      unit goes in here.
                 </doc>
-                <field minOccurs="1" name="detector_type" type="NX_CHAR">
+                <field minOccurs="1" name="detector_type">
                     <doc>
                          What kind of detector module is used, e.g. CCD-spectrometer, CCD camera, PMT, photodiode,
                          etc.
@@ -329,7 +329,7 @@
                          Define how many rotations of the rotating element were taken into account for one spectra.
                     </doc>
                 </field>
-                <field name="rotating_element" type="NX_CHAR">
+                <field name="rotating_element">
                     <doc>
                          Define which elements rotates
                     </doc>
@@ -356,7 +356,7 @@
             </group>
         </group>
         <group minOccurs="1" name="sample" type="NXsample">
-            <field minOccurs="1" name="atom_types" type="NX_CHAR">
+            <field minOccurs="1" name="atom_types">
                 <doc>
                      Use Hill's system for listing elements of the periodic table which are inside or attached
                      to the surface of the specimen and thus relevant from a scientific point. The purpose of
@@ -364,8 +364,8 @@
                      interpret the sample history or other fields.
                 </doc>
             </field>
-            <field minOccurs="1" name="name" type="NX_CHAR"/>
-            <field minOccurs="1" name="sample_history" type="NX_CHAR">
+            <field minOccurs="1" name="name"/>
+            <field minOccurs="1" name="sample_history">
                 <doc>
                      Ideally, a reference to the location or a unique (globally persistent) identifier (e.g.)
                      of e.g. another file which gives as many as possible details of the material, its
@@ -382,14 +382,14 @@
                      group and is then measured in a different time zone.
                 </doc>
             </field>
-            <field name="description" type="NX_CHAR">
+            <field name="description">
                 <doc>
                      Specimen/sample preparation and previous processing steps is the history which the sample
                      carries when it is mounted in the electron microscope. Therefore, preparation details and
                      other points of this history should be stored in sample_history.
                 </doc>
             </field>
-            <field name="layer structure" type="NX_CHAR">
+            <field name="layer structure">
                 <doc>
                      Qualitative description of the layer structure for the sample in cases where a detailed
                      geometrical description is not available or desired/required.
@@ -417,7 +417,7 @@
                      this measurement; typically an index of 0 - N
                 </doc>
             </field>
-            <field minOccurs="1" name="data_type" type="NX_CHAR">
+            <field minOccurs="1" name="data_type">
                 <doc>
                      to be defined
                 </doc>
@@ -456,12 +456,12 @@
                     </dimensions>
                 </field>
             </group>
-            <field name="stage" type="NX_CHAR">
+            <field name="stage">
                 <doc>
                      A link to the already existing information about sample position.
                 </doc>
             </field>
-            <field name="angle_of_incidence" type="NX_CHAR">
+            <field name="angle_of_incidence">
                 <doc>
                      The incident angle of the beam vs. the normal of the sample surface.
                 </doc>
@@ -471,7 +471,7 @@
                      An array of relative time points if a time series was recorded
                 </doc>
             </field>
-            <field minOccurs="1" name="medium" type="NX_CHAR">
+            <field minOccurs="1" name="medium">
                 <doc>
                      Describe what was the medium above or around the sample. The common model is built up from
                      substrate to the medium on the other side. Both boundaries are assumed infinite in the
@@ -487,7 +487,7 @@
                     <dim index="2" value="2"/>
                 </dimensions>
             </field>
-            <field name="environment_conditions" type="NX_CHAR">
+            <field name="environment_conditions">
                 <doc>
                      External parameters that have influenced the sample.
                 </doc>
@@ -498,7 +498,7 @@
                      beyond incident angle and energy / wavelength.
                 </doc>
             </field>
-            <field name="varied_parameters" type="NX_CHAR">
+            <field name="varied_parameters">
                 <doc>
                      this is to indicate which parameter was changed. Its definition must exist below. The
                      specified variable has to be number_of_runs long, providing the parameters for each data
@@ -523,7 +523,7 @@
                      Describe if the spectra where taken under optical excitation
                 </doc>
             </field>
-            <field name="excitation_source" type="NX_CHAR">
+            <field name="excitation_source">
                 <doc>
                      Specify the source for the external excitation
                 </doc>
@@ -533,7 +533,7 @@
                      Specify the FWHM of the excitation
                 </doc>
             </field>
-            <field name="excitation_type" type="NX_CHAR">
+            <field name="excitation_type">
                 <doc>
                      CW or pulsed excitation
                 </doc>
