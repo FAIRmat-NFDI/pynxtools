@@ -21,11 +21,11 @@ import json
 import pickle
 import numpy as np
 import xarray
-import hdfdict
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.template import Template
 from nexusutils.dataconverter.helpers import ensure_all_required_fields_exist
+from nexusutils.dataconverter import hdfdict
 
 
 def parse_slice(slice_string):
@@ -46,7 +46,7 @@ def get_val_nested_keystring_from_dict(keystring, data):
         return keystring
 
     current_key = keystring.split("/")[0]
-    if isinstance(data[current_key], (dict, hdfdict.hdfdict.LazyHdfDict)):
+    if isinstance(data[current_key], (dict, hdfdict.LazyHdfDict)):
         return get_val_nested_keystring_from_dict(keystring[keystring.find("/") + 1:],
                                                   data[current_key])
     if isinstance(data[current_key], xarray.DataArray):
