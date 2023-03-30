@@ -49,7 +49,8 @@ class CommentCollector:
         self._next_comment_id = single_comment.cid
         with open(self.file, mode='r', encoding='UTF-8') as f:
             lines = f.readlines()
-
+            # Make an empty line for last comment if no enpty lines in original file
+            lines.append(' ')
             for line_num, line in enumerate(lines):
                 if single_comment.is_storing_single_comment():
                     # Line number in file starts from 1
@@ -114,7 +115,9 @@ class CommentCollector:
                     return True
         return False
 
+
 class Comment:
+
     def __init__(self,
                  comment_id: int = -1,
                  last_comment: 'Comment' = None) -> None:
@@ -278,11 +281,12 @@ class YAMLComment(Comment):
     # Class level variable. The main reason behind that to follow structure of
     # abstract class 'Comment'
     __yaml_dict__: dict = {}
-    __yaml_line_info__: dict = {}
+    __yaml_line_info: dict = {}
+    __comment_escape_char = {'--': '-\\-'}
 
     def __init__(self, comment_id: int = -1, last_comment: 'Comment' = None) -> None:
         super().__init__(comment_id, last_comment)
-        self.collect_yaml_line_info(self.__yaml_dict__, self.__yaml_line_info__)
+        self.collect_yaml_line_info(YAMLComment.__yaml_dict__, YAMLComment.__yaml_line_info)
 
     def process_each_line(self, text, line_num):
         """Take care of each line of text. Through which function the text
@@ -301,7 +305,7 @@ class YAMLComment(Comment):
                 ind = text.index(':')
                 line_key = '__line__' + ''.join(text[0:ind])
 
-            for l_num, l_key in self.__yaml_line_info__.items():
+            for l_num, l_key in self.__yaml_line_info.items():
                 if line_num == int(l_num) and line_key == l_key:
                     line_number = line_num
                     self.store_element(line_key, line_number)
@@ -310,6 +314,10 @@ class YAMLComment(Comment):
     def append_comment(self, text: str) -> None:
         """
         """
+        # check for escape char
+        for ecp_char, ecp_alt in YAMLComment.__comment_escape_char.items():
+            if ecp_char in text:
+                text = text.replace(ecp_char, ecp_alt)
         # Empty line after last line of comment
         if not text and self._comnt_start_found:
             self._comnt_end_found = True
@@ -327,7 +335,7 @@ class YAMLComment(Comment):
             self._comnt_start_found = True
             self._comnt_end_found = False
             self._comnt = '' if not self._comnt else self._comnt + '\n'
-            self._comnt = self._comnt + ''.join(text[2:])
+            self._comnt = self._comnt + ''.join(text[1:])
         # for any line after 'comment block' found
         elif self._comnt_start_found:
             self._comnt_start_found = False
@@ -349,7 +357,6 @@ class YAMLComment(Comment):
 
     def __contains__(self, line_key):
         """For Checking whether __line__NAME is in _elemt dict or not."""
-
         return line_key in self._elemt
 
     def get_element_location(self) -> Union[Tuple, None]:
