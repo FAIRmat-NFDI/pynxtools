@@ -1,8 +1,8 @@
 from typing import List, Type, Any, Tuple, Union
 import xml.etree.ElementTree as ET
-from nyaml2nxdl_helper import nx_name_type_resolving, LineLoader
+from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import nx_name_type_resolving, LineLoader
 
-__all__ = ['Comment', 'CommentCollector']
+__all__ = ['Comment', 'CommentCollector', 'XMLComment', 'YAMLComment']
 
 
 class CommentCollector:
@@ -11,7 +11,7 @@ class CommentCollector:
     """
 
     def __init__(self, input_file: str = None,
-                 loaded_file: object = None,
+                 loaded_obj: object = None,
                  file_ext: str = None):
         """
         """
@@ -19,8 +19,10 @@ class CommentCollector:
         self._next_comment = None
         self._next_comment_id = None
         self.file = input_file
+        self._comment_tracker = 0
+        self._comment_hash = {}
 
-        if self.file and not loaded_file:
+        if self.file and not loaded_obj:
             if self.file.split('.')[-1] == 'xml':
                 self.Comment = XMLComment
             if self.file.split('.')[-1] == 'yaml':
@@ -28,11 +30,15 @@ class CommentCollector:
                 with open(self.file, "r", encoding="utf-8") as plain_text_yaml:
                     loader = LineLoader(plain_text_yaml)
                     self.Comment.__yaml_dict__ = loader.get_single_data()
-
-        elif self.file and loaded_file:
+        elif self.file and loaded_obj:
             if self.file.split('.')[-1] == 'yaml':
                 self.Comment = YAMLComment
-                self.Comment.__yaml_dict__ = loaded_file
+                self.Comment.__yaml_dict__ = loaded_obj
+            else:
+                raise ValueError("Incorrect inputs for CommentCollector e.g. Wrong file extension.")
+
+        else:
+            raise ValueError("Incorrect inputs for CommentCollector")
 
     def extract_all_comment_blocks(self):
         """
@@ -54,10 +60,33 @@ class CommentCollector:
                     single_comment.process_each_line(line, (line_num + 1))
 
     def get_comment(self):
-        comment = self._next_comment
-        return comment.get_comment()
+        """
+            Return comment from comment_chain that must come earlier in order.
+        """
+        return self._comment_chain[self._comment_tracker]
 
-    def reload_next_comment(self):
+    def get_coment_by_line_info(self, comment_locs: tuple):
+        """
+            Get comment using line information.
+        """
+        if comment_locs in self._comment_hash:
+            return self._comment_hash[comment_locs]
+        else:
+            line_annot, line_loc = comment_locs
+            for cmnt in self._comment_chain:
+                if line_annot in cmnt:
+                    line_loc_ = cmnt.get_line_number(line_annot)
+                    if line_loc == line_loc_:
+                        self._comment_hash[comment_locs] = cmnt
+                        return cmnt
+
+    def reload_comment(self):
+        """
+        Update self._comment_tracker after done with last comment.
+        """
+        self._comment_tracker += 1
+
+    def walk_next_comment(self):
         comment = self._comment_chain[self._next_comment_id]
 
         if comment.cid != self._next_comment_id:
@@ -66,6 +95,24 @@ class CommentCollector:
         else:
             self._next_comment_text = comment
 
+    def __contains__(self, comment_locs: tuple):
+        """
+        Confirm wether the comment corresponds to key_line and line_loc
+            is exist or not.
+            comment_locs is equvalant to (line_annotation, line_loc) e.g.
+            (__line__doc and 35)
+        """
+        if not isinstance(comment_locs, tuple):
+            raise TypeError("Comment_locs should be 'tuple' containing line annotation "
+                            "(e.g.__line__doc) and line_loc (e.g. 35).")
+        line_annot, line_loc = comment_locs
+        for cmnt in self._comment_chain:
+            if line_annot in cmnt:
+                line_loc_ = cmnt.get_line_number(line_annot)
+                if line_loc == line_loc_:
+                    self._comment_hash[comment_locs] = cmnt
+                    return True
+        return False
 
 class Comment:
     def __init__(self,
@@ -223,6 +270,10 @@ class XMLComment(Comment):
 
 class YAMLComment(Comment):
     """
+
+    NOTE:
+     1. Do not delete any element form yaml dictionary (for loaded_obj. check: Comment_collector
+     class. because this loaded file has been exploited in nyaml2nxdl forward tools.)
     """
     # Class level variable. The main reason behind that to follow structure of
     # abstract class 'Comment'
@@ -282,16 +333,24 @@ class YAMLComment(Comment):
             self._comnt_start_found = False
             self._comnt_end_found = True
 
-    def store_element(self, line_key: str, line_number: str):
+    def store_element(self, line_key: str, line_number: int):
         """
         """
         self._elemt = {}
-        self._elemt[line_key] = line_number
+        self._elemt[line_key] = int(line_number)
         self._is_elemt_found = False
         self._is_elemt_stored = True
 
     def get_comment_text(self):
         return self._comnt_list
+
+    def get_line_number(self, line_key):
+        return self._elemt[line_key]
+
+    def __contains__(self, line_key):
+        """For Checking whether __line__NAME is in _elemt dict or not."""
+
+        return line_key in self._elemt
 
     def get_element_location(self) -> Union[Tuple, None]:
         """
