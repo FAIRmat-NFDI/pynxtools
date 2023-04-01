@@ -330,12 +330,12 @@ class YAMLComment(Comment):
             self._comnt_start_found = True
             self._comnt_end_found = False
             self._comnt = '' if not self._comnt else self._comnt + '\n'
-            self._comnt = self._comnt + ''.join(text[2:])
+            self._comnt = self._comnt + text  # remove ''.join(text[2:])
         elif '#' == text[0]:
             self._comnt_start_found = True
             self._comnt_end_found = False
             self._comnt = '' if not self._comnt else self._comnt + '\n'
-            self._comnt = self._comnt + ''.join(text[1:])
+            self._comnt = self._comnt + text    # TODO: remove''.join(text[1:])
         # for any line after 'comment block' found
         elif self._comnt_start_found:
             self._comnt_start_found = False
