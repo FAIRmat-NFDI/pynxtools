@@ -440,7 +440,10 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 
 def remove_namespace_from_tag(tag):
     """Helper function to remove the namespace from an XML tag."""
-    return tag.split("}")[-1]
+    if '}' in tag:
+        return tag.split("}")[-1]
+    else:
+        return tag
 
 
 def get_first_group(root):

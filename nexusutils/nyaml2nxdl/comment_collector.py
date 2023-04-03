@@ -50,11 +50,17 @@ class CommentCollector:
         with open(self.file, mode='r', encoding='UTF-8') as f:
             lines = f.readlines()
             # Make an empty line for last comment if no enpty lines in original file
-            lines.append(' ')
+            lines.append('')
             for line_num, line in enumerate(lines):
                 if single_comment.is_storing_single_comment():
-                    # Line number in file starts from 1
-                    single_comment.process_each_line(line, (line_num + 1))
+                    # If the last comment comes without post nxdl fields, groups and attributes
+                    if line_num < (len(lines) - 1):
+                        # Line number in file starts from 1
+                        single_comment.process_each_line(line, (line_num + 1))
+                    else:
+                        # For processing post comment
+                        single_comment.process_each_line(line + 'post_comment', (line_num + 1))
+                        self._comment_chain.append(single_comment)
                 else:
                     self._comment_chain.append(single_comment)
                     single_comment = self.Comment(last_comment=single_comment)
@@ -114,6 +120,13 @@ class CommentCollector:
                     self._comment_hash[comment_locs] = cmnt
                     return True
         return False
+
+    def __getitem__(self, ind):
+        """Get comment from  self_obj._comment_chain by index.
+        """
+        if ind >= len(self._comment_chain):
+            raise IndexError(f'Oops! Coment index {ind} in {__class__} is out of range!')
+        return self._comment_chain[ind]
 
 
 class Comment:
@@ -307,17 +320,31 @@ class YAMLComment(Comment):
 
             for l_num, l_key in self.__yaml_line_info.items():
                 if line_num == int(l_num) and line_key == l_key:
-                    line_number = line_num
-                    self.store_element(line_key, line_number)
+                    self.store_element(line_key, line_num)
                     break
+                # Comment comes very end of the file
+                elif text == 'post_comment' and line_key == '':
+                    line_key = '__line__post_comment'
+                    self.store_element(line_key, line_num)
+
+    def has_post_comment(self):
+        """
+        Ensure is this a post coment or not.
+        Post comment means the comment that come at the very end without having any
+        nxdl element(class, group, filed and attribute.)
+        """
+
+        if '__line__post_comment' in self._elemt.keys():
+            return True
+        return False
 
     def append_comment(self, text: str) -> None:
         """
+            Collects all the line of the same comment and
+        append them with that single comment.
         """
         # check for escape char
-        for ecp_char, ecp_alt in YAMLComment.__comment_escape_char.items():
-            if ecp_char in text:
-                text = text.replace(ecp_char, ecp_alt)
+        text = self.replace_scape_char(text)
         # Empty line after last line of comment
         if not text and self._comnt_start_found:
             self._comnt_end_found = True
@@ -330,12 +357,15 @@ class YAMLComment(Comment):
             self._comnt_start_found = True
             self._comnt_end_found = False
             self._comnt = '' if not self._comnt else self._comnt + '\n'
-            self._comnt = self._comnt + text  # remove ''.join(text[2:])
+            self._comnt = self._comnt + ''.join(text[2:])
         elif '#' == text[0]:
             self._comnt_start_found = True
             self._comnt_end_found = False
             self._comnt = '' if not self._comnt else self._comnt + '\n'
-            self._comnt = self._comnt + text    # TODO: remove''.join(text[1:])
+            self._comnt = self._comnt + ''.join(text[1:])
+        elif 'post_comment' == text:
+            self._comnt_end_found = True
+            self._comnt_start_found = False
         # for any line after 'comment block' found
         elif self._comnt_start_found:
             self._comnt_start_found = False
@@ -353,11 +383,28 @@ class YAMLComment(Comment):
         return self._comnt_list
 
     def get_line_number(self, line_key):
+        """
+        """
         return self._elemt[line_key]
+
+    def get_line_info(self):
+        """
+            Return line annotation and line number from a comment.
+        """
+        for line_anno, line_loc in self._elemt.items():
+            return line_anno, line_loc
 
     def __contains__(self, line_key):
         """For Checking whether __line__NAME is in _elemt dict or not."""
         return line_key in self._elemt
+
+    def replace_scape_char(self, text):
+        """Replace escape char according to __comment_escape_char dict
+        """
+        for ecp_char, ecp_alt in YAMLComment.__comment_escape_char.items():
+            if ecp_char in text:
+                text = text.replace(ecp_char, ecp_alt)
+        return text
 
     def get_element_location(self) -> Union[Tuple, None]:
         """

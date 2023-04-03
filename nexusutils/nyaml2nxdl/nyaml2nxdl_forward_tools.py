@@ -425,12 +425,14 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verb
             for kkkey, vvval in vvalue.items():
                 if '__line__' in kkkey:
                     continue
+                cmnt_number = f'__line__{kkkey}'
+                cmnt_loc = vvalue[cmnt_number]
                 if kkkey == 'doc' and dim_list:
                     # doc comes as list of doc
                     for i, dim in enumerate(dim_list):
                         if isinstance(vvval, list) and i < len(vvval):
                             tmp_val = vvval[i]
-                            xml_handle_doc(dim, vvval[i])
+                            xml_handle_doc(dim, vvval[i], cmnt_number, cmnt_loc)
                         # Check all the dim have doc if not skip
                         elif isinstance(vvval, list) and i >= len(vvval):
                             pass
@@ -582,6 +584,9 @@ def xml_handle_symbols(dct, obj, keyword, value: dict):
     xml_handle_comment(obj, comment_blocks, line_number, line_loc)
     syms = ET.SubElement(obj, 'symbols')
     if 'doc' in value.keys():
+        line_number = '__line__doc'
+        line_loc = value[line_number]
+        xml_handle_comment(syms, comment_blocks, line_number, line_loc)
         doctag = ET.SubElement(syms, 'doc')
         doctag.text = '\n' + textwrap.fill(value['doc'], width=70) + '\n'
     rm_key_list = []
@@ -678,7 +683,8 @@ def xml_handle_attributes(dct, obj, keyword, value, verbose):
                     rm_key_list.append(line_number)
                     xml_handle_comment(obj, comment_blocks, line_number, line_loc, elemt_obj)
                 elif attr == 'doc':
-                    xml_handle_doc(elemt_obj, format_nxdl_doc(attr_val))
+                    xml_handle_doc(elemt_obj, format_nxdl_doc(attr_val),
+                                   line_number, line_loc)
                     rm_key_list.append(attr)
                     rm_key_list.append(line_number)
                 else:
@@ -891,7 +897,7 @@ def recursive_build(obj, dct, verbose):
         elif keyword_name[0:2] == NX_ATTR_IDNT:  # check if obj qualifies
             xml_handle_attributes(dct, obj, keyword, value, verbose)
         elif keyword == 'doc':
-            xml_handle_doc(obj, value)
+            xml_handle_doc(obj, value, line_number, line_loc)
         elif keyword == NX_UNIT_IDNT:
             xml_handle_units(obj, value)
         elif keyword == 'enumeration':
@@ -955,7 +961,7 @@ def pretty_print_xml(xml_root, output_xml, def_comments=None):
 
 
 # pylint: disable=too-many-statements
-def nyaml2nxdl(input_file: str, verbose: bool):
+def nyaml2nxdl(input_file: str, out_file, verbose: bool):
     """
     Main of the nyaml2nxdl converter, creates XML tree, namespace and
     schema, definitions then evaluates a dictionary nest of groups recursively and
@@ -1061,7 +1067,13 @@ keyword has an invalid pattern, or is too short!'
     # Taking care if definition has empty content
     if yml_appdef[name_extends]:
         recursive_build(xml_root, yml_appdef[name_extends], verbose)
+    # Taking care of comments that comes at the end of file that is might no be intended for
+    # any nxdl elements.
+    if comment_blocks[-1].has_post_comment:
+        post_comment = comment_blocks[-1]
+        (lin_annot, line_loc) = post_comment.get_line_info()
+        xml_handle_comment(xml_root, comment_blocks, lin_annot, line_loc)
 
-    pretty_print_xml(xml_root, input_file.rsplit(".", 1)[0] + '.nxdl.xml', def_cmnt_text)
+    pretty_print_xml(xml_root, out_file, def_cmnt_text)
     if verbose:
         sys.stdout.write('Parsed YAML to NXDL successfully\n')

@@ -97,9 +97,6 @@ def handle_mapping_char(text):
         if esc_key in text:
             text = text.replace(esc_key, val)
     return text
-# TODO: check comments in Comment collector that the comment has '\n' at the end of line.
-# if not add '\n'. DO not clean comment by removing '#'.
-# TODO Also ehech each comment starts with '\n' or not
 
 
 class Nxdl2yaml():
@@ -124,20 +121,20 @@ class Nxdl2yaml():
         self.is_last_element_comment = False
         self.include_comment = True
         self.pi_comments = None
-        # Here is how root_level_comments organised for storing comments
+        # NOTE: Here is how root_level_comments organised for storing comments
         # root_level_comment= {'root_doc': comment,
         #                      'symbols': comment,
-        #                      'symbols_doc': comment, # TODO remove symbol_doc key and its functionality
+        #       The 'symbol_doc_comments' list is for comments from all 'symbol doc'
+        #                      'symbol_doc_comments' : [comments]
         #                      'symbol_list': [symbols],
+        #       The 'symbol_comments' contains comments for 'symbols doc' and all 'symbol'
         #                      'symbol_comments': [comments]}
         self.root_level_comment = {}
-        # TODO: Remove indent value from writeout() addd dept instead
 
-    def print_yml(self, input_file, verbose):
+    def print_yml(self, input_file, output_yml, verbose):
         """
             Parse an XML file provided as input and print a YML file
         """
-        output_yml = input_file[:-9] + '_parsed.yaml'
         if os.path.isfile(output_yml):
             os.remove(output_yml)
 
@@ -159,23 +156,25 @@ class Nxdl2yaml():
         )
         depth += 1
         last_comment = ''
-        # TODO: remove symbol_list = []
         sbl_doc_cmnt_list = []
         # Comments that come above symbol tag
         symbol_cmnt_list = []
         for child in list(node):
             tag = remove_namespace_from_tag(child.tag)
             if tag == CMNT_TAG and self.include_comment:
+                print('### ', child.text)
                 last_comment = self.comvert_to_ymal_comment(depth * DEPTH_SIZE, child.text)
             if tag == 'doc':
                 symbol_cmnt_list.append(last_comment)
-                # self.strore_root_level_comments('symbols_doc', last_comment)
+                # The bellow line is for handling lenth of 'symbol_comments' and
+                # 'symbol_doc_comments'. Otherwise print_root_level_info() gets inconsistency
+                # over for the loop while writting comment on file
+                sbl_doc_cmnt_list.append('')
                 last_comment == ''
                 self.symbol_list.append(self.handle_not_root_level_doc(depth,
                                                                        text=child.text))
             elif tag == 'symbol':
                 # place holder is symbol name
-                # TODO: remove symbol_list.append(child.attrib['name'])
                 symbol_cmnt_list.append(last_comment)
                 last_comment = ''
                 if 'doc' in child.attrib:
@@ -195,7 +194,6 @@ class Nxdl2yaml():
                                 self.handle_not_root_level_doc(depth,
                                                                tag=child.attrib['name'],
                                                                text=symbol_doc.text))
-        # TODO: include 'symbol_doc_comments' where symblo comments hasv benn implemented
         self.strore_root_level_comments('symbol_doc_comments', sbl_doc_cmnt_list)
         self.strore_root_level_comments('symbol_comments', symbol_cmnt_list)
 
@@ -325,7 +323,7 @@ class Nxdl2yaml():
         return doc_str
 
     def write_out(self, indent, text, file_out):
-        line_string = f"{indent}{text}\n"
+        line_string = f"{indent}{text.rstrip()}\n"
         file_out.write(line_string)
 
     def print_root_level_doc(self, file_out):
@@ -340,13 +338,8 @@ class Nxdl2yaml():
             text = self.root_level_comment['root_doc']
             self.write_out(indent, text, file_out)
 
-        text = self.root_level_doc + '\n'
+        text = self.root_level_doc
         self.write_out(indent, text, file_out)
-        # TODO: remove
-        # file_out.write(
-        #     '{indent}{root_level_doc}\n'.format(
-        #         indent=0 * DEPTH_SIZE,
-        #         root_level_doc=self.root_level_doc))
         self.root_level_doc = ''
 
     def comvert_to_ymal_comment(self, indent, text):
@@ -358,10 +351,11 @@ class Nxdl2yaml():
         for line in lines:
             line = line.strip()
             if line and line[0] != '#':
-                line = indent + '#' + line
+                line = indent + '# ' + line
+                mod_lines.append(line)
             elif line:
                 line = indent + line
-            mod_lines.append(line)
+                mod_lines.append(line)
         # The starting '\n' to keep multiple comments separate
         return '\n' + '\n'.join(mod_lines)
 
@@ -377,36 +371,40 @@ class Nxdl2yaml():
         has_categoty = False
         for def_line in self.root_level_definition:
             if def_line in ("category: application", "category: base"):
-                file_out.write(f"{def_line}\n")
+                self.write_out(indent=0 * DEPTH_SIZE, text=def_line, file_out=file_out)
+                # file_out.write(f"{def_line}\n")
                 has_categoty = True
 
         if not has_categoty:
             raise ValueError("Definition dose not get any category from 'base or application'.")
-
         self.print_root_level_doc(file_out)
-        if 'symbol' in self.root_level_comment and self.root_level_comment['symbols'] != '':
+        if 'symbols' in self.root_level_comment and self.root_level_comment['symbols'] != '':
             indent = depth * DEPTH_SIZE
             text = self.root_level_comment['symbols']
             self.write_out(indent, text, file_out)
         if self.root_level_symbols:
-            file_out.write(
-                '{indent}{root_level_symbols}\n'.format(
-                    indent=0 * DEPTH_SIZE,
-                    root_level_symbols=self.root_level_symbols))
+            self.write_out(indent=0 * DEPTH_SIZE, text=self.root_level_symbols, file_out=file_out)
+            # symbol_list include 'symbols doc', and all 'symbol'
             for ind, symbol in enumerate(self.symbol_list):
+                # Taking care of comments that come on to of 'symbols doc' and 'symbol'
                 if 'symbol_comments' in self.root_level_comment and \
                         self.root_level_comment['symbol_comments'][ind] != '':
                     indent = depth * DEPTH_SIZE
                     self.write_out(indent,
                                    self.root_level_comment['symbol_comments'][ind], file_out)
-                file_out.write(
-                    '{indent}{symbol}\n'.format(
-                        indent=0 * DEPTH_SIZE,
-                        symbol=symbol))
+                if 'symbol_doc_comments' in self.root_level_comment and \
+                        self.root_level_comment['symbol_doc_comments'][ind] != '':
+
+                    indent = depth * DEPTH_SIZE
+                    self.write_out(indent,
+                                   self.root_level_comment['symbol_doc_comments'][ind], file_out)
+
+                self.write_out(indent=(0 * DEPTH_SIZE), text=symbol, file_out=file_out)
         if len(self.pi_comments) > 1:
             indent = DEPTH_SIZE * depth
+            # The first comment is top level copy-right doc string
             for comment in self.pi_comments[1:]:
-                self.write_out(indent, comment, file_out)
+                self.write_out(indent, self.comvert_to_ymal_comment(indent, comment), file_out)
         if self.root_level_definition:
             # Soring NXname for writting end of the definition attributes
             nx_name = ''
@@ -416,14 +414,8 @@ class Nxdl2yaml():
                     continue
                 if defs in ("category: application", "category: base"):
                     continue
-                file_out.write(
-                    '{indent}{defs}\n'.format(
-                        indent=0 * DEPTH_SIZE,
-                        defs=defs))
-            file_out.write(
-                '{indent}{defs}\n'.format(
-                    indent=0 * DEPTH_SIZE,
-                    defs=nx_name))
+                self.write_out(indent=0 * DEPTH_SIZE, text=defs, file_out=file_out)
+            self.write_out(indent=0 * DEPTH_SIZE, text=nx_name, file_out=file_out)
         self.found_definition = False
 
     def handle_exists(self, exists_dict, key, val):
@@ -645,10 +637,6 @@ class Nxdl2yaml():
                 if tag == CMNT_TAG and self.include_comment:
                     self.handel_comment(itm_depth + 1, child, file_out)
         else:
-            # TODO: remove
-            # file_out.write('{indent}{tag}:'.format(
-            #     indent=depth * DEPTH_SIZE,
-            #     tag=node.tag.split("}", 1)[1]))
             enum_list = ''
             remove_nodes = []
             for item_child in list(node):
@@ -667,10 +655,6 @@ class Nxdl2yaml():
                     indent=depth * DEPTH_SIZE,
                     tag=remove_namespace_from_tag(node.tag),
                     enum_list=enum_list[:-2] or ''))
-# # TODO: After test remove this paragraph
-#             file_out.write(
-#                 ' [{enum_list}]\n'.format(
-#                     enum_list=enum_list[:-2] or ''))
 
     def handle_attributes(self, depth, node, file_out):
         """Handle the attributes parsed from the xml file"""
@@ -823,7 +807,6 @@ class Nxdl2yaml():
         """
         tree = xml_tree['tree']
         node = xml_tree['node']
-        last_comment = ''
         if verbose:
             sys.stdout.write(f'Node tag: {remove_namespace_from_tag(node.tag)}\n')
             sys.stdout.write(f'Attributes: {node.attrib}\n')
@@ -833,22 +816,29 @@ class Nxdl2yaml():
                 self.found_definition = True
                 self.handle_definition(node)
                 # Taking care of root level doc and symbols
-                remove_nodes = []
+                remove_cmnt_n = None
+                last_comment = ''
                 for child in list(node):
                     tag_tmp = remove_namespace_from_tag(child.tag)
                     if tag_tmp == CMNT_TAG and self.include_comment:
                         last_comment = self.comvert_to_ymal_comment(depth * DEPTH_SIZE, child.text)
-                        node.remove(child)
+                        remove_cmnt_n = child
                     if tag_tmp == 'doc':
                         self.strore_root_level_comments('root_doc', last_comment)
                         last_comment = ''
                         self.handle_root_level_doc(child)
                         node.remove(child)
+                        if remove_cmnt_n is not None:
+                            node.remove(remove_cmnt_n)
+                            remove_cmnt_n = None
                     if tag_tmp == 'symbols':
                         self.strore_root_level_comments('symbols', last_comment)
                         last_comment = ''
                         self.handle_symbols(depth, child)
                         node.remove(child)
+                        if remove_cmnt_n is not None:
+                            node.remove(remove_cmnt_n)
+                            remove_cmnt_n = None
 
             if tag == ('doc') and depth != 1:
                 parent = get_node_parent_info(tree, node)[0]

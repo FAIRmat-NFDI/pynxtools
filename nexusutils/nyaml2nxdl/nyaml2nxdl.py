@@ -23,8 +23,8 @@ which details a hierarchy of data/metadata elements
 # limitations under the License.
 #
 import os
-
 import xml.etree.ElementTree as ET
+
 import click
 
 from nexusutils.nyaml2nxdl.nyaml2nxdl_forward_tools import nyaml2nxdl, pretty_print_xml
@@ -33,20 +33,6 @@ from nexusutils.nyaml2nxdl.nyaml2nxdl_backward_tools import (Nxdl2yaml,
 
 
 DEPTH_SIZE = "    "
-
-
-def print_yml(input_file, verbose):
-    """
-        Parse an XML file provided as input and print a YML file
-    """
-    output_yml = input_file[:-9] + '_parsed.yaml'
-    if os.path.isfile(output_yml):
-        os.remove(output_yml)
-    my_file = Nxdl2yaml([], [])
-    depth = 0
-    tree = ET.parse(input_file)
-    xml_tree = {'tree': tree.getroot(), 'node': tree.getroot()}
-    my_file.xmlparse(output_yml, xml_tree, depth, verbose)
 
 
 def append_yml(input_file, append, verbose):
@@ -106,6 +92,18 @@ and print both an XML and YML file of the extended base class.
     os.remove('tmp_parsed.nxdl.xml')
 
 
+def split_name_and_extension(file_name):
+    """
+    Split file name into extension and rest of the file name.
+    return file raw nam and extension
+    """
+    parts = file_name.rsplit('.', 2)
+    if len(parts) == 2:
+        return parts[0], parts[1]
+    if len(parts) == 3:
+        return parts[0], '.'.join(parts[1:])
+
+
 @click.command()
 @click.option(
     '--input-file',
@@ -119,31 +117,59 @@ a YAML or XML file from, respectively.'
 of an existing base class'
 )
 @click.option(
+    '--check-consistency',
+    is_flag=True,
+    default=False,
+    help=('Check wether yaml or nxdl has followed general rules of scema or not'
+          'check whether your comment in the right place or not. The option render an '
+          'output file of the same extension(*_consistency.yaml or *_consistency.nxdl.xml)')
+)
+@click.option(
     '--verbose',
     is_flag=True,
     default=False,
     help='Print in standard output keywords and value types to help \
 possible issues in yaml files'
 )
-def launch_tool(input_file, verbose, append):
+def launch_tool(input_file, verbose, append, check_consistency):
     """
         Main function that distiguishes the input file format and launches the tools.
     """
-    if input_file.rsplit(".", 1)[1] in ('yml', 'yaml'):
-        nyaml2nxdl(input_file, verbose)
+    if os.path.isfile(input_file):
+        raw_name, ext = split_name_and_extension(input_file)
+    else:
+        raise ValueError("Need a valid input file.")
+
+    if ext == 'yaml':
+        xml_out_file = raw_name + '.nxdl.xml'
+        nyaml2nxdl(input_file, xml_out_file, verbose)
         if append:
-            append_yml(input_file.rsplit(".", 1)[0] + '.nxdl.xml',
+            append_yml(raw_name + '.nxdl.xml',
                        append,
                        verbose
                        )
         else:
             pass
-    elif input_file.rsplit(".", 2)[1] == 'nxdl':
+        # For consistency running
+        if check_consistency:
+            yaml_out_file = raw_name + '_consistency.' + ext
+            converter = Nxdl2yaml([], [])
+            converter.print_yml(xml_out_file, yaml_out_file, verbose)
+            os.remove(xml_out_file)
+    elif ext == 'nxdl.xml':
         if not append:
-            print_yml(input_file, verbose)
+            yaml_out_file = raw_name + '_parsed' + '.yaml'
+            converter = Nxdl2yaml([], [])
+            converter.print_yml(input_file, yaml_out_file, verbose)
         else:
             append_yml(input_file, append, verbose)
-
+        # Taking care of consistency running
+        if check_consistency:
+            xml_out_file = raw_name + '_consistency.' + ext
+            nyaml2nxdl(yaml_out_file, xml_out_file, verbose)
+            os.remove(yaml_out_file)
+    else:
+        raise ValueError("Provide correct file with extension '.yaml or '.nxdl.xml")
 
 if __name__ == '__main__':
     launch_tool().parse()  # pylint: disable=no-value-for-parameter
