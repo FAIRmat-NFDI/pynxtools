@@ -1,4 +1,4 @@
-from typing import List, Type, Any, Tuple, Union
+from typing import List, Type, Any, Tuple, Union, Self
 import xml.etree.ElementTree as ET
 from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import nx_name_type_resolving, LineLoader
 
@@ -127,6 +127,11 @@ class CommentCollector:
         if ind >= len(self._comment_chain):
             raise IndexError(f'Oops! Coment index {ind} in {__class__} is out of range!')
         return self._comment_chain[ind]
+
+    def __iter__(self):
+        """get_comment_ieratively
+        """
+        return iter(self._comment_chain)
 
 
 class Comment:
@@ -394,10 +399,6 @@ class YAMLComment(Comment):
         for line_anno, line_loc in self._elemt.items():
             return line_anno, line_loc
 
-    def __contains__(self, line_key):
-        """For Checking whether __line__NAME is in _elemt dict or not."""
-        return line_key in self._elemt
-
     def replace_scape_char(self, text):
         """Replace escape char according to __comment_escape_char dict
         """
@@ -429,6 +430,23 @@ class YAMLComment(Comment):
         for _, val in yaml_dict.items():
             if isinstance(val, dict):
                 self.collect_yaml_line_info(val, line_info_dict)
+
+    def __contains__(self, line_key):
+        """For Checking whether __line__NAME is in _elemt dict or not."""
+        return line_key in self._elemt
+
+    def __eq__(self, comment_obj: Self) -> bool:
+        """Check the self has same value as right comment.
+        """
+        if len(self._comnt_list) != len(comment_obj._comnt_list):
+            return False
+        for left_cmnt, right_cmnt in zip(self._comnt_list, comment_obj._comnt_list):
+            left_cmnt = left_cmnt.split('\n')
+            right_cmnt = right_cmnt.split('\n')
+            for left_line, right_line in zip(left_cmnt, right_cmnt):
+                if left_line.strip() != right_line.strip():
+                    return False
+        return True
 
 
 if __name__ == "__main__":

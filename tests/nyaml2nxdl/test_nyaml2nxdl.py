@@ -287,3 +287,36 @@ has not the same root entries!!'
     os.remove('tests/data/nyaml2nxdl/Ref_NXellipsometry_parsed.yaml')
     os.remove('tests/data/nyaml2nxdl/Ref_NXellipsometry.nxdl.xml')
     sys.stdout.write('Test on yml -> xml -> yml okay.\n')
+
+
+def test_yaml_comment_parsing():
+    """Test comments parsing from yaml. Convert 'yaml' input file to '.nxdl.xml' and
+    '.nxdl.xml' to '.yaml'
+    """
+    from nexusutils.nyaml2nxdl.comment_collector import CommentCollector, Comment
+    from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import LineLoader
+
+    ref_yml_file = 'tests/data/nyaml2nxdl/Ref_NXcomment.yaml'
+    test_yml_file = 'tests/data/nyaml2nxdl/Ref_NXcomment_consistency.yaml'
+
+    result = CliRunner().invoke(nyml2nxdl.launch_tool,
+                                ['--input-file', ref_yml_file,
+                                 '--check-cosistency'])
+    assert result.exit_code == 0, (f'Exception: {result.exception}, \nExecution Info:'
+                                   '{result.exc_info}')
+    with open(ref_yml_file, 'r', encoding='utf-8') as ref_yml:
+        loader = LineLoader(ref_yml)
+        ref_loaded_yaml = loader.get_single_data()
+    ref_comment_blocks = CommentCollector(ref_yml_file, ref_loaded_yaml)
+    ref_comment_blocks.extract_all_comment_blocks()
+
+    with open(test_yml_file, 'r', encoding='utf-8') as test_yml:
+        loader = LineLoader(test_yml)
+        test_loaded_yaml = loader.get_single_data()
+    test_comment_blocks = CommentCollector(ref_yml_file, test_loaded_yaml)
+    test_comment_blocks.extract_all_comment_blocks()
+
+    for ref_cmnt, test_cmnt in zip(ref_comment_blocks, test_comment_blocks):
+        assert ref_cmnt == test_cmnt
+
+    os.remove(test_yml_file)
