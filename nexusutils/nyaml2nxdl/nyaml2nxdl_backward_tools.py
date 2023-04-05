@@ -316,7 +316,7 @@ class Nxdl2yaml():
                 tag = remove_namespace_from_tag(tag)
             indent = depth * DEPTH_SIZE
 
-        doc_str = f"{indent}{tag}: | {text}\n"
+        doc_str = f"{indent}{tag}: |{text}\n"
         if file_out:
             file_out.write(doc_str)
             return None
@@ -543,6 +543,7 @@ class Nxdl2yaml():
 
         dim_index_value = ''
         dim_other_parts = {}
+        dim_cmnt_node = []
         # taking care of dim and doc childs of dimension
         for child in list(node):
             tag = remove_namespace_from_tag(child.tag)
@@ -574,7 +575,16 @@ class Nxdl2yaml():
                         if attr not in dim_other_parts:
                             dim_other_parts[attr] = []
                         dim_other_parts[attr].append(value)
+            if tag == CMNT_TAG and self.include_comment:
+                # Store and remove node so that comment nodes from dim node so that it does not call in
+                # xmlparser function
+                dim_cmnt_node.append(child)
+                node.remove(child)
 
+        # All 'dim' element comments on top of 'dim' yaml key
+        if dim_cmnt_node:
+            for nd in dim_cmnt_node:
+                self.handel_comment(depth + 1, nd, file_out)
         # index and value attributes of dim elements
         file_out.write(
             '{indent}dim: [{value}]\n'.format(

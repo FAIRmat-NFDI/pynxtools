@@ -1,4 +1,7 @@
-from typing import List, Type, Any, Tuple, Union, Self
+"""
+"""
+
+from typing import List, Type, Any, Tuple, Union
 import xml.etree.ElementTree as ET
 from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import nx_name_type_resolving, LineLoader
 
@@ -435,7 +438,7 @@ class YAMLComment(Comment):
         """For Checking whether __line__NAME is in _elemt dict or not."""
         return line_key in self._elemt
 
-    def __eq__(self, comment_obj: Self) -> bool:
+    def __eq__(self, comment_obj) -> bool:
         """Check the self has same value as right comment.
         """
         if len(self._comnt_list) != len(comment_obj._comnt_list):

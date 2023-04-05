@@ -1,4 +1,3 @@
-#test case for attributes
 doc: documentation no. 0
 symbols:
   doc: documentation no. 1
@@ -27,4 +26,3 @@ NXellipsometry_base_draft(my_test_extends):
     definition_local:
       doc: documentation no. 7
       \@version:
-      # EMPTY ATTRIBUTES

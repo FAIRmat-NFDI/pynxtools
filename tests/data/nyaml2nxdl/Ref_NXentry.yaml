@@ -1,50 +1,51 @@
 category: base
-doc: | 
+doc: |
   my nice doc string in root level.
   my nice doc string in root level, line 2.
-
 type: group
 NXentry(NXobject):
   \@default:
-    doc: | 
+    doc: |
       oki
   (NXdata):
-    doc: | 
+    doc: |
       my nice doc string.
             my nice doc string, line 2.
   \@IDF_Version:
-    doc: | 
+    
+    # as ratified at NIAC2010
+    doc: |
       my nice single line doc string
   title:
-    doc: | 
+    doc: |
       Extended title for entry
   collection_description:
-    doc: | 
+    doc: |
       My not very proper doc string, it is supported though
   experiment_identifier:
-    doc: | 
+    doc: |
       My not very proper doc string, it is supported though
          Point-1':'
               my not very proper doc string, line2
       my not very proper doc string, line3
   experiment_description:
-    doc: | 
+    doc: |
       My single line doc string.
   (NXnote)experiment_documentation:
-    doc: | 
+    doc: |
       My single line doc string, with doc tags in different lines
   collection_identifier:
-    doc: | 
+    doc: |
       Yet another doc string not very proper but supported
   entry_identifier_uuid:
-    doc: | 
+    doc: |
       Yet another doc string not very proper but supported
       Yet another doc string not very proper but supported, line2
     \@version:
-      doc: | 
+      doc: |
         Version of UUID used
   entry_identifier:
-    doc: | 
+    doc: |
       Trailing line doc stringy. Trailing lines are removed
   (NXuser):
   (NXsample):
