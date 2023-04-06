@@ -35,6 +35,7 @@ from nexusutils.nyaml2nxdl.nyaml2nxdl_backward_tools import (Nxdl2yaml,
 DEPTH_SIZE = "    "
 
 
+# pylint: disable=too-many-locals
 def append_yml(input_file, append, verbose):
     """Append to an existing NeXus base class new elements provided in YML input file \
 and print both an XML and YML file of the extended base class.
@@ -48,8 +49,13 @@ and print both an XML and YML file of the extended base class.
     root = tree.getroot()
     # warning: tmp files are printed on disk and removed at the ends!!
     pretty_print_xml(root, 'tmp.nxdl.xml')
-    print_yml('tmp.nxdl.xml', verbose)
-    nyaml2nxdl('tmp_parsed.yaml', verbose)
+    input_tmp_xml = 'tmp.nxdl.xml'
+    out_tmp_yml = 'tmp_parsed.yaml'
+    converter = Nxdl2yaml([], [])
+    converter.print_yml(input_tmp_xml, out_tmp_yml, verbose)
+    nyaml2nxdl(input_file=out_tmp_yml,
+               out_file='tmp_parsed.nxdl.xml',
+               verbose=verbose)
     tree = ET.parse('tmp_parsed.nxdl.xml')
     tree2 = ET.parse(input_file)
     root_no_duplicates = ET.Element(
@@ -81,12 +87,18 @@ and print both an XML and YML file of the extended base class.
                                              root_no_duplicates)
     pretty_print_xml(root_no_duplicates, f"{input_file.replace('.nxdl.xml', '')}"
                      f"_appended.nxdl.xml")
-    print_yml(input_file.replace('.nxdl.xml', '') + "_appended.nxdl.xml", verbose)
-    nyaml2nxdl(input_file.replace('.nxdl.xml', '') + "_appended_parsed.yaml", verbose)
-    os.rename(f"{input_file.replace('.nxdl.xml', '')}_appended_parsed.yaml",
-              f"{input_file.replace('.nxdl.xml', '')}_appended.yaml")
-    os.rename(f"{input_file.replace('.nxdl.xml', '')}_appended_parsed.nxdl.xml",
-              f"{input_file.replace('.nxdl.xml', '')}_appended.nxdl.xml")
+
+    input_file_xml = input_file.replace('.nxdl.xml', "_appended.nxdl.xml")
+    out_file_yml = input_file.replace('.nxdl.xml', "_appended_parsed.yaml")
+    converter = Nxdl2yaml([], [])
+    converter.print_yml(input_file_xml, out_file_yml, verbose)
+    nyaml2nxdl(input_file=out_file_yml,
+               out_file=out_file_yml.replace('.yaml', '.nxdl.xml'),
+               verbose=verbose)
+    os.rename(f"{input_file.replace('.nxdl.xml', '_appended_parsed.yaml')}",
+              f"{input_file.replace('.nxdl.xml', '_appended.yaml')}")
+    os.rename(f"{input_file.replace('.nxdl.xml', '_appended_parsed.nxdl.xml')}",
+              f"{input_file.replace('.nxdl.xml', '_appended.nxdl.xml')}")
     os.remove('tmp.nxdl.xml')
     os.remove('tmp_parsed.yaml')
     os.remove('tmp_parsed.nxdl.xml')
@@ -99,15 +111,20 @@ def split_name_and_extension(file_name):
     """
     parts = file_name.rsplit('.', 2)
     if len(parts) == 2:
-        return parts[0], parts[1]
+        raw = parts[0]
+        ext = parts[1]
     if len(parts) == 3:
-        return parts[0], '.'.join(parts[1:])
+        raw = parts[0]
+        ext = '.'.join(parts[1:])
+
+    return raw, ext
 
 
 @click.command()
 @click.option(
     '--input-file',
     required=True,
+    prompt=True,
     help='The path to the XML or YAML input data file to read and create \
 a YAML or XML file from, respectively.'
 )
@@ -148,8 +165,6 @@ def launch_tool(input_file, verbose, append, check_consistency):
                        append,
                        verbose
                        )
-        else:
-            pass
         # For consistency running
         if check_consistency:
             yaml_out_file = raw_name + '_consistency.' + ext
@@ -170,6 +185,7 @@ def launch_tool(input_file, verbose, append, check_consistency):
             os.remove(yaml_out_file)
     else:
         raise ValueError("Provide correct file with extension '.yaml or '.nxdl.xml")
+
 
 if __name__ == '__main__':
     launch_tool().parse()  # pylint: disable=no-value-for-parameter

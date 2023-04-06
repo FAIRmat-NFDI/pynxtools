@@ -35,35 +35,38 @@ DEPTH_SIZE = "  "
 CMNT_TAG = '!--'
 
 
-def separate_ip_comments(input_file):
+def separate_pi_comments(input_file):
+    """
+    Separate PI comments from ProcessesInstruction (pi)
+    """
     comments_list = []
     comment = []
     xml_lines = []
 
-    with open(input_file, "r") as file:
+    with open(input_file, "r", encoding='utf-8') as file:
         lines = file.readlines()
         # pi -> ProcessInstructio section
-        pi = True
+        has_pi = True
         for line in lines:
             c_start = '<!--'
             cmnt_end = '-->'
             def_tag = '<definition'
 
-            if c_start in line and pi:
+            if c_start in line and has_pi:
                 line = line.replace(c_start, '')
                 if cmnt_end in line:
                     line = line.replace(cmnt_end, '')
                     comments_list.append(line)
                 else:
                     comment.append(line)
-            elif cmnt_end in line and len(comment) > 0 and pi:
+            elif cmnt_end in line and len(comment) > 0 and has_pi:
                 comment.append(line.replace(cmnt_end, ''))
                 comments_list.append(''.join(comment))
                 comment = []
-            elif def_tag in line or not pi:
-                pi = False
+            elif def_tag in line or not has_pi:
+                has_pi = False
                 xml_lines.append(line)
-            elif len(comment) > 0 and pi:
+            elif len(comment) > 0 and has_pi:
                 comment.append(line)
             else:
                 xml_lines.append(line)
@@ -73,21 +76,27 @@ def separate_ip_comments(input_file):
 # Collected: https://dustinoprea.com/2019/01/22/python-parsing-xml-and-retaining-the-comments/
 class _CommentedTreeBuilder(ET.TreeBuilder):
 
-    def comment(self, data):
+    def comment(self, text):
+        """
+        defining comment builder in TreeBuilder
+        """
         self.start('!--', {})
-        self.data(data)
+        self.data(text)
         self.end('--')
 
 
 def parse(filepath):
-    comments, xml_str = separate_ip_comments(filepath)
+    """
+        Construct parse function for modified tree builder for including modified TreeBuilder
+        and rebuilding XMLParser.
+    """
+    comments, xml_str = separate_pi_comments(filepath)
     ctb = _CommentedTreeBuilder()
-    xp = ET.XMLParser(target=ctb)
-    root = ET.fromstring(xml_str, parser=xp)
+    xp_parser = ET.XMLParser(target=ctb)
+    root = ET.fromstring(xml_str, parser=xp_parser)
     return comments, root
 
 
-# TODO: Add options to add comment or not.
 def handle_mapping_char(text):
     """Check for ":" char and replace it by "':'". """
 
@@ -99,6 +108,7 @@ def handle_mapping_char(text):
     return text
 
 
+# pylint: disable=too-many-instance-attributes
 class Nxdl2yaml():
     """
         Parse XML file and print a YML file
@@ -112,7 +122,6 @@ class Nxdl2yaml():
             root_level_symbols=''):
 
         # updated part of yaml_dict
-        self.append_flag = True
         self.found_definition = False
         self.root_level_doc = root_level_doc
         self.root_level_symbols = root_level_symbols
@@ -141,8 +150,6 @@ class Nxdl2yaml():
         depth = 0
 
         self.pi_comments, root = parse(input_file)
-        # tree = ET.parse(input_file)
-        # xml_tree = {'tree': tree.getroot(), 'node': tree.getroot()}
         xml_tree = {'tree': root, 'node': root}
         self.xmlparse(output_yml, xml_tree, depth, verbose)
 
@@ -162,7 +169,6 @@ class Nxdl2yaml():
         for child in list(node):
             tag = remove_namespace_from_tag(child.tag)
             if tag == CMNT_TAG and self.include_comment:
-                print('### ', child.text)
                 last_comment = self.comvert_to_ymal_comment(depth * DEPTH_SIZE, child.text)
             if tag == 'doc':
                 symbol_cmnt_list.append(last_comment)
@@ -170,7 +176,7 @@ class Nxdl2yaml():
                 # 'symbol_doc_comments'. Otherwise print_root_level_info() gets inconsistency
                 # over for the loop while writting comment on file
                 sbl_doc_cmnt_list.append('')
-                last_comment == ''
+                last_comment = ''
                 self.symbol_list.append(self.handle_not_root_level_doc(depth,
                                                                        text=child.text))
             elif tag == 'symbol':
@@ -186,7 +192,8 @@ class Nxdl2yaml():
                     for symbol_doc in list(child):
                         tag = remove_namespace_from_tag(symbol_doc.tag)
                         if tag == CMNT_TAG and self.include_comment:
-                            last_comment = self.comvert_to_ymal_comment(depth * DEPTH_SIZE, symbol_doc.text)
+                            last_comment = self.comvert_to_ymal_comment(depth * DEPTH_SIZE,
+                                                                        symbol_doc.text)
                         if tag == 'doc':
                             sbl_doc_cmnt_list.append(last_comment)
                             last_comment = ''
@@ -323,6 +330,9 @@ class Nxdl2yaml():
         return doc_str
 
     def write_out(self, indent, text, file_out):
+        """
+        Write text line in output file.
+        """
         line_string = f"{indent}{text.rstrip()}\n"
         file_out.write(line_string)
 
@@ -521,11 +531,8 @@ class Nxdl2yaml():
             '{indent}{tag}:\n'.format(
                 indent=depth * DEPTH_SIZE,
                 tag=node.tag.split("}", 1)[1]))
-        node_attrs = node.attrib
-
-        node_attrs = node.attrib
         # Taking care of dimension attributes
-        for attr, value in node_attrs.items():
+        for attr, value in node.attrib.items():
             if attr in possible_dimemsion_attrs and not isinstance(value, dict):
                 indent = (depth + 1) * DEPTH_SIZE
                 file_out.write(f'{indent}{attr}: {value}\n')
@@ -576,15 +583,15 @@ class Nxdl2yaml():
                             dim_other_parts[attr] = []
                         dim_other_parts[attr].append(value)
             if tag == CMNT_TAG and self.include_comment:
-                # Store and remove node so that comment nodes from dim node so that it does not call in
-                # xmlparser function
+                # Store and remove node so that comment nodes from dim node so
+                # that it does not call in xmlparser function
                 dim_cmnt_node.append(child)
                 node.remove(child)
 
         # All 'dim' element comments on top of 'dim' yaml key
         if dim_cmnt_node:
-            for nd in dim_cmnt_node:
-                self.handel_comment(depth + 1, nd, file_out)
+            for ch_nd in dim_cmnt_node:
+                self.handel_comment(depth + 1, ch_nd, file_out)
         # index and value attributes of dim elements
         file_out.write(
             '{indent}dim: [{value}]\n'.format(
@@ -621,6 +628,7 @@ class Nxdl2yaml():
         for child in list(node):
             if list(child):
                 check_doc.append(list(child))
+        # pylint: disable=too-many-nested-blocks
         if check_doc:
             file_out.write(
                 '{indent}{tag}: \n'.format(
@@ -787,7 +795,6 @@ class Nxdl2yaml():
         """
             Collect comment element and pass to write_out function
         """
-        # TODO think about if two comments come together
         indent = depth * DEPTH_SIZE
         if self.is_last_element_comment:
             text = self.comvert_to_ymal_comment(indent, node.text)
@@ -809,7 +816,7 @@ class Nxdl2yaml():
             xml_tree_children = {'tree': tree, 'node': child}
             self.xmlparse(output_yml, xml_tree_children, depth, verbose)
 
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches, too-many-statements
     def xmlparse(self, output_yml, xml_tree, depth, verbose):
         """
         Main of the nxdl2yaml converter.

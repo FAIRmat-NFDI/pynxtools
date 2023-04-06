@@ -278,9 +278,9 @@ def test_yml_parsing():
     assert result.exit_code == 0
     check_file_fresh_baked(test_yml_file)
 
-    test_yml_tree, _ = nyaml2nxdl_forward_tools.yml_reader(test_yml_file)
+    test_yml_tree = nyaml2nxdl_forward_tools.yml_reader(test_yml_file)
 
-    ref_yml_tree, _ = nyaml2nxdl_forward_tools.yml_reader(ref_yml_file)
+    ref_yml_tree = nyaml2nxdl_forward_tools.yml_reader(ref_yml_file)
 
     assert list(test_yml_tree) == list(ref_yml_tree), 'Ref YML and parsed YML \
 has not the same root entries!!'
