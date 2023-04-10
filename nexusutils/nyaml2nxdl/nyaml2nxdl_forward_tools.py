@@ -818,10 +818,10 @@ def xml_handle_fields(obj, keyword, value, line_annot, line_loc, verbose=False):
         recursive_build(elemt_obj, value, verbose)
 
 
-def xml_handle_comment(obj: ET,
+def xml_handle_comment(obj: ET.Element,
                        line_annotation: str,
                        line_loc_no: int,
-                       xml_ele: ET = None,
+                       xml_ele: ET.Element = None,
                        is_def_cmnt: bool = False):
     """
         Add xml comment: check for comments that has the same 'line_annotation'

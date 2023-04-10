@@ -25,7 +25,7 @@ NXentry(NXobject):
   experiment_identifier:
     doc: |
       My not very proper doc string, it is supported though
-         Point-1':'
+         Point-1:
               my not very proper doc string, line2
       my not very proper doc string, line3
   experiment_description:

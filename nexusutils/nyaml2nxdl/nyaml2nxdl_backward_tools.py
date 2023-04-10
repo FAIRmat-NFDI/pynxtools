@@ -21,7 +21,7 @@
 # limitations under the License.
 #
 import sys
-from typing import List
+from typing import List, Dict
 import xml.etree.ElementTree as ET
 import os
 
@@ -97,7 +97,7 @@ def parse(filepath):
     return comments, root
 
 
-def handle_mapping_char(text):
+def handle_mapping_char(text, depth=-1, skip_n_line_on_top=False):
     """Check for ":" char and replace it by "':'". """
 
     # This escape chars and sepeerator ':' is not allowed in yaml library
@@ -105,6 +105,23 @@ def handle_mapping_char(text):
     for esc_key, val in escape_char.items():
         if esc_key in text:
             text = text.replace(esc_key, val)
+    if not skip_n_line_on_top:
+        if depth > 0:
+            text = add_new_line_on_top(text, depth)
+        else:
+            raise ValueError("Need depth size to co-ordinate text line in yaml file.")
+    return text
+
+
+def add_new_line_on_top(text, depth):
+    """
+    Return char list for what we get error in converter. After adding a
+    new line at the start of text the eroor is solved.
+    """
+    char_list_to_add_new_line_on_top_of_text = [":"]
+    for char in char_list_to_add_new_line_on_top_of_text:
+        if char in text:
+            return '\n' + depth * DEPTH_SIZE + text
     return text
 
 
@@ -138,7 +155,7 @@ class Nxdl2yaml():
         #                      'symbol_list': [symbols],
         #       The 'symbol_comments' contains comments for 'symbols doc' and all 'symbol'
         #                      'symbol_comments': [comments]}
-        self.root_level_comment = {}
+        self.root_level_comment: Dict[str, str] = {}
 
     def print_yml(self, input_file, output_yml, verbose):
         """
@@ -262,7 +279,7 @@ class Nxdl2yaml():
         if not text:
             text = ""
         else:
-            text = handle_mapping_char(text)
+            text = handle_mapping_char(text, -1, True)
         if "\n" in text:
             # To remove '\n' character as it will be added before text.
             text = text.split('\n')
@@ -453,8 +470,7 @@ class Nxdl2yaml():
         if 'required' == key:
             exists_dict['required'] = ['required', val]
 
-    # pylint: disable=consider-using-f-string
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches, consider-using-f-string
     def handle_group_or_field(self, depth, node, file_out):
         """Handle all the possible attributes that come along a field or group"""
 
@@ -510,10 +526,12 @@ class Nxdl2yaml():
 
         depth_ = depth + 1
         for key, val in tmp_dict.items():
-            file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
+            # Increase depth size inside handle_map...() for writting text with one
+            # more indentation.
+            file_out.write(f'{depth_ * DEPTH_SIZE}{key}: '
+                           f'{handle_mapping_char(val, depth_ + 1, False)}\n')
 
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches, too-many-locals
     def handle_dimension(self, depth, node, file_out):
         """
         Handle the dimension field.
@@ -609,7 +627,10 @@ class Nxdl2yaml():
                 if key == 'doc':
                     value = self.handle_not_root_level_doc(depth + 2, str(value), key, file_out)
                 else:
-                    file_out.write(f"{indent}{key}: {handle_mapping_char(value)}\n")
+                    # Increase depth size inside handle_map...() for writting text with one
+                    # more indentation.
+                    file_out.write(f"{indent}{key}: "
+                                   f"{handle_mapping_char(value, depth + 3, False)}\n")
 
     def handle_enumeration(self, depth, node, file_out):
         """
@@ -649,7 +670,7 @@ class Nxdl2yaml():
                                 item_doc_depth = itm_depth + 1
                                 self.handle_not_root_level_doc(item_doc_depth, item_doc.text,
                                                                item_doc.tag, file_out)
-                            if (remove_namespace_from_tag(item_doc) == CMNT_TAG
+                            if (remove_namespace_from_tag(item_doc.tag) == CMNT_TAG
                                     and self.include_comment):
                                 self.handel_comment(itm_depth + 1, item_doc, file_out)
                 if tag == CMNT_TAG and self.include_comment:
@@ -735,7 +756,10 @@ class Nxdl2yaml():
 
         depth_ = depth + 1
         for key, val in tmp_dict.items():
-            file_out.write(f'{depth_ * DEPTH_SIZE}{key}: {handle_mapping_char(val)}\n')
+            # Increase depth size inside handle_map...() for writting text with one
+            # more indentation.
+            file_out.write(f'{depth_ * DEPTH_SIZE}{key}: '
+                           f'{handle_mapping_char(val, depth_ + 1, False)}\n')
 
     def handel_link(self, depth, node, file_out):
         """

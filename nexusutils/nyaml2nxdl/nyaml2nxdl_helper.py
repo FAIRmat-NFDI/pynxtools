@@ -34,8 +34,7 @@ from yaml.nodes import ScalarNode
 from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
-ESCAPE_CHAR_DICT = {":": "\':\'",
-                    "\t": "    "}
+ESCAPE_CHAR_DICT = {"\t": "    "}
 
 
 class LineLoader(Loader):  # pylint: disable=too-many-ancestors
@@ -67,7 +66,7 @@ class LineLoader(Loader):  # pylint: disable=too-many-ancestors
 
 
 def get_yaml_escape_char_dict():
-    """Get escape char and the way to hide them."""
+    """Get escape char and the way to skip them in yaml."""
     return ESCAPE_CHAR_DICT
 
 

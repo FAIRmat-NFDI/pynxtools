@@ -27,7 +27,7 @@ intended.)
 # limitations under the License.
 #
 
-from typing import List, Type, Any, Tuple, Union
+from typing import List, Type, Any, Tuple, Union, Dict
 from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import LineLoader
 
 __all__ = ['Comment', 'CommentCollector', 'XMLComment', 'YAMLComment']
@@ -40,18 +40,18 @@ class CommentCollector:
     """
 
     def __init__(self, input_file: str = None,
-                 loaded_obj: object = None):
+                 loaded_obj: Union[object, Dict] = None):
         """
         Initialise CommentCollector
         parameters:
             input_file: raw input file (xml, yml)
             loaded_obj: file loaded by third party library
         """
-        self._comment_chain: List[Type[Comment]] = []
+        self._comment_chain: List = []
         self.file = input_file
         self._comment_tracker = 0
-        self._comment_hash = {}
-
+        self._comment_hash: Dict[Tuple, Type[Comment]] = {}
+        self.comment: Type[Comment]
         if self.file and not loaded_obj:
             if self.file.split('.')[-1] == 'xml':
                 self.comment = XMLComment
@@ -61,7 +61,7 @@ class CommentCollector:
                     loader = LineLoader(plain_text_yaml)
                     self.comment.__yaml_dict__ = loader.get_single_data()
         elif self.file and loaded_obj:
-            if self.file.split('.')[-1] == 'yaml':
+            if self.file.split('.')[-1] == 'yaml' and isinstance(loaded_obj, dict):
                 self.comment = YAMLComment
                 self.comment.__yaml_dict__ = loaded_obj
             else:
@@ -102,7 +102,7 @@ class CommentCollector:
         """
         return self._comment_chain[self._comment_tracker]
 
-    def get_coment_by_line_info(self, comment_locs: tuple):
+    def get_coment_by_line_info(self, comment_locs: Tuple[str, Union[int, str]]):
         """
             Get comment using line information.
         """
@@ -183,7 +183,7 @@ class Comment:
             self.cid = comment_id
             self.last_comment = None
         elif last_comment:
-            self.cid: int = self.last_comment.cid + 1
+            self.cid = self.last_comment.cid + 1
             self.last_comment = last_comment
         else:
             raise ValueError("Neither last comment nor comment id dound")
@@ -203,7 +203,7 @@ class Comment:
         Append lines of the same comment.
         """
 
-    def store_element(self, *keyargs) -> None:
+    def store_element(self, args) -> None:
         """
         Strore comment text and line or element that is intended for comment.
         """
@@ -250,8 +250,8 @@ class XMLComment(Comment):
         elif self._comnt_start_found:
             self._comnt = self._comnt + '\n' + text
 
-    # pylint: disable=arguments-differ
-    def store_element(self, text: str) -> None:
+    # pylint: disable=arguments-differ, arguments-renamed
+    def store_element(self, text) -> None:
         def collect_xml_attributes(text_part):
             for part in text_part:
                 part = part.strip()
@@ -299,7 +299,7 @@ class XMLComment(Comment):
             text_part = text.split(' ')
             collect_xml_attributes(text_part)
 
-    def get_element_info(self) -> dict:
+    def get_element_info(self):
         """
             The method returns info dict that includes:
         'tag' and 'attrib' keys.
@@ -403,7 +403,7 @@ class YAMLComment(Comment):
             self._comnt_end_found = True
 
     # pylint: disable=arguments-differ
-    def store_element(self, line_key: str, line_number: int):
+    def store_element(self, line_key, line_number):
         """
             Store comment content and information of commen location (for what comment is
             created.).
@@ -440,7 +440,7 @@ class YAMLComment(Comment):
                 text = text.replace(ecp_char, ecp_alt)
         return text
 
-    def get_element_location(self) -> Union[Tuple, None]:
+    def get_element_location(self):
         """
         Retrun yaml line '__line__KEY' info and and line numner
         """
@@ -467,7 +467,7 @@ class YAMLComment(Comment):
         """For Checking whether __line__NAME is in _elemt dict or not."""
         return line_key in self._elemt
 
-    def __eq__(self, comment_obj) -> bool:
+    def __eq__(self, comment_obj):
         """Check the self has same value as right comment.
         """
         if len(self._comnt_list) != len(comment_obj._comnt_list):
