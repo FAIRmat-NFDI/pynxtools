@@ -141,3 +141,37 @@ def test_get_node_at_nxdl_path():
         "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME/transformation_type",
         elem=elem)
     assert node.attrib["name"] == "transformation_type"
+
+    nxdl_file_path = os.path.join(
+        local_dir,
+        "../../nexusutils/definitions/contributed_definitions/NXiv_temp.nxdl.xml"
+    )
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
+        elem=elem)
+    assert node.attrib["name"] == "voltage_controller"
+
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller/calibration_time",
+        elem=elem)
+    assert node.attrib["name"] == "calibration_time"
+
+
+def test_get_inherited_nodes():
+    """Test to verify if we receive the right XML element list for a given NXDL path"""
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    nxdl_file_path = os.path.join(
+        local_dir,
+        "../../nexusutils/definitions/contributed_definitions/NXiv_temp.nxdl.xml"
+    )
+    elem = ET.parse(nxdl_file_path).getroot()
+    (class_path, nxdlpath, elist) = nexus.get_inherited_nodes(
+        nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT",
+        elem=elem)
+    assert len(elist) == 3
+
+    (class_path, nxdlpath, elist) = nexus.get_inherited_nodes(
+        nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
+        elem=elem)
+    assert len(elist) == 4

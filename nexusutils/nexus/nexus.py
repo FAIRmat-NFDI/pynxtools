@@ -566,7 +566,7 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
                                                                 elem,
                                                                 nxdl_path,
                                                                 doc,
-                                                                attr)            
+                                                                attr)
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith('_units'):
             logger, elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl((logger,
@@ -693,17 +693,22 @@ elist is empty, a nxdl file with the name of nx_name or a rather room elem is us
         add_base_classes(elist)
 
 
+def set_nxdlpath(child, nxdl_elem):
+            if nxdl_elem.get('nxdlbase'):
+                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
+                child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
+                child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
+            return child
+
+
 def get_direct_child(nxdl_elem, html_name):
     """ returns the child of nxdl_elem which has a name
         corresponding to the the html documentation name html_name"""
     for child in nxdl_elem:
         if get_local_name_from_xml(child) in ('group', 'field', 'attribute') and \
                 html_name == get_node_name(child):
-            if nxdl_elem.get('nxdlbase'):
-                child.set('nxdlbase', nxdl_elem.get('nxdlbase'))
-                child.set('nxdlbase_class', nxdl_elem.get('nxdlbase_class'))
-                child.set('nxdlpath', nxdl_elem.get('nxdlpath') + '/' + get_node_name(child))
-            return child
+            decorated_child = set_nxdlpath(child, nxdl_elem)
+            return decorated_child
     return None
 
 
@@ -715,7 +720,7 @@ def get_field_child(nxdl_elem, html_name):
         if get_local_name_from_xml(child) != 'field':
             continue
         if get_node_name(child) == html_name:
-            data_child = child
+            data_child = set_nxdlpath(child, nxdl_elem)
             break
     return data_child
 
@@ -767,14 +772,27 @@ def get_best_child(nxdl_elem, hdf_node, hdf_name, hdf_class_name, nexus_type):
             fit = get_nx_namefit(hdf_name, get_node_name(child), name_any)
         if fit > bestfit:
             bestfit = fit
-            bestchild = child
+            bestchild = set_nxdlpath(child, nxdl_elem)
     return (bestchild, bestfit)
 
 
 def walk_elist(elist, html_name):
     """Handle elist from low priority inheritance classes to higher"""
     for ind in range(len(elist) - 1, -1, -1):
-        elist[ind] = get_direct_child(elist[ind], html_name)
+        child = get_direct_child(elist[ind], html_name)
+        if child is None:
+            # check for names fitting to a superclas definition
+            main_child = None
+            for potential_direct_parent in elist:
+                main_child = get_direct_child(potential_direct_parent, html_name)
+                if main_child is not None:
+                    (fitting_child, fit) = get_best_child(elist[ind], None, html_name,
+                                                          get_nx_class(main_child),
+                                                          get_local_name_from_xml(main_child))
+                    if fitting_child is not None:
+                        child = fitting_child
+                    break
+        elist[ind] = child
         if elist[ind] is None:
             del elist[ind]
             continue
@@ -831,7 +849,7 @@ def get_inherited_nodes(nxdl_path: str = None,
             hdf_class_path.append(attr)
         path = hdf_path
     else:
-        html_path = nxdl_path.split('/')[1:]       
+        html_path = nxdl_path.split('/')[1:]
         path = html_path
     for pind in range(len(path)):
         if hdf_node is not None:
@@ -1112,10 +1130,10 @@ def get_hdf_node_nxdl_concept_path(hdf_node, node_base_cls=None):
     """
     if node_base_cls is None:
         node_base_cls = get_nxdl_entry(hdf_node)
-        
+
     (_, _, elist) = get_inherited_nodes(None, nx_name=node_base_cls, hdf_node=hdf_node)
     top_elem = elist[0] if elist else None
-    
+
     elm_nxdl_path = top_elem.get('nxdlpath') if top_elem is not None else ''
     elm_nxdl_file = top_elem.get('nxdlbase').split('/')[-1] if top_elem is not None else None
     elm_b_c = elm_nxdl_file.split('.')[0] if elm_nxdl_file is not None else ''
@@ -1134,10 +1152,10 @@ def get_aggregated_concept_paths(hdf_node):
     Return values for any nxdl fields, attributes and groups.
     e.g.: if hdf node corresponds to
     '/NXarpes/ENTRY/DATA/DATA' or '/NXdata/DATA'
-    return 
+    return
     '/entry/data/arpes_signal
-    /entry/data/processing_result' 
-    where 
+    /entry/data/processing_result'
+    where
     """
     grp_li = []
     b_c = get_nxdl_entry(hdf_node)
@@ -1185,14 +1203,14 @@ class HandleNexus:
         """Function called by h5py that iterates on each node of hdf5file.
         It allows h5py visititems function to visit nodes."""
 
-        # ### hdf_path is something like: 
+        # ### hdf_path is something like:
         # ## /entry/data but: c2: /NXentry[ENTRY]/NXdata[DATA]
         # print('### hdf_node_attrs keys : ', hdf_node.attrs.keys())
         # print('### hdf_node_attrs path : ', hdf_path)
         # for i, key in enumerate(hdf_node.attrs.keys()):
         #     print(' ##### print: key( ',i, ' ', key, ') : ', hdf_node.attrs[key])
 
-        # ### 
+        # ###
         # ##
         # print('### hdf_node : ', get_nxdl_entry(hdf_node), ':', get_nx_class_path(hdf_node))
         concpt_paths = get_aggregated_concept_paths(hdf_node=hdf_node)
