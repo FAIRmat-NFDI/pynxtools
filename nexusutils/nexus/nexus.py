@@ -10,6 +10,7 @@ import sys
 import logging
 import textwrap
 import h5py
+import click
 
 
 class NxdlAttributeError(Exception):
@@ -29,8 +30,7 @@ def get_app_defs_names():
 def get_xml_root(file_path):
     """Reducing I/O time by caching technique"""
 
-    root = ET.parse(file_path).getroot()
-    return root
+    return ET.parse(file_path).getroot()
 
 
 def get_nexus_definitions_path():
@@ -551,6 +551,8 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
                      (get_node_docname(e) for e in elist))
     # old solution with a single elem instead of using elist
     path = get_nx_class_path(hdf_node)
+    ## print(' #### get_nx_class_path : ', path)
+    ## print('#### get_nxdl_entry(hdf_node): ',get_nxdl_entry(hdf_node))
     req_str = None
     if elem is not None and attr:  # NX_class is a compulsory attribute for groups in a nexus file
         # which should match the type of the corresponding NXDL element
@@ -564,7 +566,7 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
                                                                 elem,
                                                                 nxdl_path,
                                                                 doc,
-                                                                attr)
+                                                                attr)            
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith('_units'):
             logger, elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl((logger,
@@ -829,7 +831,7 @@ def get_inherited_nodes(nxdl_path: str = None,
             hdf_class_path.append(attr)
         path = hdf_path
     else:
-        html_path = nxdl_path.split('/')[1:]
+        html_path = nxdl_path.split('/')[1:]       
         path = html_path
     for pind in range(len(path)):
         if hdf_node is not None:
@@ -1104,32 +1106,138 @@ def axis_helper(dim, nxdata, signal, axes, logger):
         )
 
 
+def get_hdf_node_nxdl_concept_path(hdf_node, node_base_cls=None):
+    """
+        Full nxdl path for a hdf_node as defined in base class.
+    """
+    if node_base_cls is None:
+        node_base_cls = get_nxdl_entry(hdf_node)
+        
+    (_, _, elist) = get_inherited_nodes(None, nx_name=node_base_cls, hdf_node=hdf_node)
+    top_elem = elist[0] if elist else None
+    
+    elm_nxdl_path = top_elem.get('nxdlpath') if top_elem is not None else ''
+    elm_nxdl_file = top_elem.get('nxdlbase').split('/')[-1] if top_elem is not None else None
+    elm_b_c = elm_nxdl_file.split('.')[0] if elm_nxdl_file is not None else ''
+    if node_base_cls == elm_b_c and elm_b_c != '':
+        hdf_node_concept_path = '/' + node_base_cls + elm_nxdl_path
+    elif elm_b_c != '':
+        hdf_node_concept_path = '/' + node_base_cls + '/' + elm_b_c + elm_nxdl_path
+    else:
+        hdf_node_concept_path = '/' + node_base_cls + elm_nxdl_path
+
+    return hdf_node_concept_path
+
+
+def get_aggregated_concept_paths(hdf_node):
+    """
+    Return values for any nxdl fields, attributes and groups.
+    e.g.: if hdf node corresponds to
+    '/NXarpes/ENTRY/DATA/DATA' or '/NXdata/DATA'
+    return 
+    '/entry/data/arpes_signal
+    /entry/data/processing_result' 
+    where 
+    """
+    grp_li = []
+    b_c = get_nxdl_entry(hdf_node)
+    nx_cls_path = get_nx_class_path(hdf_node) # including fields and attributes
+    ## print(' ### NX clas path ', nx_cls_path)
+    full_path = get_hdf_node_nxdl_concept_path(hdf_node, b_c)
+    ## print('#### full nxdl_concept_path : ', full_path)
+    for cls_fld_atr in nx_cls_path.split('/')[1:]:
+        if cls_fld_atr[0:2] == 'NX':
+            nx_schema_key = cls_fld_atr[2:].upper()
+            if not grp_li:
+                grp_li.append(f"/{b_c}/{nx_schema_key}")
+                grp_li.append(f"/{cls_fld_atr}")
+            else:
+                tmp_grp_li = []
+                for k_exist in grp_li:
+                    tmp_grp_li.append(f"{k_exist}/{nx_schema_key}")
+                    tmp_grp_li.append(f"/{cls_fld_atr}")
+                grp_li = tmp_grp_li
+        else:
+            tmp_grp_li = []
+            for k_exist in grp_li:
+                tmp_grp_li.append(f"{k_exist}/{cls_fld_atr}")
+            grp_li = tmp_grp_li
+    # TODO: collect largest item of the list and try to construct more path from  nxdl_concept_path
+
+    return grp_li
+
+
 class HandleNexus:
     """documentation"""
-    def __init__(self, logger, args):
+    def __init__(self, logger, nexus_file,
+                 d_inq_nd, c_inq_nd):
         self.logger = logger
         local_dir = os.path.abspath(os.path.dirname(__file__))
-        self.input_file_name = args[0] if len(
-            args) >= 1 else os.path.join(local_dir, '../../tests/data/nexus/201805_WSe2_arpes.nxs')
+
+        self.input_file_name = nexus_file if nexus_file is not None else \
+            os.path.join(local_dir, '../../tests/data/nexus/201805_WSe2_arpes.nxs')
         self.parser = None
         self.in_file = None
+        self.d_inq_nd = d_inq_nd
+        self.c_inq_nd = c_inq_nd
 
     def visit_node(self, hdf_name, hdf_node):
         """Function called by h5py that iterates on each node of hdf5file.
         It allows h5py visititems function to visit nodes."""
+
+        # ### hdf_path is something like: 
+        # ## /entry/data but: c2: /NXentry[ENTRY]/NXdata[DATA]
+        # print('### hdf_node_attrs keys : ', hdf_node.attrs.keys())
+        # print('### hdf_node_attrs path : ', hdf_path)
+        # for i, key in enumerate(hdf_node.attrs.keys()):
+        #     print(' ##### print: key( ',i, ' ', key, ') : ', hdf_node.attrs[key])
+
+        # ### 
+        # ##
+        # print('### hdf_node : ', get_nxdl_entry(hdf_node), ':', get_nx_class_path(hdf_node))
+        concpt_paths = get_aggregated_concept_paths(hdf_node=hdf_node)
+        ## print(' ### nx concept path ###', concpt_paths)
+        ## if self.c_inq_nd in concpt_paths:
+        ##     print('############## : ', concpt_paths)
         hdf_path = '/' + hdf_name
-        process_node(hdf_node, hdf_path, self.parser, self.logger)
+        ## print(' #### hdf path ', hdf_path)
+        if self.d_inq_nd is not None and hdf_path == self.d_inq_nd:
+            process_node(hdf_node, hdf_path, self.parser, self.logger)
+        elif self.d_inq_nd is None:
+            process_node(hdf_node, hdf_path, self.parser, self.logger)
 
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes"""
         self.parser = parser
         self.in_file = h5py.File(self.input_file_name, 'r')
         self.in_file.visititems(self.visit_node)
-        get_default_plotable(self.in_file, self.logger)
+        if self.d_inq_nd is None:
+            get_default_plotable(self.in_file, self.logger)
         self.in_file.close()
 
-
-def main():
+@click.command()
+@click.option(
+    '--nexus-file',
+    required=False,
+    default=None,
+    help=('NeXus file with extension .nxs to learn NeXus different concept'
+         ' documentation and concept.' )
+)
+@click.option(
+    '-d',
+    '--documentation',
+    required=False,
+    default=None,
+    help="To view documentation. E.g. -d /entry/data/delays"
+)
+@click.option(
+    '-c',
+    '--concept',
+    required=False,
+    default=None,
+    help="To view concept. E.g. -d /entry/data/delays"
+)
+def main(nexus_file, documentation, concept):
     """The main function to call when used as a script."""
     logging_format = "%(levelname)s: %(message)s"
     stdout_handler = logging.StreamHandler(sys.stdout)
@@ -1138,7 +1246,9 @@ def main():
     logger = logging.getLogger(__name__)
     logger.addHandler(stdout_handler)
     logger.setLevel(logging.DEBUG)
-    nexus_helper = HandleNexus(logger, sys.argv[1:])
+    nexus_helper = HandleNexus(logger, nexus_file,
+                               d_inq_nd=documentation,
+                               c_inq_nd=concept)
     nexus_helper.process_nexus_master_file(None)
 
 
