@@ -551,6 +551,8 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
                      (get_node_concept_path(e) for e in elist))
     # old solution with a single elem instead of using elist
     path = get_nx_class_path(hdf_node)
+    ## print(' #### get_nx_class_path : ', path)
+    ## print('#### get_nxdl_entry(hdf_node): ',get_nxdl_entry(hdf_node))
     req_str = None
     if elem is not None and attr:  # NX_class is a compulsory attribute for groups in a nexus file
         # which should match the type of the corresponding NXDL element
