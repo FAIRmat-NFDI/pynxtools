@@ -175,3 +175,8 @@ def test_get_inherited_nodes():
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
         elem=elem)
     assert len(elist) == 4
+
+    (class_path, nxdlpath, elist) = nexus.get_inherited_nodes(
+        nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
+        nx_name="NXiv_temp")
+    assert len(elist) == 4
