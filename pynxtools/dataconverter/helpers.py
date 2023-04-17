@@ -17,6 +17,7 @@
 #
 """Helper functions commonly used by the convert routine."""
 
+from typing import List
 from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET
@@ -38,25 +39,57 @@ def is_a_lone_group(xml_element) -> bool:
     return True
 
 
+def get_nxdl_name_from_elem(xml_element) -> str:
+    """Extracts the name or uses the type to remove the NX bit and use as name."""
+    name_to_add = ""
+    if "name" in xml_element.attrib:
+        name_to_add = xml_element.attrib["name"]
+    elif "type" in xml_element.attrib:
+        name_to_add = (f"{convert_nexus_to_caps(xml_element.attrib['type'])}"
+                       f"[{convert_nexus_to_suggested_name(xml_element.attrib['type'])}]")
+    return name_to_add
+
+
+def get_all_defined_required_children_for_elem(xml_element):
+    """Gets all possible inherited required children for a given NXDL element"""
+    list_of_children_to_add = set()
+    for child in xml_element:
+        child.set("nxdlbase_class", xml_element.get("nxdlbase_class"))
+        if child.attrib and get_required_string(child) == "required":
+            tag = remove_namespace_from_tag(child.tag)
+
+            name_to_add = get_nxdl_name_from_elem(child)
+
+            if tag in ("field", "attribute"):
+                list_of_children_to_add.add(name_to_add)
+                if tag == "field" \
+                        and ("units" in child.attrib.keys()
+                             and child.attrib["units"] != "NX_UNITLESS"):
+                    list_of_children_to_add.add(f"{name_to_add}/@units")
+            elif tag == "group":
+                nxdlpath = f'{xml_element.get("nxdlpath")}/{child.attrib["type"][2:].upper()}'
+                nxdlbase = xml_element.get("nxdlbase")
+                nx_name = nxdlbase[nxdlbase.rfind("/") + 1:nxdlbase.rfind(".nxdl")]
+                if nxdlpath not in visited_paths:
+                    visited_paths.append(nxdlpath)
+                    children = get_all_defined_required_children(nxdlpath, nx_name)
+                    further_children = set()
+                    for child in children:
+                        further_children.add(f"{name_to_add}/{child}")
+                    list_of_children_to_add.update(further_children)
+    return list_of_children_to_add
+
+
+visited_paths: List[str] = []
+
+
 def get_all_defined_required_children(nxdl_path, nxdl_name):
-    """Helper function to find all possible inherited required children for an NXDL group"""
+    """Helper function to find all possible inherited required children for an NXDL path"""
     elist = nexus.get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
     list_of_children_to_add = set()
     for elem in elist:
-        for child in elem:
-            child.set("nxdlbase_class", elem.get("nxdlbase_class"))
-            if child.attrib and get_required_string(child) == "required":
-                tag = remove_namespace_from_tag(child.tag)
-                if tag in ("field", "attribute"):
-                    if "name" in child.attrib.keys():
-                        name_to_add = child.attrib["name"]
-                    else:
-                        name_to_add = f"{child.attrib['type'].upper()}[{child.attrib['type']}]"
-                    list_of_children_to_add.add(name_to_add)
-                    if tag == "field" \
-                       and ("units" in child.attrib.keys()
-                            and child.attrib["units"] != "NX_UNITLESS"):
-                        list_of_children_to_add.add(f"{name_to_add}/@units")
+        list_of_children_to_add.update(get_all_defined_required_children_for_elem(elem))
+
     return list_of_children_to_add
 
 
