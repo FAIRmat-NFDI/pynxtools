@@ -296,7 +296,7 @@ DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
 DEBUG - @units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/DATA
@@ -1877,7 +1877,7 @@ DEBUG - value: data
 DEBUG - 
 DEBUG - Signal has been identified: /entry/data/data
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - ===== ATTRS (//entry/data/data@target)
 DEBUG - value: /entry/instrument/analyser/data 
