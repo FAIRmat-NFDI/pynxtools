@@ -296,7 +296,7 @@ DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
 DEBUG - @units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/DATA
@@ -485,9 +485,12 @@ DEBUG - ===== GROUP (//entry/instrument/analyser [NXarpes::/NXentry/NXinstrument
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser
+NXinstrument.nxdl.xml:/DETECTOR
 NXdetector.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser):
+DEBUG - 
+DEBUG - documentation (NXinstrument.nxdl.xml:/DETECTOR):
 DEBUG - 
 DEBUG - documentation (NXdetector.nxdl.xml:):
 DEBUG - 
@@ -498,6 +501,7 @@ DEBUG - value: NXdetector
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser
+NXinstrument.nxdl.xml:/DETECTOR
 NXdetector.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
@@ -1108,9 +1112,12 @@ DEBUG - ===== GROUP (//entry/instrument/monochromator [NXarpes::/NXentry/NXinstr
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator
+NXinstrument.nxdl.xml:/MONOCHROMATOR
 NXmonochromator.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator):
+DEBUG - 
+DEBUG - documentation (NXinstrument.nxdl.xml:/MONOCHROMATOR):
 DEBUG - 
 DEBUG - documentation (NXmonochromator.nxdl.xml:):
 DEBUG - 
@@ -1132,6 +1139,7 @@ DEBUG - value: NXmonochromator
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator
+NXinstrument.nxdl.xml:/MONOCHROMATOR
 NXmonochromator.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
@@ -1869,7 +1877,7 @@ DEBUG - value: data
 DEBUG - 
 DEBUG - Signal has been identified: /entry/data/data
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - ===== ATTRS (//entry/data/data@target)
 DEBUG - value: /entry/instrument/analyser/data 
