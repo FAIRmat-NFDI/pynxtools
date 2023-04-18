@@ -101,7 +101,7 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["name"] == "long_name"
 
     nxdl_file_path = os.path.join(
-        local_dir, "../../nexusutils/definitions/contributed_definitions/NXem.nxdl.xml"
+        local_dir, "../../pynxtools/definitions/contributed_definitions/NXem.nxdl.xml"
     )
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path(
