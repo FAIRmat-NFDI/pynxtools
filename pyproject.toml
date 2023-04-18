@@ -3,7 +3,7 @@ requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nexustools"
+name = "nexusutils"
 dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
