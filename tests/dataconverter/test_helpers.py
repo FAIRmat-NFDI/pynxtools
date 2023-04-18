@@ -23,8 +23,8 @@ from distutils import file_util
 import pytest
 import numpy as np
 
-from nexusutils.dataconverter import helpers
-from nexusutils.dataconverter.template import Template
+from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.template import Template
 
 
 def alter_dict(data_dict: Template, key: str, value: object):
@@ -47,7 +47,7 @@ def set_to_none_in_dict(data_dict: Template, key: str, optionality: str):
     return None
 
 
-def remove_from_dict(data_dict: Template, key: str, optionality: str = 'optional'):
+def remove_from_dict(data_dict: Template, key: str, optionality: str = "optional"):
     """Helper function to remove a key from dict"""
     if data_dict is not None and key in data_dict[optionality]:
         internal_dict = Template(data_dict)
@@ -62,7 +62,12 @@ def listify_template(data_dict: Template):
     listified_template = Template()
     for optionality in ("optional", "recommended", "required", "undocumented"):
         for path in data_dict[optionality]:
-            if path[path.rindex("/") + 1:] in ("@units", "type", "definition", "date_value"):
+            if path[path.rindex("/") + 1 :] in (
+                "@units",
+                "type",
+                "definition",
+                "date_value",
+            ):
                 listified_template[optionality][path] = data_dict[optionality][path]
             else:
                 listified_template[optionality][path] = [data_dict[optionality][path]]
@@ -93,12 +98,15 @@ def fixture_filled_test_data(template, tmp_path):
     # Copy original measurement file to tmp dir,
     # because h5py.ExternalLink is modifying it while
     # linking the nxs file.
-    file_util.copy_file(f"{os.path.dirname(__file__)}"
-                        f"/../"
-                        f"data/dataconverter/"
-                        f"readers/mpes/"
-                        f"xarray_saved_small_cali"
-                        "bration.h5", tmp_path)
+    file_util.copy_file(
+        f"{os.path.dirname(__file__)}"
+        f"/../"
+        f"data/dataconverter/"
+        f"readers/mpes/"
+        f"xarray_saved_small_cali"
+        "bration.h5",
+        tmp_path,
+    )
 
     template.clear()
     template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
@@ -108,168 +116,251 @@ def fixture_filled_test_data(template, tmp_path):
     template["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
     template["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
     template["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],
-                                                                                dtype=np.int8)
+    template["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array(
+        [1, 2, 3], dtype=np.int8
+    )
     template["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
     template["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
     template["required"]["/ENTRY[my_entry]/definition"] = "NXtest"
     template["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
     template["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"
     template["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
-                                                                      ":14:12.05018+00:00")
-    template["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
-    template["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
+    template["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = (
+        "2022-01-22T12" ":14:12.05018+00:00"
+    )
+    template["optional"][
+        "/ENTRY[my_entry]/required_group/description"
+    ] = "An example description"
+    template["optional"][
+        "/ENTRY[my_entry]/required_group2/description"
+    ] = "An example description"
     template["undocumented"]["/ENTRY[my_entry]/does/not/exist"] = "random"
-    template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {"link":
-                                                                   f"{tmp_path}/"
-                                                                   f"xarray_saved_small_cali"
-                                                                   f"bration.h5:/axes/ax3"
-                                                                   }
+    template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {
+        "link": f"{tmp_path}/" f"xarray_saved_small_cali" f"bration.h5:/axes/ax3"
+    }
     yield template
 
 
 TEMPLATE = Template()
-TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],  # pylint: disable=E1126
-                                                                            dtype=np.int8)  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"  # pylint: disable=E1126
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/NXODD_name/float_value"
+] = 2.0  # pylint: disable=E1126
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/NXODD_name/float_value/@units"
+] = "nm"  # pylint: disable=E1126
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/optional_parent/required_child"
+] = 1  # pylint: disable=E1126
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/optional_parent/optional_child"
+] = 1  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/bool_value"
+] = True  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/int_value"
+] = 2  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/int_value/@units"
+] = "eV"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array(
+    [1, 2, 3], dtype=np.int8  # pylint: disable=E1126
+)  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/posint_value/@units"
+] = "kg"  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/char_value"
+] = "just chars"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
-TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/definition/@version"
+] = "2.4.6"  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/program_name"
+] = "Testing program"  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/type"
+] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/date_value"
+] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/required_group/description"
+] = "An example description"
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/required_group2/description"
+] = "An example description"
 # TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
 
 
-@pytest.mark.parametrize("data_dict,error_message", [
-    pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/int_value", "not_a_num"),
-        ("The value at /ENTRY[my_entry]/NXODD_name/in"
-         "t_value should be of Python type: (<class 'int'>, <cla"
-         "ss 'numpy.ndarray'>, <class 'numpy.signedinteger'>),"
-         " as defined in the NXDL as NX_INT."),
-        id="string-instead-of-int"),
-    pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/bool_value", "NOT_TRUE_OR_FALSE"),
-        ("The value at /ENTRY[my_entry]/NXODD_name/bool_value sh"
-         "ould be of Python type: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
-         "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."),
-        id="string-instead-of-int"),
-    pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/int_value", {"link": "/a-link"}),
-        (""),
-        id="link-dict-instead-of-bool"),
-    pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/posint_value", -1),
-        ("The value at /ENTRY[my_entry]/NXODD_name/posint_value "
-         "should be a positive int."),
-        id="negative-posint"),
-    pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/char_value", 3),
-        ("The value at /ENTRY[my_entry]/NXODD_name/char_value should be of Python type:"
-         " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
-         " as defined in the NXDL as NX_CHAR."),
-        id="int-instead-of-chars"),
-    pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/float_value", None),
-        "",
-        id="empty-optional-field"),
-    pytest.param(
-        set_to_none_in_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/bool_value", "required"),
-        ("The data entry corresponding to /ENTRY[entry]/NXODD_name/bool_value is"
-         " required and hasn't been supplied by the reader."),
-        id="empty-required-field"),
-    pytest.param(
-        alter_dict(TEMPLATE,
-                   "/ENTRY[my_entry]/NXODD_name/date_value",
-                   "2022-01-22T12:14:12.05018+00:00"),
-        "",
-        id="UTC-with-+00:00"),
-    pytest.param(
-        alter_dict(TEMPLATE,
-                   "/ENTRY[my_entry]/NXODD_name/date_value",
-                   "2022-01-22T12:14:12.05018Z"),
-        "",
-        id="UTC-with-Z"),
-    pytest.param(
-        alter_dict(TEMPLATE,
-                   "/ENTRY[my_entry]/NXODD_name/date_value",
-                   "2022-01-22T12:14:12.05018-00:00"),
-        "The date at /ENTRY[my_entry]/NXODD_name/date_value should be a timezone aware"
-        " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
-        "T12:14:12.05018+00:00.",
-        id="UTC-with--00:00"),
-    pytest.param(
-        listify_template(TEMPLATE),
-        "",
-        id="lists"),
-    pytest.param(
-        alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/type", "Wrong option"),
-        ("The value at /ENTRY[my_entry]/NXODD_name/type should be one of the following"
-         " strings: [1st type,2nd type,3rd type,4th type]"),
-        id="wrong-enum-choice"),
-    pytest.param(
-        set_to_none_in_dict(TEMPLATE,
-                            "/ENTRY[my_entry]/optional_parent/required_child",
-                            "optional"),
-        ("The data entry, /ENTRY[my_entry]/optional_parent/optional_child, has an "
-         "optional parent, /ENTRY[entry]/optional_parent, with required children set"
-         ". Either provide no children for /ENTRY[entry]/optional_parent or provide "
-         "all required ones."),
-        id="atleast-one-required-child-not-provided-optional-parent"),
-    pytest.param(
-        alter_dict(alter_dict(TEMPLATE,
-                              "/ENTRY[my_entry]/optional_parent/required_child",
-                              None),
-                   "/ENTRY[my_entry]/optional_parent/optional_child",
-                   None),
-        (""),
-        id="no-child-provided-optional-parent"),
-    pytest.param(
-        TEMPLATE,
-        "",
-        id="valid-data-dict"),
-    pytest.param(
-        remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-        ("The data entry corresponding to /ENTRY[entry]/required_group "
-         "is required and hasn't been supplied by the reader."),
-        id="missing-empty-yet-required-group"),
-    pytest.param(
-        remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-        ("The data entry corresponding to /ENTRY[entry]/required_group2 "
-         "is required and hasn't been supplied by the reader."),
-        id="missing-empty-yet-required-group2"),
-    pytest.param(
-        alter_dict(
-            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "/ENTRY[my_entry]/required_group",
-            {}
+@pytest.mark.parametrize(
+    "data_dict,error_message",
+    [
+        pytest.param(
+            alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/int_value", "not_a_num"),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name/in"
+                "t_value should be of Python type: (<class 'int'>, <cla"
+                "ss 'numpy.ndarray'>, <class 'numpy.signedinteger'>),"
+                " as defined in the NXDL as NX_INT."
+            ),
+            id="string-instead-of-int",
         ),
-        (""),
-        id="allow-required-and-empty-group"
-    ),
-])
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name/bool_value", "NOT_TRUE_OR_FALSE"
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name/bool_value sh"
+                "ould be of Python type: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
+                "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+            ),
+            id="string-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name/int_value", {"link": "/a-link"}
+            ),
+            (""),
+            id="link-dict-instead-of-bool",
+        ),
+        pytest.param(
+            alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/posint_value", -1),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name/posint_value "
+                "should be a positive int."
+            ),
+            id="negative-posint",
+        ),
+        pytest.param(
+            alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/char_value", 3),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name/char_value should be of Python type:"
+                " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
+                " as defined in the NXDL as NX_CHAR."
+            ),
+            id="int-instead-of-chars",
+        ),
+        pytest.param(
+            alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/float_value", None),
+            "",
+            id="empty-optional-field",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name/bool_value", "required"
+            ),
+            (
+                "The data entry corresponding to /ENTRY[entry]/NXODD_name/bool_value is"
+                " required and hasn't been supplied by the reader."
+            ),
+            id="empty-required-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name/date_value",
+                "2022-01-22T12:14:12.05018+00:00",
+            ),
+            "",
+            id="UTC-with-+00:00",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name/date_value",
+                "2022-01-22T12:14:12.05018Z",
+            ),
+            "",
+            id="UTC-with-Z",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name/date_value",
+                "2022-01-22T12:14:12.05018-00:00",
+            ),
+            "The date at /ENTRY[my_entry]/NXODD_name/date_value should be a timezone aware"
+            " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
+            "T12:14:12.05018+00:00.",
+            id="UTC-with--00:00",
+        ),
+        pytest.param(listify_template(TEMPLATE), "", id="lists"),
+        pytest.param(
+            alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/type", "Wrong option"),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name/type should be one of the following"
+                " strings: [1st type,2nd type,3rd type,4th type]"
+            ),
+            id="wrong-enum-choice",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
+            ),
+            (
+                "The data entry, /ENTRY[my_entry]/optional_parent/optional_child, has an "
+                "optional parent, /ENTRY[entry]/optional_parent, with required children set"
+                ". Either provide no children for /ENTRY[entry]/optional_parent or provide "
+                "all required ones."
+            ),
+            id="atleast-one-required-child-not-provided-optional-parent",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", None
+                ),
+                "/ENTRY[my_entry]/optional_parent/optional_child",
+                None,
+            ),
+            (""),
+            id="no-child-provided-optional-parent",
+        ),
+        pytest.param(TEMPLATE, "", id="valid-data-dict"),
+        pytest.param(
+            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
+            (
+                "The data entry corresponding to /ENTRY[entry]/required_group "
+                "is required and hasn't been supplied by the reader."
+            ),
+            id="missing-empty-yet-required-group",
+        ),
+        pytest.param(
+            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
+            (
+                "The data entry corresponding to /ENTRY[entry]/required_group2 "
+                "is required and hasn't been supplied by the reader."
+            ),
+            id="missing-empty-yet-required-group2",
+        ),
+        pytest.param(
+            alter_dict(
+                remove_from_dict(
+                    TEMPLATE, "/ENTRY[my_entry]/required_group/description"
+                ),
+                "/ENTRY[my_entry]/required_group",
+                {},
+            ),
+            (""),
+            id="allow-required-and-empty-group",
+        ),
+    ],
+)
 def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
     """Unit test for the data validation routine"""
-    if request.node.callspec.id in ("valid-data-dict",
-                                    "lists",
-                                    "empty-optional-field",
-                                    "UTC-with-+00:00",
-                                    "UTC-with-Z",
-                                    "no-child-provided-optional-parent",
-                                    "int-instead-of-chars",
-                                    "link-dict-instead-of-bool",
-                                    "allow-required-and-empty-group"):
+    if request.node.callspec.id in (
+        "valid-data-dict",
+        "lists",
+        "empty-optional-field",
+        "UTC-with-+00:00",
+        "UTC-with-Z",
+        "no-child-provided-optional-parent",
+        "int-instead-of-chars",
+        "link-dict-instead-of-bool",
+        "allow-required-and-empty-group",
+    ):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:
@@ -278,16 +369,19 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
         assert (error_message) == str(execinfo.value)
 
 
-@pytest.mark.parametrize("nxdl_path,expected", [
-    pytest.param(
-        "/ENTRY/definition/@version",
-        (True, "/ENTRY[entry]/definition/@version"),
-        id="path-exists-in-dict"),
-    pytest.param(
-        "/RANDOM/does/not/@exist",
-        (False, ""),
-        id="path-does-not-exist-in-dict")
-])
+@pytest.mark.parametrize(
+    "nxdl_path,expected",
+    [
+        pytest.param(
+            "/ENTRY/definition/@version",
+            (True, "/ENTRY[entry]/definition/@version"),
+            id="path-exists-in-dict",
+        ),
+        pytest.param(
+            "/RANDOM/does/not/@exist", (False, ""), id="path-does-not-exist-in-dict"
+        ),
+    ],
+)
 def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
     assert helpers.path_in_data_dict(nxdl_path, template) == expected

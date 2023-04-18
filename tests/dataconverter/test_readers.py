@@ -25,12 +25,13 @@ import xml.etree.ElementTree as ET
 import pytest
 from _pytest.mark.structures import ParameterSet
 
-from nexusutils.dataconverter.readers.base.reader import BaseReader
-from nexusutils.dataconverter.convert import \
-    get_names_of_all_readers, get_reader
-from nexusutils.dataconverter.helpers import \
-    validate_data_dict, generate_template_from_nxdl
-from nexusutils.dataconverter.template import Template
+from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
+from pynxtools.dataconverter.helpers import (
+    validate_data_dict,
+    generate_template_from_nxdl,
+)
+from pynxtools.dataconverter.template import Template
 
 
 def get_reader_name_from_reader_object(reader) -> str:
@@ -54,9 +55,11 @@ def get_all_readers() -> List[ParameterSet]:
     # Explicitly removing ApmReader and EmNionReader because we need to add test data
     for reader in [get_reader(x) for x in get_names_of_all_readers()]:
         if reader.__name__ in ("ApmReader", "EmNionReader", "EmSpctrscpyReader"):
-            readers.append(pytest.param(reader,
-                                        marks=pytest.mark.skip(reason="Missing test data.")
-                                        ))
+            readers.append(
+                pytest.param(
+                    reader, marks=pytest.mark.skip(reason="Missing test data.")
+                )
+            )
         else:
             readers.append(pytest.param(reader))
 
@@ -98,7 +101,9 @@ def test_has_correct_read_func(reader):
             template = Template()
             generate_template_from_nxdl(root, template)
 
-            read_data = reader().read(template=Template(template), file_paths=tuple(input_files))
+            read_data = reader().read(
+                template=Template(template), file_paths=tuple(input_files)
+            )
 
             assert isinstance(read_data, Template)
             assert validate_data_dict(template, read_data, root)

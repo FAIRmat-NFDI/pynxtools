@@ -23,54 +23,52 @@ import os
 import logging
 import xml.etree.ElementTree as ET
 
-from nexusutils.nexus import nexus
+from pynxtools.nexus import nexus
 
 
 def test_get_nexus_classes_units_attributes():
     """Check the correct parsing of a separate list for:
-Nexus classes (base_classes)
-Nexus units (memberTypes)
-Nexus attribute type (primitiveTypes)
-the tested functions can be found in nexus.py file
-"""
+    Nexus classes (base_classes)
+    Nexus units (memberTypes)
+    Nexus attribute type (primitiveTypes)
+    the tested functions can be found in nexus.py file"""
 
     # Test 1
     nexus_classes_list = nexus.get_nx_classes()
 
-    assert 'NXbeam' in nexus_classes_list
+    assert "NXbeam" in nexus_classes_list
 
     # Test 2
     nexus_units_list = nexus.get_nx_units()
-    assert 'NX_TEMPERATURE' in nexus_units_list
+    assert "NX_TEMPERATURE" in nexus_units_list
 
     # Test 3
     nexus_attribute_list = nexus.get_nx_attribute_type()
-    assert 'NX_FLOAT' in nexus_attribute_list
+    assert "NX_FLOAT" in nexus_attribute_list
 
 
 def test_nexus(tmp_path):
-    """The nexus test function
-
-"""
+    """The nexus test function"""
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    example_data = os.path.join(local_dir, '../data/nexus/201805_WSe2_arpes.nxs')
+    example_data = os.path.join(local_dir, "../data/nexus/201805_WSe2_arpes.nxs")
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
-    handler = logging.\
-        FileHandler(os.path.join(tmp_path, 'nexus_test.log'), 'w')
+    handler = logging.FileHandler(os.path.join(tmp_path, "nexus_test.log"), "w")
     handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(levelname)s - %(message)s')
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     nexus_helper = nexus.HandleNexus(logger, [example_data])
     nexus_helper.process_nexus_master_file(None)
 
-    with open(os.path.join(tmp_path, 'nexus_test.log'), 'r', encoding='utf-8') as logfile:
+    with open(
+        os.path.join(tmp_path, "nexus_test.log"), "r", encoding="utf-8"
+    ) as logfile:
         log = logfile.readlines()
     with open(
-        os.path.join(local_dir, '../data/nexus/Ref_nexus_test.log'),
-        'r',
-        encoding='utf-8'
+        os.path.join(local_dir, "../data/nexus/Ref_nexus_test.log"),
+        "r",
+        encoding="utf-8",
     ) as reffile:
         ref = reffile.readlines()
 
@@ -97,47 +95,54 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
 
-    node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name/AXISNAME/long_name", elem=elem)
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/NXODD_name/AXISNAME/long_name", elem=elem
+    )
     assert node.attrib["name"] == "long_name"
 
     nxdl_file_path = os.path.join(
-        local_dir,
-        "../../nexusutils/definitions/contributed_definitions/NXem.nxdl.xml"
+        local_dir, "../../nexusutils/definitions/contributed_definitions/NXem.nxdl.xml"
     )
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/USER/affiliation",
-        elem=elem)
+        "/ENTRY/measurement/EVENT_DATA_EM/USER/affiliation", elem=elem
+    )
     assert node.attrib["name"] == "affiliation"
 
     node = nexus.get_node_at_nxdl_path("/ENTRY/measurement", elem=elem)
     assert node.attrib["type"] == "NXevent_data_em_set"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary", elem=elem)
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary", elem=elem
+    )
     assert node.attrib["type"] == "NXdata"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/DATA", elem=elem)
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/DATA", elem=elem
+    )
     assert node.attrib["type"] == "NX_NUMBER"
 
     node = nexus.get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET_EM_XRAY/summary/AXISNAME_indices",
-        elem=elem)
+        elem=elem,
+    )
     assert node.attrib["name"] == "AXISNAME_indices"
 
     node = nexus.get_node_at_nxdl_path("/ENTRY/COORDINATE_SYSTEM_SET", elem=elem)
     assert node.attrib["type"] == "NXcoordinate_system_set"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS", elem=elem)
+        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS", elem=elem
+    )
     assert node.attrib["type"] == "NXtransformations"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME", elem=elem)
+        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME", elem=elem
+    )
     assert node.attrib["type"] == "NX_NUMBER"
 
     node = nexus.get_node_at_nxdl_path(
         "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME/transformation_type",
-        elem=elem)
+        elem=elem,
+    )
     assert node.attrib["name"] == "transformation_type"

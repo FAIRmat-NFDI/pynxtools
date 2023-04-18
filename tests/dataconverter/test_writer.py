@@ -22,8 +22,11 @@ import os
 import pytest
 import h5py
 
-from nexusutils.dataconverter.writer import Writer
-from .test_helpers import fixture_filled_test_data, fixture_template  # pylint: disable=unused-import
+from pynxtools.dataconverter.writer import Writer
+from .test_helpers import (
+    fixture_filled_test_data,
+    fixture_template,
+)  # pylint: disable=unused-import
 
 
 @pytest.mark.usefixtures("filled_test_data")
@@ -33,7 +36,7 @@ def fixture_writer(filled_test_data, tmp_path):
     writer = Writer(
         filled_test_data,
         os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml"),
-        os.path.join(tmp_path, "test.nxs")
+        os.path.join(tmp_path, "test.nxs"),
     )
     yield writer
     del writer
@@ -50,14 +53,16 @@ def test_write(writer):
     test_nxs = h5py.File(writer.output_path, "r")
     assert test_nxs["/my_entry/NXODD_name/int_value"][()] == 2
     assert test_nxs["/my_entry/NXODD_name/int_value"].attrs["units"] == "eV"
-    assert test_nxs["/my_entry/NXODD_name/posint_value"].shape == (3,)  # pylint: disable=no-member
+    assert test_nxs["/my_entry/NXODD_name/posint_value"].shape == (
+        3,
+    )  # pylint: disable=no-member
 
 
 def test_write_link(writer):
     """Test for the Writer's write function.
 
-Checks whether entries given above get written out when a dictionary containing a link is
-given in the template dictionary."""
+    Checks whether entries given above get written out when a dictionary containing a link is
+    given in the template dictionary."""
     writer.write()
     print(writer)
     print(type(writer))
