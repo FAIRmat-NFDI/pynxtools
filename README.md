@@ -1,8 +1,8 @@
 ![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg)
 ![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pylint.yml/badge.svg)
-![](https://img.shields.io/pypi/pyversions/nexusutils)
-![](https://img.shields.io/pypi/l/nexusutils)
-![](https://img.shields.io/pypi/v/nexusutils)
+![](https://img.shields.io/pypi/pyversions/nexustools)
+![](https://img.shields.io/pypi/l/nexustools)
+![](https://img.shields.io/pypi/v/nexustools)
 ![](https://coveralls.io/repos/github/nomad-coe/nomad-parser-nexus/badge.svg?branch=master)
 
 `nexusustils` is a tool designed for making your experimental data FAIR.
