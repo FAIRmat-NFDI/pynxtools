@@ -61,6 +61,7 @@ def get_all_defined_required_children_for_elem(xml_element):
             name_to_add = get_nxdl_name_from_elem(child)
 
             if tag in ("field", "attribute"):
+                name_to_add = f"@{name_to_add}" if tag == "attribute" else name_to_add
                 list_of_children_to_add.add(name_to_add)
                 if tag == "field" \
                         and ("units" in child.attrib.keys()
