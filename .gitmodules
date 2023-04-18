@@ -1,6 +1,3 @@
 [submodule "pynxtools/definitions"]
 	path = pynxtools/definitions
 	url = https://github.com/FAIRmat-Experimental/nexus_definitions.git
-[submodule "pynxtools/nexus_definitions"]
-	path = pynxtools/definitions
-	url = https://github.com/FAIRmat-Experimental/nexus_definitions.git
