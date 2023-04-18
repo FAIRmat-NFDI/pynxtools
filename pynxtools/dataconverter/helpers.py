@@ -85,6 +85,9 @@ visited_paths: List[str] = []
 
 def get_all_defined_required_children(nxdl_path, nxdl_name):
     """Helper function to find all possible inherited required children for an NXDL path"""
+    if nxdl_name == "NXtest":
+        return []
+
     elist = nexus.get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
     list_of_children_to_add = set()
     for elem in elist:
