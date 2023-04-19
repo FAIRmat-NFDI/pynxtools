@@ -4,17 +4,22 @@ and application definitions to which the file refers to.
 
 ```
 Options:
-    --nexus-file : Name of nexus output file (.nxs) to enquiry.
+    -f, --nexus-file : Name of nexus output file (.nxs) to enquiry.
     -d, --documentation : Definition path in nexus output (.nxs) file. Returns debug
                           log relavent with that definition path.
+                          Example: /entry/data/delays
     -c, --concept : Concept path from application definition file (.nxdl,xml). Finds out
                     all the available concept definition (IS-A realation) for rendered
                     concept path.
-
+                    Example: /NXarpes/ENTRY/INSTRUMENT/analyser
+    --help : To get the documentaion above
     NOTE: Only one option from (-d and -c) is acceptable.
 
-console
-user@box:~$ read_nexus --nexus-file <path_to_nexus_file> -d <Definition_path_in_nexus_output>
+In console:
+
+read_nexus [Options] <path_to_nexus_file>
+
+
 
 ```
 

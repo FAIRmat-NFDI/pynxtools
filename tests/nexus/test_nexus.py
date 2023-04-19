@@ -209,4 +209,4 @@ def test_c_option(tmp_path):
     with open(tmp_file, encoding='utf-8', mode='r') as tmp_f:
         tmp = tmp_f.readlines()
 
-    assert tmp == ref[0::2]
+    assert tmp == ref
