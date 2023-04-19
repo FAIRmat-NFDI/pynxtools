@@ -1889,3 +1889,5 @@ DEBUG -
 DEBUG - For Axis #1, 1 axes have been identified: [<HDF5 dataset "energies": shape (146,), type "<f8">]
 DEBUG - 
 DEBUG - For Axis #2, 1 axes have been identified: [<HDF5 dataset "delays": shape (195,), type "<f8">]
+INFO - entry/instrument/beam_probe_0
+INFO - entry/instrument/beam_pump_0
