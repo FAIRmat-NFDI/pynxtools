@@ -1151,7 +1151,7 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, logger=None):
 def hdf_node_to_self_concept_path(hdf_node, logger):
     """ Get concept or nxdl path from given hdf_node.
     """
-    # The bellow logger is for deactivatine unnecessary degub message above
+    # The bellow logger is for deactivatine unnecessary debug message above
     if logger is None:
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
@@ -1185,7 +1185,7 @@ class HandleNexus:
         if self.d_inq_nd is None and self.c_inq_nd is None:
             process_node(hdf_node, '/' + hdf_name, self.parser, self.logger)
         elif (self.d_inq_nd is not None
-              and (hdf_name == self.d_inq_nd)):
+              and hdf_name in (self.d_inq_nd, self.d_inq_nd[1:])):
             process_node(hdf_node, '/' + hdf_name, self.parser, self.logger)
         elif self.c_inq_nd is not None:
             ren_con = get_all_is_a_rel_from_hdf_node(hdf_node, None)
@@ -1208,6 +1208,7 @@ class HandleNexus:
 
 @click.command()
 @click.option(
+    '-f',
     '--nexus-file',
     required=False,
     default=None,
@@ -1226,7 +1227,7 @@ class HandleNexus:
     '--concept',
     required=False,
     default=None,
-    help="To view concept. E.g. -d /entry/data/delays"
+    help="To view concept. E.g. -c /NXarpes/ENTRY/INSTRUMENT/analyser"
 )
 def main(nexus_file, documentation, concept):
     """The main function to call when used as a script."""
@@ -1237,9 +1238,10 @@ def main(nexus_file, documentation, concept):
     logger = logging.getLogger(__name__)
     logger.addHandler(stdout_handler)
     logger.setLevel(logging.DEBUG)
+    logger.propagate = False
     if documentation and concept:
-        raise ValueError("Only documentation (-d) or is_a relation with a concept (-c)"
-                         " can be requested.")
+        raise ValueError("Only one option either documentation (-d) or is_a relation "
+                         "with a concept (-c) can be requested.")
     nexus_helper = HandleNexus(logger, nexus_file,
                                d_inq_nd=documentation,
                                c_inq_nd=concept)
