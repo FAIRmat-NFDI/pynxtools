@@ -68,7 +68,7 @@ def get_all_defined_required_children_for_elem(xml_element):
                              and child.attrib["units"] != "NX_UNITLESS"):
                     list_of_children_to_add.add(f"{name_to_add}/@units")
             elif tag == "group":
-                nxdlpath = f'{xml_element.get("nxdlpath")}/{child.attrib["type"][2:].upper()}'
+                nxdlpath = f'{xml_element.get("nxdlpath")}/{get_nxdl_name_from_elem(child)}'
                 nxdlbase = xml_element.get("nxdlbase")
                 nx_name = nxdlbase[nxdlbase.rfind("/") + 1:nxdlbase.rfind(".nxdl")]
                 if nxdlpath not in visited_paths:
@@ -95,6 +95,17 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
         list_of_children_to_add.update(get_all_defined_required_children_for_elem(elem))
 
     return list_of_children_to_add
+
+
+def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
+    """Takes a list of child names and appends them to template for a given path."""
+    for child in list_of_children_to_add:
+        child_path = f"{path.rsplit('/', 1)[0]}/{child}"
+        if child_path not in template.keys():
+            optional_parent = check_for_optional_parent(child_path, nxdl_root)
+            optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
+            template[optionality][f"{path.rsplit('/', 1)[0]}/{child}"] = None
+    return template
 
 
 def generate_template_from_nxdl(root, template, path="", nxdl_root=None, nxdl_name=None):
@@ -129,22 +140,21 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None, nxdl_na
                 template.optional_parents.append(optional_parent)
         template[optionality][path] = None
 
-        parent_path = convert_data_converter_dict_to_nxdl_path(path.rsplit("/", 1)[0])
-        list_of_children_to_add = get_all_defined_required_children(parent_path, nxdl_name)
-        for child in list_of_children_to_add:
-            template["required"][f"{path.rsplit('/', 1)[0]}/{child}"] = None
-
         # Only add units if it is a field and the the units are defined but not set to NX_UNITLESS
         if tag == "field" \
            and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
             template[optionality][f"{path}/@units"] = None
+
+        parent_path = convert_data_converter_dict_to_nxdl_path(path.rsplit("/", 1)[0])
+        list_of_children_to_add = get_all_defined_required_children(parent_path, nxdl_name)
+        add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
+
     elif tag == "group" and is_a_lone_group(root):
         template[get_required_string(root)][path] = None
         template["lone_groups"].append(path)
         path_nxdl = convert_data_converter_dict_to_nxdl_path(path)
         list_of_children_to_add = get_all_defined_required_children(path_nxdl, nxdl_name)
-        for child in list_of_children_to_add:
-            template["required"][f"{path}/{child}"] = None
+        add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root, nxdl_name)
