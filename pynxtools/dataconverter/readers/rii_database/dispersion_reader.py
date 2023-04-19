@@ -249,7 +249,7 @@ class DispersionReader:
         # Only read metadata for the ordinary axis
         # as this should be the same for all axes
         if identifier == "dispersion_x":
-            self.read_metadata(yml_file, dispersion_path)
+            self.read_metadata(yml_file, "/ENTRY[entry]")
 
         self.write_dispersions(
             yml_file,
