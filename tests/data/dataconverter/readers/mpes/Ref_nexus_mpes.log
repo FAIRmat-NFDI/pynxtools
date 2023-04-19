@@ -319,6 +319,7 @@ DEBUG - value: [[[1.14760e+04 1.64560e+04 1.55440e+04 1.48940e+04 1.08810e+04] .
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/DATA/data
+NXdata.nxdl.xml:/DATA
 DEBUG - <<REQUIRED>>
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/DATA/data):
@@ -328,11 +329,23 @@ DEBUG -
                      delay, spin index, temperature, etc. The axes traces should be linked to the
                      actual encoder position in NXinstrument or calibrated axes in NXprocess.
                 
+DEBUG - documentation (NXdata.nxdl.xml:/DATA):
+DEBUG - 
+			.. index:: plotting
+		
+			This field contains the data values to be used as the 
+			NeXus *plottable data*.
+			Client is responsible for defining the dimensions of the data.
+			The name of this field may be changed to fit the circumstances.
+			Standard NeXus client tools will use the attributes to determine
+			how to use this field.
+		
 DEBUG - ===== ATTRS (//entry/data/data@units)
 DEBUG - value: counts 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/DATA/data
+NXdata.nxdl.xml:/DATA
 DEBUG - @units [NX_ANY]
 DEBUG - ===== FIELD (//entry/data/delay): <HDF5 dataset "delay": shape (5,), type "<f8">
 DEBUG - value: [-2000.   125.  2250.  4375.  6500.] 
@@ -930,7 +943,7 @@ DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER):
 DEBUG - 
 DEBUG - documentation (NXelectronanalyser.nxdl.xml:):
 DEBUG - 
-         Subclass of NXinstrument to describe a photoelectron analyser.
+        Subclass of NXinstrument to describe a photoelectron analyser.
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser@NX_class)
 DEBUG - value: NXelectronanalyser 
@@ -955,8 +968,8 @@ DEBUG -
         
 DEBUG - documentation (NXcollectioncolumn.nxdl.xml:):
 DEBUG - 
-         Subclass of NXelectronanalyser to describe the electron collection column of a
-         photoelectron analyser.
+        Subclass of NXelectronanalyser to describe the electron collection
+        column of a photoelectron analyser.
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn@NX_class)
 DEBUG - value: NXcollectioncolumn 
@@ -971,6 +984,7 @@ DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/contra
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_aperture):
@@ -978,6 +992,11 @@ DEBUG -
                              The size and position of the contrast aperture inserted in the column. To add
                              additional or other apertures use the APERTURE group of NXcollectioncolumn.
                         
+DEBUG - documentation (NXcollectioncolumn.nxdl.xml:/APERTURE):
+DEBUG - 
+             The size and position of an aperture inserted in the column, e.g. field aperture
+             or contrast aperture
+        
 DEBUG - documentation (NXaperture.nxdl.xml:):
 DEBUG - 
          A beamline aperture
@@ -987,6 +1006,7 @@ DEBUG - value: NXaperture
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
@@ -1101,6 +1121,7 @@ DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/field_
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_aperture):
@@ -1108,6 +1129,11 @@ DEBUG -
                              The size and position of the field aperture inserted in the column. To add
                              additional or other apertures use the APERTURE group of NXcollectioncolumn.
                         
+DEBUG - documentation (NXcollectioncolumn.nxdl.xml:/APERTURE):
+DEBUG - 
+             The size and position of an aperture inserted in the column, e.g. field aperture
+             or contrast aperture
+        
 DEBUG - documentation (NXaperture.nxdl.xml:):
 DEBUG - 
          A beamline aperture
@@ -1117,6 +1143,7 @@ DEBUG - value: NXaperture
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
@@ -2004,7 +2031,7 @@ DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/descri
 DEBUG - 
 DEBUG - documentation (NXelectronanalyser.nxdl.xml:/description):
 DEBUG - 
-             Free text description of the type of the detector 
+             Free text description of the type of the detector
         
 DEBUG - ===== GROUP (//entry/instrument/electronanalyser/detector [NXmpes::/NXentry/NXinstrument/NXelectronanalyser/NXdetector]): <HDF5 group "/entry/instrument/electronanalyser/detector" (6 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXdetector']
@@ -2168,8 +2195,8 @@ DEBUG -
         
 DEBUG - documentation (NXenergydispersion.nxdl.xml:):
 DEBUG - 
-         Subclass of NXelectronanalyser to describe the energy dispersion section of a
-         photoelectron analyser.
+        Subclass of NXelectronanalyser to describe the energy dispersion
+        section of a photoelectron analyser.
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/energydispersion@NX_class)
 DEBUG - value: NXenergydispersion 
@@ -2335,13 +2362,13 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXelectronanalyser.nxdl.xml:/TRANSFORMATIONS):
 DEBUG - 
              Collection of axis-based translations and rotations to describe the location and
-             geometry of the manipulator as a component in the instrument. Conventions from
-             the NXtransformations base class are used. In principle, the McStas coordinate
-             system is used. The first transformation has to point either to another
-             component of the system or . (for pointing to the reference frame) to relate it
-             relative to the experimental setup. Typically, the components of a system should
-             all be related relative to each other and only one component should relate to
-             the reference coordinate system.
+             geometry of the electron analyser as a component in the instrument. Conventions
+             from the NXtransformations base class are used. In principle, the McStas
+             coordinate system is used. The first transformation has to point either to
+             another component of the system or . (for pointing to the reference frame) to
+             relate it relative to the experimental setup. Typically, the components of a
+             system should all be related relative to each other and only one component
+             should relate to the reference coordinate system.
         
 DEBUG - documentation (NXtransformations.nxdl.xml:):
 DEBUG - 
@@ -2608,8 +2635,8 @@ DEBUG -
                 
 DEBUG - documentation (NXmanipulator.nxdl.xml:):
 DEBUG - 
-         Extension of NXpositioner to include fields to describe the use of manipulators
-         in photoemission experiments.
+        Extension of NXpositioner to include fields to describe the use of
+        manipulators in photoemission experiments.
     
 DEBUG - ===== ATTRS (//entry/instrument/manipulator@NX_class)
 DEBUG - value: NXmanipulator 
@@ -3387,7 +3414,7 @@ DEBUG -
         
 DEBUG - documentation (NXdistortion.nxdl.xml:):
 DEBUG - 
-         Subclass of NXprocess to describe post-processing distortion correction.
+        Subclass of NXprocess to describe post-processing distortion correction.
     
 DEBUG - ===== ATTRS (//entry/process/distortion@NX_class)
 DEBUG - value: NXdistortion 
@@ -3460,29 +3487,34 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXdistortion.nxdl.xml:/symmetry):
 DEBUG - 
              For `symmetry-guided distortion correction`_,
-             where a pattern of features is mapped to the regular geometric structure
-             expected from the symmetry. Here we record the number of elementary symmetry
-             operations.
-
-                .. _symmetry-guided distortion correction: https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub
+             where a pattern of features is mapped to the regular geometric structure expected
+             from the symmetry. Here we record the number of elementary symmetry operations.
+             
+               .. _symmetry-guided distortion correction: https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub
         
 DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
+NXprocess.nxdl.xml:/CALIBRATION
 NXcalibration.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration):
 DEBUG - 
+DEBUG - documentation (NXprocess.nxdl.xml:/CALIBRATION):
+DEBUG - 
+             Describes the operations of calibration procedures, e.g. axis calibrations.
+        
 DEBUG - documentation (NXcalibration.nxdl.xml:):
 DEBUG - 
-         Subclass of NXprocess to describe post-processing calibrations.
+        Subclass of NXprocess to describe post-processing calibrations.
     
 DEBUG - ===== ATTRS (//entry/process/energy_calibration@NX_class)
 DEBUG - value: NXcalibration 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
+NXprocess.nxdl.xml:/CALIBRATION
 NXcalibration.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
@@ -3555,7 +3587,7 @@ DEBUG -
         
 DEBUG - documentation (NXcalibration.nxdl.xml:):
 DEBUG - 
-         Subclass of NXprocess to describe post-processing calibrations.
+        Subclass of NXprocess to describe post-processing calibrations.
     
 DEBUG - ===== ATTRS (//entry/process/kx_calibration@NX_class)
 DEBUG - value: NXcalibration 
@@ -3617,7 +3649,7 @@ DEBUG -
         
 DEBUG - documentation (NXcalibration.nxdl.xml:):
 DEBUG - 
-         Subclass of NXprocess to describe post-processing calibrations.
+        Subclass of NXprocess to describe post-processing calibrations.
     
 DEBUG - ===== ATTRS (//entry/process/ky_calibration@NX_class)
 DEBUG - value: NXcalibration 
@@ -3679,7 +3711,7 @@ DEBUG -
         
 DEBUG - documentation (NXregistration.nxdl.xml:):
 DEBUG - 
-         Describes image registration procedures.
+        Describes image registration procedures.
     
 DEBUG - ===== ATTRS (//entry/process/registration@NX_class)
 DEBUG - value: NXregistration 

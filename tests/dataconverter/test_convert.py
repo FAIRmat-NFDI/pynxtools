@@ -193,7 +193,7 @@ def test_mpes_writing(tmp_path):
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, [test_data])
+    nexus_helper = nexus.HandleNexus(logger, test_data, None, None)
     nexus_helper.process_nexus_master_file(None)
     with open(os.path.join(tmp_path, 'mpes_test.log'), 'r', encoding='utf-8') as logfile:
         log = logfile.readlines()
