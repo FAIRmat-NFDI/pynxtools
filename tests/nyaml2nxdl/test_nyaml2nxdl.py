@@ -28,8 +28,8 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import pytest
 from click.testing import CliRunner
-import nexusutils.nyaml2nxdl.nyaml2nxdl as nyml2nxdl
-from nexusutils.nyaml2nxdl import nyaml2nxdl_forward_tools
+import pynxtools.nyaml2nxdl.nyaml2nxdl as nyml2nxdl
+from pynxtools.nyaml2nxdl import nyaml2nxdl_forward_tools
 
 
 def delete_duplicates(list_of_matching_string):

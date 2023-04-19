@@ -23,7 +23,7 @@ import os
 import logging
 import xml.etree.ElementTree as ET
 
-from nexusutils.nexus import nexus
+from pynxtools.nexus import nexus
 
 
 def test_get_nexus_classes_units_attributes():
@@ -102,7 +102,7 @@ def test_get_node_at_nxdl_path():
 
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../nexusutils/definitions/contributed_definitions/NXem.nxdl.xml"
+        "../../pynxtools/definitions/contributed_definitions/NXem.nxdl.xml"
     )
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path(

@@ -30,6 +30,6 @@ dataconverter --reader xps \\
 
 # Are there detailed examples?
 
-Yes, [here](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/mpes) you can find exhaustive examples how to use `nexusutils` for your ARPES research data pipeline.
+Yes, [here](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/mpes) you can find exhaustive examples how to use `pynxtools` for your ARPES research data pipeline.
 
-There is also an [example](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/xps) for using `nexusutils` for an XPS pipeline.
+There is also an [example](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/xps) for using `pynxtools` for an XPS pipeline.
