@@ -768,7 +768,7 @@ def get_best_child(nxdl_elem, hdf_node, hdf_name, hdf_class_name, nexus_type):
         fit = -2
         if get_local_name_from_xml(child) == nexus_type and \
                 (nexus_type != 'group' or get_nx_class(child) == hdf_class_name):
-            name_any = "nameType" in nxdl_elem.attrib.keys() and child.attrib["nameType"] == "any"
+            name_any = "nameType" in nxdl_elem.attrib.keys() and nxdl_elem.attrib["nameType"] == "any"
             fit = get_nx_namefit(hdf_name, get_node_name(child), name_any)
         if fit > bestfit:
             bestfit = fit
