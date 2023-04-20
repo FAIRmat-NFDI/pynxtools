@@ -27,12 +27,46 @@ which details a hierarchy of data/metadata elements
 # Yaml library does not except the keys (escapechar "\t" and yaml separator ":")
 # So the corresponding value is to skip them and
 # and also carefull about this order
-ESCAPE_CHAR_DICT = {":": "\':\'",
-                    "\t": "    "}
+from yaml.composer import Composer
+from yaml.constructor import Constructor
+
+from yaml.nodes import ScalarNode
+from yaml.resolver import BaseResolver
+from yaml.loader import Loader
+
+ESCAPE_CHAR_DICT = {"\t": "    "}
+
+
+class LineLoader(Loader):  # pylint: disable=too-many-ancestors
+    """
+    LineLoader parses a yaml into a python dictionary extended with extra items.
+    The new items have as keys __line__<yaml_keyword> and as values the yaml file line number
+    """
+
+    def compose_node(self, parent, index):
+        # the line number where the previous token has ended (plus empty lines)
+        node = Composer.compose_node(self, parent, index)
+        node.__line__ = self.line + 1
+        return node
+
+    def construct_mapping(self, node, deep=False):
+        node_pair_lst = node.value
+        node_pair_lst_for_appending = []
+
+        for key_node in node_pair_lst:
+            shadow_key_node = ScalarNode(
+                tag=BaseResolver.DEFAULT_SCALAR_TAG, value='__line__' + key_node[0].value)
+            shadow_value_node = ScalarNode(
+                tag=BaseResolver.DEFAULT_SCALAR_TAG, value=key_node[0].__line__)
+            node_pair_lst_for_appending.append(
+                (shadow_key_node, shadow_value_node))
+
+        node.value = node_pair_lst + node_pair_lst_for_appending
+        return Constructor.construct_mapping(self, node, deep=deep)
 
 
 def get_yaml_escape_char_dict():
-    """Get escape char and the way to hide them."""
+    """Get escape char and the way to skip them in yaml."""
     return ESCAPE_CHAR_DICT
 
 
@@ -88,3 +122,24 @@ def cleaning_empty_lines(line_list):
         line_list = line_list[0:-1]
 
     return line_list
+
+
+def nx_name_type_resolving(tmp):
+    """
+    extracts the eventually custom name {optional_string}
+    and type {nexus_type} from a YML section string.
+    YML section string syntax: optional_string(nexus_type)
+    """
+    if tmp.count('(') == 1 and tmp.count(')') == 1:
+        # we can safely assume that every valid YML key resolves
+        # either an nx_ (type, base, candidate) class contains only 1 '(' and ')'
+        index_start = tmp.index('(')
+        index_end = tmp.index(')', index_start + 1)
+        typ = tmp[index_start + 1:index_end]
+        nam = tmp.replace('(' + typ + ')', '')
+        return nam, typ
+
+    # or a name for a member
+    typ = ''
+    nam = tmp
+    return nam, typ

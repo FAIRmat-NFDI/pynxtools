@@ -1,0 +1,68 @@
+
+category: application
+
+# 1: Pincelli, Rettig, Arora at fhi-berlin.mpg.de, Dobener at hu-berlin.de, 06/2022
+#Draft version of a NeXus application definition for photoemission,
+#It is designed to be extended by other application definitions
+#with higher granularity in the data description.
+
+doc: This is the most general application definition for multidimensional photoelectron spectroscopy.
+# 2: symbols comments: comments here
+symbols:
+# 3: symbols doc comments
+  doc: |
+    symbols doc
+# 4: symbol comments: comments here
+  n_different_temperatures: "Number of different temperature setpoints used in the experiment."
+# 5: symbol comments: comments here
+  n_different_voltages: "Number of different voltage setpoints used in the experiment."
+
+# 6: NXmpes: Test -- documentation
+# NXmpes: Test documentation
+NXmpes:
+  # 7: NXmpes: Test documentation
+  # NXmpes: Test documentation
+
+  # 8: exists: comment
+  (NXentry):
+    exists: recommended
+    # 9: Title comment
+    title:
+    # 10: Group comment
+    start_time(NX_DATE_TIME):
+      doc: "Datetime of the start of the measurement."
+    definition:
+      # 11: version_attribute: comments hrere
+      \@version:
+      enumeration: ["NXmpes"]
+    # 12: Scond comment for Comment NXdata(data)
+
+    # 13: comment nxdata(data): comments
+    # comment nxdata(data): comments
+
+    # 14: Third comment for Comment NXdata(data)
+    (NXdata)data:
+     # 15: comment (energy(link)):
+      energy(link):
+        target: /entry/instrument/fluorescence/energy
+     # 16: comment (data(link)):
+      data(link):
+        target: /entry/instrument/fluorescence/data
+      region_origin(NX_INT):
+        doc: |
+          origin of rectangular region selected for readout
+        # 17: dimensions comments:
+
+        # 18: rank comments: comments
+        dimensions:
+          rank: 1
+          # 19: dim comments:
+          dim: [[1, 2]]
+
+  # 20: File endgin comments
+  # 20: File ending comments
+  # 20: File ending comments
+
+  # 21: File endgin comments
+  # 21: File ending comments
+  # 21: File ending comments
