@@ -39,9 +39,9 @@ data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**nyaml2nxdl**](nexusutils/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
-- [**dataconverter**](nexusutils/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](nexusutils/nexus/README.md): Outputs a debug log for a given NeXus file.
+- [**nyaml2nxdl**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/nexusutils/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
+- [**dataconverter**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/nexusutils/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
+- [**read_nexus**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/nexusutils/nexus/README.md): Outputs a debug log for a given NeXus file.
 
 # Contributing
 
