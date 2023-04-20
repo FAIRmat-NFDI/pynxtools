@@ -319,6 +319,7 @@ DEBUG - value: [[[1.14760e+04 1.64560e+04 1.55440e+04 1.48940e+04 1.08810e+04] .
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/DATA/data
+NXdata.nxdl.xml:/DATA
 DEBUG - <<REQUIRED>>
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/DATA/data):
@@ -328,11 +329,23 @@ DEBUG -
                      delay, spin index, temperature, etc. The axes traces should be linked to the
                      actual encoder position in NXinstrument or calibrated axes in NXprocess.
                 
+DEBUG - documentation (NXdata.nxdl.xml:/DATA):
+DEBUG - 
+			.. index:: plotting
+		
+			This field contains the data values to be used as the 
+			NeXus *plottable data*.
+			Client is responsible for defining the dimensions of the data.
+			The name of this field may be changed to fit the circumstances.
+			Standard NeXus client tools will use the attributes to determine
+			how to use this field.
+		
 DEBUG - ===== ATTRS (//entry/data/data@units)
 DEBUG - value: counts 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/DATA/data
+NXdata.nxdl.xml:/DATA
 DEBUG - @units [NX_ANY]
 DEBUG - ===== FIELD (//entry/data/delay): <HDF5 dataset "delay": shape (5,), type "<f8">
 DEBUG - value: [-2000.   125.  2250.  4375.  6500.] 
@@ -971,6 +984,7 @@ DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/contra
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_aperture):
@@ -978,6 +992,11 @@ DEBUG -
                              The size and position of the contrast aperture inserted in the column. To add
                              additional or other apertures use the APERTURE group of NXcollectioncolumn.
                         
+DEBUG - documentation (NXcollectioncolumn.nxdl.xml:/APERTURE):
+DEBUG - 
+             The size and position of an aperture inserted in the column, e.g. field aperture
+             or contrast aperture
+        
 DEBUG - documentation (NXaperture.nxdl.xml:):
 DEBUG - 
          A beamline aperture
@@ -987,6 +1006,7 @@ DEBUG - value: NXaperture
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/contrast_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
@@ -1101,6 +1121,7 @@ DEBUG - ===== GROUP (//entry/instrument/electronanalyser/collectioncolumn/field_
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_aperture):
@@ -1108,6 +1129,11 @@ DEBUG -
                              The size and position of the field aperture inserted in the column. To add
                              additional or other apertures use the APERTURE group of NXcollectioncolumn.
                         
+DEBUG - documentation (NXcollectioncolumn.nxdl.xml:/APERTURE):
+DEBUG - 
+             The size and position of an aperture inserted in the column, e.g. field aperture
+             or contrast aperture
+        
 DEBUG - documentation (NXaperture.nxdl.xml:):
 DEBUG - 
          A beamline aperture
@@ -1117,6 +1143,7 @@ DEBUG - value: NXaperture
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NXaperture']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/field_aperture
+NXcollectioncolumn.nxdl.xml:/APERTURE
 NXaperture.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
@@ -3469,10 +3496,15 @@ DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXproc
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
+NXprocess.nxdl.xml:/CALIBRATION
 NXcalibration.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration):
 DEBUG - 
+DEBUG - documentation (NXprocess.nxdl.xml:/CALIBRATION):
+DEBUG - 
+             Describes the operations of calibration procedures, e.g. axis calibrations.
+        
 DEBUG - documentation (NXcalibration.nxdl.xml:):
 DEBUG - 
         Subclass of NXprocess to describe post-processing calibrations.
@@ -3482,6 +3514,7 @@ DEBUG - value: NXcalibration
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
+NXprocess.nxdl.xml:/CALIBRATION
 NXcalibration.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
