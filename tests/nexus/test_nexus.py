@@ -62,7 +62,7 @@ def test_nexus(tmp_path):
     formatter = logging.Formatter('%(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, [example_data])
+    nexus_helper = nexus.HandleNexus(logger, example_data, None, None)
     nexus_helper.process_nexus_master_file(None)
 
     with open(os.path.join(tmp_path, 'nexus_test.log'), 'r', encoding='utf-8') as logfile:
@@ -141,3 +141,72 @@ def test_get_node_at_nxdl_path():
         "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME/transformation_type",
         elem=elem)
     assert node.attrib["name"] == "transformation_type"
+
+    nxdl_file_path = os.path.join(
+        local_dir,
+        "../../nexusutils/definitions/contributed_definitions/NXiv_temp.nxdl.xml"
+    )
+    elem = ET.parse(nxdl_file_path).getroot()
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
+        elem=elem)
+    assert node.attrib["name"] == "voltage_controller"
+
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller/calibration_time",
+        elem=elem)
+    assert node.attrib["name"] == "calibration_time"
+
+
+def test_get_inherited_nodes():
+    """Test to verify if we receive the right XML element list for a given NXDL path."""
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    nxdl_file_path = os.path.join(
+        local_dir,
+        "../../nexusutils/definitions/contributed_definitions/NXiv_temp.nxdl.xml"
+    )
+    elem = ET.parse(nxdl_file_path).getroot()
+    (_, _, elist) = nexus.get_inherited_nodes(
+        nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT",
+        elem=elem)
+    assert len(elist) == 3
+
+    (_, _, elist) = nexus.get_inherited_nodes(
+        nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
+        elem=elem)
+    assert len(elist) == 4
+
+    (_, _, elist) = nexus.get_inherited_nodes(
+        nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
+        nx_name="NXiv_temp")
+    assert len(elist) == 4
+
+
+def test_c_option(tmp_path):
+    """
+    To check -c option from IV_temp.nxs.
+    """
+
+    local_path = os.path.dirname(__file__)
+    path_to_ref_files = os.path.join(local_path, '../data/nexus/')
+    ref_file = path_to_ref_files + 'Ref1_c_option_test.log'
+    tmp_file = os.path.join(tmp_path, 'c_option_1_test.log')
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler(tmp_file, 'w')
+
+    with open(ref_file, encoding='utf-8', mode='r') as ref_f:
+        ref = ref_f.readlines()
+
+    handler = logging.FileHandler(tmp_file, 'w')
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    nexus_helper = nexus.HandleNexus(logger, None, None, '/NXbeam')
+    nexus_helper.process_nexus_master_file(None)
+
+    with open(tmp_file, encoding='utf-8', mode='r') as tmp_f:
+        tmp = tmp_f.readlines()
+
+    assert tmp == ref
