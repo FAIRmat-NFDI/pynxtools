@@ -23,7 +23,6 @@
 "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/probe": "@eln",
 "/ENTRY[entry]/SAMPLE[sample]/name": "@xps_tocken:parameters/Group",
 "/ENTRY[entry]/SAMPLE[sample]/chemical_formula": "@eln",
-"/ENTRY[entry]/SAMPLE[sample]/atom_types": "@eln",
 "/ENTRY[entry]/SAMPLE[sample]/preparation_description": "@eln",
 "/ENTRY[entry]/SAMPLE[sample]/temperature": "@eln",
 "/ENTRY[entry]/SAMPLE[sample]/temperature/@units": "@eln",

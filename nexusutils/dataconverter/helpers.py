@@ -17,11 +17,12 @@
 #
 """Helper functions commonly used by the convert routine."""
 
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Union, Set, List
 import re
 import xml.etree.ElementTree as ET
 
 import numpy as np
+from ase.data import chemical_symbols
 
 from nexusutils.nexus import nexus
 from nexusutils.nexus.nexus import NxdlAttributeError
@@ -449,3 +450,64 @@ def get_first_group(root):
         if remove_namespace_from_tag(child.tag) == "group":
             return child
     return root
+
+
+def check_for_valid_atom_types(atoms: Union[str, list]):
+    """Check for whether atom exists in periodic table. """
+
+    if isinstance(atoms, list):
+        for elm in atoms:
+            if elm not in chemical_symbols:
+                raise ValueError(f"The element {elm} is not found in periodictable, "
+                                 f"check for correct element name")
+    elif isinstance(atoms, str):
+        if atoms not in chemical_symbols:
+            raise ValueError(f"The element {atoms} is not found in periodictable, "
+                             f"check for correct element name")
+
+
+def extract_atom_types(formula: str, mode: str = 'hill') -> Union[Set, List]:
+    """Extract atom types form chemical formula."""
+
+    atom_types: set = set()
+    element: str = ""
+    # tested with "(C38H54S4)n(NaO2)5(CH4)NH3B"
+    for char in formula:
+        if char.isalpha():
+            if char.isupper() and element == "":
+                element = char
+            elif char.isupper() and element != "" and element.isupper():
+                check_for_valid_atom_types(element)
+                atom_types.add(element)
+                element = char
+            elif char.islower() and element.isupper():
+                element = element + char
+                check_for_valid_atom_types(element)
+                atom_types.add(element)
+                element = ""
+
+        else:
+            if element.isupper():
+                check_for_valid_atom_types(element)
+                atom_types.add(element)
+            element = ""
+    if element.isupper():
+        atom_types.add(element)
+
+    atom_types = list(atom_types)
+    atom_types = sorted(atom_types)
+
+    def convert_to_hill(atoms_typ):
+        atom_list = []
+        if 'C' in atoms_typ:
+            atom_list.append('C')
+        if 'H' in atoms_typ:
+            atom_list.append('H')
+        for char in atom_list:
+            atoms_typ.remove(char)
+        return atom_list + list(atoms_typ)
+
+    if mode == 'hill':
+        return convert_to_hill(atom_types)
+
+    return atom_types
