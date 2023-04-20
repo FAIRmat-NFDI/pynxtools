@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<!--
+# NeXus - Neutron and X-ray Common Data Format
+# 
+# Copyright (C) 2014-2022 NeXus International Advisory Committee (NIAC)
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# For further information, see http://www.nexusformat.org
+-->
+<!--6: NXmpes: Test -\- documentation
+NXmpes: Test documentation-->
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" name="NXmpes" extends="NXobject" type="group" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+    <!--2: symbols comments: comments here-->
+    <symbols>
+        <!--3: symbols doc comments-->
+        <doc>
+             symbols doc
+        </doc>
+        <!--4: symbol comments: comments here-->
+        <symbol name="n_different_temperatures">
+            <doc>
+                 Number of different temperature setpoints used in the experiment.
+            </doc>
+        </symbol>
+        <!--5: symbol comments: comments here-->
+        <symbol name="n_different_voltages">
+            <doc>
+                 Number of different voltage setpoints used in the experiment.
+            </doc>
+        </symbol>
+    </symbols>
+    <!--1: Pincelli, Rettig, Arora at fhi-berlin.mpg.de, Dobener at hu-berlin.de, 06/2022
+Draft version of a NeXus application definition for photoemission,
+It is designed to be extended by other application definitions
+with higher granularity in the data description.-->
+    <doc>
+         This is the most general application definition for multidimensional
+         photoelectron spectroscopy.
+    </doc>
+    <!--7: NXmpes: Test documentation
+NXmpes: Test documentation
+8: exists: comment-->
+    <group type="NXentry" recommended="true">
+        <!--9: Title comment-->
+        <field name="title"/>
+        <!--10: Group comment-->
+        <field name="start_time" type="NX_DATE_TIME">
+            <doc>
+                 Datetime of the start of the measurement.
+            </doc>
+        </field>
+        <field name="definition">
+            <!--11: version_attribute: comments hrere-->
+            <attribute name="version"/>
+            <enumeration>
+                <item value="NXmpes"/>
+            </enumeration>
+        </field>
+        <!--12: Scond comment for Comment NXdata(data)-->
+        <!--13: comment nxdata(data): comments
+comment nxdata(data): comments-->
+        <!--14: Third comment for Comment NXdata(data)-->
+        <group type="NXdata" name="data">
+            <!--15: comment (energy(link)):-->
+            <link name="energy" target="/entry/instrument/fluorescence/energy"/>
+            <!--16: comment (data(link)):-->
+            <link name="data" target="/entry/instrument/fluorescence/data"/>
+            <field name="region_origin" type="NX_INT">
+                <doc>
+                     origin of rectangular region selected for readout
+                </doc>
+                <!--17: dimensions comments:-->
+                <!--18: rank comments: comments-->
+                <dimensions rank="1">
+                    <!--19: dim comments:-->
+                    <dim index="1" value="2"/>
+                </dimensions>
+            </field>
+        </group>
+    </group>
+    <!--20: File endgin comments
+20: File ending comments
+20: File ending comments-->
+    <!--21: File endgin comments
+21: File ending comments
+21: File ending comments-->
+</definition>
