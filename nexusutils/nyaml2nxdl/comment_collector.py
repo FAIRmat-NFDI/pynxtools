@@ -90,7 +90,7 @@ class CommentCollector:
                 if single_comment.is_storing_single_comment():
                     # If the last comment comes without post nxdl fields, groups and attributes
                     if line_num < (len(lines) - 1):
-                        # Line number in file starts from 1
+                        # Processing file from Line number 1
                         single_comment.process_each_line(line, (line_num + 1))
                     else:
                         # For processing post comment
