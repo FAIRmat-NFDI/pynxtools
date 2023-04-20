@@ -1,13 +1,4 @@
 #!usr/bin/env python3
-"""
-Collect comments in a list by comment collector class
-
-The class Comment block is an abstract class for general functions or method to be implemented
-XMLComment and YAMLComment class.
-
-NOTE: Here comment block mainly stands for (comment text + line or element for what comment is
-intended.)
-"""
 # -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
@@ -26,6 +17,19 @@ intended.)
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+"""
+Collect comments in a list by CommentCollector class. Comment is a instance of Comment,
+where each comment includes comment text and line info or neighbour info where the
+comment must be assinged.
+
+The class Comment is an abstract class for general functions or method to be implemented
+XMLComment and YAMLComment class.
+
+NOTE: Here comment block mainly stands for (comment text + line or element for what comment is
+intended.)
+"""
+
 
 from typing import List, Type, Any, Tuple, Union, Dict
 from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import LineLoader
@@ -79,8 +83,9 @@ class CommentCollector:
         single_comment = self.comment(comment_id=id_)
         with open(self.file, mode='r', encoding='UTF-8') as enc_f:
             lines = enc_f.readlines()
-            # Make an empty line for last comment if no enpty lines in original file
-            lines.append('')
+            # Make an empty line for last comment if no empty lines in original file
+            if lines[-1] != '':
+                lines.append('')
             for line_num, line in enumerate(lines):
                 if single_comment.is_storing_single_comment():
                     # If the last comment comes without post nxdl fields, groups and attributes
@@ -143,14 +148,14 @@ class CommentCollector:
         return False
 
     def __getitem__(self, ind):
-        """Get comment from  self_obj._comment_chain by index.
+        """Get comment from  self.obj._comment_chain by index.
         """
         if ind >= len(self._comment_chain):
             raise IndexError(f'Oops! Coment index {ind} in {__class__} is out of range!')
         return self._comment_chain[ind]
 
     def __iter__(self):
-        """get_comment_ieratively
+        """get comment ieratively
         """
         return iter(self._comment_chain)
 
@@ -316,7 +321,8 @@ class XMLComment(Comment):
 
 class YAMLComment(Comment):
     """
-
+    This class for stroing comment text as well as location of the comment e.g. line
+    number of other in the file.
     NOTE:
      1. Do not delete any element form yaml dictionary (for loaded_obj. check: Comment_collector
      class. because this loaded file has been exploited in nyaml2nxdl forward tools.)

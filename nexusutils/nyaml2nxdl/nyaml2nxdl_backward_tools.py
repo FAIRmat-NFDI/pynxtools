@@ -45,7 +45,6 @@ def separate_pi_comments(input_file):
 
     with open(input_file, "r", encoding='utf-8') as file:
         lines = file.readlines()
-        # pi -> ProcessInstructio section
         has_pi = True
         for line in lines:
             c_start = '<!--'
@@ -218,10 +217,10 @@ class Nxdl2yaml():
                                 self.handle_not_root_level_doc(depth,
                                                                tag=child.attrib['name'],
                                                                text=symbol_doc.text))
-        self.strore_root_level_comments('symbol_doc_comments', sbl_doc_cmnt_list)
-        self.strore_root_level_comments('symbol_comments', symbol_cmnt_list)
+        self.stroe_root_level_comments('symbol_doc_comments', sbl_doc_cmnt_list)
+        self.stroe_root_level_comments('symbol_comments', symbol_cmnt_list)
 
-    def strore_root_level_comments(self, holder, comment):
+    def stroe_root_level_comments(self, holder, comment):
         """Store yaml text or section line and the comments inteded for that lines or section"""
 
         self.root_level_comment[holder] = comment
@@ -865,7 +864,7 @@ class Nxdl2yaml():
                         last_comment = self.comvert_to_ymal_comment(depth * DEPTH_SIZE, child.text)
                         remove_cmnt_n = child
                     if tag_tmp == 'doc':
-                        self.strore_root_level_comments('root_doc', last_comment)
+                        self.stroe_root_level_comments('root_doc', last_comment)
                         last_comment = ''
                         self.handle_root_level_doc(child)
                         node.remove(child)
@@ -873,7 +872,7 @@ class Nxdl2yaml():
                             node.remove(remove_cmnt_n)
                             remove_cmnt_n = None
                     if tag_tmp == 'symbols':
-                        self.strore_root_level_comments('symbols', last_comment)
+                        self.stroe_root_level_comments('symbols', last_comment)
                         last_comment = ''
                         self.handle_symbols(depth, child)
                         node.remove(child)
