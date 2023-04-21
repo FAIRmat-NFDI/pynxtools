@@ -23,8 +23,8 @@ from distutils import file_util
 import pytest
 import numpy as np
 
-from nexusutils.dataconverter import helpers
-from nexusutils.dataconverter.template import Template
+from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.template import Template
 
 
 def alter_dict(data_dict: Template, key: str, value: object):

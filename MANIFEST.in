@@ -1,4 +1,4 @@
-recursive-include nexusutils/definitions/base_classes/ *.xml
-recursive-include nexusutils/definitions/applications/ *.xml
-recursive-include nexusutils/definitions/contributed_definitions/ *.xml
-include nexusutils/definitions/ *.xsd
+recursive-include pynxtools/definitions/base_classes/ *.xml
+recursive-include pynxtools/definitions/applications/ *.xml
+recursive-include pynxtools/definitions/contributed_definitions/ *.xml
+include pynxtools/definitions/ *.xsd

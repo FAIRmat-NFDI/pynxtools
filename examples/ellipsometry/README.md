@@ -16,4 +16,4 @@ in this directory.
 
 # Are there detailed examples?
 
-Yes, [here](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/ellips) you can find an exhaustive example how to use `nexusutils` for your ellipsometry research data pipeline.
+Yes, [here](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/ellips) you can find an exhaustive example how to use `pynxtools` for your ellipsometry research data pipeline.
