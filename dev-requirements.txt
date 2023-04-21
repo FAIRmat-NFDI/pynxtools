@@ -29,7 +29,6 @@ attrs==22.1.0
     # via
     #   cattrs
     #   jsonschema
-    #   pytest
     #   requests-cache
 babel==2.11.0
     # via jupyterlab-server
@@ -55,7 +54,7 @@ click==8.1.3
     #   pynxtools (pyproject.toml)
 cloudpickle==2.2.0
     # via dask
-coverage[toml]==6.5.0
+coverage[toml]==7.2.3
     # via pytest-cov
 cycler==0.11.0
     # via matplotlib
@@ -149,8 +148,16 @@ imageio==2.22.1
     #   nionui
     #   scikit-image
 importlib-metadata==5.0.0
-    # via hyperspy
-iniconfig==1.1.1
+    # via
+    #   hyperspy
+    #   jupyterlab-server
+    #   nbconvert
+    #   numba
+importlib-resources==5.9.0
+    # via
+    #   jsonschema
+    #   radioactivedecay
+iniconfig==2.0.0
     # via pytest
 ipykernel==6.16.0
     # via
@@ -237,8 +244,8 @@ kikuchipy==0.8.4
 kiwisolver==1.4.4
     # via matplotlib
 lark==1.1.5
-    # via pynxtools (pyproject.toml)
-lazy-object-proxy==1.7.1
+    # via nexusutils (pyproject.toml)
+lazy-object-proxy==1.9.0
     # via astroid
 llvmlite==0.39.1
     # via numba
@@ -273,10 +280,12 @@ mistune==2.0.4
     # via nbconvert
 mpmath==1.2.1
     # via sympy
-mypy==0.982
-    # via pynxtools (pyproject.toml)
-mypy-extensions==0.4.3
+mypy==1.2.0
+    # via nexusutils (pyproject.toml)
+mypy-extensions==1.0.0
     # via mypy
+nanonispy==1.1.0
+    # via nexusutils (pyproject.toml)
 natsort==8.2.0
     # via hyperspy
 nbclassic==0.4.8
@@ -356,10 +365,8 @@ numpy==1.21.6
     #   kikuchipy
     #   lmfit
     #   matplotlib
-    #   niondata
-    #   nionswift
-    #   nionswift-io
-    #   nionui
+    #   nanonispy
+    #   nexusutils (pyproject.toml)
     #   numba
     #   numcodecs
     #   numexpr
@@ -473,8 +480,8 @@ pygments==2.13.0
     # via
     #   ipython
     #   nbconvert
-pylint==2.15.3
-    # via pynxtools (pyproject.toml)
+pylint==2.17.2
+    # via nexusutils (pyproject.toml)
 pyparsing==3.0.9
     # via
     #   matplotlib
@@ -483,7 +490,7 @@ pyproject-hooks==1.0.0
     # via build
 pyrsistent==0.18.1
     # via jsonschema
-pytest==7.1.3
+pytest==7.3.1
     # via
     #   pynxtools (pyproject.toml)
     #   pytest-cov
@@ -583,8 +590,8 @@ soupsieve==2.3.2.post1
     # via beautifulsoup4
 sparse==0.13.0
     # via hyperspy
-structlog==22.1.0
-    # via pynxtools (pyproject.toml)
+structlog==23.1.0
+    # via nexusutils (pyproject.toml)
 sympy==1.10.1
     # via
     #   hyperspy
@@ -612,7 +619,7 @@ tomli==2.0.1
     #   pylint
     #   pyproject-hooks
     #   pytest
-tomlkit==0.11.5
+tomlkit==0.11.7
     # via pylint
 toolz==0.12.0
     # via

@@ -43,6 +43,7 @@ dependencies = [
     "lark>=1.1.5",
     "requests",
     "requests_cache",
+    "nanonispy>=1.1.0"
 ]
 
 #     "h5web @ git+https://github.com/silx-kit/h5web@3e21159",
