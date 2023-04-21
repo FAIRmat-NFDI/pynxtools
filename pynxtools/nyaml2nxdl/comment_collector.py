@@ -32,7 +32,7 @@ intended.)
 
 
 from typing import List, Type, Any, Tuple, Union, Dict
-from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import LineLoader
+from pynxtools.nyaml2nxdl.nyaml2nxdl_helper import LineLoader
 
 __all__ = ['Comment', 'CommentCollector', 'XMLComment', 'YAMLComment']
 

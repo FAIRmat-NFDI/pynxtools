@@ -293,8 +293,8 @@ def test_yml_consistency_comment_parsing():
     """Test comments parsing from yaml. Convert 'yaml' input file to '.nxdl.xml' and
     '.nxdl.xml' to '.yaml'
     """
-    from nexusutils.nyaml2nxdl.comment_collector import CommentCollector
-    from nexusutils.nyaml2nxdl.nyaml2nxdl_helper import LineLoader
+    from pynxtools.nyaml2nxdl.comment_collector import CommentCollector
+    from pynxtools.nyaml2nxdl.nyaml2nxdl_helper import LineLoader
 
     ref_yml_file = 'tests/data/nyaml2nxdl/Ref_NXcomment.yaml'
     test_yml_file = 'tests/data/nyaml2nxdl/Ref_NXcomment_consistency.yaml'
