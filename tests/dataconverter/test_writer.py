@@ -22,7 +22,7 @@ import os
 import pytest
 import h5py
 
-from nexusutils.dataconverter.writer import Writer
+from pynxtools.dataconverter.writer import Writer
 from .test_helpers import fixture_filled_test_data, fixture_template  # pylint: disable=unused-import
 
 

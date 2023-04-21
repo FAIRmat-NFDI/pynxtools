@@ -25,12 +25,12 @@ import xml.etree.ElementTree as ET
 import pytest
 from _pytest.mark.structures import ParameterSet
 
-from nexusutils.dataconverter.readers.base.reader import BaseReader
-from nexusutils.dataconverter.convert import \
+from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.convert import \
     get_names_of_all_readers, get_reader
-from nexusutils.dataconverter.helpers import \
+from pynxtools.dataconverter.helpers import \
     validate_data_dict, generate_template_from_nxdl
-from nexusutils.dataconverter.template import Template
+from pynxtools.dataconverter.template import Template
 
 
 def get_reader_name_from_reader_object(reader) -> str:
@@ -44,7 +44,7 @@ def get_reader_name_from_reader_object(reader) -> str:
 
 def get_readers_file_names() -> List[str]:
     """Helper function to parametrize paths of all the reader Python files"""
-    return sorted(glob.glob("nexusutils/dataconverter/readers/*/reader.py"))
+    return sorted(glob.glob("pynxtools/dataconverter/readers/*/reader.py"))
 
 
 def get_all_readers() -> List[ParameterSet]:
@@ -78,7 +78,7 @@ def test_has_correct_read_func(reader):
         assert hasattr(reader, "supported_nxdls")
 
         reader_name = get_reader_name_from_reader_object(reader)
-        def_dir = os.path.join(os.getcwd(), "nexusutils", "definitions")
+        def_dir = os.path.join(os.getcwd(), "pynxtools", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
         input_files = sorted(

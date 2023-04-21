@@ -3,7 +3,7 @@ requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nexusutils"
+name = "pynxtools"
 dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
@@ -61,18 +61,18 @@ dev = [
 ]
 
 [project.scripts]
-read_nexus = "nexusutils.nexus.nexus:main"
-dataconverter = "nexusutils.dataconverter.convert:convert_cli"
-nyaml2nxdl = "nexusutils.nyaml2nxdl.nyaml2nxdl:launch_tool"
+read_nexus = "pynxtools.nexus.nexus:main"
+dataconverter = "pynxtools.dataconverter.convert:convert_cli"
+nyaml2nxdl = "pynxtools.nyaml2nxdl.nyaml2nxdl:launch_tool"
 
 [tool.setuptools.package-data]
-nexusutils = ["definitions/**/*.xml", "definitions/**/*.xsd"]
-"nexusutils.dataconverter.readers.xps" = ["*.json"]
-"nexusutils.dataconverter.readers.hall" = ["enum_map.json"]
-"nexusutils.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
+pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+"pynxtools.dataconverter.readers.xps" = ["*.json"]
+"pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
+"pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
 [tool.setuptools.packages.find]
-exclude = ["nexusutils/definitions*"]
+exclude = ["pynxtools/definitions*"]
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
