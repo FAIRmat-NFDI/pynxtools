@@ -24,14 +24,13 @@ asciitree==0.3.3
 ase==3.19.0
     # via
     #   ifes-apt-tc-data-modeling
-    #   pynxtools (pyproject.toml)
-astroid==2.12.10
+    #   nexusutils (pyproject.toml)
+astroid==2.15.3
     # via pylint
 attrs==22.1.0
     # via
     #   cattrs
     #   jsonschema
-    #   pytest
     #   requests-cache
 babel==2.11.0
     # via jupyterlab-server
@@ -53,7 +52,7 @@ click==8.1.3
     # via pynxtools (pyproject.toml)
 cloudpickle==2.2.0
     # via dask
-coverage[toml]==6.5.0
+coverage[toml]==7.2.3
     # via pytest-cov
 cycler==0.11.0
     # via matplotlib
@@ -77,7 +76,9 @@ entrypoints==0.4
     #   jupyter-client
     #   numcodecs
 exceptiongroup==1.1.0
-    # via cattrs
+    # via
+    #   cattrs
+    #   pytest
 fasteners==0.18
     # via zarr
 fastjsonschema==2.16.2
@@ -125,7 +126,7 @@ importlib-resources==5.9.0
     # via
     #   jsonschema
     #   radioactivedecay
-iniconfig==1.1.1
+iniconfig==2.0.0
     # via pytest
 ipykernel==6.16.0
     # via
@@ -144,7 +145,7 @@ ipython-genutils==0.2.0
     # via
     #   nbclassic
     #   notebook
-isort==5.10.1
+isort==5.12.0
     # via pylint
 jedi==0.18.1
     # via ipython
@@ -202,8 +203,8 @@ jupyterlab-server==2.19.0
 kiwisolver==1.4.4
     # via matplotlib
 lark==1.1.5
-    # via pynxtools (pyproject.toml)
-lazy-object-proxy==1.7.1
+    # via nexusutils (pyproject.toml)
+lazy-object-proxy==1.9.0
     # via astroid
 llvmlite==0.39.1
     # via numba
@@ -228,10 +229,12 @@ mistune==2.0.4
     # via nbconvert
 mpmath==1.2.1
     # via sympy
-mypy==0.982
-    # via pynxtools (pyproject.toml)
-mypy-extensions==0.4.3
+mypy==1.2.0
+    # via nexusutils (pyproject.toml)
+mypy-extensions==1.0.0
     # via mypy
+nanonispy==1.1.0
+    # via nexusutils (pyproject.toml)
 natsort==8.2.0
     # via hyperspy
 nbclassic==0.4.8
@@ -285,6 +288,8 @@ numpy==1.21.6
     #   ifes-apt-tc-data-modeling
     #   imageio
     #   matplotlib
+    #   nanonispy
+    #   nexusutils (pyproject.toml)
     #   numba
     #   numcodecs
     #   numexpr
@@ -361,25 +366,23 @@ ptyprocess==0.7.0
     # via
     #   pexpect
     #   terminado
-py==1.11.0
-    # via pytest
-pycodestyle==2.9.1
-    # via pynxtools (pyproject.toml)
+pycodestyle==2.10.0
+    # via nexusutils (pyproject.toml)
 pycparser==2.21
     # via cffi
 pygments==2.13.0
     # via
     #   ipython
     #   nbconvert
-pylint==2.15.3
-    # via pynxtools (pyproject.toml)
+pylint==2.17.2
+    # via nexusutils (pyproject.toml)
 pyparsing==3.0.9
     # via
     #   matplotlib
     #   packaging
 pyrsistent==0.18.1
     # via jsonschema
-pytest==7.1.3
+pytest==7.3.1
     # via
     #   pynxtools (pyproject.toml)
     #   pytest-cov
@@ -453,8 +456,8 @@ soupsieve==2.3.2.post1
     # via beautifulsoup4
 sparse==0.13.0
     # via hyperspy
-structlog==22.1.0
-    # via pynxtools (pyproject.toml)
+structlog==23.1.0
+    # via nexusutils (pyproject.toml)
 sympy==1.10.1
     # via
     #   hyperspy
@@ -478,7 +481,7 @@ tomli==2.0.1
     #   mypy
     #   pylint
     #   pytest
-tomlkit==0.11.5
+tomlkit==0.11.7
     # via pylint
 toolz==0.12.0
     # via
@@ -515,13 +518,13 @@ traitlets==5.4.0
     #   notebook
 traits==6.4.1
     # via hyperspy
-types-pytz==2022.6.0.1
-    # via pynxtools (pyproject.toml)
-types-pyyaml==6.0.12
-    # via pynxtools (pyproject.toml)
-types-requests==2.28.11.12
-    # via pynxtools (pyproject.toml)
-types-urllib3==1.26.25.5
+types-pytz==2023.3.0.0
+    # via nexusutils (pyproject.toml)
+types-pyyaml==6.0.12.9
+    # via nexusutils (pyproject.toml)
+types-requests==2.28.11.17
+    # via nexusutils (pyproject.toml)
+types-urllib3==1.26.25.10
     # via types-requests
 typing-extensions==4.3.0
     # via
@@ -545,7 +548,7 @@ webencodings==0.5.1
     #   tinycss2
 websocket-client==1.4.1
     # via jupyter-server
-wrapt==1.14.1
+wrapt==1.15.0
     # via astroid
 xarray==0.20.2
     # via pynxtools (pyproject.toml)
