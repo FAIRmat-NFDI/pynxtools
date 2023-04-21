@@ -476,7 +476,7 @@ def convert_to_hill(atoms_typ):
         atom_list.append('C')
     if 'H' in atoms_typ:
         atom_list.append('H')
-    if atom_list != []:
+    if atom_list:
         for char in atom_list:
             atoms_typ.remove(char)
     return atom_list + list(atoms_typ)
