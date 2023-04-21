@@ -291,3 +291,16 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
 def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
     assert helpers.path_in_data_dict(nxdl_path, template) == expected
+
+
+def test_atom_type_extractor_and_hill_conversion():
+    """
+        Test atom type extractor and conversion to hill
+    """
+
+    test_chemical_formula = "(C38H54S4)n(NaO2)5(CH4)NH3B"
+    expected_atom_types = ['C', 'H', 'B', 'N', 'Na', 'O', 'S']
+
+    atom_list = helpers.extract_atom_types(test_chemical_formula)
+
+    assert expected_atom_types == atom_list
