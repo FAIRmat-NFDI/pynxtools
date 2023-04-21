@@ -26,7 +26,6 @@ Instrument:
 Sample:
   name: "PBTTT"
   chemical_formula: "(C42H62S4)n"
-  atom_types: ['C', 'H', 'S']
   preparation_description: "From third party"
   temperature:
     unit: "K"
@@ -37,10 +36,6 @@ Sample:
     value: 101325.0
   density: null
   description: "A polymer material called PBTTT with chemical name  poly[2,5-bis(3-dodecylthiophen-2-yl)thieno[3,2-b]thiophene]."
-start_time: null
-definition:
-  version: null
-  value: null
 title: "XPS Experiment"
 start_time: "2022-04-08T11:47:02.0200Z"
 definition:

@@ -26,12 +26,12 @@ import json
 
 import yaml
 import numpy as np
-from ase.data import chemical_symbols
 
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.readers.xps.reader_utils import XpsDataFileParser
 from nexusutils.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 from nexusutils.dataconverter.template import Template
+from nexusutils.dataconverter.helpers import extract_atom_types
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -263,40 +263,6 @@ def fill_template_with_xps_data(config_dict,
                     pass
 
 
-def extract_atom_types(formula: str) -> Set:
-    """Extract atom types form chemical formula."""
-
-    atom_types: set = set()
-    element: str = ""
-    # tested with "(C38H54S4)n(NaO2)5(CH4)NH3"
-    for char in formula:
-        if char.isalpha():
-            if char.isupper() and element == "":
-                element = char
-            elif char.isupper() and element != "" and element.isupper():
-                atom_types.add(element)
-                element = char
-            elif char.islower() and element.isupper():
-                element = element + char
-                atom_types.add(element)
-                element = ""
-
-        else:
-            if element.isupper():
-                atom_types.add(element)
-            element = ""
-
-    return atom_types
-
-
-def check_for_valid_atom_types(atom_list: str):
-    """Check for whether atom exists in periodic table. """
-    for elm in atom_list:
-        if elm not in chemical_symbols:
-            raise ValueError(f"The element {elm} is not found in periodictable, "
-                             f"check for correct element name")
-
-
 # pylint: disable=too-many-branches
 def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
@@ -304,19 +270,12 @@ def fill_template_with_eln_data(eln_data_dict,
                                 entry_set):
     """Fill the template from provided eln data"""
 
-    def fill_from_file(key):
+    def fill_atom_types(key):
         atom_types: List = []
         field_value = eln_data_dict[key]
 
         if "chemical_formula" in key:
             atom_types = list(extract_atom_types(field_value))
-
-        if "atom_types" in key:
-            if field_value:
-                pass
-            else:
-                field_value = atom_types
-            check_for_valid_atom_types(field_value)
 
         if field_value is None:
             return
@@ -324,10 +283,13 @@ def fill_template_with_eln_data(eln_data_dict,
         for entry in entry_set:
             modified_key = key.replace("[entry]", f"[{entry}]")
             template[modified_key] = field_value
+            if atom_types:
+                modified_key = modified_key.replace('chemical_formula', 'atom_types')
+                template[modified_key] = '[ ' + ', '.join(atom_types) + ' ]'
 
     def fill_from_value(key):
         field_value = eln_data_dict[key]
-        if field_value is None:
+        if not field_value:
             return
         # Do for all entry name
         for entry in entry_set:
@@ -342,7 +304,7 @@ def fill_template_with_eln_data(eln_data_dict,
 
     for key, val in config_dict.items():
         if ELN_TOCKEN in val:
-            fill_from_file(key)
+            fill_atom_types(key)
         elif key in list(eln_data_dict.keys()):
             fill_from_value(key)
 
@@ -382,7 +344,6 @@ class XPSReader(BaseReader):
             elif file_ext == ".xml":
                 data_dict = XpsDataFileParser([file]).get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
-
         with open(config_file, encoding="utf-8", mode="r") as cfile:
             config_dict = json.load(cfile)
 
