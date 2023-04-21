@@ -27,18 +27,11 @@ import json
 import yaml
 import numpy as np
 
-<<<<<<< HEAD:nexusutils/dataconverter/readers/xps/reader.py
-from nexusutils.dataconverter.readers.base.reader import BaseReader
-from nexusutils.dataconverter.readers.xps.reader_utils import XpsDataFileParser
-from nexusutils.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
-from nexusutils.dataconverter.template import Template
-from nexusutils.dataconverter.helpers import extract_atom_types
-=======
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.xps.reader_utils import XpsDataFileParser
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 from pynxtools.dataconverter.template import Template
->>>>>>> 4767305 (Renames to pynxtools):pynxtools/dataconverter/readers/xps/reader.py
+from pynxtools.dataconverter.helpers import extract_atom_types
 
 np.set_printoptions(threshold=sys.maxsize)
 
