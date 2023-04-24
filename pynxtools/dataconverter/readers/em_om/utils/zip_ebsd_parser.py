@@ -17,28 +17,18 @@
 #
 """Parse Kikuchi pattern from a ZIP file without temporary copies of unpacked files."""
 
-# pylint: disable=E1101
+# pylint: disable=E1101, E0801
 
 # https://orix.readthedocs.io/en/stable/tutorials/inverse_pole_figures.html
 
-import os
-
 import re
 
-import matplotlib.pyplot as plt
-
 import numpy as np
-
-import h5py
 
 from zipfile37 import ZipFile
 
 # import imageio.v3 as iio
 from PIL import Image as pil
-
-from typing import Dict, Any, List
-
-from pynxtools.dataconverter.readers.em_om.utils.image_transform import thumbnail
 
 from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import HFIVE_WEB_MAX_SIZE
 
@@ -59,10 +49,10 @@ class NxEmOmZipEbsdParser:
         # exports these pattern into a common format (e.g. some of the HDF5 variants)
         self.file_name = file_name
         self.entry_id = entry_id
-        self.stack_meta = None
-        self.stack = None
+        self.stack_meta = {}  # None
+        self.stack = []  # None
 
-    def parse_zip(self, template: dict, slice_id) -> dict:
+    def parse_zip(self, template: dict) -> dict:
         """Parse content from *.zip format."""
         with ZipFile(self.file_name) as zip_file_hdl:
             # print(zip_file_hdl.namelist())
@@ -98,7 +88,7 @@ class NxEmOmZipEbsdParser:
             # ASSUME slow axis is y, fast axis is x
             for keyword, value in zip_content_table.items():
                 tmp = value.split(".")
-                if len(tmp) > 1 and tmp[-1].lower() in ["bmp", "jpg", "png", "tiff"]:
+                if (len(tmp) > 1) and (tmp[-1].lower() in ["bmp", "jpg", "png", "tiff"]):
                     # there are examples where people store Kikuchi diffraction pattern
                     # as lossy and lossless raster...
                     # pil supports reading of files in more formats but the above are
@@ -111,15 +101,15 @@ class NxEmOmZipEbsdParser:
                             # how-can-i-get-the-depth-of-a-jpg-file
                             break
                         shp = (img.height, img.width)  # np.shape(img)
-                        if shp[0] > 0 and shp[0] <= HFIVE_WEB_MAX_SIZE:
-                            if shp[1] > 0 and shp[1] <= HFIVE_WEB_MAX_SIZE:
-                                # found the guiding image
-                                self.stack_meta["size"] = (shp[0], shp[1])  # , 3)
-                                self.stack_meta["fname"] = value
-                                self.stack_meta["ftype"] = tmp[-1].lower()
-                                self.stack_meta["dtype"] = np.uint8  # for mode "L"
-                                # ##MK::bit depth and other constraints
-                                break
+                        if (shp[0] > 0) and (shp[0] <= HFIVE_WEB_MAX_SIZE) \
+                                and (shp[1] > 0) and (shp[1] <= HFIVE_WEB_MAX_SIZE):
+                            # found the guiding image
+                            self.stack_meta["size"] = (shp[0], shp[1])  # , 3)
+                            self.stack_meta["fname"] = value
+                            self.stack_meta["ftype"] = tmp[-1].lower()
+                            self.stack_meta["dtype"] = np.uint8  # for mode "L"
+                            # ##MK::bit depth and other constraints
+                            break
                             # ##MK::at the moment not supporting > HFIVE_WEB_MAX_SIZE
                             # images but this is usually not required
             print(self.stack_meta)
@@ -133,11 +123,11 @@ class NxEmOmZipEbsdParser:
                                   self.stack_meta["dtype"])
             for keyword, value in zip_content_table.items():
                 tmp = value.split(".")
-                if len(tmp) > 1 and tmp[-1].lower() == self.stack_meta["ftype"]:
+                if (len(tmp) > 1) and (tmp[-1].lower() == self.stack_meta["ftype"]):
                     with zip_file_hdl.open(value) as file_handle:
                         # img = np.asarray(pil.open(file_handle))
                         img = pil.open(file_handle, "r")
-                        if img.mode == "L" and img.palette is None:
+                        if (img.mode == "L") and (img.palette is None):
                             img = np.asarray(img, np.uint8)
                             # ##MK::for bitmap no need to discard alpha channels, check
                             # print(np.shape(img))
@@ -145,14 +135,14 @@ class NxEmOmZipEbsdParser:
                         else:
                             break
 
-                        if np.shape(img) == self.stack_meta["size"]:
-                            if img.dtype == self.stack_meta["dtype"]:
-                                self.stack[identifier, :, :] = img
-                                # Kikuchi pattern may come as 8-bit (grayscale) RGBs
-                                # or as simulated intensities (as floats)
-                                # ASSUME here we load only images when [1, HFIVE_WEB_MAX_SIZE]
-                                # and map eventual RGB bitmaps on intensities
-                                identifier += 1
+                        if (np.shape(img) == self.stack_meta["size"]) \
+                                and (img.dtype == self.stack_meta["dtype"]):
+                            self.stack[identifier, :, :] = img
+                            # Kikuchi pattern may come as 8-bit (grayscale) RGBs
+                            # or as simulated intensities (as floats)
+                            # ASSUME here we load only images when [1, HFIVE_WEB_MAX_SIZE]
+                            # and map eventual RGB bitmaps on intensities
+                            identifier += 1
             # okay this is about the intensity but what about the dimension scale axes
             # with tiff these could be stored in the tiff tag image metadata
             # print(np.shape(self.kikuchi))
@@ -200,6 +190,6 @@ class NxEmOmZipEbsdParser:
         print("Parsing EBSD data generic-style for a ZIP example...")
         print(self.file_name)
         print(f"{self.entry_id}")
-        self.parse_zip(template, 1)
+        self.parse_zip(template)
         self.parse_pattern_stack_default_plot(template)
         return template

@@ -23,6 +23,8 @@
 
 import os
 
+from typing import Dict, Any, List
+
 import matplotlib.pyplot as plt
 
 import numpy as np
@@ -31,8 +33,6 @@ import h5py
 
 # import imageio.v3 as iio
 from PIL import Image as pil
-
-from typing import Dict, Any, List
 
 import diffsims
 import orix
@@ -78,7 +78,7 @@ class NxEmOmOrixEbsdParser:
         self.oina_version_identifier = "5.0"
         self.xaxis: List[float] = []
         self.yaxis: List[float] = []
-        # self.xmap = CrystalMap()
+        self.xmap = None  # CrystalMap()
         self.oina: Dict[str, Any] = {"n_slices": 1,
                                      "rotation": None,
                                      "scan_point_x": None,

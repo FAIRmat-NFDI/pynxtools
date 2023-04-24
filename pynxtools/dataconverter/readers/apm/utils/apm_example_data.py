@@ -248,70 +248,62 @@ class ApmCreateExampleData:
     def composition_to_ranging_definitions(self, template: dict) -> dict:
         """Create ranging definitions based on composition."""
         assert len(self.nrm_composition) > 0, "Composition is not defined!"
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/ranging/"
-        template[trg + "program"] = "synthetic"
-        template[trg + "program/@version"] = "synthetic data"
-        template[trg + "number_of_ion_types"] = np.uint32(0)
-        # template[trg + "number_of_ion_types/@units"] = ""
-        template[trg + "maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
-        template[trg + "maximum_number_of_atoms_per_molecular_ion/@units"] = ""
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/ranging/peak_identification/"
-        template[trg + "program"] = "synthetic"
-        template[trg + "program/@version"] = "synthetic"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
+        template[f"{trg}PROGRAM[program1]/program"] = "synthetic"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = "synthetic data"
 
         add_unknown_iontype(template, self.entry_id)
 
         ion_id = 1
         for tpl in self.nrm_composition:
-            path = trg + "ION[ion" + str(ion_id) + "]/"
+            path = f"{trg}ION[ion{ion_id}]/"
             ivec = create_isotope_vector(tpl[0])
-            template[path + "isotope_vector"] \
+            template[f"{path}isotope_vector"] \
                 = np.reshape(np.asarray(ivec, np.uint16),
                              (1, MAX_NUMBER_OF_ATOMS_PER_ION))
             # template[path + "isotope_vector/@units"] = ""
-            template[path + "charge_state"] = np.int8(tpl[1])
-            template[path + "charge_state/@units"] = "eV"
-            template[path + "mass_to_charge_range"] \
-                = np.reshape(np.asarray(
-                             [tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2))
-            template[path + "mass_to_charge_range/@units"] = "Da"
+            template[f"{path}charge_state"] = np.int8(tpl[1])
+            template[f"{path}mass_to_charge_range"] = np.reshape(
+                np.asarray([tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2))
+            template[f"{path}mass_to_charge_range/@units"] = "Da"
             nuclid_list = np.zeros([2, 32], np.uint16)
             nuclid_list = isotope_vector_to_nuclid_list(ivec)
-            template[path + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-            # template[path + "nuclid_list/@units"] = ""
+            template[f"{path}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
             template[path + "name"] = isotope_vector_to_human_readable_name(ivec, tpl[1])
             ion_id += 1
 
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/ranging/"
-        template[trg + "number_of_ion_types"] = np.uint32(ion_id)
-        # template[trg + "number_of_ion_types/@units"] = ""
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
+        template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
+        template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
+
         return template
 
     def emulate_entry(self, template: dict) -> dict:
         """Copy data in entry section."""
         # check if required fields exists and are valid
         # print("Parsing entry...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/"
-        template[trg + "definition"] = NX_APM_ADEF_NAME
-        template[trg + "@version"] = NX_APM_ADEF_VERSION
-        template[trg + "program"] = NX_APM_EXEC_NAME
-        template[trg + "program/@version"] = NX_APM_EXEC_VERSION
-        template[trg + "start_time"] = datetime.datetime.now().astimezone().isoformat()
-        template[trg + "end_time"] = datetime.datetime.now().astimezone().isoformat()
+        trg = f"/ENTRY[entry{self.entry_id}]/"
+        template[f"{trg}definition"] = NX_APM_ADEF_NAME
+        template[f"{trg}@version"] = NX_APM_ADEF_VERSION
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
+        template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
         msg = '''
               WARNING: These are mocked data !!
               They are meant to be used exclusively
               for verifying NOMAD search capabilities.
               '''
-        template[trg + "experiment_description"] = msg
+        template[f"{trg}experiment_description"] = msg
         experiment_identifier \
-            = "R" + str(np.random.choice(100, 1)[0]) \
-            + "-" + str(np.random.choice(100000, 1)[0])
-        template[trg + "experiment_identifier"] = experiment_identifier
-        template[trg + "run_number"] \
-            = experiment_identifier.split("-")[1]
-        template[trg + "operation_mode"] \
+            = str(f"R{np.random.choice(100, 1)[0]}-{np.random.choice(100000, 1)[0]}")
+        template[f"{trg}experiment_identifier"] = experiment_identifier
+        template[f"{trg}run_number"] = experiment_identifier.split("-")[1]
+        template[f"{trg}operation_mode"] \
             = str(np.random.choice(["apt", "fim", "apt_fim"], 1)[0])
         return template
 
@@ -319,7 +311,7 @@ class ApmCreateExampleData:
         """Copy data in user section."""
         # check if required fields exists and are valid
         # print("Parsing user...")
-        prefix = "/ENTRY[entry" + str(self.entry_id) + "]/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/"
         user_names = np.unique(
             np.random.choice(["Sherjeel", "MarkusK", "Dierk", "Baptiste",
                               "Alexander", "Lorenz", "Sophie", "Stefan",
@@ -329,8 +321,8 @@ class ApmCreateExampleData:
                              1 + np.random.choice(MAX_USERS, 1)))
         user_id = 1
         for name in user_names:
-            trg = prefix + "USER[user" + str(user_id) + "]/"
-            template[trg + "name"] = str(name)
+            trg = f"{prefix}USER[user{user_id}]/"
+            template[f"{trg}name"] = str(name)
             user_id += 1
         return template
 
@@ -338,7 +330,7 @@ class ApmCreateExampleData:
         """Copy data in specimen section."""
         # check if required fields exists and are valid
         # print("Parsing specimen...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/specimen/"
+        trg = f"/ENTRY[entry{self.entry_id}]/specimen/"
         assert len(self.nrm_composition) > 0, "Composition list is empty!"
         unique_elements = set()
         for tpl in self.nrm_composition:
@@ -349,159 +341,157 @@ class ApmCreateExampleData:
                     unique_elements.add(str(symbol))
         print("Unique elements are")
         print(list(unique_elements))
-        template[trg + "atom_types"] = ", ".join(list(unique_elements))
+        template[f"{trg}atom_types"] = ", ".join(list(unique_elements))
 
-        specimen_name = "Mocked atom probe specimen " \
-            + str(np.random.choice(1000, 1)[0])
-        template[trg + "name"] = specimen_name
-        template[trg + "sample_history"] = "n/a"
-        template[trg + "preparation_date"] \
+        specimen_name = str(f"Mocked atom probe specimen {np.random.choice(1000, 1)[0]}")
+        template[f"{trg}name"] = specimen_name
+        template[f"{trg}sample_history"] = "n/a"
+        template[f"{trg}preparation_date"] \
             = datetime.datetime.now().astimezone().isoformat()
-        template[trg + "short_title"] \
+        template[f"{trg}short_title"] \
             = specimen_name.replace("Mocked atom probe specimen ", "")
-        template[trg + "description"] = "n/a"
+        template[f"{trg}description"] = "n/a"
         return template
 
     def emulate_control_software(self, template: dict) -> dict:
         """Copy data in control software section."""
         # print("Parsing control software...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/control_software/"
-        template[trg + "program"] = "IVAS"
-        template[trg + "program/@version"] = "3." \
-            + str(np.random.choice(9, 1)[0]) + "." \
-            + str(np.random.choice(9, 1)[0])
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
+        template[f"{trg}PROGRAM[program1]/program"] = "IVAS"
+        template[f"{trg}PROGRAM[program1]/program/@version"] \
+            = str(f"3.{np.random.choice(9, 1)[0]}.{np.random.choice(9, 1)[0]}")
         return template
 
     def emulate_instrument_header(self, template: dict) -> dict:
         """Copy data in instrument_header section."""
         # check if required fields exists and are valid
         # print("Parsing instrument header...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/"
-        template[trg + "instrument_name"] \
-            = "test instrument " + str(np.random.choice(100, 1)[0])
-        template[trg + "flight_path_length"] \
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
+        template[f"{trg}instrument_name"] \
+            = str(f"test instrument {np.random.choice(100, 1)[0]}")
+        template[f"{trg}flight_path_length"] \
             = np.float64(np.random.normal(loc=1.0, scale=0.05))
-        template[trg + "flight_path_length/@units"] = "m"
+        template[f"{trg}flight_path_length/@units"] = "m"
         return template
 
     def emulate_fabrication(self, template: dict) -> dict:
         """Copy data in fabrication section."""
         # print("Parsing fabrication...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/FABRICATION[fabrication]/"
-        template[trg + "vendor"] \
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/FABRICATION[fabrication]/"
+        template[f"{trg}vendor"] \
             = str(np.random.choice(["AMETEK/Cameca", "customized"], 1)[0])
-        template[trg + "model"] \
+        template[f"{trg}model"] \
             = str(np.random.choice(["LEAP3000", "LEAP4000", "LEAP5000",
                   "LEAP6000", "OxCart", "MTAP", "FIM"], 1)[0])
-        template[trg + "identifier"] \
+        template[f"{trg}identifier"] \
             = str(hashlib.sha256("IVAS".encode("utf-8")).hexdigest())
-        template[trg + "capabilities"] = ""
+        # template[f"{trg}capabilities"] = ""
         return template
 
     def emulate_analysis_chamber(self, template: dict) -> dict:
         """Copy data in analysis_chamber section."""
         # print("Parsing analysis chamber...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/analysis_chamber/"
-        template[trg + "pressure"] = np.float64(
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/analysis_chamber/"
+        template[f"{trg}pressure"] = np.float64(
             np.random.normal(loc=1.0e-10, scale=0.2e-11))
-        template[trg + "pressure/@units"] = "torr"
+        template[f"{trg}pressure/@units"] = "torr"
         return template
 
     def emulate_reflectron(self, template: dict) -> dict:
         """Copy data in reflectron section."""
         # print("Parsing reflectron...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/REFLECTRON[reflectron]/"
-        template[trg + "applied"] = bool(np.random.choice([0, 1], 1)[0])
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/REFLECTRON[reflectron]/"
+        template[f"{trg}applied"] = bool(np.random.choice([0, 1], 1)[0])
         return template
 
     def emulate_local_electrode(self, template: dict) -> dict:
         """Copy data in local_electrode section."""
         # print("Parsing local electrode...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/local_electrode/"
-        template[trg + "name"] \
-            = "electrode " + str(np.random.choice(1000, 1)[0])
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/local_electrode/"
+        template[f"{trg}name"] \
+            = str(f"electrode {np.random.choice(1000, 1)[0]}")
         return template
 
     def emulate_detector(self, template: dict) -> dict:
         """Copy data in ion_detector section."""
         # print("Parsing detector...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/ion_detector/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ion_detector/"
         detector_model_type = str(np.random.choice(["cameca", "mcp", "custom"], 1)[0])
-        template[trg + "type"] = detector_model_type
-        template[trg + "name"] = detector_model_type
-        template[trg + "model"] = detector_model_type
-        template[trg + "serial_number"] = hashlib.sha256(
+        template[f"{trg}type"] = detector_model_type
+        template[f"{trg}name"] = detector_model_type
+        template[f"{trg}model"] = detector_model_type
+        template[f"{trg}serial_number"] = hashlib.sha256(
             detector_model_type.encode("utf-8")).hexdigest()
         return template
 
     def emulate_stage_lab(self, template: dict) -> dict:
         """Copy data in stage lab section."""
         # print("Parsing stage lab...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/stage_lab/"
-        template[trg + "base_temperature"] = np.float64(10 + np.random.choice(50, 1)[0])
-        template[trg + "base_temperature/@units"] = "K"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/stage_lab/"
+        template[f"{trg}base_temperature"] = np.float64(10 + np.random.choice(50, 1)[0])
+        template[f"{trg}base_temperature/@units"] = "K"
         return template
 
     def emulate_specimen_monitoring(self, template: dict) -> dict:
         """Copy data in specimen_monitoring section."""
         # print("Parsing specimen monitoring...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/specimen_monitoring/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/specimen_monitoring/"
         eta = np.min((np.random.normal(loc=0.6, scale=0.1), 1.))
-        template[trg + "detection_rate"] = np.float64(eta)
-        # template[trg + "detection_rate/@units"] = ""
-        template[trg + "initial_radius"] = np.float64(RECON_RADIUS * 0.1)
-        template[trg + "initial_radius/@units"] = "nm"
-        template[trg + "shank_angle"] = np.float64(0.)  # = np.random.choice(10, 1)[0]
-        template[trg + "shank_angle/@units"] = "degree"
+        template[f"{trg}detection_rate"] = np.float64(eta)
+        template[f"{trg}initial_radius"] = np.float64(RECON_RADIUS * 0.1)
+        template[f"{trg}initial_radius/@units"] = "nm"
+        template[f"{trg}shank_angle"] = np.float64(0.)  # = np.random.choice(10, 1)[0]
+        template[f"{trg}shank_angle/@units"] = "degree"
         return template
 
     def emulate_pulser(self, template: dict) -> dict:
         """Copy data in pulser section."""
         # print("Parsing pulser...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/pulser/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/"
         pulse_mode = str(np.random.choice(
             ["laser", "voltage", "laser_and_voltage"], 1)[0])
-        template[trg + "pulse_mode"] = pulse_mode
-        template[trg + "pulse_fraction"] \
+        template[f"{trg}pulse_mode"] = pulse_mode
+        template[f"{trg}pulse_fraction"] \
             = np.float64(np.random.normal(loc=0.1, scale=0.02))
-        # template[trg + "pulse_fraction/@units"] = ""
-        template[trg + "pulse_frequency"] \
+        template[f"{trg}pulse_frequency"] \
             = np.float64(np.random.normal(loc=250, scale=10))
-        template[trg + "pulse_frequency/@units"] = "kHz"
+        template[f"{trg}pulse_frequency/@units"] = "kHz"
         if pulse_mode != "voltage":
-            trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/pulser/laser_gun/"
-            template[trg + "name"] = "laser"
-            template[trg + "wavelength"] \
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/laser_gun/"
+            template[f"{trg}name"] = "laser"
+            template[f"{trg}wavelength"] \
                 = np.float64((30 + np.random.choice(30, 1)) * 1.0e-8)
-            template[trg + "wavelength/@units"] = "m"
-            template[trg + "pulse_energy"] \
+            template[f"{trg}wavelength/@units"] = "m"
+            template[f"{trg}pulse_energy"] \
                 = np.float64(np.random.normal(loc=1.2e-11, scale=0.2e-12))
-            template[trg + "pulse_energy/@units"] = "J"
-            template[trg + "power"] \
+            template[f"{trg}pulse_energy/@units"] = "J"
+            template[f"{trg}power"] \
                 = np.float64(np.random.normal(loc=2.0e-8, scale=0.2e-9))
-            template[trg + "power/@units"] = "W"
+            template[f"{trg}power/@units"] = "W"
         return template
 
     def emulate_reconstruction(self, template: dict) -> dict:
         """Copy data in reconstruction section."""
         # print("Parsing reconstruction...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/reconstruction/"
-        src = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/control_software/"
-        template[trg + "program"] = template[src + "program"]
-        template[trg + "program/@version"] = template[src + "program/@version"]
-        template[trg + "protocol_name"] \
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/reconstruction/"
+        src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
+        template[f"{trg}PROGRAM[program1]/program"] = template[f"{src}program"]
+        template[f"{trg}PROGRAM[program1]/program/@version"] \
+            = template[f"{src}program/@version"]
+        template[f"{trg}protocol_name"] \
             = str(np.random.choice(["bas", "geiser", "gault", "cameca", "other"], 1)[0])
-        template[trg + "parameter"] = "n/a"
-        template[trg + "crystallographic_calibration"] = "n/a"
+        template[f"{trg}parameter"] = "n/a"
+        template[f"{trg}crystallographic_calibration"] = "n/a"
         return template
 
     def emulate_ranging(self, template: dict) -> dict:
         """Copy data in ranging section."""
         # print("Parsing ranging...")
-        trg = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/ranging/"
-        src = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/control_software/"
-        template[trg + "program"] = template[src + "program"]
-        template[trg + "program/@version"] = template[src + "program/@version"]
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
+        src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
+        template[f"{trg}PROGRAM[program1]/program"] = template[f"{src}program"]
+        template[f"{trg}PROGRAM[program1]/program/@version"] \
+            = template[f"{src}program/@version"]
         return template
 
     def emulate_random_input_from_eln(self, template: dict) -> dict:
@@ -533,7 +523,7 @@ class ApmCreateExampleData:
         # heavy data, synthetic/mocked dataset
         for entry_id in np.arange(1, self.n_entries + 1):
             self.entry_id = entry_id
-            print("Generating entry" + str(self.entry_id) + "...")
+            print(f"Generating entry {self.entry_id}...")
 
             self.xyz = []
             self.m_z = []
@@ -545,15 +535,15 @@ class ApmCreateExampleData:
             self.emulate_random_input_from_eln(template)
 
             # heavy numerical data, here the synthesized "measurement" data
-            prefix = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/"
-            trg = prefix + "reconstruction/"
-            template[trg + "reconstructed_positions"] \
+            prefix = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
+            trg = f"{prefix}reconstruction/"
+            template[f"{trg}reconstructed_positions"] \
                 = {"compress": np.asarray(self.xyz, np.float32), "strength": 1}
-            template[trg + "reconstructed_positions/@units"] = "nm"
+            template[f"{trg}reconstructed_positions/@units"] = "nm"
 
-            trg = prefix + "mass_to_charge_conversion/"
-            template[trg + "mass_to_charge"] \
+            trg = f"{prefix}mass_to_charge_conversion/"
+            template[f"{trg}mass_to_charge"] \
                 = {"compress": np.asarray(self.m_z, np.float32), "strength": 1}
-            template[trg + "mass_to_charge/@units"] = "Da"
+            template[f"{trg}mass_to_charge/@units"] = "Da"
 
         return template

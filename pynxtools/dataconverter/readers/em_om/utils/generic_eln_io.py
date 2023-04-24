@@ -148,7 +148,7 @@ class NxEmOmGenericElnSchemaParser:
             template[f"{trg}origin/@version"] \
                 = self.yml[f"{src}:results_file__attr_version"]
         template[f"{trg}path"] = str("undefined")
-        # TODO: this is a bug not results_file version in eln but path !!
+        # NEW ISSUE: this is a bug not results_file version in eln but path !!
         return template
 
     def parse_measurement_section(self, template: dict) -> dict:

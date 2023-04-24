@@ -19,15 +19,11 @@
 
 # pylint: disable=E1101
 
-import numpy as np
-
-from typing import Dict, Any, List
-
-
+'''
 class DreamThreedFilter():
     """Description of a filter/plug-in from DREAM.3D."""
 
-    def __init__(self, version="", name="", dct=None, **kwargs):
+    def __init__(self, version="", name="", **kwargs):
         # mandatory
         self.version = ""
         assert isinstance(version, str), "Argument version has to be a string!"
@@ -40,13 +36,13 @@ class DreamThreedFilter():
 
         # optional
         self.human_label = ""
-        if "human_label" in kwargs.keys():
+        if "human_label" in kwargs:
             self.human_label = kwargs["human_label"]
         self.enabled = False
-        if "enabled" in kwargs.keys():
+        if "enabled" in kwargs:
             self.enabled = kwargs["enabled"]
         self.uuid = ""
-        if "uuid" in kwargs.keys():
+        if "uuid" in kwargs:
             self.uuid = kwargs["uuid"]
 
         # controlled flattened keywords
@@ -59,3 +55,5 @@ class DreamThreedFilter():
     def debug(self):
         """Offer functionality testing"""
         tmp = DreamThreedFilter(version="12", name="test")
+        print(f"DEBUG: {tmp.version}")
+'''

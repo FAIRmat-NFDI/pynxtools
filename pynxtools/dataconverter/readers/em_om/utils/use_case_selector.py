@@ -60,10 +60,12 @@ class EmOmUseCaseSelector:  # pylint: disable=R0903
     def identify_case(self):
         """Identify which sub-parsers to use if any based on input mime_types."""
         # eln
+        self.is_valid = False
         for mime_type in ["yaml", "yml"]:
             self.eln += self.mime_types[mime_type]
         if len(self.eln) == 1:
             self.eln_parser_type = "generic"
+            self.is_valid = True
         else:
             self.eln_parser_type = "none"
 
@@ -97,13 +99,13 @@ class EmOmUseCaseSelector:  # pylint: disable=R0903
         else:
             self.dat_parser_type = "none"
 
-        if self.eln_parser_type != "none":  # and (self.dat_parser_type != "none"):
-            print("Input suggests to use the following sub-parsers:")
-            print(f"ELN parser: {self.eln_parser_type}")
-            print(self.eln)
-            print(f"Data parser: {self.dat_parser_type}")
-            print(self.dat)
-            self.is_valid = True
+        # if self.eln_parser_type != "none":  # and (self.dat_parser_type != "none"):
+        print("Input suggests to use the following sub-parsers:")
+        print(f"ELN parser: {self.eln_parser_type}")
+        print(self.eln)
+        print(f"Data parser: {self.dat_parser_type}")
+        print(self.dat)
+        # self.is_valid = True
         print(f"Input suggests that parsing is valid: {self.is_valid}")
 
     def needs_orix_parser(self):

@@ -28,10 +28,10 @@ import h5py
 # import imageio.v3 as iio
 from PIL import Image as pil
 
-from typing import Dict, Any, List
+# from typing import Dict, Any, List
 
-from pynxtools.dataconverter.readers.em_om.utils.dream3d_filter_class \
-    import DreamThreedFilter
+# from pynxtools.dataconverter.readers.em_om.utils.dream3d_filter_class \
+#     import DreamThreedFilter
 
 from pynxtools.dataconverter.readers.em_om.utils.image_transform import thumbnail
 
@@ -54,6 +54,7 @@ class NxEmOmDreamThreedEbsdParser:
         self.stack_meta = {}
         self.stack = []
         self.roi = []
+        self.xyz = {}
         self.phase_id = []
         self.phases = {}
 
@@ -71,12 +72,13 @@ class NxEmOmDreamThreedEbsdParser:
 
     def parse_roi_geometry(self):
         """Parse the geometry of the 3D dataset ##MK::assuming that it exists."""
-        # TODO: this is an example how to parse 3D reconstructed EBSD data from DREAM3D
-        # to map it to an instance of NXem_ebsd
+        # NEW ISSUE: this is an example how to parse 3D reconstructed EBSD data
+        # from the older version of DREAM.3D (not for DREAM.3D NX) maps on NXem_ebsd
 
         h5r = h5py.File(self.file_name, "r")
 
-        grpnm = "/DataContainers/Small IN100/_SIMPL_GEOMETRY"  # TODO: interpret from filter!
+        grpnm = "/DataContainers/Small IN100/_SIMPL_GEOMETRY"
+        # NEW ISSUE: interpret from filter!
         has_required_metadata = True
         has_correct_shape = True
         req_field_names = [("dims", "DIMENSIONS"),
@@ -110,7 +112,7 @@ class NxEmOmDreamThreedEbsdParser:
             print(np.shape(self.phase_id))
             print(np.shape(self.stack))
 
-            # TODO: more consistence checks that sizes and shapes match
+            # NEW ISSUE: more consistence checks that sizes and shapes match
 
         h5r.close()
 
@@ -166,7 +168,7 @@ class NxEmOmDreamThreedEbsdParser:
     def parse_phases(self, template: dict) -> dict:
         """Parse data for the crystal structure models aka phases."""
         h5r = h5py.File(self.file_name, "r")
-        grpnm = "/DataContainers/Small IN100/Phase Data"  # TODO: interpret from filter!
+        grpnm = "/DataContainers/Small IN100/Phase Data"  # NEW ISSUE: interpret from filter!
         dsnm = f"{grpnm}/CrystalStructures"
         phase_ids = h5r[dsnm][...].flatten()
         print(phase_ids)
@@ -181,10 +183,10 @@ class NxEmOmDreamThreedEbsdParser:
         if np.shape(phase_ids)[0] == np.shape(phase_names)[0]:
             if np.shape(phase_ids)[0] == np.shape(unit_cells)[0]:
                 if np.shape(unit_cells)[1] == 6:
-                    # TODO: assume first one is invalid
+                    # NEW ISSUE: assume first one is invalid
                     identifier = 1
 
-        if identifier == 1:  # TODO: extend for arbitrary number of phases
+        if identifier == 1:  # NEW ISSUE: extend for arbitrary number of phases
             self.phases[identifier] = {}
             self.phases[identifier]["name"] = phase_names[identifier]
 
@@ -247,7 +249,7 @@ class NxEmOmDreamThreedEbsdParser:
 
         trg = f"/ENTRY[entry{self.entry_id}]/correlation" \
               f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_map/data"
-        # TODO: ##? imprecise currently
+        # NEW ISSUE: needs one more check if precise currently
         ipf_map = np.asarray(np.zeros(np.shape(self.stack), np.uint8))  # 4d array
         # msk = self.phase_id == phase_id
         indices = np.shape(self.stack)
@@ -296,7 +298,7 @@ class NxEmOmDreamThreedEbsdParser:
         color_key_path = (__file__).replace(
             "dream3d_ebsd_parser.py", "dream3d_v65163_color_keys")
         color_key_file_name = f"{color_key_path}/Cubic_High.png"
-        # TODO:must not be Cubic_High.png only for this example!
+        # NEW ISSUE:must not be Cubic_High.png only, this holds only for this example!
 
         # constraint further to 8bit RGB and no flipping
         # im = np.asarray(imageio.v3.imread(symm_name))
