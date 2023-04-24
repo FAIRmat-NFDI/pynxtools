@@ -341,9 +341,10 @@ class XPSReader(BaseReader):
                             REPLACE_NESTED
                         )
                     )
-            elif file_ext == ".xml":
+            elif file_ext == [".sle", ".xml"]:
                 data_dict = XpsDataFileParser([file]).get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
+
         with open(config_file, encoding="utf-8", mode="r") as cfile:
             config_dict = json.load(cfile)
 

@@ -24,6 +24,9 @@ from typing import Tuple, List, Any
 import copy
 import xarray as xr
 import numpy as np
+import sqlite3
+
+from sle_parsers import SleParserV1, SleParserV2
 
 
 class XmlSpecs():
@@ -74,8 +77,12 @@ class XmlSpecs():
             child_num -= 1
             child_elmt_ind += 1
 
+        d = self.data_dict
+
         self.collect_raw_data_to_construct_data()
         self.construct_data()
+
+        return self.data_dict
 
     def pass_child_through_parsers(self,
                                    element_: EmtT.Element,
@@ -762,6 +769,64 @@ class XmlSpecs():
                                 xr.DataArray(data=channel_counts[0, :],
                                              coords={"BE": binding_energy})
 
+class SleSpecs():
+    """
+        Class for restructuring .sle data file from
+        specs vendor into python dictionary.
+    """
+    def __init__(self):
+        self.parsers = [
+            SleParserV1,
+            SleParserV2,
+            #SleParserV3
+            ]
+
+        self.versions_map ={}
+        for parser in self.parsers:
+            supported_versions = parser.supported_versions
+            for version in supported_versions:
+                self.versions_map[version] = parser
+
+    def _get_sle_version(self):
+        """
+        Get the Prodigy SLE version from the file.
+
+        Returns
+        -------
+        version : str
+            Version string.
+
+        """
+        self.con=sqlite3.connect(self.sql_connection)
+        cur=self.con.cursor()
+        query = 'SELECT Value FROM Configuration WHERE Key=="Version"'
+        cur.execute(query)
+        version = cur.fetchall()[0][0]
+        version = version.split('.')
+        version = version[0] + "." + version[1].split('-')[0]
+        return version
+
+    def parse_file(self, filepath, **kwargs):
+        """
+        Parse the file using the parser that fits the
+        Prodigy SLE version.
+
+        Parameters
+        ----------
+        filename : str
+            Filepath of the SLE file to be read.
+
+        Returns
+        -------
+        self.spectra
+            Flat list of dictionaries containing one spectrum each.
+
+        """
+        self.sql_connection = filepath
+        version = self._get_sle_version()
+        print(version)
+        parser = self.versions_map[version]()
+        return parser.parse_file(filepath, **kwargs), parser.xml
 
 class XpsDataFileParser():
     """
@@ -769,9 +834,10 @@ class XpsDataFileParser():
         accepts xml file from specs vendor.
     """
 
-    __prmt_file_ext__ = ['xml']
+    __prmt_file_ext__ = ['xml', 'sle']
     __vendors__ = ['specs']
-    __prmt_vndr_cls = {'xml': {'specs': XmlSpecs}
+    __prmt_vndr_cls = {'xml': {'specs': XmlSpecs},
+                       'sle': {'specs': SleSpecs},
                        }
 
     __file_err_msg__ = (f'Need a xps data file with the following'
@@ -827,6 +893,20 @@ class XpsDataFileParser():
                     except KeyError as key_err:
                         raise KeyError(XpsDataFileParser.__vndr_err_msg__) \
                             from key_err
+                elif file_ext == 'sle':
+                    try:
+                        vendor = 'specs'
+                        parser_class = (XpsDataFileParser.
+                                        __prmt_vndr_cls[file_ext]
+                                        ['specs'])
+                        parser_obj = parser_class()
+                        return parser_obj.parse_file(file)
+
+                    except ValueError:
+                        ValueError(XpsDataFileParser.__vndr_err_msg__)
+                    except KeyError:
+                        KeyError(XpsDataFileParser.__vndr_err_msg__)
+
             else:
                 raise ValueError(XpsDataFileParser.__file_err_msg__)
         return {}
