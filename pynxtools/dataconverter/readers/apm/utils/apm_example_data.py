@@ -32,9 +32,11 @@ from ase.data import atomic_numbers, atomic_masses, chemical_symbols
 
 from ifes_apt_tc_data_modeling.utils.utils \
     import create_isotope_vector, isotope_vector_to_nuclid_list, \
-    isotope_vector_to_human_readable_name
-from ifes_apt_tc_data_modeling.utils.definitions \
-    import MAX_NUMBER_OF_ATOMS_PER_ION, MQ_EPSILON
+    isotope_vector_to_human_readable_name, MAX_NUMBER_OF_ATOMS_PER_ION, MQ_EPSILON
+
+# do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
+# from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
+#     import isotopes
 
 from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
@@ -42,7 +44,6 @@ from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
 from pynxtools.dataconverter.readers.apm.utils.apm_ranging_io \
     import add_unknown_iontype
 
-from ifes_apt_tc_data_modeling.utils.nist_isotope_data import isotopes
 
 # parameter affecting reconstructed positions and size
 CRYSTAL_ORIENTATION = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]

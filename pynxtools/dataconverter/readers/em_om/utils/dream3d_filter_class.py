@@ -35,7 +35,7 @@ class DreamThreedFilter():
         self.version = version
         self.name = ""
         assert isinstance(name, str), "Argument name has to be a string!"
-        #assert name != "", "Name mandatory!"
+        # assert name != "", "Name mandatory!"
         self.name = name
 
         # optional

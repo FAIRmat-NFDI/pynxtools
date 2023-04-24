@@ -37,7 +37,7 @@ definitions:
                 type:
                   type_kind: Enum
                   type_data:
-                    - 'nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951'
+                    - 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
                 description: Hashvalue of the NeXus application definition file
                 m_annotations:
                   eln:
@@ -512,13 +512,13 @@ definitions:
                           component: NumberEditQuantity
                           minValue: 0.0
                           maxValue: 1.0
-                    laser_gun_name:
+                    laser_source_name:
                       type: str
                       description: Given name/alias.
                       m_annotations:
                         eln:
                           component: StringEditQuantity
-                    laser_gun_wavelength:
+                    laser_source_wavelength:
                       type: np.float64
                       unit: meter
                       description: Nominal wavelength of the laser radiation.
@@ -527,7 +527,7 @@ definitions:
                           component: NumberEditQuantity
                           defaultDisplayUnit: nanometer
                           minValue: 0.0
-                    laser_gun_power:
+                    laser_source_power:
                       type: np.float64
                       unit: watt
                       description: |
@@ -538,7 +538,7 @@ definitions:
                           component: NumberEditQuantity
                           defaultDisplayUnit: nanowatt
                           minValue: 0.0
-                    laser_gun_pulse_energy:
+                    laser_source_pulse_energy:
                       type: np.float64
                       unit: joule
                       description: Average energy of the laser at peak of each pulse.

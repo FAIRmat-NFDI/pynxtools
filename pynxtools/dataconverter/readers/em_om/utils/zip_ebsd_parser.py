@@ -70,11 +70,11 @@ class NxEmOmZipEbsdParser:
             # ASSUME that pattern have numeral components in their file name
             zip_content_table = {}
             for file in zip_file_hdl.namelist():
-                keyword = str(np.uint64(re.sub('[^0-9]','', file)))
+                keyword = str(np.uint64(re.sub('[^0-9]', '', file)))
                 if len(keyword) > 0 and keyword not in zip_content_table:
                     zip_content_table[keyword] = file
                 else:
-                    print(f"WARNING::Automatically derived name is not unique!")
+                    print("WARNING::Automatically derived name is not unique!")
                     return template
             # not all content though qualifies as Kikuchi pattern
             # people can trick an algorithm always
@@ -89,11 +89,11 @@ class NxEmOmZipEbsdParser:
             # for storing research data are even if they were to contain only exactly
             # always data of expected format...
             self.stack_meta = {"fname": None,
-                        "size": (None, None),
-                        "dtype": None,
-                        "ftype": None,
-                        "axisy": None,
-                        "axisx": None}
+                               "size": (None, None),
+                               "dtype": None,
+                               "ftype": None,
+                               "axisy": None,
+                               "axisx": None}
             # in pixel, use axisy and axisx for dimension scale axes
             # ASSUME slow axis is y, fast axis is x
             for keyword, value in zip_content_table.items():
@@ -130,14 +130,14 @@ class NxEmOmZipEbsdParser:
             self.stack = np.zeros((len(zip_content_table),
                                    self.stack_meta["size"][0],
                                    self.stack_meta["size"][1]),
-                                   self.stack_meta["dtype"])
+                                  self.stack_meta["dtype"])
             for keyword, value in zip_content_table.items():
                 tmp = value.split(".")
                 if len(tmp) > 1 and tmp[-1].lower() == self.stack_meta["ftype"]:
                     with zip_file_hdl.open(value) as file_handle:
                         # img = np.asarray(pil.open(file_handle))
                         img = pil.open(file_handle, "r")
-                        if img.mode == "L" and img.palette == None:
+                        if img.mode == "L" and img.palette is None:
                             img = np.asarray(img, np.uint8)
                             # ##MK::for bitmap no need to discard alpha channels, check
                             # print(np.shape(img))

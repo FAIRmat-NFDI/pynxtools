@@ -26,6 +26,7 @@ import numpy as np
 from ifes_apt_tc_data_modeling.utils.utils \
     import create_isotope_vector, isotope_vector_to_nuclid_list, \
     isotope_vector_to_human_readable_name
+
 from ifes_apt_tc_data_modeling.utils.definitions \
     import MAX_NUMBER_OF_ATOMS_PER_ION, MQ_EPSILON
 
@@ -33,53 +34,50 @@ from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
 
+from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
+    import NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
+
 
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on the unknown type
-    trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/"
-    trg += "ranging/peak_identification/ION[ion0]/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" \
+          f"peak_identification/ION[ion0]/"
     ivec = create_isotope_vector([])
-    template[trg + "isotope_vector"] \
-        = np.reshape(np.asarray(ivec, np.uint16),
-                     (1, MAX_NUMBER_OF_ATOMS_PER_ION))
-    # template[trg + "isotope_vector/@units"] = ""
-    template[trg + "charge_state"] = np.int8(0)
-    # template[trg + "charge_state/@units"] = ""
-    template[trg + "mass_to_charge_range"] \
+    template[f"{trg}isotope_vector"] \
+        = np.reshape(np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION))
+    template[f"{trg}charge_state"] = np.int8(0)
+    template[f"{trg}mass_to_charge_range"] \
         = np.reshape(np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2))
-    template[trg + "mass_to_charge_range/@units"] = "Da"
+    template[f"{trg}mass_to_charge_range/@units"] = "Da"
     nuclid_list = isotope_vector_to_nuclid_list(ivec)
-    template[trg + "nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-    # template[trg + "nuclid_list/@units"] = ""
-    template[trg + "name"] = isotope_vector_to_human_readable_name(ivec, 0)
+    template[f"{trg}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
+    template[f"{trg}name"] = isotope_vector_to_human_readable_name(ivec, 0)
 
     return template
 
 
 def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int) -> dict:
     """Added standard formatted molecular ion entries."""
-    trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/ranging/"
-    template[trg + "number_of_ion_types"] = np.int32(len(ion_lst))
-
     ion_id = 1
-    trg = "/ENTRY[entry" + str(entry_id) + "]/atom_probe/ranging/peak_identification/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
     for ion in ion_lst:
-        path = trg + "ION[ion" + str(ion_id) + "]/"
+        path = f"{trg}ION[ion{ion_id}]/"
 
-        template[path + "isotope_vector"] \
-            = np.reshape(np.asarray(ion.isotope_vector.typed_value, np.uint16),
-                                   (1, MAX_NUMBER_OF_ATOMS_PER_ION))
-        # template[path + "isotope_vector/@units"] = ""
-        template[path + "charge_state"] = np.int8(ion.charge.typed_value)
-        template[path + "charge_state/@units"] = ion.charge.unit
-        template[path + "mass_to_charge_range"] \
+        template[f"{path}isotope_vector"] = np.reshape(
+            np.asarray(ion.isotope_vector.typed_value, np.uint16),
+            (1, MAX_NUMBER_OF_ATOMS_PER_ION))
+        template[f"{path}charge_state"] = np.int8(ion.charge.typed_value)
+        template[f"{path}mass_to_charge_range"] \
             = np.array(ion.ranges.typed_value, np.float32)
-        template[path + "mass_to_charge_range/@units"] = ion.ranges.unit
-        template[path + "nuclid_list"] = ion.nuclid_list.typed_value
-        # template[path + "nuclid_list/@units"] = ""
-        template[path + "name"] = ion.name.typed_value
+        template[f"{path}mass_to_charge_range/@units"] = "Da"  # ion.ranges.unit
+        template[f"{path}nuclid_list"] = ion.nuclid_list.typed_value
+        template[f"{path}name"] = ion.name.typed_value
         ion_id += 1
+
+    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
+    template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
+
     return template
 
 
@@ -90,7 +88,7 @@ def extract_data_from_rng_file(file_name: str, template: dict, entry_id: int) ->
     # ranging(NXprocess) is a group which has a minOccurs=1, \
     #     maxOccurs="unbounded" set of possible named
     # NXion members, same case for more than one operator
-    print("Extracting data from RNG file: " + file_name)
+    print(f"Extracting data from RNG file: {file_name}")
     rangefile = ReadRngFileFormat(file_name)
 
     # ion indices are on the interval [0, 256)
@@ -110,7 +108,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dic
     # ranging(NXprocess) is a group which has a minOccurs=1, \
     #     maxOccurs="unbounded" set of possible named
     # NXion members, same case for more than one operator
-    print("Extracting data from RRNG file: " + file_name)
+    print(f"Extracting data from RRNG file: {file_name}")
     rangefile = ReadRrngFileFormat(file_name)
     # rangefile.read_rrng()
 
@@ -147,32 +145,17 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
         with the application definition.
         """
         # resolve the next two program references more informatively
-        trg = "/ENTRY[entry" + str(self.meta["entry_id"]) + "]/atom_probe/ranging/"
-        template[trg + "program"] \
-            = "unclear, " + self.meta["file_format"] + " range file format" \
-            + " does not document with which program it was generated!"
-        template[trg + "program/@version"] \
-            = "unclear, " + self.meta["file_format"] + " range file format" \
-            + " does not document with which program version it was generated!"
-        template[trg + "number_of_ion_types"] = 0
-        template[trg + "number_of_ion_types/@units"] \
-            = ""
-        template[trg + "maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
-        template[trg + "maximum_number_of_atoms_per_molecular_ion/@units"] \
-            = ""
+        trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+        template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
 
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
 
-        trg = "/ENTRY[entry" + str(self.meta["entry_id"]) + "]/atom_probe/"
-        trg += "ranging/peak_identification/"
-        template[trg + "program"] \
-            = "unclear, " + self.meta["file_format"] + " range file format" \
-            + " does not document which program was used for peak_identification!"
-        template[trg + "program/@version"] \
-            = "unclear, " + self.meta["file_format"] + " range file format" \
-            + " does not document which program version was used for peak_identification!"
+        trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/" \
+              f"ranging/peak_identification/"
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         add_unknown_iontype(template, self.meta["entry_id"])
 
@@ -182,9 +165,15 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
                     self.meta["file_name"],
                     template,
                     self.meta["entry_id"])
-            if self.meta["file_format"] == "rrng":
+            elif self.meta["file_format"] == "rrng":
                 extract_data_from_rrng_file(
                     self.meta["file_name"],
                     template,
                     self.meta["entry_id"])
+            else:
+                trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+                template[f"{trg}number_of_ion_types"] = 1
+        else:
+            trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+            template[f"{trg}number_of_ion_types"] = 1
         return template

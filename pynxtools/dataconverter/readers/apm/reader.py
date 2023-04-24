@@ -89,7 +89,7 @@ class ApmReader(BaseReader):
             print("Create one synthetic entry in one NeXus file...")
             synthetic = ApmCreateExampleData(synthesis_id)
             synthetic.synthesize(template)
-        else:  # eln_data, and ideal recon and ranging definition technology partner file
+        else:  # eln_data, and ideally recon and ranging definitions from technology partner file
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
             assert case.is_valid is True, \
@@ -120,7 +120,7 @@ class ApmReader(BaseReader):
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, n_entries)
 
-        debugging = False
+        debugging = True
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():

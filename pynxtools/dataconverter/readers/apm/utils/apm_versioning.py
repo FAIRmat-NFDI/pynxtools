@@ -24,8 +24,8 @@ from pynxtools.dataconverter.readers.shared.shared_utils \
 
 
 NX_APM_ADEF_NAME = "NXapm"
-NX_APM_ADEF_VERSION = "nexus-fairmat-proposal successor of "
-NX_APM_ADEF_VERSION += "50433d9039b3f33299bab338998acb5335cd8951"
+NX_APM_ADEF_VERSION = "nexus-fairmat-proposal successor of " \
+                      "9636feecb79bb32b828b1a9804269573256d7696"
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
 NX_APM_EXEC_NAME = "dataconverter/readers/apm/reader.py"
 NX_APM_EXEC_VERSION = get_repo_last_commit()

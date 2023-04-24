@@ -99,7 +99,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         = {"compress": np.array(hist3d[1][2][1::], np.float32), "strength": 1}
     template[trg + "AXISNAME[axis_z]/@units"] = "nm"
     template[trg + "AXISNAME[axis_z]/@long_name"] = "z (nm)"
-    print("Default plot 3D discretized reconstruction at 1nm binning.")
+    print("Default plot 3D discretized reconstruction at 1 nm binning.")
     del hist3d
 
     return template
@@ -157,7 +157,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[trg + "AXISNAME[axis_mass_to_charge]/@units"] = "Da"
     template[trg + "AXISNAME[axis_mass_to_charge]/@long_name"] \
         = "Mass-to-charge-state ratio (Da)"
-    print("Plot mass spectrum at 0.01Da binning was created.")
+    print("Plot mass spectrum at 0.01 Da binning was created.")
     del hist1d
 
     return template

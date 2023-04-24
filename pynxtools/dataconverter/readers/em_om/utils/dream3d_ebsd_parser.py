@@ -124,10 +124,12 @@ class NxEmOmDreamThreedEbsdParser:
             #     self.stack_meta["origin"][i] + self.stack_meta["dims"][i] \
             #     * self.stack_meta["spacing"][i], num=self.stack_meta["dims"][i],
             #     endpoint=True), np.float32)  # DREAM.3D uses single precision
-            self.xyz[axisname[1]] = np.asarray(np.linspace(self.stack_meta["origin"][i],
-                self.stack_meta["origin"][i] + self.stack_meta["dims"][i] \
-                * self.stack_meta["spacing"][i], num=self.stack_meta["dims"][i],
-                endpoint=True), np.float32)  # DREAM.3D uses single precision
+            self.xyz[axisname[1]] = np.asarray(
+                np.linspace(self.stack_meta["origin"][i],
+                            self.stack_meta["origin"][i] + self.stack_meta["dims"][i]
+                            * self.stack_meta["spacing"][i], num=self.stack_meta["dims"][i],
+                            endpoint=True),
+                np.float32)  # DREAM.3D uses single precision
 
         # endpoint true? voxel center or its min or max bound?
 

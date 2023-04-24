@@ -97,7 +97,7 @@ class EmOmUseCaseSelector:  # pylint: disable=R0903
         else:
             self.dat_parser_type = "none"
 
-        if (self.eln_parser_type != "none"):  # and (self.dat_parser_type != "none"):
+        if self.eln_parser_type != "none":  # and (self.dat_parser_type != "none"):
             print("Input suggests to use the following sub-parsers:")
             print(f"ELN parser: {self.eln_parser_type}")
             print(self.eln)
