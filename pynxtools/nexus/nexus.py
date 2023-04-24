@@ -1221,14 +1221,17 @@ class HandleNexus:
     '--documentation',
     required=False,
     default=None,
-    help="To view documentation. E.g. -d /entry/data/delays"
+    help=("Definition path in nexus output (.nxs) file. Returns debug"
+          "log relavent with that definition path. Example: /entry/data/delays")
 )
 @click.option(
     '-c',
     '--concept',
     required=False,
     default=None,
-    help="To view concept. E.g. -c /NXarpes/ENTRY/INSTRUMENT/analyser"
+    help=("Concept path from application definition file (.nxdl,xml). Finds out"
+          "all the available concept definition (IS-A realation) for rendered"
+          "concept path. Example: /NXarpes/ENTRY/INSTRUMENT/analyser")
 )
 def main(nexus_file, documentation, concept):
     """The main function to call when used as a script."""
