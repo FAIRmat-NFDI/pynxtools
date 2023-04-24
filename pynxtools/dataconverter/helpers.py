@@ -17,6 +17,7 @@
 #
 """Helper functions commonly used by the convert routine."""
 
+from typing import List
 from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET
@@ -38,9 +39,79 @@ def is_a_lone_group(xml_element) -> bool:
     return True
 
 
-def generate_template_from_nxdl(root, template, path="", nxdl_root=None):
+def get_nxdl_name_from_elem(xml_element) -> str:
+    """Extracts the name or uses the type to remove the NX bit and use as name."""
+    name_to_add = ""
+    if "name" in xml_element.attrib:
+        name_to_add = xml_element.attrib["name"]
+    elif "type" in xml_element.attrib:
+        name_to_add = (f"{convert_nexus_to_caps(xml_element.attrib['type'])}"
+                       f"[{convert_nexus_to_suggested_name(xml_element.attrib['type'])}]")
+    return name_to_add
+
+
+def get_all_defined_required_children_for_elem(xml_element):
+    """Gets all possible inherited required children for a given NXDL element"""
+    list_of_children_to_add = set()
+    for child in xml_element:
+        child.set("nxdlbase_class", xml_element.get("nxdlbase_class"))
+        if child.attrib and get_required_string(child) == "required":
+            tag = remove_namespace_from_tag(child.tag)
+
+            name_to_add = get_nxdl_name_from_elem(child)
+
+            if tag in ("field", "attribute"):
+                name_to_add = f"@{name_to_add}" if tag == "attribute" else name_to_add
+                list_of_children_to_add.add(name_to_add)
+                if tag == "field" \
+                        and ("units" in child.attrib.keys()
+                             and child.attrib["units"] != "NX_UNITLESS"):
+                    list_of_children_to_add.add(f"{name_to_add}/@units")
+            elif tag == "group":
+                nxdlpath = f'{xml_element.get("nxdlpath")}/{get_nxdl_name_from_elem(child)}'
+                nxdlbase = xml_element.get("nxdlbase")
+                nx_name = nxdlbase[nxdlbase.rfind("/") + 1:nxdlbase.rfind(".nxdl")]
+                if nxdlpath not in visited_paths:
+                    visited_paths.append(nxdlpath)
+                    children = get_all_defined_required_children(nxdlpath, nx_name)
+                    further_children = set()
+                    for child in children:
+                        further_children.add(f"{name_to_add}/{child}")
+                    list_of_children_to_add.update(further_children)
+    return list_of_children_to_add
+
+
+visited_paths: List[str] = []
+
+
+def get_all_defined_required_children(nxdl_path, nxdl_name):
+    """Helper function to find all possible inherited required children for an NXDL path"""
+    if nxdl_name == "NXtest":
+        return []
+
+    elist = nexus.get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
+    list_of_children_to_add = set()
+    for elem in elist:
+        list_of_children_to_add.update(get_all_defined_required_children_for_elem(elem))
+
+    return list_of_children_to_add
+
+
+def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
+    """Takes a list of child names and appends them to template for a given path."""
+    for child in list_of_children_to_add:
+        child_path = f"{path.rsplit('/', 1)[0]}/{child}"
+        if child_path not in template.keys():
+            optional_parent = check_for_optional_parent(child_path, nxdl_root)
+            optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
+            template[optionality][f"{path.rsplit('/', 1)[0]}/{child}"] = None
+    return template
+
+
+def generate_template_from_nxdl(root, template, path="", nxdl_root=None, nxdl_name=None):
     """Helper function to generate a template dictionary for given NXDL"""
     if nxdl_root is None:
+        nxdl_name = root.attrib["name"]
         nxdl_root = root
         root = get_first_group(root)
 
@@ -57,10 +128,7 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None):
         hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
         suffix = f"{nexus_class}{hdf5name}"
 
-    if tag == "attribute":
-        suffix = f"@{suffix}"
-
-    path = path + "/" + suffix
+    path = path + "/" + (f"@{suffix}" if tag == "attribute" else suffix)
 
     # Only add fields or attributes to the dictionary
     if tag in ("field", "attribute"):
@@ -76,13 +144,20 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None):
         if tag == "field" \
            and ("units" in root.attrib.keys() and root.attrib["units"] != "NX_UNITLESS"):
             template[optionality][f"{path}/@units"] = None
-    elif tag == "group":
-        if is_a_lone_group(root):
-            template[get_required_string(root)][path] = None
-            template["lone_groups"].append(path)
+
+        parent_path = convert_data_converter_dict_to_nxdl_path(path.rsplit("/", 1)[0])
+        list_of_children_to_add = get_all_defined_required_children(parent_path, nxdl_name)
+        add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
+
+    elif tag == "group" and is_a_lone_group(root):
+        template[get_required_string(root)][path] = None
+        template["lone_groups"].append(path)
+        path_nxdl = convert_data_converter_dict_to_nxdl_path(path)
+        list_of_children_to_add = get_all_defined_required_children(path_nxdl, nxdl_name)
+        add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
 
     for child in root:
-        generate_template_from_nxdl(child, template, path, nxdl_root)
+        generate_template_from_nxdl(child, template, path, nxdl_root, nxdl_name)
 
 
 def get_required_string(elem):
