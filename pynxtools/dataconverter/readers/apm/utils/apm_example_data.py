@@ -42,6 +42,8 @@ from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
 from pynxtools.dataconverter.readers.apm.utils.apm_ranging_io \
     import add_unknown_iontype
 
+from ifes_apt_tc_data_modeling.utils.nist_isotope_data import isotopes
+
 # parameter affecting reconstructed positions and size
 CRYSTAL_ORIENTATION = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 # MK::add analysis how large aggregate has to be

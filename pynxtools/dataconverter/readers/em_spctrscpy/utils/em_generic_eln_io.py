@@ -200,7 +200,8 @@ class NxEmNomadOasisElnSchemaParser:
         for i in np.arange(0, 3):
             trg = grpnm + "AXISNAME[" + cs_names[i] + "]"
             template[trg] = cs_xyz[:, i]
-            template[trg + "/@transformation_type"] = "translation"
+            # the next one should not be there because this is a generic axis
+            # template[trg + "/@transformation_type"] = "translation"
             template[trg + "/@offset"] = np.asarray([0., 0., 0.], np.float64)
             template[trg + "/@offset_units"] = "m"
             template[trg + "/@depends_on"] = "."

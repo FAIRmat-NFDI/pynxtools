@@ -33,22 +33,24 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     print("--> Enter histogram computation ")
     print(np.shape(xyz))
 
-    resolution = 1.0  # in nm
+    resolution = 1.0  # cubic voxel edge length in nm
     bounds = np.zeros([3, 2], np.float32)  # in nm
     for i in np.arange(0, 3):
         bounds[i, 0] = np.min(xyz[:, i])
         bounds[i, 1] = np.max(xyz[:, i])
     # make the bounding box a quadric prism
-    imi = np.floor(bounds[0, 0])
-    imx = np.ceil(bounds[0, 1])
+    imi = np.floor(bounds[0, 0]) - resolution
+    imx = np.ceil(bounds[0, 1]) + resolution
     xedges = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1,
                          endpoint=True)
-    imi = np.floor(bounds[1, 0])
-    imx = np.ceil(bounds[1, 1])
+    # this partitioning is not general enough, imi and imx should be left and right
+    # bounds respectively
+    imi = np.floor(bounds[1, 0]) - resolution
+    imx = np.ceil(bounds[1, 1]) + resolution
     yedges = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1,
                          endpoint=True)
-    imi = np.floor(bounds[2, 0])
-    imx = np.ceil(bounds[2, 1])
+    imi = np.floor(bounds[2, 0]) - resolution
+    imx = np.ceil(bounds[2, 1]) + resolution
     zedges = np.linspace(imi, imx,
                          num=int(np.ceil((imx - imi) / resolution)) + 1,
                          endpoint=True)

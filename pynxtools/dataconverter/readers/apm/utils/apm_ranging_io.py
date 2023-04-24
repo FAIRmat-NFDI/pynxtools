@@ -45,7 +45,7 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
                      (1, MAX_NUMBER_OF_ATOMS_PER_ION))
     # template[trg + "isotope_vector/@units"] = ""
     template[trg + "charge_state"] = np.int8(0)
-    template[trg + "charge_state/@units"] = "eV"
+    # template[trg + "charge_state/@units"] = ""
     template[trg + "mass_to_charge_range"] \
         = np.reshape(np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2))
     template[trg + "mass_to_charge_range/@units"] = "Da"
@@ -94,7 +94,7 @@ def extract_data_from_rng_file(file_name: str, template: dict, entry_id: int) ->
     rangefile = ReadRngFileFormat(file_name)
 
     # ion indices are on the interval [0, 256)
-    assert len(rangefile.rng["molecular_ions"].keys()) <= np.iinfo(np.uint8).max + 1, \
+    assert len(rangefile.rng["molecular_ions"]) <= np.iinfo(np.uint8).max + 1, \
         "Current implementation does not support more than 256 ion types"
 
     add_standardize_molecular_ions(

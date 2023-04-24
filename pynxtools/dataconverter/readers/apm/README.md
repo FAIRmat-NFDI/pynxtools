@@ -89,5 +89,26 @@ and mass-to-charge-state ratio values. The readers are technically capable to re
 also all other fields in ePOS and APT files to the extent as these have been
 documented.
 
+## Known performance issues of this reader
+
+When the range file defines molecular ions which are composed from many atoms
+and using elements with many isotopes it is possible that the interpretation
+of the range file takes long. The situation is highly case dependent.
+The reason for this is that the apm reader internally uses a combinatorial
+algorithm via the ifes_apt_tc_data_modeling library which has to benefit that it
+is automatically capable to identify charge states but for complex molecular ions
+it may take a while to evaluate all possible isotopic combinations even though
+the implementation is optimized already to avoid unnecessary evaluations.
+
+Currently a more severe performance issue can be, for some cases and input only,
+that the verification of the instantiated schema is slow. This verification step
+happens before the data in the template dictionary are written to HDF5 file.
+The reason for this issue is that components of the dataconverter traverse the
+dependency graph of the instantiated NeXus application definition to assure that
+the template is valid. Depending on the complexity of the data model and which
+branches will be instantiated by the input, though, this evaluation may be slower
+as more pathes have to be visited. Noteworthy users should understand that this issue
+is independent of size of the input (i.e. how many ions a dataset has).
+
 ## Contact person in FAIRmat for this reader
 Markus Kühbach
