@@ -34,7 +34,12 @@ from yaml.nodes import ScalarNode
 from yaml.resolver import BaseResolver
 from yaml.loader import Loader
 
-ESCAPE_CHAR_DICT = {"\t": "    "}
+# NOTE: If any one change one of the bellow dict please change it for both
+ESCAPE_CHAR_DICT_IN_YAML = {"\t": "    ",
+                            "\':\'": ":"}
+
+ESCAPE_CHAR_DICT_IN_XML = {"    ": "\t",
+                           "\':\'": ":"}
 
 
 class LineLoader(Loader):  # pylint: disable=too-many-ancestors
@@ -67,15 +72,13 @@ class LineLoader(Loader):  # pylint: disable=too-many-ancestors
 
 def get_yaml_escape_char_dict():
     """Get escape char and the way to skip them in yaml."""
-    return ESCAPE_CHAR_DICT
+    return ESCAPE_CHAR_DICT_IN_YAML
 
 
 def get_yaml_escape_char_reverter_dict():
     """To revert yaml escape char in xml constructor from yaml."""
-    temp_dict = {}
-    for key, val in ESCAPE_CHAR_DICT.items():
-        temp_dict[val] = key
-    return temp_dict
+
+    return ESCAPE_CHAR_DICT_IN_XML
 
 
 def type_check(nx_type):
