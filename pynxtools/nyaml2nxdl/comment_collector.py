@@ -89,11 +89,17 @@ class CommentCollector:
             for line_num, line in enumerate(lines):
                 if single_comment.is_storing_single_comment():
                     # If the last comment comes without post nxdl fields, groups and attributes
+                    if '++ SHA HASH ++' in line:
+                        # Handle with stored nxdl.xml file that is not part of yaml
+                        line = ''
+                        single_comment.process_each_line(line + 'post_comment', (line_num + 1))
+                        self._comment_chain.append(single_comment)
+                        break
                     if line_num < (len(lines) - 1):
                         # Processing file from Line number 1
                         single_comment.process_each_line(line, (line_num + 1))
                     else:
-                        # For processing post comment
+                        # For processing last line of file
                         single_comment.process_each_line(line + 'post_comment', (line_num + 1))
                         self._comment_chain.append(single_comment)
                 else:
@@ -230,6 +236,7 @@ class XMLComment(Comment):
         if text and line_num:
             self.append_comment(text)
             if self._comnt_end_found and not self._is_elemt_found:
+                # for multiple comment if exist
                 if self._comnt:
                     self._comnt_list.append(self._comnt)
                     self._comnt = ''
