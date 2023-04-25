@@ -7,7 +7,7 @@ angle_of_incidence_unit: degrees
 angular_spread:
   unit: rad ** 2
   value: 0.2
-atom_types: Si, O
+atom_types: [Si, O]
 blocks:
 - type
 - angle_of_incidence
