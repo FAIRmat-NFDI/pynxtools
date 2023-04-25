@@ -211,6 +211,7 @@ def separate_hash_yaml_and_nxdl(yaml_file, sep_yaml, sep_xml):
                         sha_hash = line.split('# ', 1)[-1].strip()
                     else:
                         xml_f_ob.write(line[2:])
+            # If the yaml fiile does not contain any hash for nxdl then we may have last line.
             if last_line:
                 yml_f_ob.write(last_line)
 

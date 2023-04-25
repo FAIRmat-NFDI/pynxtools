@@ -44,7 +44,8 @@ def generate_nxdl_or_retrieve_nxdl(yaml_file, out_xml_file, verbose):
         retrieve the nxdl part from provided yaml.
         Else, generate nxdl from separated yaml with the help of nyaml2nxdl function
     """
-    sep_yaml = f'temp_{yaml_file}'
+    pa_path, rel_file = os.path.split(yaml_file)
+    sep_yaml = pa_path + f'temp_{rel_file}'
     hash_found = separate_hash_yaml_and_nxdl(yaml_file, sep_yaml, out_xml_file)
 
     if hash_found:
@@ -213,7 +214,7 @@ def launch_tool(input_file, verbose, append, check_consistency):
         # Taking care of consistency running
         if check_consistency:
             xml_out_file = raw_name + '_consistency.' + ext
-            nyaml2nxdl(yaml_out_file, xml_out_file, verbose)
+            generate_nxdl_or_retrieve_nxdl(yaml_out_file, xml_out_file, verbose)
             os.remove(yaml_out_file)
     else:
         raise ValueError("Provide correct file with extension '.yaml or '.nxdl.xml")
