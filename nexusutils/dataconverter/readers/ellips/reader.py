@@ -233,11 +233,16 @@ class EllipsometryReader(BaseReader):
         header["angle_of_incidence"] = unique_angles
 
         """ Create mocked ellipsometry data template: """
-        is_mock = True
+        is_mock = False
         if is_mock:
             mock_header = MockEllips(header)
             mock_header.mock_template(header)
 
+        """ Atom types: Convert str to list if atom_types is not a list: """
+        if isinstance(header["atom_types"], str):
+            header["atom_types"] = header["atom_types"].split(",")
+        
+        """ Defining labels: """
         if header["data_type"] == "psi/delta":
             labels_new = {"psi": [], "delta": []}
         elif header["data_type"] == "tan(psi)/cos(delta)":
