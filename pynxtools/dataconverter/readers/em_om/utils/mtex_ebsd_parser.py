@@ -164,8 +164,8 @@ class NxEmOmMtexEbsdParser:
         template[f"{trg}/phase_identifier"] = np.uint32(h5r[f"{src}/phase_identifier"][0])
         template[f"{trg}/phase_name"] = str(h5r[f"{src}/phase_name"][()].decode("utf-8"))
         dst = h5r[f"{src}/program"]
-        template[f"{trg}/PROGRAM[program]/program_name"] = str(dst[()].decode("utf-8"))
-        template[f"{trg}/PROGRAM[program]/program_name/@version"] = dst.attrs["version"]
+        template[f"{trg}/PROGRAM[program1]/program"] = str(dst[()].decode("utf-8"))
+        template[f"{trg}/PROGRAM[program1]/program/@version"] = dst.attrs["version"]
         template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
         # there should be a depends on etc
 

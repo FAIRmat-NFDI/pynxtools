@@ -69,12 +69,14 @@ class NxEmNomadOasisElnSchemaParser:
                     and (self.yml[f"{src}:definition"] == NX_EM_ADEF_NAME):
                 template[f"{trg}@version"] = NX_EM_ADEF_VERSION
                 template[f"{trg}definition"] = NX_EM_ADEF_NAME
+                template[f"{trg}PROGRAM[program1]/program"] = NX_EM_EXEC_NAME
+                template[f"{trg}PROGRAM[program1]/program/@version"] = NX_EM_EXEC_VERSION
             if ("program" in self.yml[src].keys()) \
                     and ("program__attr_version" in self.yml[src].keys()):
-                template[f"{trg}PROGRAM[program1]/program"] = NX_EM_EXEC_NAME
-                # self.yml[f"{src}:program"]
-                template[f"{trg}PROGRAM[program1]/program/@version"] = NX_EM_EXEC_VERSION
-                # self.yml[f"{src}:program__attr_version"]
+                template[f"{trg}PROGRAM[program2]/program"] = self.yml[f"{src}:program"]
+                template[f"{trg}PROGRAM[program2]/program/@version"] \
+                    = self.yml[f"{src}:program__attr_version"]
+
         field_names = ["experiment_identifier", "start_time", "end_time",
                        "experiment_description", "experiment_documentation"]
         for field_name in field_names:
@@ -139,7 +141,7 @@ class NxEmNomadOasisElnSchemaParser:
                     and (f"{field_name}:unit" in self.yml[src].keys()):
                 template[f"{trg}{field_name}"] \
                     = np.float64(self.yml[f"{src}:{field_name}:value"])
-                template[f"{field_name}/@units"] = self.yml[f"{src}:{field_name}:unit"]
+                template[f"{trg}{field_name}/@units"] = self.yml[f"{src}:{field_name}:unit"]
 
         return template
 
@@ -312,7 +314,7 @@ class NxEmNomadOasisElnSchemaParser:
                     trg = f"/ENTRY[entry{self.entry_id}]/em_lab/" \
                           f"DETECTOR[detector{detector_id}]/"
 
-                    char_field_names = ["type"]
+                    char_field_names = ["local_name"]
                     for field_name in char_field_names:
                         if field_name in detector.keys():
                             template[f"{trg}{field_name}"] = detector[f"{field_name}"]

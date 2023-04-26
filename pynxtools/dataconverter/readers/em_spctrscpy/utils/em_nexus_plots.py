@@ -38,8 +38,8 @@ import numpy as np
 def xray_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for Xray."""
     entry_name = f"entry{entry_id}"
-    trg = f"/ENTRY[{entry_name}]/measurement/EVENT_DATA_EM[event_data_em1]/" \
-          f"SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/"
+    trg = f"/ENTRY[{entry_name}]/measurement/" \
+          f"EVENT_DATA_EM[event_data_em1]/xray/"
 
     path = ""
     if f"{trg}stack/DATA[data_counts]" in template.keys():
@@ -62,8 +62,8 @@ def xray_plot_available(template: dict, entry_id: int) -> bool:
         trg += "measurement/"
         template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[f"{trg}@default"] = "spectrum_set_em_xray1"
-        trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/"
+        template[f"{trg}@default"] = "xray"
+        trg += "xray/"
         template[f"{trg}@default"] = path
         return True
 
@@ -73,8 +73,8 @@ def xray_plot_available(template: dict, entry_id: int) -> bool:
 def eels_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for EELS."""
     entry_name = f"entry{entry_id}"
-    trg = f"/ENTRY[{entry_name}]/measurement/EVENT_DATA_EM[event_data_em1]/" \
-          f"SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/"
+    trg = f"/ENTRY[{entry_name}]/measurement/" \
+          f"EVENT_DATA_EM[event_data_em1]/eels/"
 
     path = ""
     if f"{trg}stack/DATA[data_counts]" in template.keys():
@@ -97,8 +97,8 @@ def eels_plot_available(template: dict, entry_id: int) -> bool:
         trg += "measurement/"
         template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[f"{trg}@default"] = "spectrum_set_em_eels1"
-        trg += "SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/"
+        template[f"{trg}@default"] = "eels"
+        trg += "eels/"
         template[f"{trg}@default"] = path
         return True
 
@@ -108,8 +108,8 @@ def eels_plot_available(template: dict, entry_id: int) -> bool:
 def adf_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for ADF."""
     entry_name = f"entry{entry_id}"
-    trg = f"/ENTRY[{entry_name}]/measurement/EVENT_DATA_EM[event_data_em1]/" \
-          f"IMAGE_SET_EM_ADF[image_set_em_adf1]/"
+    trg = f"/ENTRY[{entry_name}]/measurement/" \
+          f"EVENT_DATA_EM[event_data_em1]/adf/"
 
     path = ""
     if f"{trg}stack/DATA[data_counts]" in template.keys():
@@ -127,8 +127,8 @@ def adf_plot_available(template: dict, entry_id: int) -> bool:
         trg += "measurement/"
         template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[f"{trg}@default"] = "image_set_em_adf1"
-        trg += "IMAGE_SET_EM_ADF[image_set_em_adf1]/"
+        template[f"{trg}@default"] = "adf"
+        trg += "adf/"
         template[f"{trg}@default"] = path
         return True
 

@@ -235,8 +235,8 @@ class NxEmOmDreamThreedEbsdParser:
         template[f"{trg}/bitdepth"] = np.uint32(8)
         template[f"{trg}/phase_identifier"] = np.uint32(phase_id)
         template[f"{trg}/phase_name"] = str(phase_name)
-        template[f"{trg}/PROGRAM[program]/program_name"] = str("dream3d")
-        template[f"{trg}/PROGRAM[program]/program_name/@version"] = "v6.5.163"
+        template[f"{trg}/PROGRAM[program1]/program"] = str("dream3d")
+        template[f"{trg}/PROGRAM[program1]/program/@version"] = "v6.5.163"
         template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
 
         trg = f"/ENTRY[entry{self.entry_id}]/correlation" \

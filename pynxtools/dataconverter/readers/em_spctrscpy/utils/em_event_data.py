@@ -37,6 +37,8 @@ from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_eels \
 from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_adf \
     import NxImageSetEmAdf
 
+from pynxtools.dataconverter.file_hashing import get_file_hashvalue
+
 
 class NxEventDataEm:
     """Representing a data collection event with a single detector.
@@ -47,13 +49,11 @@ class NxEventDataEm:
 
     def __init__(self, file_name: str, entry_id: int):
         self.file_name = ""
+        self.file_sha256 = ""
         self.entry_id = entry_id
         self.meta: Dict[str, NxObject] = {}
         self.meta["start_time"] = NxObject("non_recoverable")
         self.meta["end_time"] = NxObject("non_recoverable")
-        self.meta["event_identifier"] = NxObject()
-        self.meta["event_type"] = NxObject()
-        self.meta["detector_identifier"] = NxObject()
         # the following list is not complete
         # but brings an example how NXem can be used disentangle
         # data and processing when, at a given point in time,
@@ -61,6 +61,7 @@ class NxEventDataEm:
 
         if (file_name != "") and (entry_id > 0):
             self.file_name = file_name
+            self.file_sha256 = get_file_hashvalue(self.file_name)
 
             self.spectrum_set_em_xray = NxSpectrumSetEmXray([])
             self.spectrum_set_em_eels = NxSpectrumSetEmEels([])
@@ -104,12 +105,10 @@ class NxEventDataEm:
         # not always reported in which case hspy replaces missing vendor timestamps
         # with system time at runtime of the script !
 
-        template[f"{prefix}start_time"] = now
-        template[f"{prefix}end_time"] = now
-
-        template[f"{prefix}detector_identifier"] = now
-        template[f"{prefix}event_identifier"] = now
-        template[f"{prefix}event_type"] = now
+        template[f"{prefix}start_time"] = self.meta["start_time"].value
+        template[f"{prefix}end_time"] = self.meta["end_time"].value
+        event_info = {"source_file_name": self.file_name,
+                      "source_file_version": self.file_sha256}
 
         prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
                  f"EVENT_DATA_EM[event_data_em1]/"
@@ -117,14 +116,16 @@ class NxEventDataEm:
         if self.spectrum_set_em_xray is not None:
             if isinstance(self.spectrum_set_em_xray,
                           NxSpectrumSetEmXray) is True:
-                self.spectrum_set_em_xray.report(prefix, 1, template)
+                self.spectrum_set_em_xray.report(
+                    prefix, 1, event_info, template)
 
         prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
                  f"EVENT_DATA_EM[event_data_em1]/"
         if self.spectrum_set_em_eels is not None:
             if isinstance(self.spectrum_set_em_eels,
                           NxSpectrumSetEmEels) is True:
-                self.spectrum_set_em_eels.report(prefix, 1, template)
+                self.spectrum_set_em_eels.report(
+                    prefix, 1, event_info, template)
 
         prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
                  f"EVENT_DATA_EM[event_data_em1]/"
@@ -132,7 +133,8 @@ class NxEventDataEm:
         if self.image_set_em_adf is not None:
             if isinstance(self.image_set_em_adf,
                           NxImageSetEmAdf) is True:
-                self.image_set_em_adf.report(prefix, 1, template)
+                self.image_set_em_adf.report(
+                    prefix, 1, event_info, template)
 
         # add generic images
 

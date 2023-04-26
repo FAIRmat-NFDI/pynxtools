@@ -171,7 +171,8 @@ class NxImageSetEmAdf:
                         # if self.data[-1].is_valid is False:
                         #     self.is_valid = False
 
-    def report(self, prefix: str, frame_id: int, template: dict) -> dict:
+    def report(self, prefix: str, frame_id: int,
+               ifo: dict, template: dict) -> dict:
         """Enter data from the NX-specific representation into the template."""
         if self.is_valid is False:
             print(f"\tIn function {__name__} reporting nothing!")
@@ -180,26 +181,33 @@ class NxImageSetEmAdf:
         assert (len(self.data) >= 0) and (len(self.data) <= 1), \
             "More than one spectrum stack is currently not supported!"
 
-        trg = f"{prefix}IMAGE_SET_EM_ADF[image_set_em_adf{frame_id}]/"
-        template[f"{trg}PROGRAM[program1]/program"] = "hyperspy"
-        template[f"{trg}PROGRAM[program1]/program/@version"] = hs.__version__
-        # MISSING_DATA_MSG = "not in hspy metadata case specifically in original_metadata"
-        # ##MK::!!!!!
-        # ##MK::how to communicate that these data do not exist?
-        # template[f"{trg}adf_outer_half_angle"] = np.float64(0.)
-        # template[f"{trg}adf_outer_half_angle/@units"] = "rad"
-        # template[f"{trg}adf_inner_half_angle"] = np.float64(0.)
-        # template[f"{trg}adf_inner_half_angle/@units"] = "rad"
         if len(self.data) == 1:
-            prfx = f"{trg}stack/"
-            template[f"{prfx}title"] = "Annular dark field image stack"
-            # template[f"{prfx}@long_name"] = self.data[0].meta["long_name"].value
-            template[f"{prfx}@signal"] = "data_counts"
-            template[f"{prfx}@axes"] = ["axis_image_identifier", "axis_y", "axis_x"]
-            template[f"{prfx}@AXISNAME[axis_x_indices]"] = np.uint32(2)
-            template[f"{prfx}@AXISNAME[axis_y_indices]"] = np.uint32(1)
-            template[f"{prfx}@AXISNAME[axis_image_identifier]"] = np.uint32(0)
-            template[f"{prfx}DATA[data_counts]"] \
+            trg = f"{prefix}adf/PROCESS[process1]/"
+            template[f"{trg}PROGRAM[program1]/program"] = "hyperspy"
+            template[f"{trg}PROGRAM[program1]/program/@version"] \
+                = hs.__version__
+            template[f"{trg}mode"] = "n/a"
+            template[f"{trg}detector_identifier"] = "n/a"
+            template[f"{trg}source"] = ifo["source_file_name"]
+            template[f"{trg}source/@version"] = ifo["source_file_version"]
+
+            # MISSING_DATA_MSG = "not in hspy metadata case specifically in original_metadata"
+            # ##MK::!!!!!
+            # ##MK::how to communicate that these data do not exist?
+            # template[f"{trg}adf_outer_half_angle"] = np.float64(0.)
+            # template[f"{trg}adf_outer_half_angle/@units"] = "rad"
+            # template[f"{trg}adf_inner_half_angle"] = np.float64(0.)
+            # template[f"{trg}adf_inner_half_angle/@units"] = "rad"
+
+            trg = f"{prefix}adf/stack/"
+            template[f"{trg}title"] = "Annular dark field image stack"
+            # template[f"{trg}@long_name"] = self.data[0].meta["long_name"].value
+            template[f"{trg}@signal"] = "data_counts"
+            template[f"{trg}@axes"] = ["axis_image_identifier", "axis_y", "axis_x"]
+            template[f"{trg}@AXISNAME[axis_x_indices]"] = np.uint32(2)
+            template[f"{trg}@AXISNAME[axis_y_indices]"] = np.uint32(1)
+            template[f"{trg}@AXISNAME[axis_image_identifier]"] = np.uint32(0)
+            template[f"{trg}DATA[data_counts]"] \
                 = {"compress": np.reshape(
                     np.atleast_3d(self.data[0].meta["intensity"].value),
                     (1,
@@ -208,20 +216,20 @@ class NxImageSetEmAdf:
                     "strength": 1}
             # is the data layout correct?
             # I am pretty sure the last two have to be swopped also!!
-            template[f"{prfx}DATA[data_counts]/@long_name"] = "Counts (a.u.)"
-            template[f"{prfx}AXISNAME[axis_x]"] \
+            template[f"{trg}DATA[data_counts]/@long_name"] = "Counts (a.u.)"
+            template[f"{trg}AXISNAME[axis_x]"] \
                 = {"compress": self.data[0].meta["xpos"].value, "strength": 1}
-            template[f"{prfx}AXISNAME[axis_x]/@units"] = self.data[0].meta["xpos"].unit
-            template[f"{prfx}AXISNAME[axis_x]/@long_name"] \
+            template[f"{trg}AXISNAME[axis_x]/@units"] = self.data[0].meta["xpos"].unit
+            template[f"{trg}AXISNAME[axis_x]/@long_name"] \
                 = f"x ({self.data[0].meta['xpos'].unit})"
-            template[f"{prfx}AXISNAME[axis_y]"] \
+            template[f"{trg}AXISNAME[axis_y]"] \
                 = {"compress": self.data[0].meta["ypos"].value, "strength": 1}
-            template[f"{prfx}AXISNAME[axis_y]/@units"] = self.data[0].meta["ypos"].unit
-            template[f"{prfx}AXISNAME[axis_y]/@long_name"] \
+            template[f"{trg}AXISNAME[axis_y]/@units"] = self.data[0].meta["ypos"].unit
+            template[f"{trg}AXISNAME[axis_y]/@long_name"] \
                 = f"y ({self.data[0].meta['ypos'].unit})"
-            template[f"{prfx}AXISNAME[axis_image_identifier]"] \
+            template[f"{trg}AXISNAME[axis_image_identifier]"] \
                 = np.atleast_1d(np.uint32(frame_id))
-            template[f"{prfx}AXISNAME[axis_image_identifier]/@long_name"] \
+            template[f"{trg}AXISNAME[axis_image_identifier]/@long_name"] \
                 = "image identifier"
 
         return template

@@ -9,7 +9,7 @@ definitions:
     ElectronBackscatterDiffraction: # the actual schema
       # nomad.datamodel.metainfo.eln.NexusParser
       base_sections:
-        - 'nomad.datamodel.metainfo.eln.NexusDataConverter'
+        - 'nomad.datamodel.metainfo.eln.NexusParser'
         - 'nomad.datamodel.data.EntryData'
       # base_section: nomad.datamodel.data.EntryData
       m_annotations:

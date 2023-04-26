@@ -15,17 +15,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility tool constants and versioning."""
+"""Compute hashes of files for provenance tracking of data sources."""
 
-# pylint: disable=no-member
-
-from pynxtools.dataconverter.readers.shared.shared_utils \
-    import get_repo_last_commit
+import hashlib
 
 
-NX_EM_OM_ADEF_NAME = "NXem_ebsd"
-NX_EM_OM_ADEF_VERSION = "nexus-fairmat-proposal successor of " \
-                        "9636feecb79bb32b828b1a9804269573256d7696"
-# based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
-NX_EM_OM_EXEC_NAME = "dataconverter/reader/em_om/reader.py"
-NX_EM_OM_EXEC_VERSION = get_repo_last_commit()
+def get_file_hashvalue(file_name: str) -> str:
+    """Compute a hashvalue of given file, here SHA256."""
+    sha256_hash = hashlib.sha256()
+    try:
+        with open(file_name, "rb") as file_handle:
+            # Read and update hash string value in blocks of 4K
+            for byte_block in iter(lambda: file_handle.read(4096), b""):
+                sha256_hash.update(byte_block)
+    except IOError:
+        print(f"File {file_name} is not accessible !")
+
+    return sha256_hash.hexdigest()

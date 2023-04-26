@@ -69,12 +69,14 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                     and (self.yml[f"{src}:definition"] == NX_APM_ADEF_NAME):
                 template[f"{trg}@version"] = NX_APM_ADEF_VERSION
                 template[f"{trg}definition"] = NX_APM_ADEF_NAME
+                template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+                template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
             if ("program" in self.yml[src].keys()) \
                     and ("program__attr_version" in self.yml[src].keys()):
-                template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-                # self.yml[f"{src}:program"]
-                template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
-                # self.yml[f"{src}:program__attr_version"]
+                template[f"{trg}PROGRAM[program2]/program"] \
+                    = self.yml[f"{src}:program"]
+                template[f"{trg}PROGRAM[program2]/program/@version"] \
+                    = self.yml[f"{src}:program__attr_version"]
 
         required_field_names = ["experiment_identifier", "run_number",
                                 "operation_mode"]

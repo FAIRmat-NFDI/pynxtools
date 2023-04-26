@@ -345,10 +345,10 @@ class NxEmOmOrixEbsdParser:
         template[f"{trg}/bitdepth"] = np.uint32(8)
         template[f"{trg}/phase_identifier"] = np.uint32(phase_id)
         template[f"{trg}/phase_name"] = str(phase_name)
-        template[f"{trg}/PROGRAM[program1]/program_name"] = str("orix")
-        template[f"{trg}/PROGRAM[program1]/program_name/@version"] = orix.__version__
-        template[f"{trg}/PROGRAM[program2]/program_name"] = str("diffsims")
-        template[f"{trg}/PROGRAM[program2]/program_name/@version"] = diffsims.__version__
+        template[f"{trg}/PROGRAM[program1]/program"] = str("orix")
+        template[f"{trg}/PROGRAM[program1]/program/@version"] = orix.__version__
+        template[f"{trg}/PROGRAM[program2]/program"] = str("diffsims")
+        template[f"{trg}/PROGRAM[program2]/program/@version"] = diffsims.__version__
         template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
         # should have a reference so that it is directly interpretable
 

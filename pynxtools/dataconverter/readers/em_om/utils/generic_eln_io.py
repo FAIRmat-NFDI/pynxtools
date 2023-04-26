@@ -27,10 +27,10 @@ import yaml
 
 # from ase.data import chemical_symbols
 
-# from pynxtools.dataconverter.readers.em_om.utils.versioning \
-#     import NX_EM_OM_ADEF_NAME, NX_EM_OM_ADEF_VERSION
-# from pynxtools.dataconverter.readers.em_om.utils.versioning \
-#     import NX_EM_OM_EXEC_NAME, NX_EM_OM_EXEC_VERSION
+from pynxtools.dataconverter.readers.em_om.utils.versioning \
+    import NX_EM_OM_ADEF_NAME, NX_EM_OM_ADEF_VERSION
+from pynxtools.dataconverter.readers.em_om.utils.versioning \
+    import NX_EM_OM_EXEC_NAME, NX_EM_OM_EXEC_VERSION
 
 from pynxtools.dataconverter.readers.em_om.utils.handed_cartesian \
     import REFERENCE_FRAMES, AXIS_DIRECTIONS, is_cs_well_defined
@@ -66,8 +66,8 @@ class NxEmOmGenericElnSchemaParser:
         self.yml = None
         with open(self.file_name, "r", encoding="utf-8") as stream:
             self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
-        if "OrientationMicroscopyWithElectrons" in self.yml:
-            self.yml = self.yml["OrientationMicroscopyWithElectrons"]
+        if "ElectronBackscatterDiffraction" in self.yml:
+            self.yml = self.yml["ElectronBackscatterDiffraction"]
 
     def parse(self, template: dict) -> dict:
         """Extract metadata from generic ELN text file to respective NeXus objects."""
@@ -94,21 +94,25 @@ class NxEmOmGenericElnSchemaParser:
         print("Parse entry...")
         src = "entry"
         trg = f"/ENTRY[entry{self.entry_id}]/"
-        if "attr_version" in self.yml[src].keys():
-            template[f"{trg}@version"] = self.yml[f"{src}:attr_version"]
-        req_fields = ["definition", "start_time",
-                      "workflow_description", "workflow_identifier"]
-        for field in req_fields:
-            if field in self.yml[src].keys():
-                template[f"{trg}{field}"] = self.yml[f"{src}:{field}"]
-        if "end_time" in self.yml[src].keys():
-            template[f"{trg}end_time"] = self.yml[f"{src}:end_time"]
-        if "program" in self.yml[src].keys():
-            template[f"{trg}PROGRAM[program]/program_name"] = self.yml[f"{src}:program"]
-        if "program__attr_version" in self.yml[src].keys():
-            template[f"{trg}PROGRAM[program]/program_name/@version"] \
+        if (self.yml[f"{src}:attr_version"] == NX_EM_OM_ADEF_VERSION) \
+                and (self.yml[f"{src}:definition"] == NX_EM_OM_ADEF_NAME):
+            template[f"{trg}@version"] = NX_EM_OM_ADEF_VERSION
+            template[f"{trg}definition"] = NX_EM_OM_ADEF_NAME
+            template[f"{trg}PROGRAM[program1]/program"] = NX_EM_OM_EXEC_NAME
+            template[f"{trg}PROGRAM[program1]/program/@version"] = NX_EM_OM_EXEC_VERSION
+        if ("program" in self.yml[src].keys()) \
+                and ("program__attr_version" in self.yml[src].keys()):
+            template[f"{trg}PROGRAM[program2]/program"] \
+                = self.yml[f"{src}:program"]
+            template[f"{trg}PROGRAM[program2]/program/@version"] \
                 = self.yml[f"{src}:program__attr_version"]
         # check that versions NX_EM_OM_* match
+        req_field_names = ["definition", "start_time", "end_time",
+                           "workflow_description", "workflow_identifier"]
+        for field in req_field_names:
+            if field in self.yml[src].keys():
+                template[f"{trg}{field}"] = self.yml[f"{src}:{field}"]
+
         return template
 
     def parse_user_section(self, template: dict) -> dict:
@@ -119,11 +123,10 @@ class NxEmOmGenericElnSchemaParser:
             return template
         user_id = 1
         for user_list in self.yml[src]:
-            if "name" in user_list.keys():
-                trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]/"
-                template[f"{trg}name"] = user_list["name"]
+            trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]/"
             field_names = [
-                "email", "affiliation", "address", "orcid", "orcid_platform",
+                "name", "email", "affiliation", "address",
+                "orcid", "orcid_platform",
                 "telephone_number", "role",
                 "social_media_name", "social_media_platform"]
             for field_name in field_names:
@@ -137,10 +140,11 @@ class NxEmOmGenericElnSchemaParser:
         print("Parse commercial on-the-fly")
         src = "commercial_on_the_fly_indexing"
         trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/on_the_fly_indexing/"
-        if "program" in self.yml[src].keys():
-            template[f"{trg}PROGRAM[program]/program_name"] = self.yml[f"{src}:program"]
-        if "program__attr_version" in self.yml[src].keys():
-            template[f"{trg}PROGRAM[program]/program_name/@version"] \
+        if ("program" in self.yml[src].keys()) \
+                and ("program__attr_version" in self.yml[src].keys()):
+            template[f"{trg}PROGRAM[program1]/program"] \
+                = self.yml[f"{src}:program"]
+            template[f"{trg}PROGRAM[program1]/program/@version"] \
                 = self.yml[f"{src}:program__attr_version"]
         if "results_file" in self.yml[src].keys():
             template[f"{trg}origin"] = self.yml[f"{src}:results_file"]

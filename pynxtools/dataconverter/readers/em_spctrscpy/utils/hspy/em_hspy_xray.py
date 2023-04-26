@@ -337,7 +337,8 @@ class NxSpectrumSetEmXray:
             else:
                 continue
 
-    def report(self, prefix: str, frame_id: int, template: dict) -> dict:
+    def report(self, prefix: str, frame_id: int,
+               ifo: dict, template: dict) -> dict:
         """Enter data from the NX-specific representation into the template."""
         if self.is_valid is False:
             print(f"\t{__name__} reporting nothing!")
@@ -350,77 +351,80 @@ class NxSpectrumSetEmXray:
         # for keyword, obj in self.composition_map.items():
         #     print(f"{keyword}, np.shape(obj.counts.value), {np.shape(obj.counts.value)}")
 
-        trg = f"{prefix}SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray{frame_id}]/"
-        template[f"{trg}PROGRAM[program1]/program"] = "hyperspy"
-        template[f"{trg}PROGRAM[program1]/program/@version"] = hs.__version__
-        # MISSING_DATA_MSG = "not in hspy metadata case specifically in original_metadata"
-        # ##MK::!!!!!
-        # ##MK::how to communicate that these data do not exist?
-        # template[trg + "adf_outer_half_angle"] = np.float64(0.)
-        # template[trg + "adf_outer_half_angle/@units"] = "rad"
-        # template[trg + "adf_inner_half_angle"] = np.float64(0.)
-        # template[trg + "adf_inner_half_angle/@units"] = "rad"
         if len(self.stack_data) == 1:
-            prfx = f"{trg}stack/"
-            template[f"{prfx}title"] = "Xray spectra stack"
-            # template[f"{prfx}@long_name"] \
+            trg = f"{prefix}xray/PROCESS[process1]/"
+            template[f"{trg}PROGRAM[program1]/program"] = "hyperspy"
+            template[f"{trg}PROGRAM[program1]/program/@version"] \
+                = hs.__version__
+            template[f"{trg}mode"] = "n/a"
+            template[f"{trg}detector_identifier"] = "n/a"
+            template[f"{trg}source"] = ifo["source_file_name"]
+            template[f"{trg}source/@version"] = ifo["source_file_version"]
+
+            # MISSING_DATA_MSG = "not in hspy metadata case specifically in original_metadata"
+            # ##MK::!!!!!
+            # ##MK::how to communicate that these data do not exist?
+            # template[trg + "adf_outer_half_angle"] = np.float64(0.)
+            # template[trg + "adf_outer_half_angle/@units"] = "rad"
+            # template[trg + "adf_inner_half_angle"] = np.float64(0.)
+            # template[trg + "adf_inner_half_angle/@units"] = "rad"
+
+            trg = f"{prefix}xray/stack/"
+            template[f"{trg}title"] = "Xray spectra stack"
+            # template[f"{trg}@long_name"] \
             #     = self.stack_data[0].meta["long_name"].value
-            template[f"{prfx}@signal"] = "data_counts"
-            template[f"{prfx}@axes"] \
+            template[f"{trg}@signal"] = "data_counts"
+            template[f"{trg}@axes"] \
                 = ["axis_y", "axis_x", "axis_photon_energy"]
-            template[f"{prfx}@AXISNAME_indices[axis_photon_energy_indices]"] \
+            template[f"{trg}@AXISNAME_indices[axis_photon_energy_indices]"] \
                 = np.uint32(2)
-            template[f"{prfx}@AXISNAME_indices[axis_x_indices]"] = np.uint32(1)
-            template[f"{prfx}@AXISNAME_indices[axis_y_indices]"] = np.uint32(0)
-            template[f"{prfx}DATA[data_counts]"] \
+            template[f"{trg}@AXISNAME_indices[axis_x_indices]"] = np.uint32(1)
+            template[f"{trg}@AXISNAME_indices[axis_y_indices]"] = np.uint32(0)
+            template[f"{trg}DATA[data_counts]"] \
                 = {"compress": self.stack_data[0].meta["counts"].value,
                    "strength": 1}
-            template[f"{prfx}DATA[data_counts]/@long_name"] = "Photon counts (1)"
-            template[f"{prfx}AXISNAME[axis_photon_energy]"] \
+            template[f"{trg}DATA[data_counts]/@long_name"] = "Photon counts (1)"
+            template[f"{trg}AXISNAME[axis_photon_energy]"] \
                 = {"compress": self.stack_data[0].meta["photon_energy"].value,
                    "strength": 1}
-            template[f"{prfx}AXISNAME[axis_photon_energy]/@units"] \
+            template[f"{trg}AXISNAME[axis_photon_energy]/@units"] \
                 = self.stack_data[0].meta["photon_energy"].unit
-            template[f"{prfx}AXISNAME[axis_photon_energy]/@long_name"] \
+            template[f"{trg}AXISNAME[axis_photon_energy]/@long_name"] \
                 = f"Photon energy ({self.stack_data[0].meta['photon_energy'].unit})"
-            template[f"{prfx}AXISNAME[axis_x]"] \
+            template[f"{trg}AXISNAME[axis_x]"] \
                 = {"compress": self.stack_data[0].meta["xpos"].value,
                    "strength": 1}
-            template[f"{prfx}AXISNAME[axis_x]/@units"] \
+            template[f"{trg}AXISNAME[axis_x]/@units"] \
                 = self.stack_data[0].meta["xpos"].unit
-            template[f"{prfx}AXISNAME[axis_x]/@long_name"] \
+            template[f"{trg}AXISNAME[axis_x]/@long_name"] \
                 = f"x ({self.stack_data[0].meta['xpos'].unit})"
-            template[f"{prfx}AXISNAME[axis_y]"] \
+            template[f"{trg}AXISNAME[axis_y]"] \
                 = {"compress": self.stack_data[0].meta["ypos"].value,
                    "strength": 1}
-            template[f"{prfx}AXISNAME[axis_y]/@units"] \
+            template[f"{trg}AXISNAME[axis_y]/@units"] \
                 = self.stack_data[0].meta["ypos"].unit
-            template[f"{prfx}AXISNAME[axis_y]/@long_name"] \
+            template[f"{trg}AXISNAME[axis_y]/@long_name"] \
                 = f"y ({self.stack_data[0].meta['ypos'].unit})"
 
         if len(self.summary_data) == 1:
-            prfx = f"{trg}summary/"
-            template[f"{prfx}title"] = "Accumulated X-ray spectrum"
-            # template[f"{prfx}@long_name"] = self.summary_data[0].meta["long_name"].value
-            template[f"{prfx}@signal"] = "data_counts"
-            template[f"{prfx}@axes"] = ["axis_photon_energy"]
-            template[f"{prfx}@AXISNAME_indices[axis_photon_energy_indices]"] \
+            trg = f"{prefix}xray/summary/"
+            template[f"{trg}title"] = "Accumulated X-ray spectrum"
+            # template[f"{trg}@long_name"] = self.summary_data[0].meta["long_name"].value
+            template[f"{trg}@signal"] = "data_counts"
+            template[f"{trg}@axes"] = ["axis_photon_energy"]
+            template[f"{trg}@AXISNAME_indices[axis_photon_energy_indices]"] \
                 = np.uint32(0)
-            template[f"{prfx}DATA[data_counts]"] \
+            template[f"{trg}DATA[data_counts]"] \
                 = {"compress": self.summary_data[0].meta["counts"].value,
                    "strength": 1}
-            template[f"{prfx}DATA[data_counts]/@long_name"] = "Photon counts (1)"
-            template[f"{prfx}AXISNAME[axis_photon_energy]"] \
+            template[f"{trg}DATA[data_counts]/@long_name"] = "Photon counts (1)"
+            template[f"{trg}AXISNAME[axis_photon_energy]"] \
                 = {"compress": self.summary_data[0].meta["photon_energy"].value,
                    "strength": 1}
-            template[f"{prfx}AXISNAME[axis_photon_energy]/@units"] \
+            template[f"{trg}AXISNAME[axis_photon_energy]/@units"] \
                 = self.summary_data[0].meta["photon_energy"].unit
-            template[f"{prfx}AXISNAME[axis_photon_energy]/@long_name"] \
+            template[f"{trg}AXISNAME[axis_photon_energy]/@long_name"] \
                 = f"Photon energy ({self.summary_data[0].meta['photon_energy'].unit})"
-
-        # template[f"{prfx}PROGRAM[program1]/program"] = self.program.value
-        # template[f"{prfx}PROGRAM[program1]/program/@version"] \
-        #     = self.program_version.value
 
         return template
 
