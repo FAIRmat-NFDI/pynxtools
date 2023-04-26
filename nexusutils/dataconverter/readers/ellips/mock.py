@@ -118,7 +118,7 @@ class MockEllips():
                                    len(self.wavelength)
                                    ])
         for index in range(0, len(self.angles)):
-            noise=np.random.normal(0, 0.5, self.data[0, 0, 0, 0, :].size)
+            noise = np.random.normal(0, 0.5, self.data[0, 0, 0, 0, :].size)
             my_numpy_array[0][0][index] = self.data[0][0][0] * random.uniform(0.5, 1.5) + noise
         self.data = my_numpy_array
         dict["measured_data"] = my_numpy_array
@@ -134,7 +134,7 @@ class MockEllips():
                                    len(self.wavelength)
                                    ])
         for index in range(0, len(self.angles)):
-            noise=np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
+            noise = np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
             for mm_index in range(1, self.number_of_signals):
                 my_numpy_array[0][0][index][mm_index] = self.data[0][0][0][0] * random.uniform(0.5, 1.5) + noise
             my_numpy_array[0][0][index][0] = my_numpy_array[0][0][0][0] / my_numpy_array[0][0][0][0]

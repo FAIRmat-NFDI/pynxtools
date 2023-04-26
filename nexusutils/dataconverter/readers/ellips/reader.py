@@ -222,7 +222,7 @@ class EllipsometryReader(BaseReader):
                                index,
                                data_index,
                                :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
-                                                                ].astype("float64")
+                                                              ].astype("float64")
             data_index += 1
 
         # measured_data is a required field
@@ -242,16 +242,16 @@ class EllipsometryReader(BaseReader):
         """ Atom types: Convert str to list if atom_types is not a list: """
         if isinstance(header["atom_types"], str):
             header["atom_types"] = header["atom_types"].split(",")
-        
+
         """ Defining labels: """
         if header["data_type"] == "psi/delta":
             labels_new = {"psi": [], "delta": []}
         elif header["data_type"] == "tan(psi)/cos(delta)":
-           labels_new = {"tan(psi)": [], "cos(delta)": []}
+            labels_new = {"tan(psi)": [], "cos(delta)": []}
         elif header["data_type"] == "Mueller matrix":
             labels_new = {}
-            for i in range(1,5):
-                for j in range(1,5):
+            for i in range(1, 5):
+                for j in range(1, 5):
                     temp = {f"m{i}{j}": []}
                     labels_new.update(temp)
 
@@ -263,7 +263,7 @@ class EllipsometryReader(BaseReader):
 
         header["column_names"] = list(labels_new.keys())
 
-        return header, labels_new #data_list
+        return header, labels_new
 
     def read(self,
              template: dict = None,
@@ -284,7 +284,6 @@ class EllipsometryReader(BaseReader):
             raise Exception("No input files were given to Ellipsometry Reader.")
 
         # The header dictionary is filled with entries.
-        #header, psilist, deltalist = (
         header, labels = (
             EllipsometryReader.populate_header_dict_with_datasets(file_paths)
         )
@@ -300,13 +299,13 @@ class EllipsometryReader(BaseReader):
                                                      "/entry/instrument/spectrometer/wavelength"
                                                      }
         template["/ENTRY[entry]/plot/wavelength/@units"] = header["wavelength_unit"]
-        for data_indx in range(0,len(labels.keys())):
+        for data_indx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[data_indx]):
                 template[f"/ENTRY[entry]/plot/{key}"] = {"link":
-                                                        "/entry/sample/measured_data",
-                                                        "shape":
-                                                        np.index_exp[0, 0, index, data_indx, :]
-                                                        }
+                                                         "/entry/sample/measured_data",
+                                                         "shape":
+                                                         np.index_exp[0, 0, index, data_indx, :]
+                                                         }
                 template[f"/ENTRY[entry]/plot/{key}/@units"] = "degrees"
 
         # Define default plot showing psi and delta at all angles:
@@ -317,10 +316,10 @@ class EllipsometryReader(BaseReader):
 
         # if len(data_list[0]) > 1:
         template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
-        for index in range(1,len(data_list)):
+        for index in range(1, len(data_list)):
             template["/ENTRY[entry]/plot/@auxiliary_signals"] += data_list[index]
 
         return template
-
+    
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
 READER = EllipsometryReader
