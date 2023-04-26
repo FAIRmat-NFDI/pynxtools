@@ -17,12 +17,12 @@
 #
 """Utility class handling which community/technology partner files for em_om reader."""
 
-# pylint: disable=E1101, R0801
+# pylint: disable=no-member,duplicate-code
 
 from typing import Tuple, Dict, List
 
 
-class EmOmUseCaseSelector:  # pylint: disable=R0903
+class EmOmUseCaseSelector:  # pylint: disable=too-few-public-methods
     """Decision maker about what needs to be parsed given arbitrary input.
 
     Users might invoke this dataconverter with arbitrary input, no input, or

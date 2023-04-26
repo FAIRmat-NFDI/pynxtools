@@ -17,7 +17,7 @@
 #
 """Conventions suggested by D. Rowenhorst et al. in DOI: 10.1088/0965-0393/23/8/083501."""
 
-# pylint: disable=E1101, R0801
+# pylint: disable=no-member,duplicate-code
 
 msmse_convention = {
     "three_dimensional_rotation_handedness": "counter_clockwise",

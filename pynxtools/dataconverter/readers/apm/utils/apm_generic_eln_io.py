@@ -17,7 +17,7 @@
 #
 """Wrapping multiple parsers for vendor files with NOMAD OASIS/ELN/YAML metadata."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 import flatdict as fd
 
@@ -31,26 +31,28 @@ from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
 
 
-class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
+class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
     """Parse eln_data.yaml dump file content generated from a NOMAD OASIS YAML.
 
     This parser implements a design where an instance of a specific NOMAD
     custom schema ELN template is used to fill pieces of information which
-    are typically not contain in files from technology partners
-    (e.g. pos, epos, apt, rng, rrng, ...). Until this custom schema and the NXapm
-    application definition do not use a fully harmonized vocabulary the here
-    hardcoded implementation is needed which maps specifically named pieces of
-    information from the custom schema on named fields in NXapm
+    are typically not contained in files from technology partners
+    (e.g. pos, epos, apt, rng, rrng, ...). Until now, this custom schema and
+    the NXapm application definition do not use a fully harmonized vocabulary.
+    Therefore, the here hardcoded implementation is needed which maps specifically
+    named pieces of information from the custom schema instance on named fields
+    in an instance of NXapm
 
     The functionalities in this ELN YAML parser do not check if the
-    instantiated template parameter yield a compliant NXapm file as
-    this part is handled by the generic part of the dataconverter
+    instantiated template yields an instance which is compliant NXapm.
+    Instead, this task is handled by the generic part of the dataconverter
+    during the verification of the template dictionary.
     """
 
     def __init__(self, file_name: str, entry_id: int):
+        self.entry_id = entry_id
         if file_name.startswith("eln_data") and entry_id > 0:
             self.file_name = file_name
-            self.entry_id = entry_id
             with open(self.file_name, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
         else:
@@ -67,10 +69,10 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=R0903
                     and (self.yml[f"{src}:definition"] == NX_APM_ADEF_NAME):
                 template[f"{trg}@version"] = NX_APM_ADEF_VERSION
                 template[f"{trg}definition"] = NX_APM_ADEF_NAME
-            if "program" in self.yml[src].keys():
+            if ("program" in self.yml[src].keys()) \
+                    and ("program__attr_version" in self.yml[src].keys()):
                 template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
                 # self.yml[f"{src}:program"]
-            if "program__attr_version" in self.yml[src].keys():
                 template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
                 # self.yml[f"{src}:program__attr_version"]
 

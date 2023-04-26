@@ -17,7 +17,7 @@
 #
 """Parser for loading generic orientation microscopy data based on ."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from typing import Tuple, Any
 

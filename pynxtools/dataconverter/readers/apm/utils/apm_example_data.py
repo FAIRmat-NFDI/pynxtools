@@ -17,7 +17,9 @@
 #
 """Utility functions for generation of atom probe NeXus datasets for dev purposes."""
 
-# pylint: disable=E1101, R0801, R0902, W0201
+# pylint: disable=no-member,duplicate-code,too-many-instance-attributes,attribute-defined-outside-init
+
+# E1101, R0801, R0902, W0201
 
 import hashlib
 
@@ -339,8 +341,7 @@ class ApmCreateExampleData:
                 assert isinstance(symbol, str), "symbol is not a string!"
                 if (symbol in chemical_symbols) & (symbol != "X"):
                     unique_elements.add(str(symbol))
-        print("Unique elements are")
-        print(list(unique_elements))
+        print(f"Unique elements are: {list(unique_elements)}")
         template[f"{trg}atom_types"] = ", ".join(list(unique_elements))
 
         specimen_name = str(f"Mocked atom probe specimen {np.random.choice(1000, 1)[0]}")
@@ -457,7 +458,7 @@ class ApmCreateExampleData:
             = np.float64(np.random.normal(loc=250, scale=10))
         template[f"{trg}pulse_frequency/@units"] = "kHz"
         if pulse_mode != "voltage":
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/laser_gun/"
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/SOURCE[laser_source1]/"
             template[f"{trg}name"] = "laser"
             template[f"{trg}wavelength"] \
                 = np.float64((30 + np.random.choice(30, 1)) * 1.0e-8)
@@ -475,9 +476,10 @@ class ApmCreateExampleData:
         # print("Parsing reconstruction...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/reconstruction/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}PROGRAM[program1]/program"] = template[f"{src}program"]
+        template[f"{trg}PROGRAM[program1]/program"] \
+            = template[f"{src}PROGRAM[program1]/program"]
         template[f"{trg}PROGRAM[program1]/program/@version"] \
-            = template[f"{src}program/@version"]
+            = template[f"{src}PROGRAM[program1]/program/@version"]
         template[f"{trg}protocol_name"] \
             = str(np.random.choice(["bas", "geiser", "gault", "cameca", "other"], 1)[0])
         template[f"{trg}parameter"] = "n/a"
@@ -489,9 +491,10 @@ class ApmCreateExampleData:
         # print("Parsing ranging...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}PROGRAM[program1]/program"] = template[f"{src}program"]
+        template[f"{trg}PROGRAM[program1]/program"] \
+            = template[f"{src}PROGRAM[program1]/program"]
         template[f"{trg}PROGRAM[program1]/program/@version"] \
-            = template[f"{src}program/@version"]
+            = template[f"{src}PROGRAM[program1]/program/@version"]
         return template
 
     def emulate_random_input_from_eln(self, template: dict) -> dict:
@@ -515,6 +518,8 @@ class ApmCreateExampleData:
         self.emulate_pulser(template)
         self.emulate_reconstruction(template)
         self.emulate_ranging(template)
+
+        template[f"/ENTRY[entry{self.entry_id}]/atom_probe/status"] = "success"
 
         return template
 

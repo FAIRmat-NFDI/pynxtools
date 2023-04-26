@@ -17,7 +17,7 @@
 #
 """Parse metadata in generic (like reported by an OASIS ELN) schema."""
 
-# pylint: disable=E1101, R0801
+# pylint: disable=no-member,duplicate-code
 
 import numpy as np
 

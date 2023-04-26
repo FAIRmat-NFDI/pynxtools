@@ -17,11 +17,15 @@
 #
 """Wrapping multiple parsers for vendor files with ranging definition files."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from typing import Dict, Any
 
 import numpy as np
+
+from ase.data import chemical_symbols
+# ase encodes the zeroth entry as the unknown element X to have
+# atom_numbers all starting with 1 up to len(chemical_symbols) - 1
 
 from ifes_apt_tc_data_modeling.utils.utils \
     import create_isotope_vector, isotope_vector_to_nuclid_list, \
@@ -105,7 +109,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dic
     """Add those required information which an RRNG file has."""
     # modify the template to take into account ranging
     # ranging is currently not resolved recursively because
-    # ranging(NXprocess) is a group which has a minOccurs=1, \
+    # ranging(NXprocess) is a group which has a minOccurs=1, \er
     #     maxOccurs="unbounded" set of possible named
     # NXion members, same case for more than one operator
     print(f"Extracting data from RRNG file: {file_name}")
@@ -122,7 +126,7 @@ def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dic
     return template
 
 
-class ApmRangingDefinitionsParser:  # pylint: disable=R0903
+class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_name: str, entry_id: int):
@@ -137,6 +141,39 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
                 self.meta["file_format"] = "rng"
             if mime_type == "rrng":
                 self.meta["file_format"] = "rrng"
+
+    def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
+        """Update the atom_types list in the specimen based on ranging defs."""
+        number_of_ion_types = 1
+        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+        if f"{prefix}number_of_ion_types" in template.keys():
+            number_of_ion_types = template[f"{prefix}number_of_ion_types"]
+        print(f"Auto-detecting elements from ranging {number_of_ion_types} ion types...")
+
+        unique_atom_numbers = set()
+        max_atom_number = len(chemical_symbols) - 1
+        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/" \
+                 f"ranging/peak_identification/"
+        for ion_id in np.arange(1, number_of_ion_types):
+            trg = f"{prefix}ION[ion{ion_id}]/nuclid_list"
+            if trg in template.keys():
+                nuclid_list = template[trg][1, :]
+                # second row of NXion/nuclid_list yields atom number to decode element
+                for atom_number in nuclid_list:
+                    if 0 < atom_number <= max_atom_number:
+                        unique_atom_numbers.add(atom_number)
+        print(f"Unique atom numbers are: {list(unique_atom_numbers)}")
+        unique_elements = set()
+        for atom_number in unique_atom_numbers:
+            unique_elements.add(chemical_symbols[atom_number])
+        print(f"Unique elements are: {list(unique_elements)}")
+
+        atom_types_str = ", ".join(list(unique_elements))
+        if atom_types_str != "":
+            trg = f"/ENTRY[entry{self.meta['entry_id']}]/specimen/"
+            template[f"{trg}atom_types"] = atom_types_str
+
+        return template
 
     def report(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -176,4 +213,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=R0903
         else:
             trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
             template[f"{trg}number_of_ion_types"] = 1
+
+        self.update_atom_types_ranging_definitions_based(template)
+
         return template

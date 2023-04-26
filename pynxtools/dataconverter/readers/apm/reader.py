@@ -17,7 +17,7 @@
 #
 """Generic parser for loading atom probe microscopy data into NXapm."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from typing import Tuple, Any
 
@@ -120,7 +120,7 @@ class ApmReader(BaseReader):
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, n_entries)
 
-        debugging = True
+        debugging = False
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():

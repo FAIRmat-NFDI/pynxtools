@@ -17,7 +17,7 @@
 #
 """Generator for NXapm default plots."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 import numpy as np
 
@@ -75,9 +75,9 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     # template[f"{trg}@long_name"] = "Discretized reconstruction space"
     template[f"{trg}@signal"] = "data_counts"
     template[f"{trg}@axes"] = ["axis_x", "axis_y", "axis_z"]
-    template[f"{trg}@AXISNAME_indices[axis_x]"] = 0
-    template[f"{trg}@AXISNAME_indices[axis_y]"] = 1
-    template[f"{trg}@AXISNAME_indices[axis_z]"] = 2
+    template[f"{trg}@AXISNAME_indices[axis_x]"] = np.uint32(0)
+    template[f"{trg}@AXISNAME_indices[axis_y]"] = np.uint32(1)
+    template[f"{trg}@AXISNAME_indices[axis_z]"] = np.uint32(2)
 
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the appdef
@@ -139,7 +139,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}title"] = "Mass spectrum (0.01 Da binning)"
     template[f"{trg}@signal"] = "data_counts"
     template[f"{trg}@axes"] = "axis_mass_to_charge"
-    template[f"{trg}@AXISNAME_indices[axis_mass_to_charge]"] = 0
+    template[f"{trg}@AXISNAME_indices[axis_mass_to_charge]"] = np.uint32(0)
     template[f"{trg}DATA[data_counts]"] \
         = {"compress": np.array(hist1d[0], np.uint32), "strength": 1}
     template[f"{trg}DATA[data_counts]/@long_name"] = "Counts (1)"

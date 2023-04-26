@@ -17,7 +17,11 @@
 #
 """Parse three-dimensional EBSD data from a DREAM3D file."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member,too-many-instance-attributes
+
+# type: ignore
+
+# from typing import Dict, Any, List, Tuple
 
 import yaml
 
@@ -27,8 +31,6 @@ import h5py
 
 # import imageio.v3 as iio
 from PIL import Image as pil
-
-# from typing import Dict, Any, List
 
 # from pynxtools.dataconverter.readers.em_om.utils.dream3d_filter_class \
 #     import DreamThreedFilter
@@ -43,14 +45,15 @@ class NxEmOmDreamThreedEbsdParser:
 
     """
 
-    def __init__(self, file_name: str, entry_id: int):
+    def __init__(self, file_name, entry_id):
         """Class wrapping dream3d parser."""
         # this is one example which should be extended to interpretation of more
         # DREAM3D filter, currently though all these filter and the DREAM.3D software
         # experiences major refactoring associated with the introduction of DREAM3DNX
         self.file_name = file_name
         self.entry_id = entry_id
-        self.pipeline = {}  # the dictionary nest in DREAM.3D SIMPL pipeline notation
+        self.pipeline = {}
+        # the dictionary nest in DREAM.3D SIMPL pipeline notation
         self.stack_meta = {}
         self.stack = []
         self.roi = []

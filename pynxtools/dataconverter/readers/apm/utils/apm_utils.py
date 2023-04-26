@@ -17,7 +17,7 @@
 #
 """Set of utility tools for parsing file formats used by atom probe."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 # ifes_apt_tc_data_modeling replaces now the previously here stored
 # convenience functions which translated human-readable ion names into

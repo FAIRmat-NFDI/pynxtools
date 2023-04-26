@@ -17,7 +17,7 @@
 #
 """Definitions for right- or left-handed Cartesian coordinate system."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 # the nxebsd.schema.archive.yaml" offers a set of sets of RadioEditButtons
 # each such set can be used to define the unique orientation of a right-handed

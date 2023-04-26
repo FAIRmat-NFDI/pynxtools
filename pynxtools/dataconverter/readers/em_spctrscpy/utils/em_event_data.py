@@ -17,7 +17,7 @@
 #
 """Representation of an NXevent_data_em class."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 import datetime
 
@@ -46,10 +46,8 @@ class NxEventDataEm:
     """
 
     def __init__(self, file_name: str, entry_id: int):
-        assert file_name != "", "Argument file_name must not be empty !"
-        assert entry_id > 0, "Argument entry_id has to be > 0 !"
+        self.file_name = ""
         self.entry_id = entry_id
-        self.file_name = file_name
         self.meta: Dict[str, NxObject] = {}
         self.meta["start_time"] = NxObject("non_recoverable")
         self.meta["end_time"] = NxObject("non_recoverable")
@@ -60,11 +58,15 @@ class NxEventDataEm:
         # but brings an example how NXem can be used disentangle
         # data and processing when, at a given point in time,
         # multiple detectors have been used
-        self.spectrum_set_em_xray = NxSpectrumSetEmXray([])
-        self.spectrum_set_em_eels = NxSpectrumSetEmEels([])
-        self.image_set_em_adf = NxImageSetEmAdf([])
 
-        self.parse_hspy_analysis_results()
+        if (file_name != "") and (entry_id > 0):
+            self.file_name = file_name
+
+            self.spectrum_set_em_xray = NxSpectrumSetEmXray([])
+            self.spectrum_set_em_eels = NxSpectrumSetEmEels([])
+            self.image_set_em_adf = NxImageSetEmAdf([])
+
+            self.parse_hspy_analysis_results()
 
     def parse_hspy_analysis_results(self):
         """Parse the individual hyperspy-specific data.
@@ -93,38 +95,39 @@ class NxEventDataEm:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
-        prefix += "EVENT_DATA_EM[event_data_em1]/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
+                 f"EVENT_DATA_EM[event_data_em1]/"
 
-        # dummies for now
         now = datetime.datetime.now().astimezone().isoformat()
-        template[prefix + "detector_identifier"] = now
         # hyperspy cannot implement per-event time stamping especially
         # not for time-zones because time data are vendor-specifically formatted
         # not always reported in which case hspy replaces missing vendor timestamps
         # with system time at runtime of the script !
-        template[prefix + "start_time"] = now
-        template[prefix + "end_time"] = now
-        template[prefix + "event_identifier"] = now
-        template[prefix + "event_type"] = now
 
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
-        prefix += "EVENT_DATA_EM[event_data_em1]/"
+        template[f"{prefix}start_time"] = now
+        template[f"{prefix}end_time"] = now
+
+        template[f"{prefix}detector_identifier"] = now
+        template[f"{prefix}event_identifier"] = now
+        template[f"{prefix}event_type"] = now
+
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
+                 f"EVENT_DATA_EM[event_data_em1]/"
         # connect and compare frame_id with that of hspy
         if self.spectrum_set_em_xray is not None:
             if isinstance(self.spectrum_set_em_xray,
                           NxSpectrumSetEmXray) is True:
                 self.spectrum_set_em_xray.report(prefix, 1, template)
 
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
-        prefix += "EVENT_DATA_EM[event_data_em1]/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
+                 f"EVENT_DATA_EM[event_data_em1]/"
         if self.spectrum_set_em_eels is not None:
             if isinstance(self.spectrum_set_em_eels,
                           NxSpectrumSetEmEels) is True:
                 self.spectrum_set_em_eels.report(prefix, 1, template)
 
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/"
-        prefix += "EVENT_DATA_EM[event_data_em1]/"
+        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
+                 f"EVENT_DATA_EM[event_data_em1]/"
         # connect and compare frame_id with that of hspy
         if self.image_set_em_adf is not None:
             if isinstance(self.image_set_em_adf,

@@ -17,9 +17,11 @@
 #
 """Parse H5OINA and create IPF color map default plots using the pyxem/orix library."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member,duplicate-code,unsubscriptable-object,comparison-with-callable
 
 # https://orix.readthedocs.io/en/stable/tutorials/inverse_pole_figures.html
+
+# type: ignore
 
 import os
 
@@ -64,7 +66,7 @@ class NxEmOmOrixEbsdParser:
 
     """
 
-    def __init__(self, file_name: str, entry_id: int):
+    def __init__(self, file_name, entry_id):
         """Class wrapping pyxem/orix H5OINA parser."""
         # this is one example which should be extended to kikuchipy but this should
         # be done together with Hakon and Knut Marthinsen's team or the pyxem developers
@@ -78,19 +80,18 @@ class NxEmOmOrixEbsdParser:
         self.oina_version_identifier = "5.0"
         self.xaxis: List[float] = []
         self.yaxis: List[float] = []
-        self.xmap = None  # CrystalMap()
+        self.xmap = CrystalMap
         self.oina: Dict[str, Any] = {"n_slices": 1,
-                                     "rotation": None,
-                                     "scan_point_x": None,
-                                     "scan_point_y": None,
-                                     "phase_identifier": None,
-                                     "band_contrast": None,
+                                     "rotation": Rotation,
+                                     "scan_point_x": [],
+                                     "scan_point_y": [],
+                                     "phase_identifier": [],
+                                     "band_contrast": [],
                                      "scan_size": [0, 0],
                                      "scan_step": [0., 0.],
                                      "scan_unit": ["n/a", "n/a"],
                                      "phase": [],
-                                     "space_group": [],
-                                     "xy": None}
+                                     "space_group": []}
         # y (aka height), x (aka width) !
 
     def parse_h5oina(self, slice_id):

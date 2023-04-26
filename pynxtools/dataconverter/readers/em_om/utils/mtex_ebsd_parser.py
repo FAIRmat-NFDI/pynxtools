@@ -17,7 +17,7 @@
 #
 """Parse intermediate HDF5 files from MTex @EBSD classes and FAIRmat mtex2nexus script."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 import numpy as np
 

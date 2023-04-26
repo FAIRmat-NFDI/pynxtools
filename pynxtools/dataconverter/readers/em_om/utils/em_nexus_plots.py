@@ -17,7 +17,7 @@
 #
 """Logic for annotating existent default plots in NXdata for NXem_ebsd for H5Web."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 HFIVE_WEB_MAX_SIZE = 2048
 

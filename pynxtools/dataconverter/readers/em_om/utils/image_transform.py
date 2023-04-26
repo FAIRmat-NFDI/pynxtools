@@ -17,7 +17,7 @@
 #
 """Resize images so that they display properly in H5Web."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 # f"https://stackoverflow.com/questions/4321290/"
 # f" how-do-i-make-pil-take-into-account-the-shortest-side-when-creating-a-thumbnail"

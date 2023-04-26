@@ -17,7 +17,7 @@
 #
 """General metadata object connecting units and values for a quantity."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from typing import Dict
 
@@ -26,7 +26,7 @@ from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_versioning \
     NX_EM_EXEC_NAME, NX_EM_EXEC_VERSION
 
 
-class NxObject:  # pylint: disable=R0903
+class NxObject:  # pylint: disable=too-few-public-methods
     """An object in a graph e.g. a field or group in NeXus."""
 
     def __init__(self,
@@ -69,7 +69,7 @@ class NxObject:  # pylint: disable=R0903
         return f'''Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}'''
 
 
-class NxEmUser:  # pylint: disable=R0903
+class NxEmUser:  # pylint: disable=too-few-public-methods
     """An object representing a user, typically a human."""
 
     def __init__(self):
@@ -90,22 +90,22 @@ class NxEmUser:  # pylint: disable=R0903
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        template[prefix + "/address"] = self.meta["address"].value
-        template[prefix + "/affiliation"] = self.meta["affiliation"].value
-        template[prefix + "/email"] = self.meta["email"].value
-        template[prefix + "/name"] = self.meta["name"].value
-        template[prefix + "/orcid"] = self.meta["orcid"].value
-        template[prefix + "/role"] = self.meta["role"].value
-        template[prefix + "/social_media_name"] \
+        template[f"{prefix}/address"] = self.meta["address"].value
+        template[f"{prefix}/affiliation"] = self.meta["affiliation"].value
+        template[f"{prefix}/email"] = self.meta["email"].value
+        template[f"{prefix}/name"] = self.meta["name"].value
+        template[f"{prefix}/orcid"] = self.meta["orcid"].value
+        template[f"{prefix}/role"] = self.meta["role"].value
+        template[f"{prefix}/social_media_name"] \
             = self.meta["social_media_name"].value
-        template[prefix + "/social_media_platform"] \
+        template[f"{prefix}/social_media_platform"] \
             = self.meta["social_media_platform"].value
-        template[prefix + "/telephone_number"] \
+        template[f"{prefix}/telephone_number"] \
             = self.meta["telephone_number"].value
         return template
 
 
-class NxEmSample:  # pylint: disable=R0903
+class NxEmSample:  # pylint: disable=too-few-public-methods
     """An object representing a sample."""
 
     def __init__(self):
@@ -125,19 +125,19 @@ class NxEmSample:  # pylint: disable=R0903
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        template[prefix + "/method"] = self.meta["method"].value
-        template[prefix + "/name"] = self.meta["name"].value
-        template[prefix + "/sample_history"] = self.meta["sample_history"].value
-        template[prefix + "/preparation_date"] = self.meta["preparation_date"].value
-        template[prefix + "/short_title"] = self.meta["short_title"].value
-        template[prefix + "/atom_types"] = self.meta["atom_types"].value
-        template[prefix + "/thickness"] = self.meta["thickness"].value
-        template[prefix + "/thickness/@units"] = self.meta["thickness"].unit
-        template[prefix + "/description"] = self.meta["description"].value
+        template[f"{prefix}/method"] = self.meta["method"].value
+        template[f"{prefix}/name"] = self.meta["name"].value
+        template[f"{prefix}/sample_history"] = self.meta["sample_history"].value
+        template[f"{prefix}/preparation_date"] = self.meta["preparation_date"].value
+        template[f"{prefix}/short_title"] = self.meta["short_title"].value
+        template[f"{prefix}/atom_types"] = self.meta["atom_types"].value
+        template[f"{prefix}/thickness"] = self.meta["thickness"].value
+        template[f"{prefix}/thickness/@units"] = self.meta["thickness"].unit
+        template[f"{prefix}/description"] = self.meta["description"].value
         return template
 
 
-class NxEmAppDefHeader:  # pylint: disable=R0903
+class NxEmAppDefHeader:  # pylint: disable=too-few-public-methods
     """An object representing the typical header of nexus-fairmat appdefs."""
 
     def __init__(self):
@@ -163,21 +163,21 @@ class NxEmAppDefHeader:  # pylint: disable=R0903
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        template[prefix + "/@version"] = self.meta["version"].value
-        template[prefix + "/definition"] = self.meta["definition"].value
-        template[prefix + "/experiment_identifier"] \
+        template[f"{prefix}/@version"] = self.meta["version"].value
+        template[f"{prefix}/definition"] = self.meta["definition"].value
+        template[f"{prefix}/experiment_identifier"] \
             = self.meta["experiment_identifier"].value
-        template[prefix + "/experiment_description"] \
+        template[f"{prefix}/experiment_description"] \
             = self.meta["experiment_description"].value
-        template[prefix + "/start_time"] = self.meta["start_time"].value
-        template[prefix + "/end_time"] = self.meta["end_time"].value
-        template[prefix + "/program"] = self.meta["program"].value
-        template[prefix + "/program/@version"] \
+        template[f"{prefix}/start_time"] = self.meta["start_time"].value
+        template[f"{prefix}/end_time"] = self.meta["end_time"].value
+        template[f"{prefix}/program"] = self.meta["program"].value
+        template[f"{prefix}/program/@version"] \
             = self.meta["program_version"].value
-        template[prefix + "/experiment_documentation"] \
+        template[f"{prefix}/experiment_documentation"] \
             = self.meta["experiment_documentation"].value
-        template[prefix + "/thumbnail"] \
+        template[f"{prefix}/thumbnail"] \
             = self.meta["thumbnail"].value
-        template[prefix + "/thumbnail/@type"] \
+        template[f"{prefix}/thumbnail/@type"] \
             = self.meta["thumbnail_type"].value
         return template

@@ -17,12 +17,11 @@
 #
 """Parser for loading generic X-ray spectroscopy and EELS data into NXem via hyperspy."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-
 
 from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_use_case_selector \
     import EmUseCaseSelector
@@ -120,7 +119,7 @@ class EmSpctrscpyReader(BaseReader):
         print("Create NeXus default plottable data...")
         em_spctrscpy_default_plot_generator(template, n_entries)
 
-        debugging = False
+        debugging = True
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():

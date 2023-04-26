@@ -7,8 +7,9 @@ em_lab:
       value: 4
     aberration_correction:
       applied: true
-    electron_gun:
-      emitter_type: cold_cathode_field_emitter
+    electron_source:
+      emitter_type: field_emission
+      # cold_cathode_
       name: some
       voltage:
         unit: V

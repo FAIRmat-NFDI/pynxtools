@@ -17,7 +17,7 @@
 #
 """Wrapping multiple parsers for vendor files with reconstructed dataset files."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 import numpy as np
 
@@ -150,7 +150,7 @@ def extract_data_from_apt_file(file_name: str, prefix: str, template: dict) -> d
     return template
 
 
-class ApmReconstructionParser:  # pylint: disable=R0903
+class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_name: str, entry_id: int):

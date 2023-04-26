@@ -17,7 +17,8 @@
 #
 """Definition of DREAM3D SIMPL filters and their controlled vocabulary."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member,pointless-string-statement
+
 
 '''
 class DreamThreedFilter():

@@ -17,7 +17,7 @@
 #
 """Utility tool constants and versioning."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from pynxtools.dataconverter.readers.shared.shared_utils \
     import get_repo_last_commit

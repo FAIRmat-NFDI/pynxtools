@@ -17,9 +17,13 @@
 #
 """Parse Kikuchi pattern from a ZIP file without temporary copies of unpacked files."""
 
-# pylint: disable=E1101, E0801
+# pylint: disable=no-member,duplicate-code
 
 # https://orix.readthedocs.io/en/stable/tutorials/inverse_pole_figures.html
+
+# type: ignore
+
+# from typing import Dict, Any, List
 
 import re
 
@@ -38,7 +42,7 @@ class NxEmOmZipEbsdParser:
 
     """
 
-    def __init__(self, file_name: str, entry_id: int):
+    def __init__(self, file_name, entry_id):
         """Class wrapping zip parser."""
         # this is one example which should be extended to support reading of
         # EBSD pattern simulations and/or generic EBSD pattern in a zip file
@@ -49,8 +53,8 @@ class NxEmOmZipEbsdParser:
         # exports these pattern into a common format (e.g. some of the HDF5 variants)
         self.file_name = file_name
         self.entry_id = entry_id
-        self.stack_meta = {}  # None
-        self.stack = []  # None
+        self.stack_meta = {}
+        self.stack = []
 
     def parse_zip(self, template: dict) -> dict:
         """Parse content from *.zip format."""
@@ -78,12 +82,10 @@ class NxEmOmZipEbsdParser:
             # ...here we immediately see how problematic custom directory structures
             # for storing research data are even if they were to contain only exactly
             # always data of expected format...
-            self.stack_meta = {"fname": None,
-                               "size": (None, None),
-                               "dtype": None,
-                               "ftype": None,
-                               "axisy": None,
-                               "axisx": None}
+            self.stack_meta = {"fname": "",
+                               "size": (0, 0),
+                               "dtype": np.uint8,
+                               "ftype": ""}
             # in pixel, use axisy and axisx for dimension scale axes
             # ASSUME slow axis is y, fast axis is x
             for keyword, value in zip_content_table.items():
