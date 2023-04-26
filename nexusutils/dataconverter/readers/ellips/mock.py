@@ -22,6 +22,7 @@ import numpy as np
 import ase
 from nexusutils.dataconverter.readers.ellips.reader_utils import extract_atom_types
 
+
 class MockEllips():
     """ A generic class for generating duplicate outputs for ELLIPSOMETRY
 
@@ -82,7 +83,7 @@ class MockEllips():
     def mock_chemical_formula(self) -> None:
         """ Creates a list of chemical formulas consisting of two atom types """
         part_1 = ase.atom.chemical_symbols[1:]
-        part_2 = list(range(2,20,1))
+        part_2 = list(range(2, 20, 1))
 
         for x in part_1:
             for y in part_2:
@@ -95,7 +96,7 @@ class MockEllips():
     def mock_angles(self, dict) -> None:
         """ Change value and number of incident angles
         """
-        for index in range(random.randrange(1,4)):
+        for index in range(random.randrange(1, 4)):
             angle = random.choice(self.angle_list)
             self.angles.append(angle)
             self.angle_list.remove(angle)
@@ -111,14 +112,14 @@ class MockEllips():
             considering the (new) number of incident angles
         """
         my_numpy_array = np.empty([1,
-                            1,
-                            len(self.angles),
-                            self.number_of_signals,
-                            len(self.wavelength)
-                            ])
-        for index in range(0,len(self.angles)):
-            noise=np.random.normal(0,0.5,self.data[0,0,0,0,:].size)
-            my_numpy_array[0][0][index] = self.data[0][0][0]*random.uniform(0.5,1.5) + noise
+                                   1,
+                                   len(self.angles),
+                                   self.number_of_signals,
+                                   len(self.wavelength)
+                                   ])
+        for index in range(0, len(self.angles)):
+            noise=np.random.normal(0, 0.5, self.data[0, 0, 0, 0, :].size)
+            my_numpy_array[0][0][index] = self.data[0][0][0] * random.uniform(0.5, 1.5) + noise
         self.data = my_numpy_array
         dict["measured_data"] = my_numpy_array
 
@@ -127,23 +128,23 @@ class MockEllips():
             considering the (new) number of incident angles
         """
         my_numpy_array = np.empty([1,
-                            1,
-                            len(self.angles),
-                            self.number_of_signals,
-                            len(self.wavelength)
-                            ])
-        for index in range(0,len(self.angles)):
-            noise=np.random.normal(0,0.1,self.data[0,0,0,0,:].size)
-            for mm_index in range(1,self.number_of_signals):
-                my_numpy_array[0][0][index][mm_index] = self.data[0][0][0][0]*random.uniform(0.5,1.5) + noise
-            my_numpy_array[0][0][index][0] = my_numpy_array[0][0][0][0]/my_numpy_array[0][0][0][0]
+                                   1,
+                                   len(self.angles),
+                                   self.number_of_signals,
+                                   len(self.wavelength)
+                                   ])
+        for index in range(0, len(self.angles)):
+            noise=np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
+            for mm_index in range(1, self.number_of_signals):
+                my_numpy_array[0][0][index][mm_index] = self.data[0][0][0][0] * random.uniform(0.5, 1.5) + noise
+            my_numpy_array[0][0][index][0] = my_numpy_array[0][0][0][0] / my_numpy_array[0][0][0][0]
         dict["measured_data"] = my_numpy_array
 
     def modify_spectral_range(self, dict) -> None:
         """ Change spectral range (i.e. wavlength array) and step size,
             while length of the wavelength array remains the same.
         """
-        dict["spectrometer/wavelength"] = random.uniform(0.25,23)*dict["spectrometer/wavelength"]
+        dict["spectrometer/wavelength"] = random.uniform(0.25, 23) * dict["spectrometer/wavelength"]
 
     def mock_template(self, dict) -> None:
         """ Creates a mock ellipsometry template """

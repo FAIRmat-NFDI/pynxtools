@@ -28,6 +28,7 @@ from nexusutils.dataconverter.readers.ellips.mock import MockEllips
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
+
 def load_header(filename, default):
     """ load the yaml description file, and apply defaults from
         the defalut dict for all keys not found from the file.
@@ -140,6 +141,7 @@ def populate_template_dict(header, template):
             template[k] = header.pop(short_k)
     return template
 
+
 class EllipsometryReader(BaseReader):
     """An example reader implementation for the DataConverter.
     Importing metadata from the yaml file based on the last
@@ -181,18 +183,17 @@ class EllipsometryReader(BaseReader):
         if header["data_type"] == "psi/delta":
             labels = {"psi": [], "delta": []}
         elif header["data_type"] == "tan(psi)/cos(delta)":
-           labels = {"tan(psi)": [], "cos(delta)": []}
+            labels = {"tan(psi)": [], "cos(delta)": []}
         elif header["data_type"] == "Mueller matrix":
             labels = {}
-            for i in range(1,5):
-                for j in range(1,5):
+            for i in range(1, 5):
+                for j in range(1, 5):
                     temp = {f"m{i}{j}": []}
                     labels.update(temp)
 
         block_idx = [np.int64(0)]
         index = 0
         for angle in enumerate(unique_angles):
-            #for key, val in labels.items():
             for key in labels.keys():
                 labels[key].append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
@@ -214,13 +215,13 @@ class EllipsometryReader(BaseReader):
                            :,
                            :] = unique_angle
         data_index = 0
-        for key,val in labels.items():
+        for key, val in labels.items():
             for index in range(len(labels[key])):
                 my_numpy_array[0,
-                            0,
-                            index,
-                            data_index,
-                            :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
+                               0,
+                               index,
+                               data_index,
+                               :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
                                                                 ].astype("float64")
             data_index += 1
 
@@ -233,7 +234,7 @@ class EllipsometryReader(BaseReader):
         header["angle_of_incidence"] = unique_angles
 
         """ Create mocked ellipsometry data template: """
-        is_mock = False
+        is_mock = True
         if is_mock:
             mock_header = MockEllips(header)
             mock_header.mock_template(header)
