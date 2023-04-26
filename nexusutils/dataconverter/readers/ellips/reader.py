@@ -221,8 +221,7 @@ class EllipsometryReader(BaseReader):
                                0,
                                index,
                                data_index,
-                               :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
-                                                              ].astype("float64")
+                               :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]].astype("float64")
             data_index += 1
 
         # measured_data is a required field
@@ -320,6 +319,7 @@ class EllipsometryReader(BaseReader):
             template["/ENTRY[entry]/plot/@auxiliary_signals"] += data_list[index]
 
         return template
-    
+
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
 READER = EllipsometryReader
+

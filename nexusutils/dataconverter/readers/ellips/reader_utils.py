@@ -887,4 +887,3 @@ class XpsDataFileParser():
             if vendor in child_attr[key]:
                 return vendor
         return None
-    
