@@ -200,7 +200,6 @@ class EllipsometryReader(BaseReader):
             block_idx.append(index)
 
         # array that will be allocated in a HDF5 file
-        # counts[0] = N_wavelents*N_time*N_p1
         my_numpy_array = np.empty([1,
                                    1,
                                    len(unique_angles),
@@ -221,7 +220,8 @@ class EllipsometryReader(BaseReader):
                                0,
                                index,
                                data_index,
-                               :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]].astype("float64")
+                               :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
+                                                               ].astype("float64")
             data_index += 1
 
         # measured_data is a required field
@@ -232,17 +232,17 @@ class EllipsometryReader(BaseReader):
 
         header["angle_of_incidence"] = unique_angles
 
-        """ Create mocked ellipsometry data template: """
+        # Create mocked ellipsometry data template:
         is_mock = True
         if is_mock:
             mock_header = MockEllips(header)
             mock_header.mock_template(header)
 
-        """ Atom types: Convert str to list if atom_types is not a list: """
+        # Atom types: Convert str to list if atom_types is not a list:
         if isinstance(header["atom_types"], str):
             header["atom_types"] = header["atom_types"].split(",")
 
-        """ Defining labels: """
+        # Defining labels:
         if header["data_type"] == "psi/delta":
             labels_new = {"psi": [], "delta": []}
         elif header["data_type"] == "tan(psi)/cos(delta)":
