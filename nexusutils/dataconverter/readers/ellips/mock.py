@@ -20,7 +20,8 @@ from typing import Tuple, Any
 import random
 import numpy as np
 import ase
-from nexusutils.dataconverter.readers.ellips.reader_utils import extract_atom_types
+# from nexusutils.dataconverter.readers.ellips.reader_utils import extract_atom_types
+from nexusutils.dataconverter.readers.xps.reader import extract_atom_types
 
 
 class MockEllips():
@@ -77,7 +78,7 @@ class MockEllips():
         dict["data_type"] = self.data_type
         if self.data_type == "Mueller matrix":
             self.number_of_signals = 16
-        elif self.data_type == "psi/delta" or "tan(psi)/cos(delta)":
+        elif self.data_type == "psi/delta" or self.data_type == "tan(psi)/cos(delta)":
             self.number_of_signals = 2
 
     def mock_chemical_formula(self) -> None:

@@ -21,7 +21,6 @@ from typing import Tuple, Any
 import yaml
 import pandas as pd
 import numpy as np
-import random
 # import h5py
 from nexusutils.dataconverter.readers.base.reader import BaseReader
 from nexusutils.dataconverter.readers.ellips.mock import MockEllips
