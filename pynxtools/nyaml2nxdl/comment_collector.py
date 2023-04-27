@@ -128,6 +128,14 @@ class CommentCollector:
                     self._comment_hash[comment_locs] = cmnt
                     return cmnt
 
+    def remove_comment(self, ind):
+        """Remove a comment from comment list.
+        """
+        if ind < len(self._comment_chain):
+            del self._comment_chain[ind]
+        else:
+            raise ValueError("Oops! Index is out of range.")
+
     def reload_comment(self):
         """
         Update self._comment_tracker after done with last comment.
@@ -156,9 +164,15 @@ class CommentCollector:
     def __getitem__(self, ind):
         """Get comment from  self.obj._comment_chain by index.
         """
-        if ind >= len(self._comment_chain):
-            raise IndexError(f'Oops! Coment index {ind} in {__class__} is out of range!')
-        return self._comment_chain[ind]
+        if isinstance(ind, int):
+            if ind >= len(self._comment_chain):
+                raise IndexError(f'Oops! Comment index {ind} in {__class__} is out of range!')
+            return self._comment_chain[ind]
+
+        if isinstance(ind, slice):
+            start_n = ind.start or 0
+            end_n = ind.stop or len(self._comment_chain)
+            return self._comment_chain[start_n:end_n]
 
     def __iter__(self):
         """get comment ieratively
@@ -462,7 +476,7 @@ class YAMLComment(Comment):
                              f"{self._elemt}")
 
         for key, val in self._elemt.items():
-            return key, val
+            yield key, val
 
     def collect_yaml_line_info(self, yaml_dict, line_info_dict):
         """Collect __line__key and corresponding value from
