@@ -19,8 +19,6 @@
 
 # pylint: disable=no-member
 
-import datetime
-
 from typing import Dict
 
 import hyperspy.api as hs
@@ -99,7 +97,7 @@ class NxEventDataEm:
         prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
                  f"EVENT_DATA_EM[event_data_em1]/"
 
-        now = datetime.datetime.now().astimezone().isoformat()
+        # now = datetime.datetime.now().astimezone().isoformat()
         # hyperspy cannot implement per-event time stamping especially
         # not for time-zones because time data are vendor-specifically formatted
         # not always reported in which case hspy replaces missing vendor timestamps

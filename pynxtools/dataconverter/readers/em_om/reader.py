@@ -125,7 +125,7 @@ class EmOmReader(BaseReader):
         print("Create NeXus default plottable data...")
         em_om_default_plot_generator(template, 1)
 
-        debugging = True
+        debugging = False
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():

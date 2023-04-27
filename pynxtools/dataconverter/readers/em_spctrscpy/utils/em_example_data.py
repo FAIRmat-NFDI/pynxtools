@@ -273,7 +273,7 @@ class EmSpctrscpyCreateExampleData:
         detector_id = 1
         for detector in detectors:
             trg = f"/ENTRY[entry{self.entry_id}]/em_lab/DETECTOR[detector{detector_id}]/"
-            template[f"{trg}type"] = str(detector)
+            template[f"{trg}local_name"] = str(detector)
             detector_id += 1
 
         return template
@@ -365,8 +365,8 @@ class EmSpctrscpyCreateExampleData:
         # plt.ylabel("cnts")
         # plt.xscale("log")
 
-        trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM[event_data_em1]/" \
-              f"SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/summary/"
+        trg = f"/ENTRY[entry{self.entry_id}]/measurement/" \
+              f"EVENT_DATA_EM[event_data_em1]/xray/summary/"
         template[f"{trg}title"] = "Accumulated X-ray spectrum"
         # template[f"{trg}@long_name"] = "Xray"
         template[f"{trg}@signal"] = "data_counts"
