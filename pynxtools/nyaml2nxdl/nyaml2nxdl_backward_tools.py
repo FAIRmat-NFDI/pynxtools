@@ -218,7 +218,7 @@ class Nxdl2yaml():
                                                                text=symbol_doc.text))
         self.store_root_level_comments('symbol_doc_comments', sbl_doc_cmnt_list)
         self.store_root_level_comments('symbol_comments', symbol_cmnt_list)
-    # TODO: typo
+
     def store_root_level_comments(self, holder, comment):
         """Store yaml text or section line and the comments inteded for that lines or section"""
 
