@@ -185,9 +185,9 @@ class EllipsometryReader(BaseReader):
             labels = {"tan(psi)": [], "cos(delta)": []}
         else:
             labels = {}
-            for i in range(1, 5):
+            for index in range(1, 5):
                 for j in range(1, 5):
-                    temp = {f"m{i}{j}": []}
+                    temp = {f"m{index}{j}": []}
                     labels.update(temp)
 
         block_idx = [np.int64(0)]
