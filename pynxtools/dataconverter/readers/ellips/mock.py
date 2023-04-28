@@ -131,9 +131,9 @@ class MockEllips():
                                    len(self.wavelength)
                                    ])
         for idx in range(0, len(self.angles)):
-            wn = np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
-            for mm in range(1, self.number_of_signals):
-                my_numpy_array[0][0][idx][mm] = self.data[0][0][0][0] * random.uniform(.5, 1.) + wn
+            WN = np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
+            for MM in range(1, self.number_of_signals):
+                my_numpy_array[0][0][idx][MM] = self.data[0][0][0][0] * random.uniform(.5, 1.) + WN
             my_numpy_array[0][0][idx][0] = my_numpy_array[0][0][0][0] / my_numpy_array[0][0][0][0]
         data_template["measured_data"] = my_numpy_array
 
@@ -141,7 +141,8 @@ class MockEllips():
         """ Change spectral range (i.e. wavlength array) and step size,
             while length of the wavelength array remains the same.
         """
-        data_template["spectrometer/wavelength"] = random.uniform(0.25, 23) * data_template["spectrometer/wavelength"]
+        temp = random.uniform(0.25, 23)
+        data_template["spectrometer/wavelength"] = temp * data_template["spectrometer/wavelength"]
 
     def mock_template(self, data_template) -> None:
         """ Creates a mock ellipsometry template """

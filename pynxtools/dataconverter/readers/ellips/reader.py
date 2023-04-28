@@ -232,8 +232,7 @@ class EllipsometryReader(BaseReader):
         header["angle_of_incidence"] = unique_angles
 
         # Create mocked ellipsometry data template:
-        is_mock = True
-        if is_mock:
+        if True:
             mock_header = MockEllips(header)
             mock_header.mock_template(header)
 
@@ -243,25 +242,25 @@ class EllipsometryReader(BaseReader):
 
         # Defining labels:
         if header["data_type"] == "psi/delta":
-            labels_new = {"psi": [], "delta": []}
+            labels = {"psi": [], "delta": []}
         elif header["data_type"] == "tan(psi)/cos(delta)":
-            labels_new = {"tan(psi)": [], "cos(delta)": []}
-        elif header["data_type"] == "Mueller matrix":
-            labels_new = {}
+            labels = {"tan(psi)": [], "cos(delta)": []}
+        else:
+            labels = {}
             for i in range(1, 5):
                 for j in range(1, 5):
                     temp = {f"m{i}{j}": []}
-                    labels_new.update(temp)
+                    labels.update(temp)
 
         for angle in enumerate(header["angle_of_incidence"]):
-            for key in labels_new:
-                labels_new[key].append(f"{key}_{int(angle[1])}deg")
+            for key in labels:
+                labels[key].append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
             block_idx.append(index)
 
-        header["column_names"] = list(labels_new.keys())
+        header["column_names"] = list(labels.keys())
 
-        return header, labels_new
+        return header, labels
 
     def read(self,
              template: dict = None,
