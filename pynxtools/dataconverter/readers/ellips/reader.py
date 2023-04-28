@@ -158,6 +158,7 @@ def header_labels(header):
 
     return labels
 
+
 def mock_function(header):
     """ Mock ellipsometry data
 
@@ -184,9 +185,9 @@ def data_set_dims(whole_data):
     """
     energy = whole_data['type'].astype(str).values.tolist().count("E")
     unique_angles, counts = np.unique(whole_data["angle_of_incidence"
-                                                    ].to_numpy()[0:energy].astype("int64"),
-                                        return_counts=True
-                                        )
+                                                 ].to_numpy()[0:energy].astype("int64"),
+                                      return_counts=True
+                                      )
 
     return unique_angles, counts
 
