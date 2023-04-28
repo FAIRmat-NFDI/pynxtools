@@ -141,6 +141,24 @@ def populate_template_dict(header, template):
     return template
 
 
+def header_labels(header):
+    """ Define header labels
+
+    """
+
+    if header["data_type"] == "psi/delta":
+        labels = {"psi": [], "delta": []}
+    elif header["data_type"] == "tan(psi)/cos(delta)":
+        labels = {"tan(psi)": [], "cos(delta)": []}
+    else:
+        labels = {}
+        for i in range(1, 5):
+            for j in range(1, 5):
+                labels.update({f"m{i}{j}": []})
+
+    return labels
+
+
 class EllipsometryReader(BaseReader):
     """An example reader implementation for the DataConverter.
     Importing metadata from the yaml file based on the last
@@ -179,15 +197,7 @@ class EllipsometryReader(BaseReader):
                                           return_counts=True
                                           )
 
-        if header["data_type"] == "psi/delta":
-            labels = {"psi": [], "delta": []}
-        elif header["data_type"] == "tan(psi)/cos(delta)":
-            labels = {"tan(psi)": [], "cos(delta)": []}
-        else:
-            labels = {}
-            for i in range(1, 5):
-                for j in range(1, 5):
-                    labels.update({f"m{i}{j}": []})
+        labels = header_labels(header)
 
         block_idx = [np.int64(0)]
         index = 0
@@ -237,15 +247,7 @@ class EllipsometryReader(BaseReader):
             mock_header.mock_template(header)
 
         # Defining labels:
-        if header["data_type"] == "psi/delta":
-            labels = {"psi": [], "delta": []}
-        elif header["data_type"] == "tan(psi)/cos(delta)":
-            labels = {"tan(psi)": [], "cos(delta)": []}
-        else:
-            labels = {}
-            for i in range(1, 5):
-                for j in range(1, 5):
-                    labels.update({f"m{i}{j}": []})
+        labels = header_labels(header)
 
         # Atom types: Convert str to list if atom_types is not a list:
         if isinstance(header["atom_types"], str):
