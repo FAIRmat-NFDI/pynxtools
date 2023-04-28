@@ -185,16 +185,15 @@ class EllipsometryReader(BaseReader):
             labels = {"tan(psi)": [], "cos(delta)": []}
         else:
             labels = {}
-            for index in range(1, 5):
+            for i in range(1, 5):
                 for j in range(1, 5):
-                    temp = {f"m{index}{j}": []}
-                    labels.update(temp)
+                    labels.update({f"m{i}{j}": []})
 
         block_idx = [np.int64(0)]
         index = 0
         for angle in enumerate(unique_angles):
-            for key in labels:
-                labels[key].append(f"{key}_{int(angle[1])}deg")
+            for key, val in labels.items():
+                val.append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
             block_idx.append(index)
 
@@ -213,8 +212,8 @@ class EllipsometryReader(BaseReader):
                            :,
                            :] = unique_angle
         data_index = 0
-        for key in labels:
-            for index in range(len(labels[key])):
+        for key, val in labels.items():
+            for index in range(len(val)):
                 my_numpy_array[0,
                                0,
                                index,
@@ -232,13 +231,10 @@ class EllipsometryReader(BaseReader):
         header["angle_of_incidence"] = unique_angles
 
         # Create mocked ellipsometry data template:
-        if True:
+        is_mock = True
+        if is_mock:
             mock_header = MockEllips(header)
             mock_header.mock_template(header)
-
-        # Atom types: Convert str to list if atom_types is not a list:
-        if isinstance(header["atom_types"], str):
-            header["atom_types"] = header["atom_types"].split(",")
 
         # Defining labels:
         if header["data_type"] == "psi/delta":
@@ -249,12 +245,15 @@ class EllipsometryReader(BaseReader):
             labels = {}
             for i in range(1, 5):
                 for j in range(1, 5):
-                    temp = {f"m{i}{j}": []}
-                    labels.update(temp)
+                    labels.update({f"m{i}{j}": []})
+
+        # Atom types: Convert str to list if atom_types is not a list:
+        if isinstance(header["atom_types"], str):
+            header["atom_types"] = header["atom_types"].split(",")
 
         for angle in enumerate(header["angle_of_incidence"]):
-            for key in labels:
-                labels[key].append(f"{key}_{int(angle[1])}deg")
+            for key, val in labels.items():
+                val.append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
             block_idx.append(index)
 
