@@ -183,7 +183,7 @@ class EllipsometryReader(BaseReader):
             labels = {"psi": [], "delta": []}
         elif header["data_type"] == "tan(psi)/cos(delta)":
             labels = {"tan(psi)": [], "cos(delta)": []}
-        elif header["data_type"] == "Mueller matrix":
+        else:
             labels = {}
             for i in range(1, 5):
                 for j in range(1, 5):
@@ -193,7 +193,7 @@ class EllipsometryReader(BaseReader):
         block_idx = [np.int64(0)]
         index = 0
         for angle in enumerate(unique_angles):
-            for key in labels.keys():
+            for key in labels:
                 labels[key].append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
             block_idx.append(index)
@@ -213,7 +213,7 @@ class EllipsometryReader(BaseReader):
                            :,
                            :] = unique_angle
         data_index = 0
-        for key, val in labels.items():
+        for key in labels:
             for index in range(len(labels[key])):
                 my_numpy_array[0,
                                0,
@@ -254,7 +254,7 @@ class EllipsometryReader(BaseReader):
                     labels_new.update(temp)
 
         for angle in enumerate(header["angle_of_incidence"]):
-            for key in labels_new.keys():
+            for key in labels_new:
                 labels_new[key].append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
             block_idx.append(index)

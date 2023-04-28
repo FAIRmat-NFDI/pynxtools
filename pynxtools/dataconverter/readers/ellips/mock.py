@@ -16,13 +16,9 @@
 #
 
 """A generic class for generating duplicate outputs for ellipsometry"""
-from typing import Tuple, Any
 import random
 import numpy as np
 import ase
-from ase.data import chemical_symbols
-from typing import Union
-# from nexusutils.dataconverter.readers.ellips.reader_utils import extract_atom_types
 from pynxtools.dataconverter.helpers import extract_atom_types
 
 
@@ -43,44 +39,41 @@ class MockEllips():
             Chooses random entry from data_types
         - mock_signals:
             Mock data if data_type is psi/delta or tan(psi)/cos(delta)
-        - mock_Mueller_matrix:
+        - mock_mueller_matrix:
             Mock data if data_type is Mueller matrix
         - mock_template:
             Creates mock ellipsometry data (by calling the above routines)
     """
 
-    def __init__(self, dict):
-        self.name = dict["sample_name"]
-        self.data_type = dict["data_type"]
-        self.data = dict["measured_data"]
-        self.wavelength = dict["spectrometer/wavelength"]
-        self.atom_types = dict["atom_types"]
+    def __init__(self, data_template) -> None:
+        self.data = data_template["measured_data"]
+        self.wavelength = data_template["spectrometer/wavelength"]
+        self.atom_types = data_template["atom_types"]
         self.sample_list = []
         self.data_types = ["psi/delta", "tan(psi)/cos(delta)", "Mueller matrix"]
         self.angles = []
         self.number_of_signals = 0
-        self.angle_list = [40, 45, 50, 55, 60, 65, 70, 75, 80]
 
-    def mock_sample(self, dict) -> None:
+    def mock_sample(self, data_template) -> None:
         """ Chooses random entry from sample_list, overwrites sample_name
             and extracts atom_types
         """
         self.mock_chemical_formula()
-        self.name = random.choice(self.sample_list)
-        self.atom_types = extract_atom_types(self.name)
-        dict["sample_name"] = self.name
-        dict["atom_types"] = self.atom_types
-        dict["layer_structure"] = f"{self.name} bulk"
-        dict["experiment_description"] = f"RC2 scan on {self.name} bulk"
+        name = random.choice(self.sample_list)
+        self.atom_types = extract_atom_types(name)
+        data_template["sample_name"] = name
+        data_template["atom_types"] = self.atom_types
+        data_template["layer_structure"] = f"{name} bulk"
+        data_template["experiment_description"] = f"RC2 scan on {name} bulk"
 
-    def choose_data_type(self, dict) -> None:
+    def choose_data_type(self, data_template) -> None:
         """ Chooses random entry from data_types
         """
-        self.data_type = random.choice(self.data_types)
-        dict["data_type"] = self.data_type
-        if self.data_type == "Mueller matrix":
+        data_type = random.choice(self.data_types)
+        data_template["data_type"] = data_type
+        if data_type == "Mueller matrix":
             self.number_of_signals = 16
-        elif self.data_type == "psi/delta" or self.data_type == "tan(psi)/cos(delta)":
+        elif data_type in ("psi/delta", "tan(psi)/cos(delta)"):
             self.number_of_signals = 2
 
     def mock_chemical_formula(self) -> None:
@@ -88,29 +81,30 @@ class MockEllips():
         part_1 = ase.atom.chemical_symbols[1:]
         part_2 = list(range(2, 20, 1))
 
-        for x in part_1:
-            for y in part_2:
-                for z in part_1:
-                    for k in part_2:
-                        chemical_formula = f"{x}{y}{z}{k}"
-                        if x != z:
+        for el1 in part_1:
+            for na1 in part_2:
+                for el2 in part_1:
+                    for na2 in part_2:
+                        chemical_formula = f"{el1}{na1}{el2}{na2}"
+                        if el1 != el2:
                             self.sample_list.append(chemical_formula)
 
-    def mock_angles(self, dict) -> None:
+    def mock_angles(self, data_template) -> None:
         """ Change value and number of incident angles
         """
-        for index in range(random.randrange(1, 4)):
-            angle = random.choice(self.angle_list)
+        angle_list = [40, 45, 50, 55, 60, 65, 70, 75, 80]
+        for _ in range(random.randrange(1, 4)):
+            angle = random.choice(angle_list)
             self.angles.append(angle)
-            self.angle_list.remove(angle)
+            angle_list.remove(angle)
         self.angles.sort()
-        dict["angle_of_incidence"] = self.angles
+        data_template["angle_of_incidence"] = self.angles
         if self.number_of_signals == 2:
-            self.mock_signals(dict)
+            self.mock_signals(data_template)
         elif self.number_of_signals == 16:
-            self.mock_Mueller_matrix(dict)
+            self.mock_mueller_matrix(data_template)
 
-    def mock_signals(self, dict) -> None:
+    def mock_signals(self, data_template) -> None:
         """ Mock data if data_type is psi/delta or tan(psi)/cos(delta)
             considering the (new) number of incident angles
         """
@@ -124,9 +118,9 @@ class MockEllips():
             noise = np.random.normal(0, 0.5, self.data[0, 0, 0, 0, :].size)
             my_numpy_array[0][0][index] = self.data[0][0][0] * random.uniform(0.5, 1.5) + noise
         self.data = my_numpy_array
-        dict["measured_data"] = my_numpy_array
+        data_template["measured_data"] = my_numpy_array
 
-    def mock_Mueller_matrix(self, dict) -> None:
+    def mock_mueller_matrix(self, data_template) -> None:
         """ Mock data if data_type is Mueller matrix (i.e. 16 elements/signals)
             considering the (new) number of incident angles
         """
@@ -136,22 +130,22 @@ class MockEllips():
                                    self.number_of_signals,
                                    len(self.wavelength)
                                    ])
-        for index in range(0, len(self.angles)):
-            noise = np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
-            for mm_index in range(1, self.number_of_signals):
-                my_numpy_array[0][0][index][mm_index] = self.data[0][0][0][0] * random.uniform(0.5, 1.5) + noise
-            my_numpy_array[0][0][index][0] = my_numpy_array[0][0][0][0] / my_numpy_array[0][0][0][0]
-        dict["measured_data"] = my_numpy_array
+        for idx in range(0, len(self.angles)):
+            wn = np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
+            for mm in range(1, self.number_of_signals):
+                my_numpy_array[0][0][idx][mm] = self.data[0][0][0][0] * random.uniform(.5, 1.) + wn
+            my_numpy_array[0][0][idx][0] = my_numpy_array[0][0][0][0] / my_numpy_array[0][0][0][0]
+        data_template["measured_data"] = my_numpy_array
 
-    def modify_spectral_range(self, dict) -> None:
+    def modify_spectral_range(self, data_template) -> None:
         """ Change spectral range (i.e. wavlength array) and step size,
             while length of the wavelength array remains the same.
         """
-        dict["spectrometer/wavelength"] = random.uniform(0.25, 23) * dict["spectrometer/wavelength"]
+        data_template["spectrometer/wavelength"] = random.uniform(0.25, 23) * data_template["spectrometer/wavelength"]
 
-    def mock_template(self, dict) -> None:
+    def mock_template(self, data_template) -> None:
         """ Creates a mock ellipsometry template """
-        self.mock_sample(dict)
-        self.modify_spectral_range(dict)
-        self.choose_data_type(dict)
-        self.mock_angles(dict)
+        self.mock_sample(data_template)
+        self.modify_spectral_range(data_template)
+        self.choose_data_type(data_template)
+        self.mock_angles(data_template)
