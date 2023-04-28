@@ -26,7 +26,7 @@ import xarray as xr
 import numpy as np
 import sqlite3
 
-from sle_parsers import SleParserV1, SleParserV2
+from sle_parsers import SleParserV1, SleParserV4
 
 
 class XmlSpecs():
@@ -112,11 +112,14 @@ class XmlSpecs():
 
         parent_element = element_
         element = parent_element[child_elmt_ind]
-        element.attrib['__parent__'] = parent_element  # type: ignore[assignment]
-        element.attrib['__odr_siblings__'] = child_elmt_ind  # type: ignore[assignment]
+        # type: ignore[assignment]
+        element.attrib['__parent__'] = parent_element
+        # type: ignore[assignment]
+        element.attrib['__odr_siblings__'] = child_elmt_ind
 
         if self.child_nm_reslvers not in parent_element.attrib.keys():
-            parent_element.attrib[self.child_nm_reslvers] = []  # type: ignore[assignment]
+            # type: ignore[assignment]
+            parent_element.attrib[self.child_nm_reslvers] = []
 
         elmt_tag = element.tag
 
@@ -159,7 +162,7 @@ class XmlSpecs():
         key_name = "name"
         if key_name in elmt_attr.keys():
             section_nm_reslvr = f'{elmt_attr[key_name]}'
-            section_nm_reslvr = self.check_for_siblins_with_same_name(
+            section_nm_reslvr = self.check_for_siblings_with_same_name(
                 section_nm_reslvr, element_
             )
 
@@ -187,7 +190,7 @@ class XmlSpecs():
 
         section_nm_reslvr = self.restructure_value(first_child.text,
                                                    first_child.tag)
-        section_nm_reslvr = self.check_for_siblins_with_same_name(
+        section_nm_reslvr = self.check_for_siblings_with_same_name(
             section_nm_reslvr, element_
         )
         skip_child += 1
@@ -221,7 +224,7 @@ class XmlSpecs():
                                            first_child.tag)
 
         section_nm_reslvr = f'{elmt_attr[key_type_name]}_{child_txt}'
-        section_nm_reslvr = self.check_for_siblins_with_same_name(
+        section_nm_reslvr = self.check_for_siblings_with_same_name(
             section_nm_reslvr, element_
         )
 
@@ -257,7 +260,7 @@ class XmlSpecs():
         key_type_name = 'type_name'
         if key_name in elmt_attr.keys():
             section_nm_reslvr = elmt_attr[key_name]
-            section_nm_reslvr = self.check_for_siblins_with_same_name(
+            section_nm_reslvr = self.check_for_siblings_with_same_name(
                 section_nm_reslvr, element_
             )
             parent_path, self.tail_part_frm_struct = \
@@ -288,7 +291,8 @@ class XmlSpecs():
                 # Check twin siblings
                 section_nm_reslvr = self.restructure_value(elmt_attr[key_type_name],
                                                            "string")
-                section_nm_reslvr = section_nm_reslvr + "_" + str(elmt_attr['__odr_siblings__'])
+                section_nm_reslvr = section_nm_reslvr + \
+                    "_" + str(elmt_attr['__odr_siblings__'])
                 parent_path = f'{parent_path}/{section_nm_reslvr}'
 
         child_elmt_ind = 0
@@ -341,7 +345,7 @@ class XmlSpecs():
                 = self.restructure_value(child_elmt.text,
                                          child_elmt.tag)
 
-    def check_for_siblins_with_same_name(self, reslv_name, new_sblings_elmt):
+    def check_for_siblings_with_same_name(self, reslv_name, new_sblings_elmt):
         """Check for the same name in the same level. For elments with the same
         write the name _1, _2... .
         """
@@ -586,7 +590,8 @@ class XmlSpecs():
 
             if entry and (entry not in entry_list):
 
-                self.entry_to_data[entry] = {"raw_data": copy.deepcopy(raw_dict)}
+                self.entry_to_data[entry] = {
+                    "raw_data": copy.deepcopy(raw_dict)}
                 entry_list.append(entry)
 
             if "region/curves_per_scan" in key:
@@ -673,7 +678,8 @@ class XmlSpecs():
             kinetic_energy_base = raw_data["kinetic_energy_base"]
             # Adding one unit to the binding_energy_upper is added as
             # electron comes out if energy is one unit higher
-            binding_energy_upper = excitation_energy - kinetic_energy + kinetic_energy_base + 1
+            binding_energy_upper = excitation_energy - \
+                kinetic_energy + kinetic_energy_base + 1
 
             mcd_energy_shifts = raw_data["mcd_shifts"]
             mcd_energy_offsets = []
@@ -682,10 +688,12 @@ class XmlSpecs():
             # consider offset values for detector with respect to
             # position at +16 which is usually large and positive value
             for mcd_shift in mcd_energy_shifts:
-                mcd_energy_offset = (mcd_energy_shifts[-1] - mcd_shift) * pass_energy
+                mcd_energy_offset = (
+                    mcd_energy_shifts[-1] - mcd_shift) * pass_energy
                 mcd_energy_offsets.append(mcd_energy_offset)
                 offset_id = round(mcd_energy_offset / scan_delta)
-                offset_ids.append(int(offset_id - 1 if offset_id > 0 else offset_id))
+                offset_ids.append(
+                    int(offset_id - 1 if offset_id > 0 else offset_id))
 
             # Skiping entry without count data
             if not mcd_energy_offsets:
@@ -769,19 +777,20 @@ class XmlSpecs():
                                 xr.DataArray(data=channel_counts[0, :],
                                              coords={"BE": binding_energy})
 
+
 class SleSpecs():
     """
         Class for restructuring .sle data file from
         specs vendor into python dictionary.
     """
+
     def __init__(self):
         self.parsers = [
             SleParserV1,
-            SleParserV2,
-            #SleParserV3
-            ]
+            SleParserV4,
+        ]
 
-        self.versions_map ={}
+        self.versions_map = {}
         for parser in self.parsers:
             supported_versions = parser.supported_versions
             for version in supported_versions:
@@ -797,8 +806,8 @@ class SleSpecs():
             Version string.
 
         """
-        self.con=sqlite3.connect(self.sql_connection)
-        cur=self.con.cursor()
+        self.con = sqlite3.connect(self.sql_connection)
+        cur = self.con.cursor()
         query = 'SELECT Value FROM Configuration WHERE Key=="Version"'
         cur.execute(query)
         version = cur.fetchall()[0][0]
@@ -824,9 +833,9 @@ class SleSpecs():
         """
         self.sql_connection = filepath
         version = self._get_sle_version()
-        print(version)
         parser = self.versions_map[version]()
         return parser.parse_file(filepath, **kwargs), parser.xml
+
 
 class XpsDataFileParser():
     """
@@ -863,7 +872,6 @@ class XpsDataFileParser():
             raise ValueError(XpsDataFileParser.__file_err_msg__)
 
     def get_dict(self) -> dict:
-
         """
             Return python dict fully filled data from xps file.
         Returns
@@ -876,7 +884,8 @@ class XpsDataFileParser():
 
                 if file_ext == 'xml':
                     self.root_element = EmtT.parse(file).getroot()
-                    vendor = XpsDataFileParser.check_for_vendors(self.root_element)
+                    vendor = XpsDataFileParser.check_for_vendors(
+                        self.root_element)
 
                     try:
                         parser_class = (XpsDataFileParser.

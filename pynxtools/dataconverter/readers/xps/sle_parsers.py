@@ -27,88 +27,90 @@ import numpy as np
 import re
 import os
 
+
 class SleParser():
     """
     Generic parser without reading capabilities,
     to be used as template for implementing parsers for different versions.
     """
+
     def __init__(self):
         self.con = ''
         self.spectra = []
 
         self.keys_map = {
-            'Udet':'detector_voltage',
-            'Comment':'comments',
-            'ElectronEnergy':'start_energy',
-            'SpectrumID':'spectrum_id',
-            'EpassOrRR':'pass_energy',
-            'EnergyType':'x_units',
-            'Samples':'n_values',
-            'Wf':'workfunction',
-            'Step':'step',
-            'Ubias':'electron_bias',
-            'DwellTime':'dwell_time',
-            'NumScans':'scans',
-            'LensMode':'lens_mode',
-            'Timestamp':'time_stamp',
-            'Entrance':'entrance_slit',
-            'Exit':'exit_slit',
-            'ScanMode':'scan_mode',
-            'VoltageRange':'voltage_range',
-            }
+            'Udet': 'detector_voltage',
+            'Comment': 'comments',
+            'ElectronEnergy': 'start_energy',
+            'SpectrumID': 'spectrum_id',
+            'EpassOrRR': 'pass_energy',
+            'EnergyType': 'x_units',
+            'Samples': 'n_values',
+            'Wf': 'workfunction',
+            'Step': 'step',
+            'Ubias': 'electron_bias',
+            'DwellTime': 'dwell_time',
+            'NumScans': 'scans',
+            'LensMode': 'lens_mode',
+            'Timestamp': 'time_stamp',
+            'Entrance': 'entrance_slit',
+            'Exit': 'exit_slit',
+            'ScanMode': 'scan_mode',
+            'VoltageRange': 'voltage_range',
+        }
 
         self.spectrometer_setting_map = {
-            'Coil Current [mA]':'coil_current',
-            'Pre Defl Y [nU]':'y_deflector',
-            'Pre Defl X [nU]':'x_deflector',
-            'L1 [nU]':'lens1',
-            'L2 [nU]':'lens2',
-            'Focus Displacement 1 [nu]':'focus_displacement',
-            'Detector Voltage [V]':'detector_voltage',
-            'Bias Voltage Electrons [V]':'bias_voltage_electrons',
-            'Bias Voltage Ions [V]':'bias_voltage_ions',
-            }
+            'Coil Current [mA]': 'coil_current',
+            'Pre Defl Y [nU]': 'y_deflector',
+            'Pre Defl X [nU]': 'x_deflector',
+            'L1 [nU]': 'lens1',
+            'L2 [nU]': 'lens2',
+            'Focus Displacement 1 [nu]': 'focus_displacement',
+            'Detector Voltage [V]': 'detector_voltage',
+            'Bias Voltage Electrons [V]': 'bias_voltage_electrons',
+            'Bias Voltage Ions [V]': 'bias_voltage_ions',
+        }
 
         self.source_setting_map = {
-            'anode':'source_label',
-            'uanode':'source_voltage',
-            'iemission':'emission_current',
-            'DeviceExcitationEnergy':'excitation_energy',
-            }
+            'anode': 'source_label',
+            'uanode': 'source_voltage',
+            'iemission': 'emission_current',
+            'DeviceExcitationEnergy': 'excitation_energy',
+        }
 
         self.sql_metadata_map = {
-            'EnergyType':'x_units',
-            'EpassOrRR':'pass_energy',
-            'Wf':'workfunction',
-            'Timestamp':'time_stamp',
-            'Samples':'n_values',
-            'ElectronEnergy':'start_energy',
+            'EnergyType': 'x_units',
+            'EpassOrRR': 'pass_energy',
+            'Wf': 'workfunction',
+            'Timestamp': 'time_stamp',
+            'Samples': 'n_values',
+            'ElectronEnergy': 'start_energy',
             'Step': 'step_size',
-            }
+        }
 
         self.key_maps = [
             self.keys_map,
             self.spectrometer_setting_map,
             self.source_setting_map,
             self.sql_metadata_map,
-            ]
+        ]
 
         self.value_map = {
             'x_units': self._change_energy_type,
             'time_stamp': self._convert_date_time,
-            }
+        }
 
         self.keys_to_drop = [
             'CHANNELS_X',
             'CHANNELS_Y',
-            #'Bias Voltage Ions [V]',
+            # 'Bias Voltage Ions [V]',
             'operating_mode',
-            ]
+        ]
 
         self.encodings_map = {
-            'double':['d',8],
-            'float':['f',4],
-            }
+            'double': ['d', 8],
+            'float': ['f', 4],
+        }
 
         self.encoding = ['f', 4]
 
@@ -116,12 +118,12 @@ class SleParser():
 
         self.spectrometer_types = ['Phoibos1D']
 
-        self.measurement_types = ['XPS','UPS', 'ElectronSpectroscopy']
+        self.measurement_types = ['XPS', 'UPS', 'ElectronSpectroscopy']
 
     def initiate_file_connection(self, filename):
         """Set the filename of the file to be opened."""
         self.sql_connection = filename
-        self.con=sqlite3.connect(self.sql_connection)
+        self.con = sqlite3.connect(self.sql_connection)
         self.spectrum_column_names = self._get_column_names('Spectrum')
 
     def set_current_file(self, filepath):
@@ -164,13 +166,14 @@ class SleParser():
         else:
             self.average_scans = True
 
-        #initiate connection to sql file
+        # initiate connection to sql file
         self.initiate_file_connection(filepath)
 
         # read and parse sle file
         self.set_current_file(filepath)
         self._get_XML_schedule()
         self.spectra = self._flatten_xml(self.xml)
+        print(self.spectra)
         self._attach_node_ids()
         self._remove_empty_nodes()
         self._attach_device_protocols()
@@ -214,7 +217,7 @@ class SleParser():
         None.
 
         """
-        cur=self.con.cursor()
+        cur = self.con.cursor()
         query = 'SELECT Value FROM Configuration WHERE Key="Schedule"'
         cur.execute(query)
         XML = ET.fromstring(cur.fetchall()[0][0])
@@ -252,10 +255,10 @@ class SleParser():
                 signal_data_cps = self._convert_to_counts_per_sec(
                     signal_data,
                     float(scan['dwell_time'])
-                    )
+                )
                 # attach data to scan
                 scan['y'] = signal_data_cps
-                #no_of_scans_avg['scans'] = 1
+                # no_of_scans_avg['scans'] = 1
 
                 # add metadata including scan, loop no and datetime
                 scan_metadata = self._get_scan_metadata(raw_ids[n])
@@ -356,8 +359,9 @@ class SleParser():
         n_channels : int
             Number of separate energy channels for the spectrum at node ID.
         """
-        cur=self.con.cursor()
-        query = 'SELECT EnergyChns FROM Spectrum WHERE Node="{}"'.format(node_id)
+        cur = self.con.cursor()
+        query = 'SELECT EnergyChns FROM Spectrum WHERE Node="{}"'.format(
+            node_id)
         cur.execute(query)
         result = cur.fetchall()
         if len(result) != 0:
@@ -384,7 +388,7 @@ class SleParser():
             List of raw IDs for the given note ID.
 
         """
-        cur=self.con.cursor()
+        cur = self.con.cursor()
         query = 'SELECT RawId FROM RawData WHERE Node="{}"'.format(node_id)
         cur.execute(query)
         return [i[0] for i in cur.fetchall()]
@@ -404,7 +408,7 @@ class SleParser():
             Number of separate scans for the spectrum.
 
         """
-        cur=self.con.cursor()
+        cur = self.con.cursor()
         query = 'SELECT RawId FROM RawData WHERE Node="{}"'.format(node_id)
         cur.execute(query)
         return len(cur.fetchall())
@@ -428,12 +432,12 @@ class SleParser():
             List of lists with measured data.
 
         """
-        cur=self.con.cursor()
+        cur = self.con.cursor()
         query = 'SELECT RawID FROM RawData WHERE Node="{}"'.format(node_id)
         cur.execute(query)
         raw_ids = [i[0] for i in cur.fetchall()]
         detector_data = []
-        if len(raw_ids)>1:
+        if len(raw_ids) > 1:
             for raw_id in raw_ids:
                 detector_data += [self._get_one_scan(raw_id)]
         else:
@@ -457,8 +461,10 @@ class SleParser():
         for spectrum in self.spectra:
             # conver the xml xps id to the node ID and get the device protocol
             cur = self.con.cursor()
-            protocol_node_id = self._get_sql_node_id(spectrum['device_group_id'])
-            query = 'SELECT Protocol FROM DeviceProtocol WHERE Node="{}"'.format(protocol_node_id)
+            protocol_node_id = self._get_sql_node_id(
+                spectrum['device_group_id'])
+            query = 'SELECT Protocol FROM DeviceProtocol WHERE Node="{}"'.format(
+                protocol_node_id)
             result = cur.execute(query).fetchone()
 
             # if a record was accessed then parse, if not skip
@@ -469,12 +475,12 @@ class SleParser():
                 for device in protocol.iter('Command'):
                     # we just want to get the settings for the phoibos for now:
                     if 'Phoibos' in device.attrib['UniqueDeviceName']:
-                        # iterate through the parameters and add to spectrum dict
+                        # iterate through the parameters and add to spectrum
+                        # dict
                         for parameter in device.iter('Parameter'):
                             spectrum[parameter.attrib['name']] = parameter.text
 
-
-    def _get_one_scan(self,raw_id):
+    def _get_one_scan(self, raw_id):
         """
         Get the detector data for a single scan and convert it to float.
 
@@ -493,8 +499,9 @@ class SleParser():
             List with measured data.
 
         """
-        cur=self.con.cursor()
-        query = 'SELECT Data, ChunkSize FROM CountRateData WHERE RawId="{}"'.format(raw_id)
+        cur = self.con.cursor()
+        query = 'SELECT Data, ChunkSize FROM CountRateData WHERE RawId="{}"'.format(
+            raw_id)
         cur.execute(query)
         results = cur.fetchall()
         buffer = self.encoding[1]
@@ -503,8 +510,8 @@ class SleParser():
         for result in results:
             length = result[1] * buffer
             data = result[0]
-            for i in range(0,length,buffer):
-                stream.append(struct.unpack(encoding,data[i:i+buffer])[0])
+            for i in range(0, length, buffer):
+                stream.append(struct.unpack(encoding, data[i:i + buffer])[0])
         return stream
 
     def _parse_external_channels(self, channel):
@@ -536,7 +543,7 @@ class SleParser():
         """
         for spectrum in self.spectra:
             node_id = self._get_sql_node_id(spectrum['spectrum_id'])
-            cur=self.con.cursor()
+            cur = self.con.cursor()
             query = 'SELECT * FROM Spectrum WHERE Node="{}"'.format(node_id)
             cur.execute(query)
             results = cur.fetchall()
@@ -544,12 +551,13 @@ class SleParser():
                 results = results[0]
 
             column_names = self.spectrum_column_names
-            combined = {k:v for k,v in dict(zip(column_names, results)).items()
-                        if k in self.sql_metadata_map.keys()}
+            combined = {
+                k: v for k, v in dict(zip(column_names, results)).items()
+                if k in self.sql_metadata_map.keys()}
             combined = copy(combined)
             if 'EnergyType' not in combined.keys():
                 combined['EnergyType'] = 'Binding'
-            for k,v in combined.items():
+            for k, v in combined.items():
                 spectrum[k] = v
 
             query = 'SELECT Data FROM NodeData WHERE Node="{}"'.format(node_id)
@@ -576,9 +584,10 @@ class SleParser():
 
         """
         # get string Trace from RawData
-        #self.con = sqlite3.connect(self.sql_connection)
+        # self.con = sqlite3.connect(self.sql_connection)
         cur = self.con.cursor()
-        query = 'SELECT ScanDate, Trace  FROM RawData WHERE RawID="{}"'.format(raw_id)
+        query = 'SELECT ScanDate, Trace  FROM RawData WHERE RawID="{}"'.format(
+            raw_id)
         result = cur.execute(query).fetchone()
         # process metadata into a dictionary
         scan_meta = {}
@@ -634,10 +643,10 @@ class SleParser():
             list of values converted to counts per second.
 
         """
-        cps = [n/dwell_time for n in signal_data]
+        cps = [n / dwell_time for n in signal_data]
         return cps
 
-    def _get_sql_node_id(self,xml_id):
+    def _get_sql_node_id(self, xml_id):
         """
         Get the SQL internal ID for the NodeID taken from XML.
 
@@ -656,7 +665,8 @@ class SleParser():
 
         """
         cur = self.con.cursor()
-        query = 'SELECT Node FROM NodeMapping WHERE InternalID="{}"'.format(xml_id)
+        query = 'SELECT Node FROM NodeMapping WHERE InternalID="{}"'.format(
+            xml_id)
         cur.execute(query)
         node_id = cur.fetchall()[0][0]
         return node_id
@@ -713,12 +723,12 @@ class SleParser():
             start = spectrum['start_energy']
             step = spectrum['step_size']
             points = spectrum['n_values']
-            x = [start - i*step for i in range(points)]
+            x = [start - i * step for i in range(points)]
         elif spectrum['x_units'] == 'kinetic energy':
             start = spectrum['start_energy']
             step = spectrum['step_size']
             points = spectrum['n_values']
-            x = [start + i*step for i in range(points)]
+            x = [start + i * step for i in range(points)]
         return x
 
     def _get_table_names(self):
@@ -752,7 +762,7 @@ class SleParser():
             List of descriptions.
 
         """
-        cur=self.con.cursor()
+        cur = self.con.cursor()
         cur.execute(('SELECT * FROM {}').format(table_name))
         names = [description[0] for description in cur.description]
         return names
@@ -867,7 +877,7 @@ class SleParser():
             preferred keys for values.
 
         """
-        for k,v in self.value_map.items():
+        for k, v in self.value_map.items():
             dictionary[k] = v(dictionary[k])
         return dictionary
 
@@ -889,8 +899,8 @@ class SleParser():
 
         """
 
-        n_points = int(len(data)/n)
-        summed = np.sum(np.reshape(np.array(data),(n_points,n)),axis=1)
+        n_points = int(len(data) / n)
+        summed = np.sum(np.reshape(np.array(data), (n_points, n)), axis=1)
         return summed.tolist()
 
     def _check_encoding(self):
@@ -902,10 +912,10 @@ class SleParser():
         None.
 
         """
-        cur=self.con.cursor()
+        cur = self.con.cursor()
         query = 'SELECT LENGTH(Data),ChunkSize FROM CountRateData LIMIT 1'
         cur.execute(query)
-        result =cur.fetchall()[0]
+        result = cur.fetchall()[0]
         chunksize = result[1]
         data = result[0]
 
@@ -993,7 +1003,7 @@ class SleParser():
 
         """
         self.spectra = [spec for spec in self.spectra
-                        if spec['scan_mode']!='FixedEnergies']
+                        if spec['scan_mode'] != 'FixedEnergies']
 
     def _remove_syntax(self):
         """
@@ -1005,7 +1015,7 @@ class SleParser():
 
         """
         for spectrum in self.spectra:
-            new_name = spectrum['group_name'].split('#',1)[0]
+            new_name = spectrum['group_name'].split('#', 1)[0]
             new_name = new_name.rstrip(', ')
             spectrum['group_name'] = new_name
 
@@ -1031,14 +1041,15 @@ class SleParser():
             DESCRIPTION.
 
         """
-        cur=self.con.cursor()
+        cur = self.con.cursor()
         query = 'SELECT Value FROM Configuration WHERE Key=="Version"'
         cur.execute(query)
         version = cur.fetchall()[0][0]
         return version
 
+
 class SleParserV1(SleParser):
-    supported_versions = ['1.8', '1.9','1.10','1.11','1.12','1.13','1.2']
+    supported_versions = ['1.2', '1.8', '1.9', '1.10', '1.11', '1.12', '1.13']
 
     def _flatten_xml(self, xml):
         """
@@ -1057,12 +1068,12 @@ class SleParserV1(SleParser):
         """
         collect = []
         for measurement_type in self.measurement_types:
-            for i in xml.iter(measurement_type):
+            for group in xml.iter(measurement_type):
                 data = {}
                 data['analysis_method'] = measurement_type
-                data['devices']=[]
+                data['devices'] = []
 
-                for j in i.iter('DeviceCommand'):
+                for j in group.iter('DeviceCommand'):
                     settings = {}
                     for k in j.iter('Parameter'):
                         settings[k.attrib['name']] = k.text
@@ -1070,62 +1081,81 @@ class SleParserV1(SleParser):
 
                     data['devices'] += [j.attrib['DeviceType']]
 
-                for j in i.iter('SpectrumGroup'):
-                    data['group_name']=j.attrib['Name']
-                    data['group_id']=j.attrib['ID']
+                    # data['devices'] += [{'device_type' : j.attrib['DeviceType'],
+                    #                     'settings':settings}]
+                for spectrum_group in group.iter('SpectrumGroup'):
+                    data['group_name'] = spectrum_group.attrib['Name']
+                    data['group_id'] = spectrum_group.attrib['ID']
                     settings = {}
-                    for k in j.iter('CommonSpectrumSettings'):
-                        for l in k.iter():
-                            if l.tag == 'ScanMode':
-                                settings[l.tag] = l.attrib['Name']
-                            elif l.tag == 'SlitInfo':
-                                for key,val in l.attrib.items():
+                    for comm_settings in spectrum_group.iter(
+                            'CommonSpectrumSettings'):
+                        for setting in comm_settings.iter():
+                            if setting.tag == 'ScanMode':
+                                settings[setting.tag] = setting.attrib['Name']
+                            elif setting.tag == 'SlitInfo':
+                                for key, val in setting.attrib.items():
                                     settings[key] = val
-                            elif l.tag == 'Lens':
-                                settings.update(l.attrib)
-                            elif l.tag == 'EnergyChannelCalibration':
-                                settings['calibration_file'] = l.attrib['File']
-                            elif l.tag == 'Transmission':
-                                settings['transmission_function'] = l.attrib['File']
-                            elif l.tag == 'Iris':
-                                settings['iris_diameter'] = l.attrib['Diameter']
+                            elif setting.tag == 'Lens':
+                                settings.update(setting.attrib)
+                            elif setting.tag == 'EnergyChannelCalibration':
+                                settings['calibration_file'] = setting.attrib['File']
+                            elif setting.tag == 'Transmission':
+                                settings['transmission_function'] = setting.attrib['File']
+                            elif setting.tag == 'Iris':
+                                settings['iris_diameter'] = setting.attrib['Diameter']
                     data.update(copy(settings))
-                    for k in j.iter('Spectrum'):
-                        data['spectrum_id'] = k.attrib['ID']
-                        data['spectrum_type'] = k.attrib['Name']
+
+                    for spectrum in spectrum_group.iter('Spectrum'):
+                        data['spectrum_id'] = spectrum.attrib['ID']
+                        data['spectrum_type'] = spectrum.attrib['Name']
                         settings = {}
-                        for l in k.iter('FixedEnergiesSettings'):
-                            settings['dwell_time'] = float(l.attrib['DwellTime'])
-                            settings['start_energy'] = float(copy(l.attrib['Ebin']))
-                            settings['pass_energy'] = float(l.attrib['Epass'])
-                            settings['lens_mode'] = l.attrib['LensMode']
-                            settings['scans'] = int(l.attrib['NumScans'])
-                            settings['n_values'] = int(l.attrib['NumValues'])
-                            settings['end_energy'] = float(l.attrib['End'])
-                            settings['scans'] = int(l.attrib['NumScans'])
-                            settings['excitation_energy'] = float(l.attrib['Eexc'])
-                            settings['step_size'] = ((settings['start_energy']
-                                                     - settings['end_energy'])
-                                                     / (settings['n_values']-1))
-                        for l in k.iter('FixedAnalyzerTransmissionSettings'):
-                            settings['dwell_time'] = float(l.attrib['DwellTime'])
-                            settings['start_energy'] = float(copy(l.attrib['Ekin']))
-                            settings['pass_energy'] = float(l.attrib['Epass'])
-                            settings['lens_mode'] = l.attrib['LensMode']
-                            settings['scans'] = int(l.attrib['NumScans'])
-                            settings['n_values'] = int(l.attrib['NumValues'])
-                            settings['end_energy'] = float(l.attrib['End'])
-                            settings['scans'] = int(l.attrib['NumScans'])
-                            settings['excitation_energy'] = float(l.attrib['Eexc'])
-                            settings['step_size'] = ((settings['start_energy']
-                                                     - settings['end_energy'])
-                                                     / (settings['n_values']-1))
+                        for setting in spectrum.iter('FixedEnergiesSettings'):
+                            settings['dwell_time'] = float(
+                                setting.attrib['DwellTime'])
+                            settings['start_energy'] = float(
+                                copy(setting.attrib['Ebin']))
+                            settings['pass_energy'] = float(
+                                setting.attrib['Epass'])
+                            settings['lens_mode'] = setting.attrib['LensMode']
+                            settings['scans'] = int(setting.attrib['NumScans'])
+                            settings['n_values'] = int(
+                                setting.attrib['NumValues'])
+                            settings['end_energy'] = float(
+                                setting.attrib['End'])
+                            settings['scans'] = int(setting.attrib['NumScans'])
+                            settings['excitation_energy'] = float(
+                                setting.attrib['Eexc'])
+                            settings['step_size'] = ((
+                                settings['start_energy']
+                                - settings['end_energy'])
+                                / (settings['n_values'] - 1))
+                        for setting in spectrum.iter(
+                                'FixedAnalyzerTransmissionSettings'):
+                            settings['dwell_time'] = float(
+                                setting.attrib['DwellTime'])
+                            settings['start_energy'] = float(
+                                copy(setting.attrib['Ebin']))
+                            settings['pass_energy'] = float(
+                                setting.attrib['Epass'])
+                            settings['lens_mode'] = setting.attrib['LensMode']
+                            settings['scans'] = int(setting.attrib['NumScans'])
+                            settings['n_values'] = int(
+                                setting.attrib['NumValues'])
+                            settings['end_energy'] = float(
+                                setting.attrib['End'])
+                            settings['scans'] = int(setting.attrib['NumScans'])
+                            settings['excitation_energy'] = float(
+                                setting.attrib['Eexc'])
+                            settings['step_size'] = ((
+                                settings['start_energy']
+                                - settings['end_energy'])
+                                / (settings['n_values'] - 1))
                         data.update(copy(settings))
-                        collect+=[copy(data)]
+                        collect += [copy(data)]
         return collect
 
 
-class SleParserV2(SleParser):
+class SleParserV4(SleParser):
     supported_versions = [
         '4.63',
         '4.64',
@@ -1138,7 +1168,8 @@ class SleParserV2(SleParser):
         '4.71',
         '4.72',
         '4.73'
-        ]
+    ]
+
     def _flatten_xml(self, xml):
         """
         Flatten the nested XML structure, keeping only the needed metadata.
@@ -1156,69 +1187,74 @@ class SleParserV2(SleParser):
         """
         collect = []
         for measurement_type in self.measurement_types:
-            for i in xml.iter(measurement_type):
+            for group in xml.iter(measurement_type):
                 data = {}
                 data['analysis_method'] = measurement_type
-                data['devices']=[]
-                data['device_group_id'] = i.attrib['ID']
+                data['devices'] = []
+                data['device_group_id'] = group.attrib['ID']
 
-                for j in i.iter('DeviceCommand'):
+                for device in group.iter('DeviceCommand'):
                     settings = {}
-                    for k in j.iter('Parameter'):
-                        settings[k.attrib['name']] = k.text
+                    for param in device.iter('Parameter'):
+                        settings[param.attrib['name']] = param.text
                         data.update(copy(settings))
 
-                    data['devices'] += [j.attrib['DeviceType']]
+                    data['devices'] += [device.attrib['DeviceType']]
 
-                    #data['devices'] += [{'device_type' : j.attrib['DeviceType'],
+                    # data['devices'] += [{'device_type' : j.attrib['DeviceType'],
                     #                     'settings':settings}]
-                for j in i.iter('SpectrumGroup'):
-                    data['group_name']=j.attrib['Name']
-                    data['group_id']=j.attrib['ID']
+                for spectrum_group in group.iter('SpectrumGroup'):
+                    data['group_name'] = spectrum_group.attrib['Name']
+                    data['group_id'] = spectrum_group.attrib['ID']
                     settings = {}
-                    for k in j.iter('CommonSpectrumSettings'):
-                        for l in k.iter():
-                            if l.tag == 'ScanMode':
-                                settings[l.tag] = l.attrib['Name']
-                            elif l.tag == 'SlitInfo':
-                                for key,val in l.attrib.items():
+                    for comm_settings in spectrum_group.iter(
+                            'CommonSpectrumSettings'):
+                        for setting in comm_settings.iter():
+                            if setting.tag == 'ScanMode':
+                                settings[setting.tag] = setting.attrib['Name']
+                            elif setting.tag == 'SlitInfo':
+                                for key, val in setting.attrib.items():
                                     settings[key] = val
-                            elif l.tag == 'Lens':
-                                settings.update(l.attrib)
-                            elif l.tag == 'EnergyChannelCalibration':
-                                settings['calibration_file'] = l.attrib['File']
-                            elif l.tag == 'Transmission':
-                                settings['transmission_function'] = l.attrib['File']
-                            elif l.tag == 'Iris':
-                                settings['iris_diameter'] = l.attrib['Diameter']
+                            elif setting.tag == 'Lens':
+                                settings.update(setting.attrib)
+                            elif setting.tag == 'EnergyChannelCalibration':
+                                settings['calibration_file'] = setting.attrib['File']
+                            elif setting.tag == 'Transmission':
+                                settings['transmission_function'] = setting.attrib['File']
+                            elif setting.tag == 'Iris':
+                                settings['iris_diameter'] = setting.attrib['Diameter']
                     data.update(copy(settings))
-                    for k in j.iter('Spectrum'):
-                        data['spectrum_id'] = k.attrib['ID']
-                        data['spectrum_type'] = k.attrib['Name']
-                        for k2 in k.iter('Comment'):
-                            data['spectrum_comment'] = k2.text
+
+                    for spectrum in spectrum_group.iter('Spectrum'):
+                        data['spectrum_id'] = spectrum.attrib['ID']
+                        data['spectrum_type'] = spectrum.attrib['Name']
+                        for comment in spectrum.iter('Comment'):
+                            data['spectrum_comment'] = comment.text
                         """parameter3 = ET.SubElement(entry, 'Parameter')
                         parameter3.attrib['name'] = 'Coil Current [mA]'
                         parameter3.attrib['type'] = 'double'
                         parameter3.text = str(settings_dict['coil_current'])"""
 
                         settings = {}
-                        for l in k.iter('FixedEnergiesSettings'):
-                            settings['dwell_time'] = l.attrib['DwellTime']
-                            settings['start_energy'] = copy(l.attrib['Ebin'])
-                            settings['pass_energy'] = l.attrib['Epass']
-                            settings['lens_mode'] = l.attrib['LensMode']
-                            settings['scans'] = l.attrib['NumScans']
-                            settings['n_values'] = l.attrib['NumValues']
-                        for l in k.iter('FixedAnalyzerTransmissionSettings'):
-                            settings['dwell_time'] = l.attrib['DwellTime']
-                            settings['start_energy'] = copy(l.attrib['Ebin'])
-                            settings['pass_energy'] = l.attrib['Epass']
-                            settings['lens_mode'] = l.attrib['LensMode']
-                            settings['scans'] = l.attrib['NumScans']
-                            settings['n_values'] = l.attrib['NumValues']
+                        for setting in spectrum.iter('FixedEnergiesSettings'):
+                            settings['dwell_time'] = setting.attrib['DwellTime']
+                            settings['start_energy'] = copy(
+                                setting.attrib['Ebin'])
+                            settings['pass_energy'] = setting.attrib['Epass']
+                            settings['lens_mode'] = setting.attrib['LensMode']
+                            settings['scans'] = setting.attrib['NumScans']
+                            settings['n_values'] = setting.attrib['NumValues']
+                        for setting in spectrum.iter(
+                                'FixedAnalyzerTransmissionSettings'):
+                            settings['dwell_time'] = setting.attrib['DwellTime']
+                            settings['start_energy'] = copy(
+                                setting.attrib['Ebin'])
+                            settings['pass_energy'] = setting.attrib['Epass']
+                            settings['lens_mode'] = setting.attrib['LensMode']
+                            settings['scans'] = setting.attrib['NumScans']
+                            settings['n_values'] = setting.attrib['NumValues']
+
                         data.update(copy(settings))
 
-                        collect+=[copy(data)]
+                        collect += [copy(data)]
         return collect
-
