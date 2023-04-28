@@ -49,9 +49,9 @@ class MockEllips():
         self.data = data_template["measured_data"]
         self.wavelength = data_template["spectrometer/wavelength"]
         self.atom_types = data_template["atom_types"]
-        self.sample_list = []
+        self.sample_list: list = []
         self.data_types = ["psi/delta", "tan(psi)/cos(delta)", "Mueller matrix"]
-        self.angles = []
+        self.angles: list = []
         self.number_of_signals = 0
 
     def mock_sample(self, data_template) -> None:
