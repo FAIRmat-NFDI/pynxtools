@@ -235,12 +235,12 @@ class EllipsometryReader(BaseReader):
                                    counts[0]
                                    ])
 
-        for index, unique_angle in enumerate(unique_angles):
+        for index, angle in enumerate(unique_angles):
             my_numpy_array[0,
                            0,
                            index,
                            :,
-                           :] = unique_angle
+                           :] = angle
         data_index = 0
         for key, val in labels.items():
             for index in range(len(val)):
