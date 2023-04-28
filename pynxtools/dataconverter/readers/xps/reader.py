@@ -285,7 +285,7 @@ def fill_template_with_eln_data(eln_data_dict,
             template[modified_key] = field_value
             if atom_types:
                 modified_key = modified_key.replace('chemical_formula', 'atom_types')
-                template[modified_key] = '[ ' + ', '.join(atom_types) + ' ]'
+                template[modified_key] = ', '.join(atom_types)
 
     def fill_from_value(key):
         field_value = eln_data_dict[key]

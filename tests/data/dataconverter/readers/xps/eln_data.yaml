@@ -8,6 +8,7 @@ Instrument:
     Energydispersion:
       entrance_slit: "Unknown"
       scheme: "hemispherical"
+      energy_scan_mode: "fixed"
       pass_energy:
         unit: null
     Detector:
