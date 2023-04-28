@@ -158,9 +158,8 @@ def header_labels(header):
 
     return labels
 
-
 def mock_function(header):
-    """ Define header labels
+    """ Mock ellipsometry data
 
     """
 
@@ -177,6 +176,19 @@ def mock_function(header):
     header["column_names"] = list(labels.keys())
 
     return header, labels
+
+
+def data_set_dims(whole_data):
+    """ User defined variables to produce slices of the whole data set
+
+    """
+    energy = whole_data['type'].astype(str).values.tolist().count("E")
+    unique_angles, counts = np.unique(whole_data["angle_of_incidence"
+                                                    ].to_numpy()[0:energy].astype("int64"),
+                                        return_counts=True
+                                        )
+
+    return unique_angles, counts
 
 
 class EllipsometryReader(BaseReader):
@@ -210,12 +222,7 @@ class EllipsometryReader(BaseReader):
             # this we have tried, we should throw an error...
             whole_data = load_as_pandas_array(header["filename"], header)
 
-        # User defined variables to produce slices of the whole data set
-        energy = whole_data['type'].astype(str).values.tolist().count("E")
-        unique_angles, counts = np.unique(whole_data["angle_of_incidence"
-                                                     ].to_numpy()[0:energy].astype("int64"),
-                                          return_counts=True
-                                          )
+        unique_angles, counts = data_set_dims(whole_data)
 
         labels = header_labels(header)
 
@@ -261,7 +268,7 @@ class EllipsometryReader(BaseReader):
         header["angle_of_incidence"] = unique_angles
 
         # Create mocked ellipsometry data template:
-        is_mock = True
+        is_mock = False
         if is_mock:
             header, labels = mock_function(header)
             for angle in enumerate(header["angle_of_incidence"]):
