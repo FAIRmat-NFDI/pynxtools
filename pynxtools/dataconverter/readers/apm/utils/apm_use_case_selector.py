@@ -38,7 +38,7 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         self.case: Dict[str, list] = {}
         self.is_valid = False
         self.supported_mime_types = [
-            "pos", "epos", "apt", "rrng", "rng", "yaml", "yml"]
+            "pos", "epos", "apt", "rrng", "rng", "txt", "yaml", "yml"]
         for mime_type in self.supported_mime_types:
             self.case[mime_type] = []
         for file_name in file_paths:
@@ -53,7 +53,7 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         for mime_type, value in self.case.items():
             if mime_type in ["pos", "epos", "apt"]:
                 recon_input += len(value)
-            if mime_type in ["rrng", "rng"]:
+            if mime_type in ["rrng", "rng", "txt"]:
                 range_input += len(value)
         eln_input = len(self.case["yaml"]) + len(self.case["yml"])
         if (recon_input == 1) and (range_input == 1) and (eln_input == 1):
@@ -62,7 +62,7 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
             self.ranging: List[str] = []
             for mime_type in ["pos", "epos", "apt"]:
                 self.reconstruction += self.case[mime_type]
-            for mime_type in ["rrng", "rng"]:
+            for mime_type in ["rrng", "rng", "txt"]:
                 self.ranging += self.case[mime_type]
             self.eln: List[str] = []
             for mime_type in ["yaml", "yml"]:

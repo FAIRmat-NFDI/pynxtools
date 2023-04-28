@@ -137,7 +137,7 @@ idna==3.4
     # via
     #   anyio
     #   requests
-ifes-apt-tc-data-modeling==0.0.6
+ifes-apt-tc-data-modeling==0.0.7
     # via pynxtools (pyproject.toml)
 imageio==2.22.1
     # via

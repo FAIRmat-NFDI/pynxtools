@@ -38,6 +38,8 @@ from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
 
+from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
+
 from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
 
@@ -114,7 +116,6 @@ def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dic
     # NXion members, same case for more than one operator
     print(f"Extracting data from RRNG file: {file_name}")
     rangefile = ReadRrngFileFormat(file_name)
-    # rangefile.read_rrng()
 
     # ion indices are on the interval [0, 256)
     assert len(rangefile.rrng["molecular_ions"]) <= np.iinfo(np.uint8).max + 1, \
@@ -122,6 +123,21 @@ def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dic
 
     add_standardize_molecular_ions(
         rangefile.rrng["molecular_ions"], template, entry_id)
+
+    return template
+
+
+def extract_data_from_fig_txt_file(file_name: str, template: dict, entry_id) -> dict:
+    """Add those required information which an transcoded Matlab figure TXT file has."""
+    print(f"Extracting data from FIG.TXT file: {file_name}")
+    rangefile = ReadFigTxtFileFormat(file_name)
+
+    # ion indices are on the interval [0, 256)
+    assert len(rangefile.fig["molecular_ions"]) <= np.iinfo(np.uint8).max + 1, \
+        "Current implementation does not support more than 256 ion types"
+
+    add_standardize_molecular_ions(
+        rangefile.fig["molecular_ions"], template, entry_id)
 
     return template
 
@@ -137,10 +153,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
         index = file_name.lower().rfind(".")
         if index >= 0:
             mime_type = file_name.lower()[index + 1::]
-            if mime_type == "rng":
-                self.meta["file_format"] = "rng"
-            if mime_type == "rrng":
-                self.meta["file_format"] = "rrng"
+            self.meta["file_format"] = mime_type
 
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
@@ -204,6 +217,11 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
                     self.meta["entry_id"])
             elif self.meta["file_format"] == "rrng":
                 extract_data_from_rrng_file(
+                    self.meta["file_name"],
+                    template,
+                    self.meta["entry_id"])
+            elif self.meta["file_format"] == "txt":
+                extract_data_from_fig_txt_file(
                     self.meta["file_name"],
                     template,
                     self.meta["entry_id"])
