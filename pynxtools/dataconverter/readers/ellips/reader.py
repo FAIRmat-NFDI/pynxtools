@@ -142,7 +142,7 @@ def populate_template_dict(header, template):
 
 
 def header_labels(header):
-    """ Define header labels
+    """ Define data labels (column names)
 
     """
 
@@ -157,6 +157,26 @@ def header_labels(header):
                 labels.update({f"m{i}{j}": []})
 
     return labels
+
+
+def mock_function(header):
+    """ Define header labels
+
+    """
+
+    mock_header = MockEllips(header)
+    mock_header.mock_template(header)
+
+    # Defining labels:
+    labels = header_labels(header)
+
+    # Atom types: Convert str to list if atom_types is not a list:
+    if isinstance(header["atom_types"], str):
+        header["atom_types"] = header["atom_types"].split(",")
+
+    header["column_names"] = list(labels.keys())
+
+    return header, labels
 
 
 class EllipsometryReader(BaseReader):
@@ -243,21 +263,16 @@ class EllipsometryReader(BaseReader):
         # Create mocked ellipsometry data template:
         is_mock = True
         if is_mock:
-            mock_header = MockEllips(header)
-            mock_header.mock_template(header)
-
-        # Defining labels:
-        labels = header_labels(header)
+            header, labels = mock_function(header)
+            for angle in enumerate(header["angle_of_incidence"]):
+                for key, val in labels.items():
+                    val.append(f"{key}_{int(angle[1])}deg")
+                index += counts[angle[0]]
+                block_idx.append(index)
 
         # Atom types: Convert str to list if atom_types is not a list:
         if isinstance(header["atom_types"], str):
             header["atom_types"] = header["atom_types"].split(",")
-
-        for angle in enumerate(header["angle_of_incidence"]):
-            for key, val in labels.items():
-                val.append(f"{key}_{int(angle[1])}deg")
-            index += counts[angle[0]]
-            block_idx.append(index)
 
         header["column_names"] = list(labels.keys())
 
