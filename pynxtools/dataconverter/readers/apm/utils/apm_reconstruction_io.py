@@ -41,7 +41,7 @@ def extract_data_from_pos_file(file_name: str, prefix: str, template: dict) -> d
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
-    m_z = posfile.get_mass_to_charge()
+    m_z = posfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] \
         = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
@@ -62,7 +62,7 @@ def extract_data_from_epos_file(file_name: str, prefix: str, template: dict) -> 
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
-    m_z = eposfile.get_mass_to_charge()
+    m_z = eposfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] \
         = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit

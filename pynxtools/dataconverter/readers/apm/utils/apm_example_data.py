@@ -58,7 +58,7 @@ MAX_COMPONENTS = 5  # how many different molecular ions in one dataset/entry
 MAX_ATOMS = 10  # determine power-law fraction of n_atoms per ion
 MULTIPLES_FACTOR = 0.6  # controls how likely multiple ions are synthesized
 # the higher this factor the more uniformly and more likely multiplicity > 1
-MAX_CHARGE = 4  # highest allowed charge of ion
+MAX_CHARGE_STATE = 4  # highest allowed charge_state of an ion
 MAX_ATOMIC_NUMBER = 94  # do not include heavier atoms than Plutonium
 MAX_USERS = 4
 
@@ -176,7 +176,7 @@ class ApmCreateExampleData:
         # !! warning: for real world datasets actual ion charge depends
         # on (evaporation) physics, very complicated in fact a topic of current research
         self.charge_state = np.asarray(np.random.uniform(low=1,
-                                                         high=MAX_CHARGE,
+                                                         high=MAX_CHARGE_STATE,
                                                          size=(self.n_components,)),
                                        np.uint32)
 
