@@ -1,10 +1,11 @@
 
-![](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/.github/workflows/pytest.yml/badge.svg)
-![](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/.github/workflows/pylint.yml/badge.svg)
+![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pytest.yml/badge.svg)
+![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pylint.yml/badge.svg)
+![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/publish.yml/badge.svg)
 ![](https://img.shields.io/pypi/pyversions/pynxtools)
 ![](https://img.shields.io/pypi/l/pynxtools)
 ![](https://img.shields.io/pypi/v/pynxtools)
-![](https://coveralls.io/repos/github/nomad-coe/nomad-parser-nexus/badge.svg?branch=master)
+![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master)
 
 `nexusustils` is a tool designed for making your experimental data FAIR.
 It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
