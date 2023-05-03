@@ -23,6 +23,7 @@ import pandas as pd
 import numpy as np
 # import h5py
 from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.readers.ellips.mock import MockEllips
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
@@ -38,6 +39,7 @@ def load_header(filename, default):
         Returns:
             a dict containing the loaded information
     """
+
     with open(filename, 'rt', encoding='utf8') as file:
         header = yaml.safe_load(file)
 
@@ -139,12 +141,62 @@ def populate_template_dict(header, template):
     return template
 
 
+def header_labels(header):
+    """ Define data labels (column names)
+
+    """
+
+    if header["data_type"] == "psi/delta":
+        labels = {"psi": [], "delta": []}
+    elif header["data_type"] == "tan(psi)/cos(delta)":
+        labels = {"tan(psi)": [], "cos(delta)": []}
+    else:
+        labels = {}
+        for i in range(1, 5):
+            for j in range(1, 5):
+                labels.update({f"m{i}{j}": []})
+
+    return labels
+
+
+def mock_function(header):
+    """ Mock ellipsometry data
+
+    """
+
+    mock_header = MockEllips(header)
+    mock_header.mock_template(header)
+
+    # Defining labels:
+    labels = header_labels(header)
+
+    # Atom types: Convert str to list if atom_types is not a list:
+    if isinstance(header["atom_types"], str):
+        header["atom_types"] = header["atom_types"].split(",")
+
+    header["column_names"] = list(labels.keys())
+
+    return header, labels
+
+
+def data_set_dims(whole_data):
+    """ User defined variables to produce slices of the whole data set
+
+    """
+    energy = whole_data['type'].astype(str).values.tolist().count("E")
+    unique_angles, counts = np.unique(whole_data["angle_of_incidence"
+                                                 ].to_numpy()[0:energy].astype("int64"),
+                                      return_counts=True
+                                      )
+
+    return unique_angles, counts
+
+
 class EllipsometryReader(BaseReader):
     """An example reader implementation for the DataConverter.
-
-Importing metadata from the yaml file based on the last
-two parts of the key in the application definition.
-"""
+    Importing metadata from the yaml file based on the last
+    two parts of the key in the application definition.
+    """
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXellipsometry"]
@@ -153,16 +205,16 @@ two parts of the key in the application definition.
     def populate_header_dict_with_datasets(file_paths):
         """This is an ellipsometry-specific processing of data.
 
-    The procedure is the following:
-    - the header dictionary is initialized reading a yaml file
-    - the data are read from header["filename"] and saved in a pandas object
-    - an array is shaped according to application definition in a 5D array (numpy array)
-    - the array is saved in a HDF5 file as a dataset
-    - virtual datasets instances are created in the header dictionary,
-      referencing to data in the created HDF5 file.
-    - the header is finally returned, ready to be parsed in the final template dictionary
+        The procedure is the following:
+        - the header dictionary is initialized reading a yaml file
+        - the data are read from header["filename"] and saved in a pandas object
+        - an array is shaped according to application definition in a 5D array (numpy array)
+        - the array is saved in a HDF5 file as a dataset
+        - virtual datasets instances are created in the header dictionary,
+        referencing to data in the created HDF5 file.
+        - the header is finally returned, ready to be parsed in the final template dictionary
 
-    """
+        """
         header, data_file = populate_header_dict(file_paths)
 
         if os.path.isfile(data_file):
@@ -171,60 +223,68 @@ two parts of the key in the application definition.
             # this we have tried, we should throw an error...
             whole_data = load_as_pandas_array(header["filename"], header)
 
-        # User defined variables to produce slices of the whole data set
-        energy = whole_data['type'].astype(str).values.tolist().count("E")
-        unique_angles, counts = np.unique(whole_data["angle_of_incidence"
-                                                     ].to_numpy()[0:energy].astype("int64"),
-                                          return_counts=True
-                                          )
-        labels = {"psi": [], "delta": []}
+        unique_angles, counts = data_set_dims(whole_data)
+
+        labels = header_labels(header)
+
         block_idx = [np.int64(0)]
         index = 0
         for angle in enumerate(unique_angles):
-            labels["psi"].append(f"psi_{int(angle[1])}deg")
-            labels["delta"].append(f"delta_{int(angle[1])}deg")
+            for key, val in labels.items():
+                val.append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
             block_idx.append(index)
 
         # array that will be allocated in a HDF5 file
-        # counts[0] = N_wavelents*N_time*N_p1
         my_numpy_array = np.empty([1,
                                    1,
                                    len(unique_angles),
-                                   len(['psi', 'delta']),
+                                   len(labels),
                                    counts[0]
                                    ])
 
-        for index, unique_angle in enumerate(unique_angles):
+        for index, angle in enumerate(unique_angles):
             my_numpy_array[0,
                            0,
                            index,
                            :,
-                           :] = unique_angle
-
-        for index in range(len(labels["psi"])):
-            my_numpy_array[0,
-                           0,
-                           index,
-                           0,
-                           :] = whole_data["psi"].to_numpy()[block_idx[index]:block_idx[index + 1]
-                                                             ].astype("float64")
-
-        for index in range(len(labels["delta"])):
-            my_numpy_array[0,
-                           0,
-                           index,
-                           1,
-                           :] = whole_data["delta"].to_numpy()[block_idx[index]:block_idx[index + 1]
+                           :] = angle
+        data_index = 0
+        for key, val in labels.items():
+            for index in range(len(val)):
+                my_numpy_array[0,
+                               0,
+                               index,
+                               data_index,
+                               :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
                                                                ].astype("float64")
+            data_index += 1
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
         header["spectrometer/wavelength"] = (
             whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
         )
+
         header["angle_of_incidence"] = unique_angles
-        return header, labels["psi"], labels["delta"]
+
+        # Create mocked ellipsometry data template:
+        is_mock = True
+        if is_mock:
+            header, labels = mock_function(header)
+            for angle in enumerate(header["angle_of_incidence"]):
+                for key, val in labels.items():
+                    val.append(f"{key}_{int(angle[1])}deg")
+                index += counts[angle[0]]
+                block_idx.append(index)
+
+        # Atom types: Convert str to list if atom_types is not a list:
+        if isinstance(header["atom_types"], str):
+            header["atom_types"] = header["atom_types"].split(",")
+
+        header["column_names"] = list(labels.keys())
+
+        return header, labels
 
     def read(self,
              template: dict = None,
@@ -245,9 +305,13 @@ two parts of the key in the application definition.
             raise Exception("No input files were given to Ellipsometry Reader.")
 
         # The header dictionary is filled with entries.
-        header, psilist, deltalist = (
+        header, labels = (
             EllipsometryReader.populate_header_dict_with_datasets(file_paths)
         )
+
+        data_list = []
+        for val in labels.values():
+            data_list.append(val)
 
         # The template dictionary is filled
         template = populate_template_dict(header, template)
@@ -255,33 +319,26 @@ two parts of the key in the application definition.
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
                                                      "/entry/instrument/spectrometer/wavelength"
                                                      }
-        template["/ENTRY[entry]/plot/wavelength/@units"] = "angstrom"
-
-        for index, psi in enumerate(psilist):
-            template[f"/ENTRY[entry]/plot/{psi}"] = {"link":
-                                                     "/entry/sample/measured_data",
-                                                     "shape":
-                                                     np.index_exp[0, 0, index, 0, :]
-                                                     }
-            template[f"/ENTRY[entry]/plot/{psi}/@units"] = "degrees"
-
-        for index, delta in enumerate(deltalist):
-            template[f"/ENTRY[entry]/plot/{delta}"] = {"link":
-                                                       "/entry/sample/measured_data",
-                                                       "shape":
-                                                       np.index_exp[0, 0, index, 1, :]
-                                                       }
-            template[f"/ENTRY[entry]/plot/{delta}/@units"] = "degrees"
+        template["/ENTRY[entry]/plot/wavelength/@units"] = header["wavelength_unit"]
+        for data_indx in range(0, len(labels.keys())):
+            for index, key in enumerate(data_list[data_indx]):
+                template[f"/ENTRY[entry]/plot/{key}"] = {"link":
+                                                         "/entry/sample/measured_data",
+                                                         "shape":
+                                                         np.index_exp[0, 0, index, data_indx, :]
+                                                         }
+                template[f"/ENTRY[entry]/plot/{key}/@units"] = "degrees"
 
         # Define default plot showing psi and delta at all angles:
         template["/@default"] = "entry"
         template["/ENTRY[entry]/@default"] = "plot"
-        template["/ENTRY[entry]/plot/@signal"] = f"{psilist[0]}"
+        template["/ENTRY[entry]/plot/@signal"] = f"{data_list[0][0]}"
         template["/ENTRY[entry]/plot/@axes"] = "wavelength"
-        if len(psilist) > 1:
-            template["/ENTRY[entry]/plot/@auxiliary_signals"] = psilist[1:] + deltalist
-        else:
-            template["/ENTRY[entry]/plot/@auxiliary_signals"] = deltalist
+
+        # if len(data_list[0]) > 1:
+        template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
+        for index in range(1, len(data_list)):
+            template["/ENTRY[entry]/plot/@auxiliary_signals"] += data_list[index]
 
         return template
 
