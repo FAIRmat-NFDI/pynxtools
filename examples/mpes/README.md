@@ -18,7 +18,7 @@ dataconverter --reader mpes \\
 
 The reader is a tailored parser for research data in a common format. This particular example is able to read and map hdf5 files, as well as json and yaml files. Feel free to contact FAIRmat if you want to create a parser for your research data.
 
-For XPS data you may use the data in [`tests/data/dataconverter/readers/xps`](https://github.com/FAIRmat-NFDI/pynxtools/master/tests/data/dataconverter/readers/xps) with the command
+For XPS data you may use the data in [`tests/data/dataconverter/readers/xps`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests/data/dataconverter/readers/xps) with the command
 
 ```shell
 dataconverter --reader xps \\
