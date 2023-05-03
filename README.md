@@ -1,9 +1,11 @@
-![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pytest.yml/badge.svg)
-![](https://github.com/nomad-coe/nomad-parser-nexus/actions/workflows/pylint.yml/badge.svg)
+
+![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pytest.yml/badge.svg)
+![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pylint.yml/badge.svg)
+![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/publish.yml/badge.svg)
 ![](https://img.shields.io/pypi/pyversions/pynxtools)
 ![](https://img.shields.io/pypi/l/pynxtools)
 ![](https://img.shields.io/pypi/v/pynxtools)
-![](https://coveralls.io/repos/github/nomad-coe/nomad-parser-nexus/badge.svg?branch=master)
+![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master)
 
 `nexusustils` is a tool designed for making your experimental data FAIR.
 It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
@@ -17,31 +19,31 @@ Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 Install this package with
 
 ```shell
-pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
+pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 ```
 
 for the latest development version.
 
 # Scope
 
-`nexusustils` is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
+`pynxtools` (previously called `nexusustils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
 
 Additionally, the software is used in the research data management system NOMAD for
 making experimental data searchable and publishable.
 NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
 (NFDI).
 
-The software tools are located inside [`pynxtools`](https://github.com/nomad-coe/nomad-parser-nexus/tree/master/pynxtools) and they are
-shipped with unit tests located in [`tests`](https://github.com/nomad-coe/nomad-parser-nexus/tree/master/tests).
-Some examples with real datasets are provided in [`examples`](https://github.com/nomad-coe/nomad-parser-nexus/tree/master/examples).
+The software tools are located inside [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools) and they are
+shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
+Some examples with real datasets are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples).
 It guides you through the process of converting instrument raw
 data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**nyaml2nxdl**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/pynxtools/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
-- [**dataconverter**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](https://github.com/nomad-coe/nomad-parser-nexus/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
+- [**nyaml2nxdl**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
+- [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
+- [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
 
 # Contributing
 
@@ -50,7 +52,7 @@ data into the NeXus standard and visualising the files content.
 Install the package with its dependencies:
 
 ```shell
-git clone https://github.com/nomad-coe/nomad-parser-nexus.git \\
+git clone https://github.com/FAIRmat-NFDI/pynxtools.git \\
     --branch master \\
     --recursive pynxtools
 cd pynxtools
@@ -75,7 +77,7 @@ python -m pytest -sv tests
 To ask further questions, to make suggestions how we can improve these tools, to get advice
 on how to build on this work, or to get your parser included into NOMAD, you can:
 
-- Open an issue on the [pynxtools GitHub](https://github.com/nomad-coe/nomad-parser-nexus/issues)
+- Open an issue on the [pynxtools GitHub](https://github.com/FAIRmat-NFDI/pynxtools/issues)
 - Use our forums at [matsci.org](https://matsci.org/c/nomad/32)
 - Write to [support@nomad-lab.eu](mailto:support@nomad-lab.eu)
 - Contact directly the lead developers of the individual parsers.
