@@ -22,8 +22,6 @@
 # MK::2023/05/04 the code in this file can currently not be used when
 # developers have an environment which uses ase==3.19.0 and numpy>=1.2x
 
-import os
-
 import hashlib
 
 import datetime

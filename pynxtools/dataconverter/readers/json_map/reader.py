@@ -52,8 +52,8 @@ def get_val_nested_keystring_from_dict(keystring, data):
     if isinstance(data[current_key], xarray.DataArray):
         return data[current_key].values
     if isinstance(data[current_key], xarray.core.dataset.Dataset):
-        raise Exception("Xarray datasets are not supported. "
-                        "You can only use xarray dataarrays.")
+        raise NotImplementedError("Xarray datasets are not supported. "
+                                  "You can only use xarray dataarrays.")
 
     return data[current_key]
 
@@ -147,9 +147,9 @@ class JsonMapReader(BaseReader):
 
         if mapping is None:
             template = Template({x: "/hierarchical/path/in/your/datafile" for x in template})
-            raise Exception(("Please supply a JSON mapping file: --input-file"
-                             " my_nxdl_map.mapping.json\n\n You can use this "
-                             "template for the required fields: \n" + str(template)))
+            raise IOError("Please supply a JSON mapping file: --input-file"
+                          " my_nxdl_map.mapping.json\n\n You can use this "
+                          "template for the required fields: \n" + str(template))
 
         convert_shapes_to_slice_objects(mapping)
 
