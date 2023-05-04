@@ -215,7 +215,7 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An examp
         id="lists"),
     pytest.param(
         alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/type", "Wrong option"),
-        ("The value at /ENTRY[my_entry]/NXODD_name/type should be one of the following"
+        ("The value at /ENTRY[my_entry]/NXODD_name/type should be on of the following"
          " strings: [1st type,2nd type,3rd type,4th type]"),
         id="wrong-enum-choice"),
     pytest.param(

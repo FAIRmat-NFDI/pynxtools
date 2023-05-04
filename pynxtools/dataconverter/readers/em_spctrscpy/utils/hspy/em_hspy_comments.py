@@ -18,7 +18,7 @@
 #
 """Developer comments."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 
 # ISSUE WITH HSPY DEFAULTS FOR MISSING VENDOR DOCS CAUSING NON-REPRODUCIBLE tSTAMPS

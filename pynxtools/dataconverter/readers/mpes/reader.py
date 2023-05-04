@@ -275,7 +275,7 @@ class MPESReader(BaseReader):
         and returns a filled template dictionary"""
 
         if not file_paths:
-            raise Exception("No input files were given to MPES Reader.")
+            raise IOError("No input files were given to MPES Reader.")
 
         (
             x_array_loaded,

@@ -17,7 +17,7 @@
 #
 """Classes representing groups with NeXus-ish formatted data parsed from hspy."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from typing import Dict
 
@@ -78,14 +78,14 @@ class HspyRectRoiEelsAllSpectra:
         axes_as_expected = np.all(
             np.sort(avail_axis_names) == np.sort(["y", "x", "Energy loss"]))
         if axes_as_expected is False:
-            print(__name__ + " as expected")
+            print(f"\tIn function {__name__} as expected")
             self.is_valid = False
 
     def parse(self, hspy_s3d):
         """Parse a hyperspy Signal3D stack instance into an NX default plottable."""
         if self.is_valid is False:
             pass
-        print("\t" + __name__)
+        print(f"\tIn function {__name__}")
         # self.meta["title"].value = hspy_s3d.metadata["General"]["title"]
         self.meta["long_name"].value = hspy_s3d.metadata["Signal"]["signal_type"]
         # self.meta["long_name"].value = hspy_s3d.metadata["General"]["title"]
@@ -161,14 +161,14 @@ class HspyRectRoiEelsSummarySpectrum:
         axes_as_expected = np.all(
             np.sort(avail_axis_names) == np.sort(["y", "x", "Energy loss"]))
         if axes_as_expected is False:
-            print(__name__ + " as expected")
+            print(f"\tIn function {__name__} as expected")
             self.is_valid = False
 
     def parse(self, hspy_s3d):
         """Summarize the spectra stack into a ROI summary spectrum."""
         if self.is_valid is False:
             pass
-        print("\t" + __name__)
+        print(f"\tIn function {__name__}")
         self.meta["long_name"].value = hspy_s3d.metadata["Signal"]["signal_type"]
         self.meta["title"].value = hspy_s3d.metadata["Signal"]["signal_type"]
         axes_dict = hspy_s3d.axes_manager.as_dictionary()
@@ -235,7 +235,7 @@ class NxSpectrumSetEmEels:
         """Extract from hspy class instances what NOMAD OASIS understands."""
         if self.is_valid is False:
             pass
-        print("\t" + __name__)
+        print(f"\tIn function {__name__}")
         for hspy_clss in hspy_list:
             if isinstance(hspy_clss, hs.signals.EELSSpectrum) is True:
                 assert hspy_clss.data.ndim in [3], \
@@ -246,78 +246,79 @@ class NxSpectrumSetEmEels:
                     self.summary_data.append(
                         HspyRectRoiEelsSummarySpectrum(hspy_clss))
 
-    def report(self, prefix: str, frame_id: int, template: dict) -> dict:
+    def report(self, prefix: str, frame_id: int,
+               ifo: dict, template: dict) -> dict:
         """Enter data from the NX-specific representation into the template."""
         if self.is_valid is False:
-            print("\t" + __name__ + " reporting nothing!")
+            print(f"\t{__name__} reporting nothing!")
             return template
-        print("\t" + __name__ + " reporting...")
+        print(f"\t{__name__} reporting...")
         assert (len(self.stack_data) >= 0) and (len(self.stack_data) <= 1), \
             "More than one spectrum stack is currently not supported!"
         assert (len(self.summary_data) >= 0) and (len(self.summary_data) <= 1), \
             "More than one sum spectrum stack is currently not supported!"
 
-        trg = prefix + "SPECTRUM_SET_EM_EELS[spectrum_set_em_eels" + str(frame_id) + "]/"
         if len(self.stack_data) == 1:
-            # template[trg + "program"] = "hyperspy"
-            # template[trg + "program/@version"] = hs.__version__
-            prfx = trg + "stack/"
-            template[prfx + "title"] = "EELS spectra stack"
-            # template[prfx + "@long_name"] \
-            #     = self.stack_data[0].meta["long_name"].value
-            template[prfx + "@signal"] = "data_counts"
-            template[prfx + "@axes"] = ["axis_y", "axis_x", "axis_energy_loss"]
-            template[prfx + "@AXISNAME[axis_energy_loss_indices]"] = 2
-            template[prfx + "@AXISNAME[axis_x_indices]"] = 1
-            template[prfx + "@AXISNAME[axis_y_indices]"] = 0
-            template[prfx + "DATA[data_counts]"] \
+            trg = f"{prefix}eels/PROCESS[process1]/"
+            template[f"{trg}PROGRAM[program1]/program"] = "hyperspy"
+            template[f"{trg}PROGRAM[program1]/program/@version"] = hs.__version__
+            template[f"{trg}mode"] = "n/a"
+            template[f"{trg}detector_identifier"] = "n/a"
+            template[f"{trg}source"] = ifo["source_file_name"]
+            template[f"{trg}source/@version"] = ifo["source_file_version"]
+
+            trg = f"{prefix}eels/stack/"
+            template[f"{trg}title"] = "EELS spectra stack"
+            # template[f"{trg}@long_name"] = self.stack_data[0].meta["long_name"].value
+            template[f"{trg}@signal"] = "data_counts"
+            template[f"{trg}@axes"] = ["axis_y", "axis_x", "axis_energy_loss"]
+            template[f"{trg}@AXISNAME[axis_energy_loss_indices]"] = np.uint32(2)
+            template[f"{trg}@AXISNAME[axis_x_indices]"] = np.uint32(1)
+            template[f"{trg}@AXISNAME[axis_y_indices]"] = np.uint32(0)
+            template[f"{trg}DATA[data_counts]"] \
                 = {"compress": self.stack_data[0].meta["counts"].value,
                    "strength": 1}
-            template[prfx + "DATA[data_counts]/@units"] = ""
-            template[prfx + "DATA[data_counts]/@long_name"] = "Signal (a.u.)"
-            template[prfx + "AXISNAME[axis_energy_loss]"] \
+            template[f"{trg}DATA[data_counts]/@units"] = ""
+            template[f"{trg}DATA[data_counts]/@long_name"] = "Signal (a.u.)"
+            template[f"{trg}AXISNAME[axis_energy_loss]"] \
                 = {"compress": self.stack_data[0].meta["energy_loss"].value,
                    "strength": 1}
-            template[prfx + "AXISNAME[axis_energy_loss]/@units"] \
+            template[f"{trg}AXISNAME[axis_energy_loss]/@units"] \
                 = self.stack_data[0].meta["energy_loss"].unit
-            template[prfx + "AXISNAME[axis_energy_loss]/@long_name"] \
-                = "Electron energy loss (" \
-                  + self.stack_data[0].meta["energy_loss"].unit + ")"
-            template[prfx + "AXISNAME[axis_x]"] \
+            template[f"{trg}AXISNAME[axis_energy_loss]/@long_name"] \
+                = f"Electron energy loss ({self.stack_data[0].meta['energy_loss'].unit})"
+            template[f"{trg}AXISNAME[axis_x]"] \
                 = {"compress": self.stack_data[0].meta["xpos"].value,
                    "strength": 1}
-            template[prfx + "AXISNAME[axis_x]/@units"] \
+            template[f"{trg}AXISNAME[axis_x]/@units"] \
                 = self.stack_data[0].meta["xpos"].unit
-            template[prfx + "AXISNAME[axis_x]/@long_name"] \
-                = "x (" + self.stack_data[0].meta["xpos"].unit + ")"
-            template[prfx + "AXISNAME[axis_y]"] \
+            template[f"{trg}AXISNAME[axis_x]/@long_name"] \
+                = f"x ({self.stack_data[0].meta['xpos'].unit})"
+            template[f"{trg}AXISNAME[axis_y]"] \
                 = {"compress": self.stack_data[0].meta["ypos"].value,
                    "strength": 1}
-            template[prfx + "AXISNAME[axis_y]/@units"] \
+            template[f"{trg}AXISNAME[axis_y]/@units"] \
                 = self.stack_data[0].meta["ypos"].unit
-            template[prfx + "AXISNAME[axis_y]/@long_name"] \
-                = "y (" + self.stack_data[0].meta["ypos"].unit + ")"
+            template[f"{trg}AXISNAME[axis_y]/@long_name"] \
+                = f"y ({self.stack_data[0].meta['ypos'].unit})"
 
         if len(self.summary_data) == 1:
-            prfx = trg + "summary/"
-            template[prfx + "title"] = "Accumulated EELS spectrum"
-            # template[prfx + "@long_name"] \
-            #     = self.summary_data[0].meta["long_name"].value
-            template[prfx + "@signal"] = "data_counts"
-            template[prfx + "@axes"] = ["axis_energy_loss"]
-            template[prfx + "@AXISNAME[axis_energy_loss_indices]"] = 0
-            template[prfx + "DATA[data_counts]"] \
+            trg = f"{prefix}eels/summary/"
+            template[f"{trg}title"] = "Accumulated EELS spectrum"
+            # template[f"{trg}@long_name"] = self.summary_data[0].meta["long_name"].value
+            template[f"{trg}@signal"] = "data_counts"
+            template[f"{trg}@axes"] = ["axis_energy_loss"]
+            template[f"{trg}@AXISNAME[axis_energy_loss_indices]"] = np.uint32(0)
+            template[f"{trg}DATA[data_counts]"] \
                 = {"compress": self.summary_data[0].meta["counts"].value,
                    "strength": 1}
-            template[prfx + "DATA[data_counts]/@units"] = ""
-            template[prfx + "DATA[data_counts]/@long_name"] = "Signal (a.u.)"
-            template[prfx + "AXISNAME[axis_energy_loss]"] \
+            template[f"{trg}DATA[data_counts]/@long_name"] = "Signal (a.u.)"
+            template[f"{trg}AXISNAME[axis_energy_loss]"] \
                 = {"compress": self.summary_data[0].meta["energy_loss"].value,
                    "strength": 1}
-            template[prfx + "AXISNAME[axis_energy_loss]/@units"] \
+            template[f"{trg}AXISNAME[axis_energy_loss]/@units"] \
                 = self.summary_data[0].meta["energy_loss"].unit
-            template[prfx + "AXISNAME[axis_energy_loss]/@long_name"] \
-                = "Electron energy loss (" \
-                  + self.summary_data[0].meta["energy_loss"].unit + ")"
+            template[f"{trg}AXISNAME[axis_energy_loss]/@long_name"] \
+                = f"Energy loss ({self.summary_data[0].meta['energy_loss'].unit})"
 
         return template
