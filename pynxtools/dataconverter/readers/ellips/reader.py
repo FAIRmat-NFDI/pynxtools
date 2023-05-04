@@ -302,7 +302,7 @@ class EllipsometryReader(BaseReader):
         """
 
         if not file_paths:
-            raise Exception("No input files were given to Ellipsometry Reader.")
+            raise IOError("No input files were given to Ellipsometry Reader.")
 
         # The header dictionary is filled with entries.
         header, labels = (

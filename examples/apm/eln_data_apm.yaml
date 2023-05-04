@@ -1,84 +1,82 @@
+atom_probe:
+  analysis_chamber_pressure:
+    unit: torr
+    value: 1.0e-10
+  control_software_program: IVAS
+  control_software_program__attr_version: 3.6.4
+  fabrication_capabilities: n/a
+  fabrication_identifier: n/a
+  fabrication_model: LEAP3000
+  fabrication_vendor: AMETEK/Cameca
+  flight_path_length:
+    unit: m
+    value: 0.9
+  instrument_name: LEAP 3000
+  ion_detector_model: cameca
+  ion_detector_name: none
+  ion_detector_serial_number: n/a
+  ion_detector_type: mcp_dld
+  local_electrode_name: electrode 1
+  pulser:
+    laser_source_name: laser
+    laser_source_power:
+      unit: W
+      value: 2.0e-08
+    laser_source_pulse_energy:
+      unit: J
+      value: 1.2e-11
+    laser_source_wavelength:
+      unit: m
+      value: 4.8e-07
+    pulse_fraction: 0.1
+    pulse_frequency:
+      unit: kHz
+      value: 250
+    pulse_mode: laser
+  reflectron_applied: true
+  specimen_monitoring_detection_rate: 0.6
+  specimen_monitoring_initial_radius:
+    unit: nm
+    value: 30
+  specimen_monitoring_shank_angle:
+    unit: °
+    value: 5
+  stage_lab_base_temperature:
+    unit: K
+    value: 30
+  status: success
 entry:
-  attr_version: nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951
+  attr_version: nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696
   definition: NXapm
+  end_time: '2022-09-22T20:00:00+00:00'
+  experiment_description: some details for nomad, ODS steel precipitates for testing
+    a developmental clustering algorithm called OPTICS.
   experiment_identifier: R31-06365-v02
-  experiment_description: some details for nomad, ODS steel precipitates for testing a developmental clustering algorithm called OPTICS.
-  start_time: '2017-07-03T09:49:00+00:00'
-  end_time: '2017-07-03T10:23:00+00:00'
+  operation_mode: apt
   program: IVAS
   program__attr_version: 3.6.4
   run_number: '6365'
-  operation_mode: apt
-user:
-- name: Jing Wang
-- name: Daniel Schreiber
+  start_time: '2022-09-20T20:00:00+00:00'
+ranging:
+  program: IVAS
+  program__attr_version: 3.6.4
+reconstruction:
+  crystallographic_calibration: n/a
+  parameter: kf = 1.8, ICF = 1.02, Vat = 60 at/nm^3
+  program: IVAS
+  program__attr_version: 3.6.4
+  protocol_name: cameca
 specimen:
-  name: ODS-Specimen 1
-  sample_history: undocumented
-  preparation_date: '2017-06-13T09:52:00+00:00'
-  short_title: ODS
   atom_types:
   - Fe
   - Cr
   - Y
   - O
   description: ODS steel, i.e. material with Y2O3 dispersoids
-atom_probe:
-  instrument_name: LEAP 3000
-  location: PNNL, Portland
-  flight_path_length:
-    unit: m
-    value: 0.9
-  field_of_view:
-    unit: nm
-    value: 30.0
-  fabrication_vendor: AMETEK/Cameca
-  fabrication_model: LEAP3000
-  fabrication_identifier: n/a
-  fabrication_capabilities: '-----'
-  reflectron_applied: true
-  local_electrode_name: electrode 1
-  ion_detector_type: mcp_dld
-  ion_detector_name: unnamed
-  ion_detector_model: Cameca
-  ion_detector_serial_number: not disclosed
-  stage_lab_base_temperature:
-    unit: K
-    value: 30
-  analysis_chamber_pressure:
-    unit: torr
-    value: 1.0e-10
-  specimen_monitoring_initial_radius:
-    unit: nm
-    value: 30.000000000000004
-  specimen_monitoring_shank_angle:
-    unit: "\xB0"
-    value: 5
-  specimen_monitoring_detection_rate: 0.6
-  # reflectron_applied: false, in the ELN GUI the field was not ticked
-  # therefore the quantities is not picked up by this eln_data
-  control_software_program: IVAS
-  control_software_program__attr_version: 3.6.4
-  pulser:
-    pulse_fraction: 0.1
-    pulse_frequency:
-      unit: kHz
-      value: 250
-    pulse_mode: laser
-    laser_gun_name: Cameca
-    laser_gun_wavelength:
-      unit: nm
-      value: 480.
-    # laser_gun_power:
-    laser_gun_pulse_energy:
-      unit: pJ
-      value: 20.
-reconstruction:
-  program: IVAS
-  program__attr_version: 3.6.4
-  protocol_name: cameca
-  parameter: kf = 1.8, ICF = 1.02, Vat = 60 at/nm^3
-  crystallographic_calibration: n/a
-ranging:
-  program: IVAS
-  program__attr_version: 3.6.4
+  name: ODS-Specimen 1
+  preparation_date: '2022-09-12T20:01:00+00:00'
+  sample_history: undocumented
+  short_title: ODS
+user:
+- name: Jing Wang
+- name: Daniel Schreiber

@@ -37,7 +37,7 @@ definitions:
                 type:
                   type_kind: Enum
                   type_data:
-                    - 'nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951'
+                    - 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
                 description: Hashvalue of the NeXus application definition file
                 m_annotations:
                   eln:
@@ -481,9 +481,9 @@ definitions:
                   m_annotations:
                     eln:
                   quantities:
-                    type:
+                    local_name:
                       type: str
-                      description: Free text option to write further details about the detector.
+                      description: Instrument-specific alias/name
                       m_annotations:
                         eln:
                           component: StringEditQuantity

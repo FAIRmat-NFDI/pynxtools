@@ -17,6 +17,6 @@
 #
 """Classes representing groups with NeXus-ish formatted data parsed from H5OINA."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 # place where to place code for loading Oxford Instrument H5OINA files
