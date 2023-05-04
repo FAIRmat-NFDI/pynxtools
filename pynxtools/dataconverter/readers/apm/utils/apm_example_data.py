@@ -19,7 +19,10 @@
 
 # pylint: disable=no-member,duplicate-code,too-many-instance-attributes,attribute-defined-outside-init
 
-# E1101, R0801, R0902, W0201
+# MK::2023/05/04 the code in this file can currently not be used when
+# developers have an environment which uses ase==3.19.0 and numpy>=1.2x
+
+import os
 
 import hashlib
 
@@ -29,6 +32,7 @@ from typing import List
 
 import numpy as np
 
+import ase
 from ase.lattice.cubic import FaceCenteredCubic
 from ase.data import atomic_numbers, atomic_masses, chemical_symbols
 
@@ -105,6 +109,7 @@ class ApmCreateExampleData:
 
         # assumptions:
         # identity orientation, no periodic boundary conditions
+        print(f"Using the following version of ase {ase.__version__}")
         xyz = np.asarray(FaceCenteredCubic(directions=CRYSTAL_ORIENTATION,
                                            size=RECON_SIZE, symbol="Cu",
                                            latticeconstant=RECON_ATOM_SPACING,
