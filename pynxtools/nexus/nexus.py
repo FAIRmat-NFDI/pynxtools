@@ -43,32 +43,64 @@ If it is empty, this function is filling it"""
         return os.path.join(local_dir, f"..{os.sep}definitions")
 
 
-def get_nx_class_path(hdf_node):
+def get_hdf_root(hdf_node):
+    node = hdf_node
+    while node.name != '/':
+        node = node.parent
+    return node
+
+
+def get_hdf_parent(hdf_info):
+    if 'hdf_path' not in hdf_info:
+        return hdf_info['hdf_node'].parent
+    node = get_hdf_root(hdf_info['hdf_node']) if 'hdf_root' not in hdf_info \
+        else hdf_info['hdf_root']
+    for child_name in hdf_info['hdf_path'].split('/'):
+        node = node[child_name]
+    return node
+
+
+def get_parent_path(hdf_name):
+    return '/'.join(hdf_name.split('/')[:-1])
+
+
+def get_hdf_info_parent(hdf_info):
+    if 'hdf_path' not in hdf_info:
+        return {'hdf_node': hdf_info['hdf_node'].parent}
+    node = get_hdf_root(hdf_info['hdf_node']) if 'hdf_root' not in hdf_info \
+        else hdf_info['hdf_root']
+    for child_name in hdf_info['hdf_path'].split('/')[1:-1]:
+        node = node[child_name]
+    return {'hdf_node': node, 'hdf_path': get_parent_path(hdf_info['hdf_path'])}
+
+
+def get_nx_class_path(hdf_info):
     """Get the full path of an HDF5 node using nexus classes
 in case of a field, end with the field name"""
+    hdf_node = hdf_info['hdf_node']
     if hdf_node.name == '/':
         return ''
     if isinstance(hdf_node, h5py.Group):
-        return get_nx_class_path(hdf_node.parent) + '/' + \
+        return get_nx_class_path(get_hdf_info_parent(hdf_info)) + '/' + \
             (hdf_node.attrs['NX_class'] if 'NX_class' in hdf_node.attrs.keys() else
              hdf_node.name.split('/')[-1])
     if isinstance(hdf_node, h5py.Dataset):
         return get_nx_class_path(
-            hdf_node.parent) + '/' + hdf_node.name.split('/')[-1]
+            get_hdf_info_parent(hdf_info)) + '/' + hdf_node.name.split('/')[-1]
     return ''
 
 
-def get_nxdl_entry(hdf_node):
+def get_nxdl_entry(hdf_info):
     """Get the nxdl application definition for an HDF5 node"""
-    entry = hdf_node
-    while isinstance(entry, h5py.Dataset) or \
-            'NX_class' not in entry.attrs.keys() or \
-            entry.attrs['NX_class'] != 'NXentry':
-        entry = entry.parent
-        if entry.name == '/':
+    entry = hdf_info
+    while isinstance(entry['hdf_node'], h5py.Dataset) or \
+            'NX_class' not in entry['hdf_node'].attrs.keys() or \
+            entry['hdf_node'].attrs['NX_class'] != 'NXentry':
+        entry = get_hdf_info_parent(entry)
+        if entry['hdf_node'].name == '/':
             return 'NO NXentry found'
     try:
-        nxdef = entry['definition'][()]
+        nxdef = entry['hdf_node']['definition'][()]
         return nxdef.decode()
     except KeyError:  # 'NO Definition referenced'
         return "NXentry"
@@ -538,11 +570,12 @@ def get_node_concept_path(elem):
     return str(elem.get('nxdlbase').split('/')[-1] + ":" + elem.get('nxdlpath'))
 
 
-def get_nxdl_doc(hdf_node, logger, doc, attr=False):
+def get_nxdl_doc(hdf_info, logger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)"""
+    hdf_node = hdf_info['hdf_node']
     # new way: retrieve multiple inherited base classes
     (class_path, nxdl_path, elist) = \
-        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_node), hdf_node=hdf_node)
+        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_info=hdf_info)
     elem = elist[0] if class_path and elist else None
     if doc:
         logger.debug("classpath: " + str(class_path))
@@ -550,7 +583,7 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
                      "classes:\n" + "\n".join
                      (get_node_concept_path(e) for e in elist))
     # old solution with a single elem instead of using elist
-    path = get_nx_class_path(hdf_node)
+    path = get_nx_class_path(hdf_info)
     req_str = None
     if elem is not None and attr:  # NX_class is a compulsory attribute for groups in a nexus file
         # which should match the type of the corresponding NXDL element
@@ -601,7 +634,7 @@ def get_nxdl_doc(hdf_node, logger, doc, attr=False):
                                                                                      elist,
                                                                                      attr,
                                                                                      hdf_node)
-    return (req_str, get_nxdl_entry(hdf_node), nxdl_path)
+    return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
 
 
 def get_doc(node, ntype, nxhtml, nxpath):
@@ -807,9 +840,9 @@ def walk_elist(elist, html_name):
     return elist, html_name
 
 
-def helper_get_inherited_nodes(hdf_info, elist, pind, attr):
+def helper_get_inherited_nodes(hdf_info2, elist, pind, attr):
     """find the best fitting name in all children"""
-    hdf_path, hdf_node, hdf_class_path = hdf_info
+    hdf_path, hdf_node, hdf_class_path = hdf_info2
     hdf_name = hdf_path[pind]
     hdf_class_name = hdf_class_path[pind]
     if pind < len(hdf_path) - (2 if attr else 1):
@@ -832,10 +865,16 @@ def helper_get_inherited_nodes(hdf_info, elist, pind, attr):
     return hdf_path, hdf_node, hdf_class_path, elist, pind, attr, html_name
 
 
+def get_hdf_path(hdf_info):
+    if 'hdf_path' in hdf_info:
+        return hdf_info['hdf_path'].split('/')[1:]
+    return hdf_info['hdf_node'].name.split('/')[1:]
+
+
 # @lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,
                         nx_name: str = None, elem: ET.Element = None,
-                        hdf_node=None, attr=False):
+                        hdf_info=None, attr=False):
     """Returns a list of ET.Element for the given path."""
     # let us start with the given definition file
     elist = []  # type: ignore[var-annotated]
@@ -843,9 +882,10 @@ def get_inherited_nodes(nxdl_path: str = None,
     nxdl_elem_path = [elist[0]]
 
     class_path = []  # type: ignore[var-annotated]
-    if hdf_node is not None:
-        hdf_path = hdf_node.name.split('/')[1:]
-        hdf_class_path = get_nx_class_path(hdf_node).split('/')[1:]
+    if hdf_info is not None:
+        hdf_node = hdf_info['hdf_node']
+        hdf_path = get_hdf_path(hdf_info)
+        hdf_class_path = get_nx_class_path(hdf_info).split('/')[1:]
         if attr:
             hdf_path.append(attr)
             hdf_class_path.append(attr)
@@ -854,10 +894,10 @@ def get_inherited_nodes(nxdl_path: str = None,
         html_path = nxdl_path.split('/')[1:]
         path = html_path
     for pind in range(len(path)):
-        if hdf_node is not None:
-            hdf_info = [hdf_path, hdf_node, hdf_class_path]
+        if hdf_info is not None:
+            hdf_info2 = [hdf_path, hdf_node, hdf_class_path]
             [hdf_path, hdf_node, hdf_class_path, elist,
-             pind, attr, html_name] = helper_get_inherited_nodes(hdf_info, elist,
+             pind, attr, html_name] = helper_get_inherited_nodes(hdf_info2, elist,
                                                                  pind, attr)
             if html_name is None:  # return if NOT IN SCHEMA
                 return (class_path, nxdl_elem_path, None)
@@ -911,10 +951,10 @@ TODO:
     else:
         logger.debug(
             f"===== GROUP (/{hdf_path} "
-            f"[{get_nxdl_entry(hdf_node)}"
-            f"::{get_nx_class_path(hdf_node)}]): {hdf_node}"
+            f"[{get_nxdl_entry(hdf_info)}"
+            f"::{get_nx_class_path(hdf_info)}]): {hdf_node}"
         )
-    (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_node, logger, doc)
+    (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc)
     if parser is not None and isinstance(hdf_node, h5py.Dataset):
         parser({"hdf_info": hdf_info,
                 "nxdef": nxdef,
@@ -926,7 +966,7 @@ TODO:
         val = str(value).split('\n')
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
         (req_str, nxdef, nxdl_path) = \
-            get_nxdl_doc(hdf_node, logger, doc, attr=key)
+            get_nxdl_doc(hdf_info, logger, doc, attr=key)
         if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
             parser({"hdf_info": hdf_info,
                     "nxdef": nxdef,
@@ -1127,14 +1167,15 @@ def axis_helper(dim, nxdata, signal, axes, logger):
         )
 
 
-def get_all_is_a_rel_from_hdf_node(hdf_node, logger=None):
+def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path, logger=None):
     """Return list of nxdl concept paths for a nxdl element which corresponds to
     hdf node.
     """
+    hdf_info = {'hdf_path': hdf_path, 'hdf_node': hdf_node}
     (_, _, elist) = \
-        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_node), hdf_node=hdf_node)
+        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_info=hdf_info)
     inheritance_list = []
-    inheritance_list.append(hdf_node_to_self_concept_path(hdf_node, None))
+    inheritance_list.append(hdf_node_to_self_concept_path(hdf_info, None))
     if elist:
         for elem in elist:
             tmp_path = elem.get('nxdlbase').split('.nxdl')[0]
@@ -1149,14 +1190,14 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, logger=None):
     return []
 
 
-def hdf_node_to_self_concept_path(hdf_node, logger):
+def hdf_node_to_self_concept_path(hdf_info, logger):
     """ Get concept or nxdl path from given hdf_node.
     """
     # The bellow logger is for deactivatine unnecessary debug message above
     if logger is None:
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
-    (_, _, nxdl_path) = get_nxdl_doc(hdf_node, logger, None)
+    (_, _, nxdl_path) = get_nxdl_doc(hdf_info, logger, None)
     con_path = ''
     if nxdl_path:
         for nd_ in nxdl_path:
@@ -1189,7 +1230,7 @@ class HandleNexus:
               and hdf_name in (self.d_inq_nd, self.d_inq_nd[1:])):
             process_node(hdf_node, '/' + hdf_name, self.parser, self.logger)
         elif self.c_inq_nd is not None:
-            ren_con = get_all_is_a_rel_from_hdf_node(hdf_node, None)
+            ren_con = get_all_is_a_rel_from_hdf_node(hdf_node, '/' + hdf_name, None)
             if self.c_inq_nd in ren_con:
                 self.hdf_path_list_for_c_inq_nd.append(hdf_name)
 
