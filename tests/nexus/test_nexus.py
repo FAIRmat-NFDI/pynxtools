@@ -230,9 +230,6 @@ def test_d_option(tmp_path):
     To check -d option for default NXarpes test data file.
     """
 
-    local_path = os.path.dirname(__file__)
-    path_to_ref_files = os.path.join(local_path, '../data/nexus/')
-    ref_file = path_to_ref_files + 'Ref1_d_option_test.log'
     tmp_file = os.path.join(tmp_path, 'd_option_1_test.log')
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -249,4 +246,5 @@ def test_d_option(tmp_path):
     with open(tmp_file, encoding='utf-8', mode='r') as tmp_f:
         tmp = tmp_f.readlines()
 
-    assert tmp[0] == 'DEBUG: ===== FIELD (//entry/instrument/analyser/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">\n'
+    assert tmp[0] == 'DEBUG: ===== FIELD (//entry/instrument/analyser/data): ' + \
+        '<HDF5 dataset "data": shape (80, 146, 195), type "<f4">\n'

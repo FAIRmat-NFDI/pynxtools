@@ -1194,6 +1194,7 @@ class HandleNexus:
                 self.hdf_path_list_for_c_inq_nd.append(hdf_name)
 
     def not_yet_visited(self, root, name):
+        """checking if a new node has already been visited in its path"""
         path = name.split('/')
         for i in range(1, len(path)):
             act_path = '/'.join(path[:i])
@@ -1203,6 +1204,7 @@ class HandleNexus:
         return True
 
     def full_visit(self, root, hdf_node, name, func):
+        """visiting recursivly all children, but avoiding endless cycles"""
         # print(name)
         if len(name) > 0:
             func(name, hdf_node)
