@@ -3023,6 +3023,22 @@ DEBUG -
 				increasing displacement. For general axes, an appropriate direction
 				should be chosen.
 			
+DEBUG - ===== FIELD (//entry/instrument/momentum_resolution): <HDF5 dataset "momentum_resolution": shape (), type "<f8">
+DEBUG - value: 0.08 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/momentum_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXinstrument.nxdl.xml:/momentum_resolution):
+DEBUG - 
+             Momentum resolution of the experiment (FWHM)
+        
+DEBUG - ===== ATTRS (//entry/instrument/momentum_resolution@units)
+DEBUG - value: 1/angstrom 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/momentum_resolution
+DEBUG - @units [NX_WAVENUMBER]
 DEBUG - ===== FIELD (//entry/instrument/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'Time-of-flight momentum microscope equipped delay line detector, at the endstation of the high rep-rate HHG source at FHI' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_CHAR']
@@ -4101,6 +4117,22 @@ NXentry.nxdl.xml:/SAMPLE
 NXsample.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
+DEBUG - ===== FIELD (//entry/sample/bias): <HDF5 dataset "bias": shape (), type "<f8">
+DEBUG - value: 17.799719004221362 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
+DEBUG - classes:
+NXsample.nxdl.xml:/bias
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXsample.nxdl.xml:/bias):
+DEBUG - 
+             Voltage applied to sample and sample holder.
+        
+DEBUG - ===== ATTRS (//entry/sample/bias@units)
+DEBUG - value: V 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
+DEBUG - classes:
+NXsample.nxdl.xml:/bias
+DEBUG - @units [NX_VOLTAGE]
 DEBUG - ===== FIELD (//entry/sample/chemical_formula): <HDF5 dataset "chemical_formula": shape (), type "|O">
 DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
@@ -4309,6 +4341,31 @@ DEBUG -
              stored; the relevant components will be indicated by the entry in the
              sample_component member.
         
+DEBUG - ===== FIELD (//entry/sample/temperature): <HDF5 dataset "temperature": shape (), type "<f8">
+DEBUG - value: 23.050763803680983 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/temperature
+NXsample.nxdl.xml:/temperature
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/temperature):
+DEBUG - 
+                     In the case of a fixed temperature measurement this is the scalar temperature of
+                     the sample. In the case of an experiment in which the temperature is changed and
+                     recoded, this is an array of length m of temperatures. This should be a link to
+                     /entry/instrument/manipulator/sample_temperature.
+                
+DEBUG - documentation (NXsample.nxdl.xml:/temperature):
+DEBUG - 
+             Sample temperature. This could be a scanned variable
+        
+DEBUG - ===== ATTRS (//entry/sample/temperature@units)
+DEBUG - value: K 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/temperature
+NXsample.nxdl.xml:/temperature
+DEBUG - @units [NX_TEMPERATURE]
 DEBUG - ===== GROUP (//entry/sample/transformations [NXmpes::/NXentry/NXsample/NXtransformations]): <HDF5 group "/entry/sample/transformations" (7 members)>
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations']
 DEBUG - classes:
