@@ -1193,11 +1193,30 @@ class HandleNexus:
             if self.c_inq_nd in ren_con:
                 self.hdf_path_list_for_c_inq_nd.append(hdf_name)
 
+    def not_yet_visited(self, root, name):
+        path = name.split('/')
+        for i in range(1, len(path)):
+            act_path = '/'.join(path[:i])
+            # print(act_path+' - '+name)
+            if root['/' + act_path] == root['/' + name]:
+                return False
+        return True
+
+    def full_visit(self, root, hdf_node, name, func):
+        # print(name)
+        if len(name) > 0:
+            func(name, hdf_node)
+        if isinstance(hdf_node, h5py.Group):
+            for ch_name, child in hdf_node.items():
+                full_name = ch_name if len(name) == 0 else name + '/' + ch_name
+                if self.not_yet_visited(root, full_name):
+                    self.full_visit(root, child, full_name, func)
+
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes"""
         self.parser = parser
         self.in_file = h5py.File(self.input_file_name, 'r')
-        self.in_file.visititems(self.visit_node)
+        self.full_visit(self.in_file, self.in_file, '', self.visit_node)
         if self.d_inq_nd is None and self.c_inq_nd is None:
             get_default_plotable(self.in_file, self.logger)
         # To log the provided concept and concepts founded

@@ -210,3 +210,43 @@ def test_c_option(tmp_path):
         tmp = tmp_f.readlines()
 
     assert tmp == ref
+
+    logger.removeHandler(handler)
+    handler = logging.FileHandler(tmp_file, 'w')
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    nexus_helper = nexus.HandleNexus(logger, None, None, '/NXdetector/data')
+    nexus_helper.process_nexus_master_file(None)
+
+    with open(tmp_file, encoding='utf-8', mode='r') as tmp_f:
+        tmp = tmp_f.readlines()
+    assert tmp[0] == 'INFO: entry/instrument/analyser/data\n'
+
+
+def test_d_option(tmp_path):
+    """
+    To check -d option for default NXarpes test data file.
+    """
+
+    local_path = os.path.dirname(__file__)
+    path_to_ref_files = os.path.join(local_path, '../data/nexus/')
+    ref_file = path_to_ref_files + 'Ref1_d_option_test.log'
+    tmp_file = os.path.join(tmp_path, 'd_option_1_test.log')
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    handler = logging.FileHandler(tmp_file, 'w')
+
+    handler = logging.FileHandler(tmp_file, 'w')
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    nexus_helper = nexus.HandleNexus(logger, None, '/entry/instrument/analyser/data', None)
+    nexus_helper.process_nexus_master_file(None)
+
+    with open(tmp_file, encoding='utf-8', mode='r') as tmp_f:
+        tmp = tmp_f.readlines()
+
+    assert tmp[0] == 'DEBUG: ===== FIELD (//entry/instrument/analyser/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">\n'
