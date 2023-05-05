@@ -546,8 +546,97 @@ DEBUG - documentation (NXdetector.nxdl.xml:/amplifier_type):
 DEBUG - 
              Type of electron amplifier, MCP, channeltron, etc.
         
+DEBUG - ===== FIELD (//entry/instrument/analyser/angles): <HDF5 dataset "angles": shape (80,), type "<f8">
+DEBUG - value: [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031 ...
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles):
+DEBUG - 
+            Angular axis of the analyser data
+            which dimension the axis applies to is defined
+            using the normal NXdata methods.
+          
+DEBUG - ===== ATTRS (//entry/instrument/analyser/angles@target)
+DEBUG - value: /entry/instrument/analyser/angles 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
+DEBUG - @target - IS NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/instrument/analyser/angles@units)
+DEBUG - value: 1/Å 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
+DEBUG - @units [NX_ANGLE]
 DEBUG - ===== FIELD (//entry/instrument/analyser/contrast_aperture): <HDF5 dataset "contrast_aperture": shape (), type "|O">
 DEBUG - value: b'Out' 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/analyser/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
+DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data
+NXdetector.nxdl.xml:/data
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data):
+DEBUG - 
+DEBUG - documentation (NXdetector.nxdl.xml:/data):
+DEBUG - 
+             Data values from the detector. The rank and dimension ordering should follow a principle of
+             slowest to fastest measurement axes and may be explicitly specified in application definitions.
+             
+             Mechanical scanning of objects (e.g. sample position/angle, incident beam energy, etc) tends to be
+             the slowest part of an experiment and so any such scan axes should be allocated to the first dimensions
+             of the array. Note that in some cases it may be useful to represent a 2D set of scan points as a single
+             scan-axis in the data array, especially if the scan pattern doesn't fit a rectangular array nicely.
+             Repetition of an experiment in a time series tends to be used similar to a slow scan axis
+             and so will often be in the first dimension of the data array.
+             
+             The next fastest axes are typically the readout of the detector. A point detector will not add any dimensions
+             (as it is just a single value per scan point) to the data array, a strip detector will add one dimension, an
+             imaging detector will add two dimensions (e.g. X, Y axes) and detectors outputting higher dimensional data
+             will add the corresponding number of dimensions. Note that the detector dimensions don't necessarily have to
+             be written in order of the actual readout speeds - the slowest to fastest rule principle is only a guide.
+             
+             Finally, detectors that operate in a time-of-flight mode, such as a neutron spectrometer or a silicon drift
+             detector (used for X-ray fluorescence) tend to have their dimension(s) added to the last dimensions in the data array.
+             
+             The type of each dimension should should follow the order of scan points, detector pixels,
+             then time-of-flight (i.e. spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
+             shown here are merely illustrative of coordination between related datasets.
+        
+DEBUG - ===== ATTRS (//entry/instrument/analyser/data@target)
+DEBUG - value: /entry/instrument/analyser/data 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data
+NXdetector.nxdl.xml:/data
+DEBUG - @target - IS NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/instrument/analyser/data@units)
+DEBUG - value: counts 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data
+NXdetector.nxdl.xml:/data
+DEBUG - @units - REQUIRED, but undefined unit category
+DEBUG - ===== FIELD (//entry/instrument/analyser/delays): <HDF5 dataset "delays": shape (195,), type "<f8">
+DEBUG - value: [-1.1        -1.08041237 -1.06082474 -1.04123711 -1.02164948 -1.00206186 ...
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/instrument/analyser/delays@target)
+DEBUG - value: /entry/instrument/analyser/delays 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/instrument/analyser/delays@units)
+DEBUG - value: fs 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -566,6 +655,31 @@ DEBUG - value: b'Time of flight'
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/analyser/energies): <HDF5 dataset "energies": shape (146,), type "<f8">
+DEBUG - value: [ 2.5         2.46917808  2.43835616  2.40753425  2.37671233  2.34589041 ...
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies):
+DEBUG - 
+            Energy axis of the analyser data
+            which dimension the axis applies to is defined
+            using the normal NXdata methods.
+          
+DEBUG - ===== ATTRS (//entry/instrument/analyser/energies@target)
+DEBUG - value: /entry/instrument/analyser/energies 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
+DEBUG - @target - IS NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/instrument/analyser/energies@units)
+DEBUG - value: eV 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
+DEBUG - @units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/analyser/entrance_slit_setting): <HDF5 dataset "entrance_slit_setting": shape (), type "<i8">
 DEBUG - value: 0 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -1725,6 +1839,29 @@ NXentry.nxdl.xml:/SAMPLE
 NXsample.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
+DEBUG - ===== FIELD (//entry/sample/bias): <HDF5 dataset "bias": shape (), type "<i8">
+DEBUG - value: 29 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
+DEBUG - classes:
+NXsample.nxdl.xml:/bias
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXsample.nxdl.xml:/bias):
+DEBUG - 
+             Voltage applied to sample and sample holder.
+        
+DEBUG - ===== ATTRS (//entry/sample/bias@target)
+DEBUG - value: /entry/instrument/manipulator/sample_bias 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
+DEBUG - classes:
+NXsample.nxdl.xml:/bias
+DEBUG - @target - IS NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/sample/bias@units)
+DEBUG - value: V 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
+DEBUG - classes:
+NXsample.nxdl.xml:/bias
+DEBUG - @units [NX_VOLTAGE]
 DEBUG - ===== FIELD (//entry/sample/chem_id_cas): <HDF5 dataset "chem_id_cas": shape (), type "|O">
 DEBUG - value: b'12067-46-8' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
@@ -1825,6 +1962,27 @@ DEBUG - value: b'0001'
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
+DEBUG - ===== FIELD (//entry/sample/temperature): <HDF5 dataset "temperature": shape (), type "<i8">
+DEBUG - value: 300 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature):
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/sample/temperature@target)
+DEBUG - value: /entry/instrument/manipulator/sample_temperature 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature
+DEBUG - @target - IS NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//entry/sample/temperature@units)
+DEBUG - value: K 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NX_NUMBER']
+DEBUG - classes:
+NXarpes.nxdl.xml:/ENTRY/SAMPLE/temperature
+DEBUG - @units [NX_TEMPERATURE]
 DEBUG - ===== FIELD (//entry/sample/thickness): <HDF5 dataset "thickness": shape (), type "<f8">
 DEBUG - value: 0.5 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
