@@ -44,6 +44,7 @@ If it is empty, this function is filling it"""
 
 
 def get_hdf_root(hdf_node):
+    """Get the root HDF5 node"""
     node = hdf_node
     while node.name != '/':
         node = node.parent
@@ -51,6 +52,7 @@ def get_hdf_root(hdf_node):
 
 
 def get_hdf_parent(hdf_info):
+    """Get the parent of an hdf_node in an hdf_info"""
     if 'hdf_path' not in hdf_info:
         return hdf_info['hdf_node'].parent
     node = get_hdf_root(hdf_info['hdf_node']) if 'hdf_root' not in hdf_info \
@@ -61,10 +63,12 @@ def get_hdf_parent(hdf_info):
 
 
 def get_parent_path(hdf_name):
+    """Get parent path"""
     return '/'.join(hdf_name.split('/')[:-1])
 
 
 def get_hdf_info_parent(hdf_info):
+    """Get the hdf_info for the parent of an hdf_node in an hdf_info"""
     if 'hdf_path' not in hdf_info:
         return {'hdf_node': hdf_info['hdf_node'].parent}
     node = get_hdf_root(hdf_info['hdf_node']) if 'hdf_root' not in hdf_info \
@@ -868,13 +872,14 @@ def helper_get_inherited_nodes(hdf_info2, elist, pind, attr):
 
 
 def get_hdf_path(hdf_info):
+    """Get the hdf_path from an hdf_info"""
     if 'hdf_path' in hdf_info:
         return hdf_info['hdf_path'].split('/')[1:]
     return hdf_info['hdf_node'].name.split('/')[1:]
 
 
 @lru_cache(maxsize=None)
-def get_inherited_nodes(nxdl_path: str = None,
+def get_inherited_nodes(nxdl_path: str = None,  # pylint: disable=too-many-arguments,too-many-locals
                         nx_name: str = None, elem: ET.Element = None,
                         hdf_node=None, hdf_path=None, hdf_root=None, attr=False):
     """Returns a list of ET.Element for the given path."""
