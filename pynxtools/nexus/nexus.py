@@ -575,7 +575,9 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
     hdf_node = hdf_info['hdf_node']
     # new way: retrieve multiple inherited base classes
     (class_path, nxdl_path, elist) = \
-        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_info=hdf_info)
+        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
+                            hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
+                            hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
     elem = elist[0] if class_path and elist else None
     if doc:
         logger.debug("classpath: " + str(class_path))
@@ -874,7 +876,7 @@ def get_hdf_path(hdf_info):
 @lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,
                         nx_name: str = None, elem: ET.Element = None,
-                        hdf_info=None, attr=False):
+                        hdf_node=None, hdf_path=None, hdf_root=None, attr=False):
     """Returns a list of ET.Element for the given path."""
     # let us start with the given definition file
     elist = []  # type: ignore[var-annotated]
@@ -882,7 +884,12 @@ def get_inherited_nodes(nxdl_path: str = None,
     nxdl_elem_path = [elist[0]]
 
     class_path = []  # type: ignore[var-annotated]
-    if hdf_info is not None:
+    if hdf_node is not None:
+        hdf_info = {'hdf_node': hdf_node}
+        if hdf_path:
+            hdf_info['hdf_path'] = hdf_path
+        if hdf_root:
+            hdf_root['hdf_root'] = hdf_root
         hdf_node = hdf_info['hdf_node']
         hdf_path = get_hdf_path(hdf_info)
         hdf_class_path = get_nx_class_path(hdf_info).split('/')[1:]
@@ -894,7 +901,7 @@ def get_inherited_nodes(nxdl_path: str = None,
         html_path = nxdl_path.split('/')[1:]
         path = html_path
     for pind in range(len(path)):
-        if hdf_info is not None:
+        if hdf_node is not None:
             hdf_info2 = [hdf_path, hdf_node, hdf_class_path]
             [hdf_path, hdf_node, hdf_class_path, elist,
              pind, attr, html_name] = helper_get_inherited_nodes(hdf_info2, elist,
@@ -1173,7 +1180,9 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path, logger=None):
     """
     hdf_info = {'hdf_path': hdf_path, 'hdf_node': hdf_node}
     (_, _, elist) = \
-        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_info=hdf_info)
+        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
+                            hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
+                            hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
     inheritance_list = []
     inheritance_list.append(hdf_node_to_self_concept_path(hdf_info, None))
     if elist:
