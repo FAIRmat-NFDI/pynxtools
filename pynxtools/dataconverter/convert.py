@@ -103,7 +103,7 @@ def convert(input_file: Tuple[str],
 
     data_reader = get_reader(reader)
     if not (nxdl in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
-        raise Exception("The chosen NXDL isn't supported by the selected reader.")
+        raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
 
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template),
@@ -190,15 +190,15 @@ def convert_cli(input_file: Tuple[str],
             convert(**parse_params_file(params_file))
         except TypeError as exc:
             sys.tracebacklimit = 0
-            raise Exception(("Please make sure you have the following entries in your "
+            raise TypeError(("Please make sure you have the following entries in your "
                              "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
                              "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
                              "put-file: value")) from exc
     else:
         if nxdl is None:
             sys.tracebacklimit = 0
-            raise Exception("\nError: Please supply an NXDL file with the option:"
-                            " --nxdl <path to NXDL>")
+            raise IOError("\nError: Please supply an NXDL file with the option:"
+                          " --nxdl <path to NXDL>")
         convert(input_file, reader, nxdl, output, generate_template, fair)
 
 

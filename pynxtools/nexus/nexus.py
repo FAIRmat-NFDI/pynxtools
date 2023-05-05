@@ -871,7 +871,7 @@ def get_hdf_path(hdf_info):
     return hdf_info['hdf_node'].name.split('/')[1:]
 
 
-# @lru_cache(maxsize=None)
+@lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,
                         nx_name: str = None, elem: ET.Element = None,
                         hdf_info=None, attr=False):

@@ -686,7 +686,7 @@ class XmlSpecs():
             mcd_energy_offsets = np.array(mcd_energy_offsets)
             # Putting energy of the last detector as a highest energy
             starting_eng_pnts = binding_energy_upper - mcd_energy_offsets
-            ending_eng_pnts = (starting_eng_pnts - values_per_scan * scan_delta)
+            ending_eng_pnts = starting_eng_pnts - values_per_scan * scan_delta
 
             channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
             for ind in np.arange(len(channeltron_eng_axes)):
@@ -821,10 +821,12 @@ class XpsDataFileParser():
                         parser_obj.parse_xml()
                         return parser_obj.data_dict
 
-                    except ValueError:
-                        ValueError(XpsDataFileParser.__vndr_err_msg__)
-                    except KeyError:
-                        KeyError(XpsDataFileParser.__vndr_err_msg__)
+                    except ValueError as val_err:
+                        raise ValueError(XpsDataFileParser.__vndr_err_msg__) \
+                            from val_err
+                    except KeyError as key_err:
+                        raise KeyError(XpsDataFileParser.__vndr_err_msg__) \
+                            from key_err
             else:
                 raise ValueError(XpsDataFileParser.__file_err_msg__)
         return {}

@@ -17,7 +17,7 @@
 #
 """Wrapping multiple parsers for vendor files with reconstructed dataset files."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 import numpy as np
 
@@ -30,42 +30,42 @@ from ifes_apt_tc_data_modeling.epos.epos_reader import ReadEposFileFormat
 
 def extract_data_from_pos_file(file_name: str, prefix: str, template: dict) -> dict:
     """Add those required information which a POS file has."""
-    print("Extracting data from POS file: " + file_name)
+    print(f"Extracting data from POS file: {file_name}")
     posfile = ReadPosFileFormat(file_name)
 
-    trg = prefix + "reconstruction/"
+    trg = f"{prefix}reconstruction/"
     xyz = posfile.get_reconstructed_positions()
-    template[trg + "reconstructed_positions"] \
+    template[f"{trg}reconstructed_positions"] \
         = {"compress": np.array(xyz.typed_value, np.float32), "strength": 1}
-    template[trg + "reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
-    trg = prefix + "mass_to_charge_conversion/"
-    m_z = posfile.get_mass_to_charge()
-    template[trg + "mass_to_charge"] \
+    trg = f"{prefix}mass_to_charge_conversion/"
+    m_z = posfile.get_mass_to_charge_state_ratio()
+    template[f"{trg}mass_to_charge"] \
         = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
-    template[trg + "mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
 
 
 def extract_data_from_epos_file(file_name: str, prefix: str, template: dict) -> dict:
     """Add those required information which an ePOS file has."""
-    print("Extracting data from EPOS file: " + file_name)
+    print(f"Extracting data from EPOS file: {file_name}")
     eposfile = ReadEposFileFormat(file_name)
 
-    trg = prefix + "reconstruction/"
+    trg = f"{prefix}reconstruction/"
     xyz = eposfile.get_reconstructed_positions()
-    template[trg + "reconstructed_positions"] \
+    template[f"{trg}reconstructed_positions"] \
         = {"compress": np.array(xyz.typed_value, np.float32), "strength": 1}
-    template[trg + "reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
-    trg = prefix + "mass_to_charge_conversion/"
-    m_z = eposfile.get_mass_to_charge()
-    template[trg + "mass_to_charge"] \
+    trg = f"{prefix}mass_to_charge_conversion/"
+    m_z = eposfile.get_mass_to_charge_state_ratio()
+    template[f"{trg}mass_to_charge"] \
         = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
-    template[trg + "mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
 
     # there are inconsistencies in the literature as to which units these
@@ -73,49 +73,49 @@ def extract_data_from_epos_file(file_name: str, prefix: str, template: dict) -> 
     # the following source code has not been tested with the current NXapm version
     # but should be kept for making additions in the future easier
     # -->
-    # trg = prefix + "voltage_and_bowl_correction/"
+    # trg = f"{prefix}voltage_and_bowl_correction/"
     # raw_tof = eposfile.get_raw_time_of_flight()
-    # template[trg + "raw_tof"] = raw_tof.value
-    # template[trg + "raw_tof/@units"] = raw_tof.unit
+    # template[f"{trg}raw_tof"] = raw_tof.value
+    # template[f"{trg}raw_tof/@units"] = raw_tof.unit
     # # this somehow calibrated ToF is not available from an EPOS file
-    # template[trg + "calibrated_tof"] = raw_tof.value
-    # template[trg + "calibrated_tof/@units"] = raw_tof.unit
+    # template[f"{trg}calibrated_tof"] = raw_tof.value
+    # template[f"{trg}calibrated_tof/@units"] = raw_tof.unit
     # # is this really a raw ToF, if so, raw wrt to what?
     # # needs clarification from Cameca/AMETEK how this is internally computed
     # # especially when scientists write APT files and transcode them
     # # to EPOS using APSuite
     # del raw_tof
 
-    # trg = prefix + "pulser/"
+    # trg = f"{prefix}pulser/"
     # dc_voltage = eposfile.get_standing_voltage()
-    # template[trg + "standing_voltage"] = dc_voltage.value
-    # template[trg + "standing_voltage/@units"] = dc_voltage.unit
+    # template[f"{trg}standing_voltage"] = dc_voltage.value
+    # template[f"{trg}standing_voltage/@units"] = dc_voltage.unit
     # del dc_voltage
 
     # pu_voltage = eposfile.get_pulse_voltage()
-    # template[trg + "pulsed_voltage"] = pu_voltage.value
-    # template[trg + "pulsed_voltage/@units"] = pu_voltage.unit
+    # template[f"{trg}pulsed_voltage"] = pu_voltage.value
+    # template[f"{trg}pulsed_voltage/@units"] = pu_voltage.unit
     # del pu_voltage
 
-    # trg = prefix + "ion_impact_positions/"
+    # trg = f"{prefix}ion_impact_positions/"
     # hit_positions = eposfile.get_hit_positions()
-    # template[trg + "hit_positions"] = hit_positions.value
-    # template[trg + "hit_positions/@units"] = hit_positions.unit
+    # template[f"{trg}hit_positions"] = hit_positions.value
+    # template[f"{trg}hit_positions/@units"] = hit_positions.unit
     # del hit_positions
 
-    # trg = prefix + "hit_multiplicity/"
+    # trg = f"{prefix}hit_multiplicity/"
     # # little bit more discussion with e.g. F. M. M. at MPIE required
 
     # # currently npulses is "number of pulses since last event detected"
     # npulses = eposfile.get_number_of_pulses()
-    # template[trg + "hit_multiplicity"] = npulses.value
-    # template[trg + "hit_multiplicity/@units"] = npulses.unit
+    # template[f"{trg}hit_multiplicity"] = npulses.value
+    # template[f"{trg}hit_multiplicity/@units"] = npulses.unit
     # del npulses
 
     # ions_per_pulse = eposfile.get_ions_per_pulse()
     # # currently ions_per_pulse is "ions per pulse, 0 after the first ion"
-    # template[trg + "pulses_since_last_ion"] = ions_per_pulse.value
-    # template[trg + "pulses_since_last_ion/@units"] \
+    # template[f"{trg}pulses_since_last_ion"] = ions_per_pulse.value
+    # template[f"{trg}pulses_since_last_ion/@units"] \
     # = ions_per_pulse.unit
     # del ions_per_pulse
     # -->
@@ -125,21 +125,21 @@ def extract_data_from_epos_file(file_name: str, prefix: str, template: dict) -> 
 
 def extract_data_from_apt_file(file_name: str, prefix: str, template: dict) -> dict:
     """Add those required information which a APT file has."""
-    print("Extracting data from APT file: " + file_name)
+    print(f"Extracting data from APT file: {file_name}")
     aptfile = ReadAptFileFormat(file_name)
 
-    trg = prefix + "reconstruction/"
+    trg = f"{prefix}reconstruction/"
     xyz = aptfile.get_named_quantity("Position")
-    template[trg + "reconstructed_positions"] \
+    template[f"{trg}reconstructed_positions"] \
         = {"compress": np.array(xyz.typed_value, np.float32), "strength": 1}
-    template[trg + "reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
-    trg = prefix + "mass_to_charge_conversion/"
+    trg = f"{prefix}mass_to_charge_conversion/"
     m_z = aptfile.get_named_quantity("Mass")
-    template[trg + "mass_to_charge"] \
+    template[f"{trg}mass_to_charge"] \
         = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
-    template[trg + "mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
 
     # all less explored optional branches in an APT6 file can also already
@@ -150,7 +150,7 @@ def extract_data_from_apt_file(file_name: str, prefix: str, template: dict) -> d
     return template
 
 
-class ApmReconstructionParser:  # pylint: disable=R0903
+class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_name: str, entry_id: int):
@@ -159,12 +159,8 @@ class ApmReconstructionParser:  # pylint: disable=R0903
         index = file_name.lower().rfind(".")
         if index >= 0:
             mime_type = file_name.lower()[index + 1::]
-            if mime_type == "pos":
-                self.file_format = "pos"
-            if mime_type == "epos":
-                self.file_format = "epos"
-            if mime_type == "apt":
-                self.file_format = "apt"
+            if mime_type in ["pos", "epos", "apt"]:
+                self.file_format = mime_type
         self.entry_id = entry_id
 
     def report(self, template: dict) -> dict:
@@ -173,7 +169,7 @@ class ApmReconstructionParser:  # pylint: disable=R0903
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        prfx = "/ENTRY[entry" + str(self.entry_id) + "]/atom_probe/"
+        prfx = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
         if self.file_name != "" and self.file_format != "none":
             if self.file_format == "pos":
                 extract_data_from_pos_file(

@@ -1,25 +1,26 @@
 em_lab:
   detector:
-  - type: EDS detector
+  - local_name: EDS detector
   ebeam_column:
     aperture_em:
     - name: condensed
       value: 4
     aberration_correction:
       applied: true
-    electron_gun:
-      emitter_type: cold_cathode_field_emitter
+    electron_source:
+      emitter_type: field_emission
+      # cold_cathode_
       name: some
       voltage:
         unit: V
         value: 200000
   instrument_name: TALOS
   location: EPFL
-  manufacturer:
+  fabrication:
     capabilities: many
     identifier: undisclosed
     model: unknown
-    name: TALOS
+    vendor: TALOS
   optical_system_em:
     beam_current:
       unit: A
@@ -33,7 +34,7 @@ em_lab:
     description: nothing
     name: double tilt
 entry:
-  attr_version: nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951 NXem
+  attr_version: nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696
   definition: NXem
   end_time: '2022-08-11T14:23:00+00:00'
   experiment_description: '1613'

@@ -17,7 +17,7 @@
 #
 """Generic parser for loading atom probe microscopy data into NXapm."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 from typing import Tuple, Any
 
@@ -89,7 +89,7 @@ class ApmReader(BaseReader):
             print("Create one synthetic entry in one NeXus file...")
             synthetic = ApmCreateExampleData(synthesis_id)
             synthetic.synthesize(template)
-        else:  # eln_data, and ideal recon and ranging definition technology partner file
+        else:  # eln_data, and ideally recon and ranging definitions from technology partner file
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
             assert case.is_valid is True, \

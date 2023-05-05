@@ -17,7 +17,7 @@
 #
 """Parser for adding default plots and path to them to template."""
 
-# pylint: disable=E1101
+# pylint: disable=no-member
 
 import numpy as np
 
@@ -37,34 +37,34 @@ import numpy as np
 
 def xray_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for Xray."""
-    entry_name = "entry" + str(entry_id)
-    trg = "/ENTRY[" + entry_name + "]/measurement/EVENT_DATA_EM[event_data_em1]/"
-    trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/"
+    entry_name = f"entry{entry_id}"
+    trg = f"/ENTRY[{entry_name}]/measurement/" \
+          f"EVENT_DATA_EM[event_data_em1]/xray/"
 
     path = ""
-    if trg + "stack/DATA[data_counts]" in template.keys():
+    if f"{trg}stack/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[trg + "stack/DATA[data_counts]"]["compress"], np.ndarray), \
+            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
             "EDS data stack not existent!"
         path = "stack"
-    if trg + "summary/DATA[data_counts]" in template.keys():
+    if f"{trg}summary/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[trg + "summary/DATA[data_counts]"]["compress"], np.ndarray), \
+            template[f"{trg}summary/DATA[data_counts]"]["compress"], np.ndarray), \
             "EDS data summary not existent!"
         path = "summary"
 
     if path != "":
-        print("Found xray default plot for entry " + entry_name + " at " + path)
+        print(f"Found xray default plot for {entry_name} at {path}")
         trg = "/"
-        template[trg + "@default"] = entry_name
-        trg += "ENTRY[" + entry_name + "]/"
-        template[trg + "@default"] = "measurement"
+        template[f"{trg}@default"] = entry_name
+        trg = f"/ENTRY[{entry_name}]/"
+        template[f"{trg}@default"] = "measurement"
         trg += "measurement/"
-        template[trg + "@default"] = "event_data_em1"
+        template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[trg + "@default"] = "spectrum_set_em_xray1"
-        trg += "SPECTRUM_SET_EM_XRAY[spectrum_set_em_xray1]/"
-        template[trg + "@default"] = path
+        template[f"{trg}@default"] = "xray"
+        trg += "xray/"
+        template[f"{trg}@default"] = path
         return True
 
     return False
@@ -72,34 +72,34 @@ def xray_plot_available(template: dict, entry_id: int) -> bool:
 
 def eels_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for EELS."""
-    entry_name = "entry" + str(entry_id)
-    trg = "/ENTRY[" + entry_name + "]/measurement/EVENT_DATA_EM[event_data_em1]/"
-    trg += "SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/"
+    entry_name = f"entry{entry_id}"
+    trg = f"/ENTRY[{entry_name}]/measurement/" \
+          f"EVENT_DATA_EM[event_data_em1]/eels/"
 
     path = ""
-    if trg + "stack/DATA[data_counts]" in template.keys():
+    if f"{trg}stack/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[trg + "stack/DATA[data_counts]"]["compress"], np.ndarray), \
+            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
             "EELS data stack not existent!"
         path = "stack"
-    if trg + "summary/DATA[data_counts]" in template.keys():
+    if f"{trg}summary/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[trg + "summary/DATA[data_counts]"]["compress"], np.ndarray), \
+            template[f"{trg}summary/DATA[data_counts]"]["compress"], np.ndarray), \
             "EELS data summary not existent!"
         path = "summary"
 
     if path != "":
-        print("Found eels default plot for entry " + entry_name + " at " + path)
+        print(f"Found eels default plot for {entry_name} at {path}")
         trg = "/"
-        template[trg + "@default"] = entry_name
-        trg += "ENTRY[" + entry_name + "]/"
-        template[trg + "@default"] = "measurement"
+        template[f"{trg}@default"] = entry_name
+        trg = f"/ENTRY[{entry_name}]/"
+        template[f"{trg}@default"] = "measurement"
         trg += "measurement/"
-        template[trg + "@default"] = "event_data_em1"
+        template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[trg + "@default"] = "spectrum_set_em_eels1"
-        trg += "SPECTRUM_SET_EM_EELS[spectrum_set_em_eels1]/"
-        template[trg + "@default"] = path
+        template[f"{trg}@default"] = "eels"
+        trg += "eels/"
+        template[f"{trg}@default"] = path
         return True
 
     return False
@@ -107,29 +107,29 @@ def eels_plot_available(template: dict, entry_id: int) -> bool:
 
 def adf_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for ADF."""
-    entry_name = "entry" + str(entry_id)
-    trg = "/ENTRY[" + entry_name + "]/measurement/EVENT_DATA_EM[event_data_em1]/"
-    trg += "IMAGE_SET_EM_ADF[image_set_em_adf1]/"
+    entry_name = f"entry{entry_id}"
+    trg = f"/ENTRY[{entry_name}]/measurement/" \
+          f"EVENT_DATA_EM[event_data_em1]/adf/"
 
     path = ""
-    if trg + "stack/DATA[data_counts]" in template.keys():
+    if f"{trg}stack/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[trg + "stack/DATA[data_counts]"]["compress"], np.ndarray), \
+            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
             "ADF data stack not existent!"
         path = "stack"
 
     if path != "":
-        print("Found adf default plot for entry " + entry_name + " at " + path)
+        print(f"Found adf default plot for entry {entry_name} at {path}")
         trg = "/"
-        template[trg + "@default"] = entry_name
-        trg += "ENTRY[" + entry_name + "]/"
-        template[trg + "@default"] = "measurement"
+        template[f"{trg}@default"] = entry_name
+        trg = f"/ENTRY[{entry_name}]/"
+        template[f"{trg}@default"] = "measurement"
         trg += "measurement/"
-        template[trg + "@default"] = "event_data_em1"
+        template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[trg + "@default"] = "image_set_em_adf1"
-        trg += "IMAGE_SET_EM_ADF[image_set_em_adf1]/"
-        template[trg + "@default"] = path
+        template[f"{trg}@default"] = "adf"
+        trg += "adf/"
+        template[f"{trg}@default"] = path
         return True
 
     return False
@@ -137,29 +137,29 @@ def adf_plot_available(template: dict, entry_id: int) -> bool:
 
 def image_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for generic image."""
-    entry_name = "entry" + str(entry_id)
-    trg = "/ENTRY[" + entry_name + "]/measurement/EVENT_DATA_EM[event_data_em1]/"
-    trg += "IMAGE_SET_EM[image_set_em1]/"
+    entry_name = f"entry{entry_id}"
+    trg = f"/ENTRY[{entry_name}]/measurement/EVENT_DATA_EM[event_data_em1]/" \
+          f"IMAGE_SET_EM[image_set_em1]/"
 
     path = ""
-    if trg + "stack/DATA[data_counts]" in template.keys():
+    if f"{trg}stack/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[trg + "stack/DATA[data_counts]"]["compress"], np.ndarray), \
+            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
             "Generic image data stack not existent!"
         path = "stack"
 
     if path != "":
-        print("Found image default plot for entry " + entry_name + " at " + path)
+        print(f"Found image default plot for {entry_name} at {path}")
         trg = "/"
-        template[trg + "@default"] = entry_name
-        trg += "ENTRY[" + entry_name + "]/"
-        template[trg + "@default"] = "measurement"
+        template[f"{trg}@default"] = entry_name
+        trg = f"/ENTRY[{entry_name}]/"
+        template[f"{trg}@default"] = "measurement"
         trg += "measurement/"
-        template[trg + "@default"] = "event_data_em1"
+        template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[trg + "@default"] = "image_set_em1"
+        template[f"{trg}@default"] = "image_set_em1"
         trg += "IMAGE_SET_EM[image_set_em1]/"
-        template[trg + "@default"] = path
+        template[f"{trg}@default"] = path
         return True
 
     return False
@@ -187,6 +187,6 @@ def em_spctrscpy_default_plot_generator(template: dict, n_entries: int) -> dict:
         if image_plot_available(template, entry_id) is True:
             continue
 
-        print("WARNING: No path to a default plot found for entry" + str(entry_id) + "!")
+        print(f"WARNING: No path to a default plot found for entry{entry_id} !")
 
     return template

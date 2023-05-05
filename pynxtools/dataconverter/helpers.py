@@ -310,20 +310,20 @@ def is_valid_data_field(value, nxdl_type, path):
                     raise ValueError
             return accepted_types[0](value)
         except ValueError as exc:
-            raise Exception(f"The value at {path} should be of Python type: {accepted_types}"
-                            f", as defined in the NXDL as {nxdl_type}.") from exc
+            raise ValueError(f"The value at {path} should be of Python type: {accepted_types}"
+                             f", as defined in the NXDL as {nxdl_type}.") from exc
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
-        raise Exception(f"The value at {path} should be a positive int.")
+        raise ValueError(f"The value at {path} should be a positive int.")
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:"
                              r"\.\d*)?)(((?!-00:00)(\+|-)(\d{2}):(\d{2})|Z){1})$")
         results = iso8601.search(value)
         if results is None:
-            raise Exception(f"The date at {path} should be a timezone aware ISO8601 "
-                            f"formatted str. For example, 2022-01-22T12:14:12.05018Z"
-                            f" or 2022-01-22T12:14:12.05018+00:00.")
+            raise ValueError(f"The date at {path} should be a timezone aware ISO8601 "
+                             f"formatted str. For example, 2022-01-22T12:14:12.05018Z"
+                             f" or 2022-01-22T12:14:12.05018+00:00.")
 
     return value
 
@@ -395,10 +395,10 @@ def check_optionality_based_on_parent_group(
         optional_parent_nxdl = convert_data_converter_dict_to_nxdl_path(optional_parent)
         if is_nxdl_path_a_child(nxdl_path, optional_parent_nxdl) \
            and not all_required_children_are_set(optional_parent, data, nxdl_root):
-            raise Exception(f"The data entry, {path}, has an optional parent, "
-                            f"{optional_parent}, with required children set. Either"
-                            f" provide no children for {optional_parent} or provide"
-                            f" all required ones.")
+            raise LookupError(f"The data entry, {path}, has an optional parent, "
+                              f"{optional_parent}, with required children set. Either"
+                              f" provide no children for {optional_parent} or provide"
+                              f" all required ones.")
 
 
 def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
@@ -436,8 +436,8 @@ def ensure_all_required_fields_exist(template, data):
             continue
 
         if not is_path_in_data_dict or data[renamed_path] is None:
-            raise Exception(f"The data entry corresponding to {path} is required and"
-                            f" hasn't been supplied by the reader.")
+            raise ValueError(f"The data entry corresponding to {path} is required "
+                             f"and hasn't been supplied by the reader.")
 
 
 def try_undocumented(data, nxdl_root: ET.Element):
@@ -479,6 +479,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
+        # print(f"{path}")
         if data[path] is not None:
             entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
@@ -508,8 +509,8 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 data[path] = is_valid_data_field(data[path], nxdl_type, path)
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
                 if not is_valid_enum:
-                    raise Exception(f"The value at {path} should be"
-                                    f" one of the following strings: {enums}")
+                    raise ValueError(f"The value at {path} should be on of the "
+                                     f"following strings: {enums}")
 
     return True
 
