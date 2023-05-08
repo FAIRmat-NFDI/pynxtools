@@ -269,7 +269,7 @@ class EllipsometryReader(BaseReader):
         header["angle_of_incidence"] = unique_angles
 
         # Create mocked ellipsometry data template:
-        is_mock = True
+        is_mock = False
         if is_mock:
             header, labels = mock_function(header)
             for angle in enumerate(header["angle_of_incidence"]):
