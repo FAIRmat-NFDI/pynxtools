@@ -202,7 +202,7 @@ class EllipsometryReader(BaseReader):
     supported_nxdls = ["NXellipsometry"]
 
     @staticmethod
-    def populate_header_dict_with_datasets(file_paths):
+    def populate_header_dict_with_datasets(file_paths, is_mock=False):
         """This is an ellipsometry-specific processing of data.
 
         The procedure is the following:
@@ -269,7 +269,6 @@ class EllipsometryReader(BaseReader):
         header["angle_of_incidence"] = unique_angles
 
         # Create mocked ellipsometry data template:
-        is_mock = True
         if is_mock:
             header, labels = mock_function(header)
             for angle in enumerate(header["angle_of_incidence"]):
@@ -289,7 +288,8 @@ class EllipsometryReader(BaseReader):
     def read(self,
              template: dict = None,
              file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+             objects: Tuple[Any] = None,
+             is_mock: bool = False) -> dict:
         """ Reads data from given file and returns a filled template dictionary.
 
             A handlings of virtual datasets is implemented:
@@ -306,7 +306,7 @@ class EllipsometryReader(BaseReader):
 
         # The header dictionary is filled with entries.
         header, labels = (
-            EllipsometryReader.populate_header_dict_with_datasets(file_paths)
+            EllipsometryReader.populate_header_dict_with_datasets(file_paths, is_mock)
         )
 
         data_list = []
