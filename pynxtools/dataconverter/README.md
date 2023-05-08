@@ -7,7 +7,7 @@ You can read specific Readme's of the readers and find usage examples [here](../
 ## Installation
 
 ```console
-user@box:~$ pip install git+https://github.com/nomad-coe/nomad-parser-nexus.git
+user@box:~$ pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 ```
 
 ## Usage
