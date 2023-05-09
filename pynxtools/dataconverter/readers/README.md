@@ -1,7 +1,7 @@
-# File/Metadata and Data Format Reader Plug-ins aka ``reader``
+# File/Metadata and Data Format Reader Plug-ins aka `reader`
 
 The purpose of the dataconverter is to create NeXus/HDF5 files with content that
-matches a specific NeXus application definition. 
+matches a specific NeXus application definition.
 Such application definitions are useful for collecting a set of pieces of information
 about a specific experiment in a given scientific field. The pieces of information
 are metadata and numerical data. The application definition is used to provide
@@ -31,7 +31,7 @@ Therefore, please follow the instructions for cloning the reader as a complete p
 ## Download the example data for testing and development purposes
 
 Before using your own data we strongly encourage you to download a set of open-source
-test data for testing the plug-ins. For this purpose the nomad-parser-nexus comes with
+test data for testing the plug-ins. For this purpose pynxtools comes with
 a tests directory with a data/dataconverter sub-directory including reader-specific jupyter-notebook
 examples. These examples can be used for downloading test data and use specific readers
 as a standalone converter to translate given data into a NeXus/HDF5 file.

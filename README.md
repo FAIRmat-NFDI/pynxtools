@@ -1,4 +1,3 @@
-
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pytest.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pylint.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/publish.yml/badge.svg)
@@ -7,7 +6,7 @@
 ![](https://img.shields.io/pypi/v/pynxtools)
 ![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master)
 
-`nexusustils` is a tool designed for making your experimental data FAIR.
+`pynxtools` is a tool designed for making your experimental data FAIR.
 It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
 
 # Installation
@@ -26,7 +25,7 @@ for the latest development version.
 
 # Scope
 
-`pynxtools` (previously called `nexusustils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
+`pynxtools` (previously called `nexusutils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
 
 Additionally, the software is used in the research data management system NOMAD for
 making experimental data searchable and publishable.
