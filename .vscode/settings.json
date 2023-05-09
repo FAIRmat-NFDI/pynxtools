@@ -20,7 +20,7 @@
   "python.linting.enabled": true,
   "python.linting.pylintArgs": [
     "--load-plugins=nomad.metainfo.pylint_plugin",
-    "nexusutils",
+    "pynxtools",
     "tests"
   ],
   "python.testing.pytestArgs": ["tests"],
