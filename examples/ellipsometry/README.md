@@ -4,7 +4,7 @@ The [NXellipsometry](https://fairmat-experimental.github.io/nexus-fairmat-propos
 
 # How to use it?
 
-First you need to install nexusutuils, please follow the [install instructions](https://github.com/nomad-coe/nomad-parser-nexus) to set it up.
+First you need to install nexusutuils, please follow the [install instructions](https://github.com/FAIRmat-NFDI/pynxtools) to set it up.
 This is an example to use the dataconvert with the `ellips` reader and the `NXellipsometry` application definition.
 Just execute
 
