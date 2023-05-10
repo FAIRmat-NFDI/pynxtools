@@ -366,7 +366,6 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
     """Walks over optional parent's children and makes sure all required ones are set"""
     optional_parent_path = convert_data_converter_dict_to_nxdl_path(optional_parent_path)
     for key in data:
-        #print(key)
         nxdl_key = convert_data_converter_dict_to_nxdl_path(key)
         if nxdl_key[0:nxdl_key.rfind("/")] == optional_parent_path \
            and is_node_required(nxdl_key, nxdl_root) \

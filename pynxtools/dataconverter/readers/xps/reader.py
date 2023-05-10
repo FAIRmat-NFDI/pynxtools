@@ -178,7 +178,6 @@ def fill_data_group(key,
                                      if "_chan" not in x_arr],
                                      axis=0)
 
-
         template[f"{key_data}_errors"] = \
             np.std([xr_data[x_arr].data
                     for x_arr in xr_data.data_vars

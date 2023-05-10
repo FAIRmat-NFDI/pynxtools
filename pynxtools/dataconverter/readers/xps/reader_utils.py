@@ -30,7 +30,7 @@ import sqlite3
 from pynxtools.dataconverter.readers.xps.sle_parsers import (
     SleParserV1,
     SleParserV4
-    )
+)
 
 
 class XmlSpecs():
@@ -787,7 +787,6 @@ class SleSpecs():
         Class for restructuring .sle data file from
         specs vendor into python dictionary.
     """
-
     def __init__(self):
         self.parsers = [
             SleParserV1,
@@ -805,8 +804,9 @@ class SleSpecs():
 
     @property
     def data_dict(self) -> dict:
+
         """
-            Getter property
+        Getter property
         Parameters
         ----------
 
@@ -877,56 +877,53 @@ class SleSpecs():
                 'bias_voltage_electrons [V]',
                 'polar_angle',
                 'azimuth_angle',
-                ],
+            ],
             'source': [
                 'source_label',
                 'source_voltage',
                 'operating_mode',
                 'emission_current',
-                ],
-            'beam': [
-                'excitation_energy',
-                ],
-            'analyser': [
-                ],
+            ],
+            'beam': ['excitation_energy',],
+            'analyser': [],
             'collectioncolumn': [
-               'lens1_voltage [nU]',
-               'lens2_voltage [nU]',
-               'coil_current [mA]',
-               'pre_deflector_x_current [nU]',
-               'pre_deflector_y_current [nU]',
-               'focus_displacement_current [nU]',
-               'transmission_function/data',
-               'transmission_function/file',
-               'lens_mode',
-               ],
+                'lens1_voltage [nU]',
+                'lens2_voltage [nU]',
+                'coil_current [mA]',
+                'pre_deflector_x_current [nU]',
+                'pre_deflector_y_current [nU]',
+                'focus_displacement_current [nU]',
+                'transmission_function/data',
+                'transmission_function/file',
+                'lens_mode',
+            ],
             'energydispersion': [
                 'scan_mode',
                 'entrance_slit',
                 'exit_slit',
                 'iris_diameter',
                 'pass_energy',
-                ],
+            ],
             'detector': [
                 'calibration_file/dir',
                 'calibration_file',
                 'detector_voltage [V]',
                 'detector_voltage_range',
-                ],
+            ],
             'manipulator': [],
             'calibration': [
-               'transmission_function/data',
-               'transmission_function/file',
-               'calibration_file/dir',
-               'calibration_file',
-               ],
+                'transmission_function/data',
+                'transmission_function/file',
+                'calibration_file/dir',
+                'calibration_file',
+            ],
             'data': [
                 'x_units',
                 'y_units',
                 'n_values',
                 'step_size',
                 'dwell_time'
-                ],
+            ],
             'region': [
                 'analysis_method',
                 'start_energy',
@@ -934,7 +931,7 @@ class SleSpecs():
                 'spectrum_comment',
                 'time_stamp',
                 'total_scans'
-                ],
+            ],
             # 'unused': [
             #     'CHANNELS_X',
             #     'CHANNELS_Y',
@@ -945,8 +942,8 @@ class SleSpecs():
             #     'spectrum_id',
             #     'time_stamp_trace',
             #     'spectrum_comment',
-            #     ],
-            }
+            # ],
+        }
 
         for spectrum in spectra:
             group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
@@ -967,14 +964,14 @@ class SleSpecs():
                 'sample': f'{region_parent}/sample',
                 'data': f'{region_parent}/data',
                 'region': f'{region_parent}'
-                }
+            }
 
             for grouping, spectrum_keys in key_map.items():
                 root = path_map[str(grouping)]
                 for spectrum_key in spectrum_keys:
                     try:
                         units = re.search(r'\[([A-Za-z0-9_]+)\]', spectrum_key).group(1)
-                        mpes_key = spectrum_key.rsplit(' ',1 )[0]
+                        mpes_key = spectrum_key.rsplit(' ', 1)[0]
                         self._xps_dict[f'{root}/{mpes_key}/@units'] = units
                         self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
                     except AttributeError:
@@ -987,7 +984,7 @@ class SleSpecs():
             entry = self.construct_entry_name(region_parent)
 
             scan_key = self._construct_data_key(spectrum)
-            self._xps_dict["data"][entry] =  xr.Dataset()
+            self._xps_dict["data"][entry] = xr.Dataset()
 
             energy = np.array(spectrum["data"]["x"])
 
@@ -1176,7 +1173,7 @@ class XpsDataFileParser():
     @classmethod
     def check_for_vendors(cls, root_element: EmtT.Element) -> str:
         """
-            Check for the vendor name of the XPS data file.
+        Check for the vendor name of the XPS data file.
         Parameters
         ----------
         root_element : xml root element.
