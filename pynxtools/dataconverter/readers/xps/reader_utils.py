@@ -19,6 +19,7 @@
 Generic Classes for reading xml file into python dictionary.
 """
 
+import re
 import xml.etree.ElementTree as EmtT
 from typing import Tuple, List, Any
 import copy
@@ -796,6 +797,23 @@ class SleSpecs():
             for version in supported_versions:
                 self.versions_map[version] = parser
 
+        self._root_path = f'/ENTRY[entry]/specs'
+        self._xps_dict: dict = {}
+
+    @property
+    def data_dict(self) -> dict:
+        """
+            Getter property
+        Parameters
+        ----------
+
+        Returns
+        -------
+        python dictionary
+        """
+
+        return self._xps_dict
+
     def _get_sle_version(self):
         """
         Get the Prodigy SLE version from the file.
@@ -834,7 +852,235 @@ class SleSpecs():
         self.sql_connection = filepath
         version = self._get_sle_version()
         parser = self.versions_map[version]()
-        return parser.parse_file(filepath, **kwargs), parser.xml
+        self.raw_data = parser.parse_file(filepath, **kwargs)
+        self.xml = parser.xml
+
+        file_key = f'{self._root_path}/File'
+        self._xps_dict[file_key] = filepath
+
+        self.construct_data()
+
+        return self.data_dict
+
+    def construct_data(self):
+        spectra = copy.deepcopy(self.raw_data)
+
+        self._xps_dict["data"]: dict = {}
+
+        key_map = {
+            'instrument': [
+                'workfunction',
+                'bias_voltage_ions [V]',
+                'bias_voltage_electrons [V]',
+                'polar_angle',
+                'azimuth_angle',
+                ],
+            'source': [
+                'source_label',
+                'source_voltage',
+                'operating_mode',
+                'emission_current',
+                ],
+            'beam': [
+                'excitation_energy',
+                ],
+            'analyser': [
+                ],
+            'collectioncolumn': [
+               'lens1_voltage [nU]',
+               'lens2_voltage [nU]',
+               'coil_current [mA]',
+               'pre_deflector_x_current [nU]',
+               'pre_deflector_y_current [nU]',
+               'focus_displacement_current [nU]',
+               'transmission_function',
+               'transmission_function_file',
+               'lens_mode',
+               ],
+            'energydispersion': [
+                'scan_mode',
+                'entrance_slit',
+                'exit_slit',
+                'iris_diameter',
+                'pass_energy',
+                ],
+            'detector': [
+                'calibration_file_dir',
+                'calibration_file',
+                'detector_voltage [V]',
+                'detector_voltage_range',
+                ],
+            'manipulator': [],
+            'calibration': [
+               'transmission_function',
+               'transmission_function_file',
+               'calibration_file_dir',
+               'calibration_file',
+               ],
+            'data': [
+                'x_units',
+                'y_units',
+                'n_values',
+                'step_size',
+                'dwell_time'
+                ],
+            'region': [
+                'analysis_method',
+                'start_energy',
+                'dwell_time',
+                'spectrum_comment',
+                'time_stamp',
+                'total_scans'
+                ],
+            # 'unused': [
+            #     'CHANNELS_X',
+            #     'CHANNELS_Y',
+            #     'device_group_id',
+            #     'scans',
+            #     'scan_id',
+            #     'scan_no',
+            #     'spectrum_id',
+            #     'time_stamp_trace',
+            #     'spectrum_comment',
+            #     ],
+            }
+
+        for spectrum in spectra:
+            group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
+            region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
+            instrument_parent = f'{region_parent}/instrument'
+            analyser_parent = f'{instrument_parent}/analyser'
+
+            path_map = {
+                'instrument': f'{instrument_parent}',
+                'source': f'{instrument_parent}/source',
+                'beam': f'{instrument_parent}/beam',
+                'analyser': f'{analyser_parent}',
+                'collectioncolumn': f'{analyser_parent}/collectioncolumn',
+                'energydispersion': f'{analyser_parent}/energydispersion',
+                'detector': f'{analyser_parent}/detector',
+                'manipulator': f'{instrument_parent}/manipulator',
+                'calibration': f'{instrument_parent}/calibration',
+                'sample': f'{region_parent}/sample',
+                'data': f'{region_parent}/data',
+                'region': f'{region_parent}'
+                }
+
+            for grouping, spectrum_keys in key_map.items():
+                root = path_map[str(grouping)]
+                for spectrum_key in spectrum_keys:
+                    try:
+                        units = re.search(r'\[([A-Za-z0-9_]+)\]', spectrum_key).group(1)
+                        mpes_key = spectrum_key.rsplit(' ',1 )[0]
+                        self._xps_dict[f'{root}/{mpes_key}/@units'] = units
+                        self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                    except AttributeError:
+                        mpes_key = spectrum_key
+                        self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+
+            self._xps_dict[f'{path_map["analyser"]}/name'] = spectrum['devices'][0]
+            self._xps_dict[f'{path_map["source"]}/name'] = spectrum['devices'][1]
+
+            entry = self.construct_entry_name(region_parent)
+
+            scan_key = self._construct_data_key(spectrum)
+            self._xps_dict["data"][entry] =  xr.Dataset()
+
+            energy = np.array(spectrum["data"]["x"])
+
+            channels = [key for key in spectrum["data"] if "cps_ch_" in key]
+
+            for channel in channels:
+                ch_no = channel.rsplit('_')[-1]
+                channel_key = f'{scan_key}_chan_{ch_no}'
+                cps = np.array(spectrum["data"][channel])
+
+                self._xps_dict["data"][entry][channel_key] = \
+                    xr.DataArray(data=cps,
+                                 coords={"energy": energy})
+
+            self._xps_dict["data"][entry][scan_key] = \
+                xr.DataArray(data=spectrum["data"]['cps_calib'],
+                             coords={"energy": energy})
+
+            detector_data_key_child = self._construct_detector_data_key(spectrum)
+            detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
+
+            self._xps_dict[detector_data_key] = spectrum["data"]['cps_calib']
+
+    def _construct_data_key(self, spectrum):
+        """
+        Construct a key for the 'data' field of the xps_dict.
+
+        Parameters
+        ----------
+        spectrum : dict
+            Dictionary containing all data and metadata for one spectrum.
+
+        Returns
+        -------
+        data_key : str
+            Output example: cycle0_scan0.
+
+        """
+
+        if 'loop_no' in spectrum:
+            cycle_key = f'cycle{spectrum["loop_no"]}'
+        else:
+            cycle_key = 'cycle0'
+
+        if 'scan_no' in spectrum:
+            scan_key = f'scan{spectrum["scan_no"]}'
+        else:
+            scan_key = f'scan0'
+
+        data_key = f'{cycle_key}_{scan_key}'
+
+        return data_key
+
+    def _construct_detector_data_key(self, spectrum):
+        """
+        Construct a key for the detector data fields of the xps_dict.
+
+        Parameters
+        ----------
+        spectrum : dict
+            Dictionary containing all data and metadata for one spectrum.
+
+        Returns
+        -------
+        detector_data_key : str
+            Output example: 'cycles/Cycle_0/scans/Scan_0'
+
+        """
+        if 'loop_no' in spectrum:
+            cycle_key = f'cycles/Cycle_{spectrum["loop_no"]}'
+        else:
+            cycle_key = 'cycles/Cycle_0'
+
+        if 'scan_no' in spectrum:
+            scan_key = f'scans/Scan_{spectrum["scan_no"]}'
+        else:
+            scan_key = '/scans/Scan_0'
+
+        detector_data_key = f'{cycle_key}/{scan_key}'
+
+        return detector_data_key
+
+    def construct_entry_name(self, key):
+        """Construction entry name."""
+        key_parts = key.split("/")
+        try:
+            # entry example : vendor__sample__name_of_scan_region
+            entry_name = (f'{key_parts[2]}'
+                          f'__'
+                          f'{key_parts[3].split("_", 1)[1]}'
+                          f'__'
+                          f'{key_parts[5].split("_", 1)[1]}'
+                          )
+        except IndexError:
+            entry_name = ""
+        return entry_name
 
 
 class XpsDataFileParser():
@@ -909,7 +1155,9 @@ class XpsDataFileParser():
                                         __prmt_vndr_cls[file_ext]
                                         ['specs'])
                         parser_obj = parser_class()
-                        return parser_obj.parse_file(file)
+
+                        parser_obj.parse_file(file)
+                        return parser_obj.data_dict
 
                     except ValueError:
                         ValueError(XpsDataFileParser.__vndr_err_msg__)
