@@ -1120,7 +1120,7 @@ class XpsDataFileParser():
         if not self.files:
             raise ValueError(XpsDataFileParser.__file_err_msg__)
 
-    def get_dict(self) -> dict:
+    def get_dict(self, **kwargs) -> dict:
         """
             Return python dict fully filled data from xps file.
         Returns
@@ -1159,7 +1159,9 @@ class XpsDataFileParser():
                                         ['specs'])
                         parser_obj = parser_class()
 
-                        parser_obj.parse_file(file)
+                        parser_obj.parse_file(file, **kwargs)
+                        self.raw_data = parser_obj.raw_data
+                        self.xml = parser_obj.xml
                         return parser_obj.data_dict
 
                     except ValueError:

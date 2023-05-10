@@ -322,7 +322,8 @@ class XPSReader(BaseReader):
     def read(self,
              template: dict = None,
              file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+             objects: Tuple[Any] = None,
+             **kwargs) -> dict:
         """Reads data from given file and returns
         a filled template dictionary"""
 
@@ -344,7 +345,7 @@ class XPSReader(BaseReader):
                         )
                     )
             elif file_ext in [".sle", ".xml"]:
-                data_dict = XpsDataFileParser([file]).get_dict()
+                data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
                 xps_data_dict = {**xps_data_dict, **data_dict}
                 config_file = reader_dir.joinpath("config_file_{file_ext}.json")
 
