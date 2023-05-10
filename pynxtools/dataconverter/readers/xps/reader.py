@@ -347,7 +347,7 @@ class XPSReader(BaseReader):
             elif file_ext in [".sle", ".xml"]:
                 data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
                 xps_data_dict = {**xps_data_dict, **data_dict}
-                config_file = reader_dir.joinpath("config_file_{file_ext}.json")
+                config_file = reader_dir.joinpath(f"config_file_{file_ext.rsplit('.')[1]}.json")
 
             # This code is not very robust.
             elif file_ext == ".json":
