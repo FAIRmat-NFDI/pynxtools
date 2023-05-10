@@ -18,16 +18,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import re
+import numpy as np
+import struct
+from copy import copy
 import sqlite3
 from datetime import datetime
 import xml.etree.ElementTree as ET
-import struct
-from copy import copy
-import numpy as np
-import re
+from abc import ABC, abstractmethod
 
 
-class SleParser():
+class SleParser(ABC):
     """
     Generic parser without reading capabilities,
     to be used as template for implementing parsers for different versions.
@@ -1139,6 +1140,7 @@ class SleParser():
         else:
             print('This binary encoding is not supported.')
 
+    @abstractmethod
     def _flatten_xml(self, xml):
         """
         Flatten the nested XML structure, keeping only the needed metadata.
@@ -1156,7 +1158,9 @@ class SleParser():
             List of dictionary with spectra metadata.
 
         """
-        pass
+        collect = []
+
+        return collect
 
     def _reindex_spectra(self):
         """
@@ -1423,8 +1427,6 @@ class SleParserV4(SleParser):
 
                     data['devices'] += [device.attrib['DeviceType']]
 
-                    # data['devices'] += [{'device_type' : j.attrib['DeviceType'],
-                    #                     'settings':settings}]
                 for spectrum_group in group.iter('SpectrumGroup'):
                     data['group_name'] = spectrum_group.attrib['Name']
                     data['group_id'] = spectrum_group.attrib['ID']
@@ -1453,10 +1455,6 @@ class SleParserV4(SleParser):
                         data['spectrum_type'] = spectrum.attrib['Name']
                         for comment in spectrum.iter('Comment'):
                             data['spectrum_comment'] = comment.text
-                        """parameter3 = ET.SubElement(entry, 'Parameter')
-                        parameter3.attrib['name'] = 'Coil Current [mA]'
-                        parameter3.attrib['type'] = 'double'
-                        parameter3.text = str(settings_dict['coil_current'])"""
 
                         settings = {}
                         for setting in spectrum.iter('FixedEnergiesSettings'):
