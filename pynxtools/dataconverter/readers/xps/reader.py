@@ -316,7 +316,10 @@ class XPSReader(BaseReader):
     """ Reader for XPS.
     """
 
-    supported_nxdls = ["NXmpes", "NXmpes_xps"]
+    supported_nxdls = [
+        "NXmpes",
+        # "NXmpes_xps"
+    ]
 
     def read(self,
              template: dict = None,
