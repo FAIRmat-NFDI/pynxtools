@@ -25,7 +25,6 @@ import struct
 from copy import copy
 import numpy as np
 import re
-import os
 
 
 class SleParser():
@@ -50,25 +49,25 @@ class SleParser():
             'Step': 'step',
             'Ubias': 'electron_bias',
             'DwellTime': 'dwell_time',
-            'NumScans': 'scans',
+            'NumScans': 'total_scans',
             'LensMode': 'lens_mode',
             'Timestamp': 'time_stamp',
             'Entrance': 'entrance_slit',
             'Exit': 'exit_slit',
             'ScanMode': 'scan_mode',
-            'VoltageRange': 'voltage_range',
+            'VoltageRange': 'detector_voltage_range',
         }
 
         self.spectrometer_setting_map = {
-            'Coil Current [mA]': 'coil_current',
-            'Pre Defl Y [nU]': 'y_deflector',
-            'Pre Defl X [nU]': 'x_deflector',
-            'L1 [nU]': 'lens1',
-            'L2 [nU]': 'lens2',
-            'Focus Displacement 1 [nu]': 'focus_displacement',
-            'Detector Voltage [V]': 'detector_voltage',
-            'Bias Voltage Electrons [V]': 'bias_voltage_electrons',
-            'Bias Voltage Ions [V]': 'bias_voltage_ions',
+            'Coil Current [mA]': 'coil_current [mA]',
+            'Pre Defl Y [nU]': 'pre_deflector_y_current [nU]',
+            'Pre Defl X [nU]': 'pre_deflector_x_current [nU]',
+            'L1 [nU]': 'lens1_voltage [nU]',
+            'L2 [nU]': 'lens2_voltage [nU]',
+            'Focus Displacement 1 [nu]': 'focus_displacement_current [nU]',
+            'Detector Voltage [V]': 'detector_voltage [V]',
+            'Bias Voltage Electrons [V]': 'bias_voltage_electrons [V]',
+            'Bias Voltage Ions [V]': 'bias_voltage_ions [V]',
         }
 
         self.source_setting_map = {
@@ -101,10 +100,7 @@ class SleParser():
         }
 
         self.keys_to_drop = [
-            'CHANNELS_X',
-            'CHANNELS_Y',
-            # 'Bias Voltage Ions [V]',
-            'operating_mode',
+            'Work Function',
         ]
 
         self.encodings_map = {
@@ -114,7 +110,8 @@ class SleParser():
 
         self.encoding = ['f', 4]
 
-        self.average_scans = True
+        self.average_scans = False
+        self.sum_channels = False
 
         self.spectrometer_types = ['Phoibos1D']
 
@@ -164,7 +161,11 @@ class SleParser():
         if 'average_scans' in kwargs.keys():
             self.average_scans = kwargs['average_scans']
         else:
-            self.average_scans = True
+            self.average_scans = False
+        if 'sum_channels' in kwargs.keys():
+            self.sum_channels = kwargs['sum_channelss']
+        else:
+            self.sum_channels = False
 
         # initiate connection to sql file
         self.initiate_file_connection(filepath)
@@ -173,18 +174,12 @@ class SleParser():
         self.set_current_file(filepath)
         self._get_XML_schedule()
         self.spectra = self._flatten_xml(self.xml)
-        print(self.spectra)
         self._attach_node_ids()
         self._remove_empty_nodes()
         self._attach_device_protocols()
         self._get_spectrum_metadata_from_sql()
         self._check_encoding()
-# =============================================================================
-#         self._append_signal_data()
-#
-#         if len(self.individual_scans) != 0:
-#             self._insert_individual_scans()
-# =============================================================================
+
         self._append_scan_data()
 
         self._convert_to_common_format()
@@ -243,22 +238,38 @@ class SleParser():
             raw_ids = self._get_raw_ids(node_id)
             n_scans = len(raw_ids)
 
+            transmission_data = self._get_transmission(node_id)
+
             for n in range(n_scans):
                 scan = copy(spectrum)
                 scan['scan_id'] = scan_id
                 # get signal data for each scan
                 signal_data = self._get_one_scan(raw_ids[n])
+
+                # extract the individual channel data
+                signal_data = self._separate_channels(signal_data, n_channels)
+
                 # average channels if required
-                if n_channels > 1:
-                    signal_data = self._sum_channels(signal_data, n_channels)
+                if self.sum_channels:
+                    signal_data = self._sum_channels(signal_data)
+
                 # convert to counts per second
                 signal_data_cps = self._convert_to_counts_per_sec(
                     signal_data,
                     float(scan['dwell_time'])
                 )
-                # attach data to scan
-                scan['y'] = signal_data_cps
+
+                # attach individual channel data to scan
+                for ch_no, channel_data in enumerate(signal_data_cps):
+                    scan[f'cps_ch_{ch_no}'] = list(channel_data)
                 # no_of_scans_avg['scans'] = 1
+
+                # scan['cps_calib'] = self._get_calibrated_data(spectrum)
+                """ This is wrong and needs to be corrected!!!"""
+                scan['cps_calib'] = copy(scan['cps_ch_0'])
+
+                # Add transmission function
+                scan['transmission_function'] = transmission_data
 
                 # add metadata including scan, loop no and datetime
                 scan_metadata = self._get_scan_metadata(raw_ids[n])
@@ -271,75 +282,275 @@ class SleParser():
         # update self.spectra with the scan data
         self.spectra = self.individual_scans
 
+    def _get_transmission(self, node_id):
+        """
+        Get the transmission function data.
+
+        Parameters
+        ----------
+        node_id : int
+            Internal node ID of spectrum in SLE sql database.
+
+        Returns
+        -------
+        transmission_data : array
+            Array of TF values for the spectrum at node ID.
+        """
+        cur = self.con.cursor()
+        query = 'SELECT Data, SAMPLES, Ekin FROM TransmissionData WHERE Node="{}"'.format(
+            node_id)
+        cur.execute(query)
+        results = cur.fetchall()
+        buffer = self.encoding[1]
+        encoding = self.encoding[0]
+
+        stream = []
+        for result in results:
+            length = result[1] * buffer
+            data = result[0]
+            for i in range(0, length, buffer):
+                stream.append(struct.unpack(encoding, data[i:i + buffer])[0])
+
+        return stream
+
+    def _separate_channels(self, data, n_channels):
+        """
+        Separate energy channels.
+
+        Parameters
+        ----------
+        data : list
+            Array of measured daata .
+        n_channels : int
+            Number of channels to be summed.
+
+        Returns
+        -------
+        list
+            Summed data across n_channels.
+
+        """
+
+        n_points = int(len(data) / n_channels)
+        return np.reshape(np.array(data), (n_channels, n_points))
+
+
+    """ NEED TO UPDATE THIS METHOD"""
 # =============================================================================
-#     def _append_signal_data(self):
+#     def _get_calibrated_data(self, raw_data):
 #         """
-#         Get the signal data and attach to each spectrum
+#
+#
+#         Parameters
+#         ----------
+#         raw_data : List
+#             DESCRIPTION.
 #
 #         Returns
 #         -------
-#         None.
+#         channel_dict : TYPE
+#             DESCRIPTION.
 #
 #         """
-#         self.individual_scans = []
-#         for idx, spectrum in enumerate(self.spectra):
-#             node_id = self._get_sql_node_id(spectrum['spectrum_id'])
-#             n_channels = self._check_energy_channels(node_id)
-#             raw_ids = self._getRawids(node_id)
-#             n_scans = len(raw_ids)
-#             if n_scans > 1:
-#                 signal_data = []
-#                 for raw_id in raw_ids:
-#                     signal_data += [self._get_one_scan(raw_id)]
-#                 if self.average_scans:
-#                     signal_data = [float(sum(col)/len(col)) for col in zip(*signal_data)]
-#                     if n_channels > 1:
-#                         signal_data = self._sum_channels(signal_data,n_channels)
-#                     spectrum['y'] = signal_data
-#                 else:
-#                     for scan in signal_data:
-#                         if n_channels > 1:
-#                             scan = self._sumChannels(scan,n_channels)
-#                             spectrum['y'] = scan
-#                             spectrum['scans']=1
-#                         else:
-#                             spectrum['y'] = scan
-#                             spectrum['scans']=1
-#                         self.individual_scans += [[copy(spectrum),idx]]
+#         mcd_num = int(raw_data["mcd_num"])
+#
+#         curves_per_scan = raw_data["curves_per_scan"]
+#         values_per_curve = raw_data["values_per_curve"]
+#         values_per_scan = int(curves_per_scan * values_per_curve)
+#         mcd_head = int(raw_data["mcd_head"])
+#         mcd_tail = int(raw_data["mcd_tail"])
+#         excitation_energy = raw_data["excitation_energy"]
+#         scan_mode = raw_data["scan_mode"]
+#         kinetic_energy = raw_data["kinetic_energy"]
+#         scan_delta = raw_data["scan_delta"]
+#         pass_energy = raw_data["pass_energy"]
+#         kinetic_energy_base = raw_data["kinetic_energy_base"]
+#         # Adding one unit to the binding_energy_upper is added as
+#         # electron comes out if energy is one unit higher
+#         binding_energy_upper = excitation_energy - \
+#             kinetic_energy + kinetic_energy_base + 1
+#
+#         mcd_energy_shifts = raw_data["mcd_shifts"]
+#         mcd_energy_offsets = []
+#         offset_ids = []
+#
+#         # consider offset values for detector with respect to
+#         # position at +16 which is usually large and positive value
+#         for mcd_shift in mcd_energy_shifts:
+#             mcd_energy_offset = (
+#                 mcd_energy_shifts[-1] - mcd_shift) * pass_energy
+#             mcd_energy_offsets.append(mcd_energy_offset)
+#             offset_id = round(mcd_energy_offset / scan_delta)
+#             offset_ids.append(
+#                 int(offset_id - 1 if offset_id > 0 else offset_id))
+#
+#         # Skiping entry without count data
+#         if not mcd_energy_offsets:
+#             continue
+#         mcd_energy_offsets = np.array(mcd_energy_offsets)
+#         # Putting energy of the last detector as a highest energy
+#         starting_eng_pnts = binding_energy_upper - mcd_energy_offsets
+#         ending_eng_pnts = (starting_eng_pnts
+#                            - values_per_scan * scan_delta)
+#
+#         channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
+#         for ind in np.arange(len(channeltron_eng_axes)):
+#             channeltron_eng_axes[ind, :] = \
+#                 np.linspace(starting_eng_pnts[ind],
+#                             ending_eng_pnts[ind],
+#                             values_per_scan)
+#
+#         channeltron_eng_axes = np.round_(channeltron_eng_axes,
+#                                          decimals=8)
+#         # construct ultimate or incorporated energy axis from
+#         # lower to higher energy
+#         scans = list(raw_data["scans"].keys())
+#
+#         # Check whether array is empty or not
+#         if not scans:
+#             continue
+#         if not raw_data["scans"][scans[0]].any():
+#             continue
+#         # Sorting in descending order
+#         binding_energy = channeltron_eng_axes[-1, :]
+#
+#         self._xps_dict["data"][entry] = xr.Dataset()
+#
+#         for scan_nm in scans:
+#             channel_counts = np.zeros((mcd_num + 1,
+#                                        values_per_scan))
+#             # values for scan_nm corresponds to the data for each
+#             # "scan" in individual CountsSeq
+#             scan_counts = raw_data["scans"][scan_nm]
+#
+#             if scan_mode == "FixedAnalyzerTransmission":
+#                 for row in np.arange(mcd_num):
+#
+#                     count_on_row = scan_counts[row::mcd_num]
+#                     # Reverse counts from lower to higher
+#                     # BE as in BE_eng_axis
+#                     count_on_row = \
+#                         count_on_row[mcd_head:-mcd_tail]
+#
+#                     channel_counts[row + 1, :] = count_on_row
+#                     channel_counts[0, :] += count_on_row
+#
+#                     # Storing detector's raw counts
+#                     self._xps_dict["data"][entry][f"{scan_nm}_chan_{row}"] = \
+#                         xr.DataArray(data=channel_counts[row + 1, :],
+#                                      coords={"BE": binding_energy})
+#
+#                     # Storing callibrated and after accumulated each scan counts
+#                     if row == mcd_num - 1:
+#                         self._xps_dict["data"][entry][scan_nm] = \
+#                             xr.DataArray(data=channel_counts[0, :],
+#                                          coords={"BE": binding_energy})
 #             else:
-#                 signal_data = self._get_one_scan(raw_ids[0])
-#                 if n_channels > 1:
-#                     signal_data = self._sum_channels(signal_data,n_channels)
-#                 spectrum['y'] = signal_data
+#                 for row in np.arange(mcd_num):
 #
-#     def _insert_individual_scans(self):
-#         """
-#         Insert individual scans in the order they were measured.
+#                     start_id = offset_ids[row]
+#                     count_on_row = scan_counts[start_id::mcd_num]
+#                     count_on_row = count_on_row[0:values_per_scan]
+#                     channel_counts[row + 1, :] = count_on_row
 #
-#         The number of items in self.spectra is first determined from the
-#         number of spectrum nodes in the XML file. The number of spectrum
-#         nodes is not necessarily the same as the number of spectra in the
-#         sle file. If individual scans were saved separately, then each
-#         spectrum node might have multiple scans. If 'average_scans' was not
-#         chosen to be true in the converter, then the user wants to keep each
-#         individual scan. In this case, we need to duplcate the metadata for
-#         each scan and append the individual scans at the correct indices
-#         of the self.spectra list.
+#                     # shifting and adding all the curves.
+#                     channel_counts[0, :] += count_on_row
 #
-#         Returns
-#         -------
-#         None.
+#                     # Storing detector's raw counts
+#                     self._xps_dict["data"][entry][f"{scan_nm}_chan{row}"] = \
+#                         xr.DataArray(data=channel_counts[row + 1, :],
+#                                      coords={"BE": binding_energy})
 #
-#         """
-#         ids = list(set([i[1] for i in self.individual_scans]))
-#         for idx in reversed(ids):
-#             spectra = [i[0] for i in self.individual_scans if i[1] == idx]
-#             for spectrum in reversed(spectra):
-#                 spectrum = copy(spectrum)
-#                 spectrum['scans'] = 1
-#                 insert_idx = idx+1
-#                 self.spectra.insert(insert_idx, spectrum)
-#             self.spectra.pop(idx)
+#                     # Storing callibrated and after accumulated each scan counts
+#                     if row == mcd_num - 1:
+#                         self._xps_dict["data"][entry][scan_nm] = \
+#                             xr.DataArray(data=channel_counts[0, :],
+#                                          coords={"BE": binding_energy})
+#
+#         # Skiping entry without count data
+#         if not mcd_energy_offsets:
+#             continue
+#         mcd_energy_offsets = np.array(mcd_energy_offsets)
+#         # Putting energy of the last detector as a highest energy
+#         starting_eng_pnts = binding_energy_upper - mcd_energy_offsets
+#         ending_eng_pnts = (starting_eng_pnts
+#                            - values_per_scan * scan_delta)
+#
+#         channeltron_eng_axes = np.zeros((mcd_num, values_per_scan))
+#         for ind in np.arange(len(channeltron_eng_axes)):
+#             channeltron_eng_axes[ind, :] = \
+#                 np.linspace(starting_eng_pnts[ind],
+#                             ending_eng_pnts[ind],
+#                             values_per_scan)
+#
+#         channeltron_eng_axes = np.round_(channeltron_eng_axes,
+#                                          decimals=8)
+#         # construct ultimate or incorporated energy axis from
+#         # lower to higher energy
+#         scans = list(raw_data["scans"].keys())
+#
+#         # Check whether array is empty or not
+#         if not scans:
+#             continue
+#         if not raw_data["scans"][scans[0]].any():
+#             continue
+#         # Sorting in descending order
+#         binding_energy = channeltron_eng_axes[-1, :]
+#
+#         self._xps_dict["data"][entry] = xr.Dataset()
+#
+#         for scan_nm in scans:
+#             channel_counts = np.zeros((mcd_num + 1,
+#                                        values_per_scan))
+#             # values for scan_nm corresponds to the data for each
+#             # "scan" in individual CountsSeq
+#             scan_counts = raw_data["scans"][scan_nm]
+#
+#             if scan_mode == "FixedAnalyzerTransmission":
+#                 for row in np.arange(mcd_num):
+#
+#                     count_on_row = scan_counts[row::mcd_num]
+#                     # Reverse counts from lower to higher
+#                     # BE as in BE_eng_axis
+#                     count_on_row = \
+#                         count_on_row[mcd_head:-mcd_tail]
+#
+#                     channel_counts[row + 1, :] = count_on_row
+#                     channel_counts[0, :] += count_on_row
+#
+#                     # Storing detector's raw counts
+#                     self._xps_dict["data"][entry][f"{scan_nm}_chan_{row}"] = \
+#                         xr.DataArray(data=channel_counts[row + 1, :],
+#                                      coords={"BE": binding_energy})
+#
+#                     # Storing callibrated and after accumulated each scan counts
+#                     if row == mcd_num - 1:
+#                         self._xps_dict["data"][entry][scan_nm] = \
+#                             xr.DataArray(data=channel_counts[0, :],
+#                                          coords={"BE": binding_energy})
+#             else:
+#                 for row in np.arange(mcd_num):
+#
+#                     start_id = offset_ids[row]
+#                     count_on_row = scan_counts[start_id::mcd_num]
+#                     count_on_row = count_on_row[0:values_per_scan]
+#                     channel_counts[row + 1, :] = count_on_row
+#
+#                     # shifting and adding all the curves.
+#                     channel_counts[0, :] += count_on_row
+#
+#                     # Storing detector's raw counts
+#                     self._xps_dict["data"][entry][f"{scan_nm}_chan{row}"] = \
+#                         xr.DataArray(data=channel_counts[row + 1, :],
+#                                      coords={"BE": binding_energy})
+#
+#                     # Storing callibrated and after accumulated each scan counts
+#                     if row == mcd_num - 1:
+#                         self._xps_dict["data"][entry][scan_nm] = \
+#                             xr.DataArray(data=channel_counts[0, :],
+#                                          coords={"BE": binding_energy})
+#
+#         return channel_dict
 # =============================================================================
 
     def _check_energy_channels(self, node_id):
@@ -391,6 +602,9 @@ class SleParser():
         cur = self.con.cursor()
         query = 'SELECT RawId FROM RawData WHERE Node="{}"'.format(node_id)
         cur.execute(query)
+
+
+
         return [i[0] for i in cur.fetchall()]
 
     def _check_number_of_scans(self, node_id):
@@ -478,7 +692,11 @@ class SleParser():
                         # iterate through the parameters and add to spectrum
                         # dict
                         for parameter in device.iter('Parameter'):
-                            spectrum[parameter.attrib['name']] = parameter.text
+                            if parameter.attrib['type'] == 'double':
+                                param_text = float(parameter.text)
+                            else:
+                                param_text = parameter.text
+                            spectrum[parameter.attrib['name']] = param_text
 
     def _get_one_scan(self, raw_id):
         """
@@ -633,17 +851,19 @@ class SleParser():
         Parameters
         ----------
         signal_data : list
-            list of floats representing counts.
+            2D array of floats representing counts
+            Shape: (n_channel, n_value)
         dwell_time : float
             value of dwell_time per scan.
 
         Returns
         -------
-        cps : list
-            list of values converted to counts per second.
+        cps : array
+            2D array of values converted to counts per second.
+            Shape: (n_channel, n_value)
 
         """
-        cps = [n / dwell_time for n in signal_data]
+        cps = signal_data / dwell_time
         return cps
 
     def _get_sql_node_id(self, xml_id):
@@ -729,7 +949,7 @@ class SleParser():
             step = spectrum['step_size']
             points = spectrum['n_values']
             x = [start + i * step for i in range(points)]
-        return x
+        return np.array(x)
 
     def _get_table_names(self):
         """
@@ -881,7 +1101,7 @@ class SleParser():
             dictionary[k] = v(dictionary[k])
         return dictionary
 
-    def _sum_channels(self, data, n):
+    def _sum_channels(self, data):
         """
         Sum together energy channels.
 
@@ -898,10 +1118,8 @@ class SleParser():
             Summed data across n_channels.
 
         """
-
-        n_points = int(len(data) / n)
-        summed = np.sum(np.reshape(np.array(data), (n_points, n)), axis=1)
-        return summed.tolist()
+        summed = np.sum(data, axis=0)
+        return np.reshape(summed, (1, -1))
 
     def _check_encoding(self):
         """
@@ -990,7 +1208,16 @@ class SleParser():
             self._drop_unused_keys(spec, self.keys_to_drop)
             spec['data'] = {}
             spec['data']['x'] = self._get_energy_data(spec)
-            spec['data']['y'] = spec.pop('y')
+
+            channels = [key for key in spec if
+                        any([name in key for name in [
+                            "cps_ch_", "cps_calib"]])]
+
+            for channel_key in channels:
+                spec['data'][channel_key] = np.array(spec[channel_key])
+            for channel_key in channels:
+                spec.pop(channel_key)
+
             spec['y_units'] = 'Counts per Second'
 
     def _remove_fixed_energies(self):
@@ -1073,13 +1300,13 @@ class SleParserV1(SleParser):
                 data['analysis_method'] = measurement_type
                 data['devices'] = []
 
-                for j in group.iter('DeviceCommand'):
+                for device in group.iter('DeviceCommand'):
                     settings = {}
-                    for k in j.iter('Parameter'):
-                        settings[k.attrib['name']] = k.text
+                    for param in device.iter('Parameter'):
+                        settings[param.attrib['name']] = param.text
                         data.update(copy(settings))
 
-                    data['devices'] += [j.attrib['DeviceType']]
+                    data['devices'] += [device.attrib['DeviceType']]
 
                     # data['devices'] += [{'device_type' : j.attrib['DeviceType'],
                     #                     'settings':settings}]
@@ -1100,7 +1327,7 @@ class SleParserV1(SleParser):
                             elif setting.tag == 'EnergyChannelCalibration':
                                 settings['calibration_file'] = setting.attrib['File']
                             elif setting.tag == 'Transmission':
-                                settings['transmission_function'] = setting.attrib['File']
+                                settings['transmission_function_file'] = setting.attrib['File']
                             elif setting.tag == 'Iris':
                                 settings['iris_diameter'] = setting.attrib['Diameter']
                     data.update(copy(settings))
@@ -1117,12 +1344,11 @@ class SleParserV1(SleParser):
                             settings['pass_energy'] = float(
                                 setting.attrib['Epass'])
                             settings['lens_mode'] = setting.attrib['LensMode']
-                            settings['scans'] = int(setting.attrib['NumScans'])
+                            settings['total_scans'] = int(setting.attrib['NumScans'])
                             settings['n_values'] = int(
                                 setting.attrib['NumValues'])
                             settings['end_energy'] = float(
                                 setting.attrib['End'])
-                            settings['scans'] = int(setting.attrib['NumScans'])
                             settings['excitation_energy'] = float(
                                 setting.attrib['Eexc'])
                             settings['step_size'] = ((
@@ -1138,7 +1364,7 @@ class SleParserV1(SleParser):
                             settings['pass_energy'] = float(
                                 setting.attrib['Epass'])
                             settings['lens_mode'] = setting.attrib['LensMode']
-                            settings['scans'] = int(setting.attrib['NumScans'])
+                            settings['total_scans'] = setting.attrib['NumScans']
                             settings['n_values'] = int(
                                 setting.attrib['NumValues'])
                             settings['end_energy'] = float(
@@ -1218,9 +1444,10 @@ class SleParserV4(SleParser):
                             elif setting.tag == 'Lens':
                                 settings.update(setting.attrib)
                             elif setting.tag == 'EnergyChannelCalibration':
+                                settings['calibration_file_dir'] = setting.attrib['Dir']
                                 settings['calibration_file'] = setting.attrib['File']
                             elif setting.tag == 'Transmission':
-                                settings['transmission_function'] = setting.attrib['File']
+                                settings['transmission_function_file'] = setting.attrib['File']
                             elif setting.tag == 'Iris':
                                 settings['iris_diameter'] = setting.attrib['Diameter']
                     data.update(copy(settings))
@@ -1242,7 +1469,7 @@ class SleParserV4(SleParser):
                                 setting.attrib['Ebin'])
                             settings['pass_energy'] = setting.attrib['Epass']
                             settings['lens_mode'] = setting.attrib['LensMode']
-                            settings['scans'] = setting.attrib['NumScans']
+                            settings['total_scans'] = setting.attrib['NumScans']
                             settings['n_values'] = setting.attrib['NumValues']
                         for setting in spectrum.iter(
                                 'FixedAnalyzerTransmissionSettings'):
@@ -1251,7 +1478,7 @@ class SleParserV4(SleParser):
                                 setting.attrib['Ebin'])
                             settings['pass_energy'] = setting.attrib['Epass']
                             settings['lens_mode'] = setting.attrib['LensMode']
-                            settings['scans'] = setting.attrib['NumScans']
+                            settings['total_scans'] = setting.attrib['NumScans']
                             settings['n_values'] = setting.attrib['NumValues']
 
                         data.update(copy(settings))
