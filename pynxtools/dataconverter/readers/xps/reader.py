@@ -46,18 +46,19 @@ POSSIBLE_ENTRY_PATH: Dict = {}
 
 
 CONVERT_DICT = {
-    'Instrument': 'INSTRUMENT[instrument]',
-    'Analyser': 'ELECTRONANALYSER[electronanalyser]',
-    'Beam': 'BEAM[beam]',
     'unit': '@units',
     'version': '@version',
-    'Sample': 'SAMPLE[sample]',
     'User': 'USER[user]',
-    'Data': 'DATA[data]',
+    'Instrument': 'INSTRUMENT[instrument]',
     'Source': 'SOURCE[source]',
+    'Beam': 'BEAM[beam]',
+    'Analyser': 'ELECTRONANALYSER[electronanalyser]',
     'Collectioncolumn': 'COLLECTIONCOLUMN[collectioncolumn]',
     'Energydispersion': 'ENERGYDISPERSION[energydispersion]',
-    'Detector': 'DETECTOR[detector]'
+    'Detector': 'DETECTOR[detector]',
+    'Manipulator': 'MANIPULATOR[manipulator]',
+    'Sample': 'SAMPLE[sample]',
+    'Data': 'DATA[data]',
 }
 
 REPLACE_NESTED: Dict[str, str] = {}
@@ -177,10 +178,12 @@ def fill_data_group(key,
                                      if "_chan" not in x_arr],
                                      axis=0)
 
+
         template[f"{key_data}_errors"] = \
             np.std([xr_data[x_arr].data
                     for x_arr in xr_data.data_vars
                     if "_chan" not in x_arr], axis=0)
+
         template[key_data_unit] = config_dict[f"{key}/@units"]
         template[key_be_unit] = "eV"
         template[key_be] = binding_energy_coord
@@ -314,7 +317,7 @@ class XPSReader(BaseReader):
     """ Reader for XPS.
     """
 
-    supported_nxdls = ["NXmpes"]
+    supported_nxdls = ["NXmpes", "NXmpes_xps"]
 
     def read(self,
              template: dict = None,
@@ -324,7 +327,6 @@ class XPSReader(BaseReader):
         a filled template dictionary"""
 
         reader_dir = Path(__file__).parent
-        config_file = reader_dir.joinpath("config_file.json")
 
         xps_data_dict: Dict[str, Any] = {}
         eln_data_dict: Dict[str, Any] = {}
@@ -341,9 +343,15 @@ class XPSReader(BaseReader):
                             REPLACE_NESTED
                         )
                     )
-            elif file_ext == [".sle", ".xml"]:
+            elif file_ext in [".sle", ".xml"]:
                 data_dict = XpsDataFileParser([file]).get_dict()
                 xps_data_dict = {**xps_data_dict, **data_dict}
+                config_file = reader_dir.joinpath("config_file_{file_ext}.json")
+
+            # This code is not very robust.
+            elif file_ext == ".json":
+                if "config_file" in file:
+                    config_file = file
 
         with open(config_file, encoding="utf-8", mode="r") as cfile:
             config_dict = json.load(cfile)
