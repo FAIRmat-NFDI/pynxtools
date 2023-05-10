@@ -27,9 +27,7 @@ import os
 import numpy as np
 
 # Type aliases
-NestedDict = Dict[str, Union[int, 'NestedDict']]
-
-
+NestedDict = Dict[str, Union[int, str, 'NestedDict']]
 
 
 class BiasSpectData():
@@ -54,7 +52,7 @@ class BiasSpectData():
         print('#ssss')
         self.choose_correct_function_to_extract_data()
 
-    def get_data_nested_dict(self, file_name: str) -> NestedDict:
+    def get_data_nested_dict(self) -> NestedDict:
         """Retrun nested dict as bellow
         bais_data = {data_field_name:{value: value_for_data_field_of_any_data_typeS,
                                       unit: unit name,
@@ -68,40 +66,67 @@ class BiasSpectData():
         """Extract data from data file and store them into object level nested dictionary.
         """
 
-        key_seperators = ['>', '/']
+        key_seperators = ['>', '\t']
         unit_separators = [' (']
         is_matrix_data_found = False
         one_d_numpy_array = np.empty(0)
 
-        # TODO convert it into static mathod
-        def retrive_key_recursively(line_to_analse,
-                                    dict_to_store):
+        def check_and_write_unit(dct, key_or_line, value=None):
+            for sep_unit in unit_separators:
+                if sep_unit in key_or_line:
+                    key, unit = key_or_line.split(sep_unit, 1)
+                    unit = unit.split(')')[0]
+                    if key_or_line in dct:
+                        del dct[key_or_line]
+                    if isinstance(value, dict):
+                        value['unit'] = unit
+                    else:
+                        value: NestedDict = {}
+                        value['unit'] = unit
+                    dct[key] = value
+                    break
 
-            line_to_analse = line_to_analse.strip()
+        def check_metadata_with_unit(key_and_unit):
+            metadata = ''
+            key, unit = key_and_unit.split('(')
+            unit, rest = unit.split(')', 1)
+            # Some units have extra info e.g. Current (A) [filt]
+            if '[' in rest:
+                metadata = rest.split('[')[-1].split(']')[0]
+            return key, unit, metadata
+
+        # TODO convert it into static mathod
+        def retrive_key_recursively(line_to_analyse: str,
+                                    dict_to_store: NestedDict) -> None:
+
+            line_to_analyse = line_to_analyse.strip()
             for k_sep in key_seperators:
-                if k_sep in line_to_analse:
-                    key, rest = line_to_analse.split(k_sep, 1)
+                if k_sep in line_to_analyse:
+                    key, rest = line_to_analyse.split(k_sep, 1)
                     key = key.strip()
                     if key in dict_to_store:
                         new_dict = dict_to_store[key]
                     else:
                         new_dict: NestedDict = {}
-                    dict_to_store[key.strip()] = new_dict
+                    dict_to_store[key] = new_dict
+                    # check if key contains any unit inside bracket '()'
+                    check_and_write_unit(dict_to_store, key, new_dict)
                     retrive_key_recursively(rest, new_dict)
                     return
-            for u_sep in unit_separators:
-                if u_sep in line_to_analse:
-                    unit, rest = line_to_analse.split(')', 1)
-                    dict_to_store['unit'] = unit[1:].strip()
-                    retrive_key_recursively(rest, dict_to_store)
+
+            for sep_unit in unit_separators:
+                if sep_unit in line_to_analyse:
+                    check_and_write_unit(dict_to_store, line_to_analyse)
                     return
-            # check the line_to_analyse has reached to the end point
-            dict_to_store['value'] = line_to_analse
+
+            dict_to_store['value'] = line_to_analyse.strip()
             return
 
         def check_matrix_data_block_has_started(line_to_analyse):
             wd_list = line_to_analyse.split()
             int_list = []
+            if not wd_list:
+                return False, []
             for word in wd_list:
                 try:
                     float_n = float(word)
@@ -110,14 +135,22 @@ class BiasSpectData():
                     return False, []
             return True, int_list
 
-        def dismentle_matrix_into_dict_key_value(column_string, one_d_np_array, dict_to_store):
-            column_keys = column_string.split()
-            np_2d_array = one_d_np_array.reshape(-1, )
+        def dismentle_matrix_into_dict_key_value_list(column_string, one_d_np_array, dict_to_store):
+            column_keys = column_string.split('\t')
+            np_2d_array = one_d_np_array.reshape(-1, len(column_keys))
             for ind, key_and_unit in enumerate(column_keys):
                 if '(' in key_and_unit:
-                    key, unit = key_and_unit.split('(')
-                    dict_to_store[key.strip()] = {'unit': unit[0:-1],
-                                                  'value': list(np_2d_array[:, ind])}
+                    key, unit, metadata = check_metadata_with_unit(key_and_unit)
+                    if metadata:
+                        dict_to_store[key.strip()] = {'unit': unit,
+                                                      'value': list(np_2d_array[:, ind]),
+                                                      'metadata': metadata}
+                    else:
+                        dict_to_store[key.strip()] = {'unit': unit[0:-1],
+                                                      'value': list(np_2d_array[:, ind])}
+                else:
+                    dict_to_store[key.strip()] = {'value': list(np_2d_array[:, ind])}
+
 
         # TODO: write here the algorithm for reading each line
         with open(self.raw_file, 'r') as file_obj:
@@ -131,17 +164,15 @@ class BiasSpectData():
                 matrix_data, data_list = check_matrix_data_block_has_started(line)
                 if matrix_data:
                     is_matrix_data_found = True
-                    np.append(one_d_numpy_array, data_list)
+                    one_d_numpy_array = np.append(one_d_numpy_array, data_list)
                 elif not matrix_data and is_matrix_data_found:
                     is_matrix_data_found = False
-                    dismentle_matrix_into_dict_key_value(last_line, one_d_numpy_array, self.bias_spect_dict)
+                    dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
                     last_line = line
                 else:
                     retrive_key_recursively(last_line, self.bias_spect_dict)
                     last_line = line
 
-                last_line = line
-                # check for
 
     def choose_correct_function_to_extract_data(self) -> None:
         """Choose correct function to extract data that data in organised format.
@@ -152,4 +183,3 @@ class BiasSpectData():
         ext = self.raw_file.rsplit('.', 1)[-1]
         if ext == 'dat':
             self.extract_and_store_from_dat_file()
-
