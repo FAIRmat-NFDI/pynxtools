@@ -27,7 +27,10 @@ import xarray as xr
 import numpy as np
 import sqlite3
 
-from sle_parsers import SleParserV1, SleParserV4
+from pynxtools.dataconverter.readers.xps.sle_parsers import (
+    SleParserV1,
+    SleParserV4
+    )
 
 
 class XmlSpecs():
@@ -893,8 +896,8 @@ class SleSpecs():
                'pre_deflector_x_current [nU]',
                'pre_deflector_y_current [nU]',
                'focus_displacement_current [nU]',
-               'transmission_function',
-               'transmission_function_file',
+               'transmission_function/data',
+               'transmission_function/file',
                'lens_mode',
                ],
             'energydispersion': [
@@ -905,16 +908,16 @@ class SleSpecs():
                 'pass_energy',
                 ],
             'detector': [
-                'calibration_file_dir',
+                'calibration_file/dir',
                 'calibration_file',
                 'detector_voltage [V]',
                 'detector_voltage_range',
                 ],
             'manipulator': [],
             'calibration': [
-               'transmission_function',
-               'transmission_function_file',
-               'calibration_file_dir',
+               'transmission_function/data',
+               'transmission_function/file',
+               'calibration_file/dir',
                'calibration_file',
                ],
             'data': [

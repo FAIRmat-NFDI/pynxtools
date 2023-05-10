@@ -269,7 +269,7 @@ class SleParser():
                 scan['cps_calib'] = copy(scan['cps_ch_0'])
 
                 # Add transmission function
-                scan['transmission_function'] = transmission_data
+                scan['transmission_function/data'] = np.array(transmission_data)
 
                 # add metadata including scan, loop no and datetime
                 scan_metadata = self._get_scan_metadata(raw_ids[n])
@@ -1325,9 +1325,10 @@ class SleParserV1(SleParser):
                             elif setting.tag == 'Lens':
                                 settings.update(setting.attrib)
                             elif setting.tag == 'EnergyChannelCalibration':
+                                settings['calibration_file/dir'] = setting.attrib['Dir']
                                 settings['calibration_file'] = setting.attrib['File']
                             elif setting.tag == 'Transmission':
-                                settings['transmission_function_file'] = setting.attrib['File']
+                                settings['transmission_function/file'] = setting.attrib['File']
                             elif setting.tag == 'Iris':
                                 settings['iris_diameter'] = setting.attrib['Diameter']
                     data.update(copy(settings))
@@ -1444,10 +1445,10 @@ class SleParserV4(SleParser):
                             elif setting.tag == 'Lens':
                                 settings.update(setting.attrib)
                             elif setting.tag == 'EnergyChannelCalibration':
-                                settings['calibration_file_dir'] = setting.attrib['Dir']
+                                settings['calibration_file/dir'] = setting.attrib['Dir']
                                 settings['calibration_file'] = setting.attrib['File']
                             elif setting.tag == 'Transmission':
-                                settings['transmission_function_file'] = setting.attrib['File']
+                                settings['transmission_function/file'] = setting.attrib['File']
                             elif setting.tag == 'Iris':
                                 settings['iris_diameter'] = setting.attrib['Diameter']
                     data.update(copy(settings))
