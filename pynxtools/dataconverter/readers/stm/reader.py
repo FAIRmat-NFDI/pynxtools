@@ -1,6 +1,7 @@
 """
     A short description on STM reader.
 """
+
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -28,6 +29,7 @@ import re
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
+from . import BiasSpecData
 
 
 def is_separator_char_exist(key, sep_char_li):
@@ -147,7 +149,7 @@ def get_SPM_metadata_dict_and_signal(file_name):
     return entity_unit_items, signal
 
 
-def pass_metadata_and_signal_into_template(template, file_name):
+def from_sxm_into_template(template, file_name):
     """
     Pass metadata and signals into template. This should be last steps for writting
     metadata and data into nexus template.
@@ -216,13 +218,18 @@ class STMReader(BaseReader):
             General read menthod to prepare the template.
         """
 
-        file_dir = os.path.abspath(os.path.dirname(__file__))
-        SPM_file = os.path.join(
-            file_dir,
-            'SPM_data_folder/TiSe2_2303a_annealing_300C_5min_evaporate_Pyrene_1_0070.sxm')
-
         clean_template = Template()
-        filled_template = pass_metadata_and_signal_into_template(clean_template, SPM_file)
+        for file in file_paths:
+            ext = file.rsplit('.', 1)[-1]
+            if ext == 'sxm':
+                sxm_file = file
+                filled_template = from_sxm_into_template(clean_template, sxm_file)
+            elif ext == 'dat':
+                dat_file = file
+                b_s_d = BiasSpecData(dat_file)
+                print(b_s_d.get_data_nested_dict())
+
+
         return filled_template
 
 
