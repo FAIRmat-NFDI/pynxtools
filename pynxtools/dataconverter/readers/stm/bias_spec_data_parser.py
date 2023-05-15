@@ -49,7 +49,7 @@ class BiasSpectData():
         self.bias_spect_dict: NestedDict = {}
         self.raw_file: str = file_name
         # self.file_obj: TextIO = None
-        print('#ssss')
+        print('#ssss kkk')
         self.choose_correct_function_to_extract_data()
 
     def get_data_nested_dict(self) -> NestedDict:
@@ -151,9 +151,8 @@ class BiasSpectData():
                 else:
                     dict_to_store[key.strip()] = {'value': list(np_2d_array[:, ind])}
 
-
         # TODO: write here the algorithm for reading each line
-        with open(self.raw_file, 'r') as file_obj:
+        with open(self.raw_file, mode='r', encoding='utf-8') as file_obj:
             lines = file_obj.readlines()
             # last two lines for getting matrix data block that comes at the end of the file
             last_line: str
@@ -172,7 +171,6 @@ class BiasSpectData():
                 else:
                     retrive_key_recursively(last_line, self.bias_spect_dict)
                     last_line = line
-
 
     def choose_correct_function_to_extract_data(self) -> None:
         """Choose correct function to extract data that data in organised format.
