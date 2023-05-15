@@ -30,7 +30,7 @@ import numpy as np
 NestedDict = Dict[str, Union[int, str, 'NestedDict']]
 
 
-class BiasSpectData():
+class BiasSpecData():
     """This class mainly collect and store data fo Bias spectroscopy that is SPM experiment.
        The class splits the data and store in into nested python dictionary as follows.
        E.g.
@@ -160,17 +160,25 @@ class BiasSpectData():
                 if ind == 0:
                     last_line = line
                     continue
-                matrix_data, data_list = check_matrix_data_block_has_started(line)
-                if matrix_data:
+                is_mat_data, data_list = check_matrix_data_block_has_started(line)
+                if is_mat_data:
                     is_matrix_data_found = True
                     one_d_numpy_array = np.append(one_d_numpy_array, data_list)
-                elif not matrix_data and is_matrix_data_found:
+                    is_mat_data = False
+                # Map matrix data if file has at least two empty lines or starts
+                # other data or metadata except matrix data
+                elif not is_mat_data and is_matrix_data_found:
                     is_matrix_data_found = False
                     dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
                     last_line = line
                 else:
                     retrive_key_recursively(last_line, self.bias_spect_dict)
                     last_line = line
+
+            if not is_mat_data and is_matrix_data_found:
+                is_matrix_data_found = False
+                dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
+
 
     def choose_correct_function_to_extract_data(self) -> None:
         """Choose correct function to extract data that data in organised format.
