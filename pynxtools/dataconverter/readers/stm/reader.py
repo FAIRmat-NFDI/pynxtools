@@ -21,7 +21,7 @@
 
 
 import os
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 from typing import Tuple
 import numpy as np
 import nanonispy as nap
@@ -29,7 +29,8 @@ import re
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
-from . import BiasSpecData
+from pynxtools.dataconverter.readers.stm.bias_spec_data_parser import BiasSpecData
+from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path)
 
 
 def is_separator_char_exist(key, sep_char_li):
@@ -164,6 +165,22 @@ def from_sxm_into_template(template, file_name):
     return template
 
 
+def from_dat_into_template(template, dat_file):
+    """Pass metadata, current and voltage into template from file
+    with dat extension.
+    """
+    key_data_to_be_processed = {}
+    nx_data_group = {}
+
+    b_s_d = BiasSpecData(dat_file)
+    flattened_dict = {}
+    nested_path_to_slash_separated_path(
+        b_s_d.get_data_nested_dict(),
+        flattened_dict=flattened_dict)
+    print('### flatted dict ', b_s_d.get_data_nested_dict())
+
+
+
 def signal_obj_to_template_dict(signal):
     """
     Write signal data in NXdata class.
@@ -217,20 +234,23 @@ class STMReader(BaseReader):
         """
             General read menthod to prepare the template.
         """
-
+        filled_template: Union[Dict, None] = None
         clean_template = Template()
         for file in file_paths:
             ext = file.rsplit('.', 1)[-1]
             if ext == 'sxm':
                 sxm_file = file
                 filled_template = from_sxm_into_template(clean_template, sxm_file)
-            elif ext == 'dat':
+            if ext == 'dat':
                 dat_file = file
-                b_s_d = BiasSpecData(dat_file)
-                print(b_s_d.get_data_nested_dict())
+                from_dat_into_template(filled_template, dat_file)
 
 
-        return filled_template
+        if filled_template is not None:
+            return filled_template
+        else:
+            raise ValueError("Reader could not read anything! Check for input files and the"
+                             " corresponding extention.")
 
 
 READER = STMReader

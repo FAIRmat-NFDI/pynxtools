@@ -135,19 +135,23 @@ class BiasSpecData():
                     return False, []
             return True, int_list
 
-        def dismentle_matrix_into_dict_key_value_list(column_string, one_d_np_array, dict_to_store):
+        def dismentle_matrix_into_dict_key_value_list(column_string,
+                                                      one_d_np_array,
+                                                      dict_to_store):
             column_keys = column_string.split('\t')
             np_2d_array = one_d_np_array.reshape(-1, len(column_keys))
             for ind, key_and_unit in enumerate(column_keys):
                 if '(' in key_and_unit:
-                    key, unit, metadata = check_metadata_with_unit(key_and_unit)
-                    if metadata:
-                        dict_to_store[key.strip()] = {'unit': unit,
-                                                      'value': list(np_2d_array[:, ind]),
-                                                      'metadata': metadata}
+                    key, unit, data_stage = check_metadata_with_unit(key_and_unit)
+
+                    if data_stage:
+                        dict_to_store[f"{key.strip()} [{data_stage}]"] = \
+                                                            {'unit': unit,
+                                                             'value': np_2d_array[:, ind],
+                                                             'metadata': data_stage}
                     else:
-                        dict_to_store[key.strip()] = {'unit': unit[0:-1],
-                                                      'value': list(np_2d_array[:, ind])}
+                        dict_to_store[key.strip()] = {'unit': unit,
+                                                      'value': np_2d_array[:, ind]}
                 else:
                     dict_to_store[key.strip()] = {'value': list(np_2d_array[:, ind])}
 
@@ -167,7 +171,7 @@ class BiasSpecData():
                     is_mat_data = False
                 # Map matrix data if file has at least two empty lines or starts
                 # other data or metadata except matrix data
-                elif not is_mat_data and is_matrix_data_found:
+                elif (not is_mat_data) and is_matrix_data_found:
                     is_matrix_data_found = False
                     dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
                     last_line = line
@@ -175,7 +179,7 @@ class BiasSpecData():
                     retrive_key_recursively(last_line, self.bias_spect_dict)
                     last_line = line
 
-            if not is_mat_data and is_matrix_data_found:
+            if (not is_mat_data) and is_matrix_data_found:
                 is_matrix_data_found = False
                 dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
 
