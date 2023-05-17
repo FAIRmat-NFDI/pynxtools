@@ -884,7 +884,7 @@ class SleSpecs():
                 'operating_mode',
                 'emission_current',
             ],
-            'beam': ['excitation_energy',],
+            'beam': ['excitation_energy'],
             'analyser': [],
             'collectioncolumn': [
                 'lens1_voltage [nU]',
