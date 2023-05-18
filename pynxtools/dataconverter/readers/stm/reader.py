@@ -30,7 +30,7 @@ import re
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.readers.stm.bias_spec_data_parser import BiasSpecData
-from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path)
+from pynxtools.dataconverter.readers.stm.stm_helper import *
 
 
 def is_separator_char_exist(key, sep_char_li):
@@ -165,20 +165,76 @@ def from_sxm_into_template(template, file_name):
     return template
 
 
+def write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict):
+    """
+    """
+    for key, data_info_dict in nx_data_info_dict.items():
+        Bias_axis = 0
+        grp_key = f"/ENTRY[Entry]/DATA[{data_info_dict['nx_data_group_name']}]"
+        # print("data_info_dict['action_result'][1] : ", data_info_dict['action_result'][1])
+
+        data_field = grp_key + '/data'
+        template[data_field] = data_info_dict['action_result'][1]
+        data_field_signal = data_field + '/@signal'
+        template[data_field_signal] = data_info_dict['action_result'][1]
+        data_field_axis = data_field + '/axes'
+        template[data_field_axis] = ['Bias']
+        data_field_long_name = data_field + '/@long_name'
+        template[data_field_long_name] = 'dI/dV'
+
+        grp_signal = grp_key + '/@signal'
+        grp_axes = grp_key + '/@axes'
+        template[grp_axes] = ['Bias']
+        template[grp_signal] = 'data'
+        grp_axis = grp_key + '/Bias'
+        template[grp_axis] = data_info_dict['action_result'][0]  # data_info_dict['nx_data_group_axes'][0]
+        long_name = 'Bias (mV)'
+        grp_axis_lg_nm = grp_axis + '/@long_name'
+        template[grp_axis_lg_nm] = long_name
+        # template[grp_axis_lg_nm] = 'dI/dV'
+        grp_axis_ind = grp_key + '/@Bias_indices'
+        template[grp_axis_ind] = Bias_axis
+
+
 def from_dat_into_template(template, dat_file):
     """Pass metadata, current and voltage into template from file
     with dat extension.
     """
-    key_data_to_be_processed = {}
-    nx_data_group = {}
+    # This keys are collected from flatten_dict generated in
+    # nested_path_to_slash_separated_path()
+    key_data_to_be_processed = {'0': {'/Bias/value': None,
+                                      '/Current/value': None,
+                                     }
+                            }
 
     b_s_d = BiasSpecData(dat_file)
     flattened_dict = {}
     nested_path_to_slash_separated_path(
         b_s_d.get_data_nested_dict(),
         flattened_dict=flattened_dict)
-    print('### flatted dict ', b_s_d.get_data_nested_dict())
 
+    for fla_key, fla_val in flattened_dict.items():
+        for pro_key, pro_val in key_data_to_be_processed.items():
+            for ele_key, ele_val in pro_val.items():
+                if ele_key in fla_key:
+                    pro_val[ele_key] = fla_val
+
+    nx_data_info_dict = {'0': {'nx_data_group_name': '(Normal)',
+                    # axes: x, y
+                    'nx_data_group_axes': ['Bias', 'dV/dI'],
+                    'action': [slice_before_last_element, cal_dx_by_dy],
+                    'action_variable': [[key_data_to_be_processed['0']['/Bias/value']],
+                                        [key_data_to_be_processed['0']['/Current/value'],
+                                         key_data_to_be_processed['0']['/Bias/value']]],
+                    'action_result': []}}
+    # print('key_data_to_be_processed', key_data_to_be_processed)
+    for key in key_data_to_be_processed.keys():
+        key_dict = nx_data_info_dict[key]
+        for action, action_variable in zip(key_dict['action'], key_dict['action_variable']):
+            print('action variable : ', *action_variable)
+            key_dict['action_result'].append(action(*action_variable))
+
+    write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict)
 
 
 def signal_obj_to_template_dict(signal):
