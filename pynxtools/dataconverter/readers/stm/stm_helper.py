@@ -1,7 +1,6 @@
 """
     Some generic function and class for on STM reader.
 """
-
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -24,7 +23,7 @@ import numpy as np
 
 def nested_path_to_slash_separated_path(nested_dict: dict,
                                         flattened_dict: dict=None,
-                                        parent_path='') -> dict:
+                                        parent_path=''):
     """Convert nested dict into slash separeted path upto certain level.
     """
     start = '/'
@@ -37,18 +36,28 @@ def nested_path_to_slash_separated_path(nested_dict: dict,
             flattened_dict[path] = val
 
 
-def cal_dx_by_dy(x_val: np.ndarray, y_val:np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """Calc conductance dx/dy for x-variable and y-variable also return.
+def cal_dx_by_dy(x_val: np.ndarray, y_val: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Calc conductance or gradiant dx/dy for x-variable and y-variable also return the result.
     """
-    dI = x_val[0::2] - y_val[1::2]
-    dV = x_val[0::2] - y_val[1::2]
+    dx = x_val[0::2] - x_val[1::2]
+    dy = y_val[0::2] - y_val[1::2]
 
-    dI_by_dV = dI / dV
+    dx_by_dy = dx / dy
 
-    return dI_by_dV, x_val[1:]
+    return dx_by_dy
 
 
 def cal_X_multi_Y(x_val: np.ndarray, y_val: np.ndarray) -> np.ndarray:
     """Return multiplication of two array
     """
     return x_val * y_val
+
+
+def slice_before_last_element(np_array):
+    """Get all the elements before last element.
+    """
+    if isinstance(np_array, np.ndarray) and len(np.shape(np_array)) == 1:
+        return np_array[:-1]
+    else:
+        raise ValueError('Please provide a numpy array of 1D.')
+

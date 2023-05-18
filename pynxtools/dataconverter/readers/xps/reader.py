@@ -111,7 +111,7 @@ def fill_data_group(key,
                     config_dict,
                     template,
                     entry_set):
-    """Fill out fileds and attributes for NXdata"""
+    """Fill out fields and attributes for NXdata."""
 
     survey_count_ = 0
     count = 0
@@ -377,6 +377,5 @@ class XPSReader(BaseReader):
                 final_template[key] = val
 
         return final_template
-
 
 READER = XPSReader
