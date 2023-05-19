@@ -49,7 +49,7 @@ class YamlJsonReader(BaseReader):
 
         sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
         for file_path in sorted_paths:
-            extension = os.path.splitext(file_path)[1]
+            extension = os.path.splitext(file_path)[1].lower()
             if extension not in self.extensions:
                 print(
                     f"WARNING: "
