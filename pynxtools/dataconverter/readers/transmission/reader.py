@@ -33,10 +33,14 @@ from pynxtools.dataconverter.readers.utils import parse_json, parse_yml
 METADATA_MAP: Dict[str, Any] = {
     "/ENTRY[entry]/SAMPLE[sample]/name": 8,
     "/ENTRY[entry]/start_time": mpars.read_start_date,
-    "/ENTRY[entry]/instrument/sample_attenuator/attenuator_transmission": mpars.read_sample_attenuator,
-    "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission": mpars.read_ref_attenuator,
-    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating]/wavelength_range": mpars.read_uv_monochromator_range,
-    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating1]/wavelength_range": mpars.read_visir_monochromator_range,
+    "/ENTRY[entry]/instrument/sample_attenuator/attenuator_transmission":
+        mpars.read_sample_attenuator,
+    "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission":
+        mpars.read_ref_attenuator,
+    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating]/wavelength_range":
+        mpars.read_uv_monochromator_range,
+    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating1]/wavelength_range":
+        mpars.read_visir_monochromator_range,
     "/ENTRY[entry]/instrument/SOURCE[source]/type": "D2",
     "/ENTRY[entry]/instrument/SOURCE[source]/wavelength_range": mpars.get_d2_range,
     "/ENTRY[entry]/instrument/SOURCE[source1]/type": "halogen",
