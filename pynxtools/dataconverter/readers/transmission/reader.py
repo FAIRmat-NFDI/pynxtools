@@ -33,31 +33,22 @@ from pynxtools.dataconverter.readers.utils import parse_json, parse_yml
 METADATA_MAP: Dict[str, Any] = {
     "/ENTRY[entry]/SAMPLE[sample]/name": 8,
     "/ENTRY[entry]/start_time": mpars.read_start_date,
-    "/ENTRY[entry]/instrument/sample_attenuator/attenuator_transmission":
-        mpars.read_sample_attenuator,
-    "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission":
-        mpars.read_ref_attenuator,
-    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating]/wavelength_range":
-        mpars.read_uv_monochromator_range,
-    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating1]/wavelength_range":
-        mpars.read_visir_monochromator_range,
+    "/ENTRY[entry]/instrument/sample_attenuator/attenuator_transmission": mpars.read_sample_attenuator,
+    "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission": mpars.read_ref_attenuator,
+    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating]/wavelength_range": mpars.read_uv_monochromator_range,
+    "/ENTRY[entry]/instrument/spectrometer/GRATING[grating1]/wavelength_range": mpars.read_visir_monochromator_range,
     "/ENTRY[entry]/instrument/SOURCE[source]/type": "D2",
-    "/ENTRY[entry]/instrument/SOURCE[source]/wavelength_range":
-        mpars.get_d2_range,
+    "/ENTRY[entry]/instrument/SOURCE[source]/wavelength_range": mpars.get_d2_range,
     "/ENTRY[entry]/instrument/SOURCE[source1]/type": "halogen",
-    "/ENTRY[entry]/instrument/SOURCE[source1]/wavelength_range":
-        mpars.get_halogen_range
+    "/ENTRY[entry]/instrument/SOURCE[source1]/wavelength_range": mpars.get_halogen_range,
 }
 # Dictionary to map value during the yaml eln reading
 # This is typically a mapping from ELN signifier to NeXus path
-CONVERT_DICT: Dict[str, str] = {
-    'Sample': 'SAMPLE[sample]',
-    "unit": "@units"
-}
+CONVERT_DICT: Dict[str, str] = {"Sample": "SAMPLE[sample]", "unit": "@units"}
 # Dictionary to map nested values during the yaml eln reading
 # This is typically a mapping from nested ELN signifiers to NeXus group
 REPLACE_NESTED: Dict[str, str] = {
-    'Sample[sample]/experiment_identifier': 'experiment_identifier'
+    "Sample[sample]/experiment_identifier": "experiment_identifier"
 }
 
 
@@ -93,19 +84,21 @@ def parse_detector_line(line: str, convert: Callable[[str], Any] = None) -> List
         List[Any]: The list of detector settings.
     """
     if convert is None:
+
         def convert(val):
             return val
-    return [convert(s.split('/')[-1]) for s in line.split()]
+
+    return [convert(s.split("/")[-1]) for s in line.split()]
 
 
 # pylint: disable=too-many-arguments
 def convert_detector_to_template(
-        det_type: str,
-        slit: str,
-        time: float,
-        gain: float,
-        det_idx: int,
-        wavelength_range: List[float]
+    det_type: str,
+    slit: str,
+    time: float,
+    gain: float,
+    det_idx: int,
+    wavelength_range: List[float],
 ) -> Dict[str, Any]:
     """Writes the detector settings to the template.
 
@@ -119,9 +112,9 @@ def convert_detector_to_template(
         Dict[str, Any]: The dictionary containing the data readout from the asc file.
     """
     if det_idx == 0:
-        path = '/ENTRY[entry]/instrument/DETECTOR[detector]'
+        path = "/ENTRY[entry]/instrument/DETECTOR[detector]"
     else:
-        path = f'/ENTRY[entry]/instrument/DETECTOR[detector{det_idx}]'
+        path = f"/ENTRY[entry]/instrument/DETECTOR[detector{det_idx}]"
     template: Dict[str, Any] = {}
     template[f"{path}/type"] = det_type
     template[f"{path}/response_time"] = time
@@ -149,25 +142,36 @@ def read_detectors(metadata: list) -> Dict[str, Any]:
     detector_times = parse_detector_line(metadata[32], float)
     detector_gains = parse_detector_line(metadata[35], float)
     detector_changes = [float(x) for x in metadata[43].split()]
-    wavelength_ranges = \
+    wavelength_ranges = (
         [mpars.MIN_WAVELENGTH] + detector_changes[::-1] + [mpars.MAX_WAVELENGTH]
+    )
 
     template.update(
         convert_detector_to_template(
-            "PMT", detector_slits[2], detector_times[2],
-            None, 2, [wavelength_ranges[0], wavelength_ranges[1]]
+            "PMT",
+            detector_slits[-1],
+            detector_times[-1],
+            None,
+            2,
+            [wavelength_ranges[0], wavelength_ranges[1]],
         )
     )
 
-    for name, idx in zip(["PbS", "InGaAs"], [1, 0]):
+    for name, idx, slit, time, gain in zip(
+        ["PbS", "InGaAs"],
+        [1, 0],
+        detector_slits[1:],
+        detector_times[1:],
+        detector_gains[1:],
+    ):
         template.update(
             convert_detector_to_template(
                 name,
-                detector_slits[idx],
-                detector_times[idx],
-                detector_gains[idx],
+                slit,
+                time,
+                gain,
                 idx,
-                [wavelength_ranges[2 - idx], wavelength_ranges[3 - idx]]
+                [wavelength_ranges[2 - idx], wavelength_ranges[3 - idx]],
             )
         )
 
@@ -193,9 +197,7 @@ def parse_asc(file_path: str) -> Dict[str, Any]:
                 break
             metadata.append(line.strip())
 
-        data = pd.read_csv(
-            fobj, delim_whitespace=True, header=None, index_col=0
-        )
+        data = pd.read_csv(fobj, delim_whitespace=True, header=None, index_col=0)
 
     for path, val in METADATA_MAP.items():
         # If the dict value is an int just get the data with it's index
@@ -224,9 +226,10 @@ def add_def_info() -> Dict[str, str]:
     template["/ENTRY[entry]/@default"] = "data"
     template["/ENTRY[entry]/definition"] = "NXtransmission"
     template["/ENTRY[entry]/definition/@version"] = "v2022.06"
-    template["/ENTRY[entry]/definition/@url"] = \
-        "https://fairmat-experimental.github.io/nexus-fairmat-proposal/" + \
-        "50433d9039b3f33299bab338998acb5335cd8951/index.html"
+    template["/ENTRY[entry]/definition/@url"] = (
+        "https://fairmat-experimental.github.io/nexus-fairmat-proposal/"
+        + "50433d9039b3f33299bab338998acb5335cd8951/index.html"
+    )
 
     return template
 
@@ -242,7 +245,7 @@ class TransmissionReader(YamlJsonReader):
         ".json": parse_json,
         ".yml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
         ".yaml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
-        "default": lambda _: add_def_info()
+        "default": lambda _: add_def_info(),
     }
 
 
