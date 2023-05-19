@@ -19,7 +19,8 @@
 # limitations under the License.
 #
 
-#pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-instance-attributes
 
 import re
 import struct
@@ -36,9 +37,7 @@ class SleParser(ABC):
     Generic parser without reading capabilities,
     to be used as template for implementing parsers for different versions.
     """
-
     def __init__(self):
-        #pylint: disable=too-many-instance-attributes
         self.con = ''
         self.spectra = []
         self.xml = None
@@ -198,7 +197,7 @@ class SleParser(ABC):
         None.
 
         """
-        #pylint: disable=too-many-locals
+        # pylint: disable=too-many-locals
         individual_scans = []
         scan_id = 0
         for spectrum in self.spectra:
@@ -1117,7 +1116,7 @@ class SleParser(ABC):
             List of dictionary with spectra metadata.
 
         """
-        #pylint: disable=too-many-nested-blocks
+        # pylint: disable=too-many-nested-blocks
         collect = []
 
         return collect

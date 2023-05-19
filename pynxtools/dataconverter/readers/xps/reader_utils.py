@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-#pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 
 """
 Generic Classes for reading XPS files into python dictionary.
@@ -966,12 +966,14 @@ class SleSpecs():
             cps = np.array(spectrum["data"][channel])
 
             self._xps_dict["data"][entry][channel_key] = \
-                xr.DataArray(data=cps,
-                                coords={"energy": energy})
+                xr.DataArray(
+                    data=cps,
+                    coords={"energy": energy})
 
         self._xps_dict["data"][entry][scan_key] = \
-            xr.DataArray(data=spectrum["data"]['cps_calib'],
-                            coords={"energy": energy})
+            xr.DataArray(
+                data=spectrum["data"]['cps_calib'],
+                coords={"energy": energy})
 
         detector_data_key_child = self._construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
@@ -1028,6 +1030,7 @@ class SleSpecs():
         except IndexError:
             entry_name = ""
         return entry_name
+
 
 class XpsDataFileParser():
     """
@@ -1108,7 +1111,7 @@ class XpsDataFileParser():
                     except ValueError as val_err:
                         raise ValueError(XpsDataFileParser.__vndr_err_msg__) \
                             from val_err
-                    except ImportError as key_err: # KeyError
+                    except KeyError as key_err:
                         raise KeyError(XpsDataFileParser.__vndr_err_msg__) \
                             from key_err
 
