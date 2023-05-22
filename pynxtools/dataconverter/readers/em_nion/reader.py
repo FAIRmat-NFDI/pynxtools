@@ -29,8 +29,8 @@ from pynxtools.dataconverter.readers.em_nion.utils.use_case_selector \
 # from pynxtools.dataconverter.readers.em_nion.utils.generic_eln_io \
 #     import NxEmNionGenericElnSchemaParser
 
-# from pynxtools.dataconverter.readers.em_nion.utils.nszip_parser \
-#     import NxEmNionSwiftProjectParser
+from pynxtools.dataconverter.readers.em_nion.utils.nszip_parser \
+    import NxEmNionSwiftProjectParser
 
 # from pynxtools.dataconverter.readers.em_nion.utils.ns_ndata_parser \
 #     import NxEmNionSwiftNdataParser
@@ -101,7 +101,7 @@ class EmNionReader(BaseReader):
         print("IMPLEMENT DEFAULT PLOTTABLE DATA HEURISTIC !!!")
         # em_om_default_plot_generator(template, 1)
 
-        debugging = True
+        debugging = False
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():
