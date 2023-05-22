@@ -1322,27 +1322,6 @@ class HandleNexus:
                 if self.not_yet_visited(root, full_name):
                     self.full_visit(root, child, full_name, func)
 
-    def not_yet_visited(self, root, name):
-        """checking if a new node has already been visited in its path"""
-        path = name.split('/')
-        for i in range(1, len(path)):
-            act_path = '/'.join(path[:i])
-            # print(act_path+' - '+name)
-            if root['/' + act_path] == root['/' + name]:
-                return False
-        return True
-
-    def full_visit(self, root, hdf_node, name, func):
-        """visiting recursivly all children, but avoiding endless cycles"""
-        # print(name)
-        if len(name) > 0:
-            func(name, hdf_node)
-        if isinstance(hdf_node, h5py.Group):
-            for ch_name, child in hdf_node.items():
-                full_name = ch_name if len(name) == 0 else name + '/' + ch_name
-                if self.not_yet_visited(root, full_name):
-                    self.full_visit(root, child, full_name, func)
-
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes"""
         self.parser = parser
