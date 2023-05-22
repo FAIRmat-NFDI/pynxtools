@@ -477,18 +477,21 @@ def try_find_units(logger, elem, nxdl_path, doc, attr):
     try:  # try to find if units is defined inside the field in the NXDL element
         unit = elem.attrib[attr]
         if doc:
-            logger.debug("@" + attr + ' [' + unit + ']')
+            logger.debug(get_node_concept_path(elem) + "@" + attr + ' [' + unit + ']')
         elem = None
         nxdl_path.append(attr)
     except KeyError:  # otherwise try to find if units is defined as a child of the NXDL element
+        orig_elem = elem
         elem = get_nxdl_child(elem, attr, nexus_type='attribute')
         if elem is not None:
             if doc:
-                logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
+                logger.debug(get_node_concept_path(orig_elem)
+                             + "@" + attr + ' - [' + get_nx_class(elem) + ']')
             nxdl_path.append(elem)
         else:  # if no units category were defined in NXDL:
             if doc:
-                logger.debug("@" + attr + " - REQUIRED, but undefined unit category")
+                logger.debug(get_node_concept_path(orig_elem)
+                             + "@" + attr + " - REQUIRED, but undefined unit category")
             nxdl_path.append(attr)
     return logger, elem, nxdl_path, doc, attr
 
@@ -498,49 +501,55 @@ def check_attr_name_nxdl(param):
 If not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE
 is in the SCHEMA, but no units category were defined. """
     (logger, elem, nxdl_path, doc, attr, req_str) = param
+    orig_elem = elem
     elem2 = get_nxdl_child(elem, attr, nexus_type='attribute')
     if elem2 is not None:  # check for ATTRIBUTENAME_units in NXDL (normal)
         elem = elem2
         if doc:
-            logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
+            logger.debug(get_node_concept_path(orig_elem)
+                         + "@" + attr + ' - [' + get_nx_class(elem) + ']')
         nxdl_path.append(elem)
-    else:  # if not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE
+    else:
+        # if not defined, check for ATTRIBUTENAME to see if the ATTRIBUTE
         # is in the SCHEMA, but no units category were defined
         elem2 = get_nxdl_child(elem, attr[:-6], nexus_type='attribute')
         if elem2 is not None:
             req_str = '<<RECOMMENDED>>'
             if doc:
-                logger.debug("@" + attr + " - RECOMMENDED, but undefined unit category")
+                logger.debug(get_node_concept_path(orig_elem)
+                             + "@" + attr + " - RECOMMENDED, but undefined unit category")
             nxdl_path.append(attr)
         else:  # otherwise: NOT IN SCHEMA
             elem = elem2
             if doc:
-                logger.debug("@" + attr + " - IS NOT IN SCHEMA")
+                logger.debug(get_node_concept_path(orig_elem) + "@" + attr + " - IS NOT IN SCHEMA")
     return logger, elem, nxdl_path, doc, attr, req_str
 
 
-def try_find_default(logger, elem, nxdl_path, doc, attr):
+def try_find_default(logger, orig_elem, elem, nxdl_path, doc, attr):  # pylint: disable=too-many-arguments
     """Try to find if default is defined as a child of the NXDL element """
     if elem is not None:
         if doc:
-            logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
+            logger.debug(get_node_concept_path(orig_elem)
+                         + "@" + attr + ' - [' + get_nx_class(elem) + ']')
         nxdl_path.append(elem)
     else:  # if no default category were defined in NXDL:
         if doc:
-            logger.debug("@" + attr + " - [NX_CHAR]")
+            logger.debug(get_node_concept_path(orig_elem) + "@" + attr + " - [NX_CHAR]")
         nxdl_path.append(attr)
     return logger, elem, nxdl_path, doc, attr
 
 
-def other_attrs(logger, elem, nxdl_path, doc, attr):
+def other_attrs(logger, orig_elem, elem, nxdl_path, doc, attr):  # pylint: disable=too-many-arguments
     """Handle remaining attributes """
     if elem is not None:
         if doc:
-            logger.debug("@" + attr + ' - [' + get_nx_class(elem) + ']')
+            logger.debug(get_node_concept_path(orig_elem)
+                         + "@" + attr + ' - [' + get_nx_class(elem) + ']')
         nxdl_path.append(elem)
     else:
         if doc:
-            logger.debug("@" + attr + " - IS NOT IN SCHEMA")
+            logger.debug(get_node_concept_path(orig_elem) + "@" + attr + " - IS NOT IN SCHEMA")
     return logger, elem, nxdl_path, doc, attr
 
 
@@ -574,14 +583,13 @@ def get_node_concept_path(elem):
     return str(elem.get('nxdlbase').split('/')[-1] + ":" + elem.get('nxdlpath'))
 
 
-def get_nxdl_attr_doc(elem, elist, attr, hdf_node, logger, doc, nxdl_path, req_str, path, hdf_info):
+def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
+        elem, elist, attr, hdf_node, logger, doc, nxdl_path, req_str, path, hdf_info):
     """Get nxdl documentation for an attribute"""
     new_elem = []
     old_elem = elem
     for elem_index, act_elem1 in enumerate(elist):
         act_elem = act_elem1
-        if doc and len(elist) > 1 and attr != 'NX_class':
-            logger.debug('--- ' + get_node_concept_path(act_elem) + '@' + attr)
         # NX_class is a compulsory attribute for groups in a nexus file
         # which should match the type of the corresponding NXDL element
         if attr == 'NX_class' and not isinstance(hdf_node, h5py.Dataset) and elem_index == 0:
@@ -609,8 +617,9 @@ def get_nxdl_attr_doc(elem, elist, attr, hdf_node, logger, doc, nxdl_path, req_s
         elif attr == 'default' and not isinstance(hdf_node, h5py.Dataset):
             req_str = "<<RECOMMENDED>>"
             # try to find if default is defined as a child of the NXDL element
-            act_elem = get_nxdl_child(act_elem, attr, nexus_type='attribute')
+            act_elem = get_nxdl_child(act_elem, attr, nexus_type='attribute', go_base=False)
             logger, act_elem, nxdl_path, doc, attr = try_find_default(logger,
+                                                                      act_elem1,
                                                                       act_elem,
                                                                       nxdl_path,
                                                                       doc,
@@ -619,8 +628,8 @@ def get_nxdl_attr_doc(elem, elist, attr, hdf_node, logger, doc, nxdl_path, req_s
             act_elem = get_nxdl_child(act_elem, attr, nexus_type='attribute', go_base=False)
             if act_elem is not None:
                 logger, act_elem, nxdl_path, doc, attr = \
-                    other_attrs(logger, act_elem, nxdl_path, doc, attr)
-        if act_elem:
+                    other_attrs(logger, act_elem1, act_elem, nxdl_path, doc, attr)
+        if act_elem is not None:
             new_elem.append(act_elem)
             if req_str is None:
                 req_str = get_required_string(act_elem)  # check for being required
@@ -1212,7 +1221,7 @@ def axis_helper(dim, nxdata, signal, axes, logger):
         )
 
 
-def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path, logger=None):
+def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
     """Return list of nxdl concept paths for a nxdl element which corresponds to
     hdf node.
     """
@@ -1221,20 +1230,7 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path, logger=None):
         get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
                             hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
                             hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
-    inheritance_list = []
-    inheritance_list.append(hdf_node_to_self_concept_path(hdf_info, None))
-    if elist:
-        for elem in elist:
-            tmp_path = elem.get('nxdlbase').split('.nxdl')[0]
-            con_path = '/NX' + tmp_path.split('NX')[-1] + elem.get('nxdlpath')
-
-            inheritance_list.append(con_path)
-    if logger is not None:
-        for con in inheritance_list:
-            logger.info(con)
-    else:
-        return inheritance_list
-    return []
+    return elist
 
 
 def hdf_node_to_self_concept_path(hdf_info, logger):
@@ -1277,9 +1273,33 @@ class HandleNexus:
               and hdf_name in (self.d_inq_nd, self.d_inq_nd[1:])):
             process_node(hdf_node, '/' + hdf_name, self.parser, self.logger)
         elif self.c_inq_nd is not None:
-            ren_con = get_all_is_a_rel_from_hdf_node(hdf_node, '/' + hdf_name, None)
-            if self.c_inq_nd in ren_con:
-                self.hdf_path_list_for_c_inq_nd.append(hdf_name)
+            attributed_concept = self.c_inq_nd.split('@')
+            attr = attributed_concept[1] if len(attributed_concept) > 1 else None
+            elist = get_all_is_a_rel_from_hdf_node(hdf_node, '/' + hdf_name)
+            if elist is None:
+                return
+            fnd_superclass = False
+            fnd_superclass_attr = False
+            for elem in reversed(elist):
+                tmp_path = elem.get('nxdlbase').split('.nxdl')[0]
+                con_path = '/NX' + tmp_path.split('NX')[-1] + elem.get('nxdlpath')
+                if fnd_superclass or con_path == attributed_concept[0]:
+                    fnd_superclass = True
+                    if attr is None:
+                        self.hdf_path_list_for_c_inq_nd.append(hdf_name)
+                        break
+                    for attribute in hdf_node.attrs.keys():
+                        attr_concept = get_nxdl_child(elem, attribute, nexus_type='attribute',
+                                                      go_base=False)
+                        if attr_concept is not None and \
+                                attr_concept.get('nxdlpath').endswith(attr):
+                            fnd_superclass_attr = True
+                            con_path = '/NX' + tmp_path.split('NX')[-1] \
+                                + attr_concept.get('nxdlpath')
+                            self.hdf_path_list_for_c_inq_nd.append(hdf_name + "@" + attribute)
+                            break
+                if fnd_superclass_attr:
+                    break
 
     def not_yet_visited(self, root, name):
         """checking if a new node has already been visited in its path"""
