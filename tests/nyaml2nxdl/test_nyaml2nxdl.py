@@ -93,9 +93,14 @@ def test_links():
     """
     Check the correct parsing of links
     """
+    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             '../data/nyaml2nxdl')
     ref_xml_link_file = 'tests/data/nyaml2nxdl/Ref_NXtest_links.nxdl.xml'
     test_yml_link_file = 'tests/data/nyaml2nxdl/NXtest_links.yaml'
     test_xml_link_file = 'tests/data/nyaml2nxdl/NXtest_links.nxdl.xml'
+    # ref_xml_link_file = os.path.abspath(data_path + '/Ref_NXtest_links.nxdl.xml')
+    # test_yml_link_file = os.path.abspath(data_path + '/NXtest_links.yaml')
+    # test_xml_link_file = os.path.abspath(data_path + '/NXtest_links.nxdl.xml')
     desired_matches = ['<link', '/>']
     compare_matches(
         ref_xml_link_file,
@@ -123,10 +128,12 @@ def test_docs():
     sys.stdout.write('Test on documentation formatting okay.\n')
 
 
-def test_nxdl2yaml_doc_format():
+def test_nxdl2yaml_doc_format_and_nxdl_part_as_comment():
     """
-        In this test an nxdl file with all kind of doc formats are translated
+    This test for two reason:
+        1. In test-1 an nxdl file with all kind of doc formats are translated
     to yaml to check if they are correct.
+        2. In test-2: Check the nxdl that comes at the end of yaml file as comment.
     """
     ref_xml_file = 'tests/data/nyaml2nxdl/Ref_NXentry.nxdl.xml'
     ref_yml_file = 'tests/data/nyaml2nxdl/Ref_NXentry.yaml'
@@ -147,19 +154,25 @@ def test_fileline_error():
     In this test the yaml fileline in the error message is tested.
     """
     test_yml_file = 'tests/data/nyaml2nxdl/NXfilelineError1.yaml'
+    out_nxdl = 'tests/data/nyaml2nxdl/temp_NXfilelineError1.yaml'
     result = CliRunner().invoke(nyml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 1
     assert '13' in str(result.exception)
+    os.remove(out_nxdl)
 
     test_yml_file = 'tests/data/nyaml2nxdl/NXfilelineError2.yaml'
+    out_nxdl = 'tests/data/nyaml2nxdl/temp_NXfilelineError2.yaml'
     result = CliRunner().invoke(nyml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 1
     assert '21' in str(result.exception)
+    os.remove(out_nxdl)
 
     test_yml_file = 'tests/data/nyaml2nxdl/NXfilelineError3.yaml'
+    out_nxdl = 'tests/data/nyaml2nxdl/temp_NXfilelineError3.yaml'
     result = CliRunner().invoke(nyml2nxdl.launch_tool, ['--input-file', test_yml_file])
     assert result.exit_code == 1
     assert '25' in str(result.exception)
+    os.remove(out_nxdl)
 
     sys.stdout.write('Test on xml -> yml fileline error handling okay.\n')
 
