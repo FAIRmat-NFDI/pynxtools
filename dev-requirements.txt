@@ -35,6 +35,8 @@ babel==2.11.0
     # via jupyterlab-server
 backcall==0.2.0
     # via ipython
+backports-zoneinfo==0.2.1
+    # via tzlocal
 beautifulsoup4==4.11.1
     # via nbconvert
 bleach==5.0.1
@@ -124,6 +126,7 @@ h5py==3.7.0
     #   ifes-apt-tc-data-modeling
     #   jupyterlab-h5web
     #   kikuchipy
+    #   nionswift
     #   orix
     #   pyfai
     #   pynxtools (pyproject.toml)
@@ -143,6 +146,9 @@ imageio==2.22.1
     # via
     #   hyperspy
     #   kikuchipy
+    #   nionswift
+    #   nionswift-io
+    #   nionui
     #   scikit-image
 importlib-metadata==5.0.0
     # via
@@ -312,6 +318,24 @@ networkx==2.6.3
     # via
     #   radioactivedecay
     #   scikit-image
+niondata==0.15.3
+    # via
+    #   nionswift
+    #   nionswift-io
+nionswift==0.16.8
+    # via pynxtools (pyproject.toml)
+nionswift-io==0.15.1
+    # via nionswift
+nionswift-tool==0.4.18
+    # via pynxtools (pyproject.toml)
+nionui==0.6.10
+    # via nionswift
+nionutils==0.4.6
+    # via
+    #   niondata
+    #   nionswift
+    #   nionswift-io
+    #   nionui
 notebook==6.5.2
     # via jupyterlab
 notebook-shim==0.2.2
@@ -344,6 +368,10 @@ numpy==1.21.6
     #   kikuchipy
     #   lmfit
     #   matplotlib
+    #   niondata
+    #   nionswift
+    #   nionswift-io
+    #   nionui
     #   numba
     #   numcodecs
     #   numexpr
@@ -407,6 +435,7 @@ pillow==9.2.0
     # via
     #   imageio
     #   matplotlib
+    #   nionswift
     #   scikit-image
 pint==0.18
     # via hyperspy
@@ -487,6 +516,7 @@ python-dateutil==2.8.2
 pytz==2022.4
     # via
     #   babel
+    #   nionswift
     #   pandas
     #   pynxtools (pyproject.toml)
 pywavelets==1.3.0
@@ -534,6 +564,8 @@ scipy==1.7.3
     #   hyperspy
     #   kikuchipy
     #   lmfit
+    #   niondata
+    #   nionswift
     #   orix
     #   pyfai
     #   pynxtools (pyproject.toml)
@@ -651,6 +683,8 @@ typing-extensions==4.3.0
     #   mypy
     #   numcodecs
     #   pylint
+tzlocal==5.0.1
+    # via nionswift
 uncertainties==3.1.7
     # via lmfit
 url-normalize==1.4.3
