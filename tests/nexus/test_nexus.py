@@ -224,6 +224,19 @@ def test_c_option(tmp_path):
         tmp = tmp_f.readlines()
     assert tmp[0] == 'INFO: entry/instrument/analyser/data\n'
 
+    logger.removeHandler(handler)
+    handler = logging.FileHandler(tmp_file, 'w')
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    nexus_helper = nexus.HandleNexus(logger, None, None, '/NXdata@signal')
+    nexus_helper.process_nexus_master_file(None)
+
+    with open(tmp_file, encoding='utf-8', mode='r') as tmp_f:
+        tmp = tmp_f.readlines()
+    assert tmp[0] == 'INFO: entry/data@signal\n'
+
 
 def test_d_option(tmp_path):
     """
