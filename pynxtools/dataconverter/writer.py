@@ -104,7 +104,7 @@ def handle_shape_entries(data, file, path):
     return layout
 
 
-def handle_dicts_entries(data, grp, entry_name, output_path):
+def handle_dicts_entries(data, grp, entry_name, output_path, path):
     """Handle function for dictionaries found as value of the nexus file.
 
 Several cases can be encoutered:
@@ -253,11 +253,33 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     if isinstance(data, dict):
                         if "compress" in data.keys():
-                            dataset = handle_dicts_entries(data, grp, entry_name, self.output_path)
+                            dataset = handle_dicts_entries(data, grp, entry_name, self.output_path, path)
                         else:
-                            hdf5_links_for_later.append([data, grp, entry_name, self.output_path])
+                            hdf5_links_for_later.append([data, grp, entry_name, self.output_path, path])
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
+            except Exception as exc:
+                raise IOError(f"Unknown error occured writing the path: {path} "
+                              f"with the following message: {str(exc)}") from exc
+
+        for links in hdf5_links_for_later:
+            dataset = handle_dicts_entries(*links)
+
+        for path, value in self.data.items():
+            try:
+                if path[path.rindex('/') + 1:] == '@units':
+                    continue
+
+                entry_name = helpers.get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
+                if is_not_data_empty(value):
+                    data = value
+                else:
+                    continue
+
+                dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
+
+                if entry_name[0] != "@":
+                    print(path)
                     add_units_key(dataset, path)
                 else:
                     # consider changing the name here the lvalue can also be group!
@@ -266,8 +288,5 @@ class Writer:
             except Exception as exc:
                 raise IOError(f"Unknown error occured writing the path: {path} "
                               f"with the following message: {str(exc)}") from exc
-
-        for links in hdf5_links_for_later:
-            dataset = handle_dicts_entries(*links)
 
         self.output_nexus.close()
