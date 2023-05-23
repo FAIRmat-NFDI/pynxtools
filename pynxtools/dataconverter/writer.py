@@ -276,11 +276,10 @@ class Writer:
                 else:
                     continue
 
-                dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
-
                 if entry_name[0] != "@":
                     print(path)
-                    add_units_key(dataset, path)
+                    path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(path)
+                    add_units_key(self.output_nexus[path_hdf5], path)
                 else:
                     # consider changing the name here the lvalue can also be group!
                     dataset = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
