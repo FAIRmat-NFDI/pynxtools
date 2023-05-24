@@ -327,10 +327,10 @@ class EllipsometryReader(BaseReader):
         for data_indx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[data_indx]):
                 template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
-                                                                "/entry/sample/measured_data",
-                                                                "shape":
-                                                                np.index_exp[0, 0, index, data_indx, :]
-                                                                }
+                                                               "/entry/sample/measured_data",
+                                                               "shape":
+                                                               np.index_exp[0, 0, index, data_indx, :]
+                                                              }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
                 if data_indx == 0 and index == 0:
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = "Psi and Delta (degrees)"
