@@ -24,6 +24,7 @@ import numpy as np
 # import h5py
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
+from pynxtools.dataconverter.helpers import extract_atom_types
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
@@ -168,7 +169,8 @@ def mock_function(header):
     mock_header.mock_template(header)
 
     # Defining labels:
-    labels = header_labels(header)
+
+    labels = header_labels(header)#
 
     # Atom types: Convert str to list if atom_types is not a list:
     if isinstance(header["atom_types"], str):
@@ -236,24 +238,21 @@ class EllipsometryReader(BaseReader):
             block_idx.append(index)
 
         # array that will be allocated in a HDF5 file
-        my_numpy_array = np.empty([1,
-                                   1,
+        my_numpy_array = np.empty([
                                    len(unique_angles),
                                    len(labels),
                                    counts[0]
                                    ])
 
         for index, angle in enumerate(unique_angles):
-            my_numpy_array[0,
-                           0,
+            my_numpy_array[
                            index,
                            :,
                            :] = angle
         data_index = 0
         for key, val in labels.items():
             for index in range(len(val)):
-                my_numpy_array[0,
-                               0,
+                my_numpy_array[
                                index,
                                data_index,
                                :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
@@ -262,7 +261,7 @@ class EllipsometryReader(BaseReader):
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
-        header["spectrometer/wavelength"] = (
+        header["data/SPECTRUM"] = (
             whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
         )
 
@@ -277,6 +276,8 @@ class EllipsometryReader(BaseReader):
                 index += counts[angle[0]]
                 block_idx.append(index)
 
+        if "atom_types" not in header:
+            header["atom_types"] = extract_atom_types(header["chemical_formula"])
         # Atom types: Convert str to list if atom_types is not a list:
         if isinstance(header["atom_types"], str):
             header["atom_types"] = header["atom_types"].split(",")
@@ -317,23 +318,33 @@ class EllipsometryReader(BaseReader):
         template = populate_template_dict(header, template)
 
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
-                                                     "/entry/instrument/spectrometer/wavelength"
+                                                     "/entry/data/SPECTRUM"
                                                      }
-        template["/ENTRY[entry]/plot/wavelength/@units"] = header["wavelength_unit"]
-        for data_indx in range(0, len(labels.keys())):
-            for index, key in enumerate(data_list[data_indx]):
-                template[f"/ENTRY[entry]/plot/{key}"] = {"link":
-                                                         "/entry/sample/measured_data",
-                                                         "shape":
-                                                         np.index_exp[0, 0, index, data_indx, :]
-                                                         }
-                template[f"/ENTRY[entry]/plot/{key}/@units"] = "degrees"
+        template["/ENTRY[entry]/data/SPECTRUM/@units"] = \
+            "Angstroms"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/angle_of_incidence/@units"] = \
+            header["angle_of_incidence_unit"]
+        template["/ENTRY[entry]/data/SPECTRUM/@long_name"] = \
+            "wavelength (Angstroms)"
+
+        for dindx in range(0, len(labels.keys())):
+            for index, key in enumerate(data_list[dindx]):
+                template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
+                                                               "/entry/data/measured_data",
+                                                               "shape":
+                                                               np.index_exp[index, dindx, :]
+                                                               }
+                template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
+                if dindx == 0 and index == 0:
+                    template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
+                        "Psi and Delta (degrees)"
 
         # Define default plot showing psi and delta at all angles:
         template["/@default"] = "entry"
         template["/ENTRY[entry]/@default"] = "plot"
         template["/ENTRY[entry]/plot/@signal"] = f"{data_list[0][0]}"
         template["/ENTRY[entry]/plot/@axes"] = "wavelength"
+        template["/ENTRY[entry]/plot/title"] = "Psi and Delta"
 
         # if len(data_list[0]) > 1:
         template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
