@@ -320,9 +320,11 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
                                                      "/entry/instrument/spectrometer/wavelength"
                                                      }
-        template["/ENTRY[entry]/INSTRUMENT[instrument]/spectrometer/wavelength/@units"] = "Angstroms"
-        template["/ENTRY[entry]/plot/wavelength/@long_name"] = "wavelength (Angstroms)"
-        template["/ENTRY[entry]/plot/wavelength/@units"] = "Angstroms"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/spectrometer/wavelength/@units"] = \
+            "Angstroms"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/spectrometer/wavelength/@long_name"] = \
+            "wavelength (Angstroms)"
+        #template["/ENTRY[entry]/plot/wavelength/@units"] = "Angstroms"
         #template["/entry/instrument/spectrometer/wavelength/@long_name"] = "wavelength (Angstroms)"
         #template["/entry/instrument/spectrometer/wavelength/@units"] = "(Angstroms)"
 
@@ -334,7 +336,8 @@ class EllipsometryReader(BaseReader):
                                                          np.index_exp[0, 0, index, data_indx, :]
                                                          }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
-                template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = "name"
+                if data_indx == 0 and index == 0:
+                    template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = "Psi and Delta (degrees)"
 
         # Define default plot showing psi and delta at all angles:
         template["/@default"] = "entry"
@@ -348,24 +351,6 @@ class EllipsometryReader(BaseReader):
         for index in range(1, len(data_list)):
             template["/ENTRY[entry]/plot/@auxiliary_signals"] += data_list[index]
 
-        template["/ENTRY[entry]/plot_test/DATA[Psi]"] = {"link":
-                                            "/entry/sample/measured_data",
-                                            "shape":
-                                            np.index_exp[0, 0, index, 0, :]
-                                            }
-        # template["/ENTRY[entry]/plot_test/DATA[Psi]/@units"] = "degrees"
-        # template["/ENTRY[entry]/plot_test/DATA[Psi]/@long_name"] = "Psi (degrees)"
-        # template["/ENTRY[entry]/plot_test/@signal"] = "Psi"
-        # template["/ENTRY[entry]/plot_test/AXISNAME[wvl]"] = {"link":
-        #                                         "/entry/instrument/spectrometer/wavelength"
-        #                                         }
-        # template["/ENTRY[entry]/plot_test/@axes"] = "wvl"
-        # # template["/ENTRY[entry]/plot_test/AXISNAME[wvl]/@units"] = "Angstroms"
-        # # template["/ENTRY[entry]/plot_test/AXISNAME[wvl]/@long_name"] = "Angstroms"
-        # # template["/ENTRY[entry]/plot_test/AXISNAME_indices[wvl]"] = 0
-        # template["/ENTRY[entry]/plot_test/title"] = "Test plot"
-
-        print(template)
         return template
 
 

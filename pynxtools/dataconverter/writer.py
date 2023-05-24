@@ -277,7 +277,6 @@ class Writer:
                     continue
 
                 if entry_name[0] != "@":
-                    print(path)
                     path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(path)
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
