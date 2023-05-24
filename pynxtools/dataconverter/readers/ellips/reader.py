@@ -324,16 +324,17 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/INSTRUMENT[instrument]/spectrometer/wavelength/@long_name"] = \
             "wavelength (Angstroms)"
 
-        for data_indx in range(0, len(labels.keys())):
-            for index, key in enumerate(data_list[data_indx]):
+        for dindx in range(0, len(labels.keys())):
+            for index, key in enumerate(data_list[dindx]):
                 template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
                                                                "/entry/sample/measured_data",
                                                                "shape":
-                                                               np.index_exp[0, 0, index, data_indx, :]
+                                                               np.index_exp[0, 0, index, dindx, :]
                                                                }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
-                if data_indx == 0 and index == 0:
-                    template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = "Psi and Delta (degrees)"
+                if dindx == 0 and index == 0:
+                    template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
+                        "Psi and Delta (degrees)"
 
         # Define default plot showing psi and delta at all angles:
         template["/@default"] = "entry"

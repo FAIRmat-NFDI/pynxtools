@@ -253,9 +253,11 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(path, self.data.undocumented.keys())
                     if isinstance(data, dict):
                         if "compress" in data.keys():
-                            dataset = handle_dicts_entries(data, grp, entry_name, self.output_path, path)
+                            dataset = handle_dicts_entries(data, grp, entry_name, \
+                                                           self.output_path, path)
                         else:
-                            hdf5_links_for_later.append([data, grp, entry_name, self.output_path, path])
+                            hdf5_links_for_later.append([data, grp, entry_name, \
+                                                         self.output_path, path])
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
             except Exception as exc:
