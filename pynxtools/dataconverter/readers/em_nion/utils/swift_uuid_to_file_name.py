@@ -24,6 +24,7 @@ import uuid
 # see https://github.com/nion-software/nionswift/blob/e95839c5602d009006ea88a648e5f78dc77c1ea4/
 # nion/swift/model/Profile.py line 146 and following
 
+
 def encode(uuid_: uuid.UUID, alphabet: str) -> str:
     result = str()
     uuid_int = uuid_.int

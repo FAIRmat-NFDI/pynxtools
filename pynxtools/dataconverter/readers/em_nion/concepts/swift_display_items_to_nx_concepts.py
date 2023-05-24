@@ -34,8 +34,7 @@ metadata_constraints = {"type": str,
                         "timezone_offset": str,
                         "metadata/hardware_source/hardware_source_id": str,
                         "version": int,
-                        "modified": str
-                       }
+                        "modified": str}
 
 nexus_concept_dict = {"ITULL": "NxImageSetRealSpace",
                       "IFLL": "NxImageSetRealSpace",
@@ -48,8 +47,8 @@ nexus_concept_dict = {"ITULL": "NxImageSetRealSpace",
                       "SFLLE": "NxSpectrumSetEels",
                       "SFUE": "NxSpectrumSetEels",
                       "RFAA": "NxImageAngSpace",
-                      "RTUAA": "NxImageAngSpace"
-                     }
+                      "RTUAA": "NxImageAngSpace"}
+
 
 def check_existence_of_required_fields(dct: dict, constraint_dct: dict) -> bool:
     """Checks if given dictionary has fields with values which match constraints."""
@@ -62,6 +61,7 @@ def check_existence_of_required_fields(dct: dict, constraint_dct: dict) -> bool:
             print(f"-->{keyword} not instance")
             return False
     return True
+
 
 def identify_nexus_concept_key(dct: dict) -> str:
     """Identifies best candidate to map data/metadata on a NeXus concept."""

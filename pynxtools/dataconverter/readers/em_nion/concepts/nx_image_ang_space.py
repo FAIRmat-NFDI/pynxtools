@@ -85,5 +85,4 @@ NxImageAngSpaceDict = {"IGNORE": {"fun": "load_from", "terms": "type"},
                        "IGNORE": {"fun": "load_from", "terms": "collection_dimension_count"},
                        "IGNORE": {"fun": "load_from", "terms": "datum_dimension_count"},
                        "IGNORE": {"fun": "load_from", "terms": "data_modified"},
-                       "IGNORE": {"fun": "load_from", "terms": "__large_format"}
-                      }
+                       "IGNORE": {"fun": "load_from", "terms": "__large_format"}}

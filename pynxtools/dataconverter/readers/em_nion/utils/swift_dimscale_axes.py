@@ -19,17 +19,28 @@
 
 # pylint: disable=no-member
 
+from typing import List, Any
 
-def identify_dimension_scale_axes(dct: dict, nx_concept_key: str) -> list:
+import numpy as np
+
+from pynxtools.dataconverter.readers.em_nion.concepts.swift_display_items_to_nx_concepts \
+    import metadata_constraints, check_existence_of_required_fields  # nexus_concept_dict
+
+
+def get_list_of_dimension_scale_axes(dct: dict) -> list:  # , concept_key: str
     """Create a list of dimension scale axes value, unit tuples."""
-    axes = []
-    if (check_existence_of_required_fields(dct, metadata_constraints) is False) \
-            or nx_concept_key not in nexus_concept_dict.keys():
+    # use only when we know already onto which concept a display_item will be mapped
+    axes: List[Any] = []
+    if (check_existence_of_required_fields(dct, metadata_constraints) is False):
         return axes
-    if nexus_concept_dict[nx_concept_key] is None:
-        return axes
+    #        or concept_key not in nexus_concept_dict.keys():
+    # if nexus_concept_dict[concept_key] is None:
+    #     return axes
     if len(dct["dimensional_calibrations"]) != len(dct["data_shape"]):
         return axes
+
+    print(dct["dimensional_calibrations"])
+    print(dct["data_shape"])
 
     for idx in np.arange(0, len(dct["dimensional_calibrations"])):
         nvalues = dct["data_shape"][idx]
@@ -37,10 +48,12 @@ def identify_dimension_scale_axes(dct: dict, nx_concept_key: str) -> list:
         if isinstance(nvalues, int) and isinstance(axis_dict, dict):
             if (nvalues > 0) \
                     and (set(axis_dict.keys()) == set(["offset", "scale", "units"])):
-                axes.append({"value": np.asarray(
-                    np.linspace(axis_dict["offset"],
-                                axis_dict["offset"]+nvalues*axis_dict["scale"],
-                                num=nvalues,endpoint=True), np.float64),
-                             "unit": axis_dict["units"]
-                            })
+                start = axis_dict["offset"] + 0.5 * axis_dict["scale"]
+                stop = axis_dict["offset"] + ((nvalues - 1) + 0.5) * axis_dict["scale"]
+                axes.append(
+                    {"value": np.asarray(np.linspace(start,
+                                                     stop,
+                                                     num=nvalues,
+                                                     endpoint=True), np.float64),
+                     "unit": axis_dict["units"]})
     return axes

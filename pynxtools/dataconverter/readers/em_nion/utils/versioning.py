@@ -25,7 +25,7 @@ from pynxtools.dataconverter.readers.shared.shared_utils \
 
 NX_EM_NION_ADEF_NAME = "NXem"
 NX_EM_NION_ADEF_VERSION = "nexus-fairmat-proposal successor of " \
-                        "9636feecb79bb32b828b1a9804269573256d7696"
+                          "9636feecb79bb32b828b1a9804269573256d7696"
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
 NX_EM_NION_EXEC_NAME = "dataconverter/reader/em_nion/reader.py"
 NX_EM_NION_EXEC_VERSION = get_repo_last_commit()

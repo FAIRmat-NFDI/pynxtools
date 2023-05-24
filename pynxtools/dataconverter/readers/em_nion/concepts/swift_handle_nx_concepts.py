@@ -43,7 +43,7 @@ def convert_iso8601_modifier(terms, dct: dict):
     if terms is not None:
         if isinstance(terms, str):
             if terms in dct.keys():
-                return local_date_time
+                return None
         elif (isinstance(terms, list)) and (len(terms) == 2) \
                 and (all(isinstance(entry, str) for entry in terms) is True):
             # assume the first argument is a local time
@@ -99,18 +99,18 @@ def apply_modifier(modifier, dct: dict):
 # print(apply_modifier(modd, yml))
 
 def variadic_path_to_specific_path(path: str, instance_identifier: list):
-    """Transform a possibly variadic path to an NeXus instance path."""
+    """Transforms a variadic path to an actual path with instances."""
     if (path is not None) and (path != ""):
-        if path.count("*") == 0:  # path is not variadic
+        narguments = path.count("*")
+        if narguments == 0:  # path is not variadic
             return path
-        tmp = path.split("*")
-        if (len(tmp) == len(instance_identifier) + 1) and (instance_identifier != []):
-            # \ and (all(isinstance(entry, int) for entry in instance_identifier) is True):
-            idx = 0
-            nx_specific_path = f"{tmp[idx]}"
-            idx += 1
-            for identifier in instance_identifier:
-                nx_specific_path += f"{identifier}{tmp[idx]}"
-                idx += 1
-            return nx_specific_path
+        if len(instance_identifier) >= narguments:
+            tmp = path.split("*")
+            if len(tmp) == narguments + 1:
+                nx_specific_path = ""
+                for idx in range(0, narguments):
+                    nx_specific_path += f"{tmp[idx]}{instance_identifier[idx]}"
+                    idx += 1
+                nx_specific_path += f"{tmp[-1]}"
+                return nx_specific_path
     return None

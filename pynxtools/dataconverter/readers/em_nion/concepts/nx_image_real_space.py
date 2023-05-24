@@ -93,7 +93,7 @@ NxImageRealSpaceDict = {"IGNORE": {"fun": "load_from", "terms": "type"},
                         "IGNORE": {"fun": "load_from", "terms": "metadata/scan/scan_id"},
                         "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/em_lab/EBEAM_DEFLECTOR/center": {"fun": "load_from", "terms": ["metadata/scan/center_x_nm", "metadata/scan/center_y_nm"]},
                         "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/em_lab/EBEAM_DEFLECTOR/center/@units": "nm",
-                        "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/field_of_view": { "fun": "load_from", "terms": "/metadata/scan/fov_nm"},
+                        "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/field_of_view": {"fun": "load_from", "terms": "/metadata/scan/fov_nm"},
                         "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/em_lab/OPTICAL_SYSTEM_EM[optical_system_em]/field_of_view/@units": "nm",
                         "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/em_lab/EBEAM_DEFLECTOR/rotation": {"fun": "load_from", "terms": "metadata/scan/rotation"},
                         "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/em_lab/EBEAM_DEFLECTOR/rotation/@units": "UNCLEAR",
@@ -188,6 +188,4 @@ NxImageRealSpaceDict = {"IGNORE": {"fun": "load_from", "terms": "type"},
                         "IGNORE": {"fun": "load_from", "terms": "data_dtype"},
                         "IGNORE": {"fun": "load_from", "terms": "collection_dimension_count"},
                         "IGNORE": {"fun": "load_from", "terms": "datum_dimension_count"},
-                        "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/end_time": {"fun": "convert_iso8601", "terms": ["data_modified", "timezone"]}
-                       }
-
+                        "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/end_time": {"fun": "convert_iso8601", "terms": ["data_modified", "timezone"]}}
