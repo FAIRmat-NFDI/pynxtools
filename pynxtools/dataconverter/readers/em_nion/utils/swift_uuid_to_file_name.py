@@ -21,6 +21,8 @@
 
 import uuid
 
+# see https://github.com/nion-software/nionswift/blob/e95839c5602d009006ea88a648e5f78dc77c1ea4/
+# nion/swift/model/Profile.py line 146 and following
 
 def encode(uuid_: uuid.UUID, alphabet: str) -> str:
     result = str()
@@ -30,8 +32,6 @@ def encode(uuid_: uuid.UUID, alphabet: str) -> str:
         result += alphabet[digit]
     return result
 
-# see https://github.com/nion-software/nionswift/blob/e95839c5602d009006ea88a648e5f78dc77c1ea4/
-# nion/swift/model/Profile.py line 146 and following
 
 def uuid_to_file_name(data_item_uuid_str: str) -> str:
     data_item_uuid_uuid = uuid.UUID(f'{data_item_uuid_str}')

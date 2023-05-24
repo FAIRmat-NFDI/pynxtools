@@ -43,7 +43,7 @@ class EmNionUseCaseSelector:
 
     def analyze_mime_types(self, file_paths: Tuple[str] = None):
         """Accept/reject and organize input-files based on mime-type."""
-        self.supported_mime_types = ["yaml", "yml", "nszip"]
+        self.supported_mime_types = ["yaml", "yml", "nionswift"]
         for mime_type in self.supported_mime_types:
             self.mime_types[mime_type] = []
         for file_name in file_paths:
@@ -68,10 +68,10 @@ class EmNionUseCaseSelector:
         else:
             self.eln_parser_type = "none"
 
-        if "nszip" in self.mime_types:
-            if len(self.mime_types["nszip"]) == 1:
-                self.prj += self.mime_types["nszip"]
-                self.prj_parser_type = "nszip"
+        if "nionswift" in self.mime_types:
+            if len(self.mime_types["nionswift"]) == 1:
+                self.prj += self.mime_types["nionswift"]
+                self.prj_parser_type = "nionswift"
             else:
                 self.is_valid = False
 

@@ -29,7 +29,7 @@ from pynxtools.dataconverter.readers.em_nion.utils.use_case_selector \
 # from pynxtools.dataconverter.readers.em_nion.utils.generic_eln_io \
 #     import NxEmNionGenericElnSchemaParser
 
-from pynxtools.dataconverter.readers.em_nion.utils.nszip_parser \
+from pynxtools.dataconverter.readers.em_nion.utils.swift_zipped_project_parser \
     import NxEmNionSwiftProjectParser
 
 # from pynxtools.dataconverter.readers.em_nion.utils.ns_ndata_parser \
@@ -88,10 +88,9 @@ class EmNionReader(BaseReader):
             return {}
 
         print("Parse (numerical) data and metadata from nionswift project...")
-        if case.prj_parser_type == "nszip":
-            print("IMPLEMENT PRJ PARSING !!!")
-            # nszip_parser = NxEmNionSwiftProjectParser(case.prj[0], entry_id)
-            # nszip_parser.parse(template)
+        if case.prj_parser_type == "nionswift":
+            swift_parser = NxEmNionSwiftProjectParser(case.prj[0], entry_id)
+            swift_parser.parse(template)
         else:
             print("No input-file defined for technology partner data !")
 
