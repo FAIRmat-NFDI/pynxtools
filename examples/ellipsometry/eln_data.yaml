@@ -1,13 +1,16 @@
-acquisition_program/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
-acquisition_program/program: WVASE
-acquisition_program/version: '3.882'
-address: Zum Großen Windkanal 2, 12489 Berlin, Germany
-affiliation: Humboldt-Universität zu Berlin
+experiment_type: ellipsometry
+backside_roughness: False
+chemical_formula: SiO2
+sample_type: multi layer
+substrate: Si
+software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
+software/program: WVASE
+software/version: '3.882'
 angle_of_incidence_unit: degrees
+atom_types: Si, O
 angular_spread:
   unit: rad ** 2
   value: 0.2
-atom_types: Si, O
 blocks:
 - type
 - angle_of_incidence
@@ -34,7 +37,6 @@ definition/\@url: https://github.com/FAIRmat-Experimental/nexus_definitions/tree
 definition/\@version: 0.0.2
 detector_type: CCD spectrometer
 ellipsometry_type: dual compensator
-email: surname.name@physik.hu-berlin.de
 err-var:
 - err.psi
 - err.delta
@@ -44,7 +46,7 @@ filename: test-data.dat
 firmware: CompleteEASE
 firmware/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
 firmware/\@version: '6.37'
-focussing_probes: false
+data_correction: false
 integration_time:
   unit: s
   value: 0
@@ -53,7 +55,10 @@ light_source: arc lamp
 medium: air
 model: RC2
 model/\@version: 0.0.1
-name: Name Surname
+USER[user]/address: Zum Großen Windkanal 2, 12489 Berlin, Germany
+USER[user]/affiliation: Humboldt-Universität zu Berlin
+USER[user]/email: surname.name@physik.hu-berlin.de
+USER[user]/name: Name Surname
 parameters:
 - type
 - angle
@@ -64,7 +69,6 @@ sep: \t
 skip: 3
 stage_type: manual stage
 start_time: '2022-01-27T04:35:00+00:00'
-wavelength_unit: angstrom
 x-var: wavelength
 y-var:
 - psi
