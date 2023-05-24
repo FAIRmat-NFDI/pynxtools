@@ -86,7 +86,7 @@ class BiasSpecData():
                     dct[key] = value
                     break
 
-        def check_metadata_with_unit(key_and_unit):
+        def check_metadata_and_unit(key_and_unit):
             metadata = ''
             key, unit = key_and_unit.split('(')
             unit, rest = unit.split(')', 1)
@@ -140,20 +140,22 @@ class BiasSpecData():
                                                       dict_to_store):
             column_keys = column_string.split('\t')
             np_2d_array = one_d_np_array.reshape(-1, len(column_keys))
+            dat_mat_comp = 'dat_mat_components'
+            dict_to_store[dat_mat_comp] = {}
             for ind, key_and_unit in enumerate(column_keys):
                 if '(' in key_and_unit:
-                    key, unit, data_stage = check_metadata_with_unit(key_and_unit)
-
+                    key, unit, data_stage = check_metadata_and_unit(key_and_unit)
+                    # data_stage could be 'filt' or something like this
                     if data_stage:
-                        dict_to_store[f"{key.strip()} [{data_stage}]"] = \
+                        dict_to_store[dat_mat_comp][f"{key.strip()} [{data_stage}]"] = \
                                                             {'unit': unit,
                                                              'value': np_2d_array[:, ind],
                                                              'metadata': data_stage}
                     else:
-                        dict_to_store[key.strip()] = {'unit': unit,
+                        dict_to_store[dat_mat_comp][key.strip()] = {'unit': unit,
                                                       'value': np_2d_array[:, ind]}
                 else:
-                    dict_to_store[key.strip()] = {'value': list(np_2d_array[:, ind])}
+                    dict_to_store[dat_mat_comp][key.strip()] = {'value': list(np_2d_array[:, ind])}
 
         # TODO: write here the algorithm for reading each line
         with open(self.raw_file, mode='r', encoding='utf-8') as file_obj:
