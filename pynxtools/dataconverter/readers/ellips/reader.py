@@ -316,7 +316,6 @@ class EllipsometryReader(BaseReader):
         # The template dictionary is filled
         template = populate_template_dict(header, template)
 
-
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
                                                      "/entry/instrument/spectrometer/wavelength"
                                                      }
@@ -324,17 +323,14 @@ class EllipsometryReader(BaseReader):
             "Angstroms"
         template["/ENTRY[entry]/INSTRUMENT[instrument]/spectrometer/wavelength/@long_name"] = \
             "wavelength (Angstroms)"
-        #template["/ENTRY[entry]/plot/wavelength/@units"] = "Angstroms"
-        #template["/entry/instrument/spectrometer/wavelength/@long_name"] = "wavelength (Angstroms)"
-        #template["/entry/instrument/spectrometer/wavelength/@units"] = "(Angstroms)"
 
         for data_indx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[data_indx]):
                 template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
-                                                         "/entry/sample/measured_data",
-                                                         "shape":
-                                                         np.index_exp[0, 0, index, data_indx, :]
-                                                         }
+                                                                "/entry/sample/measured_data",
+                                                                "shape":
+                                                                np.index_exp[0, 0, index, data_indx, :]
+                                                                }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
                 if data_indx == 0 and index == 0:
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = "Psi and Delta (degrees)"
