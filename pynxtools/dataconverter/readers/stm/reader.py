@@ -114,8 +114,6 @@ def sxm_raw_metadata_and_signal(file_name):
     Convert header part (that contains metadata) of a file with 'sxm' extension into
     plain dict.
     """
-    print(file_name)
-
     scan_file = nap.read.Scan(file_name)
     header_end_byte = scan_file.start_byte()
 
@@ -157,7 +155,6 @@ def from_sxm_into_template(template, file_name):
     """
 
     dict_path, signal = get_SPM_metadata_dict_and_signal(file_name)
-
     for key, val in dict_path:
         key = '/ENTRY[Entry]' + key
         template[key] = val
@@ -171,7 +168,6 @@ def write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict):
     for key, data_info_dict in nx_data_info_dict.items():
         Bias_axis = 0
         grp_key = f"/ENTRY[Entry]/DATA[{data_info_dict['nx_data_group_name']}]"
-        # print("data_info_dict['action_result'][1] : ", data_info_dict['action_result'][1])
 
         data_field = grp_key + '/data'
         template[data_field] = data_info_dict['action_result'][1]
@@ -187,7 +183,7 @@ def write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict):
         template[grp_axes] = ['Bias']
         template[grp_signal] = 'data'
         grp_axis = grp_key + '/Bias'
-        template[grp_axis] = data_info_dict['action_result'][0]  # data_info_dict['nx_data_group_axes'][0]
+        template[grp_axis] = data_info_dict['action_result'][0]
         long_name = 'Bias (mV)'
         grp_axis_lg_nm = grp_axis + '/@long_name'
         template[grp_axis_lg_nm] = long_name
@@ -203,37 +199,38 @@ def from_dat_into_template(template, dat_file):
     # This keys are collected from flatten_dict generated in
     # nested_path_to_slash_separated_path()
     key_data_to_be_processed = {'0': {'/Bias/value': None,
-                                      '/Current/value': None,
-                                     }
-                            }
+                                      '/Current/value': None}}
 
     b_s_d = BiasSpecData(dat_file)
     flattened_dict = {}
     nested_path_to_slash_separated_path(
         b_s_d.get_data_nested_dict(),
         flattened_dict=flattened_dict)
+    # # TODO: Remove this open file section
+    # with open('./dict_from_dat_file.txt', mode='+w', encoding='utf-8',) as fl:
+    #     for key, val in flattened_dict.items():
+    #         print('## val', key)
+    #         fl.write(f"{key} : ##### {val}\n")
 
     for fla_key, fla_val in flattened_dict.items():
         for pro_key, pro_val in key_data_to_be_processed.items():
             for ele_key, ele_val in pro_val.items():
                 if ele_key in fla_key:
                     pro_val[ele_key] = fla_val
-
+    # 0, 1,
     nx_data_info_dict = {'0': {'nx_data_group_name': '(Normal)',
-                    # axes: x, y
-                    'nx_data_group_axes': ['Bias', 'dV/dI'],
-                    'action': [slice_before_last_element, cal_dx_by_dy],
-                    'action_variable': [[key_data_to_be_processed['0']['/Bias/value']],
-                                        [key_data_to_be_processed['0']['/Current/value'],
-                                         key_data_to_be_processed['0']['/Bias/value']]],
-                    'action_result': []}}
+                               'nx_data_group_axes': ['Bias', 'dI/dV'],
+                               'action': [slice_before_last_element, cal_dx_by_dy],
+                               'action_variable':
+                               [[key_data_to_be_processed['0']['/Bias/value']],
+                                [key_data_to_be_processed['0']['/Current/value'],
+                                 key_data_to_be_processed['0']['/Bias/value']]],
+                               'action_result': []}}
     # print('key_data_to_be_processed', key_data_to_be_processed)
     for key in key_data_to_be_processed.keys():
         key_dict = nx_data_info_dict[key]
         for action, action_variable in zip(key_dict['action'], key_dict['action_variable']):
-            print('action variable : ', *action_variable)
             key_dict['action_result'].append(action(*action_variable))
-
     write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict)
 
 
@@ -294,13 +291,18 @@ class STMReader(BaseReader):
         clean_template = Template()
         for file in file_paths:
             ext = file.rsplit('.', 1)[-1]
+
             if ext == 'sxm':
                 sxm_file = file
                 filled_template = from_sxm_into_template(clean_template, sxm_file)
             if ext == 'dat':
-                dat_file = file
-                from_dat_into_template(filled_template, dat_file)
-
+                if filled_template:
+                    dat_file = file
+                    from_dat_into_template(filled_template, dat_file)
+                else:
+                    dat_file = file
+                    from_dat_into_template(template, dat_file)
+                    filled_template = template
 
         if filled_template is not None:
             return filled_template
