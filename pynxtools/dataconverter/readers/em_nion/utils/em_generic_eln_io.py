@@ -37,7 +37,7 @@ from pynxtools.dataconverter.readers.em_nion.concepts.swift_handle_nx_concepts \
     import apply_modifier, variadic_path_to_specific_path
 
 from pynxtools.dataconverter.readers.em_nion.concepts.generic_eln_mapping \
-    import NxEmElnInput, NxUserFromListOfDict, NxSample
+    import NxEmElnInput, NxUserFromListOfDict, NxDetectorListOfDict, NxSample
 
 
 class NxEmNionElnSchemaParser:
@@ -61,12 +61,13 @@ class NxEmNionElnSchemaParser:
 
     def parse_user_section(self, template: dict) -> dict:
         """Copy data from user section into template."""
-        if "user" in self.yml.keys():
-            if isinstance(self.yml["user"], list):
-                if (all(isinstance(entry, dict) for entry in self.yml["user"]) is True):
+        src = "user"
+        if src in self.yml.keys():
+            if isinstance(self.yml[src], list):
+                if (all(isinstance(entry, dict) for entry in self.yml[src]) is True):
                     user_id = 1
                     # custom schema delivers a list of dictionaries...
-                    for user_dict in self.yml["user"]:
+                    for user_dict in self.yml[src]:
                         # ... for each of them inspect for fields mappable on NeXus
                         identifier = [self.entry_id, user_id]
                         # identifier to get instance NeXus path from variadic NeXus path
@@ -106,6 +107,30 @@ class NxEmNionElnSchemaParser:
 
         return template
 
+    def parse_detector_section(self, template: dict) -> dict:
+        """Copy data from detector section into template."""
+        src = "em_lab/detector"
+        if src in self.yml.keys():
+            if isinstance(self.yml[src], list):
+                if (all(isinstance(entry, dict) for entry in self.yml[src]) is True):
+                    detector_id = 1
+                    # custom schema delivers a list of dictionaries...
+                    for detector_dict in self.yml[src]:
+                        # ... for each of them inspect for fields mappable on NeXus
+                        identifier = [self.entry_id, detector_id]
+                        # identifier to get instance NeXus path from variadic NeXus path
+                        # try to find all quantities on the left-hand side of the mapping
+                        # table and check if we can find these
+                        for nx_path, modifier in NxDetectorListOfDict.items():
+                            if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
+                                trg = variadic_path_to_specific_path(nx_path, identifier)
+                                res = apply_modifier(modifier, detector_dict)
+                                if res is not None:
+                                    template[trg] = res
+                        detector_id += 1
+
+        return template
+
     def parse_other_sections(self, template: dict) -> dict:
         """Copy data from custom schema (excluding user, sample) into template."""
         for nx_path, modifier in NxEmElnInput.items():
@@ -119,6 +144,7 @@ class NxEmNionElnSchemaParser:
     def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_user_section(template)
+        self.parse_detector_section(template)
         self.parse_sample_section(template)
         self.parse_other_sections(template)
         return template

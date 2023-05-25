@@ -50,6 +50,11 @@ from pynxtools.dataconverter.readers.em_nion.concepts.swift_handle_nx_concepts \
 from pynxtools.dataconverter.readers.em_nion.concepts.nx_image_real_space \
     import NxImageRealSpaceDict
 
+from pynxtools.dataconverter.readers.em_nion.utils.versioning \
+    import NX_EM_NION_SWIFT_NAME, NX_EM_NION_SWIFT_VERSION
+from pynxtools.dataconverter.readers.em_nion.utils.versioning \
+    import NX_EM_NION_EXEC_NAME, NX_EM_NION_EXEC_VERSION
+
 
 class NxEmNionSwiftProjectParser:
     """Parse NionSwift project file.
@@ -63,6 +68,7 @@ class NxEmNionSwiftProjectParser:
         # counters which keep track of how many instances of NXevent_data_em have
         # been instantiated, this implementation currently maps each display_items
         # onto an own NXevent_data_em instance
+        self.event_data_written = False
         self.event_data_em_id = 1
         self.image_id = 1
         self.spectrum_id = 1
@@ -126,30 +132,49 @@ class NxEmNionSwiftProjectParser:
         print(f"Add NXdata len(axes_lst) {len(axes_lst)}, len(axes_names) {len(axes_names)}")
         if 2 <= len(axes_lst) <= len(axes_names):
             trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM[event_data_em" \
-                  f"{self.entry_id}]/IMAGE_SET[image{self.image_id}]"
-
-            print(f"SKIPPING ADDING PROCESSING DETAILS !!")  # TODO
+                  f"{self.event_data_em_id}]/IMAGE_SET[image_set{self.image_id}]/" \
+                  f"PROCESS[process]"
+            template[f"{trg}/source"] = "n/a"
+            template[f"{trg}/source/@version"] = "n/a"
+            template[f"{trg}/PROGRAM[program1]/program"] \
+                = f"We do not know because the nsproj file does not store it explicitly "\
+                  f"which nionswift version and dependencies are used when writing "\
+                  f"the nsproj file!"
+            template[f"{trg}/PROGRAM[program1]/program/@version"] = "not recoverable"
+            template[f"{trg}/PROGRAM[program2]/program"] \
+                = f"{NX_EM_NION_SWIFT_NAME}"
+            template[f"{trg}/PROGRAM[program2]/program/@version"] \
+                = f"{NX_EM_NION_SWIFT_VERSION}"
+            template[f"{trg}/PROGRAM[program3]/program"] \
+                = f"{NX_EM_NION_EXEC_NAME}"
+            template[f"{trg}/PROGRAM[program3]/program/@version"] \
+                = f"{NX_EM_NION_EXEC_VERSION}"
 
             trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM[event_data_em" \
-                  f"{self.entry_id}]/IMAGE_SET[image{self.image_id}]/DATA[stack]"
+                  f"{self.event_data_em_id}]/IMAGE_SET[image_set{self.image_id}]/DATA[stack]"
+            template[f"{trg}/@NX_class"] = "NXdata"  # ##TODO one should not need to add this manually
             template[f"{trg}/title"] = str("Should come from NionSwift directly")
             template[f"{trg}/@signal"] = "data_counts"
             template[f"{trg}/@axes"] = ["axis_image_identifier", "axis_y", "axis_x"]
             for idx in np.arange(0, 3):
                 template[f"{trg}/@AXISNAME_indices[{axes_names[idx][0]}_indices]"] \
                     = np.uint32(axes_names[idx][2])
-            template[f"{trg}/@long_name"] = "Signal"
             # the following three lines would be required by H5Web to plot RGB maps
             # template[f"{trg}/@CLASS"] = "IMAGE"
             # template[f"{trg}/@IMAGE_VERSION"] = "1.2"
             # template[f"{trg}/@SUBCLASS_VERSION"] = np.int64(15)
 
-            template[f"{trg}/data_counts"] = {"compress": np.atleast_3d(arr), "strength": 1}
-
             if len(axes_lst) == 2:
+                ny, nx = np.shape(arr)
+                template[f"{trg}/data_counts"] \
+                    = {"compress": np.reshape(arr, (1, ny, nx), order="C"), "strength": 1}
+                template[f"{trg}/data_counts/@long_name"] = "Signal"
                 # no image_identifier axis available
                 template[f"{trg}/AXISNAME[{axes_names[0][0]}]"] \
                     = {"compress": np.asarray([1], np.uint32), "strength": 1}
+                template[f"{trg}/AXISNAME[{axes_names[0][0]}]/@long_name"] \
+                    = f"Image identifier (a. u.)"
+                template[f"{trg}/AXISNAME[{axes_names[0][0]}]/@units"] = ""
                 for idx in [1, 2]:
                     template[f"{trg}/AXISNAME[{axes_names[idx][0]}]"] \
                         = {"compress": axes_lst[idx - 1]["value"], "strength": 1}
@@ -159,6 +184,7 @@ class NxEmNionSwiftProjectParser:
                     template[f"{trg}/AXISNAME[{axes_names[idx][0]}]/@units"] \
                         = f"{axes_lst[idx - 1]['unit']}"
             else:  # len(axes_lst) == 3
+                template[f"{trg}/data_counts"] = {"compress": arr, "strength": 1}
                 for idx in [0, 1, 2]:
                     # TODO check that casting works properly
                     template[f"{trg}/AXISNAME[{axes_names[idx][0]}]"] \
@@ -171,8 +197,18 @@ class NxEmNionSwiftProjectParser:
                         = f"{axes_lst[idx]['unit']}"
 
         self.image_id += 1
-        self.event_data_em_id += 1
+        self.event_data_written = True
         return template
+
+    def update_event_identifier(self):
+        """Advance and reset bookkeeping of event data em and data instances."""
+        if self.event_data_written is True:
+            self.event_data_em_id += 1
+            self.event_data_written = False
+        self.image_id = 1
+        self.spectrum_id = 1
+        # because either we found that the display item is fed from an H5 or from an NDATA
+        print(f"Identifier at {self.entry_id}, {self.event_data_em_id}, {self.image_id}, {self.spectrum_id}")
 
     def map_to_nexus(self, meta, arr, concept_name, template):
         """Create the actual instance of a specific set of NeXus concepts in template."""
@@ -184,6 +220,7 @@ class NxEmNionSwiftProjectParser:
         else:
             print(f"Ignoring concept {concept_name} because not yet implemented")
 
+        self.update_event_identifier()
         return template
 
     def process_ndata(self, file_hdl, full_path, template):
@@ -241,7 +278,6 @@ class NxEmNionSwiftProjectParser:
         del flat_metadata_dict
         del data_arr
         del nx_concept_name
-        print(f"Identifier at {self.entry_id}, {self.event_data_em_id}, {self.image_id}, {self.spectrum_id}")
         return template
 
     def process_hdf(self, file_hdl, full_path, template):
@@ -274,7 +310,6 @@ class NxEmNionSwiftProjectParser:
         del flat_metadata_dict
         del data_arr
         del nx_concept_name
-        print(f"Identifier at {self.entry_id}, {self.event_data_em_id}, {self.image_id}, {self.spectrum_id}")
         return template
 
     def parse_project_file(self, template: dict) -> dict:

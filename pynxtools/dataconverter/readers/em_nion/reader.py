@@ -32,8 +32,8 @@ from pynxtools.dataconverter.readers.em_nion.utils.em_generic_eln_io \
 from pynxtools.dataconverter.readers.em_nion.utils.swift_zipped_project_parser \
     import NxEmNionSwiftProjectParser
 
-# from pynxtools.dataconverter.readers.em_nion.utils.em_nexus_plots \
-#     import em_nion_default_plot_generator
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_plots \
+    import em_spctrscpy_default_plot_generator
 
 
 class EmNionReader(BaseReader):
@@ -90,17 +90,16 @@ class EmNionReader(BaseReader):
 
         # at this point the default plots exist already
         # we only need to decorate the template to point to the mandatory ROI overview
-        # print("Create NeXus default plottable data...")
-        print("IMPLEMENT DEFAULT PLOTTABLE DATA HEURISTIC !!!")
-        # em_nion_default_plot_generator(template, 1)
+        print("Create NeXus default plottable data...")
+        em_spctrscpy_default_plot_generator(template, entry_id)
 
         debugging = True
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():
-                # print(keyword)
+                print(keyword)
                 # print(type(template[keyword]))
-                print(f"{keyword}, {template[keyword]}")
+                # print(f"{keyword}, {template[keyword]}")
 
         print("Forward instantiated template to the NXS writer...")
         return template

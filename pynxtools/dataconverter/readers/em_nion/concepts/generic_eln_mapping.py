@@ -36,9 +36,9 @@
 NxEmElnInput = {"IGNORE": {"fun": "load_from_dict_list", "terms": "em_lab/detector"},
                 "IGNORE": {"fun": "load_from", "terms": "em_lab/ebeam_column/aberration_correction/applied"},
                 "IGNORE": {"fun": "load_from_dict_list", "terms": "em_lab/ebeam_column/aperture_em"},
-                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/emitter_type": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_gun/emitter_type"},
-                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage/@units": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_gun/voltage/unit"},
-                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_gun/voltage/value"},
+                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/emitter_type": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_source/emitter_type"},
+                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage/@units": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_source/voltage/unit"},
+                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_source/voltage/value"},
                 "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/capabilities": {"fun": "load_from", "terms": "em_lab/fabrication/capabilities"},
                 "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/identifier": {"fun": "load_from", "terms": "em_lab/fabrication/identifier"},
                 "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/model": {"fun": "load_from", "terms": "em_lab/fabrication/model"},
@@ -81,6 +81,8 @@ NxUserFromListOfDict = {"/ENTRY[entry*]/USER[user*]/name": {"fun": "load_from", 
                         "/ENTRY[entry*]/USER[user*]/social_media_name": {"fun": "load_from", "terms": "social_media_name"},
                         "/ENTRY[entry*]/USER[user*]/social_media_platform": {"fun": "load_from", "terms": "social_media_platform"}}
 
+NxDetectorListOfDict = {"/ENTRY[entry*]/em_lab/DETECTOR[detector*]/local_name": {"fun": "load_from", "terms": "local_name"}}
+
 # atom_types is a good example for specific cases where one cannot just blindly map
 # the list that comes from the custom schema ELN instance, because
 # people may enter invalid types of atoms (which would generate problems in NOMAD OASIS)
@@ -93,5 +95,5 @@ NxSample = {"IGNORE": {"fun": "load_from", "terms": "sample/atom_types"},
             "/ENTRY[entry*]/sample/preparation_date": {"fun": "load_from", "terms": "sample/preparation_date"},
             "/ENTRY[entry*]/sample/sample_history": {"fun": "load_from", "terms": "sample/sample_history"},
             "/ENTRY[entry*]/sample/short_title": {"fun": "load_from", "terms": "sample/short_title"},
-            "/ENTRY[entry*]/sample/thickness": {"fun": "load_from", "terms": "sample/thickness/unit"},
-            "/ENTRY[entry*]/sample/thickness/@units": {"fun": "load_from", "terms": "sample/thickness/value"}}
+            "/ENTRY[entry*]/sample/thickness": {"fun": "load_from", "terms": "sample/thickness/value"},
+            "/ENTRY[entry*]/sample/thickness/@units": {"fun": "load_from", "terms": "sample/thickness/unit"}}

@@ -29,3 +29,6 @@ NX_EM_NION_ADEF_VERSION = "nexus-fairmat-proposal successor of " \
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
 NX_EM_NION_EXEC_NAME = "dataconverter/reader/em_nion/reader.py"
 NX_EM_NION_EXEC_VERSION = get_repo_last_commit()
+
+NX_EM_NION_SWIFT_NAME = "nionswift"
+NX_EM_NION_SWIFT_VERSION = "0.16.8"

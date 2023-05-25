@@ -139,12 +139,12 @@ def image_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for generic image."""
     entry_name = f"entry{entry_id}"
     trg = f"/ENTRY[{entry_name}]/measurement/EVENT_DATA_EM[event_data_em1]/" \
-          f"IMAGE_SET_EM[image_set_em1]/"
+          f"IMAGE_SET[image_set1]/"
 
     path = ""
-    if f"{trg}stack/DATA[data_counts]" in template.keys():
+    if f"{trg}DATA[stack]/data_counts" in template.keys():
         assert isinstance(
-            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
+            template[f"{trg}DATA[stack]/data_counts"]["compress"], np.ndarray), \
             "Generic image data stack not existent!"
         path = "stack"
 
@@ -157,8 +157,8 @@ def image_plot_available(template: dict, entry_id: int) -> bool:
         trg += "measurement/"
         template[f"{trg}@default"] = "event_data_em1"
         trg += "EVENT_DATA_EM[event_data_em1]/"
-        template[f"{trg}@default"] = "image_set_em1"
-        trg += "IMAGE_SET_EM[image_set_em1]/"
+        template[f"{trg}@default"] = "image_set1"
+        trg += "IMAGE_SET[image_set1]/"
         template[f"{trg}@default"] = path
         return True
 
