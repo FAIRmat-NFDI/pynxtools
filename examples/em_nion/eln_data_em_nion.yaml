@@ -1,0 +1,64 @@
+em_lab:
+  detector:
+  - local_name: EDS detector
+  ebeam_column:
+    aperture_em:
+    - name: condensed
+      value: 4
+    aberration_correction:
+      applied: true
+    electron_source:
+      emitter_type: field_emission
+      # cold_cathode_
+      name: some
+      voltage:
+        unit: V
+        value: 200000
+  instrument_name: TALOS
+  location: EPFL
+  fabrication:
+    capabilities: many
+    identifier: undisclosed
+    model: unknown
+    vendor: TALOS
+  optical_system_em:
+    beam_current:
+      unit: A
+      value: 1.2e-11
+    beam_current_description: estimated
+    magnification: 610000
+    semi_convergence_angle:
+      unit: rad
+      value: 0.2
+  stage_lab:
+    description: nothing
+    name: double tilt
+entry:
+  attr_version: nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696
+  definition: NXem
+  end_time: '2022-08-11T14:23:00+00:00'
+  experiment_description: '1613'
+  experiment_identifier: '1613'
+  program: Velox
+  program__attr_version: v6.8
+  start_time: '2022-08-03T14:23:00+00:00'
+sample:
+  atom_types:
+  - Al
+  - Nd
+  - O
+  description: test
+  method: experiment
+  name: 1613_Si
+  preparation_date: '2022-08-11T14:25:00+00:00'
+  sample_history: unknown
+  short_title: '1613'
+  thickness:
+    unit: m
+    value: 2.0e-08
+user:
+- name: MarkusK
+  orcid: '0000'
+  orcid_platform: orcid
+- email: '-----'
+  name: MarkusS

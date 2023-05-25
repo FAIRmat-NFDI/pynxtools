@@ -31,7 +31,7 @@
 
 NxImageAngSpaceDict = {"IGNORE": {"fun": "load_from", "terms": "type"},
                        "IGNORE": {"fun": "load_from", "terms": "uuid"},
-                       "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/start_time": {"fun": "convert_iso8601", "terms": ["created", "timezone"]}
+                       "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/start_time": {"fun": "convert_iso8601", "terms": ["created", "timezone"]},
                        "IGNORE": {"fun": "load_from", "terms": "is_sequence"},
                        "IGNORE": {"fun": "load_from", "terms": "intensity_calibration/offset"},
                        "IGNORE": {"fun": "load_from", "terms": "intensity_calibration/scale"},
@@ -83,4 +83,3 @@ NxImageAngSpaceDict = {"IGNORE": {"fun": "load_from", "terms": "type"},
                        "IGNORE": {"fun": "load_from", "terms": "datum_dimension_count"},
                        "/ENTRY[entry*]/measurement/EVENT_DATA_EM[event_data_em*]/end_time": {"fun": "convert_iso8601", "terms": ["data_modified", "timezone"]},
                        "IGNORE": {"fun": "load_from", "terms": "__large_format"}}
-

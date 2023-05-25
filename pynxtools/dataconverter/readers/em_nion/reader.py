@@ -26,17 +26,11 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.em_nion.utils.use_case_selector \
     import EmNionUseCaseSelector
 
-# from pynxtools.dataconverter.readers.em_nion.utils.generic_eln_io \
-#     import NxEmNionGenericElnSchemaParser
+from pynxtools.dataconverter.readers.em_nion.utils.em_generic_eln_io \
+    import NxEmNionElnSchemaParser
 
 from pynxtools.dataconverter.readers.em_nion.utils.swift_zipped_project_parser \
     import NxEmNionSwiftProjectParser
-
-# from pynxtools.dataconverter.readers.em_nion.utils.ns_ndata_parser \
-#     import NxEmNionSwiftNdataParser
-
-# from pynxtools.dataconverter.readers.em_nion.utils.ns_hdf_parser \
-#     import NxEmNionSwiftHdfParser
 
 # from pynxtools.dataconverter.readers.em_nion.utils.em_nexus_plots \
 #     import em_nion_default_plot_generator
@@ -81,9 +75,8 @@ class EmNionReader(BaseReader):
 
         print("Parse (meta)data coming from an ELN...")
         if case.eln_parser_type == "generic":
-            print("IMPLEMENT ELN PARSING !!!")
-            # eln = NxEmNionGenericElnSchemaParser(case.eln[0], entry_id)
-            # eln.parse(template)
+            eln = NxEmNionElnSchemaParser(case.eln[0], entry_id)
+            eln.parse(template)
         else:
             print("No interpretable ELN input found!")
             return {}
