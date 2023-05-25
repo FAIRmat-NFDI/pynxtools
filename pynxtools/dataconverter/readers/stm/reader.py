@@ -26,6 +26,7 @@ from typing import Tuple
 import numpy as np
 import nanonispy as nap
 import re
+import json
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
@@ -148,7 +149,7 @@ def get_SPM_metadata_dict_and_signal(file_name):
     return entity_unit_items, signal
 
 
-def from_sxm_into_template(template, file_name):
+def from_sxm_into_template(template, file_name, config_dict):
     """
     Pass metadata and signals into template. This should be last steps for writting
     metadata and data into nexus template.
@@ -160,78 +161,6 @@ def from_sxm_into_template(template, file_name):
         template[key] = val
     template.update(signal_obj_to_template_dict(signal))
     return template
-
-
-def write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict):
-    """
-    """
-    for key, data_info_dict in nx_data_info_dict.items():
-        Bias_axis = 0
-        grp_key = f"/ENTRY[Entry]/DATA[{data_info_dict['nx_data_group_name']}]"
-
-        data_field = grp_key + '/data'
-        template[data_field] = data_info_dict['action_result'][1]
-        data_field_signal = data_field + '/@signal'
-        template[data_field_signal] = data_info_dict['action_result'][1]
-        data_field_axis = data_field + '/axes'
-        template[data_field_axis] = ['Bias']
-        data_field_long_name = data_field + '/@long_name'
-        template[data_field_long_name] = 'dI/dV'
-
-        grp_signal = grp_key + '/@signal'
-        grp_axes = grp_key + '/@axes'
-        template[grp_axes] = ['Bias']
-        template[grp_signal] = 'data'
-        grp_axis = grp_key + '/Bias'
-        template[grp_axis] = data_info_dict['action_result'][0]
-        long_name = 'Bias (mV)'
-        grp_axis_lg_nm = grp_axis + '/@long_name'
-        template[grp_axis_lg_nm] = long_name
-        # template[grp_axis_lg_nm] = 'dI/dV'
-        grp_axis_ind = grp_key + '/@Bias_indices'
-        template[grp_axis_ind] = Bias_axis
-
-
-def from_dat_into_template(template, dat_file):
-    """Pass metadata, current and voltage into template from file
-    with dat extension.
-    """
-    # This keys are collected from flatten_dict generated in
-    # nested_path_to_slash_separated_path()
-    key_data_to_be_processed = {'0': {'/Bias/value': None,
-                                      '/Current/value': None}}
-
-    b_s_d = BiasSpecData(dat_file)
-    flattened_dict = {}
-    nested_path_to_slash_separated_path(
-        b_s_d.get_data_nested_dict(),
-        flattened_dict=flattened_dict)
-    # # TODO: Remove this open file section
-    # with open('./dict_from_dat_file.txt', mode='+w', encoding='utf-8',) as fl:
-    #     for key, val in flattened_dict.items():
-    #         print('## val', key)
-    #         fl.write(f"{key} : ##### {val}\n")
-
-    for fla_key, fla_val in flattened_dict.items():
-        for pro_key, pro_val in key_data_to_be_processed.items():
-            for ele_key, ele_val in pro_val.items():
-                if ele_key in fla_key:
-                    pro_val[ele_key] = fla_val
-    # 0, 1,
-    nx_data_info_dict = {'0': {'nx_data_group_name': '(Normal)',
-                               'nx_data_group_axes': ['Bias', 'dI/dV'],
-                               'action': [slice_before_last_element, cal_dx_by_dy],
-                               'action_variable':
-                               [[key_data_to_be_processed['0']['/Bias/value']],
-                                [key_data_to_be_processed['0']['/Current/value'],
-                                 key_data_to_be_processed['0']['/Bias/value']]],
-                               'action_result': []}}
-    # print('key_data_to_be_processed', key_data_to_be_processed)
-    for key in key_data_to_be_processed.keys():
-        key_dict = nx_data_info_dict[key]
-        for action, action_variable in zip(key_dict['action'], key_dict['action_variable']):
-            key_dict['action_result'].append(action(*action_variable))
-    write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict)
 
 
 def signal_obj_to_template_dict(signal):
@@ -274,6 +203,216 @@ def signal_obj_to_template_dict(signal):
     return template_dict
 
 
+def write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict):
+    """
+    """
+    for key, data_info_dict in nx_data_info_dict.items():
+        Bias_axis = 0
+        grp_key = f"/ENTRY[Entry]/DATA[{data_info_dict['nx_data_group_name']}]"
+
+        data_field = grp_key + '/data'
+        template[data_field] = data_info_dict['action_result'][1]
+        data_field_signal = data_field + '/@signal'
+        template[data_field_signal] = data_info_dict['action_result'][1]
+        data_field_axis = data_field + '/axes'
+        template[data_field_axis] = ['Bias']
+        data_field_long_name = data_field + '/@long_name'
+        template[data_field_long_name] = 'dI/dV'
+
+        grp_signal = grp_key + '/@signal'
+        grp_axes = grp_key + '/@axes'
+        template[grp_axes] = ['Bias']
+        template[grp_signal] = 'data'
+        grp_axis = grp_key + '/Bias'
+        template[grp_axis] = data_info_dict['action_result'][0]
+        long_name = 'Bias (mV)'
+        grp_axis_lg_nm = grp_axis + '/@long_name'
+        template[grp_axis_lg_nm] = long_name
+        # template[grp_axis_lg_nm] = 'dI/dV'
+        grp_axis_ind = grp_key + '/@Bias_indices'
+        template[grp_axis_ind] = Bias_axis
+
+
+def process_data_from_file_(flattened_dict):
+    """Implement this function later.
+        TODO:
+        This functions mainly intended for automization of data manipulation
+         or data driven analytics.
+    """
+    # This keys are collected from flatten_dict generated in
+    # nested_path_to_slash_separated_path()
+
+    # key_data_to_be_processed = {'0': {'/Bias/value': None,
+    #                                   '/Current/value': None}}
+
+    # for fla_key, fla_val in flattened_dict.items():
+    #     for pro_key, pro_val in key_data_to_be_processed.items():
+    #         for ele_key, ele_val in pro_val.items():
+    #             if ele_key in fla_key:
+    #                 pro_val[ele_key] = fla_val
+
+    # nx_data_info_dict = {'0': {'nx_data_group_name': '(Normal)',
+    #                         'nx_data_group_axes': ['Bias', 'dI/dV'],
+    #                         'action': [slice_before_last_element, cal_dx_by_dy],
+    #                         'action_variable':
+    #                         [[key_data_to_be_processed['0']['/Bias/value']],
+    #                         [key_data_to_be_processed['0']['/Current/value'],
+    #                             key_data_to_be_processed['0']['/Bias/value']]],
+    #                         'action_result': []}}
+
+    # # TODO: add the print optionality for flattend dict option inside bias_spec_data_parser.py
+    # later add this option inside README doc
+    # with open('./dict_from_dat_file.txt', mode='+w', encoding='utf-8',) as fl:
+    #     for key, val in flattened_dict.items():
+    #         print('## val', key)
+    #         fl.write(f"{key} : ##### {val}\n")
+    # 0, 1,
+    # print('key_data_to_be_processed', key_data_to_be_processed)
+    # for key in key_data_to_be_processed.keys():
+    #     key_dict = nx_data_info_dict[key]
+    #     for action, action_variable in zip(key_dict['action'], key_dict['action_variable']):
+    #         key_dict['action_result'].append(action(*action_variable))
+    pass
+
+
+def construct_nxdata(template, data_dict, data_config_dict, data_group):
+    """
+    Construct NXdata that includes all the groups, field and attributes. All the elements
+    will be stored in template.
+    Parameters:
+    -----------
+    template : dict[str, Any]
+        Capturing data elements. One to one dictionary for capturing data array, data axes
+        and so on from data_dict to be ploted.
+    data_dict : dict[str, Union[array, str]]
+        Data stored from dat file. Path (str) to data elements which mainly come from
+        dat file. Data from this dict will go to template
+    data_config_dict : dict[str, list]
+        This dictionary is numerical data order to list (list of path to data elements in
+        input file). Each order indicates a group of data set.
+    data_group : NeXus path for NXdata
+    Return:
+    -------
+    None
+
+    Raise:
+    ------
+    None
+    """
+
+    def indivisual_DATA_field():
+        """Fill up indivisual data field:
+            /Entry[ENTRY]/data/DATA
+        """
+        has_annot = False
+        axes = ["Bias/",
+                "Current/",
+                "Temperature 1/",
+                "LI Demod 1 X/",
+                "LI Demod 1 Y/",
+                "LI Demod 2 X/",
+                "LI Demod 2 Y/"
+                ]
+        current = None
+        volt = None
+        # list of paths e.g. "/dat_mat_components/Bias/value"
+        for path in anot_val:
+            extra_annot, trimed_path = find_extra_annot(path)
+            for axis in axes:
+                if (axis + 'value') in trimed_path:
+                    # removing forward slash
+                    axes_name.append[axis[0:-1]]
+                    axes_data.append[data_dict[path]]
+                if (axis + 'unit') in trimed_path:
+                    axes_unit.append(data_dict[path] if path in data_dict else "")
+                if (axis + "metadata") in trimed_path:
+                    axes_metadata.append(data_dict[path] if path in data_dict else "")
+            if 'current/value' in trimed_path:
+                current = data_dict[path]
+            if 'Bias/value' in trimed_path:
+                volt = data_dict[path]
+
+        if not extra_annot:
+            extra_annot = 'general'
+
+        data_field = data_group + '/' + extra_annot
+        template[data_field] = cal_dx_by_dy(current, volt)
+        template[data_field + '/@axes'] = axes_name
+        template[data_field + '/@long_name'] = "dI/dV(unit)"
+        # TODO: After successfully running the code try out commented statement bellow
+        # template[data_field + '@units']
+
+    def fill_out_NXdata_group(signal='auxiliary_signals'):
+        """To fill out NXdata which is root for data field and elements.
+        """
+        data_signal = data_group + '/@' + signal
+        template[data_signal] = extra_annot
+        data_axes = data_group + '/@' + axes_name
+        template[data_axes] = axes_name
+        for axis in axes_name:
+            # construct AXISNAME_indices
+            template[data_group + '/@' + axis + '_indices'] = 0
+
+        for axis, unit in zip(axes_name, axes_unit):
+            if unit:
+                template[data_group + '/' + axis + '/@longname'] = f"{axis}({unit})"
+            else:
+                template[data_group + '/' + axis + '/@longname'] = f"{axis}"
+
+        # AXISNAME is not defined yet
+
+    def find_extra_annot(key):
+        annot_li = [' [filt]']
+        for annot in annot_li:
+            if annot in key:
+                trimed_annot = annot[annot.index('['):-1]
+                return trimed_annot, key.replace(annot, "")
+        return "", key
+
+    for anot_key, anot_val in data_config_dict.items():
+        # Working with '1' order
+        # TODO: Discus
+        axes_name = []
+        axes_unit = []
+        axes_metadata = []
+        axes_data = []
+        # 'extra_annot' will be considered as a data field /NXdata/DATA
+        extra_annot = ""
+        # To fill out data field and NXdata class
+        if anot_key == '1':
+            indivisual_DATA_field()
+            fill_out_NXdata_group('signal')
+        # To fill out data field as many as we have
+        else:
+            indivisual_DATA_field()
+            fill_out_NXdata_group()
+
+
+def from_dat_file_into_template(template, dat_file, config_dict):
+    """Pass metadata, current and voltage into template from file
+    with dat extension.
+    """
+
+    b_s_d = BiasSpecData(dat_file)
+    flattened_dict = {}
+    nested_path_to_slash_separated_path(
+        b_s_d.get_data_nested_dict(),
+        flattened_dict=flattened_dict)
+    for c_key, c_val in config_dict.items():
+        for t_key, _ in template.copy.items():
+            if c_key == t_key and isinstance(c_val, str):
+                template[t_key] = flattened_dict[c_val]
+                continue
+            if c_key == t_key and isinstance(c_val, dict):
+                data_group = "/ENTRY[entry]/data"
+                if data_group == t_key:
+                    # pass data processing here
+                    construct_nxdata(template, flattened_dict, c_val, data_group)
+                else:
+                    # pass other physical propertise
+                    pass
+
+
 class STMReader(BaseReader):
     """ Reader for XPS.
     """
@@ -287,22 +426,39 @@ class STMReader(BaseReader):
         """
             General read menthod to prepare the template.
         """
+        has_sxm_input_file = False
+        sxm_file: str = ""
+        has_dat_input_file = False
+        dat_file: str = ""
+        # TODO: remove clean_template and add there template that comes as a function
+        # parameter
         filled_template: Union[Dict, None] = None
-        clean_template = Template()
+        template = Template()
+        config_dict: Union[Dict, None] = None
+
         for file in file_paths:
             ext = file.rsplit('.', 1)[-1]
 
-            if ext == 'sxm':
+            if ext == 'sxm' and not has_dat_input_file:
+                has_sxm_input_file = True
+                dat_file = file
+            if ext == 'dat' and not has_sxm_input_file:
                 sxm_file = file
-                filled_template = from_sxm_into_template(clean_template, sxm_file)
-            if ext == 'dat':
-                if filled_template:
-                    dat_file = file
-                    from_dat_into_template(filled_template, dat_file)
-                else:
-                    dat_file = file
-                    from_dat_into_template(template, dat_file)
-                    filled_template = template
+                filled_template = template
+            if ext == 'json':
+                with open(file, mode="r", encoding="utf-8") as jf:
+                    config_dict = json.load(jf)
+        if not has_dat_input_file and not has_sxm_input_file:
+            raise ValueError("Not correct file has been found. please render correct input"
+                             " file of spm with extension: .dat or .sxm")
+        if has_dat_input_file and has_sxm_input_file:
+            raise ValueError("Only one file from .dat or .sxm can be read.")
+        if has_sxm_input_file and config_dict:
+            filled_template = from_sxm_into_template(template, sxm_file, config_dict)
+        if has_dat_input_file and config_dict:
+            from_dat_file_into_template(template, file, config_dict)
+
+
 
         if filled_template is not None:
             return filled_template
