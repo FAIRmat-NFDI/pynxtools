@@ -17,6 +17,9 @@
 #
 """Test cases for the helper functions used by the DataConverter."""
 
+# pylint: disable=deprecated-module
+# distutils will become deprecated with py3.12
+
 import xml.etree.ElementTree as ET
 import os
 from distutils import file_util

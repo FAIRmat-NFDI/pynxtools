@@ -17,6 +17,9 @@
 #
 """Test cases for the convert script used to access the DataConverter."""
 
+# pylint: disable=deprecated-module
+# distutils will become deprecated py3.12
+
 import os
 from distutils import file_util
 import logging
