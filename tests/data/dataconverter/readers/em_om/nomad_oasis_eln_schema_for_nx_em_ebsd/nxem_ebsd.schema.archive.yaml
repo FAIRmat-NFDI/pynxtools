@@ -4,14 +4,10 @@ definitions:
   name: 'em_om'
   # 'ELN for collecting conventions relevant for interpreting orientation microscopy data.'
   sections: # section definitions what were back in the old days msection base classes
-    # Operator:
-    # Specimen:
-    ElectronBackscatterDiffraction: # the actual schema
-      # nomad.datamodel.metainfo.eln.NexusParser
+    ElectronBackscatterDiffraction: # the actual schema´
       base_sections:
-        - 'nomad.datamodel.metainfo.eln.NexusParser'
+        - 'nomad.datamodel.metainfo.eln.NexusDataConverter'
         - 'nomad.datamodel.data.EntryData'
-      # base_section: nomad.datamodel.data.EntryData
       m_annotations:
         # Here you can set your default values for the reader and nxdl.
         template: 
@@ -36,8 +32,8 @@ definitions:
                 type:
                   type_kind: Enum
                   type_data:
-                    - NXem_ebsd
-                default: NXem_ebsd
+                    - 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
+                default: 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
                 description: Hashvalue of the NeXus application definition file
                 m_annotations:
                   eln:
@@ -563,14 +559,14 @@ definitions:
                   type_kind: Enum
                   type_data:
                     - undefined
-                    - front, top, left
-                    - front, top, right
-                    - front, bottom, right
-                    - front, bottom, left
-                    - back, top, left
-                    - back, top, right
-                    - back, bottom, right
-                    - back, bottom, left
+                    - front_top_left
+                    - front_top_right
+                    - front_bottom_right
+                    - front_bottom_left
+                    - back_top_left
+                    - back_top_right
+                    - back_bottom_right
+                    - back_bottom_left
                 default: undefined
                 description: |
                   Location of the origin of the sample surface reference frame.
@@ -694,14 +690,14 @@ definitions:
                   type_kind: Enum
                   type_data:
                     - undefined
-                    - front, top, left
-                    - front, top, right
-                    - front, bottom, right
-                    - front, bottom, left
-                    - back, top, left
-                    - back, top, right
-                    - back, bottom, right
-                    - back, bottom, left
+                    - front_top_left
+                    - front_top_right
+                    - front_bottom_right
+                    - front_bottom_left
+                    - back_top_left
+                    - back_top_right
+                    - back_bottom_right
+                    - back_bottom_left
                 default: undefined
                 description: |
                   Location of the origin of the sample surface reference frame.
@@ -813,14 +809,14 @@ definitions:
                   type_kind: Enum
                   type_data:
                     - undefined
-                    - front, top, left
-                    - front, top, right
-                    - front, bottom, right
-                    - front, bottom, left
-                    - back, top, left
-                    - back, top, right
-                    - back, bottom, right
-                    - back, bottom, left
+                    - front_top_left
+                    - front_top_right
+                    - front_bottom_right
+                    - front_bottom_left
+                    - back_top_left
+                    - back_top_right
+                    - back_bottom_right
+                    - back_bottom_left
                 default: undefined
                 description: |
                   Where is the origin of the detector space reference

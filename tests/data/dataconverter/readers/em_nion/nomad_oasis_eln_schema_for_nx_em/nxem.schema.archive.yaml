@@ -5,14 +5,10 @@ definitions:
   name: 'em'
   # 'ELN/application definition schema for electron microscopy (EM) experiments.'
   sections: # section definitions what were back in the old days msection base classes
-    # Operator:
-    # Specimen:
     ElectronMicroscopy: # the actual schema
-      # nomad.datamodel.metainfo.eln.NexusParser
       base_sections:
-        - 'nomad.datamodel.metainfo.eln.NexusParser'
+        - 'nomad.datamodel.metainfo.eln.NexusDataConverter'
         - 'nomad.datamodel.data.EntryData'
-      # base_section: nomad.datamodel.data.EntryData
       m_annotations:
         # Here you can set your default values for the reader and nxdl.
         template: 
@@ -333,7 +329,7 @@ definitions:
                     eln:
                   # quantities:
                   sub_sections:
-                    electron_gun:
+                    electron_source:
                       section:
                         description: The source which creates the electron beam
                         m_annotations:
@@ -356,15 +352,14 @@ definitions:
                                 component: NumberEditQuantity
                                 defaultDisplayUnit: kV
                                 minValue: 0.0
-                                maxValue: 1000.0
+                                maxValue: 1.1e6
                           emitter_type:
                             type:
                               type_kind: Enum
                               type_data:
-                                - filament
+                                - thermionic
                                 - schottky
-                                - cold_cathode_field_emitter
-                                - other
+                                - field_emission
                             description: |
                               Emitter type used to create the beam.
                             m_annotations:
