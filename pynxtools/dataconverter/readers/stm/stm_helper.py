@@ -61,3 +61,36 @@ def slice_before_last_element(np_array):
     else:
         raise ValueError('Please provide a numpy array of 1D.')
 
+
+def transform(text):
+    """
+        Transform string to the intended data type, if not then return text.
+    e.g '2.5E-2' will be transfor into 2.5E-2
+    tested with: '2.4E-23', '28', '45.98', 'test', ['59', '3.00005', '498E-34'], None]
+    with result: 2.4e-23, 28, 45.98, test, [5.90000e+01 3.00005e+00 4.98000e-32], None
+    """
+    transformed = ""
+    if text is None:
+        return text
+    if isinstance(text, list):
+        text = list(text)
+        try:
+
+            transformed = np.array(text, dtype=np.float64)
+            return transformed
+        except ValueError:
+            pass
+
+    try:
+        transformed = int(text)
+        return transformed
+    except ValueError:
+        pass
+
+    try:
+        transformed = float(text)
+        return transformed
+    except ValueError:
+        pass
+
+    return text
