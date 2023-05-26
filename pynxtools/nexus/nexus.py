@@ -1251,7 +1251,7 @@ def hdf_node_to_self_concept_path(hdf_info, logger):
 class HandleNexus:
     """documentation"""
     def __init__(self, logger, nexus_file,
-                 d_inq_nd, c_inq_nd):
+                 d_inq_nd=None, c_inq_nd=None):
         self.logger = logger
         local_dir = os.path.abspath(os.path.dirname(__file__))
 
