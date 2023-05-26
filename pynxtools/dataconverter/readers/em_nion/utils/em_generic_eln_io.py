@@ -56,7 +56,7 @@ class NxEmNionElnSchemaParser:
             self.entry_id = entry_id
             self.file_name = file_name
             with open(self.file_name, "r", encoding="utf-8") as stream:
-                self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
+                self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
         else:
             self.entry_id = 1
             self.file_name = ""
@@ -150,4 +150,9 @@ class NxEmNionElnSchemaParser:
         self.parse_detector_section(template)
         self.parse_sample_section(template)
         self.parse_other_sections(template)
+
+        debugging = False
+        if debugging is True:
+            for keyword, value in template.items():
+                print(f"{keyword}, {value}")
         return template

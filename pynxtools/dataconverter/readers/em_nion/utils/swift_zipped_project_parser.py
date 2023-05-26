@@ -208,7 +208,7 @@ class NxEmNionSwiftProjectParser:
         self.image_id = 1
         self.spectrum_id = 1
         # because either we found that the display item is fed from an H5 or from an NDATA
-        print(f"Identifier at {self.entry_id}, {self.event_data_em_id}, {self.image_id}, {self.spectrum_id}")
+        # print(f"Identifier at {self.entry_id}, {self.event_data_em_id}, {self.image_id}, {self.spectrum_id}")
 
     def map_to_nexus(self, meta, arr, concept_name, template):
         """Create the actual instance of a specific set of NeXus concepts in template."""
