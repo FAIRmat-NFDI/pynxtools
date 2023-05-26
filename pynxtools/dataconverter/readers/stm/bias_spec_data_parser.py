@@ -25,6 +25,9 @@
 from typing import Dict, Union, TextIO
 import os
 import numpy as np
+from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path,
+                                                            transform, cal_dx_by_dy)
+
 
 # Type aliases
 NestedDict = Dict[str, Union[int, str, 'NestedDict']]
@@ -185,7 +188,6 @@ class BiasSpecData():
                 is_matrix_data_found = False
                 dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
 
-
     def choose_correct_function_to_extract_data(self) -> None:
         """Choose correct function to extract data that data in organised format.
         """
@@ -195,3 +197,214 @@ class BiasSpecData():
         ext = self.raw_file.rsplit('.', 1)[-1]
         if ext == 'dat':
             self.extract_and_store_from_dat_file()
+
+
+def collect_default_value(template, search_key):
+    default_dict = {"/ENTRY[entry]/definition": "NXiv_sweep2",
+                    "/ENTRY[entry]/experiment_description": "An stm experiment."}
+    template[search_key] = default_dict[search_key]
+
+
+def construct_nxdata(template, data_dict, data_config_dict, data_group):
+    """
+    Construct NXdata that includes all the groups, field and attributes. All the elements
+    will be stored in template.
+
+    Parameters:
+    -----------
+    template : dict[str, Any]
+        Capturing data elements. One to one dictionary for capturing data array, data axes
+        and so on from data_dict to be ploted.
+    data_dict : dict[str, Union[array, str]]
+        Data stored from dat file. Path (str) to data elements which mainly come from
+        dat file. Data from this dict will go to template
+    data_config_dict : dict[str, list]
+        This dictionary is numerical data order to list (list of path to data elements in
+        input file). Each order indicates a group of data set.
+    data_group : NeXus path for NXdata
+
+    Return:
+    -------
+    None
+
+    Raise:
+    ------
+    None
+    """
+
+    def indivisual_DATA_field():
+        """Fill up template's indivisual data field and the descendant attribute.
+            e.g. /Entry[ENTRY]/data/DATA,
+              /Entry[ENTRY]/data/DATA/@axes and so on
+        """
+        # NOTE : Try to replace this hard axes name
+        axes = ["Bias/",
+                "Current/",
+                "Temperature 1/",
+                "LI Demod 1 X/",
+                "LI Demod 1 Y/",
+                "LI Demod 2 X/",
+                "LI Demod 2 Y/"]
+        global extra_annot
+        current = None
+        current_unit = ""
+        bias_unit = ""
+        volt = None
+        # list of paths e.g. "/dat_mat_components/Bias/value" comes from
+        # dict value of /ENTRY[entry]/DATA[data] in config file.
+        for path in dt_val:
+            extra_annot, trimed_path = find_extra_annot(path)
+            for axis in axes:
+                if (axis + 'value') in trimed_path:
+                    # removing forward slash
+                    axes_name.append(axis[0:-1])
+                    axes_data.append(data_dict[path])
+                if (axis + 'unit') in trimed_path:
+                    axes_unit.append(data_dict[path] if path in data_dict else "")
+                if (axis + "metadata") in trimed_path:
+                    axes_metadata.append(data_dict[path] if path in data_dict else "")
+            if 'Current/value' in trimed_path:
+                current = data_dict[path]
+            if 'Current/unit' in trimed_path:
+                current_unit = data_dict[trimed_path]
+            if 'Bias/value' in trimed_path:
+                volt = data_dict[path]
+            if 'Bias/unit' in trimed_path:
+                bias_unit = data_dict[trimed_path]
+
+        if not extra_annot:
+            extra_annot = 'data'
+        else:
+            extra_annot = f"data ({extra_annot})"
+        global temp_data_grp
+        temp_data_grp = data_group.replace("DATA[data", f"DATA[{extra_annot}")
+        data_field = temp_data_grp + '/' + extra_annot
+        template[data_field] = cal_dx_by_dy(current, volt)
+        template[data_field + '/@axes'] = axes_name
+        template[data_field + '/@long_name'] = f"dI/dV ({current_unit}/{bias_unit})"
+
+    def fill_out_NXdata_group(signal='auxiliary_signals'):
+        """To fill out NXdata which is root for all data fields and and attributes.
+           This function fills template with one level of descendent fields and attributes
+           but not the fields and attributes under child of NXdata.
+        """
+        data_signal = temp_data_grp + '/@' + signal
+        template[data_signal] = extra_annot
+
+        data_axes = temp_data_grp + '/@axes'
+        template[data_axes] = axes_name
+        for axis, coor_dt in zip(axes_name, axes_data):
+            # construct AXISNAME_indices
+            template[temp_data_grp + '/@' + axis + '_indices'] = 0
+            template[temp_data_grp + '/' + axis] = coor_dt
+        for axis, unit in zip(axes_name, axes_unit):
+            if unit:
+                template[temp_data_grp + '/' + axis + '/@longname'] = f"{axis}({unit})"
+            else:
+                template[temp_data_grp + '/' + axis + '/@longname'] = f"{axis}"
+
+    def find_extra_annot(key):
+        """Find out extra annotation that comes with data e.g. filt in
+        /dat_mat_components/Current [filt]/value
+        """
+        annot_li = [' [filt]']
+        for annot in annot_li:
+            if annot in key:
+                trimed_annot = annot[annot.index('[') + 1:-1]
+                return trimed_annot, key.replace(annot, "")
+        return "", key
+
+    for dt_key, dt_val in data_config_dict.items():
+        axes_name = []
+        axes_unit = []
+        axes_metadata = []
+        axes_data = []
+        # There are several scan data gourp in the given file.
+        if dt_key == '0':
+            continue
+        if dt_key == '1':
+            indivisual_DATA_field()
+            fill_out_NXdata_group('signal')
+        # To fill out data field as many as we have
+        else:
+            indivisual_DATA_field()
+            fill_out_NXdata_group('signal')
+
+
+def from_dat_file_into_template(template, dat_file, config_dict):
+    """Pass metadata, current and voltage into template from file
+    with dat extension.
+    """
+
+    b_s_d = BiasSpecData(dat_file)
+    flattened_dict = {}
+    nested_path_to_slash_separated_path(
+        b_s_d.get_data_nested_dict(),
+        flattened_dict=flattened_dict)
+
+    template_keys = template.keys()
+    for c_key, c_val in config_dict.items():
+        # print(template.copy().items())
+        for t_key in template_keys:
+            # debug
+            if c_val in ["None", ""]:
+                continue
+            if "@reader" in c_val and c_key == t_key:
+                collect_default_value(template, c_key)
+                break
+            if c_key == t_key and isinstance(c_val, str):
+                template[t_key] = transform(flattened_dict[c_val])
+                break
+            if c_key == t_key and isinstance(c_val, dict):
+                data_group = "/ENTRY[entry]/DATA[data]"
+                if data_group == t_key:
+                    # pass exp. data section to NXdata group
+                    construct_nxdata(template, flattened_dict, c_val, data_group)
+                else:
+                    # pass other physical quantity that has muliple dimensions or type for
+                    # same physical quantity e.g. in drift_N N will be replaced X, Y and Z
+                    work_out_overwriteable_field(template, flattened_dict, c_val, t_key)
+                break
+
+
+def work_out_overwriteable_field(template, data_dict, data_config_dict, field_path):
+    """
+    Overwrite a field for multiple dimention of the same type of physical quantity.
+
+    Parameters:
+    -----------
+    template : dict[str, Any]
+        Capturing data elements. One to one dictionary for capturing data array, data axes
+        and so on from data_dict to be ploted.
+    data_dict : dict[str, Union[array, str]]
+        Data stored from dat file. Path (str) to data elements which mainly come from
+        dat file. Data from this dict will go to template
+    data_config_dict : dict[str, list]
+        This dictionary is numerical data order to list (list of path to data elements in
+        input file). Each order indicates a group of data set.
+    field_path : NeXus field path
+
+    Returns:
+    --------
+    None
+    """
+    # Find the overwriteable part
+    overwrite_part = ""
+    for char in field_path:
+        if char.isupper():
+            overwrite_part = overwrite_part + char
+    if overwrite_part == "":
+        raise ValueError("No overwriteable part has been found.")
+    for ch_to_subs, value_dict in data_config_dict.items():
+        new_temp_key = field_path.replace(overwrite_part, ch_to_subs)
+        value = "value"
+        unit = "unit"
+        if value in value_dict:
+            path_to_dt = value_dict[value]
+            template[new_temp_key] = transform(data_dict[path_to_dt]
+                                               if path_to_dt in data_dict else None)
+        if unit in value_dict:
+            path_to_dt = value_dict[unit]
+            template[new_temp_key + "/@unit"] = transform(data_dict[path_to_dt]
+                                                          if path_to_dt in data_dict
+                                                          else None)

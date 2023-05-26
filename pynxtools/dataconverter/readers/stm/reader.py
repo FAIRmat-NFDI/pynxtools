@@ -30,7 +30,7 @@ import json
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter.readers.stm.bias_spec_data_parser import BiasSpecData
+from pynxtools.dataconverter.readers.stm.bias_spec_data_parser import from_dat_file_into_template
 from pynxtools.dataconverter.readers.stm.stm_helper import *
 
 
@@ -275,149 +275,11 @@ def process_data_from_file_(flattened_dict):
     pass
 
 
-def construct_nxdata(template, data_dict, data_config_dict, data_group):
-    """
-    Construct NXdata that includes all the groups, field and attributes. All the elements
-    will be stored in template.
-    Parameters:
-    -----------
-    template : dict[str, Any]
-        Capturing data elements. One to one dictionary for capturing data array, data axes
-        and so on from data_dict to be ploted.
-    data_dict : dict[str, Union[array, str]]
-        Data stored from dat file. Path (str) to data elements which mainly come from
-        dat file. Data from this dict will go to template
-    data_config_dict : dict[str, list]
-        This dictionary is numerical data order to list (list of path to data elements in
-        input file). Each order indicates a group of data set.
-    data_group : NeXus path for NXdata
-    Return:
-    -------
-    None
-
-    Raise:
-    ------
-    None
-    """
-
-    def indivisual_DATA_field():
-        """Fill up indivisual data field:
-            /Entry[ENTRY]/data/DATA
-        """
-        has_annot = False
-        axes = ["Bias/",
-                "Current/",
-                "Temperature 1/",
-                "LI Demod 1 X/",
-                "LI Demod 1 Y/",
-                "LI Demod 2 X/",
-                "LI Demod 2 Y/"
-                ]
-        current = None
-        volt = None
-        # list of paths e.g. "/dat_mat_components/Bias/value"
-        for path in anot_val:
-            extra_annot, trimed_path = find_extra_annot(path)
-            for axis in axes:
-                if (axis + 'value') in trimed_path:
-                    # removing forward slash
-                    axes_name.append[axis[0:-1]]
-                    axes_data.append[data_dict[path]]
-                if (axis + 'unit') in trimed_path:
-                    axes_unit.append(data_dict[path] if path in data_dict else "")
-                if (axis + "metadata") in trimed_path:
-                    axes_metadata.append(data_dict[path] if path in data_dict else "")
-            if 'current/value' in trimed_path:
-                current = data_dict[path]
-            if 'Bias/value' in trimed_path:
-                volt = data_dict[path]
-
-        if not extra_annot:
-            extra_annot = 'general'
-
-        data_field = data_group + '/' + extra_annot
-        template[data_field] = cal_dx_by_dy(current, volt)
-        template[data_field + '/@axes'] = axes_name
-        template[data_field + '/@long_name'] = "dI/dV(unit)"
-        # TODO: After successfully running the code try out commented statement bellow
-        # template[data_field + '@units']
-
-    def fill_out_NXdata_group(signal='auxiliary_signals'):
-        """To fill out NXdata which is root for data field and elements.
-        """
-        data_signal = data_group + '/@' + signal
-        template[data_signal] = extra_annot
-        data_axes = data_group + '/@' + axes_name
-        template[data_axes] = axes_name
-        for axis in axes_name:
-            # construct AXISNAME_indices
-            template[data_group + '/@' + axis + '_indices'] = 0
-
-        for axis, unit in zip(axes_name, axes_unit):
-            if unit:
-                template[data_group + '/' + axis + '/@longname'] = f"{axis}({unit})"
-            else:
-                template[data_group + '/' + axis + '/@longname'] = f"{axis}"
-
-        # AXISNAME is not defined yet
-
-    def find_extra_annot(key):
-        annot_li = [' [filt]']
-        for annot in annot_li:
-            if annot in key:
-                trimed_annot = annot[annot.index('['):-1]
-                return trimed_annot, key.replace(annot, "")
-        return "", key
-
-    for anot_key, anot_val in data_config_dict.items():
-        # Working with '1' order
-        # TODO: Discus
-        axes_name = []
-        axes_unit = []
-        axes_metadata = []
-        axes_data = []
-        # 'extra_annot' will be considered as a data field /NXdata/DATA
-        extra_annot = ""
-        # To fill out data field and NXdata class
-        if anot_key == '1':
-            indivisual_DATA_field()
-            fill_out_NXdata_group('signal')
-        # To fill out data field as many as we have
-        else:
-            indivisual_DATA_field()
-            fill_out_NXdata_group()
-
-
-def from_dat_file_into_template(template, dat_file, config_dict):
-    """Pass metadata, current and voltage into template from file
-    with dat extension.
-    """
-
-    b_s_d = BiasSpecData(dat_file)
-    flattened_dict = {}
-    nested_path_to_slash_separated_path(
-        b_s_d.get_data_nested_dict(),
-        flattened_dict=flattened_dict)
-    for c_key, c_val in config_dict.items():
-        for t_key, _ in template.copy.items():
-            if c_key == t_key and isinstance(c_val, str):
-                template[t_key] = flattened_dict[c_val]
-                continue
-            if c_key == t_key and isinstance(c_val, dict):
-                data_group = "/ENTRY[entry]/data"
-                if data_group == t_key:
-                    # pass data processing here
-                    construct_nxdata(template, flattened_dict, c_val, data_group)
-                else:
-                    # pass other physical propertise
-                    pass
-
-
 class STMReader(BaseReader):
     """ Reader for XPS.
     """
     # NXroot is a general purpose definition one can review data with this definition
-    supported_nxdls = ["NXroot"]
+    supported_nxdls = ["NXiv_sweep2"]
 
     def read(self,
              template: dict = None,
@@ -426,25 +288,23 @@ class STMReader(BaseReader):
         """
             General read menthod to prepare the template.
         """
+
         has_sxm_input_file = False
         sxm_file: str = ""
         has_dat_input_file = False
         dat_file: str = ""
-        # TODO: remove clean_template and add there template that comes as a function
-        # parameter
-        filled_template: Union[Dict, None] = None
-        template = Template()
+        filled_template: Union[Dict, None] = Template()
         config_dict: Union[Dict, None] = None
 
         for file in file_paths:
             ext = file.rsplit('.', 1)[-1]
 
-            if ext == 'sxm' and not has_dat_input_file:
+            if ext == 'sxm':
                 has_sxm_input_file = True
-                dat_file = file
-            if ext == 'dat' and not has_sxm_input_file:
                 sxm_file = file
-                filled_template = template
+            if ext == 'dat':
+                has_dat_input_file = True
+                dat_file = file
             if ext == 'json':
                 with open(file, mode="r", encoding="utf-8") as jf:
                     config_dict = json.load(jf)
@@ -454,13 +314,20 @@ class STMReader(BaseReader):
         if has_dat_input_file and has_sxm_input_file:
             raise ValueError("Only one file from .dat or .sxm can be read.")
         if has_sxm_input_file and config_dict:
-            filled_template = from_sxm_into_template(template, sxm_file, config_dict)
-        if has_dat_input_file and config_dict:
-            from_dat_file_into_template(template, file, config_dict)
+            from_sxm_into_template(template, sxm_file, config_dict)
+        elif has_dat_input_file and config_dict:
+            from_dat_file_into_template(template, dat_file, config_dict)
+        else:
+            raise ValueError("Not correct input file has been provided.")
 
+        for key, val in template.items():
 
+            if val is None:
+                del template[key]
+            else:
+                filled_template[key] = val
 
-        if filled_template is not None:
+        if not filled_template:
             return filled_template
         else:
             raise ValueError("Reader could not read anything! Check for input files and the"
