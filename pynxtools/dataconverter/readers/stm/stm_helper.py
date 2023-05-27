@@ -22,7 +22,7 @@ import numpy as np
 
 
 def nested_path_to_slash_separated_path(nested_dict: dict,
-                                        flattened_dict: dict=None,
+                                        flattened_dict: dict,
                                         parent_path=''):
     """Convert nested dict into slash separeted path upto certain level.
     """
