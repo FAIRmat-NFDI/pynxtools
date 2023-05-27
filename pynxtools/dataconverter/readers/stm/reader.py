@@ -43,6 +43,8 @@ def is_separator_char_exist(key, sep_char_li):
     return np.any(bool_k)
 
 
+# TODO: get_nested_dict_from_concatenated_key()
+# TODO: Add sep_chars in function parameter list
 def get_nested_dict_from_nested_key_dict(data_dict, dict_to_map_path=None):
     """
     Create nested dict. If key are concateneted with '_', '>' split the key and
@@ -90,10 +92,11 @@ def convert_key_to_unit_and_entity(key, val, start_bracket='', end_bracket=''):
             unit = tmp_r_part.rsplit(end_bracket)[0]
             raw_key = tmp_l_part.strip()
 
-            return [(raw_key, val), (f"{raw_key}/@units", unit)]
+            return [(raw_key, val), (f"{raw_key}/@unit", unit)]
     return
 
 
+# TODO: try to replace dict_to_path by nested_dict_to_slash_spepare_path
 def dict_to_path(nested_dict, full_path='', sep='/'):
     items = []
     for key, val in nested_dict.items():
@@ -117,36 +120,66 @@ def sxm_raw_metadata_and_signal(file_name):
     """
     scan_file = nap.read.Scan(file_name)
     header_end_byte = scan_file.start_byte()
-
     h_part = scan_file.read_raw_header(header_end_byte)
     while True:
+        # Ignore all starting chars of string h_part except Alphabat
         if not re.match("[a-zA-Z]", h_part):
             h_part = h_part[1:]
         else:
             break
-    h_comp_iter = iter(re.split('\n:|:\n', h_part))
 
+    h_comp_iter = iter(re.split('\n:|:\n', h_part))
     return dict(zip(h_comp_iter, h_comp_iter)), scan_file.signals
 
 
+# TODO: REname this function
 def get_SPM_metadata_dict_and_signal(file_name):
     """
     Get meradata and signal from spm file.
     """
+    # TODO: clean comments
     metadata_dict, signal = sxm_raw_metadata_and_signal(file_name)
     nesteded_matadata_dict = get_nested_dict_from_nested_key_dict(metadata_dict)
-    path_items = dict_to_path(nested_dict=nesteded_matadata_dict)
-    entity_unit_items: List[Tuple[Any, Any]] = []
-    for path, val in path_items:
-        phy_qunt_unit_list = convert_key_to_unit_and_entity(path, val,
-                                                            start_bracket='(',
-                                                            end_bracket=')')
-        if phy_qunt_unit_list is not None:
-            entity_unit_items.extend(phy_qunt_unit_list)
-        else:
-            entity_unit_items.append((path, val))
+    # print('#### nested_metadata : ', nesteded_matadata_dict)
 
-    return entity_unit_items, signal
+    # Convert nested (dict) path to signal into slash_separated path to signal
+    temp_flattened_dict_sig = {}
+    slash_sep_path_to_signal = nested_path_to_slash_separated_path(signal,
+                                                                   temp_flattened_dict_sig)
+    temp_flattened_dict = {}
+    nested_path_to_slash_separated_path(nesteded_matadata_dict,
+                                        temp_flattened_dict)
+    # path_items = dict_to_path(nested_dict=nesteded_matadata_dict)
+    flattened_dict = {}
+    for key, val in temp_flattened_dict.items():
+        # list of tuples of (data path, data) and (unit path/unit and unit value)
+        tuple_li = convert_key_to_unit_and_entity(key, val,
+                                                  start_bracket='(',
+                                                  end_bracket=')')
+        if tuple_li:
+            for tup in tuple_li:
+                flattened_dict[tup[0]] = tup[1]
+        else:
+            flattened_dict[key] = val
+    # entity_unit_items: List[Tuple[Any, Any]] = []
+    # # print(' path items : ', path_items)
+    # for path, val in path_items:
+    #     phy_qunt_unit_list = convert_key_to_unit_and_entity(path, val,
+    #                                                         start_bracket='(',
+    #                                                         end_bracket=')')
+    #     if phy_qunt_unit_list is not None:
+    #         entity_unit_items.extend(phy_qunt_unit_list)
+    #     else:
+    #         entity_unit_items.append((path, val))
+    # print('### : ', entity_unit_items)
+    # return entity_unit_items, signal
+    # print('### flattened_dict : ', flattened_dict)
+
+    flattened_dict.update(temp_flattened_dict_sig)
+    with open('sxm_data.txt', mode='w', encoding='utf-8') as tmp_f:
+        for key, val in flattened_dict.items():
+            tmp_f.write(f"{key} ## : ##, {val}\n")
+    return flattened_dict
 
 
 def from_sxm_into_template(template, file_name, config_dict):
@@ -202,77 +235,35 @@ def signal_obj_to_template_dict(signal):
 
     return template_dict
 
+# TODO: remove this fucntion. This was written to parse dat file
+# def write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict):
+#     """
+#     """
+#     for key, data_info_dict in nx_data_info_dict.items():
+#         Bias_axis = 0
+#         grp_key = f"/ENTRY[Entry]/DATA[{data_info_dict['nx_data_group_name']}]"
 
-def write_nxdata_from_nx_greoup_dict(template, nx_data_info_dict):
-    """
-    """
-    for key, data_info_dict in nx_data_info_dict.items():
-        Bias_axis = 0
-        grp_key = f"/ENTRY[Entry]/DATA[{data_info_dict['nx_data_group_name']}]"
+#         data_field = grp_key + '/data'
+#         template[data_field] = data_info_dict['action_result'][1]
+#         data_field_signal = data_field + '/@signal'
+#         template[data_field_signal] = data_info_dict['action_result'][1]
+#         data_field_axis = data_field + '/axes'
+#         template[data_field_axis] = ['Bias']
+#         data_field_long_name = data_field + '/@long_name'
+#         template[data_field_long_name] = 'dI/dV'
 
-        data_field = grp_key + '/data'
-        template[data_field] = data_info_dict['action_result'][1]
-        data_field_signal = data_field + '/@signal'
-        template[data_field_signal] = data_info_dict['action_result'][1]
-        data_field_axis = data_field + '/axes'
-        template[data_field_axis] = ['Bias']
-        data_field_long_name = data_field + '/@long_name'
-        template[data_field_long_name] = 'dI/dV'
-
-        grp_signal = grp_key + '/@signal'
-        grp_axes = grp_key + '/@axes'
-        template[grp_axes] = ['Bias']
-        template[grp_signal] = 'data'
-        grp_axis = grp_key + '/Bias'
-        template[grp_axis] = data_info_dict['action_result'][0]
-        long_name = 'Bias (mV)'
-        grp_axis_lg_nm = grp_axis + '/@long_name'
-        template[grp_axis_lg_nm] = long_name
-        # template[grp_axis_lg_nm] = 'dI/dV'
-        grp_axis_ind = grp_key + '/@Bias_indices'
-        template[grp_axis_ind] = Bias_axis
-
-
-def process_data_from_file_(flattened_dict):
-    """Implement this function later.
-        TODO:
-        This functions mainly intended for automization of data manipulation
-         or data driven analytics.
-    """
-    # This keys are collected from flatten_dict generated in
-    # nested_path_to_slash_separated_path()
-
-    # key_data_to_be_processed = {'0': {'/Bias/value': None,
-    #                                   '/Current/value': None}}
-
-    # for fla_key, fla_val in flattened_dict.items():
-    #     for pro_key, pro_val in key_data_to_be_processed.items():
-    #         for ele_key, ele_val in pro_val.items():
-    #             if ele_key in fla_key:
-    #                 pro_val[ele_key] = fla_val
-
-    # nx_data_info_dict = {'0': {'nx_data_group_name': '(Normal)',
-    #                         'nx_data_group_axes': ['Bias', 'dI/dV'],
-    #                         'action': [slice_before_last_element, cal_dx_by_dy],
-    #                         'action_variable':
-    #                         [[key_data_to_be_processed['0']['/Bias/value']],
-    #                         [key_data_to_be_processed['0']['/Current/value'],
-    #                             key_data_to_be_processed['0']['/Bias/value']]],
-    #                         'action_result': []}}
-
-    # # TODO: add the print optionality for flattend dict option inside bias_spec_data_parser.py
-    # later add this option inside README doc
-    # with open('./dict_from_dat_file.txt', mode='+w', encoding='utf-8',) as fl:
-    #     for key, val in flattened_dict.items():
-    #         print('## val', key)
-    #         fl.write(f"{key} : ##### {val}\n")
-    # 0, 1,
-    # print('key_data_to_be_processed', key_data_to_be_processed)
-    # for key in key_data_to_be_processed.keys():
-    #     key_dict = nx_data_info_dict[key]
-    #     for action, action_variable in zip(key_dict['action'], key_dict['action_variable']):
-    #         key_dict['action_result'].append(action(*action_variable))
-    pass
+#         grp_signal = grp_key + '/@signal'
+#         grp_axes = grp_key + '/@axes'
+#         template[grp_axes] = ['Bias']
+#         template[grp_signal] = 'data'
+#         grp_axis = grp_key + '/Bias'
+#         template[grp_axis] = data_info_dict['action_result'][0]
+#         long_name = 'Bias (mV)'
+#         grp_axis_lg_nm = grp_axis + '/@long_name'
+#         template[grp_axis_lg_nm] = long_name
+#         # template[grp_axis_lg_nm] = 'dI/dV'
+#         grp_axis_ind = grp_key + '/@Bias_indices'
+#         template[grp_axis_ind] = Bias_axis
 
 
 class STMReader(BaseReader):

@@ -408,3 +408,46 @@ def work_out_overwriteable_field(template, data_dict, data_config_dict, field_pa
             template[new_temp_key + "/@unit"] = transform(data_dict[path_to_dt]
                                                           if path_to_dt in data_dict
                                                           else None)
+
+
+def process_data_from_file_(flattened_dict):
+    """Implement this function later.
+        TODO:
+        This functions mainly intended for automization of data manipulation
+         or data driven analytics. Try it out later.
+    """
+    # This keys are collected from flatten_dict generated in
+    # nested_path_to_slash_separated_path()
+
+    # key_data_to_be_processed = {'0': {'/Bias/value': None,
+    #                                   '/Current/value': None}}
+
+    # for fla_key, fla_val in flattened_dict.items():
+    #     for pro_key, pro_val in key_data_to_be_processed.items():
+    #         for ele_key, ele_val in pro_val.items():
+    #             if ele_key in fla_key:
+    #                 pro_val[ele_key] = fla_val
+
+    # nx_data_info_dict = {'0': {'nx_data_group_name': '(Normal)',
+    #                         'nx_data_group_axes': ['Bias', 'dI/dV'],
+    #                         'action': [slice_before_last_element, cal_dx_by_dy],
+    #                         'action_variable':
+    #                         [[key_data_to_be_processed['0']['/Bias/value']],
+    #                         [key_data_to_be_processed['0']['/Current/value'],
+    #                             key_data_to_be_processed['0']['/Bias/value']]],
+    #                         'action_result': []}}
+
+    # # TODO: add the print optionality for flattend dict option inside bias_spec_data_parser.py
+    # later add this option inside README doc
+    # with open('./dict_from_dat_file.txt', mode='+w', encoding='utf-8',) as fl:
+    #     for key, val in flattened_dict.items():
+    #         print('## val', key)
+    #         fl.write(f"{key} : ##### {val}\n")
+    # 0, 1,
+    # print('key_data_to_be_processed', key_data_to_be_processed)
+    # for key in key_data_to_be_processed.keys():
+    #     key_dict = nx_data_info_dict[key]
+    #     for action, action_variable in zip(key_dict['action'], key_dict['action_variable']):
+    #         key_dict['action_result'].append(action(*action_variable))
+    pass
+
