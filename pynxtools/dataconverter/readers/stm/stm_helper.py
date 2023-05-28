@@ -69,6 +69,7 @@ def transform(text):
     tested with: '2.4E-23', '28', '45.98', 'test', ['59', '3.00005', '498E-34'], None]
     with result: 2.4e-23, 28, 45.98, test, [5.90000e+01 3.00005e+00 4.98000e-32], None
     """
+    symbol_list_for_data_seperation = [';']
     transformed = ""
     if text is None:
         return text
@@ -92,5 +93,13 @@ def transform(text):
         return transformed
     except ValueError:
         pass
+
+    for sym in symbol_list_for_data_seperation:
+        if sym in text:
+            parts = text.split(sym)
+            modified_parts = []
+            for part in parts:
+                modified_parts.append(transform(part))
+            return modified_parts
 
     return text
