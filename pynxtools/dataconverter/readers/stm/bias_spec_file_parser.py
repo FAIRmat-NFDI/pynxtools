@@ -52,7 +52,6 @@ class BiasSpecData():
         self.bias_spect_dict: NestedDict = {}
         self.raw_file: str = file_name
         # self.file_obj: TextIO = None
-        print('#ssss kkk')
         self.choose_correct_function_to_extract_data()
 
     def get_data_nested_dict(self) -> NestedDict:
@@ -205,7 +204,7 @@ def collect_default_value(template, search_key):
     template[search_key] = default_dict[search_key]
 
 
-def construct_nxdata(template, data_dict, data_config_dict, data_group):
+def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
     """
     Construct NXdata that includes all the groups, field and attributes. All the elements
     will be stored in template.
@@ -284,9 +283,9 @@ def construct_nxdata(template, data_dict, data_config_dict, data_group):
         template[data_field + '/@long_name'] = f"dI/dV ({current_unit}/{bias_unit})"
 
     def fill_out_NXdata_group(signal='auxiliary_signals'):
-        """To fill out NXdata which is root for all data fields and and attributes.
-           This function fills template with one level of descendent fields and attributes
-           but not the fields and attributes under child of NXdata.
+        """To fill out NXdata which is root for all data fields and attributes.
+           This function fills template with first level of descendent fields and attributes
+           of NXdata but not the fields and attributes under child of NXdata.
         """
         data_signal = temp_data_grp + '/@' + signal
         template[data_signal] = extra_annot
@@ -344,7 +343,6 @@ def from_dat_file_into_template(template, dat_file, config_dict):
 
     template_keys = template.keys()
     for c_key, c_val in config_dict.items():
-        # print(template.copy().items())
         for t_key in template_keys:
             # debug
             if c_val in ["None", ""]:
@@ -359,7 +357,7 @@ def from_dat_file_into_template(template, dat_file, config_dict):
                 data_group = "/ENTRY[entry]/DATA[data]"
                 if data_group == t_key:
                     # pass exp. data section to NXdata group
-                    construct_nxdata(template, flattened_dict, c_val, data_group)
+                    construct_nxdata_for_dat(template, flattened_dict, c_val, data_group)
                 else:
                     # pass other physical quantity that has muliple dimensions or type for
                     # same physical quantity e.g. in drift_N N will be replaced X, Y and Z
@@ -367,7 +365,7 @@ def from_dat_file_into_template(template, dat_file, config_dict):
                 break
 
 
-def work_out_overwriteable_field(template, data_dict, data_config_dict, field_path):
+def work_out_overwriteable_field(template, data_dict, data_config_dict, nexus_path):
     """
     Overwrite a field for multiple dimention of the same type of physical quantity.
 
@@ -388,15 +386,22 @@ def work_out_overwriteable_field(template, data_dict, data_config_dict, field_pa
     --------
     None
     """
+    # TODO: Try here to use regrex module
     # Find the overwriteable part
     overwrite_part = ""
-    for char in field_path:
+    # Two possibilities are considered: tilt_N/@units and tilt_N
+    if '/@units' in nexus_path:
+        field_to_replace = nexus_path.rsplit('/')[1]
+    else:
+        field_to_replace = nexus_path.rsplit('/', 1)[1]
+    for char in field_to_replace:
         if char.isupper():
             overwrite_part = overwrite_part + char
     if overwrite_part == "":
         raise ValueError("No overwriteable part has been found.")
     for ch_to_subs, value_dict in data_config_dict.items():
-        new_temp_key = field_path.replace(overwrite_part, ch_to_subs)
+        modified_field = field_to_replace.replace(overwrite_part, ch_to_subs)
+        new_temp_key = nexus_path.replace(field_to_replace, modified_field)
         value = "value"
         unit = "unit"
         if value in value_dict:
