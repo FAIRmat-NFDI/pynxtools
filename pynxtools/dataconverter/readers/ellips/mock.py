@@ -109,10 +109,10 @@ class MockEllips():
             considering the (new) number of incident angles
         """
         my_numpy_array = np.empty([
-                                   len(self.angles),
-                                   self.number_of_signals,
-                                   len(self.wavelength)
-                                   ])
+            len(self.angles),
+            self.number_of_signals,
+            len(self.wavelength)
+            ])
         for index in range(0, len(self.angles)):
             noise = np.random.normal(0, 0.5, self.data[0, 0, :].size)
             my_numpy_array[index] = self.data[0] * random.uniform(0.5, 1.5) + noise
