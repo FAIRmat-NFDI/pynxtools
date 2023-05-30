@@ -108,7 +108,8 @@ class MockEllips():
         """ Mock data if data_type is Psi/Delta or tan(Psi)/cos(Delta)
             considering the (new) number of incident angles
         """
-        my_numpy_array = np.empty([
+        my_numpy_array = np.empty(
+            [
             len(self.angles),
             self.number_of_signals,
             len(self.wavelength)
@@ -124,10 +125,10 @@ class MockEllips():
             considering the (new) number of incident angles
         """
         my_numpy_array = np.empty([
-                                   len(self.angles),
-                                   self.number_of_signals,
-                                   len(self.wavelength)
-                                   ])
+            len(self.angles),
+            self.number_of_signals,
+            len(self.wavelength)
+        ])
         for idx in range(0, len(self.angles)):
             noise = np.random.normal(0, 0.1, self .data[0, 0, :].size)
             for m_idx in range(1, self.number_of_signals):
