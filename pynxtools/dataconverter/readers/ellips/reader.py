@@ -207,9 +207,9 @@ def populate_template_dict(header, template):
     eln_data_dict = flatten_and_replace(
         FlattenSettings(
             dic=header,
-            convert_dict = CONVERT_DICT,
-            replace_nested = REPLACE_NESTED,
-            black_list = CONFIG_KEYS
+            convert_dict=CONVERT_DICT,
+            replace_nested=REPLACE_NESTED,
+            black_list=CONFIG_KEYS
         )
     )
     template.update(eln_data_dict)
@@ -348,59 +348,58 @@ class EllipsometryReader(BaseReader):
             counts[0]
         ])
         my_error_array = np.empty([
-                                   len(unique_angles),
-                                   len(labels),
-                                   counts[0]
-                                   ])
+            len(unique_angles),
+            len(labels),
+            counts[0]
+        ])
         derived_params = np.empty([
-                                   len(unique_angles),
-                                   1,
-                                   counts[0]
-                                   ])
+            len(unique_angles),
+            1,
+            counts[0]
+        ])
 
         for index, angle in enumerate(unique_angles):
             my_numpy_array[
-                           index,
-                           :,
-                           :] = angle
+                index,
+                :,
+                :] = angle
         data_index = 0
         for key, val in labels.items():
             for index in range(len(val)):
                 my_numpy_array[
-                               index,
-                               data_index,
-                               :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
-                                                               ].astype("float64")
+                    index,
+                    data_index,
+                    :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
+                                                    ].astype("float64")
             data_index += 1
 
         data_index = 0
         for key, val in err_labels.items():
             for index in range(len(val)):
                 my_error_array[
-                               index,
-                               data_index,
-                               :] = whole_data[key].to_numpy()[
-                                   block_idx[index]:block_idx[index + 1]].astype("float64")
+                    index,
+                    data_index,
+                    :] = whole_data[key].to_numpy()[
+                        block_idx[index]:block_idx[index + 1]].astype("float64")
             data_index += 1
 
         # derived parameters:
         colindx = 1
         temp = whole_data[header["colnames"][-colindx]].to_numpy()[
-                        block_idx_der_prms[index]].astype("float64")
+            block_idx_der_prms[index]].astype("float64")
         while temp * 0 != 0:
-        # while temp == np.nan:
             temp = whole_data[header["colnames"][-colindx]].to_numpy()[
-                            block_idx_der_prms[index]].astype("float64")
+                block_idx_der_prms[index]].astype("float64")
             colindx += 1
 
         # takes last but one column from the right (skips empty columns):
         for index in range(len(unique_angles)):
             derived_params[
-                        index,
-                        0,
-                        :] = whole_data[header["colnames"][-colindx]].to_numpy()[
-                            block_idx_der_prms[index]:block_idx_der_prms[index + 1]
-                            ].astype("float64")
+                index,
+                0,
+                :] = whole_data[header["colnames"][-colindx]].to_numpy()[
+                    block_idx_der_prms[index]:block_idx_der_prms[index + 1]
+                    ].astype("float64")
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
@@ -470,8 +469,8 @@ class EllipsometryReader(BaseReader):
         spectrum_type = header["spectrum_type"]
         spectrum_unit = header["spectrum_unit"]
         template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = {"link":
-                                                     f"/entry/data_collection/{spectrum_type}_spectrum"
-                                                     }
+                                                                     f"/entry/data_collection/{spectrum_type}_spectrum"
+                                                                     }
         # template[f"/ENTRY[entry]/data_collection/DATA[data]/AXISNAME[{spectrum_type}]"] = {"link":
         #                                              f"/entry/data_collection/{spectrum_type}_spectrum"
         #                                              }
@@ -492,10 +491,10 @@ class EllipsometryReader(BaseReader):
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
                         f"{plot_name} (degrees)"
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]"] = {"link":
-                                                               "/entry/data_collection/data_error",
-                                                               "shape":
-                                                               np.index_exp[index, dindx, :]
-                                                               }
+                                                                      "/entry/data_collection/data_error",
+                                                                      "shape":
+                                                                      np.index_exp[index, dindx, :]
+                                                                      }
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degrees"
 
         # Define default plot showing Psi and Delta at all angles:
