@@ -330,9 +330,8 @@ class EllipsometryReader(BaseReader):
         block_idx = [np.int64(0)]
         index = 0
         while index < len(whole_data):
-            index += counts[angle[0]]
+            index += counts[0]
             block_idx.append(index)
-        print(block_idx)
 
         # array that will be allocated in a HDF5 file
         my_numpy_array = np.empty([
@@ -378,20 +377,20 @@ class EllipsometryReader(BaseReader):
             data_index += 1
 
         # derived parameters:
-        colindx = 1
-        temp = whole_data[header["colnames"][-colindx]].to_numpy()[
-            block_idx[0]].astype("float64")
-        while temp * 0 != 0:
-            temp = whole_data[header["colnames"][-colindx]].to_numpy()[
-                block_idx[0]].astype("float64")
-            colindx += 1
+        # data_index = 1
+        # temp = whole_data[header["colnames"][-data_index]].to_numpy()[
+        #     block_idx[0]].astype("float64")
+        # while temp * 0 != 0:
+        #     temp = whole_data[header["colnames"][-data_index]].to_numpy()[
+        #         block_idx[0]].astype("float64")
+        #     data_index += 1
 
         # takes last but one column from the right (skips empty columns):
         for index in range(len(unique_angles)):
             derived_params[
                 index,
                 0,
-                :] = whole_data[header["colnames"][-colindx]].to_numpy()[
+                :] = whole_data[header["colnames"][3]].to_numpy()[
                     block_idx[index + 6]:block_idx[index + 7]].astype("float64")
 
         # measured_data is a required field
@@ -417,8 +416,6 @@ class EllipsometryReader(BaseReader):
                     val.append(f"{key}_{int(angle[1])}deg")
                 for key, val in err_labels.items():
                     val.append(f"{key}_{int(angle[1])}deg")
-                index += counts[angle[0]]
-                block_idx.append(index)
 
         if "atom_types" not in header:
             header["atom_types"] = extract_atom_types(header["chemical_formula"])
