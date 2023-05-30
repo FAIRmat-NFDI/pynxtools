@@ -33,10 +33,10 @@ DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 CONVERT_DICT = {
     'angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
     'angle_of_incidence/@units': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
-    'angular_spread': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/ \
-        ngular_spread',
-    'angular_spread/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes \
-        /angular_spread/@units',
+    'angular_spread': \
+         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread',
+    'angular_spread/@units': \
+        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread/@units',
     'atom_types': 'SAMPLE[sample]/atom_types',
     'backside_roughness': 'SAMPLE[sample]/backside_roughness',
     'calibration_status': 'INSTRUMENT[instrument]/calibration_status',
@@ -44,10 +44,10 @@ CONVERT_DICT = {
     'column_names': 'data_collection/column_names',
     'company': 'INSTRUMENT[instrument]/company',
     'count_time': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time',
-    'count_time/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector] \
-        /count_time/@units',
-    'data_correction': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/ \
-        data_correction',
+    'count_time/@units': \
+        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time/@units',
+    'data_correction': \
+        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/data_correction',
     'data_error': 'data_collection/data_error',
     'data_identifier': 'data_collection/data_identifier',
     'data_software/@url': 'data_collection/data_software/@url',
@@ -56,8 +56,8 @@ CONVERT_DICT = {
     'data_type': 'data_collection/data_type',
     'depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/depends_on',
     'depolarization': 'derived_parameters/depolarization',
-    'detector_type': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/ \
-        detector_type',
+    'detector_type': \
+        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/detector_type',
     'ellipsometer_type': 'INSTRUMENT[instrument]/ellipsometer_type',
     'layer_structure': 'SAMPLE[sample]/layer_structure',
     'light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/light_source',
@@ -76,18 +76,6 @@ CONVERT_DICT = {
     'software/version': 'INSTRUMENT[instrument]/software/version',
     'stage_type': 'INSTRUMENT[instrument]/sample_stage/stage_type',
     'substrate': 'SAMPLE[sample]/substrate',
-    'TRANSFORMATIONS[order]/detector': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/ \
-        TRANSFORMATIONS[order]/detector',
-    'TRANSFORMATIONS[order]/detector/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path] \
-        /TRANSFORMATIONS[order]/detector/@depends_on',
-    'TRANSFORMATIONS[order]/light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path] \
-        /TRANSFORMATIONS[order]/light_source',
-    'TRANSFORMATIONS[order]/light_source/@depends_on': 'INSTRUMENT[instrument]/ \
-        BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/light_source/@depends_on',
-    'TRANSFORMATIONS[order]/sample_stage': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path] \
-        /TRANSFORMATIONS[order]/sample_stage',
-    'TRANSFORMATIONS[order]/sample_stage/@depends_on': 'INSTRUMENT[instrument]/ \
-        BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/sample_stage/@depends_on',
 }
 
 CONFIG_KEYS = [
@@ -332,25 +320,19 @@ class EllipsometryReader(BaseReader):
 
         labels, err_labels = header_labels(header)
 
-        block_idx = [np.int64(0)]
         index = 0
         for angle in enumerate(unique_angles):
             for key, val in labels.items():
                 val.append(f"{key}_{int(angle[1])}deg")
             for key, val in err_labels.items():
                 val.append(f"{key}_{int(angle[1])}deg")
+
+        block_idx = [np.int64(0)]
+        index = 0
+        while index < len(whole_data):
             index += counts[angle[0]]
             block_idx.append(index)
-
-        block_idx_uR = [np.int64(block_idx[-1])]
-        for angle in enumerate(unique_angles):
-            index += counts[angle[0]]
-            block_idx_uR.append(index)
-
-        block_idx_der_prms = [np.int64(block_idx_uR[-1])]
-        for angle in enumerate(unique_angles):
-            index += counts[angle[0]]
-            block_idx_der_prms.append(index)
+        print(block_idx)
 
         # array that will be allocated in a HDF5 file
         my_numpy_array = np.empty([
@@ -374,6 +356,7 @@ class EllipsometryReader(BaseReader):
                 index,
                 :,
                 :] = angle
+
         data_index = 0
         for key, val in labels.items():
             for index in range(len(val)):
@@ -397,10 +380,10 @@ class EllipsometryReader(BaseReader):
         # derived parameters:
         colindx = 1
         temp = whole_data[header["colnames"][-colindx]].to_numpy()[
-            block_idx_der_prms[index]].astype("float64")
+            block_idx[0]].astype("float64")
         while temp * 0 != 0:
             temp = whole_data[header["colnames"][-colindx]].to_numpy()[
-                block_idx_der_prms[index]].astype("float64")
+                block_idx[0]].astype("float64")
             colindx += 1
 
         # takes last but one column from the right (skips empty columns):
@@ -409,7 +392,7 @@ class EllipsometryReader(BaseReader):
                 index,
                 0,
                 :] = whole_data[header["colnames"][-colindx]].to_numpy()[
-                    block_idx_der_prms[index]:block_idx_der_prms[index + 1]].astype("float64")
+                    block_idx[index + 6]:block_idx[index + 7]].astype("float64")
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
@@ -431,6 +414,8 @@ class EllipsometryReader(BaseReader):
             header, labels, err_labels = mock_function(header)
             for angle in enumerate(header["angle_of_incidence"]):
                 for key, val in labels.items():
+                    val.append(f"{key}_{int(angle[1])}deg")
+                for key, val in err_labels.items():
                     val.append(f"{key}_{int(angle[1])}deg")
                 index += counts[angle[0]]
                 block_idx.append(index)
@@ -478,36 +463,33 @@ class EllipsometryReader(BaseReader):
 
         spectrum_type = header["spectrum_type"]
         spectrum_unit = header["spectrum_unit"]
-        template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = {"link":
-                                                                     f"/entry/data_collection/ \
-                                                                        {spectrum_type}_spectrum"
-                                                                     }
+        template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = \
+            {"link": f"/entry/data_collection/{spectrum_type}_spectrum"}
         # template[f"/ENTRY[entry]/data_collection/DATA[data]/AXISNAME[{spectrum_type}]"] = {"link":
         #                                              f"/entry/data_collection/{spectrum_type}_spectrum"
         #                                              }
         template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] \
             = spectrum_unit
-        template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/ \
-                 @long_name"] = f"{spectrum_type} ({spectrum_unit})"
+        template[
+            f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@long_name"] \
+                = f"{spectrum_type} ({spectrum_unit})"
         plot_name = header["plot_name"]
         for dindx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[dindx]):
-                template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
-                                                               "/entry/data_collection/ \
-                                                                measured_data",
-                                                               "shape":
-                                                               np.index_exp[index, dindx, :]
-                                                               }
+                template[f"/ENTRY[entry]/plot/DATA[{key}]"] = \
+                    {
+                        "link": "/entry/data_collection/measured_data",
+                        "shape": np.index_exp[index, dindx, :]
+                     }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
                 if dindx == 0 and index == 0:
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
                         f"{plot_name} (degrees)"
-                template[f"/ENTRY[entry]/plot/DATA[{key}_errors]"] = {"link":
-                                                                      "/entry/data_collection/ \
-                                                                      data_error",
-                                                                      "shape":
-                                                                      np.index_exp[index, dindx, :]
-                                                                      }
+                template[f"/ENTRY[entry]/plot/DATA[{key}_errors]"] = \
+                    {
+                        "link": "/entry/data_collection/data_error",
+                        "shape": np.index_exp[index, dindx, :]
+                    }
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degrees"
 
         # Define default plot showing Psi and Delta at all angles:
