@@ -1,75 +1,62 @@
-experiment_type: ellipsometry
-backside_roughness: False
-chemical_formula: SiO2
-sample_type: multi layer
-substrate: Si
-software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
-software/program: WVASE
-software/version: '3.882'
-angle_of_incidence_unit: degrees
-atom_types: Si, O
+angle_of_incidence:
+  unit: degrees
 angular_spread:
   unit: rad ** 2
   value: 0.2
+atom_types: Si, O
+backside_roughness: False
 blocks:
 - type
 - angle_of_incidence
 calibration_status: no calibration
+chemical_formula: SiO2
 colnames:
 - type
 - wavelength
 - angle_of_incidence
-- psi
-- delta
-- err.psi
-- err.delta
-column_names:
-- psi
-- delta
+- Psi
+- Delta
+- err.Psi
+- err.Delta
 company: J. A. Woollam Co.
-count_time:
-  unit: s
-  value: 1
+data_correction: false
 data_identifier: 1
-data_type: psi/delta
+data_software/\@url: https://www.jawoollam.com/ellipsometry-software/wvase
+data_software/program: WVASE
+data_software/version: '3.882'
+data_type: Psi/Delta
 definition: NXellipsometry
 definition/\@url: https://github.com/FAIRmat-Experimental/nexus_definitions/tree/fairmat-ellips/contributed_definitions/NXellipsometry.nxdl.xml
 definition/\@version: 0.0.2
+derived_parameter_type: depolarization
 detector_type: CCD spectrometer
-ellipsometry_type: dual compensator
-err-var:
-- err.psi
-- err.delta
+ellipsometer_type: dual compensator
 experiment_description: RC2 scan on 2nm SiO2 on Si in air
 experiment_identifier: exp-ID
+experiment_type: NIR-Vis-UV spectroscopic ellipsometry
 filename: test-data.dat
-firmware: CompleteEASE
-firmware/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
-firmware/\@version: '6.37'
-data_correction: false
-integration_time:
-  unit: s
-  value: 0
+software/program: CompleteEASE
+software/\@url: https://www.jawoollam.com/ellipsometry-software/completeease
+software/version: '6.37'
 layer_structure: 2nm SiO2 on Si
 light_source: arc lamp
 medium: air
 model: RC2
 model/\@version: 0.0.1
+plot_name: Psi and Delta
+rotating_element_type: compensator (source side)
+revolutions: 50
+sample_history: Commercially purchased sample
+sample_name: 2nm SiO2 on Si
+sample_type: multi layer
+sep: \t
+skip: 3
+spectrum_type: wavelength
+spectrum_unit: Angstroms
+stage_type: manual stage
+start_time: '2022-01-27T04:35:00+00:00'
+substrate: Si
 USER[user]/address: Zum Großen Windkanal 2, 12489 Berlin, Germany
 USER[user]/affiliation: Humboldt-Universität zu Berlin
 USER[user]/email: surname.name@physik.hu-berlin.de
 USER[user]/name: Name Surname
-parameters:
-- type
-- angle
-rotating_element: compensator (source side)
-sample_history: Commercially purchased sample
-sample_name: 2nm SiO2 on Si
-sep: \t
-skip: 3
-stage_type: manual stage
-start_time: '2022-01-27T04:35:00+00:00'
-x-var: wavelength
-y-var:
-- psi
-- delta
