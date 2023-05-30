@@ -73,6 +73,7 @@ def transform(text):
     transformed = ""
     if text is None:
         return text
+
     if isinstance(text, list):
         text = list(text)
         try:
@@ -81,6 +82,9 @@ def transform(text):
             return transformed
         except ValueError:
             pass
+
+    if isinstance(text, np.ndarray):
+        return text
 
     try:
         transformed = int(text)
@@ -103,3 +107,4 @@ def transform(text):
             return modified_parts
 
     return text
+
