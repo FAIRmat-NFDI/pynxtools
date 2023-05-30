@@ -33,9 +33,9 @@ DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 CONVERT_DICT = {
     'angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
     'angle_of_incidence/@units': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
-    'angular_spread': \
+    'angular_spread':
          'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread',
-    'angular_spread/@units': \
+    'angular_spread/@units':
         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread/@units',
     'atom_types': 'SAMPLE[sample]/atom_types',
     'backside_roughness': 'SAMPLE[sample]/backside_roughness',
@@ -44,9 +44,9 @@ CONVERT_DICT = {
     'column_names': 'data_collection/column_names',
     'company': 'INSTRUMENT[instrument]/company',
     'count_time': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time',
-    'count_time/@units': \
+    'count_time/@units':
         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time/@units',
-    'data_correction': \
+    'data_correction':
         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/data_correction',
     'data_error': 'data_collection/data_error',
     'data_identifier': 'data_collection/data_identifier',
@@ -56,7 +56,7 @@ CONVERT_DICT = {
     'data_type': 'data_collection/data_type',
     'depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/depends_on',
     'depolarization': 'derived_parameters/depolarization',
-    'detector_type': \
+    'detector_type':
         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/detector_type',
     'ellipsometer_type': 'INSTRUMENT[instrument]/ellipsometer_type',
     'layer_structure': 'SAMPLE[sample]/layer_structure',
@@ -465,9 +465,8 @@ class EllipsometryReader(BaseReader):
         spectrum_unit = header["spectrum_unit"]
         template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = \
             {"link": f"/entry/data_collection/{spectrum_type}_spectrum"}
-        # template[f"/ENTRY[entry]/data_collection/DATA[data]/AXISNAME[{spectrum_type}]"] = {"link":
-        #                                              f"/entry/data_collection/{spectrum_type}_spectrum"
-        #                                              }
+        # template[f"/ENTRY[entry]/data_collection/DATA[data]/AXISNAME[{spectrum_type}]"] = \
+        #     {"link": f"/entry/data_collection/{spectrum_type}_spectrum"}
         template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] \
             = spectrum_unit
         template[
@@ -480,7 +479,7 @@ class EllipsometryReader(BaseReader):
                     {
                         "link": "/entry/data_collection/measured_data",
                         "shape": np.index_exp[index, dindx, :]
-                     }
+                    }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
                 if dindx == 0 and index == 0:
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
