@@ -1021,7 +1021,12 @@ TODO:
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
         (req_str, nxdef, nxdl_path) = \
             get_nxdl_doc(hdf_info, logger, doc, attr=key)
-        if parser is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
+        if (
+            parser is not None
+            and req_str is not None
+            and 'NOT IN SCHEMA' not in req_str
+            and 'None' not in req_str
+        ):
             parser({"hdf_info": hdf_info,
                     "nxdef": nxdef,
                     "nxdl_path": nxdl_path,
@@ -1325,7 +1330,11 @@ class HandleNexus:
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes"""
         self.parser = parser
-        self.in_file = h5py.File(self.input_file_name, 'r')
+        self.in_file = h5py.File(
+            self.input_file_name[0]
+            if isinstance(self.input_file_name, list)
+            else self.input_file_name, 'r'
+        )
         self.full_visit(self.in_file, self.in_file, '', self.visit_node)
         if self.d_inq_nd is None and self.c_inq_nd is None:
             get_default_plotable(self.in_file, self.logger)
