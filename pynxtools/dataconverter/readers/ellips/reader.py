@@ -307,11 +307,11 @@ def parameter_array(whole_data, header, unique_angles, counts):
     # takes last but one column from the right (skips empty columns):
     data_index = 1
     temp = whole_data[header["colnames"][-data_index]].to_numpy()[
-        block_idx[-1]-1].astype("float64")
+        block_idx[-1] - 1].astype("float64")
 
     while temp * 0 != 0:
         temp = whole_data[header["colnames"][-data_index]].to_numpy()[
-            block_idx[-1]-1].astype("float64")
+            block_idx[-1] - 1].astype("float64")
         data_index += 1
 
     for index in range(len(unique_angles)):
@@ -362,7 +362,7 @@ def data_array(whole_data, header, unique_angles, counts, labels):
                 index,
                 data_index,
                 :] = whole_data[f"err.{key}"].to_numpy()[block_idx[index]:block_idx[index + 1]
-                                                ].astype("float64")
+                                                         ].astype("float64")
         data_index += 1
 
     return my_data_array, my_error_array
