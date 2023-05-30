@@ -25,9 +25,80 @@ import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
 from pynxtools.dataconverter.helpers import extract_atom_types
+from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
+
+CONVERT_DICT = {
+    'angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
+    'angle_of_incidence/@units': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
+    'angular_spread': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread',
+    'angular_spread/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread/@units',
+    'atom_types': 'SAMPLE[sample]/atom_types',
+    'backside_roughness': 'SAMPLE[sample]/backside_roughness',
+    'calibration_status': 'INSTRUMENT[instrument]/calibration_status',
+    'chemical_formula': 'SAMPLE[sample]/chemical_formula',
+    'column_names': 'data_collection/column_names',
+    'company': 'INSTRUMENT[instrument]/company',
+    'count_time': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time',
+    'count_time/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time/@units',
+    'data_correction': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/data_correction',
+    'data_error': 'data_collection/data_error',
+    'data_identifier': 'data_collection/data_identifier',
+    'data_software/@url': 'data_collection/data_software/@url',
+    'data_software/program': 'data_collection/data_software/program',
+    'data_software/version': 'data_collection/data_software/version',
+    'data_type': 'data_collection/data_type',
+    'depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/depends_on',
+    'depolarization': 'derived_parameters/depolarization',
+    'detector_type': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/detector_type',
+    'ellipsometer_type': 'INSTRUMENT[instrument]/ellipsometer_type',
+    'layer_structure': 'SAMPLE[sample]/layer_structure',
+    'light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/light_source',
+    'medium': 'INSTRUMENT[instrument]/sample_stage/environment_conditions/medium',
+    'measured_data': 'data_collection/measured_data',
+    'model': 'INSTRUMENT[instrument]/model',
+    'model/@version': 'INSTRUMENT[instrument]/model/@version',
+    'real_time': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/real_time',
+    'revolutions': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/rotating_element/revolutions',
+    'rotating_element_type': 'INSTRUMENT[instrument]/rotating_element_type',
+    'sample_history': 'SAMPLE[sample]/sample_history',
+    'sample_name': 'SAMPLE[sample]/sample_name',
+    'sample_type': 'SAMPLE[sample]/sample_type',
+    'software/@url': 'INSTRUMENT[instrument]/software/@url',
+    'software/program': 'INSTRUMENT[instrument]/software/program',
+    'software/version': 'INSTRUMENT[instrument]/software/version',
+    'stage_type': 'INSTRUMENT[instrument]/sample_stage/stage_type',
+    'substrate': 'SAMPLE[sample]/substrate',
+    'TRANSFORMATIONS[order]/detector': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/detector',
+    'TRANSFORMATIONS[order]/detector/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/detector/@depends_on',
+    'TRANSFORMATIONS[order]/light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/light_source',
+    'TRANSFORMATIONS[order]/light_source/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/light_source/@depends_on',
+    'TRANSFORMATIONS[order]/sample_stage': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/sample_stage',
+    'TRANSFORMATIONS[order]/sample_stage/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/sample_stage/@depends_on',
+}
+
+CONFIG_KEYS = [
+        'blocks',
+        'colnames',
+        'derived_parameter_type',
+        'err-var',
+        'filename',
+        'parameters',
+        'plot_name',
+        'sep',
+        'skip',
+        'spectrum_type',
+        'spectrum_unit'
+        ]
+
+REPLACE_NESTED = {
+    'SOURCE[source]/Probe': 'SOURCE[source]',
+    'SOURCE[source]/Pump': 'SOURCE[source_pump]',
+    'BEAM[beam]/Probe': 'BEAM[beam]',
+    'BEAM[beam]/Pump': 'BEAM[beam_pump]',
+}
 
 def load_header(filename, default):
     """ load the yaml description file, and apply defaults from
@@ -59,6 +130,7 @@ def load_header(filename, default):
     for key, value in default.items():
         if key not in clean_header:
             clean_header[key] = value
+
     return clean_header
 
 
@@ -130,6 +202,17 @@ def populate_template_dict(header, template):
         calibration = load_as_pandas_array(header["calibration_filename"], header)
         for k in calibration:
             header[f"calibration_{k}"] = calibration[k]
+
+    eln_data_dict = flatten_and_replace(
+                FlattenSettings(
+                    dic=header,
+                    convert_dict=CONVERT_DICT,
+                    replace_nested=REPLACE_NESTED,
+                    black_list = CONFIG_KEYS
+                )
+            )
+    template.update(eln_data_dict)
+
     # For loop handling attributes from yaml to appdef:
     for k in template.keys():
         k_list = k.rsplit("/", 2)
@@ -139,6 +222,7 @@ def populate_template_dict(header, template):
             template[k] = header.pop(long_k)
         elif short_k in header:
             template[k] = header.pop(short_k)
+
     return template
 
 
@@ -147,17 +231,20 @@ def header_labels(header):
 
     """
 
-    if header["data_type"] == "psi/delta":
-        labels = {"psi": [], "delta": []}
-    elif header["data_type"] == "tan(psi)/cos(delta)":
-        labels = {"tan(psi)": [], "cos(delta)": []}
+    if header["data_type"] == "Psi/Delta":
+        labels = {"Psi": [], "Delta": []}
+        err_labels = {"err.Psi": [], "err.Delta": []}
+    elif header["data_type"] == "tan(Psi)/cos(Delta)":
+        labels = {"tan(Psi)": [], "cos(Delta)": []}
+        err_labels = {"err.tan(Psi)": [], "err.cos(Delta)": []}
     else:
         labels = {}
         for i in range(1, 5):
             for j in range(1, 5):
                 labels.update({f"m{i}{j}": []})
+                err_labels.update({f"err.m{i}{j}": []})
 
-    return labels
+    return labels, err_labels
 
 
 def mock_function(header):
@@ -170,15 +257,15 @@ def mock_function(header):
 
     # Defining labels:
 
-    labels = header_labels(header)#
+    labels, err_labels = header_labels(header)
 
     # Atom types: Convert str to list if atom_types is not a list:
-    if isinstance(header["atom_types"], str):
-        header["atom_types"] = header["atom_types"].split(",")
+    # if isinstance(header["atom_types"], str):
+    #     header["atom_types"] = header["atom_types"].split(",")
 
-    header["column_names"] = list(labels.keys())
+    # header["column_names"] = list(labels.keys())
 
-    return header, labels
+    return header, labels, err_labels
 
 
 def data_set_dims(whole_data):
@@ -219,6 +306,10 @@ class EllipsometryReader(BaseReader):
         """
         header, data_file = populate_header_dict(file_paths)
 
+        # read first N lines of the data file:
+        # with open(data_file) as input_file:
+        #     file_header = [next(input_file) for _ in range(header["skip"])]
+
         if os.path.isfile(data_file):
             whole_data = load_as_pandas_array(data_file, header)
         else:
@@ -227,20 +318,42 @@ class EllipsometryReader(BaseReader):
 
         unique_angles, counts = data_set_dims(whole_data)
 
-        labels = header_labels(header)
+        labels, err_labels = header_labels(header)
 
         block_idx = [np.int64(0)]
         index = 0
         for angle in enumerate(unique_angles):
             for key, val in labels.items():
                 val.append(f"{key}_{int(angle[1])}deg")
+            for key, val in err_labels.items():
+                val.append(f"{key}_{int(angle[1])}deg")
             index += counts[angle[0]]
             block_idx.append(index)
+
+        block_idx_uR = [np.int64(block_idx[-1])]
+        for angle in enumerate(unique_angles):
+            index += counts[angle[0]]
+            block_idx_uR.append(index)
+
+        block_idx_der_prms = [np.int64(block_idx_uR[-1])]
+        for angle in enumerate(unique_angles):
+            index += counts[angle[0]]
+            block_idx_der_prms.append(index)
 
         # array that will be allocated in a HDF5 file
         my_numpy_array = np.empty([
                                    len(unique_angles),
                                    len(labels),
+                                   counts[0]
+                                   ])
+        my_error_array = np.empty([
+                                   len(unique_angles),
+                                   len(labels),
+                                   counts[0]
+                                   ])
+        derived_params = np.empty([
+                                   len(unique_angles),
+                                   1,
                                    counts[0]
                                    ])
 
@@ -259,17 +372,53 @@ class EllipsometryReader(BaseReader):
                                                                ].astype("float64")
             data_index += 1
 
+        data_index = 0
+        for key, val in err_labels.items():
+            for index in range(len(val)):
+                my_error_array[
+                               index,
+                               data_index,
+                               :] = whole_data[key].to_numpy()[
+                                   block_idx[index]:block_idx[index + 1]].astype("float64")
+            data_index += 1
+
+        # derived parameters:
+        colindx = 1
+        temp = whole_data[header["colnames"][-colindx]].to_numpy()[
+                        block_idx_der_prms[index]].astype("float64")
+        while temp * 0 != 0:
+        # while temp == np.nan:
+            temp = whole_data[header["colnames"][-colindx]].to_numpy()[
+                            block_idx_der_prms[index]].astype("float64")
+            colindx += 1
+
+        # takes last but one column from the right (skips empty columns):
+        for index in range(len(unique_angles)):
+            derived_params[
+                        index,
+                        0,
+                        :] = whole_data[header["colnames"][-colindx]].to_numpy()[
+                            block_idx_der_prms[index]:block_idx_der_prms[index + 1]
+                            ].astype("float64")
+
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
-        header["data/SPECTRUM"] = (
-            whole_data["wavelength"].to_numpy()[0:counts[0]].astype("float64")
-        )
+        # data_error and depolarization_values are optional
+        header["data_error"] = my_error_array
+        derived_params_type = header["derived_parameter_type"]
+        header[derived_params_type] = derived_params
+
+        spectrum_type =  header["spectrum_type"]
+        if spectrum_type not in header["colnames"]:
+            print("ERROR: spectrum type not found in 'colnames'")
+        header[f"data_collection/NAME_spectrum[{spectrum_type}_spectrum]"] = (
+            whole_data[spectrum_type].to_numpy()[0:counts[0]].astype("float64"))
 
         header["angle_of_incidence"] = unique_angles
 
         # Create mocked ellipsometry data template:
         if is_mock:
-            header, labels = mock_function(header)
+            header, labels, err_labels = mock_function(header)
             for angle in enumerate(header["angle_of_incidence"]):
                 for key, val in labels.items():
                     val.append(f"{key}_{int(angle[1])}deg")
@@ -279,10 +428,10 @@ class EllipsometryReader(BaseReader):
         if "atom_types" not in header:
             header["atom_types"] = extract_atom_types(header["chemical_formula"])
         # Atom types: Convert str to list if atom_types is not a list:
-        if isinstance(header["atom_types"], str):
-            header["atom_types"] = header["atom_types"].split(",")
+        # if isinstance(header["atom_types"], str):
+        #     header["atom_types"] = header["atom_types"].split(",")
 
-        header["column_names"] = list(labels.keys())
+        # header["column_names"] = list(labels.keys())
 
         return header, labels
 
@@ -317,34 +466,43 @@ class EllipsometryReader(BaseReader):
         # The template dictionary is filled
         template = populate_template_dict(header, template)
 
-        template["/ENTRY[entry]/plot/wavelength"] = {"link":
-                                                     "/entry/data/SPECTRUM"
+        spectrum_type = header["spectrum_type"]
+        spectrum_unit = header["spectrum_unit"]
+        template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = {"link":
+                                                     f"/entry/data_collection/{spectrum_type}_spectrum"
                                                      }
-        template["/ENTRY[entry]/data/SPECTRUM/@units"] = \
-            "Angstroms"
-        template["/ENTRY[entry]/INSTRUMENT[instrument]/angle_of_incidence/@units"] = \
-            header["angle_of_incidence_unit"]
-        template["/ENTRY[entry]/data/SPECTRUM/@long_name"] = \
-            "wavelength (Angstroms)"
-
+        # template[f"/ENTRY[entry]/data_collection/DATA[data]/AXISNAME[{spectrum_type}]"] = {"link":
+        #                                              f"/entry/data_collection/{spectrum_type}_spectrum"
+        #                                              }
+        template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] = \
+            spectrum_unit
+        template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@long_name"] = \
+            f"{spectrum_type} ({spectrum_unit})"
+        plot_name = header["plot_name"]
         for dindx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[dindx]):
                 template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
-                                                               "/entry/data/measured_data",
+                                                               "/entry/data_collection/measured_data",
                                                                "shape":
                                                                np.index_exp[index, dindx, :]
                                                                }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
                 if dindx == 0 and index == 0:
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
-                        "Psi and Delta (degrees)"
+                        f"{plot_name} (degrees)"
+                template[f"/ENTRY[entry]/plot/DATA[{key}_errors]"] = {"link":
+                                                               "/entry/data_collection/data_error",
+                                                               "shape":
+                                                               np.index_exp[index, dindx, :]
+                                                               }
+                template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degrees"
 
-        # Define default plot showing psi and delta at all angles:
+        # Define default plot showing Psi and Delta at all angles:
         template["/@default"] = "entry"
         template["/ENTRY[entry]/@default"] = "plot"
         template["/ENTRY[entry]/plot/@signal"] = f"{data_list[0][0]}"
-        template["/ENTRY[entry]/plot/@axes"] = "wavelength"
-        template["/ENTRY[entry]/plot/title"] = "Psi and Delta"
+        template["/ENTRY[entry]/plot/@axes"] = spectrum_type
+        template["/ENTRY[entry]/plot/title"] = plot_name
 
         # if len(data_list[0]) > 1:
         template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
