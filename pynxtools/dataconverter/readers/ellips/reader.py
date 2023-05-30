@@ -80,25 +80,26 @@ CONVERT_DICT = {
 }
 
 CONFIG_KEYS = [
-        'blocks',
-        'colnames',
-        'derived_parameter_type',
-        'err-var',
-        'filename',
-        'parameters',
-        'plot_name',
-        'sep',
-        'skip',
-        'spectrum_type',
-        'spectrum_unit'
-        ]
+    'blocks',
+    'colnames',
+    'derived_parameter_type',
+    'err-var',
+    'filename',
+    'parameters',
+    'plot_name',
+    'sep',
+    'skip',
+    'spectrum_type',
+    'spectrum_unit'
+]
 
 REPLACE_NESTED = {
-    'SOURCE[source]/Probe': 'SOURCE[source]',
-    'SOURCE[source]/Pump': 'SOURCE[source_pump]',
-    'BEAM[beam]/Probe': 'BEAM[beam]',
-    'BEAM[beam]/Pump': 'BEAM[beam_pump]',
+    # 'SOURCE[source]/Probe': 'SOURCE[source]',
+    # 'SOURCE[source]/Pump': 'SOURCE[source_pump]',
+    # 'BEAM[beam]/Probe': 'BEAM[beam]',
+    # 'BEAM[beam]/Pump': 'BEAM[beam_pump]',
 }
+
 
 def load_header(filename, default):
     """ load the yaml description file, and apply defaults from
@@ -204,13 +205,13 @@ def populate_template_dict(header, template):
             header[f"calibration_{k}"] = calibration[k]
 
     eln_data_dict = flatten_and_replace(
-                FlattenSettings(
-                    dic=header,
-                    convert_dict=CONVERT_DICT,
-                    replace_nested=REPLACE_NESTED,
-                    black_list = CONFIG_KEYS
-                )
-            )
+        FlattenSettings(
+            dic=header,
+            convert_dict = CONVERT_DICT,
+            replace_nested = REPLACE_NESTED,
+            black_list = CONFIG_KEYS
+        )
+    )
     template.update(eln_data_dict)
 
     # For loop handling attributes from yaml to appdef:
@@ -342,10 +343,10 @@ class EllipsometryReader(BaseReader):
 
         # array that will be allocated in a HDF5 file
         my_numpy_array = np.empty([
-                                   len(unique_angles),
-                                   len(labels),
-                                   counts[0]
-                                   ])
+            len(unique_angles),
+            len(labels),
+            counts[0]
+        ])
         my_error_array = np.empty([
                                    len(unique_angles),
                                    len(labels),
@@ -408,7 +409,7 @@ class EllipsometryReader(BaseReader):
         derived_params_type = header["derived_parameter_type"]
         header[derived_params_type] = derived_params
 
-        spectrum_type =  header["spectrum_type"]
+        spectrum_type = header["spectrum_type"]
         if spectrum_type not in header["colnames"]:
             print("ERROR: spectrum type not found in 'colnames'")
         header[f"data_collection/NAME_spectrum[{spectrum_type}_spectrum]"] = (
