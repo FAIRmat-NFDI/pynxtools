@@ -1021,7 +1021,12 @@ TODO:
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
         (req_str, nxdef, nxdl_path) = \
             get_nxdl_doc(hdf_info, logger, doc, attr=key)
-        if parser is not None and req_str is not None and 'NOT IN SCHEMA' not in req_str and 'None' not in req_str:
+        if (
+            parser is not None
+            and req_str is not None
+            and 'NOT IN SCHEMA' not in req_str
+            and 'None' not in req_str
+        ):
             parser({"hdf_info": hdf_info,
                     "nxdef": nxdef,
                     "nxdl_path": nxdl_path,
