@@ -75,7 +75,8 @@ def convert(input_file: Tuple[str],
     # Reading in the NXDL and generating a template
     definitions_path = nexus.get_nexus_definitions_path()
     if nxdl == "NXtest":
-        nxdl_path = os.path.join(f"{definitions_path}/../../", "tests", "data",
+        local_dir = os.path.abspath(os.path.dirname(__file__))
+        nxdl_path = os.path.join(f"{local_dir}/../../", "tests", "data",
                                  "dataconverter", "NXtest.nxdl.xml")
     elif nxdl == "NXroot":
         nxdl_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
