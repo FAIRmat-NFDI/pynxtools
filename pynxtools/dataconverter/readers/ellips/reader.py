@@ -233,24 +233,19 @@ def header_labels(header, unique_angles):
 
     if header["data_type"] == "Psi/Delta":
         labels = {"Psi": [], "Delta": []}
-        err_labels = {"err.Psi": [], "err.Delta": []}
     elif header["data_type"] == "tan(Psi)/cos(Delta)":
         labels = {"tan(Psi)": [], "cos(Delta)": []}
-        err_labels = {"err.tan(Psi)": [], "err.cos(Delta)": []}
     else:
         labels = {}
         for i in range(1, 5):
             for j in range(1, 5):
                 labels.update({f"m{i}{j}": []})
-                err_labels.update({f"err.m{i}{j}": []})
 
     for angle in enumerate(unique_angles):
         for key, val in labels.items():
             val.append(f"{key}_{int(angle[1])}deg")
-        for key, val in err_labels.items():
-            val.append(f"{key}_{int(angle[1])}deg")
 
-    return labels, err_labels
+    return labels
 
 
 def mock_function(header):
@@ -263,7 +258,7 @@ def mock_function(header):
 
     # Defining labels:
 
-    labels, err_labels = header_labels(header)
+    labels = header_labels(header)
 
     # Atom types: Convert str to list if atom_types is not a list:
     # if isinstance(header["atom_types"], str):
@@ -271,7 +266,7 @@ def mock_function(header):
 
     # header["column_names"] = list(labels.keys())
 
-    return header, labels, err_labels
+    return header, labels
 
 
 def data_set_dims(whole_data):
@@ -324,7 +319,7 @@ class EllipsometryReader(BaseReader):
 
         unique_angles, counts = data_set_dims(whole_data)
 
-        labels, err_labels = header_labels(header, unique_angles)
+        labels = header_labels(header, unique_angles)
 
         block_idx = [np.int64(0)]
         index = 0
@@ -366,12 +361,12 @@ class EllipsometryReader(BaseReader):
             data_index += 1
 
         data_index = 0
-        for key, val in err_labels.items():
+        for key, val in labels.items():
             for index in range(len(val)):
                 my_error_array[
                     index,
                     data_index,
-                    :] = whole_data[key].to_numpy()[
+                    :] = whole_data[f"err.{key}"].to_numpy()[
                         block_idx[index]:block_idx[index + 1]].astype("float64")
             data_index += 1
 
@@ -409,11 +404,9 @@ class EllipsometryReader(BaseReader):
 
         # Create mocked ellipsometry data template:
         if is_mock:
-            header, labels, err_labels = mock_function(header)
+            header, labels = mock_function(header)
             for angle in enumerate(header["angle_of_incidence"]):
                 for key, val in labels.items():
-                    val.append(f"{key}_{int(angle[1])}deg")
-                for key, val in err_labels.items():
                     val.append(f"{key}_{int(angle[1])}deg")
 
         if "atom_types" not in header:
