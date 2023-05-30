@@ -471,7 +471,7 @@ class EllipsometryReader(BaseReader):
             = spectrum_unit
         template[
             f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@long_name"
-            ] = f"{spectrum_type} ({spectrum_unit})"
+        ] = f"{spectrum_type} ({spectrum_unit})"
         plot_name = header["plot_name"]
         for dindx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[dindx]):
