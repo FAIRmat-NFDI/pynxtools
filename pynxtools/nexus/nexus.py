@@ -1330,7 +1330,11 @@ class HandleNexus:
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes"""
         self.parser = parser
-        self.in_file = h5py.File(self.input_file_name[0], 'r')
+        self.in_file = h5py.File(
+            self.input_file_name[0]
+            if isinstance(self.input_file_name, list)
+            else self.input_file_name, 'r'
+        )
         self.full_visit(self.in_file, self.in_file, '', self.visit_node)
         if self.d_inq_nd is None and self.c_inq_nd is None:
             get_default_plotable(self.in_file, self.logger)
