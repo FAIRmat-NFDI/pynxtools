@@ -34,7 +34,7 @@ CONVERT_DICT = {
     'angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
     'angle_of_incidence/@units': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
     'angular_spread':
-         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread',
+        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread',
     'angular_spread/@units':
         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread/@units',
     'atom_types': 'SAMPLE[sample]/atom_types',
@@ -470,8 +470,8 @@ class EllipsometryReader(BaseReader):
         template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] \
             = spectrum_unit
         template[
-            f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@long_name"] \
-                = f"{spectrum_type} ({spectrum_unit})"
+            f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@long_name"
+            ] = f"{spectrum_type} ({spectrum_unit})"
         plot_name = header["plot_name"]
         for dindx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[dindx]):
@@ -479,7 +479,7 @@ class EllipsometryReader(BaseReader):
                     {
                         "link": "/entry/data_collection/measured_data",
                         "shape": np.index_exp[index, dindx, :]
-                    }
+                }
                 template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
                 if dindx == 0 and index == 0:
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
@@ -488,7 +488,7 @@ class EllipsometryReader(BaseReader):
                     {
                         "link": "/entry/data_collection/data_error",
                         "shape": np.index_exp[index, dindx, :]
-                    }
+                }
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degrees"
 
         # Define default plot showing Psi and Delta at all angles:
