@@ -38,7 +38,7 @@ class MockEllips():
         - choose_data_type:
             Chooses random entry from data_types
         - mock_signals:
-            Mock data if data_type is psi/delta or tan(psi)/cos(delta)
+            Mock data if data_type is Psi/Delta or tan(Psi)/cos(Delta)
         - mock_mueller_matrix:
             Mock data if data_type is Mueller matrix
         - mock_template:
@@ -47,10 +47,10 @@ class MockEllips():
 
     def __init__(self, data_template) -> None:
         self.data = data_template["measured_data"]
-        self.wavelength = data_template["data/SPECTRUM"]
+        self.wavelength = data_template["data_collection/NAME_spectrum[wavelength_spectrum]"]
         self.atom_types = data_template["atom_types"]
         self.sample_list: list = []
-        self.data_types = ["psi/delta", "tan(psi)/cos(delta)", "Mueller matrix"]
+        self.data_types = ["Psi/Delta", "tan(Psi)/cos(Delta)", "Mueller matrix"]
         self.angles: list = []
         self.number_of_signals = 0
 
@@ -73,7 +73,7 @@ class MockEllips():
         data_template["data_type"] = data_type
         if data_type == "Mueller matrix":
             self.number_of_signals = 16
-        elif data_type in ("psi/delta", "tan(psi)/cos(delta)"):
+        elif data_type in ("Psi/Delta", "tan(Psi)/cos(Delta)"):
             self.number_of_signals = 2
 
     def mock_chemical_formula(self) -> None:
@@ -105,7 +105,7 @@ class MockEllips():
             self.mock_mueller_matrix(data_template)
 
     def mock_signals(self, data_template) -> None:
-        """ Mock data if data_type is psi/delta or tan(psi)/cos(delta)
+        """ Mock data if data_type is Psi/Delta or tan(Psi)/cos(Delta)
             considering the (new) number of incident angles
         """
         my_numpy_array = np.empty([
@@ -141,7 +141,8 @@ class MockEllips():
             while length of the wavelength array remains the same.
         """
         temp = random.uniform(0.25, 23)
-        data_template["data/SPECTRUM"] = temp * data_template["data/SPECTRUM"]
+        data_template["data_collection/NAME_spectrum[wavelength_spectrum]"] = \
+            temp * data_template["data_collection/NAME_spectrum[wavelength_spectrum]"]
 
     def mock_template(self, data_template) -> None:
         """ Creates a mock ellipsometry template """
