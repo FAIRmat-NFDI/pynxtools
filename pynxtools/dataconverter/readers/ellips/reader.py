@@ -287,7 +287,7 @@ def data_set_dims(whole_data):
     return unique_angles, counts
 
 
-def parameter_array(whole_data, block_idx, header, unique_angles, counts):
+def parameter_array(whole_data, header, unique_angles, counts):
     """ User defined variables to produce slices of the whole data set
 
     """
@@ -297,24 +297,75 @@ def parameter_array(whole_data, block_idx, header, unique_angles, counts):
         counts[0]
     ])
 
+    block_idx = [np.int64(0)]
+    index = 0
+    while index < len(whole_data):
+        index += counts[0]
+        block_idx.append(index)
+
     # derived parameters:
     # takes last but one column from the right (skips empty columns):
     data_index = 1
     temp = whole_data[header["colnames"][-data_index]].to_numpy()[
-        block_idx[0]].astype("float64")
+        block_idx[-1]-1].astype("float64")
+
     while temp * 0 != 0:
         temp = whole_data[header["colnames"][-data_index]].to_numpy()[
-            block_idx[0]].astype("float64")
+            block_idx[-1]-1].astype("float64")
         data_index += 1
 
     for index in range(len(unique_angles)):
         my_data_array[
             index,
             0,
-            :] = whole_data[header["colnames"][3]].to_numpy()[
+            :] = whole_data[header["colnames"][-data_index]].to_numpy()[
                 block_idx[index + 6]:block_idx[index + 7]].astype("float64")
 
     return my_data_array
+
+
+def data_array(whole_data, header, unique_angles, counts, labels):
+    """ User defined variables to produce slices of the whole data set
+
+    """
+    my_data_array = np.empty([
+        len(unique_angles),
+        len(labels),
+        counts[0]
+    ])
+    my_error_array = np.empty([
+        len(unique_angles),
+        len(labels),
+        counts[0]
+    ])
+
+    block_idx = [np.int64(0)]
+    index = 0
+    while index < len(whole_data):
+        index += counts[0]
+        block_idx.append(index)
+
+    data_index = 0
+    for key, val in labels.items():
+        for index in range(len(val)):
+            my_data_array[
+                index,
+                data_index,
+                :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
+                                                ].astype("float64")
+        data_index += 1
+
+    data_index = 0
+    for key, val in labels.items():
+        for index in range(len(val)):
+            my_error_array[
+                index,
+                data_index,
+                :] = whole_data[f"err.{key}"].to_numpy()[block_idx[index]:block_idx[index + 1]
+                                                ].astype("float64")
+        data_index += 1
+
+    return my_data_array, my_error_array
 
 
 class EllipsometryReader(BaseReader):
@@ -356,56 +407,11 @@ class EllipsometryReader(BaseReader):
 
         labels = header_labels(header, unique_angles)
 
-        block_idx = [np.int64(0)]
-        index = 0
-        while index < len(whole_data):
-            index += counts[0]
-            block_idx.append(index)
-
-        # array that will be allocated in a HDF5 file
-        my_numpy_array = np.empty([
-            len(unique_angles),
-            len(labels),
-            counts[0]
-        ])
-        my_error_array = np.empty([
-            len(unique_angles),
-            len(labels),
-            counts[0]
-        ])
-
-        for index, angle in enumerate(unique_angles):
-            my_numpy_array[
-                index,
-                :,
-                :] = angle
-
-        data_index = 0
-        for key, val in labels.items():
-            for index in range(len(val)):
-                my_numpy_array[
-                    index,
-                    data_index,
-                    :] = whole_data[key].to_numpy()[block_idx[index]:block_idx[index + 1]
-                                                    ].astype("float64")
-            data_index += 1
-
-        data_index = 0
-        for key, val in labels.items():
-            for index in range(len(val)):
-                my_error_array[
-                    index,
-                    data_index,
-                    :] = whole_data[f"err.{key}"].to_numpy()[
-                        block_idx[index]:block_idx[index + 1]].astype("float64")
-            data_index += 1
-
-        # measured_data is a required field
-        header["measured_data"] = my_numpy_array
-        # data_error and depolarization_values are optional
-        header["data_error"] = my_error_array
+        # measured_data is a required field; data_error and derived_parameters are optional
+        header["measured_data"], header["data_error"] = \
+            data_array(whole_data, header, unique_angles, counts, labels)
         header[header["derived_parameter_type"]] = \
-            parameter_array(whole_data, block_idx, header, unique_angles, counts)
+            parameter_array(whole_data, header, unique_angles, counts)
 
         spectrum_type = header["spectrum_type"]
         if spectrum_type not in header["colnames"]:
