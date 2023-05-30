@@ -29,6 +29,7 @@ from pynxtools.dataconverter.readers.stm.bias_spec_file_parser import work_out_o
 from pynxtools.dataconverter.readers.stm.stm_helper import *
 
 
+
 def is_separator_char_exist(key, sep_char_li):
     """
     Check string or key whether the separator char provided in
@@ -119,7 +120,6 @@ def get_SPM_metadata_dict_and_signal(file_name):
     # TODO: clean comments
     metadata_dict, signal = sxm_raw_metadata_and_signal(file_name)
     nesteded_matadata_dict = get_nested_dict_from_concatenated_key(metadata_dict)
-
     # Convert nested (dict) path to signal into slash_separated path to signal
     temp_flattened_dict_sig = {}
     nested_path_to_slash_separated_path(signal,
@@ -145,7 +145,11 @@ def get_SPM_metadata_dict_and_signal(file_name):
     return flattened_dict
 
 
-def construct_nxdata_for_sxm(template, data_dict, data_config_dict, data_group):
+def construct_nxdata_for_sxm(template,
+                             data_dict,
+                             data_config_dict,
+                             coor_info,
+                             data_group):
     """
     Construct NXdata that includes all the groups, field and attributes. All the elements
     will be stored in template.
@@ -161,6 +165,10 @@ def construct_nxdata_for_sxm(template, data_dict, data_config_dict, data_group):
     data_config_dict : dict[str, list]
         This dictionary is numerical data order to list (list of path to data elements in
         input file). Each order indicates a group of data set.
+    coor_info: Tuple[list]
+        Tuple (for X and Y coordinate respectively) of list  and each list starting and end point
+        of x-axis.
+
     data_group : NeXus path for NXdata
 
     Return:
@@ -178,30 +186,52 @@ def construct_nxdata_for_sxm(template, data_dict, data_config_dict, data_group):
               /Entry[ENTRY]/data/DATA/@axes and so on
         """
         global nxdata_grp, data_field
-
-        # list of paths e.g. "/LI_Demod_2_X/forward" comes from
-        # dict value of /ENTRY[entry]/DATA[data] in config file.
+        # list of paths e.g. "/LI_Demod_2_X/forward" comes provided file .sxm.
         for path in dt_val:
-            grp_name, data_field = find_nxdata_group_and_name(path)
-            signals.append(data_field)
-            nxdata_grp = data_group.replace("DATA[data", f"DATA[{grp_name}")
-            temp_data_field = nxdata_grp + '/' + data_field
-            template[temp_data_field] = data_dict[path]
+            if path in data_dict:
+                grp_name, data_field = find_nxdata_group_and_name(path)
+                signals.append(data_field)
+                nxdata_grp = data_group.replace("DATA[data", f"DATA[{grp_name}")
+                temp_data_field = nxdata_grp + '/' + data_field
+                scan_dt_arr = transform(data_dict[path])
+                x_cor_len, y_cor_len = scan_dt_arr.shape
+                # collect for only one data field e.g. forward or backward, as all the data
+                # fields must have the same length of co-ordinate
+                if not axes_data:
+                    axes_data.append(np.linspace(*coor_info[0], x_cor_len))
+                    axes_data.append(np.linspace(*coor_info[1], y_cor_len))
+                axes_units.append('m')
+                template[temp_data_field] = scan_dt_arr
+            else:
+                # to clean up nxdata_grp and data_field from previous loop
+                nxdata_grp = ''
+                data_field = ''
 
-    def fill_out_NXdata_group(signal='auxiliary_signals'):
+    def fill_out_NXdata_group():
         """To fill out NXdata which is root for all data fields and attributes for NXdata.
            This function fills template with first level of descendent fields and attributes
            of NXdata but not the fields and attributes under child of NXdata.
         """
-        for ind, signal in enumerate(signals):
-            if ind == 0:
-                template[nxdata_grp + '/@' + 'signal'] = data_field
-            else:
-                template[nxdata_grp + '/@' + 'auxiliary_signal'] = data_field
+        if nxdata_grp:
+            auxiliary_signals_attr = f"{nxdata_grp}/@auxiliary_signals"
+            axes = f"{nxdata_grp}/@axes"
+            signal_attr = f"{nxdata_grp}/@signal"
+            template[auxiliary_signals_attr] = []
+            template[axes] = axes_name
+            for ind, data_field_nm in enumerate(signals):
+
+                if ind == 0:
+                    template[signal_attr] = data_field_nm
+                else:
+                    template[auxiliary_signals_attr].append(data_field_nm)
+            for axis, axis_data in zip(axes_name, axes_data):
+                template[f"{nxdata_grp}/{axis}"] = axis_data
+
 
     def find_nxdata_group_and_name(key):
         """Find data group name from a data path in file.
         E.g. 'Z', 'LI_Demod_2_X' from /Z/forward and /LI_Demod_2_X/forward
+        Note: Create a function in stm_helper.py to unit scale such as nm, micrometer
         """
         tmp_key = key.split('/', 1)[1]
         grp_name, data_field_name = tmp_key.split('/', 1)
@@ -210,16 +240,48 @@ def construct_nxdata_for_sxm(template, data_dict, data_config_dict, data_group):
 
     for _, dt_val in data_config_dict.items():
         signals = []
+        axes_name = ['X', 'Y']
+        axes_units = []
+        axes_data = []
         indivisual_DATA_field()
-        fill_out_NXdata_group('signal')
-
- #   template['/ENTRY[entry]/@default'] = {'link':'/ENTRY[entry]/DATA[Z]/forward'}
+        fill_out_NXdata_group()
 
 
 def collect_default_value(template, search_key):
     default_dict = {"/ENTRY[entry]/definition": "NXiv_sweep2",
                     "/ENTRY[entry]/experiment_description": "An stm experiment."}
     template[search_key] = default_dict[search_key]
+
+
+def get_dimension_info(config_dict, data_dict):
+    """
+        Extract dimension info from scanfield
+        ../ENVIRONMENT[environment]/scan_control/positioner/scanfield"
+        The scanfield has starting point of x and y co-ordinate,
+    """
+    sep_li = [";"]
+    scanfield = ''
+    for key, val in config_dict.items():
+        if ("/ENTRY[entry]/INSTRUMENT[instrument]/ENVIRONMENT[environment]/"
+                "scan_control/positioner/scanfield") == key:
+            if val in data_dict:
+                scanfield = data_dict[val]
+                print(' ## scan_field : ', scanfield)
+            else:
+                raise ValueError("Scan field must be added. Which stores"
+                                 " important information area of scan.")
+    for sep in sep_li:
+        if sep in scanfield:
+            # parts are X_cor, Y_cor, X_len, Y_len and unkown value
+            scanfield_parts = scanfield.split(sep)
+
+            x_start = transform(scanfield_parts[0])
+            x_len = transform(scanfield_parts[2])
+            x_cor = [x_start, x_start + x_len]
+            y_start = transform(scanfield_parts[1])
+            y_len = transform(scanfield_parts[3])
+            y_cor = [y_start, y_start + y_len]
+            return (x_cor, y_cor)
 
 
 def from_sxm_file_into_template(template, file_name, config_dict):
@@ -230,7 +292,6 @@ def from_sxm_file_into_template(template, file_name, config_dict):
 
     data_dict = get_SPM_metadata_dict_and_signal(file_name)
     temp_keys = template.keys()
-
     for temp_key in temp_keys:
         for c_key, c_val in config_dict.items():
             if c_val in ['None', ""]:
@@ -238,16 +299,20 @@ def from_sxm_file_into_template(template, file_name, config_dict):
             if temp_key == c_key and isinstance(c_val, str):
                 if '@reader' in c_val:
                     collect_default_value(template, temp_key)
-                else:
+                elif c_val in data_dict:
                     template[temp_key] = transform(data_dict[c_val])
                 break
             if temp_key == c_key and isinstance(c_val, dict):
                 data_group = "/ENTRY[entry]/DATA[data]"
                 if temp_key == data_group:
-                    construct_nxdata_for_sxm(template, data_dict,
-                                             c_val, data_group)
+                    coor_info = get_dimension_info(config_dict, data_dict)
+                    print(' ### : coor_info ', coor_info)
+                    construct_nxdata_for_sxm(template,
+                                             data_dict,
+                                             c_val,
+                                             coor_info,
+                                             data_group)
                 else:
-
                     work_out_overwriteable_field(template,
                                                  data_dict,
                                                  c_val,
