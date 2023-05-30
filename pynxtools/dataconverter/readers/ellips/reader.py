@@ -324,7 +324,7 @@ def parameter_array(whole_data, header, unique_angles, counts):
     return my_data_array
 
 
-def data_array(whole_data, header, unique_angles, counts, labels):
+def data_array(whole_data, unique_angles, counts, labels):
     """ User defined variables to produce slices of the whole data set
 
     """
@@ -409,7 +409,7 @@ class EllipsometryReader(BaseReader):
 
         # measured_data is a required field; data_error and derived_parameters are optional
         header["measured_data"], header["data_error"] = \
-            data_array(whole_data, header, unique_angles, counts, labels)
+            data_array(whole_data, unique_angles, counts, labels)
         header[header["derived_parameter_type"]] = \
             parameter_array(whole_data, header, unique_angles, counts)
 
