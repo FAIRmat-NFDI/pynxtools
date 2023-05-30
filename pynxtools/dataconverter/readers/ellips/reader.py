@@ -257,8 +257,9 @@ def mock_function(header):
     mock_header.mock_template(header)
 
     # Defining labels:
-
-    labels = header_labels(header)
+    mock_angles = header["angle_of_incidence"]
+    print(mock_angles)
+    labels = header_labels(header, mock_angles)
 
     # Atom types: Convert str to list if atom_types is not a list:
     # if isinstance(header["atom_types"], str):
