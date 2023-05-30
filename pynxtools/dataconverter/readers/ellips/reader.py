@@ -33,8 +33,10 @@ DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 CONVERT_DICT = {
     'angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
     'angle_of_incidence/@units': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
-    'angular_spread': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread',
-    'angular_spread/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread/@units',
+    'angular_spread': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/ \
+        ngular_spread',
+    'angular_spread/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes \
+        /angular_spread/@units',
     'atom_types': 'SAMPLE[sample]/atom_types',
     'backside_roughness': 'SAMPLE[sample]/backside_roughness',
     'calibration_status': 'INSTRUMENT[instrument]/calibration_status',
@@ -42,8 +44,10 @@ CONVERT_DICT = {
     'column_names': 'data_collection/column_names',
     'company': 'INSTRUMENT[instrument]/company',
     'count_time': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time',
-    'count_time/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time/@units',
-    'data_correction': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/data_correction',
+    'count_time/@units': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector] \
+        /count_time/@units',
+    'data_correction': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/ \
+        data_correction',
     'data_error': 'data_collection/data_error',
     'data_identifier': 'data_collection/data_identifier',
     'data_software/@url': 'data_collection/data_software/@url',
@@ -52,7 +56,8 @@ CONVERT_DICT = {
     'data_type': 'data_collection/data_type',
     'depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/depends_on',
     'depolarization': 'derived_parameters/depolarization',
-    'detector_type': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/detector_type',
+    'detector_type': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/ \
+        detector_type',
     'ellipsometer_type': 'INSTRUMENT[instrument]/ellipsometer_type',
     'layer_structure': 'SAMPLE[sample]/layer_structure',
     'light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/light_source',
@@ -71,12 +76,18 @@ CONVERT_DICT = {
     'software/version': 'INSTRUMENT[instrument]/software/version',
     'stage_type': 'INSTRUMENT[instrument]/sample_stage/stage_type',
     'substrate': 'SAMPLE[sample]/substrate',
-    'TRANSFORMATIONS[order]/detector': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/detector',
-    'TRANSFORMATIONS[order]/detector/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/detector/@depends_on',
-    'TRANSFORMATIONS[order]/light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/light_source',
-    'TRANSFORMATIONS[order]/light_source/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/light_source/@depends_on',
-    'TRANSFORMATIONS[order]/sample_stage': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/sample_stage',
-    'TRANSFORMATIONS[order]/sample_stage/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/sample_stage/@depends_on',
+    'TRANSFORMATIONS[order]/detector': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/ \
+        TRANSFORMATIONS[order]/detector',
+    'TRANSFORMATIONS[order]/detector/@depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path] \
+        /TRANSFORMATIONS[order]/detector/@depends_on',
+    'TRANSFORMATIONS[order]/light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path] \
+        /TRANSFORMATIONS[order]/light_source',
+    'TRANSFORMATIONS[order]/light_source/@depends_on': 'INSTRUMENT[instrument]/ \
+        BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/light_source/@depends_on',
+    'TRANSFORMATIONS[order]/sample_stage': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path] \
+        /TRANSFORMATIONS[order]/sample_stage',
+    'TRANSFORMATIONS[order]/sample_stage/@depends_on': 'INSTRUMENT[instrument]/ \
+        BEAM_PATH[beam_path]/TRANSFORMATIONS[order]/sample_stage/@depends_on',
 }
 
 CONFIG_KEYS = [
@@ -468,20 +479,22 @@ class EllipsometryReader(BaseReader):
         spectrum_type = header["spectrum_type"]
         spectrum_unit = header["spectrum_unit"]
         template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = {"link":
-                                                                     f"/entry/data_collection/{spectrum_type}_spectrum"
+                                                                     f"/entry/data_collection/ \
+                                                                        {spectrum_type}_spectrum"
                                                                      }
         # template[f"/ENTRY[entry]/data_collection/DATA[data]/AXISNAME[{spectrum_type}]"] = {"link":
         #                                              f"/entry/data_collection/{spectrum_type}_spectrum"
         #                                              }
-        template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] = \
-            spectrum_unit
-        template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@long_name"] = \
-            f"{spectrum_type} ({spectrum_unit})"
+        template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] \
+            = spectrum_unit
+        template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/ \
+                 @long_name"] = f"{spectrum_type} ({spectrum_unit})"
         plot_name = header["plot_name"]
         for dindx in range(0, len(labels.keys())):
             for index, key in enumerate(data_list[dindx]):
                 template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
-                                                               "/entry/data_collection/measured_data",
+                                                               "/entry/data_collection/ \
+                                                                measured_data",
                                                                "shape":
                                                                np.index_exp[index, dindx, :]
                                                                }
@@ -490,7 +503,8 @@ class EllipsometryReader(BaseReader):
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
                         f"{plot_name} (degrees)"
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]"] = {"link":
-                                                                      "/entry/data_collection/data_error",
+                                                                      "/entry/data_collection/ \
+                                                                      data_error",
                                                                       "shape":
                                                                       np.index_exp[index, dindx, :]
                                                                       }
