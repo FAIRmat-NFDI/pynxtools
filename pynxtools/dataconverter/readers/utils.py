@@ -41,6 +41,7 @@ class FlattenSettings():
     parent_key: str = "/ENTRY[entry]"
     sep: str = "/"
     is_in_section: bool = False
+    black_list: Optional[list] = None
 
 
 def is_section(val: Any) -> bool:
