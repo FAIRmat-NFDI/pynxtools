@@ -258,8 +258,12 @@ def mock_function(header):
 
     # Defining labels:
     mock_angles = header["angle_of_incidence"]
-    print(mock_angles)
+
     labels = header_labels(header, mock_angles)
+
+    for angle in enumerate(header["angle_of_incidence"]):
+        for key, val in labels.items():
+            val.append(f"{key}_{int(angle[1])}deg")
 
     # Atom types: Convert str to list if atom_types is not a list:
     # if isinstance(header["atom_types"], str):
@@ -372,6 +376,7 @@ class EllipsometryReader(BaseReader):
             data_index += 1
 
         # derived parameters:
+        # takes last but one column from the right (skips empty columns):
         # data_index = 1
         # temp = whole_data[header["colnames"][-data_index]].to_numpy()[
         #     block_idx[0]].astype("float64")
@@ -380,7 +385,6 @@ class EllipsometryReader(BaseReader):
         #         block_idx[0]].astype("float64")
         #     data_index += 1
 
-        # takes last but one column from the right (skips empty columns):
         for index in range(len(unique_angles)):
             derived_params[
                 index,
@@ -392,8 +396,7 @@ class EllipsometryReader(BaseReader):
         header["measured_data"] = my_numpy_array
         # data_error and depolarization_values are optional
         header["data_error"] = my_error_array
-        derived_params_type = header["derived_parameter_type"]
-        header[derived_params_type] = derived_params
+        header[header["derived_parameter_type"]] = derived_params
 
         spectrum_type = header["spectrum_type"]
         if spectrum_type not in header["colnames"]:
@@ -406,9 +409,6 @@ class EllipsometryReader(BaseReader):
         # Create mocked ellipsometry data template:
         if is_mock:
             header, labels = mock_function(header)
-            for angle in enumerate(header["angle_of_incidence"]):
-                for key, val in labels.items():
-                    val.append(f"{key}_{int(angle[1])}deg")
 
         if "atom_types" not in header:
             header["atom_types"] = extract_atom_types(header["chemical_formula"])
