@@ -287,6 +287,36 @@ def data_set_dims(whole_data):
     return unique_angles, counts
 
 
+def parameter_array(whole_data, block_idx, header, unique_angles, counts):
+    """ User defined variables to produce slices of the whole data set
+
+    """
+    my_data_array = np.empty([
+        len(unique_angles),
+        1,
+        counts[0]
+    ])
+
+    # derived parameters:
+    # takes last but one column from the right (skips empty columns):
+    data_index = 1
+    temp = whole_data[header["colnames"][-data_index]].to_numpy()[
+        block_idx[0]].astype("float64")
+    while temp * 0 != 0:
+        temp = whole_data[header["colnames"][-data_index]].to_numpy()[
+            block_idx[0]].astype("float64")
+        data_index += 1
+
+    for index in range(len(unique_angles)):
+        my_data_array[
+            index,
+            0,
+            :] = whole_data[header["colnames"][3]].to_numpy()[
+                block_idx[index + 6]:block_idx[index + 7]].astype("float64")
+
+    return my_data_array
+
+
 class EllipsometryReader(BaseReader):
     """An example reader implementation for the DataConverter.
     Importing metadata from the yaml file based on the last
@@ -343,11 +373,6 @@ class EllipsometryReader(BaseReader):
             len(labels),
             counts[0]
         ])
-        derived_params = np.empty([
-            len(unique_angles),
-            1,
-            counts[0]
-        ])
 
         for index, angle in enumerate(unique_angles):
             my_numpy_array[
@@ -375,28 +400,12 @@ class EllipsometryReader(BaseReader):
                         block_idx[index]:block_idx[index + 1]].astype("float64")
             data_index += 1
 
-        # derived parameters:
-        # takes last but one column from the right (skips empty columns):
-        # data_index = 1
-        # temp = whole_data[header["colnames"][-data_index]].to_numpy()[
-        #     block_idx[0]].astype("float64")
-        # while temp * 0 != 0:
-        #     temp = whole_data[header["colnames"][-data_index]].to_numpy()[
-        #         block_idx[0]].astype("float64")
-        #     data_index += 1
-
-        for index in range(len(unique_angles)):
-            derived_params[
-                index,
-                0,
-                :] = whole_data[header["colnames"][3]].to_numpy()[
-                    block_idx[index + 6]:block_idx[index + 7]].astype("float64")
-
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
         # data_error and depolarization_values are optional
         header["data_error"] = my_error_array
-        header[header["derived_parameter_type"]] = derived_params
+        header[header["derived_parameter_type"]] = \
+            parameter_array(whole_data, block_idx, header, unique_angles, counts)
 
         spectrum_type = header["spectrum_type"]
         if spectrum_type not in header["colnames"]:
