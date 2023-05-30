@@ -398,8 +398,7 @@ class EllipsometryReader(BaseReader):
                 index,
                 0,
                 :] = whole_data[header["colnames"][-colindx]].to_numpy()[
-                    block_idx_der_prms[index]:block_idx_der_prms[index + 1]
-                    ].astype("float64")
+                    block_idx_der_prms[index]:block_idx_der_prms[index + 1]].astype("float64")
 
         # measured_data is a required field
         header["measured_data"] = my_numpy_array
