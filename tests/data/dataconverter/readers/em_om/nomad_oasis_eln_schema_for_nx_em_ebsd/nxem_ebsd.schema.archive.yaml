@@ -12,7 +12,7 @@ definitions:
         # Here you can set your default values for the reader and nxdl.
         template: 
           reader: em_om
-          nxdl: NXem.nxdl
+          nxdl: NXem_ebsd.nxdl
         # Listing quantities in the hide component will not show them in the ELN.
         # This would be useful to make the default values set in `template` fixed.
         # Leave the hide key even if you want to pass an empty list like in this example.
@@ -33,7 +33,6 @@ definitions:
                   type_kind: Enum
                   type_data:
                     - 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
-                default: 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
                 description: Hashvalue of the NeXus application definition file
                 m_annotations:
                   eln:
@@ -43,7 +42,6 @@ definitions:
                   type_kind: Enum
                   type_data:
                     - NXem_ebsd
-                default: NXem_ebsd
                 description: NeXus NXDL schema to which this file conforms
                 m_annotations:
                   eln:

@@ -160,14 +160,6 @@ class JsonMapReader(BaseReader):
 
         ensure_all_required_fields_exist(template, new_template)
 
-        debugging = False
-        if debugging is True:
-            print("Reporting state of template before passing to HDF5 writing...")
-            for keyword, value in new_template.items():
-                print(f"{keyword}, {value}")
-                # print(type(new_template[keyword]))
-                # print(new_template[keyword])
-
         return new_template
 
 

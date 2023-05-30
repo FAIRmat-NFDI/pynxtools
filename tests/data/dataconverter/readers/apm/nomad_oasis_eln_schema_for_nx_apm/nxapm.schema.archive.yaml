@@ -34,7 +34,6 @@ definitions:
                   type_kind: Enum
                   type_data:
                     - 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
-                default: 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
                 description: Hashvalue of the NeXus application definition file
                 m_annotations:
                   eln:
@@ -44,7 +43,6 @@ definitions:
                   type_kind: Enum
                   type_data:
                     - NXapm
-                default: NXapm
                 description: NeXus NXDL schema to which this file conforms
                 m_annotations:
                   eln:
@@ -316,9 +314,6 @@ definitions:
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              location:
-                type: str
-                description: Location of the lab or place where the instrument is installed. Using GEOREF is preferred.
               # (NXfabrication):
               flight_path_length:
                 type: np.float64
@@ -332,13 +327,6 @@ definitions:
                     defaultDisplayUnit: meter
                     minValue: 0.0
                     maxValue: 10.0
-              field_of_view(NX_FLOAT):
-                type: np.float64
-                unit: meter
-                description: |
-                  The nominal diameter of the specimen ROI which is measured in the
-                  experiment. Physically, the specimen cannot be measured completely
-                  because ions may launch but not become detected or hit elsewhere.
               fabrication_vendor:
                 type: str
                 description: Name of the manufacturer/company, i.e. AMETEK/Cameca.
