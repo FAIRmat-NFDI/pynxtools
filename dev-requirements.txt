@@ -316,8 +316,6 @@ nionswift==0.16.8
     # via pynxtools (pyproject.toml)
 nionswift-io==0.15.1
     # via nionswift
-nionswift-tool==0.4.18
-    # via pynxtools (pyproject.toml)
 nionui==0.6.10
     # via nionswift
 nionutils==0.4.6
