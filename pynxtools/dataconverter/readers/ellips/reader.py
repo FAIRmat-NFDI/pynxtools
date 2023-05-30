@@ -226,7 +226,7 @@ def populate_template_dict(header, template):
     return template
 
 
-def header_labels(header):
+def header_labels(header, unique_angles):
     """ Define data labels (column names)
 
     """
@@ -243,6 +243,12 @@ def header_labels(header):
             for j in range(1, 5):
                 labels.update({f"m{i}{j}": []})
                 err_labels.update({f"err.m{i}{j}": []})
+
+    for angle in enumerate(unique_angles):
+        for key, val in labels.items():
+            val.append(f"{key}_{int(angle[1])}deg")
+        for key, val in err_labels.items():
+            val.append(f"{key}_{int(angle[1])}deg")
 
     return labels, err_labels
 
@@ -318,14 +324,7 @@ class EllipsometryReader(BaseReader):
 
         unique_angles, counts = data_set_dims(whole_data)
 
-        labels, err_labels = header_labels(header)
-
-        index = 0
-        for angle in enumerate(unique_angles):
-            for key, val in labels.items():
-                val.append(f"{key}_{int(angle[1])}deg")
-            for key, val in err_labels.items():
-                val.append(f"{key}_{int(angle[1])}deg")
+        labels, err_labels = header_labels(header, unique_angles)
 
         block_idx = [np.int64(0)]
         index = 0
