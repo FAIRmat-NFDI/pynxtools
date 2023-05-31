@@ -5,9 +5,6 @@ angular_spread:
   value: 0.2
 atom_types: Si, O
 backside_roughness: False
-blocks:
-- type
-- angle_of_incidence
 calibration_status: no calibration
 chemical_formula: SiO2
 colnames:
