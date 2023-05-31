@@ -21,9 +21,11 @@ import os
 
 import pytest
 import h5py
+from pynxtools.dataconverter.exceptions import InvalidDictProvided
+
 
 from pynxtools.dataconverter.writer import Writer
-from .test_helpers import fixture_filled_test_data, fixture_template  # pylint: disable=unused-import
+from .test_helpers import fixture_filled_test_data, fixture_template, alter_dict  # pylint: disable=unused-import
 
 
 @pytest.mark.usefixtures("filled_test_data")
@@ -59,7 +61,23 @@ def test_write_link(writer):
 Checks whether entries given above get written out when a dictionary containing a link is
 given in the template dictionary."""
     writer.write()
-    print(writer)
-    print(type(writer))
     test_nxs = h5py.File(writer.output_path, "r")
     assert isinstance(test_nxs["/my_entry/links/ext_link"], h5py.Dataset)
+
+
+@pytest.mark.usefixtures("filled_test_data")
+def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
+    """Tests if the writer correctly fails when a wrong dictionary is provided"""
+    writer = Writer(
+        alter_dict(filled_test_data,
+                   "/ENTRY[my_entry]/links/ext_link",
+                   {"not a link or anything": 2.0}),
+        os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml"),
+        os.path.join(tmp_path, "test.nxs")
+    )
+    with pytest.raises(InvalidDictProvided) as execinfo:
+        writer.write()
+        assert str(execinfo.value) == ("pynxtools.dataconverter.exceptions.InvalidDictProvided: "
+                                       "A dictionary was provided to the template but it didn't "
+                                       "fall into any of the know cases of handling dictionaries"
+                                       ". This occured for: ext_link")
