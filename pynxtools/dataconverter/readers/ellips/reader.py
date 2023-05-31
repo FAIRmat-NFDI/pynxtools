@@ -19,6 +19,7 @@
 import os
 from typing import Tuple, Any
 import yaml
+import math
 import pandas as pd
 import numpy as np
 # import h5py
@@ -31,6 +32,12 @@ DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
 
 CONVERT_DICT = {
+    'unit': '@units',
+    'Data': 'data_collection',
+    'Derived_parameters': 'derived_parameters',
+    'Instrument': 'INSTRUMENT[instrument]',
+    'Sample': 'SAMPLE[sample]',
+    'User': 'USER[user]',
     'angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
     'angle_of_incidence/@units': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
     'angular_spread':
@@ -60,7 +67,7 @@ CONVERT_DICT = {
         'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/detector_type',
     'ellipsometer_type': 'INSTRUMENT[instrument]/ellipsometer_type',
     'layer_structure': 'SAMPLE[sample]/layer_structure',
-    'light_source': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/light_source',
+    'source_type': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/light_source/source_type',
     'medium': 'INSTRUMENT[instrument]/sample_stage/environment_conditions/medium',
     'measured_data': 'data_collection/measured_data',
     'model': 'INSTRUMENT[instrument]/model',
@@ -92,7 +99,7 @@ CONFIG_KEYS = [
 ]
 
 REPLACE_NESTED = {
-    'INSTRUMENT[instrument]': 'INSTRUMENT[instrument]',
+    'INSTRUMENT[instrument]/Beam_path': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]',
 }
 
 
@@ -112,20 +119,15 @@ def load_header(filename, default):
         header = yaml.safe_load(file)
 
     clean_header = {}
-    for key, val in header.items():
-        if "\\@" in key:
-            clean_header[key.replace("\\@", "@")] = val
-        elif key == 'sep':
-            clean_header[key] = val.encode("utf-8").decode("unicode_escape")
-        elif isinstance(val, dict):
-            clean_header[key] = val.get('value')
-            clean_header[f'{key}/@units'] = val.get('unit')
-        else:
-            clean_header[key] = val
 
+    clean_header = header
     for key, value in default.items():
         if key not in clean_header:
             clean_header[key] = value
+
+    for key, val in header.items():
+        if key == 'sep':
+            clean_header[key] = val.encode("utf-8").decode("unicode_escape")
 
     return clean_header
 
@@ -204,20 +206,10 @@ def populate_template_dict(header, template):
             dic=header,
             convert_dict=CONVERT_DICT,
             replace_nested=REPLACE_NESTED,
-            black_list=CONFIG_KEYS
+            ignore_keys=CONFIG_KEYS
         )
     )
     template.update(eln_data_dict)
-
-    # For loop handling attributes from yaml to appdef:
-    for k in template.keys():
-        k_list = k.rsplit("/", 2)
-        long_k = "/".join(k_list[-2:]) if len(k_list) > 2 else ""
-        short_k = k_list[-1]
-        if len(k_list) > 2 and long_k in header:
-            template[k] = header.pop(long_k)
-        elif short_k in header:
-            template[k] = header.pop(short_k)
 
     return template
 
@@ -261,12 +253,6 @@ def mock_function(header):
         for key, val in labels.items():
             val.append(f"{key}_{int(angle[1])}deg")
 
-    # Atom types: Convert str to list if atom_types is not a list:
-    # if isinstance(header["atom_types"], str):
-    #     header["atom_types"] = header["atom_types"].split(",")
-
-    # header["column_names"] = list(labels.keys())
-
     return header, labels
 
 
@@ -305,7 +291,7 @@ def parameter_array(whole_data, header, unique_angles, counts):
     temp = whole_data[header["colnames"][-data_index]].to_numpy()[
         block_idx[-1] - 1].astype("float64")
 
-    while temp * 0 != 0:
+    while math.isnan(temp):
         temp = whole_data[header["colnames"][-data_index]].to_numpy()[
             block_idx[-1] - 1].astype("float64")
         data_index += 1
@@ -389,10 +375,6 @@ class EllipsometryReader(BaseReader):
         """
         header, data_file = populate_header_dict(file_paths)
 
-        # read first N lines of the data file:
-        # with open(data_file) as input_file:
-        #     file_header = [next(input_file) for _ in range(header["skip"])]
-
         if os.path.isfile(data_file):
             whole_data = load_as_pandas_array(data_file, header)
         else:
@@ -403,7 +385,6 @@ class EllipsometryReader(BaseReader):
 
         labels = header_labels(header, unique_angles)
 
-        # measured_data is a required field; data_error and derived_parameters are optional
         header["measured_data"], header["data_error"] = \
             data_array(whole_data, unique_angles, counts, labels)
         header[header["derived_parameter_type"]] = \
@@ -423,11 +404,6 @@ class EllipsometryReader(BaseReader):
 
         if "atom_types" not in header:
             header["atom_types"] = extract_atom_types(header["chemical_formula"])
-        # Atom types: Convert str to list if atom_types is not a list:
-        # if isinstance(header["atom_types"], str):
-        #     header["atom_types"] = header["atom_types"].split(",")
-
-        # header["column_names"] = list(labels.keys())
 
         return header, labels
 
@@ -466,8 +442,6 @@ class EllipsometryReader(BaseReader):
         spectrum_unit = header["spectrum_unit"]
         template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = \
             {"link": f"/entry/data_collection/{spectrum_type}_spectrum"}
-        # template[f"/ENTRY[entry]/data_collection/DATA[data]/AXISNAME[{spectrum_type}]"] = \
-        #     {"link": f"/entry/data_collection/{spectrum_type}_spectrum"}
         template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] \
             = spectrum_unit
         template[
