@@ -79,7 +79,6 @@ CONVERT_DICT = {
 }
 
 CONFIG_KEYS = [
-    'blocks',
     'colnames',
     'derived_parameter_type',
     'err-var',
