@@ -1,7 +1,7 @@
 angle_of_incidence:
   unit: degrees
 angular_spread:
-  unit: rad ** 2
+  unit: radians
   value: 0.2
 atom_types: Si, O
 backside_roughness: False
