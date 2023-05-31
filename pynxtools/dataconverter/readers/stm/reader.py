@@ -82,8 +82,8 @@ class STMReader(BaseReader):
                 filled_template[key] = val
 
         if not filled_template:
-            for key, val in filled_template.items():
-                print(' ### : ', key)
+            # for key, val in filled_template.items():
+            #     print(' ### : ', key)
             return filled_template
         else:
             raise ValueError("Reader could not read anything! Check for input files and the"

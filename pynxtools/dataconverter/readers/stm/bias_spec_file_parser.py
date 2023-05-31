@@ -237,21 +237,26 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
               /Entry[ENTRY]/data/DATA/@axes and so on
         """
         # NOTE : Try to replace this hard axes name
-        axes = ["Bias/",
-                "Current/",
-                "Temperature 1/",
-                "LI Demod 1 X/",
-                "LI Demod 1 Y/",
-                "LI Demod 2 X/",
-                "LI Demod 2 Y/"]
+        # TODO: Try to include re module to check similar pattern for data fields
+        # These are possible axes and nxdata fields
+        axes = ["Bias/",]
+        data_fields = ["Current/",
+                    # "Temperature 1/",
+                       "LI Demod 1 X/",
+                       "LI Demod 2 X/",
+                       "LI Demod 1 Y/",
+                       "LI Demod 2 Y/"]
+
         global extra_annot
         current = None
         current_unit = ""
         bias_unit = ""
         volt = None
+        # Bellow we are collecting: current, bias, axes, and data field info.
         # list of paths e.g. "/dat_mat_components/Bias/value" comes from
         # dict value of /ENTRY[entry]/DATA[data] in config file.
         for path in dt_val:
+            # Extra annot could be 'filt'
             extra_annot, trimed_path = find_extra_annot(path)
             for axis in axes:
                 if (axis + 'value') in trimed_path:
@@ -262,6 +267,11 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
                     axes_unit.append(data_dict[path] if path in data_dict else "")
                 if (axis + "metadata") in trimed_path:
                     axes_metadata.append(data_dict[path] if path in data_dict else "")
+            for possible_field in data_fields:
+                if possible_field + 'value' in trimed_path and path in data_dict:
+                    data_field_dt.append(data_dict[path])
+                    data_field_nm.append(possible_field[0:-1])
+                    data_field_unit.append(get_unit(path, data_dict))
             if 'Current/value' in trimed_path:
                 current = data_dict[path]
             if 'Current/unit' in trimed_path:
@@ -275,21 +285,34 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
             extra_annot = 'data'
         else:
             extra_annot = f"data ({extra_annot})"
+
+        # Note: this value must come from ELN
+        flip_number = -1
         global temp_data_grp
         temp_data_grp = data_group.replace("DATA[data", f"DATA[{extra_annot}")
-        data_field = temp_data_grp + '/' + extra_annot
-        template[data_field] = cal_dx_by_dy(current, volt)
-        template[data_field + '/@axes'] = axes_name
-        template[data_field + '/@long_name'] = f"dI/dV ({current_unit}/{bias_unit})"
+        for dt_fd, dat_, unit in zip(data_field_nm, data_field_dt, data_field_unit):
+            data_field = temp_data_grp + '/' + dt_fd
+            if "LI Demod" in dt_fd:
+                template[data_field] = dat_ * -1
+            else:
+                template[data_field] = dat_  # cal_dx_by_dy(current, volt)
+            template[data_field + '/@axes'] = axes_name[0]
+            template[data_field + '/@Bias_indices'] = 0
+            if unit:
+                template[data_field + '/@long_name'] = f"{dt_fd} ({unit})"
+            else:
+                template[data_field + '/@long_name'] = dt_fd
 
     def fill_out_NXdata_group(signal='auxiliary_signals'):
         """To fill out NXdata which is root for all data fields and attributes.
            This function fills template with first level of descendent fields and attributes
            of NXdata but not the fields and attributes under child of NXdata.
         """
-        data_signal = temp_data_grp + '/@' + signal
-        template[data_signal] = extra_annot
-
+        signal_field = "Current"
+        data_signal = temp_data_grp + '/@signal'
+        template[data_signal] = signal_field
+        # data_aux_signals = f"{temp_data_grp}/@auxiliary_signals"
+        # template[data_aux_signals] = data_field_nm
         data_axes = temp_data_grp + '/@axes'
         template[data_axes] = axes_name
         for axis, coor_dt in zip(axes_name, axes_data):
@@ -301,6 +324,15 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
                 template[temp_data_grp + '/' + axis + '/@longname'] = f"{axis}({unit})"
             else:
                 template[temp_data_grp + '/' + axis + '/@longname'] = f"{axis}"
+
+    def get_unit(value_key, data_dict):
+        # value_key: /dat_mat_components/LI Demod 1 X/value
+        # unit_key: /dat_mat_components/LI Demod 1 X/unit
+        unit_key = value_key.replace('/value', '/unit')
+        if unit_key in data_dict:
+            return data_dict[unit_key]
+        else:
+            return ""
 
     def find_extra_annot(key):
         """Find out extra annotation that comes with data e.g. filt in
@@ -314,20 +346,24 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
         return "", key
 
     for dt_key, dt_val in data_config_dict.items():
+        # The axes and data list will be field globaly and used inside other local functions
         axes_name = []
         axes_unit = []
         axes_metadata = []
         axes_data = []
+        data_field_nm = []
+        data_field_dt = []
+        data_field_unit = []
         # There are several scan data gourp in the given file.
         if dt_key == '0':
             continue
         if dt_key == '1':
             indivisual_DATA_field()
-            fill_out_NXdata_group('signal')
+            fill_out_NXdata_group()
         # To fill out data field as many as we have
         else:
             indivisual_DATA_field()
-            fill_out_NXdata_group('signal')
+            fill_out_NXdata_group()
 
 
 def from_dat_file_into_template(template, dat_file, config_dict):
@@ -340,7 +376,6 @@ def from_dat_file_into_template(template, dat_file, config_dict):
     nested_path_to_slash_separated_path(
         b_s_d.get_data_nested_dict(),
         flattened_dict=flattened_dict)
-
     template_keys = template.keys()
     for c_key, c_val in config_dict.items():
         for t_key in template_keys:

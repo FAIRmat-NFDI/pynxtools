@@ -291,6 +291,7 @@ def from_sxm_file_into_template(template, file_name, config_dict):
     """
 
     data_dict = get_SPM_metadata_dict_and_signal(file_name)
+    print('## data from dat file : ', data_dict)
     temp_keys = template.keys()
     for temp_key in temp_keys:
         for c_key, c_val in config_dict.items():
