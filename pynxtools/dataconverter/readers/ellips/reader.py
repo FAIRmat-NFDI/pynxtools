@@ -93,10 +93,10 @@ CONFIG_KEYS = [
 ]
 
 REPLACE_NESTED = {
-    # 'SOURCE[source]/Probe': 'SOURCE[source]',
-    # 'SOURCE[source]/Pump': 'SOURCE[source_pump]',
-    # 'BEAM[beam]/Probe': 'BEAM[beam]',
-    # 'BEAM[beam]/Pump': 'BEAM[beam_pump]',
+    'SOURCE[source]/Probe': 'SOURCE[source]',
+    'SOURCE[source]/Pump': 'SOURCE[source_pump]',
+    'BEAM[beam]/Probe': 'BEAM[beam]',
+    'BEAM[beam]/Pump': 'BEAM[beam_pump]',
 }
 
 
