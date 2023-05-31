@@ -18,8 +18,8 @@
 """An example reader implementation for the DataConverter."""
 import os
 from typing import Tuple, Any
-import yaml
 import math
+import yaml
 import pandas as pd
 import numpy as np
 # import h5py
