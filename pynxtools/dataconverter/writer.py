@@ -160,7 +160,6 @@ Several cases can be encoutered:
         else:
             grp.create_dataset(entry_name, data=data["compress"])
     else:
-        print("comes here!!")
         raise InvalidDictProvided("A dictionary was provided to the template but it didn't"
                                   " fall into any of the know cases of handling"
                                   " dictionaries. This occured for: " + entry_name)
