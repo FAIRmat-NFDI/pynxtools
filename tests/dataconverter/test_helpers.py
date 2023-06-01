@@ -20,7 +20,6 @@
 import xml.etree.ElementTree as ET
 import os
 from setuptools import distutils
-
 import pytest
 import numpy as np
 
