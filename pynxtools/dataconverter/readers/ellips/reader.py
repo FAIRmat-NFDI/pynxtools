@@ -48,6 +48,8 @@ CONVERT_DICT = {
     'data_error': 'data_collection/data_error',
     'depolarization': 'derived_parameters/depolarization',
     'measured_data': 'data_collection/measured_data',
+    'software': 'software/program',
+    'data_software': 'data_software/program',
 }
 
 CONFIG_KEYS = [
