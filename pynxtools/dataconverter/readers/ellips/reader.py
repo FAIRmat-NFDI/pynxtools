@@ -319,21 +319,29 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/plot/wavelength"] = {"link":
                                                      "/entry/instrument/spectrometer/wavelength"
                                                      }
-        template["/ENTRY[entry]/plot/wavelength/@units"] = header["wavelength_unit"]
-        for data_indx in range(0, len(labels.keys())):
-            for index, key in enumerate(data_list[data_indx]):
-                template[f"/ENTRY[entry]/plot/{key}"] = {"link":
-                                                         "/entry/sample/measured_data",
-                                                         "shape":
-                                                         np.index_exp[0, 0, index, data_indx, :]
-                                                         }
-                template[f"/ENTRY[entry]/plot/{key}/@units"] = "degrees"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/spectrometer/wavelength/@units"] = \
+            "Angstroms"
+        template["/ENTRY[entry]/INSTRUMENT[instrument]/spectrometer/wavelength/@long_name"] = \
+            "wavelength (Angstroms)"
+
+        for dindx in range(0, len(labels.keys())):
+            for index, key in enumerate(data_list[dindx]):
+                template[f"/ENTRY[entry]/plot/DATA[{key}]"] = {"link":
+                                                               "/entry/sample/measured_data",
+                                                               "shape":
+                                                               np.index_exp[0, 0, index, dindx, :]
+                                                               }
+                template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
+                if dindx == 0 and index == 0:
+                    template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
+                        "Psi and Delta (degrees)"
 
         # Define default plot showing psi and delta at all angles:
         template["/@default"] = "entry"
         template["/ENTRY[entry]/@default"] = "plot"
         template["/ENTRY[entry]/plot/@signal"] = f"{data_list[0][0]}"
         template["/ENTRY[entry]/plot/@axes"] = "wavelength"
+        template["/ENTRY[entry]/plot/title"] = "Psi and Delta"
 
         # if len(data_list[0]) > 1:
         template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
