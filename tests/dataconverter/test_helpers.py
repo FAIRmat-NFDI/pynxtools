@@ -97,8 +97,8 @@ def fixture_filled_test_data(template, tmp_path):
                                   f"/../"
                                   f"data/dataconverter/"
                                   f"readers/mpes/"
-                                  f"xarray_saved_small_calibration.h5",
-                                  tmp_path)
+                                  f"xarray_saved_small_cali"
+                                  f"bration.h5", tmp_path)
 
     template.clear()
     template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
