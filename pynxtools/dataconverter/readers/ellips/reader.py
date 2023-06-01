@@ -33,56 +33,21 @@ DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
 CONVERT_DICT = {
     'unit': '@units',
+    'Beam_path': 'BEAM_PATH[beam_path]',
+    'Detector': 'DETECTOR[detector]',
     'Data': 'data_collection',
     'Derived_parameters': 'derived_parameters',
+    'Environment': 'environment_conditions',
     'Instrument': 'INSTRUMENT[instrument]',
     'Sample': 'SAMPLE[sample]',
+    'Stage': 'sample_stage',
     'User': 'USER[user]',
-    'angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
-    'angle_of_incidence/@units': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
-    'angular_spread':
-        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread',
-    'angular_spread/@units':
-        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/angular_spread/@units',
-    'atom_types': 'SAMPLE[sample]/atom_types',
-    'backside_roughness': 'SAMPLE[sample]/backside_roughness',
-    'calibration_status': 'INSTRUMENT[instrument]/calibration_status',
-    'chemical_formula': 'SAMPLE[sample]/chemical_formula',
+    'Instrument/angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
+    'Instrument/angle_of_incidence/unit': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
     'column_names': 'data_collection/column_names',
-    'company': 'INSTRUMENT[instrument]/company',
-    'count_time': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time',
-    'count_time/@units':
-        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/count_time/@units',
-    'data_correction':
-        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/focussing_probes/data_correction',
     'data_error': 'data_collection/data_error',
-    'data_identifier': 'data_collection/data_identifier',
-    'data_software/@url': 'data_collection/data_software/@url',
-    'data_software/program': 'data_collection/data_software/program',
-    'data_software/version': 'data_collection/data_software/version',
-    'data_type': 'data_collection/data_type',
-    'depends_on': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/depends_on',
     'depolarization': 'derived_parameters/depolarization',
-    'detector_type':
-        'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/detector_type',
-    'ellipsometer_type': 'INSTRUMENT[instrument]/ellipsometer_type',
-    'layer_structure': 'SAMPLE[sample]/layer_structure',
-    'source_type': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/light_source/source_type',
-    'medium': 'INSTRUMENT[instrument]/sample_stage/environment_conditions/medium',
     'measured_data': 'data_collection/measured_data',
-    'model': 'INSTRUMENT[instrument]/model',
-    'model/@version': 'INSTRUMENT[instrument]/model/@version',
-    'real_time': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/DETECTOR[detector]/real_time',
-    'revolutions': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]/rotating_element/revolutions',
-    'rotating_element_type': 'INSTRUMENT[instrument]/rotating_element_type',
-    'sample_history': 'SAMPLE[sample]/sample_history',
-    'sample_name': 'SAMPLE[sample]/sample_name',
-    'sample_type': 'SAMPLE[sample]/sample_type',
-    'software/@url': 'INSTRUMENT[instrument]/software/@url',
-    'software/program': 'INSTRUMENT[instrument]/software/program',
-    'software/version': 'INSTRUMENT[instrument]/software/version',
-    'stage_type': 'INSTRUMENT[instrument]/sample_stage/stage_type',
-    'substrate': 'SAMPLE[sample]/substrate',
 }
 
 CONFIG_KEYS = [
@@ -99,7 +64,7 @@ CONFIG_KEYS = [
 ]
 
 REPLACE_NESTED = {
-    'INSTRUMENT[instrument]/Beam_path': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]',
+    'Instrument/Beam_path': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]',
 }
 
 
@@ -118,9 +83,8 @@ def load_header(filename, default):
     with open(filename, 'rt', encoding='utf8') as file:
         header = yaml.safe_load(file)
 
-    clean_header = {}
-
     clean_header = header
+
     for key, value in default.items():
         if key not in clean_header:
             clean_header[key] = value
@@ -219,9 +183,9 @@ def header_labels(header, unique_angles):
 
     """
 
-    if header["data_type"] == "Psi/Delta":
+    if header["Data"]["data_type"] == "Psi/Delta":
         labels = {"Psi": [], "Delta": []}
-    elif header["data_type"] == "tan(Psi)/cos(Delta)":
+    elif header["Data"]["data_type"] == "tan(Psi)/cos(Delta)":
         labels = {"tan(Psi)": [], "cos(Delta)": []}
     else:
         labels = {}
@@ -245,11 +209,11 @@ def mock_function(header):
     mock_header.mock_template(header)
 
     # Defining labels:
-    mock_angles = header["angle_of_incidence"]
+    mock_angles = header["Instrument/angle_of_incidence"]
 
     labels = header_labels(header, mock_angles)
 
-    for angle in enumerate(header["angle_of_incidence"]):
+    for angle in enumerate(header["Instrument/angle_of_incidence"]):
         for key, val in labels.items():
             val.append(f"{key}_{int(angle[1])}deg")
 
@@ -390,20 +354,20 @@ class EllipsometryReader(BaseReader):
         header[header["derived_parameter_type"]] = \
             parameter_array(whole_data, header, unique_angles, counts)
 
-        spectrum_type = header["spectrum_type"]
+        spectrum_type = header["Data"]["spectrum_type"]
         if spectrum_type not in header["colnames"]:
             print("ERROR: spectrum type not found in 'colnames'")
         header[f"data_collection/NAME_spectrum[{spectrum_type}_spectrum]"] = (
             whole_data[spectrum_type].to_numpy()[0:counts[0]].astype("float64"))
 
-        header["angle_of_incidence"] = unique_angles
+        header["Instrument/angle_of_incidence"] = unique_angles
 
         # Create mocked ellipsometry data template:
         if is_mock:
             header, labels = mock_function(header)
 
-        if "atom_types" not in header:
-            header["atom_types"] = extract_atom_types(header["chemical_formula"])
+        if "atom_types" not in header["Sample"]:
+            header["atom_types"] = extract_atom_types(header["Sample"]["chemical_formula"])
 
         return header, labels
 
@@ -438,8 +402,8 @@ class EllipsometryReader(BaseReader):
         # The template dictionary is filled
         template = populate_template_dict(header, template)
 
-        spectrum_type = header["spectrum_type"]
-        spectrum_unit = header["spectrum_unit"]
+        spectrum_type = header["Data"]["spectrum_type"]
+        spectrum_unit = header["Data"]["spectrum_unit"]
         template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = \
             {"link": f"/entry/data_collection/{spectrum_type}_spectrum"}
         template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] \
