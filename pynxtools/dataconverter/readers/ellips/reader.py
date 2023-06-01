@@ -89,9 +89,8 @@ def load_header(filename, default):
         if key not in clean_header:
             clean_header[key] = value
 
-    for key, val in header.items():
-        if key == 'sep':
-            clean_header[key] = val.encode("utf-8").decode("unicode_escape")
+    if 'sep' in header:
+        clean_header['sep'] = header['sep'].encode("utf-8").decode("unicode_escape")
 
     return clean_header
 
