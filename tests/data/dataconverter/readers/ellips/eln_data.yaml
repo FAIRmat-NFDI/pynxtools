@@ -2,7 +2,7 @@ Data:
   data_identifier: 1
   data_software: WVASE
   data_software/@url: https://www.jawoollam.com/ellipsometry-software/wvase
-  data_software/@version: '3.882'
+  data_software/version: '3.882'
   data_type: Psi/Delta
   spectrum_type: wavelength
   spectrum_unit: Angstroms
@@ -35,9 +35,10 @@ Instrument:
   rotating_element_type: compensator (source side)
   software: CompleteEASE
   software/@url: https://www.jawoollam.com/ellipsometry-software/completeease
-  software/@version: '6.37'
+  software/version: '6.37'
 Sample:
   atom_types: Si, O
+  backside_roughness: false
   chemical_formula: SiO2
   layer_structure: 2nm SiO2 on Si
   sample_history: Commercially purchased sample

@@ -40,7 +40,7 @@ CONVERT_DICT = {
     'Environment': 'environment_conditions',
     'Instrument': 'INSTRUMENT[instrument]',
     'Sample': 'SAMPLE[sample]',
-    'Stage': 'sample_stage',
+    'Sample_stage': 'sample_stage',
     'User': 'USER[user]',
     'Instrument/angle_of_incidence': 'INSTRUMENT[instrument]/angle_of_incidence',
     'Instrument/angle_of_incidence/unit': 'INSTRUMENT[instrument]/angle_of_incidence/@units',
