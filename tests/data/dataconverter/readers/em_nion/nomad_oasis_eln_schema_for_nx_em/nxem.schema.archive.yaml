@@ -5,18 +5,14 @@ definitions:
   name: 'em'
   # 'ELN/application definition schema for electron microscopy (EM) experiments.'
   sections: # section definitions what were back in the old days msection base classes
-    # Operator:
-    # Specimen:
     ElectronMicroscopy: # the actual schema
-      # nomad.datamodel.metainfo.eln.NexusParser
       base_sections:
-        - 'nomad.datamodel.metainfo.eln.NexusParser'
+        - 'nomad.datamodel.metainfo.eln.NexusDataConverter'
         - 'nomad.datamodel.data.EntryData'
-      # base_section: nomad.datamodel.data.EntryData
       m_annotations:
         # Here you can set your default values for the reader and nxdl.
         template: 
-          reader: em_spctrscpy
+          reader: em_nion
           nxdl: NXem.nxdl
         # Listing quantities in the hide component will not show them in the ELN.
         # This would be useful to make the default values set in `template` fixed.
@@ -37,7 +33,7 @@ definitions:
                 type:
                   type_kind: Enum
                   type_data:
-                    - 'nexus-fairmat-proposal successor of 50433d9039b3f33299bab338998acb5335cd8951'
+                    - 'nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696'
                 description: Hashvalue of the NeXus application definition file
                 m_annotations:
                   eln:
@@ -333,7 +329,7 @@ definitions:
                     eln:
                   # quantities:
                   sub_sections:
-                    electron_gun:
+                    electron_source:
                       section:
                         description: The source which creates the electron beam
                         m_annotations:
@@ -354,17 +350,16 @@ definitions:
                             m_annotations:
                               eln:
                                 component: NumberEditQuantity
-                                defaultDisplayUnit: kilovolt
+                                defaultDisplayUnit: kV
                                 minValue: 0.0
                                 maxValue: 1.1e6
                           emitter_type:
                             type:
                               type_kind: Enum
                               type_data:
-                                - filament
+                                - thermionic
                                 - schottky
-                                - cold_cathode_field_emitter
-                                - other
+                                - field_emission
                             description: |
                               Emitter type used to create the beam.
                             m_annotations:
@@ -481,9 +476,9 @@ definitions:
                   m_annotations:
                     eln:
                   quantities:
-                    type:
+                    local_name:
                       type: str
-                      description: Free text option to write further details about the detector.
+                      description: Instrument-specific alias/name
                       m_annotations:
                         eln:
                           component: StringEditQuantity

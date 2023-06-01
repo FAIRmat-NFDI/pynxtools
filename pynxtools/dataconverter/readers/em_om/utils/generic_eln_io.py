@@ -51,23 +51,21 @@ class NxEmOmGenericElnSchemaParser:
 
     def __init__(self, file_name: str, entry_id: int, pattern_simulation: bool):
         """Fill template with ELN pieces of information."""
-        self.file_name = file_name
-        if file_name != "":
-            self.file_name = file_name
-        else:
-            self.file_name = ""
-        if entry_id > 0:
+        self.pattern_simulation = pattern_simulation
+        print(f"Extracting data from ELN file: {file_name}")
+        if (file_name.rsplit('/', 1)[-1].startswith("eln_data")
+                or file_name.startswith("eln_data")) and entry_id > 0:
             self.entry_id = entry_id
+            self.file_name = file_name
+            with open(self.file_name, "r", encoding="utf-8") as stream:
+                self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
         else:
             self.entry_id = 1
-        self.pattern_simulation = pattern_simulation
+            self.file_name = ""
+            self.yml = {}
 
-        print(self.file_name)
-        self.yml = None
-        with open(self.file_name, "r", encoding="utf-8") as stream:
-            self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
-        if "ElectronBackscatterDiffraction" in self.yml:
-            self.yml = self.yml["ElectronBackscatterDiffraction"]
+        # if "ElectronBackscatterDiffraction" in self.yml:
+        #     self.yml = self.yml["ElectronBackscatterDiffraction"]
 
     def parse(self, template: dict) -> dict:
         """Extract metadata from generic ELN text file to respective NeXus objects."""
@@ -278,7 +276,7 @@ class NxEmOmGenericElnSchemaParser:
     def parse_gnomonic_projection_section(self, template: dict) -> dict:
         """Parse for the gnomonic projection."""
         axes_names = ["x", "y", "z"]
-        src = "gnomonic_projection_reference_frame"
+        src = "gnomonic_projection:gnomonic_projection_reference_frame"
         trg = f"/ENTRY[entry{self.entry_id}]/conventions" \
               f"/gnomonic_projection_reference_frame/"
         if "reference_frame_type" in self.yml[src].keys():
@@ -298,7 +296,7 @@ class NxEmOmGenericElnSchemaParser:
             if "origin" in self.yml[src].keys():
                 template[f"{trg}origin"] = self.yml[f"{src}:origin"]
 
-        src = "pattern_centre"
+        src = "gnomonic_projection:pattern_centre"
         trg = f"/ENTRY[entry{self.entry_id}]/conventions/pattern_centre/"
         axes_names = ["x", "y"]
         field_names = ["axis_boundary_convention", "axis_normalization_direction"]

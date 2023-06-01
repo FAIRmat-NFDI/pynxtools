@@ -3,16 +3,12 @@
 # quantity in NXapm
 definitions:
   name: 'apm'
-  # 'ELN/application definition schema for atom probe microscopy (APM) experiments.'
-  sections: # section definitions what were back in the old days msection base classes
-    # Operator:
-    # Specimen:
+  # 'ELN/matching NXapm NeXus appdef data schema for atom probe'
+  sections: # section definitions what were back in the old days msections
     AtomProbeMicroscopy: # the actual schema
-      # nomad.datamodel.metainfo.eln.NexusParser
       base_sections:
-        - 'nomad.datamodel.metainfo.eln.NexusParser'
+        - 'nomad.datamodel.metainfo.eln.NexusDataConverter'
         - 'nomad.datamodel.data.EntryData'
-      # base_section: nomad.datamodel.data.EntryData
       m_annotations:
         # Here you can set your default values for the reader and nxdl.
         template: 
@@ -300,15 +296,24 @@ definitions:
             m_annotations:
               eln:
             quantities:
+              status:
+                type:
+                  type_kind: Enum
+                  type_data:
+                    - success
+                    - failure
+                description: |
+                  A statement whether the measurement was
+                  successful or failed prematurely.
+                m_annotations:
+                  eln:
+                    component: RadioEnumEditQuantity
               instrument_name:
                 type: str
                 description: Given name of the atom probe at the hosting institution.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              location:
-                type: str
-                description: Location of the lab or place where the instrument is installed. Using GEOREF is preferred.
               # (NXfabrication):
               flight_path_length:
                 type: np.float64
@@ -322,13 +327,6 @@ definitions:
                     defaultDisplayUnit: meter
                     minValue: 0.0
                     maxValue: 10.0
-              field_of_view(NX_FLOAT):
-                type: np.float64
-                unit: meter
-                description: |
-                  The nominal diameter of the specimen ROI which is measured in the
-                  experiment. Physically, the specimen cannot be measured completely
-                  because ions may launch but not become detected or hit elsewhere.
               fabrication_vendor:
                 type: str
                 description: Name of the manufacturer/company, i.e. AMETEK/Cameca.
