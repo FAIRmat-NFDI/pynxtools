@@ -29,6 +29,7 @@ import numpy as np
 
 from pynxtools.dataconverter import helpers
 from pynxtools.nexus import nexus
+from pynxtools.dataconverter.exceptions import InvalidDictProvided
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)
@@ -158,6 +159,10 @@ Several cases can be encoutered:
                                compression_opts=strength)
         else:
             grp.create_dataset(entry_name, data=data["compress"])
+    else:
+        raise InvalidDictProvided("A dictionary was provided to the template but it didn't"
+                                  " fall into any of the know cases of handling"
+                                  " dictionaries. This occured for: " + entry_name)
     return grp[entry_name]
 
 
@@ -260,6 +265,8 @@ class Writer:
                                                          self.output_path, path])
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
+            except InvalidDictProvided as exc:
+                print(str(exc))
             except Exception as exc:
                 raise IOError(f"Unknown error occured writing the path: {path} "
                               f"with the following message: {str(exc)}") from exc

@@ -50,12 +50,15 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
     """
 
     def __init__(self, file_name: str, entry_id: int):
-        self.entry_id = entry_id
-        if file_name.startswith("eln_data") and entry_id > 0:
+        print(f"Extracting data from ELN file: {file_name}")
+        if (file_name.rsplit('/', 1)[-1].startswith("eln_data")
+                or file_name.startswith("eln_data")) and entry_id > 0:
+            self.entry_id = entry_id
             self.file_name = file_name
             with open(self.file_name, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter=":")
         else:
+            self.entry_id = 1
             self.file_name = ""
             self.yml = {}
 
