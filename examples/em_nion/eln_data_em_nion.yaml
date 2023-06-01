@@ -1,0 +1,63 @@
+em_lab:
+  detector:
+  - local_name: Should better be inferred in the future from a Nion microscope instance description instead of having to add it every time manually.
+  ebeam_column:
+    aberration_correction:
+      applied: true
+    aperture_em:
+    - name: C1
+      value: 4
+    electron_source:
+      emitter_type: field_emission
+      voltage:
+        unit: V
+        value: 200000
+  fabrication:
+    capabilities: '---'
+    identifier: ChristophKochGroupsNionMicroscope
+    model: NionHermes200
+    vendor: Nion Co.
+  instrument_name: Nion Hermes 200kV
+  location: Berlin
+  optical_system_em:
+    beam_current:
+      unit: A
+      value: 1.2e-11
+    beam_current_description: estimated
+    magnification: 610000
+    semi_convergence_angle:
+      unit: rad
+      value: 0.2
+  stage_lab:
+    description: double tilt
+    name: nothing
+entry:
+  attr_version: nexus-fairmat-proposal successor of 9636feecb79bb32b828b1a9804269573256d7696
+  definition: NXem
+  end_time: '2023-05-25T14:44:00+01:00'
+  experiment_description: BenediktHaas_MultiModal_ImagingMode_TestDataSet
+  experiment_identifier: 2022-04-18-BenediktHaas
+  program: nionswift
+  program__attr_version: 0.16.8, this is what Markus used for implementing the nionswift project file reader but was it also the version used by Benedikt?
+  start_time: '2023-05-25T14:44:00+01:00'
+sample:
+  atom_types:
+  - Cu
+  description: test
+  method: experiment
+  name: Cu
+  preparation_date: '2023-05-25T14:44:00+01:00'
+  sample_history: unknown
+  short_title: Cu
+  thickness:
+    unit: m
+    value: 2.0e-08
+user:
+- name: MarkusK
+  orcid: '0000'
+- email: '----'
+  name: Benedikt
+- name: Sherjeel
+  affiliation: HU Berlin
+- name: Christoph
+  role: B1 task leader
