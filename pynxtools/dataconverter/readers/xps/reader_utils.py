@@ -23,7 +23,7 @@ Generic Classes for reading XPS files into python dictionary.
 
 import re
 import xml.etree.ElementTree as EmtT
-from typing import Tuple, List, Any
+from typing import Tuple, List, Any, Dict
 import copy
 import sqlite3
 import xarray as xr
@@ -113,14 +113,11 @@ class XmlSpecs():
 
         parent_element = element_
         element = parent_element[child_elmt_ind]
-        # type: ignore[assignment]
-        element.attrib['__parent__'] = parent_element
-        # type: ignore[assignment]
-        element.attrib['__odr_siblings__'] = child_elmt_ind
+        element.attrib['__parent__'] = parent_element  # type: ignore[assignment]
+        element.attrib['__odr_siblings__'] = child_elmt_ind  # type: ignore[assignment]
 
         if self.child_nm_reslvers not in parent_element.attrib.keys():
-            # type: ignore[assignment]
-            parent_element.attrib[self.child_nm_reslvers] = []
+            parent_element.attrib[self.child_nm_reslvers] = []  # type: ignore[assignment]
 
         elmt_tag = element.tag
 
@@ -1040,9 +1037,10 @@ class XpsDataFileParser():
 
     __prmt_file_ext__ = ['xml', 'sle']
     __vendors__ = ['specs']
-    __prmt_vndr_cls = {'xml': {'specs': XmlSpecs},
-                       'sle': {'specs': SleSpecs},
-                       }
+    __prmt_vndr_cls: Dict[str, Dict] = {
+        'xml': {'specs': XmlSpecs},
+        'sle': {'specs': SleSpecs},
+    }
 
     __file_err_msg__ = (f'Need a xps data file with the following'
                         f'\n extension {__prmt_file_ext__}')
@@ -1102,7 +1100,7 @@ class XpsDataFileParser():
                         vendor = 'specs'
                         parser_class = (XpsDataFileParser.
                                         __prmt_vndr_cls[file_ext]
-                                        ['specs'])
+                                        [vendor])
                         parser_obj = parser_class()
 
                         parser_obj.parse_file(file, **kwargs)

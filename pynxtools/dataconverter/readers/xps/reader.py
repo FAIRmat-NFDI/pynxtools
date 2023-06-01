@@ -354,7 +354,7 @@ class XPSReader(BaseReader):
             # This code is not very robust.
             elif file_ext == ".json":
                 if "config_file" in file:
-                    config_file = file
+                    config_file = Path(file)
 
         with open(config_file, encoding="utf-8", mode="r") as cfile:
             config_dict = json.load(cfile)
