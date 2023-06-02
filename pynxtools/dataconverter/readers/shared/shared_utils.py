@@ -22,7 +22,7 @@
 
 # pylint: disable=E1101, R0801
 
-import git
+# import git
 
 
 def get_repo_last_commit() -> str:
