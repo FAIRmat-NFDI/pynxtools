@@ -22,7 +22,7 @@ import math
 import yaml
 import pandas as pd
 import numpy as np
-# import h5py
+from importlib.metadata import version
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
 from pynxtools.dataconverter.helpers import extract_atom_types
@@ -465,6 +465,13 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
         for index in range(1, len(data_list)):
             template["/ENTRY[entry]/plot/@auxiliary_signals"] += data_list[index]
+
+        template["/ENTRY[entry]/definition"] = "NXellipsometry"
+        template["/ENTRY[entry]/definition/@url"] = (
+            "https://github.com/FAIRmat-NFDI/nexus_definitions/"
+            "blob/fairmat/contributed_definitions/NXellipsometry.nxdl.xml"
+        )
+        template["/ENTRY[entry]/definition/@version"] = version("pynxtools")
 
         return template
 
