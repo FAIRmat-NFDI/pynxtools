@@ -19,10 +19,10 @@
 import os
 from typing import Tuple, Any
 import math
+from importlib.metadata import version
 import yaml
 import pandas as pd
 import numpy as np
-from importlib.metadata import version
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
 from pynxtools.dataconverter.helpers import extract_atom_types
