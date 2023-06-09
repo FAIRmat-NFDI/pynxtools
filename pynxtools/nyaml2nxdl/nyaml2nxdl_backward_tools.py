@@ -280,8 +280,8 @@ class Nxdl2yaml():
             text = handle_mapping_char(text, -1, True)
         if "\n" in text:
             # To remove '\n' character as it will be added before text.
-            text = text.split('\n')
-            text = cleaning_empty_lines(text)
+            text_list = text.split('\n')
+            text = cleaning_empty_lines(text_list)
             text_tmp = []
             yaml_indent_n = len((depth + 1) * DEPTH_SIZE)
             # Find indentaion in the first valid line with alphabet
@@ -851,7 +851,7 @@ class Nxdl2yaml():
             sys.stdout.write(f'Attributes: {node.attrib}\n')
         with open(output_yml, "a", encoding="utf-8") as file_out:
             tag = remove_namespace_from_tag(node.tag)
-            if tag == ('definition'):
+            if tag == 'definition':
                 self.found_definition = True
                 self.handle_definition(node)
                 # Taking care of root level doc and symbols

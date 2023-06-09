@@ -36,6 +36,9 @@ from pynxtools.nyaml2nxdl.nyaml2nxdl_backward_tools import (Nxdl2yaml,
 
 DEPTH_SIZE = "    "
 
+# NOTE: Some handful links for nyaml2nxdl converter:
+# https://manual.nexusformat.org/nxdl_desc.html?highlight=optional
+
 
 def generate_nxdl_or_retrieve_nxdl(yaml_file, out_xml_file, verbose):
     """

@@ -31,6 +31,7 @@ import yaml
 
 from pynxtools.nexus import nexus
 from pynxtools.nyaml2nxdl.comment_collector import CommentCollector
+from pynxtools.dataconverter.helpers import remove_namespace_from_tag
 from pynxtools.nyaml2nxdl.nyaml2nxdl_helper import (get_yaml_escape_char_reverter_dict,
                                                     nx_name_type_resolving,
                                                     cleaning_empty_lines, LineLoader)
@@ -65,6 +66,7 @@ NX_UNIT_IDNT = 'unit'
 DEPTH_SIZE = "    "
 NX_UNIT_TYPES = nexus.get_nx_units()
 COMMENT_BLOCKS: CommentCollector
+CATEGORY = ''  # Definition would be either 'base' or 'application'
 
 
 def check_for_dom_comment_in_yaml():
@@ -117,7 +119,55 @@ def yml_reader(inputfile):
     global DOM_COMMENT
     if dom_cmnt_frm_yaml:
         DOM_COMMENT = dom_cmnt_frm_yaml
+
+    if 'category' not in loaded_yaml.keys():
+        raise ValueError(f"All definitions should be either 'base' or 'application' category. "
+                         f"No category has been found.")
+    else:
+        CATEGORY = loaded_yaml['category']
+
     return loaded_yaml
+
+
+def check_for_default_attribute_and_value(xml_element):
+    """NeXus Groups, fields and attributes might have xml default attributes and valuesthat must
+    come. For example: 'optional' which is 'true' by default for base class and false otherwise.
+    """
+
+    # base:Default attributes and value for all elements of base class except dimension element
+    base_attr_to_val = {'optional': 'true'}
+
+    # application: Default attributes and value for all elements of application class except
+    # dimension element
+    application_attr_to_val = {'optional': 'false'}
+
+    # Default attributes and value for dimension element
+    base_dim_attr_to_val = {'required': 'false'}
+    application_dim_attr_to_val = {'required': 'true'}
+
+    # Eligible tag for default attr and value
+    # TODO also check for attributes of choice and link
+    elegible_tag = ['group', 'field', 'attribute']
+
+    def set_default_attribute(xml_elem, default_attr_to_val):
+        for deflt_attr, deflt_val in default_attr_to_val.items():
+            if deflt_attr not in xml_elem.attrib:
+                xml_elem.set(deflt_attr, deflt_val)
+
+    if len(list(xml_element)) > 0:
+        for child in list(xml_element):
+            # skiping comment 'function' that mainly collect comment from yaml file.
+            if not isinstance(child.tag, str):
+                continue
+            tag = remove_namespace_from_tag(child.tag)
+            if tag == 'dimension' and CATEGORY == 'base':
+                set_default_attribute(child, base_dim_attr_to_val)
+            if tag == 'dimension' and CATEGORY == 'application':
+                set_default_attribute(child, application_dim_attr_to_val)
+            if tag in elegible_tag and CATEGORY == 'base':
+                set_default_attribute(child, base_attr_to_val)
+            if tag in elegible_tag and CATEGORY == 'application':
+                set_default_attribute(child, application_attr_to_val)
 
 
 def yml_reader_nolinetag(inputfile):
@@ -132,7 +182,7 @@ def yml_reader_nolinetag(inputfile):
 def check_for_skiped_attributes(component, value, allowed_attr=None, verbose=False):
     """
         Check for any attributes have been skipped or not.
-        NOTE: We should we should keep in mind about 'doc'
+        NOTE: We should keep in mind about 'doc'
     """
     block_tag = ['enumeration']
     if value:
@@ -152,20 +202,6 @@ def check_for_skiped_attributes(component, value, allowed_attr=None, verbose=Fal
                 raise ValueError(f"An attribute '{attr}' in part '{component}' has been found"
                                  f". Please check arround line '{value[line_number]}. At this "
                                  f"moment. The allowed attrbutes are {allowed_attr}")
-
-
-def check_optionality_and_write(obj, opl_key, opl_val):
-    """
-    Taking care of optinality.
-    """
-    if opl_key == 'optional':
-        if opl_val == 'false':
-            obj.set('required', 'true')
-    elif opl_key == 'minOccurs':
-        if opl_val == '0':
-            pass
-        else:
-            obj.set(opl_key, str(opl_val))
 
 
 def format_nxdl_doc(string):
@@ -237,7 +273,6 @@ def xml_handle_exists(dct, obj, keyword, value):
     """
     This function creates an 'exists' element instance, and appends it to an existing element
     """
-
     line_number = f'__line__{keyword}'
     assert value is not None, f'Line {dct[line_number]}: exists argument must not be None !'
     if isinstance(value, list):
@@ -268,12 +303,14 @@ def xml_handle_exists(dct, obj, keyword, value):
                              f'entries either [min, <uint>] or [max, <uint>], or a list of four '
                              f'entries [min, <uint>, max, <uint>] !')
     else:
+        # This clause take optional in all concept except dimension where 'required' key is allowed
+        # not the 'optional' key.
         if value == 'optional':
             obj.set('optional', 'true')
         elif value == 'recommended':
             obj.set('recommended', 'true')
         elif value == 'required':
-            obj.set('required', 'true')
+            obj.set('optional', 'false')
         else:
             obj.set('minOccurs', '0')
 
@@ -300,7 +337,6 @@ def xml_handle_group(dct, obj, keyword, value, verbose=False):
         raise ValueError("A group must have both value and name. Check for group.")
     grp = ET.SubElement(obj, 'group')
 
-    # type come first
     if l_bracket == 0 and r_bracket > 0:
         grp.set('type', keyword_type)
         if keyword_name:
@@ -418,8 +454,11 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verb
         function. please also read note in xml_handle_dimensions.
     """
 
-    possible_dim_attrs = ['ref', 'optional', 'recommended', 'incr', 'refindex']
-    # , 'required'
+    possible_dim_attrs = ['ref', 'recommended', 'incr', 'refindex', 'required']
+
+    # Some attributes might have equivalent name e.g. 'required' is correct one and
+    # 'optional' could be another name. Then change attribute to the correct one.
+    wrong_to_correct_attr = [('optional', 'required')]
     header_line_number = f"__line__{keyword}"
     dim_list = []
     rm_key_list = []
@@ -432,7 +471,6 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verb
     for attr, vvalue in value.items():
         if '__line__' in attr:
             continue
-
         line_number = f"__line__{attr}"
         line_loc = value[line_number]
         # dim comes in precedence
@@ -467,6 +505,11 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verb
                     continue
                 cmnt_number = f'__line__{kkkey}'
                 cmnt_loc = vvalue[cmnt_number]
+                # Check whether any optional attributes added
+                for tuple_wng_crt in wrong_to_correct_attr:
+                    if kkkey == tuple_wng_crt[0]:
+                        raise ValueError(f"{cmnt_loc}: Attribute '{kkkey}' is prohibited, use "
+                                         f"'{tuple_wng_crt[1]}")
                 if kkkey == 'doc' and dim_list:
                     # doc comes as list of doc
                     for i, dim in enumerate(dim_list):
@@ -688,6 +731,7 @@ def xml_handle_attributes(dct, obj, keyword, value, verbose):
     line_loc = dct[line_number]
     xml_handle_comment(obj, line_number, line_loc)
     # list of possible attribute of xml attribute elementsa
+    # TODO: check 'optional', 'recommended', 'minOccurs', 'maxOccurs' are really exists in yaml file.
     attr_attr_list = ['name', 'type', 'unit', 'nameType',
                       'optional', 'recommended', 'minOccurs',
                       'maxOccurs', 'deprecated', 'exists']
@@ -783,7 +827,7 @@ def xml_handle_fields(obj, keyword, value, line_annot, line_loc, verbose=False):
     then the not empty keyword_name is a field!
     This simple function will define a new node of xml tree
     """
-
+    # TODO: check 'maxOccurs', 'minOccurs', 'recommended', and 'optional' are really exists as keys in yaml file.
     # List of possible attributes of xml elements
     allowed_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs', 'long_name',
                     'axis', 'signal', 'deprecated', 'axes', 'exists',
@@ -1107,6 +1151,7 @@ keyword has an invalid pattern, or is too short!'
         (lin_annot, line_loc) = post_comment.get_line_info()
         xml_handle_comment(xml_root, lin_annot, line_loc)
 
+    check_for_default_attribute_and_value(xml_root)
     pretty_print_xml(xml_root, out_file, def_cmnt_text)
     if verbose:
         sys.stdout.write('Parsed YAML to NXDL successfully\n')
