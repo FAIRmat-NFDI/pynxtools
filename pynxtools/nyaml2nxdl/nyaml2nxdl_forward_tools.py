@@ -364,7 +364,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
             incr:[...]'
     """
 
-    possible_dimension_attrs = ['rank']
+    possible_dimension_attrs = ['rank']  # nxdl attributes
     line_number = f'__line__{keyword}'
     line_loc = dct[line_number]
     assert 'dim' in value.keys(), (f"Line {line_loc}: No dim as child of dimension has "
@@ -373,7 +373,7 @@ def xml_handle_dimensions(dct, obj, keyword, value: dict):
     dims = ET.SubElement(obj, 'dimensions')
     # Consider all the childs under dimension is dim element and
     # its attributes
-#    val_attrs = list(value.keys())
+
     rm_key_list = []
     rank = ''
     for key, val in value.items():
@@ -418,7 +418,8 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verb
         function. please also read note in xml_handle_dimensions.
     """
 
-    possible_dim_attrs = ['ref', 'optional', 'recommended', 'required', 'incr', 'refindex']
+    possible_dim_attrs = ['ref', 'optional', 'recommended', 'incr', 'refindex']
+    # , 'required'
     header_line_number = f"__line__{keyword}"
     dim_list = []
     rm_key_list = []
