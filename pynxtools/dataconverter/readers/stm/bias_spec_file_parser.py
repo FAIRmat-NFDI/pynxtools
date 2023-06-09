@@ -248,11 +248,7 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
                        "LI Demod 2 Y/"]
 
         global extra_annot
-        current = None
-        current_unit = ""
-        bias_unit = ""
-        volt = None
-        # Bellow we are collecting: current, bias, axes, and data field info.
+        # Bellow we are collecting: axes, and data field info.
         # list of paths e.g. "/dat_mat_components/Bias/value" comes from
         # dict value of /ENTRY[entry]/DATA[data] in config file.
         for path in dt_val:
@@ -272,58 +268,33 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
                     data_field_dt.append(data_dict[path])
                     data_field_nm.append(possible_field[0:-1])
                     data_field_unit.append(get_unit(path, data_dict))
-            if 'Current/value' in trimed_path:
-                current = data_dict[path]
-            if 'Current/unit' in trimed_path:
-                current_unit = data_dict[trimed_path]
-            if 'Bias/value' in trimed_path:
-                volt = data_dict[path]
-            if 'Bias/unit' in trimed_path:
-                bias_unit = data_dict[trimed_path]
-
-        if not extra_annot:
-            extra_annot = 'data'
-        else:
-            extra_annot = f"data ({extra_annot})"
 
         # Note: this value must come from ELN
+        # Note try to create link for axes
         flip_number = -1
         global temp_data_grp
-        temp_data_grp = data_group.replace("DATA[data", f"DATA[{extra_annot}")
         for dt_fd, dat_, unit in zip(data_field_nm, data_field_dt, data_field_unit):
+            if extra_annot:
+                temp_data_grp = data_group.replace("DATA[data", f"DATA[{dt_fd}({extra_annot})")
+            else:
+                temp_data_grp = data_group.replace("DATA[data", f"DATA[{dt_fd}")
+            template[temp_data_grp + '/@signal'] = dt_fd
+            template[temp_data_grp + '/@axes'] = axes_name
+            # template[temp_data_grp + '/title'] =
             data_field = temp_data_grp + '/' + dt_fd
             if "LI Demod" in dt_fd:
-                template[data_field] = dat_ * -1
+                template[data_field] = dat_ * flip_number
             else:
                 template[data_field] = dat_  # cal_dx_by_dy(current, volt)
-            template[data_field + '/@axes'] = axes_name[0]
-            template[data_field + '/@Bias_indices'] = 0
+
+            for axis, data_, a_unit in zip(axes_name, axes_data, axes_unit):
+                template[temp_data_grp + '/' + axis] = data_
+                template[f"{temp_data_grp}/{axis}/@long_name"] = f"{axis}({a_unit})"
+                template[f"{temp_data_grp}/@{axis}_indices"] = 0
             if unit:
                 template[data_field + '/@long_name'] = f"{dt_fd} ({unit})"
             else:
                 template[data_field + '/@long_name'] = dt_fd
-
-    def fill_out_NXdata_group(signal='auxiliary_signals'):
-        """To fill out NXdata which is root for all data fields and attributes.
-           This function fills template with first level of descendent fields and attributes
-           of NXdata but not the fields and attributes under child of NXdata.
-        """
-        signal_field = "Current"
-        data_signal = temp_data_grp + '/@signal'
-        template[data_signal] = signal_field
-        # data_aux_signals = f"{temp_data_grp}/@auxiliary_signals"
-        # template[data_aux_signals] = data_field_nm
-        data_axes = temp_data_grp + '/@axes'
-        template[data_axes] = axes_name
-        for axis, coor_dt in zip(axes_name, axes_data):
-            # construct AXISNAME_indices
-            template[temp_data_grp + '/@' + axis + '_indices'] = 0
-            template[temp_data_grp + '/' + axis] = coor_dt
-        for axis, unit in zip(axes_name, axes_unit):
-            if unit:
-                template[temp_data_grp + '/' + axis + '/@longname'] = f"{axis}({unit})"
-            else:
-                template[temp_data_grp + '/' + axis + '/@longname'] = f"{axis}"
 
     def get_unit(value_key, data_dict):
         # value_key: /dat_mat_components/LI Demod 1 X/value
@@ -359,11 +330,9 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
             continue
         if dt_key == '1':
             indivisual_DATA_field()
-            fill_out_NXdata_group()
         # To fill out data field as many as we have
         else:
             indivisual_DATA_field()
-            fill_out_NXdata_group()
 
 
 def from_dat_file_into_template(template, dat_file, config_dict):
