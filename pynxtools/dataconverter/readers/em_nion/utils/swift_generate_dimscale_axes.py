@@ -23,7 +23,7 @@ from typing import List, Any
 
 import numpy as np
 
-from pynxtools.dataconverter.readers.em_nion.concepts.swift_display_items_to_nx_concepts \
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_display_items_to_nx \
     import metadata_constraints, check_existence_of_required_fields  # nexus_concept_dict
 
 

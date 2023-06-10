@@ -48,15 +48,21 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                 if suffix in self.supported_mime_types:
                     if file_name not in self.case[suffix]:
                         self.case[suffix].append(file_name)
-        recon_input = 0
-        range_input = 0
+
+        recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT
+        range_input = 0  # ranging definition file, e.g. RNG, RRNG
+        other_input = 0  # generic ELN or OASIS-specific configurations
         for mime_type, value in self.case.items():
             if mime_type in ["pos", "epos", "apt"]:
                 recon_input += len(value)
-            if mime_type in ["rrng", "rng", "txt"]:
+            elif mime_type in ["rrng", "rng", "txt"]:
                 range_input += len(value)
-        eln_input = len(self.case["yaml"]) + len(self.case["yml"])
-        if (recon_input == 1) and (range_input == 1) and (eln_input == 1):
+            elif mime_type in ["yaml", "yml"]:
+                other_input += len(value)
+            else:
+                continue
+
+        if (recon_input == 1) and (range_input == 1) and (1 <= other_input <= 2):
             self.is_valid = True
             self.reconstruction: List[str] = []
             self.ranging: List[str] = []
@@ -64,6 +70,12 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                 self.reconstruction += self.case[mime_type]
             for mime_type in ["rrng", "rng", "txt"]:
                 self.ranging += self.case[mime_type]
-            self.eln: List[str] = []
+            yml: List[str] = []
             for mime_type in ["yaml", "yml"]:
-                self.eln += self.case[mime_type]
+                yml += self.case[mime_type]
+            for entry in yml:
+                if entry.endswith(".oasis.specific.yaml") \
+                        or entry.endswith(".oasis.specific.yml"):
+                    self.cfg += [entry]
+                else:
+                    self.eln += [entry]

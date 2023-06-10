@@ -23,22 +23,25 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-from pynxtools.dataconverter.readers.apm.utils.apm_use_case_selector \
+from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases \
     import ApmUseCaseSelector
 
-from pynxtools.dataconverter.readers.apm.utils.apm_generic_eln_io \
+from pynxtools.dataconverter.readers.apm.utils.apm_load_deployment_specifics \
+    import NxApmNomadOasisConfigurationParser
+
+from pynxtools.dataconverter.readers.apm.utils.apm_load_generic_eln \
     import NxApmNomadOasisElnSchemaParser
 
-from pynxtools.dataconverter.readers.apm.utils.apm_reconstruction_io \
+from pynxtools.dataconverter.readers.apm.utils.apm_load_reconstruction \
     import ApmReconstructionParser
 
-from pynxtools.dataconverter.readers.apm.utils.apm_ranging_io \
+from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging \
     import ApmRangingDefinitionsParser
 
-from pynxtools.dataconverter.readers.apm.utils.apm_nexus_plots \
+from pynxtools.dataconverter.readers.apm.utils.apm_create_nx_default_plots \
     import apm_default_plot_generator
 
-from pynxtools.dataconverter.readers.apm.utils.apm_example_data \
+from pynxtools.dataconverter.readers.apm.utils.apm_generate_synthetic_data \
     import ApmCreateExampleData
 
 # this apm parser combines multiple sub-parsers
@@ -102,6 +105,12 @@ class ApmReader(BaseReader):
             else:
                 print("No input file defined for eln data !")
                 return {}
+
+            print("Parse (meta)data coming from a configuration that specific OASIS...")
+            if len(case.cfg) == 1:
+                nx_apm_cfg = NxApmNomadOasisConfigurationParser(case.cfg[0], entry_id)
+                nx_apm_cfg.report(template)
+            # having and or using a deployment-specific configuration is optional
 
             print("Parse (numerical) data and metadata from ranging definitions file...")
             if len(case.reconstruction) == 1:

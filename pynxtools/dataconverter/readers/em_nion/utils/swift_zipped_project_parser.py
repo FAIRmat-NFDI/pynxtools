@@ -38,21 +38,21 @@ from zipfile37 import ZipFile
 from pynxtools.dataconverter.readers.em_nion.utils.swift_uuid_to_file_name \
     import uuid_to_file_name
 
-from pynxtools.dataconverter.readers.em_nion.utils.swift_dimscale_axes \
+from pynxtools.dataconverter.readers.em_nion.utils.swift_generate_dimscale_axes \
     import get_list_of_dimension_scale_axes
 
-from pynxtools.dataconverter.readers.em_nion.concepts.swift_display_items_to_nx_concepts \
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_display_items_to_nx \
     import nexus_concept_dict, identify_nexus_concept_key
 
-from pynxtools.dataconverter.readers.em_nion.concepts.swift_handle_nx_concepts \
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import apply_modifier, variadic_path_to_specific_path
 
-from pynxtools.dataconverter.readers.em_nion.concepts.nx_image_real_space \
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_to_nx_image_real_space \
     import NxImageRealSpaceDict
 
-from pynxtools.dataconverter.readers.em_nion.utils.versioning \
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
     import NX_EM_NION_SWIFT_NAME, NX_EM_NION_SWIFT_VERSION
-from pynxtools.dataconverter.readers.em_nion.utils.versioning \
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
     import NX_EM_NION_EXEC_NAME, NX_EM_NION_EXEC_VERSION
 
 
