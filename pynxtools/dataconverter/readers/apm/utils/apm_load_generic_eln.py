@@ -23,13 +23,16 @@ import flatdict as fd
 
 import yaml
 
-# from ase.data import chemical_symbols
+from ase.data import chemical_symbols
 
 from pynxtools.dataconverter.readers.apm.map_concepts.apm_eln_to_nx_map \
     import NxApmElnInput, NxUserFromListOfDict
 
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import variadic_path_to_specific_path, apply_modifier
+
+from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table \
+    import parse_composition_table
 
 
 class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
@@ -65,6 +68,37 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
 
     def parse_sample_composition(self, template: dict) -> dict:
         """Interpret human-readable ELN input to generate consistent composition table."""
+        src = "sample/composition"
+        if src in self.yml.keys():
+            if isinstance(self.yml[src], list):
+                dct = parse_composition_table(self.yml[src])
+
+                prfx = f"/ENTRY[entry{self.entry_id}]/sample/" \
+                       f"CHEMICAL_COMPOSITION[chemical_composition]"
+                unit = "at.-%"  # the assumed default unit
+                if "normalization" in dct:
+                    if dct["normalization"] in ["%", "at%", "at-%", "at.-%", "ppm", "ppb"]:
+                        unit = "at.-%"
+                        template[f"{prfx}/normalization"] = "atom_percent"
+                    elif dct["normalization"] in ["wt%", "wt-%", "wt.-%"]:
+                        unit = "wt.-%"
+                        template[f"{prfx}/normalization"] = "weight_percent"
+                    else:
+                        return template
+                ion_id = 1
+                for symbol in chemical_symbols[1::]:
+                    # ase convention, chemical_symbols[0] == "X"
+                    # to use ordinal number for indexing
+                    if symbol in dct:
+                        if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
+                            trg = f"{prfx}/ION[ion{ion_id}]"
+                            template[f"{trg}/name"] = symbol
+                            template[f"{trg}/composition"] = dct[symbol][0]
+                            template[f"{trg}/composition/@units"] = unit
+                            if dct[symbol][1] is not None:
+                                template[f"{trg}/composition_error"] = dct[symbol][1]
+                                template[f"{trg}/composition_error/@units"] = unit
+                            ion_id += 1
         return template
 
     def parse_user_section(self, template: dict) -> dict:
