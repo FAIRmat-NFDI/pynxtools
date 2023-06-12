@@ -129,13 +129,10 @@ class ApmReader(BaseReader):
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, n_entries)
 
-        debugging = False
-        if debugging is True:
-            print("Reporting state of template before passing to HDF5 writing...")
-            for keyword in template.keys():
-                print(keyword)
-                # print(type(template[keyword]))
-                # print(template[keyword])
+        print("Reporting state of template before passing to HDF5 writing...")
+        for keyword in template.keys():
+            print(keyword)
+        #     print(template[keyword])
 
         print("Forward instantiated template to the NXS writer...")
         return template

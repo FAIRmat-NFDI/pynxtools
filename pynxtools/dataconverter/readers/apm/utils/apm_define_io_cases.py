@@ -36,11 +36,21 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         eln injects additional metadata and eventually numerical data.
         """
         self.case: Dict[str, list] = {}
+        self.eln: List[str] = []
+        self.cfg: List[str] = []
+        self.reconstruction: List[str] = []
+        self.ranging: List[str] = []
         self.is_valid = False
         self.supported_mime_types = [
             "pos", "epos", "apt", "rrng", "rng", "txt", "yaml", "yml"]
         for mime_type in self.supported_mime_types:
             self.case[mime_type] = []
+
+        self.sort_files_by_mime_type(file_paths)
+        self.check_validity_of_file_combinations()
+
+    def sort_files_by_mime_type(self, file_paths: Tuple[str] = None):
+        """Sort all input-files based on their mimetype to prepare validity check."""
         for file_name in file_paths:
             index = file_name.lower().rfind(".")
             if index >= 0:
@@ -49,6 +59,8 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                     if file_name not in self.case[suffix]:
                         self.case[suffix].append(file_name)
 
+    def check_validity_of_file_combinations(self):
+        """Check if this combination of types of files is supported."""
         recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT
         range_input = 0  # ranging definition file, e.g. RNG, RRNG
         other_input = 0  # generic ELN or OASIS-specific configurations

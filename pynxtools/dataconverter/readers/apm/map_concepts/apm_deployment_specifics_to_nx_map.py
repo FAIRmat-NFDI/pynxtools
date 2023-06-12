@@ -40,12 +40,13 @@
 # such that it executes after reading generic ELN data (eventually available entries)
 # in the template get overwritten
 
-from pynxtools.dataconverter.readers.apm.utils \
+from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
 
 
 NxApmDeploymentSpecificInput \
-    = {"ENTRY[entry*]/@version": f"{NX_APM_ADEF_VERSION}",
-       "ENTRY[entry*]/definition": f"{NX_APM_ADEF_NAME}",
-       "ENTRY[entry*]/PROGRAM[program1]/program": f"{NX_APM_EXEC_NAME}",
-       "ENTRY[entry*]/PROGRAM[program1]/program/@version": f"{NX_APM_EXEC_VERSION}"}
+    = {"/ENTRY[entry*]/@version": f"{NX_APM_ADEF_VERSION}",
+       "/ENTRY[entry*]/definition": f"{NX_APM_ADEF_NAME}",
+       "/ENTRY[entry*]/PROGRAM[program1]/program": f"{NX_APM_EXEC_NAME}",
+       "/ENTRY[entry*]/PROGRAM[program1]/program/@version": f"{NX_APM_EXEC_VERSION}",
+       "/ENTRY[entry*]/atom_probe/location": {"fun": "load_from", "terms": "location"}}

@@ -15,13 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Load deployment specific quantities."""
+"""Load deployment-specific quantities."""
 
 # pylint: disable=no-member
 
 import flatdict as fd
-
-import numpy as np
 
 import yaml
 
@@ -48,13 +46,12 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
             self.file_name = ""
             self.yml = {}
 
-    def parse_other_sections(self, template: dict) -> dict:
+    def report(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         for nx_path, modifier in NxApmDeploymentSpecificInput.items():
-            if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
+            if nx_path not in ("IGNORE", "UNCLEAR"):
                 trg = variadic_path_to_specific_path(nx_path, [self.entry_id, 1])
                 res = apply_modifier(modifier, self.yml)
                 if res is not None:
                     template[trg] = res
-
         return template

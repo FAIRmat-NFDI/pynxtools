@@ -381,7 +381,7 @@ definitions:
                     maxValue: 10.0
               field_of_view:
                 type: np.float64
-                unit: meter
+                unit: nanometer
                 description: |
                   The nominal diameter of the specimen ROI which is measured in the
                   experiment. Physically, the specimen cannot be measured completely
@@ -389,7 +389,7 @@ definitions:
                 m_annotations:
                   eln:
                     component: NumberEditQuantity
-                    defaultDisplayUnit: meter
+                    defaultDisplayUnit: nanometer
                     minValue: 0.0
               fabrication_vendor:
                 type: str
@@ -479,7 +479,7 @@ definitions:
                     component: NumberEditQuantity
                     defaultDisplayUnit: kelvin
                     minValue: 0.0
-                    maxValue: 273.15
+                    maxValue: 300.0
               analysis_chamber_pressure:
                 type: np.float64
                 unit: torr
@@ -549,8 +549,8 @@ definitions:
                         type_kind: Enum
                         type_data:
                           - laser
-                          - high_voltage
-                          - laser_and_high_voltage
+                          - voltage
+                          - laser_and_voltage
                       description: |
                         Which pulsing mode was used?
                       m_annotations:
@@ -574,41 +574,53 @@ definitions:
                           component: NumberEditQuantity
                           minValue: 0.0
                           maxValue: 1.0
-                    laser_source_name:
-                      type: str
-                      description: Given name/alias.
-                      m_annotations:
-                        eln:
-                          component: StringEditQuantity
-                    laser_source_wavelength:
-                      type: np.float64
-                      unit: meter
-                      description: Nominal wavelength of the laser radiation.
-                      m_annotations:
-                        eln:
-                          component: NumberEditQuantity
-                          defaultDisplayUnit: nanometer
-                          minValue: 0.0
-                    laser_source_power:
-                      type: np.float64
-                      unit: watt
-                      description: |
-                        Nominal power of the laser source while
-                        illuminating the specimen.
-                      m_annotations:
-                        eln:
-                          component: NumberEditQuantity
-                          defaultDisplayUnit: nanowatt
-                          minValue: 0.0
-                    laser_source_pulse_energy:
-                      type: np.float64
-                      unit: joule
-                      description: Average energy of the laser at peak of each pulse.
-                      m_annotations:
-                        eln:
-                          component: NumberEditQuantity
-                          defaultDisplayUnit: picojoule
-                          minValue: 0.0
+                    # LEAP 6000 instrument has up to two lasers
+                  sub_sections:
+                    laser_source:
+                      repeats: True
+                      section:
+                        description: |
+                          Details about each laser pulsing unit.
+                          LEAP6000 instruments can use up to two lasers.
+                        m_annotations:
+                          eln:
+                        quantities:
+                          name:
+                            type: str
+                            description: Given name/alias.
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                          wavelength:
+                            type: np.float64
+                            unit: nanometer
+                            description: Nominal wavelength of the laser radiation.
+                            m_annotations:
+                             eln:
+                               component: NumberEditQuantity
+                               defaultDisplayUnit: nanometer
+                               minValue: 0.0
+                          power:
+                            type: np.float64
+                            unit: nanowatt
+                            description: |
+                              Nominal power of the laser source while
+                              illuminating the specimen.
+                            m_annotations:
+                              eln:
+                                component: NumberEditQuantity
+                                defaultDisplayUnit: nanowatt
+                                minValue: 0.0
+                          pulse_energy:
+                            type: np.float64
+                            unit: picojoule
+                            description: |
+                              Average energy of the laser at peak of each pulse.
+                            m_annotations:
+                              eln:
+                                component: NumberEditQuantity
+                                defaultDisplayUnit: picojoule
+                                minValue: 0.0
         # control_software:
         #   section:
         #     description: Which control software was used e.g. IVAS/APSuite
