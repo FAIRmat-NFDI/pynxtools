@@ -56,16 +56,16 @@ NXmpes: Test documentation
 8: exists: comment-->
     <group type="NXentry" recommended="true">
         <!--9: Title comment-->
-        <field name="title" optional="false"/>
+        <field name="title"/>
         <!--10: Group comment-->
-        <field name="start_time" type="NX_DATE_TIME" optional="false">
+        <field name="start_time" type="NX_DATE_TIME">
             <doc>
                  Datetime of the start of the measurement.
             </doc>
         </field>
-        <field name="definition" optional="false">
+        <field name="definition">
             <!--11: version_attribute: comments hrere-->
-            <attribute name="version" optional="false"/>
+            <attribute name="version"/>
             <enumeration>
                 <item value="NXmpes"/>
             </enumeration>
@@ -74,12 +74,12 @@ NXmpes: Test documentation
         <!--13: comment nxdata(data): comments
 comment nxdata(data): comments-->
         <!--14: Third comment for Comment NXdata(data)-->
-        <group type="NXdata" name="data" optional="false">
+        <group type="NXdata" name="data">
             <!--15: comment (energy(link)):-->
             <link name="energy" target="/entry/instrument/fluorescence/energy"/>
             <!--16: comment (data(link)):-->
             <link name="data" target="/entry/instrument/fluorescence/data"/>
-            <field name="region_origin" type="NX_INT" optional="false">
+            <field name="region_origin" type="NX_INT">
                 <doc>
                      origin of rectangular region selected for readout
                 </doc>
@@ -87,7 +87,7 @@ comment nxdata(data): comments-->
                 <!--18: rank comments: comments-->
                 <dimensions rank="1">
                     <!--19: dim comments:-->
-                    <dim index="1" value="2" required="true"/>
+                    <dim index="1" value="2"/>
                 </dimensions>
             </field>
         </group>

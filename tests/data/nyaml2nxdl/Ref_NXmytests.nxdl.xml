@@ -56,20 +56,20 @@
          This is a test file for checking the correct parsing of several fields and
          attributes in nxdl files
     </doc>
-    <field name="distance" type="NX_FLOAT" units="NX_LENGTH" optional="true">
+    <field name="distance" type="NX_FLOAT" units="NX_LENGTH">
         <doc>
              Distance from sample
         </doc>
     </field>
-    <field name="incident_energy" type="NX_FLOAT" units="NX_ENERGY" optional="true">
+    <field name="incident_energy" type="NX_FLOAT" units="NX_ENERGY">
         <doc>
              Energy on entering beamline component
         </doc>
         <dimensions rank="1">
-            <dim index="1" value="i" required="false"/>
+            <dim index="1" value="i"/>
         </dimensions>
     </field>
-    <field name="mode" optional="true">
+    <field name="mode">
         <doc>
              source operating mode
         </doc>
@@ -86,14 +86,14 @@
             </item>
         </enumeration>
     </field>
-    <field name="electric_field" type="NX_FLOAT" units="NX_VOLTAGE" optional="true">
+    <field name="electric_field" type="NX_FLOAT" units="NX_VOLTAGE">
         <doc>
              Applied electric field
         </doc>
         <dimensions>
-            <dim index="1" value="n_eField" required="false"/>
+            <dim index="1" value="n_eField"/>
         </dimensions>
-        <attribute name="direction" optional="true">
+        <attribute name="direction">
             <enumeration>
                 <item value="x"/>
                 <item value="y"/>
@@ -101,12 +101,12 @@
             </enumeration>
         </attribute>
     </field>
-    <field name="temperature" type="NX_FLOAT" units="NX_TEMPERATURE" optional="true">
+    <field name="temperature" type="NX_FLOAT" units="NX_TEMPERATURE">
         <doc>
              Sample temperature. This could be a scanned variable
         </doc>
         <dimensions rank="anyRank">
-            <dim index="1" value="n_Temp" required="false"/>
+            <dim index="1" value="n_Temp"/>
         </dimensions>
     </field>
 </definition>
