@@ -2,13 +2,13 @@
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <!--
 # NeXus - Neutron and X-ray Common Data Format
-# 
+#
 # Copyright (C) 2014-2022 NeXus International Advisory Committee (NIAC)
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# version 3 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -56,12 +56,12 @@
     </symbols>
     <doc>
          Ellipsometry, complex systems, up to variable angle spectroscopy.
-         
+
          Information on ellipsometry is provided, e.g. in:
          - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons, 2007.
          - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland Publishing Company, 1977.
          - H. G. Tompkins and E. A. Irene, Handbook of Ellipsometry, William Andrew, 2005.
-         
+
          Open acces sources:
          - https://www.angstromadvanced.com/resource.asp
          - https://pypolar.readthedocs.io/en/latest/
@@ -69,12 +69,12 @@
     <group type="NXentry">
         <doc>
              Ellipsometry, complex systems, up to variable angle spectroscopy.
-             
+
              Information on ellipsometry is provided, e.g. in:
              - H. Fujiwara, Spectroscopic ellipsometry: principles and applications, John Wiley &amp; Sons, 2007.
              - R. M. A. Azzam and N. M. Bashara, Ellipsometry and Polarized Light, North-Holland Publishing Company, 1977.
              - H. G. Tompkins and E. A. Irene, Handbook of Ellipsometry, William Andrew, 2005.
-             
+
              Open acces sources:
              - https://www.angstromadvanced.com/resource.asp
              - https://pypolar.readthedocs.io/en/latest/
@@ -297,12 +297,12 @@
                          Arrays which provide the measured calibration data.
                          Multiple sets are possible, e.g. Psi and delta measured on an
                          e.g. silicon calibration waver, and the straight-through data.
-                         
-                         We 
-                         recommend to 
-                         
+
+                         We
+                         recommend to
+
                          provide data that is measured under the same settings
-                         
+
                          as the measurement was performed, that is if Psi and delta are measured
                          for your data, also provide Psi and delta here.
                          And use the same wavelenghts as there.&quot;
