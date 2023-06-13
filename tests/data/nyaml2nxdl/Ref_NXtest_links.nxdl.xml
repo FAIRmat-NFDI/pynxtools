@@ -2,9 +2,9 @@
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <!--
 # NeXus - Neutron and X-ray Common Data Format
-# 
+#
 # Copyright (C) 2014-2022 NeXus International Advisory Committee (NIAC)
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
@@ -25,7 +25,7 @@
     <doc>
          Test case for verifying that the parser can handle links correctly.
     </doc>
-    <group type="NXdata" optional="true">
+    <group type="NXdata">
         <link name="polar_angle" target="here1"/>
         <link name="target_angle" target="here2"/>
     </group>

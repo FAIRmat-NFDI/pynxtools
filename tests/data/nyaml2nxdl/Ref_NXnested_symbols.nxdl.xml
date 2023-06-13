@@ -2,9 +2,9 @@
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <!--
 # NeXus - Neutron and X-ray Common Data Format
-# 
+#
 # Copyright (C) 2014-2022 NeXus International Advisory Committee (NIAC)
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
@@ -52,7 +52,7 @@
          Test case for verifying handling of symbols inside a nexus class in nested
          layers of the hierarchy
     </doc>
-    <group type="NXsample" optional="true">
+    <group type="NXsample">
         <symbols>
             <doc>
                  teststring

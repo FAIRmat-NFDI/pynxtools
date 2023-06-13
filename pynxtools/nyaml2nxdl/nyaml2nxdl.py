@@ -34,7 +34,7 @@ from pynxtools.nyaml2nxdl.nyaml2nxdl_backward_tools import (Nxdl2yaml,
                                                             compare_niac_and_my)
 
 
-DEPTH_SIZE = "    "
+DEPTH_SIZE = 4 * " "
 
 # NOTE: Some handful links for nyaml2nxdl converter:
 # https://manual.nexusformat.org/nxdl_desc.html?highlight=optional
