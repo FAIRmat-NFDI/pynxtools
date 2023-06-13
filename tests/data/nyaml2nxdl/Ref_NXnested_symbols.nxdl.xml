@@ -68,7 +68,7 @@
                 </doc>
             </symbol>
         </symbols>
-        <group type="NXprocess" optional="true">
+        <group type="NXprocess">
             <symbols>
                 <doc>
                      another nest
