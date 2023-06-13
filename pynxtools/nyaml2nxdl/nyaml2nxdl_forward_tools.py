@@ -1153,7 +1153,8 @@ keyword has an invalid pattern, or is too short!'
         xml_handle_comment(xml_root, lin_annot, line_loc)
 
     # Note: Just to keep the functionality if we need this functionality later.
-    if False:
+    default_attr = False
+    if default_attr:
         check_for_default_attribute_and_value(xml_root)
     pretty_print_xml(xml_root, out_file, def_cmnt_text)
     if verbose:
