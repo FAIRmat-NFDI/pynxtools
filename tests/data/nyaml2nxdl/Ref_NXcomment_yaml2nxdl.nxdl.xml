@@ -8,7 +8,7 @@
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# version 3 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -56,16 +56,16 @@ NXmpes: Test documentation
 8: exists: comment-->
     <group type="NXentry" recommended="true">
         <!--9: Title comment-->
-        <field name="title"/>
+        <field name="title" optional="false"/>
         <!--10: Group comment-->
-        <field name="start_time" type="NX_DATE_TIME">
+        <field name="start_time" type="NX_DATE_TIME" optional="false">
             <doc>
                  Datetime of the start of the measurement.
             </doc>
         </field>
-        <field name="definition">
+        <field name="definition" optional="false">
             <!--11: version_attribute: comments hrere-->
-            <attribute name="version"/>
+            <attribute name="version" optional="false"/>
             <enumeration>
                 <item value="NXmpes"/>
             </enumeration>
@@ -74,12 +74,12 @@ NXmpes: Test documentation
         <!--13: comment nxdata(data): comments
 comment nxdata(data): comments-->
         <!--14: Third comment for Comment NXdata(data)-->
-        <group type="NXdata" name="data">
+        <group type="NXdata" name="data" optional="false">
             <!--15: comment (energy(link)):-->
             <link name="energy" target="/entry/instrument/fluorescence/energy"/>
             <!--16: comment (data(link)):-->
             <link name="data" target="/entry/instrument/fluorescence/data"/>
-            <field name="region_origin" type="NX_INT">
+            <field name="region_origin" type="NX_INT" optional="false">
                 <doc>
                      origin of rectangular region selected for readout
                 </doc>
@@ -87,7 +87,7 @@ comment nxdata(data): comments-->
                 <!--18: rank comments: comments-->
                 <dimensions rank="1">
                     <!--19: dim comments:-->
-                    <dim index="1" value="2"/>
+                    <dim index="1" value="2" required="true"/>
                 </dimensions>
             </field>
         </group>

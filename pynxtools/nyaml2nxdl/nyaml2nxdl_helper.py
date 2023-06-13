@@ -110,7 +110,6 @@ def cleaning_empty_lines(line_list):
     """
         Cleaning up empty lines on top and bottom.
     """
-
     if not isinstance(line_list, list):
         line_list = line_list.split('\n') if '\n' in line_list else ['']
 
@@ -119,11 +118,18 @@ def cleaning_empty_lines(line_list):
         if line_list[0].strip():
             break
         line_list = line_list[1:]
+        if len(line_list) == 0:
+            line_list.append('')
+            return line_list
+
     # Clining bottom empty lines
     while True:
         if line_list[-1].strip():
             break
         line_list = line_list[0:-1]
+        if len(line_list) == 0:
+            line_list.append('')
+            return line_list
 
     return line_list
 

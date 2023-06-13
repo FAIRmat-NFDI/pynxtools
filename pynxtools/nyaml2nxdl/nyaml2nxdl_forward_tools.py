@@ -121,11 +121,10 @@ def yml_reader(inputfile):
         DOM_COMMENT = dom_cmnt_frm_yaml
 
     if 'category' not in loaded_yaml.keys():
-        raise ValueError(f"All definitions should be either 'base' or 'application' category. "
-                         f"No category has been found.")
-    else:
-        CATEGORY = loaded_yaml['category']
-
+        raise ValueError("All definitions should be either 'base' or 'application' category. "
+                         "No category has been found.")
+    global CATEGORY
+    CATEGORY = loaded_yaml['category']
     return loaded_yaml
 
 
@@ -146,28 +145,34 @@ def check_for_default_attribute_and_value(xml_element):
     application_dim_attr_to_val = {'required': 'true'}
 
     # Eligible tag for default attr and value
-    # TODO also check for attributes of choice and link
     elegible_tag = ['group', 'field', 'attribute']
 
     def set_default_attribute(xml_elem, default_attr_to_val):
         for deflt_attr, deflt_val in default_attr_to_val.items():
-            if deflt_attr not in xml_elem.attrib:
+            if deflt_attr not in xml_elem.attrib \
+                and 'maxOccurs' not in xml_elem.attrib \
+                    and 'minOccurs' not in xml_elem.attrib \
+                        and 'recommended' not in xml_elem.attrib:
                 xml_elem.set(deflt_attr, deflt_val)
 
     if len(list(xml_element)) > 0:
+
         for child in list(xml_element):
             # skiping comment 'function' that mainly collect comment from yaml file.
             if not isinstance(child.tag, str):
                 continue
             tag = remove_namespace_from_tag(child.tag)
-            if tag == 'dimension' and CATEGORY == 'base':
+
+            if tag == 'dim' and CATEGORY == 'base':
                 set_default_attribute(child, base_dim_attr_to_val)
-            if tag == 'dimension' and CATEGORY == 'application':
+            if tag == 'dim' and CATEGORY == 'application':
                 set_default_attribute(child, application_dim_attr_to_val)
             if tag in elegible_tag and CATEGORY == 'base':
                 set_default_attribute(child, base_attr_to_val)
             if tag in elegible_tag and CATEGORY == 'application':
+
                 set_default_attribute(child, application_attr_to_val)
+            check_for_default_attribute_and_value(child)
 
 
 def yml_reader_nolinetag(inputfile):
@@ -276,16 +281,16 @@ def xml_handle_exists(dct, obj, keyword, value):
     line_number = f'__line__{keyword}'
     assert value is not None, f'Line {dct[line_number]}: exists argument must not be None !'
     if isinstance(value, list):
-        if len(value) == 2 and value[0] == 'min':
-            obj.set('minOccurs', str(value[1]))
-        elif len(value) == 2 and value[0] == 'max':
-            obj.set('maxOccurs', str(value[1]))
-        elif len(value) == 4 and value[0] == 'min' and value[2] == 'max':
+        if len(value) == 4 and value[0] == 'min' and value[2] == 'max':
             obj.set('minOccurs', str(value[1]))
             if str(value[3]) != 'infty':
                 obj.set('maxOccurs', str(value[3]))
             else:
                 obj.set('maxOccurs', 'unbounded')
+        elif len(value) == 2 and value[0] == 'min':
+            obj.set('minOccurs', str(value[1]))
+        elif len(value) == 2 and value[0] == 'max':
+            obj.set('maxOccurs', str(value[1]))
         elif len(value) == 4 and value[0] == 'max' and value[2] == 'min':
             obj.set('minOccurs', str(value[3]))
             if str(value[1]) != 'infty':
@@ -731,7 +736,6 @@ def xml_handle_attributes(dct, obj, keyword, value, verbose):
     line_loc = dct[line_number]
     xml_handle_comment(obj, line_number, line_loc)
     # list of possible attribute of xml attribute elementsa
-    # TODO: check 'optional', 'recommended', 'minOccurs', 'maxOccurs' are really exists in yaml file.
     attr_attr_list = ['name', 'type', 'unit', 'nameType',
                       'optional', 'recommended', 'minOccurs',
                       'maxOccurs', 'deprecated', 'exists']
@@ -827,7 +831,6 @@ def xml_handle_fields(obj, keyword, value, line_annot, line_loc, verbose=False):
     then the not empty keyword_name is a field!
     This simple function will define a new node of xml tree
     """
-    # TODO: check 'maxOccurs', 'minOccurs', 'recommended', and 'optional' are really exists as keys in yaml file.
     # List of possible attributes of xml elements
     allowed_attr = ['name', 'type', 'nameType', 'unit', 'minOccurs', 'long_name',
                     'axis', 'signal', 'deprecated', 'axes', 'exists',

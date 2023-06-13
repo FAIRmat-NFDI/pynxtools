@@ -8,7 +8,7 @@
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# version 3 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,7 @@
 #
 # For further information, see http://www.nexusformat.org
 -->
-<definition category="base" extends="NXobject" name="NXbeam" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="base" name="NXbeam" extends="NXobject" type="group" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
     <symbols>
         <doc>
              symbolic array lengths to be coordinated between various fields
@@ -56,20 +56,20 @@
          This is a test file for checking the correct parsing of several fields and
          attributes in nxdl files
     </doc>
-    <field name="distance" type="NX_FLOAT" units="NX_LENGTH">
+    <field name="distance" type="NX_FLOAT" units="NX_LENGTH" optional="true">
         <doc>
              Distance from sample
         </doc>
     </field>
-    <field name="incident_energy" type="NX_FLOAT" units="NX_ENERGY">
+    <field name="incident_energy" type="NX_FLOAT" units="NX_ENERGY" optional="true">
         <doc>
              Energy on entering beamline component
         </doc>
         <dimensions rank="1">
-            <dim index="1" value="i"/>
+            <dim index="1" value="i" required="false"/>
         </dimensions>
     </field>
-    <field name="mode">
+    <field name="mode" optional="true">
         <doc>
              source operating mode
         </doc>
@@ -86,14 +86,14 @@
             </item>
         </enumeration>
     </field>
-    <field name="electric_field" type="NX_FLOAT" units="NX_VOLTAGE">
+    <field name="electric_field" type="NX_FLOAT" units="NX_VOLTAGE" optional="true">
         <doc>
              Applied electric field
         </doc>
         <dimensions>
-            <dim index="1" value="n_eField"/>
+            <dim index="1" value="n_eField" required="false"/>
         </dimensions>
-        <attribute name="direction">
+        <attribute name="direction" optional="true">
             <enumeration>
                 <item value="x"/>
                 <item value="y"/>
@@ -101,12 +101,12 @@
             </enumeration>
         </attribute>
     </field>
-    <field name="temperature" type="NX_FLOAT" units="NX_TEMPERATURE">
+    <field name="temperature" type="NX_FLOAT" units="NX_TEMPERATURE" optional="true">
         <doc>
              Sample temperature. This could be a scanned variable
         </doc>
         <dimensions rank="anyRank">
-            <dim index="1" value="n_Temp"/>
+            <dim index="1" value="n_Temp" required="false"/>
         </dimensions>
     </field>
 </definition>

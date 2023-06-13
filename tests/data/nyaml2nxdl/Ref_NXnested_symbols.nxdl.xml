@@ -8,7 +8,7 @@
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# version 3 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,7 @@
 #
 # For further information, see http://www.nexusformat.org
 -->
-<definition category="base" extends="NXobject" name="NXentry" type="group" xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="base" name="NXentry" extends="NXobject" type="group" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
     <symbols>
         <doc>
              teststring
@@ -33,8 +33,8 @@
         </symbol>
         <symbol name="nsa">
             <doc>
-                 Number of slow axes (acquired scanning a physical quantity) e.g. lens
-                 voltage, photon energy or temperature
+                 Number of slow axes (acquired scanning a physical quantity) e.g. lens voltage,
+                 photon energy or temperature
             </doc>
         </symbol>
         <symbol name="nx">
@@ -52,7 +52,7 @@
          Test case for verifying handling of symbols inside a nexus class in nested
          layers of the hierarchy
     </doc>
-    <group type="NXsample">
+    <group type="NXsample" optional="true">
         <symbols>
             <doc>
                  teststring
@@ -68,7 +68,7 @@
                 </doc>
             </symbol>
         </symbols>
-        <group type="NXprocess">
+        <group type="NXprocess" optional="true">
             <symbols>
                 <doc>
                      another nest
