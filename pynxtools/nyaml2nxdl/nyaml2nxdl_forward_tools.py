@@ -457,7 +457,7 @@ def xml_handle_dim_from_dimension_dict(dct, dims_obj, keyword, value, rank, verb
         function. please also read note in xml_handle_dimensions.
     """
 
-    possible_dim_attrs = ['ref', 'recommended', 'incr', 'refindex', 'required']
+    possible_dim_attrs = ['ref', 'incr', 'refindex', 'required']
 
     # Some attributes might have equivalent name e.g. 'required' is correct one and
     # 'optional' could be another name. Then change attribute to the correct one.

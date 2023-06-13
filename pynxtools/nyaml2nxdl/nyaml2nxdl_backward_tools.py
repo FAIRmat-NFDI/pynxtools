@@ -540,8 +540,8 @@ class Nxdl2yaml():
           and attributes of dim has been handled inside this function here.
         """
         # pylint: disable=consider-using-f-string
-        possible_dim_attrs = ['ref', 'recommended',
-                              'required', 'incr', 'refindex']
+        possible_dim_attrs = ['ref', 'required',
+                              'incr', 'refindex']
         possible_dimemsion_attrs = ['rank']
 
         # taking care of Dimension tag
