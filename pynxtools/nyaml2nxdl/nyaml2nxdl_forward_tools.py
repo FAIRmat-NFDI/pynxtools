@@ -155,24 +155,22 @@ def check_for_default_attribute_and_value(xml_element):
                         and 'recommended' not in xml_elem.attrib:
                 xml_elem.set(deflt_attr, deflt_val)
 
-    if len(list(xml_element)) > 0:
+    for child in list(xml_element):
+        # skiping comment 'function' that mainly collect comment from yaml file.
+        if not isinstance(child.tag, str):
+            continue
+        tag = remove_namespace_from_tag(child.tag)
 
-        for child in list(xml_element):
-            # skiping comment 'function' that mainly collect comment from yaml file.
-            if not isinstance(child.tag, str):
-                continue
-            tag = remove_namespace_from_tag(child.tag)
+        if tag == 'dim' and CATEGORY == 'base':
+            set_default_attribute(child, base_dim_attr_to_val)
+        if tag == 'dim' and CATEGORY == 'application':
+            set_default_attribute(child, application_dim_attr_to_val)
+        if tag in elegible_tag and CATEGORY == 'base':
+            set_default_attribute(child, base_attr_to_val)
+        if tag in elegible_tag and CATEGORY == 'application':
 
-            if tag == 'dim' and CATEGORY == 'base':
-                set_default_attribute(child, base_dim_attr_to_val)
-            if tag == 'dim' and CATEGORY == 'application':
-                set_default_attribute(child, application_dim_attr_to_val)
-            if tag in elegible_tag and CATEGORY == 'base':
-                set_default_attribute(child, base_attr_to_val)
-            if tag in elegible_tag and CATEGORY == 'application':
-
-                set_default_attribute(child, application_attr_to_val)
-            check_for_default_attribute_and_value(child)
+            set_default_attribute(child, application_attr_to_val)
+        check_for_default_attribute_and_value(child)
 
 
 def yml_reader_nolinetag(inputfile):
@@ -1154,7 +1152,9 @@ keyword has an invalid pattern, or is too short!'
         (lin_annot, line_loc) = post_comment.get_line_info()
         xml_handle_comment(xml_root, lin_annot, line_loc)
 
-    check_for_default_attribute_and_value(xml_root)
+    # Note: Just to keep the functionality if we need this functionality later.
+    if False:
+        check_for_default_attribute_and_value(xml_root)
     pretty_print_xml(xml_root, out_file, def_cmnt_text)
     if verbose:
         sys.stdout.write('Parsed YAML to NXDL successfully\n')
