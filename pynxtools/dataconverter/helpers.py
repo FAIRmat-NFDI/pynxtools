@@ -242,7 +242,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": (float, np.ndarray, np.floating),
     "NX_INT": (int, np.ndarray, np.signedinteger),
-    "NX_UINT": (np.ndarray, np.unsignedinteger),
+    "NX_UINT": (int, np.ndarray, np.unsignedinteger),
     "NX_NUMBER": (int, float, np.ndarray, np.signedinteger, np.unsignedinteger, np.floating, dict),
     "NX_POSINT": (int, np.ndarray, np.signedinteger),  # > 0 is checked in is_valid_data_field()
     "NX_COMPLEX": (complex, np.ndarray, np.cdouble, np.csingle),
@@ -313,7 +313,7 @@ def is_valid_data_field(value, nxdl_type, path):
             raise ValueError(f"The value at {path} should be of Python type: {accepted_types}"
                              f", as defined in the NXDL as {nxdl_type}.") from exc
 
-    if nxdl_type == "NX_POSINT" and not is_positive_int(value):
+    if nxdl_type in ["NX_POSINT", "NX_UINT"] and not is_positive_int(value):
         raise ValueError(f"The value at {path} should be a positive int.")
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):

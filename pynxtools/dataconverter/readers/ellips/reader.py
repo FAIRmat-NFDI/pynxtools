@@ -67,6 +67,8 @@ CONFIG_KEYS = [
 
 REPLACE_NESTED = {
     'Instrument/Beam_path': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]',
+    'Env_Conditions': 'INSTRUMENT[instrument]/sample_stage/environment_conditions',
+    'Instrument': 'INSTRUMENT[instrument]'
 }
 
 
@@ -361,7 +363,17 @@ class EllipsometryReader(BaseReader):
         header[f"data_collection/NAME_spectrum[{spectrum_type}_spectrum]"] = (
             whole_data[spectrum_type].to_numpy()[0:counts[0]].astype("float64"))
 
+        def write_scan_axis(name: str, values: list, units: str):
+            base_path = f"Env_Conditions/PARAMETER[{name}]"
+            header[f"{base_path}/values"] = values
+            header[f"{base_path}/values/@units"] = units
+            header[f"{base_path}/number_of_parameters"] = len(values)
+            header[f"{base_path}/number_of_parameters/@units"] = ""
+            header[f"{base_path}/parameter_type"] = name
+
         header["Instrument/angle_of_incidence"] = unique_angles
+        for axis in ["detection_angle", "incident_angle"]:
+            write_scan_axis(axis, unique_angles, "degrees")
 
         # Create mocked ellipsometry data template:
         if is_mock:
@@ -430,6 +442,7 @@ class EllipsometryReader(BaseReader):
                         "shape": np.index_exp[index, dindx, :]
                 }
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degrees"
+
 
         # Define default plot showing Psi and Delta at all angles:
         template["/@default"] = "entry"
