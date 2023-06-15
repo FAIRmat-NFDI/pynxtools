@@ -11,9 +11,10 @@ import numpy as np
 
 
 class ScientaTxtParser():
-    """
-    Parser for Scienta TXT exports.
-    """
+    """ Parser for Scienta TXT exports."""
+
+    # pylint: disable=too-few-public-methods
+
     def __init__(self):
         self.lines: list = []
         self.spectra: list = []
@@ -33,14 +34,14 @@ class ScientaTxtParser():
             'Low Energy': 'start_energy',
             'High Energy': 'stop_energy',
             'Energy Step': 'step_size',
-            'Step Time': 'dwell_time', # ?????
+            'Step Time': 'dwell_time',
             'Number of Slices': 'number_of_slices',
             'File': 'data_file',
             'Sequence': 'sequence_file',
             'Spectrum Name': 'spectrum_type',
             'Instrument': 'instrument_name',
-            'Location': 'vendor', # ?????
-            'User': 'user_initials', # ?????
+            'Location': 'vendor',
+            'User': 'user_initials',
             'Sample': 'sample_name',
             'Comments': 'spectrum_comment',
             'Date': 'start_date',
@@ -61,8 +62,7 @@ class ScientaTxtParser():
             'Detector Last X-Channel': 'detector_last_x_channel',
             'Detector First Y-Channel': 'detector_first_y_channel',
             'Detector Last Y-Channel': 'detector_last_y_channel',
-
-            }
+        }
 
         lens_mode_map = {
             'Transmission': 'fixed analyzer transmission'
@@ -83,7 +83,7 @@ class ScientaTxtParser():
             'acquisition_mode': self._change_scan_mode,
         }
 
-    def parse_file(self, file, **kwargs):
+    def parse_file(self, file):
         """
         Parse the file's data and metadata into a flat
         list of dictionaries.
@@ -103,7 +103,7 @@ class ScientaTxtParser():
         self._read_lines(file)
         self._parse_header()
 
-        for region_id in range(1, self.no_of_regions+1):
+        for region_id in range(1, self.no_of_regions + 1):
             self._parse_region(region_id)
 
         return self.spectra
@@ -123,8 +123,8 @@ class ScientaTxtParser():
         None.
 
         """
-        with open(filepath) as fp:
-            for line in fp:
+        with open(filepath, encoding="utf-8") as file:
+            for line in file:
                 self.lines += [line]
 
     def _parse_header(self):
@@ -208,10 +208,11 @@ class ScientaTxtParser():
 
             if begin_data:
                 # Read XY data for this region.
-                [x, y]  = [float(s) for s in line.split(' ') if s != '']
+                [energy, intensity] = \
+                    [float(s) for s in line.split(' ') if s != '']
 
-                region_data['data']['x'].append(x)
-                region_data['data']['y'].append(y)
+                region_data['data']['x'].append(energy)
+                region_data['data']['y'].append(intensity)
 
         region_data['data']['x'] = np.array(region_data['data']['x'])
         region_data['data']['y'] = np.array(region_data['data']['y'])
@@ -219,7 +220,7 @@ class ScientaTxtParser():
         # Convert date and time to ISO8601 date time.
         start_date = region_data['start_date']
         start_time = region_data['start_time']
-        region_data['time_stamp'] =  self._construct_date_time(
+        region_data['time_stamp'] = self._construct_date_time(
             start_date,
             start_time)
 
@@ -286,7 +287,6 @@ class ScientaTxtParser():
             pass
 
         return key, value
-
 
     def _re_map_keys(self, key):
         """
@@ -358,7 +358,7 @@ class ScientaTxtParser():
         """
         date_time = datetime.combine(
             datetime.strptime(date, "%Y-%m-%d"),
-            datetime.strptime(time,'%H:%M:%S').time())
+            datetime.strptime(time, '%H:%M:%S').time())
 
         localtz = pytz.timezone('Europe/Berlin')
         date_time = localtz.localize(date_time)
