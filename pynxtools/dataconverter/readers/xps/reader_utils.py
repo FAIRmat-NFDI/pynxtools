@@ -1209,7 +1209,6 @@ def _construct_entry_name(key):
         entry_name = ""
     return entry_name
 
-#%%
 
 class XpsDataFileParser():
     """

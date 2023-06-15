@@ -310,9 +310,10 @@ def fill_template_with_eln_data(eln_data_dict,
         elif key in list(eln_data_dict.keys()):
             fill_from_value(key)
 
-def _concatenate_items(value1, value2):
+
+def _concatenate_values(value1, value2):
     """
-    Concatenate two values of same type to be stored in xps_data_dict
+    Concatenate two values of same type to be stored in xps_data_dict.
 
     """
     if (value1 and value2):
@@ -322,9 +323,7 @@ def _concatenate_items(value1, value2):
             return {**value1, **value2}
         if (isinstance(value1, list) and isinstance(value2, list)):
             return value1 + value2
-        else:
-            raise TypeError(
-                "Two existing values could not be concatenated.")
+    return None
 
 
 # pylint: disable=too-few-public-methods
@@ -374,17 +373,18 @@ class XPSReader(BaseReader):
                 # If there are multiple input data files, make sure
                 # that existing keys are not overwritten.
                 existing = [
-                    (key, xps_data_dict[key], data_dict[key]) for key in data_dict if
-                     key in xps_data_dict
-                    ]
+                    (key, xps_data_dict[key], data_dict[key]) for
+                    key in data_dict if key in xps_data_dict
+                ]
 
                 xps_data_dict = {**xps_data_dict, **data_dict}
                 for (key, value1, value2) in existing:
-                    xps_data_dict[key] = _concatenate_items(value1, value2)
+                    xps_data_dict[key] = _concatenate_values(
+                        value1, value2)
 
                 config_file = reader_dir.joinpath(
                     XPSReader.__config_files[file_ext.rsplit('.')[1]]
-                    )
+                )
 
             # This code is not very robust.
             elif file_ext == ".json":
@@ -412,5 +412,6 @@ class XPSReader(BaseReader):
                 final_template[key] = val
 
         return final_template
+
 
 READER = XPSReader
