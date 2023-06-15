@@ -831,7 +831,7 @@ class SleSpecs():
         parser = self.versions_map[version]()
         self.raw_data = parser.parse_file(filepath, **kwargs)
 
-        file_key = f'{self._root_path}/File'
+        file_key = f'{self._root_path}/Files'
         self._xps_dict[file_key] = filepath
 
         self.construct_data()
