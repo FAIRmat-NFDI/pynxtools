@@ -1137,17 +1137,11 @@ class ScientaTxtSpecs():
 
         energy = np.array(spectrum["data"]["x"])
 
-# =============================================================================
-#         for channel in channels:
-#             ch_no = channel.rsplit('_')[-1]
-#             channel_key = f'{scan_key}_chan_{ch_no}'
-#             cps = np.array(spectrum["data"][channel])
-#
-#             self._xps_dict["data"][entry][channel_key] = \
-#                 xr.DataArray(
-#                     data=cps,
-#                     coords={"energy": energy})
-# =============================================================================
+        channel_key = f'{scan_key}_chan_0'
+        self._xps_dict["data"][entry][channel_key] = \
+            xr.DataArray(
+                data=spectrum["data"]['y'],
+                coords={"energy": energy})
 
         self._xps_dict["data"][entry][scan_key] = \
             xr.DataArray(
@@ -1192,7 +1186,7 @@ def _construct_detector_data_key(spectrum):
     if 'scan_no' in spectrum:
         scan_key = f'scans/Scan_{spectrum["scan_no"]}'
     else:
-        scan_key = '/scans/Scan_0'
+        scan_key = 'scans/Scan_0'
 
     return f'{cycle_key}/{scan_key}'
 
