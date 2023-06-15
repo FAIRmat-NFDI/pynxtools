@@ -32,7 +32,7 @@ import numpy as np
 from pynxtools.dataconverter.readers.xps.sle_parsers import (
     SleParserV1,
     SleParserV4
-    )
+)
 from pynxtools.dataconverter.readers.xps.scienta_txt_parsers import ScientaTxtParser
 
 
@@ -548,20 +548,22 @@ class XmlSpecs():
 
         return self._xps_dict
 
-    def construct_entry_name(self, key):
-        """Construction entry name."""
-        key_parts = key.split("/")
-        try:
-            # entry example : vendor__sample__name_of_scan_rerion
-            entry_name = (f'{key_parts[2]}'
-                          f'__'
-                          f'{key_parts[3].split("_", 1)[1]}'
-                          f'__'
-                          f'{key_parts[5].split("_", 1)[1]}'
-                          )
-        except IndexError:
-            entry_name = ""
-        return entry_name
+# =============================================================================
+#     def construct_entry_name(self, key):
+#         """Construction entry name."""
+#         key_parts = key.split("/")
+#         try:
+#             # entry example : vendor__sample__name_of_scan_rerion
+#             entry_name = (f'{key_parts[2]}'
+#                           f'__'
+#                           f'{key_parts[3].split("_", 1)[1]}'
+#                           f'__'
+#                           f'{key_parts[5].split("_", 1)[1]}'
+#                           )
+#         except IndexError:
+#             entry_name = ""
+#         return entry_name
+# =============================================================================
 
     # pylint: disable=too-many-branches
     def collect_raw_data_to_construct_data(self):
@@ -588,7 +590,7 @@ class XmlSpecs():
                     "scans": {}}
         # xps_dict = copy.deepcopy(self._xps_dict)
         for key, val in self._xps_dict.items():
-            entry = self.construct_entry_name(key)
+            entry = _construct_entry_name(key)
 
             if entry and (entry not in entry_list):
 
@@ -1050,14 +1052,14 @@ class ScientaTxtSpecs():
                 'detector_first_y_channel',
                 'detector_last_x_channel',
                 'detector_last_y_channel',
-                'detector_mode', ##??
+                'detector_mode',
                 'dwell_time',
             ],
             'manipulator': [],
             'calibration': [],
             'sample': [
                 'sample_name'
-                ],
+            ],
             'data': [
                 'x_units',
                 'energy_axis',
@@ -1172,6 +1174,7 @@ def _construct_data_key(spectrum):
 
     return f'{cycle_key}_{scan_key}'
 
+
 def _construct_detector_data_key(spectrum):
     """
     Construct a key for the detector data fields of the xps_dict.
@@ -1190,6 +1193,7 @@ def _construct_detector_data_key(spectrum):
 
     return f'{cycle_key}/{scan_key}'
 
+
 def _construct_entry_name(key):
     """Construction entry name."""
     key_parts = key.split("/")
@@ -1204,6 +1208,7 @@ def _construct_entry_name(key):
     except IndexError:
         entry_name = ""
     return entry_name
+
 #%%
 
 class XpsDataFileParser():
