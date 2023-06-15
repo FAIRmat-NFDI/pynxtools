@@ -156,11 +156,16 @@ If its category attribute is 'base', then it is added to the list. """
                                             'applications', '*.nxdl.xml')))
     contributed = sorted(glob(os.path.join(get_nexus_definitions_path(),
                                            'contributed_definitions', '*.nxdl.xml')))
+    extras = sorted(glob(os.path.join(get_nexus_definitions_path(),
+                                      'manual',
+                                      'source',
+                                      'examples',
+                                      '*.nxdl.xml',)))
     nx_clss = []
-    for nexus_file in base_classes + applications + contributed:
+    for nexus_file in extras + base_classes + applications + contributed:
         root = get_xml_root(nexus_file)
         if root.attrib['category'] == 'base':
-            nx_clss.append(str(nexus_file[nexus_file.rindex(os.sep) + 1:])[:-9])
+            nx_clss.append(str(root.attrib['name']))
     nx_clss = sorted(nx_clss)
     return nx_clss
 
@@ -348,7 +353,8 @@ def find_definition_file(bc_name):
     """find the nxdl file corresponding to the name.
     Note that it first checks in contributed and goes beyond only if no contributed found"""
     bc_filename = None
-    for nxdl_folder in ['contributed_definitions', 'base_classes', 'applications']:
+    for nxdl_folder in ['contributed_definitions', 'base_classes', 'applications',
+                        'manual/source/examples']:
         if os.path.exists(f"{get_nexus_definitions_path()}{os.sep}"
                           f"{nxdl_folder}{os.sep}{bc_name}.nxdl.xml"):
             bc_filename = f"{get_nexus_definitions_path()}{os.sep}" \
