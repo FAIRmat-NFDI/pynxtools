@@ -319,7 +319,7 @@ def _concatenate_items(value1, value2):
         if (isinstance(value1, str) and isinstance(value2, str)):
             return [value1, value2]
         if (isinstance(value1, dict) and isinstance(value2, dict)):
-            return value1 | value2
+            return {**value1, **value2}
         if (isinstance(value1, list) and isinstance(value2, list)):
             return value1 + value2
         else:
@@ -370,7 +370,6 @@ class XPSReader(BaseReader):
                     )
             elif file_ext in [".sle", ".xml", ".txt"]:
                 data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
-                # xps_data_dict = {**xps_data_dict, **data_dict}
 
                 # If there are multiple input data files, make sure
                 # that existing keys are not overwritten.
@@ -379,7 +378,7 @@ class XPSReader(BaseReader):
                      key in xps_data_dict
                     ]
 
-                xps_data_dict = xps_data_dict | data_dict
+                xps_data_dict = {**xps_data_dict, **data_dict}
                 for (key, value1, value2) in existing:
                     xps_data_dict[key] = _concatenate_items(value1, value2)
 
