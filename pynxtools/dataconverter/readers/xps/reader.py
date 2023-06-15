@@ -321,6 +321,12 @@ class XPSReader(BaseReader):
         # "NXmpes_xps"
     ]
 
+    __config_files: Dict = {
+        'xml': "config_file_xml.json",
+        'sle': "config_file_xml.json",
+        'txt': "config_file_scienta_txt.json",
+    }
+
     def read(self,
              template: dict = None,
              file_paths: Tuple[str] = None,
@@ -346,10 +352,12 @@ class XPSReader(BaseReader):
                             REPLACE_NESTED
                         )
                     )
-            elif file_ext in [".sle", ".xml"]:
+            elif file_ext in [".sle", ".xml", ".txt"]:
                 data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
                 xps_data_dict = {**xps_data_dict, **data_dict}
-                config_file = reader_dir.joinpath(f"config_file_{file_ext.rsplit('.')[1]}.json")
+                config_file = reader_dir.joinpath(
+                    XPSReader.__config_files[file_ext.rsplit('.')[1]]
+                    )
 
             # This code is not very robust.
             elif file_ext == ".json":
