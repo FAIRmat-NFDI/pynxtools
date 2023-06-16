@@ -548,23 +548,6 @@ class XmlSpecs():
 
         return self._xps_dict
 
-# =============================================================================
-#     def construct_entry_name(self, key):
-#         """Construction entry name."""
-#         key_parts = key.split("/")
-#         try:
-#             # entry example : vendor__sample__name_of_scan_rerion
-#             entry_name = (f'{key_parts[2]}'
-#                           f'__'
-#                           f'{key_parts[3].split("_", 1)[1]}'
-#                           f'__'
-#                           f'{key_parts[5].split("_", 1)[1]}'
-#                           )
-#         except IndexError:
-#             entry_name = ""
-#         return entry_name
-# =============================================================================
-
     # pylint: disable=too-many-branches
     def collect_raw_data_to_construct_data(self):
         """Collect the raw data about detectors so that the binding energy and
@@ -590,7 +573,7 @@ class XmlSpecs():
                     "scans": {}}
         # xps_dict = copy.deepcopy(self._xps_dict)
         for key, val in self._xps_dict.items():
-            entry = _construct_entry_name(key)
+            entry = construct_entry_name(key)
 
             if entry and (entry not in entry_list):
 
@@ -956,10 +939,10 @@ class SleSpecs():
         self._xps_dict[f'{path_map["analyser"]}/name'] = spectrum['devices'][0]
         self._xps_dict[f'{path_map["source"]}/name'] = spectrum['devices'][1]
 
-        entry = _construct_entry_name(region_parent)
+        entry = construct_entry_name(region_parent)
         self._xps_dict["data"][entry] = xr.Dataset()
 
-        scan_key = _construct_data_key(spectrum)
+        scan_key = construct_data_key(spectrum)
 
         energy = np.array(spectrum["data"]["x"])
 
@@ -980,7 +963,7 @@ class SleSpecs():
                 data=spectrum["data"]['cps_calib'],
                 coords={"energy": energy})
 
-        detector_data_key_child = _construct_detector_data_key(spectrum)
+        detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
         self._xps_dict[detector_data_key] = spectrum["data"]['cps_calib']
@@ -1132,10 +1115,10 @@ class ScientaTxtSpecs():
                     mpes_key = spectrum_key
                     self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
 
-        entry = _construct_entry_name(region_parent)
+        entry = construct_entry_name(region_parent)
         self._xps_dict["data"][entry] = xr.Dataset()
 
-        scan_key = _construct_data_key(spectrum)
+        scan_key = construct_data_key(spectrum)
 
         energy = np.array(spectrum["data"]["x"])
 
@@ -1150,13 +1133,13 @@ class ScientaTxtSpecs():
                 data=spectrum["data"]['y'],
                 coords={"energy": energy})
 
-        detector_data_key_child = _construct_detector_data_key(spectrum)
+        detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
         self._xps_dict[detector_data_key] = spectrum["data"]['y']
 
 
-def _construct_data_key(spectrum):
+def construct_data_key(spectrum):
     """
     Construct a key for the 'data' field of the xps_dict.
     Output example: cycle0_scan0.
@@ -1175,7 +1158,7 @@ def _construct_data_key(spectrum):
     return f'{cycle_key}_{scan_key}'
 
 
-def _construct_detector_data_key(spectrum):
+def construct_detector_data_key(spectrum):
     """
     Construct a key for the detector data fields of the xps_dict.
     Output example: 'cycles/Cycle_0/scans/Scan_0'
@@ -1194,7 +1177,7 @@ def _construct_detector_data_key(spectrum):
     return f'{cycle_key}/{scan_key}'
 
 
-def _construct_entry_name(key):
+def construct_entry_name(key):
     """Construction entry name."""
     key_parts = key.split("/")
     try:
