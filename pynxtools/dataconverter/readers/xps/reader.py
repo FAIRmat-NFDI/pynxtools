@@ -311,19 +311,21 @@ def fill_template_with_eln_data(eln_data_dict,
             fill_from_value(key)
 
 
-def _concatenate_values(value1, value2):
+def concatenate_values(value1, value2):
     """
-    Concatenate two values of same type to be stored in xps_data_dict.
+    Concatenate two values of same type to be stored
+    in xps_data_dict. Dicts are merged and every other object is
+    appended to a list.
 
     """
-    if (value1 and value2):
-        if (isinstance(value1, str) and isinstance(value2, str)):
-            return [value1, value2]
-        if (isinstance(value1, dict) and isinstance(value2, dict)):
-            return {**value1, **value2}
-        if (isinstance(value1, list) and isinstance(value2, list)):
-            return value1 + value2
-    return None
+    if (isinstance(value1, dict) and isinstance(value2, dict)):
+        return {**value1, **value2}
+    else:
+        if not isinstance(value1, list):
+            value1 = [value1]
+        if not isinstance(value2, list):
+            value2 = [value2]
+        return value1 + value2
 
 
 # pylint: disable=too-few-public-methods
@@ -337,9 +339,9 @@ class XPSReader(BaseReader):
     ]
 
     __config_files: Dict = {
-        'xml': "config_file_xml.json",
-        'sle': "config_file_xml.json",
-        'txt': "config_file_scienta_txt.json",
+        "xml": "config_file_xml.json",
+        "sle": "config_file_xml.json",
+        "txt": "config_file_scienta_txt.json",
     }
 
     def read(self,
@@ -374,12 +376,12 @@ class XPSReader(BaseReader):
                 # that existing keys are not overwritten.
                 existing = [
                     (key, xps_data_dict[key], data_dict[key]) for
-                    key in data_dict if key in xps_data_dict
+                    key in set(xps_data_dict).intersection(data_dict)
                 ]
 
                 xps_data_dict = {**xps_data_dict, **data_dict}
                 for (key, value1, value2) in existing:
-                    xps_data_dict[key] = _concatenate_values(
+                    xps_data_dict[key] = concatenate_values(
                         value1, value2)
 
                 config_file = reader_dir.joinpath(
