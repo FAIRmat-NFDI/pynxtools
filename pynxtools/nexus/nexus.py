@@ -12,6 +12,122 @@ import click
 from .nxdl_utils import *
 
 
+def get_nxdl_entry(hdf_info):
+    """Get the nxdl application definition for an HDF5 node"""
+    entry = hdf_info
+    while isinstance(entry['hdf_node'], h5py.Dataset) or \
+            'NX_class' not in entry['hdf_node'].attrs.keys() or \
+            entry['hdf_node'].attrs['NX_class'] != 'NXentry':
+        entry = get_hdf_info_parent(entry)
+        if entry['hdf_node'].name == '/':
+            return 'NO NXentry found'
+    try:
+        nxdef = entry['hdf_node']['definition'][()]
+        return nxdef.decode()
+    except KeyError:  # 'NO Definition referenced'
+        return "NXentry"
+
+def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
+        elem, elist, attr, hdf_node, logger, doc, nxdl_path, req_str, path, hdf_info):
+    """Get nxdl documentation for an attribute"""
+    new_elem = []
+    old_elem = elem
+    for elem_index, act_elem1 in enumerate(elist):
+        act_elem = act_elem1
+        # NX_class is a compulsory attribute for groups in a nexus file
+        # which should match the type of the corresponding NXDL element
+        if attr == 'NX_class' and not isinstance(hdf_node, h5py.Dataset) and elem_index == 0:
+            elem = None
+            logger, doc, attr = write_doc_string(logger, doc, attr)
+            new_elem = elem
+            break
+        # units category is a compulsory attribute for any fields
+        if attr == 'units' and isinstance(hdf_node, h5py.Dataset):
+            req_str = "<<REQUIRED>>"
+            logger, act_elem, nxdl_path, doc, attr = try_find_units(logger,
+                                                                    act_elem,
+                                                                    nxdl_path,
+                                                                    doc,
+                                                                    attr)
+        # units for attributes can be given as ATTRIBUTENAME_units
+        elif attr.endswith('_units'):
+            logger, act_elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl((logger,
+                                                                                    act_elem,
+                                                                                    nxdl_path,
+                                                                                    doc,
+                                                                                    attr,
+                                                                                    req_str))
+        # default is allowed for groups
+        elif attr == 'default' and not isinstance(hdf_node, h5py.Dataset):
+            req_str = "<<RECOMMENDED>>"
+            # try to find if default is defined as a child of the NXDL element
+            act_elem = get_nxdl_child(act_elem, attr, nexus_type='attribute', go_base=False)
+            logger, act_elem, nxdl_path, doc, attr = try_find_default(logger,
+                                                                      act_elem1,
+                                                                      act_elem,
+                                                                      nxdl_path,
+                                                                      doc,
+                                                                      attr)
+        else:  # other attributes
+            act_elem = get_nxdl_child(act_elem, attr, nexus_type='attribute', go_base=False)
+            if act_elem is not None:
+                logger, act_elem, nxdl_path, doc, attr = \
+                    other_attrs(logger, act_elem1, act_elem, nxdl_path, doc, attr)
+        if act_elem is not None:
+            new_elem.append(act_elem)
+            if req_str is None:
+                req_str = get_required_string(act_elem)  # check for being required
+                if doc:
+                    logger.debug(req_str)
+            variables = [logger, act_elem, path]
+            logger, elem, path, doc, elist, attr, hdf_node = check_deprecation_enum_axis(variables,
+                                                                                         doc,
+                                                                                         elist,
+                                                                                         attr,
+                                                                                         hdf_node)
+    elem = old_elem
+    if req_str is None and doc:
+        if attr != 'NX_class':
+            logger.debug("@" + attr + " - IS NOT IN SCHEMA")
+        logger.debug("")
+    return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
+
+
+def get_nxdl_doc(hdf_info, logger, doc, attr=False):
+    """Get nxdl documentation for an HDF5 node (or its attribute)"""
+    hdf_node = hdf_info['hdf_node']
+    # new way: retrieve multiple inherited base classes
+    (class_path, nxdl_path, elist) = \
+        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
+                            hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
+                            hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
+    elem = elist[0] if class_path and elist else None
+    if doc:
+        logger.debug("classpath: " + str(class_path))
+        logger.debug("NOT IN SCHEMA" if elem is None else
+                     "classes:\n" + "\n".join
+                     (get_node_concept_path(e) for e in elist))
+    # old solution with a single elem instead of using elist
+    path = get_nx_class_path(hdf_info)
+    req_str = None
+    if elem is None:
+        if doc:
+            logger.debug("")
+        return ('None', None, None)
+    if attr:
+        return get_nxdl_attr_doc(elem, elist, attr, hdf_node, logger, doc, nxdl_path,
+                                 req_str, path, hdf_info)
+    req_str = get_required_string(elem)  # check for being required
+    if doc:
+        logger.debug(req_str)
+    variables = [logger, elem, path]
+    logger, elem, path, doc, elist, attr, hdf_node = check_deprecation_enum_axis(variables,
+                                                                                 doc,
+                                                                                 elist,
+                                                                                 attr,
+                                                                                 hdf_node)
+    return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
+
 def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     """Processes an hdf5 node.
 - it logs the node found and also checks for its attributes
