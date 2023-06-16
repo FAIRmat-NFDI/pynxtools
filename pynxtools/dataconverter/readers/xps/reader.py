@@ -319,13 +319,15 @@ def concatenate_values(value1, value2):
 
     """
     if (isinstance(value1, dict) and isinstance(value2, dict)):
-        return {**value1, **value2}
+        concatenated = {**value1, **value2}
     else:
         if not isinstance(value1, list):
             value1 = [value1]
         if not isinstance(value2, list):
             value2 = [value2]
-        return value1 + value2
+        concatenated = value1 + value2
+
+    return concatenated
 
 
 # pylint: disable=too-few-public-methods
