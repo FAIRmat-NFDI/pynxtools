@@ -40,6 +40,11 @@ def read_ref_attenuator(metadata: list) -> int:
     return int(metadata[47].split()[1].split(":")[1])
 
 
+def read_depolarizer(metadata: list) -> bool:
+    """Reads whether the depolarizer was active during the measurement"""
+    return metadata[46] == 'on'
+
+
 def read_uv_monochromator_range(metadata: list) -> list:
     """Reads the uv monochromator range from the metadata"""
     monochromator_change = float(metadata[41])
