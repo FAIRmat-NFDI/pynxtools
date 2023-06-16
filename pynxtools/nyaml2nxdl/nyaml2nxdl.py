@@ -40,7 +40,7 @@ DEPTH_SIZE = 4 * " "
 # https://manual.nexusformat.org/nxdl_desc.html?highlight=optional
 
 
-def generate_nxdl_or_retrieve_nxdl(yaml_file, out_xml_file, verbose):
+def generate_nxdl_or_retrieve_nxdl(yaml_file, out_xml_file, verbose, self_closing_tag_space):
     """
         Generate yaml, nxdl and hash.
         if the extracted hash is exactly the same as producd from generated yaml then
@@ -57,7 +57,7 @@ def generate_nxdl_or_retrieve_nxdl(yaml_file, out_xml_file, verbose):
             os.remove(sep_yaml)
             return
 
-    nyaml2nxdl(sep_yaml, out_xml_file, verbose)
+    nyaml2nxdl(sep_yaml, out_xml_file, verbose, self_closing_tag_space)
     os.remove(sep_yaml)
 
 
@@ -148,6 +148,7 @@ def split_name_and_extension(file_name):
 
 @click.command()
 @click.option(
+    '-i',
     '--input-file',
     required=True,
     prompt=True,
@@ -155,26 +156,36 @@ def split_name_and_extension(file_name):
 a YAML or XML file from, respectively.'
 )
 @click.option(
+    '-a',
     '--append',
     help='Parse xml file and append to base class, given that the xml file has same name \
 of an existing base class'
 )
 @click.option(
+    '-c',
     '--check-consistency',
     is_flag=True,
     default=False,
-    help=('Check wether yaml or nxdl has followed general rules of scema or not'
+    help=('Check wether yaml or nxdl has followed general rules of schema or not'
           'check whether your comment in the right place or not. The option render an '
           'output file of the same extension(*_consistency.yaml or *_consistency.nxdl.xml)')
 )
 @click.option(
+    '-v',
     '--verbose',
     is_flag=True,
     default=False,
     help='Print in standard output keywords and value types to help \
 possible issues in yaml files'
 )
-def launch_tool(input_file, verbose, append, check_consistency):
+@click.option(
+    '-s',
+    '--self-closing-tag-space',
+    is_flag=True,
+    default=False,
+    help='Ensure there is a single space character before all self-closing XML tag'
+)
+def launch_tool(input_file, verbose, append, check_consistency, self_closing_tag_space):
     """
         Main function that distiguishes the input file format and launches the tools.
     """
@@ -185,7 +196,7 @@ def launch_tool(input_file, verbose, append, check_consistency):
 
     if ext == 'yaml':
         xml_out_file = raw_name + '.nxdl.xml'
-        generate_nxdl_or_retrieve_nxdl(input_file, xml_out_file, verbose)
+        generate_nxdl_or_retrieve_nxdl(input_file, xml_out_file, verbose, self_closing_tag_space)
         if append:
             append_yml(raw_name + '.nxdl.xml',
                        append,

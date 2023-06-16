@@ -26,6 +26,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import os
 import textwrap
+import re
 
 import yaml
 
@@ -67,6 +68,7 @@ DEPTH_SIZE = "    "
 NX_UNIT_TYPES = nexus.get_nx_units()
 COMMENT_BLOCKS: CommentCollector
 CATEGORY = ''  # Definition would be either 'base' or 'application'
+SELF_CLOSING_TAG_REGEX = re.compile(b'\s*/>')
 
 
 def check_for_dom_comment_in_yaml():
@@ -996,7 +998,7 @@ def recursive_build(obj, dct, verbose):
                              f"not be able to be resolved. Chekc arround line {dct[line_number]}")
 
 
-def pretty_print_xml(xml_root, output_xml, def_comments=None):
+def pretty_print_xml(xml_root, output_xml, self_closing_tag_space, def_comments=None):
     """
     Print better human-readable indented and formatted xml file using
     built-in libraries and preceding XML processing instruction
@@ -1015,7 +1017,9 @@ def pretty_print_xml(xml_root, output_xml, def_comments=None):
             def_comt_ele = dom.createComment(string)
             dom.insertBefore(def_comt_ele, root)
 
-    xml_string = dom.toprettyxml(indent=1 * DEPTH_SIZE, newl='\n', encoding='UTF-8')
+    xml_string = dom.toprettyxml(indent=1 * DEPTH_SIZE, newl='\n', encoding='utf-8')
+    if self_closing_tag_space:
+        xml_string = SELF_CLOSING_TAG_REGEX.sub(b' />', xml_string)
     with open('tmp.xml', "wb") as file_tmp:
         file_tmp.write(xml_string)
     flag = False
@@ -1039,7 +1043,7 @@ def pretty_print_xml(xml_root, output_xml, def_comments=None):
 
 
 # pylint: disable=too-many-statements
-def nyaml2nxdl(input_file: str, out_file, verbose: bool):
+def nyaml2nxdl(input_file: str, out_file, verbose: bool, self_closing_tag_space: bool):
     """
     Main of the nyaml2nxdl converter, creates XML tree, namespace and
     schema, definitions then evaluates a dictionary nest of groups recursively and
@@ -1156,6 +1160,6 @@ keyword has an invalid pattern, or is too short!'
     default_attr = False
     if default_attr:
         check_for_default_attribute_and_value(xml_root)
-    pretty_print_xml(xml_root, out_file, def_cmnt_text)
+    pretty_print_xml(xml_root, out_file, self_closing_tag_space, def_cmnt_text)
     if verbose:
         sys.stdout.write('Parsed YAML to NXDL successfully\n')
