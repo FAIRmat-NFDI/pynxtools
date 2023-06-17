@@ -1,8 +1,24 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 12 16:06:29 2023
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-@author: pielsticker
+# pylint: disable=too-many-lines
+
+"""
+Class for reading XPS files from TXT export of Scienta.
 """
 
 from datetime import datetime
@@ -224,15 +240,6 @@ class ScientaTxtParser():
             start_date,
             start_time)
 
-        # No channel data available!
-        # for ch_no, channel_data in enumerate(signal_data_cps):
-        #     scan[f'cps_ch_{ch_no}'] = list(channel_data)
-        # # no_of_scans_avg['scans'] = 1
-
-        # # scan['cps_calib'] = self._get_calibrated_data(spectrum)
-        # # """ This is wrong and needs to be corrected!!!"""
-        # scan['cps_calib'] = copy(scan['cps_ch_0'])
-
         self.spectra.append(region_data)
 
     def _check_valid_value(self, value):
@@ -277,16 +284,15 @@ class ScientaTxtParser():
             value format and type.
 
         """
-        key, value = '', ''
         try:
             [key, value] = line.split('=')
             key = self._re_map_keys(key)
             value = self._re_map_values(key, value)
+            return key, value
 
         except ValueError:
-            pass
-
-        return key, value
+            key, value = '', ''
+            return key, value
 
     def _re_map_keys(self, key):
         """
