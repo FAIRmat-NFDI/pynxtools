@@ -90,6 +90,4 @@ class STMReader(BaseReader):
                              " corresponding extention.")
 
 
-
-
 READER = STMReader
