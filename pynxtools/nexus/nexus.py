@@ -27,6 +27,103 @@ def get_nxdl_entry(hdf_info):
     except KeyError:  # 'NO Definition referenced'
         return "NXentry"
 
+
+def get_nx_class_path(hdf_info):
+    """Get the full path of an HDF5 node using nexus classes
+in case of a field, end with the field name"""
+    hdf_node = hdf_info['hdf_node']
+    if hdf_node.name == '/':
+        return ''
+    if isinstance(hdf_node, h5py.Group):
+        return get_nx_class_path(get_hdf_info_parent(hdf_info)) + '/' + \
+            (hdf_node.attrs['NX_class'] if 'NX_class' in hdf_node.attrs.keys() else
+             hdf_node.name.split('/')[-1])
+    if isinstance(hdf_node, h5py.Dataset):
+        return get_nx_class_path(
+            get_hdf_info_parent(hdf_info)) + '/' + hdf_node.name.split('/')[-1]
+    return ''
+
+
+def chk_nxdataaxis_v2(hdf_node, name, logger):
+    """Check if dataset is an axis"""
+    own_signal = hdf_node.attrs.get('signal')  # check for being a Signal
+    if own_signal is str and own_signal == "1":
+        logger.debug("Dataset referenced (v2) as NXdata SIGNAL")
+    own_axes = hdf_node.attrs.get('axes')  # check for being an axis
+    if own_axes is str:
+        axes = own_axes.split(':')
+        for i in len(axes):
+            if axes[i] and name == axes[i]:
+                logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", i)
+                return None
+    ownpaxis = hdf_node.attrs.get('primary')
+    own_axis = hdf_node.attrs.get('axis')
+    if own_axis is int:
+        # also convention v1
+        if ownpaxis is int and ownpaxis == 1:
+            logger.debug("Dataset referenced (v2) as NXdata AXIS #%d", own_axis - 1)
+        else:
+            logger.debug(
+                "Dataset referenced (v2) as NXdata (primary/alternative) AXIS #%d", own_axis - 1)
+    return None
+
+
+def chk_nxdataaxis(hdf_node, name, logger):
+    """NEXUS Data Plotting Standard v3: new version from 2014"""
+    if not isinstance(hdf_node, h5py.Dataset):  # check if it is a field in an NXdata node
+        return None
+    parent = hdf_node.parent
+    if not parent or (parent and not parent.attrs.get('NX_class') == "NXdata"):
+        return None
+    signal = parent.attrs.get('signal')  # chk for Signal
+    if signal and name == signal:
+        logger.debug("Dataset referenced as NXdata SIGNAL")
+        return None
+    axes = parent.attrs.get('axes')  # check for default Axes
+    if axes is str:
+        if name == axes:
+            logger.debug("Dataset referenced as NXdata AXIS")
+            return None
+    elif axes is not None:
+        for i, j in enumerate(axes):
+            if name == j:
+                indices = parent.attrs.get(j + '_indices')
+                if indices is int:
+                    logger.debug(f"Dataset referenced as NXdata AXIS #{indices}")
+                else:
+                    logger.debug(f"Dataset referenced as NXdata AXIS #{i}")
+                return None
+    indices = parent.attrs.get(name + '_indices')  # check for alternative Axes
+    if indices is int:
+        logger.debug(f"Dataset referenced as NXdata alternative AXIS #{indices}")
+    return chk_nxdataaxis_v2(hdf_node, name, logger)  # check for older conventions
+
+
+def check_deprecation_enum_axis(variables, doc, elist, attr, hdf_node):
+    """Check for several attributes. - deprecation - enums - nxdataaxis """
+    logger, elem, path = variables
+    dep_str = elem.attrib.get('deprecated')  # check for deprecation
+    if dep_str:
+        if doc:
+            logger.debug("DEPRECATED - " + dep_str)
+    for base_elem in elist if not attr else [elem]:  # check for enums
+        sdoc = get_nxdl_child(base_elem, 'enumeration', go_base=False)
+        if sdoc is not None:
+            if doc:
+                logger.debug("enumeration (" + get_node_concept_path(base_elem) + "):")
+            for item in sdoc:
+                if get_local_name_from_xml(item) == 'item':
+                    if doc:
+                        logger.debug("-> " + item.attrib['value'])
+    chk_nxdataaxis(hdf_node, path.split('/')[-1], logger)  # look for NXdata reference (axes/signal)
+    for base_elem in elist if not attr else [elem]:  # check for doc
+        sdoc = get_nxdl_child(base_elem, 'doc', go_base=False)
+        if doc:
+            logger.debug("documentation (" + get_node_concept_path(base_elem) + "):")
+            logger.debug(sdoc.text if sdoc is not None else "")
+    return logger, elem, path, doc, elist, attr, hdf_node
+
+
 def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
         elem, elist, attr, hdf_node, logger, doc, nxdl_path, req_str, path, hdf_info):
     """Get nxdl documentation for an attribute"""
@@ -98,7 +195,7 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
     hdf_node = hdf_info['hdf_node']
     # new way: retrieve multiple inherited base classes
     (class_path, nxdl_path, elist) = \
-        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
+        get_inherited_hdf_nodes(nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
                             hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
                             hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
     elem = elist[0] if class_path and elist else None
@@ -127,6 +224,78 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
                                                                                  attr,
                                                                                  hdf_node)
     return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
+
+
+def helper_get_inherited_nodes(hdf_info2, elist, pind, attr):
+    """find the best fitting name in all children"""
+    hdf_path, hdf_node, hdf_class_path = hdf_info2
+    hdf_name = hdf_path[pind]
+    hdf_class_name = hdf_class_path[pind]
+    if pind < len(hdf_path) - (2 if attr else 1):
+        act_nexus_type = 'group'
+    elif pind == len(hdf_path) - 1 and attr:
+        act_nexus_type = 'attribute'
+    else:
+        act_nexus_type = 'field' if isinstance(hdf_node, h5py.Dataset) else 'group'
+    # find the best fitting name in all children
+    bestfit = -1
+    html_name = None
+    for ind in range(len(elist) - 1, -1, -1):
+        newelem, fit = get_best_child(elist[ind],
+                                      hdf_node,
+                                      hdf_name,
+                                      hdf_class_name,
+                                      act_nexus_type)
+        if fit >= bestfit and newelem is not None:
+            html_name = get_node_name(newelem)
+    return hdf_path, hdf_node, hdf_class_path, elist, pind, attr, html_name
+
+
+def get_hdf_path(hdf_info):
+    """Get the hdf_path from an hdf_info"""
+    if 'hdf_path' in hdf_info:
+        return hdf_info['hdf_path'].split('/')[1:]
+    return hdf_info['hdf_node'].name.split('/')[1:]
+
+
+@lru_cache(maxsize=None)
+def get_inherited_hdf_nodes(nx_name: str = None, elem: ET.Element = None,# pylint: disable=too-many-arguments,too-many-locals
+                        hdf_node=None, hdf_path=None, hdf_root=None, attr=False):
+    """Returns a list of ET.Element for the given path."""
+    # let us start with the given definition file
+    if hdf_node is None:
+        raise ValueError('hdf_node must not be None')
+    elist = []  # type: ignore[var-annotated]
+    add_base_classes(elist, nx_name, elem)
+    nxdl_elem_path = [elist[0]]
+
+    class_path = []  # type: ignore[var-annotated]
+    hdf_info = {'hdf_node': hdf_node}
+    if hdf_path:
+        hdf_info['hdf_path'] = hdf_path
+    if hdf_root:
+        hdf_root['hdf_root'] = hdf_root
+    hdf_node = hdf_info['hdf_node']
+    hdf_path = get_hdf_path(hdf_info)
+    hdf_class_path = get_nx_class_path(hdf_info).split('/')[1:]
+    if attr:
+        hdf_path.append(attr)
+        hdf_class_path.append(attr)
+    path = hdf_path
+
+    for pind in range(len(path)):
+        hdf_info2 = [hdf_path, hdf_node, hdf_class_path]
+        [hdf_path, hdf_node, hdf_class_path, elist,
+            pind, attr, html_name] = helper_get_inherited_nodes(hdf_info2, elist,
+                                                                pind, attr)
+        if html_name is None:  # return if NOT IN SCHEMA
+            return (class_path, nxdl_elem_path, None)
+        elist, html_name = walk_elist(elist, html_name)
+        if elist:
+            class_path.append(get_nx_class(elist[0]))
+            nxdl_elem_path.append(elist[0])
+    return (class_path, nxdl_elem_path, elist)
+
 
 def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     """Processes an hdf5 node.
@@ -371,7 +540,7 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
     """
     hdf_info = {'hdf_path': hdf_path, 'hdf_node': hdf_node}
     (_, _, elist) = \
-        get_inherited_nodes(None, nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
+        get_inherited_hdf_nodes(nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
                             hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
                             hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
     return elist
