@@ -311,6 +311,25 @@ def fill_template_with_eln_data(eln_data_dict,
             fill_from_value(key)
 
 
+def concatenate_values(value1, value2):
+    """
+    Concatenate two values of same type to be stored
+    in xps_data_dict. Dicts are merged and every other object is
+    appended to a list.
+
+    """
+    if (isinstance(value1, dict) and isinstance(value2, dict)):
+        concatenated = {**value1, **value2}
+    else:
+        if not isinstance(value1, list):
+            value1 = [value1]
+        if not isinstance(value2, list):
+            value2 = [value2]
+        concatenated = value1 + value2
+
+    return concatenated
+
+
 # pylint: disable=too-few-public-methods
 class XPSReader(BaseReader):
     """ Reader for XPS.
@@ -320,6 +339,12 @@ class XPSReader(BaseReader):
         "NXmpes",
         # "NXmpes_xps"
     ]
+
+    __config_files: Dict = {
+        "xml": "config_file_xml.json",
+        "sle": "config_file_xml.json",
+        "txt": "config_file_scienta_txt.json",
+    }
 
     def read(self,
              template: dict = None,
@@ -346,10 +371,24 @@ class XPSReader(BaseReader):
                             REPLACE_NESTED
                         )
                     )
-            elif file_ext in [".sle", ".xml"]:
+            elif file_ext in [".sle", ".xml", ".txt"]:
                 data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
+
+                # If there are multiple input data files, make sure
+                # that existing keys are not overwritten.
+                existing = [
+                    (key, xps_data_dict[key], data_dict[key]) for
+                    key in set(xps_data_dict).intersection(data_dict)
+                ]
+
                 xps_data_dict = {**xps_data_dict, **data_dict}
-                config_file = reader_dir.joinpath(f"config_file_{file_ext.rsplit('.')[1]}.json")
+                for (key, value1, value2) in existing:
+                    xps_data_dict[key] = concatenate_values(
+                        value1, value2)
+
+                config_file = reader_dir.joinpath(
+                    XPSReader.__config_files[file_ext.rsplit('.')[1]]
+                )
 
             # This code is not very robust.
             elif file_ext == ".json":
