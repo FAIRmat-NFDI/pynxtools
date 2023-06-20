@@ -345,6 +345,13 @@ def from_dat_file_into_template(template, dat_file, config_dict):
     nested_path_to_slash_separated_path(
         b_s_d.get_data_nested_dict(),
         flattened_dict=flattened_dict)
+    # TODO: remove this block that has been wrtteing to dev purpose
+    temp_file = 'dat_data.txt'
+    with open(temp_file, encoding='utf-8', mode='w') as dat_f:
+        for key, val in flattened_dict.items():
+            dat_f.write(f"{key} : {val}\n")
+
+    # TODO: remove upto here
     template_keys = template.keys()
     for c_key, c_val in config_dict.items():
         for t_key in template_keys:

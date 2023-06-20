@@ -29,7 +29,6 @@ from pynxtools.dataconverter.readers.stm.bias_spec_file_parser import work_out_o
 from pynxtools.dataconverter.readers.stm.stm_helper import *
 
 
-
 def is_separator_char_exist(key, sep_char_li):
     """
     Check string or key whether the separator char provided in
@@ -266,7 +265,6 @@ def get_dimension_info(config_dict, data_dict):
                 "scan_control/positioner/scanfield") == key:
             if val in data_dict:
                 scanfield = data_dict[val]
-                print(' ## scan_field : ', scanfield)
             else:
                 raise ValueError("Scan field must be added. Which stores"
                                  " important information area of scan.")
@@ -284,30 +282,60 @@ def get_dimension_info(config_dict, data_dict):
             return (x_cor, y_cor)
 
 
-def from_sxm_file_into_template(template, file_name, config_dict):
+def fill_template_from_eln_data(eln_data_dict, template):
+    """Fill out the template from dict that generated from eln yaml file.
+
+    Parameters:
+    -----------
+    eln_data_dict : dict[str, Any]
+        Python dictionary from eln file.
+    template : dict[str, Any]
+
+    Return:
+    -------
+    None
+    """
+    print('#### ääääääää ')
+
+    for e_key, e_val in eln_data_dict.items():
+        if e_key in template.keys():
+            template[e_key] = e_val
+            print('e_key : ', e_key)
+
+
+def from_sxm_file_into_template(template, file_name, config_dict, eln_data_dict):
     """
     Pass metadata and signals into template. This should be last steps for writting
     metadata and data into nexus template.
     """
 
     data_dict = get_SPM_metadata_dict_and_signal(file_name)
-    print('## data from dat file : ', data_dict)
+
+    #### TODO: remove the bolck of code that write texr in file
+    temp_file = "sxm_data.txt"
+    with open(temp_file, mode='w', encoding='utf-8') as txt_f:
+        for key, val in data_dict.items():
+            txt_f.write(f"{key} : {val}\n")
+    #### TODO: remove upto here
+
+    fill_template_from_eln_data(eln_data_dict, template)
+    # Fill out template from config file
     temp_keys = template.keys()
-    for temp_key in temp_keys:
-        for c_key, c_val in config_dict.items():
-            if c_val in ['None', ""]:
-                continue
-            if temp_key == c_key and isinstance(c_val, str):
+    for c_key, c_val in config_dict.items():
+        if c_val in ['None', ""]:
+            continue
+        if c_key in temp_keys:
+            if isinstance(c_val, str):
+                # collect default value from reader
+                # TODO: remove this as they will come though ELN
                 if '@reader' in c_val:
-                    collect_default_value(template, temp_key)
+                    collect_default_value(template, c_key)
                 elif c_val in data_dict:
-                    template[temp_key] = transform(data_dict[c_val])
-                break
-            if temp_key == c_key and isinstance(c_val, dict):
+                    template[c_key] = transform(data_dict[c_val])
+            if isinstance(c_val, dict):
                 data_group = "/ENTRY[entry]/DATA[data]"
-                if temp_key == data_group:
+                if c_key == data_group:
                     coor_info = get_dimension_info(config_dict, data_dict)
-                    print(' ### : coor_info ', coor_info)
                     construct_nxdata_for_sxm(template,
                                              data_dict,
                                              c_val,
@@ -317,7 +345,12 @@ def from_sxm_file_into_template(template, file_name, config_dict):
                     work_out_overwriteable_field(template,
                                                  data_dict,
                                                  c_val,
-                                                 temp_key)
-                break
+                                                 c_key)
+        else:
+            if isinstance(c_key, dict):
+                work_out_overwriteable_field(template,
+                                             data_dict,
+                                             c_val,
+                                             c_key)
 
     return template

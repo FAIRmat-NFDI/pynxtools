@@ -22,11 +22,32 @@
 
 from typing import Any, Dict, Tuple, Union
 import json
+import yaml
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.readers.stm.bias_spec_file_parser import from_dat_file_into_template
 from pynxtools.dataconverter.readers.stm.stm_file_parser import from_sxm_file_into_template
+from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
+
+
+CONVERT_DICT = {
+    'Instrument': 'INSTRUMENT[instrument]',
+    'Analyser': 'ELECTRONANALYSER[electronanalyser]',
+    'Beam': 'BEAM[beam]',
+    'unit': '@units',
+    'version': '@version',
+    'Sample': 'SAMPLE[sample]',
+    'User': 'USER[user]',
+    'Data': 'DATA[data]',
+    'Source': 'SOURCE[source]',
+    'Collectioncolumn': 'COLLECTIONCOLUMN[collectioncolumn]',
+    'Energydispersion': 'ENERGYDISPERSION[energydispersion]',
+    'Detector': 'DETECTOR[detector]',
+    'Environment': 'ENVIRONMENT[environment]',
+}
+
+REPLACE_NESTED: Dict[str, str] = {}
 
 
 class STMReader(BaseReader):
@@ -48,7 +69,8 @@ class STMReader(BaseReader):
         has_dat_input_file = False
         dat_file: str = ""
         filled_template: Union[Dict, None] = Template()
-        config_dict: Union[Dict, None] = None
+        config_dict: Union[Dict[str, Any], None] = None
+        eln_data_dict: Union[Dict[str, Any], None] = None
 
         for file in file_paths:
             ext = file.rsplit('.', 1)[-1]
@@ -60,15 +82,26 @@ class STMReader(BaseReader):
                 has_dat_input_file = True
                 dat_file = file
             if ext == 'json':
-                with open(file, mode="r", encoding="utf-8") as jf:
-                    config_dict = json.load(jf)
+                with open(file, mode="r", encoding="utf-8") as jn_fl:
+                    config_dict = json.load(jn_fl)
+            if ext in ['yaml', 'yml']:
+                with open(file, mode="r", encoding="utf-8") as eln:
+                    eln_data_dict = flatten_and_replace(
+                        FlattenSettings(
+                            yaml.safe_load(eln),
+                            CONVERT_DICT,
+                            REPLACE_NESTED
+                        )
+                    )
+        # print('### ELN dict \n', eln_data_dict)
+
         if not has_dat_input_file and not has_sxm_input_file:
             raise ValueError("Not correct file has been found. please render correct input"
                              " file of spm with extension: .dat or .sxm")
         if has_dat_input_file and has_sxm_input_file:
             raise ValueError("Only one file from .dat or .sxm can be read.")
         if has_sxm_input_file and config_dict:
-            from_sxm_file_into_template(template, sxm_file, config_dict)
+            from_sxm_file_into_template(template, sxm_file, config_dict, eln_data_dict)
         elif has_dat_input_file and config_dict:
             from_dat_file_into_template(template, dat_file, config_dict)
         else:
