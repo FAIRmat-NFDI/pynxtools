@@ -376,7 +376,7 @@ def from_dat_file_into_template(template, dat_file, config_dict):
                 break
 
 
-def work_out_overwriteable_field(template, data_dict, data_config_dict, nexus_path):
+def work_out_overwriteable_field(template, data_dict, sub_config_dict, nexus_path):
     """
     Overwrite a field for multiple dimention of the same type of physical quantity.
 
@@ -400,29 +400,34 @@ def work_out_overwriteable_field(template, data_dict, data_config_dict, nexus_pa
     # TODO: Try here to use regrex module
     # Find the overwriteable part
     overwrite_part = ""
+    field_to_replace = ""
     # Two possibilities are considered: tilt_N/@units and tilt_N
     if '/@units' in nexus_path:
-        field_to_replace = nexus_path.rsplit('/')[1]
+        field_to_replace = nexus_path.rsplit('/', 2)[-2]
     else:
-        field_to_replace = nexus_path.rsplit('/', 1)[1]
+        field_to_replace = nexus_path.rsplit('/', 1)[-11]
     for char in field_to_replace:
         if char.isupper():
             overwrite_part = overwrite_part + char
-    if overwrite_part == "":
-        raise ValueError("No overwriteable part has been found.")
-    for ch_to_subs, value_dict in data_config_dict.items():
-        modified_field = field_to_replace.replace(overwrite_part, ch_to_subs)
+
+    if not overwrite_part and not field_to_replace and isinstance(sub_config_dict, dict):
+        raise ValueError(f"No overwriteable part has been found but data structure "
+                         f": {sub_config_dict} intended to overeritten.")
+    # sub_config_dict contains key that repalce the overwritable (upper case part)
+    # part from nexus path
+    for ch_to_replace, value_dict in sub_config_dict.items():
+        modified_field = field_to_replace.replace(overwrite_part, ch_to_replace)
         new_temp_key = nexus_path.replace(field_to_replace, modified_field)
         value = "value"
         unit = "unit"
         if value in value_dict:
-            path_to_dt = value_dict[value]
-            template[new_temp_key] = transform(data_dict[path_to_dt]
-                                               if path_to_dt in data_dict else None)
+            path_to_data = value_dict[value]
+            template[new_temp_key] = transform(data_dict[path_to_data]
+                                               if path_to_data in data_dict else None)
         if unit in value_dict:
-            path_to_dt = value_dict[unit]
-            template[new_temp_key + "/@unit"] = transform(data_dict[path_to_dt]
-                                                          if path_to_dt in data_dict
+            path_to_data = value_dict[unit]
+            template[new_temp_key + "/@unit"] = transform(data_dict[path_to_data]
+                                                          if path_to_data in data_dict
                                                           else None)
 
 

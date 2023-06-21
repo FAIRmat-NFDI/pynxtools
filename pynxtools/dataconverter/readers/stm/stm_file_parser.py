@@ -352,5 +352,7 @@ def from_sxm_file_into_template(template, file_name, config_dict, eln_data_dict)
                                              data_dict,
                                              c_val,
                                              c_key)
+            else:
+                template[c_key] = c_val
 
     return template
