@@ -226,7 +226,6 @@ def construct_nxdata_for_sxm(template,
             for axis, axis_data in zip(axes_name, axes_data):
                 template[f"{nxdata_grp}/{axis}"] = axis_data
 
-
     def find_nxdata_group_and_name(key):
         """Find data group name from a data path in file.
         E.g. 'Z', 'LI_Demod_2_X' from /Z/forward and /LI_Demod_2_X/forward
@@ -295,12 +294,10 @@ def fill_template_from_eln_data(eln_data_dict, template):
     -------
     None
     """
-    print('#### ääääääää ')
 
     for e_key, e_val in eln_data_dict.items():
-        if e_key in template.keys():
-            template[e_key] = e_val
-            print('e_key : ', e_key)
+        template[e_key] = transform(e_val)
+
 
 
 def from_sxm_file_into_template(template, file_name, config_dict, eln_data_dict):
@@ -347,12 +344,12 @@ def from_sxm_file_into_template(template, file_name, config_dict, eln_data_dict)
                                                  c_val,
                                                  c_key)
         else:
-            if isinstance(c_key, dict):
+            if isinstance(c_val, dict):
                 work_out_overwriteable_field(template,
                                              data_dict,
                                              c_val,
                                              c_key)
             else:
-                template[c_key] = c_val
+                template[c_key] = transform(data_dict[c_val]) if c_val in data_dict else None
 
     return template

@@ -405,7 +405,7 @@ def work_out_overwriteable_field(template, data_dict, sub_config_dict, nexus_pat
     if '/@units' in nexus_path:
         field_to_replace = nexus_path.rsplit('/', 2)[-2]
     else:
-        field_to_replace = nexus_path.rsplit('/', 1)[-11]
+        field_to_replace = nexus_path.rsplit('/', 1)[-1]
     for char in field_to_replace:
         if char.isupper():
             overwrite_part = overwrite_part + char
