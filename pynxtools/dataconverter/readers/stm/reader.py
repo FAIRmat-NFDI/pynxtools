@@ -94,7 +94,7 @@ class STMReader(BaseReader):
                         )
                     )
         # print('### ELN dict \n', eln_data_dict)
-
+        # print('config dict : ', config_dict)
         if not has_dat_input_file and not has_sxm_input_file:
             raise ValueError("Not correct file has been found. please render correct input"
                              " file of spm with extension: .dat or .sxm")
@@ -114,6 +114,7 @@ class STMReader(BaseReader):
             else:
                 filled_template[key] = val
 
+        print('  filled template : ', filled_template)
         if not filled_template:
             # for key, val in filled_template.items():
             #     print(' ### : ', key)
@@ -121,6 +122,5 @@ class STMReader(BaseReader):
         else:
             raise ValueError("Reader could not read anything! Check for input files and the"
                              " corresponding extention.")
-
 
 READER = STMReader

@@ -20,7 +20,7 @@ Instrument:
       circuit:
         channels_current: null
       positioner:
-        lines: null
+        lines: 100
         pixels_line: null
         scanfield: null
         speed_backw: null
