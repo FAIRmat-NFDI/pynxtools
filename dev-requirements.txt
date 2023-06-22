@@ -244,7 +244,7 @@ kikuchipy==0.8.4
 kiwisolver==1.4.4
     # via matplotlib
 lark==1.1.5
-    # via nexusutils (pyproject.toml)
+    # via pynxtools (pyproject.toml)
 lazy-object-proxy==1.9.0
     # via astroid
 llvmlite==0.39.1
@@ -281,11 +281,11 @@ mistune==2.0.4
 mpmath==1.2.1
     # via sympy
 mypy==1.2.0
-    # via nexusutils (pyproject.toml)
+    # via pynxtools (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
 nanonispy==1.1.0
-    # via nexusutils (pyproject.toml)
+    # via pynxtools (pyproject.toml)
 natsort==8.2.0
     # via hyperspy
 nbclassic==0.4.8
@@ -366,7 +366,7 @@ numpy==1.21.6
     #   lmfit
     #   matplotlib
     #   nanonispy
-    #   nexusutils (pyproject.toml)
+    #   pynxtools (pyproject.toml)
     #   numba
     #   numcodecs
     #   numexpr
@@ -481,7 +481,7 @@ pygments==2.13.0
     #   ipython
     #   nbconvert
 pylint==2.17.2
-    # via nexusutils (pyproject.toml)
+    # via pynxtools (pyproject.toml)
 pyparsing==3.0.9
     # via
     #   matplotlib
@@ -591,7 +591,7 @@ soupsieve==2.3.2.post1
 sparse==0.13.0
     # via hyperspy
 structlog==23.1.0
-    # via nexusutils (pyproject.toml)
+    # via pynxtools (pyproject.toml)
 sympy==1.10.1
     # via
     #   hyperspy
