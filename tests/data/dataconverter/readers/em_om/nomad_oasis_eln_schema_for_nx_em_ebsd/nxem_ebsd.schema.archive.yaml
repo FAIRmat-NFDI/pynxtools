@@ -10,13 +10,13 @@ definitions:
         - 'nomad.datamodel.data.EntryData'
       m_annotations:
         # Here you can set your default values for the reader and nxdl.
-        template: 
+        template:
           reader: em_om
           nxdl: NXem_ebsd.nxdl
         # Listing quantities in the hide component will not show them in the ELN.
         # This would be useful to make the default values set in `template` fixed.
         # Leave the hide key even if you want to pass an empty list like in this example.
-        eln: 
+        eln:
           # hide: ['nxdl', 'reader']
           hide: []
       sub_sections:
@@ -77,7 +77,7 @@ definitions:
                     component: DateTimeEditQuantity
               program:
                 type: str
-                default: nexusutils/dataconverter/readers/em_om.py
+                default: pynxtools/dataconverter/readers/em_om.py
                 description: |
                   Name of the program used to parse this file.
                 m_annotations:
@@ -199,14 +199,14 @@ definitions:
               Case two is pattern in some custom format sometimes supported
               with custom metadata and descriptions of the individual fields
               and data arrays most frequently just pointing to the publication.
-              
+
               Therefore, we first need to collect how these on_the_fly indexed
               results have been generated and in which file they ended up.
               Ideally one would do so by creating a complete set of data
               using e.g. NXem. This would allow reading all the above-mentioned
               data directly from file referred to in the measurement group.
               However, in most cases this is not available.
-              
+
               Therefore, we store here key metadata about which results file
               contain the EBSD mapping and which software was used (software name
               and version with build number) to create it. These pieces of information
@@ -266,18 +266,18 @@ definitions:
                   inside an NXem which has at least one NXimage_set_em_kikuchi
                   instance. The path to this instance in the origin has to be
                   specified under path.
-                  
+
                   When NXem is not used or the aim is to rather explore first
                   how community specific files with EBSD data, such as ANG, CPR,
                   or HDF5-based formats can be parsed from, inject here the name
                   of that file.
-                  
+
                   The em_om parser will currently not interpret the majority of
                   the many system and technique-specific metadata which come
                   with the files from e.g. technology partners. This is because
                   the current culture in the field in the EBSD community is that
                   many metadata fields are not in all cases fully documented.
-                  
+
                   In addition, it is common practice in EBSD that users transcode
                   their raw data files into other formats so that these data can be
                   interpreted by specific software tools including commercial
@@ -291,7 +291,7 @@ definitions:
                   as the file pointed to will be kept but as it uses information
                   alien to most research data management systems certain data have
                   to be extracted and transformed for the RDMS to serve them.
-                  
+
                   Another reason for this choice was also to emphasize that in
                   fact such challenges do exist in the community. Hence, pointing
                   them out may support the discussion to arrive at eventually more

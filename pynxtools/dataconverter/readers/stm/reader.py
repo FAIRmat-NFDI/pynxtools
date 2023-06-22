@@ -26,8 +26,8 @@ import numpy as np
 import nanonispy as nap
 import re
 
-from nexusutils.dataconverter.readers.base.reader import BaseReader
-from nexusutils.dataconverter.template import Template
+from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.template import Template
 
 
 def is_separator_char_exist(key, sep_char_li):
