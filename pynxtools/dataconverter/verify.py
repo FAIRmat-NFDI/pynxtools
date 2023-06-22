@@ -47,53 +47,62 @@ def verify(file: str):
 
         nxdl_root = ET.parse(nxdl_path).getroot()
 
-        empty_template = Template()
-        template = Template(empty_template)
-        helpers.generate_template_from_nxdl(nxdl_root, template)
+        ref_template = Template()
+        data_template = Template()
+        helpers.generate_template_from_nxdl(nxdl_root, ref_template)
 
-        logger.log(DEBUG_TEMPLATE, "Generated template: %s", template)
+        logger.log(DEBUG_TEMPLATE, "Reference template: %s", ref_template)
 
         class_map: Dict[str, str] = {}
 
-        def collect_groups(name: str, dataset: Union[Group, Dataset]):
+        def replace_group_names(path: str):
+            for nx_class in class_map:
+                if f"/{nx_class}/" in path or path.startswith(f"{nx_class}/"):
+                    path = path.replace(
+                        f"{nx_class}/", f"{class_map[nx_class]}[{nx_class}]/"
+                    )
+            return path
+
+        def collect_entries(name: str, dataset: Union[Group, Dataset]):
+            clean_name = replace_group_names(name)
             if isinstance(dataset, Group) and (
                 nx_class := dataset.attrs.get("NX_class")
             ):
                 entry_name = name.rsplit("/", 1)[-1]
                 clean_nx_class = nx_class[2:].upper()
 
-                class_map[entry_name] = clean_nx_class
+                is_variadic = True
+                clean_name = replace_group_names(name)
+                for ref_entry in ref_template:
+                    if ref_entry.startswith(f"{entry_path}/{clean_name}"):
+                        is_variadic = False
+                        break
+
+                if is_variadic:
+                    class_map[entry_name] = clean_nx_class
                 logger.debug("Adding class %s to %s", clean_nx_class, entry_name)
 
-        def collect_fields_and_attrs(name: str, dataset: Union[Group, Dataset]):
-            for nx_class in class_map:
-                if name.startswith(nx_class):
-                    name = name.replace(
-                        f"{nx_class}/", f"{class_map[nx_class]}[{nx_class}]/"
-                    )
-
             if isinstance(dataset, Dataset):
-                logger.debug("Adding field %s/%s", entry_path, name)
+                logger.debug("Adding field %s/%s", entry_path, clean_name)
                 if isinstance(read_data := dataset[()], bytes):
                     read_data = read_data.decode("utf-8")
-                template[f"{entry_path}/{name}"] = read_data
+                data_template[f"{entry_path}/{clean_name}"] = read_data
 
             for attr_name, val in dataset.attrs.items():
                 if attr_name == "NX_class":
                     continue
-                logger.debug("Adding attribute %s/%s/@%s", entry_path, name, attr_name)
-                template[f"{entry_path}/{name}/@{attr_name}"] = val
+                logger.debug(
+                    "Adding attribute %s/%s/@%s", entry_path, clean_name, attr_name
+                )
+                data_template[f"{entry_path}/{clean_name}/@{attr_name}"] = val
 
         entry_path = f"/ENTRY[{entry}]"
         with File(file, "r") as h5file:
-            # TODO: Check whether h5py does graph traversal
-            # which would ensure visiting groups before their fields.
-            # In this case one visititems is enough.
-            h5file[f"/{entry}"].visititems(collect_groups)
-            h5file[f"/{entry}"].visititems(collect_fields_and_attrs)
+            h5file[f"/{entry}"].visititems(collect_entries)
 
-        logger.log(DEBUG_TEMPLATE, "Processed template %s", template)
-        helpers.validate_data_dict(empty_template, Template(template), nxdl_root)
+        logger.debug("Class map: %s", class_map)
+        logger.log(DEBUG_TEMPLATE, "Processed template %s", data_template)
+        helpers.validate_data_dict(ref_template, Template(data_template), nxdl_root)
 
         logger.info(
             f"The entry `{entry}` in file `{file}` is a valid file"
