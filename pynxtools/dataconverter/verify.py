@@ -25,7 +25,7 @@ def _replace_group_names(class_map: Dict[str, str], path: str):
     return path
 
 
-def _clean_str_attr(attr: Optional[Union[str, bytes]], encoding='utf-8') -> str:
+def _clean_str_attr(attr: Optional[Union[str, bytes]], encoding="utf-8") -> str:
     if attr is None:
         return attr
     if isinstance(attr, bytes):
@@ -33,7 +33,9 @@ def _clean_str_attr(attr: Optional[Union[str, bytes]], encoding='utf-8') -> str:
     if isinstance(attr, str):
         return attr
 
-    raise TypeError('Invalid type {type} for attribute. Should be either None, bytes or str.')
+    raise TypeError(
+        "Invalid type {type} for attribute. Should be either None, bytes or str."
+    )
 
 
 def _get_def_map(file: str) -> Dict[str, str]:
