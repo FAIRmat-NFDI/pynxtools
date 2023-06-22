@@ -1,7 +1,7 @@
 """Verifies a nxs file"""
 import os
 import sys
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 import xml.etree.ElementTree as ET
 import logging
 from h5py import File, Dataset, Group
@@ -25,11 +25,22 @@ def _replace_group_names(class_map: Dict[str, str], path: str):
     return path
 
 
+def _clean_str_attr(attr: Optional[Union[str, bytes]], encoding='utf-8') -> str:
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    raise TypeError('Invalid type {type} for attribute. Should be either None, bytes or str.')
+
+
 def _get_def_map(file: str) -> Dict[str, str]:
     def_map: Dict[str, str] = {}
     with File(file, "r") as h5file:
         for entry_name, dataset in h5file.items():
-            if dataset.attrs.get("NX_class") == "NXentry":
+            if _clean_str_attr(dataset.attrs.get("NX_class")) == "NXentry":
                 def_map = {
                     entry_name: (
                         definition := h5file[f"/{entry_name}/definition"][()].decode(
@@ -47,6 +58,9 @@ def _get_def_map(file: str) -> Dict[str, str]:
 def verify(file: str):
     """Verifies a nexus file"""
     def_map = _get_def_map(file)
+
+    if not def_map:
+        logger.info("Could not find any valid entry in file %s", file)
     ref_template = Template()
     data_template = Template()
     class_map: Dict[str, str] = {}
@@ -77,7 +91,7 @@ def verify(file: str):
         def collect_entries(name: str, dataset: Union[Group, Dataset]):
             clean_name = _replace_group_names(class_map, name)
             if isinstance(dataset, Group) and (
-                nx_class := dataset.attrs.get("NX_class")
+                nx_class := _clean_str_attr(dataset.attrs.get("NX_class"))
             ):
                 entry_name = name.rsplit("/", 1)[-1]
                 clean_nx_class = nx_class[2:].upper()
