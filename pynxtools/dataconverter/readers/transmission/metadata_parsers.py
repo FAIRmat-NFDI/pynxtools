@@ -40,7 +40,7 @@ def read_ref_attenuator(metadata: list) -> int:
     return int(metadata[47].split()[1].split(":")[1])
 
 
-def read_depolarizer(metadata: list) -> bool:
+def is_depolarizer_on(metadata: list) -> bool:
     """Reads whether the depolarizer was active during the measurement"""
     return metadata[46] == 'on'
 

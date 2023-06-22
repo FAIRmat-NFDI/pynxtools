@@ -40,7 +40,7 @@ METADATA_MAP: Dict[str, Any] = {
     "/ENTRY[entry]/instrument/common_beam_mask/y_gap": 45,
     "/ENTRY[entry]/instrument/polarizer": 48,
     "/ENTRY[entry]/instrument/common_beam_depolarizer":
-        mpars.read_depolarizer,
+        mpars.is_depolarizer_on,
     "/ENTRY[entry]/instrument/spectrometer/GRATING[grating]/wavelength_range":
         mpars.read_uv_monochromator_range,
     "/ENTRY[entry]/instrument/spectrometer/GRATING[grating1]/wavelength_range":
