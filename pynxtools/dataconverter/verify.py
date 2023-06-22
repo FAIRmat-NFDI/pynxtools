@@ -2,10 +2,10 @@
 import os
 import sys
 from typing import Dict, Union
-import click
 import xml.etree.ElementTree as ET
 import logging
 from h5py import File, Dataset, Group
+import click
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
@@ -18,22 +18,46 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
+def _replace_group_names(class_map: Dict[str, str], path: str):
+    for class_path, nx_class in class_map.items():
+        if f"/{class_path}/" in path or path.startswith(f"{class_path}/"):
+            path = path.replace(f"{class_path}/", f"{nx_class}[{class_path}]/")
+    return path
+
+
+def _get_def_map(file: str) -> Dict[str, str]:
+    def_map: Dict[str, str] = {}
+    with File(file, "r") as h5file:
+        for entry_name, dataset in h5file.items():
+            if dataset.attrs.get("NX_class") == "NXentry":
+                def_map = {
+                    entry_name: (
+                        definition := h5file[f"/{entry_name}/definition"][()].decode(
+                            "utf8"
+                        )
+                    )
+                }
+                logger.debug("Reading entry '%s': '%s'", entry_name, definition)
+
+    return def_map
+
+
 @click.command()
 @click.argument("file")
 def verify(file: str):
     """Verifies a nexus file"""
-    def_map: Dict[str, str] = {}
-    with File(file, "r") as h5file:
-        for entry in h5file.keys():
-            if h5file[entry].attrs.get("NX_class") == "NXentry":
-                def_map = {
-                    entry: (
-                        definition := h5file[f"/{entry}/definition"][()].decode("utf8")
-                    )
-                }
-                logger.debug(f"Reading entry '{entry}': {definition}'")
+    def_map = _get_def_map(file)
+    ref_template = Template()
+    data_template = Template()
+    class_map: Dict[str, str] = {}
+    entry_path = "/"
 
     for entry, nxdl in def_map.items():
+        ref_template = Template()
+        data_template = Template()
+        class_map = {}
+        entry_path = f"/ENTRY[{entry}]"
+
         definitions_path = nexus.get_nexus_definitions_path()
         nxdl_path = os.path.join(
             definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
@@ -47,24 +71,11 @@ def verify(file: str):
 
         nxdl_root = ET.parse(nxdl_path).getroot()
 
-        ref_template = Template()
-        data_template = Template()
         helpers.generate_template_from_nxdl(nxdl_root, ref_template)
-
         logger.log(DEBUG_TEMPLATE, "Reference template: %s", ref_template)
 
-        class_map: Dict[str, str] = {}
-
-        def replace_group_names(path: str):
-            for nx_class in class_map:
-                if f"/{nx_class}/" in path or path.startswith(f"{nx_class}/"):
-                    path = path.replace(
-                        f"{nx_class}/", f"{class_map[nx_class]}[{nx_class}]/"
-                    )
-            return path
-
         def collect_entries(name: str, dataset: Union[Group, Dataset]):
-            clean_name = replace_group_names(name)
+            clean_name = _replace_group_names(class_map, name)
             if isinstance(dataset, Group) and (
                 nx_class := dataset.attrs.get("NX_class")
             ):
@@ -72,7 +83,7 @@ def verify(file: str):
                 clean_nx_class = nx_class[2:].upper()
 
                 is_variadic = True
-                clean_name = replace_group_names(name)
+                clean_name = _replace_group_names(class_map, name)
                 for ref_entry in ref_template:
                     if ref_entry.startswith(f"{entry_path}/{clean_name}"):
                         is_variadic = False
@@ -96,7 +107,6 @@ def verify(file: str):
                 )
                 data_template[f"{entry_path}/{clean_name}/@{attr_name}"] = val
 
-        entry_path = f"/ENTRY[{entry}]"
         with File(file, "r") as h5file:
             h5file[f"/{entry}"].visititems(collect_entries)
 
@@ -105,6 +115,9 @@ def verify(file: str):
         helpers.validate_data_dict(ref_template, Template(data_template), nxdl_root)
 
         logger.info(
-            f"The entry `{entry}` in file `{file}` is a valid file"
-            f" according to the `{nxdl}` application definition."
+            "The entry `%s` in file `%s` is a valid file"
+            " according to the `%s` application definition.",
+            entry,
+            file,
+            nxdl,
         )
