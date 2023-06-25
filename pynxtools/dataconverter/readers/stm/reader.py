@@ -114,7 +114,7 @@ class STMReader(BaseReader):
             else:
                 filled_template[key] = val
 
-        print('  filled template : ', filled_template)
+        # print('  filled template : ', filled_template)
         if not filled_template:
             # for key, val in filled_template.items():
             #     print(' ### : ', key)

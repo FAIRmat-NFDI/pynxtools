@@ -32,6 +32,8 @@ from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash
 # Type aliases
 NestedDict = Dict[str, Union[int, str, 'NestedDict']]
 
+dict_orig_key_to_mod_key: dict[str, list] = {}
+
 
 class BiasSpecData():
     """This class mainly collect and store data fo Bias spectroscopy that is SPM experiment.
@@ -372,11 +374,14 @@ def from_dat_file_into_template(template, dat_file, config_dict):
                 else:
                     # pass other physical quantity that has muliple dimensions or type for
                     # same physical quantity e.g. in drift_N N will be replaced X, Y and Z
-                    work_out_overwriteable_field(template, flattened_dict, c_val, t_key)
+                    work_out_overwriteable_field(template, flattened_dict, c_val, t_key,
+                                                 dict_orig_key_to_mod_key)
                 break
 
 
-def work_out_overwriteable_field(template, data_dict, sub_config_dict, nexus_path):
+def work_out_overwriteable_field(template, data_dict,
+                                 sub_config_dict, nexus_path,
+                                 dict_orig_key_to_mod_key):
     """
     Overwrite a field for multiple dimention of the same type of physical quantity.
 
@@ -391,7 +396,7 @@ def work_out_overwriteable_field(template, data_dict, sub_config_dict, nexus_pat
     data_config_dict : dict[str, list]
         This dictionary is numerical data order to list (list of path to data elements in
         input file). Each order indicates a group of data set.
-    field_path : NeXus field path
+    field_path : NeXus field full path
 
     Returns:
     --------
@@ -420,15 +425,16 @@ def work_out_overwriteable_field(template, data_dict, sub_config_dict, nexus_pat
         new_temp_key = nexus_path.replace(field_to_replace, modified_field)
         value = "value"
         unit = "unit"
+        dict_orig_key_to_mod_key[nexus_path] = new_temp_key
         if value in value_dict:
             path_to_data = value_dict[value]
             template[new_temp_key] = transform(data_dict[path_to_data]
                                                if path_to_data in data_dict else None)
         if unit in value_dict:
             path_to_data = value_dict[unit]
-            template[new_temp_key + "/@unit"] = transform(data_dict[path_to_data]
-                                                          if path_to_data in data_dict
-                                                          else None)
+            template[new_temp_key + "/@units"] = transform(data_dict[path_to_data]
+                                                           if path_to_data in data_dict
+                                                           else None)
 
 
 def process_data_from_file_(flattened_dict):

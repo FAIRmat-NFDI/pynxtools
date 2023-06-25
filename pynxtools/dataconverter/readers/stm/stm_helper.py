@@ -20,6 +20,7 @@
 from typing import Tuple, Union
 import numpy as np
 import json
+from pynxtools.dataconverter.helpers import convert_data_dict_path_to_hdf5_path
 
 
 def nested_path_to_slash_separated_path(nested_dict: dict,
@@ -34,6 +35,34 @@ def nested_path_to_slash_separated_path(nested_dict: dict,
             nested_path_to_slash_separated_path(val, flattened_dict, path)
         else:
             flattened_dict[path] = val
+
+
+def link_implementation(template, link_modified_dict):
+    """Rewrite the link compatible with hdf5 full path.
+    for e.g. convert /ENTRY[entry]/INSTRUMENT[instrument]/name to
+    /entry/instrument/name and rewrite in template.
+
+    Parameters
+    ----------
+    template : Template (dict)
+        To write out the hdf file
+    link_modified_dict : dict
+        The key corresponds to nxdl def path e.g. /ENTRY[entry]/INSTRUMENT[instrument]/NAME
+        and the value is the modified link path e.g.
+        /ENTRY[entry]/INSTRUMENT[special_instrument]/given_name where the
+        value is according to the implementaion of the NeXus def.
+    """
+    for _, val in template.items():
+        if isinstance(val, dict) and 'link' in val:
+            orig_link_path = val['link']
+            # Check whether any concept has been rewriten stored in key value
+            if orig_link_path in link_modified_dict:
+                # modified concepts come in a list together.
+                modif_link_hdf_path = convert_data_dict_path_to_hdf5_path(
+                    link_modified_dict[orig_link_path])
+                val['link'] = modif_link_hdf_path
+            else:
+                val['link'] = convert_data_dict_path_to_hdf5_path(orig_link_path)
 
 
 def cal_dx_by_dy(x_val: np.ndarray, y_val: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
