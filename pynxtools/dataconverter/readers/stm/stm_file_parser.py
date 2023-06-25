@@ -28,6 +28,9 @@ import re
 from pynxtools.dataconverter.readers.stm.bias_spec_file_parser import work_out_overwriteable_field
 from pynxtools.dataconverter.readers.stm.stm_helper import *
 
+# TODO : try to convert all function into class
+nxdl_key_to_modified_key: dict = {}
+
 
 def is_separator_char_exist(key, sep_char_li):
     """
@@ -342,14 +345,17 @@ def from_sxm_file_into_template(template, file_name, config_dict, eln_data_dict)
                     work_out_overwriteable_field(template,
                                                  data_dict,
                                                  c_val,
-                                                 c_key)
+                                                 c_key,
+                                                 nxdl_key_to_modified_key)
         else:
             if isinstance(c_val, dict):
                 work_out_overwriteable_field(template,
                                              data_dict,
                                              c_val,
-                                             c_key)
+                                             c_key,
+                                             nxdl_key_to_modified_key)
             else:
                 template[c_key] = transform(data_dict[c_val]) if c_val in data_dict else None
+    link_implementation(template, nxdl_key_to_modified_key)
 
     return template
