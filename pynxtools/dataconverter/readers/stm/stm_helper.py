@@ -23,6 +23,80 @@ import json
 from pynxtools.dataconverter.helpers import convert_data_dict_path_to_hdf5_path
 
 
+def fill_template_from_eln_data(eln_data_dict, template):
+    """Fill out the template from dict that generated from eln yaml file.
+    Parameters:
+    -----------
+    eln_data_dict : dict[str, Any]
+        Python dictionary from eln file.
+    template : dict[str, Any]
+    Return:
+    -------
+    None
+    """
+
+    for e_key, e_val in eln_data_dict.items():
+        template[e_key] = transform(e_val)
+
+
+def work_out_overwriteable_field(template, data_dict,
+                                 sub_config_dict, nexus_path,
+                                 dict_orig_key_to_mod_key):
+    """
+    Overwrite a field for multiple dimention of the same type of physical quantity.
+
+    Parameters:
+    -----------
+    template : dict[str, Any]
+        Capturing data elements. One to one dictionary for capturing data array, data axes
+        and so on from data_dict to be ploted.
+    data_dict : dict[str, Union[array, str]]
+        Data stored from dat file. Path (str) to data elements which mainly come from
+        dat file. Data from this dict will go to template
+    data_config_dict : dict[str, list]
+        This dictionary is numerical data order to list (list of path to data elements in
+        input file). Each order indicates a group of data set.
+    field_path : NeXus field full path
+
+    Returns:
+    --------
+    None
+    """
+    # TODO: Try here to use regrex module
+    # Find the overwriteable part
+    overwrite_part = ""
+    field_to_replace = ""
+    # Two possibilities are considered: tilt_N/@units and tilt_N
+    if '/@units' in nexus_path:
+        field_to_replace = nexus_path.rsplit('/', 2)[-2]
+    else:
+        field_to_replace = nexus_path.rsplit('/', 1)[-1]
+    for char in field_to_replace:
+        if char.isupper():
+            overwrite_part = overwrite_part + char
+
+    if not overwrite_part and not field_to_replace and isinstance(sub_config_dict, dict):
+        raise ValueError(f"No overwriteable part has been found but data structure "
+                         f": {sub_config_dict} intended to overeritten.")
+    # sub_config_dict contains key that repalce the overwritable (upper case part)
+    # part from nexus path
+    for ch_to_replace, value_dict in sub_config_dict.items():
+        modified_field = field_to_replace.replace(overwrite_part, ch_to_replace)
+        new_temp_key = nexus_path.replace(field_to_replace, modified_field)
+        value = "value"
+        unit = "unit"
+        dict_orig_key_to_mod_key[nexus_path] = new_temp_key
+        if value in value_dict:
+            path_to_data = value_dict[value]
+            template[new_temp_key] = transform(data_dict[path_to_data]
+                                               if path_to_data in data_dict else None)
+        if unit in value_dict:
+            path_to_data = value_dict[unit]
+            template[new_temp_key + "/@units"] = transform(data_dict[path_to_data]
+                                                           if path_to_data in data_dict
+                                                           else None)
+
+
 def nested_path_to_slash_separated_path(nested_dict: dict,
                                         flattened_dict: dict,
                                         parent_path=''):

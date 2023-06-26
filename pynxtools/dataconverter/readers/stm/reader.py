@@ -27,7 +27,7 @@ import yaml
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.readers.stm.bias_spec_file_parser import from_dat_file_into_template
-from pynxtools.dataconverter.readers.stm.stm_file_parser import from_sxm_file_into_template
+from pynxtools.dataconverter.readers.stm.stm_file_parser import STM_Nanonis
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 
 
@@ -100,10 +100,13 @@ class STMReader(BaseReader):
                              " file of spm with extension: .dat or .sxm")
         if has_dat_input_file and has_sxm_input_file:
             raise ValueError("Only one file from .dat or .sxm can be read.")
-        if has_sxm_input_file and config_dict:
-            from_sxm_file_into_template(template, sxm_file, config_dict, eln_data_dict)
-        elif has_dat_input_file and config_dict:
-            from_dat_file_into_template(template, dat_file, config_dict)
+        if has_sxm_input_file and config_dict and eln_data_dict:
+            STM_Nanonis(file_name=sxm_file).from_sxm_file_into_template(template,
+                                                                        config_dict,
+                                                                        eln_data_dict)
+        elif has_dat_input_file and config_dict and eln_data_dict:
+            from_dat_file_into_template(template, dat_file, config_dict,
+                                        eln_data_dict)
         else:
             raise ValueError("Not correct input file has been provided.")
 
