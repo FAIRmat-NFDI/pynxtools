@@ -349,7 +349,6 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
     """Pass metadata, current and voltage into template from file
        with dat extension.
     """
-
     b_s_d = BiasSpecData_Nanonis(dat_file)
     flattened_dict = {}
     nested_path_to_slash_separated_path(
@@ -364,29 +363,24 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
     # TODO: remove upto here
     template_keys = template.keys()
     for c_key, c_val in config_dict.items():
-        for t_key in template_keys:
-            # debug
-            if c_val in ["None", ""]:
-                continue
-            if "@reader" in c_val and c_key == t_key:
-                collect_default_value(template, c_key)
-                break
-            if "@eln" in c_val:
-                break
-            if c_key == t_key and isinstance(c_val, str):
-                template[t_key] = transform(flattened_dict[c_val])
-                break
-            if c_key == t_key and isinstance(c_val, dict):
-                data_group = "/ENTRY[entry]/DATA[data]"
-                if data_group == t_key:
-                    # pass exp. data section to NXdata group
-                    construct_nxdata_for_dat(template, flattened_dict, c_val, data_group)
-                else:
-                    # pass other physical quantity that has muliple dimensions or type for
-                    # same physical quantity e.g. in drift_N N will be replaced X, Y and Z
-                    work_out_overwriteable_field(template, flattened_dict, c_val, t_key,
-                                                 dict_orig_key_to_mod_key)
-                break
+        if "@eln" in c_val:
+            continue
+        if c_val in ["", None, 'None', 'none']:
+            continue
+        if isinstance(c_val, str):
+            template[c_key] = transform(flattened_dict[c_val])
+        if isinstance(c_val, dict):
+            data_group = "/ENTRY[entry]/DATA[data]"
+            if data_group == c_key:
+                # pass exp. data section to NXdata group
+                construct_nxdata_for_dat(template, flattened_dict,
+                                         c_val, data_group)
+            else:
+                # pass other physical quantity that has muliple dimensions or type for
+                # same physical quantity e.g. in drift_N N will be replaced X, Y and Z
+                work_out_overwriteable_field(template, flattened_dict, c_val, c_key,
+                                             dict_orig_key_to_mod_key)
+
     link_implementation(template, dict_orig_key_to_mod_key)
 
 
