@@ -34,7 +34,7 @@ NestedDict = Dict[str, Union[int, str, 'NestedDict']]
 
 
 class BiasSpecData_Nanonis():
-    """This class mainly collect and store data fo Bias spectroscopy of SPM experiment.
+    """This class collect and store data fo Bias spectroscopy of SPM experiment.
 
     The class splits the data and store in into nested python dictionary as follows.
        E.g.
@@ -65,79 +65,129 @@ class BiasSpecData_Nanonis():
         """
         return self.bias_spect_dict
 
+    def check_and_write_unit(self, dct,
+                             key_or_line, unit_separators,
+                             end_of_seperators, value=None):
+        """Check and write unit.
+
+        Parameters
+        ----------
+        dct : dict
+
+        key_or_line : _type_
+            The dict that tracks full nested paths and unit at deepest nest.
+        unit_separators : list
+            List of initial separator chars
+        end_of_seperators : list
+            List of end separator chars
+        value : dict, optional
+            dict to store dict
+        """
+        for sep_unit, end_sep in zip(unit_separators, end_of_seperators):
+            if sep_unit in key_or_line:
+                key, unit = key_or_line.split(sep_unit, 1)
+                unit = unit.split(end_sep)[0]
+                if key_or_line in dct:
+                    del dct[key_or_line]
+                if isinstance(value, dict):
+                    value['unit'] = unit
+                else:
+                    value: NestedDict = {}
+                    value['unit'] = unit
+                dct[key] = value
+                break
+
+    def retrive_key_recursively(self, line_to_analyse: str,
+                                dict_to_store: NestedDict,
+                                key_seperators: list) -> None:
+        """Store metadata path in recursive manner because the path is separated by chars.
+
+        Parameters
+        ----------
+        line_to_analyse : str
+            Line with metadata path where each part of path is separated by chars from
+            key_separated chars.
+        dict_to_store : NestedDict
+            Dict to store metadata path part in nested form
+        key_separators : list
+            List of chars separating metadata path.
+        """
+        unit_separators = [' (']
+        end_of_seperators = [')']
+
+        line_to_analyse = line_to_analyse.strip()
+        for k_sep in key_seperators:
+            if k_sep in line_to_analyse:
+                key, rest = line_to_analyse.split(k_sep, 1)
+                key = key.strip()
+                if key in dict_to_store:
+                    new_dict = dict_to_store[key]
+                else:
+                    new_dict: NestedDict = {}
+                dict_to_store[key] = new_dict
+                # check if key contains any unit inside bracket '()'
+                self.check_and_write_unit(dict_to_store, key, unit_separators,
+                                          end_of_seperators, new_dict)
+                self.retrive_key_recursively(rest, new_dict, key_seperators)
+                return
+
+        for sep_unit in unit_separators:
+            if sep_unit in line_to_analyse:
+                self.check_and_write_unit(dict_to_store, line_to_analyse,
+                                          unit_separators, end_of_seperators)
+                return
+
+        dict_to_store['value'] = line_to_analyse.strip()
+        return
+
+    def check_matrix_data_block_has_started(self, line_to_analyse: str) -> Tuple[bool, list]:
+        """_summary_
+
+        Parameters
+        ----------
+        line_to_analyse : str
+            Line to check whether matrix data has started.
+
+        Returns
+        -------
+        _type_
+            _description_
+        """
+        wd_list = line_to_analyse.split()
+        int_list = []
+        if not wd_list:
+            return False, []
+        for word in wd_list:
+            try:
+                float_n = float(word)
+                int_list.append(float_n)
+            except ValueError:
+                return False, []
+        return True, int_list
+
+    def check_metadata_and_unit(self, key_and_unit: str):
+        """Check for metadata and unit.
+
+        Parameters
+        ----------
+        key_and_unit : str
+            String to check key, metadata and unit
+        """
+        metadata = ''
+        key, unit = key_and_unit.split('(')
+        unit, rest = unit.split(')', 1)
+        # Some units have extra info e.g. Current (A) [filt]
+        if '[' in rest:
+            metadata = rest.split('[')[-1].split(']')[0]
+        return key, unit, metadata
+
     def extract_and_store_from_dat_file(self) -> None:
         """Extract data from data file and store them into object level nested dictionary.
         """
 
         key_seperators = ['>', '\t']
-        unit_separators = [' (']
-        end_of_seperators = [')']
         is_matrix_data_found = False
         one_d_numpy_array = np.empty(0)
-
-        def check_and_write_unit(dct, key_or_line, value=None):
-            for sep_unit, end_sep in zip(unit_separators, end_of_seperators):
-                if sep_unit in key_or_line:
-                    key, unit = key_or_line.split(sep_unit, 1)
-                    unit = unit.split(end_sep)[0]
-                    if key_or_line in dct:
-                        del dct[key_or_line]
-                    if isinstance(value, dict): # and 'unit' in value:
-                        value['unit'] = unit
-                    else:
-                        value: NestedDict = {}
-                        value['unit'] = unit
-                    dct[key] = value
-                    break
-
-        def check_metadata_and_unit(key_and_unit):
-            metadata = ''
-            key, unit = key_and_unit.split('(')
-            unit, rest = unit.split(')', 1)
-            # Some units have extra info e.g. Current (A) [filt]
-            if '[' in rest:
-                metadata = rest.split('[')[-1].split(']')[0]
-            return key, unit, metadata
-
-        # TODO convert it into static mathod
-        def retrive_key_recursively(line_to_analyse: str,
-                                    dict_to_store: NestedDict) -> None:
-
-            line_to_analyse = line_to_analyse.strip()
-            for k_sep in key_seperators:
-                if k_sep in line_to_analyse:
-                    key, rest = line_to_analyse.split(k_sep, 1)
-                    key = key.strip()
-                    if key in dict_to_store:
-                        new_dict = dict_to_store[key]
-                    else:
-                        new_dict: NestedDict = {}
-                    dict_to_store[key] = new_dict
-                    # check if key contains any unit inside bracket '()'
-                    check_and_write_unit(dict_to_store, key, new_dict)
-                    retrive_key_recursively(rest, new_dict)
-                    return
-
-            for sep_unit in unit_separators:
-                if sep_unit in line_to_analyse:
-                    check_and_write_unit(dict_to_store, line_to_analyse)
-                    return
-
-            dict_to_store['value'] = line_to_analyse.strip()
-            return
-
-        def check_matrix_data_block_has_started(line_to_analyse):
-            wd_list = line_to_analyse.split()
-            int_list = []
-            if not wd_list:
-                return False, []
-            for word in wd_list:
-                try:
-                    float_n = float(word)
-                    int_list.append(float_n)
-                except ValueError:
-                    return False, []
-            return True, int_list
 
         def dismentle_matrix_into_dict_key_value_list(column_string,
                                                       one_d_np_array,
@@ -148,20 +198,20 @@ class BiasSpecData_Nanonis():
             dict_to_store[dat_mat_comp] = {}
             for ind, key_and_unit in enumerate(column_keys):
                 if '(' in key_and_unit:
-                    key, unit, data_stage = check_metadata_and_unit(key_and_unit)
+                    key, unit, data_stage = self.check_metadata_and_unit(key_and_unit)
                     # data_stage could be 'filt' or something like this
                     if data_stage:
                         dict_to_store[dat_mat_comp][f"{key.strip()} [{data_stage}]"] = \
-                                                            {'unit': unit,
-                                                             'value': np_2d_array[:, ind],
-                                                             'metadata': data_stage}
+                            {'unit': unit,
+                             'value': np_2d_array[:, ind],
+                             'metadata': data_stage}
                     else:
                         dict_to_store[dat_mat_comp][key.strip()] = {'unit': unit,
-                                                      'value': np_2d_array[:, ind]}
+                                                                    'value': np_2d_array[:, ind]}
                 else:
                     dict_to_store[dat_mat_comp][key.strip()] = {'value': list(np_2d_array[:, ind])}
 
-        # TODO: write here the algorithm for reading each line
+        # NOTE: write here the algorithm for reading
         with open(self.raw_file, mode='r', encoding='utf-8') as file_obj:
             lines = file_obj.readlines()
             # last two lines for getting matrix data block that comes at the end of the file
@@ -170,7 +220,7 @@ class BiasSpecData_Nanonis():
                 if ind == 0:
                     last_line = line
                     continue
-                is_mat_data, data_list = check_matrix_data_block_has_started(line)
+                is_mat_data, data_list = self.check_matrix_data_block_has_started(line)
                 if is_mat_data:
                     is_matrix_data_found = True
                     one_d_numpy_array = np.append(one_d_numpy_array, data_list)
@@ -182,7 +232,7 @@ class BiasSpecData_Nanonis():
                     dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
                     last_line = line
                 else:
-                    retrive_key_recursively(last_line, self.bias_spect_dict)
+                    self.retrive_key_recursively(last_line, self.bias_spect_dict, key_seperators)
                     last_line = line
 
             if (not is_mat_data) and is_matrix_data_found:
@@ -198,12 +248,6 @@ class BiasSpecData_Nanonis():
         ext = self.raw_file.rsplit('.', 1)[-1]
         if ext == 'dat':
             self.extract_and_store_from_dat_file()
-
-
-def collect_default_value(template, search_key):
-    default_dict = {"/ENTRY[entry]/definition": "NXiv_sweep2",
-                    "/ENTRY[entry]/experiment_description": "An stm experiment."}
-    template[search_key] = default_dict[search_key]
 
 
 def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
@@ -378,46 +422,3 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
                                              dict_orig_key_to_mod_key)
 
     link_implementation(template, dict_orig_key_to_mod_key)
-
-
-def process_data_from_file_(flattened_dict):
-    """Implement this function later.
-        TODO:
-        This functions mainly intended for automization of data manipulation
-         or data driven analytics. Try it out later.
-    """
-    # This keys are collected from flatten_dict generated in
-    # nested_path_to_slash_separated_path()
-
-    # key_data_to_be_processed = {'0': {'/Bias/value': None,
-    #                                   '/Current/value': None}}
-
-    # for fla_key, fla_val in flattened_dict.items():
-    #     for pro_key, pro_val in key_data_to_be_processed.items():
-    #         for ele_key, ele_val in pro_val.items():
-    #             if ele_key in fla_key:
-    #                 pro_val[ele_key] = fla_val
-
-    # nx_data_info_dict = {'0': {'nx_data_group_name': '(Normal)',
-    #                         'nx_data_group_axes': ['Bias', 'dI/dV'],
-    #                         'action': [slice_before_last_element, cal_dx_by_dy],
-    #                         'action_variable':
-    #                         [[key_data_to_be_processed['0']['/Bias/value']],
-    #                         [key_data_to_be_processed['0']['/Current/value'],
-    #                             key_data_to_be_processed['0']['/Bias/value']]],
-    #                         'action_result': []}}
-
-    # # TODO: add the print optionality for flattend dict option inside bias_spec_data_parser.py
-    # later add this option inside README doc
-    # with open('./dict_from_dat_file.txt', mode='+w', encoding='utf-8',) as fl:
-    #     for key, val in flattened_dict.items():
-    #         print('## val', key)
-    #         fl.write(f"{key} : ##### {val}\n")
-    # 0, 1,
-    # print('key_data_to_be_processed', key_data_to_be_processed)
-    # for key in key_data_to_be_processed.keys():
-    #     key_dict = nx_data_info_dict[key]
-    #     for action, action_variable in zip(key_dict['action'], key_dict['action_variable']):
-    #         key_dict['action_result'].append(action(*action_variable))
-    pass
-
