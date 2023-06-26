@@ -2,9 +2,9 @@
 <?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
 <!--
 # NeXus - Neutron and X-ray Common Data Format
-# 
+#
 # Copyright (C) 2014-2022 NeXus International Advisory Committee (NIAC)
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
@@ -66,7 +66,7 @@
              Energy on entering beamline component
         </doc>
         <dimensions rank="1">
-            <dim index="1" value="i"/>
+            <dim index="1" value="i" />
         </dimensions>
     </field>
     <field name="mode">
@@ -91,13 +91,13 @@
              Applied electric field
         </doc>
         <dimensions>
-            <dim index="1" value="n_eField"/>
+            <dim index="1" value="n_eField" />
         </dimensions>
         <attribute name="direction">
             <enumeration>
-                <item value="x"/>
-                <item value="y"/>
-                <item value="z"/>
+                <item value="x" />
+                <item value="y" />
+                <item value="z" />
             </enumeration>
         </attribute>
     </field>
@@ -106,7 +106,7 @@
              Sample temperature. This could be a scanned variable
         </doc>
         <dimensions rank="anyRank">
-            <dim index="1" value="n_Temp"/>
+            <dim index="1" value="n_Temp" />
         </dimensions>
     </field>
 </definition>

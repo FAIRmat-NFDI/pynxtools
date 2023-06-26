@@ -26,7 +26,7 @@
          Test case for verifying that the parser can handle links correctly.
     </doc>
     <group type="NXdata">
-        <link name="polar_angle" target="here1"/>
-        <link name="target_angle" target="here2"/>
+        <link name="polar_angle" target="here1" />
+        <link name="target_angle" target="here2" />
     </group>
 </definition>
