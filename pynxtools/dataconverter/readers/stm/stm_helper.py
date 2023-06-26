@@ -17,9 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Tuple, Union
-import numpy as np
+from typing import Tuple
 import json
+import numpy as np
 from pynxtools.dataconverter.helpers import convert_data_dict_path_to_hdf5_path
 
 
@@ -62,7 +62,6 @@ def work_out_overwriteable_field(template, data_dict,
     --------
     None
     """
-    # TODO: Try here to use regrex module
     # Find the overwriteable part
     overwrite_part = ""
     field_to_replace = ""
@@ -141,15 +140,15 @@ def link_implementation(template, link_modified_dict):
 
 def cal_dx_by_dy(x_val: np.ndarray, y_val: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """Calc conductance or gradiant dx/dy for x-variable and y-variable also return the result."""
-    dx = x_val[0::2] - x_val[1::2]
-    dy = y_val[0::2] - y_val[1::2]
+    dx_ = x_val[0::2] - x_val[1::2]
+    dy_ = y_val[0::2] - y_val[1::2]
 
-    dx_by_dy = dx / dy
+    dx_by_dy = dx_ / dy_
 
     return dx_by_dy
 
 
-def cal_X_multi_Y(x_val: np.ndarray, y_val: np.ndarray) -> np.ndarray:
+def cal_x_multi_x(x_val: np.ndarray, y_val: np.ndarray) -> np.ndarray:
     """Return multiplication of two array
     """
     return x_val * y_val
@@ -158,12 +157,12 @@ def cal_X_multi_Y(x_val: np.ndarray, y_val: np.ndarray) -> np.ndarray:
 def slice_before_last_element(np_array):
     """Get all the elements before last element.
     """
-    if isinstance(np_array, np.ndarray) and len(np.shape(np_array)) == 1:
-        return np_array[:-1]
-    else:
+    if not isinstance(np_array, np.ndarray) and not len(np.shape(np_array)) == 1:
         raise ValueError('Please provide a numpy array of 1D.')
+    return np_array[:-1]
 
 
+# pylint: disable=too-many-return-statements
 def transform(str_value):
     """
         Transform string to the intended data type, if not then return str_value.

@@ -21,14 +21,14 @@
 
 
 from typing import Any, Dict
+import re
 import numpy as np
 import nanonispy as nap
-import re
 
-from pynxtools.dataconverter.readers.stm.stm_helper import *
-
-# TODO : try to convert all function into class
-nxdl_key_to_modified_key: dict = {}
+from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path,
+                                                            transform, fill_template_from_eln_data,
+                                                            work_out_overwriteable_field,
+                                                            link_implementation)
 
 
 def is_separator_char_exist(key, sep_char_li):
@@ -39,7 +39,7 @@ def is_separator_char_exist(key, sep_char_li):
     bool_k = [x in sep_char_li for x in key]
     return np.any(bool_k)
 
-
+# pylint: disable=invalid-name
 class STM_Nanonis():
     """Specific class for stm reader from nanonis company.
 
@@ -100,7 +100,8 @@ class STM_Nanonis():
                 raw_key = tmp_l_part.strip()
 
                 return [(raw_key, val), (f"{raw_key}/@unit", unit)]
-        return
+
+        return []
 
     def sxm_raw_metadata_and_signal(self, file_name):
         """
@@ -121,12 +122,10 @@ class STM_Nanonis():
         h_comp_iter = iter(re.split('\n:|:\n', h_part))
         return dict(zip(h_comp_iter, h_comp_iter)), scan_file.signals
 
-    # TODO: REname this function
     def get_SPM_metadata_dict_and_signal(self, file_name):
         """
         Get meradata and signal from spm file.
         """
-        # TODO: clean comments
         metadata_dict, signal = self.sxm_raw_metadata_and_signal(file_name)
         nesteded_matadata_dict = self.get_nested_dict_from_concatenated_key(metadata_dict)
         # Convert nested (dict) path to signal into slash_separated path to signal
@@ -136,7 +135,6 @@ class STM_Nanonis():
         temp_flattened_dict = {}
         nested_path_to_slash_separated_path(nesteded_matadata_dict,
                                             temp_flattened_dict)
-        # path_items = dict_to_path(nested_dict=nesteded_matadata_dict)
         flattened_dict = {}
         for key, val in temp_flattened_dict.items():
             # list of tuples of (data path, data) and (unit path/unit and unit value)
@@ -153,6 +151,7 @@ class STM_Nanonis():
 
         return flattened_dict
 
+    # pylint: disable=too-many-arguments
     def construct_nxdata_for_sxm(self, template,
                                  data_dict,
                                  data_config_dict,
@@ -174,8 +173,8 @@ class STM_Nanonis():
             This dictionary is numerical data order to list (list of path to data elements in
             input file). Each order indicates a group of data set.
         coor_info: Tuple[list]
-            Tuple (for X and Y coordinate respectively) of list  and each list starting and end point
-            of x-axis.
+            Tuple (for X and Y coordinate respectively) of list  and each list starting and
+            end point of x-axis.
 
         data_group : NeXus path for NXdata
 
@@ -187,7 +186,7 @@ class STM_Nanonis():
         ------
         None
         """
-
+        # pylint: disable=global-variable-undefined
         def indivisual_DATA_field():
             """Fill up template's indivisual data field and the descendant attribute.
                 e.g. /Entry[ENTRY]/data/DATA,
@@ -253,11 +252,6 @@ class STM_Nanonis():
             indivisual_DATA_field()
             fill_out_NXdata_group()
 
-    # def collect_default_value(template, search_key):
-    #     default_dict = {"/ENTRY[entry]/definition": "NXiv_sweep2",
-    #                     "/ENTRY[entry]/experiment_description": "An stm experiment."}
-    #     template[search_key] = default_dict[search_key]
-
     def get_dimension_info(self, config_dict, data_dict):
         """
         Extract dimension info from scanfield.
@@ -288,21 +282,7 @@ class STM_Nanonis():
                 y_len = transform(scanfield_parts[3])
                 y_cor = [y_start, y_start + y_len]
                 return (x_cor, y_cor)
-
-    # def fill_template_from_eln_data(self, eln_data_dict, template):
-    #     """Fill out the template from dict that generated from eln yaml file.
-    #     Parameters:
-    #     -----------
-    #     eln_data_dict : dict[str, Any]
-    #         Python dictionary from eln file.
-    #     template : dict[str, Any]
-    #     Return:
-    #     -------
-    #     None
-    #     """
-
-    #     for e_key, e_val in eln_data_dict.items():
-    #         template[e_key] = transform(e_val)
+        return ()
 
     def from_sxm_file_into_template(self, template, config_dict, eln_data_dict):
         """
@@ -310,14 +290,15 @@ class STM_Nanonis():
         metadata and data into nexus template.
         """
 
+        nxdl_key_to_modified_key: dict = {}
         data_dict = self.get_SPM_metadata_dict_and_signal(self.file_name)
 
-        #### TODO: remove the bolck of code that write texr in file
+        # NOTE: Add a function to show data structe to the users
         temp_file = "sxm_data.txt"
         with open(temp_file, mode='w', encoding='utf-8') as txt_f:
             for key, val in data_dict.items():
                 txt_f.write(f"{key} : {val}\n")
-        #### TODO: remove upto here
+        # NOTE: upto here
 
         fill_template_from_eln_data(eln_data_dict, template)
         # Fill out template from config file
@@ -327,10 +308,6 @@ class STM_Nanonis():
                 continue
             if c_key in temp_keys:
                 if isinstance(c_val, str):
-                    # collect default value from reader
-                    # TODO: remove this as they will come though ELN
-                    # if '@reader' in c_val:
-                    #     collect_default_value(template, c_key)
                     if c_val in data_dict:
                         template[c_key] = transform(data_dict[c_val])
                 if isinstance(c_val, dict):
