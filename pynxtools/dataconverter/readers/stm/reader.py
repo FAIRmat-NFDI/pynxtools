@@ -50,6 +50,7 @@ CONVERT_DICT = {
 REPLACE_NESTED: Dict[str, str] = {}
 
 
+# pylint: disable=invalid-name
 class STMReader(BaseReader):
     """ Reader for XPS.
     """

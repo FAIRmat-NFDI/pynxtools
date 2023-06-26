@@ -23,16 +23,21 @@
 #
 
 
-from typing import Dict, Union
+from typing import Dict, Union, Tuple
 import os
 import numpy as np
-from pynxtools.dataconverter.readers.stm.stm_helper import *
+from pynxtools.dataconverter.readers.stm.stm_helper import (fill_template_from_eln_data,
+                                                            nested_path_to_slash_separated_path,
+                                                            work_out_overwriteable_field,
+                                                            link_implementation,
+                                                            transform)
 
 
 # Type aliases
 NestedDict = Dict[str, Union[int, str, 'NestedDict']]
 
 
+# pylint: disable=invalid-name
 class BiasSpecData_Nanonis():
     """This class collect and store data fo Bias spectroscopy of SPM experiment.
 
@@ -57,6 +62,7 @@ class BiasSpecData_Nanonis():
 
     def get_data_nested_dict(self) -> NestedDict:
         """Retrun nested dict as bellow
+
         bais_data = {data_field_name:{value: value_for_data_field_of_any_data_typeS,
                                       unit: unit name,
                                       date: ---,
@@ -65,6 +71,7 @@ class BiasSpecData_Nanonis():
         """
         return self.bias_spect_dict
 
+    # pylint: disable=too-many-arguments
     def check_and_write_unit(self, dct,
                              key_or_line, unit_separators,
                              end_of_seperators, value=None):
@@ -229,15 +236,18 @@ class BiasSpecData_Nanonis():
                 # other data or metadata except matrix data
                 elif (not is_mat_data) and is_matrix_data_found:
                     is_matrix_data_found = False
-                    dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
+                    dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array,
+                                                              self.bias_spect_dict)
                     last_line = line
                 else:
-                    self.retrive_key_recursively(last_line, self.bias_spect_dict, key_seperators)
+                    self.retrive_key_recursively(last_line, self.bias_spect_dict,
+                                                 key_seperators)
                     last_line = line
 
             if (not is_mat_data) and is_matrix_data_found:
                 is_matrix_data_found = False
-                dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array, self.bias_spect_dict)
+                dismentle_matrix_into_dict_key_value_list(last_line, one_d_numpy_array,
+                                                          self.bias_spect_dict)
 
     def choose_correct_function_to_extract_data(self) -> None:
         """Choose correct function to extract data that data in organised format.
@@ -250,6 +260,7 @@ class BiasSpecData_Nanonis():
             self.extract_and_store_from_dat_file()
 
 
+# pylint: disable=too-many-locals too-many-statements
 def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
     """
     Construct NXdata that includes all the groups, field and attributes. All the elements
@@ -277,23 +288,22 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
     None
     """
 
+    # pylint: disable=too-many-branches
     def indivisual_DATA_field():
         """Fill up template's indivisual data field and the descendant attribute.
             e.g. /Entry[ENTRY]/data/DATA,
               /Entry[ENTRY]/data/DATA/@axes and so on
         """
         # NOTE : Try to replace this hard axes name
-        # TODO: Try to include re module to check similar pattern for data fields
         # These are possible axes and nxdata fields
         axes = ["Bias/",]
         data_fields = ["Current/",
-                    # "Temperature 1/",
+                       "Temperature 1/",
                        "LI Demod 1 X/",
                        "LI Demod 2 X/",
                        "LI Demod 1 Y/",
                        "LI Demod 2 Y/"]
 
-        global extra_annot
         # Bellow we are collecting: axes, and data field info.
         # list of paths e.g. "/dat_mat_components/Bias/value" comes from
         # dict value of /ENTRY[entry]/DATA[data] in config file.
@@ -301,13 +311,13 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
             # Extra annot could be 'filt'
             extra_annot, trimed_path = find_extra_annot(path)
             for axis in axes:
-                if (axis + 'value') in trimed_path:
+                if axis + 'value' in trimed_path:
                     # removing forward slash
                     axes_name.append(axis[0:-1])
                     axes_data.append(data_dict[path])
-                if (axis + 'unit') in trimed_path:
+                if axis + 'unit' in trimed_path:
                     axes_unit.append(data_dict[path] if path in data_dict else "")
-                if (axis + "metadata") in trimed_path:
+                if axis + "metadata" in trimed_path:
                     axes_metadata.append(data_dict[path] if path in data_dict else "")
             for possible_field in data_fields:
                 if possible_field + 'value' in trimed_path and path in data_dict:
@@ -318,11 +328,10 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
         # Note: this value must come from ELN
         # Note try to create link for axes
         flip_number = -1
-        global temp_data_grp
         for dt_fd, dat_, unit in zip(data_field_nm, data_field_dt, data_field_unit):
             dt_fd = '_'.join(dt_fd.lower().split(' '))
             if extra_annot:
-                temp_data_grp = data_group.replace(f"DATA[data", f"DATA[{dt_fd}"
+                temp_data_grp = data_group.replace("DATA[data", f"DATA[{dt_fd}"
                                                    f"({extra_annot})")
             else:
                 temp_data_grp = data_group.replace("DATA[data", f"DATA[{dt_fd}")
@@ -350,8 +359,7 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
         unit_key = value_key.replace('/value', '/unit')
         if unit_key in data_dict:
             return data_dict[unit_key]
-        else:
-            return ""
+        return ""
 
     def find_extra_annot(key):
         """Find out extra annotation that comes with data e.g. filt in
@@ -394,14 +402,13 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
     nested_path_to_slash_separated_path(
         b_s_d.get_data_nested_dict(),
         flattened_dict=flattened_dict)
-    # TODO: remove this block that has been wrtteing to dev purpose
+    # NOTE: Add the bellow part so that user can see data structure if needed
     temp_file = 'dat_data.txt'
     with open(temp_file, encoding='utf-8', mode='w') as dat_f:
         for key, val in flattened_dict.items():
             dat_f.write(f"{key} : {val}\n")
     fill_template_from_eln_data(eln_data_dict, template)
-    # TODO: remove upto here
-    template_keys = template.keys()
+    # NOTE: Upto here.
     for c_key, c_val in config_dict.items():
         if "@eln" in c_val:
             continue
