@@ -180,12 +180,12 @@ possible issues in yaml files'
 )
 @click.option(
     '-s',
-    '--self-closing-tag-space',
+    '--self-closing-tag-nospace',
     is_flag=True,
     default=False,
-    help='Ensure there is a single space character before all self-closing XML tag'
+    help='Omit a single space character before all self-closing XML tag'
 )
-def launch_tool(input_file, verbose, append, check_consistency, self_closing_tag_space):
+def launch_tool(input_file, verbose, append, check_consistency, self_closing_tag_nospace):
     """
         Main function that distiguishes the input file format and launches the tools.
     """
@@ -196,7 +196,7 @@ def launch_tool(input_file, verbose, append, check_consistency, self_closing_tag
 
     if ext == 'yaml':
         xml_out_file = raw_name + '.nxdl.xml'
-        generate_nxdl_or_retrieve_nxdl(input_file, xml_out_file, verbose, self_closing_tag_space)
+        generate_nxdl_or_retrieve_nxdl(input_file, xml_out_file, verbose, not self_closing_tag_nospace)
         if append:
             append_yml(raw_name + '.nxdl.xml',
                        append,
