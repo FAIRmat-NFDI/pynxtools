@@ -136,7 +136,7 @@
     "/ENTRY[entry]/INSTRUMENT[instrument]/stm_head_temp/@units": "/Temperature 1/Temperature 1/@unit",
     "/ENTRY[entry]/alternative_plot": "None",
     "/ENTRY[entry]/collection_dentifier": "/Scan/series name",
-    "/ENTRY[entry]/definition": "@reader",
+    "/ENTRY[entry]/definition": "@eln",
     "/ENTRY[entry]/entry_identifier": "None",
     "/ENTRY[entry]/experiment_description": "/COMMENT",
     "/ENTRY[entry]/experiment_identifier": "None",

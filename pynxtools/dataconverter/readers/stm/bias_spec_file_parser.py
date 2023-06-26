@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-    To collect data from Bias Spectroscopy output file that is mainly a file with dat extension.
+    To collect data from Bias Spectroscopy output file that is mainly a
+    file with dat extension.
 """
 # -*- coding: utf-8 -*-
 #
@@ -26,7 +27,10 @@ from typing import Dict, Union, TextIO
 import os
 import numpy as np
 from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path,
-                                                            transform, cal_dx_by_dy)
+                                                            transform, cal_dx_by_dy,
+                                                            fill_template_from_eln_data,
+                                                            link_implementation,
+                                                            work_out_overwriteable_field)
 
 
 # Type aliases
@@ -35,9 +39,10 @@ NestedDict = Dict[str, Union[int, str, 'NestedDict']]
 dict_orig_key_to_mod_key: dict[str, list] = {}
 
 
-class BiasSpecData():
-    """This class mainly collect and store data fo Bias spectroscopy that is SPM experiment.
-       The class splits the data and store in into nested python dictionary as follows.
+class BiasSpecData_Nanonis():
+    """This class mainly collect and store data fo Bias spectroscopy of SPM experiment.
+
+    The class splits the data and store in into nested python dictionary as follows.
        E.g.
         bais_data = {data_field_name:{value: value_for_data_field_of_any_data_typeS,
                                       unit: unit name,
@@ -46,14 +51,14 @@ class BiasSpecData():
                     }
 
     """
+
     def __init__(self, file_name: str) -> None:
-        """Innitialize object level variables.
-        """
-        # TODO: If get some information about nachines or vendors which makes the data file
-        # distinguished collecte them.
+        """Innitialize object level variables."""
+        # TODO: If get some information about nachines or vendors which makes
+        # the data file distinguished collecte them.
         self.bias_spect_dict: NestedDict = {}
         self.raw_file: str = file_name
-        # self.file_obj: TextIO = None
+        self.nanonis_version = ""
         self.choose_correct_function_to_extract_data()
 
     def get_data_nested_dict(self) -> NestedDict:
@@ -72,17 +77,18 @@ class BiasSpecData():
 
         key_seperators = ['>', '\t']
         unit_separators = [' (']
+        end_of_seperators = [')']
         is_matrix_data_found = False
         one_d_numpy_array = np.empty(0)
 
         def check_and_write_unit(dct, key_or_line, value=None):
-            for sep_unit in unit_separators:
+            for sep_unit, end_sep in zip(unit_separators, end_of_seperators):
                 if sep_unit in key_or_line:
                     key, unit = key_or_line.split(sep_unit, 1)
-                    unit = unit.split(')')[0]
+                    unit = unit.split(end_sep)[0]
                     if key_or_line in dct:
                         del dct[key_or_line]
-                    if isinstance(value, dict):
+                    if isinstance(value, dict): # and 'unit' in value:
                         value['unit'] = unit
                     else:
                         value: NestedDict = {}
@@ -276,8 +282,10 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
         flip_number = -1
         global temp_data_grp
         for dt_fd, dat_, unit in zip(data_field_nm, data_field_dt, data_field_unit):
+            dt_fd = '_'.join(dt_fd.lower().split(' '))
             if extra_annot:
-                temp_data_grp = data_group.replace("DATA[data", f"DATA[{dt_fd}({extra_annot})")
+                temp_data_grp = data_group.replace(f"DATA[data", f"DATA[{dt_fd}"
+                                                   f"({extra_annot})")
             else:
                 temp_data_grp = data_group.replace("DATA[data", f"DATA[{dt_fd}")
             template[temp_data_grp + '/@signal'] = dt_fd
@@ -337,12 +345,12 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
             indivisual_DATA_field()
 
 
-def from_dat_file_into_template(template, dat_file, config_dict):
+def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
     """Pass metadata, current and voltage into template from file
-    with dat extension.
+       with dat extension.
     """
 
-    b_s_d = BiasSpecData(dat_file)
+    b_s_d = BiasSpecData_Nanonis(dat_file)
     flattened_dict = {}
     nested_path_to_slash_separated_path(
         b_s_d.get_data_nested_dict(),
@@ -352,7 +360,7 @@ def from_dat_file_into_template(template, dat_file, config_dict):
     with open(temp_file, encoding='utf-8', mode='w') as dat_f:
         for key, val in flattened_dict.items():
             dat_f.write(f"{key} : {val}\n")
-
+    fill_template_from_eln_data(eln_data_dict, template)
     # TODO: remove upto here
     template_keys = template.keys()
     for c_key, c_val in config_dict.items():
@@ -362,6 +370,8 @@ def from_dat_file_into_template(template, dat_file, config_dict):
                 continue
             if "@reader" in c_val and c_key == t_key:
                 collect_default_value(template, c_key)
+                break
+            if "@eln" in c_val:
                 break
             if c_key == t_key and isinstance(c_val, str):
                 template[t_key] = transform(flattened_dict[c_val])
@@ -377,64 +387,7 @@ def from_dat_file_into_template(template, dat_file, config_dict):
                     work_out_overwriteable_field(template, flattened_dict, c_val, t_key,
                                                  dict_orig_key_to_mod_key)
                 break
-
-
-def work_out_overwriteable_field(template, data_dict,
-                                 sub_config_dict, nexus_path,
-                                 dict_orig_key_to_mod_key):
-    """
-    Overwrite a field for multiple dimention of the same type of physical quantity.
-
-    Parameters:
-    -----------
-    template : dict[str, Any]
-        Capturing data elements. One to one dictionary for capturing data array, data axes
-        and so on from data_dict to be ploted.
-    data_dict : dict[str, Union[array, str]]
-        Data stored from dat file. Path (str) to data elements which mainly come from
-        dat file. Data from this dict will go to template
-    data_config_dict : dict[str, list]
-        This dictionary is numerical data order to list (list of path to data elements in
-        input file). Each order indicates a group of data set.
-    field_path : NeXus field full path
-
-    Returns:
-    --------
-    None
-    """
-    # TODO: Try here to use regrex module
-    # Find the overwriteable part
-    overwrite_part = ""
-    field_to_replace = ""
-    # Two possibilities are considered: tilt_N/@units and tilt_N
-    if '/@units' in nexus_path:
-        field_to_replace = nexus_path.rsplit('/', 2)[-2]
-    else:
-        field_to_replace = nexus_path.rsplit('/', 1)[-1]
-    for char in field_to_replace:
-        if char.isupper():
-            overwrite_part = overwrite_part + char
-
-    if not overwrite_part and not field_to_replace and isinstance(sub_config_dict, dict):
-        raise ValueError(f"No overwriteable part has been found but data structure "
-                         f": {sub_config_dict} intended to overeritten.")
-    # sub_config_dict contains key that repalce the overwritable (upper case part)
-    # part from nexus path
-    for ch_to_replace, value_dict in sub_config_dict.items():
-        modified_field = field_to_replace.replace(overwrite_part, ch_to_replace)
-        new_temp_key = nexus_path.replace(field_to_replace, modified_field)
-        value = "value"
-        unit = "unit"
-        dict_orig_key_to_mod_key[nexus_path] = new_temp_key
-        if value in value_dict:
-            path_to_data = value_dict[value]
-            template[new_temp_key] = transform(data_dict[path_to_data]
-                                               if path_to_data in data_dict else None)
-        if unit in value_dict:
-            path_to_data = value_dict[unit]
-            template[new_temp_key + "/@units"] = transform(data_dict[path_to_data]
-                                                           if path_to_data in data_dict
-                                                           else None)
+    link_implementation(template, dict_orig_key_to_mod_key)
 
 
 def process_data_from_file_(flattened_dict):
