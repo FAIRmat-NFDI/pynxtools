@@ -113,16 +113,6 @@ def convert(input_file: Tuple[str],
         **kwargs,
     )
     helpers.validate_data_dict(template, data, nxdl_root, logger)
-    # print(' #### data dict ###\n++++++++++++++++++++++++++++++\n\n', data)
-    # print('\n ## +++++++++++++++++ ##\n+++++++++++++++++++++++++')
-    # print(' dict delet : ', data)
-    for key, val in data.items():
-        if isinstance(val, dict):
-            if val['link'] in data.keys():
-                print(' #####exists', val['link'])
-            else:
-                print(' ### not exists ', key)
-    print(' #### data delete ', data)
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return

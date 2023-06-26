@@ -155,8 +155,9 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None, nxdl_na
         path_nxdl = convert_data_converter_dict_to_nxdl_path(path)
         list_of_children_to_add = get_all_defined_required_children(path_nxdl, nxdl_name)
         add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
-    # Handling link: link has a target attibute that store absolute path of concept to
+    # Handling link: link has a target attibute that store absolute path of concept to be
     # linked. Writer reads link from template in the format {'link': <ABSOLUTE PATH>}
+    # {'link': ':/<ABSOLUTE PATH TO EXTERNAL FILE>'}
     elif tag == "link":
         optionality = get_required_string(root)
         optional_parent = check_for_optional_parent(path, nxdl_root)
@@ -461,43 +462,26 @@ def ensure_all_linked_concept_and_data_exist(template, data, logger):
         data: dict
             The data dict has concept as key and the correspoding physical value or string
             from reader.
+        logger: Logger
     Return:
     -------
         None
-    Raise:
+    Warning:
+    --------
+        If no valid link path or no valid value for that link path.
     ------
 
     """
     # The dict has all 'optional', 'recommended', 'required', 'undocumented' concepts
     accumulated_dict = template.get_accumulated_dict()
-    concept_to_link_path_dict = {}
-    for key, val in accumulated_dict.items():
-
+    for concept, val in accumulated_dict.items():
         if isinstance(val, dict) and 'link' in val:
-            concept_to_link_path_dict[key] = val['link']
-    # # Check whether the link_path_to_concept is already defined concept in template
-    # for concept, link_path in concept_to_link_path_dict.items():
-    #     if link_path not in accumulated_dict:
-    #         logger.wanning(f"No concept '{link_path}' is found  nxdl definition template."
-    #                        f"Concept {concept} is beging removed from template")
-    for concept, link_path in concept_to_link_path_dict.items():
-        if link_path not in data.keys():
-            logger.warning(f"No link path '{link_path}' is found in concept in data dict from"
-                           f" reader.The link concept {concept} is beging removed from data dict")
-            # print('delete concept: ', concept)
-            # print(' delete data keys : ', data.keys())
-
-            if concept in data.keys():
-                print('delete1: ', concept)
-                del data[concept]
-                # print(' data : ', data.keys())
-        else:
-            if data[link_path] in ['', None, "None", 'none']:
-                logger.warning(f"No valid data found for link path : {link_path} to be link."
-                               f"link concept {concept} is beeing removed from data dict"
-                               f"from reader.")
+            link_path = val['link']
+            if link_path not in data.keys() or data[link_path] in ['', None, "None", 'none']:
+                logger.warning(f"Either link path '{link_path}' or value for {link_path} is not"
+                               f"found in template from reader. The link {concept} is "
+                               f"beging removed from data dict.")
                 if concept in data.keys():
-                    # print('delete2: ', concept)
                     del data[concept]
 
 
