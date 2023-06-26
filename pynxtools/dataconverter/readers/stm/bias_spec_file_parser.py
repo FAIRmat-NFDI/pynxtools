@@ -23,20 +23,14 @@
 #
 
 
-from typing import Dict, Union, TextIO
+from typing import Dict, Union
 import os
 import numpy as np
-from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path,
-                                                            transform, cal_dx_by_dy,
-                                                            fill_template_from_eln_data,
-                                                            link_implementation,
-                                                            work_out_overwriteable_field)
+from pynxtools.dataconverter.readers.stm.stm_helper import *
 
 
 # Type aliases
 NestedDict = Dict[str, Union[int, str, 'NestedDict']]
-
-dict_orig_key_to_mod_key: dict[str, list] = {}
 
 
 class BiasSpecData_Nanonis():
@@ -54,7 +48,7 @@ class BiasSpecData_Nanonis():
 
     def __init__(self, file_name: str) -> None:
         """Innitialize object level variables."""
-        # TODO: If get some information about nachines or vendors which makes
+        # Note: If get some information about machines or vendors which makes
         # the data file distinguished collecte them.
         self.bias_spect_dict: NestedDict = {}
         self.raw_file: str = file_name
@@ -349,6 +343,8 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
     """Pass metadata, current and voltage into template from file
        with dat extension.
     """
+    # To collect the concept if any nxdl concept is overwritten
+    dict_orig_key_to_mod_key: dict[str, list] = {}
     b_s_d = BiasSpecData_Nanonis(dat_file)
     flattened_dict = {}
     nested_path_to_slash_separated_path(
