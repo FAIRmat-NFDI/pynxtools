@@ -397,7 +397,7 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
        with dat extension.
     """
     # To collect the concept if any nxdl concept is overwritten
-    dict_orig_key_to_mod_key: dict[str, list] = {}
+    dict_orig_key_to_mod_key: Dict[str, list] = {}
     b_s_d = BiasSpecData_Nanonis(dat_file)
     flattened_dict = {}
     nested_path_to_slash_separated_path(
