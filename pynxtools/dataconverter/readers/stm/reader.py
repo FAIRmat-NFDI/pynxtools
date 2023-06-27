@@ -57,6 +57,45 @@ class STMReader(BaseReader):
     # NXroot is a general purpose definition one can review data with this definition
     supported_nxdls = ["NXiv_sweep2"]
 
+    def get_input_file_info(self, input_paths):
+        """_summary_
+
+        Parameters
+        ----------
+        input_path : tuple
+            Tuple of input paths.
+
+        """
+        has_sxm_file: bool = False
+        sxm_file: str = ""
+        has_dat_file: bool = False
+        dat_file: str = ""
+        config_dict: Union[Dict[str, Any], None] = None
+        eln_dict: Union[Dict[str, Any], None] = None
+
+        for file in input_paths:
+            ext = file.rsplit('.', 1)[-1]
+            fl_obj: object
+            if ext == 'sxm':
+                has_sxm_file = True
+                sxm_file = file
+            if ext == 'dat':
+                has_dat_file = True
+                dat_file = file
+            if ext == 'json':
+                with open(file, mode="r", encoding="utf-8") as fl_obj:
+                    config_dict = json.load(fl_obj)
+            if ext in ['yaml', 'yml']:
+                with open(file, mode="r", encoding="utf-8") as fl_obj:
+                    eln_dict = flatten_and_replace(
+                        FlattenSettings(
+                            yaml.safe_load(fl_obj),
+                            CONVERT_DICT,
+                            REPLACE_NESTED
+                        )
+                    )
+        return (has_sxm_file, sxm_file, has_dat_file, dat_file, config_dict, eln_dict)
+
     def read(self,
              template: dict = None,
              file_paths: Tuple[str] = None,
@@ -65,49 +104,29 @@ class STMReader(BaseReader):
             General read menthod to prepare the template.
         """
 
-        has_sxm_input_file = False
+        has_sxm_file: bool = False
         sxm_file: str = ""
-        has_dat_input_file = False
+        has_dat_file: bool = False
         dat_file: str = ""
         filled_template: Union[Dict, None] = Template()
         config_dict: Union[Dict[str, Any], None] = None
-        eln_data_dict: Union[Dict[str, Any], None] = None
+        eln_dict: Union[Dict[str, Any], None] = None
 
-        for file in file_paths:
-            ext = file.rsplit('.', 1)[-1]
+        has_sxm_file, sxm_file, has_dat_file, dat_file, config_dict, eln_dict = \
+            self.get_input_file_info(file_paths)
 
-            if ext == 'sxm':
-                has_sxm_input_file = True
-                sxm_file = file
-            if ext == 'dat':
-                has_dat_input_file = True
-                dat_file = file
-            if ext == 'json':
-                with open(file, mode="r", encoding="utf-8") as jn_fl:
-                    config_dict = json.load(jn_fl)
-            if ext in ['yaml', 'yml']:
-                with open(file, mode="r", encoding="utf-8") as eln:
-                    eln_data_dict = flatten_and_replace(
-                        FlattenSettings(
-                            yaml.safe_load(eln),
-                            CONVERT_DICT,
-                            REPLACE_NESTED
-                        )
-                    )
-        # print('### ELN dict \n', eln_data_dict)
-        # print('config dict : ', config_dict)
-        if not has_dat_input_file and not has_sxm_input_file:
+        if not has_dat_file and not has_sxm_file:
             raise ValueError("Not correct file has been found. please render correct input"
                              " file of spm with extension: .dat or .sxm")
-        if has_dat_input_file and has_sxm_input_file:
+        if has_dat_file and has_sxm_file:
             raise ValueError("Only one file from .dat or .sxm can be read.")
-        if has_sxm_input_file and config_dict and eln_data_dict:
+        if has_sxm_file and config_dict and eln_dict:
             STM_Nanonis(file_name=sxm_file).from_sxm_file_into_template(template,
                                                                         config_dict,
-                                                                        eln_data_dict)
-        elif has_dat_input_file and config_dict and eln_data_dict:
+                                                                        eln_dict)
+        elif has_dat_file and config_dict and eln_dict:
             from_dat_file_into_template(template, dat_file, config_dict,
-                                        eln_data_dict)
+                                        eln_dict)
         else:
             raise ValueError("Not correct input file has been provided.")
 
@@ -117,14 +136,11 @@ class STMReader(BaseReader):
                 del template[key]
             else:
                 filled_template[key] = val
-
-        # print('  filled template : ', filled_template)
-        if not filled_template:
-            # for key, val in filled_template.items():
-            #     print(' ### : ', key)
-            return filled_template
-        else:
+        print(' #### : ', template)
+        if not filled_template.keys():
             raise ValueError("Reader could not read anything! Check for input files and the"
                              " corresponding extention.")
+
+        return filled_template
 
 READER = STMReader

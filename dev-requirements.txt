@@ -23,7 +23,7 @@ ase==3.19.0
     #   pynxtools (pyproject.toml)
 asteval==0.9.29
     # via lmfit
-astroid==2.12.10
+astroid==2.15.5
     # via pylint
 attrs==22.1.0
     # via
@@ -91,7 +91,9 @@ entrypoints==0.4
     #   jupyter-client
     #   numcodecs
 exceptiongroup==1.1.0
-    # via cattrs
+    # via
+    #   cattrs
+    #   pytest
 fabio==2023.4.1
     # via
     #   pyfai
@@ -148,15 +150,7 @@ imageio==2.22.1
     #   nionui
     #   scikit-image
 importlib-metadata==5.0.0
-    # via
-    #   hyperspy
-    #   jupyterlab-server
-    #   nbconvert
-    #   numba
-importlib-resources==5.9.0
-    # via
-    #   jsonschema
-    #   radioactivedecay
+    # via hyperspy
 iniconfig==2.0.0
     # via pytest
 ipykernel==6.16.0
@@ -366,7 +360,10 @@ numpy==1.21.6
     #   lmfit
     #   matplotlib
     #   nanonispy
-    #   pynxtools (pyproject.toml)
+    #   niondata
+    #   nionswift
+    #   nionswift-io
+    #   nionui
     #   numba
     #   numcodecs
     #   numexpr
@@ -466,8 +463,6 @@ ptyprocess==0.7.0
     # via
     #   pexpect
     #   terminado
-py==1.11.0
-    # via pytest
 pycifrw==4.4.5
     # via diffpy-structure
 pycodestyle==2.9.1
@@ -674,6 +669,7 @@ types-urllib3==1.26.25.5
     # via types-requests
 typing-extensions==4.3.0
     # via
+    #   astroid
     #   mypy
     #   numcodecs
 tzdata==2023.3
