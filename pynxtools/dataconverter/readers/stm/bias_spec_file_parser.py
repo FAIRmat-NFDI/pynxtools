@@ -34,7 +34,7 @@ from pynxtools.dataconverter.readers.stm.stm_helper import (fill_template_from_e
 
 
 # Type aliases
-NestedDict = Dict[str, Union[int, str, 'NestedDict']]
+NestedDict = Dict[str, Union[int, str, float, 'NestedDict']]
 
 
 # pylint: disable=invalid-name
