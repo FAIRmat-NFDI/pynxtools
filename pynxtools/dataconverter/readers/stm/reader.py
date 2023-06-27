@@ -57,7 +57,7 @@ class STMReader(BaseReader):
     # NXroot is a general purpose definition one can review data with this definition
     supported_nxdls = ["NXiv_sweep2"]
 
-    def get_input_file_info(self, input_paths):
+    def get_input_file_info(self, input_paths: Tuple[str]):
         """_summary_
 
         Parameters
@@ -136,11 +136,11 @@ class STMReader(BaseReader):
                 del template[key]
             else:
                 filled_template[key] = val
-        print(' #### : ', template)
         if not filled_template.keys():
             raise ValueError("Reader could not read anything! Check for input files and the"
                              " corresponding extention.")
 
         return filled_template
+
 
 READER = STMReader

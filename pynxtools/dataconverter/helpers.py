@@ -17,7 +17,7 @@
 #
 """Helper functions commonly used by the convert routine."""
 
-from typing import List, Dict
+from typing import List
 from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET

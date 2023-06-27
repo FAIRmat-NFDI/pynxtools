@@ -39,6 +39,7 @@ def is_separator_char_exist(key, sep_char_li):
     bool_k = [x in sep_char_li for x in key]
     return np.any(bool_k)
 
+
 # pylint: disable=invalid-name
 class STM_Nanonis():
     """Specific class for stm reader from nanonis company.
@@ -269,7 +270,7 @@ class STM_Nanonis():
                     scanfield = data_dict[val]
                 else:
                     raise ValueError("Scan field must be added. Which stores"
-                                    " important information area of scan.")
+                                     " important information area of scan.")
         for sep in sep_li:
             if sep in scanfield:
                 # parts are X_cor, Y_cor, X_len, Y_len and one unkown value
