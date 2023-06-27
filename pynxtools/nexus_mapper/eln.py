@@ -19,7 +19,7 @@
 
 import os
 import re
-from typing import Any
+from typing import Any, Dict
 import xml.etree.ElementTree as ET
 import yaml
 
@@ -81,7 +81,7 @@ def take_care_of_special_concept(key: str):
 
 
 def get_recursive_dict(concatenated_key: str,
-                       recursive_dict: dict[str, Any],
+                       recursive_dict: Dict[str, Any],
                        level_to_skip: int) -> None:
     """Get recursive dict for concatenated string of keys.
 
@@ -143,7 +143,7 @@ def generate_eln(nexus_def: str, eln_file: str, level_to_skip: int) -> None:
     """
 
     template = get_empty_template(nexus_def)
-    recursive_dict: dict[str, Any] = {}
+    recursive_dict: Dict[str, Any] = {}
     for key, _ in template.items():
         get_recursive_dict(key, recursive_dict, level_to_skip)
 
