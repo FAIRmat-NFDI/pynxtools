@@ -1,3 +1,5 @@
+"""For functions that directly or indirectly help to for rendering ELN."""
+
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -17,32 +19,27 @@
 
 import os
 import re
+from typing import Any
 import xml.etree.ElementTree as ET
 import yaml
-from typing import Any
-import click
 
 from pynxtools.dataconverter.helpers import generate_template_from_nxdl
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus.nexus import get_nexus_definitions_path
 
 
-# TOSO: edit docs
 def get_empty_template(nexus_def: str) -> Template:
-    """Generate eln in yaml file
+    """Generate eln in yaml file.
 
     Parameters
     ----------
     nexus_def : str
         Name of NeXus definition e.g. NXmpes
-    eln_file : str
-        Name of eln file, e.g. NAME or NAME.yaml.
 
     Return
     ------
-        None
+        Template
     """
-
     definition_path = get_nexus_definitions_path()
 
     def_path = os.path.join(definition_path,
@@ -74,9 +71,7 @@ def get_empty_template(nexus_def: str) -> Template:
 
 
 def take_care_of_special_concept(key: str):
-    """TODO while writting doc mention that
-    """
-
+    """For some special concepts such as @units."""
     def unit_concept():
         return {'value': None,
                 'unit': None}
@@ -88,14 +83,16 @@ def take_care_of_special_concept(key: str):
 def get_recursive_dict(concatenated_key: str,
                        recursive_dict: dict[str, Any],
                        level_to_skip: int) -> None:
-    """_summary_
+    """Get recursive dict for concatenated string of keys.
 
     Parameters
     ----------
-    temp_dict : _type_
-        _description_
-    recursive_dict : _type_
-        _description_
+    concatenated_key : str
+        String of keys separated by slash
+    recursive_dict : dict
+        Dict to recursively stroring data.
+    level_to_skip : int
+        Integer to skip the level of hierarchical level
     """
     # splitig keys like: '/entry[ENTRY]/position[POSITION]/xx'.
     # skiping the first empty '' and top parts as directed by users.
@@ -147,7 +144,7 @@ def generate_eln(nexus_def: str, eln_file: str, level_to_skip: int) -> None:
 
     template = get_empty_template(nexus_def)
     recursive_dict: dict[str, Any] = {}
-    for key, val in template.items():
+    for key, _ in template.items():
         get_recursive_dict(key, recursive_dict, level_to_skip)
 
     name_split = eln_file.rsplit('.')

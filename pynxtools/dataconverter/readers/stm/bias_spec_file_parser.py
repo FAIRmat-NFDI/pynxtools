@@ -124,13 +124,14 @@ class BiasSpecData_Nanonis():
 
         line_to_analyse = line_to_analyse.strip()
         for k_sep in key_seperators:
+            new_dict: NestedDict = {}
             if k_sep in line_to_analyse:
                 key, rest = line_to_analyse.split(k_sep, 1)
                 key = key.strip()
                 if key in dict_to_store:
-                    new_dict = dict_to_store[key]
+                    new_dict = dict_to_store[key]  # type: ignore
                 else:
-                    new_dict: NestedDict = {}
+                    new_dict = {}
                 dict_to_store[key] = new_dict
                 # check if key contains any unit inside bracket '()'
                 self.check_and_write_unit(dict_to_store, key, unit_separators,
@@ -296,7 +297,7 @@ def construct_nxdata_for_dat(template, data_dict, data_config_dict, data_group):
         """
         # NOTE : Try to replace this hard axes name
         # These are possible axes and nxdata fields
-        axes = ["Bias/",]
+        axes = ["Bias/"]
         data_fields = ["Current/",
                        "Temperature 1/",
                        "LI Demod 1 X/",

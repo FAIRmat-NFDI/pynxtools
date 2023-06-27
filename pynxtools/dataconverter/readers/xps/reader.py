@@ -378,4 +378,5 @@ class XPSReader(BaseReader):
 
         return final_template
 
+
 READER = XPSReader

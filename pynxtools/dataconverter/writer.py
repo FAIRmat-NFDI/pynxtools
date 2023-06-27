@@ -105,7 +105,7 @@ def handle_shape_entries(data, file, path):
     return layout
 
 
-def handle_dicts_entries(data, grp, entry_name, output_path, path, self_data):
+def handle_dicts_entries(data, grp, entry_name, output_path, path):
     """Handle function for dictionaries found as value of the nexus file.
 
 Several cases can be encoutered:
@@ -140,9 +140,7 @@ Several cases can be encoutered:
     # internal and external links
     elif 'link' in data.keys():
         if ':/' not in data['link']:
-#            print(' ### soft link : ', h5py.HardLink(path))
             grp[entry_name] = h5py.SoftLink(path)  # internal link
-            print('# parth dicts entries : ', path)
         else:
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif 'compress' in data.keys():
@@ -264,7 +262,7 @@ class Writer:
                                                            self.output_path, path)
                         else:
                             hdf5_links_for_later.append([data, grp, entry_name,
-                                                         self.output_path, path, self.data])
+                                                         self.output_path, path])
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
             except InvalidDictProvided as exc:
@@ -272,10 +270,6 @@ class Writer:
             except Exception as exc:
                 raise IOError(f"Unknown error occured writing the path: {path} "
                               f"with the following message: {str(exc)}") from exc
-        temp_dataset_list = []
-        def store_h5_path(x):
-            temp_dataset_list.append(x)
-        self.output_nexus.visit(store_h5_path)
         for links in hdf5_links_for_later:
             dataset = handle_dicts_entries(*links)
 

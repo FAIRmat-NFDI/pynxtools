@@ -1,3 +1,4 @@
+"""This module Generate ELN in Hierarchical format according to NEXUS definition."""
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -15,9 +16,8 @@
 # limitations under the License.
 #
 
-from pynxtools.nexus_mapper.Eln import generate_eln
-from typing import Any
 import click
+from pynxtools.nexus_mapper.eln import generate_eln
 
 
 @click.command()
@@ -40,6 +40,17 @@ import click
 def get_eln_or_json(nxdl: str,
                     skip_top_levels: int,
                     output_file: str):
+    """To generate ELN in yaml file format.
+
+    Parameters
+    ----------
+    nxdl : str
+        Name of NeXus definition e.g. NXmpes
+    skip_top_levels : int
+        To skip hierarchical levels
+    output_file : str
+        Name of the output file.
+    """
     generate_eln(nxdl, output_file, skip_top_levels)
 
 
