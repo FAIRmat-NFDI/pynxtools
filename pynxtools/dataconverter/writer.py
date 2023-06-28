@@ -270,7 +270,6 @@ class Writer:
             except Exception as exc:
                 raise IOError(f"Unknown error occured writing the path: {path} "
                               f"with the following message: {str(exc)}") from exc
-
         for links in hdf5_links_for_later:
             dataset = handle_dicts_entries(*links)
 
