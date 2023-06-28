@@ -112,7 +112,7 @@ def convert(input_file: Tuple[str],
         file_paths=input_file,
         **kwargs,
     )
-    helpers.validate_data_dict(template, data, nxdl_root, logger)
+    helpers.validate_data_dict(template, data, nxdl_root)
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return

@@ -450,41 +450,6 @@ def ensure_all_required_fields_exist(template, data):
                              f"and hasn't been supplied by the reader.")
 
 
-def ensure_all_linked_concept_and_data_exist(template, data, logger):
-    """Check:
-        whether the concept exists to be linked
-        whether data exist corresponds to that concept available.
-        example of concept: '/ENTRY[entry]/experiment_description'
-    Parameter:
-    ----------
-        template: dict
-            This is a dict instance that has all the concepts from from NeXus definition
-        data: dict
-            The data dict has concept as key and the correspoding physical value or string
-            from reader.
-        logger: Logger
-    Return:
-    -------
-        None
-    Warning:
-    --------
-        If no valid link path or no valid value for that link path.
-    ------
-
-    """
-    # The dict has all 'optional', 'recommended', 'required', 'undocumented' concepts
-    accumulated_dict = template.get_accumulated_dict()
-    for concept, val in accumulated_dict.items():
-        if isinstance(val, dict) and 'link' in val:
-            link_path = val['link']
-            if link_path not in data.keys() or data[link_path] in ['', None, "None", 'none']:
-                logger.warning(f"Either link path '{link_path}' or value for {link_path} is not"
-                               f"found in template from reader. The link {concept} is "
-                               f"beging removed from data dict.")
-                if concept in data.keys():
-                    del data[concept]
-
-
 def try_undocumented(data, nxdl_root: ET.Element):
     """Tries to move entries used that are from base classes but not in AppDef"""
     for path in list(data.undocumented):
@@ -511,7 +476,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element, logger=None):
+def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
@@ -556,8 +521,6 @@ def validate_data_dict(template, data, nxdl_root: ET.Element, logger=None):
                 if not is_valid_enum:
                     raise ValueError(f"The value at {path} should be on of the "
                                      f"following strings: {enums}")
-
-    ensure_all_linked_concept_and_data_exist(template, data, logger)
 
     return True
 

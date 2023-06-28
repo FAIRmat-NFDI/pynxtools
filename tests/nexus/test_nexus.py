@@ -73,7 +73,6 @@ def test_nexus(tmp_path):
         encoding='utf-8'
     ) as reffile:
         ref = reffile.readlines()
-
     assert log == ref
 
     # didn't work with filecmp library

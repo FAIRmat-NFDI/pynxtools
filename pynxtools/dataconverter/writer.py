@@ -105,6 +105,7 @@ def handle_shape_entries(data, file, path):
     return layout
 
 
+# pylint: disable=too-many-locals, inconsistent-return-statements
 def handle_dicts_entries(data, grp, entry_name, output_path, path):
     """Handle function for dictionaries found as value of the nexus file.
 
@@ -163,7 +164,13 @@ Several cases can be encoutered:
         raise InvalidDictProvided("A dictionary was provided to the template but it didn't"
                                   " fall into any of the know cases of handling"
                                   " dictionaries. This occured for: " + entry_name)
-    return grp[entry_name]
+    # Check whether link has been stabilished or not
+    try:
+        return grp[entry_name]
+    except KeyError:
+        logger.warning("No path '%s' available to be linked.", path)
+        del grp[entry_name]
+        return None
 
 
 class Writer:
@@ -286,6 +293,10 @@ class Writer:
 
                 if entry_name[0] != "@":
                     path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(path)
+                    # Handling links that does not exist in hdf file
+                    if isinstance(value, dict) and path_hdf5 not in self.output_nexus:
+                        continue
+
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
                     # consider changing the name here the lvalue can also be group!

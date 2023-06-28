@@ -1,0 +1,537 @@
+definitions:
+  name: <ADD PREFERED NAME>
+  sections:
+    mpes:
+      base_sections:
+      - nomad.datamodel.metainfo.eln.NexusDataConverter
+      - nomad.datamodel.data.EntryData
+      m_annotations:
+        template:
+          reader: <READER_NAME>
+          nxdl: NX<NAME>.nxdl
+        eln:
+          hide: []
+      quantities:
+        title:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+              defaultDisplayUnit: <No Default unit>
+          description: ''
+        start_time:
+          type: Datetime
+          m_annotations:
+            eln:
+              component: DateTimeEditQuantity
+              defaultDisplayUnit: <No Default unit>
+          description: ' Datetime of the start of the measurement. '
+        definition:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+              defaultDisplayUnit: <No Default unit>
+          description: ''
+      sub_sections:
+        User:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            quantities:
+              name:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' Name of the user. '
+              affiliation:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' Name of the affiliation of the user at the point in
+                  time when the experiment was performed. '
+              address:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' Full address (street, street number, ZIP, city, country)
+                  of the user''s affiliation. '
+              email:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' Email address of the user. '
+              orcid:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' Author ID defined by https://orcid.org/. '
+        Instrument:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            quantities:
+              energy_resolution:
+                type: np.float64
+                unit: '<hint: NX_ENERGY>'
+                value: <ADD default value>
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ''
+            sub_sections:
+              Source:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    type:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    name:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    probe:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' Type of probe. In photoemission it''s always
+                        photons, so the full NIAC list is restricted. '
+              Beam:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    distance:
+                      type: np.float64
+                      unit: '<hint: NX_LENGTH>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' Distance of the point of evaluation of the beam
+                        from the sample surface. '
+                    incident_energy:
+                      type: np.float64
+                      unit: '<hint: NX_ENERGY>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    incident_energy_spread:
+                      type: np.float64
+                      unit: '<hint: NX_ENERGY>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    incident_polarization:
+                      type: np.float64
+                      unit: '<hint: NX_ANY>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+              Electronanalyser:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    description:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    energy_resolution:
+                      type: np.float64
+                      unit: '<hint: NX_ENERGY>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' Energy resolution of the analyser with the current
+                        setting. May be linked from a NXcalibration. '
+                    fast_axes:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    slow_axes:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                  sub_sections:
+                    Collectioncolumn:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        quantities:
+                          scheme:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ' Scheme of the electron collection column. '
+                          mode:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ''
+                          projection:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ''
+                        sub_sections:
+                          Field_aperture:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                          Contrast_aperture:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                    Energydispersion:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        quantities:
+                          scheme:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ''
+                          pass_energy:
+                            type: np.float64
+                            unit: '<hint: NX_ENERGY>'
+                            value: <ADD default value>
+                            m_annotations:
+                              eln:
+                                component: NumberEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ''
+                          energy_scan_mode:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ''
+                        sub_sections:
+                          Entrance_slit:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                          Exit_slit:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                    Detector:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        quantities:
+                          amplifier_type:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ' Type of electron amplifier in the first
+                              amplification step. '
+                          detector_type:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: ' Description of the detector type. '
+                        sub_sections:
+                          Data:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                              quantities:
+                                raw:
+                                  type: np.float64
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: <No Default unit>
+                                  description: ' Raw data before calibration. '
+              Manipulator:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    sample_temperature:
+                      type: np.float64
+                      unit: '<hint: NX_TEMPERATURE>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    drain_current:
+                      type: np.float64
+                      unit: '<hint: NX_CURRENT>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+                    sample_bias:
+                      type: np.float64
+                      unit: '<hint: NX_CURRENT>'
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+        Process:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            sub_sections:
+              Energy_calibration:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    applied:
+                      type: bool
+                      m_annotations:
+                        eln:
+                          component: BoolEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' Has an energy calibration been applied? '
+                    calibrated_axis:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' This is the calibrated energy axis to be used
+                        for data plotting. '
+              Angular_calibration:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    applied:
+                      type: bool
+                      m_annotations:
+                        eln:
+                          component: BoolEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' Has an angular calibration been applied? '
+                    calibrated_axis:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' This is the calibrated angular axis to be used
+                        for data plotting. '
+              Spatial_calibration:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    applied:
+                      type: bool
+                      m_annotations:
+                        eln:
+                          component: BoolEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' Has an spatial calibration been applied? '
+                    calibrated_axis:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' This is the calibrated spatial axis to be used
+                        for data plotting. '
+              Momentum_calibration:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    applied:
+                      type: bool
+                      m_annotations:
+                        eln:
+                          component: BoolEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' Has an momentum calibration been applied? '
+                    calibrated_axis:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ' This is the momentum axis to be used for data
+                        plotting. '
+        Sample:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            quantities:
+              name:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ''
+              chemical_formula:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' The chemical formula of the sample. For mixtures use
+                  the NXsample_component group in NXsample instead. '
+              atom_types:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' List of comma-separated elements from the periodic
+                  table that are contained in the sample. If the sample substance
+                  has multiple components, all elements from each component must be
+                  included in `atom_types`. '
+              preparation_date:
+                type: Datetime
+                m_annotations:
+                  eln:
+                    component: DateTimeEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' Date of preparation of the sample for the XPS experiment
+                  (i.e. cleaving, last annealing). '
+              temperature:
+                type: np.float64
+                unit: '<hint: NX_TEMPERATURE>'
+                value: <ADD default value>
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' In the case of a fixed temperature measurement this
+                  is the scalar temperature of the sample. In the case of an experiment
+                  in which the temperature is changed and recoded, this is an array
+                  of length m of temperatures. This should be a link to /entry/instrument/manipulator/sample_temperature. '
+              situation:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ''
+              gas_pressure:
+                type: np.float64
+                unit: '<hint: NX_PRESSURE>'
+                value: <ADD default value>
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ''
+            sub_sections:
+              Sample_history:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+              Preparation_description:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+        Data:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            quantities:
+              data:
+                type: np.float64
+                unit: '<hint: NX_ANY>'
+                value: <ADD default value>
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ' Represents a measure of one- or more-dimensional photoemission
+                  counts, where the varied axis may be for example energy, momentum,
+                  spatial coordinate, pump-probe delay, spin index, temperature, etc.
+                  The axes traces should be linked to the actual encoder position
+                  in NXinstrument or calibrated axes in NXprocess. '
