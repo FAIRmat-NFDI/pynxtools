@@ -47,6 +47,7 @@ CONVERT_DICT = {
     'Energydispersion': 'ENERGYDISPERSION[energydispersion]',
     'Detector': 'DETECTOR[detector]',
     'Environment': 'ENVIRONMENT[environment]',
+
 }
 
 REPLACE_NESTED: Dict[str, str] = {}
