@@ -33,6 +33,8 @@ from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSe
 
 CONVERT_DICT = {
     'Instrument': 'INSTRUMENT[instrument]',
+    'Software': 'SOFTWARE[software]',
+    'Hardware': 'Hardware[hardware]',
     'Analyser': 'ELECTRONANALYSER[electronanalyser]',
     'Beam': 'BEAM[beam]',
     'unit': '@units',

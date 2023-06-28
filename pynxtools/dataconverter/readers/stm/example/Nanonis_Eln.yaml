@@ -68,8 +68,9 @@ Instrument:
     unit: null
   current_amplifier:
     hardware: "Name of hard ware"
-  hardware:
+  Hardware:
     vendor: "Name of hard ware"
+    version: "Version"
   lock_in: null
   output_cabling: null
   piezo_config:
@@ -89,8 +90,9 @@ Instrument:
     bias:
       value: null
       unit: null
-  software:
+  Software:
     vedor: 'Name of vendor'
+    version: "Version"
   stm_head_temp:
     value: null
     unit: null
