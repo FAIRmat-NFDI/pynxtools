@@ -211,5 +211,6 @@
                                  "5": ["/LI_Demod_1_X/forward",
                                        "/LI_Demod_1_X/backward"],
                                  "6": ["/LI_Demod_1_Y/forward",
-                                       "/LI_Demod_1_Y/backward"]}
+                                       "/LI_Demod_1_Y/backward"]},
+    "unit_of_x_y_coordinate": "/Z-Controller/Z/@unit"
 }

@@ -21,6 +21,7 @@
 
 
 from typing import Any, Dict
+import logging
 import re
 import numpy as np
 import nanonispy as nap
@@ -29,6 +30,9 @@ from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash
                                                             transform, fill_template_from_eln_data,
                                                             work_out_overwriteable_field,
                                                             link_implementation)
+
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
 
 def is_separator_char_exist(key, sep_char_li):
@@ -104,7 +108,7 @@ class STM_Nanonis():
 
         return []
 
-    def sxm_raw_metadata_and_signal(self, file_name):
+    def get_sxm_raw_metadata_and_signal(self, file_name):
         """
         Retun metadata plain dict and signal
         Convert header part (that contains metadata) of a file with 'sxm' extension into
@@ -123,11 +127,11 @@ class STM_Nanonis():
         h_comp_iter = iter(re.split('\n:|:\n', h_part))
         return dict(zip(h_comp_iter, h_comp_iter)), scan_file.signals
 
-    def get_SPM_metadata_dict_and_signal(self, file_name):
+    def get_SPM_metadata_dict_and_signal(self):
         """
         Get meradata and signal from spm file.
         """
-        metadata_dict, signal = self.sxm_raw_metadata_and_signal(file_name)
+        metadata_dict, signal = self.get_sxm_raw_metadata_and_signal(self.file_name)
         nesteded_matadata_dict = self.get_nested_dict_from_concatenated_key(metadata_dict)
         # Convert nested (dict) path to signal into slash_separated path to signal
         temp_flattened_dict_sig = {}
@@ -153,9 +157,10 @@ class STM_Nanonis():
         return flattened_dict
 
     # pylint: disable=too-many-arguments
-    def construct_nxdata_for_sxm(self, template,
+    def construct_nxdata_for_sxm(self,
+                                 template,
                                  data_dict,
-                                 data_config_dict,
+                                 sub_config_dict,
                                  coor_info,
                                  data_group):
         """
@@ -193,27 +198,29 @@ class STM_Nanonis():
                 e.g. /Entry[ENTRY]/data/DATA,
                 /Entry[ENTRY]/data/DATA/@axes and so on
             """
-            global nxdata_grp, data_field
+            # To define a variable on global namespace
+            global nxdata_grp, field_name
             # list of paths e.g. "/LI_Demod_2_X/forward" comes provided file .sxm.
-            for path in dt_val:
+            for path in dt_path_list:
                 if path in data_dict:
-                    grp_name, data_field = find_nxdata_group_and_name(path)
-                    signals.append(data_field)
+                    grp_name, field_name = find_nxdata_group_and_name(path)
+                    signals.append(field_name)
                     nxdata_grp = data_group.replace("DATA[data", f"DATA[{grp_name}")
-                    temp_data_field = nxdata_grp + '/' + data_field
+                    temp_data_field = nxdata_grp + '/' + field_name
                     scan_dt_arr = transform(data_dict[path])
                     x_cor_len, y_cor_len = scan_dt_arr.shape
                     # collect for only one data field e.g. forward or backward, as all the data
                     # fields must have the same length of co-ordinate
                     if not axes_data:
-                        axes_data.append(np.linspace(*coor_info[0], x_cor_len))
-                        axes_data.append(np.linspace(*coor_info[1], y_cor_len))
-                    axes_units.append('m')
+                        # coor_info[i] has start, end and unit
+                        axes_data.append(np.linspace(*coor_info[0][0:2], x_cor_len))
+                        axes_data.append(np.linspace(*coor_info[1][0:2], y_cor_len))
+                    axes_units.append(coor_info[0][2])
                     template[temp_data_field] = scan_dt_arr
                 else:
-                    # to clean up nxdata_grp and data_field from previous loop
+                    # to clean up nxdata_grp and field_name from previous loop
                     nxdata_grp = ''
-                    data_field = ''
+                    field_name = ''
 
         def fill_out_NXdata_group():
             """To fill out NXdata which is root for all data fields and attributes for NXdata.
@@ -242,14 +249,17 @@ class STM_Nanonis():
             """
             tmp_key = key.split('/', 1)[1]
             grp_name, data_field_name = tmp_key.split('/', 1)
-
+            grp_name = grp_name.upper()
             return grp_name, data_field_name
 
-        for _, dt_val in data_config_dict.items():
+        for _, dt_path_list in sub_config_dict.items():
             signals = []
-            axes_name = ['X', 'Y']
+            axes_name = ['x', 'y']
             axes_units = []
             axes_data = []
+            # The following functions can be thought as unpacked function body here.
+            if not dt_path_list:
+                continue
             indivisual_DATA_field()
             fill_out_NXdata_group()
 
@@ -269,8 +279,14 @@ class STM_Nanonis():
                 if val in data_dict:
                     scanfield = data_dict[val]
                 else:
-                    raise ValueError("Scan field must be added. Which stores"
-                                     " important information area of scan.")
+                    raise ValueError("Scanfield data missing: /ENTRY[entry]/INSTRUMENT[instrument]"
+                                     "/ENVIRONMENT[environment]/scan_control/positioner/scanfield")
+        try:
+            conf_unit_key = 'unit_of_x_y_coordinate'
+            unit_info = data_dict[config_dict[conf_unit_key]]
+        except KeyError:
+            raise KeyError(f"No info found about coordinate unit. check config file by"
+                           f"key {conf_unit_key}")
         for sep in sep_li:
             if sep in scanfield:
                 # parts are X_cor, Y_cor, X_len, Y_len and one unkown value
@@ -278,10 +294,10 @@ class STM_Nanonis():
 
                 x_start = transform(scanfield_parts[0])
                 x_len = transform(scanfield_parts[2])
-                x_cor = [x_start, x_start + x_len]
+                x_cor = [x_start, x_start + x_len, unit_info]
                 y_start = transform(scanfield_parts[1])
                 y_len = transform(scanfield_parts[3])
-                y_cor = [y_start, y_start + y_len]
+                y_cor = [y_start, y_start + y_len, unit_info]
                 return (x_cor, y_cor)
         return ()
 
@@ -292,20 +308,13 @@ class STM_Nanonis():
         """
 
         nxdl_key_to_modified_key: dict = {}
-        data_dict = self.get_SPM_metadata_dict_and_signal(self.file_name)
-
-        # NOTE: Add a function to show data structe to the users
-        temp_file = "sxm_data.txt"
-        with open(temp_file, mode='w', encoding='utf-8') as txt_f:
-            for key, val in data_dict.items():
-                txt_f.write(f"{key} : {val}\n")
-        # NOTE: upto here
+        data_dict = self.get_SPM_metadata_dict_and_signal()
 
         fill_template_from_eln_data(eln_data_dict, template)
         # Fill out template from config file
         temp_keys = template.keys()
         for c_key, c_val in config_dict.items():
-            if c_val in ['None', ""]:
+            if c_val in ['None', ""] or c_key[0] != '/':
                 continue
             if c_key in temp_keys:
                 if isinstance(c_val, str):
@@ -338,3 +347,16 @@ class STM_Nanonis():
         link_implementation(template, nxdl_key_to_modified_key)
 
         return template
+
+
+def get_raw_file_info(raw_file):
+    """To write raw file info in a file as the data retrieve with that info."""
+
+    raw_name = raw_file.split('.')[0]
+    data_dict = STM_Nanonis(raw_file).get_SPM_metadata_dict_and_signal()
+    temp_file = f"{raw_name}.txt"
+    with open(temp_file, mode='w', encoding='utf-8') as txt_f:
+        for key, val in data_dict.items():
+            txt_f.write(f"{key} : {val}\n")
+
+    logging.info(f"'{temp_file}' has been created in current directory.")

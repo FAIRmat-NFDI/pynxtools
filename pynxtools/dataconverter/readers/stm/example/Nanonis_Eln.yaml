@@ -67,11 +67,13 @@ Instrument:
     value: null
     unit: null
   current_amplifier:
-    hardware: "Name of hard ware"
+    hardware: "Name of hard ware xxxx"
+    low_pass: null
   Hardware:
     vendor: "Name of hard ware"
     version: "Version"
-  lock_in: null
+  lock_in:
+    lock_in_data_flip_number: -1
   output_cabling: null
   piezo_config:
     2nd_order_corr_N: null
@@ -104,6 +106,8 @@ experiment_description: "Comments from experimentalists."
 experiment_identifier: "Add full path of the experiment output file in local computer."
 line_scan: null
 mesh_scan: null
+sample:
+  sample_prep_description: "Here is the description for sample preparation."
 reproducibility_indicators:
   1st_settling_time: null
   backward_sweep: null
@@ -153,3 +157,4 @@ resolution_indicators:
 single_point: null
 # Not sureabout the value
 type: 'background'
+
