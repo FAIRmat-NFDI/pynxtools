@@ -1,0 +1,17 @@
+{
+    "measurement_set": {
+        "axis_name": "rotation",
+        "values": [
+            0,
+            10,
+            20,
+            30
+        ],
+        "files": [
+            "00deg.csv",
+            "10deg.csv",
+            "20deg.csv",
+            "30deg.csv"
+        ]
+    }
+}
