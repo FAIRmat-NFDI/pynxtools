@@ -18,24 +18,12 @@
 """Perkin Ellmer transmission file reader implementation for the DataConverter."""
 import json
 from typing import Any, Dict
+import numpy as np
 import pandas as pd
 
 from pynxtools.dataconverter.readers.json_yml.reader import YamlJsonReader
 from pynxtools.dataconverter.readers.utils import parse_yml
-
-
-# Dictionary mapping metadata in the asc file to the paths in the NeXus file.
-# The entry can either be a function with one list parameter
-# which is executed to fill the specific path or an
-# integer which is used to get the value at the index of the metadata.
-# If the value is a str this string gets inputed at the path.
-METADATA_MAP: Dict[str, Any] = {}
-# Dictionary to map value during the yaml eln reading
-# This is typically a mapping from ELN signifier to NeXus path
-CONVERT_DICT: Dict[str, str] = {"Sample": "SAMPLE[sample]", "unit": "@units"}
-# Dictionary to map nested values during the yaml eln reading
-# This is typically a mapping from nested ELN signifiers to NeXus group
-REPLACE_NESTED: Dict[str, str] = {}
+from pynxtools.dataconverter.readers.ellips.reader import CONVERT_DICT, REPLACE_NESTED
 
 
 def data_to_template(data: pd.DataFrame) -> Dict[str, Any]:
@@ -60,7 +48,16 @@ def data_to_template(data: pd.DataFrame) -> Dict[str, Any]:
     return template
 
 
-def parse_measurement_file(file_path: str) -> Dict[str, Any]:
+def _get_columns_as_number(dataframe: pd.DataFrame) -> list:
+    return list(
+        map(
+            lambda aoi: round(float(aoi.replace(".", "").replace(",", ".")), 2),
+            dataframe.columns,
+        )
+    )
+
+
+def read_measurement_file_to_pandas_df(file_path: str) -> pd.DataFrame:
     """TODO: _summary_
 
     Args:
@@ -70,9 +67,19 @@ def parse_measurement_file(file_path: str) -> Dict[str, Any]:
         Dict[str, Any]:
             Dictionary containing the metadata and data from the measurement file.
     """
-    template: Dict[str, Any] = {}
+    frame = pd.read_csv(file_path, decimal=",", sep=r"\s+", index_col=0)
 
-    return template
+    nrows, ncols = frame.shape
+    data = {
+        "psi": frame.iloc[:, ::2].to_numpy().ravel("F"),
+        "delta": frame.iloc[:, 1::2].to_numpy().ravel("F"),
+        "aoi": np.asarray(_get_columns_as_number(frame.iloc[:, ::2])).repeat(nrows),
+    }
+    return pd.DataFrame(
+        data,
+        index=np.tile(np.asarray(frame.index), ncols // 2),
+        columns=["aoi", "psi", "delta"],
+    )
 
 
 def parse_measurement_set(measurement_set: Dict[str, Any]) -> Dict[str, Any]:
@@ -84,7 +91,28 @@ def parse_measurement_set(measurement_set: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: TODO: _description_
     """
+
+    for key in ("axis_name", "values", "files"):
+        if key not in measurement_set:
+            raise ValueError(f"No {key} found in measurement set.")
+
+    for lis in ("values", "files"):
+        if not isinstance(lis, list):
+            raise ValueError(
+                f"{lis} in measurement set must be a list. But is {type(lis)}"
+            )
+
+    if len(measurement_set["values"]) != len(measurement_set["files"]):
+        raise ValueError("Values and files list must have the same length.")
     template: Dict[str, Any] = {}
+
+    frames = []
+    for value, file in zip(measurement_set["values"], measurement_set["files"]):
+        frame = read_measurement_file_to_pandas_df(file)
+        frame[measurement_set["axis_name"]] = value
+        frames.append(frame)
+
+    full_frame = pd.concat(frames)
 
     return template
 
@@ -108,16 +136,17 @@ def parse_json(file_path: str) -> Dict[str, Any]:
     return json_data
 
 
-def add_def_info() -> Dict[str, str]:
+def appdef_defaults() -> Dict[str, str]:
     """Creates a template with definition version information"""
     template: Dict[str, Any] = {}
     template["/@default"] = "entry"
     template["/ENTRY[entry]/@default"] = "data"
     template["/ENTRY[entry]/definition"] = "NXellipsometry"
-    template["/ENTRY[entry]/definition/@version"] = "v2022.06"
+    template["/ENTRY[entry]/definition/@version"] = "v2022.07"
     template["/ENTRY[entry]/definition/@url"] = (
-        "https://fairmat-experimental.github.io/nexus-fairmat-proposal/"
-        + "50433d9039b3f33299bab338998acb5335cd8951/index.html"
+        "https://fairmat-nfdi.github.io/nexus-fairmat-proposal/"
+        "9636feecb79bb32b828b1a9804269573256d7696/classes/"
+        "contributed_definitions/NXellipsometry.html#nxellipsometry"
     )
 
     return template
@@ -131,11 +160,11 @@ class EllipsometrySentechReader(YamlJsonReader):
 
     supported_nxdls = ["NXellipsometry"]
     extensions = {
-        ".txt": parse_measurement_file,
+        # ".csv": parse_measurement_file,
         ".json": parse_json,
         ".yml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
         ".yaml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
-        "default": lambda _: add_def_info(),
+        "default": lambda _: appdef_defaults(),
     }
 
 
