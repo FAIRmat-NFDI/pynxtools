@@ -6,8 +6,6 @@ import os
 import xml.etree.ElementTree as ET
 from functools import lru_cache
 from glob import glob
-import sys
-import logging
 import textwrap
 
 
@@ -373,6 +371,7 @@ def get_required_string(nxdl_elem):
         return "<<REQUIRED>>"
     return "<<REQUIRED>>"
 
+
 # below there are some functions used in get_nxdl_doc function:
 def write_doc_string(logger, doc, attr):
     """Simple function that prints a line in the logger if doc exists"""
@@ -671,11 +670,10 @@ def walk_elist(elist, html_name):
     return elist, html_name
 
 
-
 @lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,  # pylint: disable=too-many-arguments,too-many-locals
                         nx_name: str = None, elem: ET.Element = None,
-                        attr=False):
+                        attr=False):  # pylint: disable=unused-argument
     """Returns a list of ET.Element for the given path."""
     # let us start with the given definition file
     elist = []  # type: ignore[var-annotated]
@@ -687,6 +685,7 @@ def get_inherited_nodes(nxdl_path: str = None,  # pylint: disable=too-many-argum
     path = html_path
     for pind in range(len(path)):
         html_name = html_path[pind]
+        # pylint: disable=duplicate-code
         elist, html_name = walk_elist(elist, html_name)
         if elist:
             class_path.append(get_nx_class(elist[0]))
@@ -717,4 +716,3 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
             raise NxdlAttributeError(f"Attributes were not found for {nxdl_path}. "
                                      "Please check this entry in the template dictionary.")
     return elem
-

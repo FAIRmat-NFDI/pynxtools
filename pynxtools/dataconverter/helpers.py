@@ -75,8 +75,8 @@ def get_all_defined_required_children_for_elem(xml_element):
                     visited_paths.append(nxdlpath)
                     children = get_all_defined_required_children(nxdlpath, nx_name)
                     further_children = set()
-                    for child in children:
-                        further_children.add(f"{name_to_add}/{child}")
+                    for further_child in children:
+                        further_children.add(f"{name_to_add}/{further_child}")
                     list_of_children_to_add.update(further_children)
     return list_of_children_to_add
 

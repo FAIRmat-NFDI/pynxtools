@@ -9,7 +9,7 @@ import logging
 import h5py
 import click
 
-from .nxdl_utils import *
+from pynxtools.nexus.nxdl_utils import *  # pylint: disable=wildcard-import, unused-wildcard-import
 
 
 def get_nxdl_entry(hdf_info):
@@ -196,8 +196,8 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
     # new way: retrieve multiple inherited base classes
     (class_path, nxdl_path, elist) = \
         get_inherited_hdf_nodes(nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
-                            hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
-                            hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
+                                hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
+                                hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
     elem = elist[0] if class_path and elist else None
     if doc:
         logger.debug("classpath: " + str(class_path))
@@ -259,8 +259,8 @@ def get_hdf_path(hdf_info):
 
 
 @lru_cache(maxsize=None)
-def get_inherited_hdf_nodes(nx_name: str = None, elem: ET.Element = None,# pylint: disable=too-many-arguments,too-many-locals
-                        hdf_node=None, hdf_path=None, hdf_root=None, attr=False):
+def get_inherited_hdf_nodes(nx_name: str = None, elem: ET.Element = None,  # pylint: disable=too-many-arguments,too-many-locals
+                            hdf_node=None, hdf_path=None, hdf_root=None, attr=False):
     """Returns a list of ET.Element for the given path."""
     # let us start with the given definition file
     if hdf_node is None:
@@ -541,8 +541,8 @@ def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
     hdf_info = {'hdf_path': hdf_path, 'hdf_node': hdf_node}
     (_, _, elist) = \
         get_inherited_hdf_nodes(nx_name=get_nxdl_entry(hdf_info), hdf_node=hdf_node,
-                            hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
-                            hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
+                                hdf_path=hdf_info['hdf_path'] if 'hdf_path' in hdf_info else None,
+                                hdf_root=hdf_info['hdf_root'] if 'hdf_root' in hdf_info else None)
     return elist
 
 
