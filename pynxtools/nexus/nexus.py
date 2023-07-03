@@ -9,7 +9,7 @@ import logging
 import h5py
 import click
 
-from .nxdl_utils import *
+from ..definitions.dev_tools.utils.nxdl_utils import *
 
 
 def get_nxdl_entry(hdf_info):
