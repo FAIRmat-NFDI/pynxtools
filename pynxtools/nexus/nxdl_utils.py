@@ -6,8 +6,6 @@ import os
 import xml.etree.ElementTree as ET
 from functools import lru_cache
 from glob import glob
-import sys
-import logging
 import textwrap
 
 
@@ -675,7 +673,7 @@ def walk_elist(elist, html_name):
 @lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,  # pylint: disable=too-many-arguments,too-many-locals
                         nx_name: str = None, elem: ET.Element = None,
-                        attr=False):
+                        attr=False):  # pylint: disable=unused-argument
     """Returns a list of ET.Element for the given path."""
     # let us start with the given definition file
     elist = []  # type: ignore[var-annotated]
@@ -687,6 +685,7 @@ def get_inherited_nodes(nxdl_path: str = None,  # pylint: disable=too-many-argum
     path = html_path
     for pind in range(len(path)):
         html_name = html_path[pind]
+        # pylint: disable=duplicate-code
         elist, html_name = walk_elist(elist, html_name)
         if elist:
             class_path.append(get_nx_class(elist[0]))

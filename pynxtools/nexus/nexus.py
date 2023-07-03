@@ -9,7 +9,7 @@ import logging
 import h5py
 import click
 
-from .nxdl_utils import *
+from pynxtools.nexus.nxdl_utils import *  # pylint: disable=wildcard-import, unused-wildcard-import
 
 
 def get_nxdl_entry(hdf_info):
