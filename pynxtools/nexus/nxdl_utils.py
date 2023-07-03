@@ -373,6 +373,7 @@ def get_required_string(nxdl_elem):
         return "<<REQUIRED>>"
     return "<<REQUIRED>>"
 
+
 # below there are some functions used in get_nxdl_doc function:
 def write_doc_string(logger, doc, attr):
     """Simple function that prints a line in the logger if doc exists"""
@@ -671,7 +672,6 @@ def walk_elist(elist, html_name):
     return elist, html_name
 
 
-
 @lru_cache(maxsize=None)
 def get_inherited_nodes(nxdl_path: str = None,  # pylint: disable=too-many-arguments,too-many-locals
                         nx_name: str = None, elem: ET.Element = None,
@@ -717,4 +717,3 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
             raise NxdlAttributeError(f"Attributes were not found for {nxdl_path}. "
                                      "Please check this entry in the template dictionary.")
     return elem
-
