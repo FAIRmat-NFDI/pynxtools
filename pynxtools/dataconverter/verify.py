@@ -14,7 +14,7 @@ from pynxtools.nexus import nexus
 logger = logging.getLogger(__name__)
 
 DEBUG_TEMPLATE = 9
-logger.setLevel(logging.INFO)
+logger.setLevel(DEBUG_TEMPLATE)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
@@ -55,73 +55,73 @@ def _get_def_map(file: str) -> Dict[str, str]:
     return def_map
 
 
+def _get_nxdl_root(nxdl: str) -> ET.Element:
+    definitions_path = nexus.get_nexus_definitions_path()
+    nxdl_path = os.path.join(
+        definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
+    )
+    if not os.path.exists(nxdl_path):
+        nxdl_path = os.path.join(
+            definitions_path, "applications", f"{nxdl}.nxdl.xml"
+        )
+    if not os.path.exists(nxdl_path):
+        raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
+
+    return ET.parse(nxdl_path).getroot()
+
+
 @click.command()
 @click.argument("file")
 def verify(file: str):
     """Verifies a nexus file"""
+
+    def collect_entries(name: str, dataset: Union[Group, Dataset]):
+        clean_name = _replace_group_names(class_map, name)
+        if isinstance(dataset, Group) and (
+            nx_class := _clean_str_attr(dataset.attrs.get("NX_class"))
+        ):
+            entry_name = name.rsplit("/", 1)[-1]
+            clean_nx_class = nx_class[2:].upper()
+
+            is_variadic = True
+            clean_name = _replace_group_names(class_map, name)
+            for ref_entry in ref_template:
+                if ref_entry.startswith(f"{entry_path}/{clean_name}"):
+                    is_variadic = False
+                    break
+
+            if is_variadic:
+                class_map[entry_name] = clean_nx_class
+            logger.debug("Adding class %s to %s", clean_nx_class, entry_name)
+
+        if isinstance(dataset, Dataset):
+            logger.debug("Adding field %s/%s", entry_path, clean_name)
+            if isinstance(read_data := dataset[()], bytes):
+                read_data = read_data.decode("utf-8")
+            data_template[f"{entry_path}/{clean_name}"] = read_data
+
+        for attr_name, val in dataset.attrs.items():
+            if attr_name == "NX_class":
+                continue
+            logger.debug(
+                "Adding attribute %s/%s/@%s", entry_path, clean_name, attr_name
+            )
+            data_template[f"{entry_path}/{clean_name}/@{attr_name}"] = val
+
     def_map = _get_def_map(file)
 
     if not def_map:
         logger.info("Could not find any valid entry in file %s", file)
-    ref_template = Template()
-    data_template = Template()
-    class_map: Dict[str, str] = {}
-    entry_path = "/"
 
     for entry, nxdl in def_map.items():
-        ref_template = Template()
         data_template = Template()
-        class_map = {}
+        class_map: Dict[str, str] = {}
         entry_path = f"/ENTRY[{entry}]"
 
-        definitions_path = nexus.get_nexus_definitions_path()
-        nxdl_path = os.path.join(
-            definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
-        )
-        if not os.path.exists(nxdl_path):
-            nxdl_path = os.path.join(
-                definitions_path, "applications", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_path):
-            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
-
-        nxdl_root = ET.parse(nxdl_path).getroot()
-
+        ref_template = Template()
+        nxdl_root = _get_nxdl_root(nxdl)
         helpers.generate_template_from_nxdl(nxdl_root, ref_template)
         logger.log(DEBUG_TEMPLATE, "Reference template: %s", ref_template)
-
-        def collect_entries(name: str, dataset: Union[Group, Dataset]):
-            clean_name = _replace_group_names(class_map, name)
-            if isinstance(dataset, Group) and (
-                nx_class := _clean_str_attr(dataset.attrs.get("NX_class"))
-            ):
-                entry_name = name.rsplit("/", 1)[-1]
-                clean_nx_class = nx_class[2:].upper()
-
-                is_variadic = True
-                clean_name = _replace_group_names(class_map, name)
-                for ref_entry in ref_template:
-                    if ref_entry.startswith(f"{entry_path}/{clean_name}"):
-                        is_variadic = False
-                        break
-
-                if is_variadic:
-                    class_map[entry_name] = clean_nx_class
-                logger.debug("Adding class %s to %s", clean_nx_class, entry_name)
-
-            if isinstance(dataset, Dataset):
-                logger.debug("Adding field %s/%s", entry_path, clean_name)
-                if isinstance(read_data := dataset[()], bytes):
-                    read_data = read_data.decode("utf-8")
-                data_template[f"{entry_path}/{clean_name}"] = read_data
-
-            for attr_name, val in dataset.attrs.items():
-                if attr_name == "NX_class":
-                    continue
-                logger.debug(
-                    "Adding attribute %s/%s/@%s", entry_path, clean_name, attr_name
-                )
-                data_template[f"{entry_path}/{clean_name}/@{attr_name}"] = val
 
         with File(file, "r") as h5file:
             h5file[f"/{entry}"].visititems(collect_entries)
