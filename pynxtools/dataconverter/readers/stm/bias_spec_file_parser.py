@@ -24,6 +24,7 @@
 
 
 from typing import Dict, Union, Tuple
+import logging
 import os
 import numpy as np
 from pynxtools.dataconverter.readers.stm.stm_helper import (fill_template_from_eln_data,
@@ -31,6 +32,9 @@ from pynxtools.dataconverter.readers.stm.stm_helper import (fill_template_from_e
                                                             work_out_overwriteable_field,
                                                             link_implementation,
                                                             transform)
+
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
 
 # Type aliases
@@ -305,8 +309,6 @@ def construct_nxdata_for_dat(template,
             e.g. /Entry[ENTRY]/data/DATA,
               /Entry[ENTRY]/data/DATA/@axes and so on
         """
-        # NOTE : Try to replace this hard axes name
-        # These are possible axes and nxdata fields
         dt_grps = []
         axes_name = []
         axes_unit = []
@@ -388,7 +390,7 @@ def construct_nxdata_for_dat(template,
 
     def find_extra_annot(key):
         """Find out extra annotation that comes with data e.g. filt in
-        /dat_mat_components/Current [filt]/value
+        /dat_mat_components/Current [filt]/value, which refers scan in filter mode.
         """
         data_grp = key.split('/')[-2]
         extra_annot = data_grp.split('[')[-1] if '[' in data_grp else ''
@@ -413,9 +415,6 @@ def construct_nxdata_for_dat(template,
                 metadata_path = path.replace('/value', '/metadata')
                 top_axes_metadata.append(data_dict[metadata_path] if metadata_path
                                          in data_dict else "")
-    # def swap_axes_data (axes_name, axes_data, axes_unit, axes_metadata,
-    #                     top_axes_name, top_axes_data, top_axes_unit, top_axes_metadata):
-    #     axes_name = top_axes_name
     top_axes_name = []
     top_axes_unit = []
     top_axes_metadata = []
@@ -474,3 +473,21 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
                                              dict_orig_key_to_mod_key)
 
     link_implementation(template, dict_orig_key_to_mod_key)
+
+
+def get_sts_raw_file_info(raw_file):
+    """Parse the raw_file into a organised dictionary. It helps users as well as developers
+    to understand how the reader works and modify the config file."""
+
+    raw_name = raw_file.split('.')[0]
+    temp_file = f"{raw_name}.txt"
+    b_s_d = BiasSpecData_Nanonis(raw_file)
+    flattened_dict = {}
+    nested_path_to_slash_separated_path(
+        b_s_d.get_data_nested_dict(),
+        flattened_dict=flattened_dict)
+    with open(temp_file, mode='w', encoding='utf-8') as txt_f:
+        for key, val in flattened_dict.items():
+            txt_f.write(f"{key} : {val}\n")
+
+    logging.info(f"'{temp_file}' has been created to investigate raw file structure.")

@@ -204,6 +204,7 @@ class STM_Nanonis():
             for path in dt_path_list:
                 if path in data_dict:
                     grp_name, field_name = find_nxdata_group_and_name(path)
+                    grp_name = '_'.join(grp_name.lower().split(' '))
                     signals.append(field_name)
                     nxdata_grp = data_group.replace("DATA[data", f"DATA[{grp_name}")
                     temp_data_field = nxdata_grp + '/' + field_name
@@ -349,8 +350,9 @@ class STM_Nanonis():
         return template
 
 
-def get_raw_file_info(raw_file):
-    """To write raw file info in a file as the data retrieve with that info."""
+def get_stm_raw_file_info(raw_file):
+    """Parse the raw_file into a organised dictionary. It helps users as well as developers
+    to understand how the reader works and modify the config file."""
 
     raw_name = raw_file.split('.')[0]
     data_dict = STM_Nanonis(raw_file).get_SPM_metadata_dict_and_signal()
@@ -359,4 +361,4 @@ def get_raw_file_info(raw_file):
         for key, val in data_dict.items():
             txt_f.write(f"{key} : {val}\n")
 
-    logging.info(f"'{temp_file}' has been created in current directory.")
+    logging.info(f"'{temp_file}' has been created to investigate raw file structure.")
