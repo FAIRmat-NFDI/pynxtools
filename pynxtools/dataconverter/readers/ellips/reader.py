@@ -431,6 +431,7 @@ class EllipsometryReader(BaseReader):
                 }
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degrees"
 
+        template["/ENTRY[entry]/data_collection/measured_data/@units"] = ""
         # Define default plot showing Psi and Delta at all angles:
         template["/@default"] = "entry"
         template["/ENTRY[entry]/@default"] = "plot"

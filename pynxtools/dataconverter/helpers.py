@@ -17,17 +17,25 @@
 #
 """Helper functions commonly used by the convert routine."""
 
+import sys
+from functools import lru_cache
 from typing import List
 from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET
+import logging
 
 import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeError
+from pynxtools.nexus.nexus import NxdlAttributeError, get_namespace
 from pynxtools.dataconverter.units import ureg
+
+
+logger = logging.getLogger(__name__)  # pylint: disable=C0103
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -329,6 +337,24 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
+def is_valid_unit(unit: str, nx_category: str) -> bool:
+    """
+    The provided unit belongs to the provided nexus unit category.
+
+    Args:
+        unit (str): The unit to check. Should be according to pint.
+        nx_category (str): A nexus unit category, e.g. `NX_LENGTH`,
+            or derived unit category, e.g., `NX_LENGTH ** 2`.
+
+    Returns:
+        bool: The unit belongs to the provided category
+    """
+    if nx_category in ("NX_ANY"):
+        return True
+    nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
+    return ureg(unit).check(f"{nx_category}")
+
+
 def path_in_data_dict(nxdl_path: str, data: dict) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
     for key in data.keys():
@@ -428,9 +454,6 @@ def does_group_exist(path_to_group, data):
 def ensure_all_required_fields_exist(template, data):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
-        entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
-        if entry_name == "@units":
-            continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
         if path in template["lone_groups"] and does_group_exist(path, data):
@@ -467,52 +490,46 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def check_unit(unit: str, nx_category: str) -> bool:
-    """
-    The provided unit belongs to the provided nexus unit category.
-
-    Args:
-        unit (str): The unit to check. Should be according to pint.
-        nx_category (str): A nexus unit category, e.g. `NX_LENGTH`,
-            or derived unit category, e.g., `NX_LENGTH ** 2`.
-
-    Returns:
-        bool: The unit belongs to the provided category
-    """
-    nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
-    return ureg(unit).check(f"{nx_category}")
-
-
 def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
-    # nxdl_path_set helps to skip validation check on the same type of nxdl signiture
-    # This reduces huge amount of runing time
-    nxdl_path_to_elm: dict = {}
+    @lru_cache
+    def get_xml_node(nxdl_path: str) -> ET.Element:
+        return nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
     # Make sure all required fields exist.
     ensure_all_required_fields_exist(template, data)
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
-        # print(f"{path}")
         if data[path] is not None:
             entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
             if entry_name == "@units":
+                nxdl_base_path = nxdl_path[:nxdl_path.rindex("/")]
+                elem = get_xml_node(nxdl_base_path)
+                if "units" not in elem.attrib:
+                    logger.warning(
+                        "The unit, %s = %s, is being written but has no documentation.",
+                        path, data[path]
+                    )
+                    continue
+
+                nxdl_unit = elem.attrib["units"]
+                if not is_valid_unit(data[path], nxdl_unit):
+                    raise ValueError(
+                        f"Invalid unit in {path}. {data[path]} "
+                        f"is not in unit category {nxdl_unit}"
+                    )
                 continue
 
             if entry_name[0] == "@" and "@" in nxdl_path:
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
-            if nxdl_path in nxdl_path_to_elm:
-                elem = nxdl_path_to_elm[nxdl_path]
-            else:
-                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
-                nxdl_path_to_elm[nxdl_path] = elem
+            elem = get_xml_node(nxdl_path)
 
             # Only check for validation in the NXDL if we did find the entry
             # otherwise we just pass it along
