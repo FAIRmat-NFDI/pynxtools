@@ -27,6 +27,7 @@ from ase.data import chemical_symbols
 
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
+from pynxtools.dataconverter.units import ureg
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -464,6 +465,22 @@ def try_undocumented(data, nxdl_root: ET.Element):
                 del data.undocumented[units]
         except NxdlAttributeError:
             pass
+
+
+def check_unit(unit: str, nx_category: str) -> bool:
+    """
+    The provided unit belongs to the provided nexus unit category.
+
+    Args:
+        unit (str): The unit to check. Should be according to pint.
+        nx_category (str): A nexus unit category, e.g. `NX_LENGTH`,
+            or derived unit category, e.g., `NX_LENGTH ** 2`.
+
+    Returns:
+        bool: The unit belongs to the provided category
+    """
+    nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
+    return ureg(unit).check(f"{nx_category}")
 
 
 def validate_data_dict(template, data, nxdl_root: ET.Element):

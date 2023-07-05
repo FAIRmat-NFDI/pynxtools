@@ -199,6 +199,8 @@ cython_debug/
 *.txt
 !requirements.txt
 !dev-requirements.txt
+!pynxtools/dataconverter/units/default_en.txt
+!pynxtools/dataconverter/units/constants_en.txt
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version
