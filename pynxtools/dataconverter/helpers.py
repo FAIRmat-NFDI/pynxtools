@@ -29,7 +29,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeError
+from pynxtools.nexus.nexus import NxdlAttributeError, get_inherited_nodes
 from pynxtools.dataconverter.units import ureg
 
 
@@ -508,9 +508,13 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
             entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
+            if entry_name[0] == "@" and "@" in nxdl_path:
+                index_of_at = nxdl_path.rindex("@")
+                nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
+
             if entry_name == "@units":
-                nxdl_base_path = nxdl_path[:nxdl_path.rindex("/")]
-                elem = get_xml_node(nxdl_base_path)
+                elempath = get_inherited_nodes(nxdl_path, None, nxdl_root)[1]
+                elem = elempath[-2]
                 if "units" not in elem.attrib:
                     logger.warning(
                         "The unit, %s = %s, is being written but has no documentation.",
@@ -525,10 +529,6 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                         f"is not in unit category {nxdl_unit}"
                     )
                 continue
-
-            if entry_name[0] == "@" and "@" in nxdl_path:
-                index_of_at = nxdl_path.rindex("@")
-                nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1:]
 
             elem = get_xml_node(nxdl_path)
 
