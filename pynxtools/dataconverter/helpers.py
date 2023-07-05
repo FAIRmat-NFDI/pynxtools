@@ -29,7 +29,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeError, get_namespace
+from pynxtools.nexus.nexus import NxdlAttributeError
 from pynxtools.dataconverter.units import ureg
 
 
@@ -350,6 +350,7 @@ def is_valid_unit(unit: str, nx_category: str) -> bool:
         bool: The unit belongs to the provided category
     """
     if nx_category in ("NX_ANY"):
+        ureg(unit)  # Check if unit is generally valid
         return True
     nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
     return ureg(unit).check(f"{nx_category}")
