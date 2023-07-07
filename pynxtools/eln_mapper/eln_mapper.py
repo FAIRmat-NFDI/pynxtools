@@ -17,7 +17,8 @@
 #
 
 import click
-from pynxtools.nexus_mapper.eln import generate_eln
+from pynxtools.eln_mapper.eln import generate_eln
+from pynxtools.eln_mapper.schema_eln import generate_schema_eln
 
 
 @click.command()
@@ -29,17 +30,27 @@ from pynxtools.nexus_mapper.eln import generate_eln
 @click.option(
     '--skip-top-levels',
     default=1,
+    required=False,
+    type=int,
+    show_default=True,
     help=("To skip the level of parent hierarchy level. E.g. for default 1 the part"
           "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped.")
 )
 @click.option(
     '--output-file',
-    required=True,
+    required=False,
     help=('Name of file that is neede to generated output file.')
 )
-def get_eln_or_json(nxdl: str,
-                    skip_top_levels: int,
-                    output_file: str):
+@click.option(
+    '--eln-type',
+    required=False,
+    type=click.Choice(['eln', 'scheme_eln'], case_sensitive=False),
+    default='eln'
+)
+def get_eln(nxdl: str,
+            skip_top_levels: int,
+            output_file: str,
+            eln_type: str):
     """To generate ELN in yaml file format.
 
     Parameters
@@ -51,8 +62,12 @@ def get_eln_or_json(nxdl: str,
     output_file : str
         Name of the output file.
     """
-    generate_eln(nxdl, output_file, skip_top_levels)
+    eln_type = eln_type.lower()
+    if eln_type == 'eln':
+        generate_eln(nxdl, output_file, skip_top_levels)
+    elif eln_type == 'scheme_eln':
+        generate_schema_eln(nxdl, eln_file=output_file)
 
 
 if __name__ == "__main__":
-    get_eln_or_json().parse()  # pylint: disable=no-value-for-parameter
+    get_eln().parse()  # pylint: disable=no-value-for-parameter
