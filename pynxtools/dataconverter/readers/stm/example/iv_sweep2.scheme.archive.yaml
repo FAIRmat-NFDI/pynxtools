@@ -1,0 +1,621 @@
+definitions:
+  name: <ADD PREFERED NAME>
+  sections:
+    stm:
+      base_section:
+      - nomad.datamodel.metainfo.eln.ElnYamlConverter
+      - nomad.datamodel.data.EntryData
+      m_annotations:
+        template:
+          reader: stm
+          nxdl: NXiv_sweep2.nxdl
+        eln:
+          hide: []
+      quantities:
+        definition:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+          description: ''
+        type:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+          description: |
+            The equipments and techniques as well as the parameter settings
+            and reference signals are used during the experiments used in the scanning
+            tunneling microscopy(STM).
+        entry_identifier:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+          description: |
+            The name of the output file, with the number of scans at the end.e.g.
+            (e.g. 221122_Au_5K00014) '
+        collection_identifier:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+          description: |
+            The name of the series output file, which represents only
+            the public part of the output file. (e.g. 221122_Au_5K).
+        experiment_identifier:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+          description: |
+            Path to storage of output files. (e.g. Path C:\Users\SPM-PEEM\Desktop\DATA_Nanonis\20220711_CreaTec_Service_Benchmarks_LHe\Nanonis-Session-PMD100-HVHU_CreaTec_Service_PalmaLabBerlin220711)
+        experiment_description:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+          description: |
+            Descriptive comments for this experiment, added by the experimenter,
+            coming from the output file. (e.g. Comment01 SYNC & Filter LP 8order WITHDRAW
+            600 steps, locked Au(111), 50pA, 100 mV set point, 1mV DCA, 973Hz,138
+            1st H, -84 2nd H).
+      sub_sections:
+        Instrument:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            sub_sections:
+              Hardware:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+              Software:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    version:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                      description: Version of the software.
+              Current_amplifier:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+              Lock_in:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    status:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                      description: |
+                        Status of Lock-in device whether while ferfoming the experiment.
+                    demodulated_signal:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                      description: |
+                        The input signal (STS signal) will be demodulated, in order to
+                        determine the amplitude and phase at the frequency set in the
+                        Frequency field or harmonics, such as current, bias, et.al.
+              Sample_bias:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    bias:
+                      type: np.float64
+                      unit: V
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: V
+                      description: Applied a voltage between tip and sample.
+                    bias_calibration:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                    bias_offset:
+                      type: str
+                      unit: V
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                          defaultDisplayUnit: V
+                      description: ''
+              Output_cabling:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+              Piezo_config:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    active_calib:
+                      type: str
+                      m_annotations:
+                        eln:
+                          component: StringEditQuantity
+                      description: |
+                        The name of caliberation type. (e.g. LHe).
+                    calib_N:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                      description: |
+                        N denotes X or Y or Z. There are 3 parameters in X, Y, and Z directions
+                        and there are 3 controls availables: Calibr. (m/V), Range (m) and HV
+                        gain. Two of them are enough to define the calibration, so when changing
+                        any value one of the other values will be updated automatically.
+                        (e.g. 3.8E-9).
+                    hv_gain_N:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                      description: |
+                        N denotes X or Y or Z. For some systems HV gain readout is available, so
+                        for those systems the HV gain should be adjusted automatically when the
+                        gain is changed at the high voltage amplifier. (e.g. 14.5).
+                    tilt_N:
+                      type: np.float64
+                      unit: deg
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: deg
+                      description: ' N denotes X or Y. There are 2 parameters in X
+                        and Y directions and this tab is used to set the sample tilt
+                        (in degrees, first order correction). '
+                    curvature_radius_N:
+                      type: np.float64
+                      unit: m
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: m
+                      description: ' N denotes X or Y. There are 2 parameters in X
+                        and Y directions and this tab is used to set a curvature (can
+                        be set approximately to the length of the piezotube). '
+                    2nd_order_corr_N:
+                      type: np.float64
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                      description: |
+                        N denotes X or Y. There are 2 parameters in X and Y directions. If you
+                        know them, you can enter the 2nd order piezo characteristics to compensate
+                        for it. The following equation shows the interpretation of the 2nd order
+                        correction parameter: For the X-piezo: "Ux = 1/cx \xB7 X + cxx \xB7\ X2"
+                        with units: [V] = [V/m] \xB7 [m] + [V/m2] \xB7 [m2]\ where cx is the
+                        calibration of the piezo X and cxx is the\ 2nd order correction. (V/m^2).
+                        (e.g. 0E+0).
+                    drift_N:
+                      type: np.float64
+                      unit: m/s
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: m/s
+                      description: |
+                        N denotes X, Y or Z. There are 3 parameters in X, Y and Z directions.
+                        Define the drift speed for all three axes. When the compensation is on,
+                        the piezos will start to move at that speed. (e.g. 0E+0).
+                    drift_correction_status:
+                      type: bool
+                      unit: on/off
+                      m_annotations:
+                        eln:
+                          component: BoolEditQuantity
+                          defaultDisplayUnit: on/of
+                      description: |
+                        Use the button to turn on/off the drift compensation. (e.g. FALSE).
+              Environment:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  sub_sections:
+                    Current_sensor:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        quantities:
+                          current:
+                            type: str
+                            unit: A
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: A
+                            description: ' This is set-point of tip current. '
+                          current_calibration:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                            description: Value of calibration that comes as A/V.
+                          current_offset:
+                            type: str
+                            unit: A
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                                defaultDisplayUnit: A
+                            description: ''
+                          current_gain:
+                            type: str
+                            m_annotations:
+                              eln:
+                                component: StringEditQuantity
+                    Position:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        quantities:
+                          x:
+                            type: np.float64
+                            unit: m
+                            m_annotations:
+                              eln:
+                                component: NumberEditQuantity
+                                defaultDisplayUnit: <No Default unit>
+                            description: |
+                              The scanning area in x position in the frame. (e.g. -890.53E-12) '
+                          y:
+                            type: np.float64
+                            unit: m
+                            m_annotations:
+                              eln:
+                                component: NumberEditQuantity
+                                defaultDisplayUnit: m
+                            description: |
+                              The scanning area in y position in the frame. (e.g. 29.6968E-9) '
+                          z:
+                            type: np.float64
+                            unit: m
+                            m_annotations:
+                              eln:
+                                component: NumberEditQuantity
+                                defaultDisplayUnit: m
+                            description: |
+                              The scanning area in x position in the frame. (e.g. 130.5E-9).
+                        sub_sections:
+                          Z_controller:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                              quantities:
+                                z:
+                                  type: str
+                                  unit: m
+                                  m_annotations:
+                                    eln:
+                                      component: StringEditQuantity
+                                      defaultDisplayUnit: m
+                                  description: |
+                                    Indicate the tip position Z between tip and sample. The tip
+                                    position can also be varied when the controller is not
+                                    running. (e.g. 130.5E-9).
+                    Sweep_control:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        sub_sections:
+                          Bias_spectroscopy:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                              quantities:
+                                integration_time:
+                                  type: np.float64
+                                  unit: s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: s
+                                  description: |
+                                    Time during which the spectroscopy data are acquired and
+                                    averaged. (e.g. 150E-6).
+                                number_of_sweeps:
+                                  type: np.float64
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                  description:
+                                    Number of sweeps to measure and average. (e.g. 100).
+                                sweep_start:
+                                  type: np.float64
+                                  unit: V
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: V
+                                  description: |
+                                    The first bias values of the sweep. (e.g. -300E-3) '
+                                sweep_end:
+                                  type: np.float64
+                                  unit: V
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: V
+                                  description: |
+                                    The last bias values of the sweep (e.g. 300E-3).
+                                num_pixel:
+                                  type: np.float64
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                  description: |
+                                    Define the sweep number of points, that is, the maximum
+                                    spectrum resolution eq. Bias window divide by Num Pixel
+                                    (e.g. 4096).
+                                z_avg_time:
+                                  type: np.float64
+                                  unit: s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: s
+                                  description: |
+                                    Duration over which the Z position is recorded and averaged
+                                    before and after the sweep (the latter only if Record final Z
+                                    position is selected in the Advanced section). After the
+                                    initial Z averaging time, if Z-Controller to Hold is selected
+                                    in the Advanced section, the Z-Controller is set to hold and
+                                    the tip is placed at the previously averaged Z position (plus
+                                    Z offset). (e.g. 100E-3).
+                          Circuit:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                              quantities:
+                                rt_frequency:
+                                  type: np.float64
+                                  unit: Hz
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: Hz
+                                  description: |
+                                    The bandwitdh of the Hardware and/or Software which is
+                                    insturment specific. For example: Nanonis Generic 5 has RT
+                                     Frequency 20E-3.
+                                signals_oversampling:
+                                  type: np.float64
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                  description: |
+                                    (Signals Periods) The Signals Period is the rate at which
+                                    the signals are transferred to the host computer running the
+                                    control software. This is usually lower by a factor of 10
+                                    than the sampling rate, because an internal oversampling of the
+                                    signal is done on the real time engine. You can reduce the
+                                    oversampling down to 1 in order to resolve higher frequencies
+                                    in the Spectrum Analyzer. (e.g. 10).
+                                acquisition_period:
+                                  type: np.float64
+                                  unit: s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: s
+                                  description: |
+                                    Update rate for several processes like History Graph,
+                                    Auto-Approach, and for many Programming Interface functions.
+                                    This is usually set to 20 ms. All additional timings (7-9)
+                                    can only be integer multiples of this value. They can be set
+                                    to different values, but the actual timing value will be
+                                    coerced to a multiple of the Acquisition Period. (e.g. 20E-3).
+                                animations_period:
+                                  type: np.float64
+                                  unit: s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: s
+                                  description: |
+                                    Update rate of animated graphical indicators. These are e.g.
+                                    some graphs & sliders. A reasonable value is 40 ms (25 updates
+                                    per second). Increase this period to reduce the processor load
+                                    for the graphical user interface, especially on slow computers.
+                                    This value is purely a user interface update rate and does not
+                                    affect measurements in any way. (e.g. 20E-3) '
+                                indicators_period:
+                                  type: np.float64
+                                  unit: s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: s
+                                  description: |
+                                    Update rate of digital indicators, e.g. the numbers displayed
+                                    besides each slider. Here, 3 updates per second, or 300 ms is
+                                    enough. This value is purely a user interface update rate and
+                                    does not affect measurements in any way. (e.g. 300E-3).
+                                measurements_period:
+                                  type: np.float64
+                                  unit: s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: s
+                                  description: |
+                                    The Measurements period is the integration time for precise
+                                    measurements (averaging over specified period), mostly used
+                                    in sweep modules. Examples are recording of a force-distance
+                                    curve or a resonance of a cantilever. For fast measurements
+                                    with small steps, a value of 40 ms may be reasonable. For
+                                    normal use, 300-500 ms is a good value, but for recording a
+                                    resonance of a high-Q cantilever, values of several seconds
+                                    might be necessary. Usually this parameter doesn \u2019t need
+                                    to be set from this module; the sweep modules will set this
+                                    value according to the sweep timings. (e.g. 500E-3) "
+                    Scan_control:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        sub_sections:
+                          Roi:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                              quantities:
+                                frame:
+                                  type: str
+                                  m_annotations:
+                                    eln:
+                                      component: StringEditQuantity
+                                  description: |
+                                    Also clarify the frame for the ROI of the scan (should depend
+                                    on the lab frame).
+                          Circuit:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                              quantities:
+                                channels_current:
+                                  type: str
+                                  unit: A
+                                  m_annotations:
+                                    eln:
+                                      component: StringEditQuantity
+                                      defaultDisplayUnit: A
+                                  description: |
+                                    The scan channels are selected by users. (e.g. (A);Bias (V);Z
+                                    (m);LI Demod 2 X (A); LI 2 Y (A);LI Demod 1 X (A);
+                                    LI Demod 1 Y (A)).
+                          Positioner:
+                            section:
+                              m_annotations:
+                                eln:
+                                  overview: true
+                              quantities:
+                                scanfield:
+                                  type: np.float64
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                  description: |
+                                    Configure the scan frame like x position; y position; width;
+                                    height. (e.g. 3.11737E-9;29.1583E-9;15E-9;15E-9;0E+0) '
+                                pixels_line:
+                                  type: np.float64
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                  description: |
+                                    Scan resolution by setting the Lines equal to Pixels.  (e.g. 512) '
+                                lines:
+                                  type: np.float64
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                  description: |
+                                    Define the image resolution. (e.g. 512).
+                                speed_forw:
+                                  type: np.float64
+                                  unit: m/s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: m/s
+                                  description: |
+                                    Define the scan forward speed in the forward direction. (m/s)
+                                    (e.g. 11.7187E-9).
+                                speed_backw:
+                                  type: np.float64
+                                  unit: m/s
+                                  m_annotations:
+                                    eln:
+                                      component: NumberEditQuantity
+                                      defaultDisplayUnit: m/s
+                                  description: |
+                                    Define the scan backward speed in the forward direction. (m/s)
+                                    (e.g. 11.7187E-9) '
+            quantities:
+              stm_head_temp:
+                type: np.float64
+                unit: K
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: K
+                description: |
+                  Temperature of STM head. Note: At least one field from stm_head_temperature,
+                  cryo_bottom_temp and cryo_sheild_temp must be provided. '
+              cryo_bottom_temp:
+                type: np.float64
+                unit: K
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: K
+                description: |
+                  Temperature of LHe helium cryostat. Note: At least one field from
+                  stm_head_temperature, cryo_bottom_temp and cryo_sheild_temp must be provided.
+              cryo_shield_temp:
+                type: np.float64
+                unit: K
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: K
+                description: |
+                  Temperature of LN2 nitrogen shield. Temperature 3 (K) (e.g 78.00000E+0). Note:
+                  At least one field from stm_head_temperature, cryo_bottom_temp and
+                  cryo_sheild_temp must be provided.
+        Resolution_indicators:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+        Reproducibility_indicators:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+        Sample:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            quantities:
+              sample_prep_descripton:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                description: |
+                  At this moment no base class available that can track entire sample preparation.
+
