@@ -268,8 +268,8 @@ class BiasSpecData_Nanonis():
         seach_key = "/ENTRY[entry]/INSTRUMENT[instrument]/lock_in/lock_in_data_flip_number"
         if seach_key in eln_dict:
             return eln_dict[seach_key]
-        else:
-            raise ValueError(f"To determine the plot fliping {seach_key} must be provided by eln.")
+
+        raise ValueError(f"To determine the plot fliping {seach_key} must be provided by eln.")
 
 
 # pylint: disable=too-many-locals too-many-statements
@@ -490,4 +490,4 @@ def get_sts_raw_file_info(raw_file):
         for key, val in flattened_dict.items():
             txt_f.write(f"{key} : {val}\n")
 
-    logging.info(f"'{temp_file}' has been created to investigate raw file structure.")
+    logging.info(' %s has been created to investigate raw file structure.', temp_file)

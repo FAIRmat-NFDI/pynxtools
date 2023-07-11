@@ -264,6 +264,7 @@ class STM_Nanonis():
             indivisual_DATA_field()
             fill_out_NXdata_group()
 
+    # pylint: disable=too-many-locals
     def get_dimension_info(self, config_dict, data_dict):
         """
         Extract dimension info from scanfield.
@@ -272,8 +273,7 @@ class STM_Nanonis():
             The scanfield has four parts starting point of (x, y) co-ordinate
             length on (x, y)-dimenstion and one last unknown values.
         """
-        sep_li = [";"]
-        scanfield = ''
+        scanfield: str = ''
         for key, val in config_dict.items():
             if ("/ENTRY[entry]/INSTRUMENT[instrument]/ENVIRONMENT[environment]/"
                     "scan_control/positioner/scanfield") == key:
@@ -282,13 +282,13 @@ class STM_Nanonis():
                 else:
                     raise ValueError("Scanfield data missing: /ENTRY[entry]/INSTRUMENT[instrument]"
                                      "/ENVIRONMENT[environment]/scan_control/positioner/scanfield")
+        conf_unit_key = 'unit_of_x_y_coordinate'
         try:
-            conf_unit_key = 'unit_of_x_y_coordinate'
             unit_info = data_dict[config_dict[conf_unit_key]]
-        except KeyError:
-            raise KeyError(f"No info found about coordinate unit. check config file by"
-                           f"key {conf_unit_key}")
-        for sep in sep_li:
+        except KeyError as exc:
+            raise KeyError(f'No info found about coordinate unit. check config file by'
+                           f'key {conf_unit_key}') from exc
+        for sep in [";"]:
             if sep in scanfield:
                 # parts are X_cor, Y_cor, X_len, Y_len and one unkown value
                 scanfield_parts = scanfield.split(sep)
@@ -361,4 +361,4 @@ def get_stm_raw_file_info(raw_file):
         for key, val in data_dict.items():
             txt_f.write(f"{key} : {val}\n")
 
-    logging.info(f"'{temp_file}' has been created to investigate raw file structure.")
+    logging.info(' %s has been created to investigate raw file structure.', temp_file)

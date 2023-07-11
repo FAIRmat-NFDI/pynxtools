@@ -1,10 +1,10 @@
 definitions:
-  name: <ADD PREFERED NAME>
+  name: Eln example for NXiv_sweep2
   sections:
     stm:
-      base_section:
-      - nomad.datamodel.metainfo.eln.ElnYamlConverter
-      - nomad.datamodel.data.EntryData
+      base_sections:
+        - nomad.datamodel.metainfo.eln.NexusDataConverter
+        - nomad.datamodel.data.EntryData
       m_annotations:
         template:
           reader: stm
@@ -222,11 +222,10 @@ definitions:
                         the piezos will start to move at that speed. (e.g. 0E+0).
                     drift_correction_status:
                       type: bool
-                      unit: on/off
                       m_annotations:
                         eln:
                           component: BoolEditQuantity
-                          defaultDisplayUnit: on/of
+                          defaultDisplayUnit: on/off
                       description: |
                         Use the button to turn on/off the drift compensation. (e.g. FALSE).
               Environment:
@@ -309,11 +308,11 @@ definitions:
                                   overview: true
                               quantities:
                                 z:
-                                  type: str
+                                  type: np.float64
                                   unit: m
                                   m_annotations:
                                     eln:
-                                      component: StringEditQuantity
+                                      component: NumberEditQuantity
                                       defaultDisplayUnit: m
                                   description: |
                                     Indicate the tip position Z between tip and sample. The tip
@@ -618,4 +617,3 @@ definitions:
                     component: StringEditQuantity
                 description: |
                   At this moment no base class available that can track entire sample preparation.
-

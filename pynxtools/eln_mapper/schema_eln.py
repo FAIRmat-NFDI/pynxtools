@@ -17,12 +17,11 @@
 # limitations under the License.
 #
 
-from typing import Dict
+from typing import Dict, Any
+import xml.etree.ElementTree as ET
 import yaml
 from pynxtools.eln_mapper.eln import retrieve_nxdl_file
 from pynxtools.dataconverter.helpers import remove_namespace_from_tag
-import xml.etree.ElementTree as ET
-import textwrap
 
 
 NEXUS_TYPE_TO_NOMAD_TYPE = {'NX_CHAR': {'convert_typ': 'str',
@@ -89,7 +88,7 @@ def construct_field_strucure(fld_elem, quntities_dict):
     construct_decription(fld_elem, fld_dict)
 
 
-def construct_decription(elm: ET.Element, concept_dict: Dict, line_width=80) -> None:
+def construct_decription(elm: ET.Element, concept_dict: Dict) -> None:
     """Collect doc from concept doc.
     """
     desc_text = ''
@@ -104,15 +103,21 @@ def construct_decription(elm: ET.Element, concept_dict: Dict, line_width=80) -> 
 
 
 def construct_group_structure(grp_elm: ET.Element, subsections: Dict) -> None:
-    """_summary_
-    TODO: Edit the docs
+    """To construct group structure as follows:
+    <group_name>:
+        section:
+            m_annotations:
+                eln:
+                    overview: true
+
     Parameters
     ----------
     elm : ET.Element
-        _description_
-    subsections : _type_
-        _description_
+        Group element
+    subsections : Dict
+        Dict to include group recursively
     """
+
     default_m_annot = {'m_annotations': {'eln': {'overview': True}}}
 
     elm_attrib = grp_elm.attrib
@@ -173,10 +178,10 @@ TODO: check the parameters
     """
 
     if is_root:
-        # TODO: crate a new function to handle root part
+        # Note for later: crate a new function to handle root part
         nxdl = 'NX<NAME>.nxdl'
-        recursive_dict[root_name] = {'base_section':
-                                     ['nomad.datamodel.metainfo.eln.ElnYamlConverter',
+        recursive_dict[root_name] = {'base_sections':
+                                     ['nomad.datamodel.metainfo.eln.NexusDataConverter',
                                       'nomad.datamodel.data.EntryData']}
 
         m_annotations: Dict = {'m_annotations': {'template': {'reader': rader_name,
@@ -267,7 +272,7 @@ def generate_schema_eln(nexus_def: str, eln_file: str = None) -> None:
         else:
             raise ValueError("Check for correct NeXus definition and output file name.")
 
-    recursive_dict = {}
+    recursive_dict: Dict[str, Any] = {}
     get_eln_recursive_dict(recursive_dict, nxdl_file)
     # print('recursive_dict', recursive_dict)
 

@@ -55,21 +55,21 @@ def retrieve_nxdl_file(nexus_def: str) -> str:
                             f"{nexus_def}.nxdl.xml")
     if os.path.exists(def_path):
         return def_path
-    else:
-        def_path = os.path.join(definition_path,
-                                'base_definitions',
-                                f"{nexus_def}.nxdl.xml")
+
+    def_path = os.path.join(definition_path,
+                            'base_definitions',
+                            f"{nexus_def}.nxdl.xml")
 
     if os.path.exists(def_path):
         return def_path
-    else:
-        def_path = os.path.join(definition_path,
-                                'applications',
-                                f"{nexus_def}.nxdl.xml")
+
+    def_path = os.path.join(definition_path,
+                            'applications',
+                            f"{nexus_def}.nxdl.xml")
     if os.path.exists(def_path):
         return def_path
-    else:
-        raise ValueError("Correct definition is rendered, try with correct definition name.")
+
+    raise ValueError("Correct definition is rendered, try with correct definition name.")
 
 
 def get_empty_template(nexus_def: str) -> Template:
