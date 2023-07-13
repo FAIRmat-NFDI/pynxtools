@@ -29,9 +29,7 @@ dependencies = [
     "ase>=3.19.0",
     "flatdict>=4.0.1",
     "hyperspy>=1.7.4",
-    "jupyterlab>=3.5.2,<3.6.0",
-    "jupyterlab_h5web>=7.0.0",
-    "ifes_apt_tc_data_modeling>=0.0.8",
+    "ifes_apt_tc_data_modeling>=0.0.9",
     "gitpython>=3.1.24",
     "pytz>=2021.1",
     "kikuchipy>=0.8.2",
@@ -44,8 +42,6 @@ dependencies = [
     "requests",
     "requests_cache",
 ]
-
-#     "h5web @ git+https://github.com/silx-kit/h5web@3e21159",
 
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools"
