@@ -38,7 +38,7 @@ class MockEllips():
         - choose_data_type:
             Chooses random entry from data_types
         - mock_signals:
-            Mock data if data_type is psi/delta or tan(psi)/cos(delta)
+            Mock data if data_type is Psi/Delta or tan(Psi)/cos(Delta)
         - mock_mueller_matrix:
             Mock data if data_type is Mueller matrix
         - mock_template:
@@ -47,10 +47,10 @@ class MockEllips():
 
     def __init__(self, data_template) -> None:
         self.data = data_template["measured_data"]
-        self.wavelength = data_template["spectrometer/wavelength"]
+        self.wavelength = data_template["data_collection/NAME_spectrum[wavelength_spectrum]"]
         self.atom_types = data_template["atom_types"]
         self.sample_list: list = []
-        self.data_types = ["psi/delta", "tan(psi)/cos(delta)", "Mueller matrix"]
+        self.data_types = ["Psi/Delta", "tan(Psi)/cos(Delta)", "Mueller matrix"]
         self.angles: list = []
         self.number_of_signals = 0
 
@@ -73,7 +73,7 @@ class MockEllips():
         data_template["data_type"] = data_type
         if data_type == "Mueller matrix":
             self.number_of_signals = 16
-        elif data_type in ("psi/delta", "tan(psi)/cos(delta)"):
+        elif data_type in ("Psi/Delta", "tan(Psi)/cos(Delta)"):
             self.number_of_signals = 2
 
     def mock_chemical_formula(self) -> None:
@@ -105,18 +105,17 @@ class MockEllips():
             self.mock_mueller_matrix(data_template)
 
     def mock_signals(self, data_template) -> None:
-        """ Mock data if data_type is psi/delta or tan(psi)/cos(delta)
+        """ Mock data if data_type is Psi/Delta or tan(Psi)/cos(Delta)
             considering the (new) number of incident angles
         """
-        my_numpy_array = np.empty([1,
-                                   1,
-                                   len(self.angles),
-                                   self.number_of_signals,
-                                   len(self.wavelength)
-                                   ])
+        my_numpy_array = np.empty([
+            len(self.angles),
+            self.number_of_signals,
+            len(self.wavelength)
+        ])
         for index in range(0, len(self.angles)):
-            noise = np.random.normal(0, 0.5, self.data[0, 0, 0, 0, :].size)
-            my_numpy_array[0][0][index] = self.data[0][0][0] * random.uniform(0.5, 1.5) + noise
+            noise = np.random.normal(0, 0.5, self.data[0, 0, :].size)
+            my_numpy_array[index] = self.data[0] * random.uniform(0.5, 1.5) + noise
         self.data = my_numpy_array
         data_template["measured_data"] = my_numpy_array
 
@@ -124,18 +123,17 @@ class MockEllips():
         """ Mock data if data_type is Mueller matrix (i.e. 16 elements/signals)
             considering the (new) number of incident angles
         """
-        my_numpy_array = np.empty([1,
-                                   1,
-                                   len(self.angles),
-                                   self.number_of_signals,
-                                   len(self.wavelength)
-                                   ])
+        my_numpy_array = np.empty([
+            len(self.angles),
+            self.number_of_signals,
+            len(self.wavelength)
+        ])
         for idx in range(0, len(self.angles)):
-            noise = np.random.normal(0, 0.1, self .data[0, 0, 0, 0, :].size)
+            noise = np.random.normal(0, 0.1, self .data[0, 0, :].size)
             for m_idx in range(1, self.number_of_signals):
-                my_numpy_array[0][0][idx][m_idx] = self.data[0][0][0][0] * random.uniform(.5, 1.)
-                my_numpy_array[0][0][idx][m_idx] += noise
-            my_numpy_array[0][0][idx][0] = my_numpy_array[0][0][0][0] / my_numpy_array[0][0][0][0]
+                my_numpy_array[idx][m_idx] = self.data[0][0] * random.uniform(.5, 1.)
+                my_numpy_array[idx][m_idx] += noise
+            my_numpy_array[idx][0] = my_numpy_array[0][0] / my_numpy_array[0][0]
         data_template["measured_data"] = my_numpy_array
 
     def modify_spectral_range(self, data_template) -> None:
@@ -143,7 +141,8 @@ class MockEllips():
             while length of the wavelength array remains the same.
         """
         temp = random.uniform(0.25, 23)
-        data_template["spectrometer/wavelength"] = temp * data_template["spectrometer/wavelength"]
+        data_template["data_collection/NAME_spectrum[wavelength_spectrum]"] = \
+            temp * data_template["data_collection/NAME_spectrum[wavelength_spectrum]"]
 
     def mock_template(self, data_template) -> None:
         """ Creates a mock ellipsometry template """

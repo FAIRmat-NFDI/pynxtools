@@ -29,7 +29,11 @@ import sqlite3
 import xarray as xr
 import numpy as np
 
-from pynxtools.dataconverter.readers.xps.sle_parsers import SleParserV1, SleParserV4
+from pynxtools.dataconverter.readers.xps.sle_parsers import (
+    SleParserV1,
+    SleParserV4
+)
+from pynxtools.dataconverter.readers.xps.scienta_txt_parsers import ScientaTxtParser
 
 
 class XmlSpecs():
@@ -544,21 +548,6 @@ class XmlSpecs():
 
         return self._xps_dict
 
-    def construct_entry_name(self, key):
-        """Construction entry name."""
-        key_parts = key.split("/")
-        try:
-            # entry example : vendor__sample__name_of_scan_rerion
-            entry_name = (f'{key_parts[2]}'
-                          f'__'
-                          f'{key_parts[3].split("_", 1)[1]}'
-                          f'__'
-                          f'{key_parts[5].split("_", 1)[1]}'
-                          )
-        except IndexError:
-            entry_name = ""
-        return entry_name
-
     # pylint: disable=too-many-branches
     def collect_raw_data_to_construct_data(self):
         """Collect the raw data about detectors so that the binding energy and
@@ -584,7 +573,7 @@ class XmlSpecs():
                     "scans": {}}
         # xps_dict = copy.deepcopy(self._xps_dict)
         for key, val in self._xps_dict.items():
-            entry = self.construct_entry_name(key)
+            entry = construct_entry_name(key)
 
             if entry and (entry not in entry_list):
 
@@ -827,7 +816,7 @@ class SleSpecs():
         parser = self.versions_map[version]()
         self.raw_data = parser.parse_file(filepath, **kwargs)
 
-        file_key = f'{self._root_path}/File'
+        file_key = f'{self._root_path}/Files'
         self._xps_dict[file_key] = filepath
 
         self.construct_data()
@@ -841,6 +830,7 @@ class SleSpecs():
         self._xps_dict["data"]: dict = {}
 
         key_map = {
+            'user': [],
             'instrument': [
                 'workfunction',
                 'bias_voltage_ions [V]',
@@ -919,6 +909,7 @@ class SleSpecs():
         analyser_parent = f'{instrument_parent}/analyser'
 
         path_map = {
+            'user': f'{region_parent}/user',
             'instrument': f'{instrument_parent}',
             'source': f'{instrument_parent}/source',
             'beam': f'{instrument_parent}/beam',
@@ -948,10 +939,10 @@ class SleSpecs():
         self._xps_dict[f'{path_map["analyser"]}/name'] = spectrum['devices'][0]
         self._xps_dict[f'{path_map["source"]}/name'] = spectrum['devices'][1]
 
-        entry = self.construct_entry_name(region_parent)
+        entry = construct_entry_name(region_parent)
         self._xps_dict["data"][entry] = xr.Dataset()
 
-        scan_key = self._construct_data_key(spectrum)
+        scan_key = construct_data_key(spectrum)
 
         energy = np.array(spectrum["data"]["x"])
 
@@ -972,61 +963,234 @@ class SleSpecs():
                 data=spectrum["data"]['cps_calib'],
                 coords={"energy": energy})
 
-        detector_data_key_child = self._construct_detector_data_key(spectrum)
+        detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
         self._xps_dict[detector_data_key] = spectrum["data"]['cps_calib']
 
-    def _construct_data_key(self, spectrum):
+
+class ScientaTxtSpecs():
+    """
+    Class for restructuring .txt data file from
+    KIT vendor into python dictionary.
+    """
+    def __init__(self):
+        self.raw_data: list = []
+        self._xps_dict: dict = {}
+        self._root_path = '/ENTRY[entry]/scienta'
+
+        self.parser = ScientaTxtParser()
+
+    def parse_file(self, filepath, **kwargs):
         """
-        Construct a key for the 'data' field of the xps_dict.
-        Output example: cycle0_scan0.
-
-        """
-        if 'loop_no' in spectrum:
-            cycle_key = f'cycle{spectrum["loop_no"]}'
-        else:
-            cycle_key = 'cycle0'
-
-        if 'scan_no' in spectrum:
-            scan_key = f'scan{spectrum["scan_no"]}'
-        else:
-            scan_key = 'scan0'
-
-        return f'{cycle_key}_{scan_key}'
-
-    def _construct_detector_data_key(self, spectrum):
-        """
-        Construct a key for the detector data fields of the xps_dict.
-        Output example: 'cycles/Cycle_0/scans/Scan_0'
+        Parse the file using the Scienta TXT parser.
 
         """
-        if 'loop_no' in spectrum:
-            cycle_key = f'cycles/Cycle_{spectrum["loop_no"]}'
-        else:
-            cycle_key = 'cycles/Cycle_0'
+        self.raw_data = self.parser.parse_file(filepath, **kwargs)
 
-        if 'scan_no' in spectrum:
-            scan_key = f'scans/Scan_{spectrum["scan_no"]}'
-        else:
-            scan_key = '/scans/Scan_0'
+        file_key = f'{self._root_path}/File'
+        self._xps_dict[file_key] = filepath
 
-        return f'{cycle_key}/{scan_key}'
+        self.construct_data()
 
-    def construct_entry_name(self, key):
-        """Construction entry name."""
-        key_parts = key.split("/")
-        try:
-            # entry example : vendor__sample__name_of_scan_region
-            entry_name = (f'{key_parts[2]}'
-                          f'__'
-                          f'{key_parts[3].split("_", 1)[1]}'
-                          f'__'
-                          f'{key_parts[5].split("_", 1)[1]}'
-                          )
-        except IndexError:
-            entry_name = ""
-        return entry_name
+        return self.data_dict
+
+    @property
+    def data_dict(self) -> dict:
+        """ Getter property."""
+        return self._xps_dict
+
+    def construct_data(self):
+        """ Map TXT format to NXmpes-ready dict. """
+        spectra = copy.deepcopy(self.raw_data)
+
+        self._xps_dict["data"]: dict = {}
+
+        key_map = {
+            'file_info': [
+                'data_file',
+                'sequence_file'
+            ],
+            'user': [
+                'user_initials',
+            ],
+            'instrument': [
+                'instrument_name',
+                'vendor',
+            ],
+            'source': [],
+            'beam': [
+                'excitation_energy'
+            ],
+            'analyser': [],
+            'collectioncolumn': [
+                'lens_mode',
+            ],
+            'energydispersion': [
+                'acquisition_mode',
+                'pass_energy',
+            ],
+            'detector': [
+                'detector_first_x_channel',
+                'detector_first_y_channel',
+                'detector_last_x_channel',
+                'detector_last_y_channel',
+                'detector_mode',
+                'dwell_time',
+            ],
+            'manipulator': [],
+            'calibration': [],
+            'sample': [
+                'sample_name'
+            ],
+            'data': [
+                'x_units',
+                'energy_axis',
+                'energy_type',
+                'step_size',
+            ],
+            'region': [
+                'center_energy',
+                'energy_scale',
+                'energy_size',
+                'no_of_scans',
+                'region_id',
+                'spectrum_comment',
+                'start_energy',
+                'stop_energy',
+                'time_stamp'
+            ],
+            # 'unused': [
+            #     'energy_unit',
+            #     'number_of_slices',
+            #     'software_version',
+            #     'spectrum_comment',
+            #     'start_date',
+            #     'start_time',
+            #     'time_per_spectrum_channel'
+            # ]
+        }
+
+        for spectrum in spectra:
+            self._update_xps_dict_with_spectrum(spectrum, key_map)
+
+    def _update_xps_dict_with_spectrum(self, spectrum, key_map):
+        """
+        Map one spectrum from raw data to NXmpes-ready dict.
+
+        """
+        # pylint: disable=too-many-locals
+        group_parent = f'{self._root_path}/RegionGroup_{spectrum["spectrum_type"]}'
+        region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
+        file_parent = f'{region_parent}/file_info'
+        instrument_parent = f'{region_parent}/instrument'
+        analyser_parent = f'{instrument_parent}/analyser'
+
+        path_map = {
+            'file_info': f'{file_parent}',
+            'user': f'{region_parent}/user',
+            'instrument': f'{instrument_parent}',
+            'source': f'{instrument_parent}/source',
+            'beam': f'{instrument_parent}/beam',
+            'analyser': f'{analyser_parent}',
+            'collectioncolumn': f'{analyser_parent}/collectioncolumn',
+            'energydispersion': f'{analyser_parent}/energydispersion',
+            'detector': f'{analyser_parent}/detector',
+            'manipulator': f'{instrument_parent}/manipulator',
+            'calibration': f'{instrument_parent}/calibration',
+            'sample': f'{region_parent}/sample',
+            'data': f'{region_parent}/data',
+            'region': f'{region_parent}'
+        }
+
+        for grouping, spectrum_keys in key_map.items():
+            root = path_map[str(grouping)]
+            for spectrum_key in spectrum_keys:
+                try:
+                    units = re.search(r'\[([A-Za-z0-9_]+)\]', spectrum_key).group(1)
+                    mpes_key = spectrum_key.rsplit(' ', 1)[0]
+                    self._xps_dict[f'{root}/{mpes_key}/@units'] = units
+                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                except AttributeError:
+                    mpes_key = spectrum_key
+                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+
+        entry = construct_entry_name(region_parent)
+        self._xps_dict["data"][entry] = xr.Dataset()
+
+        scan_key = construct_data_key(spectrum)
+
+        energy = np.array(spectrum["data"]["x"])
+
+        channel_key = f'{scan_key}_chan_0'
+        self._xps_dict["data"][entry][channel_key] = \
+            xr.DataArray(
+                data=spectrum["data"]['y'],
+                coords={"energy": energy})
+
+        self._xps_dict["data"][entry][scan_key] = \
+            xr.DataArray(
+                data=spectrum["data"]['y'],
+                coords={"energy": energy})
+
+        detector_data_key_child = construct_detector_data_key(spectrum)
+        detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
+
+        self._xps_dict[detector_data_key] = spectrum["data"]['y']
+
+
+def construct_data_key(spectrum):
+    """
+    Construct a key for the 'data' field of the xps_dict.
+    Output example: cycle0_scan0.
+
+    """
+    if 'loop_no' in spectrum:
+        cycle_key = f'cycle{spectrum["loop_no"]}'
+    else:
+        cycle_key = 'cycle0'
+
+    if 'scan_no' in spectrum:
+        scan_key = f'scan{spectrum["scan_no"]}'
+    else:
+        scan_key = 'scan0'
+
+    return f'{cycle_key}_{scan_key}'
+
+
+def construct_detector_data_key(spectrum):
+    """
+    Construct a key for the detector data fields of the xps_dict.
+    Output example: 'cycles/Cycle_0/scans/Scan_0'
+
+    """
+    if 'loop_no' in spectrum:
+        cycle_key = f'cycles/Cycle_{spectrum["loop_no"]}'
+    else:
+        cycle_key = 'cycles/Cycle_0'
+
+    if 'scan_no' in spectrum:
+        scan_key = f'scans/Scan_{spectrum["scan_no"]}'
+    else:
+        scan_key = 'scans/Scan_0'
+
+    return f'{cycle_key}/{scan_key}'
+
+
+def construct_entry_name(key):
+    """Construction entry name."""
+    key_parts = key.split("/")
+    try:
+        # entry example : vendor__sample__name_of_scan_region
+        entry_name = (f'{key_parts[2]}'
+                      f'__'
+                      f'{key_parts[3].split("_", 1)[1]}'
+                      f'__'
+                      f'{key_parts[5].split("_", 1)[1]}'
+                      )
+    except IndexError:
+        entry_name = ""
+    return entry_name
 
 
 class XpsDataFileParser():
@@ -1035,18 +1199,19 @@ class XpsDataFileParser():
         accepts xml file from specs vendor.
     """
 
-    __prmt_file_ext__ = ['xml', 'sle']
-    __vendors__ = ['specs']
+    __prmt_file_ext__ = ['xml', 'sle', 'txt']
+    __vendors__ = ['specs', 'scienta']
     __prmt_vndr_cls: Dict[str, Dict] = {
         'xml': {'specs': XmlSpecs},
         'sle': {'specs': SleSpecs},
+        'txt': {'scienta': ScientaTxtSpecs},
     }
 
-    __file_err_msg__ = (f'Need a xps data file with the following'
-                        f'\n extension {__prmt_file_ext__}')
+    __file_err_msg__ = ('Need a xps data file with the following extension: '
+                        f'{__prmt_file_ext__}')
 
-    __vndr_err_msg__ = (f'Need a xps data file from the following'
-                        f'\n {__vendors__} vendors')
+    __vndr_err_msg__ = ('Need a xps data file from the following vendors: '
+                        f'{__vendors__}')
 
     def __init__(self, file_paths: List) -> None:
         """
@@ -1098,6 +1263,23 @@ class XpsDataFileParser():
                 elif file_ext == 'sle':
                     try:
                         vendor = 'specs'
+                        parser_class = (XpsDataFileParser.
+                                        __prmt_vndr_cls[file_ext]
+                                        [vendor])
+                        parser_obj = parser_class()
+
+                        parser_obj.parse_file(file, **kwargs)
+                        return parser_obj.data_dict
+
+                    except ValueError as val_err:
+                        raise ValueError(XpsDataFileParser.__vndr_err_msg__) \
+                            from val_err
+                    except KeyError as key_err:
+                        raise KeyError(XpsDataFileParser.__vndr_err_msg__) \
+                            from key_err
+                elif file_ext == 'txt':
+                    try:
+                        vendor = 'scienta'
                         parser_class = (XpsDataFileParser.
                                         __prmt_vndr_cls[file_ext]
                                         [vendor])

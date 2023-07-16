@@ -41,6 +41,7 @@ class FlattenSettings():
     parent_key: str = "/ENTRY[entry]"
     sep: str = "/"
     is_in_section: bool = False
+    ignore_keys: Optional[list] = None
 
 
 def is_section(val: Any) -> bool:
@@ -135,6 +136,8 @@ def flatten_and_replace(settings: FlattenSettings) -> dict:
     """
     items: List[Any] = []
     for key, val in settings.dic.items():
+        if settings.ignore_keys and key in settings.ignore_keys:
+            continue
         new_key = settings.parent_key + settings.sep + settings.convert_dict.get(key, key)
         if isinstance(val, Mapping):
             items.extend(
