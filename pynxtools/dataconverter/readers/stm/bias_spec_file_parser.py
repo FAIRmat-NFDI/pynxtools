@@ -31,7 +31,7 @@ from pynxtools.dataconverter.readers.stm.stm_helper import (fill_template_from_e
                                                             nested_path_to_slash_separated_path,
                                                             work_out_overwriteable_field,
                                                             link_implementation,
-                                                            transform)
+                                                            transform, UNIT_TO_SKIP)
 
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
@@ -88,7 +88,7 @@ class BiasSpecData_Nanonis():
         key_or_line : _type_
             The dict that tracks full nested paths and unit at deepest nest.
         unit_separators : list
-            List of initial separator chars
+            List of separator chars
         end_of_seperators : list
             List of end separator chars
         value : dict, optional
@@ -100,6 +100,9 @@ class BiasSpecData_Nanonis():
                 unit = unit.split(end_sep)[0]
                 if key_or_line in dct:
                     del dct[key_or_line]
+                # skiping some unit that are not part of standard e.g. on/off
+                if unit in UNIT_TO_SKIP:
+                    unit = ''
                 if isinstance(value, dict):
                     value['unit'] = unit
                 else:
@@ -191,6 +194,8 @@ class BiasSpecData_Nanonis():
         # Some units have extra info e.g. Current (A) [filt]
         if '[' in rest:
             metadata = rest.split('[')[-1].split(']')[0]
+        if unit in UNIT_TO_SKIP:
+            unit = ''
         return key, unit, metadata
 
     def extract_and_store_from_dat_file(self) -> None:

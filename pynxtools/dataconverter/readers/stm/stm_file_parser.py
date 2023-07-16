@@ -29,7 +29,7 @@ import nanonispy as nap
 from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path,
                                                             transform, fill_template_from_eln_data,
                                                             work_out_overwriteable_field,
-                                                            link_implementation)
+                                                            link_implementation, UNIT_TO_SKIP)
 
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
@@ -103,7 +103,8 @@ class STM_Nanonis():
                 tmp_l_part, tmp_r_part = key.rsplit(start_bracket)
                 unit = tmp_r_part.rsplit(end_bracket)[0]
                 full_key = tmp_l_part.strip()
-
+                if unit in UNIT_TO_SKIP:
+                    unit = ''
                 return [(full_key, val), (f"{full_key}/@unit", unit)]
 
             # In case if value contain name and unit e.g. /.../demodulated_signal: 'current(A)'
@@ -116,6 +117,8 @@ class STM_Nanonis():
                 tmp_l_part, tmp_r_part = unit_parts
                 unit = tmp_r_part.rsplit(end_bracket)[0]
                 val = tmp_l_part.strip()
+                if unit in UNIT_TO_SKIP:
+                    unit = ''
                 return [(key, val), (f"{key}/@unit", unit)]
 
         return []
