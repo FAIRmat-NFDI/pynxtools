@@ -39,16 +39,14 @@ def thumbnail(img, size=300):
         return img
 
     if old_width == old_height:
-        img.thumbnail((size, size), pil.ANTIALIAS)
-
+        img.thumbnail((size, size))
     elif old_height > old_width:
         ratio = float(old_width) / float(old_height)
         new_width = ratio * size
-        img = img.resize((int(np.floor(new_width)), size), pil.ANTIALIAS)
-
+        img = img.resize((int(np.floor(new_width)), size))
     elif old_width > old_height:
         ratio = float(old_height) / float(old_width)
         new_height = ratio * size
-        img = img.resize((size, int(np.floor(new_height))), pil.ANTIALIAS)
+        img = img.resize((size, int(np.floor(new_height))))
 
     return img
