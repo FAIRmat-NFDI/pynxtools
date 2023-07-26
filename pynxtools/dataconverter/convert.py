@@ -22,7 +22,7 @@ import importlib.util
 import logging
 import os
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Any
 import xml.etree.ElementTree as ET
 
 import click
@@ -70,6 +70,8 @@ def convert(input_file: Tuple[str],
             output: str,
             generate_template: bool = False,
             fair: bool = False,
+            objects: Tuple[Any] = None,
+            create_mocking_data: bool = False,
             **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
@@ -107,11 +109,22 @@ def convert(input_file: Tuple[str],
     if not (nxdl in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
         raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
 
-    data = data_reader().read(  # type: ignore[operator]
-        template=Template(template),
-        file_paths=input_file,
-        **kwargs,
-    )
+    if objects is not None:
+        if create_mocking_data:
+            data = data_reader().mock_read(template=Template(template),
+                                           file_paths=input_file,
+                                           object=object)
+        else:
+            data = data_reader().read(template=Template(template),  # type: ignore[operator]
+                                      file_paths=input_file,
+                                      objects=objects)
+    else:
+        if create_mocking_data:
+            data = data_reader().mock_read(template=Template(template),
+                                           file_paths=input_file)
+        else:
+            data = data_reader().read(template=Template(template),  # type: ignore[operator]
+                                      file_paths=input_file)
 
     helpers.validate_data_dict(template, data, nxdl_root)
 
@@ -179,13 +192,20 @@ def parse_params_file(params_file):
     default=None,
     help='Allows to pass a .yaml file with all the parameters the converter supports.'
 )
+@click.option(
+    '--create-mocking-data',
+    is_flag=True,
+    default=False,
+    help='Generate nxs output file with duplicate mocking data from input file.'
+)
 def convert_cli(input_file: Tuple[str],
                 reader: str,
                 nxdl: str,
                 output: str,
                 generate_template: bool,
                 fair: bool,
-                params_file: str):
+                params_file: str,
+                create_mocking_data: bool):
     """The CLI entrypoint for the convert function"""
     if params_file:
         try:
@@ -199,9 +219,9 @@ def convert_cli(input_file: Tuple[str],
     else:
         if nxdl is None:
             sys.tracebacklimit = 0
-            raise IOError("\nError: Please supply an NXDL file with the option:"
-                          " --nxdl <path to NXDL>")
-        convert(input_file, reader, nxdl, output, generate_template, fair)
+            raise Exception("\nError: Please supply an NXDL file with the option:"
+                            " --nxdl <path to NXDL>")
+        convert(input_file, reader, nxdl, output, generate_template, fair, create_mocking_data)
 
 
 if __name__ == '__main__':

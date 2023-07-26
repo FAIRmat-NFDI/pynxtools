@@ -22,6 +22,7 @@ from pynxtools.dataconverter.template import Template
 import numpy as np
 import random
 import numpy as np
+import ase
 
 
 # pylint: disable=too-many-instance-attributes
@@ -52,18 +53,42 @@ class MockXPS():
         self.sample_replacement: str = ""
 
         # Randomly created sample and entry lists
-        self.sample_list = ["(C12H6N4)", "(C12H6N4)SO4",
-                            "(C20H60Na4)", "(C30H60K5)"]
-        self.entry_list = ["specs__PBY__C1s", "specs__PBY__F1s",
-                           "specs__PBY__S_2p", "specs__PBY__survey",
-                           "specs__PTBY__C1s", "specs__PTBY__F1s",
-                           "specs__PTBY__S_2p", "specs__PTBY__survey",
-                           "specs__PBTY_1.2__C1s", "specs__PBTY_1.2__F1s",
-                           "specs__PBTY_1.2__S_2p", "specs__PBTY_1.2__survey",
-                           "specs__PBTT_1.2__K1s", "specs__PBTT_1.2__S1s",
-                           "specs__PBTT_1.2__K2p", "specs__PBTY_2.0__survey",
-                           "specs__PTTT_1.2__C1s", "specs__PTTT_1.2__F1s",
-                           "specs__PTTT_1.2__S_2p", "specs__PTTT_1.0__survey"]
+        self.sample_list = []
+        self.entry_list = []
+        self.mock_entry_name()
+        self.mock_chemical_fomula()
+
+    def mock_entry_name(self):
+        """Mocking entry data."""
+
+        part_1 = ['specs', 'space', 'concave',
+                  'convax', 'light', 'dark',
+                  'fair', 'Adjective', 'night', 'cat']
+        part_2 = ['x', 'y', 'z', 'XYZ',
+                  'ABY', 'MNX', 'PVTT',
+                  'PBTTT', 'PBXX', 'LKW',
+                  'NMO', 'LXQ', 'PTBTY',
+                  'HARMONY', 'lxy', 'MNOP']
+        part_3 = ['1s', '2s', '2p', '3s', '3p',
+                  '4s', '3d', '4p', '5s', '6p']
+        for x in part_1:
+            for y in part_2:
+                for z in part_3:
+                    entry = f"{x}__{y}__{z}"
+                    self.entry_list.append(entry)
+
+    def mock_chemical_fomula(self):
+        """Mocking chemical formula."""
+
+        part_1 = ase.atom.chemical_symbols[1:]
+        part_2 = list(range(2,20,1))
+
+        for x in part_1:
+            for y in part_2:
+                for z in part_1:
+                    for k in part_2:
+                        chemical_fomula = f"{x}{y}{z}{k}"
+                        self.sample_list.append(chemical_fomula)
 
     def mock_one_dot_six(self) -> None:
         """Generating mock data for specs verions 1.6."""

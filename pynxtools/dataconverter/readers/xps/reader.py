@@ -415,18 +415,16 @@ class XPSReader(BaseReader):
             if ("/ENTRY[entry]" not in key) and (val is not None):
                 final_template[key] = val
 
-        is_mock = True
-        if is_mock:
-            final_template = self.mock_template(final_template)
-
         return final_template
 
-    def mock_template(self, data_template):
-        """Create mocked nxdl template from provided filled nxdl template"""
+    def mock_read(self,
+                  template: dict = None,
+                  file_paths: Tuple[str] = None) -> dict:
+        """Create mocked nxdl template from provided filled nxdl template."""
 
-        # file_paths: Tuple[str] = None,
-        # template: dict = None,
-        # ) -> dict:
+        data_template = self.read(template,
+                                  file_paths)
+
         return MockXPS(data_template).get_mock_data()
 
 
