@@ -23,18 +23,18 @@ Generic Classes for reading XPS files into python dictionary.
 
 import re
 import xml.etree.ElementTree as EmtT
-from typing import Tuple, List, Any, Dict
+from typing import Tuple, List, Any, Dict, Set
 import copy
 import sqlite3
 import xarray as xr
 import numpy as np
+from ase.data import chemical_symbols
 
 from pynxtools.dataconverter.readers.xps.sle_parsers import (
     SleParserV1,
     SleParserV4
 )
 from pynxtools.dataconverter.readers.xps.scienta_txt_parsers import ScientaTxtParser
-
 
 class XmlSpecs():
     """

@@ -415,7 +415,18 @@ class XPSReader(BaseReader):
             if ("/ENTRY[entry]" not in key) and (val is not None):
                 final_template[key] = val
 
+        isMock = False
+        if isMock:
+            final_template = self.mock_template(final_template)
+
+
         return final_template
+
+    def  mock_template(self, data_template):
+#              file_paths: Tuple[str] = None,
+#              template: dict = None,
+#              ) -> dict:
+        return MockXPS(data_template).get_mock_data()
 
 
 READER = XPSReader
