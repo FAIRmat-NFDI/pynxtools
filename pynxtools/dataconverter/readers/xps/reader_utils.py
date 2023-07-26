@@ -23,7 +23,7 @@ Generic Classes for reading XPS files into python dictionary.
 
 import re
 import xml.etree.ElementTree as EmtT
-from typing import Tuple, List, Any, Dict, Set
+from typing import Tuple, List, Any, Dict
 import copy
 import sqlite3
 import xarray as xr
@@ -35,6 +35,7 @@ from pynxtools.dataconverter.readers.xps.sle_parsers import (
     SleParserV4
 )
 from pynxtools.dataconverter.readers.xps.scienta_txt_parsers import ScientaTxtParser
+
 
 class XmlSpecs():
     """
@@ -549,12 +550,12 @@ class XmlSpecs():
         return self._xps_dict
 
     # pylint: disable=too-many-branches
-    def collect_raw_data_to_construct_data(self):
+    def collect_raw_data_to_construct_data(self) -> None:
         """Collect the raw data about detectors so that the binding energy and
             and counts for the corresponding nominal.
         """
 
-        entry_list: List = []
+        entry_list: List[str] = []
         raw_dict = {"mcd_num": 0,
                     "curves_per_scan": 0,
                     "values_per_curve": 0,
@@ -639,13 +640,13 @@ class XmlSpecs():
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-statements
-    def construct_data(self):
+    def construct_data(self) -> None:
         """Construct the Binding Energy and separate the counts for
         different detectors and finally sum up all the counts for
         to find total electron counts.
         """
         copy_entry_to_data = copy.deepcopy(self.entry_to_data)
-        self._xps_dict["data"]: dict = {}
+        self._xps_dict["data"]: Dict[str, Any] = {}
 
         for entry, _ in copy_entry_to_data.items():
 

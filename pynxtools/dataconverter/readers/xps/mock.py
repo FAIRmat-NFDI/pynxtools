@@ -21,8 +21,10 @@ from typing import Set, Tuple, Any
 from pynxtools.dataconverter.template import Template
 import numpy as np
 import random
+import numpy as np
 
 
+# pylint: disable=too-many-instance-attributes
 class MockXPS():
     """Defining Different functions for generating XPS mock nxs data file."""
 
@@ -31,14 +33,25 @@ class MockXPS():
 
         self.data = data_template
         self.template = Template()
+        # Randomly generated detector would be upto 9
         self.max_detector_num = 9
+        self.detec_num = random.randint(1, self.max_detector_num)
+        # Scan in DATA grp would be upto 20
         self.scan_max = 20
+        self.scan_num = random.randint(1, self.max_detector_num)
+        # In case any data needs to be resaled
         self.rand_int_max = 50
+        # In case any data needs to be resaled
         self.rand_float_max = 0.2
+        # Track detector scans in data grp so that confined number of
+        # detectors and scans according to self.detec_num, self.scan_num.
+        self.detector_track: dict = {}
+        self.scan_track: dict = {}
+        # maximum detectors to be allowed
+        self.entry_replacement: dict = {}
+        self.sample_replacement: str = ""
 
-    def mock_one_dot_six(self) -> None:
-        """Generating mock data for specs verions 1.6."""
-
+        # Randomly created sample and entry lists
         self.sample_list = ["(C12H6N4)", "(C12H6N4)SO4",
                             "(C20H60Na4)", "(C30H60K5)"]
         self.entry_list = ["specs__PBY__C1s", "specs__PBY__F1s",
@@ -52,20 +65,13 @@ class MockXPS():
                            "specs__PTTT_1.2__C1s", "specs__PTTT_1.2__F1s",
                            "specs__PTTT_1.2__S_2p", "specs__PTTT_1.0__survey"]
 
-        self.detec_num = random.randint(1, self.max_detector_num)
-        self.scan_num = random.randint(1, self.max_detector_num)
-        # Track detector scans in data sector so that confined number of
-        # detectors and scans according to randomly create number.
-        self.detector_track: dict = {}
-        self.scan_track: dict = {}
-        # maximum detectors to be allowed
-        self.entry_replacement: dict = {}
-        self.sample_replacement: str = ""
+    def mock_one_dot_six(self) -> None:
+        """Generating mock data for specs verions 1.6."""
 
         for key, value in self.data.items():
             key = self.mock_entry(key)
             if "chemical_formula" in key or "atom_types" in key:
-                self.mock_sample(key, value)
+                self.mock_sample(key)
             elif "DETECTOR[detector_" in key:
                 self.mock_detector_grp(key, value)
             elif "DATA[" in key:
@@ -92,7 +98,7 @@ class MockXPS():
 
         return key, value
 
-    def mock_sample(self, key, value) -> None:
+    def mock_sample(self, key) -> None:
         """Mocking Sample Name."""
 
         if "chemical_formula" in key:

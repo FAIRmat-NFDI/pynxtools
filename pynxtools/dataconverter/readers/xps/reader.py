@@ -269,7 +269,7 @@ def fill_template_with_xps_data(config_dict,
 def fill_template_with_eln_data(eln_data_dict,
                                 config_dict,
                                 template,
-                                entry_set):
+                                entry_set) -> None:
     """Fill the template from provided eln data"""
 
     def fill_atom_types(key):
@@ -289,7 +289,7 @@ def fill_template_with_eln_data(eln_data_dict,
                 modified_key = modified_key.replace('chemical_formula', 'atom_types')
                 template[modified_key] = ', '.join(atom_types)
 
-    def fill_from_value(key):
+    def fill_from_value(key) -> None:
         field_value = eln_data_dict[key]
         if not field_value:
             return
@@ -415,16 +415,18 @@ class XPSReader(BaseReader):
             if ("/ENTRY[entry]" not in key) and (val is not None):
                 final_template[key] = val
 
-        isMock = True
-        if isMock:
+        is_mock = True
+        if is_mock:
             final_template = self.mock_template(final_template)
 
         return final_template
 
-    def  mock_template(self, data_template):
-#              file_paths: Tuple[str] = None,
-#              template: dict = None,
-#              ) -> dict:
+    def mock_template(self, data_template):
+        """Create mocked nxdl template from provided filled nxdl template"""
+
+        # file_paths: Tuple[str] = None,
+        # template: dict = None,
+        # ) -> dict:
         return MockXPS(data_template).get_mock_data()
 
 
