@@ -35,7 +35,7 @@ from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
 
-def is_separator_char_exist(key, sep_char_li):
+def has_separator_char(key, sep_char_li):
     """
     Check string or key whether the separator char provided in
     'Separator Char List' exist or not.
@@ -70,14 +70,14 @@ class STM_Nanonis():
         if sep_chars is None:
             sep_chars = ['_', '>']
         for d_key, d_val in data_dict.items():
-            if is_separator_char_exist(d_key, sep_chars):
+            if has_separator_char(d_key, sep_chars):
                 # Find out which separator char exist there
                 for k_c in d_key:
                     if k_c in sep_chars:
                         sep_char = k_c
                         break
                 l_key, r_key = d_key.split(sep_char, 1)
-                if not is_separator_char_exist(r_key, sep_chars):
+                if not has_separator_char(r_key, sep_chars):
                     if l_key not in spreaded_dict:
                         spreaded_dict[l_key]: Dict[str, Any] = {}
                     spreaded_dict[l_key][r_key] = d_val
@@ -102,9 +102,21 @@ class STM_Nanonis():
             if start_bracket in key and end_bracket in key:
                 tmp_l_part, tmp_r_part = key.rsplit(start_bracket)
                 unit = tmp_r_part.rsplit(end_bracket)[0]
-                raw_key = tmp_l_part.strip()
+                full_key = tmp_l_part.strip()
 
-                return [(raw_key, val), (f"{raw_key}/@unit", unit)]
+                return [(full_key, val), (f"{full_key}/@unit", unit)]
+
+            # In case if value contain name and unit e.g. /.../demodulated_signal: 'current(A)'
+            if start_bracket in val and end_bracket in val:
+                unit_parts = val.rsplit(start_bracket)
+                # Assume that val does not have any key but decriptive text,
+                # e.g. Current (A);Bias (V);
+                if len(unit_parts) > 2:
+                    return [(key, val)]
+                tmp_l_part, tmp_r_part = unit_parts
+                unit = tmp_r_part.rsplit(end_bracket)[0]
+                val = tmp_l_part.strip()
+                return [(key, val), (f"{key}/@unit", unit)]
 
         return []
 
@@ -153,7 +165,6 @@ class STM_Nanonis():
                 flattened_dict[key] = val
 
         flattened_dict.update(temp_flattened_dict_sig)
-
         return flattened_dict
 
     # pylint: disable=too-many-arguments

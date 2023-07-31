@@ -141,7 +141,6 @@ class STMReader(BaseReader):
         if not filled_template.keys():
             raise ValueError("Reader could not read anything! Check for input files and the"
                              " corresponding extention.")
-
         return filled_template
 
 
