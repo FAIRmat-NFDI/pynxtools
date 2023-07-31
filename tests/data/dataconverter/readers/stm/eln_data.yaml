@@ -1,0 +1,162 @@
+# Note: _N should be replaced by x, y, z or 1, 2, etc according to meaning of N.
+# Fox axis or direction x,y,z and for number of channeltron 1,2,3... .
+Data: null
+Instrument:
+  Environment:
+    position:
+      x:
+        value: null
+        unit: null
+      y:
+        value: null
+        unit: null
+      z:
+        value: null
+        unit: null
+      z_controller:
+        value: null
+        unit: null
+    scan_control:
+      circuit:
+        channels_current: null
+      positioner:
+        lines: 100
+        pixels_line: null
+        scanfield: null
+        speed_backw: null
+        speed_forw: null
+      roi:
+        frame: null
+    sweep_control:
+      bias_spectroscopy:
+        integration_time:
+          value: null
+          unit: null
+        num_pixel: null
+        number_of_sweeps: null
+        sweep_end:
+          value: null
+          unit: null
+        sweep_start:
+          value: null
+          unit: null
+        z_avg_time:
+          value: null
+          unit: null
+      circuit:
+        acquisition_period:
+          value: null
+          unit: null
+        animations_period:
+          value: null
+          unit: null
+        indicators_period:
+          value: null
+          unit: null
+        measurements_period:
+          value: null
+          unit: null
+        rt_frequency:
+          value: null
+          unit: null
+        signals_oversampling: null
+  cryo_bottom_temp:
+    value: null
+    unit: null
+  cryo_shield_temp:
+    value: null
+    unit: null
+  current_amplifier:
+    hardware: "Name of hard ware xxxx"
+    low_pass: null
+  Hardware:
+    vendor: "Name of hard ware"
+    version: "Version"
+  lock_in:
+    lock_in_data_flip_number: -1
+  output_cabling: null
+  piezo_config:
+    2nd_order_corr_N: null
+    active_calib: null
+    calib_N: null
+    curvature_radius_N:
+      value: null
+      unit: null
+    drift_N: null
+    drift_correction_status: null
+    hv_gain_N: null
+    tilt_N:
+      value: null
+      unit: null
+  sample_bias:
+    bias:
+      value: null
+      unit: null
+  Software:
+    vendor: 'nanonis'
+    version: "Generic 5e"
+  stm_head_temp:
+    value: null
+    unit: null
+alternative_plot: null
+collection_identifier: null
+definition: 'NXsts'
+entry_identifier: null
+experiment_description: "Comments from experimentalists."
+experiment_identifier: "Add full path of the experiment output file in local computer."
+line_scan: null
+mesh_scan: null
+sample:
+  name: 'name'
+  sample_prep_description: "Here is the description for sample preparation."
+reproducibility_indicators:
+  1st_settling_time: null
+  backward_sweep: null
+  bias: null
+  bias_calibration: null
+  bias_offset: null
+  current: null
+  current_calibration: null
+  current_gain: null
+  current_offset: null
+  end_settling_time: null
+  final_z: null
+  integration_time: null
+  max_slew_rate: null
+  program: null
+  settling_time: null
+  start_time: null
+  z_contro_time: null
+  z_control_hold: null
+  z_control_i_gain: null
+  z_control_name: null
+  z_control_p_gain: null
+  z_control_status: null
+  z_control_switchoff_delay: null
+  z_control_time_const: null
+  z_control_tip_lift: null
+  z_offset: null
+  z_sontrol_setpoint: null
+resolution_indicators:
+  acquisition_period: null
+  animation_period: null
+  indicators_period: null
+  integration_time: null
+  measurement_period: null
+  modulated_signal_bias: null
+  number_of_pixels: null
+  number_of_sweps: null
+  oversampling: null
+  program: null
+  rt_freq: null
+  sweep_end: null
+  sweep_start: null
+  temp_cryo_bottom: null
+  temp_cryo_shield: null
+  temp_stm_head: null
+  z_avg_time: null
+single_point: null
+# Not sureabout the value
+type: 'background'
+experiment_type: 'sts'
+

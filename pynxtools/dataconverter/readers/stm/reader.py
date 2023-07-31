@@ -21,12 +21,13 @@
 
 
 from typing import Any, Dict, Tuple, Union
+from collections.abc import Callable
 import json
 import yaml
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter.readers.stm.bias_spec_file_parser import from_dat_file_into_template
+from pynxtools.dataconverter.readers.stm.sts_file_parser import from_dat_file_into_template
 from pynxtools.dataconverter.readers.stm.stm_file_parser import STM_Nanonis
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 
@@ -52,38 +53,154 @@ CONVERT_DICT = {
 REPLACE_NESTED: Dict[str, str] = {}
 
 
-# pylint: disable=invalid-name
+# pylint: disable=too-few-public-methods
+class StmNanonisGeneric5e:
+    """Class to handle 'stm' experiment of software version 'Generic 5e' from 'nanonis'
+    vendor.
+    """
+
+    def __call__(self, template: Dict, data_file: str, config_dict: str, eln_dict: Dict) -> None:
+        """Convert class instace as callable function.
+
+        Parameters
+        ----------
+        template : Dict
+            Template that will be filled.
+        data_file : str
+            The file from experiment
+        config_dict : str
+            Config file to map application definition to the raw file
+        eln_dict : Dict
+            user provided dict
+        """
+
+        STM_Nanonis(file_name=data_file).from_sxm_file_into_template(template,
+                                                                     config_dict,
+                                                                     eln_dict)
+
+
+# pylint: disable=too-few-public-methods
+class StsNanonisGeneric5e:
+    """Class to handle 'sts' experiment of software version 'Generic 5e' from 'nanonis'
+    vendor.
+    """
+    def __call__(self, template: Dict, data_file: str, config_dict: Dict, eln_dict: Dict) -> None:
+        """Convert class instace as callable function.
+
+        Parameters
+        ----------
+        template : Dict
+            Template that will be filled.
+        data_file : str
+            The file from experiment
+        config_dict : str
+            Config file to map application definition to the raw file
+        eln_dict : Dict
+            user provided dict
+        """
+        from_dat_file_into_template(template, data_file,
+                                    config_dict, eln_dict)
+
+
+# pylint: disable=too-few-public-methods
+class Spm:
+    """This class is intended for taking care of vendor's name,
+    experiment (stm, sts, afm) and software versions.
+
+    Raises
+    ------
+    ValueError
+        If experiment is not in ['sts', 'stm', 'afm']
+    ValueError
+        if vendor's name is not in ['nanonis']
+    ValueError
+        if software version is not in ['Generic 5e']
+    """
+
+    # parser navigate type
+    par_nav_t = Dict[str, Union['par_nav_t', Callable]]
+    __parser_navigation: Dict[str, par_nav_t] = \
+                                {'stm': {'nanonis': {'Generic 5e': StmNanonisGeneric5e}},
+                                 'sts': {'nanonis': {'Generic 5e': StsNanonisGeneric5e}}
+                                }
+
+    def get_appropriate_parser(self, eln_dict: Dict) -> Callable[..., None]:
+        """Search for appropriate prser and pass it the reader.
+
+        Parameters
+        ----------
+        eln_dict : str
+            User provided eln file (yaml) that must contain all the info about
+            experiment, vendor's name and version of the vendor's software.
+ # T = TypeVar('T')
+        Returns
+        -------
+            Return callable function that has capability to run the correponding parser.
+        """
+
+        experiment_t_key: str = "/ENTRY[entry]/experiment_type"
+        experiment_t: str = eln_dict[experiment_t_key]
+        try:
+            experiment_dict: Spm.par_nav_t = self.__parser_navigation[experiment_t]
+        except KeyError as exc:
+            raise KeyError(f"Add correct experiment type in ELN file "
+                           f" from {list(self.__parser_navigation.keys())}.") from exc
+
+        vendor_key: str = "/ENTRY[entry]/INSTRUMENT[instrument]/SOFTWARE[software]/vendor"
+        vendor_t: str = eln_dict[vendor_key]
+        try:
+            vendor_dict: Spm.par_nav_t = experiment_dict[vendor_t]
+        except KeyError as exc:
+            raise KeyError(f"Add correct vendor name in ELN file "
+                           f" from {list(experiment_dict.keys())}.") from exc
+
+        software_v_key: str = "/ENTRY[entry]/INSTRUMENT[instrument]/SOFTWARE[software]/@version"
+        software_v: str = eln_dict[software_v_key]
+        try:
+            parser_cls: Callable = vendor_dict[software_v]
+            # cls instance
+            parser = parser_cls()
+        except KeyError as exc:
+            raise KeyError(f"Add correct software version in ELN file "
+                           f" from {list(vendor_dict.keys())}.") from exc
+
+        # Return callable function
+        return parser
+
+
+# pylint: disable=invalid-name, too-few-public-methods
 class STMReader(BaseReader):
     """ Reader for XPS.
     """
 
-    supported_nxdls = ["NXiv_sweep2"]
+    supported_nxdls = ["NXsts"]
 
-    def get_input_file_info(self, input_paths: Tuple[str]):
-        """get and varify input files.
-
-        Parameters
-        ----------
-        input_path : tuple
-            Tuple of input paths.
-
+    def read(self,
+             template: dict = None,
+             file_paths: Tuple[str] = None,
+             objects: Tuple[Any] = None):
         """
-        has_sxm_file: bool = False
-        sxm_file: str = ""
-        has_dat_file: bool = False
-        dat_file: str = ""
-        config_dict: Union[Dict[str, Any], None] = None
+            General read menthod to prepare the template.
+        """
+
+        # has_sxm_file: bool = False
+        # sxm_file: str = ""
+        # has_dat_file: bool = False
+        # dat_file: str = ""
+        filled_template: Union[Dict, None] = Template()
+        # config_dict: Union[Dict[str, Any], None] = None
         eln_dict: Union[Dict[str, Any], None] = None
 
-        for file in input_paths:
+        # has_sxm_file, sxm_file, has_dat_file, dat_file, config_dict, eln_dict = \
+        #     self.get_input_file_info(file_paths)
+        eln_dict: Dict = {}
+        config_dict: Dict = {}
+        data_file: str = ""
+        for file in file_paths:
             ext = file.rsplit('.', 1)[-1]
             fl_obj: object
-            if ext == 'sxm':
-                has_sxm_file = True
-                sxm_file = file
-            if ext == 'dat':
-                has_dat_file = True
-                dat_file = file
+            if ext in ['sxm', 'dat']:
+                data_file = file
             if ext == 'json':
                 with open(file, mode="r", encoding="utf-8") as fl_obj:
                     config_dict = json.load(fl_obj)
@@ -96,41 +213,10 @@ class STMReader(BaseReader):
                             REPLACE_NESTED
                         )
                     )
-        return (has_sxm_file, sxm_file, has_dat_file, dat_file, config_dict, eln_dict)
 
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None):
-        """
-            General read menthod to prepare the template.
-        """
-
-        has_sxm_file: bool = False
-        sxm_file: str = ""
-        has_dat_file: bool = False
-        dat_file: str = ""
-        filled_template: Union[Dict, None] = Template()
-        config_dict: Union[Dict[str, Any], None] = None
-        eln_dict: Union[Dict[str, Any], None] = None
-
-        has_sxm_file, sxm_file, has_dat_file, dat_file, config_dict, eln_dict = \
-            self.get_input_file_info(file_paths)
-
-        if not has_dat_file and not has_sxm_file:
-            raise ValueError("Not correct file has been found. please render correct input"
-                             " file of spm with extension: .dat or .sxm")
-        if has_dat_file and has_sxm_file:
-            raise ValueError("Only one file from .dat or .sxm can be read.")
-        if has_sxm_file and config_dict and eln_dict:
-            STM_Nanonis(file_name=sxm_file).from_sxm_file_into_template(template,
-                                                                        config_dict,
-                                                                        eln_dict)
-        elif has_dat_file and config_dict and eln_dict:
-            from_dat_file_into_template(template, dat_file, config_dict,
-                                        eln_dict)
-        else:
-            raise ValueError("Not correct input file has been provided.")
+        # Get callable object that has parser inside
+        parser = Spm().get_appropriate_parser(eln_dict)
+        parser(template, data_file, config_dict, eln_dict)
 
         for key, val in template.items():
 

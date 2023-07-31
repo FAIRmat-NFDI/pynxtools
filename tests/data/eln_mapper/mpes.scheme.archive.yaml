@@ -2,7 +2,7 @@ definitions:
   name: <ADD PREFERED NAME>
   sections:
     <ROOT_NAME>:
-      base_section:
+      base_sections:
       - nomad.datamodel.metainfo.eln.ElnYamlConverter
       - nomad.datamodel.data.EntryData
       m_annotations:

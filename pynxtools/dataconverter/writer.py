@@ -163,7 +163,11 @@ Several cases can be encoutered:
         raise InvalidDictProvided("A dictionary was provided to the template but it didn't"
                                   " fall into any of the know cases of handling"
                                   " dictionaries. This occured for: " + entry_name)
-    return grp[entry_name]
+    try:
+        _ = grp[entry_name]
+    except KeyError as exc:
+        logger.warning(f"No path '{path}' available to be linked.")
+        del grp[entry_name]
 
 
 class Writer:
@@ -286,6 +290,10 @@ class Writer:
 
                 if entry_name[0] != "@":
                     path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(path)
+                    # Handling links that does not exist in hdf file
+                    if isinstance(value, dict) and path_hdf5 not in self.output_nexus:
+                        continue
+
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
                     # consider changing the name here the lvalue can also be group!

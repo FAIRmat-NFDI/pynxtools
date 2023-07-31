@@ -25,7 +25,5 @@
 
 # To mvake the functions available in stm module
 # pylint: disable=unused-import
-from pynxtools.dataconverter.readers.stm.bias_spec_file_parser import get_sts_raw_file_info
+from pynxtools.dataconverter.readers.stm.sts_file_parser import get_sts_raw_file_info
 from pynxtools.dataconverter.readers.stm.stm_file_parser import get_stm_raw_file_info
-
-

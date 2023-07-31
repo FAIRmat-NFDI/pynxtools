@@ -82,18 +82,19 @@ def work_out_overwriteable_field(template, data_dict,
                          f": {sub_config_dict} intended to overeritten.")
     # sub_config_dict contains key that repalce the overwritable (upper case part)
     # part from nexus path
-    for ch_to_replace, value_dict in sub_config_dict.items():
+    for ch_to_replace, data_path in sub_config_dict.items():
         modified_field = field_to_replace.replace(overwrite_part, ch_to_replace)
-        new_temp_key = nexus_path.replace(field_to_replace, modified_field)
+        # Considering renamed field
+        new_temp_key = nexus_path.replace(field_to_replace, f"{field_to_replace}[{modified_field}]")
         value = "value"
         unit = "unit"
         dict_orig_key_to_mod_key[nexus_path] = new_temp_key
-        if value in value_dict:
-            path_to_data = value_dict[value]
+        if value in data_path:
+            path_to_data = data_path[value]
             template[new_temp_key] = transform(data_dict[path_to_data]
                                                if path_to_data in data_dict else None)
-        if unit in value_dict:
-            path_to_data = value_dict[unit]
+        if unit in data_path:
+            path_to_data = data_path[unit]
             template[new_temp_key + "/@units"] = transform(data_dict[path_to_data]
                                                            if path_to_data in data_dict
                                                            else None)

@@ -20,6 +20,7 @@
 #
 
 
+import os
 from typing import Any, Dict
 import logging
 import re
@@ -335,6 +336,11 @@ class STM_Nanonis():
                 if isinstance(c_val, str):
                     if c_val in data_dict:
                         template[c_key] = transform(data_dict[c_val])
+                # Handling multiple possible raw data according to user's defined name.
+                if isinstance(c_val, list):
+                    for search_key in c_val:
+                        if search_key in data_dict:
+                            template[c_key] = transform(data_dict[search_key])
                 if isinstance(c_val, dict):
                     data_group = "/ENTRY[entry]/DATA[data]"
                     if c_key == data_group:
@@ -361,18 +367,16 @@ class STM_Nanonis():
                     template[c_key] = transform(data_dict[c_val]) if c_val in data_dict else None
         link_implementation(template, nxdl_key_to_modified_key)
 
-        return template
-
 
 def get_stm_raw_file_info(raw_file):
     """Parse the raw_file into a organised dictionary. It helps users as well as developers
     to understand how the reader works and modify the config file."""
 
-    raw_name = raw_file.split('.')[0]
+    raw_file = os.path.basename(raw_file)
+    raw_name = raw_file.rsplit('.')[0]
     data_dict = STM_Nanonis(raw_file).get_SPM_metadata_dict_and_signal()
     temp_file = f"{raw_name}.txt"
     with open(temp_file, mode='w', encoding='utf-8') as txt_f:
         for key, val in data_dict.items():
             txt_f.write(f"{key} : {val}\n")
-
-    logging.info(' %s has been created to investigate raw file structure.', temp_file)
+    logging.info(' %s has been created to investigate raw data structure.', temp_file)
