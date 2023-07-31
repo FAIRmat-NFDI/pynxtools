@@ -49,8 +49,7 @@ NEXUS_TYPE_TO_NOMAD_TYPE = {'NX_CHAR': {'convert_typ': 'str',
 
 
 def construct_field_strucure(fld_elem, quntities_dict):
-    """_summary_
-    TODO: Rewrite the docs
+    """Construct field structure such as unit, value.
     Parameters
     ----------
     elem : _type_
@@ -73,7 +72,10 @@ def construct_field_strucure(fld_elem, quntities_dict):
         cov_fld_typ = NEXUS_TYPE_TO_NOMAD_TYPE[nx_fld_typ]['convert_typ']
 
     fld_dict['type'] = cov_fld_typ
-    fld_dict['unit'] = '<NO UNIT>'
+    if 'units' in elm_attr:
+        print(' #### ', elm_attr['units'])
+        fld_dict['unit'] = f"<hint: {elm_attr['units']}>"
+        fld_dict['value'] = "<ADD default value>"
 
     # handle m_annotation
     m_annotation = {'m_annotations': {'eln':
@@ -158,8 +160,8 @@ def _should_skip_iteration(elm: ET.Element) -> bool:
 
 def scan_xml_element_recursively(nxdl_element: ET.Element,
                                  recursive_dict: Dict,
-                                 root_name: str = '<ROOT_NAME>',
-                                 rader_name: str = '<READER_NAME>',
+                                 root_name: str = "",
+                                 reader_name: str = '<READER_NAME>',
                                  is_root: bool = False) -> None:
     """Scan xml elements, and pass the element to the type of element handaler.
 
@@ -172,8 +174,8 @@ def scan_xml_element_recursively(nxdl_element: ET.Element,
     root_name : str, optional
         Name of root that user want to see to name their application, e.g. MPES,
         by default 'ROOT_NAME'
-TODO: check the parameters
-    root : bool, optional
+    reader_name : Prefered name of the reader.
+    is_root : bool, optional
         Declar the elment as root or not, by default False
     """
 
@@ -184,7 +186,7 @@ TODO: check the parameters
                                      ['nomad.datamodel.metainfo.eln.NexusDataConverter',
                                       'nomad.datamodel.data.EntryData']}
 
-        m_annotations: Dict = {'m_annotations': {'template': {'reader': rader_name,
+        m_annotations: Dict = {'m_annotations': {'template': {'reader': reader_name,
                                                               'nxdl': nxdl},
                                                  'eln': {'hide': []}}}
 
@@ -210,7 +212,6 @@ TODO: check the parameters
             if subsections is None:
                 recursive_dict['sub_sections'] = {}
                 subsections = recursive_dict['sub_sections']
-                print(' in if clause : ', id(subsections))
             construct_group_structure(elm, subsections)
 
 
@@ -226,11 +227,13 @@ def get_eln_recursive_dict(recursive_dict: Dict, nexus_full_file: str) -> None:
     """
 
     nxdl_root = ET.parse(nexus_full_file).getroot()
+    root_name = nxdl_root.attrib['name'][2:] if 'name' in nxdl_root.attrib else "<ROOT_NAME>"
     recursive_dict['definitions'] = {'name': '<ADD PREFERED NAME>',
                                      'sections': {}}
     sections = recursive_dict['definitions']['sections']
 
-    scan_xml_element_recursively(nxdl_root, sections, is_root=True)
+    scan_xml_element_recursively(nxdl_root, sections,
+                                 root_name=root_name, is_root=True)
 
 
 def generate_schema_eln(nexus_def: str, eln_file: str = None) -> None:

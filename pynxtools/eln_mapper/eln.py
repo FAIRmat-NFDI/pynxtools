@@ -153,7 +153,7 @@ def get_recursive_dict(concatenated_key: str,
 
 
 def generate_eln(nexus_def: str, eln_file: str = '', level_to_skip: int = 1) -> None:
-    """_summary_
+    """Genrate eln for reader.
 
     Parameters
     ----------
@@ -172,16 +172,15 @@ def generate_eln(nexus_def: str, eln_file: str = '', level_to_skip: int = 1) -> 
         get_recursive_dict(key, recursive_dict, level_to_skip)
 
     name_split = eln_file.rsplit('.')
-
     if not eln_file:
         if nexus_def[0:2] == 'NX':
             raw_name = nexus_def[2:]
             eln_file = raw_name + '.yaml'
 
-    if len(name_split) == 1:
+    elif len(name_split) == 1:
         eln_file = eln_file + '.yaml'
 
-    if len(name_split) == 2 and name_split[1] == 'yaml':
+    elif len(name_split) == 2 and name_split[1] == 'yaml':
         pass
     else:
         raise ValueError("Eln file should come with 'yaml' extension or without extension.")

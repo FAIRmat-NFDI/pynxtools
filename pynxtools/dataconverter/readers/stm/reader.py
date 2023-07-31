@@ -44,10 +44,8 @@ CONVERT_DICT = {
     'User': 'USER[user]',
     'Data': 'DATA[data]',
     'Source': 'SOURCE[source]',
-    'Collectioncolumn': 'COLLECTIONCOLUMN[collectioncolumn]',
-    'Energydispersion': 'ENERGYDISPERSION[energydispersion]',
-    'Detector': 'DETECTOR[detector]',
     'Environment': 'ENVIRONMENT[environment]',
+    'Sample_bias': 'SAMPLE_BIAS[sample_bias]'
 }
 
 REPLACE_NESTED: Dict[str, str] = {}

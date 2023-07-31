@@ -2,7 +2,7 @@
 ## Contact persion in FAIRmat for this reader
 **Rubel Mozumder (mozumder@physik.hu-berlin.de)**
 ## Reader Notes:
-- Reader builds on NXiv_sweep2
+- Reader builds on NXsts
 - Can parse bias spectroscopy (STS) from
     - Nanonis: Generic 5e, Generic 4.5
 - Can parse STM from
@@ -26,7 +26,7 @@
 
     !dataconverter \
     --reader stm \
-    --nxdl NXiv_sweep2 \
+    --nxdl NXsts \
     --input-file STM_nanonis_generic_5e.sxm \
     --input-file ../config_file_for_sxm.json \
     --input-file ./Nanonis_Eln.yaml \
@@ -39,7 +39,7 @@
 
     !dataconverter \
     --reader stm \
-    --nxdl NXiv_sweep2 \
+    --nxdl NXsts \
     --input-file ./STS_nanonis_generic_5e_1.dat \
     --input-file ../config_file_for_dat.json \
     --input-file Nanonis_Eln.yaml \
@@ -47,7 +47,8 @@
     ```
 
 - Utilization of ELN
-    - The structure of is Hierarchical type, a small part of eln as follows-
+    - The structure of the eln_data.yaml (must be consistent with concepts Hierarchy according
+    to the NXsts application definition.)
         ```
          Instrument:
           Environment:
@@ -59,7 +60,8 @@
                 value: null
                 unit: null
         ```
-     - To add any extra field please follow correct Hierarchy according to application definition NXiv_sweep2.
+     - The structure of the scheme eln any extra field please follow correct Hierarchy according
+     to application definition NXsts.
        For example, extend dimension of position
         ```
         sub_sections:
@@ -109,3 +111,20 @@
                         The scanning area in x position in the frame. (e.g. 130.5E-9).
 
         ```
+## Config file:
+- To update (if needed) the config file please follow the rules:
+  - The dictionary in config files have the following meaning?
+    ```
+    "/ENTRY[entry]/INSTRUMENT[instrument]/lock_in/harmonic_order_N": {"D1": {"value": "/Lock-in/Harmonic D1/value"},
+                                                                      "D2": {"value": "/Lock-in/Harmonic D2/value"}},
+    ```
+    Here, the `N` in field `harmonic_order_N` will be replaced my `D1` and `D2` and generate
+    two `harmonic_order_.`s.
+  - List for the same concept
+    ```
+    "/ENTRY[entry]/INSTRUMENT[instrument]/piezo_config/active_calib": ["/Piezo Configuration/Active Calib.",
+                                                                       "/Piezo Calibration/Active Calib."],
+    ```
+    For different type of software versions the raw data path could be different for same
+    concept. For example Nanonis software `generic 5e` has `/Piezo Configuration/Active Calib.`
+    and generic 4.5 has `/Piezo Calibration/Active Calib.`.

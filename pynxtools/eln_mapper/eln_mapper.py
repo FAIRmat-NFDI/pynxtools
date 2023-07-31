@@ -39,11 +39,12 @@ from pynxtools.eln_mapper.schema_eln import generate_schema_eln
 @click.option(
     '--output-file',
     required=False,
+    default='eln_data',
     help=('Name of file that is neede to generated output file.')
 )
 @click.option(
     '--eln-type',
-    required=False,
+    required=True,
     type=click.Choice(['eln', 'scheme_eln'], case_sensitive=False),
     default='eln'
 )
@@ -55,12 +56,13 @@ def get_eln(nxdl: str,
 
     Parameters
     ----------
-    nxdl : str
-        Name of NeXus definition e.g. NXmpes
-    skip_top_levels : int
-        To skip hierarchical levels
-    output_file : str
-        Name of the output file.
+
+        nxdl : str
+            Name of NeXus definition e.g. NXmpes
+        skip_top_levels : int
+            To skip hierarchical levels
+        output_file : str
+            Name of the output file.
     """
     eln_type = eln_type.lower()
     if eln_type == 'eln':

@@ -158,5 +158,5 @@ resolution_indicators:
 single_point: null
 # Not sureabout the value
 type: 'background'
-experiment_type: 'sts'
+experiment_type: 'stm'
 
