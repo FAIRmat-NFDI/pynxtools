@@ -120,11 +120,11 @@ class Spm:
     # parser navigate type
     par_nav_t = Dict[str, Union['par_nav_t', Callable]]
     __parser_navigation: Dict[str, par_nav_t] = \
-                                {'stm': {'nanonis': {'Generic 5e': StmNanonisGeneric5e}},
-                                 'sts': {'nanonis': {'Generic 5e': StsNanonisGeneric5e}}
-                                }
+        {'stm': {'nanonis': {'Generic 5e': StmNanonisGeneric5e}},
+            'sts': {'nanonis': {'Generic 5e': StsNanonisGeneric5e}}
+         }
 
-    def get_appropriate_parser(self, eln_dict: Dict) -> Callable[..., None]:
+    def get_appropriate_parser(self, eln_dict: Dict) -> Callable:
         """Search for appropriate prser and pass it the reader.
 
         Parameters
@@ -149,7 +149,7 @@ class Spm:
         vendor_key: str = "/ENTRY[entry]/INSTRUMENT[instrument]/SOFTWARE[software]/vendor"
         vendor_t: str = eln_dict[vendor_key]
         try:
-            vendor_dict: Spm.par_nav_t = experiment_dict[vendor_t]
+            vendor_dict: Spm.par_nav_t = experiment_dict[vendor_t]  # type: ignore[assignment]
         except KeyError as exc:
             raise KeyError(f"Add correct vendor name in ELN file "
                            f" from {list(experiment_dict.keys())}.") from exc
@@ -157,7 +157,7 @@ class Spm:
         software_v_key: str = "/ENTRY[entry]/INSTRUMENT[instrument]/SOFTWARE[software]/@version"
         software_v: str = eln_dict[software_v_key]
         try:
-            parser_cls: Callable = vendor_dict[software_v]
+            parser_cls: Callable = vendor_dict[software_v]  # type: ignore[assignment]
             # cls instance
             parser = parser_cls()
         except KeyError as exc:
@@ -190,11 +190,8 @@ class STMReader(BaseReader):
         filled_template: Union[Dict, None] = Template()
         # config_dict: Union[Dict[str, Any], None] = None
         eln_dict: Union[Dict[str, Any], None] = None
-
-        # has_sxm_file, sxm_file, has_dat_file, dat_file, config_dict, eln_dict = \
-        #     self.get_input_file_info(file_paths)
-        eln_dict: Dict = {}
         config_dict: Dict = {}
+
         data_file: str = ""
         for file in file_paths:
             ext = file.rsplit('.', 1)[-1]

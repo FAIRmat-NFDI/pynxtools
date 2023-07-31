@@ -317,6 +317,7 @@ class STM_Nanonis():
                 return (x_cor, y_cor)
         return ()
 
+    # pylint: disable=too-many-branches
     def from_sxm_file_into_template(self, template, config_dict, eln_data_dict):
         """
         Pass metadata and signals into template. This should be last steps for writting
