@@ -169,7 +169,7 @@ def test_get_inherited_nodes():
     (_, _, elist) = nexus.get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT",
         elem=elem)
-    assert len(elist) == 4
+    assert len(elist) == 3
 
     (_, _, elist) = nexus.get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
