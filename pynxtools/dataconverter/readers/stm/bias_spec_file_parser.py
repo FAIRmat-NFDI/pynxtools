@@ -445,13 +445,8 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
     nested_path_to_slash_separated_path(
         b_s_d.get_data_nested_dict(),
         flattened_dict=flattened_dict)
-    # NOTE: Add the bellow part so that user can see data structure if needed
-    temp_file = 'dat_data.txt'
-    with open(temp_file, encoding='utf-8', mode='w') as dat_f:
-        for key, val in flattened_dict.items():
-            dat_f.write(f"{key} : {val}\n")
+
     fill_template_from_eln_data(eln_data_dict, template)
-    # NOTE: Upto here.
     for c_key, c_val in config_dict.items():
         if "@eln" in c_val:
             continue
