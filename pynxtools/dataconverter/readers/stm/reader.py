@@ -47,7 +47,6 @@ CONVERT_DICT = {
     'Energydispersion': 'ENERGYDISPERSION[energydispersion]',
     'Detector': 'DETECTOR[detector]',
     'Environment': 'ENVIRONMENT[environment]',
-
 }
 
 REPLACE_NESTED: Dict[str, str] = {}
@@ -57,11 +56,11 @@ REPLACE_NESTED: Dict[str, str] = {}
 class STMReader(BaseReader):
     """ Reader for XPS.
     """
-    # NXroot is a general purpose definition one can review data with this definition
+
     supported_nxdls = ["NXiv_sweep2"]
 
     def get_input_file_info(self, input_paths: Tuple[str]):
-        """_summary_
+        """get and varify input files.
 
         Parameters
         ----------

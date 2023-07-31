@@ -167,7 +167,7 @@ def transform(str_value):
     """
         Transform string to the intended data type, if not then return str_value.
     e.g '2.5E-2' will be transfor into 2.5E-2
-    tested with: '2.4E-23', '28', '45.98', 'test', ['59', '3.00005', '498E-34'], None]
+    tested with: '2.4E-23', '28', '45.98', 'test', ['59', '3.00005', '498E-34'], None
     with result: 2.4e-23, 28, 45.98, test, [5.90000e+01 3.00005e+00 4.98000e-32], None
 
     Parameters
@@ -188,7 +188,6 @@ def transform(str_value):
     if isinstance(str_value, list):
         str_value = list(str_value)
         try:
-
             transformed = np.array(str_value, dtype=np.float64)
             return transformed
         except ValueError:
