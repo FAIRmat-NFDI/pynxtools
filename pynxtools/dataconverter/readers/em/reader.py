@@ -63,7 +63,7 @@ class EmReader(BaseReader):
         # pylint: disable=duplicate-code
         template.clear()
 
-        debug_id = 2
+        debug_id = 3
         template[f"/ENTRY[entry1]/test{debug_id}"] = f"test{debug_id}"
         # this em_om parser combines multiple sub-parsers
         # so we need the following input:

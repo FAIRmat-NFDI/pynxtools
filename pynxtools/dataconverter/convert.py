@@ -22,11 +22,13 @@ import importlib.util
 import logging
 import os
 import sys
+from shutil import copyfile
 from typing import List, Tuple
 import xml.etree.ElementTree as ET
 
 import click
 import yaml
+
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter import helpers
@@ -61,6 +63,40 @@ def get_names_of_all_readers() -> List[str]:
             index_of_last_path_sep = file.rindex(os.sep)
             all_readers.append(file[index_of_readers_folder_name:index_of_last_path_sep])
     return all_readers
+
+
+def append_template_data_to_acopy_of_one_inputfile(input: Tuple[str], output: str):
+    """Helper function to build outputfile based on one inputfile plus template data."""
+    # There are cases in which one of the inputfiles may contain already NeXus content
+    # typically because the scientific software tool generates such a file
+    # matching a specific application definition and thus additional pieces of information
+    # inside the template (e.g. from an ELN) should just be added to that inputfile
+
+    # one may or not in this case demand for a verification of that input file
+    # before continuing, currently we ignore this verification
+    for file_name in input:
+        if file_name[0:file_name.rfind('.')] != output:
+            continue
+        else:
+            print(f"Creating the output {output} based the this input {file_name}\n" \
+                  f"NeXus content in {file_name} is currently not verified !!!")
+            copyfile(file_name, output)
+
+            print(f"Template data will be added to the output {output}...\n" \
+                  f"Only these template data will be verified !!!")
+    # when calling dataconverter with
+    # --input-file processed.nxs.mtex
+    # --output processed.nxs
+    # -- io_mode="r+"
+    # these calls can be executed repetitively as the first step is
+    # the copying operation of *.nxs.mtex to *.nxs and then the access on the *.nxs
+    # file using h5py is then read/write without regeneration
+    # a repeated call has factually the same effect as the dataconverter
+    # used to work i.e. using h5py with "w" would regenerate the *.nxs if already existent
+    # this is a required to assure that repetitive calls of the ELN save function
+    # in NOMAD do not end up with write conflicts on the *.nxs i.e. the output file
+    # when the dataconverter is called
+    return
 
 
 # pylint: disable=too-many-arguments
@@ -124,6 +160,10 @@ def convert(input_file: Tuple[str],
         if "/@default" in path:
             continue
         logger.warning("The path, %s, is being written but has no documentation.", path)
+
+    if io_mode == "r+":
+        append_template_data_to_acopy_of_one_inputfile(
+            input=input_file, output=output)
 
     Writer(data=data, nxdl_path=nxdl_path, output_path=output, io_mode=io_mode).write()
 
