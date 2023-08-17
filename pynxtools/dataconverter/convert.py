@@ -68,6 +68,7 @@ def convert(input_file: Tuple[str],
             reader: str,
             nxdl: str,
             output: str,
+            io_mode: str = "w",
             generate_template: bool = False,
             fair: bool = False,
             **kwargs):
@@ -124,7 +125,7 @@ def convert(input_file: Tuple[str],
             continue
         logger.warning("The path, %s, is being written but has no documentation.", path)
 
-    Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
+    Writer(data=data, nxdl_path=nxdl_path, output_path=output, io_mode=io_mode).write()
 
     logger.info("The output file generated: %s", output)
 
@@ -162,6 +163,11 @@ def parse_params_file(params_file):
     help='The path to the output NeXus file to be generated.'
 )
 @click.option(
+    '--io_mode',
+    default='w',
+    help='I/O mode on the output NeXus file, see h5py doc for mode details, default="w".'
+)
+@click.option(
     '--generate-template',
     is_flag=True,
     default=False,
@@ -183,6 +189,7 @@ def convert_cli(input_file: Tuple[str],
                 reader: str,
                 nxdl: str,
                 output: str,
+                io_mode: str,
                 generate_template: bool,
                 fair: bool,
                 params_file: str):
@@ -201,7 +208,7 @@ def convert_cli(input_file: Tuple[str],
             sys.tracebacklimit = 0
             raise IOError("\nError: Please supply an NXDL file with the option:"
                           " --nxdl <path to NXDL>")
-        convert(input_file, reader, nxdl, output, generate_template, fair)
+        convert(input_file, reader, nxdl, output, io_mode, generate_template, fair)
 
 
 if __name__ == '__main__':

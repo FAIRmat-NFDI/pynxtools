@@ -183,12 +183,13 @@ class Writer:
         nxs_namespace (str): The namespace used in the NXDL tags. Helps search for XML children.
     """
 
-    def __init__(self, data: dict = None, nxdl_path: str = None, output_path: str = None):
+    def __init__(self, data: dict = None, nxdl_path: str = None,
+                 output_path: str = None, io_mode: str = "w"):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
         self.nxdl_path = nxdl_path
         self.output_path = output_path
-        self.output_nexus = h5py.File(self.output_path, "w")
+        self.output_nexus = h5py.File(self.output_path, io_mode)
         self.nxdl_data = ET.parse(self.nxdl_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
