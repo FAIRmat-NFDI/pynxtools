@@ -23,10 +23,13 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-"""
-from pynxtools.dataconverter.readers.em_om.utils.use_case_selector \
-    import EmOmUseCaseSelector
+from pynxtools.dataconverter.readers.em.concepts.nexus_concepts import NxEmAppDef
 
+from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
+
+from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
+
+"""
 from pynxtools.dataconverter.readers.em_om.utils.generic_eln_io \
     import NxEmOmGenericElnSchemaParser
 
@@ -52,7 +55,7 @@ class EmReader(BaseReader):
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls = ["NXem_refactoring"]
+    supported_nxdls = ["NXem"]  # ["NXem_refactoring"]
 
     # pylint: disable=duplicate-code
     def read(self,
@@ -63,8 +66,8 @@ class EmReader(BaseReader):
         # pylint: disable=duplicate-code
         template.clear()
 
-        debug_id = 3
-        template[f"/ENTRY[entry1]/test{debug_id}"] = f"test{debug_id}"
+        # debug_id = 3
+        # template[f"/ENTRY[entry1]/test{debug_id}"] = f"test{debug_id}"
         # this em_om parser combines multiple sub-parsers
         # so we need the following input:
         # logical analysis which use case
@@ -100,11 +103,20 @@ class EmReader(BaseReader):
         # else:
         #     print("No interpretable configuration file offered")
 
+        input_file_names = []
+        for file_path in file_paths:
+            if file_path != "":
+                input_file_names.append(file_path)
         print("Parse NeXus appdef-specific content...")
-        # nxs = NxEmAppDefContent()
-        # nxs.parse(template)
+        nxs = NxEmAppDef()
+        nxs.parse(template, entry_id, input_file_names)
 
         print("Parse and map pieces of information within files from tech partners...")
+        sub_parser = "nxs_mtex"
+        subparser = NxEmNxsMTexSubParser()
+        subparser.parse(template, entry_id)
+        # add further with resolving cases
+
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
         #    continue
@@ -133,6 +145,14 @@ class EmReader(BaseReader):
         # we only need to decorate the template to point to the mandatory ROI overview
         # print("Create NeXus default plottable data...")
         # em_default_plot_generator(template, 1)
+        nxs_plt = NxEmDefaultPlotResolver()
+        # if nxs_mtex is the sub-parser
+        resolved_path = nxs_plt.nxs_mtex_get_nxpath_to_default_plot(
+            entry_id, file_paths[0])
+        print(f"DEFAULT PLOT IS {resolved_path}")
+        if resolved_path != "":
+            nxs_plt.annotate_default_plot(template, resolved_path)
+
         debugging = True
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
