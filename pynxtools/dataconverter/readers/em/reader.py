@@ -55,7 +55,7 @@ class EmReader(BaseReader):
     # pylint: disable=too-few-public-methods
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls = ["NXem"]  # ["NXem_refactoring"]
+    supported_nxdls = ["NXem", "NXroot"]
 
     # pylint: disable=duplicate-code
     def read(self,
@@ -113,10 +113,9 @@ class EmReader(BaseReader):
 
         print("Parse and map pieces of information within files from tech partners...")
         sub_parser = "nxs_mtex"
-        subparser = NxEmNxsMTexSubParser()
-        subparser.parse(template, entry_id)
-        subparser.example_ebsd_database_set_atom_types(template, entry_id, file_paths[0])
-        subparser.example_ebsd_database_set_citations(template, entry_id, file_paths[0])
+        subparser = NxEmNxsMTexSubParser(entry_id, file_paths[0])
+        subparser.parse(template)
+
         # add further with resolving cases
 
         # for dat_instance in case.dat_parser_type:
@@ -151,7 +150,7 @@ class EmReader(BaseReader):
         # if nxs_mtex is the sub-parser
         resolved_path = nxs_plt.nxs_mtex_get_nxpath_to_default_plot(
             entry_id, file_paths[0])
-        print(f"DEFAULT PLOT IS {resolved_path}")
+        # print(f"DEFAULT PLOT IS {resolved_path}")
         if resolved_path != "":
             nxs_plt.annotate_default_plot(template, resolved_path)
 

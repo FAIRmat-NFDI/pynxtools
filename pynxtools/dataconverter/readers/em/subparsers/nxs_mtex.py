@@ -42,6 +42,8 @@ of the sub-parsers.
 """
 
 import re
+from typing import Any
+from typing_extensions import SupportsIndex
 import h5py
 
 from ase.data import chemical_symbols
@@ -54,25 +56,33 @@ class NxEmNxsMTexSubParser():
     """Map content from *.nxs.mtex files on an instance of NXem.
 
     """
-    def __init__(self):
-        pass
+    def __init__(self, entry_id: int = 1, input_file_name: str = ""):
+        if entry_id > 0:
+            self.entry_id = entry_id
+        else:
+            self.entry_id = 1
+        self.input_file_name = input_file_name
+        # the file written out by MTex/Matlab this file is already preformatted for NeXus
 
-    def parse(self, template: dict, entry_id: int = 1) -> dict:
+    def parse(self, template: dict) -> dict:
         """Pass because for *.nxs.mtex all data are already in the copy of the output."""
+        self.example_ebsd_database_set_atom_types(template)
+        self.example_ebsd_database_set_citations(template)
+        self.example_ebsd_database_set_project(template, proj_id="186", map_id="n/a")
+        self.example_ebsd_database_set_coordinate_system(template)
+        self.example_ebsd_database_set_user(template)
+        self.example_ebsd_database_conventions(template)
         return template
 
-    def example_ebsd_database_set_atom_types(self,
-                                             template: dict,
-                                             entry_id: int = 1,
-                                             input_file_name: str = "") -> dict:
+    def example_ebsd_database_set_atom_types(self, template: dict) -> dict:
         """Add phase name surplus other data to the copy of the *.nxs.mtex instance."""
         # for each phase map elements
         atom_types = set()
-        if input_file_name == "":
-            template[f"/ENTRY[entry{entry_id}]/sample/atom_types"] = ""
+        if self.input_file_name == "":
+            template[f"/ENTRY[entry{self.entry_id}]/sample/atom_types"] = ""
             return template
-        h5r = h5py.File(input_file_name, "r")
-        trg = f"/entry{entry_id}/roi1/ebsd/indexing"
+        h5r = h5py.File(self.input_file_name, "r")
+        trg = f"/entry{self.entry_id}/roi1/ebsd/indexing"
         if trg in h5r:
             for node_name in h5r[trg].keys():
                 if re.match("phase[0-9]+", node_name) is not None:
@@ -92,31 +102,56 @@ class NxEmNxsMTexSubParser():
         h5r.close()
 
         if len(atom_types) > 0:
-            template[f"/ENTRY[entry{entry_id}]/sample/atom_types"] \
+            template[f"/ENTRY[entry{self.entry_id}]/sample/atom_types"] \
                 = ", ".join(list(atom_types))
         else:
-            template[f"/ENTRY[entry{entry_id}]/sample/atom_types"] = ""
+            template[f"/ENTRY[entry{self.entry_id}]/sample/atom_types"] = ""
         return template
 
-    def example_ebsd_database_set_citations(self,
-                                            template: dict,
-                                            entry_id: int = 1,
-                                            input_file_name: str = "") -> dict:
+    def example_ebsd_database_set_citations(self, template: dict) -> dict:
         """Add doi for location and paper of orig. work in the *.nxs.mtex instance."""
         # TODO::add list of all projects
-        proj_id_key = input_file_name
+        proj_id_key = self.input_file_name
         if proj_id_key in ProjectIdToCitation.keys():
             # data citation
             cite_id = 1
             if "data" in ProjectIdToCitation[proj_id_key].keys():
-                template[f"/ENTRY[entry{entry_id}]/CITE[cite{cite_id}]/url"] \
+                template[f"/ENTRY[entry{self.entry_id}]/CITE[cite{cite_id}]/url"] \
                     = ProjectIdToCitation[proj_id_key]["data"]
-                template[f"/ENTRY[entry{entry_id}]/CITE[cite{cite_id}]/description"] \
+                template[f"/ENTRY[entry{self.entry_id}]/CITE[cite{cite_id}]/description"] \
                     = "Link to the actual data repository from where these data were collected."
                 cite_id += 1
             if "paper" in ProjectIdToCitation[proj_id_key].keys():
-                template[f"/ENTRY[entry{entry_id}]/CITE[cite{cite_id}]/url"] \
+                template[f"/ENTRY[entry{self.entry_id}]/CITE[cite{cite_id}]/url"] \
                     = ProjectIdToCitation[proj_id_key]["paper"]
-                template[f"/ENTRY[entry{entry_id}]/CITE[cite{cite_id}]/description"] \
+                template[f"/ENTRY[entry{self.entry_id}]/CITE[cite{cite_id}]/description"] \
                     = "Link to (the or a) paper which is evidently associated with these data."
+        return template
+
+    def example_ebsd_database_set_project(self,
+                                          template: dict,
+                                          proj_id: str = "",
+                                          map_id: str = "") -> dict:
+        """Add top-level project and map identifier."""
+        template[f"/ENTRY[entry{self.entry_id}]/experiment_identifier"] \
+            = f"map_id: {map_id}"
+        template[f"/ENTRY[entry{self.entry_id}]/experiment_description"] \
+            = f"project_id: {proj_id}, map_id: {map_id}"
+        # TODO::start_time and end_time, other missing sample details
+        return template
+
+    def example_ebsd_database_set_user(self, template: dict) -> dict:
+        """Add user involved in the ebsd case study."""
+        # TODO::add coauthors as parsed out from DOIs of paper and data at least first author
+        template[f"/ENTRY[entry{self.entry_id}]/USER[user1]/name"] = "M. Kühbach et al."
+        return template
+
+    def example_ebsd_database_set_coordinate_system(self, template: dict) -> dict:
+        """Add used conventions and coordinate systems."""
+        # TODO::parse these from the project table
+        return template
+
+    def example_ebsd_database_conventions(self, template: dict) -> dict:
+        """Add conventions made for EBSD setup and geometry."""
+        # TODO::parse these from the project table
         return template
