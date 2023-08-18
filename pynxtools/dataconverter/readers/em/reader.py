@@ -115,6 +115,8 @@ class EmReader(BaseReader):
         sub_parser = "nxs_mtex"
         subparser = NxEmNxsMTexSubParser()
         subparser.parse(template, entry_id)
+        subparser.example_ebsd_database_set_atom_types(template, entry_id, file_paths[0])
+        subparser.example_ebsd_database_set_citations(template, entry_id, file_paths[0])
         # add further with resolving cases
 
         # for dat_instance in case.dat_parser_type:
