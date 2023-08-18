@@ -42,7 +42,6 @@ dependencies = [
     "requests",
     "requests_cache",
     "nanonispy>=1.1.0",
-    "coverage==6.5.0"
 ]
 
 [project.urls]

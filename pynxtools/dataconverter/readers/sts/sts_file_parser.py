@@ -27,11 +27,11 @@ from typing import Dict, Union, Tuple
 import logging
 import os
 import numpy as np
-from pynxtools.dataconverter.readers.stm.stm_helper import (fill_template_from_eln_data,
-                                                            nested_path_to_slash_separated_path,
-                                                            work_out_overwriteable_field,
-                                                            link_implementation,
-                                                            transform, UNIT_TO_SKIP)
+from pynxtools.dataconverter.readers.sts.helper import (fill_template_from_eln_data,
+                                                        nested_path_to_slash_separated_path,
+                                                        work_out_overwriteable_field,
+                                                        link_implementation,
+                                                        to_intended_t, UNIT_TO_SKIP)
 
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
@@ -458,7 +458,7 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
         if c_val in ["", None, 'None', 'none']:
             continue
         if isinstance(c_val, str) and c_val in flattened_dict:
-            template[c_key] = transform(flattened_dict[c_val])
+            template[c_key] = to_intended_t(flattened_dict[c_val])
         if isinstance(c_val, dict) and c_val:
             data_group_concept = "/ENTRY[entry]/DATA[data]"
             if data_group_concept == c_key:

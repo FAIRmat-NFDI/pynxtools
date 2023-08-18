@@ -1,5 +1,5 @@
 """
-    A short description on SPM reader.
+    A short description on STS reader which also suitable for file from STM .
 """
 
 # Copyright The NOMAD Authors.
@@ -27,8 +27,8 @@ import yaml
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter.readers.stm.sts_file_parser import from_dat_file_into_template
-from pynxtools.dataconverter.readers.stm.stm_file_parser import STM_Nanonis
+from pynxtools.dataconverter.readers.sts.sts_file_parser import from_dat_file_into_template
+from pynxtools.dataconverter.readers.sts.stm_file_parser import STM_Nanonis
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 
 
@@ -47,7 +47,7 @@ CONVERT_DICT = {
     'Environment': 'ENVIRONMENT[environment]',
     'Sample_bias': 'SAMPLE_BIAS[sample_bias]'
 }
-
+# For flatened key-value pair from nested dict.
 REPLACE_NESTED: Dict[str, str] = {}
 
 
@@ -130,7 +130,7 @@ class Spm:
         eln_dict : str
             User provided eln file (yaml) that must contain all the info about
             experiment, vendor's name and version of the vendor's software.
- # T = TypeVar('T')
+
         Returns
         -------
             Return callable function that has capability to run the correponding parser.

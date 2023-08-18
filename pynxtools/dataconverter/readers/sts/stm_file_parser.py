@@ -1,5 +1,5 @@
 """
-    A parse stm file in nexus generated definition template.
+    A parser for files from stm experiment into a simple dict.
 """
 
 # Copyright The NOMAD Authors.
@@ -27,10 +27,10 @@ import re
 import numpy as np
 import nanonispy as nap
 
-from pynxtools.dataconverter.readers.stm.stm_helper import (nested_path_to_slash_separated_path,
-                                                            transform, fill_template_from_eln_data,
-                                                            work_out_overwriteable_field,
-                                                            link_implementation, UNIT_TO_SKIP)
+from pynxtools.dataconverter.readers.sts.helper import (nested_path_to_slash_separated_path,
+                                                        to_intended_t, fill_template_from_eln_data,
+                                                        work_out_overwriteable_field,
+                                                        link_implementation, UNIT_TO_SKIP)
 
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
@@ -223,7 +223,7 @@ class STM_Nanonis():
                     signals.append(field_name)
                     nxdata_grp = data_group.replace("DATA[data", f"DATA[{grp_name}")
                     temp_data_field = nxdata_grp + '/' + field_name
-                    scan_dt_arr = transform(data_dict[path])
+                    scan_dt_arr = to_intended_t(data_dict[path])
                     x_cor_len, y_cor_len = scan_dt_arr.shape
                     # collect for only one data field e.g. forward or backward, as all the data
                     # fields must have the same length of co-ordinate
@@ -308,11 +308,11 @@ class STM_Nanonis():
                 # parts are X_cor, Y_cor, X_len, Y_len and one unkown value
                 scanfield_parts = scanfield.split(sep)
 
-                x_start = transform(scanfield_parts[0])
-                x_len = transform(scanfield_parts[2])
+                x_start = to_intended_t(scanfield_parts[0])
+                x_len = to_intended_t(scanfield_parts[2])
                 x_cor = [x_start, x_start + x_len, unit_info]
-                y_start = transform(scanfield_parts[1])
-                y_len = transform(scanfield_parts[3])
+                y_start = to_intended_t(scanfield_parts[1])
+                y_len = to_intended_t(scanfield_parts[3])
                 y_cor = [y_start, y_start + y_len, unit_info]
                 return (x_cor, y_cor)
         return ()
@@ -336,12 +336,12 @@ class STM_Nanonis():
             if c_key in temp_keys:
                 if isinstance(c_val, str):
                     if c_val in data_dict:
-                        template[c_key] = transform(data_dict[c_val])
+                        template[c_key] = to_intended_t(data_dict[c_val])
                 # Handling multiple possible raw data according to user's defined name.
                 if isinstance(c_val, list):
                     for search_key in c_val:
                         if search_key in data_dict:
-                            template[c_key] = transform(data_dict[search_key])
+                            template[c_key] = to_intended_t(data_dict[search_key])
                 if isinstance(c_val, dict):
                     data_group = "/ENTRY[entry]/DATA[data]"
                     if c_key == data_group:
@@ -365,7 +365,8 @@ class STM_Nanonis():
                                                  c_key,
                                                  nxdl_key_to_modified_key)
                 else:
-                    template[c_key] = transform(data_dict[c_val]) if c_val in data_dict else None
+                    template[c_key] = to_intended_t(data_dict[c_val]) if c_val in data_dict \
+                        else None
         link_implementation(template, nxdl_key_to_modified_key)
 
 

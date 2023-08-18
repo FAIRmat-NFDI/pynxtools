@@ -1,5 +1,4 @@
-"""This test is dedicated to reader eln and shcema base eln, where reader eln
-is passed to the reader and schema based eln is passed to the Nomad.
+"""This test is dedicated generate_eln converter tool.
 """
 
 # Copyright The NOMAD Authors.

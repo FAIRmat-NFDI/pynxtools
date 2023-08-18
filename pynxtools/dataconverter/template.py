@@ -171,7 +171,6 @@ class Template(dict):
 
     def __delitem__(self, key):
         """Delete a dictionary key or template key"""
-
         if key in self.optional.keys():
             del self.optional[key]
 

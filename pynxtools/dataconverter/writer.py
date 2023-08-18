@@ -279,6 +279,9 @@ class Writer:
                               f"with the following message: {str(exc)}") from exc
         for links in hdf5_links_for_later:
             dataset = handle_dicts_entries(*links)
+            if dataset is None:
+                # If target of a link is invalid to be linked
+                del self.data[links[-1]]
 
         for path, value in self.data.items():
             try:
@@ -293,9 +296,6 @@ class Writer:
 
                 if entry_name[0] != "@":
                     path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(path)
-                    # Handling links that does not exist in hdf file
-                    if isinstance(value, dict) and path_hdf5 not in self.output_nexus:
-                        continue
 
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:

@@ -14,8 +14,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-"""
-This subpackage mainly generate the files like: yaml, json(not yet added)
-that are used to map data from experimental data file into NeXus concept.
-"""

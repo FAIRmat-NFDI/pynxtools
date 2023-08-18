@@ -24,7 +24,7 @@ from pynxtools.eln_mapper.eln import retrieve_nxdl_file
 from pynxtools.dataconverter.helpers import remove_namespace_from_tag
 
 
-NEXUS_TYPE_TO_NOMAD_TYPE = {'NX_CHAR': {'convert_typ': 'str',
+NEXUS_TYPE_TO_NUMPY_TYPE = {'NX_CHAR': {'convert_typ': 'str',
                                         'component_nm': 'StringEditQuantity',
                                         'default_unit_display': '<No Default unit>'},
                             'NX_BOOLEAN': {'convert_typ': 'bool',
@@ -48,7 +48,7 @@ NEXUS_TYPE_TO_NOMAD_TYPE = {'NX_CHAR': {'convert_typ': 'str',
                             }
 
 
-def construct_field_strucure(fld_elem, quntities_dict):
+def construct_field_structure(fld_elem, quntities_dict):
     """Construct field structure such as unit, value.
     Parameters
     ----------
@@ -68,8 +68,8 @@ def construct_field_strucure(fld_elem, quntities_dict):
     else:
         nx_fld_typ = 'NX_CHAR'
 
-    if nx_fld_typ in NEXUS_TYPE_TO_NOMAD_TYPE:
-        cov_fld_typ = NEXUS_TYPE_TO_NOMAD_TYPE[nx_fld_typ]['convert_typ']
+    if nx_fld_typ in NEXUS_TYPE_TO_NUMPY_TYPE:
+        cov_fld_typ = NEXUS_TYPE_TO_NUMPY_TYPE[nx_fld_typ]['convert_typ']
 
     fld_dict['type'] = cov_fld_typ
     if 'units' in elm_attr:
@@ -79,9 +79,9 @@ def construct_field_strucure(fld_elem, quntities_dict):
     # handle m_annotation
     m_annotation = {'m_annotations': {'eln':
                                       {'component':
-                                       NEXUS_TYPE_TO_NOMAD_TYPE[nx_fld_typ]['component_nm'],
+                                       NEXUS_TYPE_TO_NUMPY_TYPE[nx_fld_typ]['component_nm'],
                                        'defaultDisplayUnit':
-                                       (NEXUS_TYPE_TO_NOMAD_TYPE[nx_fld_typ]
+                                       (NEXUS_TYPE_TO_NUMPY_TYPE[nx_fld_typ]
                                         ['default_unit_display'])}}}
     fld_dict.update(m_annotation)
 
@@ -206,7 +206,7 @@ def scan_xml_element_recursively(nxdl_element: ET.Element,
             if quantities is None:
                 recursive_dict['quantities'] = {}
                 quantities = recursive_dict['quantities']
-            construct_field_strucure(elm, quantities)
+            construct_field_structure(elm, quantities)
         if tag == 'group':
             if subsections is None:
                 recursive_dict['sub_sections'] = {}
@@ -235,15 +235,15 @@ def get_eln_recursive_dict(recursive_dict: Dict, nexus_full_file: str) -> None:
                                  root_name=root_name, is_root=True)
 
 
-def generate_schema_eln(nexus_def: str, eln_file: str = None) -> None:
-    """Generate schema eln that should go to Nomad while running
-    the reader. The output file will be <eln_file>.scheme.archive.yaml
+def generate_scheme_eln(nexus_def: str, eln_file_name: str = None) -> None:
+    """Generate schema eln that should go to Nomad while running the reader.
+    The output file will be <eln_file_name>.scheme.archive.yaml
 
     Parameters
     ----------
     nexus_def : str
         Name of nexus definition e.g. NXmpes
-    eln_file : str
+    eln_file_name : str
         Name of output file e.g. mpes
 
     Returns:
@@ -257,17 +257,17 @@ def generate_schema_eln(nexus_def: str, eln_file: str = None) -> None:
 
     nxdl_file = retrieve_nxdl_file(nexus_def)
 
-    if eln_file is None:
+    if eln_file_name is None:
         # raw_name from e.g. /<path>/NXmpes.nxdl.xml
         raw_name = nxdl_file.split('/')[-1].split('.')[0][2:]
         out_file = '.'.join([raw_name, out_file_ext])
     else:
-        file_parts = eln_file.split('.')
+        file_parts = eln_file_name.split('.')
         if len(file_parts) == 1:
             raw_name = file_parts[0]
             out_file = '.'.join([raw_name, out_file_ext])
         elif len(file_parts) == 4 and '.'.join(file_parts[1:]) == out_file_ext:
-            out_file = eln_file
+            out_file = eln_file_name
         elif nexus_def[0:2] == 'NX':
             raw_name = nexus_def[2:]
             out_file = '.'.join([raw_name, out_file_ext])

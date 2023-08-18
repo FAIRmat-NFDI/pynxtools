@@ -159,11 +159,15 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None, nxdl_na
     # linked. Writer reads link from template in the format {'link': <ABSOLUTE PATH>}
     # {'link': ':/<ABSOLUTE PATH TO EXTERNAL FILE>'}
     elif tag == "link":
-        optionality = get_required_string(root)
-        optional_parent = check_for_optional_parent(path, nxdl_root)
-        optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
-        if optionality == "optional":
-            template.optional_parents.append(optional_parent)
+        # NOTE:  The code below can be implemented later once, NeXus brings optionality in
+        # link. Otherwise link will be considered optional by default.
+
+        # optionality = get_required_string(root)
+        # optional_parent = check_for_optional_parent(path, nxdl_root)
+        # optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
+        # if optionality == "optional":
+        #     template.optional_parents.append(optional_parent)
+        optionality = "optional"
         template[optionality][path] = {'link': root.attrib['target']}
 
     for child in root:

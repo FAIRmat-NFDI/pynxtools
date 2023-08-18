@@ -1,4 +1,4 @@
-"""This module Generate ELN in Hierarchical format according to NEXUS definition."""
+"""This module Generate ELN in a hierarchical format according to NEXUS definition."""
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -18,7 +18,7 @@
 
 import click
 from pynxtools.eln_mapper.eln import generate_eln
-from pynxtools.eln_mapper.schema_eln import generate_schema_eln
+from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
 
 
 @click.command()
@@ -68,7 +68,7 @@ def get_eln(nxdl: str,
     if eln_type == 'eln':
         generate_eln(nxdl, output_file, skip_top_levels)
     elif eln_type == 'scheme_eln':
-        generate_schema_eln(nxdl, eln_file=output_file)
+        generate_scheme_eln(nxdl, eln_file_name=output_file)
 
 
 if __name__ == "__main__":

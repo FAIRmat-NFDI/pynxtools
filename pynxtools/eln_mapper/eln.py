@@ -41,7 +41,7 @@ def retrieve_nxdl_file(nexus_def: str) -> str:
     Returns
     -------
     str
-        Return ful path of file e.g. <full_path>/paNXmpes.nxdl.xml
+        Returns full path of file e.g. <full_path>/NXmpes.nxdl.xml
 
     Raises
     ------
@@ -153,7 +153,7 @@ def get_recursive_dict(concatenated_key: str,
 
 
 def generate_eln(nexus_def: str, eln_file: str = '', level_to_skip: int = 1) -> None:
-    """Genrate eln for reader.
+    """Genrate eln from application definition.
 
     Parameters
     ----------

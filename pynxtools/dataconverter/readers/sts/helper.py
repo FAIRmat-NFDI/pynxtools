@@ -40,7 +40,7 @@ def fill_template_from_eln_data(eln_data_dict, template):
     """
 
     for e_key, e_val in eln_data_dict.items():
-        template[e_key] = transform(e_val)
+        template[e_key] = to_intended_t(e_val)
 
 
 def work_out_overwriteable_field(template, data_dict,
@@ -92,13 +92,13 @@ def work_out_overwriteable_field(template, data_dict,
         dict_orig_key_to_mod_key[nexus_path] = new_temp_key
         if value in data_path:
             path_to_data = data_path[value]
-            template[new_temp_key] = transform(data_dict[path_to_data]
-                                               if path_to_data in data_dict else None)
+            template[new_temp_key] = to_intended_t(data_dict[path_to_data]
+                                                   if path_to_data in data_dict else None)
         if unit in data_path:
             path_to_data = data_path[unit]
-            template[new_temp_key + "/@units"] = transform(data_dict[path_to_data]
-                                                           if path_to_data in data_dict
-                                                           else None)
+            template[new_temp_key + "/@units"] = to_intended_t(data_dict[path_to_data]
+                                                               if path_to_data in data_dict
+                                                               else None)
 
 
 def nested_path_to_slash_separated_path(nested_dict: dict,
@@ -168,7 +168,7 @@ def slice_before_last_element(np_array):
 
 
 # pylint: disable=too-many-return-statements
-def transform(str_value):
+def to_intended_t(str_value):
     """
         Transform string to the intended data type, if not then return str_value.
     e.g '2.5E-2' will be transfor into 2.5E-2
@@ -218,7 +218,7 @@ def transform(str_value):
                 parts = str_value.split(sym)
                 modified_parts = []
                 for part in parts:
-                    modified_parts.append(transform(part))
+                    modified_parts.append(to_intended_t(part))
                 return modified_parts
 
     return str_value
