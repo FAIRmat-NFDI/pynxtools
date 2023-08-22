@@ -41,6 +41,23 @@ def fixture_writer(filled_test_data, tmp_path):
     del writer
 
 
+@pytest.mark.usefixtures("filled_test_data")
+@pytest.fixture(name="writer_append")
+def fixture_writer_append(filled_test_data, tmp_path):
+    """pytest fixture to setup Writer object with append mode."""
+    with h5py.File(os.path.join(tmp_path, "append.nxs"), "w") as append_file:
+        append_file["/already/existing_value"] = 1
+
+    writer = Writer(
+        filled_test_data,
+        os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml"),
+        os.path.join(tmp_path, "append.nxs"),
+        append=True
+    )
+    yield writer
+    del writer
+
+
 def test_init(writer):
     """Test to verify Writer's initialization works."""
     assert isinstance(writer, Writer)
@@ -81,3 +98,12 @@ def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
                                        "A dictionary was provided to the template but it didn't "
                                        "fall into any of the know cases of handling dictionaries"
                                        ". This occured for: ext_link")
+
+
+def test_append(writer_append):
+    """Test whether append is correctly working for the writer."""
+    # TODO: Should already existing fields be overwritten or not. Proposal: Ask everytime (y/n)
+    writer_append.write()
+    with h5py.File(writer_append.output_path, "r") as append_file:
+        assert append_file["/already/existing_value"][()] == 1
+        assert append_file["/my_entry/definition"].asstr()[...] == "NXtest"  # pylint: disable=no-member

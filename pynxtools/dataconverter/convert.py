@@ -63,13 +63,14 @@ def get_names_of_all_readers() -> List[str]:
     return all_readers
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-locals
 def convert(input_file: Tuple[str],
             reader: str,
             nxdl: str,
             output: str,
             generate_template: bool = False,
             fair: bool = False,
+            append: bool = False,
             **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
@@ -124,7 +125,7 @@ def convert(input_file: Tuple[str],
             continue
         logger.warning("The path, %s, is being written but has no documentation.", path)
 
-    Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
+    Writer(data=data, nxdl_path=nxdl_path, output_path=output, append=append).write()
 
     logger.info("The output file generated: %s", output)
 
@@ -179,13 +180,20 @@ def parse_params_file(params_file):
     default=None,
     help='Allows to pass a .yaml file with all the parameters the converter supports.'
 )
+@click.option(
+    '--append',
+    is_flag=True,
+    default=False,
+    help="Appends to the given <output> file if it already exists."
+)
 def convert_cli(input_file: Tuple[str],
                 reader: str,
                 nxdl: str,
                 output: str,
                 generate_template: bool,
                 fair: bool,
-                params_file: str):
+                params_file: str,
+                append: bool):
     """The CLI entrypoint for the convert function"""
     if params_file:
         try:
@@ -201,7 +209,7 @@ def convert_cli(input_file: Tuple[str],
             sys.tracebacklimit = 0
             raise IOError("\nError: Please supply an NXDL file with the option:"
                           " --nxdl <path to NXDL>")
-        convert(input_file, reader, nxdl, output, generate_template, fair)
+        convert(input_file, reader, nxdl, output, generate_template, fair, append)
 
 
 if __name__ == '__main__':
