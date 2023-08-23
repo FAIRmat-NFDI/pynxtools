@@ -30,7 +30,8 @@ import nanonispy as nap
 from pynxtools.dataconverter.readers.sts.helper import (nested_path_to_slash_separated_path,
                                                         to_intended_t, fill_template_from_eln_data,
                                                         work_out_overwriteable_field,
-                                                        link_implementation, UNIT_TO_SKIP)
+                                                        link_seperation_from_hard_code,
+                                                        UNIT_TO_SKIP)
 
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
@@ -367,7 +368,9 @@ class STM_Nanonis():
                 else:
                     template[c_key] = to_intended_t(data_dict[c_val]) if c_val in data_dict \
                         else None
-        link_implementation(template, nxdl_key_to_modified_key)
+        # The following function can be used later it link come true in application def.
+        # link_implementation(template, nxdl_key_to_modified_key)
+        link_seperation_from_hard_code(template, nxdl_key_to_modified_key)
 
 
 def get_stm_raw_file_info(raw_file):

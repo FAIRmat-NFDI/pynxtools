@@ -30,7 +30,7 @@ import numpy as np
 from pynxtools.dataconverter.readers.sts.helper import (fill_template_from_eln_data,
                                                         nested_path_to_slash_separated_path,
                                                         work_out_overwriteable_field,
-                                                        link_implementation,
+                                                        link_seperation_from_hard_code,
                                                         to_intended_t, UNIT_TO_SKIP)
 
 
@@ -471,8 +471,9 @@ def from_dat_file_into_template(template, dat_file, config_dict, eln_data_dict):
                 # same physical quantity e.g. in drift_N N will be replaced X, Y and Z
                 work_out_overwriteable_field(template, flattened_dict, c_val, c_key,
                                              dict_orig_key_to_mod_key)
-
-    link_implementation(template, dict_orig_key_to_mod_key)
+    # The following function can be used if links in application come true
+    # link_seperation(template, dict_orig_key_to_mod_key)
+    link_seperation_from_hard_code(template, dict_orig_key_to_mod_key)
 
 
 def get_sts_raw_file_info(raw_file):

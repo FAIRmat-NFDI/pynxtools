@@ -180,7 +180,6 @@ class STMReader(BaseReader):
         """
             General read menthod to prepare the template.
         """
-
         # has_sxm_file: bool = False
         # sxm_file: str = ""
         # has_dat_file: bool = False

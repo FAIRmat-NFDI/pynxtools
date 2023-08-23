@@ -18,6 +18,7 @@
 # limitations under the License.
 
 from typing import Tuple
+import copy
 import json
 import numpy as np
 from pynxtools.dataconverter.helpers import convert_data_dict_path_to_hdf5_path
@@ -115,9 +116,9 @@ def nested_path_to_slash_separated_path(nested_dict: dict,
             flattened_dict[path] = val
 
 
-def link_implementation(template, link_modified_dict):
+def link_seperation(template, link_modified_dict):
     """Rewrite the link compatible with hdf5 full path.
-    for e.g. convert /ENTRY[entry]/INSTRUMENT[instrument]/name to
+    for e.g. convert /NXentry/NXinstrument/name to
     /entry/instrument/name and rewrite in template.
 
     Parameters
@@ -141,6 +142,104 @@ def link_implementation(template, link_modified_dict):
                 val['link'] = modif_link_hdf_path
             else:
                 val['link'] = convert_data_dict_path_to_hdf5_path(orig_link_path)
+
+
+# pylint: disable=line-too-long
+def link_seperation_from_hard_code(template, link_modified_dict):
+    """This function is intended to handle hard coded link.
+    In future, this function can be removed instead the upper function can be used,
+    once the application definition will be updated by link element.
+    """
+    concept_to_data_link: dict = {"/ENTRY[entry]/reproducibility_indicators/backward_sweep":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/backward_sweep",
+                                  "/ENTRY[entry]/reproducibility_indicators/bias":
+                                  "/NXentry/NXinstrument/NXsample_bias/bias",
+                                  "/ENTRY[entry]/reproducibility_indicators/bias_calibration":
+                                  "/NXentry/NXnstrument/NXsample_bias/bias_calibration",
+                                  "/ENTRY[entry]/reproducibility_indicators/bias_offset":
+                                  "/NXentry/NXinstrument/NXsample_bias/bias_offset",
+                                  "/ENTRY[entry]/reproducibility_indicators/current":
+                                  "/NXentry/NXinstrument/NXenvironment/NXcurrent_sensor/current",
+                                  "/ENTRY[entry]/reproducibility_indicators/current_calibration":
+                                  "/NXentry/NXinstrument/NXenvironment/NXcurrent_sensor/current_calibration",
+                                  "/ENTRY[entry]/reproducibility_indicators/current_gain":
+                                  "/NXentry/NXinstrument/NXenvironment/NXcurrent_sensor/current_gain",
+                                  "/ENTRY[entry]/reproducibility_indicators/current_offset":
+                                  "/NXentry/NXinstrument/NXenvironment/NXcurrent_sensor/current_offset",
+                                  "/ENTRY[entry]/reproducibility_indicators/end_settling_time":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/end_settling_time",
+                                  "/ENTRY[entry]/reproducibility_indicators/final_z":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/record_final_z",
+                                  "/ENTRY[entry]/reproducibility_indicators/first_settling_time":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/first_settling_time",
+                                  "/ENTRY[entry]/reproducibility_indicators/max_slew_rate":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/max_slew_rate",
+                                  "/ENTRY[entry]/reproducibility_indicators/settling_time":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/",
+                                  "/ENTRY[entry]/reproducibility_indicators/y_control_p_gain":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/p_gain",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_control_hold":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/z_ccontroller_hold",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_control_i_gain":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/i_gain",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_control_switchoff_delay":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/switchoff_delay",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_control_time":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/z_control_time",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_control_time_const":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/time_const",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_control_tip_lift":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/tip_lift",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_controller_name":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/controller_name",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_controller_setpoint":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/set_point",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_controller_status":
+                                  "/NXentry/NXinstrument/NXenvironment/NXposition/NXz_controller/controller_status",
+                                  "/ENTRY[entry]/reproducibility_indicators/z_offset":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/z_offset",
+                                  "/ENTRY[entry]/resolution_indicators/acquisition_period":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXcircuit/acquisition_period",
+                                  "/ENTRY[entry]/resolution_indicators/animations_period":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXcircuit/animations_period",
+                                  "/ENTRY[entry]/resolution_indicators/cryo_bottom_temp":
+                                  "/NXentry/NXinstrument/cryo_bottom_temp",
+                                  "/ENTRY[entry]/resolution_indicators/cryo_shield_temp":
+                                  "/NXentry/NXinstrument/temp_cryo_shield",
+                                  "/ENTRY[entry]/resolution_indicators/indicators_period":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXcircuit/indicators_period",
+                                  "/ENTRY[entry]/resolution_indicators/integration_time":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/NXintegration_time",
+                                  "/ENTRY[entry]/resolution_indicators/measurements_period":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXcircuit/measurements_period",
+                                  "/ENTRY[entry]/resolution_indicators/modulation_signal":
+                                  "/NXentry/NXinstrument/NXlock_in/modulation_signal",
+                                  "/ENTRY[entry]/resolution_indicators/num_pixel":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/num_pixel",
+                                  "/ENTRY[entry]/resolution_indicators/number_of_sweeps":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/number_of_sweeps",
+                                  "/ENTRY[entry]/resolution_indicators/rt_frequency":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXcircuit/rt_frequency",
+                                  "/ENTRY[entry]/resolution_indicators/signals_oversampling":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXcircuit/signals_oversampling",
+                                  "/ENTRY[entry]/resolution_indicators/stm_head_temp":
+                                  "/NXentry/NXinstrument/stm_head_temp",
+                                  "/ENTRY[entry]/resolution_indicators/sweep_end":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/sweep_end",
+                                  "/ENTRY[entry]/resolution_indicators/sweep_start":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/sweep_start",
+                                  "/ENTRY[entry]/resolution_indicators/z_avg_time":
+                                  "/NXentry/NXinstrument/NXenvironment/NXsweep_control/NXbias_spectroscopy/z_avg_time",
+                                  }
+    temp_template = copy.deepcopy(template)
+    for key, _ in temp_template.items():
+        if key in concept_to_data_link:
+            concept = concept_to_data_link[key]
+            concept = concept.replace("NX", "")
+            # check concept already modified before
+            if concept in link_modified_dict:
+                concept = link_modified_dict[concept]
+            template[key] = {'link': concept}
 
 
 def cal_dx_by_dy(x_val: np.ndarray, y_val: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
