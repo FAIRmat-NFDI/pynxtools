@@ -155,6 +155,20 @@ def generate_template_from_nxdl(root, template, path="", nxdl_root=None, nxdl_na
         path_nxdl = convert_data_converter_dict_to_nxdl_path(path)
         list_of_children_to_add = get_all_defined_required_children(path_nxdl, nxdl_name)
         add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
+    # Handling link: link has a target attibute that store absolute path of concept to be
+    # linked. Writer reads link from template in the format {'link': <ABSOLUTE PATH>}
+    # {'link': ':/<ABSOLUTE PATH TO EXTERNAL FILE>'}
+    elif tag == "link":
+        # NOTE:  The code below can be implemented later once, NeXus brings optionality in
+        # link. Otherwise link will be considered optional by default.
+
+        # optionality = get_required_string(root)
+        # optional_parent = check_for_optional_parent(path, nxdl_root)
+        # optionality = "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
+        # if optionality == "optional":
+        #     template.optional_parents.append(optional_parent)
+        optionality = "optional"
+        template[optionality][path] = {'link': root.attrib['target']}
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root, nxdl_name)

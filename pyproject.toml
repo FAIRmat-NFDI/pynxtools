@@ -41,6 +41,7 @@ dependencies = [
     "lark>=1.1.5",
     "requests",
     "requests_cache",
+    "nanonispy>=1.1.0",
 ]
 
 [project.urls]
@@ -66,6 +67,7 @@ dev = [
 read_nexus = "pynxtools.nexus.nexus:main"
 dataconverter = "pynxtools.dataconverter.convert:convert_cli"
 nyaml2nxdl = "pynxtools.nyaml2nxdl.nyaml2nxdl:launch_tool"
+generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
