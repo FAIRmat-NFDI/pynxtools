@@ -424,7 +424,7 @@ def does_group_exist(path_to_group, data):
     return False
 
 
-def ensure_all_required_fields_exist(template, data):
+def ensure_all_required_fields_exist(template, data, nxdl_root):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
@@ -432,7 +432,11 @@ def ensure_all_required_fields_exist(template, data):
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
+
         if path in template["lone_groups"] and does_group_exist(path, data):
+            continue
+
+        if check_for_optional_parent(path, nxdl_root) != "<<NOT_FOUND>>":
             continue
 
         if not is_path_in_data_dict or data[renamed_path] is None:
@@ -475,7 +479,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     nxdl_path_to_elm: dict = {}
 
     # Make sure all required fields exist.
-    ensure_all_required_fields_exist(template, data)
+    ensure_all_required_fields_exist(template, data, nxdl_root)
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
