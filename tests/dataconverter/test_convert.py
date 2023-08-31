@@ -197,12 +197,6 @@ def test_mpes_writing(tmp_path):
     nexus_helper.process_nexus_master_file(None)
     with open(os.path.join(tmp_path, 'mpes_test.log'), 'r', encoding='utf-8') as logfile:
         log = logfile.readlines()
-    with open(
-        os.path.join(dirpath, 'Ref_nexus_mpes.log'),
-        'r',
-        encoding='utf-8'
-    ) as logfile:
-        ref_log = logfile.readlines()
     assert len(log) == 4486
 
 
