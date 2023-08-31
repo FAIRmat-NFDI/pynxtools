@@ -71,6 +71,18 @@ Especially relevant for developers, there exists a basic test framework written 
 python -m pytest -sv tests
 ```
 
+## Run examples
+
+A number of examples exist which document how the tools can be used. For a standalone
+usage convenient jupyter notebooks are available for each tool. To use them jupyter
+and related tools have to be installed in the development environment as follows:
+
+```shell
+python -m pip install jupyter
+python -m pip install jupyterlab
+python -m pip install jupyterlab_h5web
+```
+
 # Questions, suggestions?
 
 To ask further questions, to make suggestions how we can improve these tools, to get advice

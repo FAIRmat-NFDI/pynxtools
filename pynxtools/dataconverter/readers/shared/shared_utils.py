@@ -22,15 +22,17 @@
 
 # pylint: disable=E1101, R0801
 
-import git
+# import git
 
 
 def get_repo_last_commit() -> str:
     """Identify the last commit to the repository."""
-    repo = git.Repo(search_parent_directories=True)
-    sha = str(repo.head.object.hexsha)
-    if sha != "":
-        return sha
+    # repo = git.Repo(search_parent_directories=True)
+    # sha = str(repo.head.object.hexsha)
+    # if sha != "":
+    #    return sha
+    # currently update-north-markus branch on nomad-FAIR does not pick up
+    # git even though git in the base image and gitpython in pynxtools deps
     return "unknown git commit id or unable to parse git reverse head"
 
 

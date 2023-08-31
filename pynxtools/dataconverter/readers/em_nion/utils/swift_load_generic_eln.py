@@ -27,16 +27,16 @@ import yaml
 
 from ase.data import chemical_symbols
 
-from pynxtools.dataconverter.readers.em_nion.utils.versioning \
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
     import NX_EM_NION_ADEF_NAME, NX_EM_NION_ADEF_VERSION
 
-from pynxtools.dataconverter.readers.em_nion.utils.versioning \
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
     import NX_EM_NION_EXEC_NAME, NX_EM_NION_EXEC_VERSION
 
-from pynxtools.dataconverter.readers.em_nion.concepts.swift_handle_nx_concepts \
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import apply_modifier, variadic_path_to_specific_path
 
-from pynxtools.dataconverter.readers.em_nion.concepts.generic_eln_mapping \
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_eln_to_nx_map \
     import NxEmElnInput, NxUserFromListOfDict, NxDetectorListOfDict, NxSample
 
 

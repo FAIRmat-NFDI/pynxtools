@@ -23,10 +23,10 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-from pynxtools.dataconverter.readers.em_nion.utils.use_case_selector \
+from pynxtools.dataconverter.readers.em_nion.utils.swift_define_io_cases \
     import EmNionUseCaseSelector
 
-from pynxtools.dataconverter.readers.em_nion.utils.em_generic_eln_io \
+from pynxtools.dataconverter.readers.em_nion.utils.swift_load_generic_eln \
     import NxEmNionElnSchemaParser
 
 from pynxtools.dataconverter.readers.em_nion.utils.swift_zipped_project_parser \
