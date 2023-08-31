@@ -3455,12 +3455,12 @@ DEBUG - documentation (NXentry.nxdl.xml:/SAMPLE):
 DEBUG - 
 DEBUG - documentation (NXsample.nxdl.xml:):
 DEBUG - 
-		Any information on the sample. 
-		
-		This could include scanned variables that
-		are associated with one of the data dimensions, e.g. the magnetic field, or
-		logged data, e.g. monitored temperature vs elapsed time.
-	
+         Any information on the sample.
+         
+         This could include scanned variables that
+         are associated with one of the data dimensions, e.g. the magnetic field, or
+         logged data, e.g. monitored temperature vs elapsed time.
+    
 DEBUG - ===== ATTRS (//entry/sample@NX_class)
 DEBUG - value: NXsample 
 DEBUG - classpath: ['NXentry', 'NXsample']
@@ -3494,25 +3494,25 @@ DEBUG -
                 
 DEBUG - documentation (NXsample.nxdl.xml:/chemical_formula):
 DEBUG - 
-			The chemical formula specified using CIF conventions.
-			Abbreviated version of CIF standard: 
-			
-			* Only recognized element symbols may be used.
-			* Each element symbol is followed by a 'count' number. A count of '1' may be omitted.
-			* A space or parenthesis must separate each cluster of (element symbol + count).
-			* Where a group of elements is enclosed in parentheses, the multiplier for the 
-			  group must follow the closing parentheses. That is, all element and group 
-			  multipliers are assumed to be printed as subscripted numbers.
-			* Unless the elements are ordered in a manner that corresponds to their chemical 
-			  structure, the order of the elements within any group or moiety depends on 
-			  whether or not carbon is present.
-			* If carbon is present, the order should be: 
-			
-			  - C, then H, then the other elements in alphabetical order of their symbol. 
-			  - If carbon is not present, the elements are listed purely in alphabetic order of their symbol. 
-			  
-			* This is the *Hill* system used by Chemical Abstracts.
-		
+             The chemical formula specified using CIF conventions.
+             Abbreviated version of CIF standard:
+             
+             * Only recognized element symbols may be used.
+             * Each element symbol is followed by a 'count' number. A count of '1' may be omitted.
+             * A space or parenthesis must separate each cluster of (element symbol + count).
+             * Where a group of elements is enclosed in parentheses, the multiplier for the
+               group must follow the closing parentheses. That is, all element and group
+               multipliers are assumed to be printed as subscripted numbers.
+             * Unless the elements are ordered in a manner that corresponds to their chemical
+               structure, the order of the elements within any group or moiety depends on
+               whether or not carbon is present.
+             * If carbon is present, the order should be:
+             
+               - C, then H, then the other elements in alphabetical order of their symbol.
+               - If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
+               
+             * This is the *Hill* system used by Chemical Abstracts.
+        
 DEBUG - ===== FIELD (//entry/sample/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
 DEBUG - value: b'/entry/sample/transformations/corrected_phi' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
@@ -3521,12 +3521,12 @@ NXsample.nxdl.xml:/depends_on
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/depends_on):
 DEBUG - 
-            NeXus positions components by applying a set of translations and rotations
-            to apply to the component starting from 0, 0, 0. The order of these operations
-            is critical and forms what NeXus calls a dependency chain. The depends_on
-            field defines the path to the top most operation of the dependency chain or the
-            string "." if located in the origin. Usually these operations are stored in a
-            NXtransformations group. But NeXus allows them to be stored anywhere.
+             NeXus positions components by applying a set of translations and rotations
+             to apply to the component starting from 0, 0, 0. The order of these operations
+             is critical and forms what NeXus calls a dependency chain. The depends_on
+             field defines the path to the top most operation of the dependency chain or the
+             string "." if located in the origin. Usually these operations are stored in a
+             NXtransformations group. But NeXus allows them to be stored anywhere.
         
 DEBUG - ===== FIELD (//entry/sample/description): <HDF5 dataset "description": shape (), type "|O">
 DEBUG - value: b'MoTe2' 
@@ -3536,8 +3536,8 @@ NXsample.nxdl.xml:/description
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/description):
 DEBUG - 
-			Description of the sample
-		
+             Description of the sample
+        
 DEBUG - ===== FIELD (//entry/sample/gas_pressure): <HDF5 dataset "gas_pressure": shape (), type "<f8">
 DEBUG - value: 4.5599999999999996e-11 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
@@ -3562,7 +3562,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/name):
 DEBUG - 
 DEBUG - documentation (NXsample.nxdl.xml:/name):
-DEBUG - Descriptive name of sample
+DEBUG - 
+             Descriptive name of sample
+        
 DEBUG - ===== FIELD (//entry/sample/preparation_date): <HDF5 dataset "preparation_date": shape (), type "|O">
 DEBUG - value: b'2019-05-22T14:00:00+00:00' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_DATE_TIME']
@@ -3576,7 +3578,9 @@ DEBUG -
                      annealing).
                 
 DEBUG - documentation (NXsample.nxdl.xml:/preparation_date):
-DEBUG - Date of preparation of the sample
+DEBUG - 
+             Date of preparation of the sample
+        
 DEBUG - ===== GROUP (//entry/sample/preparation_description [NXmpes::/NXentry/NXsample/NXnote]): <HDF5 group "/entry/sample/preparation_description" (1 members)>
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXnote']
 DEBUG - classes:
@@ -3675,10 +3679,10 @@ DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/situation):
 DEBUG - 
 DEBUG - documentation (NXsample.nxdl.xml:/situation):
 DEBUG - 
-			The atmosphere will be one of the components, which is where 
-			its details will be stored; the relevant components will be 
-			indicated by the entry in the sample_component member.
-		
+             The atmosphere will be one of the components, which is where
+             its details will be stored; the relevant components will be
+             indicated by the entry in the sample_component member.
+        
 DEBUG - ===== FIELD (//entry/sample/temperature): <HDF5 dataset "temperature": shape (), type "<f8">
 DEBUG - value: 23.050763803680983 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
@@ -3694,7 +3698,9 @@ DEBUG -
                      /entry/instrument/manipulator/sample_temperature.
                 
 DEBUG - documentation (NXsample.nxdl.xml:/temperature):
-DEBUG - Sample temperature. This could be a scanned variable
+DEBUG - 
+             Sample temperature. This could be a scanned variable
+        
 DEBUG - ===== ATTRS (//entry/sample/temperature@units)
 DEBUG - value: K 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
@@ -3711,10 +3717,10 @@ NXtransformations.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/TRANSFORMATIONS):
 DEBUG - 
-            This is the group recommended for holding the chain of translation
-            and rotation operations necessary to position the component within
-            the instrument. The dependency chain may however traverse similar groups in
-            other component groups.
+             This is the group recommended for holding the chain of translation
+             and rotation operations necessary to position the component within
+             the instrument. The dependency chain may however traverse similar groups in
+             other component groups.
         
 DEBUG - documentation (NXtransformations.nxdl.xml:):
 DEBUG - 

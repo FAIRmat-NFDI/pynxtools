@@ -1706,12 +1706,12 @@ DEBUG - documentation (NXentry.nxdl.xml:/SAMPLE):
 DEBUG - 
 DEBUG - documentation (NXsample.nxdl.xml:):
 DEBUG - 
-		Any information on the sample. 
-		
-		This could include scanned variables that
-		are associated with one of the data dimensions, e.g. the magnetic field, or
-		logged data, e.g. monitored temperature vs elapsed time.
-	
+         Any information on the sample.
+         
+         This could include scanned variables that
+         are associated with one of the data dimensions, e.g. the magnetic field, or
+         logged data, e.g. monitored temperature vs elapsed time.
+    
 DEBUG - ===== ATTRS (//entry/sample@NX_class)
 DEBUG - value: NXsample 
 DEBUG - classpath: ['NXentry', 'NXsample']
@@ -1766,7 +1766,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/SAMPLE/name):
 DEBUG - Descriptive name of sample
 DEBUG - documentation (NXsample.nxdl.xml:/name):
-DEBUG - Descriptive name of sample
+DEBUG - 
+             Descriptive name of sample
+        
 DEBUG - ===== FIELD (//entry/sample/preparation_method): <HDF5 dataset "preparation_method": shape (), type "|O">
 DEBUG - value: b'in-vacuum cleave' 
 DEBUG - classpath: ['NXentry', 'NXsample']
@@ -1779,7 +1781,9 @@ DEBUG - classes:
 NXsample.nxdl.xml:/pressure
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/pressure):
-DEBUG - Applied pressure
+DEBUG - 
+             Applied pressure
+        
 DEBUG - ===== ATTRS (//entry/sample/pressure@units)
 DEBUG - value: mbar 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
@@ -1829,7 +1833,9 @@ DEBUG - classes:
 NXsample.nxdl.xml:/thickness
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/thickness):
-DEBUG - sample thickness
+DEBUG - 
+             sample thickness
+        
 DEBUG - ===== ATTRS (//entry/sample/thickness@units)
 DEBUG - value: mm 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
