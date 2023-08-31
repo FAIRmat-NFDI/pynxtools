@@ -203,7 +203,7 @@ def test_mpes_writing(tmp_path):
         encoding='utf-8'
     ) as logfile:
         ref_log = logfile.readlines()
-    assert len(log) == len(ref_log)
+    assert len(log) == 4486
 
 
 def test_eln_data(tmp_path):

@@ -171,12 +171,15 @@ class Template(dict):
 
     def __delitem__(self, key):
         """Delete a dictionary key or template key"""
-
         if key in self.optional.keys():
             del self.optional[key]
 
-        if key in self.required.keys():
+        elif key in self.required.keys():
             del self.required[key]
 
-        if key in self.recommended.keys():
+        elif key in self.recommended.keys():
             del self.recommended[key]
+        elif key in self.undocumented.keys():
+            del self.undocumented[key]
+        else:
+            raise KeyError(f"{key} does not exist.")

@@ -258,8 +258,9 @@ def get_hdf_path(hdf_info):
     return hdf_info['hdf_node'].name.split('/')[1:]
 
 
+# pylint: disable=too-many-arguments,too-many-locals
 @lru_cache(maxsize=None)
-def get_inherited_hdf_nodes(nx_name: str = None, elem: ET.Element = None,  # pylint: disable=too-many-arguments,too-many-locals
+def get_inherited_hdf_nodes(nx_name: str = None, elem: ET.Element = None,
                             hdf_node=None, hdf_path=None, hdf_root=None, attr=False):
     """Returns a list of ET.Element for the given path."""
     # let us start with the given definition file
