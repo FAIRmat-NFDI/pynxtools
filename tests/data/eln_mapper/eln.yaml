@@ -76,6 +76,9 @@ Process:
     calibrated_axis: null
 Sample:
   atom_types: null
+  bias:
+    value: null
+    unit: null
   chemical_formula: null
   gas_pressure:
     value: null
