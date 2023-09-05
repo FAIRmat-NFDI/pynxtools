@@ -49,9 +49,9 @@ the tested functions can be found in nexus.py file
 
 
 def test_nexus(tmp_path):
-    """The nexus test function
-
-"""
+    """
+    The nexus test function
+    """
     local_dir = os.path.abspath(os.path.dirname(__file__))
     example_data = os.path.join(local_dir, '../data/nexus/201805_WSe2_arpes.nxs')
     logger = logging.getLogger(__name__)
@@ -75,10 +75,11 @@ def test_nexus(tmp_path):
         ref = reffile.readlines()
     assert log == ref
 
-    # didn't work with filecmp library
-    # log = os.path.join(local_dir, 'data/nexus_test_data/nexus_test.log')
-    # ref = os.path.join(local_dir, 'data/nexus_test_data/Ref2_nexus_test.log')
-    # print('yoyo', filecmp.cmp(log, ref, shallow=False))
+    # import filecmp
+    # # didn't work with filecmp library
+    # log = os.path.join(local_dir, '../data/nexus_test_data/nexus_test.log')
+    # ref = os.path.join(local_dir, '../data/nexus_test_data/Ref_nexus_test.log')
+    # print(filecmp.cmp(log, ref, shallow=False))
 
     # print('Testing of nexus.py is SUCCESSFUL.')
 
