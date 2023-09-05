@@ -206,7 +206,6 @@ def test_mpes_writing(tmp_path):
     assert log == ref_log
 
 
-
 def test_eln_data(tmp_path):
     """Check if the subsections in the eln_data.yml file work."""
     dirpath = os.path.join(os.path.dirname(__file__), "../data/dataconverter/readers/mpes")
