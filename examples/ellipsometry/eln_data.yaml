@@ -5,7 +5,7 @@ Data:
   data_software/version: '3.882'
   data_type: Psi/Delta
   spectrum_type: wavelength
-  spectrum_unit: Angstroms
+  spectrum_unit: angstrom
 Instrument:
   Beam_path:
     Detector:
