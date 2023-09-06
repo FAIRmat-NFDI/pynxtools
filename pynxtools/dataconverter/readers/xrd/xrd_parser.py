@@ -1,3 +1,23 @@
+"""
+XRD file parser collection.
+TODO: Extend the module level doc.
+"""
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import re # for regular expressions
 import os  # for file path operations
 import xml.etree.ElementTree as ET # for XML parsing
@@ -14,7 +34,7 @@ class FileReader:
 
     def read_file(self):
         '''Reads the content of a file from the given file path.
-        
+
         Returns:
             str: The content of the file.
         '''
@@ -45,7 +65,7 @@ class PanalyticalXRDMLParser:
         root = ET.fromstring(content)
 
         ns_version = root.tag.split("}")[0].strip("{")
-        ns = {'xrd': ns_version}    
+        ns = {'xrd': ns_version}
 
         xrd_measurement = root.find("xrd:xrdMeasurement", ns)
 
@@ -103,7 +123,7 @@ class FormatParser:
 
     def identify_format(self):
         '''Identifies the format of a given file.
-        
+
         Returns:
             str: The file extension of the file.
         '''
