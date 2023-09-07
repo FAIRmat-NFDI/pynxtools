@@ -21,7 +21,6 @@ import glob
 import os
 from typing import List
 import xml.etree.ElementTree as ET
-import logging
 
 import pytest
 from _pytest.mark.structures import ParameterSet
@@ -70,8 +69,9 @@ def test_if_readers_are_children_of_base_reader(reader):
     if reader.__name__ != "BaseReader":
         assert isinstance(reader(), BaseReader)
 
+
 @pytest.mark.parametrize("reader", get_all_readers())
-def test_has_correct_read_func(reader, caplog):
+def test_has_correct_read_func(reader):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
     if reader.__name__ not in ["BaseReader"]:
@@ -118,6 +118,9 @@ def test_has_correct_read_func(reader, caplog):
     ])
 ])
 def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
+    """
+    Checks whether the read function generates the correct warnings.
+    """
     def_dir = os.path.join(os.getcwd(), "pynxtools", "definitions")
     dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
