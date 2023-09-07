@@ -21,13 +21,16 @@ import glob
 import os
 from typing import List
 import xml.etree.ElementTree as ET
+import logging
 
 import pytest
 from _pytest.mark.structures import ParameterSet
 
+from click.testing import CliRunner
+
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.convert import \
-    get_names_of_all_readers, get_reader
+    get_names_of_all_readers, get_reader, convert_cli
 from pynxtools.dataconverter.helpers import \
     validate_data_dict, generate_template_from_nxdl
 from pynxtools.dataconverter.template import Template
@@ -69,9 +72,8 @@ def test_if_readers_are_children_of_base_reader(reader):
     if reader.__name__ != "BaseReader":
         assert isinstance(reader(), BaseReader)
 
-
 @pytest.mark.parametrize("reader", get_all_readers())
-def test_has_correct_read_func(reader):
+def test_has_correct_read_func(reader, caplog):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
     if reader.__name__ not in ["BaseReader"]:
@@ -102,3 +104,39 @@ def test_has_correct_read_func(reader):
 
             assert isinstance(read_data, Template)
             assert validate_data_dict(template, read_data, root)
+
+
+@pytest.mark.parametrize("reader_name,nxdl,undocumented_keys", [
+    ('mpes', 'NXmpes', [
+        '/@default',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[kx]',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[kx]/@units',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[ky]',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[ky]/@units',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[energy]',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[energy]/@units',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[delay]',
+        '/ENTRY[entry]/DATA[data]/VARIABLE[delay]/@units',
+    ])
+])
+def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
+    def_dir = os.path.join(os.getcwd(), "pynxtools", "definitions")
+    dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
+
+    input_files = sorted(
+        glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
+    )
+    nxdl_file = os.path.join(
+        def_dir, "contributed_definitions", f"{nxdl}.nxdl.xml"
+    )
+
+    root = ET.parse(nxdl_file).getroot()
+    template = Template()
+    generate_template_from_nxdl(root, template)
+
+    read_data = get_reader(reader_name)().read(
+        template=Template(template), file_paths=tuple(input_files)
+    )
+
+    assert validate_data_dict(template, read_data, root)
+    assert list(read_data.undocumented.keys()) == undocumented_keys
