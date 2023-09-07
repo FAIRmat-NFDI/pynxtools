@@ -64,7 +64,7 @@ def get_names_of_all_readers() -> List[str]:
     return all_readers
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-locals
 def convert(input_file: Tuple[str],
             reader: str,
             nxdl: str,
