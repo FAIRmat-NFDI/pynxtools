@@ -26,11 +26,9 @@ import logging
 import pytest
 from _pytest.mark.structures import ParameterSet
 
-from click.testing import CliRunner
-
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.convert import \
-    get_names_of_all_readers, get_reader, convert_cli
+    get_names_of_all_readers, get_reader
 from pynxtools.dataconverter.helpers import \
     validate_data_dict, generate_template_from_nxdl
 from pynxtools.dataconverter.template import Template
