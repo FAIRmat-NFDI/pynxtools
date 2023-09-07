@@ -36,6 +36,7 @@ from pynxtools.nexus import nexus
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
+UNDOCUMENTED = 9
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
@@ -70,6 +71,7 @@ def convert(input_file: Tuple[str],
             output: str,
             generate_template: bool = False,
             fair: bool = False,
+            undocumented: bool = False,
             **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions."""
     # Reading in the NXDL and generating a template
@@ -88,6 +90,9 @@ def convert(input_file: Tuple[str],
             raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
     nxdl_root = ET.parse(nxdl_path).getroot()
+
+    if undocumented:
+        logger.setLevel(UNDOCUMENTED)
 
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
@@ -120,7 +125,11 @@ def convert(input_file: Tuple[str],
     for path in data.undocumented.keys():
         if "/@default" in path:
             continue
-        logger.warning("The path, %s, is being written but has no documentation.", path)
+        logger.log(
+            UNDOCUMENTED,
+            "The path, %s, is being written but has no documentation.",
+            path
+        )
 
     Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
 
@@ -170,20 +179,28 @@ def parse_params_file(params_file):
     is_flag=True,
     default=False,
     help='Let the converter know to be stricter in checking the documentation.'
-)  # pylint: disable=too-many-arguments
+)
 @click.option(
     '--params-file',
     type=click.File('r'),
     default=None,
     help='Allows to pass a .yaml file with all the parameters the converter supports.'
 )
+@click.option(
+    '--undocumented',
+    is_flag=True,
+    default=False,
+    help='Shows a log output for all fields which are undocumented'
+)
+# pylint: disable=too-many-arguments
 def convert_cli(input_file: Tuple[str],
                 reader: str,
                 nxdl: str,
                 output: str,
                 generate_template: bool,
                 fair: bool,
-                params_file: str):
+                params_file: str,
+                undocumented: bool):
     """The CLI entrypoint for the convert function"""
     if params_file:
         try:
@@ -199,7 +216,7 @@ def convert_cli(input_file: Tuple[str],
             sys.tracebacklimit = 0
             raise IOError("\nError: Please supply an NXDL file with the option:"
                           " --nxdl <path to NXDL>")
-        convert(input_file, reader, nxdl, output, generate_template, fair)
+        convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)
 
 
 if __name__ == '__main__':
