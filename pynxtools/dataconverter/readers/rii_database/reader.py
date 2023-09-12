@@ -17,7 +17,6 @@
 #
 """Convert refractiveindex.info yaml files to nexus"""
 from typing import Tuple, Any, Dict
-import logging
 
 from pynxtools.dataconverter.readers.json_yml.reader import YamlJsonReader
 from pynxtools.dataconverter.readers.rii_database.dispersion_reader import (

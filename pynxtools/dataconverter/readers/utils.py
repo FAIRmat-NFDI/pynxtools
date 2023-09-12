@@ -17,9 +17,8 @@
 #
 """Utility functions for the NeXus reader classes."""
 import logging
-from typing import Tuple
 from dataclasses import dataclass, replace
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict, Optional, Tuple
 from collections.abc import Mapping
 import json
 import yaml
