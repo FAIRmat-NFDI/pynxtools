@@ -16,11 +16,14 @@
 # limitations under the License.
 #
 """Utility functions for the NeXus reader classes."""
+import logging
 from dataclasses import dataclass, replace
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict, Optional, Tuple
 from collections.abc import Mapping
 import json
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -201,3 +204,20 @@ def parse_json(file_path: str) -> Dict[str, Any]:
     """
     with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:
+    """Handle objects and generate template entries from them"""
+    if objects is None:
+        return {}
+
+    template = {}
+
+    for obj in objects:
+        if not isinstance(obj, dict):
+            logger.warning("Ignoring unknown object of type %s", type(obj))
+            continue
+
+        template.update(obj)
+
+    return template
