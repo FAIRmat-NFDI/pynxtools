@@ -105,17 +105,7 @@ def test_has_correct_read_func(reader):
 
 
 @pytest.mark.parametrize("reader_name,nxdl,undocumented_keys", [
-    ('mpes', 'NXmpes', [
-        '/@default',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[kx]',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[kx]/@units',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[ky]',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[ky]/@units',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[energy]',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[energy]/@units',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[delay]',
-        '/ENTRY[entry]/DATA[data]/VARIABLE[delay]/@units',
-    ])
+    ('mpes', 'NXmpes', ['/@default'])
 ])
 def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
     """
