@@ -23,7 +23,7 @@ from pynxtools.dataconverter.readers.json_yml.reader import YamlJsonReader
 from pynxtools.dataconverter.readers.rii_database.dispersion_reader import (
     DispersionReader,
 )
-from pynxtools.dataconverter.readers.utils import parse_json
+from pynxtools.dataconverter.readers.utils import parse_json, handle_objects
 
 
 class RiiReader(YamlJsonReader):
@@ -40,7 +40,7 @@ class RiiReader(YamlJsonReader):
             ".yaml": self.read_dispersion,
             ".json": self.parse_json_w_fileinfo,
             "default": lambda _: self.appdef_defaults(),
-            "objects": self.handle_objects,
+            "objects": self.handle_rii_objects,
         }
 
     def read_dispersion(self, filename: str):
@@ -86,20 +86,9 @@ class RiiReader(YamlJsonReader):
 
         return template
 
-    def handle_objects(self, objects: Tuple[Any]) -> Dict[str, Any]:
+    def handle_rii_objects(self, objects: Tuple[Any]) -> Dict[str, Any]:
         """Handle objects and generate template entries from them"""
-        if objects is None:
-            return {}
-
-        template = {}
-
-        for obj in objects:
-            if not isinstance(obj, dict):
-                logging.warning("Ignoring unknown object of type %s", type(obj))
-                continue
-
-            template.update(obj)
-
+        template = handle_objects(objects)
         self.fill_dispersion_in(template)
 
         return template
