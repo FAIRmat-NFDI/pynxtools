@@ -101,31 +101,31 @@ def fixture_filled_test_data(template, tmp_path):
                                   tmp_path)
 
     template.clear()
-    template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
-    template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"
-    template["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1
-    template["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1
-    template["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
-    template["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
-    template["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],
-                                                                                dtype=np.int8)
-    template["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
-    template["required"]["/ENTRY[my_entry]/definition"] = "NXtest"
-    template["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
-    template["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
-                                                                      ":14:12.05018+00:00")
-    template["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
-    template["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
-    template["undocumented"]["/ENTRY[my_entry]/does/not/exist"] = "random"
-    template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {"link":
-                                                                   f"{tmp_path}/"
-                                                                   f"xarray_saved_small_cali"
-                                                                   f"bration.h5:/axes/ax3"
-                                                                   }
+    template["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
+    template["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"
+    template["/ENTRY[my_entry]/optional_parent/required_child"] = 1
+    template["/ENTRY[my_entry]/optional_parent/optional_child"] = 1
+    template["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
+    template["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
+    template["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
+    template["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],
+                                                                    dtype=np.int8)
+    template["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
+    template["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
+    template["/ENTRY[my_entry]/definition"] = "NXtest"
+    template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
+    template["/ENTRY[my_entry]/program_name"] = "Testing program"
+    template["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
+    template["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
+                                                          ":14:12.05018+00:00")
+    template["/ENTRY[my_entry]/required_group/description"] = "An example description"
+    template["/ENTRY[my_entry]/required_group2/description"] = "An example description"
+    template["/ENTRY[my_entry]/does/not/exist"] = "random"
+    template["/ENTRY[my_entry]/links/ext_link"] = {"link":
+                                                   f"{tmp_path}/"
+                                                   f"xarray_saved_small_cali"
+                                                   f"bration.h5:/axes/ax3"
+                                                   }
     yield template
 
 
@@ -148,7 +148,10 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint:
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
-# TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
+TEMPLATE["required"]["/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"] = 1
+TEMPLATE["lone_groups"] = ['/ENTRY[entry]/required_group',
+                           '/ENTRY[entry]/required_group2',
+                           '/ENTRY[entry]/optional_parent/req_group_in_opt_group']
 
 
 @pytest.mark.parametrize("data_dict,error_message", [
@@ -241,13 +244,11 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An examp
         id="valid-data-dict"),
     pytest.param(
         remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-        ("The data entry corresponding to /ENTRY[entry]/required_group "
-         "is required and hasn't been supplied by the reader."),
+        "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
         id="missing-empty-yet-required-group"),
     pytest.param(
         remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-        ("The data entry corresponding to /ENTRY[entry]/required_group2 "
-         "is required and hasn't been supplied by the reader."),
+        "The required group, /ENTRY[entry]/required_group2, hasn't been supplied.",
         id="missing-empty-yet-required-group2"),
     pytest.param(
         alter_dict(
@@ -257,6 +258,15 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An examp
         ),
         (""),
         id="allow-required-and-empty-group"
+    ),
+    pytest.param(
+        remove_from_dict(TEMPLATE,
+                         "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]",
+                         "required"
+                         ),
+        ("The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't"
+         " been supplied."),
+        id="req-group-in-opt-parent-removed"
     ),
 ])
 def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
@@ -285,7 +295,7 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
         id="path-exists-in-dict"),
     pytest.param(
         "/RANDOM/does/not/@exist",
-        (False, ""),
+        (False, None),
         id="path-does-not-exist-in-dict")
 ])
 def test_path_in_data_dict(nxdl_path, expected, template):

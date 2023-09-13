@@ -333,7 +333,7 @@ def path_in_data_dict(nxdl_path: str, data: dict) -> Tuple[bool, str]:
     for key in data.keys():
         if nxdl_path == convert_data_converter_dict_to_nxdl_path(key):
             return True, key
-    return False, ""
+    return False, None
 
 
 def check_for_optional_parent(path: str, nxdl_root: ET.Element) -> str:
@@ -366,6 +366,8 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
     """Walks over optional parent's children and makes sure all required ones are set"""
     optional_parent_path = convert_data_converter_dict_to_nxdl_path(optional_parent_path)
     for key in data:
+        if key in data["lone_groups"]:
+            continue
         nxdl_key = convert_data_converter_dict_to_nxdl_path(key)
         if nxdl_key[0:nxdl_key.rfind("/")] == optional_parent_path \
            and is_node_required(nxdl_key, nxdl_root) \
@@ -433,12 +435,16 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
 
-        if path in template["lone_groups"] and does_group_exist(path, data):
+        renamed_path = path if renamed_path is None else renamed_path
+        if path in template["lone_groups"]:
+            opt_parent = check_for_optional_parent(path, nxdl_root)
+            if not does_group_exist(renamed_path, data):
+                raise ValueError(f"The required group, {path}, hasn't been supplied.")
+            if opt_parent != "<<NOT_FOUND>>" and does_group_exist(opt_parent, data):
+                if not does_group_exist(renamed_path, data):
+                    raise ValueError(f"The required group, {path}, hasn't been supplied"
+                                     f" while its optional parent, {path}, is supplied.")
             continue
-
-        if check_for_optional_parent(path, nxdl_root) != "<<NOT_FOUND>>":
-            continue
-
         if not is_path_in_data_dict or data[renamed_path] is None:
             raise ValueError(f"The data entry corresponding to {path} is required "
                              f"and hasn't been supplied by the reader.")
@@ -483,7 +489,6 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
-        # print(f"{path}")
         if data[path] is not None:
             entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
