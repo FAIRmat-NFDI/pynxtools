@@ -158,9 +158,6 @@ class JsonMapReader(BaseReader):
 
         fill_undocumented(mapping, new_template, data)
 
-        # TODO: Check if we do need the ensure req fields call below
-        # ensure_all_required_fields_exist(template, new_template)
-
         return new_template
 
 
