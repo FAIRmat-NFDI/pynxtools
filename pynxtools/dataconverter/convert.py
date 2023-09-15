@@ -190,7 +190,7 @@ def parse_params_file(params_file):
     '--undocumented',
     is_flag=True,
     default=False,
-    help='Shows a log output for all fields which are undocumented'
+    help='Shows a log output for all undocumented fields'
 )
 # pylint: disable=too-many-arguments
 def convert_cli(input_file: Tuple[str],

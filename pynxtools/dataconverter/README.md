@@ -15,7 +15,6 @@ user@box:~$ pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 Converts experimental data to NeXus/HDF5 files based on any provided NXDL.
 
 ```console
-user@box:~$ dataconverter --help
 Usage: dataconverter [OPTIONS]
 
   The CLI entrypoint for the convert function
@@ -35,8 +34,8 @@ Options:
                                   checking the documentation.
   --params-file FILENAME          Allows to pass a .yaml file with all the
                                   parameters the converter supports.
-  --undocumented                  Shows a log output for all fields which are
-                                  undocumented
+  --undocumented                  Shows a log output for all undocumented
+                                  fields
   --help                          Show this message and exit.
 ```
 
