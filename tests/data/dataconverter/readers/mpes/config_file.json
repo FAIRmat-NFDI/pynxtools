@@ -339,12 +339,12 @@
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
   "/ENTRY[entry]/DATA[data]/data/@units": "counts",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[kx]": "@data:kx.data",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[kx]/@units": "@data:kx.unit",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[ky]": "@data:ky.data",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[ky]/@units": "@data:ky.unit",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[energy]": "@data:energy.data",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[energy]/@units": "@data:energy.unit",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[delay]": "@data:delay.data",
-  "/ENTRY[entry]/DATA[data]/VARIABLE[delay]/@units": "@data:delay.unit"
+  "/ENTRY[entry]/DATA[data]/AXISNAME[kx]": "@data:kx.data",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[kx]/@units": "@data:kx.unit",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[ky]": "@data:ky.data",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[ky]/@units": "@data:ky.unit",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[energy]": "@data:energy.data",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[energy]/@units": "@data:energy.unit",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[delay]": "@data:delay.data",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[delay]/@units": "@data:delay.unit"
 }
