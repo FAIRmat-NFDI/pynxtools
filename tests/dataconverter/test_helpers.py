@@ -301,7 +301,6 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
     else:
         with pytest.raises(Exception) as execinfo:
             helpers.validate_data_dict(template, data_dict, nxdl_root)
-        print(execinfo.value)
         assert (error_message) == str(execinfo.value)
 
 
