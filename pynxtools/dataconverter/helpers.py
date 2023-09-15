@@ -438,12 +438,13 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
         renamed_path = path if renamed_path is None else renamed_path
         if path in template["lone_groups"]:
             opt_parent = check_for_optional_parent(path, nxdl_root)
-            if not does_group_exist(renamed_path, data):
-                raise ValueError(f"The required group, {path}, hasn't been supplied.")
-            if opt_parent != "<<NOT_FOUND>>" and does_group_exist(opt_parent, data):
-                if not does_group_exist(renamed_path, data):
+            if opt_parent != "<<NOT_FOUND>>":
+                if does_group_exist(opt_parent, data) and not does_group_exist(renamed_path, data):
                     raise ValueError(f"The required group, {path}, hasn't been supplied"
                                      f" while its optional parent, {path}, is supplied.")
+                continue
+            if not does_group_exist(renamed_path, data):
+                raise ValueError(f"The required group, {path}, hasn't been supplied.")
             continue
         if not is_path_in_data_dict or data[renamed_path] is None:
             raise ValueError(f"The data entry corresponding to {path} is required "

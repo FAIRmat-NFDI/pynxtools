@@ -27,6 +27,16 @@ from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 
 
+def remove_optional_parent(data_dict: Template):
+    """Completely removes the optional group from the test Template."""
+    internal_dict = Template(data_dict)
+    del internal_dict["/ENTRY[my_entry]/optional_parent/required_child"]
+    del internal_dict["/ENTRY[my_entry]/optional_parent/optional_child"]
+    del internal_dict["/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"]
+
+    return internal_dict
+
+
 def alter_dict(data_dict: Template, key: str, value: object):
     """Helper function to alter a single entry in dict for parametrize."""
     if data_dict is not None:
@@ -264,9 +274,15 @@ TEMPLATE["lone_groups"] = ['/ENTRY[entry]/required_group',
                          "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]",
                          "required"
                          ),
-        ("The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't"
-         " been supplied."),
+        ("The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't been "
+         "supplied while its optional parent, /ENTRY[entry]/optional_parent/"
+         "req_group_in_opt_group, is supplied."),
         id="req-group-in-opt-parent-removed"
+    ),
+    pytest.param(
+        remove_optional_parent(TEMPLATE),
+        (""),
+        id="opt-group-completely-removed"
     ),
 ])
 def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
@@ -279,12 +295,13 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
                                     "no-child-provided-optional-parent",
                                     "int-instead-of-chars",
                                     "link-dict-instead-of-bool",
-                                    "allow-required-and-empty-group"):
+                                    "allow-required-and-empty-group",
+                                    "opt-group-completely-removed"):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:
             helpers.validate_data_dict(template, data_dict, nxdl_root)
-
+        print(execinfo.value)
         assert (error_message) == str(execinfo.value)
 
 
