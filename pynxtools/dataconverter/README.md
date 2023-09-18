@@ -23,7 +23,7 @@ Usage: dataconverter [OPTIONS]
 Options:
   --input-file TEXT               The path to the input data file to read.
                                   (Repeat for more than one file.)
-  --reader [apm|ellips|em_nion|em_spctrscpy|example|hall|json_map|json_yml|mpes|rii_database|transmission|xps]
+  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|mpes|rii_database|sts|transmission|xps]
                                   The reader to use. default="example"
   --nxdl TEXT                     The name of the NXDL file to use without
                                   extension.
@@ -35,6 +35,8 @@ Options:
                                   checking the documentation.
   --params-file FILENAME          Allows to pass a .yaml file with all the
                                   parameters the converter supports.
+  --undocumented                  Shows a log output for all undocumented
+                                  fields
   --help                          Show this message and exit.
 ```
 
