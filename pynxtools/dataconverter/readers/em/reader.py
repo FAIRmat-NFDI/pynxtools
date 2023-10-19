@@ -29,6 +29,9 @@ from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSu
 
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 
+from pynxtools.dataconverter.readers.em.geometry.convention_mapper \
+    import NxEmConventionMapper
+
 """
 from pynxtools.dataconverter.readers.em_om.utils.generic_eln_io \
     import NxEmOmGenericElnSchemaParser
@@ -110,6 +113,9 @@ class EmReader(BaseReader):
         print("Parse NeXus appdef-specific content...")
         nxs = NxEmAppDef()
         nxs.parse(template, entry_id, input_file_names)
+
+        conventions = NxEmConventionMapper(entry_id)
+        conventions.parse(template)
 
         print("Parse and map pieces of information within files from tech partners...")
         sub_parser = "nxs_mtex"
