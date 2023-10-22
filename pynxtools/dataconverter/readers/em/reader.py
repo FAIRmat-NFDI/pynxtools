@@ -27,6 +27,8 @@ from pynxtools.dataconverter.readers.em.concepts.nexus_concepts import NxEmAppDe
 
 from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
 
+from pynxtools.dataconverter.readers.em.subparsers.nxs_hfive import NxEmNxsHfiveSubParser
+
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 
 from pynxtools.dataconverter.readers.em.geometry.convention_mapper \
@@ -118,11 +120,16 @@ class EmReader(BaseReader):
         conventions.parse(template)
 
         print("Parse and map pieces of information within files from tech partners...")
-        sub_parser = "nxs_mtex"
-        subparser = NxEmNxsMTexSubParser(entry_id, file_paths[0])
-        subparser.parse(template)
+        # sub_parser = "nxs_mtex"
+        # subparser = NxEmNxsMTexSubParser(entry_id, file_paths[0])
+        # subparser.parse(template)
 
         # add further with resolving cases
+        # if file_path is an HDF5 will use hfive parser
+        sub_parser = "nxs_hfive"
+        subparser = NxEmNxsHfiveSubParser(entry_id, file_paths[0])
+        subparser.parse(template)
+        exit(1)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
