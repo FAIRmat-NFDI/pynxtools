@@ -473,6 +473,9 @@ class EllipsometryReader(BaseReader):
             "blob/fairmat/contributed_definitions/NXellipsometry.nxdl.xml"
         )
         template["/ENTRY[entry]/definition/@version"] = get_vcs_version()
+        template["/ENTRY[entry]/program_name"] = "pynxtools"
+        template["/ENTRY[entry]/program_name/@version"] = version("pynxtools")
+        template["/ENTRY[entry]/program_name/@url"] = "https://github.com/FAIRmat-NFDI/pynxtools"
 
         return template
 
