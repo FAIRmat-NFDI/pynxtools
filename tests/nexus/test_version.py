@@ -1,4 +1,9 @@
+from subprocess import run
 from pynxtools.definitions.dev_tools.globals.nxdl import get_vcs_version
+
+
+def test_git_is_runnable():
+    run(["git", "describe", "--tags"])
 
 
 def test_get_vcs_version():
