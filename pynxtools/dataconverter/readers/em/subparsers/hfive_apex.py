@@ -34,11 +34,8 @@ from orix.vector import Vector3d
 import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
-from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
-
-
-def om_eu(inp):
-    return inp[0:2]
+from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
+    read_strings_from_dataset, format_euler_parameterization
 
 
 class HdfFiveEdaxApexReader(HdfFiveBaseParser):
@@ -63,21 +60,22 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
 
     def check_if_supported(self):
         """Check if instance matches all constraints to qualify as supported H5OINA"""
-        self.supported = True  # try to falsify
+        self.supported = 0  # voting-based
         with h5py.File(self.file_path, "r") as h5r:
             # parse Company and PRODUCT_VERSION attribute values from the first group below / but these are not scalar but single value lists
             # so much about interoperability
             # but hehe for the APEX example from Sebastian and Sabine there is again no Company but PRODUCT_VERSION, 2 files, 2 "formats"
             grp_names = list(h5r["/"])
             if len(grp_names) == 1:
-                if read_strings_from_dataset(h5r[grp_names[0]].attrs["Company"][0]) \
-                    not in self.supported_version["tech_partner"]:
-                    self.supported = False
-                if read_strings_from_dataset(h5r[grp_names[0]].attrs["PRODUCT_VERSION"][0]) \
-                    not in self.supported_version["schema_version"]:
-                    self.supported = False
-            if self.supported is True:
+                if read_strings_from_dataset(h5r[grp_names[0]].attrs["Company"][0]) in self.supported_version["tech_partner"]:
+                    self.supported += 1
+                if read_strings_from_dataset(h5r[grp_names[0]].attrs["PRODUCT_VERSION"][0]) in self.supported_version["schema_version"]:
+                    self.supported += 1
+            if self.supported == 2:
                 self.version = self.supported_version.copy()
+                self.supported = True
+            else:
+                self.supported = False
 
     def parse_and_normalize(self):
         """Read and normalize away EDAX/APEX-specific formatting with an equivalent in NXem."""
@@ -119,13 +117,15 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                 raise ValueError(f"Unable to parse {self.prfx}/Sample/{req_field} !")
 
         grid_type = read_strings_from_dataset(fp[f"{self.prfx}/Sample/Grid Type"][()])
-        if grid_type != "HexGrid":
+        if grid_type not in ["HexGrid", "SqrGrid"]:
             raise ValueError(f"Grid Type {grid_type} is currently not supported !")
+        self.tmp[ckey]["grid_type"] = grid_type
         self.tmp[ckey]["s_x"] = fp[f"{self.prfx}/Sample/Step X"][0]
         self.tmp[ckey]["s_unit"] = "µm"  # TODO::always micron?
         self.tmp[ckey]["n_x"] = fp[f"{self.prfx}/Sample/Number Of Columns"][0]
         self.tmp[ckey]["s_y"] = fp[f"{self.prfx}/Sample/Step Y"][0]
         self.tmp[ckey]["n_y"] = fp[f"{self.prfx}/Sample/Number Of Rows"][0]
+        # TODO::check that all data are consistent
 
     def parse_and_normalize_group_ebsd_phases(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/ANG/HEADER/Phase"
@@ -192,44 +192,46 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
 
     def parse_and_normalize_group_ebsd_data(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/ANG/DATA/DATA"
-        n_pts = self.tmp[ckey]["n_x"] * self.tmp[ckey]["n_y"]
-        if f"{grp_name}" in fp:
-            if np.shape(fp[f"{grp_name}"]) != (n_pts,) and n_pts > 0:
-                raise ValueError(f"Unexpected shape of {grp_name} !")
-
-            dat = fp[f"{grp_name}"]
-            self.tmp[ckey]["euler"] = np.zeros((n_pts, 3), np.float32)
-            # index of phase, 0 if not indexed
-            # # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
-            self.tmp[ckey]["phase_id"] = np.zeros((n_pts,), np.int32)
-            self.tmp[ckey]["ci"] = np.zeros((n_pts,), np.float32)
-
-            for i in np.arange(0, n_pts):
-                # check shape of internal virtual chunked number array
-                r = Rotation.from_matrix([np.reshape(dat[i][0], (3, 3))])
-                self.tmp[ckey]["euler"][i, :] = r.to_euler(degrees=False)
-                self.tmp[ckey]["phase_id"][i] = dat[i][2]
-                self.tmp[ckey]["ci"][i] = dat[i][3]
-
-            # TODO::convert orientation matrix to Euler angles via om_eu but what are conventions !
-            # orix based transformation ends up in positive half space and with degrees=False
-            # as radiants but the from_matrix command above might miss one rotation
-
-            # inconsistency f32 in file although specification states float
-            # Rotation.from_euler(euler=fp[f"{grp_name}/Euler"],
-            #                                 direction='lab2crystal',
-            #                                degrees=is_degrees)
-
-            # compute explicit hexagon grid cells center of mass pixel positions
-            # TODO::currently assuming HexGrid
-            self.tmp[ckey]["scan_point_x"] = np.asarray(
-                np.linspace(0, self.tmp[ckey]["n_x"] - 1,
-                            num=self.tmp[ckey]["n_x"],
-                            endpoint=True) * self.tmp[ckey]["s_x"] + 0., np.float32)
-
-            self.tmp[ckey]["scan_point_y"] = np.asarray(
-                np.linspace(0, self.tmp[ckey]["n_y"] - 1,
-                            num=self.tmp[ckey]["n_y"],
-                            endpoint=True) * self.tmp[ckey]["s_y"] + 0., np.float32)
-        else:
+        if f"{grp_name}" not in fp:
             raise ValueError(f"Unable to parse {grp_name} !")
+
+        n_pts = self.tmp[ckey]["n_x"] * self.tmp[ckey]["n_y"]
+        if np.shape(fp[f"{grp_name}"]) != (n_pts,) and n_pts > 0:
+            raise ValueError(f"Unexpected shape of {grp_name} !")
+
+        dat = fp[f"{grp_name}"]
+        self.tmp[ckey]["euler"] = np.zeros((n_pts, 3), np.float32)
+        # index of phase, 0 if not indexed
+        # # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
+        self.tmp[ckey]["phase_id"] = np.zeros((n_pts,), np.int32)
+        self.tmp[ckey]["ci"] = np.zeros((n_pts,), np.float32)
+
+        for i in np.arange(0, n_pts):
+            # check shape of internal virtual chunked number array
+            r = Rotation.from_matrix([np.reshape(dat[i][0], (3, 3))])
+            self.tmp[ckey]["euler"][i, :] = r.to_euler(degrees=False)
+            self.tmp[ckey]["phase_id"][i] = dat[i][2]
+            self.tmp[ckey]["ci"][i] = dat[i][3]
+
+        # TODO::convert orientation matrix to Euler angles via om_eu but what are conventions !
+        # orix based transformation ends up in positive half space and with degrees=False
+        # as radiants but the from_matrix command above might miss one rotation
+
+        # inconsistency f32 in file although specification states float
+        # Rotation.from_euler(euler=fp[f"{grp_name}/Euler"],
+        #                                 direction='lab2crystal',
+        #                                degrees=is_degrees)
+
+        # compute explicit hexagon grid cells center of mass pixel positions
+        # TODO::currently assuming s_x and s_y are already the correct center of mass
+        # distances for hexagonal or square tiling of R^2
+        # self.tmp[ckey]["grid_type"] in ["HexGrid", "SqrGrid"]:
+        self.tmp[ckey]["scan_point_x"] = np.asarray(
+            np.linspace(0, self.tmp[ckey]["n_x"] - 1,
+                        num=self.tmp[ckey]["n_x"],
+                        endpoint=True) * self.tmp[ckey]["s_x"] + 0., np.float32)
+
+        self.tmp[ckey]["scan_point_y"] = np.asarray(
+            np.linspace(0, self.tmp[ckey]["n_y"] - 1,
+                        num=self.tmp[ckey]["n_y"],
+                        endpoint=True) * self.tmp[ckey]["s_y"] + 0., np.float32)

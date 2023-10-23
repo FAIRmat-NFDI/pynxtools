@@ -22,7 +22,33 @@ import os, glob, re, sys
 import h5py
 import yaml
 import json
+from itertools import groupby
 
+
+EBSD_MAP_SPACEGROUP = {"F m#ovl3m": 225,
+                       "I m#ovl3m": 229}
+
+def format_euler_parameterization(triplet_set):
+    """Transform degrees to radiant and apply orientation space symmetry"""
+    is_degrees = False
+    for column_id in [0, 1, 2]:
+        # not robust enough as a single crystal close to the cube orientation
+        # with a very low orientation spread may also have all Euler angle values
+        # smaller than 2pi
+        # TODO::therefore the real specs of each tech partner's format is needed!
+        if np.max(np.abs(triplet_set[:, column_id])) > 2. * np.pi:
+            is_degrees = True
+    if is_degrees is True:
+        for column_id in [0, 1, 2]:
+            triplet_set[:, column_id] = triplet_set[:, column_id] / 180. * np.pi
+
+    sothree_shift = [2. * np.pi, np.pi, 2. * np.pi]
+    for column_id in [0, 1, 2]:
+        here = np.where(triplet_set[:, column_id] < 0.)
+        if len(here[0]) > 0:
+            triplet_set[here, column_id] \
+                = sothree_shift[column_id] + triplet_set[here, column_id]
+    return triplet_set
 
 def read_strings_from_dataset(obj):
     # print(f"type {type(obj)}, np.shape {np.shape(obj)}, obj {obj}")
@@ -53,3 +79,8 @@ def read_strings_from_dataset(obj):
     else:
         return None
         # raise ValueError("Neither np.ndarray, nor bytes, nor str !")
+
+
+def all_equal(iterable):
+    g = groupby(iterable)
+    return next(g, True) and not next(g, False)

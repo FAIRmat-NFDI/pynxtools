@@ -55,10 +55,10 @@ from pynxtools.dataconverter.readers.em.utils.hfive_web_constants import HFIVE_W
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_bruker import HdfFiveBrukerEspritReader
-# from pynxtools.dataconverter.readers.em.subparsers.hfive_edax import HdfFiveEdaxOimAnalysisReader
+from pynxtools.dataconverter.readers.em.subparsers.hfive_edax import HdfFiveEdaxOimAnalysisReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_apex import HdfFiveEdaxApexReader
+from pynxtools.dataconverter.readers.em.subparsers.hfive_ebsd import HdfFiveCommunityReader
 # from pynxtools.dataconverter.readers.em.subparsers.hfive_emsoft import HdfFiveEmSoftReader
-# from pynxtools.dataconverter.readers.em.subparsers.hfive_ebsd import HdfFiveCommunityReader
 
 
 class NxEmNxsHfiveSubParser:
@@ -109,33 +109,20 @@ class NxEmNxsHfiveSubParser:
             apex = HdfFiveEdaxApexReader(self.file_path)
             apex.parse_and_normalize()
             self.process_into_template(apex.tmp, template)
-        """
         elif hfive_parser_type == "edax":
-            with h5py.File(f"{self.file_path}", "r") as h5r:
-                grp_nms = list(h5r["/"])
-                for grp_nm in grp_nms:
-                    if grp_nm not in ["Version", "Manufacturer"]:
-                        edax_oim = HdfFiveEdaxOimAnalysisReader(self.file_path)
-                        edax_oim.parse_and_normalize_group(
-                            h5r,
-                            f"/{grp_nm}",
-                            self.cache_ebsd)
+            edax = HdfFiveEdaxOimAnalysisReader(self.file_path)
+            edax.parse_and_normalize()
+            self.process_into_template(edax.tmp, template)
         elif hfive_parser_type == "hebsd":
-            with h5py.File(f"{self.file_path}", "r") as h5r:
-                grp_nms = list(h5r["/"])
-                for grp_nm in grp_nms:
-                    if grp_nm not in ["Version", "Manufacturer"]:
-                        edax_oim = HdfFiveCommunityReader(self.file_path)
-                        edax_oim.parse_and_normalize_group(
-                            h5r,
-                            f"/{grp_nm}",
-                            self.cache_ebsd)
+            ebsd = HdfFiveCommunityReader(self.file_path)
+            ebsd.parse_and_normalize()
+            self.process_into_template(ebsd.tmp, template)
         elif hfive_parser_type == "emsoft":
             return template
         else:  # none or something unsupported
             return template
 
-        for key, val in self.cache_ebsd.items():
+        for key, val in self.cache.items():
             print(f"{key}, type: {type(val)}, shape: {np.shape(val)}")
 
         if self.cache["is_filled"] is True:
@@ -143,29 +130,30 @@ class NxEmNxsHfiveSubParser:
             self.process_roi_xmap(template)
             self.process_roi_phases(template)
             self.process_roi_inverse_pole_figures(template)
-        """
         return template
 
     def identify_hfive_type(self):
         """Identify if HDF5 file matches a known format for which a subparser exists."""
+        # tech partner formats used for measurement
         hdf = HdfFiveOxfordReader(f"{self.file_path}")
         if hdf.supported is True:
             return "oxford"
-        # hdf = HdfFiveEdaxOimAnalysisReader(f"{self.file_path}")
-        # if hdf.supported is True:
-        #     return "edax"
+        hdf = HdfFiveEdaxOimAnalysisReader(f"{self.file_path}")
+        if hdf.supported is True:
+            return "edax"
         hdf = HdfFiveEdaxApexReader(f"{self.file_path}")
         if hdf.supported is True:
             return "apex"
         hdf = HdfFiveBrukerEspritReader(f"{self.file_path}")
         if hdf.supported is True:
             return "bruker"
+        hdf = HdfFiveCommunityReader(f"{self.file_path}")
+        if hdf.supported is True:
+            return "hebsd"
+        # computer simulation tools
         # hdf = HdfFiveEmSoftReader(f"{self.file_path}")
         # if hdf.supported is True:
         #     return "emsoft"
-        # hdf = HdfFiveCommunityReader(f"{self.file_path}")
-        # if hdf.supported is True:
-        #     return "hebsd"
         return None
 
     def process_into_template(self, inp: dict, template: dict) -> dict:

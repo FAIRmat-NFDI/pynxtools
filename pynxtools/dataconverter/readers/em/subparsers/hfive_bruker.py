@@ -36,14 +36,8 @@ from orix.vector import Vector3d
 import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
-from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
-
-
-def all_equal(iterable):
-    g = groupby(iterable)
-    return next(g, True) and not next(g, False)
-
-BRUKER_MAP_SPACEGROUP = {"F m#ovl3m": 225}
+from pynxtools.dataconverter.readers.em.utils.hfive_utils import EBSD_MAP_SPACEGROUP, \
+    read_strings_from_dataset, all_equal, format_euler_parameterization
 
 
 class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
@@ -68,27 +62,28 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
 
     def check_if_supported(self):
         """Check if instance matches all constraints to qualify as supported Bruker H5"""
-        self.supported = True  # try to falsify
+        self.supported = 0  # voting-based
         with h5py.File(self.file_path, "r") as h5r:
-            if "/Manufacturer" in h5r:
-                self.version["tech_partner"] \
-                    = read_strings_from_dataset(h5r["/Manufacturer"][()])
-                if self.version["tech_partner"] not in self.supported_version["tech_partner"]:
+            req_fields = ["Manufacturer", "Version"]
+            for req_field in req_fields:
+                if f"/{req_field}" not in h5r:
                     self.supported = False
-            else:
-                self.supported = False
-            if "/Version" in h5r:
-                self.version["schema_version"] \
-                    = read_strings_from_dataset(h5r["/Version"][()])
-                if self.version["schema_version"] not in self.supported_version["schema_version"]:
-                    self.supported = False
-            else:
-                self.supported = False
+                    return
 
-        if self.supported is True:
-            self.version["schema_name"] = self.supported_version["schema_name"]
-            self.version["writer_name"] = self.supported_version["writer_name"]
-            self.version["writer_version"] = self.supported_version["writer_version"]
+            self.version["tech_partner"] = read_strings_from_dataset(h5r["/Manufacturer"][()])
+            if self.version["tech_partner"] in self.supported_version["tech_partner"]:
+                self.supported += 1
+            self.version["schema_version"] = read_strings_from_dataset(h5r["/Version"][()])
+            if self.version["schema_version"] in self.supported_version["schema_version"]:
+                self.supported += 1
+
+            if self.supported == 2:
+                self.version["schema_name"] = self.supported_version["schema_name"]
+                self.version["writer_name"] = self.supported_version["writer_name"]
+                self.version["writer_version"] = self.supported_version["writer_version"]
+                self.supported = True
+            else:
+                self.supported = False
 
     def parse_and_normalize(self):
         """Read and normalize away Bruker-specific formatting with an equivalent in NXem."""
@@ -107,171 +102,135 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
 
     def parse_and_normalize_group_ebsd_header(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/Header"
-        if f"{grp_name}/NCOLS" in fp:  # TODO::what is y and x depends on coordinate system
-            self.tmp[ckey]["n_x"] = fp[f"{grp_name}/NCOLS"][()]
-        else:
-            raise ValueError(f"Unable to parse {grp_name}/NCOLS !")
+        if f"{grp_name}" not in fp:
+            raise ValueError(f"Unable to parse {grp_name} !")
 
-        if f"{grp_name}/NROWS" in fp:
-            self.tmp[ckey]["n_y"] = fp[f"{grp_name}/NROWS"][()]
-        else:
-            raise ValueError(f"Unable to parse {grp_name}/NROWS !")
+        req_fields = ["NCOLS", "NROWS", "SEPixelSizeX", "SEPixelSizeY"]
+        for req_field in req_fields:
+            if f"{grp_name}/{req_field}" not in fp:
+                raise ValueError(f"Unable to parse {grp_name}/{req_field} !")
 
-        if f"{grp_name}/SEPixelSizeX" in fp:
-            self.tmp[ckey]["s_x"] = fp[f"{grp_name}/SEPixelSizeX"][()]
-            self.tmp[ckey]["s_unit"] = "µm"  # TODO::always micron?
-        else:
-            raise ValueError(f"Unable to parse {grp_name}/SEPixelSizeX !")
-
-        if f"{grp_name}/SEPixelSizeY" in fp:
-            self.tmp[ckey]["s_y"] = fp[f"{grp_name}/SEPixelSizeY"][()]
-        else:
-            raise ValueError(f"Unable to parse {grp_name}/SEPixelSizeY !")
-        # TODO::check that all data in the self.oina are consistent
+        self.tmp[ckey]["n_x"] = fp[f"{grp_name}/NCOLS"][()]
+        self.tmp[ckey]["n_y"] = fp[f"{grp_name}/NROWS"][()]
+        self.tmp[ckey]["s_x"] = fp[f"{grp_name}/SEPixelSizeX"][()]
+        self.tmp[ckey]["s_unit"] = "µm"  # TODO::always micron?
+        self.tmp[ckey]["s_y"] = fp[f"{grp_name}/SEPixelSizeY"][()]
+        # TODO::check that all data are consistent
+        # TODO::what is y and x depends on coordinate system
 
     def parse_and_normalize_group_ebsd_phases(self, fp, ckey: str):
-        grp_name = f"{self.prfx}/EBSD/Header"
+        grp_name = f"{self.prfx}/EBSD/Header/Phases"
+        if f"{grp_name}" not in fp:
+            raise ValueError(f"Unable parse {grp_name} !")
+
         # Phases, contains a subgroup for each phase where the name
         # of each subgroup is the index of the phase starting at 1.
-        if f"{grp_name}/Phases" in fp:
-            phase_ids = sorted(list(fp[f"{grp_name}/Phases"]), key=int)
-            self.tmp[ckey]["phase"] = []
-            self.tmp[ckey]["space_group"] = []
-            self.tmp[ckey]["phases"] = {}
-            for phase_id in phase_ids:
-                if phase_id.isdigit() is True:
-                    self.tmp[ckey]["phases"][int(phase_id)] = {}
-                    sub_grp_name = f"/{grp_name}/Phases/{phase_id}"
-                    # Name
-                    if f"{sub_grp_name}/Name" in fp:
-                        phase_name = read_strings_from_dataset(fp[f"{sub_grp_name}/Name"][()])
-                        self.tmp[ckey]["phases"][int(phase_id)]["phase_name"] = phase_name
-                    else:
-                        raise ValueError(f"Unable to parse {sub_grp_name}/Name !")
+        phase_ids = sorted(list(fp[f"{grp_name}"]), key=int)
+        self.tmp[ckey]["phase"] = []
+        self.tmp[ckey]["space_group"] = []
+        self.tmp[ckey]["phases"] = {}
+        for phase_id in phase_ids:
+            if phase_id.isdigit() is True:
+                self.tmp[ckey]["phases"][int(phase_id)] = {}
+                sub_grp_name = f"/{grp_name}/{phase_id}"
+                req_fields = ["Name", "LatticeConstants", "SpaceGroup"]
+                for req_field in req_fields:
+                    if f"{sub_grp_name}/{req_field}" not in fp:
+                        raise ValueError(f"Unable to parse {sub_grp_name}/{req_field} !")
+                # Name
+                phase_name = read_strings_from_dataset(fp[f"{sub_grp_name}/Name"][()])
+                self.tmp[ckey]["phases"][int(phase_id)]["phase_name"] = phase_name
 
-                    # Reference not available
-                    self.tmp[ckey]["phases"][int(phase_id)]["reference"] = "n/a"
+                # Reference not available
+                self.tmp[ckey]["phases"][int(phase_id)]["reference"] = "n/a"
 
-                    # LatticeConstants, a, b, c (angstrom) followed by alpha, beta and gamma angles in degree
-                    if f"{sub_grp_name}/LatticeConstants" in fp:
-                        values = np.asarray(fp[f"{sub_grp_name}/LatticeConstants"][:].flatten())
-                        a_b_c = values[0:3]
-                        angles = values[3:6]
-                        self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] \
-                            = a_b_c * 0.1
-                        self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] \
-                            = angles
-                    else:
-                        raise ValueError(f"Unable to parse {sub_grp_name}/LatticeConstants !")
+                # LatticeConstants, a, b, c (angstrom) followed by alpha, beta and gamma angles in degree
+                values = np.asarray(fp[f"{sub_grp_name}/LatticeConstants"][:].flatten())
+                a_b_c = values[0:3]
+                angles = values[3:6]
+                self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] = a_b_c * 0.1
+                self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] = angles
 
-                    # Space Group, no, H5T_NATIVE_INT32, (1, 1), Space group index.
-                    # The attribute Symbol contains the string representation, for example P m -3 m.
-                    if f"{sub_grp_name}/SpaceGroup" in fp:
-                        spc_grp  = read_strings_from_dataset(fp[f"{sub_grp_name}/SpaceGroup"][()])
-                        if spc_grp in BRUKER_MAP_SPACEGROUP.keys():
-                            space_group = BRUKER_MAP_SPACEGROUP[spc_grp]
-                            self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
-                        else:
-                            raise ValueError(f"Unable to decode improperly formatted space group {spc_grp} !")
-                    else:
-                        raise ValueError(f"Unable to parse {sub_grp_name}/SpaceGroup !")
-                    # formatting is a nightmare F m#ovl3m for F m 3bar m...
-                    if len(self.tmp[ckey]["space_group"]) > 0:
-                        self.tmp[ckey]["space_group"].append(space_group)
-                    else:
-                        self.tmp[ckey]["space_group"] = [space_group]
+                # Space Group, no, H5T_NATIVE_INT32, (1, 1), Space group index.
+                # The attribute Symbol contains the string representation, for example P m -3 m.
+                spc_grp  = read_strings_from_dataset(fp[f"{sub_grp_name}/SpaceGroup"][()])
+                if spc_grp in EBSD_MAP_SPACEGROUP.keys():
+                    space_group = EBSD_MAP_SPACEGROUP[spc_grp]
+                    self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
+                else:
+                    raise ValueError(f"Unable to decode improperly formatted space group {spc_grp} !")
 
-                    if len(self.tmp[ckey]["phase"]) > 0:
-                        self.tmp[ckey]["phase"].append(
-                            Structure(title=phase_name, atoms=None,
-                                      lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                      angles[0], angles[1], angles[2])))
-                    else:
-                        self.tmp[ckey]["phase"] \
-                            = [Structure(title=phase_name, atoms=None,
-                                         lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                         angles[0], angles[1], angles[2]))]
-        else:
-            raise ValueError(f"Unable to parse {grp_name}/Phases !")
+                # formatting is a nightmare F m#ovl3m for F m 3bar m...
+                if len(self.tmp[ckey]["space_group"]) > 0:
+                    self.tmp[ckey]["space_group"].append(space_group)
+                else:
+                    self.tmp[ckey]["space_group"] = [space_group]
+
+                if len(self.tmp[ckey]["phase"]) > 0:
+                    self.tmp[ckey]["phase"].append(
+                        Structure(title=phase_name, atoms=None,
+                                  lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                  angles[0], angles[1], angles[2])))
+                else:
+                    self.tmp[ckey]["phase"] \
+                        = [Structure(title=phase_name, atoms=None,
+                                     lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                     angles[0], angles[1], angles[2]))]
 
     def parse_and_normalize_group_ebsd_data(self, fp, ckey: str):
         # no official documentation yet from Bruker but seems inspired by H5EBSD
         grp_name = f"{self.prfx}/EBSD/Data"
-        print(f"Parsing {grp_name}")
-        # Euler, yes, H5T_NATIVE_FLOAT, (size, 3), Orientation of Crystal (CS2) to Sample-Surface (CS1).
-        n_pts = 0
-        if f"{grp_name}/phi1" in fp and f"{grp_name}/PHI" in fp and f"{grp_name}/phi2" in fp:
-            n_pts = (np.shape(fp[f"{grp_name}/phi1"][:])[0],
-                     np.shape(fp[f"{grp_name}/PHI"][:])[0],
-                     np.shape(fp[f"{grp_name}/phi2"][:])[0])
-            if all_equal(n_pts) is True and n_pts[0] > 0:
-                self.tmp[ckey]["euler"] = np.zeros((n_pts[0], 3), np.float32)
-                column_id = 0
-                for angle in ["phi1", "PHI", "phi2"]:
-                    self.tmp[ckey]["euler"][:, column_id] \
-                        = np.asarray(fp[f"{grp_name}/{angle}"][:], np.float32)
-                    column_id += 1
-                is_degrees = False
-                is_negative = False
-                for column_id in [0, 1, 2]:
-                    if np.max(np.abs(self.tmp[ckey]["euler"][:, column_id])) > 2. * np.pi:
-                        is_degrees = True
-                    if np.min(self.tmp[ckey]["euler"][:, column_id]) < 0.:
-                        is_negative = True
-                if is_degrees is True:
-                    self.tmp[ckey]["euler"] = self.tmp[ckey]["euler"] / 180. * np.pi
-                if is_negative is True:
-                    symmetrize = [2. * np.pi, np.pi, 2. * np.pi]
-                    # TODO::symmetry in Euler space really at PHI=180deg?
-                    for column_id in [0, 1, 2]:
-                        self.tmp[ckey]["euler"][:, column_id] \
-                            = self.tmp[ckey]["euler"][:, column_id] + symmetrize[column_id]
-                n_pts = n_pts[0]
-            # inconsistency f32 in file although specification states float
-                #Rotation.from_euler(euler=fp[f"{grp_name}/Euler"],
-                 #                                 direction='lab2crystal',
-                  #                                degrees=is_degrees)
-        else:
-            raise ValueError(f"Unable to parse {grp_name}/phi1, ../PHI, ../phi2 !")
+        if f"{grp_name}" not in fp:
+            raise ValueError(f"Unable to parse {grp_name} !")
+
+        req_fields = ["phi1", "PHI", "phi2", "Phase", "X SAMPLE", "Y SAMPLE", "MAD"]
+        for req_field in req_fields:
+            if f"{grp_name}/{req_field}" not in fp:
+                raise ValueError(f"Unable to parse {grp_name}/{req_field} !")
+
+        # Euler
+        n_pts = (np.shape(fp[f"{grp_name}/phi1"][:])[0],
+                 np.shape(fp[f"{grp_name}/PHI"][:])[0],
+                 np.shape(fp[f"{grp_name}/phi2"][:])[0])
+        if all_equal(n_pts) is True and n_pts[0] == (self.tmp[ckey]["n_x"] * self.tmp[ckey]["n_y"]):
+            self.tmp[ckey]["euler"] = np.zeros((n_pts[0], 3), np.float32)
+            column_id = 0
+            for angle in ["phi1", "PHI", "phi2"]:
+                self.tmp[ckey]["euler"][:, column_id] \
+                    = np.asarray(fp[f"{grp_name}/{angle}"][:], np.float32)
+                column_id += 1
+            self.tmp[ckey]["euler"] = format_euler_parameterization(self.tmp[ckey]["euler"])
+            n_pts = n_pts[0]
+        # inconsistency f32 in file although specification states float
+        # Rotation.from_euler(euler=fp[f"{grp_name}/Euler"],
+        #                                 direction='lab2crystal',
+        #                                degrees=is_degrees)
 
         # index of phase, 0 if not indexed
-        # # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
-        if f"{grp_name}/Phase" in fp:
-            if np.shape(fp[f"{grp_name}/Phase"][:])[0] == n_pts:
-                self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"][:], np.int32)
-            else:
-                raise ValueError(f"{grp_name}/Phase has unexpected shape !")
+        # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
+        if np.shape(fp[f"{grp_name}/Phase"][:])[0] == n_pts:
+            self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"][:], np.int32)
         else:
-            raise ValueError(f"Unable to parse {grp_name}/Phase !")
+            raise ValueError(f"{grp_name}/Phase has unexpected shape !")
 
         # X
-        if f"{grp_name}/X SAMPLE" in fp:
-            if np.shape(fp[f"{grp_name}/X SAMPLE"][:])[0] == n_pts:
-                self.tmp[ckey]["scan_point_x"] \
-                    = np.asarray(fp[f"{grp_name}/X SAMPLE"][:], np.float32)
-            else:
-                raise ValueError(f"{grp_name}/X SAMPLE has unexpected shape !")
+        if np.shape(fp[f"{grp_name}/X SAMPLE"][:])[0] == n_pts:
+            self.tmp[ckey]["scan_point_x"] \
+                = np.asarray(fp[f"{grp_name}/X SAMPLE"][:], np.float32)
         else:
-            raise ValueError(f"Unable to parse {grp_name}/X SAMPLE !")
+            raise ValueError(f"{grp_name}/X SAMPLE has unexpected shape !")
 
         # Y
-        if f"{grp_name}/Y SAMPLE" in fp:
-            if np.shape(fp[f"{grp_name}/Y SAMPLE"][:])[0] == n_pts:
-                self.tmp[ckey]["scan_point_y"] \
-                    = np.asarray(fp[f"{grp_name}/Y SAMPLE"], np.float32)
-            else:
-                raise ValueError(f"{grp_name}/Y SAMPLE has unexpected shape !")
+        if np.shape(fp[f"{grp_name}/Y SAMPLE"][:])[0] == n_pts:
+            self.tmp[ckey]["scan_point_y"] \
+                = np.asarray(fp[f"{grp_name}/Y SAMPLE"], np.float32)
         else:
-            raise ValueError(f"Unable to parse {grp_name}/Y SAMPLE !")
+            raise ValueError(f"{grp_name}/Y SAMPLE has unexpected shape !")
 
         # Band Contrast is not stored in Bruker but Radon Quality or MAD
         # but this is s.th. different as it is the mean angular deviation between
         # indexed with simulated and measured pattern
-        if f"{grp_name}/MAD" in fp:
-            if np.shape(fp[f"{grp_name}/MAD"][:])[0] == n_pts:
-                self.tmp[ckey]["mad"] = np.asarray(fp[f"{grp_name}/MAD"][:], np.float32)
-            else:
-                raise ValueError(f"{grp_name}/MAD has unexpected shape !")
+        if np.shape(fp[f"{grp_name}/MAD"][:])[0] == n_pts:
+            self.tmp[ckey]["mad"] = np.asarray(fp[f"{grp_name}/MAD"][:], np.float32)
         else:
-            raise ValueError(f"Unable to parse {grp_name}/MAD !")
-
+            raise ValueError(f"{grp_name}/MAD has unexpected shape !")
