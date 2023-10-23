@@ -134,15 +134,6 @@ class EmReader(BaseReader):
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
         #    continue
-        # if case.dat_parser_type == "orix":
-            #     orix_parser = NxEmOmOrixEbsdParser(case.dat[0], entry_id)
-            #     # h5oina parser evaluating content and plotting with orix on the fly
-            #     orix_parser.parse(template)
-            # elif case.dat_parser_type == "mtex":
-            #     mtex_parser = NxEmOmMtexEbsdParser(case.dat[0], entry_id)
-            #     # ebsd parser because concept suggested for MTex by M. Kühbach
-            #     # would include different HDF5 dumps for different MTex classes
-            #     mtex_parser.parse(template)
             # elif case.dat_parser_type == "zip":
             #     zip_parser = NxEmOmZipEbsdParser(case.dat[0], entry_id)
             #     zip_parser.parse(template)
@@ -167,7 +158,7 @@ class EmReader(BaseReader):
         if resolved_path != "":
             nxs_plt.annotate_default_plot(template, resolved_path)
 
-        debugging = True
+        debugging = False
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():

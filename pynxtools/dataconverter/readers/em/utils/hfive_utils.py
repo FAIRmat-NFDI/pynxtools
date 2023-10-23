@@ -25,8 +25,17 @@ import json
 from itertools import groupby
 
 
-EBSD_MAP_SPACEGROUP = {"F m#ovl3m": 225,
+EBSD_MAP_SPACEGROUP = {"P 6#sub3mc": 186,
+                       "P 6/mmm": 191,
+                       "P 6#sub3/mmc": 194,
+                       "F #ovl43m": 216,
+                       "P m#ovl3m": 221,
+                       "F m#ovl3m": 225,
+                       "Fd#ovl3m(*)": 227,
                        "I m#ovl3m": 229}
+# see here for typical examples http://img.chem.ucl.ac.uk/sgp/large/186az1.htm
+
+DIRTY_FIX_SPACEGROUP = {}
 
 def format_euler_parameterization(triplet_set):
     """Transform degrees to radiant and apply orientation space symmetry"""
@@ -79,6 +88,18 @@ def read_strings_from_dataset(obj):
     else:
         return None
         # raise ValueError("Neither np.ndarray, nor bytes, nor str !")
+
+
+def read_first_scalar(obj):
+    if hasattr(obj, "shape"):
+        if obj.shape == ():
+            return obj[()]
+        elif obj.shape == (1,):
+            return obj[0]
+        else:
+            raise ValueError(f"Unexpected shape found in {__name__} from object {obj} !")
+    else:
+        raise ValueError(f"Unexpected input passed to {__name__} with object {obj} !")
 
 
 def all_equal(iterable):

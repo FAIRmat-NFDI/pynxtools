@@ -89,7 +89,7 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
     def parse_and_normalize(self):
         """Read and normalize away community-specific formatting with an equivalent in NXem."""
         with h5py.File(f"{self.file_path}", "r") as h5r:
-            cache_id = 0
+            cache_id = 1
             grp_names = list(h5r["/"])
             for grp_name in grp_names:
                 if grp_name not in ["Version", "Manufacturer"]:

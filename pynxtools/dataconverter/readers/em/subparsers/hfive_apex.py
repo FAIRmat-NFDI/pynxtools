@@ -80,7 +80,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
     def parse_and_normalize(self):
         """Read and normalize away EDAX/APEX-specific formatting with an equivalent in NXem."""
         with h5py.File(f"{self.file_path}", "r") as h5r:
-            cache_id = 0
+            cache_id = 1
             grp_nms = list(h5r["/"])
             for grp_nm in grp_nms:
                 sub_grp_nms = list(h5r[grp_nm])
@@ -169,7 +169,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                     # problematic because mapping is not bijective!
                     # if you know the space group we know laue and point group and symmetry
                     # but the opposite direction leaves room for ambiguities
-                    space_group = "n/a"
+                    space_group = None
                     self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
 
                     if len(self.tmp[ckey]["space_group"]) > 0:
@@ -210,8 +210,8 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             # check shape of internal virtual chunked number array
             r = Rotation.from_matrix([np.reshape(dat[i][0], (3, 3))])
             self.tmp[ckey]["euler"][i, :] = r.to_euler(degrees=False)
-            self.tmp[ckey]["phase_id"][i] = dat[i][2]
-            self.tmp[ckey]["ci"][i] = dat[i][3]
+            self.tmp[ckey]["ci"][i] = dat[i][2]
+            self.tmp[ckey]["phase_id"][i] = dat[i][3]
 
         # TODO::convert orientation matrix to Euler angles via om_eu but what are conventions !
         # orix based transformation ends up in positive half space and with degrees=False

@@ -88,7 +88,7 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
     def parse_and_normalize(self):
         """Read and normalize away Bruker-specific formatting with an equivalent in NXem."""
         with h5py.File(f"{self.file_path}", "r") as h5r:
-            cache_id = 0
+            cache_id = 1
             grp_names = list(h5r["/"])
             for grp_name in grp_names:
                 if grp_name not in ["Version", "Manufacturer"]:
@@ -159,8 +159,9 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
                     self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
                 else:
                     raise ValueError(f"Unable to decode improperly formatted space group {spc_grp} !")
-
                 # formatting is a nightmare F m#ovl3m for F m 3bar m...
+                # TODO::in some case instead a group IT (likely International Tables of Crystallography)
+                # was there so parse this instead of the above used mapping table
                 if len(self.tmp[ckey]["space_group"]) > 0:
                     self.tmp[ckey]["space_group"].append(space_group)
                 else:

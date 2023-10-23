@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
-    read_strings_from_dataset, format_euler_parameterization
+    read_strings_from_dataset, read_first_scalar, format_euler_parameterization
 
 
 class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
@@ -91,7 +91,7 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
     def parse_and_normalize(self):
         """Read and normalize away EDAX-specific formatting with an equivalent in NXem."""
         with h5py.File(f"{self.file_path}", "r") as h5r:
-            cache_id = 0
+            cache_id = 1
             grp_names = list(h5r["/"])
             for grp_name in grp_names:
                 if grp_name not in ["Version", "Manufacturer"]:
@@ -119,11 +119,14 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
         if grid_type not in ["HexGrid", "SqrGrid"]:
             raise ValueError(f"Grid Type {grid_type} is currently not supported !")
         self.tmp[ckey]["grid_type"] = grid_type
-        self.tmp[ckey]["s_x"] = fp[f"{grp_name}/Step X"][()]
+        self.tmp[ckey]["s_x"] = read_first_scalar(fp[f"{grp_name}/Step X"])
         self.tmp[ckey]["s_unit"] = "µm"  # TODO::always micron?
-        self.tmp[ckey]["n_x"] = fp[f"{grp_name}/nColumns"][()]
-        self.tmp[ckey]["s_y"] = fp[f"{grp_name}/Step Y"][()]
-        self.tmp[ckey]["n_y"] = fp[f"{grp_name}/nRows"][()]
+        self.tmp[ckey]["n_x"] = read_first_scalar(fp[f"{grp_name}/nColumns"])
+        self.tmp[ckey]["s_y"] = read_first_scalar(fp[f"{grp_name}/Step Y"])
+        self.tmp[ckey]["n_y"] = read_first_scalar(fp[f"{grp_name}/nRows"])
+        # TODO::different version store the same concept with the same path name with different shape
+        # the read_first_scalar is not an optimal solution, in the future all reads from
+        # HDF5 should check for the shape instead
         # TODO::check that all data are consistent
 
     def parse_and_normalize_group_ebsd_phases(self, fp, ckey: str):
@@ -165,10 +168,11 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
                         = np.asarray(angles, np.float32)
 
                     # Space Group not stored, only laue group, point group and symmetry
+                    # https://doi.org/10.1107/S1600576718012724 is a relevant read here
                     # problematic because mapping is not bijective!
                     # if you know the space group we know laue and point group and symmetry
                     # but the opposite direction leaves room for ambiguities
-                    space_group = "n/a"
+                    space_group = None
                     self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
 
                     if len(self.tmp[ckey]["space_group"]) > 0:
@@ -207,7 +211,13 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
         # TODO::seems to be the situation in the example but there is no documentation
         self.tmp[ckey]["euler"] = format_euler_parameterization(self.tmp[ckey]["euler"])
 
-        self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"][:], np.int32)
+        # given no official EDAX OimAnalysis spec we cannot define for sure if
+        # phase_id == 0 means just all was indexed with the first/zeroth phase or nothing
+        # was indexed, TODO::assuming it means all indexed:
+        if np.all(fp[f"{grp_name}/Phase"][:] == 0):
+            self.tmp[ckey]["phase_id"] = np.zeros(n_pts, np.int32) + 1
+        else:
+            self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"][:], np.int32)
         # promoting int8 to int32 no problem
         self.tmp[ckey]["ci"] = np.asarray(fp[f"{grp_name}/CI"][:], np.float32)
         self.tmp[ckey]["scan_point_x"] = np.asarray(

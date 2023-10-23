@@ -99,10 +99,10 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
     def parse_and_normalize(self):
         """Read and normalize away Oxford-specific formatting with an equivalent in NXem."""
         with h5py.File(f"{self.file_path}", "r") as h5r:
-            cache_id = 0
+            cache_id = 1
             slice_ids = sorted(list(h5r["/"]))
             for slice_id in slice_ids:
-                if slice_id.isdigit() is True and slice_id == "1":
+                if slice_id.isdigit() is True and slice_id == "1" and f"/{slice_id}/EBSD" in h5r:
                     # non-negative int, parse for now only the 1. slice
                     self.prfx = f"/{slice_id}"
                     ckey = self.init_named_cache(f"ebsd{cache_id}")  # name of the cache to use
@@ -241,6 +241,6 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         # inconsistency f32 in file although specification states float
 
         # Band Contrast, no, H5T_NATIVE_INT32, (size, 1)
-        self.tmp[ckey]["band_contrast"] = np.asarray(fp[f"{grp_name}/Band Contrast"], np.int32)
+        self.tmp[ckey]["bc"] = np.asarray(fp[f"{grp_name}/Band Contrast"], np.int32)
         # inconsistency uint8 in file although specification states should be int32
         # promoting uint8 to int32 no problem

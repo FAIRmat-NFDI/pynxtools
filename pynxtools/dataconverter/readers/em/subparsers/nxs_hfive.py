@@ -121,15 +121,6 @@ class NxEmNxsHfiveSubParser:
             return template
         else:  # none or something unsupported
             return template
-
-        for key, val in self.cache.items():
-            print(f"{key}, type: {type(val)}, shape: {np.shape(val)}")
-
-        if self.cache["is_filled"] is True:
-            self.process_roi_overview(template)
-            self.process_roi_xmap(template)
-            self.process_roi_phases(template)
-            self.process_roi_inverse_pole_figures(template)
         return template
 
     def identify_hfive_type(self):
@@ -157,50 +148,118 @@ class NxEmNxsHfiveSubParser:
         return None
 
     def process_into_template(self, inp: dict, template: dict) -> dict:
-        for key, val in inp.items():
-            if isinstance(val, dict):
-                for ckey, cval in val.items():
-                    print(f"{ckey}, {cval}")
-            else:
-                print(f"{key}, {val}")
-        return template
-        # super().process_ebsd_cache(self.tmp, template)
-        # return template
+        debugging = False
+        if debugging is True:
+            for key, val in inp.items():
+                if isinstance(val, dict):
+                    for ckey, cval in val.items():
+                        print(f"{ckey}, {cval}")
+                else:
+                    print(f"{key}, {val}")
 
-    def process_roi_overview(inp: dict, template: dict) -> dict:
+        self.process_roi_overview(inp, template)
+        self.process_roi_ebsd_maps(inp, template)
         return template
 
-    def process_roi_xmap(inp: dict) -> dict:
-        """Process standardized IPF orientation map using pyxem from normalized orientation data."""
-        # for NeXus would like to create a default
-        '''
-        if np.max(inp["n_x"], inp["n_y"]) < HFIVE_WEB_MAXIMUM_RGB:
+    def process_roi_overview(self, inp: dict, template: dict) -> dict:
+        for ckey in inp.keys():
+            if ckey.startswith("ebsd"):
+                self.process_roi_overview_ebsd_based(
+                    inp[ckey], ckey.replace("ebsd", ""), template)
+                break  # only one roi for now
+        return template
+
+    def process_roi_overview_ebsd_based(self,
+                                        inp: dict,
+                                        roi_id: str,
+                                        template: dict) -> dict:
+        print("Parse ROI default plot...")
+        # prfx = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/region_of_interest/roi{roi_id}"
+        prfx = f"/roi{roi_id}"
+        trg = f"{prfx}"
+        template[f"{trg}/title"] = str("Region-of-interest overview image")
+        template[f"{trg}/@signal"] = "data"
+        template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
+        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
+        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
+        trg = f"{prfx}/data"
+        contrast_modes = [(None, "n/a"),
+                          ("bc", "normalized_band_contrast"),
+                          ("ci", "normalized_confidence_index"),
+                          ("mad", "normalized_mean_angular_deviation")]
+        success = False
+        for contrast_mode in contrast_modes:
+            if contrast_mode[0] in inp.keys() and success is False:
+                template[f"{trg}"] = {"compress": np.reshape(np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]]) * 255.), np.uint32), np.uint8), (inp["n_y"], inp["n_x"]), order="C"), "strength": 1}
+                template[f"{prfx}/descriptor"] = contrast_mode[1]
+                success = True
+        if success is False:
+            raise ValueError(f"{__name__} unable to generate plot for {prfx} !")
+        # 0 is y while 1 is x !
+        template[f"{trg}/@long_name"] = "Signal"
+        template[f"{trg}/@CLASS"] = "IMAGE"  # required by H5Web to plot RGB maps
+        template[f"{trg}/@IMAGE_VERSION"] = "1.2"
+        template[f"{trg}/@SUBCLASS_VERSION"] = np.int64(15)
+
+        trg = f"{prfx}/axis_x"
+        template[f"{trg}"] = {"compress": np.asarray(inp["scan_point_x"], np.float32), "strength": 1}
+        template[f"{trg}/@long_name"] = f"Coordinate along x-axis ({inp['s_unit']})"
+        template[f"{trg}/@units"] = f"{inp['s_unit']}"
+        trg = f"{prfx}/axis_y"
+        template[f"{trg}"] = {"compress": np.asarray(inp["scan_point_y"], np.float32), "strength": 1}
+        template[f"{trg}/@long_name"] = f"Coordinate along y-axis ({inp['s_unit']})"
+        template[f"{trg}/@units"] =  f"{inp['s_unit']}"
+        return template
+
+    def process_roi_ebsd_maps(self, inp: dict, template: dict) -> dict:
+        for ckey in inp.keys():
+            if ckey.startswith("ebsd"):
+                roi_identifier = ckey.replace("ebsd", "")
+                self.process_roi_xmap(
+                    inp[ckey], roi_identifier, template)
+                # self.process_roi_phases(
+                #     inp[ckey], roi_identifier, template)
+                # self.process_roi_inverse_pole_figures(
+                #     inp[ckey], roi_identifier, template)
+                break  # only one roi for now
+        return template
+
+    def process_roi_xmap(self, inp: dict, roi_id: str, template: dict) -> dict:
+        """Process crystal orientation map from normalized orientation data."""
+        # for NeXus to create a default representation of the EBSD map to explore
+        if np.max((inp["n_x"], inp["n_y"])) < HFIVE_WEB_MAXIMUM_RGB:
             # can use the map discretization as is
             coordinates, _ = create_coordinate_arrays(
                 (inp["n_x"], inp["n_y"]), (inp["s_x"], inp["s_y"]))
             xaxis = coordinates["x"]
             yaxis = coordinates["y"]
             del coordinates
-        # else:
+        else:
+            raise ValueError(f"Downsampling for too large EBSD maps is currently not supported !")
             # need to regrid to downsample too large maps
             # TODO::implement 1NN-based downsampling approach
             #       build grid
             #       tree-based 1NN
             #       proceed as usual
 
-        pyxem_phase_identifier = inp["phase_identifier"] \
-            - (np.min(inp["phase_identifier"]) - (-1))  # pyxem, non-indexed has to be -1
-        print(np.unique(pyxem_phase_identifier))
+        pyxem_phase_identifier = inp["phase_id"] - 1
+        # inp["phase_id"] - (np.min(inp["phase_id"]) - (-1))
+        # for pyxem the non-indexed has to be -1 instead of 0 which is what NeXus uses
+        # -1 always because content of inp["phase_id"] is normalized
+        # to NeXus NXem_ebsd_crystal_structure concept already!
+        print(f"Unique pyxem_phase_identifier {np.unique(pyxem_phase_identifier)}")
 
-        self.xmap = CrystalMap(rotations=inp["rotation"],
-                               x=self.xaxis, y=self.yaxis,
+        self.xmap = CrystalMap(rotations=Rotation.from_euler(euler=inp["euler"],
+                                                             direction='lab2crystal',
+                                                             degrees=False),
+                               x=xaxis, y=yaxis,
                                phase_id=pyxem_phase_identifier,
                                phase_list=PhaseList(space_groups=inp["space_group"],
                                                     structures=inp["phase"]),
-                               prop={"bc": inp["band_contrast"]},
-                               scan_unit=inp["s_unit"])
+                               prop={})
+        # "bc": inp["band_contrast"]}, scan_unit=inp["s_unit"])
         print(self.xmap)
-        '''
+        return template
 
     def process_roi_phases(self, template: dict) -> dict:
         return template
