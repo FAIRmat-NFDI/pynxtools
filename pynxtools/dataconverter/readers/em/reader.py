@@ -116,8 +116,9 @@ class EmReader(BaseReader):
         nxs = NxEmAppDef()
         nxs.parse(template, entry_id, input_file_names)
 
-        conventions = NxEmConventionMapper(entry_id)
-        conventions.parse(template)
+        print("Parse conventions of reference frames...")
+        # conventions = NxEmConventionMapper(entry_id)
+        # conventions.parse(template)
 
         print("Parse and map pieces of information within files from tech partners...")
         # sub_parser = "nxs_mtex"
@@ -129,7 +130,7 @@ class EmReader(BaseReader):
         sub_parser = "nxs_hfive"
         subparser = NxEmNxsHfiveSubParser(entry_id, file_paths[0])
         subparser.parse(template)
-        exit(1)
+        # exit(1)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")

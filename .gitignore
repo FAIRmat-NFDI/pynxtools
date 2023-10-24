@@ -202,3 +202,10 @@ cython_debug/
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version
+
+# reader specific custom settings
+*.h5
+*.oh5
+*.edaxh5
+*.h5oina
+*.nxs

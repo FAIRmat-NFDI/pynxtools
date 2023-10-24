@@ -304,5 +304,7 @@ UniquePhaseToAtomTypes = {"Actinolite": "Ca;Mg;Fe;Si;O;H",
 
 ProjectIdToCitation = {"Forsterite.ctf.nxs.mtex": {"data": "someurl", "paper": "someurl"}}
 
-AssumePhaseNameToSpaceGroup = {"Silver": 225,
-                               "Copper": 225}
+ASSUME_PHASE_NAME_TO_SPACE_GROUP = {"Silver": 225,
+                                    "Copper": 225,
+                                    "Ni (Nickel)": 225,
+                                    "Face Centered Cubic": 225}

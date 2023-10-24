@@ -38,6 +38,8 @@ import matplotlib.pyplot as plt
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     read_strings_from_dataset, read_first_scalar, format_euler_parameterization
+from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP
 
 
 class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
@@ -173,6 +175,8 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
                     # if you know the space group we know laue and point group and symmetry
                     # but the opposite direction leaves room for ambiguities
                     space_group = None
+                    if phase_name in ASSUME_PHASE_NAME_TO_SPACE_GROUP.keys():
+                        space_group = ASSUME_PHASE_NAME_TO_SPACE_GROUP[phase_name]
                     self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
 
                     if len(self.tmp[ckey]["space_group"]) > 0:

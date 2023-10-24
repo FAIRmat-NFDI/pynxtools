@@ -35,8 +35,10 @@ from orix.vector import Vector3d
 import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
-from pynxtools.dataconverter.readers.em.utils.hfive_utils import EBSD_MAP_SPACEGROUP, \
-    read_strings_from_dataset, all_equal, format_euler_parameterization
+from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
+    EBSD_MAP_SPACEGROUP, read_strings_from_dataset, all_equal, format_euler_parameterization
+from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP
 
 
 class HdfFiveCommunityReader(HdfFiveBaseParser):
@@ -160,6 +162,9 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
                 spc_grp  = read_strings_from_dataset(fp[f"{sub_grp_name}/SpaceGroup"][()])
                 if spc_grp in EBSD_MAP_SPACEGROUP.keys():
                     space_group = EBSD_MAP_SPACEGROUP[spc_grp]
+                    self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
+                elif phase_name in ASSUME_PHASE_NAME_TO_SPACE_GROUP.keys():
+                    space_group = ASSUME_PHASE_NAME_TO_SPACE_GROUP[phase_name]
                     self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
                 else:
                     raise ValueError(f"Unable to decode improperly formatted space group {spc_grp} !")

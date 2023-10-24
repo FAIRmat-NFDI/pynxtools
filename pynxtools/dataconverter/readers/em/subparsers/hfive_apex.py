@@ -35,7 +35,9 @@ import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
-    read_strings_from_dataset, format_euler_parameterization
+    read_strings_from_dataset, read_first_scalar, format_euler_parameterization
+from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP
 
 
 class HdfFiveEdaxApexReader(HdfFiveBaseParser):
@@ -129,66 +131,68 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
 
     def parse_and_normalize_group_ebsd_phases(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/ANG/HEADER/Phase"
+        if f"{grp_name}" not in fp:
+            raise ValueError(f"Unable to parse {grp_name} !")
+
         # Phases, contains a subgroup for each phase where the name
         # of each subgroup is the index of the phase starting at 1.
-        if f"{grp_name}" in fp:
-            phase_ids = sorted(list(fp[f"{grp_name}"]), key=int)
-            self.tmp[ckey]["phase"] = []
-            self.tmp[ckey]["space_group"] = []
-            self.tmp[ckey]["phases"] = {}
-            for phase_id in phase_ids:
-                if phase_id.isdigit() is True:
-                    self.tmp[ckey]["phases"][int(phase_id)] = {}
-                    sub_grp_name = f"{grp_name}/{phase_id}"
-                    # Name
-                    if f"{sub_grp_name}/Material Name" in fp:
-                        phase_name = read_strings_from_dataset(fp[f"{sub_grp_name}/Material Name"][0])
-                        self.tmp[ckey]["phases"][int(phase_id)]["phase_name"] = phase_name
-                    else:
-                        raise ValueError(f"Unable to parse {sub_grp_name}/Material Name !")
+        phase_ids = sorted(list(fp[f"{grp_name}"]), key=int)
+        self.tmp[ckey]["phase"] = []
+        self.tmp[ckey]["space_group"] = []
+        self.tmp[ckey]["phases"] = {}
+        for phase_id in phase_ids:
+            if phase_id.isdigit() is True:
+                self.tmp[ckey]["phases"][int(phase_id)] = {}
+                sub_grp_name = f"{grp_name}/{phase_id}"
+                # Name
+                if f"{sub_grp_name}/Material Name" in fp:
+                    phase_name = read_strings_from_dataset(fp[f"{sub_grp_name}/Material Name"][0])
+                    self.tmp[ckey]["phases"][int(phase_id)]["phase_name"] = phase_name
+                else:
+                    raise ValueError(f"Unable to parse {sub_grp_name}/Material Name !")
 
-                    # Reference not available only Info but this can be empty
-                    self.tmp[ckey]["phases"][int(phase_id)]["reference"] = "n/a"
+                # Reference not available only Info but this can be empty
+                self.tmp[ckey]["phases"][int(phase_id)]["reference"] = "n/a"
 
-                    req_fields = ["A", "B", "C", "Alpha", "Beta", "Gamma"]
-                    for req_field in req_fields:
-                        if f"{sub_grp_name}/Lattice Constant {req_field}" not in fp:
-                            raise ValueError(f"Unable to parse ../Lattice Constant {req_field} !")
-                    a_b_c = [fp[f"{sub_grp_name}/Lattice Constant A"][0],
-                             fp[f"{sub_grp_name}/Lattice Constant B"][0],
-                             fp[f"{sub_grp_name}/Lattice Constant C"][0]]
-                    angles = [fp[f"{sub_grp_name}/Lattice Constant Alpha"][0],
-                              fp[f"{sub_grp_name}/Lattice Constant Beta"][0],
-                              fp[f"{sub_grp_name}/Lattice Constant Gamma"][0]]
-                    self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] \
-                        = np.asarray(a_b_c, np.float32) * 0.1
-                    self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] \
-                        = np.asarray(angles, np.float32)
+                req_fields = ["A", "B", "C", "Alpha", "Beta", "Gamma"]
+                for req_field in req_fields:
+                    if f"{sub_grp_name}/Lattice Constant {req_field}" not in fp:
+                        raise ValueError(f"Unable to parse ../Lattice Constant {req_field} !")
+                a_b_c = [fp[f"{sub_grp_name}/Lattice Constant A"][0],
+                            fp[f"{sub_grp_name}/Lattice Constant B"][0],
+                            fp[f"{sub_grp_name}/Lattice Constant C"][0]]
+                angles = [fp[f"{sub_grp_name}/Lattice Constant Alpha"][0],
+                            fp[f"{sub_grp_name}/Lattice Constant Beta"][0],
+                            fp[f"{sub_grp_name}/Lattice Constant Gamma"][0]]
+                self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] \
+                    = np.asarray(a_b_c, np.float32) * 0.1
+                self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] \
+                    = np.asarray(angles, np.float32)
 
-                    # Space Group not stored, only laue group, point group and symmetry
-                    # problematic because mapping is not bijective!
-                    # if you know the space group we know laue and point group and symmetry
-                    # but the opposite direction leaves room for ambiguities
-                    space_group = None
-                    self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
+                # Space Group not stored, only laue group, point group and symmetry
+                # problematic because mapping is not bijective!
+                # if you know the space group we know laue and point group and symmetry
+                # but the opposite direction leaves room for ambiguities
+                space_group = None
+                if phase_name in ASSUME_PHASE_NAME_TO_SPACE_GROUP.keys():
+                    space_group = ASSUME_PHASE_NAME_TO_SPACE_GROUP[phase_name]
+                self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
 
-                    if len(self.tmp[ckey]["space_group"]) > 0:
-                        self.tmp[ckey]["space_group"].append(space_group)
-                    else:
-                        self.tmp[ckey]["space_group"] = [space_group]
+                if len(self.tmp[ckey]["space_group"]) > 0:
+                    self.tmp[ckey]["space_group"].append(space_group)
+                else:
+                    self.tmp[ckey]["space_group"] = [space_group]
 
-                    if len(self.tmp[ckey]["phase"]) > 0:
-                        self.tmp[ckey]["phase"].append(
-                            Structure(title=phase_name, atoms=None,
-                                      lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                      angles[0], angles[1], angles[2])))
-                    else:
-                        self.tmp[ckey]["phase"] \
-                            = [Structure(title=phase_name, atoms=None,
-                                         lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                         angles[0], angles[1], angles[2]))]
-        else:
-            raise ValueError(f"Unable to parse {grp_name} !")
+                if len(self.tmp[ckey]["phase"]) > 0:
+                    self.tmp[ckey]["phase"].append(
+                        Structure(title=phase_name, atoms=None,
+                                    lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                    angles[0], angles[1], angles[2])))
+                else:
+                    self.tmp[ckey]["phase"] \
+                        = [Structure(title=phase_name, atoms=None,
+                                        lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                        angles[0], angles[1], angles[2]))]
 
     def parse_and_normalize_group_ebsd_data(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/ANG/DATA/DATA"
@@ -201,17 +205,17 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
 
         dat = fp[f"{grp_name}"]
         self.tmp[ckey]["euler"] = np.zeros((n_pts, 3), np.float32)
-        # index of phase, 0 if not indexed
-        # # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
-        self.tmp[ckey]["phase_id"] = np.zeros((n_pts,), np.int32)
         self.tmp[ckey]["ci"] = np.zeros((n_pts,), np.float32)
+        self.tmp[ckey]["phase_id"] = np.zeros((n_pts,), np.int32)
 
         for i in np.arange(0, n_pts):
             # check shape of internal virtual chunked number array
             r = Rotation.from_matrix([np.reshape(dat[i][0], (3, 3))])
             self.tmp[ckey]["euler"][i, :] = r.to_euler(degrees=False)
             self.tmp[ckey]["ci"][i] = dat[i][2]
-            self.tmp[ckey]["phase_id"][i] = dat[i][3]
+            self.tmp[ckey]["phase_id"][i] = dat[i][3] + 1  # APEX seems to define
+            # notIndexed as -1 and the first valid phase id 0
+
 
         # TODO::convert orientation matrix to Euler angles via om_eu but what are conventions !
         # orix based transformation ends up in positive half space and with degrees=False
