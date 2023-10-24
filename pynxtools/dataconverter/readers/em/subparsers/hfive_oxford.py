@@ -129,7 +129,7 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         # X Step, yes, H5T_NATIVE_FLOAT, (1, 1), Map: Step size along x-axis in micrometers. Line scan: step size along the line scan in micrometers.
         if read_strings_from_dataset(fp[f"{grp_name}/X Step"].attrs["Unit"]) == "um":
             self.tmp[ckey]["s_x"] = fp[f"{grp_name}/X Step"][0]
-            self.tmp[ckey]["s_unit"] = "µm"
+            self.tmp[ckey]["s_unit"] = "um"  # "µm"
         else:
             raise ValueError(f"Unexpected X Step Unit attribute !")
         # Y Step, yes, H5T_NATIVE_FLOAT, (1, 1), Map: Step size along y-axis in micrometers. Line scan: Always set to 0.

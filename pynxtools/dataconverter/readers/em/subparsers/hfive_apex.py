@@ -123,7 +123,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             raise ValueError(f"Grid Type {grid_type} is currently not supported !")
         self.tmp[ckey]["grid_type"] = grid_type
         self.tmp[ckey]["s_x"] = fp[f"{self.prfx}/Sample/Step X"][0]
-        self.tmp[ckey]["s_unit"] = "µm"  # TODO::always micron?
+        self.tmp[ckey]["s_unit"] = "um"  # "µm"  # TODO::always micron?
         self.tmp[ckey]["n_x"] = fp[f"{self.prfx}/Sample/Number Of Columns"][0]
         self.tmp[ckey]["s_y"] = fp[f"{self.prfx}/Sample/Step Y"][0]
         self.tmp[ckey]["n_y"] = fp[f"{self.prfx}/Sample/Number Of Rows"][0]

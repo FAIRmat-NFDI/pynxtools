@@ -116,7 +116,7 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
         self.tmp[ckey]["n_x"] = fp[f"{grp_name}/NCOLS"][()]
         self.tmp[ckey]["n_y"] = fp[f"{grp_name}/NROWS"][()]
         self.tmp[ckey]["s_x"] = fp[f"{grp_name}/SEPixelSizeX"][()]
-        self.tmp[ckey]["s_unit"] = "µm"  # TODO::always micron?
+        self.tmp[ckey]["s_unit"] = "um"  # "µm"  # TODO::always micron?
         self.tmp[ckey]["s_y"] = fp[f"{grp_name}/SEPixelSizeY"][()]
         # TODO::check that all data are consistent
         # TODO::what is y and x depends on coordinate system

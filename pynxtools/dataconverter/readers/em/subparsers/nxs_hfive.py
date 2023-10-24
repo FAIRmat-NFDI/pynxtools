@@ -159,7 +159,7 @@ class NxEmNxsHfiveSubParser:
                 else:
                     print(f"{key}, {val}")
 
-        # self.process_roi_overview(inp, template)
+        self.process_roi_overview(inp, template)
         self.process_roi_ebsd_maps(inp, template)
         return template
 
@@ -202,11 +202,15 @@ class NxEmNxsHfiveSubParser:
         template[f"{trg}/data/@IMAGE_VERSION"] = f"1.2"
         template[f"{trg}/data/@SUBCLASS_VERSION"] = np.int64(15)
 
-        template[f"{trg}/AXISNAME[axis_x]"] = {"compress": np.asarray(inp["scan_point_x"], np.float32), "strength": 1}
-        template[f"{trg}/AXISNAME[axis_x]/@long_name"] = f"Coordinate along x-axis ({inp['s_unit']})"
+        template[f"{trg}/AXISNAME[axis_x]"] \
+            = {"compress": np.asarray(inp["scan_point_x"], np.float32), "strength": 1}
+        template[f"{trg}/AXISNAME[axis_x]/@long_name"] \
+            = f"Coordinate along x-axis ({inp['s_unit']})"
         template[f"{trg}/AXISNAME[axis_x]/@units"] = f"{inp['s_unit']}"
-        template[f"{trg}/AXISNAME[axis_y]"] = {"compress": np.asarray(inp["scan_point_y"], np.float32), "strength": 1}
-        template[f"{trg}/AXISNAME[axis_y]/@long_name"] = f"Coordinate along y-axis ({inp['s_unit']})"
+        template[f"{trg}/AXISNAME[axis_y]"] \
+            = {"compress": np.asarray(inp["scan_point_y"], np.float32), "strength": 1}
+        template[f"{trg}/AXISNAME[axis_y]/@long_name"] \
+            = f"Coordinate along y-axis ({inp['s_unit']})"
         template[f"{trg}/AXISNAME[axis_y]/@units"] =  f"{inp['s_unit']}"
         return template
 
@@ -229,6 +233,7 @@ class NxEmNxsHfiveSubParser:
                 (inp["n_y"], inp["n_x"]), (inp["s_y"], inp["s_x"]))
             xaxis = coordinates["x"]
             yaxis = coordinates["y"]
+            print(f"xmi {np.min(xaxis)}, xmx {np.max(xaxis)}, ymi {np.min(yaxis)}, ymx {np.max(yaxis)}")
             del coordinates
         else:
             raise ValueError(f"Downsampling for too large EBSD maps is currently not supported !")
@@ -263,6 +268,8 @@ class NxEmNxsHfiveSubParser:
                                                     structures=inp["phase"]),
                                prop={},
                                scan_unit=inp["s_unit"])
+        del xaxis
+        del yaxis
         # "bc": inp["band_contrast"]}, scan_unit=inp["s_unit"])
         print(self.xmap)
         return template
@@ -275,27 +282,26 @@ class NxEmNxsHfiveSubParser:
         n_pts_indexed = np.sum(inp["phase_id"] != 0)
         print(f"n_pts {n_pts}, n_pts_indexed {n_pts_indexed}")
         template[f"{prfx}/number_of_scan_points"] = np.uint32(n_pts)
-        template[f"{prfx}/indexing_rate"] = np.float64(100. n_pts_indexed / n_pts)
+        template[f"{prfx}/indexing_rate"] = np.float64(100. * n_pts_indexed / n_pts)
         template[f"{prfx}/indexing_rate/@units"] = f"%"
-        template[f"{prfx}/phase{phase_id}/number_of_scan_points"] = np.uint32(0)
-        template[f"{prfx}/phase{phase_id}/phase_identifier"] = np.uint32(phase_id)
-        template[f"{prfx}/phase{phase_id}/phase_name"] = f"notIndexed"
+        grp_name = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{phase_id}]"
+        template[f"{grp_name}/number_of_scan_points"] = np.uint32(0)
+        template[f"{grp_name}/phase_identifier"] = np.uint32(phase_id)
+        template[f"{grp_name}/phase_name"] = f"notIndexed"
 
         for pyxem_phase_id in np.arange(0, np.max(self.xmap.phase_id) + 1):
             # this loop is implicitly ignored as when xmap is None
             print(f"inp[phases].keys(): {inp['phases'].keys()}")
             if (pyxem_phase_id + 1) not in inp["phases"].keys():
                 raise ValueError(f"{pyxem_phase_id + 1} is not a key in inp['phases'] !")
-            # if isinstance(inp["phases"][phase_id], dict) is True:
-            # phase_id of pyxem notIndexed is -1 while for NeXus it is 0 so add + 1 in naming schemes
-            trg = f"{prfx}/phase{pyxem_phase_id + 1}"
+            # phase_id of pyxem notIndexed is -1 while for NeXus
+            # it is 0 so add + 1 in naming schemes
+            trg = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{pyxem_phase_id + 1}]"
             template[f"{trg}/number_of_scan_points"] \
                 = np.uint32(np.sum(self.xmap.phase_id == pyxem_phase_id))
-            # print(f"{pyxem_phase_id + 1}, " \
-            #       f"{np.uint32(np.sum(self.xmap.phase_id == pyxem_phase_id))}," \
-            #       f" {inp['phases'][pyxem_phase_id + 1]['phase_name']}")
             template[f"{trg}/phase_identifier"] = np.uint32(pyxem_phase_id + 1)
-            template[f"{trg}/phase_name"] = f"{inp['phases'][pyxem_phase_id + 1]['phase_name']}"
+            template[f"{trg}/phase_name"] \
+                = f"{inp['phases'][pyxem_phase_id + 1]['phase_name']}"
 
             self.process_roi_phase_inverse_pole_figures(roi_id, pyxem_phase_id, template)
         return template
@@ -345,55 +351,64 @@ class NxEmNxsHfiveSubParser:
             # 0 is y while 1 is x !
 
             trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing" \
-                  f"/phase{pyxem_phase_id + 1}/ipf{idx + 1}"
+                  f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{pyxem_phase_id + 1}]" \
+                  f"/MS_IPF[ipf{idx + 1}]"
             template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
 
             # add the IPF color map
-            template[f"{trg}/DATA[map]/title"] \
+            mpp = f"{trg}/DATA[map]"
+            template[f"{mpp}/title"] \
                 = f"Inverse pole figure {projection_directions[idx][0]} {phase_name}"
-            template[f"{trg}/DATA[map]/@signal"] = "data"
-            template[f"{trg}/DATA[map]/@axes"] = ["axis_y", "axis_x"]
-            template[f"{trg}/DATA[map]/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
-            template[f"{trg}/DATA[map]/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
-            template[f"{trg}/DATA[map]/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
-            template[f"{trg}/DATA[map]/DATA[data]/@CLASS"] = "IMAGE"  # required, H5Web, RGB
-            template[f"{trg}/DATA[map]/DATA[data]/@IMAGE_VERSION"] = "1.2"
-            template[f"{trg}/DATA[map]/DATA[data]/@SUBCLASS_VERSION"] = np.int64(15)
+            template[f"{mpp}/@signal"] = "data"
+            template[f"{mpp}/@axes"] = ["axis_y", "axis_x"]
+            template[f"{mpp}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
+            template[f"{mpp}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
+            template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
+            template[f"{mpp}/DATA[data]/@CLASS"] = "IMAGE"  # required, H5Web, RGB
+            template[f"{mpp}/DATA[data]/@IMAGE_VERSION"] = "1.2"
+            template[f"{mpp}/DATA[data]/@SUBCLASS_VERSION"] = np.int64(15)
 
-            template[f"{trg}/DATA[map]/AXISNAME[axis_x]"] \
+            template[f"{mpp}/AXISNAME[axis_x]"] \
                 = {"compress": np.asarray(self.xmap.x, np.float32), "strength": 1}
-            template[f"{trg}/DATA[map]/AXISNAME[axis_x]/@long_name"] \
+            template[f"{mpp}/AXISNAME[axis_x]/@long_name"] \
                 = f"Coordinate along x-axis ({self.xmap.scan_unit})"
-            template[f"{trg}/DATA[map]/AXISNAME[axis_x]/@units"] \
-                = f"{self.xmap.scan_unit}"
-            template[f"{trg}/DATA[map]/AXISNAME[axis_y]"] \
+            template[f"{mpp}/AXISNAME[axis_x]/@units"] = f"{self.xmap.scan_unit}"
+            template[f"{mpp}/AXISNAME[axis_y]"] \
                 = {"compress": np.asarray(self.xmap.y, np.float32), "strength": 1}
-            template[f"{trg}/DATA[map]/AXISNAME[axis_y]/@long_name"] \
+            template[f"{mpp}/AXISNAME[axis_y]/@long_name"] \
                 = f"Coordinate along y-axis ({self.xmap.scan_unit})"
-            template[f"{trg}/DATA[map]/AXISNAME[axis_y]/@units"] \
-                = f"{self.xmap.scan_unit}"
+            template[f"{mpp}/AXISNAME[axis_y]/@units"] = f"{self.xmap.scan_unit}"
 
             # add the IPF color map legend/key
-            template[f"{trg}/DATA[legend]/title"] \
+            lgd = f"{trg}/DATA[legend]"
+            template[f"{lgd}/title"] \
                 = f"Inverse pole figure {projection_directions[idx][0]} {phase_name}"
             # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
-            template[f"{trg}/DATA[legend]/@signal"] = "data"
-            template[f"{trg}/DATA[legend]/@axes"] = ["axis_y", "axis_x"]
-            template[f"{trg}/DATA[legend]/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
-            template[f"{trg}/DATA[legend]/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
-            template[f"{trg}/DATA[legend]/DATA[data]"] = {"compress": img, "strength": 1}
-            template[f"{trg}/DATA[legend]/DATA[data]/@CLASS"] = "IMAGE"  # required by H5Web to plot RGB maps
-            template[f"{trg}/DATA[legend]/DATA[data]/@IMAGE_VERSION"] = "1.2"
-            template[f"{trg}/DATA[legend]/DATA[data]/@SUBCLASS_VERSION"] = np.int64(15)
+            template[f"{lgd}/@signal"] = "data"
+            template[f"{lgd}/@axes"] = ["axis_y", "axis_x"]
+            template[f"{lgd}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
+            template[f"{lgd}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
+            template[f"{lgd}/data"] = {"compress": img, "strength": 1}
+            template[f"{lgd}/data/@CLASS"] = f"IMAGE"  # required by H5Web to plot RGB maps
+            template[f"{lgd}/data/@IMAGE_VERSION"] = f"1.2"
+            template[f"{lgd}/data/@SUBCLASS_VERSION"] = np.int64(15)
 
-            template[f"{trg}/DATA[legend]/AXISNAME[axis_x]"] \
-                = {"compress": np.asarray(np.linspace(1, np.shape(img)[0], num=np.shape(img)[0], endpoint=True), np.uint32), "strength": 1}
-            template[f"{trg}/DATA[legend]/AXISNAME[axis_x]/@long_name"] = "Pixel along x-axis"
-            template[f"{trg}/DATA[legend]/AXISNAME[axis_x]/@units"] = "px"
-            template[f"{trg}/DATA[legend]/AXISNAME[axis_y]"] \
-                = {"compress": np.asarray(np.linspace(1, np.shape(img)[1], num=np.shape(img)[1], endpoint=True), np.uint32), "strength": 1}
-            template[f"{trg}/DATA[legend]/AXISNAME[axis_y]/@long_name"] = "Pixel along y-axis"
-            template[f"{trg}/DATA[legend]/AXISNAME[axis_y]/@units"] = "px"
+            template[f"{lgd}/AXISNAME[axis_x]"] \
+                = {"compress": np.asarray(np.linspace(1,
+                                                      np.shape(img)[0],
+                                                      num=np.shape(img)[0],
+                                                      endpoint=True), np.uint32),
+                   "strength": 1}
+            template[f"{lgd}/AXISNAME[axis_x]/@long_name"] = "Pixel along x-axis"
+            template[f"{lgd}/AXISNAME[axis_x]/@units"] = "px"
+            template[f"{lgd}/AXISNAME[axis_y]"] \
+                = {"compress": np.asarray(np.linspace(1,
+                                                      np.shape(img)[1],
+                                                      num=np.shape(img)[1],
+                                                      endpoint=True), np.uint32),
+                   "strength": 1}
+            template[f"{lgd}/AXISNAME[axis_y]/@long_name"] = "Pixel along y-axis"
+            template[f"{lgd}/AXISNAME[axis_y]/@units"] = "px"
 
         # call process_roi_ipf_color_key
         return template

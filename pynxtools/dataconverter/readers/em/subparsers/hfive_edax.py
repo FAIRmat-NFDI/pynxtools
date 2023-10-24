@@ -122,7 +122,7 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
             raise ValueError(f"Grid Type {grid_type} is currently not supported !")
         self.tmp[ckey]["grid_type"] = grid_type
         self.tmp[ckey]["s_x"] = read_first_scalar(fp[f"{grp_name}/Step X"])
-        self.tmp[ckey]["s_unit"] = "µm"  # TODO::always micron?
+        self.tmp[ckey]["s_unit"] = "um"  # "µm"  # TODO::always micron?
         self.tmp[ckey]["n_x"] = read_first_scalar(fp[f"{grp_name}/nColumns"])
         self.tmp[ckey]["s_y"] = read_first_scalar(fp[f"{grp_name}/Step Y"])
         self.tmp[ckey]["n_y"] = read_first_scalar(fp[f"{grp_name}/nRows"])
