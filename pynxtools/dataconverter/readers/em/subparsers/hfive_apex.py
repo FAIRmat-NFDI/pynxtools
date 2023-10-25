@@ -233,9 +233,9 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         self.tmp[ckey]["scan_point_x"] = np.asarray(
             np.linspace(0, self.tmp[ckey]["n_x"] - 1,
                         num=self.tmp[ckey]["n_x"],
-                        endpoint=True) * self.tmp[ckey]["s_x"] + 0., np.float32)
+                        endpoint=True) * self.tmp[ckey]["s_x"], np.float32)
 
         self.tmp[ckey]["scan_point_y"] = np.asarray(
             np.linspace(0, self.tmp[ckey]["n_y"] - 1,
                         num=self.tmp[ckey]["n_y"],
-                        endpoint=True) * self.tmp[ckey]["s_y"] + 0., np.float32)
+                        endpoint=True) * self.tmp[ckey]["s_y"], np.float32)

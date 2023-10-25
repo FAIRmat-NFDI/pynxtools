@@ -13,7 +13,8 @@
 
 # Examples="207_2081.edaxh5"
 # Examples="173_0057.h5oina"
-Examples="229_2097.oh5"
+# oxford, bruker, britton, edax old noncali, edax old calib, apex
+Examples="173_0057.h5oina 130_0003.h5 088_0009.h5 116_0014.h5 229_2097.oh5 207_2081.edaxh5"
 for example in $Examples; do
 	echo $example
 	dataconverter --reader em --nxdl NXroot --input-file $example --output debug.$example.nxs 1>stdout.$example.nxs.txt 2>stderr.$example.nxs.txt

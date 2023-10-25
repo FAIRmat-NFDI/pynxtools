@@ -232,6 +232,10 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
         self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"], np.int32)
 
+        # normalize pixel coordinates to physical positions even though the origin can still dangle somewhere
+        # expected is order on x is first all possible x values while y == 0
+        # followed by as many copies of this linear sequence for each y increment
+        # no action needed Oxford reports already the pixel coordinate multiplied by step
         # X, no, H5T_NATIVE_FLOAT, (size, 1), X position of each pixel in micrometers (origin: top left corner)
         self.tmp[ckey]["scan_point_x"] = np.asarray(fp[f"{grp_name}/X"], np.float32)
         # inconsistency f32 in file although specification states float

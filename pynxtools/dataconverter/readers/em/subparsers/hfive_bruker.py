@@ -107,16 +107,16 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
         if f"{grp_name}" not in fp:
             raise ValueError(f"Unable to parse {grp_name} !")
 
-        req_fields = ["NCOLS", "NROWS", "SEPixelSizeX", "SEPixelSizeY"]
+        req_fields = ["NCOLS", "NROWS", "XSTEP", "YSTEP"]
         for req_field in req_fields:
             if f"{grp_name}/{req_field}" not in fp:
                 raise ValueError(f"Unable to parse {grp_name}/{req_field} !")
 
         self.tmp[ckey]["n_x"] = fp[f"{grp_name}/NCOLS"][()]
         self.tmp[ckey]["n_y"] = fp[f"{grp_name}/NROWS"][()]
-        self.tmp[ckey]["s_x"] = fp[f"{grp_name}/SEPixelSizeX"][()]
+        self.tmp[ckey]["s_x"] = fp[f"{grp_name}/XSTEP"][()]
         self.tmp[ckey]["s_unit"] = "um"  # "µm"  # TODO::always micron?
-        self.tmp[ckey]["s_y"] = fp[f"{grp_name}/SEPixelSizeY"][()]
+        self.tmp[ckey]["s_y"] = fp[f"{grp_name}/YSTEP"][()]
         # TODO::check that all data are consistent
         # TODO::what is y and x depends on coordinate system
 
@@ -189,7 +189,7 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
         if f"{grp_name}" not in fp:
             raise ValueError(f"Unable to parse {grp_name} !")
 
-        req_fields = ["phi1", "PHI", "phi2", "Phase", "X SAMPLE", "Y SAMPLE", "MAD"]
+        req_fields = ["phi1", "PHI", "phi2", "Phase", "MAD"]
         for req_field in req_fields:
             if f"{grp_name}/{req_field}" not in fp:
                 raise ValueError(f"Unable to parse {grp_name}/{req_field} !")
@@ -219,19 +219,22 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
         else:
             raise ValueError(f"{grp_name}/Phase has unexpected shape !")
 
-        # X
-        if np.shape(fp[f"{grp_name}/X SAMPLE"][:])[0] == n_pts:
-            self.tmp[ckey]["scan_point_x"] \
-                = np.asarray(fp[f"{grp_name}/X SAMPLE"][:], np.float32)
-        else:
-            raise ValueError(f"{grp_name}/X SAMPLE has unexpected shape !")
-
-        # Y
-        if np.shape(fp[f"{grp_name}/Y SAMPLE"][:])[0] == n_pts:
-            self.tmp[ckey]["scan_point_y"] \
-                = np.asarray(fp[f"{grp_name}/Y SAMPLE"], np.float32)
-        else:
-            raise ValueError(f"{grp_name}/Y SAMPLE has unexpected shape !")
+        # X and Y
+        # there is X SAMPLE and Y SAMPLE but these are not defined somewhere instead
+        # here adding x and y assuming that we scan first lines along positive x and then
+        # moving downwards along +y
+        self.tmp[ckey]["scan_point_x"] \
+            = np.asarray(np.tile(np.linspace(0.,
+                                             self.tmp[ckey]["n_x"] - 1.,
+                                             num=self.tmp[ckey]["n_x"],
+                                             endpoint=True) * self.tmp[ckey]["s_x"],
+                                             self.tmp[ckey]["n_y"]), np.float32)
+        self.tmp[ckey]["scan_point_y"] \
+            = np.asarray(np.repeat(np.linspace(0.,
+                                               self.tmp[ckey]["n_y"] - 1.,
+                                               num=self.tmp[ckey]["n_y"],
+                                               endpoint=True) * self.tmp[ckey]["s_y"],
+                                               self.tmp[ckey]["n_x"]), np.float32)
 
         # Band Contrast is not stored in Bruker but Radon Quality or MAD
         # but this is s.th. different as it is the mean angular deviation between

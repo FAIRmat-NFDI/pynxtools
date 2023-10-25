@@ -163,6 +163,12 @@ class NxEmNxsHfiveSubParser:
         self.process_roi_ebsd_maps(inp, template)
         return template
 
+    def get_named_axis(self, inp: dict, dim_name: str):
+        return np.asarray(np.linspace(0,
+                                      inp[f"n_{dim_name}"] - 1,
+                                      num=inp[f"n_{dim_name}"],
+                                      endpoint=True) * inp[f"s_{dim_name}"], np.float32)
+
     def process_roi_overview(self, inp: dict, template: dict) -> dict:
         for ckey in inp.keys():
             if ckey.startswith("ebsd") and inp[ckey] != {}:
@@ -180,6 +186,7 @@ class NxEmNxsHfiveSubParser:
         # prfx = f"/roi{roi_id}"
         trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/DATA[roi]"
         template[f"{trg}/title"] = f"Region-of-interest overview image"
+        template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
         template[f"{trg}/@signal"] = "data"
         template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
         template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
@@ -198,20 +205,23 @@ class NxEmNxsHfiveSubParser:
             raise ValueError(f"{__name__} unable to generate plot for {trg} !")
         # 0 is y while 1 is x !
         template[f"{trg}/data/@long_name"] = f"Signal"
-        template[f"{trg}/data/@CLASS"] = "IMAGE"  # required by H5Web to plot RGB maps
+        template[f"{trg}/data/@CLASS"] = "IMAGE"  # required H5Web, RGB map
         template[f"{trg}/data/@IMAGE_VERSION"] = f"1.2"
         template[f"{trg}/data/@SUBCLASS_VERSION"] = np.int64(15)
 
+        scan_unit = inp["s_unit"]
+        if scan_unit == "um":
+            scan_unit = "µm"
         template[f"{trg}/AXISNAME[axis_x]"] \
-            = {"compress": np.asarray(inp["scan_point_x"], np.float32), "strength": 1}
+            = {"compress": self.get_named_axis(inp, "x"), "strength": 1}
         template[f"{trg}/AXISNAME[axis_x]/@long_name"] \
-            = f"Coordinate along x-axis ({inp['s_unit']})"
-        template[f"{trg}/AXISNAME[axis_x]/@units"] = f"{inp['s_unit']}"
+            = f"Coordinate along x-axis ({scan_unit})"
+        template[f"{trg}/AXISNAME[axis_x]/@units"] = f"{scan_unit}"
         template[f"{trg}/AXISNAME[axis_y]"] \
-            = {"compress": np.asarray(inp["scan_point_y"], np.float32), "strength": 1}
+            = {"compress": self.get_named_axis(inp, "y"), "strength": 1}
         template[f"{trg}/AXISNAME[axis_y]/@long_name"] \
-            = f"Coordinate along y-axis ({inp['s_unit']})"
-        template[f"{trg}/AXISNAME[axis_y]/@units"] =  f"{inp['s_unit']}"
+            = f"Coordinate along y-axis ({scan_unit})"
+        template[f"{trg}/AXISNAME[axis_y]/@units"] =  f"{scan_unit}"
         return template
 
     def process_roi_ebsd_maps(self, inp: dict, template: dict) -> dict:
@@ -227,14 +237,19 @@ class NxEmNxsHfiveSubParser:
         """Process crystal orientation map from normalized orientation data."""
         # for NeXus to create a default representation of the EBSD map to explore
         self.xmap = None
+        self.axis_x = None
+        self.axis_y = None
         if np.max((inp["n_x"], inp["n_y"])) < HFIVE_WEB_MAXIMUM_RGB:
             # can use the map discretization as is
             coordinates, _ = create_coordinate_arrays(
                 (inp["n_y"], inp["n_x"]), (inp["s_y"], inp["s_x"]))
             xaxis = coordinates["x"]
             yaxis = coordinates["y"]
-            print(f"xmi {np.min(xaxis)}, xmx {np.max(xaxis)}, ymi {np.min(yaxis)}, ymx {np.max(yaxis)}")
+            print(f"xmi {np.min(xaxis)}, xmx {np.max(xaxis)}, " \
+                  f"ymi {np.min(yaxis)}, ymx {np.max(yaxis)}")
             del coordinates
+            self.axis_x = self.get_named_axis(inp, "x")
+            self.axis_y = self.get_named_axis(inp, "y")
         else:
             raise ValueError(f"Downsampling for too large EBSD maps is currently not supported !")
             # need to regrid to downsample too large maps
@@ -359,6 +374,7 @@ class NxEmNxsHfiveSubParser:
             mpp = f"{trg}/DATA[map]"
             template[f"{mpp}/title"] \
                 = f"Inverse pole figure {projection_directions[idx][0]} {phase_name}"
+            template[f"{mpp}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
             template[f"{mpp}/@signal"] = "data"
             template[f"{mpp}/@axes"] = ["axis_y", "axis_x"]
             template[f"{mpp}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
@@ -368,22 +384,24 @@ class NxEmNxsHfiveSubParser:
             template[f"{mpp}/DATA[data]/@IMAGE_VERSION"] = "1.2"
             template[f"{mpp}/DATA[data]/@SUBCLASS_VERSION"] = np.int64(15)
 
-            template[f"{mpp}/AXISNAME[axis_x]"] \
-                = {"compress": np.asarray(self.xmap.x, np.float32), "strength": 1}
+            scan_unit = self.xmap.scan_unit
+            if scan_unit == "um":
+                scan_unit = "µm"
+            template[f"{mpp}/AXISNAME[axis_x]"] = {"compress": self.axis_x, "strength": 1}
             template[f"{mpp}/AXISNAME[axis_x]/@long_name"] \
-                = f"Coordinate along x-axis ({self.xmap.scan_unit})"
-            template[f"{mpp}/AXISNAME[axis_x]/@units"] = f"{self.xmap.scan_unit}"
-            template[f"{mpp}/AXISNAME[axis_y]"] \
-                = {"compress": np.asarray(self.xmap.y, np.float32), "strength": 1}
+                = f"Coordinate along x-axis ({scan_unit})"
+            template[f"{mpp}/AXISNAME[axis_x]/@units"] = f"{scan_unit}"
+            template[f"{mpp}/AXISNAME[axis_y]"] = {"compress": self.axis_y, "strength": 1}
             template[f"{mpp}/AXISNAME[axis_y]/@long_name"] \
-                = f"Coordinate along y-axis ({self.xmap.scan_unit})"
-            template[f"{mpp}/AXISNAME[axis_y]/@units"] = f"{self.xmap.scan_unit}"
+                = f"Coordinate along y-axis ({scan_unit})"
+            template[f"{mpp}/AXISNAME[axis_y]/@units"] = f"{scan_unit}"
 
             # add the IPF color map legend/key
             lgd = f"{trg}/DATA[legend]"
             template[f"{lgd}/title"] \
                 = f"Inverse pole figure {projection_directions[idx][0]} {phase_name}"
             # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
+            template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
             template[f"{lgd}/@signal"] = "data"
             template[f"{lgd}/@axes"] = ["axis_y", "axis_x"]
             template[f"{lgd}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
@@ -394,17 +412,17 @@ class NxEmNxsHfiveSubParser:
             template[f"{lgd}/data/@SUBCLASS_VERSION"] = np.int64(15)
 
             template[f"{lgd}/AXISNAME[axis_x]"] \
-                = {"compress": np.asarray(np.linspace(1,
-                                                      np.shape(img)[0],
-                                                      num=np.shape(img)[0],
+                = {"compress": np.asarray(np.linspace(0,
+                                                      np.shape(img)[1] - 1,
+                                                      num=np.shape(img)[1],
                                                       endpoint=True), np.uint32),
                    "strength": 1}
             template[f"{lgd}/AXISNAME[axis_x]/@long_name"] = "Pixel along x-axis"
             template[f"{lgd}/AXISNAME[axis_x]/@units"] = "px"
             template[f"{lgd}/AXISNAME[axis_y]"] \
-                = {"compress": np.asarray(np.linspace(1,
-                                                      np.shape(img)[1],
-                                                      num=np.shape(img)[1],
+                = {"compress": np.asarray(np.linspace(0,
+                                                      np.shape(img)[0] - 1,
+                                                      num=np.shape(img)[0],
                                                       endpoint=True), np.uint32),
                    "strength": 1}
             template[f"{lgd}/AXISNAME[axis_y]/@long_name"] = "Pixel along y-axis"

@@ -224,7 +224,26 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
             self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"][:], np.int32)
         # promoting int8 to int32 no problem
         self.tmp[ckey]["ci"] = np.asarray(fp[f"{grp_name}/CI"][:], np.float32)
-        self.tmp[ckey]["scan_point_x"] = np.asarray(
-                fp[f"{grp_name}/X Position"][:] * self.tmp[ckey]["s_x"] + 0., np.float32)
-        self.tmp[ckey]["scan_point_y"] = np.asarray(
-                fp[f"{grp_name}/Y Position"][:] * self.tmp[ckey]["s_y"] + 0., np.float32)
+        # normalize pixel coordinates to physical positions even though the origin can still dangle somewhere
+        # expected is order on x is first all possible x values while y == 0
+        # followed by as many copies of this linear sequence for each y increment
+        # tricky situation is that for one version pixel coordinates while in another case
+        # calibrated e.g. micron coordinates are reported that is in the first case px needs
+        # multiplication with step size in the other one must not multiple with step size
+        # as the step size has already been accounted for by the tech partner when writing!
+        if self.version["schema_version"] in ["OIM Analysis 8.5.1002 x64 [07-17-20]"]:
+            print(f"{self.version['schema_version']}, tech partner accounted for calibration")
+            self.tmp[ckey]["scan_point_x"] \
+                = np.asarray(fp[f"{grp_name}/X Position"][:], np.float32)
+            self.tmp[ckey]["scan_point_y"] \
+                = np.asarray(fp[f"{grp_name}/Y Position"][:], np.float32)
+        else:
+            print(f"{self.version['schema_version']}, parser has to do the calibration")
+            self.tmp[ckey]["scan_point_x"] = np.asarray(
+                    fp[f"{grp_name}/X Position"][:] * self.tmp[ckey]["s_x"], np.float32)
+            self.tmp[ckey]["scan_point_y"] = np.asarray(
+                    fp[f"{grp_name}/Y Position"][:] * self.tmp[ckey]["s_y"], np.float32)
+        print(f"xmin {np.min(self.tmp[ckey]['scan_point_x'])}," \
+              f"xmax {np.max(self.tmp[ckey]['scan_point_x'])}," \
+              f"ymin {np.min(self.tmp[ckey]['scan_point_y'])}," \
+              f"ymax {np.max(self.tmp[ckey]['scan_point_y'])}")
