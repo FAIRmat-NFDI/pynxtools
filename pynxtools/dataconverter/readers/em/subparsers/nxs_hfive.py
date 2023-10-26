@@ -47,11 +47,13 @@ from orix import plot
 from orix.crystal_map import create_coordinate_arrays, CrystalMap, PhaseList
 from orix.quaternion import Rotation
 from orix.vector import Vector3d
+from scipy.spatial import KDTree
 
 import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
-from pynxtools.dataconverter.readers.em.utils.hfive_web_constants import HFIVE_WEB_MAXIMUM_RGB
+from pynxtools.dataconverter.readers.em.utils.hfive_web_constants \
+    import HFIVE_WEB_MAXIMUM_ROI, HFIVE_WEB_MAXIMUM_RGB
 from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
@@ -182,8 +184,10 @@ class NxEmNxsHfiveSubParser:
                                         roi_id: str,
                                         template: dict) -> dict:
         print("Parse ROI default plot...")
-        # prfx = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/region_of_interest/roi{roi_id}"
-        # prfx = f"/roi{roi_id}"
+        if np.max((inp["n_x"], inp["n_y"])) > HFIVE_WEB_MAXIMUM_ROI:
+            raise ValueError(f"Plotting roi_overviews larger than " \
+                             f"{HFIVE_WEB_MAXIMUM_ROI} is not supported !")
+
         trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/DATA[roi]"
         template[f"{trg}/title"] = f"Region-of-interest overview image"
         template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
@@ -239,7 +243,78 @@ class NxEmNxsHfiveSubParser:
         self.xmap = None
         self.axis_x = None
         self.axis_y = None
-        if np.max((inp["n_x"], inp["n_y"])) < HFIVE_WEB_MAXIMUM_RGB:
+
+        print(f"Unique phase_identifier {np.unique(inp['phase_id'])}")
+        min_phase_id = np.min(np.unique(inp["phase_id"]))
+
+        if np.max((inp["n_x"], inp["n_y"])) > HFIVE_WEB_MAXIMUM_RGB:
+            # assume center of mass of the scan points
+            # TODO::check if mapping correct for hexagonal and square grid
+            aabb = [np.min(inp["scan_point_x"]) - 0.5 * inp["s_x"],
+                    np.max(inp["scan_point_x"]) + 0.5 * inp["s_x"],
+                    np.min(inp["scan_point_y"]) - 0.5 * inp["s_y"],
+                    np.max(inp["scan_point_y"]) + 0.5 * inp["s_y"]]
+            print(f"{aabb}")
+            if aabb[1] - aabb[0] >= aabb[3] - aabb[2]:
+                sqr_step_size = (aabb[1] - aabb[0]) / HFIVE_WEB_MAXIMUM_RGB
+                nxy = [HFIVE_WEB_MAXIMUM_RGB,
+                       int(np.ceil((aabb[3] - aabb[2]) / sqr_step_size))]
+            else:
+                sqr_step_size = (aabb[3] - aabb[2]) / HFIVE_WEB_MAXIMUM_RGB
+                nxy = [int(np.ceil((aabb[1] - aabb[0]) / sqr_step_size)),
+                       HFIVE_WEB_MAXIMUM_RGB]
+            print(f"H5Web default plot generation, scaling nxy0 {[inp['n_x'], inp['n_y']]}, nxy {nxy}")
+            # the above estimate is not exactly correct (may create a slight real space shift)
+            # of the EBSD map TODO:: regrid the real world axis-aligned bounding box aabb with
+            # a regular tiling of squares or hexagons
+            # https://stackoverflow.com/questions/18982650/differences-between-matlab-and-numpy-and-pythons-round-function
+            # MTex/Matlab round not exactly the same as numpy round but reasonably close
+
+            # scan point positions were normalized by tech partner subparsers such that they
+            # always build on pixel coordinates calibrated for step size not by giving absolute positions
+            # in the sample surface frame of reference as this is typically not yet consistently documented
+            # because we assume in addition that we always start at the top left corner the zeroth/first
+            # coordinate is always 0., 0. !
+            xy = np.column_stack(
+                (np.tile(np.linspace(0, nxy[0] - 1, num=nxy[0], endpoint=True) * sqr_step_size, nxy[1]),
+                np.repeat(np.linspace(0, nxy[1] - 1, num=nxy[1], endpoint=True) * sqr_step_size, nxy[0])))
+            print(f"xy {xy}, shape {np.shape(xy)}")
+            tree = KDTree(np.column_stack((inp["scan_point_x"], inp["scan_point_y"])))
+            d, idx = tree.query(xy, k=1)
+            if np.sum(idx == tree.n) > 0:
+                raise ValueError(f"kdtree query left some query points without a neighbor!")
+            del d
+            del tree
+            pyxem_euler = np.zeros((np.shape(xy)[0], 3), np.float32)
+            pyxem_euler = np.nan
+            pyxem_euler = inp["euler"][idx, :]
+            if np.isnan(pyxem_euler).any() is True:
+                raise ValueError(f"Downsampling of the EBSD map left pixels without euler!")
+            phase_new = np.zeros((np.shape(xy)[0],), np.int32) - 2
+            phase_new = inp["phase_id"][idx]
+            if np.sum(phase_new == -2) > 0:
+                raise ValueError(f"Downsampling of the EBSD map left pixels without euler!")
+            del xy
+
+            if min_phase_id > 0:
+                pyxem_phase_id = phase_new - min_phase_id
+            elif min_phase_id == 0:
+                pyxem_phase_id = phase_new - 1
+            else:
+                raise ValueError(f"Unable how to deal with unexpected phase_identifier!")
+            del phase_new
+
+            coordinates, _ = create_coordinate_arrays(
+                (nxy[1], nxy[0]), (sqr_step_size, sqr_step_size))
+            xaxis = coordinates["x"]
+            yaxis = coordinates["y"]
+            print(f"coordinates" \
+                  f"xmi {np.min(xaxis)}, xmx {np.max(xaxis)}, " \
+                  f"ymi {np.min(yaxis)}, ymx {np.max(yaxis)}")
+            del coordinates
+            self.axis_x = np.linspace(0, nxy[0] - 1, num=nxy[0], endpoint=True) * sqr_step_size
+            self.axis_y = np.linspace(0, nxy[1] - 1, num=nxy[1], endpoint=True) * sqr_step_size
+        else:
             # can use the map discretization as is
             coordinates, _ = create_coordinate_arrays(
                 (inp["n_y"], inp["n_x"]), (inp["s_y"], inp["s_x"]))
@@ -250,35 +325,27 @@ class NxEmNxsHfiveSubParser:
             del coordinates
             self.axis_x = self.get_named_axis(inp, "x")
             self.axis_y = self.get_named_axis(inp, "y")
-        else:
-            raise ValueError(f"Downsampling for too large EBSD maps is currently not supported !")
-            # need to regrid to downsample too large maps
-            # TODO::implement 1NN-based downsampling approach
-            #       build grid
-            #       tree-based 1NN
-            #       proceed as usual
 
-        # TODO::there was one example 093_0060.h5oina
-        # where HitRate was 75% but no pixel left unidentified ??
-        print(f"Unique phase_identifier {np.unique(inp['phase_id'])}")
-        min_phase_id = np.min(np.unique(inp["phase_id"]))
-        if min_phase_id > 0:
-            pyxem_phase_identifier = inp["phase_id"] - min_phase_id
-        elif min_phase_id == 0:
-            pyxem_phase_identifier = inp["phase_id"] - 1
-        else:
-            raise ValueError(f"Unable how to deal with unexpected phase_identifier!")
+            pyxem_euler = inp["euler"]
+            # TODO::there was one example 093_0060.h5oina
+            # where HitRate was 75% but no pixel left unidentified ??
+            if min_phase_id > 0:
+                pyxem_phase_id = inp["phase_id"] - min_phase_id
+            elif min_phase_id == 0:
+                pyxem_phase_id = inp["phase_id"] - 1
+            else:
+                raise ValueError(f"Unable how to deal with unexpected phase_identifier!")
+
         # inp["phase_id"] - (np.min(inp["phase_id"]) - (-1))
         # for pyxem the non-indexed has to be -1 instead of 0 which is what NeXus uses
         # -1 always because content of inp["phase_id"] is normalized
         # to NeXus NXem_ebsd_crystal_structure concept already!
-        print(f"Unique pyxem_phase_identifier {np.unique(pyxem_phase_identifier)}")
-
-        self.xmap = CrystalMap(rotations=Rotation.from_euler(euler=inp["euler"],
+        print(f"Unique pyxem_phase_id {np.unique(pyxem_phase_id)}")
+        self.xmap = CrystalMap(rotations=Rotation.from_euler(euler=pyxem_euler,
                                                              direction='lab2crystal',
                                                              degrees=False),
                                x=xaxis, y=yaxis,
-                               phase_id=pyxem_phase_identifier,
+                               phase_id=pyxem_phase_id,
                                phase_list=PhaseList(space_groups=inp["space_group"],
                                                     structures=inp["phase"]),
                                prop={},
@@ -312,8 +379,24 @@ class NxEmNxsHfiveSubParser:
             # phase_id of pyxem notIndexed is -1 while for NeXus
             # it is 0 so add + 1 in naming schemes
             trg = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{pyxem_phase_id + 1}]"
+
+            min_phase_id = np.min(np.unique(inp["phase_id"]))
+            if min_phase_id > 0:
+                pyx_phase_id = inp["phase_id"] - min_phase_id
+            elif min_phase_id == 0:
+                pyx_phase_id = inp["phase_id"] - 1
+            else:
+                raise ValueError(f"Unable how to deal with unexpected phase_identifier!")
+            del min_phase_id
+
             template[f"{trg}/number_of_scan_points"] \
-                = np.uint32(np.sum(self.xmap.phase_id == pyxem_phase_id))
+                = np.uint32(np.sum(pyx_phase_id == pyxem_phase_id))
+            del pyx_phase_id
+            # not self.xmap.phase_id because in NeXus the number_of_scan_points is always
+            # accounting for the original map size and not the potentially downscaled version
+            # of the map as the purpose of the later one is exclusively to show a plot at all
+            # because of a technical limitation of H5Web if there would be a tool that
+            # could show larger RGB plots we would not need to downscale the EBSD map resolution!
             template[f"{trg}/phase_identifier"] = np.uint32(pyxem_phase_id + 1)
             template[f"{trg}/phase_name"] \
                 = f"{inp['phases'][pyxem_phase_id + 1]['phase_name']}"

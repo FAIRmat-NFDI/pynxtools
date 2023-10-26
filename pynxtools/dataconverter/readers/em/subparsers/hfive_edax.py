@@ -36,7 +36,7 @@ from orix.vector import Vector3d
 import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
-from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
+from pynxtools.dataconverter.readers.em.utils.hfive_utils import EULER_SPACE_SYMMETRY, \
     read_strings_from_dataset, read_first_scalar, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
     ASSUME_PHASE_NAME_TO_SPACE_GROUP
@@ -164,6 +164,7 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
                     angles = [fp[f"{sub_grp_name}/Lattice Constant alpha"][()],
                               fp[f"{sub_grp_name}/Lattice Constant beta"][()],
                               fp[f"{sub_grp_name}/Lattice Constant gamma"][()]]
+                    # TODO::available examples support reporting in angstroem and degree
                     self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] \
                         = np.asarray(a_b_c, np.float32) * 0.1
                     self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] \
@@ -209,6 +210,12 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
 
         n_pts = self.tmp[ckey]["n_x"] * self.tmp[ckey]["n_y"]
         self.tmp[ckey]["euler"] = np.zeros((n_pts, 3), np.float32)
+        # TODO::available examples support that rumour that in EDAX file sometimes values
+        # of Euler angle triplets are larger than mathematically possible
+        # unfortunately there is no confirmation from EDAX what is the reported unit and
+        # normalization for each software version, TODO::here rad is assumed but then values
+        # as large as 12.... should not be possible
+        # TODO::there has to be a mechanism which treats these dirty scan points!
         self.tmp[ckey]["euler"][:, 0] = np.asarray(fp[f"{grp_name}/Phi1"][:], np.float32)
         self.tmp[ckey]["euler"][:, 1] = np.asarray(fp[f"{grp_name}/Phi"][:], np.float32)
         self.tmp[ckey]["euler"][:, 2] = np.asarray(fp[f"{grp_name}/Phi2"][:], np.float32)
@@ -217,11 +224,19 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
 
         # given no official EDAX OimAnalysis spec we cannot define for sure if
         # phase_id == 0 means just all was indexed with the first/zeroth phase or nothing
-        # was indexed, TODO::assuming it means all indexed:
+        # was indexed, TODO::assuming it means all indexed with first phase:
         if np.all(fp[f"{grp_name}/Phase"][:] == 0):
             self.tmp[ckey]["phase_id"] = np.zeros(n_pts, np.int32) + 1
         else:
             self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"][:], np.int32)
+        # TODO::mark scan points as dirty
+        # the line below shows an example how this could be achieved
+        # is_dirty = np.zeros((n_pts,), bool)
+        # for column_id in [0, 1, 2]:
+        #    is_dirty = is_dirty & np.abs(self.tmp[ckey]["euler"][:, column_id]) > EULER_SPACE_SYMMETRY
+        # print(f"Found {np.sum(is_dirty)} scan points which are marked now as dirty!")
+        # self.tmp[ckey]["phase_id"][is_dirty] = 0
+
         # promoting int8 to int32 no problem
         self.tmp[ckey]["ci"] = np.asarray(fp[f"{grp_name}/CI"][:], np.float32)
         # normalize pixel coordinates to physical positions even though the origin can still dangle somewhere

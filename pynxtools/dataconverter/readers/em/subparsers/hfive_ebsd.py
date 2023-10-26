@@ -152,6 +152,7 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
                 values = np.asarray(fp[f"{sub_grp_name}/LatticeConstants"][:].flatten())
                 a_b_c = values[0:3]
                 angles = values[3:6]
+                # TODO::available examples support that community H5EBSD reports lattice constants in angstroem
                 self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] = a_b_c * 0.1
                 self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] = angles
 
@@ -205,15 +206,12 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
             self.tmp[ckey]["euler"] = np.zeros((n_pts[0], 3), np.float32)
             column_id = 0
             for angle in ["phi1", "PHI", "phi2"]:
+                # TODO::available examples support that community H5EBSD reports Euler triplets in degree
                 self.tmp[ckey]["euler"][:, column_id] \
-                    = np.asarray(fp[f"{grp_name}/{angle}"][:], np.float32)
+                    = np.asarray(fp[f"{grp_name}/{angle}"][:], np.float32) / 180. * np.pi
                 column_id += 1
             self.tmp[ckey]["euler"] = format_euler_parameterization(self.tmp[ckey]["euler"])
             n_pts = n_pts[0]
-        # inconsistency f32 in file although specification states float
-        # Rotation.from_euler(euler=fp[f"{grp_name}/Euler"],
-        #                                 direction='lab2crystal',
-        #                                degrees=is_degrees)
 
         # index of phase, 0 if not indexed
         # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0

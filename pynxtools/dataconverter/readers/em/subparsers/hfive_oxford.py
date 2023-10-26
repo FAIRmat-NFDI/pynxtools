@@ -36,7 +36,8 @@ from orix.vector import Vector3d
 import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
-from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
+from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
+    read_strings_from_dataset, format_euler_parameterization
 
 
 class HdfFiveOxfordReader(HdfFiveBaseParser):
@@ -171,17 +172,17 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
                     = read_strings_from_dataset(fp[f"{sub_grp_name}/Reference"][()])
 
                 # Lattice Angles, yes, H5T_NATIVE_FLOAT, (1, 3), Three columns for the alpha, beta and gamma angles in radians
-                is_degrees = False
                 if read_strings_from_dataset(fp[f"{sub_grp_name}/Lattice Angles"].attrs["Unit"]) == "rad":
-                    is_degrees = False
-                angles = np.asarray(fp[f"{sub_grp_name}/Lattice Angles"][:].flatten()) / np.pi * 180.
+                    angles = np.asarray(fp[f"{sub_grp_name}/Lattice Angles"][:].flatten())
+                else:
+                    raise ValueError(f"Unexpected case that Lattice Angles are not reported in rad !")
                 self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] = angles
 
                 # Lattice Dimensions, yes, H5T_NATIVE_FLOAT, (1, 3), Three columns for a, b and c dimensions in Angstroms
-                is_nanometer = False
                 if read_strings_from_dataset(fp[f"{sub_grp_name}/Lattice Dimensions"].attrs["Unit"]) == "angstrom":
-                    is_nanometer = False
-                a_b_c = np.asarray(fp[f"{sub_grp_name}/Lattice Dimensions"][:].flatten()) * 0.1
+                    a_b_c = np.asarray(fp[f"{sub_grp_name}/Lattice Dimensions"][:].flatten()) * 0.1
+                else:
+                    raise ValueError(f"Unexpected case that Lattice Dimensions are not reported in angstroem !")
                 self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] = a_b_c
 
                 # Space Group, no, H5T_NATIVE_INT32, (1, 1), Space group index.
@@ -216,17 +217,11 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
                 raise ValueError(f"Unable to parse {grp_name}/{req_field} !")
 
         # Euler, yes, H5T_NATIVE_FLOAT, (size, 3), Orientation of Crystal (CS2) to Sample-Surface (CS1).
-        is_degrees = False
-        is_negative = False
         if read_strings_from_dataset(fp[f"{grp_name}/Euler"].attrs["Unit"]) == "rad":
-            is_degrees = False
-        self.tmp[ckey]["euler"] = np.asarray(fp[f"{grp_name}/Euler"], np.float32)
-        # TODO::handle possible case of negative Euler angles (examples though do not indicate)
-        # that AZTec reports negative Euler angles...
-        # inconsistency f32 in file although specification states float
-        # Rotation.from_euler(euler=fp[f"{grp_name}/Euler"],
-        #                                 direction='lab2crystal',
-        #                                degrees=is_degrees)
+            self.tmp[ckey]["euler"] = np.asarray(fp[f"{grp_name}/Euler"], np.float32)
+        else:
+            raise ValueError(f"Unexpected case that Euler angle are not reported in rad !")
+        self.tmp[ckey]["euler"] = format_euler_parameterization(self.tmp[ckey]["euler"])
 
         # Phase, yes, H5T_NATIVE_INT32, (size, 1), Index of phase, 0 if not indexed
         # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0

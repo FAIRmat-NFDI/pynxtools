@@ -28,14 +28,14 @@ import orix
 from diffpy.structure import Lattice, Structure
 from orix import plot
 from orix.crystal_map import create_coordinate_arrays, CrystalMap, PhaseList
-from orix.quaternion import Rotation
+from orix.quaternion import Rotation, Orientation
 from orix.vector import Vector3d
 
 import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
-    read_strings_from_dataset, read_first_scalar, format_euler_parameterization
+    read_strings_from_dataset
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
     ASSUME_PHASE_NAME_TO_SPACE_GROUP
 
@@ -164,6 +164,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                 angles = [fp[f"{sub_grp_name}/Lattice Constant Alpha"][0],
                             fp[f"{sub_grp_name}/Lattice Constant Beta"][0],
                             fp[f"{sub_grp_name}/Lattice Constant Gamma"][0]]
+                # TODO::available examples support reporting in angstroem and degree
                 self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] \
                     = np.asarray(a_b_c, np.float32) * 0.1
                 self.tmp[ckey]["phases"][int(phase_id)]["alpha_beta_gamma"] \
@@ -210,21 +211,16 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
 
         for i in np.arange(0, n_pts):
             # check shape of internal virtual chunked number array
-            r = Rotation.from_matrix([np.reshape(dat[i][0], (3, 3))])
-            self.tmp[ckey]["euler"][i, :] = r.to_euler(degrees=False)
+            oris = Orientation.from_matrix([np.reshape(dat[i][0], (3, 3))])
+            self.tmp[ckey]["euler"][i, :] = oris.to_euler(degrees=False)
             self.tmp[ckey]["ci"][i] = dat[i][2]
             self.tmp[ckey]["phase_id"][i] = dat[i][3] + 1  # APEX seems to define
             # notIndexed as -1 and the first valid phase id 0
-
-
+        if np.isnan(self.tmp[ckey]["euler"]).any():
+            raise ValueError(f"Conversion of om2eu unexpectedly resulted in NaN !")
         # TODO::convert orientation matrix to Euler angles via om_eu but what are conventions !
         # orix based transformation ends up in positive half space and with degrees=False
         # as radiants but the from_matrix command above might miss one rotation
-
-        # inconsistency f32 in file although specification states float
-        # Rotation.from_euler(euler=fp[f"{grp_name}/Euler"],
-        #                                 direction='lab2crystal',
-        #                                degrees=is_degrees)
 
         # compute explicit hexagon grid cells center of mass pixel positions
         # TODO::currently assuming s_x and s_y are already the correct center of mass

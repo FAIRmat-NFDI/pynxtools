@@ -37,26 +37,22 @@ EBSD_MAP_SPACEGROUP = {"P 6#sub3mc": 186,
 
 DIRTY_FIX_SPACEGROUP = {}
 
+EULER_SPACE_SYMMETRY = [2. * np.pi, np.pi, 2. * np.pi]
+
 def format_euler_parameterization(triplet_set):
     """Transform degrees to radiant and apply orientation space symmetry"""
-    is_degrees = False
-    for column_id in [0, 1, 2]:
-        # not robust enough as a single crystal close to the cube orientation
-        # with a very low orientation spread may also have all Euler angle values
-        # smaller than 2pi
-        # TODO::therefore the real specs of each tech partner's format is needed!
-        if np.max(np.abs(triplet_set[:, column_id])) > 2. * np.pi:
-            is_degrees = True
-    if is_degrees is True:
-        for column_id in [0, 1, 2]:
-            triplet_set[:, column_id] = triplet_set[:, column_id] / 180. * np.pi
-
-    sothree_shift = [2. * np.pi, np.pi, 2. * np.pi]
+    # it is not robust in general to judge just from the collection of euler angles
+    # whether they are reported in radiant or degree
+    # indeed an EBSD map of a slightly deformed single crystal close to e.g. the cube ori
+    # can have euler angles for each scan point within pi, 2pi respectively
+    # similarly there was an example in the data 229_2096.oh5 where 3 out of 20.27 mio
+    # scan points where not reported in radiant but rather using 4pi as a marker to indicate
+    # there was a problem with the scan point
     for column_id in [0, 1, 2]:
         here = np.where(triplet_set[:, column_id] < 0.)
         if len(here[0]) > 0:
             triplet_set[here, column_id] \
-                = sothree_shift[column_id] + triplet_set[here, column_id]
+                = EULER_SPACE_SYMMETRY[column_id] + triplet_set[here, column_id]
     return triplet_set
 
 def read_strings_from_dataset(obj):
