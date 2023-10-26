@@ -122,6 +122,8 @@ def convert(input_file: Tuple[str],
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return
 
+    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
+
     for path in data.undocumented.keys():
         if "/@default" in path:
             continue

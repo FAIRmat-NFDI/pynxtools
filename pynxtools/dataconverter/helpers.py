@@ -21,9 +21,11 @@ from typing import List
 from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
 
 import numpy as np
 from ase.data import chemical_symbols
+import h5py
 
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
@@ -583,12 +585,22 @@ def convert_to_hill(atoms_typ):
     return atom_list + list(atoms_typ)
 
 
+def add_default_root_attributes(data, filename):
+    """Takes a dict/Template and adds NXroot fields/attributes that are inherently available"""
+    data["/@NX_class"] = "NXroot"
+    data["/@file_name"] = filename
+    data["/@file_time"] = str(datetime.now(timezone.utc).astimezone())
+    data["/@file_update_time"] = data["/@file_time"]
+    data["/@NeXus_version"] = "NOT_IMPLEMENTED"
+    data["/@HDF5_version"] = '.'.join(map(str, h5py.h5.get_libversion()))  # pylint: disable=c-extension-no-member
+    data["/@h5py_version"] = h5py.__version__
+
+
 def extract_atom_types(formula, mode='hill'):
     """Extract atom types form chemical formula."""
-
     atom_types: set = set()
     element: str = ""
-    # tested with "(C38H54S4)n(NaO2)5(CH4)NH3B"
+
     for char in formula:
         if char.isalpha():
             if char.isupper() and element == "":
