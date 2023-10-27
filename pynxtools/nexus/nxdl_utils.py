@@ -701,6 +701,9 @@ def get_node_at_nxdl_path(nxdl_path: str = None,
     we are looking for or the root elem from a previously loaded NXDL file
     and finds the corresponding XML element with the needed attributes."""
     try:
+        if nxdl_path.count("/") == 1 and nxdl_path not in ("/ENTRY", "/entry"):
+            elem = None
+            nx_name = "NXroot"
         (class_path, nxdlpath, elist) = get_inherited_nodes(nxdl_path, nx_name, elem)
     except ValueError as value_error:
         if exc:

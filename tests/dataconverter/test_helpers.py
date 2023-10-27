@@ -162,6 +162,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DA
 TEMPLATE["lone_groups"] = ['/ENTRY[entry]/required_group',
                            '/ENTRY[entry]/required_group2',
                            '/ENTRY[entry]/optional_parent/req_group_in_opt_group']
+TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 
 
 @pytest.mark.parametrize("data_dict,error_message", [

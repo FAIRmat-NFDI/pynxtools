@@ -131,6 +131,8 @@ def convert(input_file: Tuple[str],
             path
         )
 
+    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
+
     Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
 
     logger.info("The output file generated: %s", output)
