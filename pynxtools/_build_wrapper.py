@@ -1,10 +1,13 @@
+"""
+Build wrapper for setuptools to create a nexus-version.txt file
+containing the nexus definitions verison.
+"""
 import os
-from glob import glob
 from subprocess import CalledProcessError, run
 from typing import Optional
 
 from setuptools import build_meta as _orig
-from setuptools.build_meta import *
+from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 
 def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
@@ -27,7 +30,7 @@ def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
         return None
 
 
-def _write_version_to_metadata(directory: str):
+def _write_version_to_metadata():
     version = get_vcs_version()
     if version is None or not version:
         raise ValueError("Could not determine version from nexus_definitions")
@@ -40,21 +43,24 @@ def _write_version_to_metadata(directory: str):
         file.write(version)
 
 
-def build_editable(wheel_directory, config_settings=None, metadata_directory=None):
-    _write_version_to_metadata(metadata_directory)
-    ret = _orig.build_editable(wheel_directory, config_settings, metadata_directory)
-
-    return ret
-
-
+# pylint: disable=function-redefined
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
-    _write_version_to_metadata(metadata_directory)
+    """
+    PEP 517 compliant build wheel hook.
+    This is a wrapper for setuptools and adds a nexus version file.
+    """
+    _write_version_to_metadata()
     ret = _orig.build_wheel(wheel_directory, config_settings, metadata_directory)
 
     return ret
 
 
+# pylint: disable=function-redefined
 def build_sdist(sdist_directory, config_settings=None):
-    _write_version_to_metadata(os.path.join(os.path.dirname(__file__), "../"))
+    """
+    PEP 517 compliant build sdist hook.
+    This is a wrapper for setuptools and adds a nexus version file.
+    """
+    _write_version_to_metadata()
     sdist_dir = _orig.build_sdist(sdist_directory, config_settings)
     return sdist_dir

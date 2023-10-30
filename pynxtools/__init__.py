@@ -21,6 +21,7 @@
 import os
 from glob import glob
 
+from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
 from pynxtools._build_wrapper import get_vcs_version
 
 
@@ -37,9 +38,7 @@ def get_nexus_version() -> str:
 
     if not os.path.exists(version_file):
         # We are in the limbo, just get the nxdl version from nexus definitions
-        from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
-
         return get_nxdl_version()
 
-    with open(version_file) as vfile:
+    with open(version_file, encoding='utf-8') as vfile:
         return vfile.read().strip()
