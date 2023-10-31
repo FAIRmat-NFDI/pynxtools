@@ -4,10 +4,13 @@ containing the nexus definitions verison.
 """
 import os
 from subprocess import CalledProcessError, run
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from setuptools import build_meta as _orig
 from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
+
+if TYPE_CHECKING:
+    from setuptools_scm import ScmVersion
 
 
 def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
@@ -28,6 +31,13 @@ def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
         )
     except (FileNotFoundError, CalledProcessError):
         return None
+
+
+def _build_version(tag: str, distance: int, node: str, dirty: bool) -> str:
+    if distance == 0 and not dirty:
+        return f"{tag}"
+
+    return f"{tag}.dev{distance}+{'dirty' if dirty else node}"
 
 
 def _write_version_to_metadata():
@@ -64,3 +74,10 @@ def build_sdist(sdist_directory, config_settings=None):
     _write_version_to_metadata()
     sdist_dir = _orig.build_sdist(sdist_directory, config_settings)
     return sdist_dir
+
+
+def construct_version(version: "ScmVersion") -> str:
+    """
+    Constructs the pynxtools version
+    """
+    return _build_version(version.tag, version.distance, version.node, version.dirty)

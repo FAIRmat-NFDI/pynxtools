@@ -20,9 +20,24 @@
 #
 import os
 from glob import glob
+from typing import Union
 
+from pynxtools._build_wrapper import _build_version, get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
-from pynxtools._build_wrapper import get_vcs_version
+
+
+def format_version(version: str) -> str:
+    """
+    Formats the git describe version string into the local format.
+    """
+    version_parts = version.split("-")
+
+    return _build_version(
+        version_parts[0],
+        int(version_parts[1]),
+        version_parts[2],
+        len(version_parts) == 4 and version_parts[3] == "dirty",
+    )
 
 
 def get_nexus_version() -> str:
@@ -31,14 +46,15 @@ def get_nexus_version() -> str:
     based on git tags and commits
     """
     version = get_vcs_version()
+
     if version is not None:
-        return version
+        return format_version(version)
 
     version_file = os.path.join(os.path.dirname(__file__), "nexus-version.txt")
 
     if not os.path.exists(version_file):
         # We are in the limbo, just get the nxdl version from nexus definitions
-        return get_nxdl_version()
+        return format_version(get_nxdl_version())
 
-    with open(version_file, encoding='utf-8') as vfile:
-        return vfile.read().strip()
+    with open(version_file, encoding="utf-8") as vfile:
+        return format_version(vfile.read().strip())
