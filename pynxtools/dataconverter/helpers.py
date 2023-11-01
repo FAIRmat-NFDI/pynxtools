@@ -479,8 +479,8 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
     def raise_required_concept_missing_error(missing_groups_and_fields):
         error = ''
         for concept, path_list in missing_groups_and_fields.items():
-            error = error + f"Required {concept} are not provided: \n"
             if path_list:
+                error = error + f"Required {concept} are not provided: \n"
                 for path in path_list:
                     error = error + f"    \n\u2022{path}\n"
         if error:
