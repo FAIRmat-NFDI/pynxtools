@@ -59,7 +59,7 @@ def get_val_nested_keystring_from_dict(keystring, data):
 
 def is_path(keystring):
     """Checks whether a given value in the mapping is a mapping path or just data"""
-    return isinstance(keystring, str) and keystring[0] == "/"
+    return isinstance(keystring, str) and len(keystring) > 0 and keystring[0] == "/"
 
 
 def fill_undocumented(mapping, template, data):
