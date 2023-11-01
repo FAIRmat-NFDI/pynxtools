@@ -592,6 +592,10 @@ def add_default_root_attributes(data, filename):
     data["/@file_name"] = filename
     data["/@file_time"] = str(datetime.now(timezone.utc).astimezone())
     data["/@file_update_time"] = data["/@file_time"]
+    data["/@NeXus_repository"] = (
+        "https://github.com/FAIRmat-NFDI/nexus_definitions/"
+        f"blob/{get_nexus_version_hash()}"
+    )
     data["/@NeXus_version"] = get_nexus_version()
     data["/@HDF5_version"] = '.'.join(map(str, h5py.h5.get_libversion()))  # pylint: disable=c-extension-no-member
     data["/@h5py_version"] = h5py.__version__

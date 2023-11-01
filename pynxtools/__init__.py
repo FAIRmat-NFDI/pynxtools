@@ -19,11 +19,14 @@
 # limitations under the License.
 #
 import os
+import re
 from glob import glob
 from typing import Union
 
 from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
+
+MAIN_BRANCH_NAME = "fairmat"
 
 
 def _build_version(tag: str, distance: int, node: str, dirty: bool) -> str:
@@ -69,3 +72,15 @@ def get_nexus_version() -> str:
 
     with open(version_file, encoding="utf-8") as vfile:
         return format_version(vfile.read().strip())
+
+
+def get_nexus_version_hash() -> str:
+    """
+    Gets the git hash from the nexus version string
+    """
+    version = re.search(r"g([a-z0-9]+)", get_nexus_version())
+
+    if version is None:
+        return MAIN_BRANCH_NAME
+
+    return version.group(1)

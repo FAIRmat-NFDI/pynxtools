@@ -27,7 +27,7 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
 from pynxtools.dataconverter.helpers import extract_atom_types
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
-from pynxtools import get_nexus_version
+from pynxtools import get_nexus_version, get_nexus_version_hash
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
@@ -470,7 +470,7 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/definition"] = "NXellipsometry"
         template["/ENTRY[entry]/definition/@url"] = (
             "https://github.com/FAIRmat-NFDI/nexus_definitions/"
-            "blob/fairmat/contributed_definitions/NXellipsometry.nxdl.xml"
+            f"blob/{get_nexus_version_hash()}/contributed_definitions/NXellipsometry.nxdl.xml"
         )
         template["/ENTRY[entry]/definition/@version"] = get_nexus_version()
         template["/ENTRY[entry]/program_name"] = "pynxtools"
