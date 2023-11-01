@@ -20,6 +20,7 @@
 #
 import os
 import re
+from datetime import datetime
 from glob import glob
 from typing import Union
 
@@ -32,12 +33,13 @@ MAIN_BRANCH_NAME = "fairmat"
 def _build_version(tag: str, distance: int, node: str, dirty: bool) -> str:
     """
     Builds the version string for a given set of git states.
-    This resembles `no-guess-dev` + `dirty-tag` behavior from setuptools_scm.
+    This resembles `no-guess-dev` + `node-and-date` behavior from setuptools_scm.
     """
     if distance == 0 and not dirty:
         return f"{tag}"
 
-    return f"{tag}.post1.dev{distance}+{'dirty' if dirty else node}"
+    dirty_appendix = datetime.now().strftime(".d%Y%m%d") if dirty else ""
+    return f"{tag}.post1.dev{distance}+{node}{dirty_appendix}"
 
 
 def format_version(version: str) -> str:

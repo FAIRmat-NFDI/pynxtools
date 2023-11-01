@@ -81,4 +81,4 @@ exclude = ["pynxtools/definitions*"]
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
-local_scheme = "dirty-tag"
+local_scheme = "node-and-date"

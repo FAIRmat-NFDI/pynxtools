@@ -18,7 +18,15 @@ def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
     try:
         return (
             run(
-                ["git", "describe", "--tags", "--long", "--match", tag_match],
+                [
+                    "git",
+                    "describe",
+                    "--dirty",
+                    "--tags",
+                    "--long",
+                    "--match",
+                    tag_match,
+                ],
                 cwd=os.path.join(os.path.dirname(__file__), "../pynxtools/definitions"),
                 check=True,
                 capture_output=True,
