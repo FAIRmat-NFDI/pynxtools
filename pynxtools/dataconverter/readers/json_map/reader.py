@@ -21,6 +21,7 @@ import json
 import pickle
 import numpy as np
 import xarray
+from mergedeep import merge
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
@@ -142,7 +143,7 @@ class JsonMapReader(BaseReader):
                 if is_hdf5:
                     hdf = hdfdict.load(file_path)
                     hdf.unlazy()
-                    data = dict(hdf)
+                    merge(data, dict(hdf))
 
         if mapping is None:
             template = Template({x: "/hierarchical/path/in/your/datafile" for x in template})
