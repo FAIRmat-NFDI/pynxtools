@@ -22,8 +22,19 @@ import os
 from glob import glob
 from typing import Union
 
-from pynxtools._build_wrapper import _build_version, get_vcs_version
+from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
+
+
+def _build_version(tag: str, distance: int, node: str, dirty: bool) -> str:
+    """
+    Builds the version string for a given set of git states.
+    This resembles `no-guess-dev` + `dirty-tag` behavior from setuptools_scm.
+    """
+    if distance == 0 and not dirty:
+        return f"{tag}"
+
+    return f"{tag}.post1.dev{distance}+{'dirty' if dirty else node}"
 
 
 def format_version(version: str) -> str:

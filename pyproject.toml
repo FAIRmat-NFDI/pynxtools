@@ -80,7 +80,5 @@ pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 exclude = ["pynxtools/definitions*"]
 
 [tool.setuptools_scm]
-version_scheme = "pynxtools._build_wrapper:construct_version"
-# We don't need a local scheme as this is already handled by the
-# construct_version function above
-local_scheme = "no-local-version"
+version_scheme = "no-guess-dev"
+local_scheme = "dirty-tag"
