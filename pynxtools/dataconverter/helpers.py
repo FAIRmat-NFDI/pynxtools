@@ -27,7 +27,7 @@ import numpy as np
 from ase.data import chemical_symbols
 import h5py
 
-from pynxtools import get_nexus_version
+from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
 
