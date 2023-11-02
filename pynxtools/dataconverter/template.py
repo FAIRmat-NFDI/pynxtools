@@ -114,10 +114,9 @@ class Template(dict):
         """Returns a dictionary of all the optionalities merged into one."""
         return {**self.optional, **self.recommended, **self.required}
 
-
     def __contains__(self, k):
         """
-        Supports in operator for
+        Supports in operator for the nested Template keys
         """
         return any([
             k in self.optional,
@@ -125,7 +124,6 @@ class Template(dict):
             k in self.undocumented,
             k in self.required
         ])
-
 
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""

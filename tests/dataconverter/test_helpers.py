@@ -339,9 +339,9 @@ def test_writing_of_root_attributes(caplog):
     Tests if all root attributes are populated
     """
     template = Template()
-    FNAME = "my_nexus_file.nxs"
+    filename = "my_nexus_file.nxs"
     with caplog.at_level(logging.WARNING):
-        helpers.add_default_root_attributes(template, FNAME)
+        helpers.add_default_root_attributes(template, filename)
 
     assert "" == caplog.text
 
@@ -349,7 +349,7 @@ def test_writing_of_root_attributes(caplog):
     assert "/@NX_class" in keys_added
     assert template["/@NX_class"] == "NXroot"
     assert "/@file_name" in keys_added
-    assert template["/@file_name"] == FNAME
+    assert template["/@file_name"] == filename
     assert "/@file_time" in keys_added
     assert "/@file_update_time" in keys_added
     assert "/@NeXus_version" in keys_added
@@ -359,12 +359,14 @@ def test_writing_of_root_attributes(caplog):
 
 def test_warning_on_root_attribute_overwrite(caplog):
     """
+    A warning is emitted when a root attribute is overwritten
+    by pynxtools.
     """
     template = Template()
     template["/@NX_class"] = "NXwrong"
-    FNAME = "my_nexus_file.nxs"
-    with caplog.at_level(logging.INFO):
-        helpers.add_default_root_attributes(template, FNAME)
+    filname = "my_nexus_file.nxs"
+    with caplog.at_level(logging.WARNING):
+        helpers.add_default_root_attributes(template, filname)
     error_text = (
         "The NXroot entry '/@NX_class' (value: NXwrong) should not be populated by the reader. "
         "This is overwritten by the actually used value 'NXroot'"

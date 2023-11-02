@@ -23,7 +23,6 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 import logging
-import sys
 
 import numpy as np
 from ase.data import chemical_symbols
