@@ -22,6 +22,7 @@ from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+import logging
 
 import numpy as np
 from ase.data import chemical_symbols
@@ -30,6 +31,8 @@ import h5py
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
+
+logger = logging.getLogger(__file__)
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -587,18 +590,30 @@ def convert_to_hill(atoms_typ):
 
 
 def add_default_root_attributes(data, filename):
-    """Takes a dict/Template and adds NXroot fields/attributes that are inherently available"""
-    data["/@NX_class"] = "NXroot"
-    data["/@file_name"] = filename
-    data["/@file_time"] = str(datetime.now(timezone.utc).astimezone())
-    data["/@file_update_time"] = data["/@file_time"]
-    data["/@NeXus_repository"] = (
+    """
+    Takes a dict/Template and adds NXroot fields/attributes that are inherently available
+    """
+    def update_and_warn(key: str, value: str):
+        if key in data and data[key] != value:
+            logger.warning(
+                "The NXroot entry '%s' (value: %s) should not be populated by the reader. "
+                "This is overwritten by the actually used value '%s'",
+                key, data[key], value
+            )
+        data[key] = value
+
+    update_and_warn("/@NX_class", "NXroot")
+    update_and_warn("/@file_name", filename)
+    update_and_warn("/@file_time", str(datetime.now(timezone.utc).astimezone()))
+    update_and_warn("/@file_update_time", data["/@file_time"])
+    update_and_warn(
+        "/@NeXus_repository",
         "https://github.com/FAIRmat-NFDI/nexus_definitions/"
         f"blob/{get_nexus_version_hash()}"
     )
-    data["/@NeXus_version"] = get_nexus_version()
-    data["/@HDF5_version"] = '.'.join(map(str, h5py.h5.get_libversion()))  # pylint: disable=c-extension-no-member
-    data["/@h5py_version"] = h5py.__version__
+    update_and_warn("/@NeXus_version", get_nexus_version())
+    update_and_warn("/@HDF5_version", '.'.join(map(str, h5py.h5.get_libversion())))
+    update_and_warn("/@h5py_version", h5py.__version__)
 
 
 def extract_atom_types(formula, mode='hill'):
