@@ -114,6 +114,19 @@ class Template(dict):
         """Returns a dictionary of all the optionalities merged into one."""
         return {**self.optional, **self.recommended, **self.required}
 
+
+    def __contains__(self, k):
+        """
+        Supports in operator for
+        """
+        return any([
+            k in self.optional,
+            k in self.recommended,
+            k in self.undocumented,
+            k in self.required
+        ])
+
+
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
