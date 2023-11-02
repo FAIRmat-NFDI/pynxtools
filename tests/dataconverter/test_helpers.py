@@ -19,6 +19,7 @@
 
 import xml.etree.ElementTree as ET
 import os
+import logging
 from setuptools import distutils
 import pytest
 import numpy as np
@@ -331,3 +332,44 @@ def test_atom_type_extractor_and_hill_conversion():
     atom_list = helpers.extract_atom_types(test_chemical_formula)
 
     assert expected_atom_types == atom_list
+
+
+def test_writing_of_root_attributes(caplog):
+    """
+    Tests if all root attributes are populated
+    """
+    template = Template()
+    FNAME = "my_nexus_file.nxs"
+    with caplog.at_level(logging.WARNING):
+        helpers.add_default_root_attributes(template, FNAME)
+
+    assert "" == caplog.text
+
+    keys_added = template.keys()
+    assert "/@NX_class" in keys_added
+    assert template["/@NX_class"] == "NXroot"
+    assert "/@file_name" in keys_added
+    assert template["/@file_name"] == FNAME
+    assert "/@file_time" in keys_added
+    assert "/@file_update_time" in keys_added
+    assert "/@NeXus_version" in keys_added
+    assert "/@HDF5_version" in keys_added
+    assert "/@h5py_version" in keys_added
+
+
+def test_warning_on_root_attribute_overwrite(caplog):
+    """
+    """
+    template = Template()
+    template["/@NX_class"] = "NXwrong"
+    FNAME = "my_nexus_file.nxs"
+    with caplog.at_level(logging.INFO):
+        helpers.add_default_root_attributes(template, FNAME)
+    error_text = (
+        "The NXroot entry '/@NX_class' (value: NXwrong) should not be populated by the reader. "
+        "This is overwritten by the actually used value 'NXroot'"
+    )
+    assert error_text in caplog.text
+
+    assert "/@NX_class" in template.keys()
+    assert template["/@NX_class"] == "NXroot"

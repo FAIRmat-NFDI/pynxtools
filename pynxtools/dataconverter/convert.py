@@ -130,9 +130,8 @@ def convert(input_file: Tuple[str],
             "The path, %s, is being written but has no documentation.",
             path
         )
-
-    Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
+    Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
 
     logger.info("The output file generated: %s", output)
 

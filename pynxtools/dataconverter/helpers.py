@@ -23,6 +23,7 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 import logging
+import sys
 
 import numpy as np
 from ase.data import chemical_symbols
@@ -32,7 +33,7 @@ from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 def is_a_lone_group(xml_element) -> bool:

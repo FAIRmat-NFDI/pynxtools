@@ -58,9 +58,7 @@ def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
     This is a wrapper for setuptools and adds a nexus version file.
     """
     _write_version_to_metadata()
-    ret = _orig.build_wheel(wheel_directory, config_settings, metadata_directory)
-
-    return ret
+    return _orig.build_wheel(wheel_directory, config_settings, metadata_directory)
 
 
 # pylint: disable=function-redefined
@@ -70,5 +68,4 @@ def build_sdist(sdist_directory, config_settings=None):
     This is a wrapper for setuptools and adds a nexus version file.
     """
     _write_version_to_metadata()
-    sdist_dir = _orig.build_sdist(sdist_directory, config_settings)
-    return sdist_dir
+    return _orig.build_sdist(sdist_directory, config_settings)
