@@ -352,6 +352,7 @@ def test_writing_of_root_attributes(caplog):
     assert template["/@file_name"] == filename
     assert "/@file_time" in keys_added
     assert "/@file_update_time" in keys_added
+    assert "/@NeXus_repository" in keys_added
     assert "/@NeXus_version" in keys_added
     assert "/@HDF5_version" in keys_added
     assert "/@h5py_version" in keys_added
