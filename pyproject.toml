@@ -1,6 +1,7 @@
 [build-system]
 requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+backend-path = ["pynxtools"]
+build-backend = "_build_wrapper"
 
 [project]
 name = "pynxtools"
@@ -10,7 +11,7 @@ authors = [
 ]
 description = "Extend NeXus for materials science experiment and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
-license = { file = "LICENSE.txt" }
+license = { file = "LICENSE" }
 requires-python = ">=3.8,<3.11"
 classifiers = [
     "Programming Language :: Python :: 3.8",
@@ -79,5 +80,5 @@ pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 exclude = ["pynxtools/definitions*"]
 
 [tool.setuptools_scm]
-version_scheme = "guess-next-dev"
+version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
