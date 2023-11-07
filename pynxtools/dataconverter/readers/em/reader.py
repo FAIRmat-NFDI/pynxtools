@@ -130,7 +130,7 @@ class EmReader(BaseReader):
         sub_parser = "nxs_hfive"
         subparser = NxEmNxsHfiveSubParser(entry_id, file_paths[0])
         subparser.parse(template)
-        # exit(1)
+        exit(1)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")

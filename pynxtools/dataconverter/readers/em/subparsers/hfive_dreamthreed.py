@@ -115,47 +115,107 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
         with h5py.File(self.file_path, "r") as h5r:
             if len(h5r["/"].attrs.keys()) < 2:
                 self.supported = False
-                print("Not enough attrs")
                 return
             req_fields = ["DREAM3D Version", "FileVersion"]
             for req_field in req_fields:
                 if f"{req_field}" not in h5r["/"].attrs.keys():
                     self.supported = False
-                    print(f"{req_field} not proper!")
                     return
-            print(read_strings_from_dataset(h5r["/"].attrs["DREAM3D Version"]))
             if read_strings_from_dataset(h5r["/"].attrs["DREAM3D Version"]) in self.supported_version["writer_version"]:
                 self.supported += 1
-            print(read_strings_from_dataset(h5r["/"].attrs["FileVersion"]))
             if read_strings_from_dataset(h5r["/"].attrs["FileVersion"]) in self.supported_version["schema_version"]:
                 self.supported += 1
-            print(f"{self.supported}")
 
             if self.supported == 2:
                 self.supported = True
                 self.version = self.supported_version.copy()
             else:
-                print("Some other!")
                 self.supported = False
 
     def search_normalizable_content(self):
         """Check if that highly customizable DREAM3D file has here supported content."""
         super().open()
         super().get_content()
-        super().report_content()
+        # super().report_content()
         super().close()
         # the logic to find if there is at all a 3D EBSD reconstruction in it
         # search for a node:
+        target_path = []
         #    named _SIMPL_GEOMETRY
+        candidate_paths = []
+        for hdf_node_path in self.datasets.keys():
+            idx = hdf_node_path.find("/_SIMPL_GEOMETRY")
+            if idx > -1:
+                candidate_paths.append((hdf_node_path, idx))
         #    which has childs "DIMENSIONS, ORIGIN, SPACING"
+        for path_idx in candidate_paths:
+            head = path_idx[0][0:path_idx[1]]
+            tail = path_idx[0][path_idx[1]:]
+            found = 0
+            req_fields = ["DIMENSIONS", "ORIGIN", "SPACING"]
+            for req_field in req_fields:
+                if f"{head}/_SIMPL_GEOMETRY/{req_field}" in self.datasets.keys():
+                    found += 1
+            if found == 3:
+                target_path.append(head)
+                break
+        del candidate_paths
         # if only one such node found parse only if
+        if len(target_path) != 1:
+            return
+        else:
+            target_path = target_path[0]
         #    that node has one sibling node called CellData
-        #       which has a group of named EulerAngles shape 4d, (i, j, k, 1) +
+        found = 0
+        i_j_k = (None, None, None)
+        group_name = None
+        for entry in self.datasets.keys():
+            if entry.startswith(f"{target_path}") is True and entry.endswith(f"EulerAngles") is True:
+                group_name = entry[0:-12]  # removing the trailing fwslash
+        #       which has a dset of named EulerAngles shape 4d, (i, j, k, 1) +
+                shp = self.datasets[entry][2]
+                if isinstance(shp, tuple) and len(shp) == 4:
+                    if shp[3] == 3:
+                        i_j_k = (shp[0], shp[1], shp[2])
+                        found += 1
+                        break
+        if group_name is None:
+            return
         #       which has a dset named BC or CI or MAD shape 4d (i, j, k, 1) +
+        one_key_required = ["BC", "Band Contrast", "CI", "Confidence Index", "MAD"]
+        for key in one_key_required:
+            if f"{group_name}/{key}" in self.datasets.keys():
+                shp = self.datasets[f"{group_name}/{key}"][2]
+                if isinstance(shp, tuple) and len(shp) == 4:
+                    if (shp[0], shp[1], shp[2]) == i_j_k:
+                        found += 1
+                        break
         #       which has a dset named Phases shape 4d (i, j, k, 1) +
+        if f"{group_name}/Phases" in self.datasets.keys():
+            shp = self.datasets[f"{group_name}/Phases"][2]
+            if isinstance(shp, tuple) and len(shp) == 4:
+                if (shp[0], shp[1], shp[2]) == i_j_k:
+                    found += 1
         #    that node has one sibling node called Phase Data
+        if found != 3:
+            return
         #       which has a dset named CrystalStructures, LatticeConstants, MaterialName
+        req_fields = ["CrystalStructures", "LatticeConstants", "MaterialName"]
+        found = 0
+        possible_locs = ["Phase Data", "CellEnsembleData"]
+        # TODO::these group names were found in the examples but likely they can be changed depending on how the filters are set
+        for req_field in req_fields:
+            for loc in possible_locs:
+                if f"{target_path}/{loc}/{req_field}" in self.datasets.keys():
         #           (which should also have specific shape)
+                    found += 1
+                    if found != 3:
+                        print(f"Relevant 3D EBSD content found")
+                        print(f"{target_path}")
+                        print(f"{group_name}")
+                        return
+        print(f"No relevant 3D EBSD content found!")
+
         # but see if that logic does not also check the shape and numerical content
         # there are still possibilities where this logic fails to detect a concept
         # reliably, this shows clearly that documenting and offering versioned description
@@ -163,6 +223,10 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
         # normalization and assuring that content from other data providers (like DREAM3D)
         # is understood before being normalized so that results in the RDMS are really
         # useful and comparable
+
+        # this is one approach how to find relevant groups
+        # another would be to interpret really the filters applied and hunt
+        # for the output within the parameters of a specific filter
 
     def parse_and_normalize(self):
         """Read and normalize away community-specific formatting with an equivalent in NXem."""
