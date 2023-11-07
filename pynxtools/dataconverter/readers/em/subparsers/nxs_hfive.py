@@ -62,6 +62,7 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_edax import HdfFiveEdax
 from pynxtools.dataconverter.readers.em.subparsers.hfive_apex import HdfFiveEdaxApexReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_ebsd import HdfFiveCommunityReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_emsoft import HdfFiveEmSoftReader
+from pynxtools.dataconverter.readers.em.subparsers.hfive_dreamthreed import HdfFiveDreamThreedReader
 
 
 class NxEmNxsHfiveSubParser:
@@ -123,6 +124,9 @@ class NxEmNxsHfiveSubParser:
         elif hfive_parser_type == "emsoft":
             emsoft = HdfFiveEmSoftReader(self.file_path)
             emsoft.parse_and_normalize()
+        elif hfive_parser_type == "dreamthreed":
+            dreamthreed = HdfFiveDreamThreedReader(self.file_path)
+            dreamthreed.parse_and_normalize()
         else:  # none or something unsupported
             return template
         return template
@@ -149,6 +153,9 @@ class NxEmNxsHfiveSubParser:
         hdf = HdfFiveEmSoftReader(f"{self.file_path}")
         if hdf.supported is True:
             return "emsoft"
+        hdf = HdfFiveDreamThreedReader(f"{self.file_path}")
+        if hdf.supported is True:
+            return "dreamthreed"
         return None
 
     def process_into_template(self, inp: dict, template: dict) -> dict:
