@@ -65,7 +65,7 @@ def get_names_of_all_readers() -> List[str]:
 
 
 # pylint: disable=too-many-arguments,too-many-locals
-def convert(input_file: Tuple[str],
+def convert(input_file: Tuple[str, ...],
             reader: str,
             nxdl: str,
             output: str,
@@ -201,11 +201,11 @@ def parse_params_file(params_file):
     help='Merges partial NeXus files provided as different --input-file to the converter.'
 )
 @click.option(
-        '--mapping',
-        help='Takes a <name>.mapping.json file and converts data from given input files.'
+    '--mapping',
+    help='Takes a <name>.mapping.json file and converts data from given input files.'
 )
 # pylint: disable=too-many-arguments
-def convert_cli(input_file: Tuple[str],
+def convert_cli(input_file: Tuple[str, ...],
                 reader: str,
                 nxdl: str,
                 output: str,
