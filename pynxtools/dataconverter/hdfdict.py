@@ -123,7 +123,12 @@ def load(hdf, *args, lazy=True, unpacker=unpack_dataset, **kwargs):
             elif isinstance(value, h5py.Dataset):
                 if not lazy:
                     value = unpacker(value)
-                datadict[key] = value
+                datadict[key] = value.asstr()[...] if h5py.check_string_dtype(value.dtype) else value  # pylint: disable=line-too-long
+
+            if "attrs" in dir(value):
+                datadict[key + "@"] = {}
+                for attr, attrval in value.attrs.items():
+                    datadict[key + "@"][attr] = attrval
 
         return datadict
 
