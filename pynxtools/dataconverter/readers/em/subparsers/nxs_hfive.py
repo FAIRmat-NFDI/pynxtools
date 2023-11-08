@@ -169,7 +169,7 @@ class NxEmNxsHfiveSubParser:
                     print(f"{key}, {val}")
 
         self.process_roi_overview(inp, template)
-        self.process_roi_ebsd_maps(inp, template)
+        # self.process_roi_ebsd_maps(inp, template)
         return template
 
     def get_named_axis(self, inp: dict, dim_name: str):
@@ -191,17 +191,31 @@ class NxEmNxsHfiveSubParser:
                                         roi_id: str,
                                         template: dict) -> dict:
         print("Parse ROI default plot...")
-        if np.max((inp["n_x"], inp["n_y"])) > HFIVE_WEB_MAXIMUM_ROI:
-            raise ValueError(f"Plotting roi_overviews larger than " \
-                             f"{HFIVE_WEB_MAXIMUM_ROI} is not supported !")
+        is_threed = False
+        if "n_z" in inp.keys():
+            is_threed = True
+            if np.max((inp["n_x"], inp["n_y"], inp["n_z"])) > HFIVE_WEB_MAXIMUM_ROI:
+                raise ValueError(f"Plotting 3D roi_overviews larger than " \
+                                 f"{HFIVE_WEB_MAXIMUM_ROI} is not supported !")
+        else:
+            if np.max((inp["n_x"], inp["n_y"])) > HFIVE_WEB_MAXIMUM_ROI:
+                raise ValueError(f"Plotting 2D roi_overviews larger than " \
+                                 f"{HFIVE_WEB_MAXIMUM_ROI} is not supported !")
 
         trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/DATA[roi]"
         template[f"{trg}/title"] = f"Region-of-interest overview image"
         template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
         template[f"{trg}/@signal"] = "data"
-        template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
-        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
-        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
+        dims = ["x", "y"]
+        if is_threed is True:
+            dims.append("z")
+        idx = 0
+        for dim in dims:
+            template[f"{trg}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
+            idx += 1
+        dims.reverse()
+        template[f"{trg}/@axes"] = dims
+
         contrast_modes = [(None, "n/a"),
                           ("bc", "normalized_band_contrast"),
                           ("ci", "normalized_confidence_index"),
@@ -209,12 +223,15 @@ class NxEmNxsHfiveSubParser:
         success = False
         for contrast_mode in contrast_modes:
             if contrast_mode[0] in inp.keys() and success is False:
-                template[f"{trg}/data"] = {"compress": np.reshape(np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]]) * 255.), np.uint32), np.uint8), (inp["n_y"], inp["n_x"]), order="C"), "strength": 1}
+                if is_three_d is True:
+                    template[f"{trg}/data"] = {"compress": np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]], axis=None) * 255.), np.uint32), np.uint8), "strength": 1}
+                else:
+                    template[f"{trg}/data"] = {"compress": inp[contrast_mode[0]] / np.ma}
                 template[f"{trg}/descriptor"] = contrast_mode[1]
                 success = True
         if success is False:
             raise ValueError(f"{__name__} unable to generate plot for {trg} !")
-        # 0 is y while 1 is x !
+        # 0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
         template[f"{trg}/data/@long_name"] = f"Signal"
         template[f"{trg}/data/@CLASS"] = "IMAGE"  # required H5Web, RGB map
         template[f"{trg}/data/@IMAGE_VERSION"] = f"1.2"
@@ -223,16 +240,13 @@ class NxEmNxsHfiveSubParser:
         scan_unit = inp["s_unit"]
         if scan_unit == "um":
             scan_unit = "µm"
-        template[f"{trg}/AXISNAME[axis_x]"] \
-            = {"compress": self.get_named_axis(inp, "x"), "strength": 1}
-        template[f"{trg}/AXISNAME[axis_x]/@long_name"] \
-            = f"Coordinate along x-axis ({scan_unit})"
-        template[f"{trg}/AXISNAME[axis_x]/@units"] = f"{scan_unit}"
-        template[f"{trg}/AXISNAME[axis_y]"] \
-            = {"compress": self.get_named_axis(inp, "y"), "strength": 1}
-        template[f"{trg}/AXISNAME[axis_y]/@long_name"] \
-            = f"Coordinate along y-axis ({scan_unit})"
-        template[f"{trg}/AXISNAME[axis_y]/@units"] =  f"{scan_unit}"
+        dims.reverse()
+        for dim in dims:
+            template[f"{trg}/AXISNAME[axis_{dim}]"] \
+                = {"compress": self.get_named_axis(inp, dim), "strength": 1}
+            template[f"{trg}/AXISNAME[axis_{dim}]/@long_name"] \
+                = f"Coordinate along {dim}-axis ({scan_unit})"
+            template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
         return template
 
     def process_roi_ebsd_maps(self, inp: dict, template: dict) -> dict:

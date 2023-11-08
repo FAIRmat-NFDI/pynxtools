@@ -1,7 +1,8 @@
 #!/bin/bash
 
-Examples="067_0003 177_0004 177_0005 177_0006 177_0007 177_0008 177_0009 226_0010 226_0011 226_0012 226_0013 244_0014 SmallIN100_Final"
-
+Examples="067_0003 177_0004 177_0005 177_0006 177_0008 177_0009 226_0010 226_0011 226_0012 226_0013 244_0014 SmallIN100_Final"
+Examples="067_0003 SmallIN100_Final 244_0014"
+# 177_0007
 # skip
 # 177_0007 as it is one of the weird examples where the h5py library cannot traverse the content... let's not follow-up on this rabbit hole right now
 # 177_0004 has only vertices
@@ -15,7 +16,8 @@ Examples="067_0003 177_0004 177_0005 177_0006 177_0007 177_0008 177_0009 226_001
 # 244_0014 is out because it does not have any quantity whereby to generate a band contrast, confidence index, or mad on to generate a default plot
 
 
-# Examples="SmallIN100_Final"
+Examples="SmallIN100_Final"
+# Examples="244_0014"
 for example in $Examples; do
 	echo $example
 	dataconverter --reader em --nxdl NXroot --input-file $example.dream3d --output debug.$example.dream3d.nxs 1>stdout.$example.dream3d.nxs.txt 2>stderr.$example.dream3d.nxs.txt

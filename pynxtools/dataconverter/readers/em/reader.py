@@ -130,7 +130,7 @@ class EmReader(BaseReader):
         sub_parser = "nxs_hfive"
         subparser = NxEmNxsHfiveSubParser(entry_id, file_paths[0])
         subparser.parse(template)
-        exit(1)
+        # exit(1)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
@@ -159,7 +159,7 @@ class EmReader(BaseReader):
         if resolved_path != "":
             nxs_plt.annotate_default_plot(template, resolved_path)
 
-        debugging = False
+        debugging = True
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():
