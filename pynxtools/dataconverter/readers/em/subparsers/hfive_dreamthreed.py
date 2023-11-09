@@ -379,7 +379,7 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
                 h5r[f"{self.path_registry['group_data']}/Phases"], np.int32)
             old_shp = np.shape(self.tmp[ckey]["phase_id"])
             self.tmp[ckey]["phase_id"] = np.reshape(self.tmp[ckey]["phase_id"],
-                                                    (int(np.prod(old_shp[0:3])), int(old_shp[3])),
+                                                    (int(np.prod(old_shp[0:3])),),
                                                     order="C")
             print(np.unique(self.tmp[ckey]["phase_id"]))
             # Phases here stores C-style index which Phase of the possible ones

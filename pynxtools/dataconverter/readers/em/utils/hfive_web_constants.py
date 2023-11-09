@@ -28,4 +28,5 @@ def hfive_web_decorate_nxdata(path: str, inp: dict) -> dict:
         inp[f"{path}/@CLASS"] = f"IMAGE"  # required by H5Web to plot RGB maps
         inp[f"{path}/@IMAGE_VERSION"] = f"1.2"
         inp[f"{path}/@SUBCLASS_VERSION"] = np.int64(15)
+        inp[f"{path}/@long_name"] = f"Signal"
     return inp

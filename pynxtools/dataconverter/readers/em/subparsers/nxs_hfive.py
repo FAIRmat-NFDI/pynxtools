@@ -562,7 +562,8 @@ class NxEmNxsHfiveSubParser:
         template[f"{prfx}/indexing_rate"] = np.float64(100. * n_pts_indexed / n_pts)
         template[f"{prfx}/indexing_rate/@units"] = f"%"
         grp_name = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{phase_id}]"
-        template[f"{grp_name}/number_of_scan_points"] = np.uint32(0)
+        template[f"{grp_name}/number_of_scan_points"] \
+            = np.uint32(np.sum(inp["phase_id"] == 0))
         template[f"{grp_name}/phase_identifier"] = np.uint32(phase_id)
         template[f"{grp_name}/phase_name"] = f"notIndexed"
 
@@ -611,7 +612,7 @@ class NxEmNxsHfiveSubParser:
                 direction=PROJECTION_VECTORS[idx])
             img = get_ipfdir_legend(ipf_key)
 
-            rotations = Rotation.from_euler(euler=inp["euler"][inp["phases"] == pyxem_phase_id],
+            rotations = Rotation.from_euler(euler=inp["euler"][inp["phase_id"] == pyxem_phase_id],
                                             direction='lab2crystal',
                                             degrees=False)
             print(f"shape rotations -----> {np.shape(rotations)}")
@@ -625,7 +626,7 @@ class NxEmNxsHfiveSubParser:
             # but IPF color maps have a whitepoint which encodes in fact an orientation
             # and because of that we may have a single crystal with an orientation
             # close to the whitepoint which become a fully white seemingly "empty" image
-            ipf_rgb_map[inp["phases"] == pyxem_phase_id, :] = rgb_px_with_phase_id
+            ipf_rgb_map[inp["phase_id"] == pyxem_phase_id, :] = rgb_px_with_phase_id
             ipf_rgb_map = np.reshape(
                 ipf_rgb_map, (inp["n_z"], inp["n_y"], inp["n_x"], 3), order="C")
             # 0 is z, 1 is y, while 2 is x !
@@ -653,16 +654,17 @@ class NxEmNxsHfiveSubParser:
             template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
             hfive_web_decorate_nxdata(f"{mpp}/DATA[data]", template)
 
-            scan_unit = inp["s_unit"]  # this is not correct necessarily as the
-            # simulation may be scale-invariant...
+            scan_unit = inp["s_unit"]  # TODO::this is not necessarily correct
+            # could be a scale-invariant synthetic microstructure whose simulation
+            # would work on multiple length-scales as atoms are not resolved directly!
             if scan_unit == "um":
                 scan_unit = "µm"
             for dim in dims:
                 template[f"{mpp}/AXISNAME[axis_{dim}]"] \
-                = {"compress": self.get_named_axis(inp, f"{dim}"), "strength": 1}
-            template[f"{mpp}/AXISNAME[axis_{dim}]/@long_name"] \
-                = f"Coordinate along {dim}-axis ({scan_unit})"
-            template[f"{mpp}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
+                    = {"compress": self.get_named_axis(inp, f"{dim}"), "strength": 1}
+                template[f"{mpp}/AXISNAME[axis_{dim}]/@long_name"] \
+                    = f"Coordinate along {dim}-axis ({scan_unit})"
+                template[f"{mpp}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
 
             # add the IPF color map legend/key
             lgd = f"{trg}/DATA[legend]"
@@ -672,6 +674,7 @@ class NxEmNxsHfiveSubParser:
             template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
             template[f"{lgd}/@signal"] = "data"
             template[f"{lgd}/@axes"] = []
+            dims = ["x", "y"]
             for dim in dims[::-1]:
                 template[f"{lgd}/@axes"].append(f"axis_{dim}")
             enum = 0
