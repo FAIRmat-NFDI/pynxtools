@@ -53,7 +53,7 @@ import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
 from pynxtools.dataconverter.readers.em.utils.hfive_web_constants \
-    import HFIVE_WEB_MAXIMUM_ROI, HFIVE_WEB_MAXIMUM_RGB
+    import HFIVE_WEB_MAXIMUM_ROI, HFIVE_WEB_MAXIMUM_RGB, hfive_web_decorate_nxdata
 from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
@@ -171,7 +171,7 @@ class NxEmNxsHfiveSubParser:
                     print(f"{key}, {val}")
 
         self.process_roi_overview(inp, template)
-        # self.process_roi_ebsd_maps(inp, template)
+        self.process_roi_ebsd_maps(inp, template)
         return template
 
     def get_named_axis(self, inp: dict, dim_name: str):
@@ -242,9 +242,7 @@ class NxEmNxsHfiveSubParser:
 
         # 0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
         template[f"{trg}/data/@long_name"] = f"Signal"
-        template[f"{trg}/data/@CLASS"] = "IMAGE"  # required H5Web, RGB map
-        template[f"{trg}/data/@IMAGE_VERSION"] = f"1.2"
-        template[f"{trg}/data/@SUBCLASS_VERSION"] = np.int64(15)
+        hfive_web_decorate_nxdata(f"{trg}/data", template)
 
         scan_unit = inp["s_unit"]
         if scan_unit == "um":
@@ -262,13 +260,20 @@ class NxEmNxsHfiveSubParser:
             if ckey.startswith("ebsd") and inp[ckey] != {}:
                 if ckey.replace("ebsd", "").isdigit():
                     roi_id = int(ckey.replace("ebsd", ""))
-                    self.process_roi_xmap(inp[ckey], roi_id, template)
-                    self.process_roi_phases(inp[ckey], roi_id, template)
+                    if "n_z" not in inp[ckey].keys():
+                        self.prepare_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
+                        self.process_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
+                    else:
+                        self.onthefly_process_roi_ipfs_phases_threed(inp[ckey], roi_id, template)
         return template
 
-    def process_roi_xmap(self, inp: dict, roi_id: int, template: dict) -> dict:
+    def prepare_roi_ipfs_phases_twod(self, inp: dict, roi_id: int, template: dict) -> dict:
         """Process crystal orientation map from normalized orientation data."""
         # for NeXus to create a default representation of the EBSD map to explore
+        # get rid of this xmap at some point it is really not needed in my option
+        # one can work with passing the set of EulerAngles to the IPF mapper directly
+        # the order of the individual per scan point results arrays anyway are assumed
+        # to have the same sequence of scan points and thus the same len along the scan axes
         self.xmap = None
         self.axis_x = None
         self.axis_y = None
@@ -385,8 +390,8 @@ class NxEmNxsHfiveSubParser:
         print(self.xmap)
         return template
 
-    def process_roi_phases(self, inp: dict, roi_id: int, template: dict) -> dict:
-        print("Parse crystal_structure_models aka phases...")
+    def process_roi_ipfs_phases_twod(self, inp: dict, roi_id: int, template: dict) -> dict:
+        print("Parse crystal_structure_models aka phases (use xmap)...")
         phase_id = 0
         prfx = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing"
         n_pts = inp["n_x"] * inp["n_y"]
@@ -430,15 +435,11 @@ class NxEmNxsHfiveSubParser:
             template[f"{trg}/phase_name"] \
                 = f"{inp['phases'][pyxem_phase_id + 1]['phase_name']}"
 
-            self.process_roi_phase_inverse_pole_figures(roi_id, pyxem_phase_id, template)
+            self.process_roi_phase_ipfs_twod(roi_id, pyxem_phase_id, template)
         return template
 
-    def process_roi_phase_inverse_pole_figures(self,
-                                               roi_id: int,
-                                               pyxem_phase_id: int,
-                                               template: dict) -> dict:
-        """Parse inverse pole figures (IPF) mappings."""
-        # call process_roi_ipf_map
+    def process_roi_phase_ipfs_twod(self, roi_id: int, pyxem_phase_id: int, template: dict) -> dict:
+        """Parse inverse pole figures (IPF) mappings for a single phase."""
         phase_name = self.xmap.phases[pyxem_phase_id].name
         print(f"Generate IPF map for {pyxem_phase_id}, {phase_name}...")
 
@@ -488,13 +489,16 @@ class NxEmNxsHfiveSubParser:
                 = f"Inverse pole figure {projection_directions[idx][0]} {phase_name}"
             template[f"{mpp}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
             template[f"{mpp}/@signal"] = "data"
-            template[f"{mpp}/@axes"] = ["axis_y", "axis_x"]
-            template[f"{mpp}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
-            template[f"{mpp}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
+            dims = ["x", "y"]
+            template[f"{mpp}/@axes"] = []
+            for dim in dims[::-1]:
+                template[f"{mpp}/@axes"].append(f"axis_{dim}")
+            idx = 0
+            for dim in dims:
+                template[f"{mpp}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
+                idx += 1
             template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
-            template[f"{mpp}/DATA[data]/@CLASS"] = "IMAGE"  # required, H5Web, RGB
-            template[f"{mpp}/DATA[data]/@IMAGE_VERSION"] = "1.2"
-            template[f"{mpp}/DATA[data]/@SUBCLASS_VERSION"] = np.int64(15)
+            hfive_web_decorate_nxdata(f"{mpp}/DATA[data]", template)
 
             scan_unit = self.xmap.scan_unit
             if scan_unit == "um":
@@ -515,30 +519,69 @@ class NxEmNxsHfiveSubParser:
             # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
             template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
             template[f"{lgd}/@signal"] = "data"
-            template[f"{lgd}/@axes"] = ["axis_y", "axis_x"]
-            template[f"{lgd}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
-            template[f"{lgd}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
+            template[f"{lgd}/@axes"] = []
+            for dim in dims[::-1]:
+                template[f"{lgd}/@axes"].append(f"axis_{dim}")
+            idx = 0
+            for dim in dims:
+                template[f"{lgd}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
+                idx += 1
             template[f"{lgd}/data"] = {"compress": img, "strength": 1}
-            template[f"{lgd}/data/@CLASS"] = f"IMAGE"  # required by H5Web to plot RGB maps
-            template[f"{lgd}/data/@IMAGE_VERSION"] = f"1.2"
-            template[f"{lgd}/data/@SUBCLASS_VERSION"] = np.int64(15)
+            hfive_web_decorate_nxdata(f"{lgd}/data", template)
 
-            template[f"{lgd}/AXISNAME[axis_x]"] \
-                = {"compress": np.asarray(np.linspace(0,
-                                                      np.shape(img)[1] - 1,
-                                                      num=np.shape(img)[1],
-                                                      endpoint=True), np.uint32),
-                   "strength": 1}
-            template[f"{lgd}/AXISNAME[axis_x]/@long_name"] = "Pixel along x-axis"
-            template[f"{lgd}/AXISNAME[axis_x]/@units"] = "px"
-            template[f"{lgd}/AXISNAME[axis_y]"] \
-                = {"compress": np.asarray(np.linspace(0,
-                                                      np.shape(img)[0] - 1,
-                                                      num=np.shape(img)[0],
-                                                      endpoint=True), np.uint32),
-                   "strength": 1}
-            template[f"{lgd}/AXISNAME[axis_y]/@long_name"] = "Pixel along y-axis"
-            template[f"{lgd}/AXISNAME[axis_y]/@units"] = "px"
+            dims = [("x", 1), ("y", 0)]
+            for dim in dims:
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]"] \
+                    = {"compress": np.asarray(np.linspace(0,
+                                                          np.shape(img)[dim[1]] - 1,
+                                                          num=np.shape(img)[dim[1]],
+                                                          endpoint=True), np.uint32),
+                       "strength": 1}
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@long_name"] \
+                    = f"Pixel along {dim[0]}-axis"
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@units"] = "px"
 
         # call process_roi_ipf_color_key
+        return template
+
+    def onthefly_process_roi_ipfs_phases_threed(self, inp: dict, roi_id: int, template: dict) -> dict:
+        print("Parse crystal_structure_models aka phases (no xmap)...")
+        phase_id = 0
+        prfx = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing"
+        n_pts = inp["n_x"] * inp["n_y"] * inp["n_z"]
+        n_pts_indexed = np.sum(inp["phase_id"] != 0)
+        print(f"n_pts {n_pts}, n_pts_indexed {n_pts_indexed}")
+        template[f"{prfx}/number_of_scan_points"] = np.uint32(n_pts)
+        template[f"{prfx}/indexing_rate"] = np.float64(100. * n_pts_indexed / n_pts)
+        template[f"{prfx}/indexing_rate/@units"] = f"%"
+        grp_name = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{phase_id}]"
+        template[f"{grp_name}/number_of_scan_points"] = np.uint32(0)
+        template[f"{grp_name}/phase_identifier"] = np.uint32(phase_id)
+        template[f"{grp_name}/phase_name"] = f"notIndexed"
+
+        print(f"----unique inp phase_id--->{np.unique(inp['phase_id'])}")
+        for phase_id in np.arange(1, np.max(np.unique(inp["phase_id"])) + 1):
+            # starting here at ID 1 because TODO::currently the only supported 3D case
+            # is from DREAM3D and here phase_ids start at 0 but this marks in DREAM3D jargon
+            # the 999 i.e. null-model of the notIndexed phase !
+            print(f"inp[phases].keys(): {inp['phases'].keys()}")
+            if phase_id not in inp["phases"].keys():
+                raise ValueError(f"{phase_id} is not a key in inp['phases'] !")
+            # pyxem_phase_id for notIndexed is -1, while for NeXus it is 0 so add + 1 in naming schemes
+            trg = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{phase_id}]"
+
+            # TODO::dealing with unexpected phase_identifier should not be an issue
+            # with DREAM3D because that software is more restrictive on this
+            template[f"{trg}/number_of_scan_points"] \
+                = np.uint32(np.sum(inp["phase_id"] == phase_id))
+            template[f"{trg}/phase_identifier"] = np.uint32(phase_id)
+            template[f"{trg}/phase_name"] \
+                = f"{inp['phases'][phase_id]['phase_name']}"
+
+            # mind to pass phase_id - 1 from the perspective of pyxem because
+            # in that software the id of the null-model is -1 and not 0 like in NeXus or DREAM3D!
+            # self.process_roi_phase_ipfs_threed(roi_id, phase_id, template)
+        return template
+
+    def process_roi_phase_ipfs_threed(self, roi_id: int, pyxem_phase_id: int, template: dict) -> dict:
         return template

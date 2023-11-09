@@ -328,24 +328,33 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
         with h5py.File(self.file_path, "r") as h5r:
             idx = np.asarray(h5r[f"{self.path_registry['group_phases']}/CrystalStructures"][:].flatten(), np.uint32)
             print(f"csys {np.shape(idx)}, {idx}")
+            nms = None
+            if f"{self.path_registry['group_phases']}/MaterialName" in h5r:
+                nms = read_strings_from_dataset(h5r[f"{self.path_registry['group_phases']}/MaterialName"][:])
+                print(f"nms ---------> {nms}")
+                if len(idx) != len(nms):
+                    raise ValueError(f"{__name__} MaterialName was recoverable but array has different length than for CrystalStructures!")
+            ijk = 0
             for entry in idx:
                 if entry != 999:
-                    self.tmp[ckey]["phases"][int(entry)] = {}
-                    self.tmp[ckey]["phases"][int(entry)]["Space Group"] \
+                    self.tmp[ckey]["phases"][ijk] = {}
+                    self.tmp[ckey]["phases"][ijk]["space_group"] \
                         = DREAM_SPACEGROUPS_TO_REPRESENTATIVE_SPACEGROUP[entry]
-                    # TODO::need to do a reindexing of the phase ids as they
-                    # might not be stored in asc. order!
+                    self.tmp[ckey]["phases"][ijk]["phase_name"] = nms[ijk]
+                ijk += 1
+                # TODO::need to do a reindexing of the phase ids as they
+                # might not be stored in asc. order!
 
-                    # LatticeAngles are implicitly defined for each space group
-                    # LatticeDimensions essentially provides scaling information
-                    # but indeed for simulating a crystal with a computer simulation
-                    # at a length scale larger than atoms (mesoscale and macroscale)
-                    # one can argue the exact spacing is not needed except when
-                    # one wishes to compute the diffraction pattern but as most results
-                    # from DREAM3D implicitly rely on information from a previous workflow
-                    # where these atomistic details have been abstracted away it is
-                    # factually true that there is not really a need for documenting
-                    # the lattice dimensions from a DREAM3D analysis.
+                # LatticeAngles are implicitly defined for each space group
+                # LatticeDimensions essentially provides scaling information
+                # but indeed for simulating a crystal with a computer simulation
+                # at a length scale larger than atoms (mesoscale and macroscale)
+                # one can argue the exact spacing is not needed except when
+                # one wishes to compute the diffraction pattern but as most results
+                # from DREAM3D implicitly rely on information from a previous workflow
+                # where these atomistic details have been abstracted away it is
+                # factually true that there is not really a need for documenting
+                # the lattice dimensions from a DREAM3D analysis.
         for key, dct in self.tmp[ckey]["phases"].items():
             print(f"{key}, {dct}")
 
@@ -353,11 +362,19 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
         with h5py.File(self.file_path, "r") as h5r:
             self.tmp[ckey]["euler"] = np.asarray(
                 h5r[f"{self.path_registry['group_data']}/EulerAngles"], np.float32)
+            old_shp = np.shape(self.tmp[ckey]["euler"])
+            self.tmp[ckey]["euler"] = np.reshape(self.tmp[ckey]["euler"],
+                                                 (int(np.prod(old_shp[0:3])), int(old_shp[3])),
+                                                 order="C")
             # TODO::DREAM3D uses Rowenhorst et. al. conventions
             # so we are already in positive halfspace, and radiants
 
             self.tmp[ckey]["phase_id"] = np.asarray(
                 h5r[f"{self.path_registry['group_data']}/Phases"], np.int32)
+            old_shp = np.shape(self.tmp[ckey]["phase_id"])
+            self.tmp[ckey]["phase_id"] = np.reshape(self.tmp[ckey]["phase_id"],
+                                                    (int(np.prod(old_shp[0:3])), int(old_shp[3])),
+                                                    order="C")
             print(np.unique(self.tmp[ckey]["phase_id"]))
             # Phases here stores C-style index which Phase of the possible ones
             # we are facing, the marker 999 is equivalent to the null-model notIndexed
