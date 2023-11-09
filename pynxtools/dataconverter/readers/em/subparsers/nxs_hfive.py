@@ -124,9 +124,11 @@ class NxEmNxsHfiveSubParser:
         elif hfive_parser_type == "emsoft":
             emsoft = HdfFiveEmSoftReader(self.file_path)
             emsoft.parse_and_normalize()
+            # self.process_into_template(emsoft.tmp, template)
         elif hfive_parser_type == "dreamthreed":
             dreamthreed = HdfFiveDreamThreedReader(self.file_path)
             dreamthreed.parse_and_normalize()
+            self.process_into_template(dreamthreed.tmp, template)
         else:  # none or something unsupported
             return template
         return template
@@ -191,6 +193,19 @@ class NxEmNxsHfiveSubParser:
                                         roi_id: str,
                                         template: dict) -> dict:
         print("Parse ROI default plot...")
+        contrast_modes = [(None, "n/a"),
+                          ("bc", "normalized_band_contrast"),
+                          ("ci", "normalized_confidence_index"),
+                          ("mad", "normalized_mean_angular_deviation")]
+        contrast_mode = None
+        for mode in contrast_modes:
+            if mode[0] in inp.keys() and contrast_mode is None:
+                contrast_mode = mode
+                break
+        if contrast_mode is None:
+            print(f"{__name__} unable to generate plot for entry{self.entry_id}, roi{roi_id} !")
+            return template
+
         is_threed = False
         if "n_z" in inp.keys():
             is_threed = True
@@ -202,6 +217,8 @@ class NxEmNxsHfiveSubParser:
                 raise ValueError(f"Plotting 2D roi_overviews larger than " \
                                  f"{HFIVE_WEB_MAXIMUM_ROI} is not supported !")
 
+        template[f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/@NX_class"] = "NXroi"  # TODO::writer should decorate automatically!
+        template[f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/@NX_class"] = "NXprocess"  # TODO::writer should decorate automatically!
         trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/DATA[roi]"
         template[f"{trg}/title"] = f"Region-of-interest overview image"
         template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
@@ -213,24 +230,16 @@ class NxEmNxsHfiveSubParser:
         for dim in dims:
             template[f"{trg}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
             idx += 1
-        dims.reverse()
-        template[f"{trg}/@axes"] = dims
+        template[f"{trg}/@axes"] = []
+        for dim in dims[::-1]:
+            template[f"{trg}/@axes"].append(f"axis_{dim}")
 
-        contrast_modes = [(None, "n/a"),
-                          ("bc", "normalized_band_contrast"),
-                          ("ci", "normalized_confidence_index"),
-                          ("mad", "normalized_mean_angular_deviation")]
-        success = False
-        for contrast_mode in contrast_modes:
-            if contrast_mode[0] in inp.keys() and success is False:
-                if is_three_d is True:
-                    template[f"{trg}/data"] = {"compress": np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]], axis=None) * 255.), np.uint32), np.uint8), "strength": 1}
-                else:
-                    template[f"{trg}/data"] = {"compress": inp[contrast_mode[0]] / np.ma}
-                template[f"{trg}/descriptor"] = contrast_mode[1]
-                success = True
-        if success is False:
-            raise ValueError(f"{__name__} unable to generate plot for {trg} !")
+        if is_threed is True:
+            template[f"{trg}/data"] = {"compress": np.squeeze(np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]], axis=None) * 255.), np.uint32), np.uint8), axis=3), "strength": 1}
+        else:
+            template[f"{trg}/data"] = {"compress": np.reshape(np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]]) * 255.), np.uint32), np.uint8), (inp["n_y"], inp["n_x"]), order="C"), "strength": 1}
+        template[f"{trg}/descriptor"] = contrast_mode[1]
+
         # 0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
         template[f"{trg}/data/@long_name"] = f"Signal"
         template[f"{trg}/data/@CLASS"] = "IMAGE"  # required H5Web, RGB map
@@ -240,7 +249,6 @@ class NxEmNxsHfiveSubParser:
         scan_unit = inp["s_unit"]
         if scan_unit == "um":
             scan_unit = "µm"
-        dims.reverse()
         for dim in dims:
             template[f"{trg}/AXISNAME[axis_{dim}]"] \
                 = {"compress": self.get_named_axis(inp, dim), "strength": 1}

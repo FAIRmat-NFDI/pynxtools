@@ -16,7 +16,7 @@ Examples="067_0003 SmallIN100_Final 244_0014"
 # 244_0014 is out because it does not have any quantity whereby to generate a band contrast, confidence index, or mad on to generate a default plot
 
 
-Examples="SmallIN100_Final"
+# Examples="SmallIN100_Final"
 # Examples="244_0014"
 for example in $Examples; do
 	echo $example
