@@ -61,7 +61,7 @@
 "/ENTRY[entry]/SAMPLE[sample]/description": "@eln",
 "/ENTRY[entry]/DATA[data]/@signal": "",
 "/ENTRY[entry]/DATA[data]/data": "@data:cycle",
-"/ENTRY[entry]/DATA[data]/data/@units": "counts per second",
+"/ENTRY[entry]/DATA[data]/data/@units": "counts_per_second",
 "/ENTRY[entry]/DATA[data]/energy": "@data:cycle",
 "/ENTRY[entry]/DATA[data]/energy/@type": "@xps_tocken:data/region_energy_type",
 "/ENTRY[entry]/DATA[data]/energy/@units": "eV"
