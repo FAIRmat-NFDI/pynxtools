@@ -334,6 +334,12 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
                 print(f"nms ---------> {nms}")
                 if len(idx) != len(nms):
                     raise ValueError(f"{__name__} MaterialName was recoverable but array has different length than for CrystalStructures!")
+            # alternatively
+            if f"{self.path_registry['group_phases']}/PhaseName" in h5r:
+                nms = read_strings_from_dataset(h5r[f"{self.path_registry['group_phases']}/PhaseName"][:])
+                print(f"nms ---------> {nms}")
+                if len(idx) != len(nms):
+                    raise ValueError(f"{__name__} PhaseName was recoverable but array has different length than for CrystalStructures!")
             ijk = 0
             for entry in idx:
                 if entry != 999:

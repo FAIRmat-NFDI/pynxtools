@@ -17,7 +17,7 @@ Examples="067_0003 SmallIN100_Final 244_0014"
 
 
 # Examples="SmallIN100_Final"
-# Examples="244_0014"
+Examples="244_0014"
 for example in $Examples; do
 	echo $example
 	dataconverter --reader em --nxdl NXroot --input-file $example.dream3d --output debug.$example.dream3d.nxs 1>stdout.$example.dream3d.nxs.txt 2>stderr.$example.dream3d.nxs.txt

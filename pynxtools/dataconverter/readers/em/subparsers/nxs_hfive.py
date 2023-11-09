@@ -46,6 +46,7 @@ from diffpy.structure import Lattice, Structure
 from orix import plot
 from orix.crystal_map import create_coordinate_arrays, CrystalMap, PhaseList
 from orix.quaternion import Rotation
+from orix.quaternion.symmetry import get_point_group
 from orix.vector import Vector3d
 from scipy.spatial import KDTree
 
@@ -56,6 +57,10 @@ from pynxtools.dataconverter.readers.em.utils.hfive_web_constants \
     import HFIVE_WEB_MAXIMUM_ROI, HFIVE_WEB_MAXIMUM_RGB, hfive_web_decorate_nxdata
 from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
 
+PROJECTION_DIRECTIONS = [("X", [1., 0., 0.]), ("Y", [0., 1., 0.]), ("Z", [0., 0., 1.])]
+# TODO::do not hardcode but use data.flatten() of the following instances
+PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
+
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_bruker import HdfFiveBrukerEspritReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_edax import HdfFiveEdaxOimAnalysisReader
@@ -63,6 +68,21 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_apex import HdfFiveEdax
 from pynxtools.dataconverter.readers.em.subparsers.hfive_ebsd import HdfFiveCommunityReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_emsoft import HdfFiveEmSoftReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_dreamthreed import HdfFiveDreamThreedReader
+
+
+def get_ipfdir_legend(ipf_key):
+    """Generate IPF color map key for a specific ipf_key."""
+    img = None
+    fig = ipf_key.plot(return_figure=True)
+    fig.savefig("temporary.png", dpi=300, facecolor='w', edgecolor='w',
+                orientation='landscape', format='png', transparent=False,
+                bbox_inches='tight', pad_inches=0.1, metadata=None)
+    img = np.asarray(thumbnail(pil.open("temporary.png", "r", ["png"]),
+                        size=HFIVE_WEB_MAXIMUM_RGB), np.uint8)  # no flipping
+    img = img[:, :, 0:3]  # discard alpha channel
+    if os.path.exists("temporary.png"):
+        os.remove("temporary.png")
+    return img
 
 
 class NxEmNxsHfiveSubParser:
@@ -439,28 +459,14 @@ class NxEmNxsHfiveSubParser:
         return template
 
     def process_roi_phase_ipfs_twod(self, roi_id: int, pyxem_phase_id: int, template: dict) -> dict:
-        """Parse inverse pole figures (IPF) mappings for a single phase."""
+        """Parse inverse pole figures (IPF) mappings for specific phase."""
         phase_name = self.xmap.phases[pyxem_phase_id].name
-        print(f"Generate IPF map for {pyxem_phase_id}, {phase_name}...")
-
-        projection_directions = [("X", [1., 0., 0.]),
-                                 ("Y", [0., 1., 0.]),
-                                 ("Z", [0., 0., 1.])]
-        projection_vectors = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
-        for idx in [0, 1, 2]:
+        print(f"Generate 2D IPF map for {pyxem_phase_id}, {phase_name}...")
+        for idx in np.arange(0, len(PROJECTION_VECTORS)):
             ipf_key = plot.IPFColorKeyTSL(
                 self.xmap.phases[pyxem_phase_id].point_group.laue,
-                direction=projection_vectors[idx])
-
-            fig = ipf_key.plot(return_figure=True)
-            fig.savefig("temporary.png", dpi=300, facecolor='w', edgecolor='w',
-                        orientation='landscape', format='png', transparent=False,
-                        bbox_inches='tight', pad_inches=0.1, metadata=None)
-            img = np.asarray(thumbnail(pil.open("temporary.png", "r", ["png"]),
-                             size=HFIVE_WEB_MAXIMUM_RGB), np.uint8)  # no flipping
-            img = img[:, :, 0:3]  # discard alpha channel
-            if os.path.exists("temporary.png"):
-                os.remove("temporary.png")
+                direction=PROJECTION_VECTORS[idx])
+            img = get_ipfdir_legend(ipf_key)
 
             rgb_px_with_phase_id = np.asarray(
                 np.asarray(ipf_key.orientation2color(
@@ -481,22 +487,23 @@ class NxEmNxsHfiveSubParser:
             trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing" \
                   f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{pyxem_phase_id + 1}]" \
                   f"/MS_IPF[ipf{idx + 1}]"
-            template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
+            template[f"{trg}/projection_direction"] \
+                = np.asarray(PROJECTION_VECTORS[idx].data.flatten(), np.float32)
 
             # add the IPF color map
             mpp = f"{trg}/DATA[map]"
             template[f"{mpp}/title"] \
-                = f"Inverse pole figure {projection_directions[idx][0]} {phase_name}"
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
             template[f"{mpp}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
             template[f"{mpp}/@signal"] = "data"
             dims = ["x", "y"]
             template[f"{mpp}/@axes"] = []
             for dim in dims[::-1]:
                 template[f"{mpp}/@axes"].append(f"axis_{dim}")
-            idx = 0
+            enum = 0
             for dim in dims:
-                template[f"{mpp}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
-                idx += 1
+                template[f"{mpp}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
             template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
             hfive_web_decorate_nxdata(f"{mpp}/DATA[data]", template)
 
@@ -515,17 +522,17 @@ class NxEmNxsHfiveSubParser:
             # add the IPF color map legend/key
             lgd = f"{trg}/DATA[legend]"
             template[f"{lgd}/title"] \
-                = f"Inverse pole figure {projection_directions[idx][0]} {phase_name}"
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
             # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
             template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
             template[f"{lgd}/@signal"] = "data"
             template[f"{lgd}/@axes"] = []
             for dim in dims[::-1]:
                 template[f"{lgd}/@axes"].append(f"axis_{dim}")
-            idx = 0
+            enum = 0
             for dim in dims:
-                template[f"{lgd}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
-                idx += 1
+                template[f"{lgd}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
             template[f"{lgd}/data"] = {"compress": img, "strength": 1}
             hfive_web_decorate_nxdata(f"{lgd}/data", template)
 
@@ -580,8 +587,109 @@ class NxEmNxsHfiveSubParser:
 
             # mind to pass phase_id - 1 from the perspective of pyxem because
             # in that software the id of the null-model is -1 and not 0 like in NeXus or DREAM3D!
-            # self.process_roi_phase_ipfs_threed(roi_id, phase_id, template)
+            self.process_roi_phase_ipfs_threed(inp,
+                                               roi_id,
+                                               phase_id,
+                                               inp["phases"][phase_id]["phase_name"],
+                                               inp["phases"][phase_id]["space_group"],
+                                               template)
         return template
 
-    def process_roi_phase_ipfs_threed(self, roi_id: int, pyxem_phase_id: int, template: dict) -> dict:
+    def process_roi_phase_ipfs_threed(self,
+                                      inp: dict,
+                                      roi_id: int,
+                                      pyxem_phase_id: int,
+                                      phase_name: str,
+                                      space_group: int,
+                                      template: dict) -> dict:
+        """Generate inverse pole figures (IPF) for 3D mappings for specific phase."""
+        print(f"Generate 3D IPF map for {pyxem_phase_id}, {phase_name}...")
+        for idx in np.arange(0, len(PROJECTION_VECTORS)):
+            point_group = get_point_group(space_group, proper=False)
+            ipf_key = plot.IPFColorKeyTSL(
+                point_group.laue,
+                direction=PROJECTION_VECTORS[idx])
+            img = get_ipfdir_legend(ipf_key)
+
+            rotations = Rotation.from_euler(euler=inp["euler"][inp["phases"] == pyxem_phase_id],
+                                            direction='lab2crystal',
+                                            degrees=False)
+            print(f"shape rotations -----> {np.shape(rotations)}")
+            rgb_px_with_phase_id = np.asarray(np.asarray(
+                ipf_key.orientation2color(rotations) * 255., np.uint32), np.uint8)
+            print(f"shape rgb_px_with_phase_id -----> {np.shape(rgb_px_with_phase_id)}")
+
+            ipf_rgb_map = np.asarray(
+                np.uint8(np.zeros((inp["n_z"] * inp["n_y"] * inp["n_x"], 3)) * 255.))
+            # background is black instead of white (which would be more pleasing)
+            # but IPF color maps have a whitepoint which encodes in fact an orientation
+            # and because of that we may have a single crystal with an orientation
+            # close to the whitepoint which become a fully white seemingly "empty" image
+            ipf_rgb_map[inp["phases"] == pyxem_phase_id, :] = rgb_px_with_phase_id
+            ipf_rgb_map = np.reshape(
+                ipf_rgb_map, (inp["n_z"], inp["n_y"], inp["n_x"], 3), order="C")
+            # 0 is z, 1 is y, while 2 is x !
+
+            trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing" \
+                  f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{pyxem_phase_id}]" \
+                  f"/MS_IPF[ipf{idx + 1}]"
+            template[f"{trg}/projection_direction"] \
+                = np.asarray(PROJECTION_VECTORS[idx].data.flatten(), np.float32)
+
+            # add the IPF color map
+            mpp = f"{trg}/DATA[map]"
+            template[f"{mpp}/title"] \
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
+            template[f"{mpp}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
+            template[f"{mpp}/@signal"] = "data"
+            dims = ["x", "y", "z"]
+            template[f"{mpp}/@axes"] = []
+            for dim in dims[::-1]:
+                template[f"{mpp}/@axes"].append(f"axis_{dim}")
+            enum = 0
+            for dim in dims:
+                template[f"{mpp}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
+            template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
+            hfive_web_decorate_nxdata(f"{mpp}/DATA[data]", template)
+
+            scan_unit = inp["s_unit"]  # this is not correct necessarily as the
+            # simulation may be scale-invariant...
+            if scan_unit == "um":
+                scan_unit = "µm"
+            for dim in dims:
+                template[f"{mpp}/AXISNAME[axis_{dim}]"] \
+                = {"compress": self.get_named_axis(inp, f"{dim}"), "strength": 1}
+            template[f"{mpp}/AXISNAME[axis_{dim}]/@long_name"] \
+                = f"Coordinate along {dim}-axis ({scan_unit})"
+            template[f"{mpp}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
+
+            # add the IPF color map legend/key
+            lgd = f"{trg}/DATA[legend]"
+            template[f"{lgd}/title"] \
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
+            # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
+            template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
+            template[f"{lgd}/@signal"] = "data"
+            template[f"{lgd}/@axes"] = []
+            for dim in dims[::-1]:
+                template[f"{lgd}/@axes"].append(f"axis_{dim}")
+            enum = 0
+            for dim in dims:
+                template[f"{lgd}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
+            template[f"{lgd}/data"] = {"compress": img, "strength": 1}
+            hfive_web_decorate_nxdata(f"{lgd}/data", template)
+
+            dims = [("x", 1), ("y", 0)]
+            for dim in dims:
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]"] \
+                    = {"compress": np.asarray(np.linspace(0,
+                                                          np.shape(img)[dim[1]] - 1,
+                                                          num=np.shape(img)[dim[1]],
+                                                          endpoint=True), np.uint32),
+                       "strength": 1}
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@long_name"] \
+                    = f"Pixel along {dim[0]}-axis"
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@units"] = "px"
         return template
