@@ -35,10 +35,10 @@ from pynxtools.dataconverter.helpers import extract_atom_types
 
 np.set_printoptions(threshold=sys.maxsize)
 
-XPS_TOCKEN = "@xps_tocken:"
-XPS_DATA_TOCKEN = "@data:"
-XPS_DETECTOR_TOCKEN = "@detector_data:"
-ELN_TOCKEN = "@eln"
+XPS_TOKEN = "@xps_token:"
+XPS_DATA_TOKEN = "@data:"
+XPS_DETECTOR_TOKEN = "@detector_data:"
+ELN_TOKEN = "@eln"
 # Track entries for using for eln data
 ENTRY_SET: Set[str] = set()
 DETECTOR_SET: Set[str] = set()
@@ -90,14 +90,14 @@ def find_entry_and_value(xps_data_dict,
     """
 
     entries_values = {}
-    if dt_typ == XPS_TOCKEN:
+    if dt_typ == XPS_TOKEN:
 
         for key, val in xps_data_dict.items():
             if key_part in key:
                 entry = construct_entry_name(key)
                 entries_values[entry] = val
 
-    elif dt_typ in (XPS_DATA_TOCKEN, XPS_DETECTOR_TOCKEN):
+    elif dt_typ in (XPS_DATA_TOKEN, XPS_DETECTOR_TOKEN):
         # entries_values = entry:{cycle0_scan0_chan0:xr.data}
         entries_values = xps_data_dict["data"]
 
@@ -234,27 +234,27 @@ def fill_template_with_xps_data(config_dict,
         for separating the data from xps_data_dict.
     """
     for key, value in config_dict.items():
-        if XPS_DATA_TOCKEN in value:
-            key_part = value.split(XPS_DATA_TOCKEN)[-1]
+        if XPS_DATA_TOKEN in value:
+            key_part = value.split(XPS_DATA_TOKEN)[-1]
             entries_values = find_entry_and_value(xps_data_dict,
                                                   key_part,
-                                                  dt_typ=XPS_DATA_TOCKEN)
+                                                  dt_typ=XPS_DATA_TOKEN)
 
             fill_data_group(key, entries_values, config_dict, template, entry_set)
 
-        if XPS_DETECTOR_TOCKEN in value:
-            key_part = value.split(XPS_DATA_TOCKEN)[-1]
+        if XPS_DETECTOR_TOKEN in value:
+            key_part = value.split(XPS_DATA_TOKEN)[-1]
             entries_values = find_entry_and_value(xps_data_dict,
                                                   key_part,
-                                                  dt_typ=XPS_DETECTOR_TOCKEN)
+                                                  dt_typ=XPS_DETECTOR_TOKEN)
 
             fill_detector_group(key, entries_values, config_dict, template, entry_set)
 
-        if XPS_TOCKEN in value:
-            tocken = value.split(XPS_TOCKEN)[-1]
+        if XPS_TOKEN in value:
+            token = value.split(XPS_TOKEN)[-1]
             entries_values = find_entry_and_value(xps_data_dict,
-                                                  tocken,
-                                                  dt_typ=XPS_TOCKEN)
+                                                  token,
+                                                  dt_typ=XPS_TOKEN)
             for entry, ent_value in entries_values.items():
                 entry_set.add(entry)
                 modified_key = key.replace("[entry]", f"[{entry}]")
@@ -305,7 +305,7 @@ def fill_template_with_eln_data(eln_data_dict,
                 template[modified_key] = field_value
 
     for key, val in config_dict.items():
-        if ELN_TOCKEN in val:
+        if ELN_TOKEN in val:
             fill_atom_types(key)
         elif key in list(eln_data_dict.keys()):
             fill_from_value(key)
