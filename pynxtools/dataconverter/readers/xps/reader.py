@@ -29,7 +29,7 @@ import yaml
 import numpy as np
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.readers.xps.reader_utils import XpsDataFileParser
+from pynxtools.dataconverter.readers.xps.file_parser import XpsDataFileParser
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.helpers import extract_atom_types
