@@ -1,7 +1,9 @@
-"""Parsers for reading loading XPS (X-ray Photoelectron Spectroscopy) data
- from Specs Lab Prodigy, to be passed to mpes nxdl (NeXus Definition Language)
- template.
 """
+Parser for reading XPS (X-ray Photoelectron Spectroscopy) data from native
+Specs Lab Prodigy SLE format, to be passed to mpes nxdl
+(NeXus Definition Language) template.
+"""
+
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -29,10 +31,223 @@ import sqlite3
 from datetime import datetime
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
+import xarray as xr
 import numpy as np
 
+from pynxtools.dataconverter.reader.xps.reader_utils import (
+    construct_entry_name,
+    construct_data_key,
+    construct_detector_data_key
+)
 
-class SleParser(ABC):
+
+class SleParserSpecs():
+    """
+    Class for restructuring .sle data file from
+    specs vendor into python dictionary.
+    """
+    config_file = "config_sle_specs.json"
+
+    def __init__(self):
+        self.parsers = [
+            SleProdigyParserV1,
+            SleProdigyParserV4,
+        ]
+
+        self.versions_map = {}
+        for parser in self.parsers:
+            supported_versions = parser.supported_versions
+            for version in supported_versions:
+                self.versions_map[version] = parser
+
+        self.sql_connection = None
+
+        self.raw_data: list = []
+        self._xps_dict: dict = {}
+
+        self._root_path = '/ENTRY[entry]'
+
+    @property
+    def data_dict(self) -> dict:
+        """ Getter property."""
+        return self._xps_dict
+
+    def _get_sle_version(self):
+        """Get the Prodigy SLE version from the file."""
+        con = sqlite3.connect(self.sql_connection)
+        cur = con.cursor()
+        query = 'SELECT Value FROM Configuration WHERE Key=="Version"'
+        cur.execute(query)
+        version = cur.fetchall()[0][0]
+        version = version.split('.')
+        version = version[0] + "." + version[1].split('-')[0]
+        return version
+
+    def parse_file(self, file, **kwargs):
+        """
+        Parse the file using the parser that fits the Prodigy SLE version.
+        Returns flat list of dictionaries containing one spectrum each.
+
+        """
+        self.sql_connection = file
+        version = self._get_sle_version()
+        parser = self.versions_map[version]()
+        self.raw_data = parser.parse_file(file, **kwargs)
+
+        file_key = f'{self._root_path}/Files'
+        self._xps_dict[file_key] = file
+
+        self.construct_data()
+
+        return self.data_dict
+
+    def construct_data(self):
+        """ Map SLE format to NXmpes-ready dict. """
+        spectra = copy.deepcopy(self.raw_data)
+
+        self._xps_dict["data"]: dict = {}
+
+        key_map = {
+            'user': [],
+            'instrument': [
+                'workfunction',
+                'bias_voltage_ions [V]',
+                'bias_voltage_electrons [V]',
+                'polar_angle',
+                'azimuth_angle',
+            ],
+            'source': [
+                'source_label',
+                'source_voltage',
+                'operating_mode',
+                'emission_current',
+            ],
+            'beam': ['excitation_energy'],
+            'analyser': [],
+            'collectioncolumn': [
+                'lens1_voltage [nU]',
+                'lens2_voltage [nU]',
+                'coil_current [mA]',
+                'pre_deflector_x_current [nU]',
+                'pre_deflector_y_current [nU]',
+                'focus_displacement_current [nU]',
+                'transmission_function/data',
+                'transmission_function/file',
+                'lens_mode',
+            ],
+            'energydispersion': [
+                'scan_mode',
+                'entrance_slit',
+                'exit_slit',
+                'iris_diameter',
+                'pass_energy',
+            ],
+            'detector': [
+                'calibration_file/dir',
+                'calibration_file',
+                'detector_voltage [V]',
+                'detector_voltage_range',
+            ],
+            'manipulator': [],
+            'calibration': [
+                'transmission_function/data',
+                'transmission_function/file',
+                'calibration_file/dir',
+                'calibration_file',
+            ],
+            'data': [
+                'x_units',
+                'y_units',
+                'n_values',
+                'step_size',
+                'dwell_time'
+            ],
+            'region': [
+                'analysis_method',
+                'start_energy',
+                'dwell_time',
+                'spectrum_comment',
+                'time_stamp',
+                'total_scans'
+            ],
+        }
+
+        for spectrum in spectra:
+            self._update_xps_dict_with_spectrum(spectrum, key_map)
+
+    def _update_xps_dict_with_spectrum(self, spectrum, key_map):
+        """
+        Map one spectrum from raw data to NXmpes-ready dict.
+
+        """
+        # pylint: disable=too-many-locals
+        group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
+        region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
+        instrument_parent = f'{region_parent}/instrument'
+        analyser_parent = f'{instrument_parent}/analyser'
+
+        path_map = {
+            'user': f'{region_parent}/user',
+            'instrument': f'{instrument_parent}',
+            'source': f'{instrument_parent}/source',
+            'beam': f'{instrument_parent}/beam',
+            'analyser': f'{analyser_parent}',
+            'collectioncolumn': f'{analyser_parent}/collectioncolumn',
+            'energydispersion': f'{analyser_parent}/energydispersion',
+            'detector': f'{analyser_parent}/detector',
+            'manipulator': f'{instrument_parent}/manipulator',
+            'calibration': f'{instrument_parent}/calibration',
+            'sample': f'{region_parent}/sample',
+            'data': f'{region_parent}/data',
+            'region': f'{region_parent}'
+        }
+
+        for grouping, spectrum_keys in key_map.items():
+            root = path_map[str(grouping)]
+            for spectrum_key in spectrum_keys:
+                try:
+                    units = re.search(r'\[([A-Za-z0-9_]+)\]', spectrum_key).group(1)
+                    mpes_key = spectrum_key.rsplit(' ', 1)[0]
+                    self._xps_dict[f'{root}/{mpes_key}/@units'] = units
+                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                except AttributeError:
+                    mpes_key = spectrum_key
+                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+
+        self._xps_dict[f'{path_map["analyser"]}/name'] = spectrum['devices'][0]
+        self._xps_dict[f'{path_map["source"]}/name'] = spectrum['devices'][1]
+
+        entry = construct_entry_name(region_parent)
+        self._xps_dict["data"][entry] = xr.Dataset()
+
+        scan_key = construct_data_key(spectrum)
+
+        energy = np.array(spectrum["data"]["x"])
+
+        channels = [key for key in spectrum["data"] if "cps_ch_" in key]
+
+        for channel in channels:
+            ch_no = channel.rsplit('_')[-1]
+            channel_key = f'{scan_key}_chan_{ch_no}'
+            cps = np.array(spectrum["data"][channel])
+
+            self._xps_dict["data"][entry][channel_key] = \
+                xr.DataArray(
+                    data=cps,
+                    coords={"energy": energy})
+
+        self._xps_dict["data"][entry][scan_key] = \
+            xr.DataArray(
+                data=spectrum["data"]['cps_calib'],
+                coords={"energy": energy})
+
+        detector_data_key_child = construct_detector_data_key(spectrum)
+        detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
+
+        self._xps_dict[detector_data_key] = spectrum["data"]['cps_calib']
+
+
+class SleProdigyParser(ABC):
     """
     Generic parser without reading capabilities,
     to be used as template for implementing parsers for different versions.
@@ -1199,7 +1414,7 @@ class SleParser(ABC):
         return version
 
 
-class SleParserV1(SleParser):
+class SleProdigyParserV1(SleProdigyParser):
     """
     Parser for SLE version 1.
     """
@@ -1371,7 +1586,7 @@ class SleParserV1(SleParser):
         return spectrum_settings
 
 
-class SleParserV4(SleParser):
+class SleProdigyParserV4(SleProdigyParser):
     """
     Parser for SLE version 4.
     """
