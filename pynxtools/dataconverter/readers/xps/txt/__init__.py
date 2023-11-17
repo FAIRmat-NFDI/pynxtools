@@ -16,3 +16,4 @@
 #
 
 from pynxtools.dataconverter.readers.xps.xml.txt_parsers_scienta import TxtParserScienta
+from pynxtools.dataconverter.readers.xps.xml.txt_parsers_vamas_export import TxtParserVamasExport
