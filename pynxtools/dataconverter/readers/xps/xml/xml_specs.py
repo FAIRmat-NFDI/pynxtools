@@ -20,11 +20,12 @@ Specs Lab Prodigy XML export, to be passed to mpes nxdl
 # limitations under the License.
 #
 import xml.etree.ElementTree as EmtT
+from typing import Tuple, List, Any
 import copy
 import xarray as xr
 import numpy as np
 
-class XmlSpecs():
+class XmlParserSpecs():
     """
         Class for restructuring xml data file from
         specs vendor into python dictionary.

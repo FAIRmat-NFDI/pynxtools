@@ -26,7 +26,7 @@ Specs Lab Prodigy SLE format, to be passed to mpes nxdl
 
 import re
 import struct
-from copy import copy
+import copy
 import sqlite3
 from datetime import datetime
 import xml.etree.ElementTree as ET
@@ -34,7 +34,7 @@ from abc import ABC, abstractmethod
 import xarray as xr
 import numpy as np
 
-from pynxtools.dataconverter.reader.xps.reader_utils import (
+from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key

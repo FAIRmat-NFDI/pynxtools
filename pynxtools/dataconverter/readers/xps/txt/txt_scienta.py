@@ -1,3 +1,6 @@
+"""
+Class for reading XPS files from TXT export of Scienta.
+"""
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -17,18 +20,14 @@
 
 # pylint: disable=too-many-lines
 
-"""
-Class for reading XPS files from TXT export of Scienta.
-"""
-
 import re
 import copy
-import datetime.datetime
+from datetime import datetime
 import pytz
 import xarray as xr
 import numpy as np
 
-from pynxtools.dataconverter.reader.xps.reader_utils import (
+from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key
