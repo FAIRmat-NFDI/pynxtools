@@ -21,12 +21,192 @@
 Class for reading XPS files from TXT export of Scienta.
 """
 
-from datetime import datetime
+import re
+import copy
+import datetime.datetime
 import pytz
+import xarray as xr
 import numpy as np
 
+from pynxtools.dataconverter.reader.xps.reader_utils import (
+    construct_entry_name,
+    construct_data_key,
+    construct_detector_data_key
+)
 
-class ScientaTxtParser():
+class TxtParserScienta():
+    """
+    Class for restructuring .txt data file from
+    Scienta TXT export into python dictionary.
+    """
+    config_file = "config_txt_scienta.json"
+
+    def __init__(self):
+        self.raw_data: list = []
+        self._xps_dict: dict = {}
+        self._root_path = '/ENTRY[entry]'
+
+        self.helper = ScientaTxtHelper()
+
+    def parse_file(self, filepath, **kwargs):
+        """
+        Parse the file using the Scienta TXT parser.
+
+        """
+        self.raw_data = self.helper.parse_file(filepath, **kwargs)
+
+        file_key = f'{self._root_path}/File'
+        self._xps_dict[file_key] = filepath
+
+        self.construct_data()
+
+        return self.data_dict
+
+    @property
+    def data_dict(self) -> dict:
+        """ Getter property."""
+        return self._xps_dict
+
+    def construct_data(self):
+        """ Map TXT format to NXmpes-ready dict. """
+        spectra = copy.deepcopy(self.raw_data)
+
+        self._xps_dict["data"]: dict = {}
+
+        key_map = {
+            'file_info': [
+                'data_file',
+                'sequence_file'
+            ],
+            'user': [
+                'user_initials',
+            ],
+            'instrument': [
+                'instrument_name',
+                'vendor',
+            ],
+            'source': [],
+            'beam': [
+                'excitation_energy'
+            ],
+            'analyser': [],
+            'collectioncolumn': [
+                'lens_mode',
+            ],
+            'energydispersion': [
+                'acquisition_mode',
+                'pass_energy',
+            ],
+            'detector': [
+                'detector_first_x_channel',
+                'detector_first_y_channel',
+                'detector_last_x_channel',
+                'detector_last_y_channel',
+                'detector_mode',
+                'dwell_time',
+            ],
+            'manipulator': [],
+            'calibration': [],
+            'sample': [
+                'sample_name'
+            ],
+            'data': [
+                'x_units',
+                'energy_axis',
+                'energy_type',
+                'step_size',
+            ],
+            'region': [
+                'center_energy',
+                'energy_scale',
+                'energy_size',
+                'no_of_scans',
+                'region_id',
+                'spectrum_comment',
+                'start_energy',
+                'stop_energy',
+                'time_stamp'
+            ],
+            # 'unused': [
+            #     'energy_unit',
+            #     'number_of_slices',
+            #     'software_version',
+            #     'spectrum_comment',
+            #     'start_date',
+            #     'start_time',
+            #     'time_per_spectrum_channel'
+            # ]
+        }
+
+        for spectrum in spectra:
+            self._update_xps_dict_with_spectrum(spectrum, key_map)
+
+    def _update_xps_dict_with_spectrum(self, spectrum, key_map):
+        """
+        Map one spectrum from raw data to NXmpes-ready dict.
+
+        """
+        # pylint: disable=too-many-locals
+        group_parent = f'{self._root_path}/RegionGroup_{spectrum["spectrum_type"]}'
+        region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
+        file_parent = f'{region_parent}/file_info'
+        instrument_parent = f'{region_parent}/instrument'
+        analyser_parent = f'{instrument_parent}/analyser'
+
+        path_map = {
+            'file_info': f'{file_parent}',
+            'user': f'{region_parent}/user',
+            'instrument': f'{instrument_parent}',
+            'source': f'{instrument_parent}/source',
+            'beam': f'{instrument_parent}/beam',
+            'analyser': f'{analyser_parent}',
+            'collectioncolumn': f'{analyser_parent}/collectioncolumn',
+            'energydispersion': f'{analyser_parent}/energydispersion',
+            'detector': f'{analyser_parent}/detector',
+            'manipulator': f'{instrument_parent}/manipulator',
+            'calibration': f'{instrument_parent}/calibration',
+            'sample': f'{region_parent}/sample',
+            'data': f'{region_parent}/data',
+            'region': f'{region_parent}'
+        }
+
+        for grouping, spectrum_keys in key_map.items():
+            root = path_map[str(grouping)]
+            for spectrum_key in spectrum_keys:
+                try:
+                    units = re.search(r'\[([A-Za-z0-9_]+)\]', spectrum_key).group(1)
+                    mpes_key = spectrum_key.rsplit(' ', 1)[0]
+                    self._xps_dict[f'{root}/{mpes_key}/@units'] = units
+                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                except AttributeError:
+                    mpes_key = spectrum_key
+                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+
+        entry = construct_entry_name(region_parent)
+        self._xps_dict["data"][entry] = xr.Dataset()
+
+        scan_key = construct_data_key(spectrum)
+
+        energy = np.array(spectrum["data"]["x"])
+
+        channel_key = f'{scan_key}_chan_0'
+        self._xps_dict["data"][entry][channel_key] = \
+            xr.DataArray(
+                data=spectrum["data"]['y'],
+                coords={"energy": energy})
+
+        self._xps_dict["data"][entry][scan_key] = \
+            xr.DataArray(
+                data=spectrum["data"]['y'],
+                coords={"energy": energy})
+
+        detector_data_key_child = construct_detector_data_key(spectrum)
+        detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
+
+        self._xps_dict[detector_data_key] = spectrum["data"]['y']
+
+
+class ScientaTxtHelper():
     """ Parser for Scienta TXT exports."""
 
     # pylint: disable=too-few-public-methods
