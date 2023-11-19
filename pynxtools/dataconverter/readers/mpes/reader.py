@@ -199,20 +199,6 @@ def handle_h5_and_json_file(file_paths, objects):
             )
 
         if not os.path.exists(file_path):
-            file_path = os.path.join(
-                os.path.dirname(__file__),
-                "..",
-                "..",
-                "..",
-                "..",
-                "tests",
-                "data",
-                "dataconverter",
-                "readers",
-                "mpes",
-                file_path,
-            )
-        if not os.path.exists(file_path):
             raise FileNotFoundError(
                 errno.ENOENT,
                 os.strerror(errno.ENOENT),
@@ -252,7 +238,7 @@ def rgetattr(obj, attr):
 
     if "index" in attr:
         axis = attr.split(".")[0]
-        return str(obj.dims.index(f"{axis}"))
+        return obj.dims.index(f"{axis}")
 
     return reduce(_getattr, [obj] + attr.split("."))
 
