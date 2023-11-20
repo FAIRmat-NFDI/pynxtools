@@ -37,8 +37,6 @@ Options:
                                   parameters the converter supports.
   --undocumented                  Shows a log output for all undocumented
                                   fields
-  --merge-partial                 Merges partial NeXus files provided as
-                                  different --input-file to the converter.
   --mapping TEXT                  Takes a <name>.mapping.json file and
                                   converts data from given input files.
   --help                          Show this message and exit.
@@ -47,7 +45,7 @@ Options:
 #### Merge partial NeXus files into one
 
 ```console
-user@box:~$ dataconverter --nxdl nxdl --input-file partial1.nxs --input-file partial2.nxs --merge-partial
+user@box:~$ dataconverter --nxdl nxdl --input-file partial1.nxs --input-file partial2.nxs
 ```
 
 #### Map an HDF5/JSON/(Python Dict pickled in a pickle file)
