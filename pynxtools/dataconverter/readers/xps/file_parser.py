@@ -27,40 +27,47 @@ from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlParserSpecs
 from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleParserSpecs
 from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhParserSpecs
 from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtParserScienta
+
 # from pynxtools.dataconverter.readers.xps.txt.txt_specs import TxtParserSpecs
-from pynxtools.dataconverter.readers.xps.txt.txt_vamas_export import TxtParserVamasExport
+from pynxtools.dataconverter.readers.xps.txt.txt_vamas_export import (
+    TxtParserVamasExport,
+)
+
 # from pynxtools.dataconverter.readers.xps.xy.xy_specs import XyParserSpecs
 from pynxtools.dataconverter.readers.xps.vms.vamas import VamasParser
 
-class XpsDataFileParser():
-    """ Class intended for receiving any type of XPS data file."""
 
-    __prmt_file_ext__ = ['slh', 'sle', 'txt', 'vms', 'xml', 'xy']
-    __vendors__ = ['specs', 'scienta', 'kratos', 'unkwown']
+class XpsDataFileParser:
+    """Class intended for receiving any type of XPS data file."""
+
+    __prmt_file_ext__ = ["slh", "sle", "txt", "vms", "xml", "xy"]
+    __vendors__ = ["specs", "scienta", "kratos", "unkwown"]
     __prmt_vndr_cls: Dict[str, Dict] = {
-        'xml': {'specs': XmlParserSpecs},
-        'sle': {'specs': SleParserSpecs},
-        'slh': {'specs': SlhParserSpecs},
-        'txt': {
-            'scienta': TxtParserScienta,
-        #     'specs': TxtParserSpecs,
-            'unknown': TxtParserVamasExport
-            },
+        "xml": {"specs": XmlParserSpecs},
+        "sle": {"specs": SleParserSpecs},
+        "slh": {"specs": SlhParserSpecs},
+        "txt": {
+            "scienta": TxtParserScienta,
+            #     'specs': TxtParserSpecs,
+            "unknown": TxtParserVamasExport,
+        },
         # 'xy': {'specs': XyParserSpecs},
-        'vms': {'unkwown': VamasParser},
+        "vms": {"unkwown": VamasParser},
     }
 
     __config_files: Dict = {
-        'xml': 'config_file_xml.json',
-        'sle': 'config_file_xml.json',
-        'txt': 'config_file_scienta_txt.json',
+        "xml": "config_file_xml.json",
+        "sle": "config_file_xml.json",
+        "txt": "config_file_scienta_txt.json",
     }
 
-    __file_err_msg__ = ('Need a xps data file with the following extension: '
-                        f'{__prmt_file_ext__}')
+    __file_err_msg__ = (
+        "Need a xps data file with the following extension: " f"{__prmt_file_ext__}"
+    )
 
-    __vndr_err_msg__ = ('Need a xps data file from the following vendors: '
-                        f'{__vendors__}')
+    __vndr_err_msg__ = (
+        "Need a xps data file from the following vendors: " f"{__vendors__}"
+    )
 
     def __init__(self, file_paths: List) -> None:
         """
@@ -90,23 +97,18 @@ class XpsDataFileParser():
         for file in self.files:
             file_ext = file.rsplit(".")[-1]
             if file_ext in XpsDataFileParser.__prmt_file_ext__:
-
                 vendor = XpsDataFileParser.check_for_vendors(file)
                 try:
-                    parser_class = (XpsDataFileParser.
-                                __prmt_vndr_cls[file_ext]
-                                [vendor])
+                    parser_class = XpsDataFileParser.__prmt_vndr_cls[file_ext][vendor]
                     parser_obj = parser_class()
                     parser_obj.parse_file(file, **kwargs)
                     self.config_file = parser_obj.config_file
                     return parser_obj.data_dict
 
                 except ValueError as val_err:
-                    raise ValueError(XpsDataFileParser.__vndr_err_msg__) \
-                        from val_err
+                    raise ValueError(XpsDataFileParser.__vndr_err_msg__) from val_err
                 except KeyError as key_err:
-                    raise KeyError(XpsDataFileParser.__vndr_err_msg__) \
-                        from key_err
+                    raise KeyError(XpsDataFileParser.__vndr_err_msg__) from key_err
             else:
                 raise ValueError(XpsDataFileParser.__file_err_msg__)
         return {}
@@ -123,7 +125,7 @@ class XpsDataFileParser():
         if len(vendor_dict) == 1:
             return vendor_dict.keys()[0]
         else:
-            if file_ext == 'txt':
+            if file_ext == "txt":
                 return cls._check_for_vendors_txt(file)
         return None
 
@@ -142,7 +144,7 @@ class XpsDataFileParser():
             Vendor name if that name is in the txt file.
 
         """
-        vendor_dict = XpsDataFileParser.__prmt_vndr_cls['txt']
+        vendor_dict = XpsDataFileParser.__prmt_vndr_cls["txt"]
 
         with open(file, encoding="utf-8") as f:
             contents = f.read()

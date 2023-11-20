@@ -18,23 +18,24 @@ Helper functions for populating NXmpes template
 # limitations under the License.
 #
 
+
 def construct_data_key(spectrum):
     """
     Construct a key for the 'data' field of the xps_dict.
     Output example: cycle0_scan0.
 
     """
-    if 'loop_no' in spectrum:
+    if "loop_no" in spectrum:
         cycle_key = f'cycle{spectrum["loop_no"]}'
     else:
-        cycle_key = 'cycle0'
+        cycle_key = "cycle0"
 
-    if 'scan_no' in spectrum:
+    if "scan_no" in spectrum:
         scan_key = f'scan{spectrum["scan_no"]}'
     else:
-        scan_key = 'scan0'
+        scan_key = "scan0"
 
-    return f'{cycle_key}_{scan_key}'
+    return f"{cycle_key}_{scan_key}"
 
 
 def construct_detector_data_key(spectrum):
@@ -43,17 +44,17 @@ def construct_detector_data_key(spectrum):
     Output example: 'cycles/Cycle_0/scans/Scan_0'
 
     """
-    if 'loop_no' in spectrum:
+    if "loop_no" in spectrum:
         cycle_key = f'cycles/Cycle_{spectrum["loop_no"]}'
     else:
-        cycle_key = 'cycles/Cycle_0'
+        cycle_key = "cycles/Cycle_0"
 
-    if 'scan_no' in spectrum:
+    if "scan_no" in spectrum:
         scan_key = f'scans/Scan_{spectrum["scan_no"]}'
     else:
-        scan_key = 'scans/Scan_0'
+        scan_key = "scans/Scan_0"
 
-    return f'{cycle_key}/{scan_key}'
+    return f"{cycle_key}/{scan_key}"
 
 
 def construct_entry_name(key):
@@ -61,12 +62,13 @@ def construct_entry_name(key):
     key_parts = key.split("/")
     try:
         # entry example : vendor__sample__name_of_scan_region
-        entry_name = (f'{key_parts[2]}'
-                      f'__'
-                      f'{key_parts[3].split("_", 1)[1]}'
-                      f'__'
-                      f'{key_parts[5].split("_", 1)[1]}'
-                      )
+        entry_name = (
+            f"{key_parts[2]}"
+            f"__"
+            f'{key_parts[3].split("_", 1)[1]}'
+            f"__"
+            f'{key_parts[5].split("_", 1)[1]}'
+        )
     except IndexError:
         entry_name = ""
     return entry_name

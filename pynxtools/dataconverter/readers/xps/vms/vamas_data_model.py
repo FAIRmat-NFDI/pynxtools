@@ -19,6 +19,7 @@ Data model for Vamas ISO standard.
 #
 from dataclasses import dataclass
 
+
 @dataclass
 class VamasHeader:
     """An object to store the Vamas header information."""
@@ -45,6 +46,7 @@ class VamasHeader:
         self.unknown_5 = "0"
         self.unknown_6 = "0"
         self.no_blocks = "1"
+
 
 @dataclass
 class Block:

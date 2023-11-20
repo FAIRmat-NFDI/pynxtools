@@ -30,20 +30,22 @@ import numpy as np
 from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_entry_name,
     construct_data_key,
-    construct_detector_data_key
+    construct_detector_data_key,
 )
 
-class TxtParserScienta():
+
+class TxtParserScienta:
     """
     Class for restructuring .txt data file from
     Scienta TXT export into python dictionary.
     """
+
     config_file = "config_txt_scienta.json"
 
     def __init__(self):
         self.raw_data: list = []
         self._xps_dict: dict = {}
-        self._root_path = '/ENTRY[entry]'
+        self._root_path = "/ENTRY[entry]"
 
         self.helper = ScientaTxtHelper()
 
@@ -54,7 +56,7 @@ class TxtParserScienta():
         """
         self.raw_data = self.helper.parse_file(filepath, **kwargs)
 
-        file_key = f'{self._root_path}/File'
+        file_key = f"{self._root_path}/File"
         self._xps_dict[file_key] = filepath
 
         self.construct_data()
@@ -63,68 +65,61 @@ class TxtParserScienta():
 
     @property
     def data_dict(self) -> dict:
-        """ Getter property."""
+        """Getter property."""
         return self._xps_dict
 
     def construct_data(self):
-        """ Map TXT format to NXmpes-ready dict. """
+        """Map TXT format to NXmpes-ready dict."""
         spectra = copy.deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
 
         key_map = {
-            'file_info': [
-                'data_file',
-                'sequence_file'
+            "file_info": ["data_file", "sequence_file"],
+            "user": [
+                "user_initials",
             ],
-            'user': [
-                'user_initials',
+            "instrument": [
+                "instrument_name",
+                "vendor",
             ],
-            'instrument': [
-                'instrument_name',
-                'vendor',
+            "source": [],
+            "beam": ["excitation_energy"],
+            "analyser": [],
+            "collectioncolumn": [
+                "lens_mode",
             ],
-            'source': [],
-            'beam': [
-                'excitation_energy'
+            "energydispersion": [
+                "acquisition_mode",
+                "pass_energy",
             ],
-            'analyser': [],
-            'collectioncolumn': [
-                'lens_mode',
+            "detector": [
+                "detector_first_x_channel",
+                "detector_first_y_channel",
+                "detector_last_x_channel",
+                "detector_last_y_channel",
+                "detector_mode",
+                "dwell_time",
             ],
-            'energydispersion': [
-                'acquisition_mode',
-                'pass_energy',
+            "manipulator": [],
+            "calibration": [],
+            "sample": ["sample_name"],
+            "data": [
+                "x_units",
+                "energy_axis",
+                "energy_type",
+                "step_size",
             ],
-            'detector': [
-                'detector_first_x_channel',
-                'detector_first_y_channel',
-                'detector_last_x_channel',
-                'detector_last_y_channel',
-                'detector_mode',
-                'dwell_time',
-            ],
-            'manipulator': [],
-            'calibration': [],
-            'sample': [
-                'sample_name'
-            ],
-            'data': [
-                'x_units',
-                'energy_axis',
-                'energy_type',
-                'step_size',
-            ],
-            'region': [
-                'center_energy',
-                'energy_scale',
-                'energy_size',
-                'no_of_scans',
-                'region_id',
-                'spectrum_comment',
-                'start_energy',
-                'stop_energy',
-                'time_stamp'
+            "region": [
+                "center_energy",
+                "energy_scale",
+                "energy_size",
+                "no_of_scans",
+                "region_id",
+                "spectrum_comment",
+                "start_energy",
+                "stop_energy",
+                "time_stamp",
             ],
             # 'unused': [
             #     'energy_unit',
@@ -148,38 +143,38 @@ class TxtParserScienta():
         # pylint: disable=too-many-locals
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["spectrum_type"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
-        file_parent = f'{region_parent}/file_info'
-        instrument_parent = f'{region_parent}/instrument'
-        analyser_parent = f'{instrument_parent}/analyser'
+        file_parent = f"{region_parent}/file_info"
+        instrument_parent = f"{region_parent}/instrument"
+        analyser_parent = f"{instrument_parent}/analyser"
 
         path_map = {
-            'file_info': f'{file_parent}',
-            'user': f'{region_parent}/user',
-            'instrument': f'{instrument_parent}',
-            'source': f'{instrument_parent}/source',
-            'beam': f'{instrument_parent}/beam',
-            'analyser': f'{analyser_parent}',
-            'collectioncolumn': f'{analyser_parent}/collectioncolumn',
-            'energydispersion': f'{analyser_parent}/energydispersion',
-            'detector': f'{analyser_parent}/detector',
-            'manipulator': f'{instrument_parent}/manipulator',
-            'calibration': f'{instrument_parent}/calibration',
-            'sample': f'{region_parent}/sample',
-            'data': f'{region_parent}/data',
-            'region': f'{region_parent}'
+            "file_info": f"{file_parent}",
+            "user": f"{region_parent}/user",
+            "instrument": f"{instrument_parent}",
+            "source": f"{instrument_parent}/source",
+            "beam": f"{instrument_parent}/beam",
+            "analyser": f"{analyser_parent}",
+            "collectioncolumn": f"{analyser_parent}/collectioncolumn",
+            "energydispersion": f"{analyser_parent}/energydispersion",
+            "detector": f"{analyser_parent}/detector",
+            "manipulator": f"{instrument_parent}/manipulator",
+            "calibration": f"{instrument_parent}/calibration",
+            "sample": f"{region_parent}/sample",
+            "data": f"{region_parent}/data",
+            "region": f"{region_parent}",
         }
 
         for grouping, spectrum_keys in key_map.items():
             root = path_map[str(grouping)]
             for spectrum_key in spectrum_keys:
                 try:
-                    units = re.search(r'\[([A-Za-z0-9_]+)\]', spectrum_key).group(1)
-                    mpes_key = spectrum_key.rsplit(' ', 1)[0]
-                    self._xps_dict[f'{root}/{mpes_key}/@units'] = units
-                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                    units = re.search(r"\[([A-Za-z0-9_]+)\]", spectrum_key).group(1)
+                    mpes_key = spectrum_key.rsplit(" ", 1)[0]
+                    self._xps_dict[f"{root}/{mpes_key}/@units"] = units
+                    self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
                 except AttributeError:
                     mpes_key = spectrum_key
-                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                    self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
 
         entry = construct_entry_name(region_parent)
         self._xps_dict["data"][entry] = xr.Dataset()
@@ -188,25 +183,23 @@ class TxtParserScienta():
 
         energy = np.array(spectrum["data"]["x"])
 
-        channel_key = f'{scan_key}_chan_0'
-        self._xps_dict["data"][entry][channel_key] = \
-            xr.DataArray(
-                data=spectrum["data"]['y'],
-                coords={"energy": energy})
+        channel_key = f"{scan_key}_chan_0"
+        self._xps_dict["data"][entry][channel_key] = xr.DataArray(
+            data=spectrum["data"]["y"], coords={"energy": energy}
+        )
 
-        self._xps_dict["data"][entry][scan_key] = \
-            xr.DataArray(
-                data=spectrum["data"]['y'],
-                coords={"energy": energy})
+        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
+            data=spectrum["data"]["y"], coords={"energy": energy}
+        )
 
         detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
-        self._xps_dict[detector_data_key] = spectrum["data"]['y']
+        self._xps_dict[detector_data_key] = spectrum["data"]["y"]
 
 
-class ScientaTxtHelper():
-    """ Parser for Scienta TXT exports."""
+class ScientaTxtHelper:
+    """Parser for Scienta TXT exports."""
 
     # pylint: disable=too-few-public-methods
 
@@ -216,52 +209,50 @@ class ScientaTxtHelper():
         self.no_of_regions = 0
 
         keys_map = {
-            'Number of Regions': 'no_of_regions',
-            'Version': 'software_version',
-            'Lens Mode': 'lens_mode',
-            'Pass Energy': 'pass_energy',
-            'Number of Sweeps': 'no_of_scans',
-            'Excitation Energy': 'excitation_energy',
-            'Energy Scale': 'energy_scale',
-            'Acquisition Mode': 'acquisition_mode',
-            'Energy Unit': 'x_units',
-            'Center Energy': 'center_energy',
-            'Low Energy': 'start_energy',
-            'High Energy': 'stop_energy',
-            'Energy Step': 'step_size',
-            'Step Time': 'dwell_time',
-            'Number of Slices': 'number_of_slices',
-            'File': 'data_file',
-            'Sequence': 'sequence_file',
-            'Spectrum Name': 'spectrum_type',
-            'Instrument': 'instrument_name',
-            'Location': 'vendor',
-            'User': 'user_initials',
-            'Sample': 'sample_name',
-            'Comments': 'spectrum_comment',
-            'Date': 'start_date',
-            'Time': 'start_time',
-            'Time per Spectrum Channel': 'time_per_spectrum_channel',
-            'DetectorMode': 'detector_mode',
+            "Number of Regions": "no_of_regions",
+            "Version": "software_version",
+            "Lens Mode": "lens_mode",
+            "Pass Energy": "pass_energy",
+            "Number of Sweeps": "no_of_scans",
+            "Excitation Energy": "excitation_energy",
+            "Energy Scale": "energy_scale",
+            "Acquisition Mode": "acquisition_mode",
+            "Energy Unit": "x_units",
+            "Center Energy": "center_energy",
+            "Low Energy": "start_energy",
+            "High Energy": "stop_energy",
+            "Energy Step": "step_size",
+            "Step Time": "dwell_time",
+            "Number of Slices": "number_of_slices",
+            "File": "data_file",
+            "Sequence": "sequence_file",
+            "Spectrum Name": "spectrum_type",
+            "Instrument": "instrument_name",
+            "Location": "vendor",
+            "User": "user_initials",
+            "Sample": "sample_name",
+            "Comments": "spectrum_comment",
+            "Date": "start_date",
+            "Time": "start_time",
+            "Time per Spectrum Channel": "time_per_spectrum_channel",
+            "DetectorMode": "detector_mode",
         }
 
         self.region_keys_map = {
-            'Region Name': 'region_name',
-            'name': 'energy_type',
-            'size': 'energy_size',
-            'scale': 'energy_axis',
+            "Region Name": "region_name",
+            "name": "energy_type",
+            "size": "energy_size",
+            "scale": "energy_axis",
         }
 
         detector_map = {
-            'Detector First X-Channel': 'detector_first_x_channel',
-            'Detector Last X-Channel': 'detector_last_x_channel',
-            'Detector First Y-Channel': 'detector_first_y_channel',
-            'Detector Last Y-Channel': 'detector_last_y_channel',
+            "Detector First X-Channel": "detector_first_x_channel",
+            "Detector Last X-Channel": "detector_last_x_channel",
+            "Detector First Y-Channel": "detector_first_y_channel",
+            "Detector Last Y-Channel": "detector_last_y_channel",
         }
 
-        lens_mode_map = {
-            'Transmission': 'fixed analyzer transmission'
-        }
+        lens_mode_map = {"Transmission": "fixed analyzer transmission"}
 
         self.key_maps = [
             keys_map,
@@ -271,11 +262,11 @@ class ScientaTxtHelper():
         ]
 
         self.value_map = {
-            'no_of_regions': self._change_no_of_regions,
-            'x_units': self._change_energy_type,
-            'energy_axis': [self._separate_dimension_scale, np.array],
-            'energy_scale': self._change_energy_type,
-            'acquisition_mode': self._change_scan_mode,
+            "no_of_regions": self._change_no_of_regions,
+            "x_units": self._change_energy_type,
+            "energy_axis": [self._separate_dimension_scale, np.array],
+            "energy_scale": self._change_energy_type,
+            "acquisition_mode": self._change_scan_mode,
         }
 
     def parse_file(self, file):
@@ -359,11 +350,8 @@ class ScientaTxtHelper():
         """
 
         region_data = {
-            'region_id': region_id,
-            'data': {
-                'x': [],
-                'y': []
-            },
+            "region_id": region_id,
+            "data": {"x": [], "y": []},
         }
 
         begin_region = False
@@ -371,11 +359,11 @@ class ScientaTxtHelper():
         begin_data = False
 
         for line in self.lines:
-            if line.startswith(f'[Region {region_id}'):
+            if line.startswith(f"[Region {region_id}"):
                 begin_region = True
-            if line.startswith(f'[Info {region_id}'):
+            if line.startswith(f"[Info {region_id}"):
                 begin_info = True
-            if line.startswith(f'[Data {region_id}'):
+            if line.startswith(f"[Data {region_id}"):
                 begin_data = True
                 continue
 
@@ -387,10 +375,10 @@ class ScientaTxtHelper():
             if begin_region:
                 # Read region meta data.
                 key, value = self._get_key_value_pair(line)
-                if 'Dimension' in key:
+                if "Dimension" in key:
                     key = self._re_map_keys(key)
-                    key = self.region_keys_map[key.rsplit(' ')[-1]]
-                    key = key.rsplit(' ')[-1]
+                    key = self.region_keys_map[key.rsplit(" ")[-1]]
+                    key = key.rsplit(" ")[-1]
                     value = self._re_map_values(key, value)
                     if self._check_valid_value(value):
                         region_data[key] = value
@@ -403,21 +391,18 @@ class ScientaTxtHelper():
 
             if begin_data:
                 # Read XY data for this region.
-                [energy, intensity] = \
-                    [float(s) for s in line.split(' ') if s != '']
+                [energy, intensity] = [float(s) for s in line.split(" ") if s != ""]
 
-                region_data['data']['x'].append(energy)
-                region_data['data']['y'].append(intensity)
+                region_data["data"]["x"].append(energy)
+                region_data["data"]["y"].append(intensity)
 
-        region_data['data']['x'] = np.array(region_data['data']['x'])
-        region_data['data']['y'] = np.array(region_data['data']['y'])
+        region_data["data"]["x"] = np.array(region_data["data"]["x"])
+        region_data["data"]["y"] = np.array(region_data["data"]["y"])
 
         # Convert date and time to ISO8601 date time.
-        start_date = region_data['start_date']
-        start_time = region_data['start_time']
-        region_data['time_stamp'] = self._construct_date_time(
-            start_date,
-            start_time)
+        start_date = region_data["start_date"]
+        start_time = region_data["start_time"]
+        region_data["time_stamp"] = self._construct_date_time(start_date, start_time)
 
         self.spectra.append(region_data)
 
@@ -464,13 +449,13 @@ class ScientaTxtHelper():
 
         """
         try:
-            [key, value] = line.split('=')
+            [key, value] = line.split("=")
             key = self._re_map_keys(key)
             value = self._re_map_values(key, value)
             return key, value
 
         except ValueError:
-            key, value = '', ''
+            key, value = "", ""
             return key, value
 
     def _re_map_keys(self, key):
@@ -514,14 +499,14 @@ class ScientaTxtHelper():
         Change the strings for energy type to the preferred format.
 
         """
-        if 'Binding' in energy:
-            return 'binding energy'
-        if 'Kinetic' in energy:
-            return 'kinetic energy'
+        if "Binding" in energy:
+            return "binding energy"
+        if "Kinetic" in energy:
+            return "kinetic energy"
         return None
 
     def _separate_dimension_scale(self, scale):
-        return [float(s) for s in scale.split(' ')]
+        return [float(s) for s in scale.split(" ")]
 
     def _change_scan_mode(self, acquisition_mode):
         """
@@ -529,10 +514,10 @@ class ScientaTxtHelper():
         the allowed values in NXmpes.
 
         """
-        if acquisition_mode == 'Fixed':
-            return 'fixed'
-        if acquisition_mode == 'Swept':
-            return 'sweep'
+        if acquisition_mode == "Fixed":
+            return "fixed"
+        if acquisition_mode == "Swept":
+            return "sweep"
         return None
 
     def _construct_date_time(self, date, time):
@@ -543,9 +528,10 @@ class ScientaTxtHelper():
         """
         date_time = datetime.combine(
             datetime.strptime(date, "%Y-%m-%d"),
-            datetime.strptime(time, '%H:%M:%S').time())
+            datetime.strptime(time, "%H:%M:%S").time(),
+        )
 
-        localtz = pytz.timezone('Europe/Berlin')
+        localtz = pytz.timezone("Europe/Berlin")
         date_time = localtz.localize(date_time)
 
         return date_time.isoformat()
@@ -557,7 +543,7 @@ class ScientaTxtHelper():
 
         """
         try:
-            value = value.rstrip('\n')
+            value = value.rstrip("\n")
         except AttributeError:
             pass
 

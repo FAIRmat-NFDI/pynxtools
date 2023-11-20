@@ -25,14 +25,12 @@ from abc import ABC, abstractmethod
 import xarray as xr
 import numpy as np
 
-from pynxtools.dataconverter.readers.xps.vms.vamas_data_model import(
-    VamasHeader, Block
-    )
+from pynxtools.dataconverter.readers.xps.vms.vamas_data_model import VamasHeader, Block
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_entry_name,
     construct_data_key,
-    construct_detector_data_key
+    construct_detector_data_key,
 )
 
 
@@ -45,17 +43,17 @@ class VamasParser:
 
         self.parser_map = {
             "regular": VamasParserRegular,
-            "irregular": VamasParserIrregular
-            }
+            "irregular": VamasParserIrregular,
+        }
 
         self.raw_data: list = []
         self._xps_dict: dict = {}
 
-        self._root_path = '/ENTRY[entry]'
+        self._root_path = "/ENTRY[entry]"
 
     @property
     def data_dict(self) -> dict:
-        """ Getter property."""
+        """Getter property."""
         return self._xps_dict
 
     def parse_file(self, file, **kwargs):
@@ -69,13 +67,12 @@ class VamasParser:
         parser = self.parser_map[vms_type]()
         self.raw_data = parser.parse_file(file, **kwargs)
 
-        file_key = f'{self._root_path}/Files'
+        file_key = f"{self._root_path}/Files"
         self._xps_dict[file_key] = file
 
         self.construct_data()
 
         return self.data_dict
-
 
     def _get_vms_type(self):
         """
@@ -88,7 +85,7 @@ class VamasParser:
 
         """
         contents = []
-        with open(self.file, 'rb') as f:
+        with open(self.file, "rb") as f:
             for line in f:
                 if line.endswith(b"\r\n"):
                     contents += [line.decode("utf-8", errors="ignore").strip()]
@@ -98,60 +95,56 @@ class VamasParser:
                 return vms_type
 
     def construct_data(self):
-        """ Map VMS format to NXmpes-ready dict. """
+        """Map VMS format to NXmpes-ready dict."""
         spectra = copy.deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
 
         key_map = {
-            'user': [],
-            'instrument': [
-                'work_function',
-                'target_bias',
-                'analyzer_take_off_azimuth',
-                'analyzer_take_off_polar',
-                'analysis_width_x',
-                'analysis_width_y',
+            "user": [],
+            "instrument": [
+                "work_function",
+                "target_bias",
+                "analyzer_take_off_azimuth",
+                "analyzer_take_off_polar",
+                "analysis_width_x",
+                "analysis_width_y",
             ],
-            'source': [
-                'source_label',
-                'source_analyzer_angle',
+            "source": [
+                "source_label",
+                "source_analyzer_angle",
             ],
-            'beam': ['excitation_energy'],
-            'analyser': [],
-            'collectioncolumn': [],
-            'energydispersion': [
-                'scan_mode',
-                'pass_energy',
+            "beam": ["excitation_energy"],
+            "analyser": [],
+            "collectioncolumn": [],
+            "energydispersion": [
+                "scan_mode",
+                "pass_energy",
             ],
-            'detector': [
-                'signal_mode'
+            "detector": ["signal_mode"],
+            "manipulator": [],
+            "sample": ["target_bias"],
+            "calibration": [],
+            "data": [
+                "x_label",
+                "x_units",
+                "y_labels_1",
+                "y_units_1",
+                "y_labels_2",
+                "y_units_2",
+                "n_values",
+                "start_energy",
+                "step_size",
+                "dwell_time",
             ],
-            'manipulator': [],
-            'sample': [
-                'target_bias'
-                ],
-            'calibration': [],
-            'data': [
-                'x_label',
-                'x_units',
-                'y_labels_1',
-                'y_units_1',
-                'y_labels_2',
-                'y_units_2',
-                'n_values',
-                'start_energy',
-                'step_size',
-                'dwell_time'
-            ],
-            'region': [
-                'analysis_method',
-                'spectrum_type',
-                'dwell_time',
-                'comments',
-                'spectrum_id',
-                'time_stamp',
-                'scans'
+            "region": [
+                "analysis_method",
+                "spectrum_type",
+                "dwell_time",
+                "comments",
+                "spectrum_id",
+                "time_stamp",
+                "scans",
             ],
         }
 
@@ -166,36 +159,36 @@ class VamasParser:
         # pylint: disable=too-many-locals
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
-        instrument_parent = f'{region_parent}/instrument'
-        analyser_parent = f'{instrument_parent}/analyser'
+        instrument_parent = f"{region_parent}/instrument"
+        analyser_parent = f"{instrument_parent}/analyser"
 
         path_map = {
-            'user': f'{region_parent}/user',
-            'instrument': f'{instrument_parent}',
-            'source': f'{instrument_parent}/source',
-            'beam': f'{instrument_parent}/beam',
-            'analyser': f'{analyser_parent}',
-            'collectioncolumn': f'{analyser_parent}/collectioncolumn',
-            'energydispersion': f'{analyser_parent}/energydispersion',
-            'detector': f'{analyser_parent}/detector',
-            'manipulator': f'{instrument_parent}/manipulator',
-            'calibration': f'{instrument_parent}/calibration',
-            'sample': f'{region_parent}/sample',
-            'data': f'{region_parent}/data',
-            'region': f'{region_parent}'
+            "user": f"{region_parent}/user",
+            "instrument": f"{instrument_parent}",
+            "source": f"{instrument_parent}/source",
+            "beam": f"{instrument_parent}/beam",
+            "analyser": f"{analyser_parent}",
+            "collectioncolumn": f"{analyser_parent}/collectioncolumn",
+            "energydispersion": f"{analyser_parent}/energydispersion",
+            "detector": f"{analyser_parent}/detector",
+            "manipulator": f"{instrument_parent}/manipulator",
+            "calibration": f"{instrument_parent}/calibration",
+            "sample": f"{region_parent}/sample",
+            "data": f"{region_parent}/data",
+            "region": f"{region_parent}",
         }
 
         for grouping, spectrum_keys in key_map.items():
             root = path_map[str(grouping)]
             for spectrum_key in spectrum_keys:
                 try:
-                    units = re.search(r'\[([A-Za-z0-9_]+)\]', spectrum_key).group(1)
-                    mpes_key = spectrum_key.rsplit(' ', 1)[0]
-                    self._xps_dict[f'{root}/{mpes_key}/@units'] = units
-                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                    units = re.search(r"\[([A-Za-z0-9_]+)\]", spectrum_key).group(1)
+                    mpes_key = spectrum_key.rsplit(" ", 1)[0]
+                    self._xps_dict[f"{root}/{mpes_key}/@units"] = units
+                    self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
                 except AttributeError:
                     mpes_key = spectrum_key
-                    self._xps_dict[f'{root}/{mpes_key}'] = spectrum[spectrum_key]
+                    self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
 
         entry = construct_entry_name(region_parent)
         self._xps_dict["data"][entry] = xr.Dataset()
@@ -207,30 +200,26 @@ class VamasParser:
         channels = [key for key in spectrum["data"] if "cps_ch_" in key]
 
         for channel in channels:
-            ch_no = channel.rsplit('_')[-1]
-            channel_key = f'{scan_key}_chan_{ch_no}'
+            ch_no = channel.rsplit("_")[-1]
+            channel_key = f"{scan_key}_chan_{ch_no}"
             cps = np.array(spectrum["data"][channel])
 
-            self._xps_dict["data"][entry][channel_key] = \
-                xr.DataArray(
-                    data=cps,
-                    coords={"energy": energy})
+            self._xps_dict["data"][entry][channel_key] = xr.DataArray(
+                data=cps, coords={"energy": energy}
+            )
 
-        self._xps_dict["data"][entry][scan_key] = \
-            xr.DataArray(
-                data=spectrum["data"]['cps_calib'],
-                coords={"energy": energy})
+        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
+            data=spectrum["data"]["cps_calib"], coords={"energy": energy}
+        )
 
         detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
-        self._xps_dict[detector_data_key] = spectrum["data"]['cps_calib']
+        self._xps_dict[detector_data_key] = spectrum["data"]["cps_calib"]
 
 
 class VamasParserVMS(ABC):
-    """A parser for reading vamas files.
-
-    """
+    """A parser for reading vamas files."""
 
     def __init__(self):
         """Construct the vamas parser.
@@ -532,9 +521,9 @@ class VamasParserVMS(ABC):
             settings = {
                 "region": b.block_id,
                 "sample_name": b.sample_id,
-                "comments": b.comment_lines, ## need to be split,
+                "comments": b.comment_lines,  ## need to be split,
                 "analysis_method": b.technique,
-                "source_label": b.source_label, #Al
+                "source_label": b.source_label,  # Al
                 "excitation_energy": b.source_energy,
                 "source_analyzer_angle": b.source_analyzer_angle,
                 "scan_mode": b.analyzer_mode,
@@ -542,13 +531,13 @@ class VamasParserVMS(ABC):
                 "magnification": b.magnification,
                 "work_function": b.work_function,
                 "target_bias": b.target_bias,
-                "analysis_width_x": b.analyzer_width_x, #analyser slit length divided by the magnification of the analyser transfer lens
+                "analysis_width_x": b.analyzer_width_x,  # analyser slit length divided by the magnification of the analyser transfer lens
                 "analysis_width_y": b.analyzer_width_y,
-                "analyzer_take_off_polar": b.analyzer_take_off_polar_angle, #degrees from upward z-direction, defined by the sample stage
+                "analyzer_take_off_polar": b.analyzer_take_off_polar_angle,  # degrees from upward z-direction, defined by the sample stage
                 "analyzer_take_off_azimuth": b.analyzer_azimuth,
-                "element": b.species_label, # Fe
-                "transition": b.transition_label, # 2p
-                "particle_charge": b.particle_charge, # -1
+                "element": b.species_label,  # Fe
+                "transition": b.transition_label,  # 2p
+                "particle_charge": b.particle_charge,  # -1
                 "x_label": b.abscissa_label,
                 "x_units": b.abscissa_units,
                 "start_energy": b.abscissa_start,
@@ -557,11 +546,11 @@ class VamasParserVMS(ABC):
                 "y_units_1": b.variable_units_1,
                 "y_labels_2": b.variable_label_2,
                 "y_units_2": b.variable_units_2,
-                "signal_mode": b.signal_mode, # pulse counting
+                "signal_mode": b.signal_mode,  # pulse counting
                 "dwell_time": b.dwell_time,
                 "time_correction": b.time_correction,
-                "sample_normal_polarangle_tilt": b.sample_angle_tilt, # degrees from upward z-direction, defined by the sample stag
-                "sample_tilt_azimuth": b.sample_tilt_azimuth, #degrees clockwise from the y-direction towards the operator, defined by the sample stage
+                "sample_normal_polarangle_tilt": b.sample_angle_tilt,  # degrees from upward z-direction, defined by the sample stag
+                "sample_tilt_azimuth": b.sample_tilt_azimuth,  # degrees clockwise from the y-direction towards the operator, defined by the sample stage
                 "sample_rotation_angle": b.sample_rotation,
                 "n_values": int(b.num_ord_values / b.no_variables),
             }
@@ -1021,13 +1010,14 @@ class VamasParserIrregular(VamasParserVMS):
             data_dict[name] = dd
             setattr(block, name, data_dict[name])
 
+
 if __name__ == "__main__":
     filepath = r"C:\Users\pielsticker\Lukas\MPI-CEC\Projects\deepxps\xpsdeeplearning\data\references\Fe_references.vms"
-    #filepath = r"C:\Users\pielsticker\Downloads\CasaXP1_irregular.vms"
+    # filepath = r"C:\Users\pielsticker\Downloads\CasaXP1_irregular.vms"
     v = VamasParser()
     V = v.parse_file(filepath)
     data_dict = v.data_dict
-    #h = v.header
-    #n = h.no_blocks
-    #b = v.blocks[0]
-    #header = h.__dict__
+    # h = v.header
+    # n = h.no_blocks
+    # b = v.blocks[0]
+    # header = h.__dict__
