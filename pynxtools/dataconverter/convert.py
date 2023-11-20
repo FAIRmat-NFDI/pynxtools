@@ -155,7 +155,7 @@ def parse_params_file(params_file):
 )
 @click.option(
     '--reader',
-    default='example',
+    default='json_map',
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
     help='The reader to use. default="example"'
 )
@@ -195,12 +195,6 @@ def parse_params_file(params_file):
     help='Shows a log output for all undocumented fields'
 )
 @click.option(
-    '--merge-partial',
-    is_flag=True,
-    default=False,
-    help='Merges partial NeXus files provided as different --input-file to the converter.'
-)
-@click.option(
     '--mapping',
     help='Takes a <name>.mapping.json file and converts data from given input files.'
 )
@@ -213,7 +207,6 @@ def convert_cli(input_file: Tuple[str, ...],
                 fair: bool,
                 params_file: str,
                 undocumented: bool,
-                merge_partial: bool,
                 mapping: str):
     """The CLI entrypoint for the convert function"""
     if params_file:
@@ -230,7 +223,7 @@ def convert_cli(input_file: Tuple[str, ...],
             sys.tracebacklimit = 0
             raise IOError("\nError: Please supply an NXDL file with the option:"
                           " --nxdl <path to NXDL>")
-        if merge_partial or mapping:
+        if mapping:
             reader = "json_map"
             if mapping:
                 input_file = input_file + tuple([mapping])

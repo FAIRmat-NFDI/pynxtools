@@ -61,6 +61,8 @@ def restore_xarray_file_from_tmp(tmp_path):
 ])
 def test_find_nxdl(cli_inputs):
     """Unit test to check if dataconverter can find NXDLs in contributed/applications folder."""
+    cli_inputs.extend(["--reader", "example"])
+
     runner = CliRunner()
     result = runner.invoke(dataconverter.convert_cli, cli_inputs)
     if "NXdoesnotexist" in cli_inputs:
