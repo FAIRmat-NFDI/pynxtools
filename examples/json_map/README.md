@@ -11,8 +11,9 @@ It accepts any NXDL file that you like as long as your mapping file contains all
 Please use the --generate-template function of the dataconverter to create a .mapping.json file.
 
 ```console
-user@box:~$ python convert.py --nxdl NXmynxdl --generate-template > mynxdl.mapping.json
+user@box:~$ dataconverter --nxdl NXmynxdl --generate-template > mynxdl.mapping.json
 ```
+##### Details on the [mapping.json](/pynxtools/dataconverter/readers/json_map/README.md#the-mappingjson-file) file.
 
 ## How to run these examples?
 
