@@ -65,7 +65,7 @@ def get_names_of_all_readers() -> List[str]:
 
 
 # pylint: disable=too-many-arguments,too-many-locals
-def convert(input_file: Tuple[str],
+def convert(input_file: Tuple[str, ...],
             reader: str,
             nxdl: str,
             output: str,
@@ -153,7 +153,7 @@ def parse_params_file(params_file):
 )
 @click.option(
     '--reader',
-    default='example',
+    default='json_map',
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
     help='The reader to use. default="example"'
 )
@@ -192,15 +192,20 @@ def parse_params_file(params_file):
     default=False,
     help='Shows a log output for all undocumented fields'
 )
+@click.option(
+    '--mapping',
+    help='Takes a <name>.mapping.json file and converts data from given input files.'
+)
 # pylint: disable=too-many-arguments
-def convert_cli(input_file: Tuple[str],
+def convert_cli(input_file: Tuple[str, ...],
                 reader: str,
                 nxdl: str,
                 output: str,
                 generate_template: bool,
                 fair: bool,
                 params_file: str,
-                undocumented: bool):
+                undocumented: bool,
+                mapping: str):
     """The CLI entrypoint for the convert function"""
     if params_file:
         try:
@@ -216,6 +221,10 @@ def convert_cli(input_file: Tuple[str],
             sys.tracebacklimit = 0
             raise IOError("\nError: Please supply an NXDL file with the option:"
                           " --nxdl <path to NXDL>")
+        if mapping:
+            reader = "json_map"
+            if mapping:
+                input_file = input_file + tuple([mapping])
         convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)
 
 

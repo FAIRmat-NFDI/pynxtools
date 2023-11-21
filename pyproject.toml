@@ -42,7 +42,8 @@ dependencies = [
     "lark>=1.1.5",
     "requests",
     "requests_cache",
-    "nanonispy@git+https://github.com/ramav87/nanonispy.git@a0da87c58482d29624a2bf5deecb763dd1274212"
+    "nanonispy@git+https://github.com/ramav87/nanonispy.git@a0da87c58482d29624a2bf5deecb763dd1274212",
+    "mergedeep"
 ]
 
 [project.urls]
