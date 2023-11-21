@@ -269,6 +269,13 @@ class MPESReader(BaseReader):
             eln_data_dict,
         ) = handle_h5_and_json_file(file_paths, objects)
 
+        for key in list(config_file_dict):
+            if "*" in key:
+                value = config_file_dict[key]
+                for dim in x_array_loaded.dims:
+                    config_file_dict[key.replace("*", dim)] = value.replace("*", dim)
+                config_file_dict.pop(key)
+
         for key, value in config_file_dict.items():
 
             if isinstance(value, str) and ":" in value:
