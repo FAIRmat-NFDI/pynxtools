@@ -332,19 +332,10 @@
   "/ENTRY[entry]/PROCESS[process]/CALIBRATION[ky_calibration]/offset": "@attrs:metadata/momentum_correction/offset_ky",
   "/ENTRY[entry]/PROCESS[process]/CALIBRATION[ky_calibration]/calibrated_axis": "@attrs:metadata/momentum_correction/calibration/axis_ky",
   "/ENTRY[entry]/DATA[data]/@axes": "@data:dims",
-  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@kx_indices]": "@data:kx.index",
-  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@ky_indices]": "@data:ky.index",
-  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@energy_indices]": "@data:energy.index",
-  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@delay_indices]": "@data:delay.index",
+  "/ENTRY[entry]/DATA[data]/AXISNAME_indices[@*_indices]": "@data:*.index",
   "/ENTRY[entry]/DATA[data]/@signal": "data",
   "/ENTRY[entry]/DATA[data]/data": "@data:data",
   "/ENTRY[entry]/DATA[data]/data/@units": "counts",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[kx]": "@data:kx.data",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[kx]/@units": "@data:kx.unit",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[ky]": "@data:ky.data",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[ky]/@units": "@data:ky.unit",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[energy]": "@data:energy.data",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[energy]/@units": "@data:energy.unit",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[delay]": "@data:delay.data",
-  "/ENTRY[entry]/DATA[data]/AXISNAME[delay]/@units": "@data:delay.unit"
+  "/ENTRY[entry]/DATA[data]/AXISNAME[*]": "@data:*.data",
+  "/ENTRY[entry]/DATA[data]/AXISNAME[*]/@units": "@data:*.unit"
 }
