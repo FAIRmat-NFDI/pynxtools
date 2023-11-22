@@ -25,6 +25,11 @@ import copy
 import xarray as xr
 import numpy as np
 
+from pynxtools.dataconverter.readers.xps.reader_utils import (
+    construct_entry_name,
+    construct_data_key,
+    construct_detector_data_key,
+)
 
 class XmlParserSpecs:
     """
@@ -572,6 +577,9 @@ class XmlParserSpecs:
                 _, last_part = key.split("cycles/Cycle_")
                 if "/time" in last_part:
                     self.entry_to_data[entry]["raw_data"]["time"] = val
+                    continue
+                if "/parameters/Loop" in last_part:
+                    self.entry_to_data[entry]["raw_data"]["loop_no"] = val
                     continue
                 parts = last_part.split("/")
                 cycle_num, scan_num = parts[0], parts[-2].split("_")[1]
