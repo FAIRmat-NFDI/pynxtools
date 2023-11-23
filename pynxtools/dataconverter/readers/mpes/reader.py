@@ -243,6 +243,25 @@ def rgetattr(obj, attr):
     return reduce(_getattr, [obj] + attr.split("."))
 
 
+def fill_data_indices_in_config(config_file_dict, x_array_loaded):
+    """Add data indices key value pairs to the config_file
+    dictionary from the xarray dimensions if not already
+    present.
+    """
+    for key in list(config_file_dict):
+        if "*" in key:
+            value = config_file_dict[key]
+            for dim in x_array_loaded.dims:
+                new_key = key.replace("*", dim)
+                new_value = value.replace("*", dim)
+
+                if new_key not in config_file_dict.keys() \
+                        and new_value not in config_file_dict.values():
+                    config_file_dict[new_key] = new_value
+
+            config_file_dict.pop(key)
+
+
 class MPESReader(BaseReader):
     """MPES-specific reader class"""
 
@@ -251,7 +270,7 @@ class MPESReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXmpes"]
 
-    def read(
+    def read(  # pylint: disable=too-many-branches
             self,
             template: dict = None,
             file_paths: Tuple[str] = None,
@@ -269,12 +288,7 @@ class MPESReader(BaseReader):
             eln_data_dict,
         ) = handle_h5_and_json_file(file_paths, objects)
 
-        for key in list(config_file_dict):
-            if "*" in key:
-                value = config_file_dict[key]
-                for dim in x_array_loaded.dims:
-                    config_file_dict[key.replace("*", dim)] = value.replace("*", dim)
-                config_file_dict.pop(key)
+        fill_data_indices_in_config(config_file_dict, x_array_loaded)
 
         for key, value in config_file_dict.items():
 
