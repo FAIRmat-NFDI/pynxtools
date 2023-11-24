@@ -1009,15 +1009,3 @@ class VamasParserIrregular(VamasParserVMS):
             dd = d[v::n]
             data_dict[name] = dd
             setattr(block, name, data_dict[name])
-
-
-if __name__ == "__main__":
-    filepath = r"C:\Users\pielsticker\Lukas\MPI-CEC\Projects\deepxps\xpsdeeplearning\data\references\Fe_references.vms"
-    # filepath = r"C:\Users\pielsticker\Downloads\CasaXP1_irregular.vms"
-    v = VamasParser()
-    V = v.parse_file(filepath)
-    data_dict = v.data_dict
-    # h = v.header
-    # n = h.no_blocks
-    # b = v.blocks[0]
-    # header = h.__dict__
