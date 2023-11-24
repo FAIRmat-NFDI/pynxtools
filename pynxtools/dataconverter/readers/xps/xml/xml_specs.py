@@ -28,7 +28,6 @@ import numpy as np
 from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_entry_name,
     construct_data_key,
-    construct_detector_data_key,
 )
 
 class XmlParserSpecs:
@@ -711,3 +710,4 @@ class XmlParserSpecs:
                             self._xps_dict["data"][entry][scan_nm] = xr.DataArray(
                                 data=channel_counts[0, :], coords={"BE": binding_energy}
                             )
+

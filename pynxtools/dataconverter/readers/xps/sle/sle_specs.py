@@ -107,7 +107,6 @@ class SleParserSpecs:
         spectra = copy.deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
-
         key_map = {
             "user": [],
             "instrument": [
@@ -970,7 +969,7 @@ class SleProdigyParser(ABC):
                 for k, v in dict(zip(column_names, results)).items()
                 if k in self.sql_metadata_map
             }
-            combined = copy(combined)
+            combined = copy.copy(combined)
             if "EnergyType" not in combined.keys():
                 combined["EnergyType"] = "Binding"
             for key, value in combined.items():
@@ -1345,7 +1344,7 @@ class SleProdigyParser(ABC):
         for idx, group_id in enumerate(group_ids):
             for spec in self.spectra:
                 if int(spec["group_id"]) == int(group_id):
-                    spec["group_id"] = copy(idx)
+                    spec["group_id"] = copy.copy(idx)
 
     def _convert_to_common_format(self):
         """
@@ -1449,7 +1448,7 @@ class SleProdigyParserV1(SleProdigyParser):
                     settings = {}
                     for param in device.iter("Parameter"):
                         settings[param.attrib["name"]] = param.text
-                        data.update(copy(settings))
+                        data.update(copy.copy(settings))
 
                     data["devices"] += [device.attrib["DeviceType"]]
 
@@ -1457,8 +1456,8 @@ class SleProdigyParserV1(SleProdigyParser):
                     #                     'settings':settings}]
                 for spectrum_group in group.iter("SpectrumGroup"):
                     settings = self._get_group_metadata(spectrum_group)
-                    data.update(copy(settings))
-                    collect += [copy(data)]
+                    data.update(copy.copy(settings))
+                    collect += [copy.copy(data)]
         return collect
 
     def _get_group_metadata(self, spectrum_group):
@@ -1482,11 +1481,11 @@ class SleProdigyParserV1(SleProdigyParser):
         settings["group_id"] = spectrum_group.attrib["ID"]
         for comm_settings in spectrum_group.iter("CommonSpectrumSettings"):
             common_spectrum_settings = self._extract_comm_settings(comm_settings)
-            settings.update(copy(common_spectrum_settings))
+            settings.update(copy.copy(common_spectrum_settings))
 
         for spectrum in spectrum_group.iter("Spectrum"):
             spectrum_settings = self._get_spectrum_metadata(spectrum)
-            settings.update(copy(spectrum_settings))
+            settings.update(copy.copy(spectrum_settings))
 
         return settings
 
@@ -1548,7 +1547,7 @@ class SleProdigyParserV1(SleProdigyParser):
         spectrum_settings["spectrum_type"] = spectrum.attrib["Name"]
         for setting in spectrum.iter("FixedEnergiesSettings"):
             spectrum_settings["dwell_time"] = float(setting.attrib["DwellTime"])
-            spectrum_settings["start_energy"] = float(copy(setting.attrib["Ebin"]))
+            spectrum_settings["start_energy"] = float(copy.copy(setting.attrib["Ebin"]))
             spectrum_settings["pass_energy"] = float(setting.attrib["Epass"])
             spectrum_settings["lens_mode"] = setting.attrib["LensMode"]
             spectrum_settings["total_scans"] = int(setting.attrib["NumScans"])
@@ -1560,7 +1559,7 @@ class SleProdigyParserV1(SleProdigyParser):
             ) / (spectrum_settings["n_values"] - 1)
         for setting in spectrum.iter("FixedAnalyzerTransmissionSettings"):
             spectrum_settings["dwell_time"] = float(setting.attrib["DwellTime"])
-            spectrum_settings["start_energy"] = float(copy(setting.attrib["Ebin"]))
+            spectrum_settings["start_energy"] = float(copy.copy(setting.attrib["Ebin"]))
             spectrum_settings["pass_energy"] = float(setting.attrib["Epass"])
             spectrum_settings["lens_mode"] = setting.attrib["LensMode"]
             spectrum_settings["total_scans"] = setting.attrib["NumScans"]
@@ -1620,14 +1619,14 @@ class SleProdigyParserV4(SleProdigyParser):
                     settings = {}
                     for param in device.iter("Parameter"):
                         settings[param.attrib["name"]] = param.text
-                        data.update(copy(settings))
+                        data.update(copy.copy(settings))
 
                     data["devices"] += [device.attrib["DeviceType"]]
 
                 for spectrum_group in group.iter("SpectrumGroup"):
                     settings = self._get_group_metadata(spectrum_group)
-                    data.update(copy(settings))
-                    collect += [copy(data)]
+                    data.update(copy.copy(settings))
+                    collect += [copy.copy(data)]
         return collect
 
     def _get_group_metadata(self, spectrum_group):
@@ -1651,11 +1650,11 @@ class SleProdigyParserV4(SleProdigyParser):
         settings["group_id"] = spectrum_group.attrib["ID"]
         for comm_settings in spectrum_group.iter("CommonSpectrumSettings"):
             common_spectrum_settings = self._extract_comm_settings(comm_settings)
-            settings.update(copy(common_spectrum_settings))
+            settings.update(copy.copy(common_spectrum_settings))
 
         for spectrum in spectrum_group.iter("Spectrum"):
             spectrum_settings = self._get_spectrum_metadata(spectrum)
-            settings.update(copy(spectrum_settings))
+            settings.update(copy.copy(spectrum_settings))
 
         return settings
 
@@ -1720,14 +1719,14 @@ class SleProdigyParserV4(SleProdigyParser):
 
         for setting in spectrum.iter("FixedEnergiesSettings"):
             spectrum_settings["dwell_time"] = float(setting.attrib["DwellTime"])
-            spectrum_settings["start_energy"] = float(copy(setting.attrib["Ebin"]))
+            spectrum_settings["start_energy"] = float(copy.copy(setting.attrib["Ebin"]))
             spectrum_settings["pass_energy"] = float(setting.attrib["Epass"])
             spectrum_settings["lens_mode"] = setting.attrib["LensMode"]
             spectrum_settings["total_scans"] = int(setting.attrib["NumScans"])
             spectrum_settings["n_values"] = int(setting.attrib["NumValues"])
         for setting in spectrum.iter("FixedAnalyzerTransmissionSettings"):
             spectrum_settings["dwell_time"] = float(setting.attrib["DwellTime"])
-            spectrum_settings["start_energy"] = float(copy(setting.attrib["Ebin"]))
+            spectrum_settings["start_energy"] = float(copy.copy(setting.attrib["Ebin"]))
             spectrum_settings["pass_energy"] = float(setting.attrib["Epass"])
             spectrum_settings["lens_mode"] = setting.attrib["LensMode"]
             spectrum_settings["total_scans"] = setting.attrib["NumScans"]

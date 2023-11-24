@@ -21,7 +21,7 @@ Class for reading XPS files from TXT export of Scienta.
 # pylint: disable=too-many-lines
 
 import re
-import copy
+from copy import deepcopy
 from datetime import datetime
 import pytz
 import xarray as xr
@@ -70,7 +70,7 @@ class TxtParserScienta:
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""
-        spectra = copy.deepcopy(self.raw_data)
+        spectra = deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
 

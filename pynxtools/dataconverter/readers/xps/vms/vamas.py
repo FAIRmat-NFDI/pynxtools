@@ -19,7 +19,7 @@ Class for reading XPS files from raw VMS data.
 #
 
 import re
-import copy
+from copy import deepcopy
 from datetime import datetime, timedelta
 from abc import ABC, abstractmethod
 import xarray as xr
@@ -96,7 +96,7 @@ class VamasParser:
 
     def construct_data(self):
         """Map VMS format to NXmpes-ready dict."""
-        spectra = copy.deepcopy(self.raw_data)
+        spectra = deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
 
