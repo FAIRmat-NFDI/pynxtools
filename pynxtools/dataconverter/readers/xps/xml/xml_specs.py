@@ -25,10 +25,22 @@ import copy
 import xarray as xr
 import numpy as np
 
-from pynxtools.dataconverter.readers.xps.reader_utils import (
-    construct_entry_name,
-    construct_data_key,
-)
+
+def _construct_entry_name_xml(key):
+    """Construction entry name."""
+    key_parts = key.split("/")
+    try:
+        # entry example : vendor__sample__name_of_scan_region
+        entry_name = (f'{key_parts[2]}'
+                      f'__'
+                      f'{key_parts[3].split("_", 1)[1]}'
+                      f'__'
+                      f'{key_parts[5].split("_", 1)[1]}'
+                      )
+    except IndexError:
+        entry_name = ""
+    return entry_name
+
 
 class XmlParserSpecs:
     """
@@ -521,7 +533,7 @@ class XmlParserSpecs:
         }
         # xps_dict = copy.deepcopy(self._xps_dict)
         for key, val in self._xps_dict.items():
-            entry = construct_entry_name(key)
+            entry = _construct_entry_name_xml(key)
 
             if entry and (entry not in entry_list):
                 self.entry_to_data[entry] = {"raw_data": copy.deepcopy(raw_dict)}
