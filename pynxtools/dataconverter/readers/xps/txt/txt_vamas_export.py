@@ -24,11 +24,13 @@ import itertools
 import operator
 import copy
 from abc import ABC, abstractmethod
-from scipy.interpolate import interp1d
 import xarray as xr
 import numpy as np
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
+    check_uniform_step_width,
+    get_minimal_step,
+    interpolate_arrays,
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key,
@@ -134,6 +136,7 @@ class TxtParserVamasExport:
                 'region_name',
                 'start_energy',
                 'stop_energy',
+                'step_size'
             ],
         }
 
@@ -195,60 +198,13 @@ class TxtParserVamasExport:
 
         self._xps_dict[detector_data_key] = spectrum["data"]['intensity']
 
-def safe_arange_with_edges(start, stop, step):
-    """
-    In order to avoid float point errors in the division by step.
-
-    Parameters
-    ----------
-    start : float
-        Smallest value.
-    stop : float
-        Biggest value.
-    step : float
-        Step size between points.
-
-    Returns
-    -------
-    ndarray
-        1D array with values in the interval (start, stop),
-        incremented by step.
-
-    """
-    return step * np.arange(start / step, (stop + step) / step)
-
-
-def _resample_array(y, x0, x1):
-    """
-    Resample an array (y) which has the same initial spacing
-    of another array(x0), based on the spacing of a new
-    array(x1).
-
-    Parameters
-    ----------
-    y : array
-        Lineshape array.
-    x0 : array
-        x array with old spacing.
-    x1 : array
-        x array with new spacing.
-
-    Returns
-    -------
-    TYPE
-        DESCRIPTION.
-
-    """
-    fn = interp1d(x0, y, axis=0, fill_value="extrapolate")
-    return fn(x1)
-
 
 class TextParser(ABC):
     """
     Parser for ASCI files exported from CasaXPS.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         self.lines = []
         self.data_dict = []
         self.n_headerlines = 7
@@ -358,85 +314,6 @@ class TextParser(ABC):
         data = block[self.n_headerlines :]
 
         return header, data
-
-    def _check_uniform_step_width(self, x):
-        """
-        Check to see if a non-uniform step width is used in the spectrum
-
-        Parameters
-        ----------
-        x : list
-            List of data points.
-
-        Returns
-        -------
-        bool
-            False if list is non-uniformally spaced.
-
-        """
-        start = x[0]
-        stop = x[-1]
-        step = self._get_minimal_step(x)
-
-        if step != 0.0 and np.abs((stop - start) / step) > len(x):
-            return False
-        return True
-
-    def _get_minimal_step(self, x):
-        """
-        Return the minimal difference between two consecutive values
-        in a list. Used for extracting minimal difference in a
-        list with non-uniform spacing.
-
-        Parameters
-        ----------
-        x : list
-            List of data points.
-
-        Returns
-        -------
-        step : float
-            Non-zero, minimal distance between consecutive data
-            points in x.
-
-        """
-        x1 = np.roll(x, -1)
-        diff = np.abs(np.subtract(x, x1))
-        step = round(np.min(diff[diff != 0]), 2)
-
-        return step
-
-
-    def _interpolate(self, x, array_list):
-        """
-        Interpolate data points in case a non-uniform step width was used.
-
-        Parameters
-        ----------
-        x : list
-            List of non-uniformally spaced data points.
-        array_list : list
-            List of arrays to be interpolated according to new x axis.
-
-        Returns
-        -------
-        x, array_list
-            Interpolated x axis and list of arrays
-
-        """
-        if not isinstance(array_list, list):
-            array_list = [array_list]
-        start = x[0]
-        stop = x[-1]
-        step = self._get_minimal_step(x)
-        if start > stop:
-            new_x = np.flip(safe_arange_with_edges(stop, start, step))
-        else:
-            new_x = safe_arange_with_edges(start, stop, step)
-
-        output_list = [_resample_array(arr, x, new_x) for arr in array_list]
-
-        return new_x, output_list
 
 
 class TextParserRows(TextParser):
@@ -550,20 +427,22 @@ class TextParserRows(TextParser):
             x_bin, y = np.array(x_bin), np.array(y)
 
             if (self.uniform_energy_steps and
-                not self._check_uniform_step_width(x_bin)):
-                x_bin, y = self._interpolate(x_bin, y)
+                not check_uniform_step_width(x_bin)):
+                x_bin, y = interpolate_arrays(x_bin, y)
 
             spectrum = {
-                "binding_energy": np.array(x_bin),
-                "intensity": np.array(y).squeeze(),
-                }
-
-            data += [{
-                "data": spectrum,
-                "step_size": self._check_uniform_step_width(x_bin),
+                "data": {
+                    "binding_energy": np.array(x_bin),
+                    "intensity": np.array(y).squeeze(),
+                    },
                 "start_energy": x_bin[0],
                 "stop_energy": x_bin[-1],
-                }]
+                }
+
+            if check_uniform_step_width(x_bin):
+                spectrum["step_size"] = get_minimal_step(x_bin)
+
+            data += [spectrum]
 
         return data
 
@@ -649,8 +528,8 @@ class TextParserColumns(TextParser):
         y = lines[:, 1]
 
         if (self.uniform_energy_steps and
-            not self._check_uniform_step_width(x_kin)):
-            x_kin, (x_bin, y) = self._interpolate(x_kin, [x_bin, y])
+            not check_uniform_step_width(x_kin)):
+            x_kin, (x_bin, y) = interpolate_arrays(x_kin, [x_bin, y])
 
         return {
             "kinetic_energy": np.array(x_kin),
@@ -682,26 +561,14 @@ class TextParserColumns(TextParser):
             block_data = {"data": self._parse_block_data(block_data_lines)}
             kinetic_energy = block_data["data"]["kinetic_energy"]
             block_settings.update({
-                "step_size": self._check_uniform_step_width(kinetic_energy),
                 "start_energy": kinetic_energy[0],
                 "stop_energy": kinetic_energy[-1],
                 })
+            if check_uniform_step_width(kinetic_energy):
+                block_settings["step_size"] = get_minimal_step(kinetic_energy)
+
             spectra += [block_settings|block_data]
 
         return spectra
 
 
-if __name__ == "__main__":
-   filepaths = [
-       r"C:\Users\pielsticker\Downloads\vm_test_rows_r.txt",
-       r"C:\Users\pielsticker\Downloads\vm_test_rows_irr.txt",
-       r"C:\Users\pielsticker\Downloads\vm_test_cols_r.txt",
-       r"C:\Users\pielsticker\Downloads\vm_test_cols_irr.txt",
-       ]
-
-   l = []
-
-   for file in filepaths:
-       p = TxtParserVamasExport()
-       new_dict = p.parse_file(file=file, uniform_energy_steps=True)
-       l.append(new_dict)

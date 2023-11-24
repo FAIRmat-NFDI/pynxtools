@@ -218,9 +218,7 @@ class XyProdigyParser:
 
         """
         self.lines = []
-        self.spectra = {}
         self.prefix = "#"
-        self.file = file
         self.n_headerlines = 14
         self.export_settings = {}
 
@@ -776,23 +774,3 @@ class XyProdigyParser:
             }
 
         return unit_map[y_units]
-
-if __name__ == "__main__":
-    import os
-    folder = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Pielsticker_XPS_MPI-CEC\EX889_S1110_MgFe2O4_spent\xy"
-    files = [
-       # "EX889_S1110_MgFe2O4_spent.xy",
-#       "EX889_S1110_MgFe2O4_spent_channels.xy",
-        "EX889_S1110_MgFe2O4_spent_channels_shortened.xy",
-      #  "EX889_S1110_MgFe2O4_spent_tf.xy",
-        ]
-
-    data = []
-
-    for file in files:
-        file = os.path.join(folder, file)
-        p = XyParserSpecs()
-        d = p.parse_file(file=file)
-        raw_data = p.raw_data
-
-        data.append(d)
