@@ -174,7 +174,7 @@ def transfer_data_into_template(input_file,
 
 
 # pylint: disable=too-many-arguments,too-many-locals
-def convert(input_file: Tuple[str],
+def convert(input_file: Tuple[str, ...],
             reader: str,
             nxdl: str,
             output: str,
@@ -327,7 +327,7 @@ def convert_cli(input_file: Tuple[str, ...],
             reader = "json_map"
             if mapping:
                 input_file = input_file + tuple([mapping])
-        convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)  # type: ignore
+        convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)
 
 
 if __name__ == '__main__':
