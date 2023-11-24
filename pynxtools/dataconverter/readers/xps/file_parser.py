@@ -23,27 +23,23 @@ Generic Classes for reading XPS files into python dictionary.
 
 from typing import List, Dict
 
-from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlParserSpecs
 from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleParserSpecs
 from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhParserSpecs
 from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtParserScienta
-
 # from pynxtools.dataconverter.readers.xps.txt.txt_specs import TxtParserSpecs
-from pynxtools.dataconverter.readers.xps.txt.txt_vamas_export import (
-    TxtParserVamasExport,
-)
-
-# from pynxtools.dataconverter.readers.xps.xy.xy_specs import XyParserSpecs
+from pynxtools.dataconverter.readers.xps.txt.txt_vamas_export import TxtParserVamasExport
 from pynxtools.dataconverter.readers.xps.vms.vamas import VamasParser
+from pynxtools.dataconverter.readers.xps.xy.xy_specs import XyParserSpecs
+from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlParserSpecs
+
 
 
 class XpsDataFileParser:
     """Class intended for receiving any type of XPS data file."""
 
-    __prmt_file_ext__ = ["slh", "sle", "txt", "vms", "xml", "xy"]
+    __prmt_file_ext__ = ["sle", "slh", "txt", "vms", "xml", "xy"]
     __vendors__ = ["specs", "scienta", "kratos", "unkwown"]
     __prmt_vndr_cls: Dict[str, Dict] = {
-        "xml": {"specs": XmlParserSpecs},
         "sle": {"specs": SleParserSpecs},
         "slh": {"specs": SlhParserSpecs},
         "txt": {
@@ -51,8 +47,9 @@ class XpsDataFileParser:
             #     'specs': TxtParserSpecs,
             "unknown": TxtParserVamasExport,
         },
-        # 'xy': {'specs': XyParserSpecs},
         "vms": {"unkwown": VamasParser},
+        "xml": {"specs": XmlParserSpecs},
+        "xy": {'specs': XyParserSpecs},
     }
 
     __config_files: Dict = {
