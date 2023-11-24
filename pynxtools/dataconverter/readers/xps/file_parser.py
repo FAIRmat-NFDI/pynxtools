@@ -110,6 +110,7 @@ class XpsDataFileParser:
                 raise ValueError(XpsDataFileParser.__file_err_msg__)
         return {}
 
+    @classmethod
     def check_for_vendors(cls, file: str) -> str:
         """
         Check for the vendor name of the XPS data file.
@@ -120,7 +121,7 @@ class XpsDataFileParser:
         vendor_dict = XpsDataFileParser.__prmt_vndr_cls[file_ext]
 
         if len(vendor_dict) == 1:
-            return vendor_dict.keys()[0]
+            return list(vendor_dict.keys())[0]
         else:
             if file_ext == "txt":
                 return cls._check_for_vendors_txt(file)

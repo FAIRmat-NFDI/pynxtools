@@ -228,7 +228,7 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
     for separating the data from xps_data_dict.
     """
     for key, value in config_dict.items():
-        if XPS_DATA_TOKEN in value:
+        if XPS_DATA_TOKEN in str(value):
             key_part = value.split(XPS_DATA_TOKEN)[-1]
             entries_values = find_entry_and_value(
                 xps_data_dict, key_part, dt_typ=XPS_DATA_TOKEN
@@ -236,7 +236,7 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
 
             fill_data_group(key, entries_values, config_dict, template, entry_set)
 
-        if XPS_DETECTOR_TOKEN in value:
+        if XPS_DETECTOR_TOKEN in str(value):
             key_part = value.split(XPS_DATA_TOKEN)[-1]
             entries_values = find_entry_and_value(
                 xps_data_dict, key_part, dt_typ=XPS_DETECTOR_TOKEN
@@ -244,7 +244,7 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
 
             fill_detector_group(key, entries_values, config_dict, template, entry_set)
 
-        if XPS_TOKEN in value:
+        if XPS_TOKEN in str(value):
             token = value.split(XPS_TOKEN)[-1]
             entries_values = find_entry_and_value(
                 xps_data_dict, token, dt_typ=XPS_TOKEN
@@ -296,7 +296,7 @@ def fill_template_with_eln_data(eln_data_dict, config_dict, template, entry_set)
                 template[modified_key] = field_value
 
     for key, val in config_dict.items():
-        if ELN_TOKEN in val:
+        if ELN_TOKEN in str(val):
             fill_atom_types(key)
         elif key in list(eln_data_dict.keys()):
             fill_from_value(key)
@@ -370,7 +370,7 @@ class XPSReader(BaseReader):
                 for key, value1, value2 in existing:
                     xps_data_dict[key] = concatenate_values(value1, value2)
 
-                config_file = reader_dir.joinpath(XpsDataFileParser._get_config_file())
+                config_file = reader_dir.joinpath(f"config/{config_file}")
             elif file_ext in [".slh"]:
                 data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
 
