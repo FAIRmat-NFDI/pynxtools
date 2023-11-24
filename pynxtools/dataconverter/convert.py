@@ -238,28 +238,6 @@ def convert(input_file: Tuple[str],
     logger.info("The output file generated: %s", output)
 
 
-def convert_and_return_template(input_file: Tuple[str],
-                                reader: str,
-                                nxdl: str,
-                                output: str,
-                                generate_template: bool = False,
-                                fair: bool = False,
-                                undocumented: bool = False,
-                                **kwargs):
-
-    """Convert input files into structure data according template and return template.
-
-    This function only is special than convert function by return value which is filled data
-    template.
-    """
-    temp_data_dict = {'data': None}
-    convert(input_file=input_file, reader=reader,
-            nxdl=nxdl, output=output, generate_template=generate_template,
-            fair=fair, undocumented=undocumented, temp_data_dict=temp_data_dict, **kwargs)
-
-    return temp_data_dict['data']
-
-
 def parse_params_file(params_file):
     """Parses the parameters from a given dictionary and returns them"""
     params = yaml.load(params_file, Loader=yaml.Loader)['dataconverter']
@@ -349,7 +327,7 @@ def convert_cli(input_file: Tuple[str, ...],
             reader = "json_map"
             if mapping:
                 input_file = input_file + tuple([mapping])
-        convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)
+        convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)  # type: ignore
 
 
 if __name__ == '__main__':
