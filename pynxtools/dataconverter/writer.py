@@ -192,7 +192,8 @@ class Writer:
 
     def __init__(self, data: dict = None,
                  nxdl_path: str = None,
-                 output_path: str = None, write_in_memory: bool = False):
+                 output_path: str = None,
+                 write_in_memory: bool = False):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
         self.nxdl_path = nxdl_path
@@ -248,7 +249,7 @@ class Writer:
             return grp
         return self.output_nexus[parent_path_hdf5]
 
-    def _process_data_into_hdf5(self):
+    def _put_data_into_hdf5(self):
         """Store data in hdf5 in in-memory file or file."""
 
         hdf5_links_for_later = []
@@ -321,7 +322,7 @@ class Writer:
             if self.write_in_memory:
                 raise ValueError("To write in memory and get the file obhect please use  "
                                  "the method get_in_memory_obj()")
-            self._process_data_into_hdf5()
+            self._put_data_into_hdf5()
         finally:
             self.output_nexus.close()
 
@@ -332,7 +333,7 @@ class Writer:
         """
         try:
             if self.write_in_memory:
-                self._process_data_into_hdf5()
+                self._put_data_into_hdf5()
             else:
                 raise ValueError("The write_in_memory variable is False Writer"
                                  "class initialization.")

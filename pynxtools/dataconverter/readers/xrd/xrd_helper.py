@@ -100,9 +100,6 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
             if not isinstance(val, dict) and isinstance(val, str):
                 template[nx_key] = val
 
-    fill_template_from_config_data(config_dict, template,
-                                   xrd_dict, file_term)
-
     def two_theta_plot():
         two_theta_gr = "/ENTRY[entry]/2theta_plot"
         template[two_theta_gr + "/" + "@axes"] = ["two_theta"]
@@ -127,6 +124,8 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
             template[q_plot_gr + "/" + "q_vec"] = q_vec
             template[q_plot_gr + "/" + "@q_vec_indicies"] = 0
             template[q_plot_gr + "/" + "@axes"] = ["q_vec"]
+
+        template[q_plot_gr + "/" + "@signal"] = "intensity"
 
     def handle_special_fields():
         """Some fields need special treatment."""
@@ -155,6 +154,8 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
         template[key] = count_time[0] if (isinstance(count_time, np.ndarray)
                                           and count_time.shape == (1,)) else count_time
 
+    fill_template_from_config_data(config_dict, template,
+                                   xrd_dict, file_term)
     two_theta_plot()
     q_plot()
     handle_special_fields()
