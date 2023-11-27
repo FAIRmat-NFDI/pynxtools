@@ -30,13 +30,22 @@ from pynxtools.dataconverter.readers.xrd.xrd_parser import parse_and_fill_templa
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-CONVERT_DICT: Dict[str, str] = {}
+CONVERT_DICT: Dict[str, str] = {
+    'unit': '@units',
+    'Instrument': 'INSTRUMENT[instrument]',
+    'Source': 'SOURCE[source]',
+    'Detector': 'DETECTOR[detector]',
+    'Collection': 'COLLECTION[collection]',
+    'Sample': 'SAMPLE[sample]',
+    'version': '@version',
+    'User': 'USER[user]',
+}
 
 
 # Global var to collect the root from get_template_from_nxdl_name()
 # and use it in the the the varidate_data_dict()
 ROOT: ET.Element = None
-REPLACE_NESTED: Dict[str, str] = {}
+REPLACE_NESTED: Dict[str, Any] = {}
 XRD_FILE_EXTENSIONS = [".xrdml", "xrdml", ".udf", ".raw", ".xye"]
 
 

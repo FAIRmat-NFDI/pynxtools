@@ -168,8 +168,7 @@ class Spm:
 
 # pylint: disable=invalid-name, too-few-public-methods
 class STMReader(BaseReader):
-    """ Reader for XPS.
-    """
+    """Reader for STM/STS."""
 
     supported_nxdls = ["NXsts"]
 

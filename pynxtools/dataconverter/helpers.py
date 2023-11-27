@@ -684,9 +684,9 @@ def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
         except ValueError:
             pass
 
-    if isinstance(str_value, np.ndarray):
+    elif isinstance(str_value, np.ndarray):
         return str_value
-    if isinstance(str_value, str):
+    elif isinstance(str_value, str):
         try:
             transformed = int(str_value)
         except ValueError:
@@ -695,7 +695,7 @@ def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
             except ValueError:
                 if '[' in str_value and ']' in str_value:
                     transformed = json.loads(str_value)
-        if transformed:
+        if transformed is not None:
             return transformed
         for sym in symbol_list_for_data_seperation:
             if sym in str_value:
