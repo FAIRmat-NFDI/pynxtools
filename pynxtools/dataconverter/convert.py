@@ -34,7 +34,7 @@ from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 
-if sys.version_info.major >= 3 and sys.version_info.minor > 9:
+if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
 else:
     from importlib_metadata import entry_points
@@ -59,7 +59,6 @@ def get_reader(reader_name) -> BaseReader:
         importlib_module = entry_points(group='pynxtools.reader')
         if (
             importlib_module
-            # pylint: disable=unexpected-keyword-arg
             and reader_name in map(lambda ep: ep.name, entry_points(group='pynxtools.reader'))
         ):
             return importlib_module[reader_name].load()
@@ -77,7 +76,6 @@ def get_names_of_all_readers() -> List[str]:
             index_of_readers_folder_name = file.rindex(f"readers{os.sep}") + len(f"readers{os.sep}")
             index_of_last_path_sep = file.rindex(os.sep)
             all_readers.append(file[index_of_readers_folder_name:index_of_last_path_sep])
-    # pylint: disable=unexpected-keyword-arg
     plugins = list(map(lambda ep: ep.name, entry_points(group='pynxtools.reader')))
     return all_readers + plugins
 
