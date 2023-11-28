@@ -103,21 +103,21 @@ def get_nxdl_root_and_path(nxdl: str):
     # Reading in the NXDL and generating a template
     definitions_path = nexus.get_nexus_definitions_path()
     if nxdl == "NXtest":
-        nxdl_path = os.path.join(
+        nxdl_f_path = os.path.join(
             f"{os.path.abspath(os.path.dirname(__file__))}/../../",
             "tests", "data", "dataconverter", "NXtest.nxdl.xml")
     elif nxdl == "NXroot":
-        nxdl_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
+        nxdl_f_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
     else:
-        nxdl_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")
-        if not os.path.exists(nxdl_path):
-            nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
-        if not os.path.exists(nxdl_path):
-            nxdl_path = os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml")
-        if not os.path.exists(nxdl_path):
+        nxdl_f_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_f_path):
+            nxdl_f_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_f_path):
+            nxdl_f_path = os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_f_path):
             raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
-    return ET.parse(nxdl_path).getroot(), nxdl_path
+    return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
 
 
 def transfer_data_into_template(input_file,
@@ -207,7 +207,7 @@ def convert(input_file: Tuple[str, ...],
     None.
     """
 
-    nxdl_root, nxdl_path = get_nxdl_root_and_path(nxdl)
+    nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
 
     if generate_template:
         template = Template()
@@ -233,7 +233,7 @@ def convert(input_file: Tuple[str, ...],
             path
         )
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
-    Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
+    Writer(data=data, nxdl_path=nxdl_f_path, output_path=output).write()
 
     logger.info("The output file generated: %s", output)
 
