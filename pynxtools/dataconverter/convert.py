@@ -34,6 +34,11 @@ from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 
+if sys.version_info.major >= 3 and sys.version_info.minor > 8:
+    from importlib.metadata import entry_points
+else:
+    from importlib_metadata import entry_points
+
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 UNDOCUMENTED = 9
@@ -46,8 +51,15 @@ def get_reader(reader_name) -> BaseReader:
     path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     path = os.path.join(path_prefix, "readers", reader_name, "reader.py")
     spec = importlib.util.spec_from_file_location("reader.py", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    try:
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    except FileNotFoundError as exc:
+        importlib_module = entry_points(group=f'pynxtools.reader.{reader_name}')
+        if importlib_module:
+            return importlib_module['reader'].load()
+        else:
+            raise ValueError(f"The reader, {reader_name}, was not found.") from exc
     return module.READER  # type: ignore[attr-defined]
 
 
