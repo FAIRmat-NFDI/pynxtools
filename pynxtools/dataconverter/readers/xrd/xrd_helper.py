@@ -128,7 +128,6 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
                                                                intsity_len)
         template[two_theta_gr + "/" + "@axes"] = ["two_theta"]
         template[two_theta_gr + "/" + "@signal"] = "intensity"
-        template[two_theta_gr + "/" + "@auxiliary_signals"] = "omega"
 
     def q_plot():
         q_plot_gr = "/ENTRY[entry]/q_plot"
