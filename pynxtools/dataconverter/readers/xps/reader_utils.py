@@ -108,7 +108,7 @@ def _resample_array(y, x0, x1):
     Returns
     -------
     TYPE
-        DESCRIPTION.
+        Interpolated y array.
 
     """
     fn = interp1d(x0, y, axis=0, fill_value="extrapolate")
