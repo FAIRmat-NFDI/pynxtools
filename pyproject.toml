@@ -40,7 +40,6 @@ dependencies = [
     "tzlocal<=4.3",
     "scipy>=1.7.1",
     "lark>=1.1.5",
-    "xrayutilities>=1.7.4",
     "requests",
     "requests_cache",
     "mergedeep"
