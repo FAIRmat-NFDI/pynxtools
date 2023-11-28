@@ -23,7 +23,6 @@ from typing import Any, Dict, Tuple, Optional, List
 from pathlib import Path
 import warnings
 import xml.etree.ElementTree as ET  # for XML parsing
-from xrayutilities.io.panalytical_xml import XRDMLFile  # for reading XRDML files
 from pynxtools.dataconverter.helpers import transform_to_intended_dt, remove_namespace_from_tag
 from pynxtools.dataconverter.readers.xrd.xrd_helper import feed_xrdml_to_template
 
@@ -187,13 +186,13 @@ class XRDMLParser:
 
         _, multi_childs_tag = self.has_multi_childs_with_same_tag(xml_node)
         # List of tag extensions for child nodes which have the same tag.
-        tag_extensions: List[int] = [0]
+        tag_extensions = [0]
         for child in iter(xml_node):
             if child is not None:
                 self.parse_each_elm(parent_path, child,
                                     multi_childs_tag, tag_extensions)
 
-    def has_multi_childs_with_same_tag(self, parent_node: ET.Element) -> Tuple[str, bool]:
+    def has_multi_childs_with_same_tag(self, parent_node: ET.Element) -> Tuple[bool, str]:
         """Check for multiple childs that have the same tag.
 
         Parameter:
