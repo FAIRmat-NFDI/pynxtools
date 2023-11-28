@@ -1,6 +1,6 @@
 """
-Parser for reading XPS (X-ray Photoelectron Spectroscopy) data from native
-Specs Lab Prodigy SLE format, to be passed to mpes nxdl
+Parser for reading XPS (X-ray Photoelectron Spectroscopy) data from
+Specs Lab Prodigy XY exports, to be passed to mpes nxdl
 (NeXus Definition Language) template.
 """
 
@@ -190,19 +190,36 @@ class XyParserSpecs:
             averaged_channels = spectrum["data"]["y"]
         else:
             all_channel_data = [
-                value for key, value in self._xps_dict.items() if
+                (key, value) for key, value in self._xps_dict.items() if
                 detector_data_key.split('Channel_')[0] in key
                 ]
             averaged_channels = np.mean(all_channel_data, axis = 0)
 
             loop_no = spectrum["loop_no"]
-          #  print(loop_no)
-            self._xps_dict["data"][entry][f"{scan_key}_chan{loop_no}"] = xr.DataArray(
-                data=spectrum["data"]["y"], coords={x_units: energy}
+            self._xps_dict["data"][entry][
+                f"{scan_key}_chan{loop_no}"
+                ] = xr.DataArray(
+                    data=spectrum["data"]["y"],
+                    coords={x_units: energy}
             )
 
-        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
-            data=averaged_channels, coords={x_units: energy}
+        if not self.parser.export_settings["Separate Scan Data"]:
+            averaged_scans = spectrum["data"]["y"]
+        else:
+            all_scan_data = [
+                value for key, value in self._xps_dict.items() if
+                detector_data_key.split('Scan_')[0] in key
+                ]
+            averaged_scans = np.mean(all_scan_data, axis = 0)
+
+            self._xps_dict["data"][entry][scan_key] = xr.DataArray(
+                data=averaged_scans,
+                coords={x_units: energy},
+            )
+
+        self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
+            data=spectrum["data"]["y"],
+            coords={x_units: energy},
         )
 
 
@@ -382,7 +399,6 @@ class XyProdigyParser:
         for name_header, group_data in zip(grouped_list[::2], grouped_list[1::2]):
             name = self._strip_param(name_header[0], "Group:")
             group_settings = {"group_name": name}
-
             groups[name] = {
                 "group_settings": self._replace_keys(group_settings, self.settings_map),
                 }
@@ -460,28 +476,18 @@ class XyProdigyParser:
         for i, line in enumerate(region_data):
             if cycle_pattern.match(line):
                 cycle_line_nrs["cycle_" + str(int(self._strip_param(line, 'Cycle:')))] = i
+            if i == len(region_data)-1:
+                cycle_line_nrs["end"] = i + 1
 
-        if len(cycle_line_nrs) == 1:
-            name = "cycle_0"
-            cycle_settings = {"loop_no": list(cycle_line_nrs.values())[0]}
-            cycle_data = region_data
+        for i, (line_no_a, line_no_b) in enumerate(zip(list(cycle_line_nrs.values()), list(cycle_line_nrs.values())[1:])):
+            name = f"cycle_{i}"
+            cycle_settings = {"loop_no": i}
+            cycle_data = region_data[line_no_a:line_no_b]
+
             cycles[name] = {
                 "cycle_settings": self._replace_keys(cycle_settings, self.settings_map),
                 }
             cycles[name].update(self._handle_individual_cycles(cycle_data))
-
-        else:
-            for i, (line_no_a, line_no_b) in enumerate(zip(list(cycle_line_nrs.values()), list(cycle_line_nrs.values())[1:])):
-                name = f"cycle_{i}"
-                cycle_settings = {"loop_no": i}
-                cycle_data = region_data[line_no_a:line_no_b]
-
-                cycles[name] = {
-                    "cycle_settings": self._replace_keys(cycle_settings, self.settings_map),
-                    }
-                cycles[name].update(self._handle_individual_cycles(cycle_data))
-
-                print(cycle_settings["loop_no"])
 
         return cycles
 
@@ -519,20 +525,14 @@ class XyProdigyParser:
                                               for element in line.strip(self.prefix).strip().split(', ')))
                 name = ''.join([f"{key.lower()}_{val}_" for key, val in name_dict.items() if key != "Curve"]).rstrip("_")
                 scan_line_nrs[name] = i
+            if i == len(cycle_data)-1:
+                scan_line_nrs["end"] = i + 1
 
-        if len(scan_line_nrs) == 1:
-            name = list(scan_line_nrs.keys())[0]
-            scan_data = cycle_data[list(scan_line_nrs.values())[0]+1:]
+        for i, ((name, line_no_a), line_no_b) in enumerate(zip(list(scan_line_nrs.items()), list(scan_line_nrs.values())[1:])):
+            scan_data = cycle_data[line_no_a:line_no_b]
             scan = self._handle_individual_scan(scan_data)
             scan["scan_settings"].update(self._extend_scan_settings(name))
             scans[name] = scan
-
-        else:
-            for i, ((name, line_no_a), line_no_b) in enumerate(zip(list(scan_line_nrs.items()), list(scan_line_nrs.values())[1:])):
-                scan_data = cycle_data[line_no_a:line_no_b]
-                scan = self._handle_individual_scan(scan_data)
-                scan["scan_settings"].update(self._extend_scan_settings(name))
-                scans[name] = scan
 
         return scans
 
@@ -631,9 +631,8 @@ class XyProdigyParser:
         split_name = scan_name.split("_")
 
         for param, val in zip(split_name[::2],split_name[1::2]):
-            if param == "cycle":
-                param = "loop"
-            settings[f"{param}_no"] = int(val)
+            if param != "cycle":
+                settings[f"{param}_no"] = int(val)
 
         return settings
 
@@ -682,6 +681,7 @@ class XyProdigyParser:
 
         """
         spectra = []
+        self.data_dict = data_dict
 
         for group_name, group in data_dict.items():
             group_settings = group["group_settings"]
