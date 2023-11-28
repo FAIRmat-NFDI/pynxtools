@@ -55,11 +55,13 @@ def get_reader(reader_name) -> BaseReader:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)  # type: ignore[attr-defined]
     except FileNotFoundError as exc:
-        importlib_module = entry_points(group=f'pynxtools.reader.{reader_name}')
-        if importlib_module:
-            return importlib_module['reader'].load()
-        else:
-            raise ValueError(f"The reader, {reader_name}, was not found.") from exc
+        importlib_module = entry_points(group='pynxtools.reader')
+        if (
+            importlib_module
+            and reader_name in map(lambda ep: ep.name, entry_points(group='pynxtools.reader'))
+        ):
+            return importlib_module[reader_name].load()
+        raise ValueError(f"The reader, {reader_name}, was not found.") from exc
     return module.READER  # type: ignore[attr-defined]
 
 
@@ -73,7 +75,8 @@ def get_names_of_all_readers() -> List[str]:
             index_of_readers_folder_name = file.rindex(f"readers{os.sep}") + len(f"readers{os.sep}")
             index_of_last_path_sep = file.rindex(os.sep)
             all_readers.append(file[index_of_readers_folder_name:index_of_last_path_sep])
-    return all_readers
+    plugins = list(map(lambda ep: ep.name, entry_points(group='pynxtools.reader')))
+    return all_readers + plugins
 
 
 # pylint: disable=too-many-arguments,too-many-locals
