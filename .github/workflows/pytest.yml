@@ -31,7 +31,7 @@ jobs:
           python -m pip install coverage coveralls
       - name: Install package
         run: |
-          python -m pip install .[dev]
+          pip install ".[dev]"
       - name: Test with pytest
         run: |
           coverage run -m pytest -sv --show-capture=no tests
