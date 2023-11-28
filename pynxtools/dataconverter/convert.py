@@ -34,7 +34,7 @@ from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 
-if sys.version_info.major >= 3 and sys.version_info.minor > 8:
+if sys.version_info.major >= 3 and sys.version_info.minor > 9:
     from importlib.metadata import entry_points
 else:
     from importlib_metadata import entry_points
