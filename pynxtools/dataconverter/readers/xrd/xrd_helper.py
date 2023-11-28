@@ -36,6 +36,7 @@ def get_a_value_or_warn(return_value="",
     return return_value
 
 
+# pylint: disable=too-many-statements
 def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=None):
     """Fill template with data from xrdml type file.
 
