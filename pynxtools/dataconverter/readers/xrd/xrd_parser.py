@@ -1,7 +1,7 @@
 """
 XRD file parser collection.
-TODO: Extend the module level doc.
 """
+
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -18,209 +18,371 @@ TODO: Extend the module level doc.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re # for regular expressions
-import os  # for file path operations
-import xml.etree.ElementTree as ET # for XML parsing
-from xrayutilities.io.panalytical_xml import XRDMLFile # for reading XRDML files
+from pathlib import Path
+import warnings
+import xml.etree.ElementTree as ET  # for XML parsing
+from xrayutilities.io.panalytical_xml import XRDMLFile  # for reading XRDML files
+from pynxtools.dataconverter.helpers import transform_to_intended_dt, remove_namespace_from_tag
+from pynxtools.dataconverter.readers.xrd.xrd_helper import feed_xrdml_to_template
 
-class FileReader:
-    '''A class to read files from a given file path.'''
+
+def fill_slash_sep_dict_from_nested_dict(parent_path: str, nested_dict: dict,
+                                         slash_sep_dict: dict):
+    """Convert a nested dict into slash separated dict.
+
+    Extend slash_sep_dict by key (slash separated key) from nested dict.
+
+    Parameters
+    ----------
+    parent_path : str
+        Parent path to be appended at the starting of slash separated key.
+    nested_dict : dict
+        Dict nesting other dict.
+    slash_sep_dict : dict
+        Plain dict to be extended by key value generated from nested_dict.
+    """
+    for key, val in nested_dict.items():
+        slash_sep_path = parent_path + key
+        if isinstance(val, dict):
+            fill_slash_sep_dict_from_nested_dict(slash_sep_path, val, slash_sep_dict)
+        else:
+            slash_sep_dict[slash_sep_path] = val
+
+
+class IgnoreNodeTextWarning(Warning):
+    """Special class to warn node text skip."""
+
+
+class XRDMLParser:
+    """Parser for xrdml file with the help of other XRD library e.g. panalytical_xml."""
+
     def __init__(self, file_path):
-        '''
-        Args:
-            file_path (str): The path of the file to be read.
-        '''
-        self.file_path = file_path
+        """Construct XRDMLParser obj.
 
-    def read_file(self):
-        '''Reads the content of a file from the given file path.
+        Parameters
+        ----------
+        file_path : str
+            Path of the file.
+        """
+        # In future it can be utilised later it different versions of file
+        # self.__version = None
+        self.__xrd_dict = {}
+        self.__file_path = file_path
+        self.xrdml_version: str = ""
+        self.xml_root = ET.parse(self.__file_path).getroot()
+        self.find_version()
+        # Important note for key-val pair separator list: preceding elements have precedence on the
+        # on the following elements
+        self.key_val_pair_sprtr = (';', ',')
+        # Important note for key-val separator list: preceding elements have precedence on the
+        # on the following elements
+        self.key_val_sprtr = ('=', ':')
 
-        Returns:
-            str: The content of the file.
-        '''
-        with open(self.file_path, 'r', encoding='utf-8') as file:
-            content = file.read()
-        return content
+    def find_version(self):
+        """To find xrdml file version."""
+        schema_loc = "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"
+        # str: 'http://www.xrdml.com/XRDMeasurement/1.5
+        version = self.xml_root.get(schema_loc).split(' ')[0]
+        self.xrdml_version = version.split('/')[-1]
 
+    def get_slash_separated_xrd_dict(self):
+        """Return a dict with slash separated key and value from xrd file.
 
-class PanalyticalXRDMLParser:
-    '''A class to parse Panalytical XRDML files.'''
+        The key is the slash separated string path for nested xml elements.
 
-    def __init__(self, file_path):
-        '''
-        Args:
-            file_path (str): The path of the XRDML file to be parsed.
-        '''
-        self.file_path = file_path
+        Returns
+        -------
+        dict:
+            Dictionary where key maps xml nested elements by slash separated str.
+        """
+        # To navigate different functions in future according to some parameters
+        # such as version, and data analysis module from panalytical_xml
+        self.handle_with_panalytical_module()
+        return self.__xrd_dict
 
-    def parse_metadata(self):
-        '''Parses the metadata of the XRDML file.'''
+    def handle_with_panalytical_module(self):
+        """Handeling XRDml file by parsing xml file and Pnanalytical_xml parser
 
-        with open(self.file_path, 'r', encoding='utf-8') as file:
-            content = file.read()
+        Panalytical module extends and constructs some array data from experiment settings
+        comes with xml file.
+        """
+        self.parse_each_elm(parent_path='/', xml_node=self.xml_root)
 
-        # Remove the XML encoding declaration if it exists
-        content = re.sub(r'<\?xml.*\?>', '', content)
+        # Extract other numerical data e.g. 'hkl', 'Omega', '2Theta', CountTime etc
+        # using panalytical_xml module
+        parsed_data = XRDMLFile(self.__file_path)
+        nested_data_dict = parsed_data.scan.ddict
+        fill_slash_sep_dict_from_nested_dict('/', nested_data_dict, self.__xrd_dict)
 
-        root = ET.fromstring(content)
+    def process_node_text(self, parent_path, node_txt) -> None:
+        """Processing text of node
 
-        ns_version = root.tag.split("}")[0].strip("{")
-        ns = {'xrd': ns_version}
+        Parameters
+        ----------
+        parent_path : str
+            Starting str of the key when forming a string key.
+        node_txt : str
+            text from node.
 
-        xrd_measurement = root.find("xrd:xrdMeasurement", ns)
+        Returns
+        ------
+        None
+        """
+        key_val_pairs = []
+        # get key-val pair
+        for sep in self.key_val_pair_sprtr:
+            if sep in node_txt:
+                key_val_pairs.extend(node_txt.split(sep))
+                break
+        # Separate key-val, build full path and
+        # store them in dict
+        if key_val_pairs:
+            for key_val in key_val_pairs:
+                for k_v_sep in self.key_val_sprtr:
+                    if k_v_sep in key_val:
+                        key, val = key_val.split(k_v_sep)
+                        key = key.replace(' ', '')
+                        self.__xrd_dict['/'.join([parent_path, key])] = val
+                        break
+        # Handling array data comes as node text
+        else:
+            try:
+                self.__xrd_dict[parent_path] = transform_to_intended_dt(node_txt)
+            except ValueError:
+                warnings.warn(f'Element text {node_txt} is ignored from parseing!',
+                              IgnoreNodeTextWarning)
 
-        metadata = {
-            "measurement_type": xrd_measurement.get("measurementType"),
-            "sample_mode": xrd_measurement.get("sampleMode"),
-            "source": {
-                "voltage": float(xrd_measurement.find("xrd:incidentBeamPath/xrd:xRayTube/xrd:tension", ns).text) if xrd_measurement.find("xrd:incidentBeamPath/xrd:xRayTube/xrd:tension", ns) is not None else None,
-                "current": float(xrd_measurement.find("xrd:incidentBeamPath/xrd:xRayTube/xrd:current", ns).text) if xrd_measurement.find("xrd:incidentBeamPath/xrd:xRayTube/xrd:current", ns) is not None else None,
-                "kAlpha1": float(xrd_measurement.find("xrd:usedWavelength/xrd:kAlpha1", ns).text) if xrd_measurement.find("xrd:usedWavelength/xrd:kAlpha1", ns) is not None else None,
-                "kAlpha2": float(xrd_measurement.find("xrd:usedWavelength/xrd:kAlpha2", ns).text) if xrd_measurement.find("xrd:usedWavelength/xrd:kAlpha2", ns) is not None else None,
-                "anode_material": xrd_measurement.find("xrd:incidentBeamPath/xrd:xRayTube/xrd:anodeMaterial", ns).text if xrd_measurement.find("xrd:incidentBeamPath/xrd:xRayTube/xrd:anodeMaterial", ns) is not None else None,
-            },
+    def parse_each_elm(self, parent_path, xml_node):
+        """Check each xml element and send the element to intended function.
 
-            "scan_mode": xrd_measurement.find("xrd:scan", ns).get("mode") if xrd_measurement.find("xrd:scan", ns) is not None else None,
-            "scan_axis": xrd_measurement.find("xrd:scan", ns).get("scanAxis") if xrd_measurement.find("xrd:scan", ns) is not None else None,
-        }
-        print(metadata)
-        return metadata
+        Parameters
+        ----------
+        parent_path : str
+            Path to be in the starting of the key composing from element e.g. '/'.
+        xml_node : XML.Element
+            Any element except process instruction nodes.
 
+        Returns
+        ------
+        None
+        """
+        tag = remove_namespace_from_tag(xml_node.tag)
+        # Take care of special node of 'entry' tag
+        if tag == 'entry':
+            parent_path = self.parse_entry_elm(parent_path, xml_node)
+        else:
+            parent_path = self.parse_general_elm(parent_path, xml_node)
 
-    def parse_xrdml(self):
-        '''Parses the XRDML file using xrayutilities.
+        for child in iter(xml_node):
+            if child is not None:
+                self.parse_each_elm(parent_path, child)
 
-        Returns:
-            dict: A dictionary containing the parsed XRDML data.
-        '''
-        # Read the XRDML file using xrayutilities
-        xrd_data = XRDMLFile(self.file_path)
-        result = xrd_data.scan.ddict
-        print(result.keys())
-        print(f"counts: {result['counts']}")
-        print(f"detector: {result['detector']}")
+    def parse_general_elm(self, parent_path, xml_node):
+        """Handle general element except entry element.
 
+        Parameters
+        ----------
+        parent_path : str
+            Path to be in the starting of the key composing from element e.g. '/'.
+        xml_node : XML.Element
+            Any element except process instruction and entry nodes.
 
-        # Add the scanmotname, material, hkl to the dictionary
-        result["scanmotname"] = xrd_data.scan.scanmotname
-        result["material"] = xrd_data.scan.material
-        result["hkl"] = xrd_data.scan.hkl
-        # add the metadata to the dictionary
-        result["metadata"] = self.parse_metadata()
+        Returns
+        -------
+        None
+        """
+        tag = remove_namespace_from_tag(xml_node.tag)
 
-        return result
+        if parent_path == '/':
+            parent_path = '/' + tag
+        else:
+            # New parent path ends with element tag
+            parent_path = '/'.join([parent_path, tag])
+
+        node_attr = xml_node.attrib
+        if node_attr:
+            for key, val in node_attr.items():
+                # Some attr has namespace
+                key = remove_namespace_from_tag(key)
+                key = key.replace(' ', '_')
+                path_extend = '/'.join([parent_path, key])
+                self.__xrd_dict[path_extend] = val
+
+        node_txt = xml_node.text
+        if node_txt:
+            self.process_node_text(parent_path, node_txt)
+
+        return parent_path
+
+    def parse_entry_elm(self, parent_path, xml_node):
+        """Handle entry element.
+
+        Parameters
+        ----------
+        parent_path : str
+            Path to be in the starting of the key composing from element e.g. '/'.
+        xml_node : XML.Element
+            Any entry node.
+
+        Returns
+        -------
+        str:
+            Parent path.
+        """
+        tag = remove_namespace_from_tag(xml_node.tag)
+
+        if parent_path == '/':
+            parent_path = '/' + tag
+        else:
+            # Parent path ends with element tag
+            parent_path = '/'.join([parent_path, tag])
+
+        node_attr = xml_node.attrib
+        if node_attr:
+            for key, val in node_attr.items():
+                # Some attributes have namespace
+                key = remove_namespace_from_tag(key)
+                path_extend = '/'.join([parent_path, key])
+                self.__xrd_dict[path_extend] = val
+
+        # In entry element text must get special care on it
+        node_txt = xml_node.text
+        if node_txt:
+            self.process_node_text(parent_path, node_txt)
+
+        return parent_path
 
 
 class FormatParser:
-    '''A class to identify and parse different file formats.'''
+    """A class to identify and parse different file formats."""
 
     def __init__(self, file_path):
-        '''
-        Args:
-            file_path (str): The path of the file to be identified and parsed.
-        '''
-        self.file_path = file_path
+        """Construct FormatParser obj.
 
-    def identify_format(self):
-        '''Identifies the format of a given file.
+        Parameters
+        ----------
+        file_path : str
+            XRD file to be parsed.
+
+        Returns
+        -------
+        None
+        """
+        self.file_path = file_path
+        self.file_parser = XRDMLParser(self.file_path)
+        # termilnological name of file to read config file
+        self.file_term = 'xrdml_' + self.file_parser.xrdml_version
+
+    def get_file_format(self):
+        """Identifies the format of a given file.
 
         Returns:
-            str: The file extension of the file.
-        '''
-        file_extension = os.path.splitext(self.file_path)[1].lower()
+        --------
+        str:
+            The file extension of the file.
+        """
+        file_extension = ''.join(Path(self.file_path).suffixes)
         return file_extension
 
-    def parse_panalytical_xrdml(self):
-        '''Parses a Panalytical XRDML file.
+    def parse_xrdml(self):
+        """Parses a Panalytical XRDML file.
 
-        Returns:
-            dict: A dictionary containing the parsed XRDML
-        data.
-        '''
-        xrdml_parser = PanalyticalXRDMLParser(self.file_path)
-        return xrdml_parser.parse_xrdml()
+        Returns
+        -------
+        dict
+            A dictionary containing the parsed XRDML data.
+        """
+        return self.file_parser.get_slash_separated_xrd_dict()
 
     def parse_panalytical_udf(self):
-        '''Parse the Panalytical .udf file.
+        """Parse the Panalytical .udf file.
 
-        Returns:
-            None: Placeholder for parsing .udf files.
-        '''
-        pass
+        Returns
+        -------
+        None
+            Placeholder for parsing .udf files.
+        """
 
     def parse_bruker_raw(self):
-        '''Parse the Bruker .raw file.
+        """Parse the Bruker .raw file.
 
-        Returns:
-            None: Placeholder for parsing .raw files.
-        '''
-        pass
+        Returns
+        None
+        """
 
     def parse_bruker_xye(self):
-        '''Parse the Bruker .xye file.
+        """Parse the Bruker .xye file.
 
+        Returns
+        None
+        """
+
+    # pylint: disable=import-outside-toplevel
+    def parse_and_populate_template(self, template, config_dict, eln_dict):
+        """Parse xrd file into dict and fill the template.
+
+        Parameters
+        ----------
+        template : Template
+            NeXus template generated from NeXus application definitions.
+        xrd_file : str
+            Name of the xrd file.
+        config_dict : dict
+            A dict geenerated from python
+        eln_dict : dict
+            A dict generatd from eln yaml file.
         Returns:
-            None: Placeholder for parsing .xye files.
-        '''
-        pass
+        None
+        """
+
+        file_format = self.get_file_format()
+        if file_format == ".xrdml":
+            xrd_dict = self.parse()
+            if len(config_dict) == 0 and self.file_parser.xrdml_version == '1.5':
+                from pynxtools.dataconverter.readers.xrd.config import xrdml
+                config_dict = xrdml
+            feed_xrdml_to_template(template, xrd_dict, eln_dict,
+                                   file_term=self.file_term, config_dict=config_dict)
 
     def parse(self):
         '''Parses the file based on its format.
 
         Returns:
-            dict: A dictionary containing the parsed data.
+        dict
+            A dictionary containing the parsed data.
 
         Raises:
             ValueError: If the file format is unsupported.
         '''
-        file_format = self.identify_format()
-
+        file_format = self.get_file_format()
+        slash_sep_dict = {}
         if file_format == ".xrdml":
-            return self.parse_panalytical_xrdml()
-        elif file_format == ".udf":
-            return self.parse_panalytical_udf()
-        elif file_format == ".raw":
-            return self.parse_bruker_raw()
-        elif file_format == ".xye":
-            return self.parse_bruker_xye()
-        else:
-            raise ValueError(f"Unsupported file format: {file_format}")
+            slash_sep_dict = self.parse_xrdml()
+        # elif file_format == ".udf":
+        #     return self.parse_panalytical_udf()
+        # elif file_format == ".raw":
+        #     return self.parse_bruker_raw()
+        # elif file_format == ".xye":
+        #     return self.parse_bruker_xye()
+        # else:
+        #     raise ValueError(f"Unsupported file format: {file_format}")
+        return slash_sep_dict
 
 
-class DataConverter:
-    '''A class to convert parsed data into a common dictionary format.'''
+def parse_and_fill_template(template, xrd_file, config_dict, eln_dict):
+    """Parse xrd file and fill the template with data from that file.
 
-    def __init__(self, parsed_data):
-        '''
-        Args:
-            parsed_data (dict): The parsed data to be converted.
-        '''
-        self.parsed_data = parsed_data
+    Parameters
+    ----------
+    template : Template[dict]
+        Template gnenerated from nxdl definition.
+    xrd_file : str
+        Name of the xrd file with extension
+    config_dict : Dict
+        Dictionary from config.json or similar file.
+    eln_dict : Dict
+        Plain and '/' separated dictionary from yaml for ELN.
+    """
 
-    def convert(self):
-        '''Converts the parsed data into a common dictionary format.
-
-        Returns:
-            dict: The converted data in a common dictionary format.
-        '''
-        # In this case, the parsed_data is already in the common dictionary format
-        # If you need additional conversion or data processing, implement it here
-        return self.parsed_data
-
-def parse_and_convert_file(file_path):
-    '''The main function to parse and convert a file.
-    Args:
-        file_path (str): The path of the file to be parsed and converted.
-
-    Returns:
-        dict: The parsed and converted data in a common dictionary format.
-    '''
-    file_path = os.path.abspath(file_path)
-
-    format_parser = FormatParser(file_path)
-    parsed_data = format_parser.parse()
-
-    data_converter = DataConverter(parsed_data)
-    common_data = data_converter.convert()
-
-    return common_data
+    format_parser = FormatParser(xrd_file)
+    format_parser.parse_and_populate_template(template, config_dict, eln_dict)
