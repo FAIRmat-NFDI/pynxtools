@@ -137,7 +137,11 @@ class Template(dict):
         return :
             The value comes with return_value
         """
-        return self.__getitem__(key)
+        try:
+            return self.__getitem__(key)
+        except KeyError:
+            return return_value
+
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
