@@ -79,6 +79,7 @@ def listify_template(data_dict: Template):
                 listified_template[optionality][path] = [data_dict[optionality][path]]
     return listified_template
 
+
 @pytest.mark.parametrize("input_data, expected_output", [
     ('2.4E-23', 2.4e-23),
     ('28', 28),
@@ -89,6 +90,7 @@ def listify_template(data_dict: Template):
     (None, None),
 ])
 def test_transform_to_intended_dt(input_data, expected_output):
+    """Transform to possible numerical method."""
     result = helpers.transform_to_intended_dt(input_data)
 
     # Use pytest.approx for comparing floating-point numbers
