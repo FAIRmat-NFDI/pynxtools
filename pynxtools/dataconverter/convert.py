@@ -167,7 +167,6 @@ def transfer_data_into_template(input_file,
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template),
         file_paths=input_file,
-        **kwargs,
     )
     helpers.validate_data_dict(template, data, nxdl_root)
     return data

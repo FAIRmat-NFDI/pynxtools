@@ -18,7 +18,7 @@ XRD file parser collection.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Tuple, Optional, List
+from typing import Dict, Tuple, Optional, List
 
 from pathlib import Path
 import warnings
