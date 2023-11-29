@@ -137,17 +137,7 @@ class Template(dict):
         return :
             The value comes with return_value
         """
-        val = self.optional.get(key, None)
-        if val is None:
-            val = self.recommended.get(key, None)
-            if val is None:
-                val = self.required.get(key, None)
-                if val is None:
-                    val = self.undocumented.get(key, None)
-        if val is None:
-            return return_value
-        return val
-
+        return self.__getitem__(key)
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
