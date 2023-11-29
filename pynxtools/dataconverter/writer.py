@@ -22,7 +22,6 @@
 import copy
 import logging
 import sys
-import tempfile
 import xml.etree.ElementTree as ET
 
 import h5py
