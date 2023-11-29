@@ -51,14 +51,33 @@ class XyParserSpecs:
     def __init__(self):
         self.raw_data: list = []
         self._xps_dict: dict = {}
+        self.write_channels_to_data = False
 
         self._root_path = "/ENTRY[entry]"
 
     def parse_file(self, file, **kwargs):
         """
-        Parse the file using the Scienta TXT parser.
+        Parse the file using the Specs XY parser.
+
+
+        Parameters
+        ----------
+        file : TYPE
+            DESCRIPTION.
+        **kwargs : dict
+            write_channels_to_data: bool
+                If True, the spectra of each individual channel is
+                written to the entry/data field in the MPEs template.
+
+        Returns
+        -------
+        dict
+            Flattened dictionary to be passed to MPES template.
 
         """
+        if "write_channels_to_data" in kwargs.keys():
+            self.write_channels_to_data = kwargs["write_channels_to_data"]
+
         self.parser = XyProdigyParser()
         # self.parser = self.parser_map[self._get_file_type(file)]()
         self.raw_data = self.parser.parse_file(file, **kwargs)
@@ -131,6 +150,12 @@ class XyParserSpecs:
         for spectrum in spectra:
             self._update_xps_dict_with_spectrum(spectrum, key_map)
 
+# =============================================================================
+#         for entry, xarr in self._xps_dict["data"].items():
+#             sorted_xarr = xarr[sorted(list(xarr.keys()))]
+#             self._xps_dict["data"][entry] = sorted_xarr
+#
+# =============================================================================
     def _update_xps_dict_with_spectrum(self, spectrum, key_map):
         """
         Map one spectrum from raw data to NXmpes-ready dict.
@@ -179,7 +204,8 @@ class XyParserSpecs:
         detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
-        self._xps_dict["data"][entry] = xr.Dataset()
+        if entry not in self._xps_dict["data"]:
+            self._xps_dict["data"][entry] = xr.Dataset()
 
         x_units = spectrum["x_units"]
         energy = np.array(spectrum["data"]["x"])
@@ -190,18 +216,10 @@ class XyParserSpecs:
             averaged_channels = spectrum["data"]["y"]
         else:
             all_channel_data = [
-                (key, value) for key, value in self._xps_dict.items() if
+                value for key, value in self._xps_dict.items() if
                 detector_data_key.split('Channel_')[0] in key
                 ]
             averaged_channels = np.mean(all_channel_data, axis = 0)
-
-            loop_no = spectrum["loop_no"]
-            self._xps_dict["data"][entry][
-                f"{scan_key}_chan{loop_no}"
-                ] = xr.DataArray(
-                    data=spectrum["data"]["y"],
-                    coords={x_units: energy}
-            )
 
         if not self.parser.export_settings["Separate Scan Data"]:
             averaged_scans = spectrum["data"]["y"]
@@ -212,14 +230,25 @@ class XyParserSpecs:
                 ]
             averaged_scans = np.mean(all_scan_data, axis = 0)
 
-            self._xps_dict["data"][entry][scan_key] = xr.DataArray(
-                data=averaged_scans,
-                coords={x_units: energy},
-            )
-
+        # Write order: scan, cycle, channel data
         self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
-            data=spectrum["data"]["y"],
+            data=averaged_scans,
             coords={x_units: energy},
+        )
+
+        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
+            data=averaged_channels,
+            coords={x_units: energy},
+        )
+
+        if (self.parser.export_settings["Separate Channel Data"] and
+            self.write_channels_to_data):
+            channel_no = spectrum["channel_no"]
+            self._xps_dict["data"][entry][
+                f"{scan_key}_chan{channel_no}"
+                ] = xr.DataArray(
+                    data=spectrum["data"]["y"],
+                    coords={x_units: energy}
         )
 
 
