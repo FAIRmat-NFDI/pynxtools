@@ -127,20 +127,24 @@ class Template(dict):
 
     def get(self, key, return_value=None):
         """Implementing get method for template.
-
         Parameters
         ----------
         key : str
             Template key
         return_value : Any
-
         return :
             The value comes with return_value
         """
-        try:
-            return self.__getitem__(key)
-        except KeyError:
+        val = self.optional.get(key, None)
+        if val is None:
+            val = self.recommended.get(key, None)
+            if val is None:
+                val = self.required.get(key, None)
+                if val is None:
+                    val = self.undocumented.get(key, None)
+        if val is None:
             return return_value
+        return val
 
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
