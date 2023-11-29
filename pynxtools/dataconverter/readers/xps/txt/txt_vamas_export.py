@@ -44,7 +44,7 @@ class TxtMapperVamasExport(XPSMapper):
     Casa TXT export (from Vamas) into python dictionary.
     """
 
-    config_file = "config_sle_txt_vamas_export.json"
+    config_file = "config_txt_vamas_export.json"
 
     def __init__(self):
         self.parser_map = {
@@ -335,7 +335,7 @@ class TextParserRows(TextParser):
         settings = self._parse_header(header)
         data = self._parse_data(data_lines)
         for spec_settings, spec_data in zip(settings, data):
-            spectra += [spec_settings | spec_data]
+            spectra += [{**spec_settings, **spec_data}]
 
         return spectra
 
@@ -542,6 +542,6 @@ class TextParserColumns(TextParser):
             if check_uniform_step_width(kinetic_energy):
                 block_settings["step_size"] = get_minimal_step(kinetic_energy)
 
-            spectra += [block_settings | block_data]
+            spectra += [{**block_settings, **block_data}]
 
         return spectra
