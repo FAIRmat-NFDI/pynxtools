@@ -34,6 +34,11 @@ from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 
+if sys.version_info >= (3, 10):
+    from importlib.metadata import entry_points
+else:
+    from importlib_metadata import entry_points
+
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 UNDOCUMENTED = 9
@@ -46,8 +51,18 @@ def get_reader(reader_name) -> BaseReader:
     path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     path = os.path.join(path_prefix, "readers", reader_name, "reader.py")
     spec = importlib.util.spec_from_file_location("reader.py", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    try:
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    except FileNotFoundError as exc:
+        # pylint: disable=unexpected-keyword-arg
+        importlib_module = entry_points(group='pynxtools.reader')
+        if (
+            importlib_module
+            and reader_name in map(lambda ep: ep.name, entry_points(group='pynxtools.reader'))
+        ):
+            return importlib_module[reader_name].load()
+        raise ValueError(f"The reader, {reader_name}, was not found.") from exc
     return module.READER  # type: ignore[attr-defined]
 
 
@@ -61,7 +76,8 @@ def get_names_of_all_readers() -> List[str]:
             index_of_readers_folder_name = file.rindex(f"readers{os.sep}") + len(f"readers{os.sep}")
             index_of_last_path_sep = file.rindex(os.sep)
             all_readers.append(file[index_of_readers_folder_name:index_of_last_path_sep])
-    return all_readers
+    plugins = list(map(lambda ep: ep.name, entry_points(group='pynxtools.reader')))
+    return all_readers + plugins
 
 
 # pylint: disable=too-many-arguments,too-many-locals
