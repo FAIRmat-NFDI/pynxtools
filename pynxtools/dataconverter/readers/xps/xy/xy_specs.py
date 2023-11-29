@@ -32,7 +32,6 @@ from datetime import datetime
 import xarray as xr
 import numpy as np
 
-
 from pynxtools.dataconverter.readers.xps.reader_utils import (
     check_uniform_step_width,
     get_minimal_step,
@@ -44,8 +43,8 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
 
 class XyParserSpecs:
     """
-    Class for restructuring .sle data file from
-    specs vendor into python dictionary.
+    Class for restructuring .xy data file from
+    Specs vendor into python dictionary.
     """
 
     def __init__(self):
@@ -59,7 +58,6 @@ class XyParserSpecs:
         """
         Parse the file using the Specs XY parser.
 
-
         Parameters
         ----------
         file : TYPE
@@ -67,7 +65,7 @@ class XyParserSpecs:
         **kwargs : dict
             write_channels_to_data: bool
                 If True, the spectra of each individual channel is
-                written to the entry/data field in the MPEs template.
+                written to the entry/data field in the MPES template.
 
         Returns
         -------
@@ -150,12 +148,6 @@ class XyParserSpecs:
         for spectrum in spectra:
             self._update_xps_dict_with_spectrum(spectrum, key_map)
 
-# =============================================================================
-#         for entry, xarr in self._xps_dict["data"].items():
-#             sorted_xarr = xarr[sorted(list(xarr.keys()))]
-#             self._xps_dict["data"][entry] = sorted_xarr
-#
-# =============================================================================
     def _update_xps_dict_with_spectrum(self, spectrum, key_map):
         """
         Map one spectrum from raw data to NXmpes-ready dict.
@@ -199,17 +191,19 @@ class XyParserSpecs:
             self._xps_dict[path] = spectrum["data"]["transmission_function"]
             self._xps_dict[f"{path}/units"] = spectrum["tf_units"]
 
+        # Create keys for writing to data and detector
         entry = construct_entry_name(region_parent)
         scan_key = construct_data_key(spectrum)
         detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
-        if entry not in self._xps_dict["data"]:
-            self._xps_dict["data"][entry] = xr.Dataset()
-
         x_units = spectrum["x_units"]
         energy = np.array(spectrum["data"]["x"])
 
+        if entry not in self._xps_dict["data"]:
+            self._xps_dict["data"][entry] = xr.Dataset()
+
+        # Write raw data to detector.
         self._xps_dict[detector_data_key] = spectrum["data"]["y"]
 
         if not self.parser.export_settings["Separate Channel Data"]:
@@ -230,7 +224,7 @@ class XyParserSpecs:
                 ]
             averaged_scans = np.mean(all_scan_data, axis = 0)
 
-        # Write order: scan, cycle, channel data
+        # Writing order: scan, cycle, channel data
         self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
             data=averaged_scans,
             coords={x_units: energy},
@@ -326,23 +320,24 @@ class XyProdigyParser:
         header, data = self._separate_header()
         self.export_settings = self._parse_export_settings(header)
 
+        # Recursively read XPS data from flar 'lines' list.
         groups = self._handle_groups(data)
 
         return self._flatten_dict(groups)
 
     def _read_lines(self, file):
         """
-        Read all lines from the input txt files.
-
+        Read all lines from the input XY files.
 
         Parameters
         ----------
-        filepath : str
-            Filepath of the TXT file to be read.
+        file : str
+            Filepath of the XY file to be read.
 
         Returns
         -------
-        None.
+        lines : list
+            All lines in the XY file.
 
         """
         with open(file, encoding="utf-8") as f:
@@ -487,6 +482,7 @@ class XyProdigyParser:
         of one cycle.
 
         Parameters
+        ----------
         region_data : list
             Region data list (list of strings).
 
@@ -524,7 +520,7 @@ class XyProdigyParser:
         """
         Separate the data list of an individual cycle into a
         dictionary, with each element containing the data list
-        of one spectrum.
+        of one scan.
 
         Parameters
         cycle_data : list
@@ -567,9 +563,9 @@ class XyProdigyParser:
 
     def _handle_individual_scan(self, scan_data):
         """
-        Separate the data list of an individual cycle into a
-        dictionary, with each element containing the data list
-        of one spectrum.
+        Separate the data list of an individual scan into a
+        dictionary, with each element containing the data and
+        metadata of one spectrum.
 
         Parameters
         scan_data : list
@@ -638,16 +634,16 @@ class XyProdigyParser:
         Split the scan name and extract the scan metadata.
 
         Example:
-            scan_name == cycle_0_scan_0_channel_0
-            -> settings = {'loop_no': 0, 'scan_no': 0, 'channel_no': 0}
+            scan_name == scan_0_channel_0
+            -> settings = {'scan_no': 0, 'channel_no': 0}
 
         Parameters
         ----------
         scan_name : str
             String with the name of the scan, in the format
-            cycle_0_scan_0_channel_0.
+            scan_0_channel_0.
 
-            Scan and channel number are optional.
+            Channel number is optional.
 
         Returns
         -------
