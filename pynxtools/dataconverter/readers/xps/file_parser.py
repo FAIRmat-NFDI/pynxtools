@@ -24,7 +24,7 @@ Generic Classes for reading XPS files into python dictionary.
 from typing import List, Dict
 
 from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleParserSpecs
-from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhParserSpecs
+# from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhParserSpecs
 from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtParserScienta
 
 # from pynxtools.dataconverter.readers.xps.txt.txt_specs import TxtParserSpecs
@@ -43,21 +43,15 @@ class XpsDataFileParser:
     __vendors__ = ["specs", "scienta", "kratos", "unkwown"]
     __prmt_vndr_cls: Dict[str, Dict] = {
         "sle": {"specs": SleParserSpecs},
-        "slh": {"specs": SlhParserSpecs},
+        # "slh": {"specs": SlhParserSpecs},
         "txt": {
             "scienta": TxtParserScienta,
-            #     'specs': TxtParserSpecs,
+            # 'specs': TxtParserSpecs,
             "unknown": TxtParserVamasExport,
         },
         "vms": {"unkwown": VamasParser},
         "xml": {"specs": XmlParserSpecs},
         "xy": {"specs": XyParserSpecs},
-    }
-
-    __config_files: Dict = {
-        "xml": "config_file_xml.json",
-        "sle": "config_file_xml.json",
-        "txt": "config_file_scienta_txt.json",
     }
 
     __file_err_msg__ = (
@@ -124,12 +118,12 @@ class XpsDataFileParser:
 
         if len(vendor_dict) == 1:
             return list(vendor_dict.keys())[0]
-        else:
-            if file_ext == "txt":
-                return cls._check_for_vendors_txt(file)
+        if file_ext == "txt":
+            return cls._check_for_vendors_txt(file)
         return None
 
-    def _check_for_vendors_txt(self, file: str) -> str:
+    @classmethod
+    def _check_for_vendors_txt(cls, file: str) -> str:
         """
         Search for a vendor names in a txt file
 
@@ -146,9 +140,10 @@ class XpsDataFileParser:
         """
         vendor_dict = XpsDataFileParser.__prmt_vndr_cls["txt"]
 
-        with open(file, encoding="utf-8") as f:
-            contents = f.read()
+        with open(file, encoding="utf-8") as txt_file:
+            contents = txt_file.read()
 
         for vendor in vendor_dict:
             if vendor in contents:
                 return vendor
+        return None
