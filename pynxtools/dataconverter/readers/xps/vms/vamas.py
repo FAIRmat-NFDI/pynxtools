@@ -34,6 +34,7 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_detector_data_key,
 )
 
+
 class VamasMapper(XPSMapper):
     """
     Class for restructuring .txt data file from
@@ -78,14 +79,6 @@ class VamasMapper(XPSMapper):
             if vms_type.upper() in contents:
                 return vms_type
         return None
-
-    def parse_file(self, file, **kwargs):
-        """
-        Parse the file using the parser that fits the VAMAS file type.
-        Returns flat list of dictionaries containing one spectrum each.
-
-        """
-        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map VMS format to NXmpes-ready dict."""

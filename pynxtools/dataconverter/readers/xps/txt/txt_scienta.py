@@ -34,6 +34,7 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_detector_data_key,
 )
 
+
 class TxtMapperScienta(XPSMapper):
     """
     Class for restructuring .txt data file from
@@ -41,9 +42,6 @@ class TxtMapperScienta(XPSMapper):
     """
 
     config_file = "config_txt_scienta.json"
-
-    def __init__(self):
-        super().__init__()
 
     def _select_parser(self):
         """
@@ -57,13 +55,6 @@ class TxtMapperScienta(XPSMapper):
 
         """
         return ScientaTxtHelper()
-
-    def parse_file(self, file, **kwargs):
-        """
-        Parse the file using the Scienta TXT parser.
-
-        """
-        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""

@@ -56,9 +56,6 @@ class XmlMapperSpecs(XPSMapper):
 
     config_file = "config_xml_specs.json"
 
-    def __init__(self):
-        super().__init__()
-
     def _select_parser(self):
         """
         Select Specs XML parser.
@@ -92,8 +89,10 @@ class XmlMapperSpecs(XPSMapper):
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-branches
     def construct_data(self):
-        """Construct the Binding Energy and separate the counts for
+        """
+        Construct the Binding Energy and separate the counts for
         different detectors and finally sum up all the counts for
         to find total electron counts.
         """
@@ -217,6 +216,7 @@ class XmlMapperSpecs(XPSMapper):
 
 
 class XmlParserSpecs:
+    """ Parser for SpecsLab2 XML data"""
     def __init__(self) -> None:
         self.metadata_dict: dict = {}
         self.entry_to_data: dict = {}

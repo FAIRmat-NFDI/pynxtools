@@ -49,6 +49,7 @@ class XyMapperSpecs(XPSMapper):
     """
     def __init__(self):
         super().__init__()
+        self.write_channels_to_data = True
 
     def _select_parser(self):
         return XyProdigyParser()
@@ -230,7 +231,7 @@ class XyMapperSpecs(XPSMapper):
             ] = xr.DataArray(data=spectrum["data"]["y"], coords={x_units: energy})
 
 
-class XyProdigyParser: # pylint: disable=too-few-public-methods
+class XyProdigyParser:  # pylint: disable=too-few-public-methods
     """
     A parser for reading in ASCII-encoded .xy data from Specs Prodigy.
 

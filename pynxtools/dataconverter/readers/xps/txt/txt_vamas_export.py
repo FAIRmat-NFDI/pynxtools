@@ -37,6 +37,7 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_detector_data_key,
 )
 
+
 class TxtMapperVamasExport(XPSMapper):
     """
     Class for restructuring .txt data file from
@@ -84,13 +85,6 @@ class TxtMapperVamasExport(XPSMapper):
 
         """
         return self.parser_map[self._get_file_type(self.file)]()
-
-    def parse_file(self, file, **kwargs):
-        """
-        Parse the file using the TXT parser.
-
-        """
-        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""
@@ -184,7 +178,7 @@ class TxtMapperVamasExport(XPSMapper):
         self._xps_dict[detector_data_key] = spectrum["data"]["intensity"]
 
 
-class TextParser(ABC): # pylint: disable=too-few-public-methods
+class TextParser(ABC):  # pylint: disable=too-few-public-methods
     """
     Parser for ASCI files exported from CasaXPS.
     """

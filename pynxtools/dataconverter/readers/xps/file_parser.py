@@ -148,8 +148,7 @@ class XpsDataFileParser:
                 vendor,
                 vendor.upper(),
                 vendor.capitalize()
-
-                ]
+            ]
 
             if any(vendor_opt in contents for vendor_opt in vendor_options):
                 return vendor

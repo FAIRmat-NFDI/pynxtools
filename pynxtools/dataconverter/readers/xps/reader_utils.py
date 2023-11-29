@@ -24,7 +24,6 @@ import numpy as np
 
 class XPSMapper(ABC):
     """Abstract base class from mapping from a parser to NXmpes template"""
-    @abstractmethod
     def __init__(self):
         self.file = None
         self.raw_data: list = []
@@ -35,7 +34,16 @@ class XPSMapper(ABC):
 
     @abstractmethod
     def _select_parser(self):
-        return None
+        """
+        Select the correct parser for the file extension and format.
+
+        Should be implemented by the inheriting mapper.
+
+        Returns
+        -------
+        Parser
+
+        """
 
     @property
     def data_dict(self) -> dict:
@@ -60,7 +68,12 @@ class XPSMapper(ABC):
 
     @abstractmethod
     def construct_data(self):
-        pass
+        """
+        Map from individual parser format to NXmpes-ready dict.
+
+        Should be implemented by the inheriting mapper.
+
+        """
 
 
 def safe_arange_with_edges(start, stop, step):
