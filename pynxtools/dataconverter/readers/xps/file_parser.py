@@ -26,12 +26,14 @@ from typing import List, Dict
 from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleParserSpecs
 from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhParserSpecs
 from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtParserScienta
+
 # from pynxtools.dataconverter.readers.xps.txt.txt_specs import TxtParserSpecs
-from pynxtools.dataconverter.readers.xps.txt.txt_vamas_export import TxtParserVamasExport
+from pynxtools.dataconverter.readers.xps.txt.txt_vamas_export import (
+    TxtParserVamasExport,
+)
 from pynxtools.dataconverter.readers.xps.vms.vamas import VamasParser
 from pynxtools.dataconverter.readers.xps.xy.xy_specs import XyParserSpecs
 from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlParserSpecs
-
 
 
 class XpsDataFileParser:
@@ -49,7 +51,7 @@ class XpsDataFileParser:
         },
         "vms": {"unkwown": VamasParser},
         "xml": {"specs": XmlParserSpecs},
-        "xy": {'specs': XyParserSpecs},
+        "xy": {"specs": XyParserSpecs},
     }
 
     __config_files: Dict = {

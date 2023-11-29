@@ -21,6 +21,7 @@ Helper functions for populating NXmpes template
 from scipy.interpolate import interp1d
 import numpy as np
 
+
 def safe_arange_with_edges(start, stop, step):
     """
     In order to avoid float point errors in the division by step.
@@ -42,6 +43,7 @@ def safe_arange_with_edges(start, stop, step):
 
     """
     return step * np.arange(start / step, (stop + step) / step)
+
 
 def check_uniform_step_width(x):
     """
@@ -65,6 +67,7 @@ def check_uniform_step_width(x):
     if step != 0.0 and np.abs((stop - start) / step) > len(x):
         return False
     return True
+
 
 def get_minimal_step(x):
     """
@@ -90,6 +93,7 @@ def get_minimal_step(x):
 
     return step
 
+
 def _resample_array(y, x0, x1):
     """
     Resample an array (y) which has the same initial spacing
@@ -113,6 +117,7 @@ def _resample_array(y, x0, x1):
     """
     fn = interp1d(x0, y, axis=0, fill_value="extrapolate")
     return fn(x1)
+
 
 def interpolate_arrays(x, array_list):
     """
@@ -195,9 +200,7 @@ def construct_entry_name(key):
     try:
         # entry example : sample__name_of_scan_region
         entry_name = (
-            f'{key_parts[2].split("_", 1)[1]}'
-            f"__"
-            f'{key_parts[4].split("_", 1)[1]}'
+            f'{key_parts[2].split("_", 1)[1]}' f"__" f'{key_parts[4].split("_", 1)[1]}'
         )
     except IndexError:
         entry_name = ""

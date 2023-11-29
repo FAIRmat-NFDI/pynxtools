@@ -31,12 +31,13 @@ def _construct_entry_name_xml(key):
     key_parts = key.split("/")
     try:
         # entry example : vendor__sample__name_of_scan_region
-        entry_name = (f'{key_parts[2]}'
-                      f'__'
-                      f'{key_parts[3].split("_", 1)[1]}'
-                      f'__'
-                      f'{key_parts[5].split("_", 1)[1]}'
-                      )
+        entry_name = (
+            f"{key_parts[2]}"
+            f"__"
+            f'{key_parts[3].split("_", 1)[1]}'
+            f"__"
+            f'{key_parts[5].split("_", 1)[1]}'
+        )
     except IndexError:
         entry_name = ""
     return entry_name
@@ -722,4 +723,3 @@ class XmlParserSpecs:
                             self._xps_dict["data"][entry][scan_nm] = xr.DataArray(
                                 data=channel_counts[0, :], coords={"BE": binding_energy}
                             )
-
