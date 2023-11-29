@@ -54,6 +54,8 @@ class XyParserSpecs:
 
         self._root_path = "/ENTRY[entry]"
 
+        self.parser = XyProdigyParser()
+
     def parse_file(self, file, **kwargs):
         """
         Parse the file using the Specs XY parser.
@@ -73,10 +75,9 @@ class XyParserSpecs:
             Flattened dictionary to be passed to MPES template.
 
         """
-        if "write_channels_to_data" in kwargs.keys():
+        if "write_channels_to_data" in kwargs:
             self.write_channels_to_data = kwargs["write_channels_to_data"]
 
-        self.parser = XyProdigyParser()
         # self.parser = self.parser_map[self._get_file_type(file)]()
         self.raw_data = self.parser.parse_file(file, **kwargs)
 
@@ -94,6 +95,7 @@ class XyParserSpecs:
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""
+        # pylint: disable=duplicate-code
         spectra = copy.deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
@@ -150,6 +152,7 @@ class XyParserSpecs:
 
         """
         # pylint: disable=too-many-locals
+        # pylint: disable=duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
         file_parent = f"{region_parent}/file_info"
@@ -227,11 +230,11 @@ class XyParserSpecs:
             data=averaged_scans,
             coords={x_units: energy},
         )
-
-        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
-            data=averaged_channels,
-            coords={x_units: energy},
-        )
+        if self.parser.export_settings["Separate Scan Data"]:
+            self._xps_dict["data"][entry][scan_key] = xr.DataArray(
+                data=averaged_channels,
+                coords={x_units: energy},
+            )
 
         if (
             self.parser.export_settings["Separate Channel Data"]
@@ -243,13 +246,14 @@ class XyParserSpecs:
             ] = xr.DataArray(data=spectrum["data"]["y"], coords={x_units: energy})
 
 
-class XyProdigyParser:
-    """A parser for reading in ASCII-encoded .xy data from Specs Prodigy.
+class XyProdigyParser: # pylint: disable=too-few-public-methods
+    """
+    A parser for reading in ASCII-encoded .xy data from Specs Prodigy.
 
     Tested with SpecsLab Prodigy v 4.64.1-r88350.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         """
         Construct the parser.
 
@@ -307,9 +311,9 @@ class XyProdigyParser:
             Flat list of dictionaries containing one spectrum each.
 
         """
-        if "commentprefix" in kwargs.keys():
+        if "commentprefix" in kwargs:
             self.prefix = kwargs["commentprefix"]
-        if "n_headerlines" in kwargs.keys():
+        if "n_headerlines" in kwargs:
             self.n_headerlines = kwargs["n_headerlines"]
 
         self.lines = self._read_lines(file)
@@ -336,8 +340,8 @@ class XyProdigyParser:
             All lines in the XY file.
 
         """
-        with open(file, encoding="utf-8") as f:
-            lines = f.readlines()
+        with open(file, encoding="utf-8") as xy_file:
+            lines = xy_file.readlines()
 
         return lines
 
@@ -354,7 +358,7 @@ class XyProdigyParser:
 
         """
         header = self.lines[: self.n_headerlines]
-        groups = self.lines[self.n_headerlines :]
+        groups = self.lines[self.n_headerlines:]
 
         return header, groups
 
@@ -373,22 +377,19 @@ class XyProdigyParser:
             Dictionary of export settings.
 
         """
-        export_lines = self.lines[: self.n_headerlines]
-
         bool_map = {
             "yes": True,
             "no": False,
         }
 
         export_settings = {}
-        for line in export_lines:
+        for line in header:
             line = line.strip(self.prefix).strip()
             if len(line) == 0:
                 pass
             else:
                 setting = line.split(":", 1)[1].strip()
-                if setting in bool_map.keys():
-                    setting = bool_map[setting]
+                setting = bool_map.get(setting)
                 export_settings[line.split(":", 1)[0].strip()] = setting
 
         return export_settings
@@ -465,10 +466,9 @@ class XyProdigyParser:
                 if not setting.startswith(self.prefix):
                     region_data = region_data[i:]
                     break
-                else:
-                    setting_name = setting.split(self.prefix)[-1].strip().split(":")[0]
-                    val = setting.split(self.prefix)[-1].strip().split(":")[1].strip()
-                    region_settings[setting_name] = val
+                setting_name = setting.split(self.prefix)[-1].strip().split(":")[0]
+                val = setting.split(self.prefix)[-1].strip().split(":")[1].strip()
+                region_settings[setting_name] = val
 
             regions[name] = {
                 "region_settings": self._replace_keys(
@@ -497,7 +497,7 @@ class XyProdigyParser:
             Entries are as cycle_name: cycle_data.
 
         """
-        cycle_pattern = re.compile(f"{self.prefix} Cycle: \d\n", re.IGNORECASE)
+        cycle_pattern = re.compile(fr"{self.prefix} Cycle: \d\n", re.IGNORECASE)
 
         cycles = OrderedDict()
         cycle_line_nrs = {}
@@ -541,11 +541,11 @@ class XyProdigyParser:
             Entries are as scan_name: scan_data.
 
         """
-        spec_pattern = f"{self.prefix} Cycle: \d, Curve: \d"
+        spec_pattern = fr"{self.prefix} Cycle: \d, Curve: \d"
         if self.export_settings["Separate Scan Data"]:
-            spec_pattern += ", Scan: \d"
+            spec_pattern += r", Scan: \d"
         if self.export_settings["Separate Channel Data"]:
-            spec_pattern += ", Channel: \d"
+            spec_pattern += r", Channel: \d"
         spec_pattern = re.compile(spec_pattern, re.IGNORECASE)
 
         scans = OrderedDict()
@@ -602,12 +602,12 @@ class XyProdigyParser:
                 }
 
         """
-        x = []
-        y = []
+        energy = []
+        intensity = []
         transmission_function = []
         scan_settings = {}
 
-        for i, line in enumerate(scan_data):
+        for line in scan_data:
             if line.startswith(self.prefix) and line.strip(self.prefix).strip("\n"):
                 key, val = [
                     item.strip()
@@ -631,18 +631,18 @@ class XyProdigyParser:
             if not line.startswith(self.prefix) and line.strip("\n"):
                 data = line.strip("\n").split(" ")
                 data = [d for d in data if d]
-                x.append(float(data[0]))
-                y.append(float(data[1]))
+                energy.append(float(data[0]))
+                intensity.append(float(data[1]))
                 if self.export_settings["Transmission Function"]:
                     transmission_function.append(float(data[2]))
 
-        if check_uniform_step_width(x):
-            scan_settings["step_size"] = get_minimal_step(x)
+        if check_uniform_step_width(energy):
+            scan_settings["step_size"] = get_minimal_step(energy)
 
         scan = {
             "data": {
-                "x": np.array(x),
-                "y": np.array(y),
+                "x": np.array(energy),
+                "y": np.array(intensity),
             },
             "scan_settings": self._replace_keys(scan_settings, self.settings_map),
         }
@@ -708,6 +708,7 @@ class XyProdigyParser:
         """
         if key in line:
             return line.strip().split(self.prefix + " " + key)[-1].strip()
+        return line
 
     def _flatten_dict(self, data_dict):
         """
@@ -727,15 +728,14 @@ class XyProdigyParser:
 
         """
         spectra = []
-        self.data_dict = data_dict
 
-        for group_name, group in data_dict.items():
+        for group in data_dict.values():
             group_settings = group["group_settings"]
-            for region_name, region in list(group.items())[1:]:
+            for region in list(group.values())[1:]:
                 region_settings = region["region_settings"]
-                for cycle_name, cycle in list(region.items())[1:]:
+                for cycle in list(region.values())[1:]:
                     cycle_settings = cycle["cycle_settings"]
-                    for scan_name, scan in list(cycle.items())[1:]:
+                    for scan in list(cycle.values())[1:]:
                         scan_settings = scan["scan_settings"]
                         spectrum = {}
                         for settings in [
