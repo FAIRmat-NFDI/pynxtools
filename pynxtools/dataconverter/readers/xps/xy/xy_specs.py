@@ -33,6 +33,7 @@ import xarray as xr
 import numpy as np
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
+    XPSMapper,
     check_uniform_step_width,
     get_minimal_step,
     construct_entry_name,
@@ -41,20 +42,16 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
 )
 
 
-class XyParserSpecs:
+class XyMapperSpecs(XPSMapper):
     """
     Class for restructuring .xy data file from
     Specs vendor into python dictionary.
     """
-
     def __init__(self):
-        self.raw_data: list = []
-        self._xps_dict: dict = {}
-        self.write_channels_to_data = False
+        super().__init__()
 
-        self._root_path = "/ENTRY[entry]"
-
-        self.parser = XyProdigyParser()
+    def _select_parser(self):
+        return XyProdigyParser()
 
     def parse_file(self, file, **kwargs):
         """
@@ -78,20 +75,7 @@ class XyParserSpecs:
         if "write_channels_to_data" in kwargs:
             self.write_channels_to_data = kwargs["write_channels_to_data"]
 
-        # self.parser = self.parser_map[self._get_file_type(file)]()
-        self.raw_data = self.parser.parse_file(file, **kwargs)
-
-        file_key = f"{self._root_path}/File"
-        self._xps_dict[file_key] = file
-
-        self.construct_data()
-
-        return self.data_dict
-
-    @property
-    def data_dict(self) -> dict:
-        """Getter property."""
-        return self._xps_dict
+        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""

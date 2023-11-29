@@ -28,12 +28,13 @@ import xarray as xr
 import numpy as np
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
+    XPSMapper,
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key,
 )
 
-class TxtParserScienta:
+class TxtMapperScienta(XPSMapper):
     """
     Class for restructuring .txt data file from
     Scienta TXT export into python dictionary.
@@ -42,30 +43,27 @@ class TxtParserScienta:
     config_file = "config_txt_scienta.json"
 
     def __init__(self):
-        self.raw_data: list = []
-        self._xps_dict: dict = {}
-        self._root_path = "/ENTRY[entry]"
+        super().__init__()
 
-        self.parser = ScientaTxtHelper()
+    def _select_parser(self):
+        """
+        Select Scienta TXT parser.
+        Currently, there is only one parser.
+
+        Returns
+        -------
+        ScientaTxtHelper
+            Parser for reading .txt file exported by Scienta.
+
+        """
+        return ScientaTxtHelper()
 
     def parse_file(self, file, **kwargs):
         """
         Parse the file using the Scienta TXT parser.
 
         """
-        self.raw_data = self.parser.parse_file(file, **kwargs)
-
-        file_key = f"{self._root_path}/File"
-        self._xps_dict[file_key] = file
-
-        self.construct_data()
-
-        return self.data_dict
-
-    @property
-    def data_dict(self) -> dict:
-        """Getter property."""
-        return self._xps_dict
+        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""

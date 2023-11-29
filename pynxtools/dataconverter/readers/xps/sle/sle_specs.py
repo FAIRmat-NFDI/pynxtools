@@ -35,13 +35,14 @@ import xarray as xr
 import numpy as np
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
+    XPSMapper,
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key,
 )
 
 
-class SleParserSpecs:
+class SleMapperSpecs(XPSMapper):
     """
     Class for restructuring .sle data file from
     specs vendor into python dictionary.
@@ -63,15 +64,20 @@ class SleParserSpecs:
 
         self.sql_connection = None
 
-        self.raw_data: list = []
-        self._xps_dict: dict = {}
+        super().__init__()
 
-        self._root_path = "/ENTRY[entry]"
+    def _select_parser(self):
+        """
+        Select the correct parser for the SLE file version.
 
-    @property
-    def data_dict(self) -> dict:
-        """Getter property."""
-        return self._xps_dict
+        Returns
+        -------
+        Parser
+            Specs SLE Parser.
+
+        """
+        version = self._get_sle_version()
+        return self.versions_map[version]()
 
     def _get_sle_version(self):
         """Get the Prodigy SLE version from the file."""
@@ -91,16 +97,7 @@ class SleParserSpecs:
 
         """
         self.sql_connection = file
-        version = self._get_sle_version()
-        parser = self.versions_map[version]()
-        self.raw_data = parser.parse_file(file, **kwargs)
-
-        file_key = f"{self._root_path}/Files"
-        self._xps_dict[file_key] = file
-
-        self.construct_data()
-
-        return self.data_dict
+        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map SLE format to NXmpes-ready dict."""

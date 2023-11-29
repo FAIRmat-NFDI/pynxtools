@@ -28,6 +28,7 @@ import xarray as xr
 import numpy as np
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
+    XPSMapper,
     check_uniform_step_width,
     get_minimal_step,
     interpolate_arrays,
@@ -36,8 +37,7 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_detector_data_key,
 )
 
-
-class TxtParserVamasExport:
+class TxtMapperVamasExport(XPSMapper):
     """
     Class for restructuring .txt data file from
     Casa TXT export (from Vamas) into python dictionary.
@@ -46,35 +46,11 @@ class TxtParserVamasExport:
     config_file = "config_sle_txt_vamas_export.json"
 
     def __init__(self):
-        self.raw_data: list = []
-        self._xps_dict: dict = {}
-        self._root_path = "/ENTRY[entry]"
-
-        self.parser = None
         self.parser_map = {
             "rows_of_tables": TextParserRows,
             "columns_of_tables": TextParserColumns,
         }
-
-        self.raw_data: list = []
-        self._xps_dict: dict = {}
-
-        self._root_path = "/ENTRY[entry]"
-
-    def parse_file(self, file, **kwargs):
-        """
-        Parse the file using the Scienta TXT parser.
-
-        """
-        self.parser = self.parser_map[self._get_file_type(file)]()
-        self.raw_data = self.parser.parse_file(file, **kwargs)
-
-        file_key = f"{self._root_path}/File"
-        self._xps_dict[file_key] = file
-
-        self.construct_data()
-
-        return self.data_dict
+        super().__init__()
 
     def _get_file_type(self, file):
         """
@@ -97,10 +73,24 @@ class TxtParserVamasExport:
                 return "columns_of_tables"
             return "rows_of_tables"
 
-    @property
-    def data_dict(self) -> dict:
-        """Getter property."""
-        return self._xps_dict
+    def _select_parser(self):
+        """
+        Select parser based on the structure of the text file
+
+        Returns
+        -------
+        TextParser
+            TextParser for CasaXPS export from Vamas files.
+
+        """
+        return self.parser_map[self._get_file_type(self.file)]()
+
+    def parse_file(self, file, **kwargs):
+        """
+        Parse the file using the TXT parser.
+
+        """
+        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""

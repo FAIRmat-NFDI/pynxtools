@@ -28,57 +28,43 @@ import numpy as np
 from pynxtools.dataconverter.readers.xps.vms.vamas_data_model import VamasHeader, Block
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
+    XPSMapper,
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key,
 )
 
-
-class VamasParser:
+class VamasMapper(XPSMapper):
     """
     Class for restructuring .txt data file from
     Vamas format into python dictionary.
     """
     def __init__(self):
         self.file = None
-
         self.parsers = [
             VamasParserRegular,
             VamasParserIrregular,
         ]
-
         self.parser_map = {
             "regular": VamasParserRegular,
             "irregular": VamasParserIrregular,
         }
 
-        self.raw_data: list = []
-        self._xps_dict: dict = {}
+        super().__init__()
 
-        self._root_path = "/ENTRY[entry]"
-
-    @property
-    def data_dict(self) -> dict:
-        """Getter property."""
-        return self._xps_dict
-
-    def parse_file(self, file, **kwargs):
+    def _select_parser(self):
         """
-        Parse the file using the parser that fits the VAMAS file type.
-        Returns flat list of dictionaries containing one spectrum each.
+        Select parser based on the structure of the Vamas file,
+        i.e., whether it is regular or irregular.
+
+        Returns
+        -------
+        VamasParserVMS
+            Vamas parser for reading this file structure.
 
         """
-        self.file = file
         vms_type = self._get_vms_type()
-        parser = self.parser_map[vms_type]()
-        self.raw_data = parser.parse_file(file, **kwargs)
-
-        file_key = f"{self._root_path}/Files"
-        self._xps_dict[file_key] = file
-
-        self.construct_data()
-
-        return self.data_dict
+        return self.parser_map[vms_type]()
 
     def _get_vms_type(self):
         """Check if the vamas file is regular or irregular"""
@@ -92,6 +78,14 @@ class VamasParser:
             if vms_type.upper() in contents:
                 return vms_type
         return None
+
+    def parse_file(self, file, **kwargs):
+        """
+        Parse the file using the parser that fits the VAMAS file type.
+        Returns flat list of dictionaries containing one spectrum each.
+
+        """
+        return super().parse_file(file, **kwargs)
 
     def construct_data(self):
         """Map VMS format to NXmpes-ready dict."""
@@ -216,7 +210,7 @@ class VamasParser:
         self._xps_dict[detector_data_key] = spectrum["data"]["cps_calib"]
 
 
-class VamasParserVMS(ABC):
+class VamasParser(ABC):
     """A parser for reading vamas files."""
 
     def __init__(self):
@@ -584,7 +578,7 @@ class VamasParserVMS(ABC):
         return spectra
 
 
-class VamasParserRegular(VamasParserVMS):
+class VamasParserRegular(VamasParser):
     """ Parser for .vms files of type REGULAR"""
     def _parse_norm_block(self):
         """
@@ -789,7 +783,7 @@ class VamasParserRegular(VamasParserVMS):
 
 
 # THIS DOESN'T WORK SO FAR!!
-class VamasParserIrregular(VamasParserVMS):
+class VamasParserIrregular(VamasParser):
     """ Parser for .vms files of type IRREGULAR"""
     def _parse_norm_block(self):
         """

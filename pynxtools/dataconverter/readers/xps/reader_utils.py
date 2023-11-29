@@ -17,9 +17,50 @@ Helper functions for populating NXmpes template
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from abc import ABC, abstractmethod
 from scipy.interpolate import interp1d
 import numpy as np
+
+
+class XPSMapper(ABC):
+    """Abstract base class from mapping from a parser to NXmpes template"""
+    @abstractmethod
+    def __init__(self):
+        self.file = None
+        self.raw_data: list = []
+        self._xps_dict: dict = {}
+        self._root_path = "/ENTRY[entry]"
+
+        self.parser = None
+
+    @abstractmethod
+    def _select_parser(self):
+        return None
+
+    @property
+    def data_dict(self) -> dict:
+        """Getter property."""
+        return self._xps_dict
+
+    def parse_file(self, file, **kwargs):
+        """
+        Parse the file using the Scienta TXT parser.
+
+        """
+        self.file = file
+        self.parser = self._select_parser()
+        self.raw_data = self.parser.parse_file(file, **kwargs)
+
+        file_key = f"{self._root_path}/File"
+        self._xps_dict[file_key] = file
+
+        self.construct_data()
+
+        return self.data_dict
+
+    @abstractmethod
+    def construct_data(self):
+        pass
 
 
 def safe_arange_with_edges(start, stop, step):

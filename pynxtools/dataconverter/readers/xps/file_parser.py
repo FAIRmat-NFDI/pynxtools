@@ -23,17 +23,17 @@ Generic Classes for reading XPS files into python dictionary.
 
 from typing import List, Dict
 
-from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleParserSpecs
-# from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhParserSpecs
-from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtParserScienta
+from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleMapperSpecs
+# from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhMapperSpecs
+from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtMapperScienta
 
-# from pynxtools.dataconverter.readers.xps.txt.txt_specs import TxtParserSpecs
+# from pynxtools.dataconverter.readers.xps.txt.txt_specs import TxtMapperSpecs
 from pynxtools.dataconverter.readers.xps.txt.txt_vamas_export import (
-    TxtParserVamasExport,
+    TxtMapperVamasExport,
 )
-from pynxtools.dataconverter.readers.xps.vms.vamas import VamasParser
-from pynxtools.dataconverter.readers.xps.xy.xy_specs import XyParserSpecs
-from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlParserSpecs
+from pynxtools.dataconverter.readers.xps.vms.vamas import VamasMapper
+from pynxtools.dataconverter.readers.xps.xy.xy_specs import XyMapperSpecs
+from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlMapperSpecs
 
 
 class XpsDataFileParser:
@@ -42,16 +42,16 @@ class XpsDataFileParser:
     __prmt_file_ext__ = ["sle", "slh", "txt", "vms", "xml", "xy"]
     __vendors__ = ["specs", "scienta", "kratos", "unkwown"]
     __prmt_vndr_cls: Dict[str, Dict] = {
-        "sle": {"specs": SleParserSpecs},
-        # "slh": {"specs": SlhParserSpecs},
+        "sle": {"specs": SleMapperSpecs},
+        # "slh": {"specs": SlhMapperSpecs},
         "txt": {
-            "scienta": TxtParserScienta,
-            # 'specs': TxtParserSpecs,
-            "unknown": TxtParserVamasExport,
+            "scienta": TxtMapperScienta,
+            # 'specs': TxtMapperSpecs,
+            "unknown": TxtMapperVamasExport,
         },
-        "vms": {"unkwown": VamasParser},
-        "xml": {"specs": XmlParserSpecs},
-        "xy": {"specs": XyParserSpecs},
+        "vms": {"unkwown": VamasMapper},
+        "xml": {"specs": XmlMapperSpecs},
+        "xy": {"specs": XyMapperSpecs},
     }
 
     __file_err_msg__ = (
@@ -144,6 +144,13 @@ class XpsDataFileParser:
             contents = txt_file.read()
 
         for vendor in vendor_dict:
-            if vendor in contents:
+            vendor_options = [
+                vendor,
+                vendor.upper(),
+                vendor.capitalize()
+
+                ]
+
+            if any(vendor_opt in contents for vendor_opt in vendor_options):
                 return vendor
-        return None
+        return "unknown"
