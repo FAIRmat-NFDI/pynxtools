@@ -20,7 +20,7 @@ Class for reading XPS files from raw VMS data.
 
 import re
 from copy import deepcopy
-from datetime import datetime, timedelta
+import datetime
 from abc import ABC, abstractmethod
 import xarray as xr
 import numpy as np
@@ -35,7 +35,13 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
 
 
 class VamasParser:
+    """
+    Class for restructuring .txt data file from
+    Vamas format into python dictionary.
+    """
     def __init__(self):
+        self.file = None
+
         self.parsers = [
             VamasParserRegular,
             VamasParserIrregular,
@@ -58,7 +64,7 @@ class VamasParser:
 
     def parse_file(self, file, **kwargs):
         """
-        Parse the file using the parser that fits the Prodigy SLE version.
+        Parse the file using the parser that fits the VAMAS file type.
         Returns flat list of dictionaries containing one spectrum each.
 
         """
@@ -75,24 +81,17 @@ class VamasParser:
         return self.data_dict
 
     def _get_vms_type(self):
-        """
-        Check if the vamas file is regular or irregular
-
-        Returns
-        -------
-        vms_type : str
-            'regular' or 'irregular'
-
-        """
+        """Check if the vamas file is regular or irregular"""
         contents = []
-        with open(self.file, "rb") as f:
-            for line in f:
+        with open(self.file, "rb") as vms_file:
+            for line in vms_file:
                 if line.endswith(b"\r\n"):
                     contents += [line.decode("utf-8", errors="ignore").strip()]
 
-        for vms_type in self.parser_map.keys():
+        for vms_type in self.parser_map:
             if vms_type.upper() in contents:
                 return vms_type
+        return None
 
     def construct_data(self):
         """Map VMS format to NXmpes-ready dict."""
@@ -152,10 +151,7 @@ class VamasParser:
             self._update_xps_dict_with_spectrum(spectrum, key_map)
 
     def _update_xps_dict_with_spectrum(self, spectrum, key_map):
-        """
-        Map one spectrum from raw data to NXmpes-ready dict.
-
-        """
+        """Map one spectrum from raw data to NXmpes-ready dict."""
         # pylint: disable=too-many-locals
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
@@ -230,196 +226,195 @@ class VamasParserVMS(ABC):
         vamas attribute keys, which are used, depending on how the
         vamas file is formatted.
         """
+        self.data = []
+
         self.header = VamasHeader()
         self.blocks = []
-        self.common_header_attr = [
-            "format_id",
-            "institute_id",
-            "instrumentModel_id",
-            "operator_id",
-            "experiment_id",
-            "no_comment_lines",
-        ]
 
-        self.exp_var_attributes = ["exp_var_label", "exp_var_unit"]
+        self.attrs = {
+            "common_header": [
+                "format_id",
+                "institute_id",
+                "instrumentModel_id",
+                "operator_id",
+                "experiment_id",
+                "no_comment_lines",
+            ],
+            "exp_var": [
+                "exp_var_label",
+                "exp_var_unit"
+            ],
+            "norm_header": [
+                "scan_mode",
+                "nr_regions",
+                "nr_exp_var",
+                "unknown_3",
+                "unknown_4",
+                "unknown_5",
+                "unknown_6",
+                "no_blocks",
+            ],
+            "map_header": [
+                "scan_mode",
+                "nr_regions",
+                "nr_positions",
+                "nr_x_coords",
+                "nr_y_coords",
+                "nr_exp_var",
+                "unknown_3",
+                "unknown_4",
+                "unknown_5",
+                "unknown_6",
+                "no_blocks",
+            ],
+            "norm_block": [
+                "block_id",
+                "sample_id",
+                "year",
+                "month",
+                "day",
+                "hour",
+                "minute",
+                "second",
+                "no_hrs_in_advance_of_gmt",
+                "no_comment_lines",
+                "comment_lines",
+                "technique",
+                "exp_var_value",
+                "source_label",
+                "source_energy",
+                "unknown_1",
+                "unknown_2",
+                "unknown_3",
+                "source_analyzer_angle",
+                "unknown_4",
+                "analyzer_mode",
+                "resolution",
+                "magnification",
+                "work_function",
+                "target_bias",
+                "analyzer_width_x",
+                "analyzer_width_y",
+                "analyzer_take_off_polar_angle",
+                "analyzer_azimuth",
+                "species_label",
+                "transition_label",
+                "particle_charge",
+                "abscissa_label",
+                "abscissa_units",
+                "abscissa_start",
+                "abscissa_step",
+                "no_variables",
+                "variable_label1",
+                "variable_units1",
+                "variable_label2",
+                "variable_units2",
+                "signal_mode",
+                "dwell_time",
+                "no_scans",
+                "time_correction",
+                "sample_angle_tilt",
+                "sample_tilt_azimuth",
+                "sample_rotation",
+                "no_additional_params",
+                "param_label_1",
+                "param_unit_1",
+                "param_value_1",
+                "param_label_2",
+                "param_unit_2",
+                "param_value_2",
+                "num_ord_values",
+                "min_ord_value_1",
+                "max_ord_value_1",
+                "min_ord_value_2",
+                "max_ord_value_2",
+                "data_string",
+            ],
+            "map_block": [
+                "block_id",
+                "sample_id",
+                "year",
+                "month",
+                "day",
+                "hour",
+                "minute",
+                "second",
+                "no_hrs_in_advance_of_gmt",
+                "no_comment_lines",
+                "comment_lines",
+                "technique",
+                "x_coord",
+                "y_coord",
+                "exp_var_value",
+                "source_label",
+                "source_energy",
+                "unknown_1",
+                "unknown_2",
+                "unknown_3",
+                "fov_x",
+                "fov_y",
+                "source_analyzer_angle",
+                "unknown_4",
+                "analyzer_mode",
+                "resolution",
+                "magnification",
+                "work_function",
+                "target_bias",
+                "analyzer_width_x",
+                "analyzer_width_y",
+                "analyzer_take_off_polar_angle",
+                "analyzer_azimuth",
+                "species_label",
+                "transition_label",
+                "particle_charge",
+                "abscissa_label",
+                "abscissa_units",
+                "abscissa_start",
+                "abscissa_step",
+                "no_variables",
+                "variable_label_1",
+                "variable_units_1",
+                "variable_label_2",
+                "variable_units_2",
+                "signal_mode",
+                "dwell_time",
+                "no_scans",
+                "time_correction",
+                "sample_angle_tilt",
+                "sample_tilt_azimuth",
+                "sample_rotation",
+                "no_additional_params",
+                "param_label_1",
+                "param_unit_1",
+                "param_value_1",
+                "param_label_2",
+                "param_unit_2",
+                "param_value_2",
+                "num_ord_values",
+                "min_ord_value_1",
+                "max_ord_value_1",
+                "min_ord_value_2",
+                "max_ord_value_2",
+                "data_string",
+            ],
+        }
 
-        self.norm_header_attr = [
-            "scan_mode",
-            "nr_regions",
-            "nr_exp_var",
-            "unknown_3",
-            "unknown_4",
-            "unknown_5",
-            "unknown_6",
-            "no_blocks",
-        ]
-
-        self.map_header_attr = [
-            "scan_mode",
-            "nr_regions",
-            "nr_positions",
-            "nr_x_coords",
-            "nr_y_coords",
-            "nr_exp_var",
-            "unknown_3",
-            "unknown_4",
-            "unknown_5",
-            "unknown_6",
-            "no_blocks",
-        ]
-
-        self.norm_block_attr = [
-            "block_id",
-            "sample_id",
-            "year",
-            "month",
-            "day",
-            "hour",
-            "minute",
-            "second",
-            "no_hrs_in_advance_of_gmt",
-            "no_comment_lines",
-            "comment_lines",
-            "technique",
-            "exp_var_value",
-            "source_label",
-            "source_energy",
-            "unknown_1",
-            "unknown_2",
-            "unknown_3",
-            "source_analyzer_angle",
-            "unknown_4",
-            "analyzer_mode",
-            "resolution",
-            "magnification",
-            "work_function",
-            "target_bias",
-            "analyzer_width_x",
-            "analyzer_width_y",
-            "analyzer_take_off_polar_angle",
-            "analyzer_azimuth",
-            "species_label",
-            "transition_label",
-            "particle_charge",
-            "abscissa_label",
-            "abscissa_units",
-            "abscissa_start",
-            "abscissa_step",
-            "no_variables",
-            "variable_label1",
-            "variable_units1",
-            "variable_label2",
-            "variable_units2",
-            "signal_mode",
-            "dwell_time",
-            "no_scans",
-            "time_correction",
-            "sample_angle_tilt",
-            "sample_tilt_azimuth",
-            "sample_rotation",
-            "no_additional_params",
-            "param_label_1",
-            "param_unit_1",
-            "param_value_1",
-            "param_label_2",
-            "param_unit_2",
-            "param_value_2",
-            "num_ord_values",
-            "min_ord_value_1",
-            "max_ord_value_1",
-            "min_ord_value_2",
-            "max_ord_value_2",
-            "data_string",
-        ]
-
-        self.map_block_attr = [
-            "block_id",
-            "sample_id",
-            "year",
-            "month",
-            "day",
-            "hour",
-            "minute",
-            "second",
-            "no_hrs_in_advance_of_gmt",
-            "no_comment_lines",
-            "comment_lines",
-            "technique",
-            "x_coord",
-            "y_coord",
-            "exp_var_value",
-            "source_label",
-            "source_energy",
-            "unknown_1",
-            "unknown_2",
-            "unknown_3",
-            "fov_x",
-            "fov_y",
-            "source_analyzer_angle",
-            "unknown_4",
-            "analyzer_mode",
-            "resolution",
-            "magnification",
-            "work_function",
-            "target_bias",
-            "analyzer_width_x",
-            "analyzer_width_y",
-            "analyzer_take_off_polar_angle",
-            "analyzer_azimuth",
-            "species_label",
-            "transition_label",
-            "particle_charge",
-            "abscissa_label",
-            "abscissa_units",
-            "abscissa_start",
-            "abscissa_step",
-            "no_variables",
-            "variable_label_1",
-            "variable_units_1",
-            "variable_label_2",
-            "variable_units_2",
-            "signal_mode",
-            "dwell_time",
-            "no_scans",
-            "time_correction",
-            "sample_angle_tilt",
-            "sample_tilt_azimuth",
-            "sample_rotation",
-            "no_additional_params",
-            "param_label_1",
-            "param_unit_1",
-            "param_value_1",
-            "param_label_2",
-            "param_unit_2",
-            "param_value_2",
-            "num_ord_values",
-            "min_ord_value_1",
-            "max_ord_value_1",
-            "min_ord_value_2",
-            "max_ord_value_2",
-            "data_string",
-        ]
-
-    def parse_file(self, filepath, **kwargs):
+    def parse_file(self, file):
         """Parse the vamas file into a list of dictionaries.
 
-        This method should be called inside the Converter object.
         Parameters
         ----------
-        filepath: STRING
-        The location and name of the vamas file to be parsed.
+        file: str
+           The location and name of the vamas file to be parsed.
         """
-        self._read_lines(filepath)
+        self._read_lines(file)
         self._parse_header()
         self._parse_blocks()
-        return self._build_list()
+        return self.build_list()
 
-    def _read_lines(self, filepath):
-        self.data = []
-        self.filepath = filepath
-
-        with open(filepath, "rb") as fp:
-            for line in fp:
+    def _read_lines(self, file):
+        with open(file, "rb") as vms_file:
+            for line in vms_file:
                 if line.endswith(b"\r\n"):
                     self.data += [line.decode("utf-8", errors="ignore").strip()]
 
@@ -432,33 +427,33 @@ class VamasParserVMS(ABC):
         -------
         None.
         """
-        for attr in self.common_header_attr:
+        for attr in self.attrs["common_header"]:
             setattr(self.header, attr, self.data.pop(0).strip())
-        n = int(self.header.no_comment_lines)
+        no_comment_lines = int(self.header.no_comment_lines)
         comments = ""
-        for l in range(n):
+        for _ in range(no_comment_lines):
             comments += self.data.pop(0)
         self.header.comment_lines = comments
         self.header.exp_mode = self.data.pop(0).strip()
         if self.header.exp_mode == "NORM":
-            for attr in self.norm_header_attr:
+            for attr in self.attrs["norm_header"]:
                 setattr(self.header, attr, self.data.pop(0).strip())
                 if attr == "nr_exp_var":
                     self._add_exp_var()
 
         elif self.header.exp_mode == "MAP":
-            for attr in self.map_header_attr:
+            for attr in self.attrs["map_header"]:
                 setattr(self.header, attr, self.data.pop(0).strip())
                 if attr == "nr_exp_var":
                     self._add_exp_var()
 
     def _add_exp_var(self):
-        for v in range(int(self.header.nr_exp_var)):
-            for attr in self.exp_var_attributes:
+        for _ in range(int(self.header.nr_exp_var)):
+            for attr in self.attrs["exp_var"]:
                 setattr(self.header, attr, self.data.pop(0).strip())
 
     def _parse_blocks(self):
-        for b in range(int(self.header.no_blocks)):
+        for _ in range(int(self.header.no_blocks)):
             self._parse_one_block()
 
     def _parse_one_block(self):
@@ -475,9 +470,7 @@ class VamasParserVMS(ABC):
         This method has to be implemented in the inherited parsers.
 
         """
-        block = Block()
-
-        return Block
+        return Block()
 
     @abstractmethod
     def _parse_map_block(self):
@@ -487,11 +480,9 @@ class VamasParserVMS(ABC):
         This method has to be implemented in the inherited parsers.
 
         """
-        block = Block()
+        return Block()
 
-        return Block
-
-    def _build_list(self):
+    def build_list(self):
         """
         Construct a list of dictionaries from the Vamas objects
 
@@ -506,81 +497,75 @@ class VamasParserVMS(ABC):
         temp_group_name = ""
         spectra = []
 
-        for idx, b in enumerate(self.blocks):
-            group_name = b.sampleID
-            """ This set of conditions detects if the group name has changed.
-            If it has, then it increments the group_idx.
-            """
+        for spectrum_id, block in enumerate(self.blocks):
+            group_name = block.sample_id
+            # This set of conditions detects if the group name has changed.
+            # If it has, then it increments the group_idx.
             if group_name != temp_group_name:
                 temp_group_name = group_name
                 group_id += 1
 
-            spectrum_type = str(b.species_label + b.transition_label)
-            spectrum_id = idx
+            spectrum_type = str(block.species_label + block.transition_label)
 
             settings = {
-                "region": b.block_id,
-                "sample_name": b.sample_id,
-                "comments": b.comment_lines,  ## need to be split,
-                "analysis_method": b.technique,
-                "source_label": b.source_label,  # Al
-                "excitation_energy": b.source_energy,
-                "source_analyzer_angle": b.source_analyzer_angle,
-                "scan_mode": b.analyzer_mode,
-                "pass_energy": b.resolution,
-                "magnification": b.magnification,
-                "work_function": b.work_function,
-                "target_bias": b.target_bias,
-                "analysis_width_x": b.analyzer_width_x,  # analyser slit length divided by the magnification of the analyser transfer lens
-                "analysis_width_y": b.analyzer_width_y,
-                "analyzer_take_off_polar": b.analyzer_take_off_polar_angle,  # degrees from upward z-direction, defined by the sample stage
-                "analyzer_take_off_azimuth": b.analyzer_azimuth,
-                "element": b.species_label,  # Fe
-                "transition": b.transition_label,  # 2p
-                "particle_charge": b.particle_charge,  # -1
-                "x_label": b.abscissa_label,
-                "x_units": b.abscissa_units,
-                "start_energy": b.abscissa_start,
-                "step_size": b.abscissa_step,
-                "y_labels_1": b.variable_label_1,
-                "y_units_1": b.variable_units_1,
-                "y_labels_2": b.variable_label_2,
-                "y_units_2": b.variable_units_2,
-                "signal_mode": b.signal_mode,  # pulse counting
-                "dwell_time": b.dwell_time,
-                "time_correction": b.time_correction,
-                "sample_normal_polarangle_tilt": b.sample_angle_tilt,  # degrees from upward z-direction, defined by the sample stag
-                "sample_tilt_azimuth": b.sample_tilt_azimuth,  # degrees clockwise from the y-direction towards the operator, defined by the sample stage
-                "sample_rotation_angle": b.sample_rotation,
-                "n_values": int(b.num_ord_values / b.no_variables),
+                "region": block.block_id,
+                "sample_name": block.sample_id,
+                "comments": block.comment_lines,
+                "analysis_method": block.technique,
+                "source_label": block.source_label,
+                "excitation_energy": block.source_energy,
+                "source_analyzer_angle": block.source_analyzer_angle,
+                "scan_mode": block.analyzer_mode,
+                "pass_energy": block.resolution,
+                "magnification": block.magnification,
+                "work_function": block.work_function,
+                "target_bias": block.target_bias,
+                "analysis_width_x": block.analyzer_width_x,
+                "analysis_width_y": block.analyzer_width_y,
+                "analyzer_take_off_polar": block.analyzer_take_off_polar_angle,
+                "analyzer_take_off_azimuth": block.analyzer_azimuth,
+                "element": block.species_label,
+                "transition": block.transition_label,
+                "particle_charge": block.particle_charge,
+                "x_label": block.abscissa_label,
+                "x_units": block.abscissa_units,
+                "start_energy": block.abscissa_start,
+                "step_size": block.abscissa_step,
+                "y_labels_1": block.variable_label_1,
+                "y_units_1": block.variable_units_1,
+                "y_labels_2": block.variable_label_2,
+                "y_units_2": block.variable_units_2,
+                "signal_mode": block.signal_mode,
+                "dwell_time": block.dwell_time,
+                "time_correction": block.time_correction,
+                "sample_normal_polarangle_tilt": block.sample_angle_tilt,
+                "sample_tilt_azimuth": block.sample_tilt_azimuth,
+                "sample_rotation_angle": block.sample_rotation,
+                "n_values": int(block.num_ord_values / block.no_variables),
             }
 
-            date = (
-                str(b.year)
-                + "-"
-                + str(b.month)
-                + "-"
-                + str(b.day)
-                + " "
-                + str(b.hour)
-                + ":"
-                + str(b.minute)
-                + ":"
-                + str(b.second)
+            # Convert the native time format to the datetime string
+            # in the ISO 8601 format
+            tzinfo = datetime.timezone(
+                datetime.timedelta(hours=block.no_hrs_in_advance_of_gmt)
+            )
+            date_time = datetime.datetime(
+                block.year,
+                block.month,
+                block.day,
+                block.hour,
+                block.minute,
+                block.second,
+                tzinfo=tzinfo,
             )
 
-            # Convert the native time format to the datetime string
-            # in the ISO 8601 format: '%Y-%b-%dT%H:%M:%S.%fZ'.
-            date_time = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-            date_time += timedelta(hours=b.no_hrs_in_advance_of_gmt)
-
-            data = {"x": b.x}
-            for n in range(int(b.no_variables)):
-                if n == 0:
+            data = {"x": block.x}
+            for var in range(int(block.no_variables)):
+                if var == 0:
                     key = "y"
                 else:
-                    key = "y" + str(n)
-                data[key] = getattr(b, key)
+                    key = "y" + str(var)
+                data[key] = getattr(block, key)
 
             spec_dict = {
                 "time_stamp": date_time,
@@ -588,17 +573,17 @@ class VamasParserVMS(ABC):
                 "group_id": group_id,
                 "spectrum_type": spectrum_type,
                 "spectrum_id": spectrum_id,
-                "scans": b.no_scans,
+                "scans": block.no_scans,
                 "data": data,
             }
             spec_dict.update(settings)
             spectra += [spec_dict]
 
-        self.data_list = spectra
-        return self.data_list
+        return spectra
 
 
 class VamasParserRegular(VamasParserVMS):
+    """ Parser for .vms files of type REGULAR"""
     def _parse_norm_block(self):
         """
         Use this method when the NORM keyword is present.
@@ -609,8 +594,8 @@ class VamasParserRegular(VamasParserVMS):
             A block represents one spectrum with its metadata.
 
         """
+        # pylint: disable=too-many-statements
         block = Block()
-
         block.block_id = self.data.pop(0).strip()
         block.sample_id = self.data.pop(0).strip()
         block.year = int(self.data.pop(0).strip())
@@ -621,10 +606,10 @@ class VamasParserRegular(VamasParserVMS):
         block.second = int(self.data.pop(0).strip().split(".")[0])
         block.no_hrs_in_advance_of_gmt = int(self.data.pop(0).strip())
         block.no_comment_lines = int(self.data.pop(0).strip())
-        for n in range(block.no_comment_lines):
+        for _ in range(block.no_comment_lines):
             block.comment_lines += self.data.pop(0)
         block.technique = self.data.pop(0).strip()
-        for v in range(int(self.header.nr_exp_var)):
+        for _ in range(int(self.header.nr_exp_var)):
             block.exp_var_value = self.data.pop(0).strip()
         block.source_label = self.data.pop(0).strip()
         block.source_energy = float(self.data.pop(0).strip())
@@ -650,10 +635,10 @@ class VamasParserRegular(VamasParserVMS):
         block.abscissa_start = float(self.data.pop(0).strip())
         block.abscissa_step = float(self.data.pop(0).strip())
         block.no_variables = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "variable_label_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "variable_label_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
-            name = "variable_units_" + str(p + 1)
+            name = "variable_units_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
         block.signal_mode = self.data.pop(0).strip()
         block.dwell_time = float(self.data.pop(0).strip())
@@ -663,18 +648,18 @@ class VamasParserRegular(VamasParserVMS):
         block.sample_tilt_azimuth = float(self.data.pop(0).strip())
         block.sample_rotation = float(self.data.pop(0).strip())
         block.no_additional_params = int(self.data.pop(0).strip())
-        for p in range(block.no_additional_params):
-            name = "param_label_" + str(p + 1)
+        for param in range(block.no_additional_params):
+            name = "param_label_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_unit_" + str(p + 1)
+            name = "param_unit_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_value_" + str(p + 1)
+            name = "param_value_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
         block.num_ord_values = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "min_ord_value_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "min_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
-            name = "max_ord_value_" + str(p + 1)
+            name = "max_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
 
         self._add_data_values(block)
@@ -690,6 +675,7 @@ class VamasParserRegular(VamasParserVMS):
             A block represents one spectrum with its metadata.
 
         """
+        # pylint: disable=too-many-statements
         block = Block()
         block.block_id = self.data.pop(0).strip()
         block.sample_id = self.data.pop(0).strip()
@@ -701,7 +687,7 @@ class VamasParserRegular(VamasParserVMS):
         block.second = int(self.data.pop(0).strip())
         block.no_hrs_in_advance_of_gmt = int(self.data.pop(0).strip())
         block.no_comment_lines = int(self.data.pop(0).strip())
-        for n in range(block.no_comment_lines):
+        for _ in range(block.no_comment_lines):
             self.data.pop(0)
             block.comment_lines += self.data.pop(0)
         block.technique = self.data.pop(0).strip()
@@ -734,10 +720,10 @@ class VamasParserRegular(VamasParserVMS):
         block.abscissa_start = float(self.data.pop(0).strip())
         block.abscissa_step = float(self.data.pop(0).strip())
         block.no_variables = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "variable_label_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "variable_label_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
-            name = "variable_units_" + str(p + 1)
+            name = "variable_units_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
         block.signal_mode = self.data.pop(0).strip()
         block.dwell_time = float(self.data.pop(0).strip())
@@ -747,18 +733,18 @@ class VamasParserRegular(VamasParserVMS):
         block.sample_tilt_azimuth = float(self.data.pop(0).strip())
         block.sample_rotation = float(self.data.pop(0).strip())
         block.no_additional_params = int(self.data.pop(0).strip())
-        for p in range(block.no_additional_params):
-            name = "param_label_" + str(p + 1)
+        for param in range(block.no_additional_params):
+            name = "param_label_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_unit_" + str(p + 1)
+            name = "param_unit_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_value_" + str(p + 1)
+            name = "param_value_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
         block.num_ord_values = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "min_ord_value_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "min_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
-            name = "max_ord_value_" + str(p + 1)
+            name = "max_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
 
         self._add_data_values(block)
@@ -766,46 +752,43 @@ class VamasParserRegular(VamasParserVMS):
         return block
 
     def _add_data_values(self, block):
+        """ Add data values to a Vamas data block."""
         data_dict = {}
         start = float(block.abscissa_start)
         step = float(block.abscissa_step)
         num = int(block.num_ord_values / block.no_variables)
-        x = [round(start + i * step, 2) for i in range(num)]
+        energy = [round(start + i * step, 2) for i in range(num)]
 
         if block.abscissa_label == "binding energy":
-            x.reverse()
+            energy.reverse()
 
-        setattr(block, "x", x)
+        setattr(block, "x", energy)
 
-        for v in range(block.no_variables):
-            if v == 0:
+        for var in range(block.no_variables):
+            if var == 0:
                 name = "y"
             else:
-                name = "y" + str(v)
+                name = "y" + str(var)
             data_dict[name] = []
 
-        d = list(np.array(self.data[: block.num_ord_values], dtype=float))
+        data_array = list(np.array(self.data[: block.num_ord_values], dtype=float))
 
-        self.data = self.data[block.num_ord_values :]
+        self.data = self.data[block.num_ord_values:]
 
-        """for r in range(int(block.numOrdValues / block.noVariables)):
-            for v in range(block.noVariables):
-                name = 'y' + str(v)
-                data_dict[name] += [float(self.data.pop(0).strip())]"""
-
-        for v in range(block.no_variables):
-            n = block.no_variables
-            if v == 0:
+        for var in range(block.no_variables):
+            max_var = block.no_variables
+            if var == 0:
                 name = "y"
             else:
-                name = "y" + str(v)
-            dd = d[v::n]
-            data_dict[name] = dd
+                name = "y" + str(var)
+            data_array_slice = data_array[var::max_var]
+            data_dict[name] = data_array_slice
             setattr(block, name, data_dict[name])
 
 
-### THIS DOESN'T WORK SO FAR!!
+# THIS DOESN'T WORK SO FAR!!
 class VamasParserIrregular(VamasParserVMS):
+    """ Parser for .vms files of type IRREGULAR"""
     def _parse_norm_block(self):
         """
         Use this method when the NORM keyword is present.
@@ -816,8 +799,8 @@ class VamasParserIrregular(VamasParserVMS):
             A block represents one spectrum with its metadata.
 
         """
+        # pylint: disable=too-many-statements
         block = Block()
-
         block.block_id = self.data.pop(0).strip()
         block.sample_id = self.data.pop(0).strip()
         block.year = int(self.data.pop(0).strip())
@@ -828,10 +811,10 @@ class VamasParserIrregular(VamasParserVMS):
         block.second = int(self.data.pop(0).strip().split(".")[0])
         block.no_hrs_in_advance_of_gmt = int(self.data.pop(0).strip())
         block.no_comment_lines = int(self.data.pop(0).strip())
-        for n in range(block.no_comment_lines):
+        for _ in range(block.no_comment_lines):
             block.comment_lines += self.data.pop(0)
         block.technique = self.data.pop(0).strip()
-        for v in range(int(self.header.nr_exp_var)):
+        for _ in range(int(self.header.nr_exp_var)):
             block.exp_var_value = self.data.pop(0).strip()
         block.source_label = self.data.pop(0).strip()
         block.source_energy = float(self.data.pop(0).strip())
@@ -857,10 +840,10 @@ class VamasParserIrregular(VamasParserVMS):
         block.abscissa_start = float(self.data.pop(0).strip())
         block.abscissa_step = float(self.data.pop(0).strip())
         block.no_variables = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "variable_label_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "variable_label_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
-            name = "variable_units_" + str(p + 1)
+            name = "variable_units_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
         block.signal_mode = self.data.pop(0).strip()
         block.dwell_time = float(self.data.pop(0).strip())
@@ -870,18 +853,18 @@ class VamasParserIrregular(VamasParserVMS):
         block.sample_tilt_azimuth = float(self.data.pop(0).strip())
         block.sample_rotation = float(self.data.pop(0).strip())
         block.no_additional_params = int(self.data.pop(0).strip())
-        for p in range(block.no_additional_params):
-            name = "param_label_" + str(p + 1)
+        for param in range(block.no_additional_params):
+            name = "param_label_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_unit_" + str(p + 1)
+            name = "param_unit_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_value_" + str(p + 1)
+            name = "param_value_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
         block.num_ord_values = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "min_ord_value_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "min_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
-            name = "max_ord_value_" + str(p + 1)
+            name = "max_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
 
         self._add_data_values(block)
@@ -897,6 +880,7 @@ class VamasParserIrregular(VamasParserVMS):
             A block represents one spectrum with its metadata.
 
         """
+        # pylint: disable=too-many-statements
         block = Block()
         block.block_id = self.data.pop(0).strip()
         block.sample_id = self.data.pop(0).strip()
@@ -908,7 +892,7 @@ class VamasParserIrregular(VamasParserVMS):
         block.second = int(self.data.pop(0).strip())
         block.no_hrs_in_advance_of_gmt = int(self.data.pop(0).strip())
         block.no_comment_lines = int(self.data.pop(0).strip())
-        for n in range(block.no_comment_lines):
+        for _ in range(block.no_comment_lines):
             self.data.pop(0)
             block.comment_lines += self.data.pop(0)
         block.technique = self.data.pop(0).strip()
@@ -941,10 +925,10 @@ class VamasParserIrregular(VamasParserVMS):
         block.abscissa_start = float(self.data.pop(0).strip())
         block.abscissa_step = float(self.data.pop(0).strip())
         block.no_variables = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "variable_label_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "variable_label_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
-            name = "variable_units_" + str(p + 1)
+            name = "variable_units_" + str(var + 1)
             setattr(block, name, self.data.pop(0).strip())
         block.signal_mode = self.data.pop(0).strip()
         block.dwell_time = float(self.data.pop(0).strip())
@@ -954,18 +938,18 @@ class VamasParserIrregular(VamasParserVMS):
         block.sample_tilt_azimuth = float(self.data.pop(0).strip())
         block.sample_rotation = float(self.data.pop(0).strip())
         block.no_additional_params = int(self.data.pop(0).strip())
-        for p in range(block.no_additional_params):
-            name = "param_label_" + str(p + 1)
+        for param in range(block.no_additional_params):
+            name = "param_label_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_unit_" + str(p + 1)
+            name = "param_unit_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
-            name = "param_value_" + str(p + 1)
+            name = "param_value_" + str(param + 1)
             setattr(block, name, self.data.pop(0))
         block.num_ord_values = int(self.data.pop(0).strip())
-        for p in range(block.no_variables):
-            name = "min_ord_value_" + str(p + 1)
+        for var in range(block.no_variables):
+            name = "min_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
-            name = "max_ord_value_" + str(p + 1)
+            name = "max_ord_value_" + str(var + 1)
             setattr(block, name, float(self.data.pop(0).strip()))
 
         self._add_data_values(block)
@@ -973,39 +957,35 @@ class VamasParserIrregular(VamasParserVMS):
         return block
 
     def _add_data_values(self, block):
+        """ Add data values to a Vamas data block."""
         data_dict = {}
         start = float(block.abscissa_start)
         step = float(block.abscissa_step)
         num = int(block.num_ord_values / block.no_variables)
-        x = [round(start + i * step, 2) for i in range(num)]
+        energy = [round(start + i * step, 2) for i in range(num)]
 
         if block.abscissa_label == "binding energy":
-            x.reverse()
+            energy.reverse()
 
-        setattr(block, "x", x)
+        setattr(block, "x", energy)
 
-        for v in range(block.no_variables):
-            if v == 0:
+        for var in range(block.no_variables):
+            if var == 0:
                 name = "y"
             else:
-                name = "y" + str(v)
+                name = "y" + str(var)
             data_dict[name] = []
 
-        d = list(np.array(self.data[: block.num_ord_values], dtype=float))
+        data_array = list(np.array(self.data[:block.num_ord_values], dtype=float))
 
-        self.data = self.data[block.num_ord_values :]
+        self.data = self.data[block.num_ord_values:]
 
-        """for r in range(int(block.numOrdValues / block.noVariables)):
-            for v in range(block.noVariables):
-                name = 'y' + str(v)
-                data_dict[name] += [float(self.data.pop(0).strip())]"""
-
-        for v in range(block.no_variables):
-            n = block.no_variables
-            if v == 0:
+        for var in range(block.no_variables):
+            max_var = block.no_variables
+            if var == 0:
                 name = "y"
             else:
-                name = "y" + str(v)
-            dd = d[v::n]
-            data_dict[name] = dd
+                name = "y" + str(var)
+            data_array_slice = data_array[var::max_var]
+            data_dict[name] = data_array_slice
             setattr(block, name, data_dict[name])
