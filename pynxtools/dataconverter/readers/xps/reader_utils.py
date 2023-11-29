@@ -45,13 +45,13 @@ def safe_arange_with_edges(start, stop, step):
     return step * np.arange(start / step, (stop + step) / step)
 
 
-def check_uniform_step_width(x):
+def check_uniform_step_width(lst):
     """
-    Check to see if a non-uniform step width is used in the spectrum
+    Check to see if a non-uniform step width is used in an lst
 
     Parameters
     ----------
-    x : list
+    lst : list
         List of data points.
 
     Returns
@@ -60,16 +60,16 @@ def check_uniform_step_width(x):
         False if list is non-uniformally spaced.
 
     """
-    start = x[0]
-    stop = x[-1]
-    step = get_minimal_step(x)
+    start = lst[0]
+    stop = lst[-1]
+    step = get_minimal_step(lst)
 
-    if step != 0.0 and np.abs((stop - start) / step) > len(x):
+    if step != 0.0 and np.abs((stop - start) / step) > len(lst):
         return False
     return True
 
 
-def get_minimal_step(x):
+def get_minimal_step(lst):
     """
     Return the minimal difference between two consecutive values
     in a list. Used for extracting minimal difference in a
@@ -77,18 +77,18 @@ def get_minimal_step(x):
 
     Parameters
     ----------
-    x : list
+    lst : list
         List of data points.
 
     Returns
     -------
     step : float
         Non-zero, minimal distance between consecutive data
-        points in x.
+        points in lst.
 
     """
-    x1 = np.roll(x, -1)
-    diff = np.abs(np.subtract(x, x1))
+    lst1 = np.roll(lst, -1)
+    diff = np.abs(np.subtract(lst, lst1))
     step = round(np.min(diff[diff != 0]), 2)
 
     return step
@@ -111,12 +111,13 @@ def _resample_array(y, x0, x1):
 
     Returns
     -------
-    TYPE
+    list
         Interpolated y array.
 
     """
-    fn = interp1d(x0, y, axis=0, fill_value="extrapolate")
-    return fn(x1)
+    # pylint: disable=invalid-name
+    interp_fn = interp1d(x0, y, axis=0, fill_value="extrapolate")
+    return interp_fn(x1)
 
 
 def interpolate_arrays(x, array_list):
@@ -136,12 +137,14 @@ def interpolate_arrays(x, array_list):
         Interpolated x axis and list of arrays
 
     """
+    # pylint: disable=invalid-name
     if not isinstance(array_list, list):
         array_list = [array_list]
     start = x[0]
     stop = x[-1]
     step = get_minimal_step(x)
     if start > stop:
+        # pylint: disable=arguments-out-of-order
         new_x = np.flip(safe_arange_with_edges(stop, start, step))
     else:
         new_x = safe_arange_with_edges(start, stop, step)

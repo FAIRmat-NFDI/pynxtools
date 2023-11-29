@@ -21,7 +21,7 @@ Class for reading XPS files from TXT export of Scienta.
 # pylint: disable=too-many-lines
 
 import re
-from copy import deepcopy
+import copy
 from datetime import datetime
 import pytz
 import xarray as xr
@@ -32,7 +32,6 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_data_key,
     construct_detector_data_key,
 )
-
 
 class TxtParserScienta:
     """
@@ -47,17 +46,17 @@ class TxtParserScienta:
         self._xps_dict: dict = {}
         self._root_path = "/ENTRY[entry]"
 
-        self.helper = ScientaTxtHelper()
+        self.parser = ScientaTxtHelper()
 
-    def parse_file(self, filepath, **kwargs):
+    def parse_file(self, file, **kwargs):
         """
         Parse the file using the Scienta TXT parser.
 
         """
-        self.raw_data = self.helper.parse_file(filepath, **kwargs)
+        self.raw_data = self.parser.parse_file(file, **kwargs)
 
         file_key = f"{self._root_path}/File"
-        self._xps_dict[file_key] = filepath
+        self._xps_dict[file_key] = file
 
         self.construct_data()
 
@@ -70,7 +69,8 @@ class TxtParserScienta:
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""
-        spectra = deepcopy(self.raw_data)
+        # pylint: disable=duplicate-code
+        spectra = copy.deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
 
@@ -141,6 +141,7 @@ class TxtParserScienta:
 
         """
         # pylint: disable=too-many-locals
+        # pylint: disable=duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["spectrum_type"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
         file_parent = f"{region_parent}/file_info"
@@ -294,14 +295,14 @@ class ScientaTxtHelper:
 
         return self.spectra
 
-    def _read_lines(self, filepath):
+    def _read_lines(self, file):
         """
         Read all lines from the input txt files.
 
 
         Parameters
         ----------
-        filepath : str
+        file : str
             Filepath of the TXT file to be read.
 
         Returns
@@ -309,8 +310,8 @@ class ScientaTxtHelper:
         None.
 
         """
-        with open(filepath, encoding="utf-8") as file:
-            for line in file:
+        with open(file, encoding="utf-8") as txt_file:
+            for line in txt_file:
                 self.lines += [line]
 
     def _parse_header(self):

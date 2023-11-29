@@ -51,7 +51,7 @@ class XmlParserSpecs:
 
     config_file = "config_xml_specs.json"
 
-    def __init__(self, vendor_name: str = "specs") -> None:
+    def __init__(self) -> None:
         self._root_path = "/ENTRY[entry]/"
         self._xps_dict: dict = {}
         self.entry_to_data: dict = {}
@@ -59,7 +59,7 @@ class XmlParserSpecs:
         self.tail_part_frm_othr = ""
         self.child_nm_reslvers = "__child_name_resolver__"
 
-    def parse_file(self, file, **kwargs):
+    def parse_file(self, file):
         """Start parsing process and parse children recursively.
 
         Parameters
@@ -469,7 +469,7 @@ class XmlParserSpecs:
                     counts_length = num_of_counts
                 if counts_length != num_of_counts:
                     raise ValueError(
-                        "Count number from all the " "scans must be equals!!"
+                        "Count number from all scans must be equal!!"
                     )
 
             if scan_seq_elem.attrib["type_name"] == "Counts":
@@ -508,6 +508,7 @@ class XmlParserSpecs:
         return self._xps_dict
 
     # pylint: disable=too-many-branches
+    # pylint: disable=too-many-statements
     def collect_raw_data_to_construct_data(self):
         """Collect the raw data about detectors so that the binding energy and
         and counts for the corresponding nominal.
@@ -532,7 +533,6 @@ class XmlParserSpecs:
             "time": 0,
             "scans": {},
         }
-        # xps_dict = copy.deepcopy(self._xps_dict)
         for key, val in self._xps_dict.items():
             entry = _construct_entry_name_xml(key)
 

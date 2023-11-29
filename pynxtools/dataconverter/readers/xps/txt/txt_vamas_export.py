@@ -17,8 +17,8 @@ Classes for reading XPS files from TXT export of CasaXPS.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 # pylint: disable=too-many-lines
+# pylint: disable=too-few-public-methods
 
 import itertools
 import operator
@@ -50,6 +50,7 @@ class TxtParserVamasExport:
         self._xps_dict: dict = {}
         self._root_path = "/ENTRY[entry]"
 
+        self.parser = None
         self.parser_map = {
             "rows_of_tables": TextParserRows,
             "columns_of_tables": TextParserColumns,
@@ -90,8 +91,8 @@ class TxtParserVamasExport:
             Either columns_of_tables or rows_of_tables.
 
         """
-        with open(file) as f:
-            first_line = f.readline()
+        with open(file, encoding="utf-8") as txt_file:
+            first_line = txt_file.readline()
             if first_line.startswith("Cycle"):
                 return "columns_of_tables"
             return "rows_of_tables"
@@ -103,6 +104,7 @@ class TxtParserVamasExport:
 
     def construct_data(self):
         """Map TXT format to NXmpes-ready dict."""
+        # pylint: disable=duplicate-code
         spectra = copy.deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
@@ -125,7 +127,7 @@ class TxtParserVamasExport:
             ],
             "manipulator": [],
             "calibration": [],
-            "sample": ["sample_name"],
+            "sample": [],
             "data": [
                 "dwell_time",
                 "y_units",
@@ -142,8 +144,9 @@ class TxtParserVamasExport:
 
         """
         # pylint: disable=too-many-locals
-        group_parent = f'{self._root_path}/RegionGroup_{spectrum["spectrum_type"]}'
-        region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
+        # pylint: disable=duplicate-code
+        group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
+        region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
         file_parent = f"{region_parent}/file_info"
         instrument_parent = f"{region_parent}/instrument"
         analyser_parent = f"{instrument_parent}/analyser"
@@ -191,7 +194,7 @@ class TxtParserVamasExport:
         self._xps_dict[detector_data_key] = spectrum["data"]["intensity"]
 
 
-class TextParser(ABC):
+class TextParser(ABC): # pylint: disable=too-few-public-methods
     """
     Parser for ASCI files exported from CasaXPS.
     """
@@ -224,7 +227,7 @@ class TextParser(ABC):
             DESCRIPTION.
 
         """
-        if "n_headerlines" in kwargs.keys():
+        if "n_headerlines" in kwargs:
             self.n_headerlines = kwargs["n_headerlines"]
 
         self.uniform_energy_steps = uniform_energy_steps
@@ -247,8 +250,8 @@ class TextParser(ABC):
         None.
 
         """
-        with open(file) as f:
-            for line in f:
+        with open(file, encoding="utf-8") as txt_file:
+            for line in txt_file:
                 self.lines += [line]
 
     @abstractmethod
@@ -302,8 +305,8 @@ class TextParser(ABC):
         None.
 
         """
-        header = block[: self.n_headerlines]
-        data = block[self.n_headerlines :]
+        header = block[:self.n_headerlines]
+        data = block[self.n_headerlines:]
 
         return header, data
 
@@ -314,8 +317,8 @@ class TextParserRows(TextParser):
     'Rows of Tables' option.
     """
 
-    def __init__(self, **kwargs):
-        super(TextParserRows, self).__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self.n_headerlines = 7
 
     def _parse_blocks(self):
@@ -370,13 +373,11 @@ class TextParserRows(TextParser):
         """
         settings = []
         for spec_header in header[-1].split("\t")[1::3]:
-            sample_name = spec_header.split(":")[1]
+            group_name = spec_header.split(":")[1]
             region = spec_header.split(":")[2]
-            spectrum_type = sample_name + "_" + region
             spectrum_settings = {
-                "sample_name": sample_name,
-                "region_name": region,
-                "spectrum_type": spectrum_type,
+                "group_name": group_name,
+                "spectrum_type": region,
                 "y_units": spec_header.split(":")[3],
             }
             settings += [spectrum_settings]
@@ -404,7 +405,7 @@ class TextParserRows(TextParser):
             del line[2::3]
             del line[-1]
 
-        lines = [[] for _ in range(max([len(l) for l in data_lines]))]
+        lines = [[] for _ in range(max(len(line) for line in data_lines))]
 
         for line in data_lines:
             for i, data_point in enumerate(line):
@@ -415,16 +416,16 @@ class TextParserRows(TextParser):
 
         data = []
 
-        for x_bin, y in zip(lines[::2], lines[1::2]):
-            x_bin, y = np.array(x_bin), np.array(y)
+        for x_bin, intensity in zip(lines[::2], lines[1::2]):
+            x_bin, intensity = np.array(x_bin), np.array(intensity)
 
             if self.uniform_energy_steps and not check_uniform_step_width(x_bin):
-                x_bin, y = interpolate_arrays(x_bin, y)
+                x_bin, intensity = interpolate_arrays(x_bin, intensity)
 
             spectrum = {
                 "data": {
                     "binding_energy": np.array(x_bin),
-                    "intensity": np.array(y).squeeze(),
+                    "intensity": np.array(intensity).squeeze(),
                 },
                 "start_energy": x_bin[0],
                 "stop_energy": x_bin[-1],
@@ -444,8 +445,8 @@ class TextParserColumns(TextParser):
     'Columns of Tables' option.
     """
 
-    def __init__(self, **kwargs):
-        super(TextParserColumns, self).__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self.n_headerlines = 8
 
     def _parse_blocks(self):
@@ -462,7 +463,7 @@ class TextParserColumns(TextParser):
         blocks = [
             list(g) for _, g in itertools.groupby(self.lines, lambda i: "Cycle " in i)
         ]
-        blocks = [operator.add(*blocks[i : i + 2]) for i in range(0, len(blocks), 2)]
+        blocks = [operator.add(*blocks[i: i + 2]) for i in range(0, len(blocks), 2)]
 
         return blocks
 
@@ -477,17 +478,15 @@ class TextParserColumns(TextParser):
 
         Returns
         -------
-        settings : dict
+        settings : dictf
             Dict of measurement settings for one spectrum.
 
         """
-        sample_name = header[0].split(":")[1]
+        group_name = header[0].split(":")[1]
         region = header[0].split(":")[2].split("\n")[0]
-        spectrum_type = sample_name + "_" + region
         settings = {
-            "sample_name": sample_name,
-            "region_name": region,
-            "spectrum_type": spectrum_type,
+            "group_name": group_name,
+            "spectrum_type": region,
             "excitation_energy": header[1].split("\t")[2],
             "excitation_energy/@units": header[1].split("\t")[1].split(" ")[-1],
             "dwell_time": float(header[1].split("\t")[4].strip()),
@@ -516,15 +515,15 @@ class TextParserColumns(TextParser):
 
         x_kin = lines[:, 0]
         x_bin = lines[:, 2]
-        y = lines[:, 1]
+        intensity = lines[:, 1]
 
         if self.uniform_energy_steps and not check_uniform_step_width(x_kin):
-            x_kin, (x_bin, y) = interpolate_arrays(x_kin, [x_bin, y])
+            x_kin, (x_bin, intensity) = interpolate_arrays(x_kin, [x_bin, intensity])
 
         return {
             "kinetic_energy": np.array(x_kin),
             "binding_energy": np.array(x_bin),
-            "intensity": np.array(y).squeeze(),
+            "intensity": np.array(intensity).squeeze(),
         }
 
     def _build_list_of_dicts(self, blocks):

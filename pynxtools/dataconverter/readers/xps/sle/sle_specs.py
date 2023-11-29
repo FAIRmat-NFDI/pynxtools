@@ -104,6 +104,7 @@ class SleParserSpecs:
 
     def construct_data(self):
         """Map SLE format to NXmpes-ready dict."""
+        # pylint: disable=duplicate-code
         spectra = copy.deepcopy(self.raw_data)
 
         self._xps_dict["data"]: dict = {}
@@ -175,6 +176,7 @@ class SleParserSpecs:
 
         """
         # pylint: disable=too-many-locals
+        # pylint: disable=duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
         instrument_parent = f"{region_parent}/instrument"
@@ -381,14 +383,7 @@ class SleProdigyParser(ABC):
         return self.spectra
 
     def _get_xml_schedule(self):
-        """
-        Parse the schedule into an XML object.
-
-        Returns
-        -------
-        None.
-
-        """
+        """Parse the schedule into an XML object."""
         cur = self.con.cursor()
         query = 'SELECT Value FROM Configuration WHERE Key="Schedule"'
         cur.execute(query)
@@ -418,7 +413,7 @@ class SleProdigyParser(ABC):
             transmission_data = self._get_transmission(node_id)
 
             for scan_no in range(n_scans):
-                scan = copy(spectrum)
+                scan = copy.copy(spectrum)
 
                 scan["scan_id"] = scan_id
                 # get signal data for each scan
@@ -443,7 +438,7 @@ class SleProdigyParser(ABC):
 
                 # scan['cps_calib'] = self._get_calibrated_data(spectrum)
                 # """ This is wrong and needs to be corrected!!!"""
-                scan["cps_calib"] = copy(scan["cps_ch_0"])
+                scan["cps_calib"] = copy.copy(scan["cps_ch_0"])
 
                 # Add transmission function
                 scan["transmission_function/data"] = np.array(transmission_data)
@@ -487,7 +482,7 @@ class SleProdigyParser(ABC):
             length = result[1] * buffer
             data = result[0]
             for i in range(0, length, buffer):
-                stream.append(struct.unpack(encoding, data[i : i + buffer])[0])
+                stream.append(struct.unpack(encoding, data[i: i + buffer])[0])
 
         return stream
 
@@ -856,10 +851,10 @@ class SleProdigyParser(ABC):
             # if a record was accessed then parse, if not skip
             if result:
                 protocol = ET.fromstring(result[0])
-                protocal_params = self._get_one_device_protocal(protocol)
+                protocal_params = self._get_one_device_protocol(protocol)
                 spectrum.update(protocal_params)
 
-    def _get_one_device_protocal(self, protocol):
+    def _get_one_device_protocol(self, protocol):
         """
          Get all parameters for one device protocol
 
@@ -925,7 +920,7 @@ class SleProdigyParser(ABC):
             length = result[1] * buffer
             data = result[0]
             for i in range(0, length, buffer):
-                stream.append(struct.unpack(encoding, data[i : i + buffer])[0])
+                stream.append(struct.unpack(encoding, data[i: i + buffer])[0])
         return stream
 
     def _parse_external_channels(self, channel):
