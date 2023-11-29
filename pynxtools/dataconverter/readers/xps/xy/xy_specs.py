@@ -108,19 +108,15 @@ class XyParserSpecs:
                 "source_analyzer_angle",
             ],
             "beam": ["excitation_energy"],
-            "analyser": [
-                "analyzer_name"
-                ],
-            "collectioncolumn": [
-                "lens_mode"
-                ],
+            "analyser": ["analyzer_name"],
+            "collectioncolumn": ["lens_mode"],
             "energydispersion": [
                 "scan_mode",
                 "pass_energy",
             ],
             "detector": [
                 "detector_voltage",
-                ],
+            ],
             "manipulator": [],
             "sample": ["target_bias"],
             "calibration": [],
@@ -140,8 +136,8 @@ class XyParserSpecs:
                 "spectrum_id",
                 "time_stamp",
                 "scans",
-                "spectrum_id"
-                'cycle_no',
+                "spectrum_id",
+                "cycle_no",
             ],
         }
 
@@ -210,19 +206,21 @@ class XyParserSpecs:
             averaged_channels = spectrum["data"]["y"]
         else:
             all_channel_data = [
-                value for key, value in self._xps_dict.items() if
-                detector_data_key.split('Channel_')[0] in key
-                ]
-            averaged_channels = np.mean(all_channel_data, axis = 0)
+                value
+                for key, value in self._xps_dict.items()
+                if detector_data_key.split("Channel_")[0] in key
+            ]
+            averaged_channels = np.mean(all_channel_data, axis=0)
 
         if not self.parser.export_settings["Separate Scan Data"]:
             averaged_scans = spectrum["data"]["y"]
         else:
             all_scan_data = [
-                value for key, value in self._xps_dict.items() if
-                detector_data_key.split('Scan_')[0] in key
-                ]
-            averaged_scans = np.mean(all_scan_data, axis = 0)
+                value
+                for key, value in self._xps_dict.items()
+                if detector_data_key.split("Scan_")[0] in key
+            ]
+            averaged_scans = np.mean(all_scan_data, axis=0)
 
         # Writing order: scan, cycle, channel data
         self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
@@ -235,15 +233,14 @@ class XyParserSpecs:
             coords={x_units: energy},
         )
 
-        if (self.parser.export_settings["Separate Channel Data"] and
-            self.write_channels_to_data):
+        if (
+            self.parser.export_settings["Separate Channel Data"]
+            and self.write_channels_to_data
+        ):
             channel_no = spectrum["channel_no"]
             self._xps_dict["data"][entry][
                 f"{scan_key}_chan{channel_no}"
-                ] = xr.DataArray(
-                    data=spectrum["data"]["y"],
-                    coords={x_units: energy}
-        )
+            ] = xr.DataArray(data=spectrum["data"]["y"], coords={x_units: energy})
 
 
 class XyProdigyParser:
@@ -315,7 +312,6 @@ class XyProdigyParser:
         if "n_headerlines" in kwargs.keys():
             self.n_headerlines = kwargs["n_headerlines"]
 
-
         self.lines = self._read_lines(file)
         header, data = self._separate_header()
         self.export_settings = self._parse_export_settings(header)
@@ -357,8 +353,8 @@ class XyProdigyParser:
             List of list containing data strings.
 
         """
-        header = self.lines[:self.n_headerlines]
-        groups = self.lines[self.n_headerlines:]
+        header = self.lines[: self.n_headerlines]
+        groups = self.lines[self.n_headerlines :]
 
         return header, groups
 
@@ -377,12 +373,12 @@ class XyProdigyParser:
             Dictionary of export settings.
 
         """
-        export_lines = self.lines[:self.n_headerlines]
+        export_lines = self.lines[: self.n_headerlines]
 
         bool_map = {
             "yes": True,
             "no": False,
-            }
+        }
 
         export_settings = {}
         for line in export_lines:
@@ -415,7 +411,10 @@ class XyProdigyParser:
 
         """
         grouped_list = [
-            list(g) for _, g in itertools.groupby(data, lambda line: "Group:" in line.strip(self.prefix).strip())
+            list(g)
+            for _, g in itertools.groupby(
+                data, lambda line: "Group:" in line.strip(self.prefix).strip()
+            )
         ][1:]
 
         groups = OrderedDict()
@@ -425,7 +424,7 @@ class XyProdigyParser:
             group_settings = {"group_name": name}
             groups[name] = {
                 "group_settings": self._replace_keys(group_settings, self.settings_map),
-                }
+            }
             groups[name].update(self._handle_regions(group_data))
 
         return groups
@@ -449,7 +448,10 @@ class XyProdigyParser:
 
         """
         grouped_list = [
-            list(g) for _, g in itertools.groupby(group_data, lambda line: "Region:" in line.strip(self.prefix).strip())
+            list(g)
+            for _, g in itertools.groupby(
+                group_data, lambda line: "Region:" in line.strip(self.prefix).strip()
+            )
         ][1:]
 
         regions = OrderedDict()
@@ -469,8 +471,10 @@ class XyProdigyParser:
                     region_settings[setting_name] = val
 
             regions[name] = {
-                "region_settings": self._replace_keys(region_settings, self.settings_map),
-                }
+                "region_settings": self._replace_keys(
+                    region_settings, self.settings_map
+                ),
+            }
             regions[name].update(self._handle_cycles(region_data))
 
         return regions
@@ -500,18 +504,22 @@ class XyProdigyParser:
 
         for i, line in enumerate(region_data):
             if cycle_pattern.match(line):
-                cycle_line_nrs["cycle_" + str(int(self._strip_param(line, 'Cycle:')))] = i
-            if i == len(region_data)-1:
+                cycle_line_nrs[
+                    "cycle_" + str(int(self._strip_param(line, "Cycle:")))
+                ] = i
+            if i == len(region_data) - 1:
                 cycle_line_nrs["end"] = i + 1
 
-        for i, (line_no_a, line_no_b) in enumerate(zip(list(cycle_line_nrs.values()), list(cycle_line_nrs.values())[1:])):
+        for i, (line_no_a, line_no_b) in enumerate(
+            zip(list(cycle_line_nrs.values()), list(cycle_line_nrs.values())[1:])
+        ):
             name = f"cycle_{i}"
             cycle_settings = {"loop_no": i}
             cycle_data = region_data[line_no_a:line_no_b]
 
             cycles[name] = {
                 "cycle_settings": self._replace_keys(cycle_settings, self.settings_map),
-                }
+            }
             cycles[name].update(self._handle_individual_cycles(cycle_data))
 
         return cycles
@@ -545,15 +553,27 @@ class XyProdigyParser:
 
         for i, line in enumerate(cycle_data):
             if spec_pattern.match(line):
-                name_dict = dict((a.strip(), int(b.strip()))
-                                 for a, b in (element.split(': ')
-                                              for element in line.strip(self.prefix).strip().split(', ')))
-                name = ''.join([f"{key.lower()}_{val}_" for key, val in name_dict.items() if key != "Curve"]).rstrip("_")
+                name_dict = dict(
+                    (a.strip(), int(b.strip()))
+                    for a, b in (
+                        element.split(": ")
+                        for element in line.strip(self.prefix).strip().split(", ")
+                    )
+                )
+                name = "".join(
+                    [
+                        f"{key.lower()}_{val}_"
+                        for key, val in name_dict.items()
+                        if key != "Curve"
+                    ]
+                ).rstrip("_")
                 scan_line_nrs[name] = i
-            if i == len(cycle_data)-1:
+            if i == len(cycle_data) - 1:
                 scan_line_nrs["end"] = i + 1
 
-        for i, ((name, line_no_a), line_no_b) in enumerate(zip(list(scan_line_nrs.items()), list(scan_line_nrs.values())[1:])):
+        for i, ((name, line_no_a), line_no_b) in enumerate(
+            zip(list(scan_line_nrs.items()), list(scan_line_nrs.values())[1:])
+        ):
             scan_data = cycle_data[line_no_a:line_no_b]
             scan = self._handle_individual_scan(scan_data)
             scan["scan_settings"].update(self._extend_scan_settings(name))
@@ -588,12 +608,15 @@ class XyProdigyParser:
         scan_settings = {}
 
         for i, line in enumerate(scan_data):
-            if (line.startswith(self.prefix) and line.strip(self.prefix).strip("\n")):
-                key, val = [item.strip() for item in line.strip(self.prefix).strip("\n").split(":",1)]
+            if line.startswith(self.prefix) and line.strip(self.prefix).strip("\n"):
+                key, val = [
+                    item.strip()
+                    for item in line.strip(self.prefix).strip("\n").split(":", 1)
+                ]
                 if key == "Acquisition Date":
                     scan_settings[key] = self._parse_datetime(val)
 
-                if  key == "ColumnLabels":
+                if key == "ColumnLabels":
                     if not self.export_settings["Transmission Function"]:
                         x_units, y_units = val.split(" ")
                         scan_settings["x_units"] = x_units
@@ -605,7 +628,7 @@ class XyProdigyParser:
                         scan_settings["y_units"] = self._reformat_y_units(y_units)
                         scan_settings["tf_units"] = tf_units
 
-            if (not line.startswith(self.prefix) and line.strip("\n")):
+            if not line.startswith(self.prefix) and line.strip("\n"):
                 data = line.strip("\n").split(" ")
                 data = [d for d in data if d]
                 x.append(float(data[0]))
@@ -620,9 +643,9 @@ class XyProdigyParser:
             "data": {
                 "x": np.array(x),
                 "y": np.array(y),
-                },
-            "scan_settings": self._replace_keys(scan_settings, self.settings_map)
-            }
+            },
+            "scan_settings": self._replace_keys(scan_settings, self.settings_map),
+        }
 
         if self.export_settings["Transmission Function"]:
             scan["data"]["transmission_function"] = np.array(transmission_function)
@@ -655,12 +678,11 @@ class XyProdigyParser:
 
         split_name = scan_name.split("_")
 
-        for param, val in zip(split_name[::2],split_name[1::2]):
+        for param, val in zip(split_name[::2], split_name[1::2]):
             if param != "cycle":
                 settings[f"{param}_no"] = int(val)
 
         return settings
-
 
     def _strip_param(self, line, key):
         """
@@ -686,7 +708,6 @@ class XyProdigyParser:
         """
         if key in line:
             return line.strip().split(self.prefix + " " + key)[-1].strip()
-
 
     def _flatten_dict(self, data_dict):
         """
@@ -721,8 +742,8 @@ class XyProdigyParser:
                             group_settings,
                             region_settings,
                             cycle_settings,
-                            scan_settings
-                            ]:
+                            scan_settings,
+                        ]:
                             spectrum.update(settings)
                         spectrum["data"] = scan["data"]
                         spectra.append(spectrum)
@@ -793,9 +814,6 @@ class XyProdigyParser:
             Shortened intensity units.
 
         """
-        unit_map = {
-            "counts/s": "CPS",
-            "counts": "Counts"
-            }
+        unit_map = {"counts/s": "CPS", "counts": "Counts"}
 
         return unit_map[y_units]
