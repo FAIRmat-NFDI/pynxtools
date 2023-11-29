@@ -22,6 +22,7 @@
 import copy
 import logging
 import sys
+import tempfile
 import xml.etree.ElementTree as ET
 
 import h5py
@@ -192,18 +193,12 @@ class Writer:
 
     def __init__(self, data: dict = None,
                  nxdl_path: str = None,
-                 output_path: str = None,
-                 write_in_memory: bool = False):
+                 output_path: str = None):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
         self.nxdl_path = nxdl_path
         self.output_path = output_path
-        self.write_in_memory = write_in_memory
-        if self.write_in_memory:
-            self.output_nexus = h5py.File(self.output_path, "w", driver="core", backing_store=False)
-        else:
-            self.output_nexus = h5py.File(self.output_path, "w")
-
+        self.output_nexus = h5py.File(self.output_path, "w")
         self.nxdl_data = ET.parse(self.nxdl_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
@@ -319,25 +314,6 @@ class Writer:
     def write(self):
         """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
         try:
-            if self.write_in_memory:
-                raise ValueError("To write in memory and get the file obhect please use  "
-                                 "the method get_in_memory_obj()")
             self._put_data_into_hdf5()
         finally:
             self.output_nexus.close()
-
-    def get_in_memory_obj(self):
-        """Write the nexus file as in-memory obj.
-
-        Write in nexus in-memory file obj and return that file object.
-        """
-        try:
-            if self.write_in_memory:
-                self._put_data_into_hdf5()
-            else:
-                raise ValueError("The write_in_memory variable is False Writer"
-                                 "class initialization.")
-        except Exception as excp:
-            self.output_nexus.close()
-            raise excp
-        return self.output_nexus
