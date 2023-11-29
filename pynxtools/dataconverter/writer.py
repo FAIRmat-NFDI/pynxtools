@@ -178,12 +178,12 @@ class Writer:
 
     Args:
         data (dict): Dictionary containing the data to convert.
-        nxdl_path (str): Path to the nxdl file to use during conversion.
+        nxdl_f_path (str): Path to the nxdl file to use during conversion.
         output_path (str): Path to the output NeXus file.
 
     Attributes:
         data (dict): Dictionary containing the data to convert.
-        nxdl_path (str): Path to the nxdl file to use during conversion.
+        nxdl_f_path (str): Path to the nxdl file to use during conversion.
         output_path (str): Path to the output NeXus file.
         output_nexus (h5py.File): The h5py file object to manipulate output file.
         nxdl_data (dict): Stores xml data from given nxdl file to use during conversion.
@@ -191,14 +191,14 @@ class Writer:
     """
 
     def __init__(self, data: dict = None,
-                 nxdl_path: str = None,
+                 nxdl_f_path: str = None,
                  output_path: str = None):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
-        self.nxdl_path = nxdl_path
+        self.nxdl_f_path = nxdl_f_path
         self.output_path = output_path
         self.output_nexus = h5py.File(self.output_path, "w")
-        self.nxdl_data = ET.parse(self.nxdl_path).getroot()
+        self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
     def __nxdl_to_attrs(self, path: str = '/') -> dict:
