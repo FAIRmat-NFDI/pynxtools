@@ -95,18 +95,19 @@ class VamasMapper(XPSMapper):
             "user": [],
             "instrument": [
                 "work_function",
-                "target_bias",
-                "analyzer_take_off_azimuth",
-                "analyzer_take_off_polar",
-                "analysis_width_x",
-                "analysis_width_y",
             ],
             "source": [
                 "source_label",
                 "source_analyzer_angle",
             ],
             "beam": ["excitation_energy"],
-            "analyser": [],
+            "analyser": [
+                "analyzer_take_off_azimuth",
+                "analyzer_take_off_polar",
+                "analysis_width_x",
+                "analysis_width_y",
+                "target_bias",
+                ],
             "collectioncolumn": [],
             "energydispersion": [
                 "scan_mode",
@@ -114,7 +115,7 @@ class VamasMapper(XPSMapper):
             ],
             "detector": ["signal_mode"],
             "manipulator": [],
-            "sample": ["target_bias"],
+            "sample": [],
             "calibration": [],
             "data": [
                 "x_label",
@@ -203,11 +204,6 @@ class VamasMapper(XPSMapper):
         if averaged_scans.size == 1:
             # on first scan in cycle
             averaged_scans = intensity
-        if entry == "3 S1110, UHV, RT, Epass = 30 eV__VB":
-            self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
-                data=averaged_scans,
-                coords={"energy": energy},
-       )
 
         try:
             self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(

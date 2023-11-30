@@ -95,10 +95,9 @@ class XyMapperSpecs(XPSMapper):
             ],
             "source": [
                 "source_label",
-                "source_analyzer_angle",
             ],
             "beam": ["excitation_energy"],
-            "analyser": ["analyzer_name"],
+            "analyser": ["analyser_name"],
             "collectioncolumn": ["lens_mode"],
             "energydispersion": [
                 "scan_mode",
@@ -259,7 +258,7 @@ class XyProdigyParser:  # pylint: disable=too-few-public-methods
         self.settings_map = {
             "Acquisition Date": "time_stamp",
             "Analysis Method": "analysis_method",
-            "Analyzer": "analyzer_name",
+            "Analyzer": "analyser_name",
             "Analyzer Lens": "lens_mode",
             "Analyzer Slit": "entrance_slit",
             "Bias Voltage": "bias_voltage",

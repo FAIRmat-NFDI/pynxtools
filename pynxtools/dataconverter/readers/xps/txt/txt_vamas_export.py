@@ -100,23 +100,27 @@ class TxtMapperVamasExport(XPSMapper):
             "source": [],
             "beam": [
                 "excitation_energy",
-                "excitation_energy/@units",
+                "excitation_energy/units",
             ],
             "analyser": [],
             "collectioncolumn": [],
             "energydispersion": [],
             "detector": [
                 "dwell_time",
-                "dwell_time/@units",
+                "dwell_time/units",
             ],
             "manipulator": [],
             "calibration": [],
             "sample": [],
             "data": [
                 "dwell_time",
+                "x_units"
                 "y_units",
+                "start_energy",
+                "stop_energy",
+                "step_size"
             ],
-            "region": ["region_name", "start_energy", "stop_energy", "step_size"],
+            "region": ["region_name"],
         }
 
         for spectrum in spectra:
@@ -382,6 +386,7 @@ class TextParserRows(TextParser):
             spectrum_settings = {
                 "group_name": group_name,
                 "spectrum_type": region,
+                "x_units": "binding",
                 "y_units": spec_header.split(":")[3],
             }
             settings += [spectrum_settings]
@@ -433,6 +438,8 @@ class TextParserRows(TextParser):
                 },
                 "start_energy": x_bin[0],
                 "stop_energy": x_bin[-1],
+                "x_units": "binding",
+                "y_units": "CPS",
             }
 
             if check_uniform_step_width(x_bin):
