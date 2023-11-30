@@ -9,7 +9,7 @@ dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
 ]
-description = "Extend NeXus for materials science experiment and serve as a NOMAD parser implementation for NeXus."
+description = "Extend NeXus for experiments and characterization in Materials Science and Materials Engineering and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.8,!=3.12"
