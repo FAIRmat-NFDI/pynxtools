@@ -36,6 +36,20 @@ def get_a_value_or_warn(return_value="",
     return return_value
 
 
+def check_unit(unit: str):
+    """Handle conflicted unit.
+    Some units comes with verdor file that do not follow correct format.
+    """
+    if unit is None:
+        return unit
+    unit_map = {'Angstrom': 'angstrom',
+                }
+    correct_unit = unit_map.get(unit, None)
+    if correct_unit is None:
+        return unit
+    return correct_unit
+
+
 # pylint: disable=too-many-statements
 def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=None):
     """Fill template with data from xrdml type file.
@@ -91,11 +105,15 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
                 # the field does not have any value
                 if not raw_data_des.get('value', None):
                     continue
+                # Note: path is the data path in raw file
                 for val_atr_key, path in raw_data_des.items():
                     # data or field val
                     if val_atr_key == 'value':
                         template[nx_key] = xrd_dict.get(path, None)
-                    # attr e.g. @units
+                    elif path and val_atr_key == '@units':
+                        template[nx_key + '/' + val_atr_key] = check_unit(
+                            xrd_dict.get(path, None))
+                    # attr e.g. @AXISNAME
                     elif path and val_atr_key.startswith('@'):
                         template[nx_key + '/' + val_atr_key] = xrd_dict.get(path, None)
             if not isinstance(val, dict) and isinstance(val, str):
