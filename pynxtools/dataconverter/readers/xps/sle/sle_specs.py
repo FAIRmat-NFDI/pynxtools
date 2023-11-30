@@ -210,33 +210,60 @@ class SleMapperSpecs(XPSMapper):
         self._xps_dict[f'{path_map["analyser"]}/name'] = spectrum["devices"][0]
         self._xps_dict[f'{path_map["source"]}/name'] = spectrum["devices"][1]
 
+        # Create keys for writing to data and detector
         entry = construct_entry_name(region_parent)
-        self._xps_dict["data"][entry] = xr.Dataset()
-
         scan_key = construct_data_key(spectrum)
+        detector_data_key_child = construct_detector_data_key(spectrum)
 
         energy = np.array(spectrum["data"]["x"])
 
-        channels = [key for key in spectrum["data"] if "cps_ch_" in key]
+        # If multiple spectra exist to entry, only create a new
+        # xr.Dataset if the entry occurs for the first time.
+        if entry not in self._xps_dict["data"]:
+            self._xps_dict["data"][entry] = xr.Dataset()
 
-        for channel in channels:
-            ch_no = channel.rsplit("_")[-1]
-            channel_key = f"{scan_key}_chan_{ch_no}"
-            cps = np.array(spectrum["data"][channel])
+        # Write averaged cycle data to 'data'.
+        all_scan_data = [
+            value
+            for key, value in self._xps_dict["data"][entry].items()
+            if scan_key.split("_")[0] in key
+        ]
+        averaged_scans = np.mean(all_scan_data, axis=0)
+        if averaged_scans.size == 1:
+            # on first scan in cycle
+            averaged_scans = spectrum["data"]["cps_calib"]
 
-            self._xps_dict["data"][entry][channel_key] = xr.DataArray(
-                data=cps, coords={"energy": energy}
+        try:
+            self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
+                data=averaged_scans,
+                coords={"energy": energy},
             )
+        # This error occurs if twice the same region is scanned with
+        # different step sizes.
+        except ValueError:
+            pass
 
+        # Write scan data to 'data'.
         self._xps_dict["data"][entry][scan_key] = xr.DataArray(
             data=spectrum["data"]["cps_calib"], coords={"energy": energy}
         )
 
-        detector_data_key_child = construct_detector_data_key(spectrum)
-        detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
+        channels = [key for key in spectrum["data"] if "cps_ch_" in key]
+        for channel in channels:
+            ch_no = channel.rsplit("_")[-1]
+            channel_key = f"{scan_key}_chan_{ch_no}"
+            detector_data_key = (
+                f"{path_map['detector']}/{detector_data_key_child}"
+                f"_channels_Channel_{ch_no}/counts"
+            )
+            cps = np.array(spectrum["data"][channel])
 
-        self._xps_dict[detector_data_key] = spectrum["data"]["cps_calib"]
-
+            # Write raw data to detector.
+            self._xps_dict[detector_data_key] = spectrum["data"]["cps_calib"]
+            # Write channel data to 'data'.
+            self._xps_dict["data"][entry][channel_key] = xr.DataArray(
+                data=cps, coords={"energy": energy}
+            )
 
 class SleProdigyParser(ABC):
     """

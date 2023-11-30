@@ -22,6 +22,7 @@ import re
 from copy import deepcopy
 import datetime
 from abc import ABC, abstractmethod
+from itertools import groupby
 import xarray as xr
 import numpy as np
 
@@ -40,6 +41,9 @@ class VamasMapper(XPSMapper):
     Class for restructuring .txt data file from
     Vamas format into python dictionary.
     """
+
+    config_file = "config_vms.json"
+
     def __init__(self):
         self.file = None
         self.parsers = [
@@ -175,32 +179,51 @@ class VamasMapper(XPSMapper):
                     mpes_key = spectrum_key
                     self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
 
+        # Create keys for writing to data and detector
         entry = construct_entry_name(region_parent)
-        self._xps_dict["data"][entry] = xr.Dataset()
-
         scan_key = construct_data_key(spectrum)
-
-        energy = np.array(spectrum["data"]["x"])
-
-        channels = [key for key in spectrum["data"] if "cps_ch_" in key]
-
-        for channel in channels:
-            ch_no = channel.rsplit("_")[-1]
-            channel_key = f"{scan_key}_chan_{ch_no}"
-            cps = np.array(spectrum["data"][channel])
-
-            self._xps_dict["data"][entry][channel_key] = xr.DataArray(
-                data=cps, coords={"energy": energy}
-            )
-
-        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
-            data=spectrum["data"]["cps_calib"], coords={"energy": energy}
-        )
-
         detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
-        self._xps_dict[detector_data_key] = spectrum["data"]["cps_calib"]
+        energy = np.array(spectrum["data"]["x"])
+        intensity = np.array(spectrum["data"]["y"])
+
+        if entry not in self._xps_dict["data"]:
+            self._xps_dict["data"][entry] = xr.Dataset()
+
+        # Write averaged cycle data to 'data'.
+        all_scan_data = [
+            np.array(value)
+            for key, value in self._xps_dict["data"][entry].items()
+            if scan_key.split("_")[0] in key
+        ]
+
+        # Write averaged cycle data to 'data'.
+        averaged_scans = np.mean(all_scan_data, axis=0)
+        if averaged_scans.size == 1:
+            # on first scan in cycle
+            averaged_scans = intensity
+        if entry == "3 S1110, UHV, RT, Epass = 30 eV__VB":
+            self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
+                data=averaged_scans,
+                coords={"energy": energy},
+       )
+
+        try:
+            self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
+               data=averaged_scans,
+               coords={"energy": energy},
+           )
+        except ValueError:
+            pass
+
+        # Write scan data to 'data'.
+        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
+            data=intensity, coords={"energy": energy}
+        )
+
+        # Write raw intensities to 'detector'.
+        self._xps_dict[detector_data_key] = intensity
 
 
 class VamasParser(ABC):
@@ -471,6 +494,38 @@ class VamasParser(ABC):
         """
         return Block()
 
+    def _get_scan_numbers_for_spectra(self, spectra):
+        """
+        For a flat list of spectra, groupby group name and spectrum
+        type and iteratively give them scan numbers.
+
+        Parameters
+        ----------
+        spectra : list
+            List of dicts with each dict containing data and metadata
+            for one spectrum.
+
+        Returns
+        -------
+        flattened_spectra : list
+            Same list of dicts, but each spectrum gets a scan number.
+
+        """
+
+        grouped_spectra = [list(y) for x,y in groupby(
+            sorted(spectra,
+                   key=lambda x: (x['group_name'],x['spectrum_type'])),
+            lambda x: (x['group_name'],x['spectrum_type']))]
+
+        for group in grouped_spectra:
+            for i, spectrum in enumerate(group):
+                spectrum["scan_no"] = i
+
+        flattened_spectra = [spectrum for group in grouped_spectra for spectrum in group]
+
+        return flattened_spectra
+
+
     def build_list(self):
         """
         Construct a list of dictionaries from the Vamas objects
@@ -567,6 +622,8 @@ class VamasParser(ABC):
             }
             spec_dict.update(settings)
             spectra += [spec_dict]
+
+        spectra = self._get_scan_numbers_for_spectra(spectra)
 
         return spectra
 

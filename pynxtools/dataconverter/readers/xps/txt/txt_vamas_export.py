@@ -161,21 +161,41 @@ class TxtMapperVamasExport(XPSMapper):
                 except KeyError:
                     pass
 
+        # Create keys for writing to data and detector
         entry = construct_entry_name(region_parent)
-        self._xps_dict["data"][entry] = xr.Dataset()
-
         scan_key = construct_data_key(spectrum)
-
-        energy = np.array(spectrum["data"]["binding_energy"])
-
-        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
-            data=spectrum["data"]["intensity"], coords={"energy": energy}
-        )
-
         detector_data_key_child = construct_detector_data_key(spectrum)
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
-        self._xps_dict[detector_data_key] = spectrum["data"]["intensity"]
+        energy = np.array(spectrum["data"]["binding_energy"])
+        intensity = np.array(spectrum["data"]["intensity"])
+
+        # If multiple spectra exist to entry, only create a new
+        # xr.Dataset if the entry occurs for the first time.
+        if entry not in self._xps_dict["data"]:
+            self._xps_dict["data"][entry] = xr.Dataset()
+
+        # Write averaged cycle data to 'data'.
+        all_scan_data = [
+            value
+            for key, value in self._xps_dict["data"][entry].items()
+            if scan_key.split("_")[0] in key
+        ]
+        averaged_scans = np.mean(all_scan_data, axis=0)
+        if averaged_scans.size == 1:
+            # on first scan in cycle
+            averaged_scans = intensity
+
+        self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
+            data=averaged_scans,
+            coords={"energy": energy},
+        )
+
+        self._xps_dict["data"][entry][scan_key] = xr.DataArray(
+            data=intensity, coords={"energy": energy}
+        )
+
+        self._xps_dict[detector_data_key] = intensity
 
 
 class TextParser(ABC):  # pylint: disable=too-few-public-methods

@@ -47,6 +47,9 @@ class XyMapperSpecs(XPSMapper):
     Class for restructuring .xy data file from
     Specs vendor into python dictionary.
     """
+
+    config_file = "config_specs_xy.json"
+
     def __init__(self):
         super().__init__()
         self.write_channels_to_data = True
@@ -183,15 +186,16 @@ class XyMapperSpecs(XPSMapper):
 
         x_units = spectrum["x_units"]
         energy = np.array(spectrum["data"]["x"])
+        intensity = np.array(spectrum["data"]["y"])
 
         if entry not in self._xps_dict["data"]:
             self._xps_dict["data"][entry] = xr.Dataset()
 
         # Write raw data to detector.
-        self._xps_dict[detector_data_key] = spectrum["data"]["y"]
+        self._xps_dict[detector_data_key] = intensity
 
         if not self.parser.export_settings["Separate Channel Data"]:
-            averaged_channels = spectrum["data"]["y"]
+            averaged_channels = intensity
         else:
             all_channel_data = [
                 value
@@ -201,7 +205,7 @@ class XyMapperSpecs(XPSMapper):
             averaged_channels = np.mean(all_channel_data, axis=0)
 
         if not self.parser.export_settings["Separate Scan Data"]:
-            averaged_scans = spectrum["data"]["y"]
+            averaged_scans = intensity
         else:
             all_scan_data = [
                 value
@@ -210,12 +214,15 @@ class XyMapperSpecs(XPSMapper):
             ]
             averaged_scans = np.mean(all_scan_data, axis=0)
 
-        # Writing order: scan, cycle, channel data
+        # Write to data in order: scan, cycle, channel
+
+        # Write averaged cycle data to 'data'.
         self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
             data=averaged_scans,
             coords={x_units: energy},
         )
         if self.parser.export_settings["Separate Scan Data"]:
+            # Write average cycle data to 'data'.
             self._xps_dict["data"][entry][scan_key] = xr.DataArray(
                 data=averaged_channels,
                 coords={x_units: energy},
@@ -225,10 +232,11 @@ class XyMapperSpecs(XPSMapper):
             self.parser.export_settings["Separate Channel Data"]
             and self.write_channels_to_data
         ):
+            # Write channel data to 'data'.
             channel_no = spectrum["channel_no"]
             self._xps_dict["data"][entry][
                 f"{scan_key}_chan{channel_no}"
-            ] = xr.DataArray(data=spectrum["data"]["y"], coords={x_units: energy})
+            ] = xr.DataArray(data=intensity, coords={x_units: energy})
 
 
 class XyProdigyParser:  # pylint: disable=too-few-public-methods
