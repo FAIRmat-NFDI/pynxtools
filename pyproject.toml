@@ -9,14 +9,15 @@ dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
 ]
-description = "Extend NeXus for materials science experiment and serve as a NOMAD parser implementation for NeXus."
+description = "Extend NeXus for experiments and characterization in Materials Science and Materials Engineering and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.8,<3.11"
+requires-python = ">=3.8,!=3.12"
 classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
@@ -36,7 +37,7 @@ dependencies = [
     "kikuchipy>=0.8.2",
     "pyxem>=0.14.2",
     "zipfile37==0.1.3",
-    "nionswift==0.16.8",
+    "nionswift>=0.16.8",
     "tzlocal<=4.3",
     "scipy>=1.7.1",
     "lark>=1.1.5",
