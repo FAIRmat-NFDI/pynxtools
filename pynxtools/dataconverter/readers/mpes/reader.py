@@ -199,20 +199,6 @@ def handle_h5_and_json_file(file_paths, objects):
             )
 
         if not os.path.exists(file_path):
-            file_path = os.path.join(
-                os.path.dirname(__file__),
-                "..",
-                "..",
-                "..",
-                "..",
-                "tests",
-                "data",
-                "dataconverter",
-                "readers",
-                "mpes",
-                file_path,
-            )
-        if not os.path.exists(file_path):
             raise FileNotFoundError(
                 errno.ENOENT,
                 os.strerror(errno.ENOENT),
@@ -252,9 +238,28 @@ def rgetattr(obj, attr):
 
     if "index" in attr:
         axis = attr.split(".")[0]
-        return str(obj.dims.index(f"{axis}"))
+        return obj.dims.index(f"{axis}")
 
     return reduce(_getattr, [obj] + attr.split("."))
+
+
+def fill_data_indices_in_config(config_file_dict, x_array_loaded):
+    """Add data indices key value pairs to the config_file
+    dictionary from the xarray dimensions if not already
+    present.
+    """
+    for key in list(config_file_dict):
+        if "*" in key:
+            value = config_file_dict[key]
+            for dim in x_array_loaded.dims:
+                new_key = key.replace("*", dim)
+                new_value = value.replace("*", dim)
+
+                if new_key not in config_file_dict.keys() \
+                        and new_value not in config_file_dict.values():
+                    config_file_dict[new_key] = new_value
+
+            config_file_dict.pop(key)
 
 
 class MPESReader(BaseReader):
@@ -265,7 +270,7 @@ class MPESReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXmpes"]
 
-    def read(
+    def read(  # pylint: disable=too-many-branches
             self,
             template: dict = None,
             file_paths: Tuple[str] = None,
@@ -282,6 +287,8 @@ class MPESReader(BaseReader):
             config_file_dict,
             eln_data_dict,
         ) = handle_h5_and_json_file(file_paths, objects)
+
+        fill_data_indices_in_config(config_file_dict, x_array_loaded)
 
         for key, value in config_file_dict.items():
 
