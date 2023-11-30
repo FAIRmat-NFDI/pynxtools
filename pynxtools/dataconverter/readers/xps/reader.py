@@ -58,6 +58,7 @@ CONVERT_DICT = {
     "Energydispersion": "ENERGYDISPERSION[energydispersion]",
     "Detector": "DETECTOR[detector]",
     "Manipulator": "MANIPULATOR[manipulator]",
+    "Process": "PROCESS[process]",
     "Sample": "SAMPLE[sample]",
     "Data": "DATA[data]",
 }

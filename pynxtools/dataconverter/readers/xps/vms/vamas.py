@@ -17,6 +17,7 @@ Class for reading XPS files from raw VMS data.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# pylint: disable=too-many-lines
 
 import re
 from copy import deepcopy
@@ -107,7 +108,7 @@ class VamasMapper(XPSMapper):
                 "analysis_width_x",
                 "analysis_width_y",
                 "target_bias",
-                ],
+            ],
             "collectioncolumn": [],
             "energydispersion": [
                 "scan_mode",
@@ -207,9 +208,9 @@ class VamasMapper(XPSMapper):
 
         try:
             self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
-               data=averaged_scans,
-               coords={"energy": energy},
-           )
+                data=averaged_scans,
+                coords={"energy": energy},
+            )
         except ValueError:
             pass
 
@@ -507,11 +508,10 @@ class VamasParser(ABC):
             Same list of dicts, but each spectrum gets a scan number.
 
         """
-
-        grouped_spectra = [list(y) for x,y in groupby(
+        grouped_spectra = [list(y) for x, y in groupby(
             sorted(spectra,
-                   key=lambda x: (x['group_name'],x['spectrum_type'])),
-            lambda x: (x['group_name'],x['spectrum_type']))]
+                   key=lambda x: (x['group_name'], x['spectrum_type'])),
+            lambda x: (x['group_name'], x['spectrum_type']))]
 
         for group in grouped_spectra:
             for i, spectrum in enumerate(group):
@@ -520,7 +520,6 @@ class VamasParser(ABC):
         flattened_spectra = [spectrum for group in grouped_spectra for spectrum in group]
 
         return flattened_spectra
-
 
     def build_list(self):
         """

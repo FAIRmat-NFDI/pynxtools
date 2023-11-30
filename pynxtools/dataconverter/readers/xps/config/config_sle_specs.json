@@ -41,6 +41,7 @@
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]/LENS_EM[Focus Displacement 1]/current/@units": "@xps_token:collectioncolumn/focus_displacement_current/@units",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/DETECTOR[detector]/DATA[data]/@signal": "",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/DETECTOR[detector]/DATA[data]/raw": "@detector_data:cycles/Cycle_",
+    "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/DETECTOR[detector]/DATA[data]/raw/@units": "counts",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/DETECTOR[detector]/amplifier_type": "channeltron",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/DETECTOR[detector]/detector_type": "DLD",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/ENERGYDISPERSION[energydispersion]/energy_scan_mode": "@xps_token:energydispersion/scan_mode",
