@@ -109,6 +109,7 @@ class XRDMLParser:
         """
         self.parse_each_elm(parent_path='/', xml_node=self.xml_root)
         nested_data_dict: Dict[str, any] = {}
+        # Note: To use panalytical lib
         # Extract other numerical data e.g. 'hkl', 'Omega', '2Theta', CountTime etc
         # using panalytical_xml module
         # parsed_data = XRDMLFile(self.__file_path)
