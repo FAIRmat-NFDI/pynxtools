@@ -21,8 +21,7 @@ Specs Lab Prodigy XY exports, to be passed to mpes nxdl
 # limitations under the License.
 #
 
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-lines,too-many-instance-attributes
 
 import re
 import itertools
@@ -138,8 +137,7 @@ class XyMapperSpecs(XPSMapper):
         Map one spectrum from raw data to NXmpes-ready dict.
 
         """
-        # pylint: disable=too-many-locals
-        # pylint: disable=duplicate-code
+        # pylint: disable=too-many-locals,duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
         file_parent = f"{region_parent}/file_info"

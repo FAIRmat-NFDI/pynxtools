@@ -129,8 +129,7 @@ class TxtMapperScienta(XPSMapper):
         Map one spectrum from raw data to NXmpes-ready dict.
 
         """
-        # pylint: disable=too-many-locals
-        # pylint: disable=duplicate-code
+        # pylint: disable=too-many-locals,duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["spectrum_type"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
         file_parent = f"{region_parent}/file_info"

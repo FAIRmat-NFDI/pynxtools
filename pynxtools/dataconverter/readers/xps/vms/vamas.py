@@ -83,7 +83,7 @@ class VamasMapper(XPSMapper):
         for vms_type in self.parser_map:
             if vms_type.upper() in contents:
                 return vms_type
-        return None
+        return ""
 
     def construct_data(self):
         """Map VMS format to NXmpes-ready dict."""
@@ -146,8 +146,7 @@ class VamasMapper(XPSMapper):
 
     def _update_xps_dict_with_spectrum(self, spectrum, key_map):
         """Map one spectrum from raw data to NXmpes-ready dict."""
-        # pylint: disable=too-many-locals
-        # pylint: disable=duplicate-code
+        # pylint: disable=too-many-locals,duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
         instrument_parent = f"{region_parent}/instrument"

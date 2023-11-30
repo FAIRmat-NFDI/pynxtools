@@ -245,7 +245,7 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
 
             fill_detector_group(key, entries_values, config_dict, template, entry_set)
 
-        if XPS_TOKEN in str(value):
+        elif XPS_TOKEN in str(value):
             token = value.split(XPS_TOKEN)[-1]
             entries_values = find_entry_and_value(
                 xps_data_dict, token, dt_typ=XPS_TOKEN
@@ -355,7 +355,7 @@ class XPSReader(BaseReader):
                             yaml.safe_load(eln), CONVERT_DICT, REPLACE_NESTED
                         )
                     )
-            elif file_ext in [".sle", ".xml", ".txt", "xy", "vms"]:
+            elif file_ext in XpsDataFileParser.__prmt_file_ext__:
                 parser = XpsDataFileParser([file])
                 data_dict = parser.get_dict(**kwargs)
                 config_file = parser.config_file

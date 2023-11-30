@@ -17,8 +17,7 @@ Classes for reading XPS files from TXT export of CasaXPS.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# pylint: disable=too-many-lines
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-many-lines,too-few-public-methods
 
 import itertools
 import operator
@@ -131,8 +130,7 @@ class TxtMapperVamasExport(XPSMapper):
         Map one spectrum from raw data to NXmpes-ready dict.
 
         """
-        # pylint: disable=too-many-locals
-        # pylint: disable=duplicate-code
+        # pylint: disable=too-many-locals,duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
         region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
         file_parent = f"{region_parent}/file_info"

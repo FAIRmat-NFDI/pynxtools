@@ -87,9 +87,7 @@ class XmlMapperSpecs(XPSMapper):
 
         return self.data_dict
 
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-locals,too-many-statements, too-many-branches
     def construct_data(self):
         """
         Construct the Binding Energy and separate the counts for
