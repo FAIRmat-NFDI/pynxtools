@@ -265,6 +265,7 @@ class SleMapperSpecs(XPSMapper):
                 data=cps, coords={"energy": energy}
             )
 
+
 class SleProdigyParser(ABC):
     """
     Generic parser without reading capabilities,
