@@ -462,14 +462,14 @@ def ensure_all_required_fields_exist(template, data, nxdl_root, logger):
             if opt_parent != "<<NOT_FOUND>>":
                 if does_group_exist(opt_parent, data) and not does_group_exist(renamed_path, data):
                     logger.warning(f"The required group, {path}, hasn't been supplied"
-                                 f" while its optional parent, {path}, is supplied.")
+                                   f" while its optional parent, {path}, is supplied.")
                 continue
             if not does_group_exist(renamed_path, data):
                 raise ValueError(f"The required group, {path}, hasn't been supplied.")
             continue
         if not is_path_in_data_dict or data[renamed_path] is None:
             logger.warning(f"The data entry corresponding to {path} is required "
-                         f"and hasn't been supplied by the reader.")
+                           f"and hasn't been supplied by the reader.")
 
 
 def try_undocumented(data, nxdl_root: ET.Element):
