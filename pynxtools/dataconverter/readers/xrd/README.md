@@ -37,4 +37,4 @@ The reader can be run from Jupyter-notebook or Jupyter-lab with the following co
 --output <output-file location>.nxs
 ```
 
-An example file can be found here in GitLab, but to have access in that GitLab on must need an account in https://gitlab.mpcdf.mpg.de/.
+An example file can be found here in GitLab in [nomad-remote-tools-hub](https://gitlab.mpcdf.mpg.de/) feel free to vist and try out the reader.
