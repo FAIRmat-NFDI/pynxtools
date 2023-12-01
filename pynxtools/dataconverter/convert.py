@@ -34,7 +34,7 @@ from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 
-from .logger import logger
+from pynxtools.dataconverter.logger import logger as pynx_logger
 
 
 def get_reader(reader_name) -> BaseReader:
@@ -188,6 +188,10 @@ def convert(input_file: Tuple[str, ...],
     -------
     None.
     """
+    if logger_:
+        logger = logger_
+    else:
+        logger = pynx_logger
 
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
 
@@ -209,7 +213,7 @@ def convert(input_file: Tuple[str, ...],
         if "/@default" in path:
             continue
         logger.info(
-            f"NO DOCUMENTATION: The path, {path}  is being written but has no documentation."
+            f"NO DOCUMENTATION: The path, {path} is being written but has no documentation."
         )
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()

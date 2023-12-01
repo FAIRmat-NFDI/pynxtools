@@ -25,6 +25,7 @@ import xml.etree.ElementTree as ET
 import pytest
 from _pytest.mark.structures import ParameterSet
 
+from pynxtools.dataconverter.logger import logger as pynx_logger
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.convert import \
     get_names_of_all_readers, get_reader
@@ -101,7 +102,7 @@ def test_has_correct_read_func(reader):
             read_data = reader().read(template=Template(template), file_paths=tuple(input_files))
 
             assert isinstance(read_data, Template)
-            assert validate_data_dict(template, read_data, root)
+            assert validate_data_dict(template, read_data, root, logger=pynx_logger)
 
 
 @pytest.mark.parametrize("reader_name,nxdl,undocumented_keys", [
@@ -129,5 +130,5 @@ def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
         template=Template(template), file_paths=tuple(input_files)
     )
 
-    assert validate_data_dict(template, read_data, root)
+    assert validate_data_dict(template, read_data, root, logger=pynx_logger)
     assert list(read_data.undocumented.keys()) == undocumented_keys

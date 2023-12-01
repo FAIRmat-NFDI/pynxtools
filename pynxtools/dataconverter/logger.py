@@ -1,3 +1,4 @@
+"""Logger for pynxtools"""
 #
 # Copyright The NOMAD Authors.
 #
