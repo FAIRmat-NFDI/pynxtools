@@ -324,15 +324,17 @@ def test_validate_data_dict(caplog, data_dict, error_message, template, nxdl_roo
                                     "allow-required-and-empty-group",
                                     "opt-group-completely-removed"):
         helpers.validate_data_dict(template, data_dict, nxdl_root, logger=pynx_logger)
+    # Missing required fields
+    elif request.node.callspec.id in ("empty-required-field",
+                                      "req-group-in-opt-parent-removed"
+                                      ):
+        captured_logs = caplog.records
+        helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
+        assert any(error_message in rec.message for rec in captured_logs)
     else:
-        try:
-            captured_logs = caplog.records
+        with pytest.raises(Exception) as execinfo:
             helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
-            assert any(error_message in rec.message for rec in captured_logs)
-        except Exception:
-            with pytest.raises(Exception) as execinfo:
-                helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
-            assert (error_message) == str(execinfo.value)
+        assert (error_message) == str(execinfo.value)
 
 
 @pytest.mark.parametrize("nxdl_path,expected", [
