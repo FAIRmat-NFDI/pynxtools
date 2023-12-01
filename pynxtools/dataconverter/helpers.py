@@ -33,7 +33,7 @@ from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
 
-logger = logging.getLogger(__name__)
+pynx_logger = logging.getLogger(__name__)
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -447,7 +447,9 @@ def does_group_exist(path_to_group, data):
     return False
 
 
-def ensure_all_required_fields_exist(template, data, nxdl_root, logger):
+# pylint: disable=W1203
+def ensure_all_required_fields_exist(template, data,
+                                     nxdl_root, logger=pynx_logger):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
@@ -498,7 +500,9 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element, logger):
+def validate_data_dict(template, data,
+                       nxdl_root: ET.Element,
+                       logger=pynx_logger):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
@@ -590,7 +594,7 @@ def convert_to_hill(atoms_typ):
     return atom_list + list(atoms_typ)
 
 
-def add_default_root_attributes(data, filename):
+def add_default_root_attributes(data, filename, logger=pynx_logger):
     """
     Takes a dict/Template and adds NXroot fields/attributes that are inherently available
     """

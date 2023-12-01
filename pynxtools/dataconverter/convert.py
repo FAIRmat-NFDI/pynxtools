@@ -36,14 +36,29 @@ from pynxtools.nexus import nexus
 
 from pynxtools.dataconverter.logger import logger as pynx_logger
 
+if sys.version_info >= (3, 10):
+    from importlib.metadata import entry_points
+else:
+    from importlib_metadata import entry_points
+
 
 def get_reader(reader_name) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
     path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     path = os.path.join(path_prefix, "readers", reader_name, "reader.py")
     spec = importlib.util.spec_from_file_location("reader.py", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    try:
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    except FileNotFoundError as exc:
+        # pylint: disable=unexpected-keyword-arg
+        importlib_module = entry_points(group='pynxtools.reader')
+        if (
+            importlib_module
+            and reader_name in map(lambda ep: ep.name, entry_points(group='pynxtools.reader'))
+        ):
+            return importlib_module[reader_name].load()
+        raise ValueError(f"The reader, {reader_name}, was not found.") from exc
     return module.READER  # type: ignore[attr-defined]
 
 
@@ -158,7 +173,7 @@ def transfer_data_into_template(input_file,
     return data
 
 
-# pylint: disable=too-many-arguments,too-many-locals
+# pylint: disable=too-many-arguments, W1203
 def convert(input_file: Tuple[str, ...],
             reader: str,
             nxdl: str,
@@ -211,12 +226,13 @@ def convert(input_file: Tuple[str, ...],
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return
-    for path in data.undocumented.keys():
-        if "/@default" in path:
-            continue
-        logger.info(
-            f"NO DOCUMENTATION: The path, {path} is being written but has no documentation."
-        )
+    if undocumented:
+        for path in data.undocumented.keys():
+            if "/@default" in path:
+                continue
+            logger.info(
+                f"NO DOCUMENTATION: The path, {path} is being written but has no documentation."
+            )
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
