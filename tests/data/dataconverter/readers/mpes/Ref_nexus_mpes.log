@@ -3664,13 +3664,20 @@ NXcalibration.nxdl.xml:/fit_function
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/fit_function):
 DEBUG -
-             For non-linear energy calibrations. Here we can store the formula of the fit function.
+             For non-linear energy calibrations. Here we can store the formula of the
+             fit function.
 
-Use a0, a1, …, an for the coefficients, corresponding to the values in the coefficients field.
+             Use a0, a1, ..., an for the coefficients, corresponding to the values in the coefficients field.
 
-Use x0, x1, …, xn for the nth position in the original_axis field. If there is the symbol attribute specified for the original_axis this may be used instead of x. If you want to use the whole axis use x. Alternate axis can also be available as specified by the input_SYMBOL field. The data should then be referred here by the SYMBOL name, e.g., for a field name input_my_field it should be referred here by my_field or my_field0 if you want to read the zeroth element of the array.
+             Use x0, x1, ..., xn for the nth position in the `original_axis` field.
+             If there is the symbol attribute specified for the `original_axis` this may be used instead of x.
+             If you want to use the whole axis use `x`.
+             Alternate axis can also be available as specified by the `input_SYMBOL` field.
+             The data should then be referred here by the `SYMBOL` name, e.g., for a field
+             name `input_my_field` it should be referred here by `my_field` or `my_field0` if
+             you want to read the zeroth element of the array.
 
-The formula should be numpy compliant.
+             The formula should be numpy compliant.
 
 DEBUG - ===== FIELD (//entry/process/energy_calibration/original_axis): <HDF5 dataset "original_axis": shape (900,), type "<f8">
 DEBUG - value: [ 60027.77777778  60083.33333333  60138.88888889  60194.44444444 ...
