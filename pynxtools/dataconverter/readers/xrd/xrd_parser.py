@@ -18,6 +18,8 @@ XRD file parser collection.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any, Dict, Tuple, Optional, List
+
 from pathlib import Path
 import warnings
 import xml.etree.ElementTree as ET  # for XML parsing
@@ -107,11 +109,11 @@ class XRDMLParser:
         comes with xml file.
         """
         self.parse_each_elm(parent_path='/', xml_node=self.xml_root)
-
+        nested_data_dict: Dict[str, any] = {}
         # Extract other numerical data e.g. 'hkl', 'Omega', '2Theta', CountTime etc
         # using panalytical_xml module
-        parsed_data = XRDMLFile(self.__file_path)
-        nested_data_dict = parsed_data.scan.ddict
+        # parsed_data = XRDMLFile(self.__file_path)
+        # nested_data_dict = parsed_data.scan.ddict
         fill_slash_sep_dict_from_nested_dict('/', nested_data_dict, self.__xrd_dict)
 
     def process_node_text(self, parent_path, node_txt) -> None:
@@ -152,7 +154,9 @@ class XRDMLParser:
                 warnings.warn(f'Element text {node_txt} is ignored from parseing!',
                               IgnoreNodeTextWarning)
 
-    def parse_each_elm(self, parent_path, xml_node):
+    def parse_each_elm(self, parent_path, xml_node,
+                       multi_childs_tag: str = '',
+                       tag_extensions: Optional[List[int]] = None):
         """Check each xml element and send the element to intended function.
 
         Parameters
@@ -161,40 +165,86 @@ class XRDMLParser:
             Path to be in the starting of the key composing from element e.g. '/'.
         xml_node : XML.Element
             Any element except process instruction nodes.
+        multi_childs_tag : str
+            Tag that is available on several child nodes.
+        tag_extension : List[int]
+            List of extension of the child tag if there are several childs having the same
+            tag.
 
         Returns
         ------
         None
         """
+
         tag = remove_namespace_from_tag(xml_node.tag)
         # Take care of special node of 'entry' tag
         if tag == 'entry':
-            parent_path = self.parse_entry_elm(parent_path, xml_node)
+            parent_path = self.parse_entry_elm(parent_path, xml_node,
+                                               multi_childs_tag, tag_extensions)
         else:
-            parent_path = self.parse_general_elm(parent_path, xml_node)
+            parent_path = self.parse_general_elm(parent_path, xml_node,
+                                                 multi_childs_tag, tag_extensions)
 
+        _, multi_childs_tag = self.has_multi_childs_with_same_tag(xml_node)
+        # List of tag extensions for child nodes which have the same tag.
+        tag_extensions: List[int] = [0]
         for child in iter(xml_node):
             if child is not None:
-                self.parse_each_elm(parent_path, child)
+                self.parse_each_elm(parent_path, child,
+                                    multi_childs_tag, tag_extensions)
 
-    def parse_general_elm(self, parent_path, xml_node):
+    def has_multi_childs_with_same_tag(self, parent_node: ET.Element) -> Tuple[str, bool]:
+        """Check for multiple childs that have the same tag.
+
+        Parameter:
+        ----------
+        parent_node : ET.Element
+            Parent node that might has multiple childs with the same tag.
+
+        Returns:
+        --------
+        Tuple[bool, str]
+            (true if multiple childs with the same tag, tag).
+        """
+        tag: str = None
+        for child in iter(parent_node):
+            temp_tag = remove_namespace_from_tag(child.tag)
+            if tag is None:
+                tag = temp_tag
+            else:
+                if tag == temp_tag:
+                    return (True, tag)
+
+        return (False, '')
+
+    def parse_general_elm(self, parent_path, xml_node,
+                          multi_childs_tag, tag_extensions: List[int]):
         """Handle general element except entry element.
-
         Parameters
         ----------
         parent_path : str
             Path to be in the starting of the key composing from element e.g. '/'.
         xml_node : XML.Element
             Any element except process instruction and entry nodes.
+        multi_childs_tag : str
+            Tag that is available on several siblings.
+        tag_extension : List[int]
+            List of extension of the shiblings tag if there are several shiblings having
+            the same tag.
 
         Returns
         -------
         None
         """
+
         tag = remove_namespace_from_tag(xml_node.tag)
+        if tag == multi_childs_tag:
+            new_ext = tag_extensions[-1] + 1
+            tag = tag + '_' + str(new_ext)
+            tag_extensions.append(new_ext)
 
         if parent_path == '/':
-            parent_path = '/' + tag
+            parent_path = parent_path + tag
         else:
             # New parent path ends with element tag
             parent_path = '/'.join([parent_path, tag])
@@ -214,7 +264,8 @@ class XRDMLParser:
 
         return parent_path
 
-    def parse_entry_elm(self, parent_path, xml_node):
+    def parse_entry_elm(self, parent_path: str, xml_node: ET.Element,
+                        multi_childs_tag: str, tag_extensions: List[int]):
         """Handle entry element.
 
         Parameters
@@ -223,13 +274,24 @@ class XRDMLParser:
             Path to be in the starting of the key composing from element e.g. '/'.
         xml_node : XML.Element
             Any entry node.
+        multi_childs_tag : str
+            Tag that is available on several siblings.
+        tag_extension : List[int]
+            List of extension of the shiblings tag if there are several shiblings having
+            the same tag.
 
         Returns
         -------
         str:
             Parent path.
         """
+
         tag = remove_namespace_from_tag(xml_node.tag)
+
+        if tag == multi_childs_tag:
+            new_ext = tag_extensions[-1] + 1
+            tag_extensions.append(new_ext)
+            tag = tag + '_' + str(new_ext)
 
         if parent_path == '/':
             parent_path = '/' + tag
@@ -335,14 +397,12 @@ class FormatParser:
         None
         """
 
-        file_format = self.get_file_format()
-        if file_format == ".xrdml":
-            xrd_dict = self.parse()
-            if len(config_dict) == 0 and self.file_parser.xrdml_version == '1.5':
-                from pynxtools.dataconverter.readers.xrd.config import xrdml
-                config_dict = xrdml
-            feed_xrdml_to_template(template, xrd_dict, eln_dict,
-                                   file_term=self.file_term, config_dict=config_dict)
+        xrd_dict = self.parse()
+        if len(config_dict) == 0 and self.file_parser.xrdml_version == '1.5':
+            from pynxtools.dataconverter.readers.xrd.config import xrdml
+            config_dict = xrdml
+        feed_xrdml_to_template(template, xrd_dict, eln_dict,
+                               file_term=self.file_term, config_dict=config_dict)
 
     def parse(self):
         '''Parses the file based on its format.

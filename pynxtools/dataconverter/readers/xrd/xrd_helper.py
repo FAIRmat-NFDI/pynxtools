@@ -101,9 +101,33 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
                 template[nx_key] = val
 
     def two_theta_plot():
-        two_theta_gr = "/ENTRY[entry]/2theta_plot"
+
+        intesity = transform_to_intended_dt(template.get("/ENTRY[entry]/2theta_plot/intensity",
+                                                         None))
+        if intesity is not None:
+            intsity_len = np.shape(intesity)[0]
+        else:
+            raise ValueError("No intensity is found")
+
+        two_theta_gr = "/ENTRY[entry]/2theta_plot/"
+        if template.get(f"{two_theta_gr}omega", None) is None:
+            omega_start = template.get("/ENTRY[entry]/COLLECTION[collection]/omega/start", None)
+            omega_end = template.get("/ENTRY[entry]/COLLECTION[collection]/omega/end", None)
+
+            template["/ENTRY[entry]/2theta_plot/omega"] = np.linspace(float(omega_start),
+                                                                      float(omega_end),
+                                                                      intsity_len)
+
+        if template.get(f"{two_theta_gr}two_theta", None) is None:
+            tw_theta_start = template.get("/ENTRY[entry]/COLLECTION[collection]/2theta/start",
+                                          None)
+            tw_theta_end = template.get("/ENTRY[entry]/COLLECTION[collection]/2theta/end", None)
+            template[f"{two_theta_gr}two_theta"] = np.linspace(float(tw_theta_start),
+                                                               float(tw_theta_end),
+                                                               intsity_len)
         template[two_theta_gr + "/" + "@axes"] = ["two_theta"]
         template[two_theta_gr + "/" + "@signal"] = "intensity"
+        template[two_theta_gr + "/" + "@auxiliary_signals"] = "omega"
 
     def q_plot():
         q_plot_gr = "/ENTRY[entry]/q_plot"
@@ -112,13 +136,14 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
         alpha_1 = template.get("/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/k_alpha_one",
                                None)
         two_theta: np.ndarray = template.get("/ENTRY[entry]/2theta_plot/two_theta", None)
+        if two_theta is None:
+            raise ValueError("Two-theta data is not found")
         if isinstance(two_theta, np.ndarray):
             theta: np.ndarray = two_theta / 2
-        # pylint: disable=line-too-long
-        ratio_key = "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/ratio_k_alphatwo_k_alphaone"
+        ratio_k = "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/ratio_k_alphatwo_k_alphaone"
         if alpha_1 and alpha_2:
             ratio = alpha_2 / alpha_1
-            template[ratio_key] = ratio
+            template[ratio_k] = ratio
             lamda = ratio * alpha_1 + (1 - ratio) * alpha_2
             q_vec = (4 * np.pi / lamda) * np.sin(np.deg2rad(theta))
             template[q_plot_gr + "/" + "q_vec"] = q_vec
