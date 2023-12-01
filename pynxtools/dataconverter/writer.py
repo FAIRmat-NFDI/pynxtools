@@ -190,12 +190,19 @@ class Writer:
         nxs_namespace (str): The namespace used in the NXDL tags. Helps search for XML children.
     """
 
-    def __init__(self, data: dict = None, nxdl_path: str = None, output_path: str = None):
+    def __init__(self, data: dict = None,
+                 nxdl_path: str = None,
+                 output_path: str = None, write_in_memory: bool = False):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
         self.nxdl_path = nxdl_path
         self.output_path = output_path
-        self.output_nexus = h5py.File(self.output_path, "w")
+        self.write_in_memory = write_in_memory
+        if self.write_in_memory:
+            self.output_nexus = h5py.File(self.output_path, "w", driver="core", backing_store=False)
+        else:
+            self.output_nexus = h5py.File(self.output_path, "w")
+
         self.nxdl_data = ET.parse(self.nxdl_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
@@ -241,8 +248,9 @@ class Writer:
             return grp
         return self.output_nexus[parent_path_hdf5]
 
-    def write(self):
-        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+    def _process_data_into_hdf5(self):
+        """Store data in hdf5 in in-memory file or file."""
+
         hdf5_links_for_later = []
 
         def add_units_key(dataset, path):
@@ -277,6 +285,7 @@ class Writer:
             except Exception as exc:
                 raise IOError(f"Unknown error occured writing the path: {path} "
                               f"with the following message: {str(exc)}") from exc
+
         for links in hdf5_links_for_later:
             dataset = handle_dicts_entries(*links)
             if dataset is None:
@@ -306,4 +315,28 @@ class Writer:
                 raise IOError(f"Unknown error occured writing the path: {path} "
                               f"with the following message: {str(exc)}") from exc
 
-        self.output_nexus.close()
+    def write(self):
+        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+        try:
+            if self.write_in_memory:
+                raise ValueError("To write in memory and get the file obhect please use  "
+                                 "the method get_in_memory_obj()")
+            self._process_data_into_hdf5()
+        finally:
+            self.output_nexus.close()
+
+    def get_in_memory_obj(self):
+        """Write the nexus file as in-memory obj.
+
+        Write in nexus in-memory file obj and return that file object.
+        """
+        try:
+            if self.write_in_memory:
+                self._process_data_into_hdf5()
+            else:
+                raise ValueError("The write_in_memory variable is False Writer"
+                                 "class initialization.")
+        except Exception as excp:
+            self.output_nexus.close()
+            raise excp
+        return self.output_nexus

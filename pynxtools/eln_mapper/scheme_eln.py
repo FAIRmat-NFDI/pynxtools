@@ -276,7 +276,6 @@ def generate_scheme_eln(nexus_def: str, eln_file_name: str = None) -> None:
 
     recursive_dict: Dict[str, Any] = {}
     get_eln_recursive_dict(recursive_dict, nxdl_file)
-    # print('recursive_dict', recursive_dict)
 
     with open(out_file, mode='w', encoding='utf-8') as out_f:
         yaml.dump(recursive_dict, sort_keys=False, stream=out_f)

@@ -22,7 +22,7 @@ import importlib.util
 import logging
 import os
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import xml.etree.ElementTree as ET
 
 import click
@@ -80,16 +80,26 @@ def get_names_of_all_readers() -> List[str]:
     return all_readers + plugins
 
 
-# pylint: disable=too-many-arguments,too-many-locals
-def convert(input_file: Tuple[str, ...],
-            reader: str,
-            nxdl: str,
-            output: str,
-            generate_template: bool = False,
-            fair: bool = False,
-            undocumented: bool = False,
-            **kwargs):
-    """The conversion routine that takes the input parameters and calls the necessary functions."""
+def get_nxdl_root_and_path(nxdl: str):
+    """Get xml root element and file path from nxdl name e.g. NXapm.
+
+    Parameters
+    ----------
+    nxdl: str
+        Name of nxdl file e.g. NXapm from NXapm.nxdl.xml.
+
+    Returns
+    -------
+    ET.root
+        Root element of nxdl file.
+    str
+        Path of nxdl file.
+
+    Raises
+    ------
+    FileNotFoundError
+        Error if no file with the given nxdl name is found.
+    """
     # Reading in the NXDL and generating a template
     definitions_path = nexus.get_nexus_definitions_path()
     if nxdl == "NXtest":
@@ -103,29 +113,55 @@ def convert(input_file: Tuple[str, ...],
         if not os.path.exists(nxdl_path):
             nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
         if not os.path.exists(nxdl_path):
+            nxdl_path = os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_path):
             raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
-    nxdl_root = ET.parse(nxdl_path).getroot()
+    return ET.parse(nxdl_path).getroot(), nxdl_path
 
-    if undocumented:
-        logger.setLevel(UNDOCUMENTED)
+
+def transfer_data_into_template(input_file,
+                                reader, nxdl_name,
+                                nxdl_root: Optional[ET.Element] = None,
+                                **kwargs):
+    """Transfer parse and merged data from input experimental file, config file and eln.
+
+    Experimental and eln files will be parsed and finally will be merged into template.
+    Before returning the template validate the template data.
+
+    Parameters
+    ----------
+    input_file : Union[tuple[str], str]
+        Tuple of files or file
+    reader: str
+        Name of reader such as xps
+    nxdl_name : str
+        Root name of nxdl file, e.g. NXmpes from NXmpes.nxdl.xml
+    nxdl_root : ET.element
+        Root element of nxdl file, otherwise provide nxdl_name
+
+    Returns
+    -------
+    Template
+        Template filled with data from raw file and eln file.
+
+    """
+    if nxdl_root is None:
+        nxdl_root, _ = get_nxdl_root_and_path(nxdl=nxdl_name)
 
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
-    if generate_template:
-        logger.info(template)
-        return
 
-    # Setting up all the input data
     if isinstance(input_file, str):
         input_file = (input_file,)
+
     bulletpoint = "\n\u2022 "
     logger.info("Using %s reader to convert the given files: %s ",
                 reader,
                 bulletpoint.join((" ", *input_file)))
 
     data_reader = get_reader(reader)
-    if not (nxdl in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
+    if not (nxdl_name in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
         raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
 
     data = data_reader().read(  # type: ignore[operator]
@@ -134,6 +170,56 @@ def convert(input_file: Tuple[str, ...],
         **kwargs,
     )
     helpers.validate_data_dict(template, data, nxdl_root)
+    return data
+
+
+# pylint: disable=too-many-arguments,too-many-locals
+def convert(input_file: Tuple[str],
+            reader: str,
+            nxdl: str,
+            output: str,
+            generate_template: bool = False,
+            fair: bool = False,
+            undocumented: bool = False,
+            **kwargs):
+    """The conversion routine that takes the input parameters and calls the necessary functions.
+
+    Parameters
+    ----------
+    input_file : Tuple[str]
+        Tuple of files or file
+    reader: str
+        Name of reader such as xps
+    nxdl : str
+        Root name of nxdl file, e.g. NXmpes for NXmpes.nxdl.xml
+    output : str
+        Output file name.
+    generate_template : bool, default False
+        True if user wants template in logger info.
+    fair : bool, default False
+        If True, a warning is given that there are undocumented paths
+        in the template.
+    undocumented : bool, default False
+        If True, an undocumented warning is given.
+
+    Returns
+    -------
+    None.
+    """
+
+    nxdl_root, nxdl_path = get_nxdl_root_and_path(nxdl)
+
+    if generate_template:
+        template = Template()
+        helpers.generate_template_from_nxdl(nxdl_root, template)
+        logger.info(template)
+        return
+
+    data = transfer_data_into_template(input_file=input_file, reader=reader,
+                                       nxdl_name=nxdl, nxdl_root=nxdl_root,
+                                       **kwargs)
+    if undocumented:
+        logger.setLevel(UNDOCUMENTED)
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return
@@ -150,6 +236,28 @@ def convert(input_file: Tuple[str, ...],
     Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
 
     logger.info("The output file generated: %s", output)
+
+
+def convert_and_return_template(input_file: Tuple[str],
+                                reader: str,
+                                nxdl: str,
+                                output: str,
+                                generate_template: bool = False,
+                                fair: bool = False,
+                                undocumented: bool = False,
+                                **kwargs):
+
+    """Convert input files into structure data according template and return template.
+
+    This function only is special than convert function by return value which is filled data
+    template.
+    """
+    temp_data_dict = {'data': None}
+    convert(input_file=input_file, reader=reader,
+            nxdl=nxdl, output=output, generate_template=generate_template,
+            fair=fair, undocumented=undocumented, temp_data_dict=temp_data_dict, **kwargs)
+
+    return temp_data_dict['data']
 
 
 def parse_params_file(params_file):
