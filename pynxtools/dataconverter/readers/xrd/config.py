@@ -78,8 +78,8 @@ xrdml = {
     "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/k_alpha_two": {"xrdml_1.5": {"value": "/xrdMeasurements/xrdMeasurement/usedWavelength/kAlpha2",
                                                                                       "@units": "/xrdMeasurements/xrdMeasurement/usedWavelength/kAlpha2/unit"},
                                                                         },
-    "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/kbeta": {"xrdml_1.5": {"value": "",
-                                                                                "@units": ""},
+    "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/kbeta": {"xrdml_1.5": {"value": "/xrdMeasurements/xrdMeasurement/usedWavelength/kBeta",
+                                                                                "@units": "/xrdMeasurements/xrdMeasurement/usedWavelength/kBeta/unit"},
                                                                   },
     "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/ratio_k_alphatwo_k_alphaone": {"xrdml_1.5": {"value": "",
                                                                                                       "@units": ""}

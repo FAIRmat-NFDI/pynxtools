@@ -87,7 +87,7 @@ def listify_template(data_dict: Template):
     ('test', 'test'),
     (['59', '3.00005', '498E-36'], np.array([59.0, 3.00005, 4.98e-34])),
     ('23 34 444 5000', np.array([23., 34., 444., 5000.])),
-    ('xrd experiment','xrd experiment'),
+    ('xrd experiment', 'xrd experiment'),
     (None, None),
 ])
 def test_transform_to_intended_dt(input_data, expected_output):
