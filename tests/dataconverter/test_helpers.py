@@ -189,6 +189,7 @@ TEMPLATE["lone_groups"] = ['/ENTRY[entry]/required_group',
 TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 
 
+# pylint: disable=too-many-arguments,broad-exception-caught
 @pytest.mark.parametrize("data_dict,error_message", [
     pytest.param(
         alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/int_value", "not_a_num"),

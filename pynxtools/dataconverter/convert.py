@@ -104,7 +104,7 @@ def get_nxdl_root_and_path(nxdl: str):
 def transfer_data_into_template(input_file,
                                 reader, nxdl_name,
                                 nxdl_root: Optional[ET.Element] = None,
-                                **kwargs):
+                                logger_: logging.Logger = None, **kwargs):
     """Transfer parse and merged data from input experimental file, config file and eln.
 
     Experimental and eln files will be parsed and finally will be merged into template.
@@ -127,6 +127,10 @@ def transfer_data_into_template(input_file,
         Template filled with data from raw file and eln file.
 
     """
+    if logger_:
+        logger = logger_
+    else:
+        logger = pynx_logger
     if nxdl_root is None:
         nxdl_root, _ = get_nxdl_root_and_path(nxdl=nxdl_name)
 
