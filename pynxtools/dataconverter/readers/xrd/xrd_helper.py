@@ -42,7 +42,7 @@ def check_unit(unit: str):
     """
     if unit is None:
         return unit
-    unit_map = {'Angstrom': 'angstrom',
+    unit_map = {'Angstrom': '\u212B',
                 }
     correct_unit = unit_map.get(unit, None)
     if correct_unit is None:

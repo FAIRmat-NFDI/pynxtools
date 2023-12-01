@@ -85,7 +85,7 @@ xrdml = {
                                                                                                       "@units": ""}
                                                                                         },
     "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/xray_tube_current": {"xrdml_1.5": {"value": "/xrdMeasurements/xrdMeasurement/incidentBeamPath/xRayTube/current",
-                                                                                            "@units": ""}
+                                                                                            "@units": "/xrdMeasurements/xrdMeasurement/incidentBeamPath/xRayTube/current/unit"}
                                                                               },
     "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/source_peak_wavelength": {"xrdml_1.5": {"value": "",
                                                                                                  "@units": ""}

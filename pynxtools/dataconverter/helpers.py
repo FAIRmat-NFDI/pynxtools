@@ -652,7 +652,7 @@ def extract_atom_types(formula, mode='hill'):
 
     return atom_types
 
-
+# pylint: disable=too-many-branches
 def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
     """Transform string to the intended data type, if not then return str_value.
 
@@ -702,7 +702,11 @@ def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
                 parts = str_value.split(sym)
                 modified_parts = []
                 for part in parts:
-                    modified_parts.append(transform_to_intended_dt(part))
+                    part = transform_to_intended_dt(part)
+                    if (isinstance(part, int) or isinstance(part, float)):
+                        modified_parts.append(part)
+                    else:
+                        return str_value
                 return transform_to_intended_dt(modified_parts)
 
     return str_value
