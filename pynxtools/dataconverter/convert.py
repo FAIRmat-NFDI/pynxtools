@@ -181,6 +181,7 @@ def convert(input_file: Tuple[str, ...],
             generate_template: bool = False,
             fair: bool = False,
             undocumented: bool = False,
+            logger_: logging.Logger = None,
             **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions.
 

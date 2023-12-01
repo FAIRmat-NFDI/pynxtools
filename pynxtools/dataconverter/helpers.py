@@ -447,11 +447,8 @@ def does_group_exist(path_to_group, data):
     return False
 
 
-def ensure_all_required_fields_exist(template, data, nxdl_root):
+def ensure_all_required_fields_exist(template, data, nxdl_root, logger):
     """Checks whether all the required fields are in the returned data object."""
-    missing_groups_and_fields = {'groups': [],
-                                 'fields': [],
-                                 'attributes': []}
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
         if entry_name == "@units":
@@ -464,28 +461,15 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
             opt_parent = check_for_optional_parent(path, nxdl_root)
             if opt_parent != "<<NOT_FOUND>>":
                 if does_group_exist(opt_parent, data) and not does_group_exist(renamed_path, data):
-                    missing_groups_and_fields['groups'].appends(path)
+                    logger.error(f"The required group, {path}, hasn't been supplied"
+                                 f" while its optional parent, {path}, is supplied.")
                 continue
             if not does_group_exist(renamed_path, data):
                 raise ValueError(f"The required group, {path}, hasn't been supplied.")
             continue
         if not is_path_in_data_dict or data[renamed_path] is None:
-            if entry_name.startswith('@'):
-                missing_groups_and_fields['attributes'].append(path)
-            else:
-                missing_groups_and_fields['fields'].append(path)
-
-    # Rasing errors for any kind of missing required fields, gorup and attributes:
-    def raise_required_concept_missing_error(missing_groups_and_fields):
-        error = ''
-        for concept, path_list in missing_groups_and_fields.items():
-            if path_list:
-                error = error + f"Required {concept} are not provided: \n"
-                for path in path_list:
-                    error = error + f"    \n\u2022{path}\n"
-        if error:
-            raise ValueError(error)
-    raise_required_concept_missing_error(missing_groups_and_fields)
+            logger.error(f"The data entry corresponding to {path} is required "
+                         f"and hasn't been supplied by the reader.")
 
 
 def try_undocumented(data, nxdl_root: ET.Element):
@@ -514,7 +498,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element):
+def validate_data_dict(template, data, nxdl_root: ET.Element, logger):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
@@ -523,7 +507,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     nxdl_path_to_elm: dict = {}
 
     # Make sure all required fields exist.
-    ensure_all_required_fields_exist(template, data, nxdl_root)
+    ensure_all_required_fields_exist(template, data, nxdl_root, logger)
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
