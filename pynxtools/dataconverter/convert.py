@@ -154,7 +154,7 @@ def transfer_data_into_template(input_file,
         file_paths=input_file,
         **kwargs
     )
-    helpers.validate_data_dict(template, data, nxdl_root)
+    helpers.validate_data_dict(template, data, nxdl_root, logger=logger)
     return data
 
 
@@ -207,12 +207,10 @@ def convert(input_file: Tuple[str, ...],
 
     data = transfer_data_into_template(input_file=input_file, reader=reader,
                                        nxdl_name=nxdl, nxdl_root=nxdl_root,
-                                       **kwargs)
-
+                                       logger_=logger, **kwargs)
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return
-
     for path in data.undocumented.keys():
         if "/@default" in path:
             continue
