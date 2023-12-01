@@ -41,7 +41,6 @@ else:
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
-UNDOCUMENTED = 9
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
@@ -219,8 +218,7 @@ def convert(input_file: Tuple[str, ...],
     data = transfer_data_into_template(input_file=input_file, reader=reader,
                                        nxdl_name=nxdl, nxdl_root=nxdl_root,
                                        **kwargs)
-    if undocumented:
-        logger.setLevel(UNDOCUMENTED)
+
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return
@@ -228,10 +226,8 @@ def convert(input_file: Tuple[str, ...],
     for path in data.undocumented.keys():
         if "/@default" in path:
             continue
-        logger.log(
-            UNDOCUMENTED,
-            "The path, %s, is being written but has no documentation.",
-            path
+        logger.info(
+            f"NO DOCUMENTATION: The path, {path}  is being written but has no documentation."
         )
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
