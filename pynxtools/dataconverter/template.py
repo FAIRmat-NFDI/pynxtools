@@ -148,7 +148,10 @@ class Template(dict):
                         return self.required[k]
                     except KeyError:
                         return self.undocumented[k]
-        return self.get_optionality(k)
+        if k in ("required", "optional", "recommended", "undocumented"):
+            return self.get_optionality(k)
+        raise KeyError("Only paths starting with '/' or one of [optional_parents, "
+                       "lone_groups, required, optional, recommended, undocumented] can be used.")
 
     def clear(self):
         """Clears all data stored in the Template object."""
