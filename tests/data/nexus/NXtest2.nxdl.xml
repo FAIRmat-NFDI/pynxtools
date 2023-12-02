@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<!--
+# NeXus - Neutron and X-ray Common Data Format
+#
+# Copyright (C) 2014-2022 NeXus International Advisory Committee (NIAC)
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+	@@ -21,2037 +21,415 @@
+#
+# For further information, see http://www.nexusformat.org
+-->
+<!--While an important
+step this will still need in the future a mechains
+ So far Essentially when the docstrings are no longer needed
+ but can be replaced by a connection to an automated tool which understands
+ what a specific field represents conceptually, EM data have become more
+ generally interoperable EM data.
+NEW ISSUE: see duration and collection time, duty cycle
+NEW ISSUE: duration and collection_time needs a clearer description and
+definition by the community
+NEW ISSUE: should version always be an enumeration?
+NEW ISSUE: filter keywords \(.*?\)
+NEW ISSUE: NXdetector adding only those fields which have changed or not?
+symbols:
+the NeXus default for application definitions wrt to the exists keyword is
+that it is required-->
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="application" name="NXem" extends="NXobject" type="group" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+    <doc>
+         Characterization of a sample during a session on an electron microscope.
+    </doc>
+    <group type="NXentry" minOccurs="1" maxOccurs="unbounded">
+        <group type="NXcoordinate_system_set" recommended="true">
+            <group name="TRANSFORMATIONS" type="NXtransformations" minOccurs="0" maxOccurs="unbounded"/>
+        </group>
+        <group name="em_lab" type="NXinstrument">
+            <doc>
+                 Metadata and numerical data of the microscope and the lab in which it stands.
+
+
+            </doc>
+            <field name="instrument_name">
+                <doc>
+                     Given name of the microscope at the hosting institution. This is an alias.
+                     Examples could be NionHermes, Titan, JEOL, Gemini, etc.
+                </doc>
+            </field>
+            <field name="location" optional="true">
+                <doc>
+                     Location of the lab or place where the instrument is installed.
+                     Using GEOREF is preferred.
+                </doc>
+            </field>
+            <group type="NXfabrication">
+                <field name="vendor" recommended="true"/>
+                <field name="model" recommended="true"/>
+                <field name="identifier" recommended="true"/>
+                <field name="capabilities" optional="true"/>
+            </group>
+            <group type="NXchamber" optional="true"/>
+            <group type="NXebeam_column" minOccurs="1" maxOccurs="1">
+                <group type="NXfabrication" recommended="true">
+                    <field name="vendor" recommended="true"/>
+                    <field name="model" recommended="true"/>
+                    <field name="identifier" recommended="true"/>
+                </group>
+                <group type="NXchamber" optional="true"/>
+                <group name="electron_source" type="NXsource">
+                    <field name="name" recommended="true"/>
+                    <group type="NXfabrication" recommended="true">
+                        <field name="vendor" recommended="true"/>
+                        <field name="model" recommended="true"/>
+                        <field name="identifier" recommended="true"/>
+                    </group>
+                    <field name="voltage" type="NX_FLOAT"/>
+                    <field name="emitter_type" recommended="true">
+                        <enumeration>
+                            <item value="thermionic"/>
+                            <item value="schottky"/>
+                            <item value="field_emission"/>
+                        </enumeration>
+                    </field>
+                </group>
+                <group type="NXaperture_em" minOccurs="0" maxOccurs="unbounded">
+                    <group type="NXfabrication" recommended="true">
+                        <field name="vendor" recommended="true"/>
+                        <field name="model" recommended="true"/>
+                        <field name="identifier" recommended="true"/>
+                    </group>
+                    <field name="value" type="NX_NUMBER"/>
+                    <field name="name"/>
+                    <field name="description" optional="true"/>
+                </group>
+                <group type="NXlens_em" minOccurs="0" maxOccurs="unbounded">
+                    <doc>
+                         If the lens is described at least one of the fields
+                         voltage, current, or value should be defined.
+                    </doc>
+                    <!--a classical case where we want at least one field of multiple to exist-->
+                    <group type="NXfabrication" recommended="true">
+                        <field name="vendor" recommended="true"/>
+                        <field name="model" recommended="true"/>
+                        <field name="identifier" recommended="true"/>
+                    </group>
+                    <field name="voltage" type="NX_NUMBER" recommended="true"/>
+                    <field name="current" type="NX_NUMBER" recommended="true"/>
+                    <field name="value" type="NX_NUMBER" recommended="true"/>
+                </group>
+                <group name="aberration_correction" type="NXcorrector_cs" recommended="true">
+                    <field name="applied" type="NX_BOOLEAN"/>
+                    <field name="name" optional="true"/>
+                    <group type="NXfabrication" recommended="true">
+                        <field name="vendor" recommended="true"/>
+                        <field name="model" recommended="true"/>
+                        <field name="identifier" recommended="true"/>
+                    </group>
+                    <group name="ZEMLIN_TABLEAU" type="NXprocess" recommended="true">
+                        <field name="description" optional="true"/>
+                        <field name="tilt_angle" type="NX_FLOAT" recommended="true" units="NX_ANGLE"/>
+                        <field name="exposure_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                        <field name="magnification" type="NX_NUMBER" optional="true" units="NX_DIMENSIONLESS"/>
+                        <group type="NXprocess" minOccurs="0" maxOccurs="unbounded">
+                            <group name="ceos" type="NXaberration_model_ceos" optional="true">
+                                <group name="c_1" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="a_1" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="b_2" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="a_2" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_3" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="s_3" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="a_3" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <!--based on feedback from Thilo Remmele the following aberrations could be measured-->
+                                <group name="b_4" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="d_4" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="a_4" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="s_5" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="r_5" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                                <group name="a_6" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="angle" type="NX_FLOAT" units="NX_ANGLE"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" recommended="true" units="NX_TIME"/>
+                                </group>
+                            </group>
+                            <group name="nion" type="NXaberration_model_nion" optional="true">
+                                <group name="c_1_0" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_1_2_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_1_2_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_2_1_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_2_1_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_2_3_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_2_3_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_3_0" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_3_2_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_3_2_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_3_4_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_3_4_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_4_1_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_4_1_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_4_3_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_4_3_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_4_5_a" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_4_5_b" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5_0" type="NXaberration" recommended="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5_2_a" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5_2_b" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5_4_a" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5_4_b" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5_6_a" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                                <group name="c_5_6_b" type="NXaberration" optional="true">
+                                    <field name="magnitude" type="NX_FLOAT" units="NX_LENGTH"/>
+                                    <field name="uncertainty" type="NX_FLOAT" recommended="true" units="NX_LENGTH"/>
+                                    <field name="uncertainty_model" recommended="true"/>
+                                    <field name="delta_time" type="NX_FLOAT" optional="true" units="NX_TIME"/>
+                                </group>
+                            </group>
+                        </group>
+                    </group>
+                </group>
+            </group>
+            <group name="EBEAM_DEFLECTOR" type="NXscanbox_em" minOccurs="0" maxOccurs="unbounded">
+                <group type="NXfabrication" recommended="true">
+                    <field name="vendor" recommended="true"/>
+                    <field name="model" recommended="true"/>
+                    <field name="identifier" recommended="true"/>
+                </group>
+                <field name="pixel_time" type="NX_FLOAT" recommended="true"/>
+            </group>
+            <group name="IBEAM_DEFLECTOR" type="NXscanbox_em" minOccurs="0" maxOccurs="unbounded">
+                <group type="NXfabrication" recommended="true">
+                    <field name="vendor" recommended="true"/>
+                    <field name="model" recommended="true"/>
+                    <field name="identifier" recommended="true"/>
+                </group>
+            </group>
+            <group type="NXoptical_system_em" recommended="true">
+                <field name="camera_length" type="NX_NUMBER" optional="true"/>
+                <field name="magnification" type="NX_NUMBER" optional="true"/>
+                <field name="defocus" type="NX_NUMBER" recommended="true"/>
+                <!--this is c_1_0 of aberration_correction-->
+                <field name="semi_convergence_angle" type="NX_NUMBER" recommended="true"/>
+                <field name="working_distance" type="NX_FLOAT" recommended="true"/>
+                <field name="beam_current" type="NX_FLOAT" recommended="true"/>
+                <field name="beam_current_description" recommended="true"/>
+            </group>
+            <!--vendor/instrument-specific data currently case-by-case dependent
+e.g. Nion Co. magboard settings
+instances of NXoptical system can be placed here and specific for
+each NXevent_data_em instance if desired-->
+            <!--##MK::eventually only adding (NXfabrication) and the new docstring
+is needed, will the rest be inferred automatically?-->
+            <group name="DETECTOR" type="NXdetector" minOccurs="1" maxOccurs="unbounded">
+                <doc>
+                     Description of the type of the detector.
+
+                     Electron microscopes have typically multiple detectors.
+                     Different technologies are in use like CCD, scintillator,
+                     direct electron, CMOS, or image plate to name but a few.
+                </doc>
+                <field name="local_name">
+                    <doc>
+                         Instrument-specific alias/name
+                    </doc>
+                </field>
+                <!--it is unfortunate that for NXdetector there are already many places
+how one can specify details which could equally end up in fabrications
+we should give better guidance which option to use-->
+                <group type="NXfabrication" recommended="true">
+                    <field name="identifier" recommended="true"/>
+                </group>
+            </group>
+            <group type="NXpump" minOccurs="0" maxOccurs="unbounded"/>
+            <!--NEW ISSUE: do we consider the EELS spectrometer an own detector or an own functional unit i.e. NXeels-->
+            <group name="stage_lab" type="NXstage_lab">
+                <field name="name"/>
+                <group type="NXfabrication" recommended="true">
+                    <field name="vendor" recommended="true"/>
+                    <field name="model" recommended="true"/>
+                    <field name="identifier" recommended="true"/>
+                    <field name="capabilities" optional="true"/>
+                </group>
+                <field name="design" recommended="true"/>
+                <field name="description" optional="true"/>
+                <!--tricky for arbitrary design we cannot enforce all the below to exist at all-->
+                <field name="position" type="NX_FLOAT" recommended="true"/>
+                <field name="rotation" type="NX_FLOAT" recommended="true"/>
+                <field name="tilt_1" type="NX_FLOAT" recommended="true"/>
+                <field name="tilt_2" type="NX_FLOAT" recommended="true"/>
+            </group>
+        </group>
+        <group name="measurement" type="NXevent_data_em_set" minOccurs="0" maxOccurs="1">
+            <doc>
+                 A container for storing a set of NXevent_data_em instances.
+
+            </doc>
+        </group>
+    </group>
+</definition>
