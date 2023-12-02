@@ -125,6 +125,13 @@ class Template(dict):
             k in self.required
         ])
 
+    def get(self, key: str, default=None):
+        """Proxies the get function to our internal __getitem__"""
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
