@@ -25,6 +25,7 @@ import pytest
 import numpy as np
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.logger import logger as pynx_logger
 from pynxtools.dataconverter.template import Template
 
 
@@ -189,6 +190,7 @@ TEMPLATE["lone_groups"] = ['/ENTRY[entry]/required_group',
 TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 
 
+# pylint: disable=too-many-arguments
 @pytest.mark.parametrize("data_dict,error_message", [
     pytest.param(
         alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/int_value", "not_a_num"),
@@ -310,7 +312,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         id="opt-group-completely-removed"
     ),
 ])
-def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
+def test_validate_data_dict(caplog, data_dict, error_message, template, nxdl_root, request):
     """Unit test for the data validation routine"""
     if request.node.callspec.id in ("valid-data-dict",
                                     "lists",
@@ -322,10 +324,17 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
                                     "link-dict-instead-of-bool",
                                     "allow-required-and-empty-group",
                                     "opt-group-completely-removed"):
-        helpers.validate_data_dict(template, data_dict, nxdl_root)
+        helpers.validate_data_dict(template, data_dict, nxdl_root, logger=pynx_logger)
+    # Missing required fields
+    elif request.node.callspec.id in ("empty-required-field",
+                                      "req-group-in-opt-parent-removed"
+                                      ):
+        captured_logs = caplog.records
+        helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
+        assert any(error_message in rec.message for rec in captured_logs)
     else:
         with pytest.raises(Exception) as execinfo:
-            helpers.validate_data_dict(template, data_dict, nxdl_root)
+            helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
         assert (error_message) == str(execinfo.value)
 
 

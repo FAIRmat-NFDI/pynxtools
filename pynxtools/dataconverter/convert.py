@@ -33,17 +33,12 @@ from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
+from pynxtools.dataconverter.logger import logger as pynx_logger
 
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
 else:
     from importlib_metadata import entry_points
-
-
-logger = logging.getLogger(__name__)  # pylint: disable=C0103
-UNDOCUMENTED = 9
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def get_reader(reader_name) -> BaseReader:
@@ -123,6 +118,7 @@ def get_nxdl_root_and_path(nxdl: str):
 def transfer_data_into_template(input_file,
                                 reader, nxdl_name,
                                 nxdl_root: Optional[ET.Element] = None,
+                                logger: logging.Logger = pynx_logger,
                                 **kwargs):
     """Transfer parse and merged data from input experimental file, config file and eln.
 
@@ -139,6 +135,8 @@ def transfer_data_into_template(input_file,
         Root name of nxdl file, e.g. NXmpes from NXmpes.nxdl.xml
     nxdl_root : ET.element
         Root element of nxdl file, otherwise provide nxdl_name
+    logger: looging.Logger
+        Logger to get log massages.
 
     Returns
     -------
@@ -156,10 +154,10 @@ def transfer_data_into_template(input_file,
         input_file = (input_file,)
 
     bulletpoint = "\n\u2022 "
-    logger.info("Using %s reader to convert the given files: %s ",
-                reader,
-                bulletpoint.join((" ", *input_file)))
-
+    logger.info("Using %s reader reader to convert the given files: %s ",
+                reader, bulletpoint.join((' ', *input_file)))
+    # logger.info(f"Using {reader} reader to convert the given files: "
+    #             f"{bulletpoint.join((' ', *input_file))}.")
     data_reader = get_reader(reader)
     if not (nxdl_name in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
         raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
@@ -169,7 +167,7 @@ def transfer_data_into_template(input_file,
         file_paths=input_file,
         **kwargs
     )
-    helpers.validate_data_dict(template, data, nxdl_root)
+    helpers.validate_data_dict(template, data, nxdl_root, logger=logger)
     return data
 
 
@@ -181,6 +179,7 @@ def convert(input_file: Tuple[str, ...],
             generate_template: bool = False,
             fair: bool = False,
             undocumented: bool = False,
+            logger: logging.Logger = pynx_logger,
             **kwargs):
     """The conversion routine that takes the input parameters and calls the necessary functions.
 
@@ -201,6 +200,8 @@ def convert(input_file: Tuple[str, ...],
         in the template.
     undocumented : bool, default False
         If True, an undocumented warning is given.
+    logger: looging.Logger
+        Logger to get log massages.
 
     Returns
     -------
@@ -217,25 +218,27 @@ def convert(input_file: Tuple[str, ...],
 
     data = transfer_data_into_template(input_file=input_file, reader=reader,
                                        nxdl_name=nxdl, nxdl_root=nxdl_root,
-                                       **kwargs)
-    if undocumented:
-        logger.setLevel(UNDOCUMENTED)
+                                       logger=logger, **kwargs)
+
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return
+    if undocumented:
+        for path in data.undocumented.keys():
+            if "/@default" in path:
+                continue
+            logger.info(
+                "NO DOCUMENTATION: The path, %s, is being written but has no documentation.",
+                path)
+            # logger.info(
+            #     f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation.")
 
-    for path in data.undocumented.keys():
-        if "/@default" in path:
-            continue
-        logger.log(
-            UNDOCUMENTED,
-            "The path, %s, is being written but has no documentation.",
-            path
-        )
-    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
+    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output),
+                                        logger=logger)
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
-    logger.info("The output file generated: %s", output)
+    logger.info("The output file generated: %s ", output)
+    # logger.info(f"The output file generated: {output}")
 
 
 def parse_params_file(params_file):

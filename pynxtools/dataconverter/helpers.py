@@ -32,8 +32,7 @@ import h5py
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
-
-logger = logging.getLogger(__name__)
+from pynxtools.dataconverter.logger import logger as pynx_logger
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -447,7 +446,9 @@ def does_group_exist(path_to_group, data):
     return False
 
 
-def ensure_all_required_fields_exist(template, data, nxdl_root):
+# pylint: disable=W1203
+def ensure_all_required_fields_exist(template, data,
+                                     nxdl_root, logger=pynx_logger):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex('/') + 1:])
@@ -461,15 +462,20 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
             opt_parent = check_for_optional_parent(path, nxdl_root)
             if opt_parent != "<<NOT_FOUND>>":
                 if does_group_exist(opt_parent, data) and not does_group_exist(renamed_path, data):
-                    raise ValueError(f"The required group, {path}, hasn't been supplied"
-                                     f" while its optional parent, {path}, is supplied.")
+                    logger.warning("The required group, %s, hasn't been supplied"
+                                   " while its optional parent, %s, is supplied.", path,
+                                   opt_parent)
+                    # logger.warning("The required group, {path}, hasn't been supplied"
+                    #                f" while its optional parent, {path}, is supplied.")
                 continue
             if not does_group_exist(renamed_path, data):
                 raise ValueError(f"The required group, {path}, hasn't been supplied.")
             continue
         if not is_path_in_data_dict or data[renamed_path] is None:
-            raise ValueError(f"The data entry corresponding to {path} is required "
-                             f"and hasn't been supplied by the reader.")
+            logger.warning("The data entry corresponding to %s is required "
+                           "and hasn't been supplied by the reader.", path)
+            # logger.warning(f"The data entry corresponding to {path} is required "
+            #                f"and hasn't been supplied by the reader.")
 
 
 def try_undocumented(data, nxdl_root: ET.Element):
@@ -498,7 +504,8 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element):
+def validate_data_dict(template, data,
+                       nxdl_root: ET.Element, logger=pynx_logger):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
@@ -507,7 +514,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     nxdl_path_to_elm: dict = {}
 
     # Make sure all required fields exist.
-    ensure_all_required_fields_exist(template, data, nxdl_root)
+    ensure_all_required_fields_exist(template, data, nxdl_root, logger)
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
@@ -590,7 +597,7 @@ def convert_to_hill(atoms_typ):
     return atom_list + list(atoms_typ)
 
 
-def add_default_root_attributes(data, filename):
+def add_default_root_attributes(data, filename, logger=pynx_logger):
     """
     Takes a dict/Template and adds NXroot fields/attributes that are inherently available
     """
