@@ -472,6 +472,7 @@ def ensure_all_required_fields_exist(template, data,
             logger.warning("The data entry corresponding to %s is required "
                            "and hasn't been supplied by the reader.", path)
 
+
 def try_undocumented(data, nxdl_root: ET.Element):
     """Tries to move entries used that are from base classes but not in AppDef"""
     for path in list(data.undocumented):
