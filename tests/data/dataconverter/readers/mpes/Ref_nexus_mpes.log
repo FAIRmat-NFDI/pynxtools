@@ -1362,14 +1362,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_A@NX_class)
 DEBUG - value: NXlens_em 
@@ -1398,8 +1398,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_A/voltage@units)
 DEBUG - value: V 
@@ -1419,14 +1421,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_B@NX_class)
 DEBUG - value: NXlens_em 
@@ -1455,8 +1457,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_B/voltage@units)
 DEBUG - value: V 
@@ -1476,14 +1480,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_C@NX_class)
 DEBUG - value: NXlens_em 
@@ -1512,8 +1516,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_C/voltage@units)
 DEBUG - value: V 
@@ -1533,14 +1539,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_D@NX_class)
 DEBUG - value: NXlens_em 
@@ -1569,8 +1575,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_D/voltage@units)
 DEBUG - value: V 
@@ -1590,14 +1598,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_E@NX_class)
 DEBUG - value: NXlens_em 
@@ -1626,8 +1634,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_E/voltage@units)
 DEBUG - value: V 
@@ -1647,14 +1657,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_F@NX_class)
 DEBUG - value: NXlens_em 
@@ -1683,8 +1693,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_F/voltage@units)
 DEBUG - value: V 
@@ -1704,14 +1716,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_Foc@NX_class)
 DEBUG - value: NXlens_em 
@@ -1740,8 +1752,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_Foc/voltage@units)
 DEBUG - value: V 
@@ -1761,14 +1775,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_G@NX_class)
 DEBUG - value: NXlens_em 
@@ -1797,8 +1811,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_G/voltage@units)
 DEBUG - value: V 
@@ -1818,14 +1834,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_H@NX_class)
 DEBUG - value: NXlens_em 
@@ -1854,8 +1870,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_H/voltage@units)
 DEBUG - value: V 
@@ -1875,14 +1893,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_I@NX_class)
 DEBUG - value: NXlens_em 
@@ -1911,8 +1929,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_I/voltage@units)
 DEBUG - value: V 
@@ -1932,14 +1952,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_UCA@NX_class)
 DEBUG - value: NXlens_em 
@@ -1968,8 +1988,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_UCA/voltage@units)
 DEBUG - value: V 
@@ -1989,14 +2011,14 @@ DEBUG -
         
 DEBUG - documentation (NXlens_em.nxdl.xml:):
 DEBUG - 
-         Description of an electro-magnetic lens or a compound lens.
+         Base class for an electro-magnetic lens or a compound lens.
          
-         For NXtransformations the origin of the coordinate system is placed
-         in the center of the lens
-         (its polepiece, pinhole, or another point of reference).
-         The origin should be specified in the NXtransformations.
+         For :ref:`NXtransformations` the origin of the coordinate system is placed
+         in the center of the lens (its polepiece, pinhole, or another
+         point of reference). The origin should be specified in the :ref:`NXtransformations`.
          
-         For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
+         For details of electro-magnetic lenses in the literature
+         see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
     
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_UFA@NX_class)
 DEBUG - value: NXlens_em 
@@ -2025,8 +2047,10 @@ NXlens_em.nxdl.xml:/voltage
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXlens_em.nxdl.xml:/voltage):
 DEBUG - 
-             Excitation voltage of the lens. For dipoles it is a single number. For higher
-             orders, it is an array.
+             Excitation voltage of the lens.
+             
+             For dipoles it is a single number.
+             For higher order multipoles, it is an array.
         
 DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/collectioncolumn/lens_UFA/voltage@units)
 DEBUG - value: V 
@@ -3669,7 +3693,13 @@ DEBUG -
              
              Use a0, a1, ..., an for the coefficients, corresponding to the values in the coefficients field.
              
-             Use x0, x1, ..., xn for the variables.
+             Use x0, x1, ..., xn for the nth position in the `original_axis` field.
+             If there is the symbol attribute specified for the `original_axis` this may be used instead of x.
+             If you want to use the whole axis use `x`.
+             Alternate axis can also be available as specified by the `input_SYMBOL` field.
+             The data should then be referred here by the `SYMBOL` name, e.g., for a field
+             name `input_my_field` it should be referred here by `my_field` or `my_field0` if
+             you want to read the zeroth element of the array.
              
              The formula should be numpy compliant.
         
@@ -3734,6 +3764,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
 DEBUG - 
              For linear calibration. Offset parameter.
+             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== FIELD (//entry/process/kx_calibration/scaling): <HDF5 dataset "scaling": shape (), type "<f8">
 DEBUG - value: 0.01046958495673419 
@@ -3744,6 +3775,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/scaling):
 DEBUG - 
              For linear calibration. Scaling parameter.
+             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== GROUP (//entry/process/ky_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/ky_calibration" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
@@ -3796,6 +3828,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
 DEBUG - 
              For linear calibration. Offset parameter.
+             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== FIELD (//entry/process/ky_calibration/scaling): <HDF5 dataset "scaling": shape (), type "<f8">
 DEBUG - value: 0.01046958495673419 
@@ -3806,6 +3839,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/scaling):
 DEBUG - 
              For linear calibration. Scaling parameter.
+             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== GROUP (//entry/process/registration [NXmpes::/NXentry/NXprocess/NXregistration]): <HDF5 group "/entry/process/registration" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration']
