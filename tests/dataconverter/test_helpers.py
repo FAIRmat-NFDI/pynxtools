@@ -302,8 +302,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                          "required"
                          ),
         ("The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't been "
-         "supplied while its optional parent, /ENTRY[entry]/optional_parent/"
-         "req_group_in_opt_group, is supplied."),
+         "supplied while its optional parent, /ENTRY[entry]/optional_parent, is supplied."),
         id="req-group-in-opt-parent-removed"
     ),
     pytest.param(

@@ -22,7 +22,6 @@ from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
-import logging
 import json
 
 import numpy as np
