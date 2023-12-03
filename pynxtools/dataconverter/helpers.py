@@ -17,12 +17,13 @@
 #
 """Helper functions commonly used by the convert routine."""
 
-from typing import List
+from typing import List, Optional, Any
 from typing import Tuple, Callable, Union
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 import logging
+import json
 
 import numpy as np
 from ase.data import chemical_symbols
@@ -650,3 +651,77 @@ def extract_atom_types(formula, mode='hill'):
         return convert_to_hill(atom_types)
 
     return atom_types
+
+
+# pylint: disable=too-many-branches
+def transform_to_intended_dt(str_value: Any) -> Optional[Any]:
+    """Transform string to the intended data type, if not then return str_value.
+
+    E.g '2.5E-2' will be transfor into 2.5E-2
+    tested with: '2.4E-23', '28', '45.98', 'test', ['59', '3.00005', '498E-34'],
+                 '23 34 444 5000', None
+    with result: 2.4e-23, 28, 45.98, test, [5.90000e+01 3.00005e+00 4.98000e-32],
+                 np.array([23 34 444 5000]), None
+    NOTE: add another arg in this func for giving 'hint' what kind of data like
+        numpy array or list
+    Parameters
+    ----------
+    str_value : str
+        Data from other format that comes as string e.g. string of list.
+
+    Returns
+    -------
+    Union[str, int, float, np.ndarray]
+        Converted data type
+    """
+
+    symbol_list_for_data_seperation = [';', ' ']
+    transformed: Any = None
+
+    if isinstance(str_value, list):
+        try:
+            transformed = np.array(str_value, dtype=np.float64)
+            return transformed
+        except ValueError:
+            pass
+
+    elif isinstance(str_value, np.ndarray):
+        return str_value
+    elif isinstance(str_value, str):
+        try:
+            transformed = int(str_value)
+        except ValueError:
+            try:
+                transformed = float(str_value)
+            except ValueError:
+                if '[' in str_value and ']' in str_value:
+                    transformed = json.loads(str_value)
+        if transformed is not None:
+            return transformed
+        for sym in symbol_list_for_data_seperation:
+            if sym in str_value:
+                parts = str_value.split(sym)
+                modified_parts: List = []
+                for part in parts:
+                    part = transform_to_intended_dt(part)
+                    if isinstance(part, (int, float)):
+                        modified_parts.append(part)
+                    else:
+                        return str_value
+                return transform_to_intended_dt(modified_parts)
+
+    return str_value
+
+
+def nested_dict_to_slash_separated_path(nested_dict: dict,
+                                        flattened_dict: dict,
+                                        parent_path=''):
+    """Convert nested dict into slash separeted path upto certain level."""
+    sep = '/'
+
+    for key, val in nested_dict.items():
+        path = parent_path + sep + key
+        if isinstance(val, dict):
+            nested_dict_to_slash_separated_path(val, flattened_dict, path)
+        else:
+            flattened_dict[path] = val
