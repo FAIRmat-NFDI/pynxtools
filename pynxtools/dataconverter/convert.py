@@ -156,8 +156,7 @@ def transfer_data_into_template(input_file,
     bulletpoint = "\n\u2022 "
     logger.info("Using %s reader reader to convert the given files: %s ",
                 reader, bulletpoint.join((' ', *input_file)))
-    # logger.info(f"Using {reader} reader to convert the given files: "
-    #             f"{bulletpoint.join((' ', *input_file))}.")
+
     data_reader = get_reader(reader)
     if not (nxdl_name in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
         raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
@@ -209,7 +208,6 @@ def convert(input_file: Tuple[str, ...],
     """
 
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
-
     if generate_template:
         template = Template()
         helpers.generate_template_from_nxdl(nxdl_root, template)
@@ -230,15 +228,12 @@ def convert(input_file: Tuple[str, ...],
             logger.info(
                 "NO DOCUMENTATION: The path, %s, is being written but has no documentation.",
                 path)
-            # logger.info(
-            #     f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation.")
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output),
                                         logger=logger)
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
     logger.info("The output file generated: %s ", output)
-    # logger.info(f"The output file generated: {output}")
 
 
 def parse_params_file(params_file):

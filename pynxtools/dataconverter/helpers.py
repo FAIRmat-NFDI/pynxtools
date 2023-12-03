@@ -464,8 +464,6 @@ def ensure_all_required_fields_exist(template, data,
                     logger.warning("The required group, %s, hasn't been supplied"
                                    " while its optional parent, %s, is supplied.", path,
                                    opt_parent)
-                    # logger.warning("The required group, {path}, hasn't been supplied"
-                    #                f" while its optional parent, {path}, is supplied.")
                 continue
             if not does_group_exist(renamed_path, data):
                 raise ValueError(f"The required group, {path}, hasn't been supplied.")
@@ -473,9 +471,6 @@ def ensure_all_required_fields_exist(template, data,
         if not is_path_in_data_dict or data[renamed_path] is None:
             logger.warning("The data entry corresponding to %s is required "
                            "and hasn't been supplied by the reader.", path)
-            # logger.warning(f"The data entry corresponding to {path} is required "
-            #                f"and hasn't been supplied by the reader.")
-
 
 def try_undocumented(data, nxdl_root: ET.Element):
     """Tries to move entries used that are from base classes but not in AppDef"""
