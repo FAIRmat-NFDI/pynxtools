@@ -3764,7 +3764,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
 DEBUG - 
              For linear calibration. Offset parameter.
-             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
+             This should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== FIELD (//entry/process/kx_calibration/scaling): <HDF5 dataset "scaling": shape (), type "<f8">
 DEBUG - value: 0.01046958495673419 
@@ -3775,7 +3775,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/scaling):
 DEBUG - 
              For linear calibration. Scaling parameter.
-             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
+             This should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== GROUP (//entry/process/ky_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/ky_calibration" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
@@ -3828,7 +3828,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/offset):
 DEBUG - 
              For linear calibration. Offset parameter.
-             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
+             This should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== FIELD (//entry/process/ky_calibration/scaling): <HDF5 dataset "scaling": shape (), type "<f8">
 DEBUG - value: 0.01046958495673419 
@@ -3839,7 +3839,7 @@ DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXcalibration.nxdl.xml:/scaling):
 DEBUG - 
              For linear calibration. Scaling parameter.
-             This is should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
+             This should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
 DEBUG - ===== GROUP (//entry/process/registration [NXmpes::/NXentry/NXprocess/NXregistration]): <HDF5 group "/entry/process/registration" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration']
