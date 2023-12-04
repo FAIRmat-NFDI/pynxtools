@@ -112,7 +112,7 @@ def test_cli(caplog, cli_inputs):
 def test_links_and_virtual_datasets(tmp_path):
     """A test for the convert CLI to check whether a Dataset object is created,
 
-when  the template contains links."""
+    when  the template contains links."""
     move_xarray_file_to_tmp(tmp_path)
 
     dirpath = os.path.join(os.path.dirname(__file__),

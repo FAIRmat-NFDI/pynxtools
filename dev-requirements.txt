@@ -4,10 +4,6 @@
 #
 #    pip-compile --extra=dev --output-file=dev-requirements.txt pyproject.toml
 #
-appnope==0.1.3
-    # via
-    #   ipykernel
-    #   ipython
 asciitree==0.3.3
     # via zarr
 ase==3.22.1
@@ -48,16 +44,13 @@ comm==0.2.0
 contourpy==1.1.1
     # via matplotlib
 coverage[toml]==7.3.2
-    # via
-    #   coverage
-    #   pytest-cov
+    # via pytest-cov
 cycler==0.12.1
     # via matplotlib
 cython==3.0.6
     # via tables
 dask[array]==2023.5.0
     # via
-    #   dask
     #   hyperspy
     #   kikuchipy
     #   orix

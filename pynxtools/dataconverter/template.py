@@ -125,6 +125,13 @@ class Template(dict):
             k in self.required
         ])
 
+    def get(self, key: str, default=None):
+        """Proxies the get function to our internal __getitem__"""
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
@@ -141,7 +148,10 @@ class Template(dict):
                         return self.required[k]
                     except KeyError:
                         return self.undocumented[k]
-        return self.get_optionality(k)
+        if k in ("required", "optional", "recommended", "undocumented"):
+            return self.get_optionality(k)
+        raise KeyError("Only paths starting with '/' or one of [optional_parents, "
+                       "lone_groups, required, optional, recommended, undocumented] can be used.")
 
     def clear(self):
         """Clears all data stored in the Template object."""

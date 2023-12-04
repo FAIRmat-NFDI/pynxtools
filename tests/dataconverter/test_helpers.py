@@ -80,6 +80,29 @@ def listify_template(data_dict: Template):
     return listified_template
 
 
+@pytest.mark.parametrize("input_data, expected_output", [
+    ('2.4E-23', 2.4e-23),
+    ('28', 28),
+    ('45.98', 45.98),
+    ('test', 'test'),
+    (['59', '3.00005', '498E-36'], np.array([59.0, 3.00005, 4.98e-34])),
+    ('23 34 444 5000', np.array([23., 34., 444., 5000.])),
+    ('xrd experiment', 'xrd experiment'),
+    (None, None),
+])
+def test_transform_to_intended_dt(input_data, expected_output):
+    """Transform to possible numerical method."""
+    result = helpers.transform_to_intended_dt(input_data)
+
+    # Use pytest.approx for comparing floating-point numbers
+    if isinstance(expected_output, np.ndarray):
+        np.testing.assert_allclose(result, expected_output, rtol=1e-3)
+    elif isinstance(expected_output, float):
+        assert result == pytest.approx(expected_output, rel=1e-5)
+    else:
+        assert result == expected_output
+
+
 @pytest.fixture(name="nxdl_root")
 def fixture_nxdl_root():
     """pytest fixture to load the same NXDL file for all tests."""
