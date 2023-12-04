@@ -48,6 +48,7 @@ dependencies = [
 
 [options]
 install_requires = "importlib-metadata ; python_version < '3.10'"
+
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools"
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"

@@ -82,6 +82,7 @@ python -m pip install jupyter
 python -m pip install jupyterlab
 python -m pip install jupyterlab_h5web
 ```
+
 # Questions, suggestions?
 
 To ask further questions, to make suggestions how we can improve these tools, to get advice
