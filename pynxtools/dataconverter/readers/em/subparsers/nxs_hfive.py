@@ -54,12 +54,16 @@ import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
 from pynxtools.dataconverter.readers.em.utils.hfive_web_constants \
-    import HFIVE_WEB_MAXIMUM_ROI, HFIVE_WEB_MAXIMUM_RGB, hfive_web_decorate_nxdata
+    import HFIVE_WEB_MAXIMUM_ROI, HFIVE_WEB_MAXIMUM_RGB
+from pynxtools.dataconverter.readers.em.utils.hfive_web_utils \
+    import hfive_web_decorate_nxdata
 from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
 
-PROJECTION_DIRECTIONS = [("X", [1., 0., 0.]), ("Y", [0., 1., 0.]), ("Z", [0., 0., 1.])]
-# TODO::do not hardcode but use data.flatten() of the following instances
 PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
+PROJECTION_DIRECTIONS = [("X", Vector3d.xvector().data.flatten()),
+                         ("Y", Vector3d.yvector().data.flatten()),
+                         ("Z", Vector3d.zvector().data.flatten())]
+
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_bruker import HdfFiveBrukerEspritReader
@@ -283,6 +287,7 @@ class NxEmNxsHfiveSubParser:
                     if "n_z" not in inp[ckey].keys():
                         self.prepare_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
                         self.process_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
+                        # self.onthefly_process_roi_ipfs_phases_threed(inp[ckey], roi_id, template)
                     else:
                         self.onthefly_process_roi_ipfs_phases_threed(inp[ckey], roi_id, template)
         return template
@@ -458,6 +463,10 @@ class NxEmNxsHfiveSubParser:
             self.process_roi_phase_ipfs_twod(roi_id, pyxem_phase_id, template)
         return template
 
+    def onthefly_process_roi_ipfs_phases_twod(self, inp: dict, roi_id: int, template: dict) -> dict:
+        # TODO: #####
+        return template
+
     def process_roi_phase_ipfs_twod(self, roi_id: int, pyxem_phase_id: int, template: dict) -> dict:
         """Parse inverse pole figures (IPF) mappings for specific phase."""
         phase_name = self.xmap.phases[pyxem_phase_id].name
@@ -596,32 +605,35 @@ class NxEmNxsHfiveSubParser:
                                                template)
         return template
 
-    def process_roi_phase_ipfs_threed(self,
-                                      inp: dict,
-                                      roi_id: int,
-                                      pyxem_phase_id: int,
-                                      phase_name: str,
-                                      space_group: int,
-                                      template: dict) -> dict:
+    def process_roi_phase_ipfs_threed(self, inp: dict, roi_id: int, pyxem_phase_id: int, phase_name: str, space_group: int, template: dict) -> dict:
         """Generate inverse pole figures (IPF) for 3D mappings for specific phase."""
+        # equivalent to the case in twod, one needs at if required regridding/downsampling
+        # code here when any of the ROI's number of pixels along an edge > HFIVE_WEB_MAXIMUM_RGB
+        # TODO: I have not seen any dataset yet where is limit is exhausted, the largest
+        # dataset is a 3D SEM/FIB study from a UK project this is likely because to
+        # get an EBSD map as large one already scans quite long for one section as making
+        # a ompromise is required and thus such hypothetical large serial-sectioning
+        # studies would block the microscope for a very long time
+        # however I have seen examples from Hadi Pirgazi with L. Kestens from Leuven
+        # where indeed large but thin 3d slabs were characterized
         print(f"Generate 3D IPF map for {pyxem_phase_id}, {phase_name}...")
+        rotations = Rotation.from_euler(
+            euler=inp["euler"][inp["phase_id"] == pyxem_phase_id],
+            direction='lab2crystal', degrees=False)
+        print(f"shape rotations -----> {np.shape(rotations)}")
+
         for idx in np.arange(0, len(PROJECTION_VECTORS)):
             point_group = get_point_group(space_group, proper=False)
             ipf_key = plot.IPFColorKeyTSL(
-                point_group.laue,
-                direction=PROJECTION_VECTORS[idx])
+                point_group.laue, direction=PROJECTION_VECTORS[idx])
             img = get_ipfdir_legend(ipf_key)
 
-            rotations = Rotation.from_euler(euler=inp["euler"][inp["phase_id"] == pyxem_phase_id],
-                                            direction='lab2crystal',
-                                            degrees=False)
-            print(f"shape rotations -----> {np.shape(rotations)}")
             rgb_px_with_phase_id = np.asarray(np.asarray(
                 ipf_key.orientation2color(rotations) * 255., np.uint32), np.uint8)
             print(f"shape rgb_px_with_phase_id -----> {np.shape(rgb_px_with_phase_id)}")
 
-            ipf_rgb_map = np.asarray(
-                np.uint8(np.zeros((inp["n_z"] * inp["n_y"] * inp["n_x"], 3)) * 255.))
+            ipf_rgb_map = np.asarray(np.asarray(
+                np.zeros((inp["n_z"] * inp["n_y"] * inp["n_x"], 3)) * 255., np.uint32), np.uint8)
             # background is black instead of white (which would be more pleasing)
             # but IPF color maps have a whitepoint which encodes in fact an orientation
             # and because of that we may have a single crystal with an orientation

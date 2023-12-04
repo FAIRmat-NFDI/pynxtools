@@ -15,9 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Constants relevant when working with H5Web."""
+"""Utilities relevant when working with H5Web."""
 
 import numpy as np
 
-HFIVE_WEB_MAXIMUM_ROI = 2**14 - 1
-HFIVE_WEB_MAXIMUM_RGB = 2**11 - 1
+
+def hfive_web_decorate_nxdata(path: str, inp: dict) -> dict:
+    if f"{path}" in inp.keys():
+        inp[f"{path}/@CLASS"] = f"IMAGE"  # required by H5Web to plot RGB maps
+        inp[f"{path}/@IMAGE_VERSION"] = f"1.2"
+        inp[f"{path}/@SUBCLASS_VERSION"] = np.int64(15)
+        inp[f"{path}/@long_name"] = f"Signal"
+    return inp
