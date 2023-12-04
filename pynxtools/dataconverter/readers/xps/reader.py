@@ -302,7 +302,7 @@ def fill_template_with_eln_data(eln_data_dict, config_dict, template, entry_set)
             fill_from_value(key)
 
 
-def concatenate_values(value1, value2):
+def _concatenate_values(value1, value2):
     """
     Concatenate two values of same type to be stored
     in xps_data_dict. Dicts are merged and every other object is
@@ -319,6 +319,36 @@ def concatenate_values(value1, value2):
         concatenated = value1 + value2
 
     return concatenated
+
+def update_dict_without_replacing(existing_dict, new_dict):
+    """
+    Update an existing dictionary with a new dict,
+    without overwriting existing keys.
+
+    Parameters
+    ----------
+    existing_dict : dict
+        Dictionary contain XPS data.
+    new_dict : dict
+        Dictionary containining similar XPS data, used to update the
+        first dict.
+
+    Returns
+    -------
+    updated_dict : dict
+        Existing dictionary, updated with new dict.
+
+    """
+    existing = [
+        (key, existing_dict[key], new_dict[key])
+        for key in set(existing_dict).intersection(new_dict)
+    ]
+
+    updated_dict = {**existing_dict, **new_dict}
+    for key, value1, value2 in existing:
+        updated_dict[key] = _concatenate_values(value1, value2)
+
+    return updated_dict
 
 
 # pylint: disable=too-few-public-methods
@@ -358,24 +388,19 @@ class XPSReader(BaseReader):
             elif file_ext in XpsDataFileParser.__prmt_file_ext__:
                 parser = XpsDataFileParser([file])
                 data_dict = parser.get_dict(**kwargs)
-                config_file = parser.config_file
+                config_file = reader_dir.joinpath(f"config/{parser.config_file}")
 
                 # If there are multiple input data files of the same type,
                 # make sure that existing keys are not overwritten.
-                existing = [
-                    (key, xps_data_dict[key], data_dict[key])
-                    for key in set(xps_data_dict).intersection(data_dict)
-                ]
+                xps_data_dict = update_dict_without_replacing(
+                    xps_data_dict, data_dict)
 
-                xps_data_dict = {**xps_data_dict, **data_dict}
-                for key, value1, value2 in existing:
-                    xps_data_dict[key] = concatenate_values(value1, value2)
-
-                config_file = reader_dir.joinpath(f"config/{config_file}")
             elif file_ext in XpsDataFileParser.__prmt_metadata_file_ext__:
-                data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
+                parser = XpsDataFileParser([file])
+                data_dict = parser.get_dict(**kwargs)
 
-                xps_data_dict = {**xps_data_dict, **data_dict}
+                xps_data_dict = update_dict_without_replacing(
+                    xps_data_dict, data_dict)
 
             # This code is not very robust.
             elif file_ext == "json":
