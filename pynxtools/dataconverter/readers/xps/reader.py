@@ -343,7 +343,7 @@ class XPSReader(BaseReader):
 
         xps_data_dict: Dict[str, Any] = {}
         eln_data_dict: Dict[str, Any] = {}
-        config_file: Path = reader_dir.joinpath("config/template.json")
+        config_file: Path = reader_dir.joinpath("config", "template.json")
 
         for file in file_paths:
             file_ext = file.rsplit(".")[-1]
