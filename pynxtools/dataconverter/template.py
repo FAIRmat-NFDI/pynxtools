@@ -125,26 +125,12 @@ class Template(dict):
             k in self.required
         ])
 
-    def get(self, key, return_value=None):
-        """Implementing get method for template.
-        Parameters
-        ----------
-        key : str
-            Template key
-        return_value : Any
-        return :
-            The value comes with return_value
-        """
-        val = self.optional.get(key, None)
-        if val is None:
-            val = self.recommended.get(key, None)
-            if val is None:
-                val = self.required.get(key, None)
-                if val is None:
-                    val = self.undocumented.get(key, None)
-        if val is None:
-            return return_value
-        return val
+    def get(self, key: str, default=None):
+        """Proxies the get function to our internal __getitem__"""
+        try:
+            return self[key]
+        except KeyError:
+            return default
 
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
@@ -162,7 +148,10 @@ class Template(dict):
                         return self.required[k]
                     except KeyError:
                         return self.undocumented[k]
-        return self.get_optionality(k)
+        if k in ("required", "optional", "recommended", "undocumented"):
+            return self.get_optionality(k)
+        raise KeyError("Only paths starting with '/' or one of [optional_parents, "
+                       "lone_groups, required, optional, recommended, undocumented] can be used.")
 
     def clear(self):
         """Clears all data stored in the Template object."""
