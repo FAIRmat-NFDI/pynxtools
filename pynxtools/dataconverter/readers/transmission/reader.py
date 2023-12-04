@@ -22,7 +22,7 @@ import pandas as pd
 
 from pynxtools.dataconverter.readers.json_yml.reader import YamlJsonReader
 import pynxtools.dataconverter.readers.transmission.metadata_parsers as mpars
-from pynxtools.dataconverter.readers.utils import parse_json, parse_yml
+from pynxtools.dataconverter.readers.utils import parse_json, parse_yml, handle_objects
 
 
 # Dictionary mapping metadata in the asc file to the paths in the NeXus file.
@@ -254,6 +254,7 @@ class TransmissionReader(YamlJsonReader):
         ".yml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
         ".yaml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
         "default": lambda _: add_def_info(),
+        "objects": handle_objects,
     }
 
 

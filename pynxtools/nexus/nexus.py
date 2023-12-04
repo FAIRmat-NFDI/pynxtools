@@ -258,8 +258,9 @@ def get_hdf_path(hdf_info):
     return hdf_info['hdf_node'].name.split('/')[1:]
 
 
+# pylint: disable=too-many-arguments,too-many-locals
 @lru_cache(maxsize=None)
-def get_inherited_hdf_nodes(nx_name: str = None, elem: ET.Element = None,  # pylint: disable=too-many-arguments,too-many-locals
+def get_inherited_hdf_nodes(nx_name: str = None, elem: ET.Element = None,
                             hdf_node=None, hdf_path=None, hdf_root=None, attr=False):
     """Returns a list of ET.Element for the given path."""
     # let us start with the given definition file
@@ -563,8 +564,11 @@ def hdf_node_to_self_concept_path(hdf_info, logger):
 
 class HandleNexus:
     """documentation"""
+
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, logger, nexus_file,
-                 d_inq_nd=None, c_inq_nd=None):
+                 d_inq_nd=None, c_inq_nd=None,
+                 is_in_memory_file=False):
         self.logger = logger
         local_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -572,6 +576,7 @@ class HandleNexus:
             os.path.join(local_dir, '../../tests/data/nexus/201805_WSe2_arpes.nxs')
         self.parser = None
         self.in_file = None
+        self.is_hdf5_file_obj = is_in_memory_file
         self.d_inq_nd = d_inq_nd
         self.c_inq_nd = c_inq_nd
         # Aggregating hdf path corresponds to concept query node
@@ -638,19 +643,28 @@ class HandleNexus:
     def process_nexus_master_file(self, parser):
         """Process a nexus master file by processing all its nodes and their attributes"""
         self.parser = parser
-        self.in_file = h5py.File(
-            self.input_file_name[0]
-            if isinstance(self.input_file_name, list)
-            else self.input_file_name, 'r'
-        )
-        self.full_visit(self.in_file, self.in_file, '', self.visit_node)
-        if self.d_inq_nd is None and self.c_inq_nd is None:
-            get_default_plotable(self.in_file, self.logger)
-        # To log the provided concept and concepts founded
-        if self.c_inq_nd is not None:
-            for hdf_path in self.hdf_path_list_for_c_inq_nd:
-                self.logger.info(hdf_path)
-        self.in_file.close()
+        try:
+            if not self.is_hdf5_file_obj:
+                self.in_file = h5py.File(
+                    self.input_file_name[0]
+                    if isinstance(self.input_file_name, list)
+                    else self.input_file_name, 'r'
+                )
+            else:
+                self.in_file = self.input_file_name
+
+            self.full_visit(self.in_file, self.in_file, '', self.visit_node)
+
+            if self.d_inq_nd is None and self.c_inq_nd is None:
+                get_default_plotable(self.in_file, self.logger)
+            # To log the provided concept and concepts founded
+            if self.c_inq_nd is not None:
+                for hdf_path in self.hdf_path_list_for_c_inq_nd:
+                    self.logger.info(hdf_path)
+        finally:
+            # To test if hdf_file is open print(self.in_file.id.valid)
+            self.in_file.close()
+            # To test if hdf_file is open print(self.in_file.id.valid)
 
 
 @click.command()

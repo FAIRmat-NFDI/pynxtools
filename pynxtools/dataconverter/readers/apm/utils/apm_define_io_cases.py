@@ -36,11 +36,21 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         eln injects additional metadata and eventually numerical data.
         """
         self.case: Dict[str, list] = {}
+        self.eln: List[str] = []
+        self.cfg: List[str] = []
+        self.reconstruction: List[str] = []
+        self.ranging: List[str] = []
         self.is_valid = False
         self.supported_mime_types = [
             "pos", "epos", "apt", "rrng", "rng", "txt", "yaml", "yml"]
         for mime_type in self.supported_mime_types:
             self.case[mime_type] = []
+
+        self.sort_files_by_mime_type(file_paths)
+        self.check_validity_of_file_combinations()
+
+    def sort_files_by_mime_type(self, file_paths: Tuple[str] = None):
+        """Sort all input-files based on their mimetype to prepare validity check."""
         for file_name in file_paths:
             index = file_name.lower().rfind(".")
             if index >= 0:
@@ -48,15 +58,23 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                 if suffix in self.supported_mime_types:
                     if file_name not in self.case[suffix]:
                         self.case[suffix].append(file_name)
-        recon_input = 0
-        range_input = 0
+
+    def check_validity_of_file_combinations(self):
+        """Check if this combination of types of files is supported."""
+        recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT
+        range_input = 0  # ranging definition file, e.g. RNG, RRNG
+        other_input = 0  # generic ELN or OASIS-specific configurations
         for mime_type, value in self.case.items():
             if mime_type in ["pos", "epos", "apt"]:
                 recon_input += len(value)
-            if mime_type in ["rrng", "rng", "txt"]:
+            elif mime_type in ["rrng", "rng", "txt"]:
                 range_input += len(value)
-        eln_input = len(self.case["yaml"]) + len(self.case["yml"])
-        if (recon_input == 1) and (range_input == 1) and (eln_input == 1):
+            elif mime_type in ["yaml", "yml"]:
+                other_input += len(value)
+            else:
+                continue
+
+        if (recon_input == 1) and (range_input == 1) and (1 <= other_input <= 2):
             self.is_valid = True
             self.reconstruction: List[str] = []
             self.ranging: List[str] = []
@@ -64,6 +82,12 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                 self.reconstruction += self.case[mime_type]
             for mime_type in ["rrng", "rng", "txt"]:
                 self.ranging += self.case[mime_type]
-            self.eln: List[str] = []
+            yml: List[str] = []
             for mime_type in ["yaml", "yml"]:
-                self.eln += self.case[mime_type]
+                yml += self.case[mime_type]
+            for entry in yml:
+                if entry.endswith(".oasis.specific.yaml") \
+                        or entry.endswith(".oasis.specific.yml"):
+                    self.cfg += [entry]
+                else:
+                    self.eln += [entry]

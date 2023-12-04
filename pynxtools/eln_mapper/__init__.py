@@ -1,4 +1,3 @@
-#
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -15,12 +14,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Set of utility tools for parsing file formats used by atom probe."""
-
-# pylint: disable=no-member
-
-# ifes_apt_tc_data_modeling replaces now the previously here stored
-# convenience functions which translated human-readable ion names into
-# isotope_vector descriptions and vice versa as proposed by M. Kuehbach et al. in
-# DOI: 10.1017/S1431927621012241 to the human-readable ion names which are use
-# in P. Felfer et al."s atom probe toolbox

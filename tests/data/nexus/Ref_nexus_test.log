@@ -8,12 +8,13 @@ DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY):
 DEBUG - 
 DEBUG - documentation (NXentry.nxdl.xml:):
 DEBUG - 
-		(**required**) :ref:`NXentry` describes the measurement.
-
-		The top-level NeXus group which contains all the data and associated
-		information that comprise a single measurement.
-		It is mandatory that there is at least one
-		group of this type in the NeXus file.	
+         (**required**) :ref:`NXentry` describes the measurement.
+         
+         The top-level NeXus group which contains all the data and associated
+         information that comprise a single measurement.
+         It is mandatory that there is at least one
+         group of this type in the NeXus file.
+    
 DEBUG - ===== ATTRS (//entry@NX_class)
 DEBUG - value: NXentry 
 DEBUG - classpath: ['NXentry']
@@ -30,9 +31,9 @@ NXentry.nxdl.xml:/collection_time
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/collection_time):
 DEBUG - 
-			Time transpired actually collecting data i.e. taking out time when collection was
-			suspended due to e.g. temperature out of range
-		
+             Time transpired actually collecting data i.e. taking out time when collection was
+             suspended due to e.g. temperature out of range
+        
 DEBUG - ===== ATTRS (//entry/collection_time@units)
 DEBUG - value: s 
 DEBUG - classpath: ['NXentry', 'NX_FLOAT']
@@ -50,34 +51,33 @@ DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/DATA):
 DEBUG - 
 DEBUG - documentation (NXentry.nxdl.xml:/DATA):
 DEBUG - 
-			The data group
-
-			.. note:: Before the NIAC2016 meeting [#]_, at least one
-			   :ref:`NXdata` group was required in each :ref:`NXentry` group.
-			   At the NIAC2016 meeting, it was decided to make :ref:`NXdata`
-			   an optional group in :ref:`NXentry` groups for data files that
-			   do not use an application definition.
-			   It is recommended strongly that all NeXus data files provide
-			   a NXdata group.
-			   It is permissable to omit the NXdata group only when
-			   defining the default plot is not practical or possible
-			   from the available data.
-
-			   For example, neutron event data may not have anything that
-			   makes a useful plot without extensive processing.
-
-			   Certain application definitions override this decision and
-			   require an :ref:`NXdata` group
-			   in the :ref:`NXentry` group.  The ``minOccurs=0`` attribute
-			   in the application definition will indicate the
-			   :ref:`NXdata` group
-			   is optional, otherwise, it is required.
-
-			   .. [#] NIAC2016:
-			      https://www.nexusformat.org/NIAC2016.html,
-			      https://github.com/nexusformat/NIAC/issues/16
-
-		
+             The data group
+             
+             .. note:: Before the NIAC2016 meeting [#]_, at least one
+                :ref:`NXdata` group was required in each :ref:`NXentry` group.
+                At the NIAC2016 meeting, it was decided to make :ref:`NXdata`
+                an optional group in :ref:`NXentry` groups for data files that
+                do not use an application definition.
+                It is recommended strongly that all NeXus data files provide
+                a NXdata group.
+                It is permissable to omit the NXdata group only when
+                defining the default plot is not practical or possible
+                from the available data.
+             
+                For example, neutron event data may not have anything that
+                makes a useful plot without extensive processing.
+             
+                Certain application definitions override this decision and
+                require an :ref:`NXdata` group
+                in the :ref:`NXentry` group.  The ``minOccurs=0`` attribute
+                in the application definition will indicate the
+                :ref:`NXdata` group
+                is optional, otherwise, it is required.
+             
+                .. [#] NIAC2016:
+             	  https://www.nexusformat.org/NIAC2016.html,
+             	  https://github.com/nexusformat/NIAC/issues/16
+        
 DEBUG - documentation (NXdata.nxdl.xml:):
 DEBUG - 
 		:ref:`NXdata` describes the plottable data and related dimension scales. 
@@ -395,21 +395,21 @@ DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/definition):
 DEBUG - Official NeXus NXDL schema to which this file conforms.
 DEBUG - documentation (NXentry.nxdl.xml:/definition):
 DEBUG - 
-			(alternate use: see same field in :ref:`NXsubentry` for preferred)
-			
-			Official NeXus NXDL schema to which this entry conforms which must be
-			the name of the NXDL file (case sensitive without the file extension)
-			that the NXDL schema is defined in. 
-			
-			For example the ``definition`` field for a file that conformed to the 
-			*NXarpes.nxdl.xml* definition must contain the string **NXarpes**.
-			
-			This field is provided so that :ref:`NXentry` can be the overlay position
-			in a NeXus data file for an application definition and its
-			set of groups, fields, and attributes.
-
-			*It is advised* to use :ref:`NXsubentry`, instead, as the overlay position.
-		
+             (alternate use: see same field in :ref:`NXsubentry` for preferred)
+             
+             Official NeXus NXDL schema to which this entry conforms which must be
+             the name of the NXDL file (case sensitive without the file extension)
+             that the NXDL schema is defined in.
+             
+             For example the ``definition`` field for a file that conformed to the
+             *NXarpes.nxdl.xml* definition must contain the string **NXarpes**.
+             
+             This field is provided so that :ref:`NXentry` can be the overlay position
+             in a NeXus data file for an application definition and its
+             set of groups, fields, and attributes.
+             
+             *It is advised* to use :ref:`NXsubentry`, instead, as the overlay position.
+        
 DEBUG - ===== FIELD (//entry/duration): <HDF5 dataset "duration": shape (), type "<i8">
 DEBUG - value: 7200 
 DEBUG - classpath: ['NXentry', 'NX_INT']
@@ -417,7 +417,9 @@ DEBUG - classes:
 NXentry.nxdl.xml:/duration
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/duration):
-DEBUG - Duration of measurement
+DEBUG - 
+             Duration of measurement
+        
 DEBUG - ===== ATTRS (//entry/duration@units)
 DEBUG - value: s 
 DEBUG - classpath: ['NXentry', 'NX_INT']
@@ -431,7 +433,9 @@ DEBUG - classes:
 NXentry.nxdl.xml:/end_time
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/end_time):
-DEBUG - Ending time of measurement
+DEBUG - 
+             Ending time of measurement
+        
 DEBUG - ===== FIELD (//entry/entry_identifier): <HDF5 dataset "entry_identifier": shape (), type "|O">
 DEBUG - value: b'Run 22118' 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
@@ -439,7 +443,9 @@ DEBUG - classes:
 NXentry.nxdl.xml:/entry_identifier
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/entry_identifier):
-DEBUG - unique identifier for the measurement, defined by the facility.
+DEBUG - 
+             unique identifier for the measurement, defined by the facility.
+        
 DEBUG - ===== FIELD (//entry/experiment_identifier): <HDF5 dataset "experiment_identifier": shape (), type "|O">
 DEBUG - value: b'F-20170538' 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
@@ -448,10 +454,10 @@ NXentry.nxdl.xml:/experiment_identifier
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/experiment_identifier):
 DEBUG - 
-			Unique identifier for the experiment,
-			defined by the facility,
-			possibly linked to the proposals
-		
+             Unique identifier for the experiment,
+             defined by the facility,
+             possibly linked to the proposals
+        
 DEBUG - ===== GROUP (//entry/instrument [NXarpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (11 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - classes:
@@ -465,15 +471,15 @@ DEBUG - documentation (NXentry.nxdl.xml:/INSTRUMENT):
 DEBUG - 
 DEBUG - documentation (NXinstrument.nxdl.xml:):
 DEBUG - 
-		Collection of the components of the instrument or beamline.
-		
-		Template of instrument descriptions comprising various beamline components. 
-		Each component will also be a NeXus group defined by its distance from the 
-		sample. Negative distances represent beamline components that are before the 
-		sample while positive distances represent components that are after the sample. 
-		This device allows the unique identification of beamline components in a way 
-		that is valid for both reactor and pulsed instrumentation.
-	
+         Collection of the components of the instrument or beamline.
+         
+         Template of instrument descriptions comprising various beamline components.
+         Each component will also be a NeXus group defined by its distance from the
+         sample. Negative distances represent beamline components that are before the
+         sample while positive distances represent components that are after the sample.
+         This device allows the unique identification of beamline components in a way
+         that is valid for both reactor and pulsed instrumentation.
+    
 DEBUG - ===== ATTRS (//entry/instrument@NX_class)
 DEBUG - value: NXinstrument 
 DEBUG - classpath: ['NXentry', 'NXinstrument']
@@ -496,8 +502,8 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/DETECTOR):
 DEBUG - 
 DEBUG - documentation (NXdetector.nxdl.xml:):
 DEBUG - 
-    A detector, detector bank, or multidetector.
-  
+         A detector, detector bank, or multidetector.
+    
 DEBUG - ===== ATTRS (//entry/instrument/analyser@NX_class)
 DEBUG - value: NXdetector 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
@@ -527,12 +533,19 @@ DEBUG - -> decimated
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/acquisition_mode):
 DEBUG - 
 DEBUG - documentation (NXdetector.nxdl.xml:/acquisition_mode):
-DEBUG - The acquisition mode of the detector.
+DEBUG - 
+             The acquisition mode of the detector.
+        
 DEBUG - ===== FIELD (//entry/instrument/analyser/amplifier_type): <HDF5 dataset "amplifier_type": shape (), type "|O">
 DEBUG - value: b'MCP' 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
+DEBUG - classes:
+NXdetector.nxdl.xml:/amplifier_type
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXdetector.nxdl.xml:/amplifier_type):
 DEBUG - 
+             Type of electron amplifier, MCP, channeltron, etc.
+        
 DEBUG - ===== FIELD (//entry/instrument/analyser/angles): <HDF5 dataset "angles": shape (80,), type "<f8">
 DEBUG - value: [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031 ...
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -574,29 +587,29 @@ DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data):
 DEBUG - 
 DEBUG - documentation (NXdetector.nxdl.xml:/data):
 DEBUG - 
-      Data values from the detector. The rank and dimension ordering should follow a principle of
-      slowest to fastest measurement axes and may be explicitly specified in application definitions.
-      
-      Mechanical scanning of objects (e.g. sample position/angle, incident beam energy, etc) tends to be
-      the slowest part of an experiment and so any such scan axes should be allocated to the first dimensions
-      of the array. Note that in some cases it may be useful to represent a 2D set of scan points as a single
-      scan-axis in the data array, especially if the scan pattern doesn't fit a rectangular array nicely.
-      Repetition of an experiment in a time series tends to be used similar to a slow scan axis
-      and so will often be in the first dimension of the data array.
-      
-      The next fastest axes are typically the readout of the detector. A point detector will not add any dimensions
-      (as it is just a single value per scan point) to the data array, a strip detector will add one dimension, an 
-      imaging detector will add two dimensions (e.g. X, Y axes) and detectors outputting higher dimensional data 
-      will add the corresponding number of dimensions. Note that the detector dimensions don't necessarily have to
-      be written in order of the actual readout speeds - the slowest to fastest rule principle is only a guide.
-      
-      Finally, detectors that operate in a time-of-flight mode, such as a neutron spectrometer or a silicon drift 
-      detector (used for X-ray fluorescence) tend to have their dimension(s) added to the last dimensions in the data array.
-      
-      The type of each dimension should should follow the order of scan points, detector pixels, 
-      then time-of-flight (i.e. spectroscopy, spectrometry). The rank and dimension sizes (see symbol list) 
-      shown here are merely illustrative of coordination between related datasets.
-    
+             Data values from the detector. The rank and dimension ordering should follow a principle of
+             slowest to fastest measurement axes and may be explicitly specified in application definitions.
+             
+             Mechanical scanning of objects (e.g. sample position/angle, incident beam energy, etc) tends to be
+             the slowest part of an experiment and so any such scan axes should be allocated to the first dimensions
+             of the array. Note that in some cases it may be useful to represent a 2D set of scan points as a single
+             scan-axis in the data array, especially if the scan pattern doesn't fit a rectangular array nicely.
+             Repetition of an experiment in a time series tends to be used similar to a slow scan axis
+             and so will often be in the first dimension of the data array.
+             
+             The next fastest axes are typically the readout of the detector. A point detector will not add any dimensions
+             (as it is just a single value per scan point) to the data array, a strip detector will add one dimension, an
+             imaging detector will add two dimensions (e.g. X, Y axes) and detectors outputting higher dimensional data
+             will add the corresponding number of dimensions. Note that the detector dimensions don't necessarily have to
+             be written in order of the actual readout speeds - the slowest to fastest rule principle is only a guide.
+             
+             Finally, detectors that operate in a time-of-flight mode, such as a neutron spectrometer or a silicon drift
+             detector (used for X-ray fluorescence) tend to have their dimension(s) added to the last dimensions in the data array.
+             
+             The type of each dimension should should follow the order of scan points, detector pixels,
+             then time-of-flight (i.e. spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
+             shown here are merely illustrative of coordination between related datasets.
+        
 DEBUG - ===== ATTRS (//entry/instrument/analyser/data@target)
 DEBUG - value: /entry/instrument/analyser/data 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -630,9 +643,14 @@ DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/detector_type): <HDF5 dataset "detector_type": shape (), type "|O">
 DEBUG - value: b'DLD' 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
+DEBUG - classes:
+NXdetector.nxdl.xml:/detector_type
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXdetector.nxdl.xml:/detector_type):
 DEBUG - 
+             Description of the detector type, DLD, Phosphor+CCD, CMOS.
+        
 DEBUG - ===== FIELD (//entry/instrument/analyser/dispersion_scheme): <HDF5 dataset "dispersion_scheme": shape (), type "|O">
 DEBUG - value: b'Time of flight' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
@@ -776,9 +794,14 @@ DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_size):
 DEBUG - size of rectangular region selected for readout
 DEBUG - ===== FIELD (//entry/instrument/analyser/sensor_count): <HDF5 dataset "sensor_count": shape (), type "<i8">
 DEBUG - value: 4 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
+DEBUG - classes:
+NXdetector.nxdl.xml:/sensor_count
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXdetector.nxdl.xml:/sensor_count):
 DEBUG - 
+             Number of imaging sensor chips on the detector.
+        
 DEBUG - ===== FIELD (//entry/instrument/analyser/sensor_size): <HDF5 dataset "sensor_size": shape (2,), type "<i8">
 DEBUG - value: [ 80 146] 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
@@ -821,22 +844,22 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/BEAM):
 DEBUG - 
 DEBUG - documentation (NXbeam.nxdl.xml:):
 DEBUG - 
-        Properties of the neutron or X-ray beam at a given location. 
-
-        This group is intended to be referenced
-        by beamline component groups within the :ref:`NXinstrument` group or by the :ref:`NXsample` group. This group is
-        especially valuable in storing the results of instrument simulations in which it is useful
-        to specify the beam profile, time distribution etc. at each beamline component. Otherwise,
-        its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
-        scattering by the sample, e.g., energy transfer, polarizations. Finally, There are cases where the beam is
-        considered as a beamline component and this group may be defined as a subgroup directly inside
-        :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an 
-        :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
-
-        Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
-        To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
-        by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
-        
+         Properties of the neutron or X-ray beam at a given location.
+         
+         This group is intended to be referenced
+         by beamline component groups within the :ref:`NXinstrument` group or by the :ref:`NXsample` group. This group is
+         especially valuable in storing the results of instrument simulations in which it is useful
+         to specify the beam profile, time distribution etc. at each beamline component. Otherwise,
+         its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
+         scattering by the sample, e.g., energy transfer, polarizations. Finally, There are cases where the beam is
+         considered as a beamline component and this group may be defined as a subgroup directly inside
+         :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an
+         :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
+         
+         Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
+         To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
+         by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
+    
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0@NX_class)
 DEBUG - value: NXbeam 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
@@ -852,7 +875,9 @@ DEBUG - classes:
 NXbeam.nxdl.xml:/distance
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXbeam.nxdl.xml:/distance):
-DEBUG - Distance from sample. Note, it is recommended to use NXtransformations instead.
+DEBUG - 
+             Distance from sample. Note, it is recommended to use NXtransformations instead.
+        
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/distance@units)
 DEBUG - value: cm 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
@@ -886,14 +911,20 @@ DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/pulse_duration): <HDF5 dataset "pulse_duration": shape (), type "<i8">
 DEBUG - value: 70 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/pulse_duration
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXbeam.nxdl.xml:/pulse_duration):
 DEBUG - 
+             FWHM duration of the pulses at the diagnostic point
+        
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0/pulse_duration@units)
 DEBUG - value: fs 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/pulse_duration
+DEBUG - NXbeam.nxdl.xml:/pulse_duration@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/size_x): <HDF5 dataset "size_x": shape (), type "<i8">
 DEBUG - value: 500 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
@@ -924,22 +955,22 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/BEAM):
 DEBUG - 
 DEBUG - documentation (NXbeam.nxdl.xml:):
 DEBUG - 
-        Properties of the neutron or X-ray beam at a given location. 
-
-        This group is intended to be referenced
-        by beamline component groups within the :ref:`NXinstrument` group or by the :ref:`NXsample` group. This group is
-        especially valuable in storing the results of instrument simulations in which it is useful
-        to specify the beam profile, time distribution etc. at each beamline component. Otherwise,
-        its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
-        scattering by the sample, e.g., energy transfer, polarizations. Finally, There are cases where the beam is
-        considered as a beamline component and this group may be defined as a subgroup directly inside
-        :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an 
-        :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
-
-        Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
-        To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
-        by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
-        
+         Properties of the neutron or X-ray beam at a given location.
+         
+         This group is intended to be referenced
+         by beamline component groups within the :ref:`NXinstrument` group or by the :ref:`NXsample` group. This group is
+         especially valuable in storing the results of instrument simulations in which it is useful
+         to specify the beam profile, time distribution etc. at each beamline component. Otherwise,
+         its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
+         scattering by the sample, e.g., energy transfer, polarizations. Finally, There are cases where the beam is
+         considered as a beamline component and this group may be defined as a subgroup directly inside
+         :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an
+         :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
+         
+         Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
+         To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
+         by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
+    
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0@NX_class)
 DEBUG - value: NXbeam 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
@@ -950,14 +981,20 @@ DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/average_power): <HDF5 dataset "average_power": shape (), type "<f8">
 DEBUG - value: 6.21289 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/average_power
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXbeam.nxdl.xml:/average_power):
 DEBUG - 
+             Average power at the diagnostic point
+        
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/average_power@units)
 DEBUG - value: uW 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/average_power
+DEBUG - NXbeam.nxdl.xml:/average_power@units [NX_POWER]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/center_wavelength): <HDF5 dataset "center_wavelength": shape (), type "<i8">
 DEBUG - value: 800 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
@@ -975,7 +1012,9 @@ DEBUG - classes:
 NXbeam.nxdl.xml:/distance
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXbeam.nxdl.xml:/distance):
-DEBUG - Distance from sample. Note, it is recommended to use NXtransformations instead.
+DEBUG - 
+             Distance from sample. Note, it is recommended to use NXtransformations instead.
+        
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/distance@units)
 DEBUG - value: cm 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
@@ -984,14 +1023,20 @@ NXbeam.nxdl.xml:/distance
 DEBUG - NXbeam.nxdl.xml:/distance@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/fluence): <HDF5 dataset "fluence": shape (), type "<i8">
 DEBUG - value: 5 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/fluence
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXbeam.nxdl.xml:/fluence):
 DEBUG - 
+             Incident fluence at the diagnostic point
+        
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/fluence@units)
 DEBUG - value: mJ/cm^2 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/fluence
+DEBUG - NXbeam.nxdl.xml:/fluence@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/photon_energy): <HDF5 dataset "photon_energy": shape (), type "<f8">
 DEBUG - value: 1.55 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
@@ -1019,24 +1064,36 @@ DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/pulse_duration): <HDF5 dataset "pulse_duration": shape (), type "<i8">
 DEBUG - value: 50 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/pulse_duration
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXbeam.nxdl.xml:/pulse_duration):
 DEBUG - 
+             FWHM duration of the pulses at the diagnostic point
+        
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/pulse_duration@units)
 DEBUG - value: fs 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/pulse_duration
+DEBUG - NXbeam.nxdl.xml:/pulse_duration@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/pulse_energy): <HDF5 dataset "pulse_energy": shape (), type "<f8">
 DEBUG - value: 1.24258 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/pulse_energy
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXbeam.nxdl.xml:/pulse_energy):
 DEBUG - 
+             Energy of a single pulse at the diagnostic point
+        
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0/pulse_energy@units)
 DEBUG - value: nJ 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam', 'NX_FLOAT']
+DEBUG - classes:
+NXbeam.nxdl.xml:/pulse_energy
+DEBUG - NXbeam.nxdl.xml:/pulse_energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/size_x): <HDF5 dataset "size_x": shape (), type "<i8">
 DEBUG - value: 500 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
@@ -1059,14 +1116,20 @@ DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<i8">
 DEBUG - value: 100 
-DEBUG - classpath: ['NXentry', 'NXinstrument']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/energy_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXinstrument.nxdl.xml:/energy_resolution):
 DEBUG - 
+             Energy resolution of the experiment (FWHM or gaussian broadening)
+        
 DEBUG - ===== ATTRS (//entry/instrument/energy_resolution@units)
 DEBUG - value: meV 
-DEBUG - classpath: ['NXentry', 'NXinstrument']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/energy_resolution
+DEBUG - NXinstrument.nxdl.xml:/energy_resolution@units [NX_ENERGY]
 DEBUG - ===== GROUP (//entry/instrument/manipulator [NXarpes::/NXentry/NXinstrument/NXpositioner]): <HDF5 group "/entry/instrument/manipulator" (9 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - classes:
@@ -1272,7 +1335,9 @@ DEBUG - classes:
 NXinstrument.nxdl.xml:/name
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXinstrument.nxdl.xml:/name):
-DEBUG - Name of instrument
+DEBUG - 
+             Name of instrument
+        
 DEBUG - ===== GROUP (//entry/instrument/source [NXarpes::/NXentry/NXinstrument/NXsource]): <HDF5 group "/entry/instrument/source" (16 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - classes:
@@ -1285,7 +1350,9 @@ DEBUG -
 DEBUG - documentation (NXinstrument.nxdl.xml:/SOURCE):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:):
-DEBUG - The neutron or x-ray storage ring/facility.
+DEBUG - 
+         The neutron or x-ray storage ring/facility.
+    
 DEBUG - ===== ATTRS (//entry/instrument/source@NX_class)
 DEBUG - value: NXsource 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1302,7 +1369,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/bunch_distance
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_distance):
-DEBUG - For storage rings, time between bunches
+DEBUG - 
+             For storage rings, time between bunches
+        
 DEBUG - ===== ATTRS (//entry/instrument/source/bunch_distance@units)
 DEBUG - value: us 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1316,7 +1385,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/bunch_length
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_length):
-DEBUG - For storage rings, temporal length of the bunch
+DEBUG - 
+             For storage rings, temporal length of the bunch
+        
 DEBUG - ===== ATTRS (//entry/instrument/source/bunch_length@units)
 DEBUG - value: fs 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1360,7 +1431,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/current
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/current):
-DEBUG - Accelerator, X-ray tube, or storage ring current
+DEBUG - 
+             Accelerator, X-ray tube, or storage ring current
+        
 DEBUG - ===== ATTRS (//entry/instrument/source/current@units)
 DEBUG - value: uA 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1375,10 +1448,10 @@ NXsource.nxdl.xml:/energy
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/energy):
 DEBUG - 
-			Source energy.  
-			For storage rings, this would be the particle beam energy.
-			For X-ray tubes, this would be the excitation voltage.
-		
+             Source energy.
+             For storage rings, this would be the particle beam energy.
+             For X-ray tubes, this would be the excitation voltage.
+        
 DEBUG - ===== ATTRS (//entry/instrument/source/energy@units)
 DEBUG - value: MeV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1392,7 +1465,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/frequency
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/frequency):
-DEBUG - Frequency of pulsed source
+DEBUG - 
+             Frequency of pulsed source
+        
 DEBUG - ===== ATTRS (//entry/instrument/source/frequency@units)
 DEBUG - value: Hz 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1409,7 +1484,9 @@ DEBUG - enumeration (NXsource.nxdl.xml:/mode):
 DEBUG - -> Single Bunch
 DEBUG - -> Multi Bunch
 DEBUG - documentation (NXsource.nxdl.xml:/mode):
-DEBUG - source operating mode
+DEBUG - 
+             source operating mode
+        
 DEBUG - ===== FIELD (//entry/instrument/source/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'FLASH' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
@@ -1420,7 +1497,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/name):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/name):
-DEBUG - Name of source
+DEBUG - 
+             Name of source
+        
 DEBUG - ===== FIELD (//entry/instrument/source/number_of_bunches): <HDF5 dataset "number_of_bunches": shape (), type "<i8">
 DEBUG - value: 500 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_INT']
@@ -1428,7 +1507,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/number_of_bunches
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/number_of_bunches):
-DEBUG - For storage rings, the number of bunches in use.
+DEBUG - 
+             For storage rings, the number of bunches in use.
+        
 DEBUG - ===== FIELD (//entry/instrument/source/number_of_bursts): <HDF5 dataset "number_of_bursts": shape (), type "<i8">
 DEBUG - value: 1 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1455,7 +1536,9 @@ DEBUG - -> proton
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/probe):
-DEBUG - type of radiation probe (pick one from the enumerated list and spell exactly)
+DEBUG - 
+             type of radiation probe (pick one from the enumerated list and spell exactly)
+        
 DEBUG - ===== FIELD (//entry/instrument/source/top_up): <HDF5 dataset "top_up": shape (), type "|b1">
 DEBUG - value: True 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_BOOLEAN']
@@ -1463,7 +1546,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/top_up
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/top_up):
-DEBUG - Is the synchrotron operating in top_up mode?
+DEBUG - 
+             Is the synchrotron operating in top_up mode?
+        
 DEBUG - ===== FIELD (//entry/instrument/source/type): <HDF5 dataset "type": shape (), type "|O">
 DEBUG - value: b'Free Electron Laser' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
@@ -1488,7 +1573,9 @@ DEBUG - -> Metal Jet X-ray
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/type):
-DEBUG - type of radiation source (pick one from the enumerated list and spell exactly)
+DEBUG - 
+             type of radiation source (pick one from the enumerated list and spell exactly)
+        
 DEBUG - ===== GROUP (//entry/instrument/source_pump [NXarpes::/NXentry/NXinstrument/NXsource]): <HDF5 group "/entry/instrument/source_pump" (12 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - classes:
@@ -1501,7 +1588,9 @@ DEBUG -
 DEBUG - documentation (NXinstrument.nxdl.xml:/SOURCE):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:):
-DEBUG - The neutron or x-ray storage ring/facility.
+DEBUG - 
+         The neutron or x-ray storage ring/facility.
+    
 DEBUG - ===== ATTRS (//entry/instrument/source_pump@NX_class)
 DEBUG - value: NXsource 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1518,7 +1607,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/bunch_distance
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_distance):
-DEBUG - For storage rings, time between bunches
+DEBUG - 
+             For storage rings, time between bunches
+        
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/bunch_distance@units)
 DEBUG - value: us 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1532,7 +1623,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/bunch_length
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/bunch_length):
-DEBUG - For storage rings, temporal length of the bunch
+DEBUG - 
+             For storage rings, temporal length of the bunch
+        
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/bunch_length@units)
 DEBUG - value: fs 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1566,7 +1659,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/frequency
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/frequency):
-DEBUG - Frequency of pulsed source
+DEBUG - 
+             Frequency of pulsed source
+        
 DEBUG - ===== ATTRS (//entry/instrument/source_pump/frequency@units)
 DEBUG - value: Hz 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
@@ -1583,7 +1678,9 @@ DEBUG - enumeration (NXsource.nxdl.xml:/mode):
 DEBUG - -> Single Bunch
 DEBUG - -> Multi Bunch
 DEBUG - documentation (NXsource.nxdl.xml:/mode):
-DEBUG - source operating mode
+DEBUG - 
+             source operating mode
+        
 DEBUG - ===== FIELD (//entry/instrument/source_pump/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'User Laser @ FLASH' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
@@ -1594,7 +1691,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/name):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/name):
-DEBUG - Name of source
+DEBUG - 
+             Name of source
+        
 DEBUG - ===== FIELD (//entry/instrument/source_pump/number_of_bunches): <HDF5 dataset "number_of_bunches": shape (), type "<i8">
 DEBUG - value: 400 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_INT']
@@ -1602,7 +1701,9 @@ DEBUG - classes:
 NXsource.nxdl.xml:/number_of_bunches
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/number_of_bunches):
-DEBUG - For storage rings, the number of bunches in use.
+DEBUG - 
+             For storage rings, the number of bunches in use.
+        
 DEBUG - ===== FIELD (//entry/instrument/source_pump/number_of_bursts): <HDF5 dataset "number_of_bursts": shape (), type "<i8">
 DEBUG - value: 1 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1629,7 +1730,9 @@ DEBUG - -> proton
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/probe):
-DEBUG - type of radiation probe (pick one from the enumerated list and spell exactly)
+DEBUG - 
+             type of radiation probe (pick one from the enumerated list and spell exactly)
+        
 DEBUG - ===== FIELD (//entry/instrument/source_pump/rms_jitter): <HDF5 dataset "rms_jitter": shape (), type "<f8">
 DEBUG - value: 204.68816194453154 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1664,27 +1767,41 @@ DEBUG - -> Metal Jet X-ray
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/type):
-DEBUG - type of radiation source (pick one from the enumerated list and spell exactly)
+DEBUG - 
+             type of radiation source (pick one from the enumerated list and spell exactly)
+        
 DEBUG - ===== FIELD (//entry/instrument/spatial_resolution): <HDF5 dataset "spatial_resolution": shape (), type "<i8">
 DEBUG - value: 500 
-DEBUG - classpath: ['NXentry', 'NXinstrument']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/spatial_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXinstrument.nxdl.xml:/spatial_resolution):
 DEBUG - 
+             Spatial resolution of the experiment (Airy disk radius)
+        
 DEBUG - ===== ATTRS (//entry/instrument/spatial_resolution@units)
 DEBUG - value: um 
-DEBUG - classpath: ['NXentry', 'NXinstrument']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/spatial_resolution
+DEBUG - NXinstrument.nxdl.xml:/spatial_resolution@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/instrument/temporal_resolution): <HDF5 dataset "temporal_resolution": shape (), type "<i8">
 DEBUG - value: 100 
-DEBUG - classpath: ['NXentry', 'NXinstrument']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/temporal_resolution
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXinstrument.nxdl.xml:/temporal_resolution):
 DEBUG - 
+             Temporal resolution of the experiment (FWHM)
+        
 DEBUG - ===== ATTRS (//entry/instrument/temporal_resolution@units)
 DEBUG - value: fs 
-DEBUG - classpath: ['NXentry', 'NXinstrument']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
+DEBUG - classes:
+NXinstrument.nxdl.xml:/temporal_resolution
+DEBUG - NXinstrument.nxdl.xml:/temporal_resolution@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/run_cycle): <HDF5 dataset "run_cycle": shape (), type "|O">
 DEBUG - value: b'2018 User Run Block 2' 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
@@ -1692,7 +1809,9 @@ DEBUG - classes:
 NXentry.nxdl.xml:/run_cycle
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/run_cycle):
-DEBUG - Such as "2007-3". Some user facilities organize their beam time into run cycles.
+DEBUG - 
+             Such as "2007-3". Some user facilities organize their beam time into run cycles.
+        
 DEBUG - ===== GROUP (//entry/sample [NXarpes::/NXentry/NXsample]): <HDF5 group "/entry/sample" (14 members)>
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - classes:
@@ -1706,12 +1825,12 @@ DEBUG - documentation (NXentry.nxdl.xml:/SAMPLE):
 DEBUG - 
 DEBUG - documentation (NXsample.nxdl.xml:):
 DEBUG - 
-		Any information on the sample. 
-		
-		This could include scanned variables that
-		are associated with one of the data dimensions, e.g. the magnetic field, or
-		logged data, e.g. monitored temperature vs elapsed time.
-	
+         Any information on the sample.
+         
+         This could include scanned variables that
+         are associated with one of the data dimensions, e.g. the magnetic field, or
+         logged data, e.g. monitored temperature vs elapsed time.
+    
 DEBUG - ===== ATTRS (//entry/sample@NX_class)
 DEBUG - value: NXsample 
 DEBUG - classpath: ['NXentry', 'NXsample']
@@ -1766,7 +1885,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/SAMPLE/name):
 DEBUG - Descriptive name of sample
 DEBUG - documentation (NXsample.nxdl.xml:/name):
-DEBUG - Descriptive name of sample
+DEBUG - 
+             Descriptive name of sample
+        
 DEBUG - ===== FIELD (//entry/sample/preparation_method): <HDF5 dataset "preparation_method": shape (), type "|O">
 DEBUG - value: b'in-vacuum cleave' 
 DEBUG - classpath: ['NXentry', 'NXsample']
@@ -1779,7 +1900,9 @@ DEBUG - classes:
 NXsample.nxdl.xml:/pressure
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/pressure):
-DEBUG - Applied pressure
+DEBUG - 
+             Applied pressure
+        
 DEBUG - ===== ATTRS (//entry/sample/pressure@units)
 DEBUG - value: mbar 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
@@ -1829,7 +1952,9 @@ DEBUG - classes:
 NXsample.nxdl.xml:/thickness
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsample.nxdl.xml:/thickness):
-DEBUG - sample thickness
+DEBUG - 
+             sample thickness
+        
 DEBUG - ===== ATTRS (//entry/sample/thickness@units)
 DEBUG - value: mm 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
@@ -1851,7 +1976,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/start_time):
 DEBUG - 
 DEBUG - documentation (NXentry.nxdl.xml:/start_time):
-DEBUG - Starting time of measurement
+DEBUG - 
+             Starting time of measurement
+        
 DEBUG - ===== FIELD (//entry/title): <HDF5 dataset "title": shape (), type "|O">
 DEBUG - value: b'Excited-state dynamics of WSe2 in the Valence Band and Core-Levels' 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
@@ -1862,7 +1989,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/title):
 DEBUG - 
 DEBUG - documentation (NXentry.nxdl.xml:/title):
-DEBUG - Extended title for entry
+DEBUG - 
+             Extended title for entry
+        
 DEBUG - ========================
 DEBUG - === Default Plotable ===
 DEBUG - ========================

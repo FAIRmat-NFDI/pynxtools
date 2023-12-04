@@ -45,7 +45,7 @@ from ifes_apt_tc_data_modeling.utils.utils \
 from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
 
-from pynxtools.dataconverter.readers.apm.utils.apm_ranging_io \
+from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging \
     import add_unknown_iontype
 
 

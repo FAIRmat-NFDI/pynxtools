@@ -19,12 +19,23 @@
 
 import xml.etree.ElementTree as ET
 import os
+import logging
 from setuptools import distutils
 import pytest
 import numpy as np
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
+
+
+def remove_optional_parent(data_dict: Template):
+    """Completely removes the optional group from the test Template."""
+    internal_dict = Template(data_dict)
+    del internal_dict["/ENTRY[my_entry]/optional_parent/required_child"]
+    del internal_dict["/ENTRY[my_entry]/optional_parent/optional_child"]
+    del internal_dict["/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"]
+
+    return internal_dict
 
 
 def alter_dict(data_dict: Template, key: str, value: object):
@@ -69,6 +80,29 @@ def listify_template(data_dict: Template):
     return listified_template
 
 
+@pytest.mark.parametrize("input_data, expected_output", [
+    ('2.4E-23', 2.4e-23),
+    ('28', 28),
+    ('45.98', 45.98),
+    ('test', 'test'),
+    (['59', '3.00005', '498E-36'], np.array([59.0, 3.00005, 4.98e-34])),
+    ('23 34 444 5000', np.array([23., 34., 444., 5000.])),
+    ('xrd experiment', 'xrd experiment'),
+    (None, None),
+])
+def test_transform_to_intended_dt(input_data, expected_output):
+    """Transform to possible numerical method."""
+    result = helpers.transform_to_intended_dt(input_data)
+
+    # Use pytest.approx for comparing floating-point numbers
+    if isinstance(expected_output, np.ndarray):
+        np.testing.assert_allclose(result, expected_output, rtol=1e-3)
+    elif isinstance(expected_output, float):
+        assert result == pytest.approx(expected_output, rel=1e-5)
+    else:
+        assert result == expected_output
+
+
 @pytest.fixture(name="nxdl_root")
 def fixture_nxdl_root():
     """pytest fixture to load the same NXDL file for all tests."""
@@ -101,31 +135,31 @@ def fixture_filled_test_data(template, tmp_path):
                                   tmp_path)
 
     template.clear()
-    template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
-    template["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"
-    template["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1
-    template["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1
-    template["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
-    template["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
-    template["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],
-                                                                                dtype=np.int8)
-    template["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
-    template["required"]["/ENTRY[my_entry]/definition"] = "NXtest"
-    template["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
-    template["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
-    template["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
-                                                                      ":14:12.05018+00:00")
-    template["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
-    template["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
-    template["undocumented"]["/ENTRY[my_entry]/does/not/exist"] = "random"
-    template["undocumented"]["/ENTRY[my_entry]/links/ext_link"] = {"link":
-                                                                   f"{tmp_path}/"
-                                                                   f"xarray_saved_small_cali"
-                                                                   f"bration.h5:/axes/ax3"
-                                                                   }
+    template["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
+    template["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"
+    template["/ENTRY[my_entry]/optional_parent/required_child"] = 1
+    template["/ENTRY[my_entry]/optional_parent/optional_child"] = 1
+    template["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
+    template["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
+    template["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
+    template["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],
+                                                                    dtype=np.int8)
+    template["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
+    template["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
+    template["/ENTRY[my_entry]/definition"] = "NXtest"
+    template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
+    template["/ENTRY[my_entry]/program_name"] = "Testing program"
+    template["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
+    template["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
+                                                          ":14:12.05018+00:00")
+    template["/ENTRY[my_entry]/required_group/description"] = "An example description"
+    template["/ENTRY[my_entry]/required_group2/description"] = "An example description"
+    template["/ENTRY[my_entry]/does/not/exist"] = "random"
+    template["/ENTRY[my_entry]/links/ext_link"] = {"link":
+                                                   f"{tmp_path}/"
+                                                   f"xarray_saved_small_cali"
+                                                   f"bration.h5:/axes/ax3"
+                                                   }
     yield template
 
 
@@ -148,7 +182,11 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint:
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
-# TEMPLATE["optional_parents"].append("/ENTRY[entry]/optional_parent")
+TEMPLATE["required"]["/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"] = 1
+TEMPLATE["lone_groups"] = ['/ENTRY[entry]/required_group',
+                           '/ENTRY[entry]/required_group2',
+                           '/ENTRY[entry]/optional_parent/req_group_in_opt_group']
+TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 
 
 @pytest.mark.parametrize("data_dict,error_message", [
@@ -241,13 +279,11 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An examp
         id="valid-data-dict"),
     pytest.param(
         remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-        ("The data entry corresponding to /ENTRY[entry]/required_group "
-         "is required and hasn't been supplied by the reader."),
+        "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
         id="missing-empty-yet-required-group"),
     pytest.param(
         remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-        ("The data entry corresponding to /ENTRY[entry]/required_group2 "
-         "is required and hasn't been supplied by the reader."),
+        "The required group, /ENTRY[entry]/required_group2, hasn't been supplied.",
         id="missing-empty-yet-required-group2"),
     pytest.param(
         alter_dict(
@@ -257,6 +293,21 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An examp
         ),
         (""),
         id="allow-required-and-empty-group"
+    ),
+    pytest.param(
+        remove_from_dict(TEMPLATE,
+                         "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]",
+                         "required"
+                         ),
+        ("The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't been "
+         "supplied while its optional parent, /ENTRY[entry]/optional_parent/"
+         "req_group_in_opt_group, is supplied."),
+        id="req-group-in-opt-parent-removed"
+    ),
+    pytest.param(
+        remove_optional_parent(TEMPLATE),
+        (""),
+        id="opt-group-completely-removed"
     ),
 ])
 def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
@@ -269,12 +320,12 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
                                     "no-child-provided-optional-parent",
                                     "int-instead-of-chars",
                                     "link-dict-instead-of-bool",
-                                    "allow-required-and-empty-group"):
+                                    "allow-required-and-empty-group",
+                                    "opt-group-completely-removed"):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     else:
         with pytest.raises(Exception) as execinfo:
             helpers.validate_data_dict(template, data_dict, nxdl_root)
-
         assert (error_message) == str(execinfo.value)
 
 
@@ -285,7 +336,7 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
         id="path-exists-in-dict"),
     pytest.param(
         "/RANDOM/does/not/@exist",
-        (False, ""),
+        (False, None),
         id="path-does-not-exist-in-dict")
 ])
 def test_path_in_data_dict(nxdl_path, expected, template):
@@ -304,3 +355,47 @@ def test_atom_type_extractor_and_hill_conversion():
     atom_list = helpers.extract_atom_types(test_chemical_formula)
 
     assert expected_atom_types == atom_list
+
+
+def test_writing_of_root_attributes(caplog):
+    """
+    Tests if all root attributes are populated
+    """
+    template = Template()
+    filename = "my_nexus_file.nxs"
+    with caplog.at_level(logging.WARNING):
+        helpers.add_default_root_attributes(template, filename)
+
+    assert "" == caplog.text
+
+    keys_added = template.keys()
+    assert "/@NX_class" in keys_added
+    assert template["/@NX_class"] == "NXroot"
+    assert "/@file_name" in keys_added
+    assert template["/@file_name"] == filename
+    assert "/@file_time" in keys_added
+    assert "/@file_update_time" in keys_added
+    assert "/@NeXus_repository" in keys_added
+    assert "/@NeXus_version" in keys_added
+    assert "/@HDF5_version" in keys_added
+    assert "/@h5py_version" in keys_added
+
+
+def test_warning_on_root_attribute_overwrite(caplog):
+    """
+    A warning is emitted when a root attribute is overwritten
+    by pynxtools.
+    """
+    template = Template()
+    template["/@NX_class"] = "NXwrong"
+    filname = "my_nexus_file.nxs"
+    with caplog.at_level(logging.WARNING):
+        helpers.add_default_root_attributes(template, filname)
+    error_text = (
+        "The NXroot entry '/@NX_class' (value: NXwrong) should not be populated by the reader. "
+        "This is overwritten by the actually used value 'NXroot'"
+    )
+    assert error_text in caplog.text
+
+    assert "/@NX_class" in template.keys()
+    assert template["/@NX_class"] == "NXroot"

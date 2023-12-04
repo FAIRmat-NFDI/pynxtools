@@ -52,7 +52,8 @@ class ExampleReader(BaseReader):
         for k in template.keys():
             # The entries in the template dict should correspond with what the dataconverter
             # outputs with --generate-template for a provided NXDL file
-            if k.startswith("/ENTRY[entry]/required_group"):
+            if k.startswith("/ENTRY[entry]/required_group") \
+               or k == "/ENTRY[entry]/optional_parent/req_group_in_opt_group":
                 continue
 
             field_name = k[k.rfind("/") + 1:]
@@ -60,6 +61,10 @@ class ExampleReader(BaseReader):
                 template[k] = data[field_name]
                 if f"{field_name}_units" in data.keys() and f"{k}/@units" in template.keys():
                     template[f"{k}/@units"] = data[f"{field_name}_units"]
+
+        template["required"]["/ENTRY[entry]/optional_parent/required_child"] = 1
+        template["optional"][("/ENTRY[entry]/optional_parent/"
+                              "req_group_in_opt_group/DATA[data]")] = [0, 1]
 
         # Add non template key
         template["/ENTRY[entry]/does/not/exist"] = "None"
