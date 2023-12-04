@@ -43,11 +43,9 @@ dependencies = [
     "lark>=1.1.5",
     "requests",
     "requests_cache",
-    "mergedeep"
+    "mergedeep",
+    "importlib-metadata",
 ]
-
-[options]
-install_requires = "importlib-metadata ; python_version < '3.10'"
 
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools"
