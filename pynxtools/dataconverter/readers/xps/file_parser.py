@@ -39,7 +39,8 @@ from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlMapperSpecs
 class XpsDataFileParser:
     """Class intended for receiving any type of XPS data file."""
 
-    __prmt_file_ext__ = ["sle", "slh", "txt", "vms", "xml", "xy"]
+    __prmt_file_ext__ = ["sle", "txt", "vms", "xml", "xy"]
+    __prmt_metadata_file_ext__ = ["slh"]
     __vendors__ = ["specs", "scienta", "kratos", "unkwown"]
     __prmt_vndr_cls: Dict[str, Dict] = {
         "sle": {"specs": SleMapperSpecs},

@@ -18,7 +18,6 @@ file into mpes nxdl (NeXus Definition Language) template.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import os
 from pathlib import Path
 from typing import Any, Dict, Set, List
 from typing import Tuple
@@ -347,9 +346,9 @@ class XPSReader(BaseReader):
         config_file: Path = reader_dir.joinpath("config/template.json")
 
         for file in file_paths:
-            file_ext = os.path.splitext(file)[1]
+            file_ext = file.rsplit(".")[-1]
 
-            if file_ext in [".yaml", ".yml"]:
+            if file_ext in ["yaml", "yml"]:
                 with open(file, mode="r", encoding="utf-8") as eln:
                     eln_data_dict = flatten_and_replace(
                         FlattenSettings(
@@ -373,14 +372,14 @@ class XPSReader(BaseReader):
                     xps_data_dict[key] = concatenate_values(value1, value2)
 
                 config_file = reader_dir.joinpath(f"config/{config_file}")
-            elif file_ext in [".slh"]:
+            elif file_ext in XpsDataFileParser.__prmt_metadata_file_ext__:
                 data_dict = XpsDataFileParser([file]).get_dict(**kwargs)
 
                 xps_data_dict = {**xps_data_dict, **data_dict}
 
             # This code is not very robust.
-            elif file_ext == ".json":
-                if "config_file" in file:
+            elif file_ext == "json":
+                if "config" in file:
                     config_file = Path(file)
 
         with open(config_file, encoding="utf-8", mode="r") as cfile:
