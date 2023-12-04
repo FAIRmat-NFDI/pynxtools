@@ -13,8 +13,9 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python_version: ["3.8", "3.9", "3.10"]
+        python_version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v3
@@ -31,14 +32,12 @@ jobs:
           python -m pip install coverage coveralls
       - name: Install package
         run: |
-          python -m pip install --no-deps .
-      - name: Install dev requirements
-        run: |
-          python -m pip install -r dev-requirements.txt
+          pip install ".[dev]"
       - name: Test with pytest
         run: |
           coverage run -m pytest -sv --show-capture=no tests
       - name: Submit to coveralls
+        continue-on-error: true
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

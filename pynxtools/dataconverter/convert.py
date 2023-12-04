@@ -22,7 +22,7 @@ import importlib.util
 import logging
 import os
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import xml.etree.ElementTree as ET
 
 import click
@@ -33,6 +33,11 @@ from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
+
+if sys.version_info >= (3, 10):
+    from importlib.metadata import entry_points
+else:
+    from importlib_metadata import entry_points
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
@@ -46,8 +51,18 @@ def get_reader(reader_name) -> BaseReader:
     path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     path = os.path.join(path_prefix, "readers", reader_name, "reader.py")
     spec = importlib.util.spec_from_file_location("reader.py", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    try:
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    except FileNotFoundError as exc:
+        # pylint: disable=unexpected-keyword-arg
+        importlib_module = entry_points(group='pynxtools.reader')
+        if (
+            importlib_module
+            and reader_name in map(lambda ep: ep.name, entry_points(group='pynxtools.reader'))
+        ):
+            return importlib_module[reader_name].load()
+        raise ValueError(f"The reader, {reader_name}, was not found.") from exc
     return module.READER  # type: ignore[attr-defined]
 
 
@@ -61,7 +76,101 @@ def get_names_of_all_readers() -> List[str]:
             index_of_readers_folder_name = file.rindex(f"readers{os.sep}") + len(f"readers{os.sep}")
             index_of_last_path_sep = file.rindex(os.sep)
             all_readers.append(file[index_of_readers_folder_name:index_of_last_path_sep])
-    return all_readers
+    plugins = list(map(lambda ep: ep.name, entry_points(group='pynxtools.reader')))
+    return all_readers + plugins
+
+
+def get_nxdl_root_and_path(nxdl: str):
+    """Get xml root element and file path from nxdl name e.g. NXapm.
+
+    Parameters
+    ----------
+    nxdl: str
+        Name of nxdl file e.g. NXapm from NXapm.nxdl.xml.
+
+    Returns
+    -------
+    ET.root
+        Root element of nxdl file.
+    str
+        Path of nxdl file.
+
+    Raises
+    ------
+    FileNotFoundError
+        Error if no file with the given nxdl name is found.
+    """
+    # Reading in the NXDL and generating a template
+    definitions_path = nexus.get_nexus_definitions_path()
+    if nxdl == "NXtest":
+        nxdl_f_path = os.path.join(
+            f"{os.path.abspath(os.path.dirname(__file__))}/../../",
+            "tests", "data", "dataconverter", "NXtest.nxdl.xml")
+    elif nxdl == "NXroot":
+        nxdl_f_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
+    else:
+        nxdl_f_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_f_path):
+            nxdl_f_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_f_path):
+            nxdl_f_path = os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml")
+        if not os.path.exists(nxdl_f_path):
+            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
+
+    return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
+
+
+def transfer_data_into_template(input_file,
+                                reader, nxdl_name,
+                                nxdl_root: Optional[ET.Element] = None,
+                                **kwargs):
+    """Transfer parse and merged data from input experimental file, config file and eln.
+
+    Experimental and eln files will be parsed and finally will be merged into template.
+    Before returning the template validate the template data.
+
+    Parameters
+    ----------
+    input_file : Union[tuple[str], str]
+        Tuple of files or file
+    reader: str
+        Name of reader such as xps
+    nxdl_name : str
+        Root name of nxdl file, e.g. NXmpes from NXmpes.nxdl.xml
+    nxdl_root : ET.element
+        Root element of nxdl file, otherwise provide nxdl_name
+
+    Returns
+    -------
+    Template
+        Template filled with data from raw file and eln file.
+
+    """
+    if nxdl_root is None:
+        nxdl_root, _ = get_nxdl_root_and_path(nxdl=nxdl_name)
+
+    template = Template()
+    helpers.generate_template_from_nxdl(nxdl_root, template)
+
+    if isinstance(input_file, str):
+        input_file = (input_file,)
+
+    bulletpoint = "\n\u2022 "
+    logger.info("Using %s reader to convert the given files: %s ",
+                reader,
+                bulletpoint.join((" ", *input_file)))
+
+    data_reader = get_reader(reader)
+    if not (nxdl_name in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
+        raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
+
+    data = data_reader().read(  # type: ignore[operator]
+        template=Template(template),
+        file_paths=input_file,
+        **kwargs
+    )
+    helpers.validate_data_dict(template, data, nxdl_root)
+    return data
 
 
 # pylint: disable=too-many-arguments,too-many-locals
@@ -73,51 +182,44 @@ def convert(input_file: Tuple[str, ...],
             fair: bool = False,
             undocumented: bool = False,
             **kwargs):
-    """The conversion routine that takes the input parameters and calls the necessary functions."""
-    # Reading in the NXDL and generating a template
-    definitions_path = nexus.get_nexus_definitions_path()
-    if nxdl == "NXtest":
-        nxdl_path = os.path.join(
-            f"{os.path.abspath(os.path.dirname(__file__))}/../../",
-            "tests", "data", "dataconverter", "NXtest.nxdl.xml")
-    elif nxdl == "NXroot":
-        nxdl_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
-    else:
-        nxdl_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")
-        if not os.path.exists(nxdl_path):
-            nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
-        if not os.path.exists(nxdl_path):
-            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
+    """The conversion routine that takes the input parameters and calls the necessary functions.
 
-    nxdl_root = ET.parse(nxdl_path).getroot()
+    Parameters
+    ----------
+    input_file : Tuple[str]
+        Tuple of files or file
+    reader: str
+        Name of reader such as xps
+    nxdl : str
+        Root name of nxdl file, e.g. NXmpes for NXmpes.nxdl.xml
+    output : str
+        Output file name.
+    generate_template : bool, default False
+        True if user wants template in logger info.
+    fair : bool, default False
+        If True, a warning is given that there are undocumented paths
+        in the template.
+    undocumented : bool, default False
+        If True, an undocumented warning is given.
 
-    if undocumented:
-        logger.setLevel(UNDOCUMENTED)
+    Returns
+    -------
+    None.
+    """
 
-    template = Template()
-    helpers.generate_template_from_nxdl(nxdl_root, template)
+    nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
+
     if generate_template:
+        template = Template()
+        helpers.generate_template_from_nxdl(nxdl_root, template)
         logger.info(template)
         return
 
-    # Setting up all the input data
-    if isinstance(input_file, str):
-        input_file = (input_file,)
-    bulletpoint = "\n\u2022 "
-    logger.info("Using %s reader to convert the given files: %s ",
-                reader,
-                bulletpoint.join((" ", *input_file)))
-
-    data_reader = get_reader(reader)
-    if not (nxdl in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
-        raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
-
-    data = data_reader().read(  # type: ignore[operator]
-        template=Template(template),
-        file_paths=input_file,
-        **kwargs,
-    )
-    helpers.validate_data_dict(template, data, nxdl_root)
+    data = transfer_data_into_template(input_file=input_file, reader=reader,
+                                       nxdl_name=nxdl, nxdl_root=nxdl_root,
+                                       **kwargs)
+    if undocumented:
+        logger.setLevel(UNDOCUMENTED)
     if fair and data.undocumented.keys():
         logger.warning("There are undocumented paths in the template. This is not acceptable!")
         return
@@ -131,7 +233,7 @@ def convert(input_file: Tuple[str, ...],
             path
         )
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
-    Writer(data=data, nxdl_path=nxdl_path, output_path=output).write()
+    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
     logger.info("The output file generated: %s", output)
 

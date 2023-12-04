@@ -11,7 +11,7 @@ It allows to develop ontologies and to create ontological instances based on the
 
 # Installation
 
-It is recommended to use python 3.8 with a dedicated virtual environment for this package.
+It is recommended to use python 3.10 with a dedicated virtual environment for this package.
 Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 

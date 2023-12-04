@@ -41,7 +41,7 @@ def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
 def _write_version_to_metadata():
     version = get_vcs_version()
     if version is None or not version:
-        raise ValueError("Could not determine version from nexus_definitions")
+        return
 
     with open(
         os.path.join(os.path.dirname(__file__), "nexus-version.txt"),
