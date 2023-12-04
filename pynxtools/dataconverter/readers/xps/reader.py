@@ -344,6 +344,7 @@ class XPSReader(BaseReader):
 
         xps_data_dict: Dict[str, Any] = {}
         eln_data_dict: Dict[str, Any] = {}
+        config_file: str = ""
 
         for file in file_paths:
             file_ext = os.path.splitext(file)[1]
