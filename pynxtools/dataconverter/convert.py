@@ -37,7 +37,14 @@ from pynxtools.nexus import nexus
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
 else:
-    from importlib_metadata import entry_points
+    try:
+        from importlib_metadata import entry_points
+    except ImportError:
+        # If importlib_metadata is not present
+        # we provide a dummy function just returning an empty list.
+        def entry_points(_):
+            """Dummy function for importlib_metadata"""
+            return []
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
@@ -59,7 +66,7 @@ def get_reader(reader_name) -> BaseReader:
         importlib_module = entry_points(group='pynxtools.reader')
         if (
             importlib_module
-            and reader_name in map(lambda ep: ep.name, entry_points(group='pynxtools.reader'))
+            and reader_name in map(lambda ep: ep.name, importlib_module)
         ):
             return importlib_module[reader_name].load()
         raise ValueError(f"The reader, {reader_name}, was not found.") from exc
