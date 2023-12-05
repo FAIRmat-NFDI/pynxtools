@@ -598,8 +598,8 @@ def add_default_root_attributes(data, filename, logger=pynx_logger):
     def update_and_warn(key: str, value: str):
         if key in data and data[key] != value:
             logger.warning(
-                f"The NXroot entry {key} (value: {data[key]}) should not be populated by "
-                f"the reader. This is overwritten by the actually used value {value}"
+                f"The NXroot entry '{key}' (value: {data[key]}) should not be populated by "
+                f"the reader. This is overwritten by the actually used value '{value}'"
             )
         data[key] = value
 
