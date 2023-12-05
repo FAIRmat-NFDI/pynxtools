@@ -43,7 +43,7 @@ else:
         # If importlib_metadata is not present
         # we provide a dummy function just returning an empty list.
         # pylint: disable=W0613
-        def entry_points(group, _):
+        def entry_points(group):
             """Dummy function for importlib_metadata"""
             return []
 
