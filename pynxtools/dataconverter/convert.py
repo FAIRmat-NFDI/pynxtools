@@ -154,8 +154,8 @@ def transfer_data_into_template(input_file,
         input_file = (input_file,)
 
     bulletpoint = "\n\u2022 "
-    logger.info("Using %s reader reader to convert the given files: %s ",
-                reader, bulletpoint.join((' ', *input_file)))
+    logger.info(f"Using {reader} reader reader to convert the given files:"
+                f" {bulletpoint.join((' ', *input_file))}")
 
     data_reader = get_reader(reader)
     if not (nxdl_name in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
@@ -170,7 +170,7 @@ def transfer_data_into_template(input_file,
     return data
 
 
-# pylint: disable=too-many-arguments,too-many-locals
+# pylint: disable=too-many-arguments,too-many-locals,W1203
 def convert(input_file: Tuple[str, ...],
             reader: str,
             nxdl: str,
@@ -226,14 +226,13 @@ def convert(input_file: Tuple[str, ...],
             if "/@default" in path:
                 continue
             logger.info(
-                "NO DOCUMENTATION: The path, %s, is being written but has no documentation.",
-                path)
+                f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation.")
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output),
                                         logger=logger)
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
-    logger.info("The output file generated: %s ", output)
+    logger.info(f"The output file generated: {output}.")
 
 
 def parse_params_file(params_file):
