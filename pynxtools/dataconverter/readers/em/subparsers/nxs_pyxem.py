@@ -89,7 +89,7 @@ def get_ipfdir_legend(ipf_key):
     return img
 
 
-class NxEmNxsHfiveSubParser:
+class NxEmNxsPyxemSubParser:
     """Map content from different type of *.h5 files on an instance of NXem."""
 
     def __init__(self, entry_id: int = 1, input_file_name: str = ""):

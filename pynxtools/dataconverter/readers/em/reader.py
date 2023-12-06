@@ -27,7 +27,7 @@ from pynxtools.dataconverter.readers.em.concepts.nexus_concepts import NxEmAppDe
 
 from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
 
-from pynxtools.dataconverter.readers.em.subparsers.nxs_hfive import NxEmNxsHfiveSubParser
+from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
 
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 
@@ -127,8 +127,8 @@ class EmReader(BaseReader):
 
         # add further with resolving cases
         # if file_path is an HDF5 will use hfive parser
-        sub_parser = "nxs_hfive"
-        subparser = NxEmNxsHfiveSubParser(entry_id, file_paths[0])
+        sub_parser = "nxs_pyxem"
+        subparser = NxEmNxsPyxemSubParser(entry_id, file_paths[0])
         subparser.parse(template)
         # exit(1)
 
