@@ -39,7 +39,7 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBase
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     EBSD_MAP_SPACEGROUP, read_strings_from_dataset, all_equal, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    ASSUME_PHASE_NAME_TO_SPACE_GROUP
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID
 
 
 class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
@@ -106,6 +106,12 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
         grp_name = f"{self.prfx}/EBSD/Header"
         if f"{grp_name}" not in fp:
             raise ValueError(f"Unable to parse {grp_name} !")
+
+        self.tmp[ckey]["dimensionality"] = 2  # TODO::QUBE can also yield 3D datasets
+        if read_strings_from_dataset(fp[f"{grp_name}/Grid Type"]) == "isometric":
+            self.tmp[ckey]["grid_type"] = SQUARE_GRID
+        else:
+            raise ValueError(f"Unable to parse {grp_name}/Grid Type !")
 
         req_fields = ["NCOLS", "NROWS", "XSTEP", "YSTEP"]
         for req_field in req_fields:
@@ -221,6 +227,9 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
         # there is X SAMPLE and Y SAMPLE but these are not defined somewhere instead
         # here adding x and y assuming that we scan first lines along positive x and then
         # moving downwards along +y
+        # TODO::calculation below x/y only valid if self.tmp[ckey]["grid_type"] == SQUARE_GRID
+        if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
+            print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
         self.tmp[ckey]["scan_point_x"] \
             = np.asarray(np.tile(np.linspace(0.,
                                              self.tmp[ckey]["n_x"] - 1.,

@@ -39,7 +39,7 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBase
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import EULER_SPACE_SYMMETRY, \
     read_strings_from_dataset, read_first_scalar, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    ASSUME_PHASE_NAME_TO_SPACE_GROUP
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID
 
 
 class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
@@ -110,17 +110,20 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
         if f"{grp_name}" not in fp:
             raise ValueError(f"Unable to parse {grp_name} !")
 
-        grid_type = None
         n_pts = 0
         req_fields = ["Grid Type", "Step X", "Step Y", "nColumns", "nRows"]
         for req_field in req_fields:
             if f"{grp_name}/{req_field}" not in fp:
                 raise ValueError(f"Unable to parse {grp_name}/{req_field} !")
 
+        self.tmp[ckey]["dimensionality"] = 2
         grid_type = read_strings_from_dataset(fp[f"{grp_name}/Grid Type"][()])
-        if grid_type not in ["HexGrid", "SqrGrid"]:
-            raise ValueError(f"Grid Type {grid_type} is currently not supported !")
-        self.tmp[ckey]["grid_type"] = grid_type
+        if grid_type == "HexGrid":
+            self.tmp[ckey]["grid_type"] = HEXAGONAL_GRID
+        elif grid_type == "SqrGrid":
+            self.tmp[ckey]["grid_type"] = SQUARE_GRID
+        else:
+            raise ValueError(f"Unable to parse {grp_name}/Grid Type !")
         self.tmp[ckey]["s_x"] = read_first_scalar(fp[f"{grp_name}/Step X"])
         self.tmp[ckey]["s_unit"] = "um"  # "µm"  # TODO::always micron?
         self.tmp[ckey]["n_x"] = read_first_scalar(fp[f"{grp_name}/nColumns"])
@@ -248,17 +251,17 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
         # as the step size has already been accounted for by the tech partner when writing!
         if self.version["schema_version"] in ["OIM Analysis 8.5.1002 x64 [07-17-20]"]:
             print(f"{self.version['schema_version']}, tech partner accounted for calibration")
+            if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
+                print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
             self.tmp[ckey]["scan_point_x"] \
                 = np.asarray(fp[f"{grp_name}/X Position"][:], np.float32)
             self.tmp[ckey]["scan_point_y"] \
                 = np.asarray(fp[f"{grp_name}/Y Position"][:], np.float32)
         else:
             print(f"{self.version['schema_version']}, parser has to do the calibration")
+            if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
+                print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
             self.tmp[ckey]["scan_point_x"] = np.asarray(
                     fp[f"{grp_name}/X Position"][:] * self.tmp[ckey]["s_x"], np.float32)
             self.tmp[ckey]["scan_point_y"] = np.asarray(
                     fp[f"{grp_name}/Y Position"][:] * self.tmp[ckey]["s_y"], np.float32)
-        print(f"xmin {np.min(self.tmp[ckey]['scan_point_x'])}," \
-              f"xmax {np.max(self.tmp[ckey]['scan_point_x'])}," \
-              f"ymin {np.min(self.tmp[ckey]['scan_point_y'])}," \
-              f"ymax {np.max(self.tmp[ckey]['scan_point_y'])}")

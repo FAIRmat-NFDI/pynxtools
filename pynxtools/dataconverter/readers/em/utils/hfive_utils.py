@@ -101,3 +101,8 @@ def read_first_scalar(obj):
 def all_equal(iterable):
     g = groupby(iterable)
     return next(g, True) and not next(g, False)
+
+
+# for dim in ["x", "y"]:
+#     print(f"{dim}min {np.min(self.tmp[ckey][f'scan_point_{dim}'])}")
+#    print(f"{dim}max {np.max(self.tmp[ckey][f'scan_point_{dim}'])}")

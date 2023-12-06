@@ -38,6 +38,8 @@ import matplotlib.pyplot as plt
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     read_strings_from_dataset, format_euler_parameterization
+from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
+    HEXAGONAL_GRID, SQUARE_GRID
 
 
 class HdfFiveOxfordReader(HdfFiveBaseParser):
@@ -117,6 +119,10 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         grp_name = f"{self.prfx}/EBSD/Header"
         if f"{grp_name}" not in fp:
             raise ValueError(f"Unable to parse {grp_name} !")
+
+        # TODO::check if Oxford always uses SquareGrid like assumed here
+        self.tmp[ckey]["dimensionality"] = 2
+        self.tmp[ckey]["grid_type"] = SQUARE_GRID
 
         req_fields = ["X Cells", "Y Cells", "X Step", "Y Step"]
         for req_field in req_fields:
@@ -231,6 +237,8 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         # expected is order on x is first all possible x values while y == 0
         # followed by as many copies of this linear sequence for each y increment
         # no action needed Oxford reports already the pixel coordinate multiplied by step
+        if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
+            print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
         # X, no, H5T_NATIVE_FLOAT, (size, 1), X position of each pixel in micrometers (origin: top left corner)
         self.tmp[ckey]["scan_point_x"] = np.asarray(fp[f"{grp_name}/X"], np.float32)
         # inconsistency f32 in file although specification states float

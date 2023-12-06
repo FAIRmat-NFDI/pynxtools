@@ -37,7 +37,9 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBase
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     read_strings_from_dataset
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    ASSUME_PHASE_NAME_TO_SPACE_GROUP
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID
+from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
+    get_scan_point_coords
 
 
 class HdfFiveEdaxApexReader(HdfFiveBaseParser):
@@ -106,7 +108,6 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         if f"{self.prfx}/EBSD/ANG/DATA/DATA" not in fp:
             raise ValueError(f"Unable to parse {self.prfx}/EBSD/ANG/DATA/DATA !")
 
-        grid_type = None
         # for a regular tiling of R^2 with perfect hexagons
         n_pts = 0
         # their vertical center of mass distance is smaller than the horizontal
@@ -118,10 +119,14 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             if f"{self.prfx}/Sample/{req_field}" not in fp:
                 raise ValueError(f"Unable to parse {self.prfx}/Sample/{req_field} !")
 
+        self.tmp[ckey]["dimensionality"] = 2
         grid_type = read_strings_from_dataset(fp[f"{self.prfx}/Sample/Grid Type"][()])
-        if grid_type not in ["HexGrid", "SqrGrid"]:
-            raise ValueError(f"Grid Type {grid_type} is currently not supported !")
-        self.tmp[ckey]["grid_type"] = grid_type
+        if grid_type == "HexGrid":
+            self.tmp[ckey]["grid_type"] = HEXAGONAL_GRID
+        elif grid_type == "SqrGrid":
+            self.tmp[ckey]["grid_type"] = SQUARE_GRID
+        else:
+            raise ValueError(f"Unable to parse {self.prfx}/Sample/Grid Type !")
         self.tmp[ckey]["s_x"] = fp[f"{self.prfx}/Sample/Step X"][0]
         self.tmp[ckey]["s_unit"] = "um"  # "µm"  # TODO::always micron?
         self.tmp[ckey]["n_x"] = fp[f"{self.prfx}/Sample/Number Of Columns"][0]
@@ -226,12 +231,40 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # TODO::currently assuming s_x and s_y are already the correct center of mass
         # distances for hexagonal or square tiling of R^2
         # self.tmp[ckey]["grid_type"] in ["HexGrid", "SqrGrid"]:
-        self.tmp[ckey]["scan_point_x"] = np.asarray(
-            np.linspace(0, self.tmp[ckey]["n_x"] - 1,
-                        num=self.tmp[ckey]["n_x"],
-                        endpoint=True) * self.tmp[ckey]["s_x"], np.float32)
-
-        self.tmp[ckey]["scan_point_y"] = np.asarray(
-            np.linspace(0, self.tmp[ckey]["n_y"] - 1,
-                        num=self.tmp[ckey]["n_y"],
-                        endpoint=True) * self.tmp[ckey]["s_y"], np.float32)
+        # if just SQUARE_GRID there is no point to explicitly compute the scan_point
+        # coordinates here (for every subparser) especially not when the respective
+        # quantity from the tech partner is just a pixel index i.e. zeroth, first px ...
+        # however, ideally the tech partners would use the scan_point fields to report
+        # calibrated absolute scan point positions in the local reference frame of the
+        # sample surface in which case these could indeed not just scaled positions
+        # having the correct x and y spacing but eventually even the absolute coordinate
+        # where the scan was performed on the sample surface whereby one could conclude
+        # more precisely where the scanned area was located, in practice though this precision
+        # is usually not needed because scientists assume that the ROI is representative for
+        # the material which they typically never scan (time, interest, costs, instrument
+        # availability) completely!
+        if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
+            print(f"WARNING: {self.tmp[ckey]['grid_type']}: check carefully the " \
+                  f"correct interpretation of scan_point coords!")
+        # the case of EDAX APEX shows the key problem with implicit assumptions
+        # edaxh5 file not necessarily store the scan_point_{dim} positions
+        # therefore the following code is deprecated as the axes coordinates anyway
+        # have to be recomputed based on whether results are rediscretized on a coarser
+        # grid or not !
+        # mind also that the code below anyway would give only the NeXus dim axis but
+        # not the array of pairs of x, y coordinates for each scan point
+        # TODO::also keep in mind that the order in which the scan points are stored
+        # i.e. which index on self.tmp[ckey]["euler"] belongs to which scan point
+        # depends not only on the scan grid but also the flight plan i.e. how the grid
+        # gets visited
+        # only because of the fact that in most cases people seem to accept that
+        # scanning snake like first a line along +x and then +y meandering over the
+        # scan area from the top left corner to the bottom right corner is JUST an
+        # assumption for a random or dynamically adaptive scan strategy the scan positions
+        # have to be reported anyway, TODO::tech partners should be convinced to export
+        # scaled and calibrated scan positions as they are not necessarily redundant information
+        # that can be stripped to improve performance of their commercial product, I mean
+        # we talk typically <5k pattern per second demanding to store 5k * 2 * 8B, indeed
+        # this is the non-harmonized content one is facing in the field of EBSD despite
+        # almost two decades of commercialization of the technique now
+        get_scan_point_coords(self.tmp[ckey])

@@ -38,7 +38,7 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBase
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     EBSD_MAP_SPACEGROUP, read_strings_from_dataset, all_equal, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    ASSUME_PHASE_NAME_TO_SPACE_GROUP
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID
 
 
 class HdfFiveCommunityReader(HdfFiveBaseParser):
@@ -107,6 +107,12 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
         grp_name = f"{self.prfx}/EBSD/Header"
         if f"{grp_name}" not in fp:
             raise ValueError(f"Unable to parse {grp_name} !")
+
+        self.tmp[ckey]["dimensionality"] = 2
+        if read_strings_from_dataset(fp[f"{grp_name}/Grid Type"][()]) == "isometric":
+            self.tmp[ckey]["grid_type"] = SQUARE_GRID
+        else:
+            raise ValueError(f"Unable to parse {grp_name}/Grid Type !")
 
         req_fields = ["NCOLS", "NROWS", "XSTEP", "YSTEP"]
         for req_field in req_fields:
@@ -223,7 +229,10 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
         # X and Y
         # there exist X SAMPLE and Y SAMPLE which give indeed calibrated coordinates
         # relative to the sample coordinate system, ignore this for now an
-        # and TOD::just calibrate on image dimension
+        # and TODO::just calibrate on image dimension
+        # TODO::calculation below x/y only valid if self.tmp[ckey]["grid_type"] == SQUARE_GRID
+        if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
+            print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
         self.tmp[ckey]["scan_point_x"] \
             = np.asarray(np.tile(np.linspace(0.,
                                              self.tmp[ckey]["n_x"] - 1.,
@@ -236,17 +245,7 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
                                                num=self.tmp[ckey]["n_y"],
                                                endpoint=True) * self.tmp[ckey]["s_y"],
                                                self.tmp[ckey]["n_x"]), np.float32)
-
-        # if np.shape(fp[f"{grp_name}/X SAMPLE"][:])[0] == n_pts:
-        #     self.tmp[ckey]["scan_point_x"] \
-        #         = np.asarray(fp[f"{grp_name}/X SAMPLE"][:], np.float32)
-        # else:
-        #     raise ValueError(f"{grp_name}/X SAMPLE has unexpected shape !")
-        # if np.shape(fp[f"{grp_name}/Y SAMPLE"][:])[0] == n_pts:
-        #     self.tmp[ckey]["scan_point_y"] \
-        #         = np.asarray(fp[f"{grp_name}/Y SAMPLE"], np.float32)
-        # else:
-        #     raise ValueError(f"{grp_name}/Y SAMPLE has unexpected shape !")
+        # X SAMPLE and Y SAMPLE seem to be something different!
 
         # Band Contrast is not stored in Bruker but Radon Quality or MAD
         # but this is s.th. different as it is the mean angular deviation between

@@ -28,6 +28,9 @@
 # is recoverable when there is no common agreement about the phases used and their
 # exact atomic configuration
 
+HEXAGONAL_GRID = "hexagonal_grid"
+SQUARE_GRID = "square_grid"
+
 
 FreeTextToUniquePhase = {"Actinolite": "Actinolite",
                          "al": "Al",

@@ -48,7 +48,6 @@ from orix.crystal_map import create_coordinate_arrays, CrystalMap, PhaseList
 from orix.quaternion import Rotation
 from orix.quaternion.symmetry import get_point_group
 from orix.vector import Vector3d
-from scipy.spatial import KDTree
 
 import matplotlib.pyplot as plt
 
@@ -58,12 +57,15 @@ from pynxtools.dataconverter.readers.em.utils.hfive_web_constants \
 from pynxtools.dataconverter.readers.em.utils.hfive_web_utils \
     import hfive_web_decorate_nxdata
 from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
+from pynxtools.dataconverter.readers.em.utils.get_sqr_grid import \
+    get_scan_points_with_mark_data_discretized_on_sqr_grid
+from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
+    get_scan_point_axis_values, get_scan_point_coords
 
 PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
 PROJECTION_DIRECTIONS = [("X", Vector3d.xvector().data.flatten()),
                          ("Y", Vector3d.yvector().data.flatten()),
                          ("Z", Vector3d.zvector().data.flatten())]
-
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_bruker import HdfFiveBrukerEspritReader
@@ -114,17 +116,33 @@ class NxEmNxsPyxemSubParser:
         # copying over all data and content within tech partner files into NeXus makes
         # not much sense as the data exists and we would like to motivate that
         # tech partners and community members write NeXus content directly
-        # therefore currently in this example we carry over the EBSD map and some
-        # metadata to motivate that there is indeed value wrt to interoperability
-        # when such data are harmonized exactly this is the point we would like to
-        # make with this example for NeXus and NOMAD OASIS within the FAIRmat project
+        # therefore, in this example we carry over the EBSD map and some metadata
+        # to motivate that there is indeed value wrt to interoperability when such data
+        # are harmonized upon injection in the RDMS - exactly this is the point
+        # we would like to make with this comprehensive example of data harmonization
+        # within the field of EBSD as one method in the field of electron diffraction
+        # we use NeXus, NOMAD OASIS within the FAIRmat project
         # it is practically beyond our resources to implement a mapping for all cases
-        # and corner cases of the vendor files
+        # and corner cases of vendor files
         # ideally concept mapping would be applied to just point to pieces of information
-        # in the HDF5 file that is written by the tech partners however because of the
-        # fact that currently these pieces of information are formatted very differently
-        # it is non-trivial to establish this mapping and only because of this we
-        # map over manually
+        # in (HDF5) files based on which semantically understood pieces of information
+        # are then interpreted and injected into the RDMS
+        # currently the fact that the documentation by tech partners is incomplete
+        # and the fact that conceptually similar or even the same concepts as instances
+        # with their pieces of information are formatted very differently, it is
+        # non-trivial to establish this mapping and only because of this we
+        # map over using hardcoding of concept names and symbols
+
+        # a collection of different tech-partner-specific subparser follows
+        # these subparsers already extract specific information and perform a first
+        # step of harmonization. The subparsers specifically store e.g. EBSD maps in a
+        # tmp dictionary, which is
+        # TODO: scan point positions (irrespective on which grid type (sqr, hex) these
+        # were probed, in some cases the grid may have a two large extent along a dim
+        # so that a sub-sampling is performed, here only for the purpose of using
+        # h5web to show the IPF color maps but deal with the fact that h5web has so far
+        # not been designed to deal with images as large as several thousand pixels along
+        # either dimension
         if hfive_parser_type == "oxford":
             oina = HdfFiveOxfordReader(self.file_path)
             oina.parse_and_normalize()
@@ -199,6 +217,8 @@ class NxEmNxsPyxemSubParser:
         return template
 
     def get_named_axis(self, inp: dict, dim_name: str):
+        """"Return scaled but not offset-calibrated scan point coordinates along dim."""
+        # TODO::remove!
         return np.asarray(np.linspace(0,
                                       inp[f"n_{dim_name}"] - 1,
                                       num=inp[f"n_{dim_name}"],
@@ -217,38 +237,47 @@ class NxEmNxsPyxemSubParser:
                                         roi_id: str,
                                         template: dict) -> dict:
         print("Parse ROI default plot...")
+        # tech partner specific subparsers have just extracted the per scan point information
+        # in the sequence they were (which is often how they were scanned)
+        # however that can be a square, a hexagonal or some random grid
+        # a consuming visualization tool (like h5web) may however not be able to
+        # represent the data as point cloud but only visualizes a grid of square pixels
+        # therefore in general the scan_point_x and scan_point_y arrays and their associated
+        # data arrays such as euler should always be interpolated on a specific grid
+        # Here, the square_grid supported by h5web with a specific maximum extent
+        # which may represent a downsampled representation of the actual ROI
+        # only in the case that indeed the grid is a square grid this interpolation is
+        # obsolete but also only when the grid does not exceed the technical limitation
+        # of here h5web
+        # TODO::implement rediscretization using a kdtree take n_x, n_y, and n_z as guides
+
+        trg_grid \
+            = get_scan_points_with_mark_data_discretized_on_sqr_grid(inp,
+                                                                     HFIVE_WEB_MAXIMUM_ROI)
+
         contrast_modes = [(None, "n/a"),
                           ("bc", "normalized_band_contrast"),
                           ("ci", "normalized_confidence_index"),
                           ("mad", "normalized_mean_angular_deviation")]
         contrast_mode = None
         for mode in contrast_modes:
-            if mode[0] in inp.keys() and contrast_mode is None:
+            if mode[0] in trg_grid.keys() and contrast_mode is None:
                 contrast_mode = mode
                 break
         if contrast_mode is None:
             print(f"{__name__} unable to generate plot for entry{self.entry_id}, roi{roi_id} !")
             return template
 
-        is_threed = False
-        if "n_z" in inp.keys():
-            is_threed = True
-            if np.max((inp["n_x"], inp["n_y"], inp["n_z"])) > HFIVE_WEB_MAXIMUM_ROI:
-                raise ValueError(f"Plotting 3D roi_overviews larger than " \
-                                 f"{HFIVE_WEB_MAXIMUM_ROI} is not supported !")
-        else:
-            if np.max((inp["n_x"], inp["n_y"])) > HFIVE_WEB_MAXIMUM_ROI:
-                raise ValueError(f"Plotting 2D roi_overviews larger than " \
-                                 f"{HFIVE_WEB_MAXIMUM_ROI} is not supported !")
-
-        template[f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/@NX_class"] = "NXroi"  # TODO::writer should decorate automatically!
-        template[f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/@NX_class"] = "NXprocess"  # TODO::writer should decorate automatically!
+        template[f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/@NX_class"] = "NXroi"
+        # TODO::writer should decorate automatically!
+        template[f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/@NX_class"] = "NXprocess"
+        # TODO::writer should decorate automatically!
         trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing/DATA[roi]"
         template[f"{trg}/title"] = f"Region-of-interest overview image"
         template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
         template[f"{trg}/@signal"] = "data"
         dims = ["x", "y"]
-        if is_threed is True:
+        if trg_grid["dimensionality"] == 3:
             dims.append("z")
         idx = 0
         for dim in dims:
@@ -258,22 +287,22 @@ class NxEmNxsPyxemSubParser:
         for dim in dims[::-1]:
             template[f"{trg}/@axes"].append(f"axis_{dim}")
 
-        if is_threed is True:
-            template[f"{trg}/data"] = {"compress": np.squeeze(np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]], axis=None) * 255.), np.uint32), np.uint8), axis=3), "strength": 1}
+        if trg_grid["dimensionality"] == 3:
+            template[f"{trg}/data"] = {"compress": np.squeeze(np.asarray(np.asarray((trg_grid[contrast_mode[0]] / np.max(trg_grid[contrast_mode[0]], axis=None) * 255.), np.uint32), np.uint8), axis=3), "strength": 1}
         else:
-            template[f"{trg}/data"] = {"compress": np.reshape(np.asarray(np.asarray((inp[contrast_mode[0]] / np.max(inp[contrast_mode[0]]) * 255.), np.uint32), np.uint8), (inp["n_y"], inp["n_x"]), order="C"), "strength": 1}
+            template[f"{trg}/data"] = {"compress": np.reshape(np.asarray(np.asarray((trg_grid[contrast_mode[0]] / np.max(trg_grid[contrast_mode[0]]) * 255.), np.uint32), np.uint8), (trg_grid["n_y"], trg_grid["n_x"]), order="C"), "strength": 1}
         template[f"{trg}/descriptor"] = contrast_mode[1]
 
         # 0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
         template[f"{trg}/data/@long_name"] = f"Signal"
         hfive_web_decorate_nxdata(f"{trg}/data", template)
 
-        scan_unit = inp["s_unit"]
+        scan_unit = trg_grid["s_unit"]
         if scan_unit == "um":
             scan_unit = "µm"
         for dim in dims:
             template[f"{trg}/AXISNAME[axis_{dim}]"] \
-                = {"compress": self.get_named_axis(inp, dim), "strength": 1}
+                = {"compress": self.get_named_axis(trg_grid, dim), "strength": 1}
             template[f"{trg}/AXISNAME[axis_{dim}]/@long_name"] \
                 = f"Coordinate along {dim}-axis ({scan_unit})"
             template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
@@ -287,7 +316,7 @@ class NxEmNxsPyxemSubParser:
                     if "n_z" not in inp[ckey].keys():
                         self.prepare_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
                         self.process_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
-                        # self.onthefly_process_roi_ipfs_phases_threed(inp[ckey], roi_id, template)
+                        # self.onthefly_process_roi_ipfs_phases_two(inp[ckey], roi_id, template)
                     else:
                         self.onthefly_process_roi_ipfs_phases_threed(inp[ckey], roi_id, template)
         return template
@@ -612,7 +641,7 @@ class NxEmNxsPyxemSubParser:
         # TODO: I have not seen any dataset yet where is limit is exhausted, the largest
         # dataset is a 3D SEM/FIB study from a UK project this is likely because to
         # get an EBSD map as large one already scans quite long for one section as making
-        # a ompromise is required and thus such hypothetical large serial-sectioning
+        # a compromise is required and thus such hypothetical large serial-sectioning
         # studies would block the microscope for a very long time
         # however I have seen examples from Hadi Pirgazi with L. Kestens from Leuven
         # where indeed large but thin 3d slabs were characterized
