@@ -105,7 +105,7 @@ def test_has_correct_read_func(reader):
 
 
 @pytest.mark.parametrize("reader_name,nxdl,undocumented_keys", [
-    ('mpes', 'NXmpes', ['/@default'])
+    ('mpes', 'NXmpes', [])
 ])
 def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
     """

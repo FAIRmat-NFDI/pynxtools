@@ -58,9 +58,6 @@ colnames:
 - Delta
 - err.Psi
 - err.Delta
-definition: NXellipsometry
-definition/@url: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/fairmat/contributed_definitions/NXellipsometry.nxdl.xml
-definition/@version: 0.0.2
 derived_parameter_type: depolarization
 experiment_description: RC2 scan on 2nm SiO2 on Si in air
 experiment_identifier: exp-ID

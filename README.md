@@ -11,7 +11,7 @@ It allows to develop ontologies and to create ontological instances based on the
 
 # Installation
 
-It is recommended to use python 3.8 with a dedicated virtual environment for this package.
+It is recommended to use python 3.10 with a dedicated virtual environment for this package.
 Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
@@ -40,7 +40,6 @@ data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**nyaml2nxdl**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
 - [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
 - [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
 

@@ -19,14 +19,15 @@
 import os
 from typing import Tuple, Any
 import math
+from importlib.metadata import version
 import yaml
 import pandas as pd
 import numpy as np
-# import h5py
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
 from pynxtools.dataconverter.helpers import extract_atom_types
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
+from pynxtools import get_nexus_version, get_nexus_version_hash
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
@@ -465,6 +466,16 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
         for index in range(1, len(data_list)):
             template["/ENTRY[entry]/plot/@auxiliary_signals"] += data_list[index]
+
+        template["/ENTRY[entry]/definition"] = "NXellipsometry"
+        template["/ENTRY[entry]/definition/@url"] = (
+            "https://github.com/FAIRmat-NFDI/nexus_definitions/"
+            f"blob/{get_nexus_version_hash()}/contributed_definitions/NXellipsometry.nxdl.xml"
+        )
+        template["/ENTRY[entry]/definition/@version"] = get_nexus_version()
+        template["/ENTRY[entry]/program_name"] = "pynxtools"
+        template["/ENTRY[entry]/program_name/@version"] = version("pynxtools")
+        template["/ENTRY[entry]/program_name/@url"] = "https://github.com/FAIRmat-NFDI/pynxtools"
 
         return template
 

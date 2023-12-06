@@ -21,6 +21,7 @@ import json
 import pickle
 import numpy as np
 import xarray
+from mergedeep import merge
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
@@ -57,9 +58,26 @@ def get_val_nested_keystring_from_dict(keystring, data):
     return data[current_key]
 
 
+def get_attrib_nested_keystring_from_dict(keystring, data):
+    """
+    Fetches all attributes from the data dict using path strings without a leading '/':
+        'path/to/data/in/dict'
+    """
+    if isinstance(keystring, (list, dict)):
+        return keystring
+
+    key_splits = keystring.split("/")
+    parents = key_splits[:-1]
+    target = key_splits[-1]
+    for key in parents:
+        data = data[key]
+
+    return data[target + "@"] if target + "@" in data.keys() else None
+
+
 def is_path(keystring):
     """Checks whether a given value in the mapping is a mapping path or just data"""
-    return isinstance(keystring, str) and keystring[0] == "/"
+    return isinstance(keystring, str) and len(keystring) > 0 and keystring[0] == "/"
 
 
 def fill_undocumented(mapping, template, data):
@@ -68,6 +86,7 @@ def fill_undocumented(mapping, template, data):
         if is_path(value):
             template["undocumented"][path] = get_val_nested_keystring_from_dict(value[1:],
                                                                                 data)
+            fill_attributes(path, value[1:], data, template)
         else:
             template["undocumented"][path] = value
 
@@ -81,6 +100,7 @@ def fill_documented(template, mapping, template_provided, data):
                 if is_path(map_str):
                     template[path] = get_val_nested_keystring_from_dict(map_str[1:],
                                                                         data)
+                    fill_attributes(path, map_str[1:], data, template)
                 else:
                     template[path] = map_str
 
@@ -89,12 +109,39 @@ def fill_documented(template, mapping, template_provided, data):
                 pass
 
 
+def fill_attributes(path, map_str, data, template):
+    """Fills in the template all attributes found in the data object"""
+    attribs = get_attrib_nested_keystring_from_dict(map_str, data)
+    if attribs:
+        for key, value in attribs.items():
+            template[path + "/@" + key] = value
+
+
 def convert_shapes_to_slice_objects(mapping):
     """Converts shape slice strings to slice objects for indexing"""
     for key in mapping:
         if isinstance(mapping[key], dict):
             if "shape" in mapping[key]:
                 mapping[key]["shape"] = parse_slice(mapping[key]["shape"])
+
+
+def get_map_from_partials(partials, template, data):
+    """Takes a list of partials and returns a mapping dictionary to fill partials in our template"""
+    mapping: dict = {}
+    for partial in partials:
+        path = ""
+        template_path = ""
+        for part in partial.split("/")[1:]:
+            path = path + "/" + part
+            attribs = get_attrib_nested_keystring_from_dict(path[1:], data)
+            if template_path + "/" + part in template.keys():
+                template_path = template_path + "/" + part
+            else:
+                nx_name = f"{attribs['NX_class'][2:].upper()}[{part}]" if attribs and "NX_class" in attribs else part  # pylint: disable=line-too-long
+                template_path = template_path + "/" + nx_name
+        mapping[template_path] = path
+
+    return mapping
 
 
 class JsonMapReader(BaseReader):
@@ -118,10 +165,10 @@ class JsonMapReader(BaseReader):
         The mapping is only accepted as file.mapping.json to the inputs.
         """
         data: dict = {}
-        mapping: dict = {}
+        mapping: dict = None
+        partials: list = []
 
-        if objects:
-            data = objects[0]
+        data = objects[0] if objects else data
 
         for file_path in file_paths:
             file_extension = file_path[file_path.rindex("."):]
@@ -142,17 +189,22 @@ class JsonMapReader(BaseReader):
                 if is_hdf5:
                     hdf = hdfdict.load(file_path)
                     hdf.unlazy()
-                    data = dict(hdf)
+                    merge(data, dict(hdf))
+                    if "entry@" in data and "partial" in data["entry@"]:
+                        partials.extend(data["entry@"]["partial"])
 
         if mapping is None:
-            template = Template({x: "/hierarchical/path/in/your/datafile" for x in template})
-            raise IOError("Please supply a JSON mapping file: --input-file"
-                          " my_nxdl_map.mapping.json\n\n You can use this "
-                          "template for the required fields: \n" + str(template))
-
-        convert_shapes_to_slice_objects(mapping)
+            if len(partials) > 0:
+                mapping = get_map_from_partials(partials, template, data)
+            else:
+                template = Template({x: "/hierarchical/path/in/your/datafile" for x in template})
+                raise IOError("Please supply a JSON mapping file: --input-file"
+                              " my_nxdl_map.mapping.json\n\n You can use this "
+                              "template for the required fields: \n" + str(template))
 
         new_template = Template()
+        convert_shapes_to_slice_objects(mapping)
+
         fill_documented(new_template, mapping, template, data)
 
         fill_undocumented(mapping, new_template, data)

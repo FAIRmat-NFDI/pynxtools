@@ -79,9 +79,6 @@ def test_nexus(tmp_path):
     # # didn't work with filecmp library
     # log = os.path.join(local_dir, '../data/nexus_test_data/nexus_test.log')
     # ref = os.path.join(local_dir, '../data/nexus_test_data/Ref_nexus_test.log')
-    # print(filecmp.cmp(log, ref, shallow=False))
-
-    # print('Testing of nexus.py is SUCCESSFUL.')
 
 
 def test_get_node_at_nxdl_path():
@@ -102,7 +99,7 @@ def test_get_node_at_nxdl_path():
 
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../pynxtools/definitions/contributed_definitions/NXem.nxdl.xml"
+        "../data/nexus/NXtest2.nxdl.xml"
     )
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path(
