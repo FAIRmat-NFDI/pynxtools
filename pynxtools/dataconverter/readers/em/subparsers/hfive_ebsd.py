@@ -17,28 +17,16 @@
 #
 """(Sub-)parser mapping concepts and content from community *.h5/*.h5ebsd files on NXem."""
 
-import os
-from typing import Dict, Any, List
 import numpy as np
 import h5py
-# import imageio.v3 as iio
-from PIL import Image as pil
-
-import diffsims
-import orix
+from typing import Dict
 from diffpy.structure import Lattice, Structure
-from orix import plot
-from orix.crystal_map import create_coordinate_arrays, CrystalMap, PhaseList
-from orix.quaternion import Rotation
-from orix.vector import Vector3d
-
-import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     EBSD_MAP_SPACEGROUP, read_strings_from_dataset, all_equal, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID, REGULAR_TILING, FLIGHT_PLAN
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP, SQUARE_GRID, REGULAR_TILING, FLIGHT_PLAN  # HEXAGONAL_GRID
 from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
     get_scan_point_coords
 
@@ -49,8 +37,8 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
         super().__init__(file_path)
         self.prfx = None
         self.tmp = {}
-        self.supported_version = {}
-        self.version = {}
+        self.supported_version: Dict = {}
+        self.version: Dict = {}
         self.init_support()
         self.supported = False
         self.check_if_supported()

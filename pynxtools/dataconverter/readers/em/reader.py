@@ -25,33 +25,27 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 from pynxtools.dataconverter.readers.em.concepts.nexus_concepts import NxEmAppDef
 
-from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
+# from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
 
 from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
 
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 
-from pynxtools.dataconverter.readers.em.geometry.convention_mapper \
-    import NxEmConventionMapper
+# from pynxtools.dataconverter.readers.em.geometry.convention_mapper import NxEmConventionMapper
 
-"""
-from pynxtools.dataconverter.readers.em_om.utils.generic_eln_io \
-    import NxEmOmGenericElnSchemaParser
-
-from pynxtools.dataconverter.readers.em_om.utils.orix_ebsd_parser \
-    import NxEmOmOrixEbsdParser
-
-from pynxtools.dataconverter.readers.em_om.utils.mtex_ebsd_parser \
-    import NxEmOmMtexEbsdParser
-
-from pynxtools.dataconverter.readers.em_om.utils.zip_ebsd_parser \
-    import NxEmOmZipEbsdParser
-
-from pynxtools.dataconverter.readers.em_om.utils.dream3d_ebsd_parser \
-    import NxEmOmDreamThreedEbsdParser
-
-from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots \
-    import em_om_default_plot_generator"""
+# remaining subparsers to be implemented and merged into this one
+# from pynxtools.dataconverter.readers.em_om.utils.generic_eln_io \
+#     import NxEmOmGenericElnSchemaParser
+# from pynxtools.dataconverter.readers.em_om.utils.orix_ebsd_parser \
+#     import NxEmOmOrixEbsdParser
+# from pynxtools.dataconverter.readers.em_om.utils.mtex_ebsd_parser \
+#     import NxEmOmMtexEbsdParser
+# from pynxtools.dataconverter.readers.em_om.utils.zip_ebsd_parser \
+#     import NxEmOmZipEbsdParser
+# from pynxtools.dataconverter.readers.em_om.utils.dream3d_ebsd_parser \
+#     import NxEmOmDreamThreedEbsdParser
+# from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots \
+#     import em_om_default_plot_generator
 
 
 class EmReader(BaseReader):
@@ -127,7 +121,7 @@ class EmReader(BaseReader):
 
         # add further with resolving cases
         # if file_path is an HDF5 will use hfive parser
-        sub_parser = "nxs_pyxem"
+        # sub_parser = "nxs_pyxem"
         subparser = NxEmNxsPyxemSubParser(entry_id, file_paths[0])
         subparser.parse(template)
         # exit(1)

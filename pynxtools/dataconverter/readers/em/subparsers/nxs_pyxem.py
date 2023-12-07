@@ -33,27 +33,13 @@
 # towards more interoperability between the different tools in the community
 
 import os
-import glob
-import re
-import sys
-from typing import Dict, Any, List
 import numpy as np
-import h5py
-import yaml
-import json
-# import imageio.v3 as iio
+# from typing import Dict, Any, List
 from PIL import Image as pil
-
-import diffsims
-import orix
-from diffpy.structure import Lattice, Structure
 from orix import plot
-from orix.crystal_map import create_coordinate_arrays, CrystalMap, PhaseList
 from orix.quaternion import Rotation
 from orix.quaternion.symmetry import get_point_group
 from orix.vector import Vector3d
-
-import matplotlib.pyplot as plt
 
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
 from pynxtools.dataconverter.readers.em.utils.hfive_web_constants \
@@ -64,7 +50,7 @@ from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
 from pynxtools.dataconverter.readers.em.utils.get_sqr_grid import \
     get_scan_points_with_mark_data_discretized_on_sqr_grid
 from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
-    get_scan_point_axis_values, get_scan_point_coords, square_grid, hexagonal_grid, threed
+    square_grid, hexagonal_grid, threed, get_scan_point_axis_values, get_scan_point_coords
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_bruker import HdfFiveBrukerEspritReader
@@ -472,17 +458,17 @@ class NxEmNxsPyxemSubParser:
             template[f"{lgd}/data"] = {"compress": img, "strength": 1}
             hfive_web_decorate_nxdata(f"{lgd}/data", template)
 
-            dims = [("x", 1), ("y", 0)]
-            for dim in dims:
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]"] \
+            dims_idxs = {"x": 1, "y": 0}
+            for dim, idx in dims_idxs.items():
+                template[f"{lgd}/AXISNAME[axis_{dim}]"] \
                     = {"compress": np.asarray(np.linspace(0,
-                                                          np.shape(img)[dim[1]] - 1,
-                                                          num=np.shape(img)[dim[1]],
+                                                          np.shape(img)[idx] - 1,
+                                                          num=np.shape(img)[idx],
                                                           endpoint=True), np.uint32),
                        "strength": 1}
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@long_name"] \
+                template[f"{lgd}/AXISNAME[axis_{dim}]/@long_name"] \
                     = f"Pixel along {dim[0]}-axis"
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@units"] = "px"
+                template[f"{lgd}/AXISNAME[axis_{dim}]/@units"] = "px"
         return template
 
     def onthefly_process_roi_ipfs_phases_threed(self,
@@ -625,15 +611,15 @@ class NxEmNxsPyxemSubParser:
             template[f"{lgd}/data"] = {"compress": img, "strength": 1}
             hfive_web_decorate_nxdata(f"{lgd}/data", template)
 
-            dims = [("x", 1), ("y", 0)]
-            for dim in dims:
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]"] \
+            dims_idxs = {"x": 1, "y": 0}
+            for dim, idx in dims_idxs.items():
+                template[f"{lgd}/AXISNAME[axis_{dim}]"] \
                     = {"compress": np.asarray(np.linspace(0,
-                                                          np.shape(img)[dim[1]] - 1,
-                                                          num=np.shape(img)[dim[1]],
+                                                          np.shape(img)[idx] - 1,
+                                                          num=np.shape(img)[idx],
                                                           endpoint=True), np.uint32),
                        "strength": 1}
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@long_name"] \
-                    = f"Pixel along {dim[0]}-axis"
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@units"] = "px"
+                template[f"{lgd}/AXISNAME[axis_{dim}]/@long_name"] \
+                    = f"Pixel along {dim}-axis"
+                template[f"{lgd}/AXISNAME[axis_{dim}]/@units"] = "px"
         return template

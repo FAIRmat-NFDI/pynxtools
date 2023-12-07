@@ -17,23 +17,9 @@
 #
 """(Sub-)parser mapping concepts and content from Marc deGraeff's EMsoft *.h5 files on NXem."""
 
-import os
-from typing import Dict, Any, List
 import numpy as np
 import h5py
-from itertools import groupby
-# import imageio.v3 as iio
-from PIL import Image as pil
-
-import diffsims
-import orix
-from diffpy.structure import Lattice, Structure
-from orix import plot
-from orix.crystal_map import create_coordinate_arrays, CrystalMap, PhaseList
-from orix.quaternion import Rotation
-from orix.vector import Vector3d
-
-import matplotlib.pyplot as plt
+from typing import Dict
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBaseParser
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import read_strings_from_dataset
@@ -45,8 +31,8 @@ class HdfFiveEmSoftReader(HdfFiveBaseParser):
         super().__init__(file_path)
         self.prfx = None
         self.tmp = {}
-        self.supported_version = {}
-        self.version = {}
+        self.supported_version: Dict = {}
+        self.version: Dict = {}
         self.init_support()
         self.supported = False
         self.check_if_supported()

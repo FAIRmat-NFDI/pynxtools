@@ -17,14 +17,16 @@
 #
 """Constants and utilities used when parsing concepts from HDF5 files."""
 
+from typing import Dict
+
 IS_GROUP = 0
 IS_REGULAR_DATASET = 1
 IS_COMPOUND_DATASET = 2
 IS_FIELD_IN_COMPOUND_DATASET = 3
 IS_ATTRIBUTE = 4
-VERSION_MANAGEMENT = {"tech_partner": [],
-                      "schema_name": [], "schema_version": [],
-                      "writer_name": [], "writer_version": []}
+VERSION_MANAGEMENT: Dict = {"tech_partner": [],
+                            "schema_name": [], "schema_version": [],
+                            "writer_name": [], "writer_version": []}
 
 
 class Concept():

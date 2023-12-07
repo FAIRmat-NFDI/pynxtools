@@ -18,10 +18,9 @@
 """(Sub-)parser mapping concepts and content from *.nxs.mtex files on NXem."""
 
 import re
-from typing import Any
-from typing_extensions import SupportsIndex
 import h5py
-
+# from typing_extensions import SupportsIndex
+# from typing import Any
 from ase.data import chemical_symbols
 
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \

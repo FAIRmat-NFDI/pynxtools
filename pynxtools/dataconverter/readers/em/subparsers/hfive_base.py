@@ -17,17 +17,9 @@
 #
 """(Sub-)parser mapping concepts and content from EDAX/AMETEK *.edaxh5 (APEX) files on NXem."""
 
-import os
-import glob
-import re
-import sys
-from typing import Dict, Any, List
 import numpy as np
 import h5py
-import yaml
-import json
-# import imageio.v3 as iio
-from PIL import Image as pil
+from typing import Dict, List
 
 from pynxtools.dataconverter.readers.em.subparsers.hfive_concept import \
     IS_GROUP, IS_REGULAR_DATASET, IS_COMPOUND_DATASET, IS_ATTRIBUTE, \
@@ -64,24 +56,24 @@ class HdfFiveBaseParser:
         #   an instance of a file whose schema belongs to the H5OINA family of HDF5 container formats
         #   specifically using version 5
         self.prfx = None
-        self.tmp = {}
+        self.tmp: Dict = {}
         self.source = None
         self.file_path = None
         # collection of instance path
-        self.groups = {}
-        self.datasets = {}
-        self.attributes = {}
-        self.instances = {}
+        self.groups: Dict = {}
+        self.datasets: Dict = {}
+        self.attributes: Dict = {}
+        self.instances: Dict = {}
         # collection of template
-        self.template_groups = []
-        self.template_datasets = []
-        self.template_attributes = []
-        self.templates = {}
+        self.template_groups: List = []
+        self.template_datasets: List = []
+        self.template_attributes: List = []
+        self.templates: Dict = {}
         self.h5r = None
         if file_path is not None and file_path != "":
             self.file_path = file_path
         else:
-            raise ValueError(f"{__class__.__name__} needs proper instantiation !")
+            raise ValueError(f"{__name__} needs proper instantiation !")
 
     def init_named_cache(self, ckey: str):
         """Init a new cache for normalized EBSD data if not existent."""

@@ -26,6 +26,7 @@ import yaml
 import json
 import numpy as np
 from itertools import groupby
+from typing import List, Dict
 
 
 EBSD_MAP_SPACEGROUP = {"P 6#sub3mc": 186,
@@ -38,8 +39,8 @@ EBSD_MAP_SPACEGROUP = {"P 6#sub3mc": 186,
                        "I m#ovl3m": 229}
 # see here for typical examples http://img.chem.ucl.ac.uk/sgp/large/186az1.htm
 
-DIRTY_FIX_SPACEGROUP = {}
-EULER_SPACE_SYMMETRY = [2. * np.pi, np.pi, 2. * np.pi]
+DIRTY_FIX_SPACEGROUP: Dict = {}
+EULER_SPACE_SYMMETRY: List = [2. * np.pi, np.pi, 2. * np.pi]
 
 
 def format_euler_parameterization(triplet_set):
