@@ -167,11 +167,11 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                     if f"{sub_grp_name}/Lattice Constant {req_field}" not in fp:
                         raise ValueError(f"Unable to parse ../Lattice Constant {req_field} !")
                 a_b_c = [fp[f"{sub_grp_name}/Lattice Constant A"][0],
-                            fp[f"{sub_grp_name}/Lattice Constant B"][0],
-                            fp[f"{sub_grp_name}/Lattice Constant C"][0]]
+                         fp[f"{sub_grp_name}/Lattice Constant B"][0],
+                         fp[f"{sub_grp_name}/Lattice Constant C"][0]]
                 angles = [fp[f"{sub_grp_name}/Lattice Constant Alpha"][0],
-                            fp[f"{sub_grp_name}/Lattice Constant Beta"][0],
-                            fp[f"{sub_grp_name}/Lattice Constant Gamma"][0]]
+                          fp[f"{sub_grp_name}/Lattice Constant Beta"][0],
+                          fp[f"{sub_grp_name}/Lattice Constant Gamma"][0]]
                 # TODO::available examples support reporting in angstroem and degree
                 self.tmp[ckey]["phases"][int(phase_id)]["a_b_c"] \
                     = np.asarray(a_b_c, np.float32) * 0.1
@@ -194,14 +194,16 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
 
                 if len(self.tmp[ckey]["phase"]) > 0:
                     self.tmp[ckey]["phase"].append(
-                        Structure(title=phase_name, atoms=None,
-                                    lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                    angles[0], angles[1], angles[2])))
+                        Structure(title=phase_name,
+                                  atoms=None,
+                                  lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                                  angles[0], angles[1], angles[2])))
                 else:
-                    self.tmp[ckey]["phase"] \
-                        = [Structure(title=phase_name, atoms=None,
-                                        lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                        angles[0], angles[1], angles[2]))]
+                    self.tmp[ckey]["phase"] = [
+                        Structure(title=phase_name,
+                                  atoms=None,
+                                  lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                                  angles[0], angles[1], angles[2]))]
 
     def parse_and_normalize_group_ebsd_data(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/ANG/DATA/DATA"
@@ -248,7 +250,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # the material which they typically never scan (time, interest, costs, instrument
         # availability) completely!
         if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
-            print(f"WARNING: {self.tmp[ckey]['grid_type']}: check carefully the " \
+            print(f"WARNING: {self.tmp[ckey]['grid_type']}: check carefully the "
                   f"correct interpretation of scan_point coords!")
         # the case of EDAX APEX shows the key problem with implicit assumptions
         # edaxh5 file not necessarily store the scan_point_{dim} positions

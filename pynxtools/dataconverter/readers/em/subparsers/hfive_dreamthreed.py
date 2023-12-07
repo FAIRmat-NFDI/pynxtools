@@ -265,7 +265,6 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
                     found = 0
                     for req_field in ["CrystalStructures", "LatticeConstants", "MaterialName"]:
                         if f"{group_phases}/{req_field}" in self.datasets.keys():
-                        #           (which should also have specific shape)
                             found += 1
                     if found != 3:
                         return False
@@ -305,11 +304,11 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
 
     def parse_and_normalize_ebsd_header(self, ckey: str):
         with h5py.File(self.file_path, "r") as h5r:
-            dims = h5r[f"{self.path_registry['group_geometry']}" \
+            dims = h5r[f"{self.path_registry['group_geometry']}"
                        f"/_SIMPL_GEOMETRY/DIMENSIONS"][:].flatten()
-            org = h5r[f"{self.path_registry['group_geometry']}" \
+            org = h5r[f"{self.path_registry['group_geometry']}"
                       f"/_SIMPL_GEOMETRY/ORIGIN"][:].flatten()
-            spc = h5r[f"{self.path_registry['group_geometry']}" \
+            spc = h5r[f"{self.path_registry['group_geometry']}"
                       f"/_SIMPL_GEOMETRY/SPACING"][:].flatten()
             idx = 0
 
@@ -401,13 +400,9 @@ class HdfFiveDreamThreedReader(HdfFiveBaseParser):
             # tiled and repeated coordinate tuples and not like below
             # only the dimension scale axes values!
             for dim in ["x", "y", "z"]:
-                self.tmp[ckey][f"scan_point_{dim}"] \
-                    = np.asarray(np.linspace(0, self.tmp[ckey][f"n_{dim}"] - 1,
-                                             num=self.tmp[ckey][f"n_{dim}"],
-                                             endpoint=True) \
-                                             * self.tmp[ckey][f"s_{dim}"] \
-                                             + 0.5 * self.tmp[ckey][f"s_{dim}"],
-                                             np.float32)
+                self.tmp[ckey][f"scan_point_{dim}"] = np.asarray(np.linspace(
+                    0, self.tmp[ckey][f"n_{dim}"] - 1, num=self.tmp[ckey][f"n_{dim}"], endpoint=True)
+                    * self.tmp[ckey][f"s_{dim}"] + 0.5 * self.tmp[ckey][f"s_{dim}"], np.float32)
             # ROI overviewed rendered from either bc, ci, or mad
             if isinstance(self.path_registry["roi_info"], tuple) and len(self.path_registry["roi_info"]) == 2:
                 if isinstance(self.path_registry["roi_info"][0], str) is True and isinstance(self.path_registry["roi_info"][1], str) is True:

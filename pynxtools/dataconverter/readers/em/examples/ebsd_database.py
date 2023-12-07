@@ -38,7 +38,6 @@ REGULAR_TILING = "regular_tiling"
 FLIGHT_PLAN = "start_top_left_stack_x_left_to_right_stack_x_line_along_end_bottom_right"
 
 
-
 FreeTextToUniquePhase = {"Actinolite": "Actinolite",
                          "al": "Al",
                          "Al2 O3": "Al2O3",

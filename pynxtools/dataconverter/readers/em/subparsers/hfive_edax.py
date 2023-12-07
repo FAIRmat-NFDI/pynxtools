@@ -194,14 +194,16 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
 
                     if len(self.tmp[ckey]["phase"]) > 0:
                         self.tmp[ckey]["phase"].append(
-                            Structure(title=phase_name, atoms=None,
+                            Structure(title=phase_name,
+                                      atoms=None,
                                       lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                      angles[0], angles[1], angles[2])))
+                                                      angles[0], angles[1], angles[2])))
                     else:
                         self.tmp[ckey]["phase"] \
-                            = [Structure(title=phase_name, atoms=None,
+                            = [Structure(title=phase_name,
+                                         atoms=None,
                                          lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                         angles[0], angles[1], angles[2]))]
+                                                         angles[0], angles[1], angles[2]))]
         else:
             raise ValueError(f"Unable to parse {grp_name} !")
 
@@ -268,8 +270,8 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
             if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
                 print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
             self.tmp[ckey]["scan_point_x"] = np.asarray(
-                    fp[f"{grp_name}/X Position"][:] * self.tmp[ckey]["s_x"], np.float32)
+                fp[f"{grp_name}/X Position"][:] * self.tmp[ckey]["s_x"], np.float32)
             self.tmp[ckey]["scan_point_y"] = np.asarray(
-                    fp[f"{grp_name}/Y Position"][:] * self.tmp[ckey]["s_y"], np.float32)
+                fp[f"{grp_name}/Y Position"][:] * self.tmp[ckey]["s_y"], np.float32)
         # despite differences in reported calibrations the scan_point_{dim} arrays are
         # already provided by the tech partner as tile and repeat coordinates

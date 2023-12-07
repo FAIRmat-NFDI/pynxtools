@@ -17,7 +17,23 @@
 #
 """(Sub-)parser mapping concepts and content from EDAX/AMETEK *.edaxh5 (APEX) files on NXem."""
 
-"""HDF5 base parser to inherit from for tech-partner-specific HDF5 subparsers."""
+import os
+import glob
+import re
+import sys
+from typing import Dict, Any, List
+import numpy as np
+import h5py
+import yaml
+import json
+# import imageio.v3 as iio
+from PIL import Image as pil
+
+from pynxtools.dataconverter.readers.em.subparsers.hfive_concept import \
+    IS_GROUP, IS_REGULAR_DATASET, IS_COMPOUND_DATASET, IS_ATTRIBUTE, \
+    IS_FIELD_IN_COMPOUND_DATASET, Concept
+
+# HDF5 base parser to inherit from for tech-partner-specific HDF5 subparsers."""
 
 # the base parser implements the processing of standardized orientation maps via
 # the pyxem software package from the electron microscopy community
@@ -33,19 +49,6 @@
 # one could have also implemented the HDF5 parsing inside MTex but we leave this as a
 # task for the community and instead focus here on showing a more diverse example
 # towards more interoperability between the different tools in the community
-
-import os, glob, re, sys
-from typing import Dict, Any, List
-import numpy as np
-import h5py
-import yaml, json
-# import imageio.v3 as iio
-from PIL import Image as pil
-
-
-from pynxtools.dataconverter.readers.em.subparsers.hfive_concept import \
-    IS_GROUP, IS_REGULAR_DATASET, IS_COMPOUND_DATASET, IS_ATTRIBUTE, \
-    IS_FIELD_IN_COMPOUND_DATASET, Concept
 
 
 class HdfFiveBaseParser:
@@ -101,7 +104,7 @@ class HdfFiveBaseParser:
     def __call__(self, node_name, h5obj):
         # only h5py datasets have dtype attribute, so we can search on this
         if isinstance(h5obj, h5py.Dataset):
-            if not node_name in self.datasets.keys():
+            if node_name not in self.datasets.keys():
                 if hasattr(h5obj, "dtype"):
                     if hasattr(h5obj.dtype, "fields") and hasattr(h5obj.dtype, "names"):
                         if h5obj.dtype.names is not None:
@@ -153,7 +156,7 @@ class HdfFiveBaseParser:
                                               None,
                                               hdf_type="regular_dataset")
                             elif n_dims == 1:
-                                if not 0 in np.shape(h5obj):
+                                if 0 not in np.shape(h5obj):
                                     self.datasets[node_name] \
                                         = ("IS_REGULAR_DATASET",
                                            type(h5obj),
@@ -225,12 +228,12 @@ class HdfFiveBaseParser:
                                               hdf_type="regular_dataset")
                     else:
                         raise ValueError(
-                            f"hasattr(h5obj.dtype, 'fields') and hasattr(" \
+                            f"hasattr(h5obj.dtype, 'fields') and hasattr("
                             f"h5obj.dtype, 'names') failed, inspect {node_name} !")
                 else:
                     raise ValueError(f"hasattr(h5obj, dtype) failed, inspect {node_name} !")
         else:
-            if not node_name in self.groups.keys():
+            if node_name not in self.groups.keys():
                 self.groups[node_name] = ("IS_GROUP")
                 self.instances[node_name] \
                     = Concept(node_name,
@@ -246,7 +249,7 @@ class HdfFiveBaseParser:
     def get_attribute_data_structure(self, prefix, src_dct):
         # trg_dct is self.attributes
         for key, val in src_dct.items():
-            if not f"{prefix}/@{key}" in self.attributes.keys():
+            if f"{prefix}/@{key}" not in self.attributes.keys():
                 if isinstance(val, str):
                     self.attributes[f"{prefix}/@{key}"] \
                         = ("IS_ATTRIBUTE", type(val), np.shape(val), str, val)
@@ -280,8 +283,8 @@ class HdfFiveBaseParser:
         """Walk recursively through the file to get content."""
         if self.h5r is not None:  # if self.file_path is not None:
             # with h5py.File(self.file_path, "r") as h5r:
-                # first step visit all groups and datasets recursively
-                # get their full path within the HDF5 file
+            # first step visit all groups and datasets recursively
+            # get their full path within the HDF5 file
             self.h5r.visititems(self)
             # second step visit all these and get their attributes
             for h5path, h5ifo in self.groups.items():
@@ -315,29 +318,29 @@ class HdfFiveBaseParser:
                      store_instances_templatized=True,
                      store_templates=False):
         if store_instances is True:
-            print(f"Storing analysis results in " \
-                  f"{self.file_path[self.file_path.rfind('/')+1:]}." \
+            print(f"Storing analysis results in "
+                  f"{self.file_path[self.file_path.rfind('/')+1:]}."
                   f"EbsdHdfFileInstanceNames.txt...")
             with open(f"{self.file_path}.EbsdHdfFileInstanceNames.txt", "w") as txt:
                 for instance_name, concept in self.instances.items():
-                    txt.write(f"/{instance_name}, hdf: {concept.hdf}, " \
+                    txt.write(f"/{instance_name}, hdf: {concept.hdf}, "
                               f"type: {concept.dtype}, shape: {concept.shape}\n")
 
         if store_instances_templatized is True:
-            print(f"Storing analysis results in " \
-                  f"{self.file_path[self.file_path.rfind('/')+1:]}" \
+            print(f"Storing analysis results in "
+                  f"{self.file_path[self.file_path.rfind('/')+1:]}"
                   f".EbsdHdfFileInstanceNamesTemplatized.txt...")
             with open(f"{self.file_path}.EbsdHdfFileInstanceNamesTemplatized.txt", "w") as txt:
                 for instance_name, concept in self.instances.items():
                     txt.write(f"/{instance_name}, hdf: {concept.hdf}\n")
 
         if store_templates is True:
-            print(f"Storing analysis results in "\
-                  f"{self.file_path[self.file_path.rfind('/')+1:]}" \
+            print(f"Storing analysis results in "
+                  f"{self.file_path[self.file_path.rfind('/')+1:]}"
                   f".EbsdHdfFileTemplateNames.txt...")
             with open(f"{self.file_path}.EbsdHdfFileTemplateNames.txt", "w") as txt:
                 for template_name, concept in self.templates.items():
-                    txt.write(f"{template_name}, hdf: {concept.hdf}, "\
+                    txt.write(f"{template_name}, hdf: {concept.hdf}, "
                               f"type: {concept.dtype}, shape: {concept.shape}\n")
 
     def get_attribute_value(self, h5path):
@@ -366,7 +369,7 @@ class HdfFiveBaseParser:
             if h5path.count("#") == 1:
                 # with (self.file_path, "r") as h5r:
                 obj = self.h5r[h5path[0:h5path.rfind("#")]]
-                return obj.fields(h5path[h5path.rfind("#")+1:])[:]
+                return obj.fields(h5path[h5path.rfind("#") + 1:])[:]
             return None
 
     def get_value(self, h5path):

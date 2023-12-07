@@ -205,14 +205,16 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
 
                 if len(self.tmp[ckey]["phase"]) > 0:
                     self.tmp[ckey]["phase"].append(
-                        Structure(title=phase_name, atoms=None,
-                                    lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                    angles[0], angles[1], angles[2])))
+                        Structure(title=phase_name,
+                                  atoms=None,
+                                  lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                                  angles[0], angles[1], angles[2])))
                 else:
                     self.tmp[ckey]["phase"] \
-                        = [Structure(title=phase_name, atoms=None,
-                                        lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                        angles[0], angles[1], angles[2]))]
+                        = [Structure(title=phase_name,
+                                     atoms=None,
+                                     lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                                     angles[0], angles[1], angles[2]))]
 
     def parse_and_normalize_slice_ebsd_data(self, fp, ckey: str):
         # https://github.com/oinanoanalysis/h5oina/blob/master/H5OINAFile.md

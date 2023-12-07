@@ -53,7 +53,7 @@ def get_all_readers() -> List[ParameterSet]:
 
     # Explicitly removing ApmReader and EmNionReader because we need to add test data
     for reader in [get_reader(x) for x in get_names_of_all_readers()]:
-        if reader.__name__ in ("ApmReader", "EmOmReader", "EmSpctrscpyReader", "EmNionReader"):
+        if reader.__name__ in ("ApmReader", "EmReader", "EmOmReader", "EmSpctrscpyReader", "EmNionReader"):
             readers.append(pytest.param(reader,
                                         marks=pytest.mark.skip(reason="Missing test data.")
                                         ))

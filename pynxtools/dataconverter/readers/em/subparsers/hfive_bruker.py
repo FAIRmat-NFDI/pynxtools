@@ -167,7 +167,7 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
 
                 # Space Group, no, H5T_NATIVE_INT32, (1, 1), Space group index.
                 # The attribute Symbol contains the string representation, for example P m -3 m.
-                spc_grp  = read_strings_from_dataset(fp[f"{sub_grp_name}/SpaceGroup"][()])
+                spc_grp = read_strings_from_dataset(fp[f"{sub_grp_name}/SpaceGroup"][()])
                 if spc_grp in EBSD_MAP_SPACEGROUP.keys():
                     space_group = EBSD_MAP_SPACEGROUP[spc_grp]
                     self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
@@ -186,14 +186,15 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
 
                 if len(self.tmp[ckey]["phase"]) > 0:
                     self.tmp[ckey]["phase"].append(
+                        Structure(title=phase_name,
+                                  atoms=None,
+                                  lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
+                                                  angles[0], angles[1], angles[2])))
+                else:
+                    self.tmp[ckey]["phase"] = [
                         Structure(title=phase_name, atoms=None,
                                   lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                  angles[0], angles[1], angles[2])))
-                else:
-                    self.tmp[ckey]["phase"] \
-                        = [Structure(title=phase_name, atoms=None,
-                                     lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                     angles[0], angles[1], angles[2]))]
+                                                  angles[0], angles[1], angles[2]))]
 
     def parse_and_normalize_group_ebsd_data(self, fp, ckey: str):
         # no official documentation yet from Bruker but seems inspired by H5EBSD

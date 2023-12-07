@@ -171,7 +171,7 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
                 # The attribute Symbol contains the string representation, for example P m -3 m.
                 # formatting is a nightmare F m#ovl3m for F m 3bar m... but IT i.e.
                 # international table of crystallography identifier
-                spc_grp  = read_strings_from_dataset(fp[f"{sub_grp_name}/SpaceGroup"][()])
+                spc_grp = read_strings_from_dataset(fp[f"{sub_grp_name}/SpaceGroup"][()])
                 if spc_grp in EBSD_MAP_SPACEGROUP.keys():
                     space_group = EBSD_MAP_SPACEGROUP[spc_grp]
                     self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
@@ -181,7 +181,6 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
                 else:
                     raise ValueError(f"Unable to decode improperly formatted space group {spc_grp} !")
 
-
                 if len(self.tmp[ckey]["space_group"]) > 0:
                     self.tmp[ckey]["space_group"].append(space_group)
                 else:
@@ -189,14 +188,16 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
 
                 if len(self.tmp[ckey]["phase"]) > 0:
                     self.tmp[ckey]["phase"].append(
-                        Structure(title=phase_name, atoms=None,
+                        Structure(title=phase_name,
+                                  atoms=None,
                                   lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                  angles[0], angles[1], angles[2])))
+                                                  angles[0], angles[1], angles[2])))
                 else:
                     self.tmp[ckey]["phase"] \
-                        = [Structure(title=phase_name, atoms=None,
+                        = [Structure(title=phase_name,
+                                     atoms=None,
                                      lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                     angles[0], angles[1], angles[2]))]
+                                                     angles[0], angles[1], angles[2]))]
 
     def parse_and_normalize_group_ebsd_data(self, fp, ckey: str):
         # no official documentation yet from Bruker but seems inspired by H5EBSD
@@ -260,6 +261,3 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
             self.tmp[ckey]["mad"] = np.asarray(fp[f"{grp_name}/MAD"][:], np.float32)
         else:
             raise ValueError(f"{grp_name}/MAD has unexpected shape !")
-        
-
-

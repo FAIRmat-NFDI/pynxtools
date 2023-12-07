@@ -135,18 +135,18 @@ class EmReader(BaseReader):
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
         #    continue
-            # elif case.dat_parser_type == "zip":
-            #     zip_parser = NxEmOmZipEbsdParser(case.dat[0], entry_id)
-            #     zip_parser.parse(template)
-            # elif case.dat_parser_type == "dream3d":
-            #     dream_parser = NxEmOmDreamThreedEbsdParser(case.dat[0], entry_id)
-            #     dream_parser.parse(template)
-            # elif case.dat_parser_type == "kikuchipy":
-            # elif case.dat_parser_type == "pyxem":
-            # elif case.dat_parser_type == "score":
-            # elif case.dat_parser_type == "qube":
-            # elif case.dat_parser_type == "paradis":
-            # elif case.dat_parser_type == "brinckmann":
+        #    # elif case.dat_parser_type == "zip":
+        #    #     zip_parser = NxEmOmZipEbsdParser(case.dat[0], entry_id)
+        #    #     zip_parser.parse(template)
+        #    # elif case.dat_parser_type == "dream3d":
+        #    #     dream_parser = NxEmOmDreamThreedEbsdParser(case.dat[0], entry_id)
+        #    #     dream_parser.parse(template)
+        #    # elif case.dat_parser_type == "kikuchipy":
+        #    # elif case.dat_parser_type == "pyxem":
+        #    # elif case.dat_parser_type == "score":
+        #    # elif case.dat_parser_type == "qube":
+        #    # elif case.dat_parser_type == "paradis":
+        #    # elif case.dat_parser_type == "brinckmann":
         # at this point the data for the default plots should already exist
         # we only need to decorate the template to point to the mandatory ROI overview
         # print("Create NeXus default plottable data...")

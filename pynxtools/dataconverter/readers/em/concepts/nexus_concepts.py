@@ -19,6 +19,7 @@
 
 # pylint: disable=no-member
 
+from typing import List
 from pynxtools.dataconverter.readers.em.concepts.concept_mapper \
     import variadic_path_to_specific_path, apply_modifier
 
@@ -46,7 +47,8 @@ class NxEmAppDef():
     def __init__(self):
         pass
 
-    def parse(self, template: dict, entry_id: int = 1, cmd_line_args = []) -> dict:
+    def parse(self, template: dict, entry_id: int = 1, cmd_line_args: List = []) -> dict:
+        """Parse application definition."""
         for nx_path, modifier in NxEmRoot.items():
             if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
                 trg = variadic_path_to_specific_path(nx_path, [entry_id])

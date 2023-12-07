@@ -32,11 +32,15 @@
 # task for the community and instead focus here on showing a more diverse example
 # towards more interoperability between the different tools in the community
 
-import os, glob, re, sys
+import os
+import glob
+import re
+import sys
 from typing import Dict, Any, List
 import numpy as np
 import h5py
-import yaml, json
+import yaml
+import json
 # import imageio.v3 as iio
 from PIL import Image as pil
 
@@ -62,11 +66,6 @@ from pynxtools.dataconverter.readers.em.utils.get_sqr_grid import \
 from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
     get_scan_point_axis_values, get_scan_point_coords, square_grid, hexagonal_grid, threed
 
-PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
-PROJECTION_DIRECTIONS = [("X", Vector3d.xvector().data.flatten()),
-                         ("Y", Vector3d.yvector().data.flatten()),
-                         ("Z", Vector3d.zvector().data.flatten())]
-
 from pynxtools.dataconverter.readers.em.subparsers.hfive_oxford import HdfFiveOxfordReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_bruker import HdfFiveBrukerEspritReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_edax import HdfFiveEdaxOimAnalysisReader
@@ -74,6 +73,12 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_apex import HdfFiveEdax
 from pynxtools.dataconverter.readers.em.subparsers.hfive_ebsd import HdfFiveCommunityReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_emsoft import HdfFiveEmSoftReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_dreamthreed import HdfFiveDreamThreedReader
+
+
+PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
+PROJECTION_DIRECTIONS = [("X", Vector3d.xvector().data.flatten()),
+                         ("Y", Vector3d.yvector().data.flatten()),
+                         ("Z", Vector3d.zvector().data.flatten())]
 
 
 def get_ipfdir_legend(ipf_key):
@@ -84,7 +89,7 @@ def get_ipfdir_legend(ipf_key):
                 orientation='landscape', format='png', transparent=False,
                 bbox_inches='tight', pad_inches=0.1, metadata=None)
     img = np.asarray(thumbnail(pil.open("temporary.png", "r", ["png"]),
-                        size=HFIVE_WEB_MAXIMUM_RGB), np.uint8)  # no flipping
+                     size=HFIVE_WEB_MAXIMUM_RGB), np.uint8)  # no flipping
     img = img[:, :, 0:3]  # discard alpha channel
     if os.path.exists("temporary.png"):
         os.remove("temporary.png")
@@ -375,7 +380,7 @@ class NxEmNxsPyxemSubParser:
                                              inp["phases"][nxem_phase_id]["space_group"],
                                              template)
         return template
-    
+
     def process_roi_phase_ipfs_twod(self,
                                     inp: dict,
                                     roi_id: int,
@@ -386,7 +391,7 @@ class NxEmNxsPyxemSubParser:
         print(f"Generate 2D IPF maps for {nxem_phase_id}, {phase_name}...")
         trg_grid \
             = get_scan_points_with_mark_data_discretized_on_sqr_grid(inp, HFIVE_WEB_MAXIMUM_RGB)
-        
+
         rotations = Rotation.from_euler(
             euler=trg_grid["euler"][trg_grid["phase_id"] == nxem_phase_id],
             direction='lab2crystal', degrees=False)

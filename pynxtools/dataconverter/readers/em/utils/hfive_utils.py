@@ -17,11 +17,14 @@
 #
 """Utility functions when working with parsing HDF5."""
 
-import numpy as np
-import os, glob, re, sys
+import os
+import glob
+import re
+import sys
 import h5py
 import yaml
 import json
+import numpy as np
 from itertools import groupby
 
 
@@ -36,8 +39,8 @@ EBSD_MAP_SPACEGROUP = {"P 6#sub3mc": 186,
 # see here for typical examples http://img.chem.ucl.ac.uk/sgp/large/186az1.htm
 
 DIRTY_FIX_SPACEGROUP = {}
-
 EULER_SPACE_SYMMETRY = [2. * np.pi, np.pi, 2. * np.pi]
+
 
 def format_euler_parameterization(triplet_set):
     """Transform degrees to radiant and apply orientation space symmetry"""
@@ -54,6 +57,7 @@ def format_euler_parameterization(triplet_set):
             triplet_set[here, column_id] \
                 = EULER_SPACE_SYMMETRY[column_id] + triplet_set[here, column_id]
     return triplet_set
+
 
 def read_strings_from_dataset(obj):
     # print(f"type {type(obj)}, np.shape {np.shape(obj)}, obj {obj}")
