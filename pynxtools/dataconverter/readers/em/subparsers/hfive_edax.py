@@ -39,7 +39,7 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBase
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import EULER_SPACE_SYMMETRY, \
     read_strings_from_dataset, read_first_scalar, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID, REGULAR_TILING, FLIGHT_PLAN
 
 
 class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
@@ -124,6 +124,10 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
             self.tmp[ckey]["grid_type"] = SQUARE_GRID
         else:
             raise ValueError(f"Unable to parse {grp_name}/Grid Type !")
+        # the next two lines encode the typical assumption that is not reported in tech partner file!
+        self.tmp[ckey]["tiling"] = REGULAR_TILING
+        self.tmp[ckey]["flight_plan"] = FLIGHT_PLAN
+
         self.tmp[ckey]["s_x"] = read_first_scalar(fp[f"{grp_name}/Step X"])
         self.tmp[ckey]["s_unit"] = "um"  # "µm"  # TODO::always micron?
         self.tmp[ckey]["n_x"] = read_first_scalar(fp[f"{grp_name}/nColumns"])
@@ -227,7 +231,9 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
 
         # given no official EDAX OimAnalysis spec we cannot define for sure if
         # phase_id == 0 means just all was indexed with the first/zeroth phase or nothing
-        # was indexed, TODO::assuming it means all indexed with first phase:
+        # was indexed, here we assume it means all indexed with first phase
+        # and we assume EDAX uses -1 for notIndexed, this assumption is also
+        # substantiated by the situation in the hfive_apex parser
         if np.all(fp[f"{grp_name}/Phase"][:] == 0):
             self.tmp[ckey]["phase_id"] = np.zeros(n_pts, np.int32) + 1
         else:
@@ -265,3 +271,5 @@ class HdfFiveEdaxOimAnalysisReader(HdfFiveBaseParser):
                     fp[f"{grp_name}/X Position"][:] * self.tmp[ckey]["s_x"], np.float32)
             self.tmp[ckey]["scan_point_y"] = np.asarray(
                     fp[f"{grp_name}/Y Position"][:] * self.tmp[ckey]["s_y"], np.float32)
+        # despite differences in reported calibrations the scan_point_{dim} arrays are
+        # already provided by the tech partner as tile and repeat coordinates

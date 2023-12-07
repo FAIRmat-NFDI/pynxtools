@@ -32,7 +32,7 @@ examples="207_2081.edaxh5"
 # examples="229_2097.oh5"
 # examples="067_0003.dream3d SmallIN100_Final.dream3d 244_0014.dream3d"
 # examples="244_0014.dream3d"
-# examples="SmallIN100_Final.dream3d"
+examples="SmallIN100_Final.dream3d"
 # examples="067_0003.dream3d"  # very large 3D EBSD takes ~40GB RAM for processing
 
 for example in $examples; do

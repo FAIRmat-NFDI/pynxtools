@@ -39,7 +39,7 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBase
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     read_strings_from_dataset, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    HEXAGONAL_GRID, SQUARE_GRID
+    HEXAGONAL_GRID, SQUARE_GRID, REGULAR_TILING, FLIGHT_PLAN
 
 
 class HdfFiveOxfordReader(HdfFiveBaseParser):
@@ -123,6 +123,9 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         # TODO::check if Oxford always uses SquareGrid like assumed here
         self.tmp[ckey]["dimensionality"] = 2
         self.tmp[ckey]["grid_type"] = SQUARE_GRID
+        # the next two lines encode the typical assumption that is not reported in tech partner file!
+        self.tmp[ckey]["tiling"] = REGULAR_TILING
+        self.tmp[ckey]["flight_plan"] = FLIGHT_PLAN
 
         req_fields = ["X Cells", "Y Cells", "X Step", "Y Step"]
         for req_field in req_fields:
@@ -230,7 +233,7 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         self.tmp[ckey]["euler"] = format_euler_parameterization(self.tmp[ckey]["euler"])
 
         # Phase, yes, H5T_NATIVE_INT32, (size, 1), Index of phase, 0 if not indexed
-        # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
+        # no normalization needed, also in NXem the null model notIndexed is phase_identifier 0
         self.tmp[ckey]["phase_id"] = np.asarray(fp[f"{grp_name}/Phase"], np.int32)
 
         # normalize pixel coordinates to physical positions even though the origin can still dangle somewhere
@@ -240,6 +243,7 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
             print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
         # X, no, H5T_NATIVE_FLOAT, (size, 1), X position of each pixel in micrometers (origin: top left corner)
+        # for Oxford instrument this is already the required tile and repeated array of shape (size,1)
         self.tmp[ckey]["scan_point_x"] = np.asarray(fp[f"{grp_name}/X"], np.float32)
         # inconsistency f32 in file although specification states float
 

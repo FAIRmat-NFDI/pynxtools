@@ -39,7 +39,9 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_base import HdfFiveBase
 from pynxtools.dataconverter.readers.em.utils.hfive_utils import \
     EBSD_MAP_SPACEGROUP, read_strings_from_dataset, all_equal, format_euler_parameterization
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
-    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID
+    ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID, REGULAR_TILING, FLIGHT_PLAN
+from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
+    get_scan_point_coords
 
 
 class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
@@ -112,6 +114,9 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
             self.tmp[ckey]["grid_type"] = SQUARE_GRID
         else:
             raise ValueError(f"Unable to parse {grp_name}/Grid Type !")
+        # the next two lines encode the typical assumption that is not reported in tech partner file!
+        self.tmp[ckey]["tiling"] = REGULAR_TILING
+        self.tmp[ckey]["flight_plan"] = FLIGHT_PLAN
 
         req_fields = ["NCOLS", "NROWS", "XSTEP", "YSTEP"]
         for req_field in req_fields:
@@ -230,18 +235,19 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
         # TODO::calculation below x/y only valid if self.tmp[ckey]["grid_type"] == SQUARE_GRID
         if self.tmp[ckey]["grid_type"] != SQUARE_GRID:
             print(f"WARNING: Check carefully correct interpretation of scan_point coords!")
-        self.tmp[ckey]["scan_point_x"] \
-            = np.asarray(np.tile(np.linspace(0.,
-                                             self.tmp[ckey]["n_x"] - 1.,
-                                             num=self.tmp[ckey]["n_x"],
-                                             endpoint=True) * self.tmp[ckey]["s_x"],
-                                             self.tmp[ckey]["n_y"]), np.float32)
-        self.tmp[ckey]["scan_point_y"] \
-            = np.asarray(np.repeat(np.linspace(0.,
-                                               self.tmp[ckey]["n_y"] - 1.,
-                                               num=self.tmp[ckey]["n_y"],
-                                               endpoint=True) * self.tmp[ckey]["s_y"],
-                                               self.tmp[ckey]["n_x"]), np.float32)
+        # self.tmp[ckey]["scan_point_x"] \
+        #     = np.asarray(np.tile(np.linspace(0.,
+        #                                      self.tmp[ckey]["n_x"] - 1.,
+        #                                      num=self.tmp[ckey]["n_x"],
+        #                                      endpoint=True) * self.tmp[ckey]["s_x"],
+        #                                      self.tmp[ckey]["n_y"]), np.float32)
+        # self.tmp[ckey]["scan_point_y"] \
+        #     = np.asarray(np.repeat(np.linspace(0.,
+        #                                        self.tmp[ckey]["n_y"] - 1.,
+        #                                        num=self.tmp[ckey]["n_y"],
+        #                                        endpoint=True) * self.tmp[ckey]["s_y"],
+        #                                        self.tmp[ckey]["n_x"]), np.float32)
+        get_scan_point_coords(self.tmp[ckey])
 
         # Band Contrast is not stored in Bruker but Radon Quality or MAD
         # but this is s.th. different as it is the mean angular deviation between
