@@ -30,31 +30,15 @@ import yaml
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 
-DEFAULT_UNITS = {
-    "X": "step",
-    "Y": "step",
-    "t": "step",
-    "tofVoltage": "V",
-    "extractorVoltage": "V",
-    "extractorCurrent": "A",
-    "cryoTemperature": "K",
-    "sampleTemperature": "K",
-    "dldTimeBinSize": "ns",
-    "delay": "ps",
-    "timeStamp": "s",
-    "energy": "eV",
-    "kx": "1/A",
-    "ky": "1/A",
-}
 
-
-def res_to_xarray(res, bin_names, bin_axes, metadata=None):
+def res_to_xarray(res, bin_names, bin_axes, axis_units, metadata=None):
     """creates a BinnedArray (xarray subclass) out of the given np.array
     Parameters:
         res: np.array
             nd array of binned data
         bin_names (list): list of names of the binned axes
         bin_axes (list): list of np.arrays with the values of the axes
+        axis_units (dict): dict of unit names for the axes
     Returns:
         ba: BinnedArray (xarray)
             an xarray-like container with binned data, axis, and all
@@ -69,7 +53,7 @@ def res_to_xarray(res, bin_names, bin_axes, metadata=None):
 
     for name in bin_names:
         try:
-            xres[name].attrs["unit"] = DEFAULT_UNITS[name]
+            xres[name].attrs["unit"] = axis_units[name]
         except KeyError:
             pass
 
@@ -101,11 +85,16 @@ def h5_to_xarray(faddr, mode="r"):
         # Reading the axes
         axes = []
         bin_names = []
+        axis_units = {}
 
         try:
             for axis in h5_file["axes"]:
                 axes.append(h5_file["axes"][axis])
                 bin_names.append(h5_file["axes"][axis].attrs["name"])
+                try:
+                    axis_units[bin_names[-1]] = h5_file["axes"][axis].attrs["unit"]
+                except KeyError:
+                    pass
         except KeyError:
             print("Wrong Data Format, axes not found")
             raise
@@ -139,7 +128,7 @@ def h5_to_xarray(faddr, mode="r"):
                     metadata['file'][key] = metadata['file'][k]
                     del metadata['file'][k]
 
-        xarray = res_to_xarray(data, bin_names, axes, metadata)
+        xarray = res_to_xarray(data, bin_names, axes, axis_units, metadata)
         return xarray
 
 
