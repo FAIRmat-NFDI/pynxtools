@@ -98,5 +98,5 @@ No. The data files produced here can be uploaded to Nomad. Therefore, this acts 
 
 # Troubleshooting
 
-Please check this [guide](TROUBLESHOOTING.md) for any issues you face with the tool. If you don't find a solution there, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.md).
+Please check this [guide](TROUBLESHOOTING.md) for any issues you face with the tool. If you don't find a solution there, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).
 
