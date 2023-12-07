@@ -60,7 +60,7 @@ from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
 from pynxtools.dataconverter.readers.em.utils.get_sqr_grid import \
     get_scan_points_with_mark_data_discretized_on_sqr_grid
 from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
-    get_scan_point_axis_values, get_scan_point_coords, square_grid, hexagonal_grid
+    get_scan_point_axis_values, get_scan_point_coords, square_grid, hexagonal_grid, threed
 
 PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
 PROJECTION_DIRECTIONS = [("X", Vector3d.xvector().data.flatten()),
@@ -318,16 +318,324 @@ class NxEmNxsPyxemSubParser:
             if ckey.startswith("ebsd") and inp[ckey] != {}:
                 if ckey.replace("ebsd", "").isdigit():
                     roi_id = int(ckey.replace("ebsd", ""))
-                    if "n_z" not in inp[ckey].keys():
-                        self.prepare_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
-                        self.process_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
-                        # self.onthefly_process_roi_ipfs_phases_two(inp[ckey], roi_id, template)
+                    if threed(inp[ckey]) is False:
+                        self.onthefly_process_roi_ipfs_phases_twod(inp[ckey], roi_id, template)
                     else:
                         self.onthefly_process_roi_ipfs_phases_threed(inp[ckey], roi_id, template)
         return template
 
+    def onthefly_process_roi_ipfs_phases_twod(self,
+                                              inp: dict,
+                                              roi_id: int,
+                                              template: dict) -> dict:
+        print("Parse crystal_structure_models aka phases (no xmap) 2D version...")
+        nxem_phase_id = 0
+        prfx = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing"
+        # bookkeeping is always reported for the original grid
+        # because the eventual discretization for h5web is solely
+        # for the purpose of showing users a readily consumable default plot
+        # to judge for each possible dataset in the same way if the
+        # dataset is worthwhile and potentially valuable for ones on research
+        n_pts = inp["n_x"] * inp["n_y"]
+        n_pts_indexed = np.sum(inp["phase_id"] != 0)
+        print(f"n_pts {n_pts}, n_pts_indexed {n_pts_indexed}")
+        template[f"{prfx}/number_of_scan_points"] = np.uint32(n_pts)
+        template[f"{prfx}/indexing_rate"] = np.float64(100. * n_pts_indexed / n_pts)
+        template[f"{prfx}/indexing_rate/@units"] = f"%"
+        grp_name = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{nxem_phase_id}]"
+        template[f"{grp_name}/number_of_scan_points"] \
+            = np.uint32(np.sum(inp["phase_id"] == 0))
+        template[f"{grp_name}/phase_identifier"] = np.uint32(nxem_phase_id)
+        template[f"{grp_name}/phase_name"] = f"notIndexed"
+
+        print(f"----unique inp phase_id--->{np.unique(inp['phase_id'])}")
+        for nxem_phase_id in np.arange(1, np.max(np.unique(inp["phase_id"])) + 1):
+            # starting here at ID 1 because the subpasrsers have already normalized the
+            # tech partner specific phase_id convention to follow NXem NeXus convention
+            print(f"inp[phases].keys(): {inp['phases'].keys()}")
+            if nxem_phase_id not in inp["phases"].keys():
+                raise ValueError(f"{nxem_phase_id} is not a key in inp['phases'] !")
+            trg = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{nxem_phase_id}]"
+            template[f"{trg}/number_of_scan_points"] \
+                = np.uint32(np.sum(inp["phase_id"] == nxem_phase_id))
+            template[f"{trg}/phase_identifier"] = np.uint32(nxem_phase_id)
+            template[f"{trg}/phase_name"] \
+                = f"{inp['phases'][nxem_phase_id]['phase_name']}"
+            # internally the following function may discretize a coarser IPF
+            # if the input grid inp is too large for h5web to display
+            # this remove fine details in the EBSD maps but keep in mind
+            # that the purpose of the default plot is to guide the user
+            # of the potential usefulness of the dataset when searching in
+            # a RDMS like NOMAD OASIS, the purpose is NOT to take the coarse-grained
+            # discretization and use this for scientific data analysis!
+            self.process_roi_phase_ipfs_twod(inp,
+                                             roi_id,
+                                             nxem_phase_id,
+                                             inp["phases"][nxem_phase_id]["phase_name"],
+                                             inp["phases"][nxem_phase_id]["space_group"],
+                                             template)
+        return template
+    
+    def process_roi_phase_ipfs_twod(self,
+                                    inp: dict,
+                                    roi_id: int,
+                                    nxem_phase_id: int,
+                                    phase_name: str,
+                                    space_group: int,
+                                    template: dict) -> dict:
+        print(f"Generate 2D IPF maps for {nxem_phase_id}, {phase_name}...")
+        trg_grid \
+            = get_scan_points_with_mark_data_discretized_on_sqr_grid(inp, HFIVE_WEB_MAXIMUM_RGB)
+        
+        rotations = Rotation.from_euler(
+            euler=trg_grid["euler"][trg_grid["phase_id"] == nxem_phase_id],
+            direction='lab2crystal', degrees=False)
+        print(f"shape rotations -----> {np.shape(rotations)}")
+
+        for idx in np.arange(0, len(PROJECTION_VECTORS)):
+            point_group = get_point_group(space_group, proper=False)
+            ipf_key = plot.IPFColorKeyTSL(
+                point_group.laue, direction=PROJECTION_VECTORS[idx])
+            img = get_ipfdir_legend(ipf_key)
+
+            rgb_px_with_phase_id = np.asarray(np.asarray(
+                ipf_key.orientation2color(rotations) * 255., np.uint32), np.uint8)
+            print(f"shape rgb_px_with_phase_id -----> {np.shape(rgb_px_with_phase_id)}")
+
+            ipf_rgb_map = np.asarray(np.asarray(
+                np.zeros((trg_grid["n_y"] * trg_grid["n_x"], 3)) * 255., np.uint32), np.uint8)
+            # background is black instead of white (which would be more pleasing)
+            # but IPF color maps have a whitepoint which encodes in fact an orientation
+            # and because of that we may have a map from a single crystal characterization
+            # whose orientation could be close to the whitepoint which becomes a fully white
+            # seemingly "empty" image, therefore we use black as empty, i.e. white reports an
+            # orientation
+            ipf_rgb_map[trg_grid["phase_id"] == nxem_phase_id, :] = rgb_px_with_phase_id
+            ipf_rgb_map = np.reshape(ipf_rgb_map, (trg_grid["n_y"], trg_grid["n_x"], 3), order="C")
+            # 0 is y, 1 is x, only valid for REGULAR_TILING and FLIGHT_PLAN !
+
+            trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing" \
+                  f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{nxem_phase_id}]" \
+                  f"/MS_IPF[ipf{idx + 1}]"
+            template[f"{trg}/projection_direction"] \
+                = np.asarray(PROJECTION_VECTORS[idx].data.flatten(), np.float32)
+
+            # add the IPF color map
+            mpp = f"{trg}/DATA[map]"
+            template[f"{mpp}/title"] \
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
+            template[f"{mpp}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
+            template[f"{mpp}/@signal"] = "data"
+            dims = ["x", "y"]
+            template[f"{mpp}/@axes"] = []
+            for dim in dims[::-1]:
+                template[f"{mpp}/@axes"].append(f"axis_{dim}")
+            enum = 0
+            for dim in dims:
+                template[f"{mpp}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
+            template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
+            hfive_web_decorate_nxdata(f"{mpp}/DATA[data]", template)
+
+            scan_unit = trg_grid["s_unit"]  # TODO::this is not necessarily correct
+            # could be a scale-invariant synthetic microstructure whose simulation
+            # would work on multiple length-scales as atoms are not resolved directly!
+            if scan_unit == "um":
+                scan_unit = "µm"
+            for dim in dims:
+                template[f"{mpp}/AXISNAME[axis_{dim}]"] \
+                    = {"compress": self.get_named_axis(trg_grid, f"{dim}"), "strength": 1}
+                template[f"{mpp}/AXISNAME[axis_{dim}]/@long_name"] \
+                    = f"Coordinate along {dim}-axis ({scan_unit})"
+                template[f"{mpp}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
+
+            # add the IPF color map legend/key
+            lgd = f"{trg}/DATA[legend]"
+            template[f"{lgd}/title"] \
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
+            # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
+            template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
+            template[f"{lgd}/@signal"] = "data"
+            template[f"{lgd}/@axes"] = []
+            dims = ["x", "y"]
+            for dim in dims[::-1]:
+                template[f"{lgd}/@axes"].append(f"axis_{dim}")
+            enum = 0
+            for dim in dims:
+                template[f"{lgd}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
+            template[f"{lgd}/data"] = {"compress": img, "strength": 1}
+            hfive_web_decorate_nxdata(f"{lgd}/data", template)
+
+            dims = [("x", 1), ("y", 0)]
+            for dim in dims:
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]"] \
+                    = {"compress": np.asarray(np.linspace(0,
+                                                          np.shape(img)[dim[1]] - 1,
+                                                          num=np.shape(img)[dim[1]],
+                                                          endpoint=True), np.uint32),
+                       "strength": 1}
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@long_name"] \
+                    = f"Pixel along {dim[0]}-axis"
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@units"] = "px"
+        return template
+
+    def onthefly_process_roi_ipfs_phases_threed(self,
+                                                inp: dict,
+                                                roi_id: int,
+                                                template: dict) -> dict:
+        # this function is almost the same as its twod version we keep it for
+        # now an own function until the rediscretization also works for the 3D grid
+        print("Parse crystal_structure_models aka phases (no xmap) 3D version...")
+        # see comments in twod version of this function
+        nxem_phase_id = 0
+        prfx = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing"
+        n_pts = inp["n_x"] * inp["n_y"] * inp["n_z"]
+        n_pts_indexed = np.sum(inp["phase_id"] != 0)
+        print(f"n_pts {n_pts}, n_pts_indexed {n_pts_indexed}")
+        template[f"{prfx}/number_of_scan_points"] = np.uint32(n_pts)
+        template[f"{prfx}/indexing_rate"] = np.float64(100. * n_pts_indexed / n_pts)
+        template[f"{prfx}/indexing_rate/@units"] = f"%"
+        grp_name = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{nxem_phase_id}]"
+        template[f"{grp_name}/number_of_scan_points"] \
+            = np.uint32(np.sum(inp["phase_id"] == 0))
+        template[f"{grp_name}/phase_identifier"] = np.uint32(nxem_phase_id)
+        template[f"{grp_name}/phase_name"] = f"notIndexed"
+
+        print(f"----unique inp phase_id--->{np.unique(inp['phase_id'])}")
+        for nxem_phase_id in np.arange(1, np.max(np.unique(inp["phase_id"])) + 1):
+            print(f"inp[phases].keys(): {inp['phases'].keys()}")
+            if nxem_phase_id not in inp["phases"].keys():
+                raise ValueError(f"{nxem_phase_id} is not a key in inp['phases'] !")
+            trg = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{nxem_phase_id}]"
+            template[f"{trg}/number_of_scan_points"] \
+                = np.uint32(np.sum(inp["phase_id"] == nxem_phase_id))
+            template[f"{trg}/phase_identifier"] = np.uint32(nxem_phase_id)
+            template[f"{trg}/phase_name"] \
+                = f"{inp['phases'][nxem_phase_id]['phase_name']}"
+
+            self.process_roi_phase_ipfs_threed(inp,
+                                               roi_id,
+                                               nxem_phase_id,
+                                               inp["phases"][nxem_phase_id]["phase_name"],
+                                               inp["phases"][nxem_phase_id]["space_group"],
+                                               template)
+        return template
+
+    def process_roi_phase_ipfs_threed(self,
+                                      inp: dict,
+                                      roi_id: int,
+                                      nxem_phase_id: int,
+                                      phase_name: str,
+                                      space_group: int,
+                                      template: dict) -> dict:
+        """Generate inverse pole figures (IPF) for 3D mappings for specific phase."""
+        # equivalent to the case in twod, one needs at if required regridding/downsampling
+        # code here when any of the ROI's number of pixels along an edge > HFIVE_WEB_MAXIMUM_RGB
+        # TODO: I have not seen any dataset yet where is limit is exhausted, the largest
+        # dataset is a 3D SEM/FIB study from a UK project this is likely because to
+        # get an EBSD map as large one already scans quite long for one section as making
+        # a compromise is required and thus such hypothetical large serial-sectioning
+        # studies would block the microscope for a very long time
+        # however I have seen examples from Hadi Pirgazi with L. Kestens from Leuven
+        # where indeed large but thin 3d slabs were characterized
+        print(f"Generate 3D IPF map for {nxem_phase_id}, {phase_name}...")
+        rotations = Rotation.from_euler(
+            euler=inp["euler"][inp["phase_id"] == nxem_phase_id],
+            direction='lab2crystal', degrees=False)
+        print(f"shape rotations -----> {np.shape(rotations)}")
+
+        for idx in np.arange(0, len(PROJECTION_VECTORS)):
+            point_group = get_point_group(space_group, proper=False)
+            ipf_key = plot.IPFColorKeyTSL(
+                point_group.laue, direction=PROJECTION_VECTORS[idx])
+            img = get_ipfdir_legend(ipf_key)
+
+            rgb_px_with_phase_id = np.asarray(np.asarray(
+                ipf_key.orientation2color(rotations) * 255., np.uint32), np.uint8)
+            print(f"shape rgb_px_with_phase_id -----> {np.shape(rgb_px_with_phase_id)}")
+
+            ipf_rgb_map = np.asarray(np.asarray(
+                np.zeros((inp["n_z"] * inp["n_y"] * inp["n_x"], 3)) * 255., np.uint32), np.uint8)
+            # background is black instead of white (which would be more pleasing)
+            # but IPF color maps have a whitepoint which encodes in fact an orientation
+            # and because of that we may have a single crystal with an orientation
+            # close to the whitepoint which become a fully white seemingly "empty" image
+            ipf_rgb_map[inp["phase_id"] == nxem_phase_id, :] = rgb_px_with_phase_id
+            ipf_rgb_map = np.reshape(
+                ipf_rgb_map, (inp["n_z"], inp["n_y"], inp["n_x"], 3), order="C")
+            # 0 is z, 1 is y, while 2 is x !
+
+            trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing" \
+                  f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{nxem_phase_id}]" \
+                  f"/MS_IPF[ipf{idx + 1}]"
+            template[f"{trg}/projection_direction"] \
+                = np.asarray(PROJECTION_VECTORS[idx].data.flatten(), np.float32)
+
+            # add the IPF color map
+            mpp = f"{trg}/DATA[map]"
+            template[f"{mpp}/title"] \
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
+            template[f"{mpp}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
+            template[f"{mpp}/@signal"] = "data"
+            dims = ["x", "y", "z"]
+            template[f"{mpp}/@axes"] = []
+            for dim in dims[::-1]:
+                template[f"{mpp}/@axes"].append(f"axis_{dim}")
+            enum = 0
+            for dim in dims:
+                template[f"{mpp}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
+            template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
+            hfive_web_decorate_nxdata(f"{mpp}/DATA[data]", template)
+
+            scan_unit = inp["s_unit"]  # TODO::this is not necessarily correct
+            # could be a scale-invariant synthetic microstructure whose simulation
+            # would work on multiple length-scales as atoms are not resolved directly!
+            if scan_unit == "um":
+                scan_unit = "µm"
+            for dim in dims:
+                template[f"{mpp}/AXISNAME[axis_{dim}]"] \
+                    = {"compress": self.get_named_axis(inp, f"{dim}"), "strength": 1}
+                template[f"{mpp}/AXISNAME[axis_{dim}]/@long_name"] \
+                    = f"Coordinate along {dim}-axis ({scan_unit})"
+                template[f"{mpp}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
+
+            # add the IPF color map legend/key
+            lgd = f"{trg}/DATA[legend]"
+            template[f"{lgd}/title"] \
+                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
+            # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
+            template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
+            template[f"{lgd}/@signal"] = "data"
+            template[f"{lgd}/@axes"] = []
+            dims = ["x", "y"]
+            for dim in dims[::-1]:
+                template[f"{lgd}/@axes"].append(f"axis_{dim}")
+            enum = 0
+            for dim in dims:
+                template[f"{lgd}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
+                enum += 1
+            template[f"{lgd}/data"] = {"compress": img, "strength": 1}
+            hfive_web_decorate_nxdata(f"{lgd}/data", template)
+
+            dims = [("x", 1), ("y", 0)]
+            for dim in dims:
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]"] \
+                    = {"compress": np.asarray(np.linspace(0,
+                                                          np.shape(img)[dim[1]] - 1,
+                                                          num=np.shape(img)[dim[1]],
+                                                          endpoint=True), np.uint32),
+                       "strength": 1}
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@long_name"] \
+                    = f"Pixel along {dim[0]}-axis"
+                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@units"] = "px"
+        return template
+
+
+    """
     def prepare_roi_ipfs_phases_twod(self, inp: dict, roi_id: int, template: dict) -> dict:
-        """Process crystal orientation map from normalized orientation data."""
+        # Process crystal orientation map from normalized orientation data.
         # for NeXus to create a default representation of the EBSD map to explore
         # get rid of this xmap at some point it is really not needed in my option
         # one can work with passing the set of EulerAngles to the IPF mapper directly
@@ -449,7 +757,10 @@ class NxEmNxsPyxemSubParser:
         print(self.xmap)
         return template
 
-    def process_roi_ipfs_phases_twod(self, inp: dict, roi_id: int, template: dict) -> dict:
+    def process_roi_ipfs_phases_twod(self,
+                                     inp: dict,
+                                     roi_id: int,
+                                     template: dict) -> dict:
         print("Parse crystal_structure_models aka phases (use xmap)...")
         phase_id = 0
         prfx = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing"
@@ -496,13 +807,9 @@ class NxEmNxsPyxemSubParser:
 
             self.process_roi_phase_ipfs_twod(roi_id, pyxem_phase_id, template)
         return template
-
-    def onthefly_process_roi_ipfs_phases_twod(self, inp: dict, roi_id: int, template: dict) -> dict:
-        # TODO: #####
-        return template
-
+    
     def process_roi_phase_ipfs_twod(self, roi_id: int, pyxem_phase_id: int, template: dict) -> dict:
-        """Parse inverse pole figures (IPF) mappings for specific phase."""
+        # Parse inverse pole figures (IPF) mappings for specific phase.
         phase_name = self.xmap.phases[pyxem_phase_id].name
         print(f"Generate 2D IPF map for {pyxem_phase_id}, {phase_name}...")
         for idx in np.arange(0, len(PROJECTION_VECTORS)):
@@ -593,152 +900,4 @@ class NxEmNxsPyxemSubParser:
 
         # call process_roi_ipf_color_key
         return template
-
-    def onthefly_process_roi_ipfs_phases_threed(self, inp: dict, roi_id: int, template: dict) -> dict:
-        print("Parse crystal_structure_models aka phases (no xmap)...")
-        phase_id = 0
-        prfx = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing"
-        n_pts = inp["n_x"] * inp["n_y"] * inp["n_z"]
-        n_pts_indexed = np.sum(inp["phase_id"] != 0)
-        print(f"n_pts {n_pts}, n_pts_indexed {n_pts_indexed}")
-        template[f"{prfx}/number_of_scan_points"] = np.uint32(n_pts)
-        template[f"{prfx}/indexing_rate"] = np.float64(100. * n_pts_indexed / n_pts)
-        template[f"{prfx}/indexing_rate/@units"] = f"%"
-        grp_name = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{phase_id}]"
-        template[f"{grp_name}/number_of_scan_points"] \
-            = np.uint32(np.sum(inp["phase_id"] == 0))
-        template[f"{grp_name}/phase_identifier"] = np.uint32(phase_id)
-        template[f"{grp_name}/phase_name"] = f"notIndexed"
-
-        print(f"----unique inp phase_id--->{np.unique(inp['phase_id'])}")
-        for phase_id in np.arange(1, np.max(np.unique(inp["phase_id"])) + 1):
-            # starting here at ID 1 because TODO::currently the only supported 3D case
-            # is from DREAM3D and here phase_ids start at 0 but this marks in DREAM3D jargon
-            # the 999 i.e. null-model of the notIndexed phase !
-            print(f"inp[phases].keys(): {inp['phases'].keys()}")
-            if phase_id not in inp["phases"].keys():
-                raise ValueError(f"{phase_id} is not a key in inp['phases'] !")
-            # pyxem_phase_id for notIndexed is -1, while for NeXus it is 0 so add + 1 in naming schemes
-            trg = f"{prfx}/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{phase_id}]"
-
-            # TODO::dealing with unexpected phase_identifier should not be an issue
-            # with DREAM3D because that software is more restrictive on this
-            template[f"{trg}/number_of_scan_points"] \
-                = np.uint32(np.sum(inp["phase_id"] == phase_id))
-            template[f"{trg}/phase_identifier"] = np.uint32(phase_id)
-            template[f"{trg}/phase_name"] \
-                = f"{inp['phases'][phase_id]['phase_name']}"
-
-            # mind to pass phase_id - 1 from the perspective of pyxem because
-            # in that software the id of the null-model is -1 and not 0 like in NeXus or DREAM3D!
-            self.process_roi_phase_ipfs_threed(inp,
-                                               roi_id,
-                                               phase_id,
-                                               inp["phases"][phase_id]["phase_name"],
-                                               inp["phases"][phase_id]["space_group"],
-                                               template)
-        return template
-
-    def process_roi_phase_ipfs_threed(self, inp: dict, roi_id: int, pyxem_phase_id: int, phase_name: str, space_group: int, template: dict) -> dict:
-        """Generate inverse pole figures (IPF) for 3D mappings for specific phase."""
-        # equivalent to the case in twod, one needs at if required regridding/downsampling
-        # code here when any of the ROI's number of pixels along an edge > HFIVE_WEB_MAXIMUM_RGB
-        # TODO: I have not seen any dataset yet where is limit is exhausted, the largest
-        # dataset is a 3D SEM/FIB study from a UK project this is likely because to
-        # get an EBSD map as large one already scans quite long for one section as making
-        # a compromise is required and thus such hypothetical large serial-sectioning
-        # studies would block the microscope for a very long time
-        # however I have seen examples from Hadi Pirgazi with L. Kestens from Leuven
-        # where indeed large but thin 3d slabs were characterized
-        print(f"Generate 3D IPF map for {pyxem_phase_id}, {phase_name}...")
-        rotations = Rotation.from_euler(
-            euler=inp["euler"][inp["phase_id"] == pyxem_phase_id],
-            direction='lab2crystal', degrees=False)
-        print(f"shape rotations -----> {np.shape(rotations)}")
-
-        for idx in np.arange(0, len(PROJECTION_VECTORS)):
-            point_group = get_point_group(space_group, proper=False)
-            ipf_key = plot.IPFColorKeyTSL(
-                point_group.laue, direction=PROJECTION_VECTORS[idx])
-            img = get_ipfdir_legend(ipf_key)
-
-            rgb_px_with_phase_id = np.asarray(np.asarray(
-                ipf_key.orientation2color(rotations) * 255., np.uint32), np.uint8)
-            print(f"shape rgb_px_with_phase_id -----> {np.shape(rgb_px_with_phase_id)}")
-
-            ipf_rgb_map = np.asarray(np.asarray(
-                np.zeros((inp["n_z"] * inp["n_y"] * inp["n_x"], 3)) * 255., np.uint32), np.uint8)
-            # background is black instead of white (which would be more pleasing)
-            # but IPF color maps have a whitepoint which encodes in fact an orientation
-            # and because of that we may have a single crystal with an orientation
-            # close to the whitepoint which become a fully white seemingly "empty" image
-            ipf_rgb_map[inp["phase_id"] == pyxem_phase_id, :] = rgb_px_with_phase_id
-            ipf_rgb_map = np.reshape(
-                ipf_rgb_map, (inp["n_z"], inp["n_y"], inp["n_x"], 3), order="C")
-            # 0 is z, 1 is y, while 2 is x !
-
-            trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{roi_id}]/ebsd/indexing" \
-                  f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL[phase{pyxem_phase_id}]" \
-                  f"/MS_IPF[ipf{idx + 1}]"
-            template[f"{trg}/projection_direction"] \
-                = np.asarray(PROJECTION_VECTORS[idx].data.flatten(), np.float32)
-
-            # add the IPF color map
-            mpp = f"{trg}/DATA[map]"
-            template[f"{mpp}/title"] \
-                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
-            template[f"{mpp}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
-            template[f"{mpp}/@signal"] = "data"
-            dims = ["x", "y", "z"]
-            template[f"{mpp}/@axes"] = []
-            for dim in dims[::-1]:
-                template[f"{mpp}/@axes"].append(f"axis_{dim}")
-            enum = 0
-            for dim in dims:
-                template[f"{mpp}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
-                enum += 1
-            template[f"{mpp}/DATA[data]"] = {"compress": ipf_rgb_map, "strength": 1}
-            hfive_web_decorate_nxdata(f"{mpp}/DATA[data]", template)
-
-            scan_unit = inp["s_unit"]  # TODO::this is not necessarily correct
-            # could be a scale-invariant synthetic microstructure whose simulation
-            # would work on multiple length-scales as atoms are not resolved directly!
-            if scan_unit == "um":
-                scan_unit = "µm"
-            for dim in dims:
-                template[f"{mpp}/AXISNAME[axis_{dim}]"] \
-                    = {"compress": self.get_named_axis(inp, f"{dim}"), "strength": 1}
-                template[f"{mpp}/AXISNAME[axis_{dim}]/@long_name"] \
-                    = f"Coordinate along {dim}-axis ({scan_unit})"
-                template[f"{mpp}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
-
-            # add the IPF color map legend/key
-            lgd = f"{trg}/DATA[legend]"
-            template[f"{lgd}/title"] \
-                = f"Inverse pole figure {PROJECTION_DIRECTIONS[idx][0]} {phase_name}"
-            # template[f"{trg}/title"] = f"Inverse pole figure color key with SST"
-            template[f"{lgd}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
-            template[f"{lgd}/@signal"] = "data"
-            template[f"{lgd}/@axes"] = []
-            dims = ["x", "y"]
-            for dim in dims[::-1]:
-                template[f"{lgd}/@axes"].append(f"axis_{dim}")
-            enum = 0
-            for dim in dims:
-                template[f"{lgd}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(enum)
-                enum += 1
-            template[f"{lgd}/data"] = {"compress": img, "strength": 1}
-            hfive_web_decorate_nxdata(f"{lgd}/data", template)
-
-            dims = [("x", 1), ("y", 0)]
-            for dim in dims:
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]"] \
-                    = {"compress": np.asarray(np.linspace(0,
-                                                          np.shape(img)[dim[1]] - 1,
-                                                          num=np.shape(img)[dim[1]],
-                                                          endpoint=True), np.uint32),
-                       "strength": 1}
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@long_name"] \
-                    = f"Pixel along {dim[0]}-axis"
-                template[f"{lgd}/AXISNAME[axis_{dim[0]}]/@units"] = "px"
-        return template
+    """

@@ -222,8 +222,9 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             oris = Orientation.from_matrix([np.reshape(dat[i][0], (3, 3))])
             self.tmp[ckey]["euler"][i, :] = oris.to_euler(degrees=False)
             self.tmp[ckey]["ci"][i] = dat[i][2]
-            self.tmp[ckey]["phase_id"][i] = dat[i][3] + 1  # APEX seems to define
-            # notIndexed as -1 and the first valid phase id 0
+            self.tmp[ckey]["phase_id"][i] = dat[i][3] + 1  # adding +1 because
+            # EDAX/APEX seems to define notIndexed as -1 and the first valid phase_id is then 0
+            # for NXem however we assume that notIndexed is 0 and the first valid_phase_id is 1
         if np.isnan(self.tmp[ckey]["euler"]).any():
             raise ValueError(f"Conversion of om2eu unexpectedly resulted in NaN !")
         # TODO::convert orientation matrix to Euler angles via om_eu but what are conventions !
