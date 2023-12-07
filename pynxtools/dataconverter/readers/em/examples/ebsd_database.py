@@ -28,8 +28,15 @@
 # is recoverable when there is no common agreement about the phases used and their
 # exact atomic configuration
 
-HEXAGONAL_GRID = "hexagonal_grid"
-SQUARE_GRID = "square_grid"
+# typical scanning schemes used for EBSD
+# which lattice symmetry
+HEXAGONAL_GRID = "hexagonal_grid"  # typically assuming a tiling with regular hexagons
+SQUARE_GRID = "square_grid"  # a tiling with squares
+REGULAR_TILING = "regular_tiling"
+# most frequently this is the sequence of set scan positions with actual positions
+# based on grid type and spacing based on tiling
+FLIGHT_PLAN = "start_top_left_stack_x_left_to_right_stack_x_line_along_end_bottom_right"
+
 
 
 FreeTextToUniquePhase = {"Actinolite": "Actinolite",

@@ -60,7 +60,7 @@ from pynxtools.dataconverter.readers.em.utils.image_processing import thumbnail
 from pynxtools.dataconverter.readers.em.utils.get_sqr_grid import \
     get_scan_points_with_mark_data_discretized_on_sqr_grid
 from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
-    get_scan_point_axis_values, get_scan_point_coords
+    get_scan_point_axis_values, get_scan_point_coords, square_grid, hexagonal_grid
 
 PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
 PROJECTION_DIRECTIONS = [("X", Vector3d.xvector().data.flatten()),
@@ -217,12 +217,17 @@ class NxEmNxsPyxemSubParser:
         return template
 
     def get_named_axis(self, inp: dict, dim_name: str):
-        """"Return scaled but not offset-calibrated scan point coordinates along dim."""
+        # Return scaled but not offset-calibrated scan point coordinates along dim.
         # TODO::remove!
-        return np.asarray(np.linspace(0,
-                                      inp[f"n_{dim_name}"] - 1,
-                                      num=inp[f"n_{dim_name}"],
-                                      endpoint=True) * inp[f"s_{dim_name}"], np.float32)
+        if square_grid(inp) is True or hexagonal_grid(inp) is True:
+            # TODO::this code does not work for scaled and origin-offset scan point positions!
+            # TODO::below formula is only the same for sqr and hex grid if
+            # s_{dim_name} already accounts for the fact that typically s_y = sqrt(3)/2 s_x !
+            return np.asarray(np.linspace(0,
+                                          inp[f"n_{dim_name}"] - 1,
+                                          num=inp[f"n_{dim_name}"],
+                                          endpoint=True) * inp[f"s_{dim_name}"], np.float32)
+        return None
 
     def process_roi_overview(self, inp: dict, template: dict) -> dict:
         for ckey in inp.keys():

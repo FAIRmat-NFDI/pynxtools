@@ -23,17 +23,15 @@ import numpy as np
 from scipy.spatial import KDTree
 
 from pynxtools.dataconverter.readers.em.examples.ebsd_database import SQUARE_GRID
+from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
+    threed, square_grid, hexagonal_grid
 
 
 def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
                                                            max_edge_length: int) -> dict:
     """Inspect grid_type, dimensionality, point locations, and mark src_grida, map then."""
-    is_threed = False
-    if "dimensionality" in src_grid.keys():
-        if src_grid["dimensionality"] == 3:
-            is_threed = True
-
-    req_keys = ["grid_type"]
+    is_threed = threed(src_grid)
+    req_keys = ["grid_type", "tiling", "flight_plan"]
     dims = ["x", "y"]
     if is_threed is True:
         dims.append("z")
@@ -56,28 +54,36 @@ def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
     else:
         max_extent = np.max((src_grid["n_x"], src_grid["n_y"], src_grid["n_z"]))
 
-    if src_grid["grid_type"] == SQUARE_GRID:
+    if square_grid(src_grid) is True:
         if max_extent <= max_edge_length:
             return src_grid
         else:
-            max_extent = max_edge_length  # cap the maximum extent
+            # too large square grid has to be discretized and capped
+            # cap to the maximum extent to comply with h5web technical constraints
+            max_extent = max_edge_length
+    elif hexagonal_grid(src_grid) is True:
+        if max_extent > max_edge_length:
+            max_extent = max_edge_length
+    else:
+        raise ValueError(f"Facing an unsupported grid type !")
 
     # all non-square grids or too large square grids will be
     # discretized onto a regular grid with square or cubic pixel/voxel
     aabb = []
     for dim in dims:
-        aabb.append(np.min(src_grid[f"scan_point_{dim}"]))  # - 0.5 * src_grid[f"s_{dim}"]))
-        aabb.append(np.max(src_grid[f"scan_point_{dim}"]))  # + 0.5 * src_grid[f"s_{dim}"]))
+        aabb.append(np.min(src_grid[f"scan_point_{dim}"] - 0.5 * src_grid[f"s_{dim}"]))
+        aabb.append(np.max(src_grid[f"scan_point_{dim}"] + 0.5 * src_grid[f"s_{dim}"]))
     print(f"{aabb}")
 
     if is_threed is False:
         if aabb[1] - aabb[0] >= aabb[3] - aabb[2]:
-            sxy = (aabb[1] - aabb[0]) / max_extent
-            nxy = [max_extent, int(np.ceil((aabb[3] - aabb[2]) / sxy))]
+            trg_sxy = (aabb[1] - aabb[0]) / max_extent
+            trg_nxy = [max_extent, int(np.ceil((aabb[3] - aabb[2]) / trg_sxy))]
         else:
-            sxy = (aabb[3] - aabb[2]) / max_extent
-            nxy = [int(np.ceil((aabb[1] - aabb[0]) / sxy)), max_extent]
-        print(f"H5Web default plot generation, scaling nxy0 {[src_grid['n_x'], src_grid['n_y']]}, nxy {nxy}")
+            trg_sxy = (aabb[3] - aabb[2]) / max_extent
+            trg_nxy = [int(np.ceil((aabb[1] - aabb[0]) / trg_sxy)), max_extent]
+        print(f"H5Web default plot generation, scaling src_nxy " \
+              f"{[src_grid['n_x'], src_grid['n_y']]}, trg_nxy {trg_nxy}")
         # the above estimate is not exactly correct (may create a slight real space shift)
         # of the EBSD map TODO:: regrid the real world axis-aligned bounding box aabb with
         # a regular tiling of squares or hexagons
@@ -89,14 +95,13 @@ def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
         # in the sample surface frame of reference as this is typically not yet consistently documented
         # because we assume in addition that we always start at the top left corner the zeroth/first
         # coordinate is always 0., 0. !
-        xy = np.column_stack(
-            (np.tile(np.linspace(0, nxy[0] - 1, num=nxy[0], endpoint=True) * sxy, nxy[1]),
-            np.repeat(np.linspace(0, nxy[1] - 1, num=nxy[1], endpoint=True) * sxy, nxy[0])))
+        trg_xy = np.column_stack((np.tile(np.linspace(0, trg_nxy[0] - 1, num=trg_nxy[0], endpoint=True) * trg_sxy, trg_nxy[1]),
+                                  np.repeat(np.linspace(0, trg_nxy[1] - 1, num=trg_nxy[1], endpoint=True) * trg_sxy, trg_nxy[0])))
         # TODO:: if scan_point_{dim} are calibrated this approach
         # here would shift the origin to 0, 0 implicitly which may not be desired
-        print(f"xy {xy}, shape {np.shape(xy)}")
+        print(f"trg_xy {trg_xy}, shape {np.shape(trg_xy)}")
         tree = KDTree(np.column_stack((src_grid["scan_point_x"], src_grid["scan_point_y"])))
-        d, idx = tree.query(xy, k=1)
+        d, idx = tree.query(trg_xy, k=1)
         if np.sum(idx == tree.n) > 0:
             raise ValueError(f"kdtree query left some query points without a neighbor!")
         del d
@@ -105,7 +110,7 @@ def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
         # rebuild src_grid container with only the relevant src_grida selected from src_grid
         for key in src_grid.keys():
             if key == "euler":
-                trg_grid[key] = np.zeros((np.shape(xy)[0], 3), np.float32)
+                trg_grid[key] = np.zeros((np.shape(trg_xy)[0], 3), np.float32)
                 trg_grid[key] = np.nan
                 trg_grid[key] = src_grid["euler"][idx, :]
                 if np.isnan(trg_grid[key]).any() is True:
@@ -113,7 +118,7 @@ def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
                                      f"pixels without mark data {key} !")
                 print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
             elif key == "phase_id" or key == "bc":
-                trg_grid[key] = np.zeros((np.shape(xy)[0],), np.int32) - 2
+                trg_grid[key] = np.zeros((np.shape(trg_xy)[0],), np.int32) - 2
                 # pyxem_id is at least -1, bc is typically positive
                 trg_grid[key] = src_grid[key][idx]
                 if np.sum(trg_grid[key] == -2) > 0:
@@ -121,23 +126,27 @@ def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
                                      f"pixels without mark data {key} !")
                 print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
             elif key == "ci" or key == "mad":
-                trg_grid[key] = np.zeros((np.shape(xy)[0],), np.float32)
+                trg_grid[key] = np.zeros((np.shape(trg_xy)[0],), np.float32)
                 trg_grid[key] = np.nan
                 trg_grid[key] = src_grid[key][idx]
                 print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
                 if np.isnan(trg_grid[key]).any() is True:
                     raise ValueError(f"Downsampling of the point cloud left " \
                                      f"pixels without mark data {key} !")
-            elif key not in ["n_x", "n_y", "n_z", "s_x", "s_y", "s_z"]:
-                print(f"WARNING:: src_grid[{key}] is mapped as is on trg_grid[{key}] !")
+            elif key not in ["n_x", "n_y", "n_z",
+                             "s_x", "s_y", "s_z",
+                             "scan_point_x", "scan_point_y", "scan_point_z"]:
                 trg_grid[key] = src_grid[key]
-                print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
+            #     print(f"WARNING:: src_grid[{key}] is mapped as is on trg_grid[{key}] !")
+            #     print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
             else:
                 print(f"WARNING:: src_grid[{key}] is not yet mapped on trg_grid[{key}] !")
-            trg_grid["n_x"] = nxy[0]
-            trg_grid["n_y"] = nxy[1]
-            trg_grid["s_x"] = sxy
-            trg_grid["s_y"] = sxy
+            trg_grid["n_x"] = trg_nxy[0]
+            trg_grid["n_y"] = trg_nxy[1]
+            trg_grid["s_x"] = trg_sxy
+            trg_grid["s_y"] = trg_sxy
+            trg_grid["scan_point_x"] = trg_xy[0]
+            trg_grid["scan_point_y"] = trg_xy[1]
             # TODO::need to update scan_point_{dim}
         return trg_grid
     else:
