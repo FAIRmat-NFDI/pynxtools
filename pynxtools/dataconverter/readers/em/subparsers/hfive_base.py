@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""(Sub-)parser mapping concepts and content from EDAX/AMETEK *.edaxh5 (APEX) files on NXem."""
+"""Parent class for all tech partner-specific HDF5 parsers for mapping on NXem."""
 
 import numpy as np
 import h5py
@@ -24,8 +24,6 @@ from typing import Dict, List
 from pynxtools.dataconverter.readers.em.subparsers.hfive_concept import \
     IS_GROUP, IS_REGULAR_DATASET, IS_COMPOUND_DATASET, IS_ATTRIBUTE, \
     IS_FIELD_IN_COMPOUND_DATASET, Concept
-
-# HDF5 base parser to inherit from for tech-partner-specific HDF5 subparsers."""
 
 # the base parser implements the processing of standardized orientation maps via
 # the pyxem software package from the electron microscopy community
