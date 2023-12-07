@@ -49,10 +49,10 @@ class NxEmAppDef():
 
     def parse(self, template: dict, entry_id: int = 1, cmd_line_args: List = []) -> dict:
         """Parse application definition."""
-        for nx_path, modifier in NxEmRoot.items():
+        for nx_path, value in NxEmRoot.items():
             if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
                 trg = variadic_path_to_specific_path(nx_path, [entry_id])
-                res = apply_modifier(modifier, modifier)
+                res = value
                 if res is not None:
                     template[trg] = res
         if cmd_line_args != [] and all(isinstance(item, str) for item in cmd_line_args):

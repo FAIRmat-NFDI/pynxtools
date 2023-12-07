@@ -68,10 +68,10 @@ class NxEmConventionMapper:
     def parse(self, template: dict) -> dict:
         """Extract metadata from generic ELN text file to respective NeXus objects."""
         print("Parsing conventions...")
-        for nx_path, modifier in NxEmConventions.items():
+        for nx_path, value in NxEmConventions.items():
             if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
                 trg = variadic_path_to_specific_path(nx_path, [self.entry_id])
-                res = apply_modifier(modifier, modifier)
+                res = value
                 if res is not None:
                     template[trg] = res
         return template

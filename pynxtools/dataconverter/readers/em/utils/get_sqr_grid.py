@@ -110,15 +110,16 @@ def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
         # rebuild src_grid container with only the relevant src_grida selected from src_grid
         for key in src_grid.keys():
             if key == "euler":
-                trg_grid[key] = np.zeros((np.shape(trg_xy)[0], 3), np.float32)
-                trg_grid[key] = np.nan
+                trg_grid[key] = np.empty((np.shape(trg_xy)[0], 3), np.float32)
+                trg_grid[key].fill(np.nan)
                 trg_grid[key] = src_grid["euler"][idx, :]
                 if np.isnan(trg_grid[key]).any() is True:
                     raise ValueError(f"Downsampling of the point cloud left "
                                      f"pixels without mark data {key} !")
                 print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
             elif key == "phase_id" or key == "bc":
-                trg_grid[key] = np.zeros((np.shape(trg_xy)[0],), np.int32) - 2
+                trg_grid[key] = np.empty((np.shape(trg_xy)[0],), np.int32)
+                trg_grid[key].fill(np.int32(-2))
                 # pyxem_id is at least -1, bc is typically positive
                 trg_grid[key] = src_grid[key][idx]
                 if np.sum(trg_grid[key] == -2) > 0:
@@ -126,8 +127,8 @@ def get_scan_points_with_mark_data_discretized_on_sqr_grid(src_grid: dict,
                                      f"pixels without mark data {key} !")
                 print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
             elif key == "ci" or key == "mad":
-                trg_grid[key] = np.zeros((np.shape(trg_xy)[0],), np.float32)
-                trg_grid[key] = np.nan
+                trg_grid[key] = np.empty((np.shape(trg_xy)[0],), np.float32)
+                trg_grid[key].fill(np.nan)
                 trg_grid[key] = src_grid[key][idx]
                 print(f"final np.shape(trg_grid[{key}]) {np.shape(trg_grid[key])}")
                 if np.isnan(trg_grid[key]).any() is True:

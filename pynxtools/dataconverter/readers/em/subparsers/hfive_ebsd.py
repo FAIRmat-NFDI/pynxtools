@@ -199,11 +199,11 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
                 raise ValueError(f"Unable to parse {grp_name}/{req_field} !")
 
         # Euler
-        n_pts = (np.shape(fp[f"{grp_name}/phi1"][:])[0],
-                 np.shape(fp[f"{grp_name}/PHI"][:])[0],
-                 np.shape(fp[f"{grp_name}/phi2"][:])[0])
-        if all_equal(n_pts) is True and n_pts[0] == (self.tmp[ckey]["n_x"] * self.tmp[ckey]["n_y"]):
-            self.tmp[ckey]["euler"] = np.zeros((n_pts[0], 3), np.float32)
+        n_pts_probe = (np.shape(fp[f"{grp_name}/phi1"][:])[0],
+                       np.shape(fp[f"{grp_name}/PHI"][:])[0],
+                       np.shape(fp[f"{grp_name}/phi2"][:])[0])
+        if all_equal(n_pts_probe) is True and n_pts_probe[0] == (self.tmp[ckey]["n_x"] * self.tmp[ckey]["n_y"]):
+            self.tmp[ckey]["euler"] = np.zeros((n_pts_probe[0], 3), np.float32)
             column_id = 0
             for angle in ["phi1", "PHI", "phi2"]:
                 # TODO::available examples support that community H5EBSD reports Euler triplets in degree
@@ -211,7 +211,7 @@ class HdfFiveCommunityReader(HdfFiveBaseParser):
                     = np.asarray(fp[f"{grp_name}/{angle}"][:], np.float32) / 180. * np.pi
                 column_id += 1
             self.tmp[ckey]["euler"] = format_euler_parameterization(self.tmp[ckey]["euler"])
-            n_pts = n_pts[0]
+            n_pts = n_pts_probe[0]
 
         # index of phase, 0 if not indexed
         # no normalization needed, also in NXem_ebsd the null model notIndexed is phase_identifier 0
