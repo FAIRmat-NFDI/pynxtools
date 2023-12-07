@@ -36,6 +36,7 @@ examples="026_0046.h5oina 026_0049.h5oina 026_0050.h5oina 026_0052.h5oina 066_00
 # examples="244_0014.dream3d"
 # examples="SmallIN100_Final.dream3d"
 # examples="067_0003.dream3d"  # very large 3D EBSD takes ~40GB RAM for processing
+# examples="174_0031.h5 130_2085.h5 130_2092.h5 130_2093.h5 130_2089.h5 130_2087.h5 130_2088.h5 130_2090.h5 130_2091.h5 124_0036.h5 130_2082.h5 130_2083.h5 130_2084.h5 130_2094.h5 130_0003.h5 130_2086.h5 124_0002.h5 144_0043.h5 066_0013.h5 066_0034.h5 066_0016.h5 066_0023.h5 066_0025.h5"
 
 for example in $examples; do
 	echo $example

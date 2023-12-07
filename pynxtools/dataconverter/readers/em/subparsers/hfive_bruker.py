@@ -97,7 +97,7 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
             raise ValueError(f"Unable to parse {grp_name} !")
 
         self.tmp[ckey]["dimensionality"] = 2  # TODO::QUBE can also yield 3D datasets
-        if read_strings_from_dataset(fp[f"{grp_name}/Grid Type"]) == "isometric":
+        if read_strings_from_dataset(fp[f"{grp_name}/Grid Type"][()]) == "isometric":
             self.tmp[ckey]["grid_type"] = SQUARE_GRID
         else:
             raise ValueError(f"Unable to parse {grp_name}/Grid Type !")
