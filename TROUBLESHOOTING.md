@@ -1,6 +1,6 @@
 # Troubleshooting Guide
 
-### If you don't find a solution here, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.md).
+### If you don't find a solution here, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).
 
 <br/>
 
