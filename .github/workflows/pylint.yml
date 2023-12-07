@@ -25,6 +25,9 @@ jobs:
       - name: ruff
         run: |
           ruff pynxtools tests
+      - name: ruff formatting
+        run: |
+          ruff format --check pynxtools tests
       - name: mypy
         run: |
           mypy pynxtools tests
