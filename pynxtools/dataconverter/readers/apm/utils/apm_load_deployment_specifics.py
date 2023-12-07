@@ -23,20 +23,27 @@ import flatdict as fd
 
 import yaml
 
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_deployment_specifics_to_nx_map \
-    import NxApmDeploymentSpecificInput
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_deployment_specifics_to_nx_map import (
+    NxApmDeploymentSpecificInput,
+)
 
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import apply_modifier, variadic_path_to_specific_path
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+    apply_modifier,
+    variadic_path_to_specific_path,
+)
 
 
 class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-methods
     """Parse deployment specific configuration."""
 
     def __init__(self, file_name: str, entry_id: int):
-        print(f"Extracting data from deployment specific configuration file: {file_name}")
-        if (file_name.rsplit('/', 1)[-1].endswith(".oasis.specific.yaml")
-                or file_name.endswith(".oasis.specific.yml")) and entry_id > 0:
+        print(
+            f"Extracting data from deployment specific configuration file: {file_name}"
+        )
+        if (
+            file_name.rsplit("/", 1)[-1].endswith(".oasis.specific.yaml")
+            or file_name.endswith(".oasis.specific.yml")
+        ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_name = file_name
             with open(self.file_name, "r", encoding="utf-8") as stream:

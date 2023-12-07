@@ -34,28 +34,37 @@ import ase
 from ase.lattice.cubic import FaceCenteredCubic
 from ase.data import atomic_numbers, atomic_masses, chemical_symbols
 
-from ifes_apt_tc_data_modeling.utils.utils \
-    import create_isotope_vector, isotope_vector_to_nuclid_list, \
-    isotope_vector_to_human_readable_name, MAX_NUMBER_OF_ATOMS_PER_ION, MQ_EPSILON
+from ifes_apt_tc_data_modeling.utils.utils import (
+    create_isotope_vector,
+    isotope_vector_to_nuclid_list,
+    isotope_vector_to_human_readable_name,
+    MAX_NUMBER_OF_ATOMS_PER_ION,
+    MQ_EPSILON,
+)
 
 # do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
 
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
-    import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
+from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+    NX_APM_ADEF_NAME,
+    NX_APM_ADEF_VERSION,
+    NX_APM_EXEC_NAME,
+    NX_APM_EXEC_VERSION,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging \
-    import add_unknown_iontype
+from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging import (
+    add_unknown_iontype,
+)
 
 
 # parameter affecting reconstructed positions and size
 CRYSTAL_ORIENTATION = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 # MK::add analysis how large aggregate has to be
 RECON_SIZE = (50, 50, 300)
-RECON_ATOM_SPACING = 5.
-RECON_HEIGHT = 300.  # angstroem
-RECON_RADIUS = 50.  # angstroem
+RECON_ATOM_SPACING = 5.0
+RECON_HEIGHT = 300.0  # angstroem
+RECON_RADIUS = 50.0  # angstroem
 MAX_COMPONENTS = 5  # how many different molecular ions in one dataset/entry
 MAX_ATOMS = 10  # determine power-law fraction of n_atoms per ion
 MULTIPLES_FACTOR = 0.6  # controls how likely multiple ions are synthesized
@@ -108,20 +117,26 @@ class ApmCreateExampleData:
         # assumptions:
         # identity orientation, no periodic boundary conditions
         print(f"Using the following version of ase {ase.__version__}")
-        xyz = np.asarray(FaceCenteredCubic(directions=CRYSTAL_ORIENTATION,
-                                           size=RECON_SIZE, symbol="Cu",
-                                           latticeconstant=RECON_ATOM_SPACING,
-                                           pbc=(0, 0, 0)).get_positions(), np.float32)
+        xyz = np.asarray(
+            FaceCenteredCubic(
+                directions=CRYSTAL_ORIENTATION,
+                size=RECON_SIZE,
+                symbol="Cu",
+                latticeconstant=RECON_ATOM_SPACING,
+                pbc=(0, 0, 0),
+            ).get_positions(),
+            np.float32,
+        )
         # Cu will be ignored, only the lattice with positions is relevant
-        centre_of_mass = np.asarray([np.mean(xyz[:, 0]),
-                                     np.mean(xyz[:, 1]),
-                                     np.mean(xyz[:, 2])], np.float32)
+        centre_of_mass = np.asarray(
+            [np.mean(xyz[:, 0]), np.mean(xyz[:, 1]), np.mean(xyz[:, 2])], np.float32
+        )
         # print("Centre of mass of ASE lattice is (with coordinates in angstroem)")
         # print(centre_of_mass)
         xyz = xyz - centre_of_mass
-        centre_of_mass = np.asarray([np.mean(xyz[:, 0]),
-                                     np.mean(xyz[:, 1]),
-                                     np.mean(xyz[:, 2])], np.float32)
+        centre_of_mass = np.asarray(
+            [np.mean(xyz[:, 0]), np.mean(xyz[:, 1]), np.mean(xyz[:, 2])], np.float32
+        )
         # print("Updated centre of mass")
         # print(centre_of_mass)
         # axis_aligned_bbox = np.asarray([np.min(xyz[:, 0]), np.max(xyz[:, 0]),
@@ -134,10 +149,11 @@ class ApmCreateExampleData:
         mask = None
         mask = xyz[:, 2] <= (origin[2] + 0.5 * RECON_HEIGHT)
         mask &= xyz[:, 2] >= (origin[2] - 0.5 * RECON_HEIGHT)
-        mask &= ((xyz[:, 0] - origin[0])**2
-                 + (xyz[:, 1] - origin[1])**2) <= RECON_RADIUS**2
+        mask &= (
+            (xyz[:, 0] - origin[0]) ** 2 + (xyz[:, 1] - origin[1]) ** 2
+        ) <= RECON_RADIUS**2
         self.xyz = xyz[mask]
-        shift = [0., 0., 0.5 * RECON_HEIGHT]
+        shift = [0.0, 0.0, 0.5 * RECON_HEIGHT]
         for idx in np.arange(0, 3):
             self.xyz[:, idx] += shift[idx]
         self.xyz *= 0.1  # from angstroem to nm
@@ -161,13 +177,12 @@ class ApmCreateExampleData:
 
         # power law model for multiplicity of molecular ions
         # !! warning: for real world datasets depends on evaporation physics
-        self.n_ivec = np.asarray(np.linspace(1,
-                                             MAX_ATOMS,
-                                             num=MAX_ATOMS,
-                                             endpoint=True), np.float64)
+        self.n_ivec = np.asarray(
+            np.linspace(1, MAX_ATOMS, num=MAX_ATOMS, endpoint=True), np.float64
+        )
         accept_reject = MULTIPLES_FACTOR**self.n_ivec
         accept_reject = np.cumsum(accept_reject) / np.sum(accept_reject)
-        unifrnd = np.random.uniform(low=0., high=1., size=(self.n_components,))
+        unifrnd = np.random.uniform(low=0.0, high=1.0, size=(self.n_components,))
         self.multiplicity = np.ones((self.n_components,))
         for idx in np.arange(0, len(accept_reject) - 1):
             mask = unifrnd[:] >= accept_reject[idx]
@@ -178,10 +193,10 @@ class ApmCreateExampleData:
         # uniform model for distribution of charge states
         # !! warning: for real world datasets actual ion charge depends
         # on (evaporation) physics, very complicated in fact a topic of current research
-        self.charge_state = np.asarray(np.random.uniform(low=1,
-                                                         high=MAX_CHARGE_STATE,
-                                                         size=(self.n_components,)),
-                                       np.uint32)
+        self.charge_state = np.asarray(
+            np.random.uniform(low=1, high=MAX_CHARGE_STATE, size=(self.n_components,)),
+            np.uint32,
+        )
 
         # compose for each component randomly sampled hypothetical molecular ions
         # uniform random model which elements to pick from periodic table of elements
@@ -197,23 +212,30 @@ class ApmCreateExampleData:
         composition = []  # list of tuples, one for each composition
         for idx in np.arange(0, self.n_components):
             isotope_vector = []
-            mass_sum = 0.
+            mass_sum = 0.0
             # sample atoms for building the ion
             sampled_elements = np.asarray(
-                np.random.uniform(low=1, high=MAX_ATOMIC_NUMBER,
-                                  size=(self.multiplicity[idx],)), np.uint32)
+                np.random.uniform(
+                    low=1, high=MAX_ATOMIC_NUMBER, size=(self.multiplicity[idx],)
+                ),
+                np.uint32,
+            )
 
             for val in sampled_elements:
                 symbol = value_to_pse_symbol_lookup[val]
                 isotope_vector.append(symbol)
                 mass_sum += atomic_masses[atomic_numbers[symbol]]
 
-            composition.append((isotope_vector,
-                                self.charge_state[idx],
-                                mass_sum / self.charge_state[idx],
-                                np.float64(np.random.uniform(low=1, high=100))))
+            composition.append(
+                (
+                    isotope_vector,
+                    self.charge_state[idx],
+                    mass_sum / self.charge_state[idx],
+                    np.float64(np.random.uniform(low=1, high=100)),
+                )
+            )
 
-        weighting_factor_sum = 0.
+        weighting_factor_sum = 0.0
         for idx in np.arange(0, self.n_components):
             weighting_factor_sum += composition[idx][3]
 
@@ -222,23 +244,27 @@ class ApmCreateExampleData:
         self.nrm_composition = []
         # print(composition)
         for idx in np.arange(0, self.n_components):
-            self.nrm_composition.append((
-                composition[idx][0],
-                composition[idx][1],
-                composition[idx][2],
-                composition[idx][3] / weighting_factor_sum))
+            self.nrm_composition.append(
+                (
+                    composition[idx][0],
+                    composition[idx][1],
+                    composition[idx][2],
+                    composition[idx][3] / weighting_factor_sum,
+                )
+            )
 
         self.nrm_composition.sort(key=lambda a: a[3])  # sort asc. for composition
-        accept_reject = [0.]
+        accept_reject = [0.0]
         for idx in self.nrm_composition:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
-        assert self.xyz != [], \
-            "self.xyz must not be an empty dataset, create a geometry first!"
+        assert (
+            self.xyz != []
+        ), "self.xyz must not be an empty dataset, create a geometry first!"
         # print("Accept/reject sampling m/q values for "
         #       + str(np.shape(self.xyz)[0]) + " ions")
 
-        unifrnd = np.random.uniform(low=0., high=1., size=(np.shape(self.xyz)[0],))
+        unifrnd = np.random.uniform(low=0.0, high=1.0, size=(np.shape(self.xyz)[0],))
         self.m_z = np.empty((np.shape(self.xyz)[0],))
         self.m_z[:] = np.nan
         for idx in np.arange(0, len(accept_reject) - 1):
@@ -267,18 +293,21 @@ class ApmCreateExampleData:
         for tpl in self.nrm_composition:
             path = f"{trg}ION[ion{ion_id}]/"
             ivec = create_isotope_vector(tpl[0])
-            template[f"{path}isotope_vector"] \
-                = np.reshape(np.asarray(ivec, np.uint16),
-                             (1, MAX_NUMBER_OF_ATOMS_PER_ION))
+            template[f"{path}isotope_vector"] = np.reshape(
+                np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION)
+            )
             # template[path + "isotope_vector/@units"] = ""
             template[f"{path}charge_state"] = np.int8(tpl[1])
             template[f"{path}mass_to_charge_range"] = np.reshape(
-                np.asarray([tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2))
+                np.asarray([tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2)
+            )
             template[f"{path}mass_to_charge_range/@units"] = "Da"
             nuclid_list = np.zeros([2, 32], np.uint16)
             nuclid_list = isotope_vector_to_nuclid_list(ivec)
             template[f"{path}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-            template[path + "name"] = isotope_vector_to_human_readable_name(ivec, tpl[1])
+            template[path + "name"] = isotope_vector_to_human_readable_name(
+                ivec, tpl[1]
+            )
             ion_id += 1
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
@@ -298,18 +327,20 @@ class ApmCreateExampleData:
         template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
-        msg = '''
+        msg = """
               WARNING: These are mocked data !!
               They are meant to be used exclusively
               for verifying NOMAD search capabilities.
-              '''
+              """
         template[f"{trg}experiment_description"] = msg
-        experiment_identifier \
-            = str(f"R{np.random.choice(100, 1)[0]}-{np.random.choice(100000, 1)[0]}")
+        experiment_identifier = str(
+            f"R{np.random.choice(100, 1)[0]}-{np.random.choice(100000, 1)[0]}"
+        )
         template[f"{trg}experiment_identifier"] = experiment_identifier
         template[f"{trg}run_number"] = experiment_identifier.split("-")[1]
-        template[f"{trg}operation_mode"] \
-            = str(np.random.choice(["apt", "fim", "apt_fim"], 1)[0])
+        template[f"{trg}operation_mode"] = str(
+            np.random.choice(["apt", "fim", "apt_fim"], 1)[0]
+        )
         return template
 
     def emulate_user(self, template: dict) -> dict:
@@ -318,12 +349,32 @@ class ApmCreateExampleData:
         # print("Parsing user...")
         prefix = f"/ENTRY[entry{self.entry_id}]/"
         user_names = np.unique(
-            np.random.choice(["Sherjeel", "MarkusK", "Dierk", "Baptiste",
-                              "Alexander", "Lorenz", "Sophie", "Stefan",
-                              "Katharina", "Florian", "Daniel", "Sandor",
-                              "Carola", "Andrea", "Hampus", "Pepe", "Lauri",
-                              "MarkusS", "Christoph", "Claudia"],
-                             1 + np.random.choice(MAX_USERS, 1)))
+            np.random.choice(
+                [
+                    "Sherjeel",
+                    "MarkusK",
+                    "Dierk",
+                    "Baptiste",
+                    "Alexander",
+                    "Lorenz",
+                    "Sophie",
+                    "Stefan",
+                    "Katharina",
+                    "Florian",
+                    "Daniel",
+                    "Sandor",
+                    "Carola",
+                    "Andrea",
+                    "Hampus",
+                    "Pepe",
+                    "Lauri",
+                    "MarkusS",
+                    "Christoph",
+                    "Claudia",
+                ],
+                1 + np.random.choice(MAX_USERS, 1),
+            )
+        )
         user_id = 1
         for name in user_names:
             trg = f"{prefix}USER[user{user_id}]/"
@@ -347,13 +398,17 @@ class ApmCreateExampleData:
         print(f"Unique elements are: {list(unique_elements)}")
         template[f"{trg}atom_types"] = ", ".join(list(unique_elements))
 
-        specimen_name = str(f"Mocked atom probe specimen {np.random.choice(1000, 1)[0]}")
+        specimen_name = str(
+            f"Mocked atom probe specimen {np.random.choice(1000, 1)[0]}"
+        )
         template[f"{trg}name"] = specimen_name
         template[f"{trg}sample_history"] = "n/a"
-        template[f"{trg}preparation_date"] \
-            = datetime.datetime.now().astimezone().isoformat()
-        template[f"{trg}short_title"] \
-            = specimen_name.replace("Mocked atom probe specimen ", "")
+        template[f"{trg}preparation_date"] = (
+            datetime.datetime.now().astimezone().isoformat()
+        )
+        template[f"{trg}short_title"] = specimen_name.replace(
+            "Mocked atom probe specimen ", ""
+        )
         template[f"{trg}description"] = "n/a"
         return template
 
@@ -362,8 +417,9 @@ class ApmCreateExampleData:
         # print("Parsing control software...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
         template[f"{trg}PROGRAM[program1]/program"] = "IVAS"
-        template[f"{trg}PROGRAM[program1]/program/@version"] \
-            = str(f"3.{np.random.choice(9, 1)[0]}.{np.random.choice(9, 1)[0]}")
+        template[f"{trg}PROGRAM[program1]/program/@version"] = str(
+            f"3.{np.random.choice(9, 1)[0]}.{np.random.choice(9, 1)[0]}"
+        )
         return template
 
     def emulate_instrument_header(self, template: dict) -> dict:
@@ -371,10 +427,12 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # print("Parsing instrument header...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
-        template[f"{trg}instrument_name"] \
-            = str(f"test instrument {np.random.choice(100, 1)[0]}")
-        template[f"{trg}flight_path_length"] \
-            = np.float64(np.random.normal(loc=1.0, scale=0.05))
+        template[f"{trg}instrument_name"] = str(
+            f"test instrument {np.random.choice(100, 1)[0]}"
+        )
+        template[f"{trg}flight_path_length"] = np.float64(
+            np.random.normal(loc=1.0, scale=0.05)
+        )
         template[f"{trg}flight_path_length/@units"] = "m"
         return template
 
@@ -382,13 +440,26 @@ class ApmCreateExampleData:
         """Copy data in fabrication section."""
         # print("Parsing fabrication...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/FABRICATION[fabrication]/"
-        template[f"{trg}vendor"] \
-            = str(np.random.choice(["AMETEK/Cameca", "customized"], 1)[0])
-        template[f"{trg}model"] \
-            = str(np.random.choice(["LEAP3000", "LEAP4000", "LEAP5000",
-                  "LEAP6000", "OxCart", "MTAP", "FIM"], 1)[0])
-        template[f"{trg}identifier"] \
-            = str(hashlib.sha256("IVAS".encode("utf-8")).hexdigest())
+        template[f"{trg}vendor"] = str(
+            np.random.choice(["AMETEK/Cameca", "customized"], 1)[0]
+        )
+        template[f"{trg}model"] = str(
+            np.random.choice(
+                [
+                    "LEAP3000",
+                    "LEAP4000",
+                    "LEAP5000",
+                    "LEAP6000",
+                    "OxCart",
+                    "MTAP",
+                    "FIM",
+                ],
+                1,
+            )[0]
+        )
+        template[f"{trg}identifier"] = str(
+            hashlib.sha256("IVAS".encode("utf-8")).hexdigest()
+        )
         # template[f"{trg}capabilities"] = ""
         return template
 
@@ -397,7 +468,8 @@ class ApmCreateExampleData:
         # print("Parsing analysis chamber...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/analysis_chamber/"
         template[f"{trg}pressure"] = np.float64(
-            np.random.normal(loc=1.0e-10, scale=0.2e-11))
+            np.random.normal(loc=1.0e-10, scale=0.2e-11)
+        )
         template[f"{trg}pressure/@units"] = "torr"
         return template
 
@@ -412,8 +484,7 @@ class ApmCreateExampleData:
         """Copy data in local_electrode section."""
         # print("Parsing local electrode...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/local_electrode/"
-        template[f"{trg}name"] \
-            = str(f"electrode {np.random.choice(1000, 1)[0]}")
+        template[f"{trg}name"] = str(f"electrode {np.random.choice(1000, 1)[0]}")
         return template
 
     def emulate_detector(self, template: dict) -> dict:
@@ -425,7 +496,8 @@ class ApmCreateExampleData:
         template[f"{trg}name"] = detector_model_type
         template[f"{trg}model"] = detector_model_type
         template[f"{trg}serial_number"] = hashlib.sha256(
-            detector_model_type.encode("utf-8")).hexdigest()
+            detector_model_type.encode("utf-8")
+        ).hexdigest()
         return template
 
     def emulate_stage_lab(self, template: dict) -> dict:
@@ -440,11 +512,11 @@ class ApmCreateExampleData:
         """Copy data in specimen_monitoring section."""
         # print("Parsing specimen monitoring...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/specimen_monitoring/"
-        eta = np.min((np.random.normal(loc=0.6, scale=0.1), 1.))
+        eta = np.min((np.random.normal(loc=0.6, scale=0.1), 1.0))
         template[f"{trg}detection_rate"] = np.float64(eta)
         template[f"{trg}initial_radius"] = np.float64(RECON_RADIUS * 0.1)
         template[f"{trg}initial_radius/@units"] = "nm"
-        template[f"{trg}shank_angle"] = np.float64(0.)  # = np.random.choice(10, 1)[0]
+        template[f"{trg}shank_angle"] = np.float64(0.0)  # = np.random.choice(10, 1)[0]
         template[f"{trg}shank_angle/@units"] = "degree"
         return template
 
@@ -452,25 +524,33 @@ class ApmCreateExampleData:
         """Copy data in pulser section."""
         # print("Parsing pulser...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/"
-        pulse_mode = str(np.random.choice(
-            ["laser", "voltage", "laser_and_voltage"], 1)[0])
+        pulse_mode = str(
+            np.random.choice(["laser", "voltage", "laser_and_voltage"], 1)[0]
+        )
         template[f"{trg}pulse_mode"] = pulse_mode
-        template[f"{trg}pulse_fraction"] \
-            = np.float64(np.random.normal(loc=0.1, scale=0.02))
-        template[f"{trg}pulse_frequency"] \
-            = np.float64(np.random.normal(loc=250, scale=10))
+        template[f"{trg}pulse_fraction"] = np.float64(
+            np.random.normal(loc=0.1, scale=0.02)
+        )
+        template[f"{trg}pulse_frequency"] = np.float64(
+            np.random.normal(loc=250, scale=10)
+        )
         template[f"{trg}pulse_frequency/@units"] = "kHz"
         if pulse_mode != "voltage":
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/SOURCE[laser_source1]/"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/SOURCE[laser_source1]/"
+            )
             template[f"{trg}name"] = "laser"
-            template[f"{trg}wavelength"] \
-                = np.float64((30 + np.random.choice(30, 1)) * 1.0e-8)
+            template[f"{trg}wavelength"] = np.float64(
+                (30 + np.random.choice(30, 1)) * 1.0e-8
+            )
             template[f"{trg}wavelength/@units"] = "m"
-            template[f"{trg}pulse_energy"] \
-                = np.float64(np.random.normal(loc=1.2e-11, scale=0.2e-12))
+            template[f"{trg}pulse_energy"] = np.float64(
+                np.random.normal(loc=1.2e-11, scale=0.2e-12)
+            )
             template[f"{trg}pulse_energy/@units"] = "J"
-            template[f"{trg}power"] \
-                = np.float64(np.random.normal(loc=2.0e-8, scale=0.2e-9))
+            template[f"{trg}power"] = np.float64(
+                np.random.normal(loc=2.0e-8, scale=0.2e-9)
+            )
             template[f"{trg}power/@units"] = "W"
         return template
 
@@ -479,12 +559,15 @@ class ApmCreateExampleData:
         # print("Parsing reconstruction...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/reconstruction/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}PROGRAM[program1]/program"] \
-            = template[f"{src}PROGRAM[program1]/program"]
-        template[f"{trg}PROGRAM[program1]/program/@version"] \
-            = template[f"{src}PROGRAM[program1]/program/@version"]
-        template[f"{trg}protocol_name"] \
-            = str(np.random.choice(["bas", "geiser", "gault", "cameca", "other"], 1)[0])
+        template[f"{trg}PROGRAM[program1]/program"] = template[
+            f"{src}PROGRAM[program1]/program"
+        ]
+        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
+            f"{src}PROGRAM[program1]/program/@version"
+        ]
+        template[f"{trg}protocol_name"] = str(
+            np.random.choice(["bas", "geiser", "gault", "cameca", "other"], 1)[0]
+        )
         template[f"{trg}parameter"] = "n/a"
         template[f"{trg}crystallographic_calibration"] = "n/a"
         return template
@@ -494,10 +577,12 @@ class ApmCreateExampleData:
         # print("Parsing ranging...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}PROGRAM[program1]/program"] \
-            = template[f"{src}PROGRAM[program1]/program"]
-        template[f"{trg}PROGRAM[program1]/program/@version"] \
-            = template[f"{src}PROGRAM[program1]/program/@version"]
+        template[f"{trg}PROGRAM[program1]/program"] = template[
+            f"{src}PROGRAM[program1]/program"
+        ]
+        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
+            f"{src}PROGRAM[program1]/program/@version"
+        ]
         return template
 
     def emulate_random_input_from_eln(self, template: dict) -> dict:
@@ -545,13 +630,17 @@ class ApmCreateExampleData:
             # heavy numerical data, here the synthesized "measurement" data
             prefix = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
             trg = f"{prefix}reconstruction/"
-            template[f"{trg}reconstructed_positions"] \
-                = {"compress": np.asarray(self.xyz, np.float32), "strength": 1}
+            template[f"{trg}reconstructed_positions"] = {
+                "compress": np.asarray(self.xyz, np.float32),
+                "strength": 1,
+            }
             template[f"{trg}reconstructed_positions/@units"] = "nm"
 
             trg = f"{prefix}mass_to_charge_conversion/"
-            template[f"{trg}mass_to_charge"] \
-                = {"compress": np.asarray(self.m_z, np.float32), "strength": 1}
+            template[f"{trg}mass_to_charge"] = {
+                "compress": np.asarray(self.m_z, np.float32),
+                "strength": 1,
+            }
             template[f"{trg}mass_to_charge/@units"] = "Da"
 
         return template

@@ -24,6 +24,7 @@ Generic Classes for reading XPS files into python dictionary.
 from typing import List, Dict
 
 from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleMapperSpecs
+
 # from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhMapperSpecs
 from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtMapperScienta
 
@@ -145,11 +146,7 @@ class XpsDataFileParser:
             contents = txt_file.read()
 
         for vendor in vendor_dict:
-            vendor_options = [
-                vendor,
-                vendor.upper(),
-                vendor.capitalize()
-            ]
+            vendor_options = [vendor, vendor.upper(), vendor.capitalize()]
 
             if any(vendor_opt in contents for vendor_opt in vendor_options):
                 return vendor

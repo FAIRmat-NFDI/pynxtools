@@ -35,31 +35,40 @@ import h5py
 
 from zipfile37 import ZipFile
 
-from pynxtools.dataconverter.readers.em_nion.utils.swift_uuid_to_file_name \
-    import uuid_to_file_name
+from pynxtools.dataconverter.readers.em_nion.utils.swift_uuid_to_file_name import (
+    uuid_to_file_name,
+)
 
-from pynxtools.dataconverter.readers.em_nion.utils.swift_generate_dimscale_axes \
-    import get_list_of_dimension_scale_axes
+from pynxtools.dataconverter.readers.em_nion.utils.swift_generate_dimscale_axes import (
+    get_list_of_dimension_scale_axes,
+)
 
-from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_display_items_to_nx \
-    import nexus_concept_dict, identify_nexus_concept_key
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_display_items_to_nx import (
+    nexus_concept_dict,
+    identify_nexus_concept_key,
+)
 
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import apply_modifier, variadic_path_to_specific_path
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+    apply_modifier,
+    variadic_path_to_specific_path,
+)
 
-from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_to_nx_image_real_space \
-    import NxImageRealSpaceDict
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_to_nx_image_real_space import (
+    NxImageRealSpaceDict,
+)
 
-from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
-    import NX_EM_NION_SWIFT_NAME, NX_EM_NION_SWIFT_VERSION
-from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
-    import NX_EM_NION_EXEC_NAME, NX_EM_NION_EXEC_VERSION
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning import (
+    NX_EM_NION_SWIFT_NAME,
+    NX_EM_NION_SWIFT_VERSION,
+)
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning import (
+    NX_EM_NION_EXEC_NAME,
+    NX_EM_NION_EXEC_VERSION,
+)
 
 
 class NxEmNionSwiftProjectParser:
-    """Parse NionSwift project file.
-
-    """
+    """Parse NionSwift project file."""
 
     def __init__(self, file_name, entry_id):
         """Class wrapping swift parser."""
@@ -85,11 +94,11 @@ class NxEmNionSwiftProjectParser:
         with ZipFile(self.file_name) as zip_file_hdl:
             for file in zip_file_hdl.namelist():
                 if file.endswith(".h5"):
-                    key = file[file.rfind("/") + 1:].replace(".h5", "")
+                    key = file[file.rfind("/") + 1 :].replace(".h5", "")
                     if key not in self.hdf_file_dict:
                         self.hdf_file_dict[key] = file
                 elif file.endswith(".ndata"):
-                    key = file[file.rfind("/") + 1:].replace(".ndata", "")
+                    key = file[file.rfind("/") + 1 :].replace(".ndata", "")
                     if key not in self.ndata_file_dict:
                         self.ndata_file_dict[key] = file
                 elif file.endswith(".nsproj"):
@@ -126,39 +135,51 @@ class NxEmNionSwiftProjectParser:
         axes_lst = get_list_of_dimension_scale_axes(meta)
         # print(axes_lst)
 
-        axes_names = [("axis_image_identifier", "image_identifier", 2),
-                      ("axis_y", "y", 1),
-                      ("axis_x", "x", 0)]
-        print(f"Add NXdata len(axes_lst) {len(axes_lst)}, len(axes_names) {len(axes_names)}")
+        axes_names = [
+            ("axis_image_identifier", "image_identifier", 2),
+            ("axis_y", "y", 1),
+            ("axis_x", "x", 0),
+        ]
+        print(
+            f"Add NXdata len(axes_lst) {len(axes_lst)}, len(axes_names) {len(axes_names)}"
+        )
         if 2 <= len(axes_lst) <= len(axes_names):
-            trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM[event_data_em" \
-                  f"{self.event_data_em_id}]/IMAGE_SET[image_set{self.image_id}]/" \
-                  f"PROCESS[process]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM[event_data_em"
+                f"{self.event_data_em_id}]/IMAGE_SET[image_set{self.image_id}]/"
+                f"PROCESS[process]"
+            )
             template[f"{trg}/source"] = "n/a"
             template[f"{trg}/source/@version"] = "n/a"
-            template[f"{trg}/PROGRAM[program1]/program"] \
-                = f"We do not know because the nsproj file does not store it explicitly "\
-                  f"which nionswift version and dependencies are used when writing "\
-                  f"the nsproj file!"
+            template[f"{trg}/PROGRAM[program1]/program"] = (
+                f"We do not know because the nsproj file does not store it explicitly "
+                f"which nionswift version and dependencies are used when writing "
+                f"the nsproj file!"
+            )
             template[f"{trg}/PROGRAM[program1]/program/@version"] = "not recoverable"
-            template[f"{trg}/PROGRAM[program2]/program"] \
-                = f"{NX_EM_NION_SWIFT_NAME}"
-            template[f"{trg}/PROGRAM[program2]/program/@version"] \
-                = f"{NX_EM_NION_SWIFT_VERSION}"
-            template[f"{trg}/PROGRAM[program3]/program"] \
-                = f"{NX_EM_NION_EXEC_NAME}"
-            template[f"{trg}/PROGRAM[program3]/program/@version"] \
-                = f"{NX_EM_NION_EXEC_VERSION}"
+            template[f"{trg}/PROGRAM[program2]/program"] = f"{NX_EM_NION_SWIFT_NAME}"
+            template[
+                f"{trg}/PROGRAM[program2]/program/@version"
+            ] = f"{NX_EM_NION_SWIFT_VERSION}"
+            template[f"{trg}/PROGRAM[program3]/program"] = f"{NX_EM_NION_EXEC_NAME}"
+            template[
+                f"{trg}/PROGRAM[program3]/program/@version"
+            ] = f"{NX_EM_NION_EXEC_VERSION}"
 
-            trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM[event_data_em" \
-                  f"{self.event_data_em_id}]/IMAGE_SET[image_set{self.image_id}]/DATA[stack]"
-            template[f"{trg}/@NX_class"] = "NXdata"  # ##TODO one should not need to add this manually
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM[event_data_em"
+                f"{self.event_data_em_id}]/IMAGE_SET[image_set{self.image_id}]/DATA[stack]"
+            )
+            template[
+                f"{trg}/@NX_class"
+            ] = "NXdata"  # ##TODO one should not need to add this manually
             template[f"{trg}/title"] = str("Should come from NionSwift directly")
             template[f"{trg}/@signal"] = "data_counts"
             template[f"{trg}/@axes"] = ["axis_image_identifier", "axis_y", "axis_x"]
             for idx in np.arange(0, 3):
-                template[f"{trg}/@AXISNAME_indices[{axes_names[idx][0]}_indices]"] \
-                    = np.uint32(axes_names[idx][2])
+                template[
+                    f"{trg}/@AXISNAME_indices[{axes_names[idx][0]}_indices]"
+                ] = np.uint32(axes_names[idx][2])
             # the following three lines would be required by H5Web to plot RGB maps
             # template[f"{trg}/@CLASS"] = "IMAGE"
             # template[f"{trg}/@IMAGE_VERSION"] = "1.2"
@@ -166,35 +187,47 @@ class NxEmNionSwiftProjectParser:
 
             if len(axes_lst) == 2:
                 ny, nx = np.shape(arr)
-                template[f"{trg}/data_counts"] \
-                    = {"compress": np.reshape(arr, (1, ny, nx), order="C"), "strength": 1}
+                template[f"{trg}/data_counts"] = {
+                    "compress": np.reshape(arr, (1, ny, nx), order="C"),
+                    "strength": 1,
+                }
                 template[f"{trg}/data_counts/@long_name"] = "Signal"
                 # no image_identifier axis available
-                template[f"{trg}/AXISNAME[{axes_names[0][0]}]"] \
-                    = {"compress": np.asarray([1], np.uint32), "strength": 1}
-                template[f"{trg}/AXISNAME[{axes_names[0][0]}]/@long_name"] \
-                    = f"Image identifier (a. u.)"
+                template[f"{trg}/AXISNAME[{axes_names[0][0]}]"] = {
+                    "compress": np.asarray([1], np.uint32),
+                    "strength": 1,
+                }
+                template[
+                    f"{trg}/AXISNAME[{axes_names[0][0]}]/@long_name"
+                ] = f"Image identifier (a. u.)"
                 template[f"{trg}/AXISNAME[{axes_names[0][0]}]/@units"] = ""
                 for idx in [1, 2]:
-                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]"] \
-                        = {"compress": axes_lst[idx - 1]["value"], "strength": 1}
-                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]/@long_name"] \
-                        = f"Calibrated position along {axes_names[idx][1]}-axis " \
-                          f"({axes_lst[idx - 1]['unit']})"
-                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]/@units"] \
-                        = f"{axes_lst[idx - 1]['unit']}"
+                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]"] = {
+                        "compress": axes_lst[idx - 1]["value"],
+                        "strength": 1,
+                    }
+                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]/@long_name"] = (
+                        f"Calibrated position along {axes_names[idx][1]}-axis "
+                        f"({axes_lst[idx - 1]['unit']})"
+                    )
+                    template[
+                        f"{trg}/AXISNAME[{axes_names[idx][0]}]/@units"
+                    ] = f"{axes_lst[idx - 1]['unit']}"
             else:  # len(axes_lst) == 3
                 template[f"{trg}/data_counts"] = {"compress": arr, "strength": 1}
                 for idx in [0, 1, 2]:
                     # TODO check that casting works properly
-                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]"] \
-                        = {"compress": np.asarray(axes_lst[idx]["value"], np.uint32),
-                           "strength": 1}
-                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]/@long_name"] \
-                        = f"Calibrated position along {axes_names[idx][1]}-axis " \
-                          f"({axes_lst[idx]['unit']})"
-                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]/@units"] \
-                        = f"{axes_lst[idx]['unit']}"
+                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]"] = {
+                        "compress": np.asarray(axes_lst[idx]["value"], np.uint32),
+                        "strength": 1,
+                    }
+                    template[f"{trg}/AXISNAME[{axes_names[idx][0]}]/@long_name"] = (
+                        f"Calibrated position along {axes_names[idx][1]}-axis "
+                        f"({axes_lst[idx]['unit']})"
+                    )
+                    template[
+                        f"{trg}/AXISNAME[{axes_names[idx][0]}]/@units"
+                    ] = f"{axes_lst[idx]['unit']}"
 
         self.image_id += 1
         self.event_data_written = True
@@ -235,20 +268,21 @@ class NxEmNionSwiftProjectParser:
 
         for offset, tpl in local_files.items():
             # print(f"{tpl}")
-            if tpl[0] == b'metadata.json':
+            if tpl[0] == b"metadata.json":
                 print(f"Extract metadata.json from {full_path} at offset {offset}")
                 # ... explicit jump back to beginning of the file
                 file_hdl.seek(0)
-                metadata_dict = nsnd.read_json(file_hdl,
-                                               local_files,
-                                               dir_files,
-                                               b'metadata.json')
+                metadata_dict = nsnd.read_json(
+                    file_hdl, local_files, dir_files, b"metadata.json"
+                )
 
                 nx_concept_key = identify_nexus_concept_key(metadata_dict)
                 nx_concept_name = nexus_concept_dict[nx_concept_key]
-                print(f"Display_item {full_path}, concept {nx_concept_key}, maps {nx_concept_name}")
+                print(
+                    f"Display_item {full_path}, concept {nx_concept_key}, maps {nx_concept_name}"
+                )
 
-                flat_metadata_dict = fd.FlatDict(metadata_dict, delimiter='/')
+                flat_metadata_dict = fd.FlatDict(metadata_dict, delimiter="/")
                 break
                 # because we expect (based on Benedikt's example) to find only one json file
                 # in that *.ndata file pointed to by file_hdl
@@ -258,13 +292,10 @@ class NxEmNionSwiftProjectParser:
 
         for offset, tpl in local_files.items():
             # print(f"{tpl}")
-            if tpl[0] == b'data.npy':
+            if tpl[0] == b"data.npy":
                 print(f"Extract data.npy from {full_path} at offset {offset}")
                 file_hdl.seek(0)
-                data_arr = nsnd.read_data(file_hdl,
-                                          local_files,
-                                          dir_files,
-                                          b'data.npy')
+                data_arr = nsnd.read_data(file_hdl, local_files, dir_files, b"data.npy")
                 break
                 # because we expect (based on Benedikt's example) to find only one npy file
                 # in that *.ndata file pointed to by file_hdl
@@ -292,9 +323,11 @@ class NxEmNionSwiftProjectParser:
 
         nx_concept_key = identify_nexus_concept_key(metadata_dict)
         nx_concept_name = nexus_concept_dict[nx_concept_key]
-        print(f"Display_item {full_path}, concept {nx_concept_key}, maps {nx_concept_name}")
+        print(
+            f"Display_item {full_path}, concept {nx_concept_key}, maps {nx_concept_name}"
+        )
 
-        flat_metadata_dict = fd.FlatDict(metadata_dict, delimiter='/')
+        flat_metadata_dict = fd.FlatDict(metadata_dict, delimiter="/")
 
         if flat_metadata_dict == {}:  # only continue if some metadata were retrieved
             return template
@@ -318,7 +351,7 @@ class NxEmNionSwiftProjectParser:
         with ZipFile(self.file_name) as zip_file_hdl:
             with zip_file_hdl.open(self.proj_file_names[0]) as file_hdl:
                 # with open(file_name, 'r') as stream:
-                swift_proj_dict = fd.FlatDict(yaml.safe_load(file_hdl), delimiter='/')
+                swift_proj_dict = fd.FlatDict(yaml.safe_load(file_hdl), delimiter="/")
                 # for entry in swift_proj_dict["display_items"]:
                 #     if isinstance(entry, dict):
                 #         for key, val in entry.items():
@@ -327,37 +360,48 @@ class NxEmNionSwiftProjectParser:
             return template
 
         for itm in swift_proj_dict["display_items"]:
-            if set(["type", "uuid", "created", "display_data_channels"]).issubset(itm.keys()):
+            if set(["type", "uuid", "created", "display_data_channels"]).issubset(
+                itm.keys()
+            ):
                 if len(itm["display_data_channels"]) == 1:
                     if "data_item_reference" in itm["display_data_channels"][0].keys():
                         key = uuid_to_file_name(
-                            itm["display_data_channels"][0]["data_item_reference"])
+                            itm["display_data_channels"][0]["data_item_reference"]
+                        )
                         # file_name without the mime type
                         if key in self.ndata_file_dict:
-                            print(f"Key {key} is *.ndata maps to {self.ndata_file_dict[key]}")
+                            print(
+                                f"Key {key} is *.ndata maps to {self.ndata_file_dict[key]}"
+                            )
                             with ZipFile(self.file_name) as zip_file_hdl:
                                 print(f"Parsing {self.ndata_file_dict[key]}...")
-                                with zip_file_hdl.open(self.ndata_file_dict[key]) as file_hdl:
+                                with zip_file_hdl.open(
+                                    self.ndata_file_dict[key]
+                                ) as file_hdl:
                                     self.process_ndata(
-                                        file_hdl,
-                                        self.ndata_file_dict[key],
-                                        template)
+                                        file_hdl, self.ndata_file_dict[key], template
+                                    )
                         elif key in self.hdf_file_dict:
-                            print(f"Key {key} is *.h5 maps to {self.hdf_file_dict[key]}")
+                            print(
+                                f"Key {key} is *.h5 maps to {self.hdf_file_dict[key]}"
+                            )
                             with ZipFile(self.file_name) as zip_file_hdl:
                                 print(f"Parsing {self.hdf_file_dict[key]}...")
-                                with zip_file_hdl.open(self.hdf_file_dict[key]) as file_hdl:
+                                with zip_file_hdl.open(
+                                    self.hdf_file_dict[key]
+                                ) as file_hdl:
                                     self.process_hdf(
-                                        file_hdl,
-                                        self.hdf_file_dict[key],
-                                        template)
+                                        file_hdl, self.hdf_file_dict[key], template
+                                    )
                         else:
                             print(f"Key {key} has no corresponding data file")
         return template
 
     def parse(self, template: dict) -> dict:
         """Parse NOMAD OASIS relevant data and metadata from swift project."""
-        print("Parsing lazily from compressed NionSwift project (nsproj + directory)...")
+        print(
+            "Parsing lazily from compressed NionSwift project (nsproj + directory)..."
+        )
         print(self.file_name)
         print(f"{self.entry_id}")
         if self.check_project_file() is False:

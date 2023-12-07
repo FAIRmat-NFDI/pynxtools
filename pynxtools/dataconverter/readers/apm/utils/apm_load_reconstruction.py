@@ -35,15 +35,19 @@ def extract_data_from_pos_file(file_name: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}reconstruction/"
     xyz = posfile.get_reconstructed_positions()
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.typed_value, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.array(xyz.typed_value, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = posfile.get_mass_to_charge_state_ratio()
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.array(m_z.typed_value, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -56,15 +60,19 @@ def extract_data_from_epos_file(file_name: str, prefix: str, template: dict) -> 
 
     trg = f"{prefix}reconstruction/"
     xyz = eposfile.get_reconstructed_positions()
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.typed_value, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.array(xyz.typed_value, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = eposfile.get_mass_to_charge_state_ratio()
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.array(m_z.typed_value, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
 
@@ -130,15 +138,19 @@ def extract_data_from_apt_file(file_name: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}reconstruction/"
     xyz = aptfile.get_named_quantity("Position")
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.typed_value, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.array(xyz.typed_value, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = aptfile.get_named_quantity("Mass")
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.typed_value, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.array(m_z.typed_value, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
 
@@ -158,7 +170,7 @@ class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
         self.file_name = file_name
         index = file_name.lower().rfind(".")
         if index >= 0:
-            mime_type = file_name.lower()[index + 1::]
+            mime_type = file_name.lower()[index + 1 : :]
             if mime_type in ["pos", "epos", "apt"]:
                 self.file_format = mime_type
         self.entry_id = entry_id
@@ -172,12 +184,9 @@ class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
         prfx = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
         if self.file_name != "" and self.file_format != "none":
             if self.file_format == "pos":
-                extract_data_from_pos_file(
-                    self.file_name, prfx, template)
+                extract_data_from_pos_file(self.file_name, prfx, template)
             if self.file_format == "epos":
-                extract_data_from_epos_file(
-                    self.file_name, prfx, template)
+                extract_data_from_epos_file(self.file_name, prfx, template)
             if self.file_format == "apt":
-                extract_data_from_apt_file(
-                    self.file_name, prfx, template)
+                extract_data_from_apt_file(self.file_name, prfx, template)
         return template

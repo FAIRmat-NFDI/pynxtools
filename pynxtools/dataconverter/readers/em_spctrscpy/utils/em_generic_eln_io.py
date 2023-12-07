@@ -27,8 +27,12 @@ import yaml
 
 from ase.data import chemical_symbols
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_versioning \
-    import NX_EM_ADEF_NAME, NX_EM_ADEF_VERSION, NX_EM_EXEC_NAME, NX_EM_EXEC_VERSION
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_versioning import (
+    NX_EM_ADEF_NAME,
+    NX_EM_ADEF_VERSION,
+    NX_EM_EXEC_NAME,
+    NX_EM_EXEC_VERSION,
+)
 
 
 class NxEmNomadOasisElnSchemaParser:
@@ -51,8 +55,10 @@ class NxEmNomadOasisElnSchemaParser:
 
     def __init__(self, file_name: str, entry_id: int):
         print(f"Extracting data from ELN file: {file_name}")
-        if (file_name.rsplit('/', 1)[-1].startswith("eln_data")
-                or file_name.startswith("eln_data")) and entry_id > 0:
+        if (
+            file_name.rsplit("/", 1)[-1].startswith("eln_data")
+            or file_name.startswith("eln_data")
+        ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_name = file_name
             with open(self.file_name, "r", encoding="utf-8") as stream:
@@ -68,20 +74,30 @@ class NxEmNomadOasisElnSchemaParser:
         trg = f"/ENTRY[entry{self.entry_id}]/"
         src = "entry"
         if isinstance(self.yml[src], fd.FlatDict):
-            if (self.yml[f"{src}:attr_version"] == NX_EM_ADEF_VERSION) \
-                    and (self.yml[f"{src}:definition"] == NX_EM_ADEF_NAME):
+            if (self.yml[f"{src}:attr_version"] == NX_EM_ADEF_VERSION) and (
+                self.yml[f"{src}:definition"] == NX_EM_ADEF_NAME
+            ):
                 template[f"{trg}@version"] = NX_EM_ADEF_VERSION
                 template[f"{trg}definition"] = NX_EM_ADEF_NAME
                 template[f"{trg}PROGRAM[program1]/program"] = NX_EM_EXEC_NAME
-                template[f"{trg}PROGRAM[program1]/program/@version"] = NX_EM_EXEC_VERSION
-            if ("program" in self.yml[src].keys()) \
-                    and ("program__attr_version" in self.yml[src].keys()):
+                template[
+                    f"{trg}PROGRAM[program1]/program/@version"
+                ] = NX_EM_EXEC_VERSION
+            if ("program" in self.yml[src].keys()) and (
+                "program__attr_version" in self.yml[src].keys()
+            ):
                 template[f"{trg}PROGRAM[program2]/program"] = self.yml[f"{src}:program"]
-                template[f"{trg}PROGRAM[program2]/program/@version"] \
-                    = self.yml[f"{src}:program__attr_version"]
+                template[f"{trg}PROGRAM[program2]/program/@version"] = self.yml[
+                    f"{src}:program__attr_version"
+                ]
 
-        field_names = ["experiment_identifier", "start_time", "end_time",
-                       "experiment_description", "experiment_documentation"]
+        field_names = [
+            "experiment_identifier",
+            "start_time",
+            "end_time",
+            "experiment_description",
+            "experiment_documentation",
+        ]
         for field_name in field_names:
             if field_name in self.yml[src].keys():
                 template[f"{trg}{field_name}"] = self.yml[f"{src}:{field_name}"]
@@ -96,10 +112,18 @@ class NxEmNomadOasisElnSchemaParser:
             if len(self.yml[src]) >= 1:
                 user_id = 1
                 for user_list in self.yml[src]:
-                    char_field_names = ["name", "email", "affiliation", "address",
-                                        "orcid", "orcid_platform",
-                                        "telephone_number", "role",
-                                        "social_media_name", "social_media_platform"]
+                    char_field_names = [
+                        "name",
+                        "email",
+                        "affiliation",
+                        "address",
+                        "orcid",
+                        "orcid_platform",
+                        "telephone_number",
+                        "role",
+                        "social_media_name",
+                        "social_media_platform",
+                    ]
 
                     trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]/"
                     for field_name in char_field_names:
@@ -116,18 +140,23 @@ class NxEmNomadOasisElnSchemaParser:
         src = "sample"
         trg = f"/ENTRY[entry{self.entry_id}]/sample/"
         if isinstance(self.yml[src], fd.FlatDict):
-            if (isinstance(self.yml[f"{src}:atom_types"], list)) \
-                    and (len(self.yml[src + ":atom_types"]) >= 1):
+            if (isinstance(self.yml[f"{src}:atom_types"], list)) and (
+                len(self.yml[src + ":atom_types"]) >= 1
+            ):
                 atom_types_are_valid = True
                 for symbol in self.yml[f"{src}:atom_types"]:
-                    valid = isinstance(symbol, str) \
-                        and (symbol in chemical_symbols) and (symbol != "X")
+                    valid = (
+                        isinstance(symbol, str)
+                        and (symbol in chemical_symbols)
+                        and (symbol != "X")
+                    )
                     if valid is False:
                         atom_types_are_valid = False
                         break
                 if atom_types_are_valid is True:
-                    template[f"{trg}atom_types"] \
-                        = ", ".join(list(self.yml[f"{src}:atom_types"]))
+                    template[f"{trg}atom_types"] = ", ".join(
+                        list(self.yml[f"{src}:atom_types"])
+                    )
 
         char_req_field_names = ["method", "name", "sample_history", "preparation_date"]
         for field_name in char_req_field_names:
@@ -140,11 +169,15 @@ class NxEmNomadOasisElnSchemaParser:
 
         float_field_names = ["thickness", "density"]
         for field_name in float_field_names:
-            if (f"{field_name}:value" in self.yml[src].keys()) \
-                    and (f"{field_name}:unit" in self.yml[src].keys()):
-                template[f"{trg}{field_name}"] \
-                    = np.float64(self.yml[f"{src}:{field_name}:value"])
-                template[f"{trg}{field_name}/@units"] = self.yml[f"{src}:{field_name}:unit"]
+            if (f"{field_name}:value" in self.yml[src].keys()) and (
+                f"{field_name}:unit" in self.yml[src].keys()
+            ):
+                template[f"{trg}{field_name}"] = np.float64(
+                    self.yml[f"{src}:{field_name}:value"]
+                )
+                template[f"{trg}{field_name}/@units"] = self.yml[
+                    f"{src}:{field_name}:unit"
+                ]
 
         return template
 
@@ -159,25 +192,28 @@ class NxEmNomadOasisElnSchemaParser:
         # Oxford Instruments nowadays stores coordinate systems implicitly by
         # communicating the specification of their file format (like H5OINA)
         # print("Parsing coordinate system...")
-        prefix = f"/ENTRY[entry{self.entry_id}]/" \
-                 f"COORDINATE_SYSTEM_SET[coordinate_system_set]/"
+        prefix = (
+            f"/ENTRY[entry{self.entry_id}]/"
+            f"COORDINATE_SYSTEM_SET[coordinate_system_set]/"
+        )
         # this is likely not yet matching how it should be in NeXus
         grpnm = f"{prefix}TRANSFORMATIONS[laboratory]/"
         cs_xyz = np.asarray(
-            [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]], np.float64)
+            [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]], np.float64
+        )
         cs_names = ["x", "y", "z"]
         for i in np.arange(0, 3):
             trg = f"{grpnm}AXISNAME[{cs_names[i]}]"
             template[trg] = cs_xyz[:, i]
-            template[f"{trg}/@offset"] = np.asarray([0., 0., 0.], np.float64)
+            template[f"{trg}/@offset"] = np.asarray([0.0, 0.0, 0.0], np.float64)
             template[f"{trg}/@offset_units"] = "m"
             template[f"{trg}/@depends_on"] = "."
 
-        msg = '''
+        msg = """
               This way of defining coordinate systems is only a small example of what
               is possible and how it can be done. More discussion among members of
               FAIRmat Areas A, B, C, and D and the EM community is needed !
-              '''
+              """
         template[f"{prefix}@comment"] = msg
 
         return template
@@ -211,17 +247,22 @@ class NxEmNomadOasisElnSchemaParser:
 
         src = "em_lab:ebeam_column:electron_source"
         if isinstance(self.yml[src], fd.FlatDict):
-            trg = f"/ENTRY[entry{self.entry_id}]/em_lab/" \
-                  f"EBEAM_COLUMN[ebeam_column]/electron_source/"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/em_lab/"
+                f"EBEAM_COLUMN[ebeam_column]/electron_source/"
+            )
 
             float_field_names = ["voltage"]
             for field_name in float_field_names:
-                if (f"{field_name}:value" in self.yml[src].keys()) \
-                        and (f"{field_name}:unit" in self.yml[src].keys()):
-                    template[f"{trg}{field_name}"] \
-                        = np.float64(self.yml[f"{src}:{field_name}:value"])
-                    template[f"{trg}{field_name}/@units"] \
-                        = self.yml[f"{src}:{field_name}:unit"]
+                if (f"{field_name}:value" in self.yml[src].keys()) and (
+                    f"{field_name}:unit" in self.yml[src].keys()
+                ):
+                    template[f"{trg}{field_name}"] = np.float64(
+                        self.yml[f"{src}:{field_name}:value"]
+                    )
+                    template[f"{trg}{field_name}/@units"] = self.yml[
+                        f"{src}:{field_name}:unit"
+                    ]
 
             char_field_names = ["emitter_type"]
             for field_name in char_field_names:
@@ -233,9 +274,11 @@ class NxEmNomadOasisElnSchemaParser:
             if len(self.yml[src]) >= 1:
                 aperture_id = 1
                 for aperture in self.yml[src]:
-                    trg = f"/ENTRY[entry{self.entry_id}]/em_lab/" \
-                          f"EBEAM_COLUMN[ebeam_column]/" \
-                          f"APERTURE_EM[aperture_em{aperture_id}]/"
+                    trg = (
+                        f"/ENTRY[entry{self.entry_id}]/em_lab/"
+                        f"EBEAM_COLUMN[ebeam_column]/"
+                        f"APERTURE_EM[aperture_em{aperture_id}]/"
+                    )
                     if "value" in aperture.keys():
                         template[f"{trg}value"] = np.float64(aperture["value"])
                     char_field_names = ["name", "description"]
@@ -248,8 +291,10 @@ class NxEmNomadOasisElnSchemaParser:
 
         # corrector_cs
         src = "em_lab:ebeam_column:aberration_correction"
-        trg = f"/ENTRY[entry{self.entry_id}]/em_lab/" \
-              f"EBEAM_COLUMN[ebeam_column]/aberration_correction/"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/em_lab/"
+            f"EBEAM_COLUMN[ebeam_column]/aberration_correction/"
+        )
         if "applied" in self.yml[src].keys():
             template[f"{trg}applied"] = self.yml[f"{src}:applied"]
 
@@ -282,24 +327,34 @@ class NxEmNomadOasisElnSchemaParser:
         # print("Parsing optics...")
         src = "em_lab:optical_system_em"
         if isinstance(self.yml[src], fd.FlatDict):
-            trg = f"/ENTRY[entry{self.entry_id}]/em_lab/" \
-                  f"OPTICAL_SYSTEM_EM[optical_system_em]/"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/em_lab/"
+                f"OPTICAL_SYSTEM_EM[optical_system_em]/"
+            )
 
             char_field_names = ["beam_current_description"]
             for field_name in char_field_names:
                 if field_name in self.yml[src].keys():
                     template[f"{trg}{field_name}"] = self.yml[f"{src}:{field_name}"]
 
-            float_field_names = ["camera_length", "magnification", "defocus",
-                                 "semi_convergence_angle", "working_distance",
-                                 "beam_current"]
+            float_field_names = [
+                "camera_length",
+                "magnification",
+                "defocus",
+                "semi_convergence_angle",
+                "working_distance",
+                "beam_current",
+            ]
             for field_name in float_field_names:
-                if (f"{field_name}:value" in self.yml[src].keys()) \
-                        and (f"{field_name}:unit" in self.yml[src].keys()):
-                    template[f"{trg}{field_name}"] \
-                        = np.float64(self.yml[f"{src}:{field_name}:value"])
-                    template[f"{trg}{field_name}/@units"] \
-                        = self.yml[f"{src}:{field_name}:unit"]
+                if (f"{field_name}:value" in self.yml[src].keys()) and (
+                    f"{field_name}:unit" in self.yml[src].keys()
+                ):
+                    template[f"{trg}{field_name}"] = np.float64(
+                        self.yml[f"{src}:{field_name}:value"]
+                    )
+                    template[f"{trg}{field_name}/@units"] = self.yml[
+                        f"{src}:{field_name}:unit"
+                    ]
 
         return template
 
@@ -314,8 +369,10 @@ class NxEmNomadOasisElnSchemaParser:
             detector_id = 1
             for detector in self.yml[src]:
                 if isinstance(detector, dict):
-                    trg = f"/ENTRY[entry{self.entry_id}]/em_lab/" \
-                          f"DETECTOR[detector{detector_id}]/"
+                    trg = (
+                        f"/ENTRY[entry{self.entry_id}]/em_lab/"
+                        f"DETECTOR[detector{detector_id}]/"
+                    )
 
                     char_field_names = ["local_name"]
                     for field_name in char_field_names:

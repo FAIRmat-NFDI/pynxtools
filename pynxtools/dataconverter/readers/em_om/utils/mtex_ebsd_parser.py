@@ -25,9 +25,7 @@ import h5py
 
 
 class NxEmOmMtexEbsdParser:
-    """Parse *.mtex EBSD data.
-
-    """
+    """Parse *.mtex EBSD data."""
 
     def __init__(self, file_name: str, entry_id: int):
         """Class wrapping reading HDF5 files formatted according NXem_ebsd from MTex."""
@@ -42,7 +40,9 @@ class NxEmOmMtexEbsdParser:
 
         src = "/entry1/indexing/region_of_interest"
         trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/region_of_interest"
-        template[f"{trg}/descriptor"] = str(h5r[f"{src}/descriptor"][()].decode("utf-8"))
+        template[f"{trg}/descriptor"] = str(
+            h5r[f"{src}/descriptor"][()].decode("utf-8")
+        )
 
         src = "/entry1/indexing/region_of_interest/roi"
         trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/region_of_interest/roi"
@@ -55,12 +55,18 @@ class NxEmOmMtexEbsdParser:
         template[f"{trg}/title"] = str("Region-of-interest overview image")
         template[f"{trg}/@signal"] = grp.attrs["signal"]
         template[f"{trg}/@axes"] = grp.attrs["axes"]
-        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = grp.attrs["axis_x_indices"]
-        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = grp.attrs["axis_y_indices"]
+        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = grp.attrs[
+            "axis_x_indices"
+        ]
+        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = grp.attrs[
+            "axis_y_indices"
+        ]
 
         src = "/entry1/indexing/region_of_interest/roi/data"
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/region_of_interest/roi/data"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/region_of_interest/roi/data"
+        )
         if src not in h5r.keys():
             # must not happen, dst is required
             print(f"{src} not found !")
@@ -75,8 +81,10 @@ class NxEmOmMtexEbsdParser:
         axes_names = ["axis_x", "axis_y"]
         for axis_name in axes_names:
             src = f"/entry1/indexing/region_of_interest/roi/{axis_name}"
-            trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-                  f"region_of_interest/roi/{axis_name}"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+                f"region_of_interest/roi/{axis_name}"
+            )
             if src not in h5r.keys():
                 # must not happen, dst is required
                 # print(f"{src} not found !")
@@ -96,7 +104,7 @@ class NxEmOmMtexEbsdParser:
 
         src = "/entry1/indexing"
         # mtex2nexus MTex/Matlab scripts writes controlled terms phaseID
-        group_names = [entry for entry in h5r[src].keys() if entry.startswith('phase')]
+        group_names = [entry for entry in h5r[src].keys() if entry.startswith("phase")]
         if len(group_names) == 0:
             return template
         # group_names end up sorted in ascending order
@@ -106,14 +114,18 @@ class NxEmOmMtexEbsdParser:
                 # must not happen, verifier will complain
                 return template
             src = f"/entry1/indexing/{group_name}"
-            trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-                  f"EM_EBSD_CRYSTAL_STRUCTURE_MODEL" \
-                  f"[em_ebsd_crystal_structure_model{identifier}]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+                f"EM_EBSD_CRYSTAL_STRUCTURE_MODEL"
+                f"[em_ebsd_crystal_structure_model{identifier}]"
+            )
             template[f"{trg}/phase_identifier"] = h5r[f"{src}/phase_identifier"][0]
-            template[f"{trg}/phase_name"] \
-                = str(h5r[f"{src}/phase_name"][()].decode("utf-8"))
-            template[f"{trg}/point_group"] \
-                = str(h5r[f"{src}/point_group"][()].decode("utf-8"))
+            template[f"{trg}/phase_name"] = str(
+                h5r[f"{src}/phase_name"][()].decode("utf-8")
+            )
+            template[f"{trg}/point_group"] = str(
+                h5r[f"{src}/point_group"][()].decode("utf-8")
+            )
             dst = h5r[f"{src}/unit_cell_abc"]
             template[f"{trg}/unit_cell_abc"] = dst[:]
             template[f"{trg}/unit_cell_abc/@units"] = dst.attrs["units"]
@@ -131,7 +143,9 @@ class NxEmOmMtexEbsdParser:
 
         src = "/entry1/indexing"
         # mtex2nexus MTex/Matlab scripts writes controlled terms phaseID
-        group_names = [entry for entry in h5r[src].keys() if entry.startswith('ipf_map')]
+        group_names = [
+            entry for entry in h5r[src].keys() if entry.startswith("ipf_map")
+        ]
         if len(group_names) == 0:
             return template
         # group_names end up sorted in ascending order
@@ -155,23 +169,33 @@ class NxEmOmMtexEbsdParser:
         group_name = f"ipf_map{identifier}"
         print(f"Parse inverse pole figure (IPF) map for {group_name}...")
         src = f"/entry1/indexing/{group_name}"
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{identifier}]"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{identifier}]"
+        )
         if src not in h5r.keys():
             # print(f"WARNING: {group_name} not found !")
             return template
         template[f"{trg}/bitdepth"] = np.uint32(8)  # h5r[f"{src}/bitdepth"][0]
-        template[f"{trg}/phase_identifier"] = np.uint32(h5r[f"{src}/phase_identifier"][0])
-        template[f"{trg}/phase_name"] = str(h5r[f"{src}/phase_name"][()].decode("utf-8"))
+        template[f"{trg}/phase_identifier"] = np.uint32(
+            h5r[f"{src}/phase_identifier"][0]
+        )
+        template[f"{trg}/phase_name"] = str(
+            h5r[f"{src}/phase_name"][()].decode("utf-8")
+        )
         dst = h5r[f"{src}/program"]
         template[f"{trg}/PROGRAM[program1]/program"] = str(dst[()].decode("utf-8"))
         template[f"{trg}/PROGRAM[program1]/program/@version"] = dst.attrs["version"]
-        template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
+        template[f"{trg}/projection_direction"] = np.asarray(
+            [0.0, 0.0, 1.0], np.float32
+        )
         # there should be a depends on etc
 
         src = f"/entry1/indexing/{group_name}/ipf_rgb_map"
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-              f"PROCESS[ipf_map{identifier}]/ipf_rgb_map"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+            f"PROCESS[ipf_map{identifier}]/ipf_rgb_map"
+        )
         if src not in h5r.keys():
             # must not happen, grp is required
             # print(f"WARNING: {group_name} not found, ipf_rgb_map !")
@@ -181,12 +205,18 @@ class NxEmOmMtexEbsdParser:
         template[f"{trg}/title"] = str("Inverse pole figure color map")
         template[f"{trg}/@signal"] = grp.attrs["signal"]
         template[f"{trg}/@axes"] = grp.attrs["axes"]
-        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = grp.attrs["axis_x_indices"]
-        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = grp.attrs["axis_y_indices"]
+        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = grp.attrs[
+            "axis_x_indices"
+        ]
+        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = grp.attrs[
+            "axis_y_indices"
+        ]
 
         src = f"/entry1/indexing/{group_name}/ipf_rgb_map/data"
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-              f"PROCESS[ipf_map{identifier}]/ipf_rgb_map/DATA[data]"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+            f"PROCESS[ipf_map{identifier}]/ipf_rgb_map/DATA[data]"
+        )
         if src not in h5r.keys():
             # must not happen, dst is required
             # print(f"WARNING: {group_name} not found, ipf_rgb_map, data !")
@@ -201,8 +231,10 @@ class NxEmOmMtexEbsdParser:
         axes_names = ["axis_x", "axis_y"]
         for axis_name in axes_names:
             src = f"/entry1/indexing/{group_name}/ipf_rgb_map/{axis_name}"
-            trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-                  f"/PROCESS[ipf_map{identifier}]/ipf_rgb_map/AXISNAME[{axis_name}]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+                f"/PROCESS[ipf_map{identifier}]/ipf_rgb_map/AXISNAME[{axis_name}]"
+            )
             if src not in h5r.keys():
                 # must not happen, dst is required
                 # print(f"WARNING: {group_name} not found, ipf_rgb_map, {axis_name} !")
@@ -214,13 +246,17 @@ class NxEmOmMtexEbsdParser:
 
         return template
 
-    def parse_inverse_pole_figure_color_key(self, h5r, identifier, template: dict) -> dict:
+    def parse_inverse_pole_figure_color_key(
+        self, h5r, identifier, template: dict
+    ) -> dict:
         """Parse color key renderings of inverse-pole-figure (IPF) mappings."""
         group_name = f"ipf_map{identifier}"
         print(f"Parse inverse pole figure (IPF) color key {group_name}...")
         src = f"/entry1/indexing/{group_name}/ipf_rgb_color_model"
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{identifier}]/ipf_rgb_color_model"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{identifier}]/ipf_rgb_color_model"
+        )
         if src not in h5r.keys():
             # must not happen, grp is required
             # print(f"WARNING: {group_name} not found, ipf_rgb_color_model")
@@ -229,12 +265,18 @@ class NxEmOmMtexEbsdParser:
         template[f"{trg}/title"] = str("Inverse pole figure color key with SST")
         template[f"{trg}/@signal"] = grp.attrs["signal"]
         template[f"{trg}/@axes"] = grp.attrs["axes"]
-        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = grp.attrs["axis_x_indices"]
-        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = grp.attrs["axis_y_indices"]
+        template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = grp.attrs[
+            "axis_x_indices"
+        ]
+        template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = grp.attrs[
+            "axis_y_indices"
+        ]
 
         src = f"/entry1/indexing/{group_name}/ipf_rgb_color_model/data"
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{identifier}]/ipf_rgb_color_model/DATA[data]"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{identifier}]/ipf_rgb_color_model/DATA[data]"
+        )
         if src not in h5r.keys():
             # must not happen, dst is required
             # print(f"WARNING: {group_name} not found, ipf_rgb_color_model, data")
@@ -249,9 +291,11 @@ class NxEmOmMtexEbsdParser:
         axes_names = ["axis_x", "axis_y"]
         for axis_name in axes_names:
             src = f"/entry1/indexing/{group_name}/ipf_rgb_color_model/{axis_name}"
-            trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-                  f"/PROCESS[ipf_map{identifier}]/ipf_rgb_color_model" \
-                  f"/AXISNAME[{axis_name}]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+                f"/PROCESS[ipf_map{identifier}]/ipf_rgb_color_model"
+                f"/AXISNAME[{axis_name}]"
+            )
             if src not in h5r.keys():
                 # must not happen, dst is required
                 # print(f"WARNING: {group_name} not found,

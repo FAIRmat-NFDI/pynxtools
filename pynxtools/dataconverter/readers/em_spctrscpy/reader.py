@@ -23,20 +23,25 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_use_case_selector \
-    import EmUseCaseSelector
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_use_case_selector import (
+    EmUseCaseSelector,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_generic_eln_io \
-    import NxEmNomadOasisElnSchemaParser
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_generic_eln_io import (
+    NxEmNomadOasisElnSchemaParser,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_event_data \
-    import NxEventDataEm
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_event_data import (
+    NxEventDataEm,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_plots \
-    import em_spctrscpy_default_plot_generator
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_plots import (
+    em_spctrscpy_default_plot_generator,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_example_data \
-    import EmSpctrscpyCreateExampleData
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_example_data import (
+    EmSpctrscpyCreateExampleData,
+)
 
 
 def hyperspy_parser(file_name: str, template: dict, entry_id: int) -> dict:
@@ -66,10 +71,12 @@ class EmSpctrscpyReader(BaseReader):
     supported_nxdls = ["NXem"]
 
     # pylint: disable=duplicate-code
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ) -> dict:
         """Read data from given file, return filled template dictionary em."""
         # pylint: disable=duplicate-code
         template.clear()
@@ -96,8 +103,9 @@ class EmSpctrscpyReader(BaseReader):
         else:
             print("Parse ELN and technology partner file(s)...")
             case = EmUseCaseSelector(file_paths)
-            assert case.is_valid is True, \
-                "Such a combination of input-file(s, if any) is not supported !"
+            assert (
+                case.is_valid is True
+            ), "Such a combination of input-file(s, if any) is not supported !"
 
             print("Parse (meta)data coming from an ELN...")
             if case.eln_parser == "nomad-oasis":
@@ -106,7 +114,9 @@ class EmSpctrscpyReader(BaseReader):
                 print("No input file defined for eln data !")
                 return {}
 
-            print("Parse (numerical) data and metadata from technology partner files...")
+            print(
+                "Parse (numerical) data and metadata from technology partner files..."
+            )
             if case.vendor_parser == "oina":
                 # oina_parser(case.vendor[0], template, entry_id)
                 return {}

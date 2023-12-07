@@ -63,6 +63,7 @@ dev = [
     "types-pytz",
     "types-requests",
     "pip-tools",
+    "pre-commit",
 ]
 
 [project.scripts]

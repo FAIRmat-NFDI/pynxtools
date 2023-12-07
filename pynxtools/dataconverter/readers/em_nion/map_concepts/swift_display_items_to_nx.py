@@ -22,37 +22,41 @@
 import flatdict as fd
 
 
-metadata_constraints = {"type": str,
-                        "uuid": str,
-                        "created": str,
-                        "data_shape": list,
-                        "data_dtype": str,
-                        "is_sequence": bool,
-                        "dimensional_calibrations": list,
-                        "data_modified": str,
-                        "timezone": str,
-                        "timezone_offset": str,
-                        "metadata/hardware_source/hardware_source_id": str,
-                        "version": int,
-                        "modified": str}
+metadata_constraints = {
+    "type": str,
+    "uuid": str,
+    "created": str,
+    "data_shape": list,
+    "data_dtype": str,
+    "is_sequence": bool,
+    "dimensional_calibrations": list,
+    "data_modified": str,
+    "timezone": str,
+    "timezone_offset": str,
+    "metadata/hardware_source/hardware_source_id": str,
+    "version": int,
+    "modified": str,
+}
 
-nexus_concept_dict = {"ITULL": "NxImageSetRealSpace",
-                      "IFLL": "NxImageSetRealSpace",
-                      "IFL": None,
-                      "ITUL": None,
-                      "STUUE": "NxSpectrumSetEelsOmegaQ",
-                      "STULLE": "NxSpectrumSetEels",
-                      "STULLUE": "NxSpectrumSetOmegaQ",
-                      "SFLLUE": "NxSpectrumSetOmegaQ",
-                      "SFLLE": "NxSpectrumSetEels",
-                      "SFUE": "NxSpectrumSetEelsOmegaQ",
-                      "RFAA": "NxImageAngSpace",
-                      "RTUAA": "NxImageAngSpace"}
+nexus_concept_dict = {
+    "ITULL": "NxImageSetRealSpace",
+    "IFLL": "NxImageSetRealSpace",
+    "IFL": None,
+    "ITUL": None,
+    "STUUE": "NxSpectrumSetEelsOmegaQ",
+    "STULLE": "NxSpectrumSetEels",
+    "STULLUE": "NxSpectrumSetOmegaQ",
+    "SFLLUE": "NxSpectrumSetOmegaQ",
+    "SFLLE": "NxSpectrumSetEels",
+    "SFUE": "NxSpectrumSetEelsOmegaQ",
+    "RFAA": "NxImageAngSpace",
+    "RTUAA": "NxImageAngSpace",
+}
 
 
 def check_existence_of_required_fields(dct: dict, constraint_dct: dict) -> bool:
     """Checks if given dictionary has fields with values which match constraints."""
-    flat_dct = fd.FlatDict(dct, delimiter='/')
+    flat_dct = fd.FlatDict(dct, delimiter="/")
     for keyword, dtyp in constraint_dct.items():
         if keyword not in flat_dct.keys():
             print(f"-->{keyword} not keyword")
@@ -87,14 +91,17 @@ def identify_nexus_concept_key(dct: dict) -> str:
         set_unit_catg = set(lst_unit_catg)
 
         if "A" in set_unit_catg:
-            nexus_concept_key \
-                = f"R{str(dct['is_sequence']).upper()[0:1]}{''.join(lst_unit_catg)}"
+            nexus_concept_key = (
+                f"R{str(dct['is_sequence']).upper()[0:1]}{''.join(lst_unit_catg)}"
+            )
         elif "E" in set_unit_catg:
-            nexus_concept_key \
-                = f"S{str(dct['is_sequence']).upper()[0:1]}{''.join(lst_unit_catg)}"
+            nexus_concept_key = (
+                f"S{str(dct['is_sequence']).upper()[0:1]}{''.join(lst_unit_catg)}"
+            )
         elif "E" not in set_unit_catg:
-            nexus_concept_key \
-                = f"I{str(dct['is_sequence']).upper()[0:1]}{''.join(lst_unit_catg)}"
+            nexus_concept_key = (
+                f"I{str(dct['is_sequence']).upper()[0:1]}{''.join(lst_unit_catg)}"
+            )
         else:
             return nexus_concept_key
     return nexus_concept_key

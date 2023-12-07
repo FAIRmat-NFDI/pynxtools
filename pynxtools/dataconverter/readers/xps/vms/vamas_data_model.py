@@ -25,6 +25,7 @@ from dataclasses import dataclass
 @dataclass
 class VamasHeader:
     """An object to store the Vamas header information."""
+
     format_id: str = (
         "VAMAS Surface Chemical Analysis Standard Data Transfer Format 1988 May 4"
     )
@@ -50,6 +51,7 @@ class VamasHeader:
 @dataclass
 class Block:
     """An object to store a block of spectrum data and meta-data."""
+
     block_id: str = ""
     sample_id: str = ""
     year: str = ""

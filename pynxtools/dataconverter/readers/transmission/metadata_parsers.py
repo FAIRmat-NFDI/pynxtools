@@ -19,8 +19,8 @@
 from datetime import datetime
 
 # The min & max wavelength the instrument can measure
-MIN_WAVELENGTH = 190.
-MAX_WAVELENGTH = 3350.
+MIN_WAVELENGTH = 190.0
+MAX_WAVELENGTH = 3350.0
 
 
 def read_start_date(metadata: list) -> str:
@@ -42,7 +42,7 @@ def read_ref_attenuator(metadata: list) -> int:
 
 def is_depolarizer_on(metadata: list) -> bool:
     """Reads whether the depolarizer was active during the measurement"""
-    return metadata[46] == 'on'
+    return metadata[46] == "on"
 
 
 def read_uv_monochromator_range(metadata: list) -> list:

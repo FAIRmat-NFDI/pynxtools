@@ -98,24 +98,25 @@ def parse_human_readable_composition_information(eln_input):
         if (element_symbol != "X") and (element_symbol in chemical_symbols):
             # case: "Mo"
             if len(args) == 1:
-                return parse_human_readable_composition_case_one(
-                    element_symbol)
+                return parse_human_readable_composition_case_one(element_symbol)
             # case: "Mo matrix" or "Mo 98.0", always assuming at.-%!
             if len(args) == 2:
-                return parse_human_readable_composition_case_two(
-                    args, element_symbol)
+                return parse_human_readable_composition_case_two(args, element_symbol)
             # case: "Mo 98 wt.-%", selectable at.-%, ppm, ppb, or wt.-%!
             if len(args) == 3:
                 return parse_human_readable_composition_case_three(
-                    eln_input, args, element_symbol)
+                    eln_input, args, element_symbol
+                )
             # case: "Mo 98 +- 2", always assuming at.-%!
             if len(args) == 4:
                 return parse_human_readable_composition_case_four(
-                    eln_input, element_symbol)
+                    eln_input, element_symbol
+                )
             # case: "Mo 98 wt.-% +- 2", selectable at.-%, ppm, ppb, or wt.-%!
             if len(args) == 5:
                 return parse_human_readable_composition_case_five(
-                    eln_input, args, element_symbol)
+                    eln_input, args, element_symbol
+                )
     return (None, None, None, None, None)
 
 
@@ -124,8 +125,13 @@ def parse_composition_table(composition_list):
     composition_table = {}
     # check that there are no contradictions or inconsistenc
     for entry in composition_list:
-        instruction, element, composition, stdev, normalization \
-            = parse_human_readable_composition_information(entry)
+        (
+            instruction,
+            element,
+            composition,
+            stdev,
+            normalization,
+        ) = parse_human_readable_composition_information(entry)
         # print(f"{instruction}, {element}, {composition}, {stdev}, {normalization}")
 
         if instruction == "add_element":
@@ -138,25 +144,31 @@ def parse_composition_table(composition_list):
                 # percent normalization in a composition_table
                 if normalization is not None:
                     if normalization != composition_table["normalization"]:
-                        raise ValueError("Composition list is contradicting as it \
-                                         mixes atom- with weight-percent normalization!")
+                        raise ValueError(
+                            "Composition list is contradicting as it \
+                                         mixes atom- with weight-percent normalization!"
+                        )
 
             if element not in composition_table:
                 composition_table[element] = (composition, stdev)
             else:
-                raise ValueError("Composition list is incorrectly formatted as if has \
-                                 at least multiple lines for the same element!")
+                raise ValueError(
+                    "Composition list is incorrectly formatted as if has \
+                                 at least multiple lines for the same element!"
+                )
             continue
         if instruction == "define_matrix":
             if element not in composition_table:
                 composition_table[element] = (None, None)
                 # because the fraction is unclear at this point
             else:
-                raise ValueError("Composition list is contradicting as it includes \
-                                 at least two statements what the matrix should be!")
+                raise ValueError(
+                    "Composition list is contradicting as it includes \
+                                 at least two statements what the matrix should be!"
+                )
 
     # determine remaining fraction
-    total_fractions = 0.
+    total_fractions = 0.0
     remainder_element = None
     for keyword, tpl in composition_table.items():
         if keyword != "normalization":
@@ -166,8 +178,10 @@ def parse_composition_table(composition_list):
                 remainder_element = keyword
     # print(f"Total fractions {total_fractions}, remainder element {remainder_element}")
     if remainder_element is None:
-        raise ValueError("Composition list inconsistent because either fractions for \
-                         elements do not add up to 100. or no symbol for matrix defined!")
+        raise ValueError(
+            "Composition list inconsistent because either fractions for \
+                         elements do not add up to 100. or no symbol for matrix defined!"
+        )
 
     if composition_table:  # means != {}
         composition_table[remainder_element] = (1.0e2 - total_fractions, None)

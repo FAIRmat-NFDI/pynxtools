@@ -39,20 +39,18 @@ def get_repo_last_commit() -> str:
 class NxObject:  # pylint: disable=R0903
     """An object in a graph e.g. a field or group in NeXus."""
 
-    def __init__(self,
-                 name: str = None,
-                 unit: str = None,
-                 dtype=str,
-                 value=None,
-                 **kwargs):
+    def __init__(
+        self, name: str = None, unit: str = None, dtype=str, value=None, **kwargs
+    ):
         if name is not None:
             assert name != "", "Argument name needs to be a non-empty string !"
         if unit is not None:
             assert unit != "", "Argument unit needs to be a non-empty string !"
         assert dtype is not None, "Argument dtype must not be None !"
         if dtype is not None:
-            assert isinstance(dtype, type), \
-                "Argument dtype needs a valid, ideally numpy, datatype !"
+            assert isinstance(
+                dtype, type
+            ), "Argument dtype needs a valid, ideally numpy, datatype !"
         # ##MK::if value is not None:
         self.is_a = "NXobject"
         self.is_attr = False  # if True indicates object is attribute
@@ -70,8 +68,9 @@ class NxObject:  # pylint: disable=R0903
             self.value = None
         # value should be a numpy scalar, tensor, or string if possible
         if "is_attr" in kwargs:
-            assert isinstance(kwargs["is_attr"], bool), \
-                "Kwarg is_attr needs to be a boolean !"
+            assert isinstance(
+                kwargs["is_attr"], bool
+            ), "Kwarg is_attr needs to be a boolean !"
             self.is_attr = kwargs["is_attr"]
 
     def print(self):
@@ -82,6 +81,7 @@ class NxObject:  # pylint: disable=R0903
         print(str(self.unit))
         print("dtype: ")
         print(self.dtype)
+
 
 # test = NxObject(name="test", unit="baud", dtype=np.uint32, value=32000)
 # test.print()
