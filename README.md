@@ -95,3 +95,8 @@ on how to build on this work, or to get your parser included into NOMAD, you can
 ### Does this software require NOMAD or NOMAD OASIS ?
 
 No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe.
+
+# Troubleshooting
+
+Please check this [guide](TROUBLESHOOTING.md) for any issues you face with the tool. If you don't find a solution there, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.md).
+
