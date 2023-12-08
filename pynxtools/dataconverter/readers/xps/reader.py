@@ -37,6 +37,7 @@ np.set_printoptions(threshold=sys.maxsize)
 
 XPS_TOKEN = "@xps_token:"
 XPS_DATA_TOKEN = "@data:"
+XPS_METADATA_TOKEN = "@metadata:"
 XPS_DETECTOR_TOKEN = "@detector_data:"
 ELN_TOKEN = "@eln"
 # Track entries for using for eln data
@@ -227,36 +228,53 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
     and store them into template. We use searching_keys
     for separating the data from xps_data_dict.
     """
-    for key, value in config_dict.items():
-        if XPS_DATA_TOKEN in str(value):
-            key_part = value.split(XPS_DATA_TOKEN)[-1]
-            entries_values = find_entry_and_value(
-                xps_data_dict, key_part, dt_typ=XPS_DATA_TOKEN
-            )
+    for key, value_list in config_dict.items():
+        value_list = list(value_list)
 
-            fill_data_group(key, entries_values, config_dict, template, entry_set)
+        for value in value_list:
+            if XPS_DATA_TOKEN in str(value):
+                key_part = value.split(XPS_DATA_TOKEN)[-1]
+                entries_values = find_entry_and_value(
+                    xps_data_dict, key_part, dt_typ=XPS_DATA_TOKEN
+                )
 
-        if XPS_DETECTOR_TOKEN in str(value):
-            key_part = value.split(XPS_DATA_TOKEN)[-1]
-            entries_values = find_entry_and_value(
-                xps_data_dict, key_part, dt_typ=XPS_DETECTOR_TOKEN
-            )
+                fill_data_group(key, entries_values, config_dict, template, entry_set)
 
-            fill_detector_group(key, entries_values, config_dict, template, entry_set)
+            elif XPS_DETECTOR_TOKEN in str(value):
+                key_part = value.split(XPS_DATA_TOKEN)[-1]
+                entries_values = find_entry_and_value(
+                    xps_data_dict, key_part, dt_typ=XPS_DETECTOR_TOKEN
+                )
 
-        elif XPS_TOKEN in str(value):
-            token = value.split(XPS_TOKEN)[-1]
-            entries_values = find_entry_and_value(
-                xps_data_dict, token, dt_typ=XPS_TOKEN
-            )
-            for entry, ent_value in entries_values.items():
-                entry_set.add(entry)
-                modified_key = key.replace("[entry]", f"[{entry}]")
-                template[modified_key] = ent_value
-                try:
-                    template[f"{modified_key}/@units"] = config_dict[f"{key}/@units"]
-                except KeyError:
-                    pass
+                fill_detector_group(key, entries_values, config_dict, template, entry_set)
+
+            elif XPS_TOKEN in str(value):
+                token = value.split(XPS_TOKEN)[-1]
+                entries_values = find_entry_and_value(
+                    xps_data_dict, token, dt_typ=XPS_TOKEN
+                )
+                for entry, ent_value in entries_values.items():
+                    entry_set.add(entry)
+                    modified_key = key.replace("[entry]", f"[{entry}]")
+                    template[modified_key] = ent_value
+                    try:
+                        template[f"{modified_key}/@units"] = config_dict[f"{key}/@units"]
+                    except KeyError:
+                        pass
+
+            elif XPS_METADATA_TOKEN in str(value):
+                token = value.split(XPS_METADATA_TOKEN)[-1]
+                entries_values = find_entry_and_value(
+                    xps_data_dict, token, dt_typ=XPS_METADATA_TOKEN
+                )
+                for entry, ent_value in entries_values.items():
+                    entry_set.add(entry)
+                    modified_key = key.replace("[entry]", f"[{entry}]")
+                    template[modified_key] = ent_value
+                    try:
+                        template[f"{modified_key}/@units"] = config_dict[f"{key}/@units"]
+                    except KeyError:
+                       pass
 
 
 # pylint: disable=too-many-branches
