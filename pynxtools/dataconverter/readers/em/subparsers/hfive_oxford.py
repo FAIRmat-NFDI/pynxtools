@@ -42,9 +42,10 @@ class HdfFiveOxfordReader(HdfFiveBaseParser):
         # duplicate the code of the base hfive parser for generating NeXus default plots
         self.supported_version: Dict = {}
         self.version: Dict = {}
-        self.init_support()
         self.supported = False
-        self.check_if_supported()
+        if self.is_hdf is True:
+            self.init_support()
+            self.check_if_supported()
 
     def init_support(self):
         """Init supported versions."""

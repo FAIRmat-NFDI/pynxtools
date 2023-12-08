@@ -39,9 +39,10 @@ class HdfFiveBrukerEspritReader(HdfFiveBaseParser):
         self.tmp: Dict = {}
         self.supported_version: Dict = {}
         self.version: Dict = {}
-        self.init_support()
         self.supported = False
-        self.check_if_supported()
+        if self.is_hdf is True:
+            self.init_support()
+            self.check_if_supported()
 
     def init_support(self):
         """Init supported versions."""

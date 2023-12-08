@@ -22,15 +22,11 @@
 from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-
 from pynxtools.dataconverter.readers.em.concepts.nexus_concepts import NxEmAppDef
-
 # from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
-
 from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
-
+from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
-
 # from pynxtools.dataconverter.readers.em.geometry.convention_mapper import NxEmConventionMapper
 
 # remaining subparsers to be implemented and merged into this one
@@ -118,13 +114,19 @@ class EmReader(BaseReader):
         # sub_parser = "nxs_mtex"
         # subparser = NxEmNxsMTexSubParser(entry_id, file_paths[0])
         # subparser.parse(template)
+        # TODO::check correct loop through!
 
         # add further with resolving cases
         # if file_path is an HDF5 will use hfive parser
         # sub_parser = "nxs_pyxem"
-        subparser = NxEmNxsPyxemSubParser(entry_id, file_paths[0])
+        # subparser = NxEmNxsPyxemSubParser(entry_id, file_paths[0])
+        # subparser.parse(template)
+        # TODO::check correct loop through!
+
+        # sub_parser = "image_tiff"
+        subparser = NxEmImagesSubParser(entry_id, file_paths[0])
         subparser.parse(template)
-        # exit(1)
+        exit(1)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")

@@ -68,8 +68,10 @@ class HdfFiveBaseParser:
         self.template_attributes: List = []
         self.templates: Dict = {}
         self.h5r = None
+        self.is_hdf = True
         if file_path is not None and file_path != "":
             self.file_path = file_path
+            # TODO::check if HDF5 file using magic cookie
         else:
             raise ValueError(f"{__name__} needs proper instantiation !")
 
