@@ -20,7 +20,7 @@
 import numpy as np
 # from typing import Dict, Any, List
 
-from pynxtools.dataconverter.readers.em.subparsers.image_tiff import TiffSubParser
+from pynxtools.dataconverter.readers.em.subparsers.image_tiff_tfs import TfsTiffSubParser
 
 
 class NxEmImagesSubParser:
@@ -38,9 +38,9 @@ class NxEmImagesSubParser:
     def identify_image_type(self):
         """Identify if image matches known mime type and has content for which subparser exists."""
         # tech partner formats used for measurement
-        img = TiffSubParser(f"{self.file_path}")
+        img = TfsTiffSubParser(f"{self.file_path}")
         if img.supported is True:
-            return "tiff"
+            return "tiff_tfs"
         return None
 
     def parse(self, template: dict) -> dict:
@@ -52,8 +52,8 @@ class NxEmImagesSubParser:
         # see also comments for respective nxs_pyxem parser
         # and its interaction with tech-partner-specific hfive_* subparsers
 
-        if image_parser_type == "tiff":
-            tiff = TiffSubParser(self.file_path)
+        if image_parser_type == "tiff_tfs":
+            tiff = TfsTiffSubParser(self.file_path)
             tiff.parse_and_normalize()
             self.process_into_template(tiff.tmp, template)
         else:  # none or something unsupported
