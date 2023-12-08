@@ -62,6 +62,14 @@ python -m pip install -e .
 python -m pip install -e ".[dev]"
 ```
 
+There is also a [pre-commit hook](https://pre-commit.com/#intro) available
+which formats the code and checks the linting before actually commiting.
+It can be installed with
+```shell
+pre-commit install
+```
+from the root of this repository.
+
 ## Test this software
 
 Especially relevant for developers, there exists a basic test framework written in
