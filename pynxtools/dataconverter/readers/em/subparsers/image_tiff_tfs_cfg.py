@@ -195,6 +195,23 @@ TiffTfsConcepts = ["User/Date",
                    "ColdStage/Humidity",
                    "ColdStage/SampleBias"]
 
+# there is more to know and understand than just knowing TFS/FEI uses
+# the above-mentioned concepts in their taxonomy:
+# take the example of System/Source for which an example file (instance) has the
+# value "FEG"
+# similar like in NeXus "System/Source" labels a concept for which (assumption!) there
+# is a controlled enumeration of symbols possible (as the example shows "FEG" is one such
+# allowed symbol of the enumeration.
+# The key issue is that the symbols for the leaf (here "FEG") means nothing eventually
+# when one has another semantic world-view, like in NOMAD metainfo or NeXus
+# (only us) humans understand that what TFS/FEI likely means with the symbol
+# "FEG" is exactly the same as what we mean in NeXus when setting emitter_type of
+# NXebeam_column to "cold_cathode_field_emitter"
+# world with the controlled enumeration value "other" because we do not know
+# if FEG means really a filament or a cold_cathode_field_emitter
+
+TfsToNexusConceptMapping = {"System/Source/FEG": "cold_field_cathode_emitter"}
+
 
 def get_fei_parent_concepts() -> List:
     """Get list of unique FEI parent concepts."""
@@ -215,7 +232,8 @@ def get_fei_childs(concept: str) -> List:
     return list(child_concepts)
 
 
-TiffTfsToNeXusCfg = {"/ENTRY[entry*]/measurement/EVENT_DATA_EM_SET[event_data_em_set]/EVENT_DATA_EM[event_data_em*]/start_time": {"fun": "ikz_berlin_apreo_iso8601", "terms": ["User/Date", "User/Time"]},
+# "/ENTRY[entry*]/measurement/EVENT_DATA_EM_SET[event_data_em_set]/EVENT_DATA_EM[event_data_em*]/start_time"
+TiffTfsToNeXusCfg = {"IGNORE": {"fun": "ikz_berlin_apreo_iso8601", "terms": ["User/Date", "User/Time"]},
                      "IGNORE": { "fun": "load_from", "terms": "User/User" },	
                      "IGNORE": { "fun": "load_from", "terms": "User/UserText" },
                      "IGNORE": { "fun": "load_from", "terms": "User/UserTextUnicode" },	
@@ -223,8 +241,8 @@ TiffTfsToNeXusCfg = {"/ENTRY[entry*]/measurement/EVENT_DATA_EM_SET[event_data_em
                      "IGNORE": { "fun": "load_from", "terms": "System/Dnumber" },
                      "IGNORE": { "fun": "load_from", "terms": "System/Software" },
                      "/ENTRY[entry*]/measurement/em_lab/FABRICATION[fabrication]/identifier": { "fun": "load_from", "terms": "System/BuildNr" },
-                     "/ENTRY[entry*]/measurement/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/emitter_type": { "fun": "ikz_berlin_apreo", "terms": "System/Source" },
-                     "/ENTRY[entry*]/measurement/em_lab/FABRICATION[fabrication]/vendor": { "fun": "load_from", "terms": "System/Column" },	
+                     "/ENTRY[entry*]/measurement/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/emitter_type": { "fun": "tfs_to_nexus", "terms": "System/Source" },
+                     "/ENTRY[entry*]/measurement/em_lab/FABRICATION[fabrication]/vendor": "FEI",
                      "IGNORE": { "fun": "load_from", "terms": "System/FinalLens" },
                      "IGNORE": { "fun": "load_from", "terms": "System/Chamber" },
                      "IGNORE": { "fun": "load_from", "terms": "System/Stage" },

@@ -78,11 +78,9 @@ def apply_modifier(modifier, dct: dict):
                 return load_from_modifier(modifier["terms"], dct)
             if modifier["fun"] == "convert_iso8601":
                 return convert_iso8601_modifier(modifier["terms"], dct)
-        elif set(["link"]) == set(modifier.keys()):
-            # CURRENTLY NOT IMPLEMENTED
-            # with the jsonmap reader Sherjeel conceptualized "link"
-            return None
         else:
+            print(f"WARNING::Modifier {modifier} is currently not implemented !")
+            # elif set(["link"]) == set(modifier.keys()), with the jsonmap reader Sherjeel conceptualized "link"
             return None
     if isinstance(modifier, str):
         return modifier

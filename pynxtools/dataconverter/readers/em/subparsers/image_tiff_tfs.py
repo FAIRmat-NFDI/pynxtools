@@ -28,6 +28,10 @@ from pynxtools.dataconverter.readers.em.subparsers.image_tiff_tfs_cfg import \
     TiffTfsConcepts, TiffTfsToNeXusCfg, get_fei_parent_concepts, get_fei_childs
 from pynxtools.dataconverter.readers.em.utils.image_utils import \
     sort_ascendingly_by_second_argument, if_str_represents_float
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
+    import variadic_path_to_specific_path
+from pynxtools.dataconverter.readers.em.subparsers.image_tiff_tfs_modifier import \
+    get_nexus_value
 
 
 class TfsTiffSubParser(TiffSubParser):
@@ -141,18 +145,13 @@ class TfsTiffSubParser(TiffSubParser):
                   f"TIFF file that this parser can process !")
 
     def process_into_template(self, template: dict) -> dict:
-        self.process_event_data_em_metadata(template)
-        self.process_event_data_em_data(template)
+        if self.supported is True:
+            self.process_event_data_em_metadata(template)
+            self.process_event_data_em_data(template)
         return template
     
-    def process_event_data_em_metadata(self, template: dict) -> dict:
-        """Add respective event_data_em header."""
-        # contextualization to understand how the image relates to the EM session
-        print(f"Mapping some of the TFS/FEI metadata concepts onto NeXus concepts")
-        return template
-
     def process_event_data_em_data(self, template: dict) -> dict:
-        """Add respective heavy image data."""
+        """Add respective heavy data."""
         # default display of the image(s) representing the data collected in this event
         print(f"Writing TFS/FEI TIFF image as a onto the respective NeXus concept")
         # read image in-place
@@ -215,8 +214,14 @@ class TfsTiffSubParser(TiffSubParser):
                 template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit[dim]}"
         return template
     
-    def process_event_data_em_state(self, template: dict) -> dict:
-        """Add em-state as they were during the event_data_em event."""
-        # state of the microscope not repeating static/long-valid microscope metadata
-        print(f"Writing TFS/FEI event_data_em state")
+    def process_event_data_em_metadata(self, template: dict) -> dict:
+        """Add respective metadata."""
+        # contextualization to understand how the image relates to the EM session
+        print(f"Mapping some of the TFS/FEI metadata concepts onto NeXus concepts")
+        identifier = [self.entry_id, self.event_id, 1]
+        for nx_path, modifier in TiffTfsToNeXusCfg.items():
+            if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
+                trg = variadic_path_to_specific_path(nx_path, identifier)
+                template[trg] = get_nexus_value(modifier, self.tmp["meta"])
+                # print(f"nx_path: {nx_path}, trg: {trg}, tfs_concept: {template[trg]}\n")
         return template
