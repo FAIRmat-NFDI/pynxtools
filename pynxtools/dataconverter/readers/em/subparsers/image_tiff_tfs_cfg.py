@@ -17,6 +17,8 @@
 #
 """Configuration of the image_tiff_tfs subparser."""
 
+from typing import List
+
 
 TiffTfsConcepts = ["User/Date",
                    "User/Time",
@@ -104,16 +106,16 @@ TiffTfsConcepts = ["User/Date",
                    "Scan/FrameTime",
                    "EScan/Scan",
                    "EScan/InternalScan",
-                   "ESCAN/Dwell",
-                   "ESCAN/PixelWidth",
-                   "ESCAN/PixelHeight",
-                   "ESCAN/HorFieldsize",
-                   "ESCAN/VerFieldsize",
-                   "ESCAN/FrameTime",
-                   "ESCAN/LineTime",
-                   "ESCAN/Mainslock",
-                   "ESCAN/LineIntegration",
-                   "ESCAN/ScanInterlacing",
+                   "EScan/Dwell",
+                   "EScan/PixelWidth",
+                   "EScan/PixelHeight",
+                   "EScan/HorFieldsize",
+                   "EScan/VerFieldsize",
+                   "EScan/FrameTime",
+                   "EScan/LineTime",
+                   "EScan/Mainslock",
+                   "EScan/LineIntegration",
+                   "EScan/ScanInterlacing",
                    "Stage/StageX",
                    "Stage/StageY",
                    "Stage/StageZ",
@@ -192,6 +194,26 @@ TiffTfsConcepts = ["User/Date",
                    "ColdStage/ActualTemperature",
                    "ColdStage/Humidity",
                    "ColdStage/SampleBias"]
+
+
+def get_fei_parent_concepts() -> List:
+    """Get list of unique FEI parent concepts."""
+    parent_concepts = set()
+    for entry in TiffTfsConcepts:
+        if isinstance(entry, str) and entry.count("/") == 1:
+            parent_concepts.add(entry.split("/")[0])
+    return list(parent_concepts)
+
+
+def get_fei_childs(concept: str) -> List:
+    """Get all children of FEI parent concept."""
+    child_concepts = set()
+    for entry in TiffTfsConcepts:
+        if isinstance(entry, str) and entry.count("/") == 1:
+            if entry.startswith(f"{concept}/") is True:
+                child_concepts.add(entry.split("/")[1])
+    return list(child_concepts)
+
 
 TiffTfsToNeXusCfg = {"/ENTRY[entry*]/measurement/EVENT_DATA_EM_SET[event_data_em_set]/EVENT_DATA_EM[event_data_em*]/start_time": {"fun": "ikz_berlin_apreo_iso8601", "terms": ["User/Date", "User/Time"]},
                      "IGNORE": { "fun": "load_from", "terms": "User/User" },	
