@@ -19,8 +19,10 @@
 
 import numpy as np
 # from typing import Dict, Any, List
+from PIL import Image
 
 from pynxtools.dataconverter.readers.em.subparsers.image_tiff_tfs import TfsTiffSubParser
+from pynxtools.dataconverter.readers.em.utils.hfive_web_utils import hfive_web_decorate_nxdata
 
 
 class NxEmImagesSubParser:
@@ -53,22 +55,10 @@ class NxEmImagesSubParser:
         # and its interaction with tech-partner-specific hfive_* subparsers
 
         if image_parser_type == "tiff_tfs":
-            tiff = TfsTiffSubParser(self.file_path)
+            tiff = TfsTiffSubParser(self.file_path, self.entry_id)
             tiff.parse_and_normalize()
-            self.process_into_template(tiff.tmp, template)
-        else:  # none or something unsupported
-            return template
-        return template
-
-    def process_into_template(self, inp: dict, template: dict) -> dict:
-        debugging = False
-        if debugging is True:
-            for key, val in inp.items():
-                if isinstance(val, dict):
-                    for ckey, cval in val.items():
-                        print(f"{ckey}, {cval}")
-                else:
-                    print(f"{key}, {val}")
-        # TODO:: implement actual mapping on template
-        # self.process_roi_overview(inp, template)
+            tiff.process_into_template(template)
+        # else:
+            # TODO::add here specific content parsers for other tech partner
+            # or other custom parsing of images
         return template

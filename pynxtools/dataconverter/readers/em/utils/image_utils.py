@@ -34,7 +34,6 @@ def sort_ascendingly_by_second_argument(tup):
 
 def if_str_represents_float(s):
     try:
-        float(s)
-        return str(float(s)) == s
+        return isinstance(float(s), float)
     except ValueError:
         return False

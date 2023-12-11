@@ -126,8 +126,7 @@ class EmReader(BaseReader):
         # sub_parser = "image_tiff"
         subparser = NxEmImagesSubParser(entry_id, file_paths[0])
         subparser.parse(template)
-        exit(1)
-
+        
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
         #    continue
@@ -147,13 +146,15 @@ class EmReader(BaseReader):
         # we only need to decorate the template to point to the mandatory ROI overview
         # print("Create NeXus default plottable data...")
         # em_default_plot_generator(template, 1)
-        nxs_plt = NxEmDefaultPlotResolver()
-        # if nxs_mtex is the sub-parser
-        resolved_path = nxs_plt.nxs_mtex_get_nxpath_to_default_plot(
-            entry_id, file_paths[0])
-        # print(f"DEFAULT PLOT IS {resolved_path}")
-        if resolved_path != "":
-            nxs_plt.annotate_default_plot(template, resolved_path)
+        
+        if True is False:
+            nxs_plt = NxEmDefaultPlotResolver()
+            # if nxs_mtex is the sub-parser
+            resolved_path = nxs_plt.nxs_mtex_get_nxpath_to_default_plot(
+                entry_id, file_paths[0])
+            # print(f"DEFAULT PLOT IS {resolved_path}")
+            if resolved_path != "":
+                nxs_plt.annotate_default_plot(template, resolved_path)
 
         debugging = True
         if debugging is True:
