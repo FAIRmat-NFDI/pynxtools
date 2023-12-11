@@ -94,7 +94,7 @@ class TfsTiffSubParser(TiffSubParser):
             sequence = []  # decide I/O order in which metadata for childs of parent concepts will be read
             for key, value in tfs_parent_concepts_byte_offset.items():
                 if value is not None:
-                    sequence.append((key, value)) 
+                    sequence.append((key, value))
                     # tuple of parent_concept name and byte offset
             sequence = sort_ascendingly_by_second_argument(sequence)
             print(sequence)
@@ -131,7 +131,7 @@ class TfsTiffSubParser(TiffSubParser):
                                 else:
                                     self.tmp["meta"][f"{parent}/{term}"] = value
                         else:
-                            raise ValueError(f"Detected an unexpected case {parent}/{term}, type: {type(value)} !")                
+                            raise ValueError(f"Detected an unexpected case {parent}/{term}, type: {type(value)} !")
                     else:
                         pass
 
@@ -149,7 +149,7 @@ class TfsTiffSubParser(TiffSubParser):
             self.process_event_data_em_metadata(template)
             self.process_event_data_em_data(template)
         return template
-    
+
     def process_event_data_em_data(self, template: dict) -> dict:
         """Add respective heavy data."""
         # default display of the image(s) representing the data collected in this event
@@ -167,8 +167,8 @@ class TfsTiffSubParser(TiffSubParser):
             # explorative viewing using H5Web than what traditionally typical image viewers are meant for
             image_identifier = 1
             trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM_SET[event_data_em_set]/" \
-                    f"EVENT_DATA_EM[event_data_em{self.event_id}]/" \
-                    f"IMAGE_R_SET[image_r_set{image_identifier}]/DATA[image]"
+                  f"EVENT_DATA_EM[event_data_em{self.event_id}]/" \
+                  f"IMAGE_R_SET[image_r_set{image_identifier}]/DATA[image]"
             # TODO::writer should decorate automatically!
             template[f"{trg}/title"] = f"Image"
             template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
@@ -183,8 +183,8 @@ class TfsTiffSubParser(TiffSubParser):
                 template[f"{trg}/@axes"].append(f"axis_{dim}")
             template[f"{trg}/intensity"] = {"compress": np.array(fp), "strength": 1}
             #  0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
-            template[f"{trg}/intensity/@long_name"] = f"Signal"         
-    
+            template[f"{trg}/intensity/@long_name"] = f"Signal"
+
             sxy = {"x": self.tmp["meta"]["EScan/PixelWidth"],
                    "y": self.tmp["meta"]["EScan/PixelHeight"]}
             shp = np.shape(np.array(fp))
@@ -206,14 +206,14 @@ class TfsTiffSubParser(TiffSubParser):
             for dim in dims:
                 template[f"{trg}/AXISNAME[axis_{dim}]"] \
                     = {"compress": np.asarray(np.linspace(0,
-                                                            nxy[dim] - 1,
-                                                            num=nxy[dim],
-                                                            endpoint=True) * sxy[dim], np.float64), "strength": 1}
+                                                          nxy[dim] - 1,
+                                                          num=nxy[dim],
+                                                          endpoint=True) * sxy[dim], np.float64), "strength": 1}
                 template[f"{trg}/AXISNAME[axis_{dim}]/@long_name"] \
                     = f"Coordinate along {dim}-axis ({scan_unit[dim]})"
                 template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit[dim]}"
         return template
-    
+
     def process_event_data_em_metadata(self, template: dict) -> dict:
         """Add respective metadata."""
         # contextualization to understand how the image relates to the EM session

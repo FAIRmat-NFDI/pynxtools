@@ -17,14 +17,14 @@
 #
 """Parser for loading generic orientation microscopy data based on ."""
 
-# pylint: disable=no-member
+# pylint: disable=no-member,fixme
 
 from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.em.concepts.nexus_concepts import NxEmAppDef
 # from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
-from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
+# from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
 from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 # from pynxtools.dataconverter.readers.em.geometry.convention_mapper import NxEmConventionMapper
@@ -126,7 +126,7 @@ class EmReader(BaseReader):
         # sub_parser = "image_tiff"
         subparser = NxEmImagesSubParser(entry_id, file_paths[0])
         subparser.parse(template)
-        
+
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
         #    continue
@@ -146,7 +146,7 @@ class EmReader(BaseReader):
         # we only need to decorate the template to point to the mandatory ROI overview
         # print("Create NeXus default plottable data...")
         # em_default_plot_generator(template, 1)
-        
+
         if True is False:
             nxs_plt = NxEmDefaultPlotResolver()
             # if nxs_mtex is the sub-parser
