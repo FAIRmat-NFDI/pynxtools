@@ -44,17 +44,21 @@ comm==0.2.0
 contourpy==1.1.1
     # via matplotlib
 coverage[toml]==7.3.2
-    # via pytest-cov
+    # via
+    #   coverage
+    #   pytest-cov
 cycler==0.12.1
     # via matplotlib
 cython==3.0.6
     # via tables
 dask[array]==2023.5.0
     # via
+    #   dask
     #   hyperspy
     #   kikuchipy
     #   orix
     #   pyxem
+    #   rosettasciio
 debugpy==1.8.0
     # via ipykernel
 decorator==5.1.1
@@ -282,6 +286,7 @@ numpy==1.24.4
     #   pywavelets
     #   pyxem
     #   radioactivedecay
+    #   rosettasciio
     #   scikit-image
     #   scikit-learn
     #   scipy
@@ -332,7 +337,9 @@ pillow==10.0.1
     #   nionswift
     #   scikit-image
 pint==0.21.1
-    # via hyperspy
+    # via
+    #   hyperspy
+    #   rosettasciio
 pip-tools==7.3.0
     # via pynxtools (pyproject.toml)
 platformdirs==4.0.0
@@ -388,6 +395,8 @@ pytest-cov==4.1.0
     # via pynxtools (pyproject.toml)
 pytest-timeout==2.2.0
     # via pynxtools (pyproject.toml)
+python-box==6.1.0
+    # via rosettasciio
 python-dateutil==2.8.2
     # via
     #   hyperspy
@@ -395,6 +404,7 @@ python-dateutil==2.8.2
     #   jupyter-client
     #   matplotlib
     #   pandas
+    #   rosettasciio
 pytz==2023.3.post1
     # via
     #   nionswift
@@ -412,6 +422,7 @@ pyyaml==6.0.1
     #   hyperspy
     #   kikuchipy
     #   pynxtools (pyproject.toml)
+    #   rosettasciio
 pyzmq==25.1.1
     # via
     #   ipykernel
@@ -426,6 +437,8 @@ requests==2.31.0
     #   pynxtools (pyproject.toml)
     #   requests-cache
 requests-cache==1.1.1
+    # via pynxtools (pyproject.toml)
+rosettasciio==0.2
     # via pynxtools (pyproject.toml)
 scikit-image==0.20.0
     # via

@@ -1,8 +1,15 @@
 #!/bin/bash
 
-datasource="../../../../paper_paper_paper/scidat_nomad_ebsd/bb_analysis/data/production_imgs/"
+datasource="../../../../paper_paper_paper/scidat_nomad_ebsd/bb_analysis/data/development_imgs/"
 
-examples="ALN_baoh_021.tif"  # FeMoOx_AntiA_04_1k5x_CN.tif"
+# comments is detector mode
+examples="kit/FeMoOx_AntiA_04_1k5x_CN.tif"
+examples="ikz_robert/0c8nA_3deg_003_AplusB_test.tif"  # T1
+examples="ikz_martin/ALN_baoh_021.tif"  # T2
+examples="ikz_robert/T3_image.tif"
+examples="ikz_robert/ETD_image.tif"  # ETD
+examples="ikz_martin/NavCam_normal_vis_light_ccd.tif"  # NavCam
+
 
 for example in $examples; do
 	echo $example

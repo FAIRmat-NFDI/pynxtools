@@ -21,7 +21,7 @@
 
 from typing import List
 from pynxtools.dataconverter.readers.em.concepts.concept_mapper \
-    import variadic_path_to_specific_path, apply_modifier
+    import variadic_path_to_specific_path
 
 
 PYNXTOOLS_VERSION = "n/a"
