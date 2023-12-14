@@ -24,8 +24,10 @@ from PIL import Image
 from PIL.TiffTags import TAGS
 
 from pynxtools.dataconverter.readers.em.subparsers.image_tiff import TiffSubParser
+from pynxtools.dataconverter.readers.em.subparsers.image_tiff_tfs_concepts import \
+    get_fei_parent_concepts, get_fei_childs
 from pynxtools.dataconverter.readers.em.subparsers.image_tiff_tfs_cfg import \
-    TiffTfsConcepts, TiffTfsToNeXusCfg, get_fei_parent_concepts, get_fei_childs
+    TIFF_TFS_TO_NEXUS_CFG
 from pynxtools.dataconverter.readers.em.utils.image_utils import \
     sort_ascendingly_by_second_argument, if_str_represents_float
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
@@ -88,7 +90,7 @@ class TfsTiffSubParser(TiffSubParser):
                 if pos != -1:
                     tfs_parent_concepts_byte_offset[concept] = pos
                 else:
-                    raise ValueError(f"Expected block with metadata for concept [{concept}] were not found !")
+                    print(f"Instance of concept [{concept}] was not found !")
             print(tfs_parent_concepts_byte_offset)
 
             sequence = []  # decide I/O order in which metadata for childs of parent concepts will be read
@@ -140,6 +142,8 @@ class TfsTiffSubParser(TiffSubParser):
         if self.supported is True:
             print(f"Parsing via ThermoFisher-specific metadata...")
             self.get_metadata()
+            # for key in self.tmp["meta"].keys():
+            #     print(f"{key}")
         else:
             print(f"{self.file_path} is not a ThermoFisher-specific "
                   f"TIFF file that this parser can process !")
@@ -185,11 +189,14 @@ class TfsTiffSubParser(TiffSubParser):
             #  0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
             template[f"{trg}/intensity/@long_name"] = f"Signal"
 
-            sxy = {"x": self.tmp["meta"]["EScan/PixelWidth"],
-                   "y": self.tmp["meta"]["EScan/PixelHeight"]}
-            shp = np.shape(np.array(fp))
-            nxy = {"x": shp[1], "y": shp[0]}
+            sxy = {"x": 1., "y": 1.}
             scan_unit = {"x": "m", "y": "m"}  # assuming FEI reports SI units
+            # we may face the CCD overview camera for the chamber for which there might not be a calibration!
+            if ("EScan/PixelWidth" in self.tmp["meta"].keys()) and ("EScan/PixelHeight" in self.tmp["meta"].keys()):
+                sxy = {"x": self.tmp["meta"]["EScan/PixelWidth"],
+                       "y": self.tmp["meta"]["EScan/PixelHeight"]}
+                scan_unit = {"x": "px", "y": "px"}
+            nxy = {"x": np.shape(np.array(fp))[1], "y": np.shape(np.array(fp))[0]}
             # TODO::be careful we assume here a very specific coordinate system
             # however the TIFF file gives no clue, TIFF just documents in which order
             # it arranges a bunch of pixels that have stream in into a n-d tiling
@@ -219,9 +226,14 @@ class TfsTiffSubParser(TiffSubParser):
         # contextualization to understand how the image relates to the EM session
         print(f"Mapping some of the TFS/FEI metadata concepts onto NeXus concepts")
         identifier = [self.entry_id, self.event_id, 1]
-        for nx_path, modifier in TiffTfsToNeXusCfg.items():
-            if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
-                trg = variadic_path_to_specific_path(nx_path, identifier)
-                template[trg] = get_nexus_value(modifier, self.tmp["meta"])
-                # print(f"nx_path: {nx_path}, trg: {trg}, tfs_concept: {template[trg]}\n")
+        for tpl in TIFF_TFS_TO_NEXUS_CFG:
+            if isinstance(tpl, tuple):
+                trg = variadic_path_to_specific_path(tpl[0], identifier)
+                if len(tpl) == 2:
+                    template[trg] = tpl[1]
+                if len(tpl) == 3:
+                    # nxpath, modifier, value to load from and eventually to be modified
+                    retval = get_nexus_value(tpl[1], tpl[2], self.tmp["meta"])
+                    if retval is not None:
+                        template[trg] = retval
         return template

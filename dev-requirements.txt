@@ -65,6 +65,8 @@ decorator==5.1.1
     # via
     #   ipyparallel
     #   ipython
+defusedxml==0.7.1
+    # via odfpy
 diffpy-structure==3.1.0
     # via
     #   diffsims
@@ -298,6 +300,8 @@ numpy==1.24.4
     #   zarr
 numpy-quaternion==2022.4.3
     # via orix
+odfpy==1.4.1
+    # via pynxtools (pyproject.toml)
 orix==0.11.1
     # via
     #   diffsims

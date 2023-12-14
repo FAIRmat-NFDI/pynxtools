@@ -19,31 +19,25 @@
 
 # pylint: disable=no-member
 
-from pynxtools.dataconverter.readers.em.subparsers.image_tiff_tfs_cfg import \
-    TfsToNexusConceptMapping
+from numpy import pi
 
 
-def get_nexus_value(modifier, metadata: dict):
-    """Interpret a functional mapping using data from dct via calling modifiers."""
-    if isinstance(modifier, dict):
-        # different commands are available
-        if set(["fun", "terms"]) == set(modifier.keys()):
-            if modifier["fun"] == "load_from":
-                if modifier["terms"] in metadata.keys():
-                    return metadata[modifier['terms']]
-                else:
-                    raise ValueError(f"Unable to interpret modififier load_from for argument {modifier['terms']}")
-            if modifier["fun"] == "tfs_to_nexus":
-                # print(metadata[modifier['terms']])
-                if f"{modifier['terms']}/{metadata[modifier['terms']]}" in TfsToNexusConceptMapping.keys():
-                    return TfsToNexusConceptMapping[f"{modifier['terms']}/{metadata[modifier['terms']]}"]
-                else:
-                    raise ValueError(f"Unable to interpret modifier tfs_to_nexus for argument {modifier['terms']}/{metadata[modifier['terms']]}")
-        else:
-            print(f"WARNING::Modifier {modifier} is currently not implemented !")
-            # elif set(["link"]) == set(modifier.keys()), with the jsonmap reader Sherjeel conceptualized "link"
+def get_nexus_value(modifier, qnt_name, metadata: dict):
+    """Interpret a functional mapping and modifier on qnt_name loaded from metadata."""
+    if qnt_name in metadata.keys():
+        if modifier == "load_from":
+            return metadata[qnt_name]
+        elif modifier == "load_from_rad_to_deg":
+            if qnt_name in metadata.keys():
+                return metadata[qnt_name] / pi * 180.
+        elif modifier == "load_from_lower_case":
+            if isinstance(metadata[qnt_name], str):
+                return metadata[qnt_name].lower()
+            # print(f"WARNING modifier {modifier}, qnt_name {qnt_name} metadata['qnt_name'] not string !")
             return None
-    elif isinstance(modifier, str):
-        return modifier  # metadata[modifier]
     else:
+        # print(f"WARNING modifier {modifier}, qnt_name {qnt_name} not found !")
         return None
+    # if f"{modifier['terms']}/{metadata[modifier['terms']]}" in TfsToNexusConceptMapping.keys():
+    # return TfsToNexusConceptMapping[f"{modifier['terms']}/{metadata[modifier['terms']]}"]
+    # elif set(["link"]) == set(modifier.keys()), with the jsonmap reader Sherjeel conceptualized "link"
