@@ -25,17 +25,17 @@ from typing import Dict
 from pynxtools.dataconverter.readers.em.concepts.nxs_object import NxObject
 
 
-NX_EM_IMAGE_REAL_SPACE_SET_HDF_PATH = []
+NX_SPECTRUM_SET_HDF_PATH = []
 # this one needs an update !
 
 
-class NxEmImageRealSpaceSet():
+class NxSpectrumSet():
     def __init__(self):
         self.tmp: Dict = {}
-        for entry in NX_EM_IMAGE_REAL_SPACE_SET_HDF_PATH:
+        for entry in NX_SPECTRUM_SET_HDF_PATH:
             if entry.endswith("-field") is True:
-                self.tmp[entry[0:len(entry)-len("-field")]] = NxObject(eqv_hdf="dset")
+                self.tmp[entry[0:len(entry)-len("-field")]] = NxObject(eqv_hdf="dataset")
             elif entry.endswith("-attribute") is True:
-                self.tmp[entry[0:len(entry)-len("-attribute")]] = NxObject(eqv_hdf="attr")
+                self.tmp[entry[0:len(entry)-len("-attribute")]] = NxObject(eqv_hdf="attribute")
             else:
-                self.tmp[entry[0:len(entry)-len("-group")]] = NxObject(eqv_hdf="grp")
+                self.tmp[entry[0:len(entry)-len("-group")]] = NxObject(eqv_hdf="group")

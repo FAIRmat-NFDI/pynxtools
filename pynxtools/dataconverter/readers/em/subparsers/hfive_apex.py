@@ -30,6 +30,8 @@ from pynxtools.dataconverter.readers.em.examples.ebsd_database import \
     ASSUME_PHASE_NAME_TO_SPACE_GROUP, HEXAGONAL_GRID, SQUARE_GRID, REGULAR_TILING, FLIGHT_PLAN
 from pynxtools.dataconverter.readers.em.utils.get_scan_points import \
     get_scan_point_coords
+from pynxtools.dataconverter.readers.em.concepts.nxs_image_r_set import \
+    NX_IMAGE_REAL_SPACE_SET_HDF_PATH, NxImageRealSpaceSet
 
 
 class HdfFiveEdaxApexReader(HdfFiveBaseParser):
@@ -83,6 +85,14 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                     sub_sub_grp_nms = list(h5r[f"/{grp_nm}/{sub_grp_nm}"])
                     for sub_sub_grp_nm in sub_sub_grp_nms:
                         if sub_sub_grp_nm.startswith("Area"):
+                            # get field-of-view (fov in edax jargon, i.e. roi)
+                            if "/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/FOVIMAGE" in h5r.keys():
+                                ckey = self.init_named_cache(f"roi{cache_id}")
+                                self.parse_and_normalize_roi(
+                                    h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/FOVIMAGE", ckey)
+                                cache_id += 1
+
+                            # get oim_maps, live_maps, or line_scans if available
                             area_grp_nms = list(h5r[f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}"])
                             for area_grp_nm in area_grp_nms:
                                 if area_grp_nm.startswith("OIM Map"):
@@ -93,6 +103,41 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     self.parse_and_normalize_group_ebsd_phases(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_data(h5r, ckey)
                                     cache_id += 1
+                                elif area_grp_nm.startswith("Live Map"):
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    print(f"Parsing {self.prfx}")
+                                    ckey = self.init_named_cache(f"eds{cache_id}")
+                                    self.parse_and_normalize_eds_spd(
+                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
+                                    cache_id += 1
+
+    def parse_and_normalize_roi(self, fp, src: str, ckey: str):
+        """Normalize and scale APEX-specific FOV/ROI image to NeXus."""
+        self.tmp[ckey] = NxImageRealSpaceSet()
+        reqs = ["PixelHeight", "PixelWidth"]
+        for req in reqs:
+            if req not in fp[f"{src}/FOVIMAGE"].attrs.keys():
+                # also check for shape
+                raise ValueError(f"Required attribute named {req} not found in {src}/FOVIMAGE !")
+        nyx = {"y": fp[f"{src}/FOVIMAGE"].attrs["PixelHeight"][0],
+               "x": fp[f"{src}/FOVIMAGE"].attrs["PixelWidth"][0]}
+        self.tmp[ckey]["image_twod/intensity"] = np.reshape(np.asarray(fp[f"{src}/FOVIMAGE"]), (nyx["y"], nyx["x"]))
+
+        syx = {"x": 1., "y": 1.}
+        scan_unit = {"x": "px", "y": "px"}
+        if f"{src}/FOVIMAGECOLLECTIONPARAMS" in fp.keys():
+            ipr = np.asarray(fp[f"{src}/FOVIPR"])
+            syx = {"x": ipr["MicronsPerPixelX"][0], "y": ipr["MicronsPerPixelY"][0]}
+            scan_unit = {"x": "µm", "y": "µm"}
+        dims = ["y", "x"]
+        for dim in dims:
+            self.tmp[ckey].tmp[f"image_twod/axis_{dim}"] = np.asarray(
+                np.linspace(0, nyx[dim] - 1, num=nyx[dim], endpoint=True) * syx[dim], np.float64)
+            self.tmp[ckey].tmp[f"image_twod/axis_{dim}@long_name"] \
+                = f"Calibrated pixel position along {dim} ({scan_unit[dim]})"
+        for key, val in self.tmp[ckey].tmp.items():
+            if key.startswith("image_twod"):
+                print(f"{key}, {val}")
 
     def parse_and_normalize_group_ebsd_header(self, fp, ckey: str):
         # no official documentation yet from EDAX/APEX, deeply nested, chunking, virtual ds
@@ -265,3 +310,52 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # this is the non-harmonized content one is facing in the field of EBSD despite
         # almost two decades of commercialization of the technique now
         get_scan_point_coords(self.tmp[ckey])
+
+    def parse_and_normalize_eds_spd(self, fp, src: str, ckey: str):
+        if f"{src}/SPD" not in fp.keys():
+            return None
+        reqs = ["MicronPerPixelX",
+                "MicronPerPixelY",
+                "NumberOfLines",
+                "NumberOfPoints",
+                "NumberofChannels"]  # TODO: mind the typo here, can break parsing easily!
+        for req in reqs:
+            if req not in fp[f"{src}/SPD"].attrs.keys():  # also check for shape
+                raise ValueError(f"Required attribute named {req} not found in {src}/SPD !")
+        
+        nyxe = {"y": fp[f"{src}/SPD"].attrs["NumberOfLines"][0],
+                "x": fp[f"{src}/SPD"].attrs["NumberOfPoints"][0],
+                "e": fp[f"{src}/SPD"].attrs["NumberofChannels"][0]}
+        print(f"lines: {nyxe['y']}, points: {nyxe['x']}, channels: {nyxe['e']}")
+        # the native APEX SPD concept instance is a two-dimensional array of arrays of length e (n_energy_bins)
+        # likely EDAX has in their C(++) code a vector of vector or something equivalent either way we faced
+        # nested C arrays of the base data type in an IKZ example <i2, even worse stored chunked in HDF5 !
+        # while storage efficient and likely with small effort to add HDF5 storage from the EDAX code
+        # thereby these EDAX energy count arrays are just some payload inside a set of compressed chunks
+        # without some extra logic to resolve the third (energy) dimension reading them can be super inefficient
+        # so let's read chunk-by-chunk to reuse chunk cache, hopefully...
+        chk_bnds = {"x": [], "y": []}
+        chk_info = {"ny": nyxe["y"], "cy": fp[f"{src}/SPD"].chunks[0],
+                    "nx": nyxe["x"], "cx": fp[f"{src}/SPD"].chunks[1]}
+        for dim in ["y", "x"]:
+            idx = 0
+            while idx < chk_info[f"n{dim}"]:
+                if idx + chk_info[f"c{dim}"] < chk_info[f"n{dim}"]:
+                    chk_bnds[f"{dim}"].append((idx, idx + chk_info[f"c{dim}"]))
+                else:
+                    chk_bnds[f"{dim}"].append((idx, chk_info[f"n{dim}"]))
+                idx += chk_info[f"c{dim}"]
+        for key, val in chk_bnds.items():
+            print(f"{key}, {val}")
+        spd_chk = np.zeros((nyxe["y"], nyxe["x"], nyxe["e"]), fp[f"{src}/SPD"].dtype)
+        print(f"edax: {np.shape(spd_chk)}, {type(spd_chk)}, {spd_chk.dtype}")
+        for chk_bnd_y in chk_bnds["y"]:
+            for chk_bnd_x in chk_bnds["x"]:
+                spd_chk[chk_bnd_y[0]:chk_bnd_y[1], chk_bnd_x[0]:chk_bnd_x[1], :] \
+                    = fp[f"{src}/SPD"][chk_bnd_y[0]:chk_bnd_y[1], chk_bnd_x[0]:chk_bnd_x[1]]
+        # compared to naive reading, thereby we read the chunks as they are arranged in memory
+        # and thus do not discard unnecessarily data cached in the hfive chunk cache
+        # by contrast, if we were to read naively for each pixel the energy array most of the
+        # content in the chunk cache is discarded plus we may end up reading a substantially
+        # more times from the file, tested this on a Samsung 990 2TB pro-SSD for a tiny 400 x 512 SPD:
+        # above strategy 2s, versus hours! required to read and reshape the spectrum via naive I/O
