@@ -18,10 +18,13 @@
 """Subparser for exemplar reading of raw PNG files collected on a TEM with Protochip heating_chip."""
 
 import mmap
+import re
 import numpy as np
+import xmltodict
 from typing import Dict
 from PIL import Image
 from zipfile import ZipFile
+from collections import OrderedDict
 
 from pynxtools.dataconverter.readers.em.subparsers.image_png_protochips_concepts import \
     get_protochips_variadic_concept
@@ -35,6 +38,26 @@ from pynxtools.dataconverter.readers.em.subparsers.image_base import \
     ImgsBaseParser
 
 
+def flatten_xml_to_dict(xml_content) -> dict:
+    # https://codereview.stackexchange.com/a/21035
+    # https://stackoverflow.com/questions/38852822/how-to-flatten-xml-file-in-python
+    def items():
+        for key, value in xml_content.items():
+            # nested subtree
+            if isinstance(value, dict):
+                for subkey, subvalue in flatten_xml_to_dict(value).items():
+                    yield '{}.{}'.format(key, subkey), subvalue
+            # nested list
+            elif isinstance(value, list):
+                for num, elem in enumerate(value):
+                    for subkey, subvalue in flatten_xml_to_dict(elem).items():
+                        yield '{}.[{}].{}'.format(key, num, subkey), subvalue
+            # everything else (only leafs should remain)
+            else:
+                yield key, value
+    return OrderedDict(items())
+
+
 class ProtochipsPngSetSubParser(ImgsBaseParser):
     def __init__(self, file_path: str = "", entry_id: int = 1):
         super().__init__(file_path)
@@ -45,6 +68,7 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
                           "meta": {}}
         self.supported_version: Dict = {}
         self.version: Dict = {}
+        self.png_info: Dict = {}
         self.supported = False
         self.check_if_zipped_png_protochips()
 
@@ -60,7 +84,7 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
                 print(f"Test 1 failed, {self.file_path} is not a ZIP archive !")
                 return
         # test 2: check if there are at all PNG files with iTXt metadata from Protochips in this zip file
-        png_info = {}  # collect all those PNGs to work with and write a tuple of their image dimensions
+        # collect all those PNGs to work with and write a tuple of their image dimensions
         with ZipFile(self.file_path) as zip_file_hdl:
             for file in zip_file_hdl.namelist():
                 if file.lower().endswith(".png") is True:
@@ -74,22 +98,22 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
                                 with Image.open(fp) as png:
                                     try:
                                         nparr = np.array(png)
-                                        png_info[file] = np.shape(nparr)
+                                        self.png_info[file] = np.shape(nparr)
                                     except:
                                         raise ValueError(f"Loading image data in-place from {self.file_path}:{file} failed !")
                             if method == "smart":  # knowing where to hunt width and height in PNG metadata
                                 # https://dev.exiv2.org/projects/exiv2/wiki/The_Metadata_in_PNG_files
                                 magic = fp.read(8)
-                                png_info[file] = (np.frombuffer(fp.read(4), dtype=">i4"),
-                                                  np.frombuffer(fp.read(4), dtype=">i4"))
+                                self.png_info[file] = (np.frombuffer(fp.read(4), dtype=">i4"),
+                                                       np.frombuffer(fp.read(4), dtype=">i4"))
 
         # test 3: check there are some PNGs
-        if len(png_info.keys()) == 0:
+        if len(self.png_info.keys()) == 0:
             print("Test 3 failed, there are no PNGs !")
             return
         # test 4: check that all PNGs have the same dimensions, TODO::could check for other things here
         target_dims = None
-        for file_name, tpl in png_info.items():
+        for file_name, tpl in self.png_info.items():
             if target_dims is not None:
                 if tpl == target_dims:
                     continue
@@ -106,6 +130,50 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
         if self.supported is True:
             print(f"Parsing via Protochips-specific metadata...")
             # may need to set self.supported = False on error
+            with ZipFile(self.file_path) as zip_file_hdl:
+                for file in self.png_info.keys():
+                    with zip_file_hdl.open(file) as fp:
+                        try:
+                            with Image.open(fp) as png:
+                                png.load()
+                                if "MicroscopeControlImage" in png.info.keys():
+                                    meta = flatten_xml_to_dict(
+                                        xmltodict.parse(png.info["MicroscopeControlImage"]))
+                                    # first phase analyse the collection of Protochips metadata concept instance symbols and reduce to unique concepts
+                                    self.tmp["meta"][file] = {}
+                                for concept, value in meta.items():
+                                    # not every key is allowed to define a concept
+                                    # print(f"{concept}: {value}")
+                                    idxs = re.finditer(".\[[0-9]+\].", concept)
+                                    if (sum(1 for _ in idxs) > 0):  # is_variadic
+                                        markers = [".Name", ".PositionerName"]
+                                        for marker in markers:
+                                            if concept.endswith(marker):
+                                                self.tmp["meta"][file][f"{concept[0:len(concept)-len(marker)]}"] = value
+                                    else:
+                                        self.tmp["meta"][file][concept] = value
+                                # print(f"First phase of metadata parsing {self.file_path}:{file} successful")
+                                # second phase, evaluate each concept instance symbol wrt to its prefix coming from the unique concept
+                                for k, v in meta.items():
+                                    grpnms = None
+                                    idxs = re.finditer(".\[[0-9]+\].", k)
+                                    if (sum(1 for _ in idxs) > 0):  # is variadic
+                                        search_argument = k[0:k.rfind("].")+1]
+                                        for parent_grpnm, child_grpnm in self.tmp["meta"][file].items():
+                                            if parent_grpnm.startswith(search_argument):
+                                                grpnms = (parent_grpnm, child_grpnm)
+                                                break
+                                        if grpnms is not None:
+                                            if len(grpnms) == 2:
+                                                if "PositionerSettings" in k and k.endswith(".PositionerName") is False:
+                                                    print(f"vv: {grpnms[0]}.{grpnms[1]}{k[k.rfind('.') + 1:]}: {v}")
+                                                if k.endswith(".Value"):
+                                                    print(f"vv: {grpnms[0]}.{grpnms[1]}: {v}")
+                                    else:
+                                        print(f"nv: {k}: {v}")
+                                    # TODO::simplify and check that metadata end up correctly in self.tmp["meta"][file]
+                        except:
+                            raise ValueError(f"Flattening XML metadata content {self.file_path}:{file} failed !")
         else:
             print(f"{self.file_path} is not a Protochips-specific "
                   f"PNG file that this parser can process !")
