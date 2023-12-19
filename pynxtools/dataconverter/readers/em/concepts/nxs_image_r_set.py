@@ -68,8 +68,8 @@ class NxImageRealSpaceSet():
         self.tmp: Dict = {}
         for entry in NX_IMAGE_REAL_SPACE_SET_HDF_PATH:
             if entry.endswith("-field") is True:
-                self.tmp[entry[0:len(entry)-len("-field")]] = NxObject(eqv_hdf="dataset")
+                self.tmp[entry[0:len(entry) - len("-field")]] = NxObject(eqv_hdf="dataset")
             elif entry.endswith("-attribute") is True:
-                self.tmp[entry[0:len(entry)-len("-attribute")]] = NxObject(eqv_hdf="attribute")
+                self.tmp[entry[0:len(entry) - len("-attribute")]] = NxObject(eqv_hdf="attribute")
             else:
-                self.tmp[entry[0:len(entry)-len("-group")]] = NxObject(eqv_hdf="group")
+                self.tmp[entry[0:len(entry) - len("-group")]] = NxObject(eqv_hdf="group")

@@ -147,7 +147,8 @@ class EmReader(BaseReader):
         # print("Create NeXus default plottable data...")
         # em_default_plot_generator(template, 1)
 
-        if True is False:
+        run_block = False
+        if run_block is True:
             nxs_plt = NxEmDefaultPlotResolver()
             # if nxs_mtex is the sub-parser
             resolved_path = nxs_plt.nxs_mtex_get_nxpath_to_default_plot(

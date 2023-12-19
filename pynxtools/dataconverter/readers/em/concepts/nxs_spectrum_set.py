@@ -20,12 +20,12 @@
 # pylint: disable=no-member,too-few-public-methods
 
 
-from typing import Dict
+from typing import Dict, List
 
 from pynxtools.dataconverter.readers.em.concepts.nxs_object import NxObject
 
 
-NX_SPECTRUM_SET_HDF_PATH = []
+NX_SPECTRUM_SET_HDF_PATH: List = []
 # this one needs an update !
 
 
@@ -34,8 +34,8 @@ class NxSpectrumSet():
         self.tmp: Dict = {}
         for entry in NX_SPECTRUM_SET_HDF_PATH:
             if entry.endswith("-field") is True:
-                self.tmp[entry[0:len(entry)-len("-field")]] = NxObject(eqv_hdf="dataset")
+                self.tmp[entry[0:len(entry) - len("-field")]] = NxObject(eqv_hdf="dataset")
             elif entry.endswith("-attribute") is True:
-                self.tmp[entry[0:len(entry)-len("-attribute")]] = NxObject(eqv_hdf="attribute")
+                self.tmp[entry[0:len(entry) - len("-attribute")]] = NxObject(eqv_hdf="attribute")
             else:
-                self.tmp[entry[0:len(entry)-len("-group")]] = NxObject(eqv_hdf="group")
+                self.tmp[entry[0:len(entry) - len("-group")]] = NxObject(eqv_hdf="group")

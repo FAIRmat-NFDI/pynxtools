@@ -322,7 +322,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         for req in reqs:
             if req not in fp[f"{src}/SPD"].attrs.keys():  # also check for shape
                 raise ValueError(f"Required attribute named {req} not found in {src}/SPD !")
-        
+
         nyxe = {"y": fp[f"{src}/SPD"].attrs["NumberOfLines"][0],
                 "x": fp[f"{src}/SPD"].attrs["NumberOfPoints"][0],
                 "e": fp[f"{src}/SPD"].attrs["NumberofChannels"][0]}
@@ -334,7 +334,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # thereby these EDAX energy count arrays are just some payload inside a set of compressed chunks
         # without some extra logic to resolve the third (energy) dimension reading them can be super inefficient
         # so let's read chunk-by-chunk to reuse chunk cache, hopefully...
-        chk_bnds = {"x": [], "y": []}
+        chk_bnds: Dict = {"x": [], "y": []}
         chk_info = {"ny": nyxe["y"], "cy": fp[f"{src}/SPD"].chunks[0],
                     "nx": nyxe["x"], "cx": fp[f"{src}/SPD"].chunks[1]}
         for dim in ["y", "x"]:

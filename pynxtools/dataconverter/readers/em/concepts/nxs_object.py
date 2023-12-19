@@ -36,7 +36,7 @@ class NxObject:
         if (unit is not None) and (unit == ""):
             raise ValueError(f"Value for argument unit needs to be a non-empty string !")
         if (dtype is not None) and isinstance(dtype, type) is False:
-            raise ValueError(f"Value of argument dtype must not be None " \
+            raise ValueError(f"Value of argument dtype must not be None "
                              f" and a valid, ideally a numpy datatype !")
         # self.doc = None  # docstring
         self.name = name  # name of the field

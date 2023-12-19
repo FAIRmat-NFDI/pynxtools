@@ -44,7 +44,7 @@ class RsciioBrukerSubParser(RsciioBaseParser):
             # based on this one could then plan how much memory has to be reserved
             # in the template and stream out accordingly
             self.supported = True
-        except:
+        except IOError:
             print(f"Loading {self.file_path} using {self.__name__} is not supported !")
 
     def parse_and_normalize(self):
@@ -72,7 +72,7 @@ class RsciioBrukerSubParser(RsciioBaseParser):
             self.process_event_data_em_metadata(template)
             self.process_event_data_em_data(template)
         return template
-    
+
     def process_event_data_em_metadata(self, template: dict) -> dict:
         return template
 

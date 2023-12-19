@@ -24,7 +24,6 @@ import xmltodict
 from typing import Dict
 from PIL import Image
 from zipfile import ZipFile
-from collections import OrderedDict
 
 from pynxtools.dataconverter.readers.em.subparsers.image_png_protochips_concepts import \
     get_protochips_variadic_concept
@@ -34,28 +33,9 @@ from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import variadic_path_to_specific_path
 from pynxtools.dataconverter.readers.em.subparsers.image_png_protochips_modifier import \
     get_nexus_value
-from pynxtools.dataconverter.readers.em.subparsers.image_base import \
-    ImgsBaseParser
-
-
-def flatten_xml_to_dict(xml_content) -> dict:
-    # https://codereview.stackexchange.com/a/21035
-    # https://stackoverflow.com/questions/38852822/how-to-flatten-xml-file-in-python
-    def items():
-        for key, value in xml_content.items():
-            # nested subtree
-            if isinstance(value, dict):
-                for subkey, subvalue in flatten_xml_to_dict(value).items():
-                    yield '{}.{}'.format(key, subkey), subvalue
-            # nested list
-            elif isinstance(value, list):
-                for num, elem in enumerate(value):
-                    for subkey, subvalue in flatten_xml_to_dict(elem).items():
-                        yield '{}.[{}].{}'.format(key, num, subkey), subvalue
-            # everything else (only leafs should remain)
-            else:
-                yield key, value
-    return OrderedDict(items())
+from pynxtools.dataconverter.readers.em.subparsers.image_base import ImgsBaseParser
+from pynxtools.dataconverter.readers.em.utils.xml_utils import flatten_xml_to_dict
+from pynxtools.dataconverter.readers.shared.shared_utils import get_sha256_of_file_content
 
 
 class ProtochipsPngSetSubParser(ImgsBaseParser):
@@ -99,8 +79,8 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
                                     try:
                                         nparr = np.array(png)
                                         self.png_info[file] = np.shape(nparr)
-                                    except:
-                                        raise ValueError(f"Loading image data in-place from {self.file_path}:{file} failed !")
+                                    except IOError:
+                                        print(f"Loading image data in-place from {self.file_path}:{file} failed !")
                             if method == "smart":  # knowing where to hunt width and height in PNG metadata
                                 # https://dev.exiv2.org/projects/exiv2/wiki/The_Metadata_in_PNG_files
                                 magic = fp.read(8)
@@ -125,6 +105,53 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
         print("All tests passed successfully")
         self.supported = True
 
+    def get_xml_metadata(self, file, fp):
+        try:
+            fp.seek(0)
+            with Image.open(fp) as png:
+                png.load()
+                if "MicroscopeControlImage" in png.info.keys():
+                    meta = flatten_xml_to_dict(
+                        xmltodict.parse(png.info["MicroscopeControlImage"]))
+                    # first phase analyse the collection of Protochips metadata concept instance symbols and reduce to unique concepts
+                    grpnm_lookup = {}
+                    for concept, value in meta.items():
+                        # not every key is allowed to define a concept
+                        # print(f"{concept}: {value}")
+                        idxs = re.finditer(r".\[[0-9]+\].", concept)
+                        if (sum(1 for _ in idxs) > 0):  # is_variadic
+                            markers = [".Name", ".PositionerName"]
+                            for marker in markers:
+                                if concept.endswith(marker):
+                                    grpnm_lookup[f"{concept[0:len(concept)-len(marker)]}"] = value
+                        else:
+                            grpnm_lookup[concept] = value
+                    # second phase, evaluate each concept instance symbol wrt to its prefix coming from the unique concept
+                    self.tmp["meta"][file] = {}
+                    for k, v in meta.items():
+                        grpnms = None
+                        idxs = re.finditer(r".\[[0-9]+\].", k)
+                        if (sum(1 for _ in idxs) > 0):  # is variadic
+                            search_argument = k[0:k.rfind("].") + 1]
+                            for parent_grpnm, child_grpnm in grpnm_lookup.items():
+                                if parent_grpnm.startswith(search_argument):
+                                    grpnms = (parent_grpnm, child_grpnm)
+                                    break
+                            if grpnms is not None:
+                                if len(grpnms) == 2:
+                                    if "PositionerSettings" in k and k.endswith(".PositionerName") is False:
+                                        self.tmp["meta"][file][f"{grpnms[0]}.{grpnms[1]}{k[k.rfind('.') + 1:]}"] = v
+                                    if k.endswith(".Value"):
+                                        self.tmp["meta"][file][f"{grpnms[0]}.{grpnms[1]}"] = v
+                        else:
+                            self.tmp["meta"][file][f"{k}"] = v
+                        # TODO::simplify and check that metadata end up correctly in self.tmp["meta"][file]
+        except ValueError:
+            print(f"Flattening XML metadata content {self.file_path}:{file} failed !")
+
+    def get_file_hash(self, file, fp):
+        self.tmp["meta"][file]["sha256"] = get_sha256_of_file_content(fp)
+
     def parse_and_normalize(self):
         """Perform actual parsing filling cache self.tmp."""
         if self.supported is True:
@@ -133,47 +160,13 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
             with ZipFile(self.file_path) as zip_file_hdl:
                 for file in self.png_info.keys():
                     with zip_file_hdl.open(file) as fp:
-                        try:
-                            with Image.open(fp) as png:
-                                png.load()
-                                if "MicroscopeControlImage" in png.info.keys():
-                                    meta = flatten_xml_to_dict(
-                                        xmltodict.parse(png.info["MicroscopeControlImage"]))
-                                    # first phase analyse the collection of Protochips metadata concept instance symbols and reduce to unique concepts
-                                    self.tmp["meta"][file] = {}
-                                for concept, value in meta.items():
-                                    # not every key is allowed to define a concept
-                                    # print(f"{concept}: {value}")
-                                    idxs = re.finditer(".\[[0-9]+\].", concept)
-                                    if (sum(1 for _ in idxs) > 0):  # is_variadic
-                                        markers = [".Name", ".PositionerName"]
-                                        for marker in markers:
-                                            if concept.endswith(marker):
-                                                self.tmp["meta"][file][f"{concept[0:len(concept)-len(marker)]}"] = value
-                                    else:
-                                        self.tmp["meta"][file][concept] = value
-                                # print(f"First phase of metadata parsing {self.file_path}:{file} successful")
-                                # second phase, evaluate each concept instance symbol wrt to its prefix coming from the unique concept
-                                for k, v in meta.items():
-                                    grpnms = None
-                                    idxs = re.finditer(".\[[0-9]+\].", k)
-                                    if (sum(1 for _ in idxs) > 0):  # is variadic
-                                        search_argument = k[0:k.rfind("].")+1]
-                                        for parent_grpnm, child_grpnm in self.tmp["meta"][file].items():
-                                            if parent_grpnm.startswith(search_argument):
-                                                grpnms = (parent_grpnm, child_grpnm)
-                                                break
-                                        if grpnms is not None:
-                                            if len(grpnms) == 2:
-                                                if "PositionerSettings" in k and k.endswith(".PositionerName") is False:
-                                                    print(f"vv: {grpnms[0]}.{grpnms[1]}{k[k.rfind('.') + 1:]}: {v}")
-                                                if k.endswith(".Value"):
-                                                    print(f"vv: {grpnms[0]}.{grpnms[1]}: {v}")
-                                    else:
-                                        print(f"nv: {k}: {v}")
-                                    # TODO::simplify and check that metadata end up correctly in self.tmp["meta"][file]
-                        except:
-                            raise ValueError(f"Flattening XML metadata content {self.file_path}:{file} failed !")
+                        self.get_xml_metadata(file, fp)
+                        self.get_file_hash(file, fp)
+                        # print(f"Debugging self.tmp.file.items {file}")
+                        # for k, v in self.tmp["meta"][file].items():
+                        #    print(f"{k}: {v}")
+            print(f"{self.file_path} metadata within PNG collection processed "
+                  f"successfully ({len(self.tmp['meta'].keys())} PNGs evaluated).")
         else:
             print(f"{self.file_path} is not a Protochips-specific "
                   f"PNG file that this parser can process !")
@@ -181,7 +174,7 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
     def process_into_template(self, template: dict) -> dict:
         if self.supported is True:
             self.process_event_data_em_metadata(template)
-            self.process_event_data_em_data(template)
+            # self.process_event_data_em_data(template)
         return template
 
     def process_event_data_em_metadata(self, template: dict) -> dict:
