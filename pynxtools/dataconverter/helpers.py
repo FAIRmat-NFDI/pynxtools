@@ -17,21 +17,20 @@
 #
 """Helper functions commonly used by the convert routine."""
 
-from typing import List, Optional, Any
-from typing import Tuple, Callable, Union
+import json
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
-import json
+from typing import Any, Callable, List, Optional, Tuple, Union
 
+import h5py
 import numpy as np
 from ase.data import chemical_symbols
-import h5py
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.logger import logger as pynx_logger
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
-from pynxtools.dataconverter.logger import logger as pynx_logger
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -488,8 +487,7 @@ def does_group_exist(path_to_group, data):
 
 
 # pylint: disable=W1203
-def ensure_all_required_fields_exist(template, data,
-                                     nxdl_root, logger=pynx_logger):
+def ensure_all_required_fields_exist(template, data, nxdl_root, logger=pynx_logger):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
@@ -502,16 +500,22 @@ def ensure_all_required_fields_exist(template, data,
         if path in template["lone_groups"]:
             opt_parent = check_for_optional_parent(path, nxdl_root)
             if opt_parent != "<<NOT_FOUND>>":
-                if does_group_exist(opt_parent, data) and not does_group_exist(renamed_path, data):
-                    logger.warning(f"The required group, {path}, hasn't been supplied"
-                                   f" while its optional parent, {opt_parent}, is supplied.")
+                if does_group_exist(opt_parent, data) and not does_group_exist(
+                    renamed_path, data
+                ):
+                    logger.warning(
+                        f"The required group, {path}, hasn't been supplied"
+                        f" while its optional parent, {opt_parent}, is supplied."
+                    )
                 continue
             if not does_group_exist(renamed_path, data):
-                raise ValueError(f"The required group, {path}, hasn't been supplied.")
-            continue
+                logger.warning(f"The required group, {path}, hasn't been supplied.")
+                continue
         if not is_path_in_data_dict or data[renamed_path] is None:
-            logger.warning(f"The data entry corresponding to {path} is required "
-                           f"and hasn't been supplied by the reader.",)
+            logger.warning(
+                f"The data entry corresponding to {path} is required "
+                f"and hasn't been supplied by the reader.",
+            )
 
 
 def try_undocumented(data, nxdl_root: ET.Element):
@@ -540,8 +544,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def validate_data_dict(template, data,
-                       nxdl_root: ET.Element, logger=pynx_logger):
+def validate_data_dict(template, data, nxdl_root: ET.Element, logger=pynx_logger):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 

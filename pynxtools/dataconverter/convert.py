@@ -140,11 +140,14 @@ def get_nxdl_root_and_path(nxdl: str):
     return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
 
 
-def transfer_data_into_template(input_file,
-                                reader, nxdl_name,
-                                nxdl_root: Optional[ET.Element] = None,
-                                logger: logging.Logger = pynx_logger,
-                                **kwargs):
+def transfer_data_into_template(
+    input_file,
+    reader,
+    nxdl_name,
+    nxdl_root: Optional[ET.Element] = None,
+    logger: logging.Logger = pynx_logger,
+    **kwargs,
+):
     """Transfer parse and merged data from input experimental file, config file and eln.
 
     Experimental and eln files will be parsed and finally will be merged into template.
@@ -179,8 +182,10 @@ def transfer_data_into_template(input_file,
         input_file = (input_file,)
 
     bulletpoint = "\n\u2022 "
-    logger.info(f"Using {reader} reader reader to convert the given files:"
-                f" {bulletpoint.join((' ', *input_file))}")
+    logger.info(
+        f"Using {reader} reader reader to convert the given files:"
+        f" {bulletpoint.join((' ', *input_file))}"
+    )
 
     data_reader = get_reader(reader)
     if not (
@@ -198,15 +203,17 @@ def transfer_data_into_template(input_file,
 
 
 # pylint: disable=too-many-arguments,too-many-locals,W1203
-def convert(input_file: Tuple[str, ...],
-            reader: str,
-            nxdl: str,
-            output: str,
-            generate_template: bool = False,
-            fair: bool = False,
-            undocumented: bool = False,
-            logger: logging.Logger = pynx_logger,
-            **kwargs):
+def convert(
+    input_file: Tuple[str, ...],
+    reader: str,
+    nxdl: str,
+    output: str,
+    generate_template: bool = False,
+    fair: bool = False,
+    undocumented: bool = False,
+    logger: logging.Logger = pynx_logger,
+    **kwargs,
+):
     """The conversion routine that takes the input parameters and calls the necessary functions.
 
     Parameters
@@ -241,9 +248,14 @@ def convert(input_file: Tuple[str, ...],
         logger.info(template)
         return
 
-    data = transfer_data_into_template(input_file=input_file, reader=reader,
-                                       nxdl_name=nxdl, nxdl_root=nxdl_root,
-                                       logger=logger, **kwargs)
+    data = transfer_data_into_template(
+        input_file=input_file,
+        reader=reader,
+        nxdl_name=nxdl,
+        nxdl_root=nxdl_root,
+        logger=logger,
+        **kwargs,
+    )
 
     if fair and data.undocumented.keys():
         logger.warning(
@@ -255,10 +267,12 @@ def convert(input_file: Tuple[str, ...],
             if "/@default" in path:
                 continue
             logger.info(
-                f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation.")
+                f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation."
+            )
 
-    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output),
-                                        logger=logger)
+    helpers.add_default_root_attributes(
+        data=data, filename=os.path.basename(output), logger=logger
+    )
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
     logger.info(f"The output file generated: {output}.")
