@@ -34,7 +34,9 @@ def remove_optional_parent(data_dict: Template):
     internal_dict = Template(data_dict)
     del internal_dict["/ENTRY[my_entry]/optional_parent/required_child"]
     del internal_dict["/ENTRY[my_entry]/optional_parent/optional_child"]
-    del internal_dict["/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"]
+    del internal_dict[
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"
+    ]
 
     return internal_dict
 
@@ -59,7 +61,7 @@ def set_to_none_in_dict(data_dict: Template, key: str, optionality: str):
     return None
 
 
-def remove_from_dict(data_dict: Template, key: str, optionality: str = 'optional'):
+def remove_from_dict(data_dict: Template, key: str, optionality: str = "optional"):
     """Helper function to remove a key from dict"""
     if data_dict is not None and key in data_dict[optionality]:
         internal_dict = Template(data_dict)
@@ -74,23 +76,31 @@ def listify_template(data_dict: Template):
     listified_template = Template()
     for optionality in ("optional", "recommended", "required", "undocumented"):
         for path in data_dict[optionality]:
-            if path[path.rindex("/") + 1:] in ("@units", "type", "definition", "date_value"):
+            if path[path.rindex("/") + 1 :] in (
+                "@units",
+                "type",
+                "definition",
+                "date_value",
+            ):
                 listified_template[optionality][path] = data_dict[optionality][path]
             else:
                 listified_template[optionality][path] = [data_dict[optionality][path]]
     return listified_template
 
 
-@pytest.mark.parametrize("input_data, expected_output", [
-    ('2.4E-23', 2.4e-23),
-    ('28', 28),
-    ('45.98', 45.98),
-    ('test', 'test'),
-    (['59', '3.00005', '498E-36'], np.array([59.0, 3.00005, 4.98e-34])),
-    ('23 34 444 5000', np.array([23., 34., 444., 5000.])),
-    ('xrd experiment', 'xrd experiment'),
-    (None, None),
-])
+@pytest.mark.parametrize(
+    "input_data, expected_output",
+    [
+        ("2.4E-23", 2.4e-23),
+        ("28", 28),
+        ("45.98", 45.98),
+        ("test", "test"),
+        (["59", "3.00005", "498E-36"], np.array([59.0, 3.00005, 4.98e-34])),
+        ("23 34 444 5000", np.array([23.0, 34.0, 444.0, 5000.0])),
+        ("xrd experiment", "xrd experiment"),
+        (None, None),
+    ],
+)
 def test_transform_to_intended_dt(input_data, expected_output):
     """Transform to possible numerical method."""
     result = helpers.transform_to_intended_dt(input_data)
@@ -128,12 +138,14 @@ def fixture_filled_test_data(template, tmp_path):
     # Copy original measurement file to tmp dir,
     # because h5py.ExternalLink is modifying it while
     # linking the nxs file.
-    distutils.file_util.copy_file(f"{os.path.dirname(__file__)}"
-                                  f"/../"
-                                  f"data/dataconverter/"
-                                  f"readers/mpes/"
-                                  f"xarray_saved_small_calibration.h5",
-                                  tmp_path)
+    distutils.file_util.copy_file(
+        f"{os.path.dirname(__file__)}"
+        f"/../"
+        f"data/dataconverter/"
+        f"readers/mpes/"
+        f"xarray_saved_small_calibration.h5",
+        tmp_path,
+    )
 
     template.clear()
     template["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
@@ -143,24 +155,24 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
     template["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
     template["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
-    template["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],
-                                                                    dtype=np.int8)
+    template["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array(
+        [1, 2, 3], dtype=np.int8
+    )
     template["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
     template["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
     template["/ENTRY[my_entry]/definition"] = "NXtest"
     template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
     template["/ENTRY[my_entry]/program_name"] = "Testing program"
     template["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"
-    template["/ENTRY[my_entry]/NXODD_name/date_value"] = ("2022-01-22T12"
-                                                          ":14:12.05018+00:00")
+    template["/ENTRY[my_entry]/NXODD_name/date_value"] = (
+        "2022-01-22T12" ":14:12.05018+00:00"
+    )
     template["/ENTRY[my_entry]/required_group/description"] = "An example description"
     template["/ENTRY[my_entry]/required_group2/description"] = "An example description"
     template["/ENTRY[my_entry]/does/not/exist"] = "random"
-    template["/ENTRY[my_entry]/links/ext_link"] = {"link":
-                                                   f"{tmp_path}/"
-                                                   f"xarray_saved_small_cali"
-                                                   f"bration.h5:/axes/ax3"
-                                                   }
+    template["/ENTRY[my_entry]/links/ext_link"] = {
+        "link": f"{tmp_path}/" f"xarray_saved_small_cali" f"bration.h5:/axes/ax3"
+    }
     yield template
 
 
@@ -172,21 +184,33 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # p
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array([1, 2, 3],  # pylint: disable=E1126
-                                                                            dtype=np.int8)  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array(
+    [1, 2, 3],  # pylint: disable=E1126
+    dtype=np.int8,
+)  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = "An example description"
-TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = "An example description"
-TEMPLATE["required"]["/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"] = 1
-TEMPLATE["lone_groups"] = ['/ENTRY[entry]/required_group',
-                           '/ENTRY[entry]/required_group2',
-                           '/ENTRY[entry]/optional_parent/req_group_in_opt_group']
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name/date_value"
+] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/required_group/description"
+] = "An example description"
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/required_group2/description"
+] = "An example description"
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"
+] = 1
+TEMPLATE["lone_groups"] = [
+    "/ENTRY[entry]/required_group",
+    "/ENTRY[entry]/required_group2",
+    "/ENTRY[entry]/optional_parent/req_group_in_opt_group",
+]
 TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 
 
@@ -290,8 +314,13 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
     pytest.param(
         alter_dict(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "/ENTRY[my_entry]/required_group",
-            {}
+            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
+            id="missing-empty-yet-required-group",
+        ),
+        pytest.param(
+            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
+            "The required group, /ENTRY[entry]/required_group2, hasn't been supplied.",
+            id="missing-empty-yet-required-group2",
         ),
         (""),
         id="allow-required-and-empty-group"
@@ -337,16 +366,19 @@ def test_validate_data_dict(caplog, data_dict, error_message, template, nxdl_roo
         assert (error_message) == str(execinfo.value)
 
 
-@pytest.mark.parametrize("nxdl_path,expected", [
-    pytest.param(
-        "/ENTRY/definition/@version",
-        (True, "/ENTRY[entry]/definition/@version"),
-        id="path-exists-in-dict"),
-    pytest.param(
-        "/RANDOM/does/not/@exist",
-        (False, None),
-        id="path-does-not-exist-in-dict")
-])
+@pytest.mark.parametrize(
+    "nxdl_path,expected",
+    [
+        pytest.param(
+            "/ENTRY/definition/@version",
+            (True, "/ENTRY[entry]/definition/@version"),
+            id="path-exists-in-dict",
+        ),
+        pytest.param(
+            "/RANDOM/does/not/@exist", (False, None), id="path-does-not-exist-in-dict"
+        ),
+    ],
+)
 def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
     assert helpers.path_in_data_dict(nxdl_path, template) == expected
@@ -354,11 +386,11 @@ def test_path_in_data_dict(nxdl_path, expected, template):
 
 def test_atom_type_extractor_and_hill_conversion():
     """
-        Test atom type extractor and conversion to hill
+    Test atom type extractor and conversion to hill
     """
 
     test_chemical_formula = "(C38H54S4)n(NaO2)5(CH4)NH3B"
-    expected_atom_types = ['C', 'H', 'B', 'N', 'Na', 'O', 'S']
+    expected_atom_types = ["C", "H", "B", "N", "Na", "O", "S"]
 
     atom_list = helpers.extract_atom_types(test_chemical_formula)
 

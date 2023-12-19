@@ -19,13 +19,13 @@
 
 # pylint: disable=no-member
 
-from pynxtools.dataconverter.readers.shared.shared_utils \
-    import get_repo_last_commit
+from pynxtools.dataconverter.readers.shared.shared_utils import get_repo_last_commit
 
 
 NX_EM_ADEF_NAME = "NXem"
-NX_EM_ADEF_VERSION = "nexus-fairmat-proposal successor of " \
-                     "9636feecb79bb32b828b1a9804269573256d7696"
+NX_EM_ADEF_VERSION = (
+    "nexus-fairmat-proposal successor of " "9636feecb79bb32b828b1a9804269573256d7696"
+)
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
 NX_EM_EXEC_NAME = "dataconverter/reader/em_sptrscpy/reader.py"
 NX_EM_EXEC_VERSION = get_repo_last_commit()

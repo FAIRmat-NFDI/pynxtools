@@ -44,8 +44,11 @@ def convert_iso8601_modifier(terms, dct: dict):
         if isinstance(terms, str):
             if terms in dct.keys():
                 return None
-        elif (isinstance(terms, list)) and (len(terms) == 2) \
-                and (all(isinstance(entry, str) for entry in terms) is True):
+        elif (
+            (isinstance(terms, list))
+            and (len(terms) == 2)
+            and (all(isinstance(entry, str) for entry in terms) is True)
+        ):
             # assume the first argument is a local time
             # assume the second argument is a timezone string
             if terms[0] in dct.keys() and terms[1] in dct.keys():
@@ -56,13 +59,15 @@ def convert_iso8601_modifier(terms, dct: dict):
                 date_time_str = dct[terms[0]].replace("T", " ")
                 time_zone_str = dct[terms[1]]
                 if time_zone_str in pytz.all_timezones:
-                    date_time_obj \
-                        = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S.%f')
-                    utc_time_zone_aware \
-                        = pytz.timezone(time_zone_str).localize(date_time_obj)
+                    date_time_obj = datetime.strptime(
+                        date_time_str, "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    utc_time_zone_aware = pytz.timezone(time_zone_str).localize(
+                        date_time_obj
+                    )
                     return utc_time_zone_aware
                 else:
-                    raise ValueError('Invalid timezone string!')
+                    raise ValueError("Invalid timezone string!")
                 return None
         else:
             return None
@@ -97,6 +102,7 @@ def apply_modifier(modifier, dct: dict):
 #     "metadata/scan/scan_device_properties/mag_boards/MagBoard 1 Relay"]}
 # modd = {"fun": "convert_iso8601", "terms": ["data_modified", "timezone"]}
 # print(apply_modifier(modd, yml))
+
 
 def variadic_path_to_specific_path(path: str, instance_identifier: list):
     """Transforms a variadic path to an actual path with instances."""

@@ -27,13 +27,20 @@ import yaml
 
 # from ase.data import chemical_symbols
 
-from pynxtools.dataconverter.readers.em_om.utils.versioning \
-    import NX_EM_OM_ADEF_NAME, NX_EM_OM_ADEF_VERSION
-from pynxtools.dataconverter.readers.em_om.utils.versioning \
-    import NX_EM_OM_EXEC_NAME, NX_EM_OM_EXEC_VERSION
+from pynxtools.dataconverter.readers.em_om.utils.versioning import (
+    NX_EM_OM_ADEF_NAME,
+    NX_EM_OM_ADEF_VERSION,
+)
+from pynxtools.dataconverter.readers.em_om.utils.versioning import (
+    NX_EM_OM_EXEC_NAME,
+    NX_EM_OM_EXEC_VERSION,
+)
 
-from pynxtools.dataconverter.readers.em_om.utils.handed_cartesian \
-    import REFERENCE_FRAMES, AXIS_DIRECTIONS, is_cs_well_defined
+from pynxtools.dataconverter.readers.em_om.utils.handed_cartesian import (
+    REFERENCE_FRAMES,
+    AXIS_DIRECTIONS,
+    is_cs_well_defined,
+)
 
 # example how to check against different types of Euler angle conventions
 # from pynxtools.dataconverter.readers.em_om.utils.euler_angle_convention \
@@ -45,16 +52,16 @@ from pynxtools.dataconverter.readers.em_om.utils.handed_cartesian \
 
 
 class NxEmOmGenericElnSchemaParser:
-    """Parse eln_data.yaml dump file content generated from an (e.g. OASIS) ELN.
-
-    """
+    """Parse eln_data.yaml dump file content generated from an (e.g. OASIS) ELN."""
 
     def __init__(self, file_name: str, entry_id: int, pattern_simulation: bool):
         """Fill template with ELN pieces of information."""
         self.pattern_simulation = pattern_simulation
         print(f"Extracting data from ELN file: {file_name}")
-        if (file_name.rsplit('/', 1)[-1].startswith("eln_data")
-                or file_name.startswith("eln_data")) and entry_id > 0:
+        if (
+            file_name.rsplit("/", 1)[-1].startswith("eln_data")
+            or file_name.startswith("eln_data")
+        ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_name = file_name
             with open(self.file_name, "r", encoding="utf-8") as stream:
@@ -88,25 +95,32 @@ class NxEmOmGenericElnSchemaParser:
         return template
 
     def parse_entry_section(self, template: dict) -> dict:
-        """"Parse entry section."""
+        """ "Parse entry section."""
         print("Parse entry...")
         src = "entry"
         trg = f"/ENTRY[entry{self.entry_id}]/"
-        if (self.yml[f"{src}:attr_version"] == NX_EM_OM_ADEF_VERSION) \
-                and (self.yml[f"{src}:definition"] == NX_EM_OM_ADEF_NAME):
+        if (self.yml[f"{src}:attr_version"] == NX_EM_OM_ADEF_VERSION) and (
+            self.yml[f"{src}:definition"] == NX_EM_OM_ADEF_NAME
+        ):
             template[f"{trg}@version"] = NX_EM_OM_ADEF_VERSION
             template[f"{trg}definition"] = NX_EM_OM_ADEF_NAME
             template[f"{trg}PROGRAM[program1]/program"] = NX_EM_OM_EXEC_NAME
             template[f"{trg}PROGRAM[program1]/program/@version"] = NX_EM_OM_EXEC_VERSION
-        if ("program" in self.yml[src].keys()) \
-                and ("program__attr_version" in self.yml[src].keys()):
-            template[f"{trg}PROGRAM[program2]/program"] \
-                = self.yml[f"{src}:program"]
-            template[f"{trg}PROGRAM[program2]/program/@version"] \
-                = self.yml[f"{src}:program__attr_version"]
+        if ("program" in self.yml[src].keys()) and (
+            "program__attr_version" in self.yml[src].keys()
+        ):
+            template[f"{trg}PROGRAM[program2]/program"] = self.yml[f"{src}:program"]
+            template[f"{trg}PROGRAM[program2]/program/@version"] = self.yml[
+                f"{src}:program__attr_version"
+            ]
         # check that versions NX_EM_OM_* match
-        req_field_names = ["definition", "start_time", "end_time",
-                           "workflow_description", "workflow_identifier"]
+        req_field_names = [
+            "definition",
+            "start_time",
+            "end_time",
+            "workflow_description",
+            "workflow_identifier",
+        ]
         for field in req_field_names:
             if field in self.yml[src].keys():
                 template[f"{trg}{field}"] = self.yml[f"{src}:{field}"]
@@ -123,10 +137,17 @@ class NxEmOmGenericElnSchemaParser:
         for user_list in self.yml[src]:
             trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]/"
             field_names = [
-                "name", "email", "affiliation", "address",
-                "orcid", "orcid_platform",
-                "telephone_number", "role",
-                "social_media_name", "social_media_platform"]
+                "name",
+                "email",
+                "affiliation",
+                "address",
+                "orcid",
+                "orcid_platform",
+                "telephone_number",
+                "role",
+                "social_media_name",
+                "social_media_platform",
+            ]
             for field_name in field_names:
                 if field_name in user_list.keys():
                     template[f"{trg}{field_name}"] = user_list[field_name]
@@ -138,17 +159,19 @@ class NxEmOmGenericElnSchemaParser:
         print("Parse commercial on-the-fly")
         src = "commercial_on_the_fly_indexing"
         trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/on_the_fly_indexing/"
-        if ("program" in self.yml[src].keys()) \
-                and ("program__attr_version" in self.yml[src].keys()):
-            template[f"{trg}PROGRAM[program1]/program"] \
-                = self.yml[f"{src}:program"]
-            template[f"{trg}PROGRAM[program1]/program/@version"] \
-                = self.yml[f"{src}:program__attr_version"]
+        if ("program" in self.yml[src].keys()) and (
+            "program__attr_version" in self.yml[src].keys()
+        ):
+            template[f"{trg}PROGRAM[program1]/program"] = self.yml[f"{src}:program"]
+            template[f"{trg}PROGRAM[program1]/program/@version"] = self.yml[
+                f"{src}:program__attr_version"
+            ]
         if "results_file" in self.yml[src].keys():
             template[f"{trg}origin"] = self.yml[f"{src}:results_file"]
         if "results_file__attr_version" in self.yml[src].keys():
-            template[f"{trg}origin/@version"] \
-                = self.yml[f"{src}:results_file__attr_version"]
+            template[f"{trg}origin/@version"] = self.yml[
+                f"{src}:results_file__attr_version"
+            ]
         template[f"{trg}path"] = str("undefined")
         # NEW ISSUE: this is a bug not results_file version in eln but path !!
         return template
@@ -187,14 +210,16 @@ class NxEmOmGenericElnSchemaParser:
             "three_dimensional_rotation_handedness",
             "rotation_convention",
             "euler_angle_convention",
-            "axis_angle_convention"]
+            "axis_angle_convention",
+        ]
         for term in terms:
             if term in self.yml[src].keys():
                 template[f"{trg}{term}"] = self.yml[f"{src}:{term}"].lower()
         # one term named differently in ELN than in NeXus appdef template keyword
         if "sign_convention" in self.yml[src].keys():
-            template[f"{trg}orientation_parameterization_sign_convention"] \
-                = self.yml[f"{src}:sign_convention"].lower()
+            template[f"{trg}orientation_parameterization_sign_convention"] = self.yml[
+                f"{src}:sign_convention"
+            ].lower()
         # if desired one could check conventions are consistent with specific ones
         return template
 
@@ -205,19 +230,24 @@ class NxEmOmGenericElnSchemaParser:
         trg = f"/ENTRY[entry{self.entry_id}]/conventions/processing_reference_frame/"
         if "reference_frame_type" in self.yml[src].keys():
             if self.yml[f"{src}:reference_frame_type"] in REFERENCE_FRAMES:
-                template[f"{trg}reference_frame_type"] \
-                    = self.yml[f"{src}:reference_frame_type"]
+                template[f"{trg}reference_frame_type"] = self.yml[
+                    f"{src}:reference_frame_type"
+                ]
             xyz_directions = ["undefined", "undefined", "undefined"]
             xyz_aliases = ["", "", ""]
             for idx in np.arange(0, 3):
                 axis_name = axes_names[idx]
                 if f"{axis_name}axis_direction" in self.yml[src].keys():
                     if self.yml[f"{src}:{axis_name}axis_direction"] in AXIS_DIRECTIONS:
-                        xyz_directions[idx] = self.yml[f"{src}:{axis_name}axis_direction"]
+                        xyz_directions[idx] = self.yml[
+                            f"{src}:{axis_name}axis_direction"
+                        ]
                 if f"{axis_name}axis_alias" in self.yml[src].keys():
                     xyz_aliases[idx] = self.yml[f"{src}:{axis_name}axis_alias"]
 
-            if is_cs_well_defined(self.yml[f"{src}:reference_frame_type"], xyz_directions):
+            if is_cs_well_defined(
+                self.yml[f"{src}:reference_frame_type"], xyz_directions
+            ):
                 for idx in np.arange(0, 3):
                     axis_name = axes_names[idx]
                     template[f"{trg}{axis_name}axis_direction"] = xyz_directions[idx]
@@ -233,15 +263,20 @@ class NxEmOmGenericElnSchemaParser:
         trg = f"/ENTRY[entry{self.entry_id}]/conventions/sample_reference_frame/"
         if "reference_frame_type" in self.yml[src].keys():
             if self.yml[f"{src}:reference_frame_type"] in REFERENCE_FRAMES:
-                template[f"{trg}reference_frame_type"] \
-                    = self.yml[f"{src}:reference_frame_type"]
+                template[f"{trg}reference_frame_type"] = self.yml[
+                    f"{src}:reference_frame_type"
+                ]
             xyz_directions = ["undefined", "undefined", "undefined"]
             for idx in np.arange(0, 3):
                 axis_name = axes_names[idx]
                 if f"{axis_name}axis_direction" in self.yml[src].keys():
                     if self.yml[f"{src}:{axis_name}axis_direction"] in AXIS_DIRECTIONS:
-                        xyz_directions[idx] = self.yml[f"{src}:{axis_name}axis_direction"]
-            if is_cs_well_defined(self.yml[f"{src}:reference_frame_type"], xyz_directions):
+                        xyz_directions[idx] = self.yml[
+                            f"{src}:{axis_name}axis_direction"
+                        ]
+            if is_cs_well_defined(
+                self.yml[f"{src}:reference_frame_type"], xyz_directions
+            ):
                 for idx in np.arange(0, 3):
                     axis_name = axes_names[idx]
                     template[f"{trg}{axis_name}axis_direction"] = xyz_directions[idx]
@@ -256,15 +291,20 @@ class NxEmOmGenericElnSchemaParser:
         trg = f"/ENTRY[entry{self.entry_id}]/conventions/detector_reference_frame/"
         if "reference_frame_type" in self.yml[src].keys():
             if self.yml[f"{src}:reference_frame_type"] in REFERENCE_FRAMES:
-                template[f"{trg}reference_frame_type"] \
-                    = self.yml[f"{src}:reference_frame_type"]
+                template[f"{trg}reference_frame_type"] = self.yml[
+                    f"{src}:reference_frame_type"
+                ]
             xyz_directions = ["undefined", "undefined", "undefined"]
             for idx in np.arange(0, 3):
                 axis_name = axes_names[idx]
                 if f"{axis_name}axis_direction" in self.yml[src].keys():
                     if self.yml[f"{src}:{axis_name}axis_direction"] in AXIS_DIRECTIONS:
-                        xyz_directions[idx] = self.yml[f"{src}:{axis_name}axis_direction"]
-            if is_cs_well_defined(self.yml[f"{src}:reference_frame_type"], xyz_directions):
+                        xyz_directions[idx] = self.yml[
+                            f"{src}:{axis_name}axis_direction"
+                        ]
+            if is_cs_well_defined(
+                self.yml[f"{src}:reference_frame_type"], xyz_directions
+            ):
                 for idx in np.arange(0, 3):
                     axis_name = axes_names[idx]
                     template[f"{trg}{axis_name}axis_direction"] = xyz_directions[idx]
@@ -277,19 +317,26 @@ class NxEmOmGenericElnSchemaParser:
         """Parse for the gnomonic projection."""
         axes_names = ["x", "y", "z"]
         src = "gnomonic_projection:gnomonic_projection_reference_frame"
-        trg = f"/ENTRY[entry{self.entry_id}]/conventions" \
-              f"/gnomonic_projection_reference_frame/"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/conventions"
+            f"/gnomonic_projection_reference_frame/"
+        )
         if "reference_frame_type" in self.yml[src].keys():
             if self.yml[f"{src}:reference_frame_type"] in REFERENCE_FRAMES:
-                template[f"{trg}reference_frame_type"] \
-                    = self.yml[f"{src}:reference_frame_type"]
+                template[f"{trg}reference_frame_type"] = self.yml[
+                    f"{src}:reference_frame_type"
+                ]
             xyz_directions = ["undefined", "undefined", "undefined"]
             for idx in np.arange(0, 3):
                 axis_name = axes_names[idx]
                 if f"{axis_name}axis_direction" in self.yml[src].keys():
                     if self.yml[f"{src}:{axis_name}axis_direction"] in AXIS_DIRECTIONS:
-                        xyz_directions[idx] = self.yml[f"{src}:{axis_name}axis_direction"]
-            if is_cs_well_defined(self.yml[f"{src}:reference_frame_type"], xyz_directions):
+                        xyz_directions[idx] = self.yml[
+                            f"{src}:{axis_name}axis_direction"
+                        ]
+            if is_cs_well_defined(
+                self.yml[f"{src}:reference_frame_type"], xyz_directions
+            ):
                 for idx in np.arange(0, 3):
                     axis_name = axes_names[idx]
                     template[f"{trg}{axis_name}axis_direction"] = xyz_directions[idx]
@@ -304,8 +351,9 @@ class NxEmOmGenericElnSchemaParser:
             axis_name = axes_names[idx]
             for field_name in field_names:
                 if f"{axis_name}{field_name}" in self.yml[src].keys():
-                    template[f"{trg}{axis_name}{field_name}"] \
-                        = self.yml[f"{src}:{axis_name}{field_name}"]
+                    template[f"{trg}{axis_name}{field_name}"] = self.yml[
+                        f"{src}:{axis_name}{field_name}"
+                    ]
         return template
 
     def parse_indexing(self, template: dict) -> dict:

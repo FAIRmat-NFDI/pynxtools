@@ -133,11 +133,11 @@ def h5_to_xarray(faddr, mode="r"):
             metadata = recursive_parse_metadata(h5_file["metadata"])
         # Segment to change Vset to V in lens voltages
         if "file" in metadata.keys():
-            for k in list(metadata['file']):
+            for k in list(metadata["file"]):
                 if "VSet" in k:
                     key = k[:-3]
-                    metadata['file'][key] = metadata['file'][k]
-                    del metadata['file'][k]
+                    metadata["file"][key] = metadata["file"][k]
+                    del metadata["file"][k]
 
         xarray = res_to_xarray(data, bin_names, axes, metadata)
         return xarray
@@ -157,22 +157,22 @@ def iterate_dictionary(dic, key_string):
 
 
 CONVERT_DICT = {
-    'Instrument': 'INSTRUMENT[instrument]',
-    'Analyzer': 'ELECTRONANALYSER[electronanalyser]',
-    'Manipulator': 'MANIPULATOR[manipulator]',
-    'Beam': 'BEAM[beam]',
-    'unit': '@units',
-    'Sample': 'SAMPLE[sample]',
-    'Source': 'SOURCE[source]',
-    'User': 'USER[user]'
+    "Instrument": "INSTRUMENT[instrument]",
+    "Analyzer": "ELECTRONANALYSER[electronanalyser]",
+    "Manipulator": "MANIPULATOR[manipulator]",
+    "Beam": "BEAM[beam]",
+    "unit": "@units",
+    "Sample": "SAMPLE[sample]",
+    "Source": "SOURCE[source]",
+    "User": "USER[user]",
 }
 
 REPLACE_NESTED = {
-    'SOURCE[source]/Probe': 'SOURCE[source]',
-    'SOURCE[source]/Pump': 'SOURCE[source_pump]',
-    'BEAM[beam]/Probe': 'BEAM[beam]',
-    'BEAM[beam]/Pump': 'BEAM[beam_pump]',
-    'sample_history': 'sample_history/description'
+    "SOURCE[source]/Probe": "SOURCE[source]",
+    "SOURCE[source]/Pump": "SOURCE[source_pump]",
+    "BEAM[beam]/Probe": "BEAM[beam]",
+    "BEAM[beam]/Pump": "BEAM[beam_pump]",
+    "sample_history": "sample_history/description",
 }
 
 
@@ -184,7 +184,7 @@ def handle_h5_and_json_file(file_paths, objects):
 
     for file_path in file_paths:
         try:
-            file_extension = file_path[file_path.rindex("."):]
+            file_extension = file_path[file_path.rindex(".") :]
         except ValueError as exc:
             raise ValueError(
                 f"The file path {file_path} must have an extension.",
@@ -216,7 +216,7 @@ def handle_h5_and_json_file(file_paths, objects):
                     FlattenSettings(
                         dic=yaml.safe_load(feln),
                         convert_dict=CONVERT_DICT,
-                        replace_nested=REPLACE_NESTED
+                        replace_nested=REPLACE_NESTED,
                     )
                 )
 
@@ -233,6 +233,7 @@ def handle_h5_and_json_file(file_paths, objects):
 
 def rgetattr(obj, attr):
     """Get attributes recursively"""
+
     def _getattr(obj, attr):
         return getattr(obj, attr)
 
@@ -255,8 +256,10 @@ def fill_data_indices_in_config(config_file_dict, x_array_loaded):
                 new_key = key.replace("*", dim)
                 new_value = value.replace("*", dim)
 
-                if new_key not in config_file_dict.keys() \
-                        and new_value not in config_file_dict.values():
+                if (
+                    new_key not in config_file_dict.keys()
+                    and new_value not in config_file_dict.values()
+                ):
                     config_file_dict[new_key] = new_value
 
             config_file_dict.pop(key)
@@ -271,10 +274,10 @@ class MPESReader(BaseReader):
     supported_nxdls = ["NXmpes"]
 
     def read(  # pylint: disable=too-many-branches
-            self,
-            template: dict = None,
-            file_paths: Tuple[str] = None,
-            objects: Tuple[Any] = None,
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
     ) -> dict:
         """Reads data from given file or alternatively an xarray object
         and returns a filled template dictionary"""
@@ -291,10 +294,9 @@ class MPESReader(BaseReader):
         fill_data_indices_in_config(config_file_dict, x_array_loaded)
 
         for key, value in config_file_dict.items():
-
             if isinstance(value, str) and ":" in value:
                 precursor = value.split(":")[0]
-                value = value[value.index(":") + 1:]
+                value = value[value.index(":") + 1 :]
 
                 # Filling in the data and axes along with units from xarray
                 if precursor == "@data":
@@ -308,8 +310,7 @@ class MPESReader(BaseReader):
 
                     except ValueError:
                         print(
-                            f"Incorrect axis name corresponding to "
-                            f"the path {key}",
+                            f"Incorrect axis name corresponding to " f"the path {key}",
                         )
 
                     except AttributeError:

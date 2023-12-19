@@ -23,17 +23,21 @@ from typing import Dict
 
 import hyperspy.api as hs
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_base_classes \
-    import NxObject
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_base_classes import (
+    NxObject,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_xray \
-    import NxSpectrumSetEmXray
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_xray import (
+    NxSpectrumSetEmXray,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_eels \
-    import NxSpectrumSetEmEels
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_eels import (
+    NxSpectrumSetEmEels,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_adf \
-    import NxImageSetEmAdf
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.hspy.em_hspy_adf import (
+    NxImageSetEmAdf,
+)
 
 from pynxtools.dataconverter.file_hashing import get_file_hashvalue
 
@@ -94,8 +98,10 @@ class NxEventDataEm:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
-                 f"EVENT_DATA_EM[event_data_em1]/"
+        prefix = (
+            f"/ENTRY[entry{self.entry_id}]/measurement/"
+            f"EVENT_DATA_EM[event_data_em1]/"
+        )
 
         # now = datetime.datetime.now().astimezone().isoformat()
         # hyperspy cannot implement per-event time stamping especially
@@ -105,34 +111,36 @@ class NxEventDataEm:
 
         template[f"{prefix}start_time"] = self.meta["start_time"].value
         template[f"{prefix}end_time"] = self.meta["end_time"].value
-        event_info = {"source_file_name": self.file_name,
-                      "source_file_version": self.file_sha256}
+        event_info = {
+            "source_file_name": self.file_name,
+            "source_file_version": self.file_sha256,
+        }
 
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
-                 f"EVENT_DATA_EM[event_data_em1]/"
+        prefix = (
+            f"/ENTRY[entry{self.entry_id}]/measurement/"
+            f"EVENT_DATA_EM[event_data_em1]/"
+        )
         # connect and compare frame_id with that of hspy
         if self.spectrum_set_em_xray is not None:
-            if isinstance(self.spectrum_set_em_xray,
-                          NxSpectrumSetEmXray) is True:
-                self.spectrum_set_em_xray.report(
-                    prefix, 1, event_info, template)
+            if isinstance(self.spectrum_set_em_xray, NxSpectrumSetEmXray) is True:
+                self.spectrum_set_em_xray.report(prefix, 1, event_info, template)
 
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
-                 f"EVENT_DATA_EM[event_data_em1]/"
+        prefix = (
+            f"/ENTRY[entry{self.entry_id}]/measurement/"
+            f"EVENT_DATA_EM[event_data_em1]/"
+        )
         if self.spectrum_set_em_eels is not None:
-            if isinstance(self.spectrum_set_em_eels,
-                          NxSpectrumSetEmEels) is True:
-                self.spectrum_set_em_eels.report(
-                    prefix, 1, event_info, template)
+            if isinstance(self.spectrum_set_em_eels, NxSpectrumSetEmEels) is True:
+                self.spectrum_set_em_eels.report(prefix, 1, event_info, template)
 
-        prefix = f"/ENTRY[entry{self.entry_id}]/measurement/" \
-                 f"EVENT_DATA_EM[event_data_em1]/"
+        prefix = (
+            f"/ENTRY[entry{self.entry_id}]/measurement/"
+            f"EVENT_DATA_EM[event_data_em1]/"
+        )
         # connect and compare frame_id with that of hspy
         if self.image_set_em_adf is not None:
-            if isinstance(self.image_set_em_adf,
-                          NxImageSetEmAdf) is True:
-                self.image_set_em_adf.report(
-                    prefix, 1, event_info, template)
+            if isinstance(self.image_set_em_adf, NxImageSetEmAdf) is True:
+                self.image_set_em_adf.report(prefix, 1, event_info, template)
 
         # add generic images
 

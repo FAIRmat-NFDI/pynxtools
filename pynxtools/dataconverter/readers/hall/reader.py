@@ -1,4 +1,3 @@
-
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -43,7 +42,7 @@ MEASUREMENT_REPLACEMENTS = {
 CONVERSION_FUNCTIONS = {
     "Start Time": helpers.convert_date,
     "Time Completed": helpers.convert_date,
-    "Skipped at": helpers.convert_date
+    "Skipped at": helpers.convert_date,
 }
 
 # Keys that indicate the start of measurement block
@@ -73,7 +72,7 @@ def split_add_key(fobj: Optional[TextIO], dic: dict, prefix: str, expr: str) -> 
 
     def parse_enum() -> bool:
         sprefix = prefix.strip("/")
-        if 'Keithley' not in sprefix:
+        if "Keithley" not in sprefix:
             w_trailing_num = re.search(r"(.*) \d+$", sprefix)
             if w_trailing_num:
                 sprefix = w_trailing_num.group(1)
@@ -149,6 +148,7 @@ def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
     Returns:
         dict: Dict containing the data and metadata of the measurement
     """
+
     def parse_measurement(line: str, current_section: str, current_measurement: str):
         data = []
         for mline in fobj:
@@ -160,12 +160,11 @@ def parse_txt(fname: str, encoding: str = "iso-8859-1") -> dict:
         dkey = helpers.get_unique_dkey(
             template, f"{current_section}{current_measurement}/data"
         )
-        template.update(helpers.pandas_df_to_template(
-            dkey,
-            pd.DataFrame(
-                np.array(data, dtype=np.float64), columns=header
+        template.update(
+            helpers.pandas_df_to_template(
+                dkey, pd.DataFrame(np.array(data, dtype=np.float64), columns=header)
             )
-        ))
+        )
 
         return current_section, current_measurement
 

@@ -46,7 +46,9 @@ from orix.vector import Vector3d
 
 from pynxtools.dataconverter.readers.em_om.utils.image_transform import thumbnail
 
-from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import HFIVE_WEB_MAX_SIZE
+from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import (
+    HFIVE_WEB_MAX_SIZE,
+)
 
 orix_params = {
     "figure.facecolor": "w",
@@ -62,9 +64,7 @@ plt.rcParams.update(orix_params)
 
 
 class NxEmOmOrixEbsdParser:
-    """Parse *.h5oina EBSD data.
-
-    """
+    """Parse *.h5oina EBSD data."""
 
     def __init__(self, file_name, entry_id):
         """Class wrapping pyxem/orix H5OINA parser."""
@@ -81,17 +81,19 @@ class NxEmOmOrixEbsdParser:
         self.xaxis: List[float] = []
         self.yaxis: List[float] = []
         self.xmap = CrystalMap
-        self.oina: Dict[str, Any] = {"n_slices": 1,
-                                     "rotation": Rotation,
-                                     "scan_point_x": [],
-                                     "scan_point_y": [],
-                                     "phase_identifier": [],
-                                     "band_contrast": [],
-                                     "scan_size": [0, 0],
-                                     "scan_step": [0., 0.],
-                                     "scan_unit": ["n/a", "n/a"],
-                                     "phase": [],
-                                     "space_group": []}
+        self.oina: Dict[str, Any] = {
+            "n_slices": 1,
+            "rotation": Rotation,
+            "scan_point_x": [],
+            "scan_point_y": [],
+            "phase_identifier": [],
+            "band_contrast": [],
+            "scan_size": [0, 0],
+            "scan_step": [0.0, 0.0],
+            "scan_unit": ["n/a", "n/a"],
+            "phase": [],
+            "space_group": [],
+        }
         # y (aka height), x (aka width) !
 
     def parse_h5oina(self, slice_id):
@@ -105,7 +107,9 @@ class NxEmOmOrixEbsdParser:
         h5r = h5py.File(self.file_names, "r")
         self.oina_version_identifier = h5r["/Format Version"][0].decode("utf-8")
         self.oina["n_slices"] = h5r["/Index"][0]
-        print(f"H5OINA v{self.oina_version_identifier} has {self.oina['n_slices']} slices")
+        print(
+            f"H5OINA v{self.oina_version_identifier} has {self.oina['n_slices']} slices"
+        )
         if self.oina_version_identifier != "5.0" or self.oina["n_slices"] != 1:
             print("This examples supports H5OINA only in version 5.0 with one slice!")
             return
@@ -129,9 +133,9 @@ class NxEmOmOrixEbsdParser:
         # required entries in v5.0
         dset_name = f"{group_name}/Euler"
         if dset_name in h5r:
-            self.oina["rotation"] = Rotation.from_euler(euler=h5r[dset_name],
-                                                        direction='lab2crystal',
-                                                        degrees=False)  # rad in v5.0
+            self.oina["rotation"] = Rotation.from_euler(
+                euler=h5r[dset_name], direction="lab2crystal", degrees=False
+            )  # rad in v5.0
         dset_name = f"{group_name}/Phase"
         if dset_name in h5r:
             self.oina["phase_identifier"] = np.asarray(h5r[dset_name], np.int32)
@@ -144,7 +148,9 @@ class NxEmOmOrixEbsdParser:
         if dset_name in h5r:
             self.oina["scan_point_y"] = np.asarray(h5r[dset_name], np.float32)
         dset_name = f"{group_name}/Band Contrast"
-        if dset_name in h5r:  # is not required but should how else to create a ROI image
+        if (
+            dset_name in h5r
+        ):  # is not required but should how else to create a ROI image
             self.oina["band_contrast"] = np.asarray(h5r[dset_name], np.uint8)
 
     def parse_h5oina_ebsd_header(self, h5r, slice_id):
@@ -181,7 +187,7 @@ class NxEmOmOrixEbsdParser:
         # "Reference", but even examples from Oxford place no DOIs here
         dset_name = f"{sub_group_name}/Lattice Angles"
         if dset_name in h5r:
-            alpha_beta_gamma = np.asarray(h5r[dset_name][:].flatten()) / np.pi * 180.
+            alpha_beta_gamma = np.asarray(h5r[dset_name][:].flatten()) / np.pi * 180.0
             # rad2deg
         dset_name = f"{sub_group_name}/Lattice Dimensions"
         if dset_name in h5r:
@@ -200,18 +206,26 @@ class NxEmOmOrixEbsdParser:
             self.oina["space_group"].append(space_group)
 
         self.oina["phase"].append(
-            Structure(title=phase_name,
-                      atoms=None,
-                      lattice=Lattice(a_b_c[0], a_b_c[1], a_b_c[2],
-                                      alpha_beta_gamma[0],
-                                      alpha_beta_gamma[1],
-                                      alpha_beta_gamma[2])))
+            Structure(
+                title=phase_name,
+                atoms=None,
+                lattice=Lattice(
+                    a_b_c[0],
+                    a_b_c[1],
+                    a_b_c[2],
+                    alpha_beta_gamma[0],
+                    alpha_beta_gamma[1],
+                    alpha_beta_gamma[2],
+                ),
+            )
+        )
 
     def generate_xmap(self):
         """Generate the orientation map and orix/diffsims data structures."""
         coordinates, _ = create_coordinate_arrays(
             (self.oina["scan_size"][0], self.oina["scan_size"][1]),
-            (self.oina["scan_step"][0], self.oina["scan_step"][1]))
+            (self.oina["scan_step"][0], self.oina["scan_step"][1]),
+        )
         self.xaxis = coordinates["x"]
         self.yaxis = coordinates["y"]
         del coordinates
@@ -223,13 +237,17 @@ class NxEmOmOrixEbsdParser:
         self.oina["phase_identifier"] = self.oina["phase_identifier"] - 1
         print(np.unique(self.oina["phase_identifier"]))
 
-        self.xmap = CrystalMap(rotations=self.oina["rotation"],
-                               x=self.xaxis, y=self.yaxis,
-                               phase_id=self.oina["phase_identifier"],
-                               phase_list=PhaseList(space_groups=self.oina["space_group"],
-                                                    structures=self.oina["phase"]),
-                               prop={"bc": self.oina["band_contrast"]},
-                               scan_unit=self.oina["scan_unit"])
+        self.xmap = CrystalMap(
+            rotations=self.oina["rotation"],
+            x=self.xaxis,
+            y=self.yaxis,
+            phase_id=self.oina["phase_identifier"],
+            phase_list=PhaseList(
+                space_groups=self.oina["space_group"], structures=self.oina["phase"]
+            ),
+            prop={"bc": self.oina["band_contrast"]},
+            scan_unit=self.oina["scan_unit"],
+        )
         print(self.xmap)
 
     def parse_roi_default_plot(self, template: dict) -> dict:
@@ -249,34 +267,60 @@ class NxEmOmOrixEbsdParser:
         template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
         template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/region_of_interest/roi/data"
-        template[f"{trg}"] = {"compress": np.reshape(
-            np.asarray(np.asarray((self.xmap.bc / np.max(self.xmap.bc) * 255.),
-                       np.uint32), np.uint8), (self.xmap.shape[0], self.xmap.shape[1]),
-            order="C"), "strength": 1}
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/region_of_interest/roi/data"
+        )
+        template[f"{trg}"] = {
+            "compress": np.reshape(
+                np.asarray(
+                    np.asarray(
+                        (self.xmap.bc / np.max(self.xmap.bc) * 255.0), np.uint32
+                    ),
+                    np.uint8,
+                ),
+                (self.xmap.shape[0], self.xmap.shape[1]),
+                order="C",
+            ),
+            "strength": 1,
+        }
         # 0 is y while 1 is x !
         template[f"{trg}/@long_name"] = "Signal"
         template[f"{trg}/@CLASS"] = "IMAGE"  # required by H5Web to plot RGB maps
         template[f"{trg}/@IMAGE_VERSION"] = "1.2"
         template[f"{trg}/@SUBCLASS_VERSION"] = np.int64(15)
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/region_of_interest/roi/axis_x"
-        template[f"{trg}"] = {"compress": np.asarray(
-            0.5 * self.oina["scan_step"][1] + self.xaxis[0:self.xmap.shape[1]],
-            np.float32), "strength": 1}
-        template[f"{trg}/@long_name"] \
-            = f"Calibrated coordinate along x-axis ({self.oina['scan_unit'][1]})"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/region_of_interest/roi/axis_x"
+        )
+        template[f"{trg}"] = {
+            "compress": np.asarray(
+                0.5 * self.oina["scan_step"][1] + self.xaxis[0 : self.xmap.shape[1]],
+                np.float32,
+            ),
+            "strength": 1,
+        }
+        template[
+            f"{trg}/@long_name"
+        ] = f"Calibrated coordinate along x-axis ({self.oina['scan_unit'][1]})"
         template[f"{trg}/@units"] = self.oina["scan_unit"][1]
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/region_of_interest/roi/axis_y"
-        template[f"{trg}"] = {"compress": np.asarray(
-            0.5 * self.oina["scan_step"][0] + self.yaxis[0:self.xmap.size:self.xmap.shape[1]],
-            np.float32), "strength": 1}
-        template[f"{trg}/@long_name"] \
-            = f"Calibrated coordinate along y-axis ({self.oina['scan_unit'][0]})"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/region_of_interest/roi/axis_y"
+        )
+        template[f"{trg}"] = {
+            "compress": np.asarray(
+                0.5 * self.oina["scan_step"][0]
+                + self.yaxis[0 : self.xmap.size : self.xmap.shape[1]],
+                np.float32,
+            ),
+            "strength": 1,
+        }
+        template[
+            f"{trg}/@long_name"
+        ] = f"Calibrated coordinate along y-axis ({self.oina['scan_unit'][0]})"
         template[f"{trg}/@units"] = self.oina["scan_unit"][0]
         return template
 
@@ -286,18 +330,21 @@ class NxEmOmOrixEbsdParser:
         identifier = 1
         # identifier match because phase is a list asc. sorted by numerical keys
         for phase in self.oina["phase"]:
-            trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-                  f"EM_EBSD_CRYSTAL_STRUCTURE_MODEL" \
-                  f"[em_ebsd_crystal_structure_model{identifier}]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+                f"EM_EBSD_CRYSTAL_STRUCTURE_MODEL"
+                f"[em_ebsd_crystal_structure_model{identifier}]"
+            )
             template[f"{trg}/phase_identifier"] = np.uint32(identifier)
             template[f"{trg}/phase_name"] = str(phase.title)
             template[f"{trg}/unit_cell_abc"] = np.asarray(
-                [phase.lattice.a, phase.lattice.b, phase.lattice.c],
-                np.float32)
+                [phase.lattice.a, phase.lattice.b, phase.lattice.c], np.float32
+            )
             template[f"{trg}/unit_cell_abc/@units"] = "nm"
             template[f"{trg}/unit_cell_alphabetagamma"] = np.asarray(
                 [phase.lattice.alpha, phase.lattice.beta, phase.lattice.gamma],
-                np.float32)
+                np.float32,
+            )
             template[f"{trg}/unit_cell_alphabetagamma/@units"] = "°"
             identifier += 1
         return template
@@ -319,29 +366,39 @@ class NxEmOmOrixEbsdParser:
         # +1 because for orix not_indexed -1 and "first" phase has ID 0 !
         phase_id = identifier + 1
         phase_name = self.xmap.phases[identifier].name
-        print(f"Generate inverse pole figure (IPF) map for {identifier}, {phase_name}...")
+        print(
+            f"Generate inverse pole figure (IPF) map for {identifier}, {phase_name}..."
+        )
 
         phase_id_ipf_key = plot.IPFColorKeyTSL(
-            self.xmap.phases[identifier].point_group.laue,
-            direction=Vector3d.zvector())
+            self.xmap.phases[identifier].point_group.laue, direction=Vector3d.zvector()
+        )
 
         rgb_px_with_phase_id = np.asarray(
-            np.asarray(phase_id_ipf_key.orientation2color(
-                self.xmap[phase_name].rotations) * 255., np.uint32), np.uint8)
+            np.asarray(
+                phase_id_ipf_key.orientation2color(self.xmap[phase_name].rotations)
+                * 255.0,
+                np.uint32,
+            ),
+            np.uint8,
+        )
 
         ipf_rgb_map = np.asarray(
-            np.uint8(np.zeros((self.xmap.shape[0] * self.xmap.shape[1], 3)) * 255.0))
+            np.uint8(np.zeros((self.xmap.shape[0] * self.xmap.shape[1], 3)) * 255.0)
+        )
         # background is black instead of white (which would be more pleasing)
         # but IPF color maps have a whitepoint which encodes in fact an orientation
         # and because of that we may have a single crystal with an orientation
         # close to the whitepoint which become a fully white seemingly "empty" image
         ipf_rgb_map[self.xmap.phase_id == identifier, :] = rgb_px_with_phase_id
-        ipf_rgb_map = np.reshape(ipf_rgb_map,
-                                 (self.xmap.shape[0], self.xmap.shape[1], 3),
-                                 order="C")  # 0 is y while 1 is x !
+        ipf_rgb_map = np.reshape(
+            ipf_rgb_map, (self.xmap.shape[0], self.xmap.shape[1], 3), order="C"
+        )  # 0 is y while 1 is x !
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{phase_id}]"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{phase_id}]"
+        )
         template[f"{trg}/bitdepth"] = np.uint32(8)
         template[f"{trg}/phase_identifier"] = np.uint32(phase_id)
         template[f"{trg}/phase_name"] = str(phase_name)
@@ -349,41 +406,61 @@ class NxEmOmOrixEbsdParser:
         template[f"{trg}/PROGRAM[program1]/program/@version"] = orix.__version__
         template[f"{trg}/PROGRAM[program2]/program"] = str("diffsims")
         template[f"{trg}/PROGRAM[program2]/program/@version"] = diffsims.__version__
-        template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
+        template[f"{trg}/projection_direction"] = np.asarray(
+            [0.0, 0.0, 1.0], np.float32
+        )
         # should have a reference so that it is directly interpretable
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-              f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+            f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map"
+        )
         template[f"{trg}/title"] = str("Inverse pole figure color map")
         template[f"{trg}/@signal"] = "data"
         template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
         template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
         template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-              f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map/DATA[data]"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+            f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map/DATA[data]"
+        )
         template[f"{trg}"] = {"compress": ipf_rgb_map, "strength": 1}
         template[f"{trg}/@CLASS"] = "IMAGE"  # required by H5Web to plot RGB maps
         template[f"{trg}/@IMAGE_VERSION"] = "1.2"
         template[f"{trg}/@SUBCLASS_VERSION"] = np.int64(15)
 
         # dimension scale axes value arrays same for each phase, entire IPF map
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-              f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map/axis_x"
-        template[f"{trg}"] = {"compress": np.asarray(
-            0.5 * self.oina["scan_step"][1] + self.xaxis[0:self.xmap.shape[1]],
-            np.float32), "strength": 1}
-        template[f"{trg}/@long_name"] \
-            = f"Calibrated coordinate along x-axis ({self.oina['scan_unit'][1]})"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+            f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map/axis_x"
+        )
+        template[f"{trg}"] = {
+            "compress": np.asarray(
+                0.5 * self.oina["scan_step"][1] + self.xaxis[0 : self.xmap.shape[1]],
+                np.float32,
+            ),
+            "strength": 1,
+        }
+        template[
+            f"{trg}/@long_name"
+        ] = f"Calibrated coordinate along x-axis ({self.oina['scan_unit'][1]})"
         template[f"{trg}/@units"] = self.oina["scan_unit"][1]
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing/" \
-              f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map/axis_y"
-        template[f"{trg}"] = {"compress": np.asarray(
-            0.5 * self.oina["scan_step"][0]
-            + self.yaxis[0:self.xmap.size:self.xmap.shape[1]],
-            np.float32), "strength": 1}
-        template[f"{trg}/@long_name"] \
-            = f"Calibrated coordinate along y-axis ({self.oina['scan_unit'][0]})"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing/"
+            f"PROCESS[ipf_map{phase_id}]/ipf_rgb_map/axis_y"
+        )
+        template[f"{trg}"] = {
+            "compress": np.asarray(
+                0.5 * self.oina["scan_step"][0]
+                + self.yaxis[0 : self.xmap.size : self.xmap.shape[1]],
+                np.float32,
+            ),
+            "strength": 1,
+        }
+        template[
+            f"{trg}/@long_name"
+        ] = f"Calibrated coordinate along y-axis ({self.oina['scan_unit'][0]})"
         template[f"{trg}/@units"] = self.oina["scan_unit"][0]
 
         return template
@@ -393,21 +470,34 @@ class NxEmOmOrixEbsdParser:
         # +1 because for orix not_indexed -1 and "first" phase has ID 0 !
         phase_id = identifier + 1
         phase_name = self.xmap.phases[identifier].name
-        print(f"Parse inverse pole figure (IPF) color key {identifier}, {phase_name}...")
+        print(
+            f"Parse inverse pole figure (IPF) color key {identifier}, {phase_name}..."
+        )
 
         phase_id_ipf_key = plot.IPFColorKeyTSL(
-            self.xmap.phases[identifier].point_group.laue,
-            direction=Vector3d.zvector())
+            self.xmap.phases[identifier].point_group.laue, direction=Vector3d.zvector()
+        )
 
         # render domain-specific IPF color keys using orix
         fig = phase_id_ipf_key.plot(return_figure=True)
-        fig.savefig("temporary.png", dpi=300, facecolor='w', edgecolor='w',
-                    orientation='landscape', format='png', transparent=False,
-                    bbox_inches='tight', pad_inches=0.1, metadata=None)
+        fig.savefig(
+            "temporary.png",
+            dpi=300,
+            facecolor="w",
+            edgecolor="w",
+            orientation="landscape",
+            format="png",
+            transparent=False,
+            bbox_inches="tight",
+            pad_inches=0.1,
+            metadata=None,
+        )
         # constraint further to 8bit RGB and no flipping
         # im = np.asarray(imageio.v3.imread(symm_name))
-        img = np.asarray(thumbnail(pil.open("temporary.png", "r", ["png"]),
-                         size=HFIVE_WEB_MAX_SIZE), np.uint8)
+        img = np.asarray(
+            thumbnail(pil.open("temporary.png", "r", ["png"]), size=HFIVE_WEB_MAX_SIZE),
+            np.uint8,
+        )
         img = img[:, :, 0:3]  # discard alpha channel
         if os.path.exists("temporary.png"):
             os.remove("temporary.png")
@@ -415,39 +505,49 @@ class NxEmOmOrixEbsdParser:
         # a specific type of image and bitdepth and color model, and avoid implicit
         # image transformations such as flips or rotations
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model"
+        )
         template[f"{trg}/title"] = str("Inverse pole figure color key with SST")
         template[f"{trg}/@signal"] = "data"
         template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
         template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
         template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/DATA[data]"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/DATA[data]"
+        )
         template[f"{trg}"] = {"compress": img, "strength": 1}
         template[f"{trg}/@CLASS"] = "IMAGE"
         template[f"{trg}/@IMAGE_VERSION"] = "1.2"
         template[f"{trg}/@SUBCLASS_VERSION"] = np.int64(15)
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/AXISNAME[axis_y]"
-        template[f"{trg}"] = {"compress":
-                              np.asarray(np.linspace(1,
-                                                     np.shape(img)[0],
-                                                     num=np.shape(img)[0],
-                                                     endpoint=True), np.uint32),
-                              "strength": 1}
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/AXISNAME[axis_y]"
+        )
+        template[f"{trg}"] = {
+            "compress": np.asarray(
+                np.linspace(1, np.shape(img)[0], num=np.shape(img)[0], endpoint=True),
+                np.uint32,
+            ),
+            "strength": 1,
+        }
         template[f"{trg}/@long_name"] = "Pixel along y-axis"
         template[f"{trg}/@units"] = "px"
 
-        trg = f"/ENTRY[entry{self.entry_id}]/experiment/indexing" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/AXISNAME[axis_x]"
-        template[f"{trg}"] = {"compress":
-                              np.asarray(np.linspace(1,
-                                                     np.shape(img)[1],
-                                                     num=np.shape(img)[1],
-                                                     endpoint=True), np.uint32),
-                              "strength": 1}
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/experiment/indexing"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/AXISNAME[axis_x]"
+        )
+        template[f"{trg}"] = {
+            "compress": np.asarray(
+                np.linspace(1, np.shape(img)[1], num=np.shape(img)[1], endpoint=True),
+                np.uint32,
+            ),
+            "strength": 1,
+        }
         template[f"{trg}/@long_name"] = "Pixel along x-axis"
         template[f"{trg}/@units"] = "px"
 

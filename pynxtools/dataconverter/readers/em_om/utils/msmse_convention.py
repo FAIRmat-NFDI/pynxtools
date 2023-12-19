@@ -23,7 +23,7 @@ msmse_convention = {
     "three_dimensional_rotation_handedness": "counter_clockwise",
     "rotation_convention": "passive",
     "euler_angle_convention": "zxz",
-    "axis_angle_convention": "rotation_angle_on_interval_zero_to_pi"
+    "axis_angle_convention": "rotation_angle_on_interval_zero_to_pi",
 }
 # the sign convention is mentioned in the paper but left as a parameter
 # "sign_convention": "p_minus_one"
@@ -36,7 +36,8 @@ def is_consistent_with_msmse_convention(dct):
         "three_dimensional_rotation_handedness",
         "rotation_convention",
         "euler_angle_convention",
-        "axis_angle_convention"]
+        "axis_angle_convention",
+    ]
     for field_name in req_fields:
         if (field_name not in dct) or (field_name not in msmse_convention):
             return "unclear"

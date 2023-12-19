@@ -1,3 +1,4 @@
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pytest.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pylint.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/publish.yml/badge.svg)
@@ -40,7 +41,6 @@ data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**nyaml2nxdl**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
 - [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
 - [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
 
@@ -61,6 +61,14 @@ python -m pip install --upgrade pip
 python -m pip install -e .
 python -m pip install -e ".[dev]"
 ```
+
+There is also a [pre-commit hook](https://pre-commit.com/#intro) available
+which formats the code and checks the linting before actually commiting.
+It can be installed with
+```shell
+pre-commit install
+```
+from the root of this repository.
 
 ## Test this software
 
@@ -96,3 +104,8 @@ on how to build on this work, or to get your parser included into NOMAD, you can
 ### Does this software require NOMAD or NOMAD OASIS ?
 
 No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe.
+
+# Troubleshooting
+
+Please check this [guide](TROUBLESHOOTING.md) for any issues you face with the tool. If you don't find a solution there, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).
+

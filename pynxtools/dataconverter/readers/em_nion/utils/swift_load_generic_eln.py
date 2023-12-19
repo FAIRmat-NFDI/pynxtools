@@ -27,17 +27,27 @@ import yaml
 
 from ase.data import chemical_symbols
 
-from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
-    import NX_EM_NION_ADEF_NAME, NX_EM_NION_ADEF_VERSION
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning import (
+    NX_EM_NION_ADEF_NAME,
+    NX_EM_NION_ADEF_VERSION,
+)
 
-from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning \
-    import NX_EM_NION_EXEC_NAME, NX_EM_NION_EXEC_VERSION
+from pynxtools.dataconverter.readers.em_nion.utils.em_nion_versioning import (
+    NX_EM_NION_EXEC_NAME,
+    NX_EM_NION_EXEC_VERSION,
+)
 
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import apply_modifier, variadic_path_to_specific_path
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+    apply_modifier,
+    variadic_path_to_specific_path,
+)
 
-from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_eln_to_nx_map \
-    import NxEmElnInput, NxUserFromListOfDict, NxDetectorListOfDict, NxSample
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_eln_to_nx_map import (
+    NxEmElnInput,
+    NxUserFromListOfDict,
+    NxDetectorListOfDict,
+    NxSample,
+)
 
 
 class NxEmNionElnSchemaParser:
@@ -51,8 +61,10 @@ class NxEmNionElnSchemaParser:
 
     def __init__(self, file_name: str, entry_id: int):
         print(f"Extracting data from ELN file: {file_name}")
-        if (file_name.rsplit('/', 1)[-1].startswith("eln_data")
-                or file_name.startswith("eln_data")) and entry_id > 0:
+        if (
+            file_name.rsplit("/", 1)[-1].startswith("eln_data")
+            or file_name.startswith("eln_data")
+        ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_name = file_name
             with open(self.file_name, "r", encoding="utf-8") as stream:
@@ -67,7 +79,7 @@ class NxEmNionElnSchemaParser:
         src = "user"
         if src in self.yml.keys():
             if isinstance(self.yml[src], list):
-                if (all(isinstance(entry, dict) for entry in self.yml[src]) is True):
+                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
                     user_id = 1
                     # custom schema delivers a list of dictionaries...
                     for user_dict in self.yml[src]:
@@ -78,7 +90,9 @@ class NxEmNionElnSchemaParser:
                         # table and check if we can find these
                         for nx_path, modifier in NxUserFromListOfDict.items():
                             if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
-                                trg = variadic_path_to_specific_path(nx_path, identifier)
+                                trg = variadic_path_to_specific_path(
+                                    nx_path, identifier
+                                )
                                 res = apply_modifier(modifier, user_dict)
                                 if res is not None:
                                     template[trg] = res
@@ -93,8 +107,11 @@ class NxEmNionElnSchemaParser:
             if (isinstance(self.yml[src], list)) and (len(self.yml[src]) >= 1):
                 atom_types_are_valid = True
                 for symbol in self.yml[src]:
-                    valid = isinstance(symbol, str) \
-                        and (symbol in chemical_symbols) and (symbol != "X")
+                    valid = (
+                        isinstance(symbol, str)
+                        and (symbol in chemical_symbols)
+                        and (symbol != "X")
+                    )
                     if valid is False:
                         atom_types_are_valid = False
                         break
@@ -115,7 +132,7 @@ class NxEmNionElnSchemaParser:
         src = "em_lab/detector"
         if src in self.yml.keys():
             if isinstance(self.yml[src], list):
-                if (all(isinstance(entry, dict) for entry in self.yml[src]) is True):
+                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
                     detector_id = 1
                     # custom schema delivers a list of dictionaries...
                     for detector_dict in self.yml[src]:
@@ -126,7 +143,9 @@ class NxEmNionElnSchemaParser:
                         # table and check if we can find these
                         for nx_path, modifier in NxDetectorListOfDict.items():
                             if (nx_path != "IGNORE") and (nx_path != "UNCLEAR"):
-                                trg = variadic_path_to_specific_path(nx_path, identifier)
+                                trg = variadic_path_to_specific_path(
+                                    nx_path, identifier
+                                )
                                 res = apply_modifier(modifier, detector_dict)
                                 if res is not None:
                                     template[trg] = res
