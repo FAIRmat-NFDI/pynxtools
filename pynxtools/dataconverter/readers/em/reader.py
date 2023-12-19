@@ -157,7 +157,7 @@ class EmReader(BaseReader):
             if resolved_path != "":
                 nxs_plt.annotate_default_plot(template, resolved_path)
 
-        debugging = True
+        debugging = False
         if debugging is True:
             print("Reporting state of template before passing to HDF5 writing...")
             for keyword in template.keys():

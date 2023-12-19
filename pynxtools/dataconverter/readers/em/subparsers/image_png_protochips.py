@@ -53,6 +53,7 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
         self.version: Dict = {}
         self.png_info: Dict = {}
         self.supported = False
+        self.event_sequence: List = []
         self.check_if_zipped_png_protochips()
 
     def check_if_zipped_png_protochips(self):
@@ -165,11 +166,10 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
                     with zip_file_hdl.open(file) as fp:
                         self.get_xml_metadata(file, fp)
                         self.get_file_hash(file, fp)
-                        print(f"Debugging self.tmp.file.items {file}")
-                        for k, v in self.tmp["meta"][file].items():
-                            # if k == "MicroscopeControlImageMetadata.MicroscopeDateTime":
-                            print(f"{k}: {v}")
-
+                        # print(f"Debugging self.tmp.file.items {file}")
+                        # for k, v in self.tmp["meta"][file].items():
+                        #     if k == "MicroscopeControlImageMetadata.MicroscopeDateTime":
+                        #     print(f"{k}: {v}")
             print(f"{self.file_path} metadata within PNG collection processed "
                   f"successfully ({len(self.tmp['meta'].keys())} PNGs evaluated).")
         else:
@@ -179,7 +179,7 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
     def process_into_template(self, template: dict) -> dict:
         if self.supported is True:
             self.process_event_data_em_metadata(template)
-            # self.process_event_data_em_data(template)
+            self.process_event_data_em_data(template)
         return template
 
     def sort_event_data_em(self) -> List:
@@ -211,19 +211,19 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
         # surplus eventually AXON-specific identifier it seems useful though to sort these
         # PNGs based on time stamped information directly from the AXON metadata
         # here we sort ascendingly in time the events and associate new event ids
-        event_sequence = self.sort_event_data_em()
+        self.event_sequence = self.sort_event_data_em()
         event_id = self.event_id
-        for file_name, iso8601 in event_sequence:
+        for file_name, iso8601 in self.event_sequence:
             identifier = [self.entry_id, event_id, 1]
             for tpl in PNG_PROTOCHIPS_TO_NEXUS_CFG:
                 if isinstance(tpl, tuple):
                     trg = variadic_path_to_specific_path(tpl[0], identifier)
-                    print(f"Target {trg} after variadic name resolution identifier {identifier}")
+                    # print(f"Target {trg} after variadic name resolution identifier {identifier}")
                     if len(tpl) == 2:
                         template[trg] = tpl[1]
                     if len(tpl) == 3:
                         # nxpath, modifier, value to load from and eventually to be modified
-                        print(f"Loading {tpl[2]} from tmp.meta.filename modifier {tpl[1]}...")
+                        # print(f"Loading {tpl[2]} from tmp.meta.filename modifier {tpl[1]}...")
                         retval = get_nexus_value(tpl[1], tpl[2], self.tmp["meta"][file_name])
                         if retval is not None:
                             template[trg] = retval
@@ -237,66 +237,53 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
     def process_event_data_em_data(self, template: dict) -> dict:
         """Add respective heavy data."""
         # default display of the image(s) representing the data collected in this event
-        print(f"Writing Protochips PNG image into a respective NeXus concept instance")
+        print(f"Writing Protochips PNG images into respective NeXus event_data_em concept instances")
         # read image in-place
-        with Image.open(self.file_path, mode="r") as fp:
-            nparr = np.array(fp)
-            # print(f"type: {type(nparr)}, dtype: {nparr.dtype}, shape: {np.shape(nparr)}")
-            # TODO::discussion points
-            # - how do you know we have an image of real space vs. imaginary space (from the metadata?)
-            # - how do deal with the (ugly) scale bar that is typically stamped into the TIFF image content?
-            # with H5Web and NeXus most of this is obsolete unless there are metadata stamped which are not
-            # available in NeXus or in the respective metadata in the metadata section of the TIFF image
-            # remember H5Web images can be scaled based on the metadata allowing basically the same
-            # explorative viewing using H5Web than what traditionally typical image viewers are meant for
-            image_identifier = 1
-            trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM_SET[event_data_em_set]/" \
-                  f"EVENT_DATA_EM[event_data_em{self.event_id}]/" \
-                  f"IMAGE_R_SET[image_r_set{image_identifier}]/DATA[image]"
-            # TODO::writer should decorate automatically!
-            template[f"{trg}/title"] = f"Image"
-            template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
-            template[f"{trg}/@signal"] = "intensity"
-            dims = ["x", "y"]
-            idx = 0
-            for dim in dims:
-                template[f"{trg}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
-                idx += 1
-            template[f"{trg}/@axes"] = []
-            for dim in dims[::-1]:
-                template[f"{trg}/@axes"].append(f"axis_{dim}")
-            template[f"{trg}/intensity"] = {"compress": np.array(fp), "strength": 1}
-            #  0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
-            template[f"{trg}/intensity/@long_name"] = f"Signal"
+        event_id = self.event_id
+        with ZipFile(self.file_path) as zip_file_hdl:
+            for file_name, iso8601 in self.event_sequence:
+                identifier = [self.entry_id, event_id, 1]
+                with zip_file_hdl.open(file_name) as fp:
+                    with Image.open(fp) as png:
+                        nparr = np.array(png)
+                        image_identifier = 1
+                        trg = f"/ENTRY[entry{self.entry_id}]/measurement/EVENT_DATA_EM_SET" \
+                              f"[event_data_em_set]/EVENT_DATA_EM[event_data_em{event_id}]" \
+                              f"/IMAGE_R_SET[image_r_set{image_identifier}]/DATA[image]"
+                        # TODO::writer should decorate automatically!
+                        template[f"{trg}/title"] = f"Image"
+                        template[f"{trg}/@NX_class"] = f"NXdata"  # TODO::writer should decorate automatically!
+                        template[f"{trg}/@signal"] = "intensity"
+                        dims = ["x", "y"]
+                        idx = 0
+                        for dim in dims:
+                            template[f"{trg}/@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(idx)
+                            idx += 1
+                        template[f"{trg}/@axes"] = []
+                        for dim in dims[::-1]:
+                            template[f"{trg}/@axes"].append(f"axis_{dim}")
+                        template[f"{trg}/intensity"] = {"compress": nparr, "strength": 1}
+                        #  0 is y while 1 is x for 2d, 0 is z, 1 is y, while 2 is x for 3d
+                        template[f"{trg}/intensity/@long_name"] = f"Signal"
 
-            sxy = {"x": 1., "y": 1.}
-            scan_unit = {"x": "m", "y": "m"}  # assuming FEI reports SI units
-            # we may face the CCD overview camera for the chamber for which there might not be a calibration!
-            if ("EScan/PixelWidth" in self.tmp["meta"].keys()) and ("EScan/PixelHeight" in self.tmp["meta"].keys()):
-                sxy = {"x": self.tmp["meta"]["EScan/PixelWidth"],
-                       "y": self.tmp["meta"]["EScan/PixelHeight"]}
-                scan_unit = {"x": "px", "y": "px"}
-            nxy = {"x": np.shape(np.array(fp))[1], "y": np.shape(np.array(fp))[0]}
-            # TODO::be careful we assume here a very specific coordinate system
-            # however the TIFF file gives no clue, TIFF just documents in which order
-            # it arranges a bunch of pixels that have stream in into a n-d tiling
-            # e.g. a 2D image
-            # also we have to be careful because TFS just gives us here
-            # typical case of an image without an information without its location
-            # on the physical sample surface, therefore we can only scale
-            # pixel_identifier by physical scaling quantities s_x, s_y
-            # also the dimensions of the image are on us to fish with the image
-            # reading library instead of TFS for consistency checks adding these
-            # to the metadata the reason is that TFS TIFF use the TIFF tagging mechanism
-            # and there is already a proper TIFF tag for the width and height of an
-            # image in number of pixel
-            for dim in dims:
-                template[f"{trg}/AXISNAME[axis_{dim}]"] \
-                    = {"compress": np.asarray(np.linspace(0,
-                                                          nxy[dim] - 1,
-                                                          num=nxy[dim],
-                                                          endpoint=True) * sxy[dim], np.float64), "strength": 1}
-                template[f"{trg}/AXISNAME[axis_{dim}]/@long_name"] \
-                    = f"Coordinate along {dim}-axis ({scan_unit[dim]})"
-                template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit[dim]}"
+                        sxy = {"x": 1., "y": 1.}
+                        scan_unit = {"x": "px", "y": "px"}  # TODO::get AXON image calibration
+                        nxy = {"x": np.shape(nparr)[1],
+                               "y": np.shape(nparr)[0]}
+                        del nparr
+                        # TODO::we assume here a very specific coordinate system
+                        # see image_tiff_tfs.py parser for further details of the limitations
+                        # of this approach
+                        for dim in dims:
+                            template[f"{trg}/AXISNAME[axis_{dim}]"] \
+                                = {"compress": np.asarray(np.linspace(0,
+                                                                      nxy[dim] - 1,
+                                                                      num=nxy[dim],
+                                                                      endpoint=True) * sxy[dim],
+                                                          np.float64), "strength": 1}
+                            template[f"{trg}/AXISNAME[axis_{dim}]/@long_name"] \
+                                = f"Coordinate along {dim}-axis ({scan_unit[dim]})"
+                            template[f"{trg}/AXISNAME[axis_{dim}]/@units"] \
+                                = f"{scan_unit[dim]}"
+                event_id += 1
         return template

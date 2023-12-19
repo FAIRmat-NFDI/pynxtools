@@ -55,7 +55,6 @@ def get_nexus_value(modifier, qnt_name, metadata: dict):
                         retval.append(metadata[qnt])
                         break  # breaking only out of the inner loop
             if retval != []:
-                print(f"load_from_concatenate modifier, retval: {retval}")
                 return retval
         return None
     else:
