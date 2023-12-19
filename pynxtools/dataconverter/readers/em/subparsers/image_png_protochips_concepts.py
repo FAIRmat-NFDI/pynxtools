@@ -1,3 +1,4 @@
+#
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -14,3 +15,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Configuration of the image_png_protochips subparser."""
+
+from typing import List
+from pynxtools.dataconverter.readers.em.subparsers.image_png_protochips_cfg import \
+    PNG_PROTOCHIPS_TO_NEXUS_CFG
+
+
+def get_protochips_variadic_concept(png_metadata_tag) -> str:
+    """Get variadic protochips concept name to identify target NeXus concept name target."""
+    return None

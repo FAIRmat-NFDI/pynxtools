@@ -14,3 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Constants relevant when working with H5Web."""
+
+import numpy as np
+
+HFIVE_WEB_MAXIMUM_ROI = 2**14 - 1
+HFIVE_WEB_MAXIMUM_RGB = 2**11 - 1

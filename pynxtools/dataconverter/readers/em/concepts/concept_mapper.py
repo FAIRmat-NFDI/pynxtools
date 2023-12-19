@@ -78,9 +78,11 @@ def apply_modifier(modifier, dct: dict):
                 return load_from_modifier(modifier["terms"], dct)
             if modifier["fun"] == "convert_iso8601":
                 return convert_iso8601_modifier(modifier["terms"], dct)
+        elif set(["link"]) == set(modifier.keys()):
+            # CURRENTLY NOT IMPLEMENTED
+            # with the jsonmap reader Sherjeel conceptualized "link"
+            return None
         else:
-            print(f"WARNING::Modifier {modifier} is currently not implemented !")
-            # elif set(["link"]) == set(modifier.keys()), with the jsonmap reader Sherjeel conceptualized "link"
             return None
     if isinstance(modifier, str):
         return modifier
@@ -96,7 +98,7 @@ def apply_modifier(modifier, dct: dict):
 # modd = {"fun": "convert_iso8601", "terms": ["data_modified", "timezone"]}
 # print(apply_modifier(modd, yml))
 
-def variadic_path_to_specific_path(path, instance_identifier: list):
+def variadic_path_to_specific_path(path: str, instance_identifier: list):
     """Transforms a variadic path to an actual path with instances."""
     if (path is not None) and (path != ""):
         narguments = path.count("*")

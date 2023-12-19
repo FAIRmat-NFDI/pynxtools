@@ -1,3 +1,4 @@
+#
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -14,3 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Identify which string encoding is used."""
+
+import sys
+
+
+def get_string_encoding():
+    if sys.maxunicode == 1114111:
+        return "ucs4"
+    if sys.maxunicode == 65536:
+        return "ucs2"
+    return None

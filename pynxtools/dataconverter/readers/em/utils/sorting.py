@@ -1,3 +1,4 @@
+#
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -14,3 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+import numpy as np
+import datetime
+
+
+def sort_ascendingly_by_second_argument_iso8601(tup):
+    # convert the list of tuples to a numpy array with data type (object, int)
+    arr = np.array(tup, dtype=[('col1', object), ('col2', datetime.datetime)])
+    # get the indices that would sort the array based on the second column
+    indices = np.argsort(arr['col2'])
+    # use the resulting indices to sort the array
+    sorted_arr = arr[indices]
+    # convert the sorted numpy array back to a list of tuples
+    sorted_tup = [(row['col1'], row['col2']) for row in sorted_arr]
+    return sorted_tup

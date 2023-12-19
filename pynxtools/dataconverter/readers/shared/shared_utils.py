@@ -23,6 +23,7 @@
 # pylint: disable=E1101, R0801
 
 # import git
+import hashlib
 
 
 def get_repo_last_commit() -> str:
@@ -34,6 +35,16 @@ def get_repo_last_commit() -> str:
     # currently update-north-markus branch on nomad-FAIR does not pick up
     # git even though git in the base image and gitpython in pynxtools deps
     return "unknown git commit id or unable to parse git reverse head"
+
+
+def get_sha256_of_file_content(file_hdl) -> str:
+    """Compute a hashvalue of given file, here SHA256."""
+    file_hdl.seek(0)
+    # Read and update hash string value in blocks of 4K
+    sha256_hash = hashlib.sha256()
+    for byte_block in iter(lambda: file_hdl.read(4096), b""):
+        sha256_hash.update(byte_block)
+    return str(sha256_hash.hexdigest())
 
 
 class NxObject:  # pylint: disable=R0903
