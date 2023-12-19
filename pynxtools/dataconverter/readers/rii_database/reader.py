@@ -44,7 +44,7 @@ class RiiReader(YamlJsonReader):
 
     def read_dispersion(self, filename: str):
         """Reads the dispersion from the give filename"""
-        download_bibtex = self.kwargs.get('download_bibtex', False)
+        download_bibtex = self.kwargs.get("download_bibtex", False)
         return DispersionReader(download_bibtex).read_dispersion(filename)
 
     def appdef_defaults(self) -> Dict[str, Any]:

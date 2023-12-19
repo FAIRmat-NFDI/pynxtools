@@ -23,26 +23,33 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-from pynxtools.dataconverter.readers.em_om.utils.use_case_selector \
-    import EmOmUseCaseSelector
+from pynxtools.dataconverter.readers.em_om.utils.use_case_selector import (
+    EmOmUseCaseSelector,
+)
 
-from pynxtools.dataconverter.readers.em_om.utils.generic_eln_io \
-    import NxEmOmGenericElnSchemaParser
+from pynxtools.dataconverter.readers.em_om.utils.generic_eln_io import (
+    NxEmOmGenericElnSchemaParser,
+)
 
-from pynxtools.dataconverter.readers.em_om.utils.orix_ebsd_parser \
-    import NxEmOmOrixEbsdParser
+from pynxtools.dataconverter.readers.em_om.utils.orix_ebsd_parser import (
+    NxEmOmOrixEbsdParser,
+)
 
-from pynxtools.dataconverter.readers.em_om.utils.mtex_ebsd_parser \
-    import NxEmOmMtexEbsdParser
+from pynxtools.dataconverter.readers.em_om.utils.mtex_ebsd_parser import (
+    NxEmOmMtexEbsdParser,
+)
 
-from pynxtools.dataconverter.readers.em_om.utils.zip_ebsd_parser \
-    import NxEmOmZipEbsdParser
+from pynxtools.dataconverter.readers.em_om.utils.zip_ebsd_parser import (
+    NxEmOmZipEbsdParser,
+)
 
-from pynxtools.dataconverter.readers.em_om.utils.dream3d_ebsd_parser \
-    import NxEmOmDreamThreedEbsdParser
+from pynxtools.dataconverter.readers.em_om.utils.dream3d_ebsd_parser import (
+    NxEmOmDreamThreedEbsdParser,
+)
 
-from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots \
-    import em_om_default_plot_generator
+from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import (
+    em_om_default_plot_generator,
+)
 
 
 class EmOmReader(BaseReader):
@@ -58,10 +65,12 @@ class EmOmReader(BaseReader):
     supported_nxdls = ["NXem_ebsd"]  # how to combine with "NXem"?
 
     # pylint: disable=duplicate-code
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ) -> dict:
         """Read data from given file, return filled template dictionary em."""
         # pylint: disable=duplicate-code
         template.clear()
@@ -89,7 +98,9 @@ class EmOmReader(BaseReader):
             pattern_simulation = False
             if case.dat_parser_type == "zip":
                 pattern_simulation = True
-            eln = NxEmOmGenericElnSchemaParser(case.eln[0], entry_id, pattern_simulation)
+            eln = NxEmOmGenericElnSchemaParser(
+                case.eln[0], entry_id, pattern_simulation
+            )
             eln.parse(template)
         else:
             print("No interpretable ELN input found!")

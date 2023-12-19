@@ -34,13 +34,13 @@ from zipfile37 import ZipFile
 # import imageio.v3 as iio
 from PIL import Image as pil
 
-from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import HFIVE_WEB_MAX_SIZE
+from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import (
+    HFIVE_WEB_MAX_SIZE,
+)
 
 
 class NxEmOmZipEbsdParser:
-    """Parse *.zip EBSD data.
-
-    """
+    """Parse *.zip EBSD data."""
 
     def __init__(self, file_name, entry_id):
         """Class wrapping zip parser."""
@@ -64,7 +64,7 @@ class NxEmOmZipEbsdParser:
             # ASSUME that pattern have numeral components in their file name
             zip_content_table = {}
             for file in zip_file_hdl.namelist():
-                keyword = str(np.uint64(re.sub('[^0-9]', '', file)))
+                keyword = str(np.uint64(re.sub("[^0-9]", "", file)))
                 if len(keyword) > 0 and keyword not in zip_content_table:
                     zip_content_table[keyword] = file
                 else:
@@ -82,15 +82,19 @@ class NxEmOmZipEbsdParser:
             # ...here we immediately see how problematic custom directory structures
             # for storing research data are even if they were to contain only exactly
             # always data of expected format...
-            self.stack_meta = {"fname": "",
-                               "size": (0, 0),
-                               "dtype": np.uint8,
-                               "ftype": ""}
+            self.stack_meta = {
+                "fname": "",
+                "size": (0, 0),
+                "dtype": np.uint8,
+                "ftype": "",
+            }
             # in pixel, use axisy and axisx for dimension scale axes
             # ASSUME slow axis is y, fast axis is x
             for keyword, value in zip_content_table.items():
                 tmp = value.split(".")
-                if (len(tmp) > 1) and (tmp[-1].lower() in ["bmp", "jpg", "png", "tiff"]):
+                if (len(tmp) > 1) and (
+                    tmp[-1].lower() in ["bmp", "jpg", "png", "tiff"]
+                ):
                     # there are examples where people store Kikuchi diffraction pattern
                     # as lossy and lossless raster...
                     # pil supports reading of files in more formats but the above are
@@ -103,8 +107,12 @@ class NxEmOmZipEbsdParser:
                             # how-can-i-get-the-depth-of-a-jpg-file
                             break
                         shp = (img.height, img.width)  # np.shape(img)
-                        if (shp[0] > 0) and (shp[0] <= HFIVE_WEB_MAX_SIZE) \
-                                and (shp[1] > 0) and (shp[1] <= HFIVE_WEB_MAX_SIZE):
+                        if (
+                            (shp[0] > 0)
+                            and (shp[0] <= HFIVE_WEB_MAX_SIZE)
+                            and (shp[1] > 0)
+                            and (shp[1] <= HFIVE_WEB_MAX_SIZE)
+                        ):
                             # found the guiding image
                             self.stack_meta["size"] = (shp[0], shp[1])  # , 3)
                             self.stack_meta["fname"] = value
@@ -119,10 +127,14 @@ class NxEmOmZipEbsdParser:
             # with useful numeral names and that these have the same metadata
             # (size, filetype, dtype)
             identifier = 0
-            self.stack = np.zeros((len(zip_content_table),
-                                   self.stack_meta["size"][0],
-                                   self.stack_meta["size"][1]),
-                                  self.stack_meta["dtype"])
+            self.stack = np.zeros(
+                (
+                    len(zip_content_table),
+                    self.stack_meta["size"][0],
+                    self.stack_meta["size"][1],
+                ),
+                self.stack_meta["dtype"],
+            )
             for keyword, value in zip_content_table.items():
                 tmp = value.split(".")
                 if (len(tmp) > 1) and (tmp[-1].lower() == self.stack_meta["ftype"]):
@@ -137,8 +149,9 @@ class NxEmOmZipEbsdParser:
                         else:
                             break
 
-                        if (np.shape(img) == self.stack_meta["size"]) \
-                                and (img.dtype == self.stack_meta["dtype"]):
+                        if (np.shape(img) == self.stack_meta["size"]) and (
+                            img.dtype == self.stack_meta["dtype"]
+                        ):
                             self.stack[identifier, :, :] = img
                             # Kikuchi pattern may come as 8-bit (grayscale) RGBs
                             # or as simulated intensities (as floats)
@@ -154,8 +167,10 @@ class NxEmOmZipEbsdParser:
     def parse_pattern_stack_default_plot(self, template: dict) -> dict:
         """Parse data for the Kikuchi image stack default plot."""
         print("Parse Kikuchi pattern stack default plot...")
-        trg = f"/ENTRY[entry{self.entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI" \
-              f"[image_set_em_kikuchi]/stack"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI"
+            f"[image_set_em_kikuchi]/stack"
+        )
 
         template[f"{trg}/title"] = str("Kikuchi diffraction pattern stack")
         template[f"{trg}/@signal"] = "data_counts"
@@ -163,8 +178,10 @@ class NxEmOmZipEbsdParser:
         template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
         template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
 
-        trg = f"/ENTRY[entry{self.entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI" \
-              f"[image_set_em_kikuchi]/stack/data_counts"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI"
+            f"[image_set_em_kikuchi]/stack/data_counts"
+        )
         template[f"{trg}"] = {"compress": self.stack, "strength": 1}
         # 0 is y while 1 is x !
         template[f"{trg}/@long_name"] = "Signal"
@@ -174,12 +191,19 @@ class NxEmOmZipEbsdParser:
 
         axes_names = [("axis_x", 1, "x-axis"), ("axis_y", 0, "y-axis")]
         for axis in axes_names:
-            trg = f"/ENTRY[entry{self.entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI" \
-                  f"[image_set_em_kikuchi]/stack/{axis[0]}"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI"
+                f"[image_set_em_kikuchi]/stack/{axis[0]}"
+            )
             axis_i = np.asarray(
-                np.linspace(0, self.stack_meta["size"][axis[1]],
-                            num=self.stack_meta["size"][axis[1]],
-                            endpoint=True), np.float64)
+                np.linspace(
+                    0,
+                    self.stack_meta["size"][axis[1]],
+                    num=self.stack_meta["size"][axis[1]],
+                    endpoint=True,
+                ),
+                np.float64,
+            )
             # overwrite with calibrated scale if available
             # i.e. when self.stack_meta["axis_x"] not None:
             template[f"{trg}"] = {"compress": axis_i, "strength": 1}

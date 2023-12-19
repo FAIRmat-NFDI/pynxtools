@@ -68,8 +68,10 @@ def roi_plot_available(template: dict, entry_id: int) -> bool:
         return True
 
     # fall-back display an IPF mapping
-    trg = f"/ENTRY[entry{entry_id}]/experiment/indexing" \
-          f"/PROCESS[ipf_map1]/ipf_rgb_map/data"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/experiment/indexing"
+        f"/PROCESS[ipf_map1]/ipf_rgb_map/data"
+    )
     # by definition if there is one it will be always the first one and we use this IPF map
     if trg in template.keys():
         print(f"Found image default plot for entry{entry_id}")
@@ -90,8 +92,10 @@ def roi_plot_available(template: dict, entry_id: int) -> bool:
 
 def diffraction_pattern_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance diffraction pattern."""
-    trg = f"/ENTRY[entry{entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI" \
-          f"[image_set_em_kikuchi]/stack/data_counts"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/simulation/IMAGE_SET_EM_KIKUCHI"
+        f"[image_set_em_kikuchi]/stack/data_counts"
+    )
     if trg in template.keys():
         print(f"Found image default plot for entry{entry_id}")
         trg = "/"

@@ -23,15 +23,17 @@ from typing import List, Any
 
 import numpy as np
 
-from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_display_items_to_nx \
-    import metadata_constraints, check_existence_of_required_fields  # nexus_concept_dict
+from pynxtools.dataconverter.readers.em_nion.map_concepts.swift_display_items_to_nx import (
+    metadata_constraints,
+    check_existence_of_required_fields,
+)  # nexus_concept_dict
 
 
 def get_list_of_dimension_scale_axes(dct: dict) -> list:  # , concept_key: str
     """Create a list of dimension scale axes value, unit tuples."""
     # use only when we know already onto which concept a display_item will be mapped
     axes: List[Any] = []
-    if (check_existence_of_required_fields(dct, metadata_constraints) is False):
+    if check_existence_of_required_fields(dct, metadata_constraints) is False:
         return axes
     #        or concept_key not in nexus_concept_dict.keys():
     # if nexus_concept_dict[concept_key] is None:
@@ -46,14 +48,18 @@ def get_list_of_dimension_scale_axes(dct: dict) -> list:  # , concept_key: str
         nvalues = dct["data_shape"][idx]
         axis_dict = dct["dimensional_calibrations"][idx]
         if isinstance(nvalues, int) and isinstance(axis_dict, dict):
-            if (nvalues > 0) \
-                    and (set(axis_dict.keys()) == set(["offset", "scale", "units"])):
+            if (nvalues > 0) and (
+                set(axis_dict.keys()) == set(["offset", "scale", "units"])
+            ):
                 start = axis_dict["offset"] + 0.5 * axis_dict["scale"]
                 stop = axis_dict["offset"] + ((nvalues - 1) + 0.5) * axis_dict["scale"]
                 axes.append(
-                    {"value": np.asarray(np.linspace(start,
-                                                     stop,
-                                                     num=nvalues,
-                                                     endpoint=True), np.float64),
-                     "unit": axis_dict["units"]})
+                    {
+                        "value": np.asarray(
+                            np.linspace(start, stop, num=nvalues, endpoint=True),
+                            np.float64,
+                        ),
+                        "unit": axis_dict["units"],
+                    }
+                )
     return axes

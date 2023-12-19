@@ -40,10 +40,12 @@ class BaseReader(ABC):
     supported_nxdls = [""]
 
     @abstractmethod
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         return template
 

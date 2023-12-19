@@ -25,14 +25,19 @@ import yaml
 
 from ase.data import chemical_symbols
 
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_eln_to_nx_map \
-    import NxApmElnInput, NxUserFromListOfDict
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_eln_to_nx_map import (
+    NxApmElnInput,
+    NxUserFromListOfDict,
+)
 
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import variadic_path_to_specific_path, apply_modifier
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+    variadic_path_to_specific_path,
+    apply_modifier,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table \
-    import parse_composition_table
+from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table import (
+    parse_composition_table,
+)
 
 
 class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
@@ -55,8 +60,10 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
 
     def __init__(self, file_name: str, entry_id: int):
         print(f"Extracting data from ELN file: {file_name}")
-        if (file_name.rsplit('/', 1)[-1].startswith("eln_data")
-                or file_name.startswith("eln_data")) and entry_id > 0:
+        if (
+            file_name.rsplit("/", 1)[-1].startswith("eln_data")
+            or file_name.startswith("eln_data")
+        ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_name = file_name
             with open(self.file_name, "r", encoding="utf-8") as stream:
@@ -73,11 +80,20 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
             if isinstance(self.yml[src], list):
                 dct = parse_composition_table(self.yml[src])
 
-                prfx = f"/ENTRY[entry{self.entry_id}]/sample/" \
-                       f"CHEMICAL_COMPOSITION[chemical_composition]"
+                prfx = (
+                    f"/ENTRY[entry{self.entry_id}]/sample/"
+                    f"CHEMICAL_COMPOSITION[chemical_composition]"
+                )
                 unit = "at.-%"  # the assumed default unit
                 if "normalization" in dct:
-                    if dct["normalization"] in ["%", "at%", "at-%", "at.-%", "ppm", "ppb"]:
+                    if dct["normalization"] in [
+                        "%",
+                        "at%",
+                        "at-%",
+                        "at.-%",
+                        "ppm",
+                        "ppb",
+                    ]:
                         unit = "at.-%"
                         template[f"{prfx}/normalization"] = "atom_percent"
                     elif dct["normalization"] in ["wt%", "wt-%", "wt.-%"]:
@@ -117,7 +133,9 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                         # table and check if we can find these
                         for nx_path, modifier in NxUserFromListOfDict.items():
                             if nx_path not in ("IGNORE", "UNCLEAR"):
-                                trg = variadic_path_to_specific_path(nx_path, identifier)
+                                trg = variadic_path_to_specific_path(
+                                    nx_path, identifier
+                                )
                                 res = apply_modifier(modifier, user_dict)
                                 if res is not None:
                                     template[trg] = res
@@ -139,20 +157,25 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                 if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
                     laser_id = 1
                     # custom schema delivers a list of dictionaries...
-                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser" \
-                          f"/SOURCE[source{laser_id}]"
+                    trg = (
+                        f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser"
+                        f"/SOURCE[source{laser_id}]"
+                    )
                     for laser_dict in self.yml[src]:
                         if "name" in laser_dict.keys():
                             template[f"{trg}/name"] = laser_dict["name"]
                         quantities = ["power", "pulse_energy", "wavelength"]
                         for quant in quantities:
                             if isinstance(laser_dict[quant], dict):
-                                if ("value" in laser_dict[quant].keys()) \
-                                        and ("unit" in laser_dict[quant].keys()):
-                                    template[f"{trg}/{quant}"] \
-                                        = laser_dict[quant]["value"]
-                                    template[f"{trg}/{quant}/@units"] \
-                                        = laser_dict[quant]["unit"]
+                                if ("value" in laser_dict[quant].keys()) and (
+                                    "unit" in laser_dict[quant].keys()
+                                ):
+                                    template[f"{trg}/{quant}"] = laser_dict[quant][
+                                        "value"
+                                    ]
+                                    template[f"{trg}/{quant}/@units"] = laser_dict[
+                                        quant
+                                    ]["unit"]
                         laser_id += 1
         return template
 
