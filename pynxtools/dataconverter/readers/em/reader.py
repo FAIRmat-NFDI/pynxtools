@@ -26,6 +26,7 @@ from pynxtools.dataconverter.readers.em.concepts.nxs_concepts import NxEmAppDef
 # from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
 # from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
 from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
+from pynxtools.dataconverter.readers.em.subparsers.nxs_nion import NxEmZippedNionProjectSubParser
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 # from pynxtools.dataconverter.readers.em.geometry.convention_mapper import NxEmConventionMapper
 
@@ -103,8 +104,8 @@ class EmReader(BaseReader):
             if file_path != "":
                 input_file_names.append(file_path)
         print("Parse NeXus appdef-specific content...")
-        nxs = NxEmAppDef()
-        nxs.parse(template, entry_id, input_file_names)
+        # nxs = NxEmAppDef()
+        # nxs.parse(template, entry_id, input_file_names)
 
         print("Parse conventions of reference frames...")
         # conventions = NxEmConventionMapper(entry_id)
@@ -124,8 +125,12 @@ class EmReader(BaseReader):
         # TODO::check correct loop through!
 
         # sub_parser = "image_tiff"
-        subparser = NxEmImagesSubParser(entry_id, file_paths[0])
-        subparser.parse(template)
+        # subparser = NxEmImagesSubParser(entry_id, file_paths[0])
+        # subparser.parse(template)
+
+        # sub_parser = "zipped_nion_project"
+        subparser = NxEmZippedNionProjectSubParser(entry_id, file_paths[0])
+        subparser.parse(template, verbose=True)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")
