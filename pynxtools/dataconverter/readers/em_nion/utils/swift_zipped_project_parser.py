@@ -33,7 +33,7 @@ import numpy as np
 
 import h5py
 
-from zipfile37 import ZipFile
+from zipfile import ZipFile
 
 from pynxtools.dataconverter.readers.em_nion.utils.swift_uuid_to_file_name \
     import uuid_to_file_name

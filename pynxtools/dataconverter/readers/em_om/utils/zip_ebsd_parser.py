@@ -29,7 +29,7 @@ import re
 
 import numpy as np
 
-from zipfile37 import ZipFile
+from zipfile import ZipFile
 
 # import imageio.v3 as iio
 from PIL import Image as pil
