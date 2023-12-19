@@ -10,6 +10,8 @@
       "source.organizeImports": true
     },
     "editor.defaultFormatter": "charliermarsh.ruff"
+      "source.organizeImports": "never"
+    }
   },
   "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
