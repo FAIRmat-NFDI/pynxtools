@@ -26,12 +26,8 @@
 # from typing import Dict, Any, List
 
 import re
-
-import numpy as np
-
 from zipfile import ZipFile
-
-# import imageio.v3 as iio
+import numpy as np
 from PIL import Image as pil
 
 from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import HFIVE_WEB_MAX_SIZE

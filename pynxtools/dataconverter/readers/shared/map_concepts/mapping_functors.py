@@ -96,7 +96,7 @@ def apply_modifier(modifier, dct: dict):
 # modd = {"fun": "convert_iso8601", "terms": ["data_modified", "timezone"]}
 # print(apply_modifier(modd, yml))
 
-def variadic_path_to_specific_path(path: str, instance_identifier: list):
+def variadic_path_to_specific_path(path, instance_identifier: list):
     """Transforms a variadic path to an actual path with instances."""
     if (path is not None) and (path != ""):
         narguments = path.count("*")

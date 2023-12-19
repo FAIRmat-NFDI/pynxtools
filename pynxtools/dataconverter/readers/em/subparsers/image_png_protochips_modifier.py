@@ -19,20 +19,44 @@
 
 # pylint: disable=no-member
 
+import re
 from numpy import pi
+
+
+def specific_to_variadic(token):
+    # "MicroscopeControlImageMetadata.AuxiliaryData.AuxiliaryDataCategory.[0].DataValues.AuxiliaryDataValue.[20].HeatingPower"
+    # to "MicroscopeControlImageMetadata.AuxiliaryData.AuxiliaryDataCategory.[*].DataValues.AuxiliaryDataValue.[*].HeatingPower"
+    if isinstance(token, str) and token != "":
+        concept = token.strip()
+        idxs = re.finditer(r".\[[0-9]+\].", concept)
+        if (sum(1 for _ in idxs) > 0):
+            variadic = concept
+            for idx in re.finditer(r".\[[0-9]+\].", concept):
+                variadic = variadic.replace(concept[idx.start(0):idx.end(0)], ".[*].")
+            return variadic
+        else:
+            return concept
+    return None
 
 
 def get_nexus_value(modifier, qnt_name, metadata: dict):
     """Interpret a functional mapping and modifier on qnt_name loaded from metadata."""
-    if qnt_name in metadata.keys():
-        if modifier == "load_from":
-            return metadata[qnt_name]
-        elif modifier == "load_from_concatenate":
-            if qnt_name in metadata.keys():
-                return metadata[qnt_name] / pi * 180.
-    else:
-        # print(f"WARNING modifier {modifier}, qnt_name {qnt_name} not found !")
+    if modifier == "load_from":
+        if isinstance(qnt_name, str):
+            for qnt in metadata.keys():
+                if qnt_name == specific_to_variadic(qnt):
+                    return metadata[qnt]
+    elif modifier == "load_from_concatenate":
+        if isinstance(qnt_name, list):
+            retval = []
+            for entry in qnt_name:
+                for qnt in metadata.keys():
+                    if entry == specific_to_variadic(qnt):
+                        retval.append(metadata[qnt])
+                        break  # breaking only out of the inner loop
+            if retval != []:
+                print(f"load_from_concatenate modifier, retval: {retval}")
+                return retval
         return None
-    # if f"{modifier['terms']}/{metadata[modifier['terms']]}" in TfsToNexusConceptMapping.keys():
-    # return TfsToNexusConceptMapping[f"{modifier['terms']}/{metadata[modifier['terms']]}"]
-    # elif set(["link"]) == set(modifier.keys()), with the jsonmap reader Sherjeel conceptualized "link"
+    else:
+        return None

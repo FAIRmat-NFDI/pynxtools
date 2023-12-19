@@ -21,7 +21,8 @@ import mmap
 import re
 import numpy as np
 import xmltodict
-from typing import Dict
+import datetime
+from typing import Dict, List
 from PIL import Image
 from zipfile import ZipFile
 
@@ -36,6 +37,8 @@ from pynxtools.dataconverter.readers.em.subparsers.image_png_protochips_modifier
 from pynxtools.dataconverter.readers.em.subparsers.image_base import ImgsBaseParser
 from pynxtools.dataconverter.readers.em.utils.xml_utils import flatten_xml_to_dict
 from pynxtools.dataconverter.readers.shared.shared_utils import get_sha256_of_file_content
+from pynxtools.dataconverter.readers.em.utils.sorting import \
+    sort_ascendingly_by_second_argument_iso8601
 
 
 class ProtochipsPngSetSubParser(ImgsBaseParser):
@@ -140,7 +143,7 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
                             if grpnms is not None:
                                 if len(grpnms) == 2:
                                     if "PositionerSettings" in k and k.endswith(".PositionerName") is False:
-                                        self.tmp["meta"][file][f"{grpnms[0]}.{grpnms[1]}{k[k.rfind('.') + 1:]}"] = v
+                                        self.tmp["meta"][file][f"{grpnms[0]}.{grpnms[1]}.{k[k.rfind('.') + 1:]}"] = v
                                     if k.endswith(".Value"):
                                         self.tmp["meta"][file][f"{grpnms[0]}.{grpnms[1]}"] = v
                         else:
@@ -162,9 +165,11 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
                     with zip_file_hdl.open(file) as fp:
                         self.get_xml_metadata(file, fp)
                         self.get_file_hash(file, fp)
-                        # print(f"Debugging self.tmp.file.items {file}")
-                        # for k, v in self.tmp["meta"][file].items():
-                        #    print(f"{k}: {v}")
+                        print(f"Debugging self.tmp.file.items {file}")
+                        for k, v in self.tmp["meta"][file].items():
+                            # if k == "MicroscopeControlImageMetadata.MicroscopeDateTime":
+                            print(f"{k}: {v}")
+
             print(f"{self.file_path} metadata within PNG collection processed "
                   f"successfully ({len(self.tmp['meta'].keys())} PNGs evaluated).")
         else:
@@ -177,21 +182,56 @@ class ProtochipsPngSetSubParser(ImgsBaseParser):
             # self.process_event_data_em_data(template)
         return template
 
+    def sort_event_data_em(self) -> List:
+        events: List = []
+        for file_name, mdict in self.tmp["meta"].items():
+            key = f"MicroscopeControlImageMetadata.MicroscopeDateTime"
+            if key in mdict.keys():
+                if mdict[key].count(".") == 1:
+                    datetime_obj = datetime.datetime.strptime(mdict[key], '%Y-%m-%dT%H:%M:%S.%f%z')
+                else:
+                    datetime_obj = datetime.datetime.strptime(mdict[key], '%Y-%m-%dT%H:%M:%S%z')
+                events.append((f"{file_name}", datetime_obj))
+
+        events_sorted = sort_ascendingly_by_second_argument_iso8601(events)
+        del events
+        time_series_start = events_sorted[0][1]
+        print(f"Time series start: {time_series_start}")
+        for file_name, iso8601 in events_sorted:
+            continue
+            # print(f"{file_name}, {iso8601}, {(iso8601 - time_series_start).total_seconds()} s")
+        print(f"Time series end: {events_sorted[-1][1]}, {(events_sorted[-1][1] - time_series_start).total_seconds()} s")
+        return events_sorted
+
     def process_event_data_em_metadata(self, template: dict) -> dict:
         """Add respective metadata."""
         # contextualization to understand how the image relates to the EM session
         print(f"Mapping some of the Protochips-specific metadata on respective NeXus concept instance")
-        identifier = [self.entry_id, self.event_id, 1]
-        for tpl in PNG_PROTOCHIPS_TO_NEXUS_CFG:
-            if isinstance(tpl, tuple):
-                trg = variadic_path_to_specific_path(tpl[0], identifier)
-                if len(tpl) == 2:
-                    template[trg] = tpl[1]
-                if len(tpl) == 3:
-                    # nxpath, modifier, value to load from and eventually to be modified
-                    retval = get_nexus_value(tpl[1], tpl[2], self.tmp["meta"])
-                    if retval is not None:
-                        template[trg] = retval
+        # individual PNGs in self.file_path may include time/date information in the file name
+        # surplus eventually AXON-specific identifier it seems useful though to sort these
+        # PNGs based on time stamped information directly from the AXON metadata
+        # here we sort ascendingly in time the events and associate new event ids
+        event_sequence = self.sort_event_data_em()
+        event_id = self.event_id
+        for file_name, iso8601 in event_sequence:
+            identifier = [self.entry_id, event_id, 1]
+            for tpl in PNG_PROTOCHIPS_TO_NEXUS_CFG:
+                if isinstance(tpl, tuple):
+                    trg = variadic_path_to_specific_path(tpl[0], identifier)
+                    print(f"Target {trg} after variadic name resolution identifier {identifier}")
+                    if len(tpl) == 2:
+                        template[trg] = tpl[1]
+                    if len(tpl) == 3:
+                        # nxpath, modifier, value to load from and eventually to be modified
+                        print(f"Loading {tpl[2]} from tmp.meta.filename modifier {tpl[1]}...")
+                        retval = get_nexus_value(tpl[1], tpl[2], self.tmp["meta"][file_name])
+                        if retval is not None:
+                            template[trg] = retval
+                    trg = variadic_path_to_specific_path(f"/ENTRY[entry*]/measurement/EVENT_DATA_EM_SET"
+                                                         f"[event_data_em_set]/EVENT_DATA_EM[event_data_em*]"
+                                                         f"/start_time", identifier)
+                    template[trg] = f"{iso8601}"
+            event_id += 1
         return template
 
     def process_event_data_em_data(self, template: dict) -> dict:
