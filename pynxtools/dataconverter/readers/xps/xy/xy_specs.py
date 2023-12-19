@@ -348,7 +348,7 @@ class XyProdigyParser:  # pylint: disable=too-few-public-methods
 
         """
         header = self.lines[: self.n_headerlines]
-        groups = self.lines[self.n_headerlines:]
+        groups = self.lines[self.n_headerlines :]
 
         return header, groups
 
@@ -487,7 +487,7 @@ class XyProdigyParser:  # pylint: disable=too-few-public-methods
             Entries are as cycle_name: cycle_data.
 
         """
-        cycle_pattern = re.compile(fr"{self.prefix} Cycle: \d\n", re.IGNORECASE)
+        cycle_pattern = re.compile(rf"{self.prefix} Cycle: \d\n", re.IGNORECASE)
 
         cycles = OrderedDict()
         cycle_line_nrs = {}
@@ -531,7 +531,7 @@ class XyProdigyParser:  # pylint: disable=too-few-public-methods
             Entries are as scan_name: scan_data.
 
         """
-        spec_pattern = fr"{self.prefix} Cycle: \d, Curve: \d"
+        spec_pattern = rf"{self.prefix} Cycle: \d, Curve: \d"
         if self.export_settings["Separate Scan Data"]:
             spec_pattern += r", Scan: \d"
         if self.export_settings["Separate Channel Data"]:

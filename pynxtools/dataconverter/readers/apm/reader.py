@@ -23,26 +23,33 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases \
-    import ApmUseCaseSelector
+from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases import (
+    ApmUseCaseSelector,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_load_deployment_specifics \
-    import NxApmNomadOasisConfigurationParser
+from pynxtools.dataconverter.readers.apm.utils.apm_load_deployment_specifics import (
+    NxApmNomadOasisConfigurationParser,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_load_generic_eln \
-    import NxApmNomadOasisElnSchemaParser
+from pynxtools.dataconverter.readers.apm.utils.apm_load_generic_eln import (
+    NxApmNomadOasisElnSchemaParser,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_load_reconstruction \
-    import ApmReconstructionParser
+from pynxtools.dataconverter.readers.apm.utils.apm_load_reconstruction import (
+    ApmReconstructionParser,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging \
-    import ApmRangingDefinitionsParser
+from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging import (
+    ApmRangingDefinitionsParser,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_create_nx_default_plots \
-    import apm_default_plot_generator
+from pynxtools.dataconverter.readers.apm.utils.apm_create_nx_default_plots import (
+    apm_default_plot_generator,
+)
 
-from pynxtools.dataconverter.readers.apm.utils.apm_generate_synthetic_data \
-    import ApmCreateExampleData
+from pynxtools.dataconverter.readers.apm.utils.apm_generate_synthetic_data import (
+    ApmCreateExampleData,
+)
 
 # this apm parser combines multiple sub-parsers
 # so we need the following input:
@@ -74,10 +81,12 @@ class ApmReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXapm"]
 
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
         template.clear()
 
@@ -95,8 +104,9 @@ class ApmReader(BaseReader):
         else:  # eln_data, and ideally recon and ranging definitions from technology partner file
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
-            assert case.is_valid is True, \
-                "Such a combination of input-file(s, if any) is not supported !"
+            assert (
+                case.is_valid is True
+            ), "Such a combination of input-file(s, if any) is not supported !"
 
             print("Parse (meta)data coming from an ELN...")
             if len(case.eln) == 1:
@@ -112,7 +122,9 @@ class ApmReader(BaseReader):
                 nx_apm_cfg.report(template)
             # having and or using a deployment-specific configuration is optional
 
-            print("Parse (numerical) data and metadata from ranging definitions file...")
+            print(
+                "Parse (numerical) data and metadata from ranging definitions file..."
+            )
             if len(case.reconstruction) == 1:
                 nx_apm_recon = ApmReconstructionParser(case.reconstruction[0], entry_id)
                 nx_apm_recon.report(template)

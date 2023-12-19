@@ -214,7 +214,8 @@ class XmlMapperSpecs(XPSMapper):
 
 
 class XmlParserSpecs:
-    """ Parser for SpecsLab2 XML data"""
+    """Parser for SpecsLab2 XML data"""
+
     def __init__(self) -> None:
         self.metadata_dict: dict = {}
         self.entry_to_data: dict = {}
@@ -344,7 +345,9 @@ class XmlParserSpecs:
         for unit in units:
             if f"_[{unit}]" in section_nm_reslvr:
                 section_nm_reslvr, _ = section_nm_reslvr.split("_")
-                self.metadata_dict[f"{parent_path}/" f"{section_nm_reslvr}/@unit"] = unit
+                self.metadata_dict[
+                    f"{parent_path}/" f"{section_nm_reslvr}/@unit"
+                ] = unit
 
         parent_path, self.tail_part_frm_struct = self.check_last_part_repetition(
             parent_path, self.tail_part_frm_struct, section_nm_reslvr
@@ -631,9 +634,7 @@ class XmlParserSpecs:
                 if not counts_length:
                     counts_length = num_of_counts
                 if counts_length != num_of_counts:
-                    raise ValueError(
-                        "Count number from all scans must be equal!!"
-                    )
+                    raise ValueError("Count number from all scans must be equal!!")
 
             if scan_seq_elem.attrib["type_name"] == "Counts":
                 counts_data = self.restructure_value(

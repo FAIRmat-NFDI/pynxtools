@@ -54,24 +54,28 @@ def test_reader_eln(tmp_path):
     """
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    ref_file = os.path.join(local_dir, '../data/eln_mapper/eln.yaml')
+    ref_file = os.path.join(local_dir, "../data/eln_mapper/eln.yaml")
 
-    test_file = os.path.join(tmp_path, 'eln.yaml')
+    test_file = os.path.join(tmp_path, "eln.yaml")
     cli_run = testing.CliRunner()
-    cli_run.invoke(eln_mapper.get_eln, [
-        "--nxdl",
-        "NXmpes",
-        "--skip-top-levels",
-        1,
-        "--output-file",
-        test_file,
-        "--eln-type",
-        'eln'])
+    cli_run.invoke(
+        eln_mapper.get_eln,
+        [
+            "--nxdl",
+            "NXmpes",
+            "--skip-top-levels",
+            1,
+            "--output-file",
+            test_file,
+            "--eln-type",
+            "eln",
+        ],
+    )
 
-    with open(ref_file, encoding='utf-8', mode='r') as ref_f:
+    with open(ref_file, encoding="utf-8", mode="r") as ref_f:
         ref_dict = yaml.safe_load(ref_f)
 
-    with open(test_file, encoding='utf-8', mode='r') as test_f:
+    with open(test_file, encoding="utf-8", mode="r") as test_f:
         test_dict = yaml.safe_load(test_f)
 
     check_keys_from_two_dict(ref_dict, test_dict)
@@ -87,21 +91,18 @@ def test_scheme_eln(tmp_path):
     """
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    ref_file = os.path.join(local_dir, '../data/eln_mapper/mpes.scheme.archive.yaml')
+    ref_file = os.path.join(local_dir, "../data/eln_mapper/mpes.scheme.archive.yaml")
 
-    test_file = os.path.join(tmp_path, '.scheme.archive.yaml')
+    test_file = os.path.join(tmp_path, ".scheme.archive.yaml")
     cli_run = testing.CliRunner()
-    cli_run.invoke(eln_mapper.get_eln, [
-        "--nxdl",
-        "NXmpes",
-        "--output-file",
-        test_file,
-        "--eln-type",
-        'scheme_eln'])
-    with open(ref_file, encoding='utf-8', mode='r') as ref_f:
+    cli_run.invoke(
+        eln_mapper.get_eln,
+        ["--nxdl", "NXmpes", "--output-file", test_file, "--eln-type", "scheme_eln"],
+    )
+    with open(ref_file, encoding="utf-8", mode="r") as ref_f:
         ref_dict = yaml.safe_load(ref_f)
 
-    with open(test_file, encoding='utf-8', mode='r') as test_f:
+    with open(test_file, encoding="utf-8", mode="r") as test_f:
         test_dict = yaml.safe_load(test_f)
 
     check_keys_from_two_dict(ref_dict, test_dict)

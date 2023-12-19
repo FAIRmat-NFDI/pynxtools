@@ -164,7 +164,9 @@ def pack_dataset(hdfobject, key, value):
         # Obviously the data was not serializable. To give it
         # a last try; serialize it to yaml
         # and save it to the hdf file:
-        dataset = hdfobject.create_dataset(name=key, data=string_(yaml.safe_dump(value)))
+        dataset = hdfobject.create_dataset(
+            name=key, data=string_(yaml.safe_dump(value))
+        )
         dataset.attrs.create(name=TYPEID, data=string_("yaml"))
         # if this fails again, restructure your data!
 

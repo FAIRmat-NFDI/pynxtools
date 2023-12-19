@@ -29,8 +29,8 @@ def thumbnail(img, size=300):
     """Create a thumbnail, i.e. resized version of an image."""
     img = img.copy()
 
-    if img.mode not in ('L', 'RGB'):
-        img = img.convert('RGB')
+    if img.mode not in ("L", "RGB"):
+        img = img.convert("RGB")
 
     old_width, old_height = img.size
 

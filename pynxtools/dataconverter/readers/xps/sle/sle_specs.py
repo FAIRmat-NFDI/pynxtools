@@ -505,7 +505,7 @@ class SleProdigyParser(ABC):
             length = result[1] * buffer
             data = result[0]
             for i in range(0, length, buffer):
-                stream.append(struct.unpack(encoding, data[i: i + buffer])[0])
+                stream.append(struct.unpack(encoding, data[i : i + buffer])[0])
 
         return stream
 
@@ -943,7 +943,7 @@ class SleProdigyParser(ABC):
             length = result[1] * buffer
             data = result[0]
             for i in range(0, length, buffer):
-                stream.append(struct.unpack(encoding, data[i: i + buffer])[0])
+                stream.append(struct.unpack(encoding, data[i : i + buffer])[0])
         return stream
 
     def _parse_external_channels(self, channel):

@@ -140,14 +140,14 @@ def to_bool(expr: str) -> bool:
         bool: The boolean value.
     """
     replacements = {
-        'On': True,
-        'Off': False,
-        'Yes': True,
-        'No': False,
-        'True': True,
-        'False': False,
-        'true': True,
-        'false': False,
+        "On": True,
+        "Off": False,
+        "Yes": True,
+        "No": False,
+        "True": True,
+        "False": False,
+        "true": True,
+        "false": False,
     }
 
     return replacements.get(expr)
@@ -206,11 +206,11 @@ def clean(unit: str) -> str:
         str: The cleaned unit string.
     """
     conversions = {
-        'VS': "volt * second",
-        'Sec': "s",
-        '²': "^2",
-        '³': "^3",
-        'ohm cm': "ohm * cm",
+        "VS": "volt * second",
+        "Sec": "s",
+        "²": "^2",
+        "³": "^3",
+        "ohm cm": "ohm * cm",
     }
 
     for old, new in conversions.items():
@@ -247,31 +247,31 @@ def pandas_df_to_template(prefix: str, data: pd.DataFrame) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: The dict containing the data and metainfo.
     """
-    if prefix.endswith('/'):
+    if prefix.endswith("/"):
         prefix = prefix[:-1]
 
     template: Dict[str, Any] = {}
-    template[f'{prefix}/@NX_class'] = 'NXdata'
+    template[f"{prefix}/@NX_class"] = "NXdata"
 
     def write_data(header: str, attr: str, data: np.ndarray) -> None:
         if header is None:
-            print('Warning: Trying to write dataframe without a header. Skipping.')
+            print("Warning: Trying to write dataframe without a header. Skipping.")
             return
 
         if is_value_with_unit(header):
             name, unit = split_str_with_unit(header)
-            template[f'{prefix}/{name}/@units'] = clean(unit)
+            template[f"{prefix}/{name}/@units"] = clean(unit)
         else:
             name = header.lower()
 
-        if attr == '@auxiliary_signals':
-            if f'{prefix}/{attr}' in template:
-                template[f'{prefix}/{attr}'].append(name)
+        if attr == "@auxiliary_signals":
+            if f"{prefix}/{attr}" in template:
+                template[f"{prefix}/{attr}"].append(name)
             else:
-                template[f'{prefix}/{attr}'] = [name]
+                template[f"{prefix}/{attr}"] = [name]
         else:
-            template[f'{prefix}/{attr}'] = name
-        template[f'{prefix}/{name}'] = data
+            template[f"{prefix}/{attr}"] = name
+        template[f"{prefix}/{name}"] = data
 
     if data.index.name is None:
         data = data.set_index(data.columns[0])
@@ -280,11 +280,11 @@ def pandas_df_to_template(prefix: str, data: pd.DataFrame) -> Dict[str, Any]:
     if data.index.values[-1] == 0:
         data = data.iloc[:-1]
 
-    write_data(data.index.name, '@axes', data.index.values)
-    write_data(data.columns[0], '@signal', data.iloc[:, 0].values)
+    write_data(data.index.name, "@axes", data.index.values)
+    write_data(data.columns[0], "@signal", data.iloc[:, 0].values)
 
     for column in data.columns[1:]:
-        write_data(column, '@auxiliary_signals', data[column].values)
+        write_data(column, "@auxiliary_signals", data[column].values)
 
     return template
 
@@ -302,8 +302,7 @@ def convert_date(datestr: str, timezone: str = "Europe/Berlin") -> str:
 
     try:
         return (
-            datetime
-            .strptime(datestr, r'%m/%d/%y %H%M%S')
+            datetime.strptime(datestr, r"%m/%d/%y %H%M%S")
             .astimezone(pytz.timezone(timezone))
             .isoformat()
         )

@@ -248,10 +248,7 @@ class VamasParser(ABC):
                 "experiment_id",
                 "no_comment_lines",
             ],
-            "exp_var": [
-                "exp_var_label",
-                "exp_var_unit"
-            ],
+            "exp_var": ["exp_var_label", "exp_var_unit"],
             "norm_header": [
                 "scan_mode",
                 "nr_regions",
@@ -507,16 +504,21 @@ class VamasParser(ABC):
             Same list of dicts, but each spectrum gets a scan number.
 
         """
-        grouped_spectra = [list(y) for x, y in groupby(
-            sorted(spectra,
-                   key=lambda x: (x['group_name'], x['spectrum_type'])),
-            lambda x: (x['group_name'], x['spectrum_type']))]
+        grouped_spectra = [
+            list(y)
+            for x, y in groupby(
+                sorted(spectra, key=lambda x: (x["group_name"], x["spectrum_type"])),
+                lambda x: (x["group_name"], x["spectrum_type"]),
+            )
+        ]
 
         for group in grouped_spectra:
             for i, spectrum in enumerate(group):
                 spectrum["scan_no"] = i
 
-        flattened_spectra = [spectrum for group in grouped_spectra for spectrum in group]
+        flattened_spectra = [
+            spectrum for group in grouped_spectra for spectrum in group
+        ]
 
         return flattened_spectra
 
@@ -623,7 +625,8 @@ class VamasParser(ABC):
 
 
 class VamasParserRegular(VamasParser):
-    """ Parser for .vms files of type REGULAR"""
+    """Parser for .vms files of type REGULAR"""
+
     def _parse_norm_block(self):
         """
         Use this method when the NORM keyword is present.
@@ -792,7 +795,7 @@ class VamasParserRegular(VamasParser):
         return block
 
     def _add_data_values(self, block):
-        """ Add data values to a Vamas data block."""
+        """Add data values to a Vamas data block."""
         data_dict = {}
         start = float(block.abscissa_start)
         step = float(block.abscissa_step)
@@ -813,7 +816,7 @@ class VamasParserRegular(VamasParser):
 
         data_array = list(np.array(self.data[: block.num_ord_values], dtype=float))
 
-        self.data = self.data[block.num_ord_values:]
+        self.data = self.data[block.num_ord_values :]
 
         for var in range(block.no_variables):
             max_var = block.no_variables
@@ -828,7 +831,8 @@ class VamasParserRegular(VamasParser):
 
 # THIS DOESN'T WORK SO FAR!!
 class VamasParserIrregular(VamasParser):
-    """ Parser for .vms files of type IRREGULAR"""
+    """Parser for .vms files of type IRREGULAR"""
+
     def _parse_norm_block(self):
         """
         Use this method when the NORM keyword is present.
@@ -997,7 +1001,7 @@ class VamasParserIrregular(VamasParser):
         return block
 
     def _add_data_values(self, block):
-        """ Add data values to a Vamas data block."""
+        """Add data values to a Vamas data block."""
         data_dict = {}
         start = float(block.abscissa_start)
         step = float(block.abscissa_step)
@@ -1016,9 +1020,9 @@ class VamasParserIrregular(VamasParser):
                 name = "y" + str(var)
             data_dict[name] = []
 
-        data_array = list(np.array(self.data[:block.num_ord_values], dtype=float))
+        data_array = list(np.array(self.data[: block.num_ord_values], dtype=float))
 
-        self.data = self.data[block.num_ord_values:]
+        self.data = self.data[block.num_ord_values :]
 
         for var in range(block.no_variables):
             max_var = block.no_variables

@@ -37,7 +37,15 @@ from pynxtools.nexus import nexus
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
 else:
-    from importlib_metadata import entry_points
+    try:
+        from importlib_metadata import entry_points
+    except ImportError:
+        # If importlib_metadata is not present
+        # we provide a dummy function just returning an empty list.
+        # pylint: disable=W0613
+        def entry_points(group):
+            """Dummy function for importlib_metadata"""
+            return []
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
@@ -48,7 +56,9 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 
 def get_reader(reader_name) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
-    path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
+    path_prefix = (
+        f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
+    )
     path = os.path.join(path_prefix, "readers", reader_name, "reader.py")
     spec = importlib.util.spec_from_file_location("reader.py", path)
     try:
@@ -56,10 +66,9 @@ def get_reader(reader_name) -> BaseReader:
         spec.loader.exec_module(module)  # type: ignore[attr-defined]
     except FileNotFoundError as exc:
         # pylint: disable=unexpected-keyword-arg
-        importlib_module = entry_points(group='pynxtools.reader')
-        if (
-            importlib_module
-            and reader_name in map(lambda ep: ep.name, entry_points(group='pynxtools.reader'))
+        importlib_module = entry_points(group="pynxtools.reader")
+        if importlib_module and reader_name in map(
+            lambda ep: ep.name, importlib_module
         ):
             return importlib_module[reader_name].load()
         raise ValueError(f"The reader, {reader_name}, was not found.") from exc
@@ -68,15 +77,21 @@ def get_reader(reader_name) -> BaseReader:
 
 def get_names_of_all_readers() -> List[str]:
     """Helper function to populate a list of all available readers"""
-    path_prefix = f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
+    path_prefix = (
+        f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
+    )
     files = sorted(glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py")))
     all_readers = []
     for file in files:
         if f"{os.sep}base{os.sep}" not in file:
-            index_of_readers_folder_name = file.rindex(f"readers{os.sep}") + len(f"readers{os.sep}")
+            index_of_readers_folder_name = file.rindex(f"readers{os.sep}") + len(
+                f"readers{os.sep}"
+            )
             index_of_last_path_sep = file.rindex(os.sep)
-            all_readers.append(file[index_of_readers_folder_name:index_of_last_path_sep])
-    plugins = list(map(lambda ep: ep.name, entry_points(group='pynxtools.reader')))
+            all_readers.append(
+                file[index_of_readers_folder_name:index_of_last_path_sep]
+            )
+    plugins = list(map(lambda ep: ep.name, entry_points(group="pynxtools.reader")))
     return all_readers + plugins
 
 
@@ -105,25 +120,34 @@ def get_nxdl_root_and_path(nxdl: str):
     if nxdl == "NXtest":
         nxdl_f_path = os.path.join(
             f"{os.path.abspath(os.path.dirname(__file__))}/../../",
-            "tests", "data", "dataconverter", "NXtest.nxdl.xml")
+            "tests",
+            "data",
+            "dataconverter",
+            "NXtest.nxdl.xml",
+        )
     elif nxdl == "NXroot":
         nxdl_f_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
     else:
-        nxdl_f_path = os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml")
+        nxdl_f_path = os.path.join(
+            definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
+        )
         if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
+            nxdl_f_path = os.path.join(
+                definitions_path, "applications", f"{nxdl}.nxdl.xml"
+            )
         if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml")
+            nxdl_f_path = os.path.join(
+                definitions_path, "base_classes", f"{nxdl}.nxdl.xml"
+            )
         if not os.path.exists(nxdl_f_path):
             raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
     return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
 
 
-def transfer_data_into_template(input_file,
-                                reader, nxdl_name,
-                                nxdl_root: Optional[ET.Element] = None,
-                                **kwargs):
+def transfer_data_into_template(
+    input_file, reader, nxdl_name, nxdl_root: Optional[ET.Element] = None, **kwargs
+):
     """Transfer parse and merged data from input experimental file, config file and eln.
 
     Experimental and eln files will be parsed and finally will be merged into template.
@@ -156,32 +180,38 @@ def transfer_data_into_template(input_file,
         input_file = (input_file,)
 
     bulletpoint = "\n\u2022 "
-    logger.info("Using %s reader to convert the given files: %s ",
-                reader,
-                bulletpoint.join((" ", *input_file)))
+    logger.info(
+        "Using %s reader to convert the given files: %s ",
+        reader,
+        bulletpoint.join((" ", *input_file)),
+    )
 
     data_reader = get_reader(reader)
-    if not (nxdl_name in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls):
-        raise NotImplementedError("The chosen NXDL isn't supported by the selected reader.")
+    if not (
+        nxdl_name in data_reader.supported_nxdls or "*" in data_reader.supported_nxdls
+    ):
+        raise NotImplementedError(
+            "The chosen NXDL isn't supported by the selected reader."
+        )
 
     data = data_reader().read(  # type: ignore[operator]
-        template=Template(template),
-        file_paths=input_file,
-        **kwargs
+        template=Template(template), file_paths=input_file, **kwargs
     )
     helpers.validate_data_dict(template, data, nxdl_root)
     return data
 
 
 # pylint: disable=too-many-arguments,too-many-locals
-def convert(input_file: Tuple[str, ...],
-            reader: str,
-            nxdl: str,
-            output: str,
-            generate_template: bool = False,
-            fair: bool = False,
-            undocumented: bool = False,
-            **kwargs):
+def convert(
+    input_file: Tuple[str, ...],
+    reader: str,
+    nxdl: str,
+    output: str,
+    generate_template: bool = False,
+    fair: bool = False,
+    undocumented: bool = False,
+    **kwargs,
+):
     """The conversion routine that takes the input parameters and calls the necessary functions.
 
     Parameters
@@ -215,13 +245,19 @@ def convert(input_file: Tuple[str, ...],
         logger.info(template)
         return
 
-    data = transfer_data_into_template(input_file=input_file, reader=reader,
-                                       nxdl_name=nxdl, nxdl_root=nxdl_root,
-                                       **kwargs)
+    data = transfer_data_into_template(
+        input_file=input_file,
+        reader=reader,
+        nxdl_name=nxdl,
+        nxdl_root=nxdl_root,
+        **kwargs,
+    )
     if undocumented:
         logger.setLevel(UNDOCUMENTED)
     if fair and data.undocumented.keys():
-        logger.warning("There are undocumented paths in the template. This is not acceptable!")
+        logger.warning(
+            "There are undocumented paths in the template. This is not acceptable!"
+        )
         return
 
     for path in data.undocumented.keys():
@@ -230,7 +266,7 @@ def convert(input_file: Tuple[str, ...],
         logger.log(
             UNDOCUMENTED,
             "The path, %s, is being written but has no documentation.",
-            path
+            path,
         )
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
@@ -240,7 +276,7 @@ def convert(input_file: Tuple[str, ...],
 
 def parse_params_file(params_file):
     """Parses the parameters from a given dictionary and returns them"""
-    params = yaml.load(params_file, Loader=yaml.Loader)['dataconverter']
+    params = yaml.load(params_file, Loader=yaml.Loader)["dataconverter"]
     for param in list(params.keys()):
         params[param.replace("-", "_")] = params.pop(param)
     return params
@@ -248,81 +284,89 @@ def parse_params_file(params_file):
 
 @click.command()
 @click.option(
-    '--input-file',
+    "--input-file",
     default=[],
     multiple=True,
-    help='The path to the input data file to read. (Repeat for more than one file.)'
+    help="The path to the input data file to read. (Repeat for more than one file.)",
 )
 @click.option(
-    '--reader',
-    default='json_map',
+    "--reader",
+    default="json_map",
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
-    help='The reader to use. default="example"'
+    help='The reader to use. default="example"',
 )
 @click.option(
-    '--nxdl',
+    "--nxdl",
     default=None,
     required=False,
-    help='The name of the NXDL file to use without extension.'
+    help="The name of the NXDL file to use without extension.",
 )
 @click.option(
-    '--output',
-    default='output.nxs',
-    help='The path to the output NeXus file to be generated.'
+    "--output",
+    default="output.nxs",
+    help="The path to the output NeXus file to be generated.",
 )
 @click.option(
-    '--generate-template',
+    "--generate-template",
     is_flag=True,
     default=False,
-    help='Just print out the template generated from given NXDL file.'
+    help="Just print out the template generated from given NXDL file.",
 )
 @click.option(
-    '--fair',
+    "--fair",
     is_flag=True,
     default=False,
-    help='Let the converter know to be stricter in checking the documentation.'
+    help="Let the converter know to be stricter in checking the documentation.",
 )
 @click.option(
-    '--params-file',
-    type=click.File('r'),
+    "--params-file",
+    type=click.File("r"),
     default=None,
-    help='Allows to pass a .yaml file with all the parameters the converter supports.'
+    help="Allows to pass a .yaml file with all the parameters the converter supports.",
 )
 @click.option(
-    '--undocumented',
+    "--undocumented",
     is_flag=True,
     default=False,
-    help='Shows a log output for all undocumented fields'
+    help="Shows a log output for all undocumented fields",
 )
 @click.option(
-    '--mapping',
-    help='Takes a <name>.mapping.json file and converts data from given input files.'
+    "--mapping",
+    help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
 # pylint: disable=too-many-arguments
-def convert_cli(input_file: Tuple[str, ...],
-                reader: str,
-                nxdl: str,
-                output: str,
-                generate_template: bool,
-                fair: bool,
-                params_file: str,
-                undocumented: bool,
-                mapping: str):
+def convert_cli(
+    input_file: Tuple[str, ...],
+    reader: str,
+    nxdl: str,
+    output: str,
+    generate_template: bool,
+    fair: bool,
+    params_file: str,
+    undocumented: bool,
+    mapping: str,
+):
     """The CLI entrypoint for the convert function"""
     if params_file:
         try:
             convert(**parse_params_file(params_file))
         except TypeError as exc:
             sys.tracebacklimit = 0
-            raise TypeError(("Please make sure you have the following entries in your "
-                             "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
-                             "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
-                             "put-file: value")) from exc
+            raise TypeError(
+                (
+                    "Please make sure you have the following entries in your "
+                    "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
+                    "\n\ndataconverter:\n\treader: value\n\tnxdl: value\n\tin"
+                    "put-file: value"
+                )
+            ) from exc
     else:
         if nxdl is None:
             sys.tracebacklimit = 0
-            raise IOError("\nError: Please supply an NXDL file with the option:"
-                          " --nxdl <path to NXDL>")
+            raise IOError(
+                "\nError: Please supply an NXDL file with the option:"
+                " --nxdl <path to NXDL>"
+            )
         if mapping:
             reader = "json_map"
             if mapping:
@@ -330,5 +374,5 @@ def convert_cli(input_file: Tuple[str, ...],
         convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     convert_cli()  # pylint: disable=no-value-for-parameter
