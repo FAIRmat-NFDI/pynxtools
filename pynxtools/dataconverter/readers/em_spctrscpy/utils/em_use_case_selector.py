@@ -47,9 +47,10 @@ class EmUseCaseSelector:  # pylint: disable=too-few-public-methods
         for file_name in file_paths:
             index = file_name.lower().rfind(".")
             if index >= 0:
-                suffix = file_name.lower()[index + 1::]
-                add = (suffix in self.supported_mime_types) \
-                    and (file_name not in self.case[suffix])
+                suffix = file_name.lower()[index + 1 : :]
+                add = (suffix in self.supported_mime_types) and (
+                    file_name not in self.case[suffix]
+                )
                 if add is True:
                     self.case[suffix].append(file_name)
         # the em reader currently supports a combination of one vendor file and
@@ -66,8 +67,9 @@ class EmUseCaseSelector:  # pylint: disable=too-few-public-methods
             if mime_type in ["bcf", "dm3", "emd"]:
                 hspy_input += len(value)
 
-        assert (oina_input == 1) or (hspy_input == 1), \
-            "Currently the reader supports to have only one vendor input file!"
+        assert (oina_input == 1) or (
+            hspy_input == 1
+        ), "Currently the reader supports to have only one vendor input file!"
         if oina_input == 1:
             self.vendor += self.case["h5oina"]
             self.vendor_parser = "oina"
@@ -77,13 +79,15 @@ class EmUseCaseSelector:  # pylint: disable=too-few-public-methods
                 self.vendor_parser = "hspy"
 
         eln_input = len(self.case["yaml"]) + len(self.case["yml"])
-        assert eln_input == 1, \
-            "Currently the reader supports to have only one YAML input-file!"
+        assert (
+            eln_input == 1
+        ), "Currently the reader supports to have only one YAML input-file!"
 
         for mime_type in ["yaml", "yml"]:
             self.eln += self.case[mime_type]
             self.eln_parser = "nomad-oasis"
 
         self.is_valid = True
+
 
 # test = EmUseCaseSelector(("a.bcf", "b.yaml", "c.apt", "d.h5oina"))

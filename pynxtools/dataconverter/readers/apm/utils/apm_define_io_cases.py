@@ -42,7 +42,15 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         self.ranging: List[str] = []
         self.is_valid = False
         self.supported_mime_types = [
-            "pos", "epos", "apt", "rrng", "rng", "txt", "yaml", "yml"]
+            "pos",
+            "epos",
+            "apt",
+            "rrng",
+            "rng",
+            "txt",
+            "yaml",
+            "yml",
+        ]
         for mime_type in self.supported_mime_types:
             self.case[mime_type] = []
 
@@ -54,7 +62,7 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         for file_name in file_paths:
             index = file_name.lower().rfind(".")
             if index >= 0:
-                suffix = file_name.lower()[index + 1::]
+                suffix = file_name.lower()[index + 1 : :]
                 if suffix in self.supported_mime_types:
                     if file_name not in self.case[suffix]:
                         self.case[suffix].append(file_name)
@@ -86,8 +94,9 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
             for mime_type in ["yaml", "yml"]:
                 yml += self.case[mime_type]
             for entry in yml:
-                if entry.endswith(".oasis.specific.yaml") \
-                        or entry.endswith(".oasis.specific.yml"):
+                if entry.endswith(".oasis.specific.yaml") or entry.endswith(
+                    ".oasis.specific.yml"
+                ):
                     self.cfg += [entry]
                 else:
                     self.eln += [entry]

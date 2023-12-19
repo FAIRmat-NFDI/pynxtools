@@ -38,19 +38,18 @@ import numpy as np
 def xray_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for Xray."""
     entry_name = f"entry{entry_id}"
-    trg = f"/ENTRY[{entry_name}]/measurement/" \
-          f"EVENT_DATA_EM[event_data_em1]/xray/"
+    trg = f"/ENTRY[{entry_name}]/measurement/" f"EVENT_DATA_EM[event_data_em1]/xray/"
 
     path = ""
     if f"{trg}stack/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
-            "EDS data stack not existent!"
+            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray
+        ), "EDS data stack not existent!"
         path = "stack"
     if f"{trg}summary/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[f"{trg}summary/DATA[data_counts]"]["compress"], np.ndarray), \
-            "EDS data summary not existent!"
+            template[f"{trg}summary/DATA[data_counts]"]["compress"], np.ndarray
+        ), "EDS data summary not existent!"
         path = "summary"
 
     if path != "":
@@ -73,19 +72,18 @@ def xray_plot_available(template: dict, entry_id: int) -> bool:
 def eels_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for EELS."""
     entry_name = f"entry{entry_id}"
-    trg = f"/ENTRY[{entry_name}]/measurement/" \
-          f"EVENT_DATA_EM[event_data_em1]/eels/"
+    trg = f"/ENTRY[{entry_name}]/measurement/" f"EVENT_DATA_EM[event_data_em1]/eels/"
 
     path = ""
     if f"{trg}stack/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
-            "EELS data stack not existent!"
+            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray
+        ), "EELS data stack not existent!"
         path = "stack"
     if f"{trg}summary/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[f"{trg}summary/DATA[data_counts]"]["compress"], np.ndarray), \
-            "EELS data summary not existent!"
+            template[f"{trg}summary/DATA[data_counts]"]["compress"], np.ndarray
+        ), "EELS data summary not existent!"
         path = "summary"
 
     if path != "":
@@ -108,14 +106,13 @@ def eels_plot_available(template: dict, entry_id: int) -> bool:
 def adf_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for ADF."""
     entry_name = f"entry{entry_id}"
-    trg = f"/ENTRY[{entry_name}]/measurement/" \
-          f"EVENT_DATA_EM[event_data_em1]/adf/"
+    trg = f"/ENTRY[{entry_name}]/measurement/" f"EVENT_DATA_EM[event_data_em1]/adf/"
 
     path = ""
     if f"{trg}stack/DATA[data_counts]" in template.keys():
         assert isinstance(
-            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray), \
-            "ADF data stack not existent!"
+            template[f"{trg}stack/DATA[data_counts]"]["compress"], np.ndarray
+        ), "ADF data stack not existent!"
         path = "stack"
 
     if path != "":
@@ -138,14 +135,16 @@ def adf_plot_available(template: dict, entry_id: int) -> bool:
 def image_plot_available(template: dict, entry_id: int) -> bool:
     """Choose a preferred NXdata/data instance for generic image."""
     entry_name = f"entry{entry_id}"
-    trg = f"/ENTRY[{entry_name}]/measurement/EVENT_DATA_EM[event_data_em1]/" \
-          f"IMAGE_SET[image_set1]/"
+    trg = (
+        f"/ENTRY[{entry_name}]/measurement/EVENT_DATA_EM[event_data_em1]/"
+        f"IMAGE_SET[image_set1]/"
+    )
 
     path = ""
     if f"{trg}DATA[stack]/data_counts" in template.keys():
         assert isinstance(
-            template[f"{trg}DATA[stack]/data_counts"]["compress"], np.ndarray), \
-            "Generic image data stack not existent!"
+            template[f"{trg}DATA[stack]/data_counts"]["compress"], np.ndarray
+        ), "Generic image data stack not existent!"
         path = "stack"
 
     if path != "":
@@ -165,7 +164,9 @@ def image_plot_available(template: dict, entry_id: int) -> bool:
     return False
 
 
-def em_spctrscpy_default_plot_generator(template: dict, n_entries: int) -> dict:  # ignore:R0915
+def em_spctrscpy_default_plot_generator(
+    template: dict, n_entries: int
+) -> dict:  # ignore:R0915
     """For a valid NXS file at least one default plot is required."""
 
     for entry_id in np.arange(1, n_entries + 1):

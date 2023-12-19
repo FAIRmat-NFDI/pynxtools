@@ -24,6 +24,7 @@ import numpy as np
 
 class XPSMapper(ABC):
     """Abstract base class from mapping from a parser to NXmpes template"""
+
     def __init__(self):
         self.file = None
         self.raw_data: list = []

@@ -4,6 +4,10 @@
 #
 #    pip-compile --extra=dev --output-file=dev-requirements.txt pyproject.toml
 #
+appnope==0.1.3
+    # via
+    #   ipykernel
+    #   ipython
 asciitree==0.3.3
     # via zarr
 ase==3.22.1
@@ -12,8 +16,6 @@ ase==3.22.1
     #   pynxtools (pyproject.toml)
 asteval==0.9.31
     # via lmfit
-astroid==3.0.1
-    # via pylint
 asttokens==2.4.1
     # via stack-data
 attrs==23.1.0
@@ -30,6 +32,8 @@ cattrs==23.2.2
     # via requests-cache
 certifi==2023.11.17
     # via requests
+cfgv==3.4.0
+    # via pre-commit
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
@@ -44,13 +48,16 @@ comm==0.2.0
 contourpy==1.1.1
     # via matplotlib
 coverage[toml]==7.3.2
-    # via pytest-cov
+    # via
+    #   coverage
+    #   pytest-cov
 cycler==0.12.1
     # via matplotlib
 cython==3.0.6
     # via tables
 dask[array]==2023.5.0
     # via
+    #   dask
     #   hyperspy
     #   kikuchipy
     #   orix
@@ -71,9 +78,9 @@ diffsims==0.5.2
     #   kikuchipy
     #   pyxem
 dill==0.3.7
-    # via
-    #   hyperspy
-    #   pylint
+    # via hyperspy
+distlib==0.3.7
+    # via virtualenv
 entrypoints==0.4
     # via ipyparallel
 exceptiongroup==1.2.0
@@ -88,6 +95,8 @@ fabio==2023.10.0
     #   silx
 fasteners==0.19
     # via zarr
+filelock==3.13.1
+    # via virtualenv
 flatdict==4.0.1
     # via pynxtools (pyproject.toml)
 fonttools==4.45.1
@@ -122,6 +131,8 @@ hyperspy==1.7.6
     #   kikuchipy
     #   pynxtools (pyproject.toml)
     #   pyxem
+identify==2.5.33
+    # via pre-commit
 idna==3.6
     # via requests
 ifes-apt-tc-data-modeling==0.1
@@ -138,6 +149,7 @@ importlib-metadata==6.8.0
     # via
     #   dask
     #   hyperspy
+    #   pynxtools (pyproject.toml)
 iniconfig==2.0.0
     # via pytest
 ipykernel==6.27.1
@@ -149,8 +161,6 @@ ipython==8.12.3
     #   hyperspy
     #   ipykernel
     #   ipyparallel
-isort==5.12.0
-    # via pylint
 jedi==0.19.1
     # via ipython
 jinja2==3.1.2
@@ -200,8 +210,6 @@ matplotlib-inline==0.1.6
     #   ipython
 matplotlib-scalebar==0.8.1
     # via orix
-mccabe==0.7.0
-    # via pylint
 mergedeep==1.3.4
     # via pynxtools (pyproject.toml)
 mpmath==1.3.0
@@ -236,6 +244,8 @@ nionutils==0.4.6
     #   nionswift
     #   nionswift-io
     #   nionui
+nodeenv==1.8.0
+    # via pre-commit
 numba==0.58.1
     # via
     #   diffsims
@@ -339,8 +349,8 @@ platformdirs==4.0.0
     # via
     #   jupyter-core
     #   pooch
-    #   pylint
     #   requests-cache
+    #   virtualenv
 pluggy==1.3.0
     # via pytest
 ply==3.11
@@ -349,6 +359,8 @@ pooch==1.8.0
     # via
     #   kikuchipy
     #   orix
+pre-commit==3.5.0
+    # via pynxtools (pyproject.toml)
 prettytable==3.9.0
     # via hyperspy
 prompt-toolkit==3.0.41
@@ -367,14 +379,10 @@ py-cpuinfo==9.0.0
     # via tables
 pycifrw==4.4.6
     # via diffpy-structure
-pycodestyle==2.11.1
-    # via pynxtools (pyproject.toml)
 pyfai==2023.9.0
     # via pyxem
 pygments==2.17.2
     # via ipython
-pylint==3.0.2
-    # via pynxtools (pyproject.toml)
 pyparsing==3.1.1
     # via matplotlib
 pyproject-hooks==1.0.0
@@ -411,6 +419,7 @@ pyyaml==6.0.1
     #   dask
     #   hyperspy
     #   kikuchipy
+    #   pre-commit
     #   pynxtools (pyproject.toml)
 pyzmq==25.1.1
     # via
@@ -426,6 +435,8 @@ requests==2.31.0
     #   pynxtools (pyproject.toml)
     #   requests-cache
 requests-cache==1.1.1
+    # via pynxtools (pyproject.toml)
+ruff==0.1.7
     # via pynxtools (pyproject.toml)
 scikit-image==0.20.0
     # via
@@ -487,11 +498,8 @@ tomli==2.0.1
     #   coverage
     #   mypy
     #   pip-tools
-    #   pylint
     #   pyproject-hooks
     #   pytest
-tomlkit==0.12.3
-    # via pylint
 toolz==0.12.0
     # via
     #   dask
@@ -535,7 +543,6 @@ types-requests==2.31.0.10
     # via pynxtools (pyproject.toml)
 typing-extensions==4.8.0
     # via
-    #   astroid
     #   cattrs
     #   mypy
 tzdata==2023.3
@@ -555,6 +562,8 @@ urllib3==2.1.0
     #   requests
     #   requests-cache
     #   types-requests
+virtualenv==20.25.0
+    # via pre-commit
 wcwidth==0.2.12
     # via
     #   prettytable

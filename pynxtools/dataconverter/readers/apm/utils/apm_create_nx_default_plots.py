@@ -21,8 +21,7 @@
 
 import numpy as np
 
-from pynxtools.dataconverter.readers.shared.shared_utils \
-    import get_repo_last_commit
+from pynxtools.dataconverter.readers.shared.shared_utils import get_repo_last_commit
 
 
 def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
@@ -39,38 +38,46 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     # make the bounding box a quadric prism
     imi = np.floor(bounds[0, 0]) - resolution
     imx = np.ceil(bounds[0, 1]) + resolution
-    xedges = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1,
-                         endpoint=True)
+    xedges = np.linspace(
+        imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1, endpoint=True
+    )
     # this partitioning is not general enough, imi and imx should be left and right
     # bounds respectively
     imi = np.floor(bounds[1, 0]) - resolution
     imx = np.ceil(bounds[1, 1]) + resolution
-    yedges = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1,
-                         endpoint=True)
+    yedges = np.linspace(
+        imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1, endpoint=True
+    )
     imi = np.floor(bounds[2, 0]) - resolution
     imx = np.ceil(bounds[2, 1]) + resolution
-    zedges = np.linspace(imi, imx,
-                         num=int(np.ceil((imx - imi) / resolution)) + 1,
-                         endpoint=True)
+    zedges = np.linspace(
+        imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1, endpoint=True
+    )
 
-    hist3d = np.histogramdd((xyz[:, 0], xyz[:, 1], xyz[:, 2]),
-                            bins=(xedges, yedges, zedges))
+    hist3d = np.histogramdd(
+        (xyz[:, 0], xyz[:, 1], xyz[:, 2]), bins=(xedges, yedges, zedges)
+    )
     del xyz
-    assert isinstance(hist3d[0], np.ndarray), \
-        "Hist3d computation from the reconstruction failed!"
-    assert len(np.shape(hist3d[0])) == 3, \
-        "Hist3d computation from the reconstruction failed!"
+    assert isinstance(
+        hist3d[0], np.ndarray
+    ), "Hist3d computation from the reconstruction failed!"
+    assert (
+        len(np.shape(hist3d[0])) == 3
+    ), "Hist3d computation from the reconstruction failed!"
     for i in np.arange(0, 3):
-        assert np.shape(hist3d[0])[i] > 0, \
-            "Dimensions " + str(i) + " has no length!"
+        assert np.shape(hist3d[0])[i] > 0, "Dimensions " + str(i) + " has no length!"
 
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/" \
-          f"naive_point_cloud_density_map/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
+        f"naive_point_cloud_density_map/"
+    )
     template[f"{trg}PROGRAM[program1]/program"] = "nomad-parser-nexus/apm/reader.py"
     template[f"{trg}PROGRAM[program1]/program/@version"] = get_repo_last_commit()
 
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/" \
-          f"naive_point_cloud_density_map/DATA[data]/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
+        f"naive_point_cloud_density_map/DATA[data]/"
+    )
     template[f"{trg}title"] = "Discretized reconstruction space"
     # template[f"{trg}@long_name"] = "Discretized reconstruction space"
     template[f"{trg}@signal"] = "data_counts"
@@ -81,18 +88,26 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
 
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the appdef
-    template[f"{trg}DATA[data_counts]"] \
-        = {"compress": np.array(hist3d[0], np.uint32), "strength": 1}
-    template[f"{trg}AXISNAME[axis_x]"] \
-        = {"compress": np.array(hist3d[1][0][1::], np.float32), "strength": 1}
+    template[f"{trg}DATA[data_counts]"] = {
+        "compress": np.array(hist3d[0], np.uint32),
+        "strength": 1,
+    }
+    template[f"{trg}AXISNAME[axis_x]"] = {
+        "compress": np.array(hist3d[1][0][1::], np.float32),
+        "strength": 1,
+    }
     template[f"{trg}AXISNAME[axis_x]/@units"] = "nm"
     template[f"{trg}AXISNAME[axis_x]/@long_name"] = "x (nm)"
-    template[f"{trg}AXISNAME[axis_y]"] \
-        = {"compress": np.array(hist3d[1][1][1::], np.float32), "strength": 1}
+    template[f"{trg}AXISNAME[axis_y]"] = {
+        "compress": np.array(hist3d[1][1][1::], np.float32),
+        "strength": 1,
+    }
     template[f"{trg}AXISNAME[axis_y]/@units"] = "nm"
     template[f"{trg}AXISNAME[axis_y]/@long_name"] = "y (nm)"
-    template[f"{trg}AXISNAME[axis_z]"] \
-        = {"compress": np.array(hist3d[1][2][1::], np.float32), "strength": 1}
+    template[f"{trg}AXISNAME[axis_z]"] = {
+        "compress": np.array(hist3d[1][2][1::], np.float32),
+        "strength": 1,
+    }
     template[f"{trg}AXISNAME[axis_z]/@units"] = "nm"
     template[f"{trg}AXISNAME[axis_z]/@long_name"] = "z (nm)"
     print("Default plot 3D discretized reconstruction at 1 nm binning.")
@@ -113,17 +128,19 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
 
     hist1d = np.histogram(
         m_z[:],
-        np.linspace(mqmin, mqmax,
-                    num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1,
-                    endpoint=True))
+        np.linspace(
+            mqmin, mqmax, num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1, endpoint=True
+        ),
+    )
     del m_z
-    assert isinstance(hist1d[0], np.ndarray), \
-        "Hist1d computation from the mass spectrum failed!"
-    assert len(np.shape(hist1d[0])) == 1, \
-        "Hist1d computation from the mass spectrum failed!"
+    assert isinstance(
+        hist1d[0], np.ndarray
+    ), "Hist1d computation from the mass spectrum failed!"
+    assert (
+        len(np.shape(hist1d[0])) == 1
+    ), "Hist1d computation from the mass spectrum failed!"
     for i in np.arange(0, 1):
-        assert np.shape(hist1d[0])[i] > 0, \
-            "Dimensions " + str(i) + " has no length!"
+        assert np.shape(hist1d[0])[i] > 0, "Dimensions " + str(i) + " has no length!"
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/mass_to_charge_distribution/"
     template[f"{trg}PROGRAM[program1]/program"] = "nomad-parser-nexus/apm/reader.py"
@@ -134,20 +151,27 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}range_minmax"] = np.array([mqmin, mqmax], np.float32)
     template[f"{trg}range_minmax/@units"] = "Da"
 
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" \
-          f"mass_to_charge_distribution/mass_spectrum/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
+        f"mass_to_charge_distribution/mass_spectrum/"
+    )
     template[f"{trg}title"] = "Mass spectrum (0.01 Da binning)"
     template[f"{trg}@signal"] = "data_counts"
     template[f"{trg}@axes"] = "axis_mass_to_charge"
     template[f"{trg}@AXISNAME_indices[axis_mass_to_charge]"] = np.uint32(0)
-    template[f"{trg}DATA[data_counts]"] \
-        = {"compress": np.array(hist1d[0], np.uint32), "strength": 1}
+    template[f"{trg}DATA[data_counts]"] = {
+        "compress": np.array(hist1d[0], np.uint32),
+        "strength": 1,
+    }
     template[f"{trg}DATA[data_counts]/@long_name"] = "Counts (1)"
-    template[f"{trg}AXISNAME[axis_mass_to_charge]"] \
-        = {"compress": np.array(hist1d[1][1::], np.float32), "strength": 1}
+    template[f"{trg}AXISNAME[axis_mass_to_charge]"] = {
+        "compress": np.array(hist1d[1][1::], np.float32),
+        "strength": 1,
+    }
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "Da"
-    template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] \
-        = "Mass-to-charge-state ratio (Da)"
+    template[
+        f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"
+    ] = "Mass-to-charge-state ratio (Da)"
     print("Plot mass spectrum at 0.01 Da binning was created.")
     del hist1d
 
@@ -183,8 +207,9 @@ def apm_default_plot_generator(template: dict, n_entries: int) -> dict:
                     has_valid_xyz = True
 
         has_default_data = has_valid_m_z or has_valid_xyz
-        assert has_default_data is True, \
-            "Having no recon or mass-to-charge data is inacceptable at the moment!"
+        assert (
+            has_default_data is True
+        ), "Having no recon or mass-to-charge data is inacceptable at the moment!"
 
         # NEW ISSUE: fall-back solution to plot something else, however
         # currently POS, EPOS and APT provide always xyz, and m_z data

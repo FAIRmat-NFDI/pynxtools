@@ -23,22 +23,24 @@ import xml.etree.ElementTree as ET
 
 import yaml
 
-from pynxtools.dataconverter.helpers import (generate_template_from_nxdl,
-                                             validate_data_dict)
+from pynxtools.dataconverter.helpers import (
+    generate_template_from_nxdl,
+    validate_data_dict,
+)
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.readers.xrd.xrd_parser import parse_and_fill_template
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 CONVERT_DICT: Dict[str, str] = {
-    'unit': '@units',
-    'Instrument': 'INSTRUMENT[instrument]',
-    'Source': 'SOURCE[source]',
-    'Detector': 'DETECTOR[detector]',
-    'Collection': 'COLLECTION[collection]',
-    'Sample': 'SAMPLE[sample]',
-    'version': '@version',
-    'User': 'USER[user]',
+    "unit": "@units",
+    "Instrument": "INSTRUMENT[instrument]",
+    "Source": "SOURCE[source]",
+    "Detector": "DETECTOR[detector]",
+    "Collection": "COLLECTION[collection]",
+    "Sample": "SAMPLE[sample]",
+    "version": "@version",
+    "User": "USER[user]",
 }
 
 
@@ -70,20 +72,20 @@ def get_template_from_nxdl_name(nxdl_name):
     """
     nxdl_file = nxdl_name + ".nxdl.xml"
     current_path = Path(__file__)
-    def_path = current_path.parent.parent.parent.parent / 'definitions'
+    def_path = current_path.parent.parent.parent.parent / "definitions"
     # Check contributed defintions
-    full_nxdl_path = Path(def_path, 'contributed_definitions', nxdl_file)
+    full_nxdl_path = Path(def_path, "contributed_definitions", nxdl_file)
     root = None
     if full_nxdl_path.exists():
         root = ET.parse(full_nxdl_path).getroot()
     else:
         # Check application definition
-        full_nxdl_path = Path(def_path, 'applications', nxdl_file)
+        full_nxdl_path = Path(def_path, "applications", nxdl_file)
 
     if root is None and full_nxdl_path.exists():
         root = ET.parse(full_nxdl_path).getroot()
     else:
-        full_nxdl_path = Path(def_path, 'base_classes', nxdl_file)
+        full_nxdl_path = Path(def_path, "base_classes", nxdl_file)
 
     if root is None and full_nxdl_path.exists():
         root = ET.parse(full_nxdl_path).getroot()
@@ -113,8 +115,7 @@ def get_template_from_xrd_reader(nxdl_name, file_paths):
 
     template = get_template_from_nxdl_name(nxdl_name)
 
-    data = XRDReader().read(template=template,
-                            file_paths=file_paths)
+    data = XRDReader().read(template=template, file_paths=file_paths)
     validate_data_dict(template=template, data=data, nxdl_root=ROOT)
     return data
 
@@ -125,10 +126,12 @@ class XRDReader(BaseReader):
 
     supported_nxdls = ["NXxrd_pan"]
 
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None):
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ):
         """General read menthod to prepare the template."""
 
         if not isinstance(file_paths, tuple) and not isinstance(file_paths, list):
@@ -140,15 +143,14 @@ class XRDReader(BaseReader):
         xrd_file_ext: str = ""
         for file in file_paths:
             ext = "".join(Path(file).suffixes)
-            if ext == '.json':
+            if ext == ".json":
                 with open(file, mode="r", encoding="utf-8") as fl_obj:
                     config_dict = json.load(fl_obj)
-            elif ext in ['.yaml', '.yml']:
+            elif ext in [".yaml", ".yml"]:
                 with open(file, mode="r", encoding="utf-8") as fl_obj:
                     eln_dict = flatten_and_replace(
                         FlattenSettings(
-                            yaml.safe_load(fl_obj),
-                            CONVERT_DICT, REPLACE_NESTED
+                            yaml.safe_load(fl_obj), CONVERT_DICT, REPLACE_NESTED
                         )
                     )
             elif ext in XRD_FILE_EXTENSIONS:
@@ -157,19 +159,22 @@ class XRDReader(BaseReader):
         if xrd_file:
             parse_and_fill_template(template, xrd_file, config_dict, eln_dict)
         else:
-            raise ValueError(f"Allowed XRD experimental with extenstion from"
-                             f" {XRD_FILE_EXTENSIONS} found {xrd_file_ext}")
+            raise ValueError(
+                f"Allowed XRD experimental with extenstion from"
+                f" {XRD_FILE_EXTENSIONS} found {xrd_file_ext}"
+            )
 
         # Get rid of empty concept and cleaning up Template
         for key, val in template.items():
-
             if val is None:
                 del template[key]
             else:
                 filled_template[key] = val
         if not filled_template.keys():
-            raise ValueError("Reader could not read anything! Check for input files and the"
-                             " corresponding extention.")
+            raise ValueError(
+                "Reader could not read anything! Check for input files and the"
+                " corresponding extention."
+            )
         return filled_template
 
 

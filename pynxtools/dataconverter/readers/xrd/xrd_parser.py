@@ -23,12 +23,16 @@ from typing import Dict, Tuple, Optional, List
 from pathlib import Path
 import warnings
 import xml.etree.ElementTree as ET  # for XML parsing
-from pynxtools.dataconverter.helpers import transform_to_intended_dt, remove_namespace_from_tag
+from pynxtools.dataconverter.helpers import (
+    transform_to_intended_dt,
+    remove_namespace_from_tag,
+)
 from pynxtools.dataconverter.readers.xrd.xrd_helper import feed_xrdml_to_template
 
 
-def fill_slash_sep_dict_from_nested_dict(parent_path: str, nested_dict: dict,
-                                         slash_sep_dict: dict):
+def fill_slash_sep_dict_from_nested_dict(
+    parent_path: str, nested_dict: dict, slash_sep_dict: dict
+):
     """Convert a nested dict into slash separated dict.
 
     Extend slash_sep_dict by key (slash separated key) from nested dict.
@@ -74,17 +78,17 @@ class XRDMLParser:
         self.find_version()
         # Important note for key-val pair separator list: preceding elements have precedence on the
         # on the following elements
-        self.key_val_pair_sprtr = (';', ',')
+        self.key_val_pair_sprtr = (";", ",")
         # Important note for key-val separator list: preceding elements have precedence on the
         # on the following elements
-        self.key_val_sprtr = ('=', ':')
+        self.key_val_sprtr = ("=", ":")
 
     def find_version(self):
         """To find xrdml file version."""
         schema_loc = "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"
         # str: 'http://www.xrdml.com/XRDMeasurement/1.5
-        version = self.xml_root.get(schema_loc).split(' ')[0]
-        self.xrdml_version = version.split('/')[-1]
+        version = self.xml_root.get(schema_loc).split(" ")[0]
+        self.xrdml_version = version.split("/")[-1]
 
     def get_slash_separated_xrd_dict(self):
         """Return a dict with slash separated key and value from xrd file.
@@ -107,14 +111,14 @@ class XRDMLParser:
         Panalytical module extends and constructs some array data from experiment settings
         comes with xml file.
         """
-        self.parse_each_elm(parent_path='/', xml_node=self.xml_root)
+        self.parse_each_elm(parent_path="/", xml_node=self.xml_root)
         nested_data_dict: Dict[str, any] = {}
         # Note: To use panalytical lib
         # Extract other numerical data e.g. 'hkl', 'Omega', '2Theta', CountTime etc
         # using panalytical_xml module
         # parsed_data = XRDMLFile(self.__file_path)
         # nested_data_dict = parsed_data.scan.ddict
-        fill_slash_sep_dict_from_nested_dict('/', nested_data_dict, self.__xrd_dict)
+        fill_slash_sep_dict_from_nested_dict("/", nested_data_dict, self.__xrd_dict)
 
     def process_node_text(self, parent_path, node_txt) -> None:
         """Processing text of node
@@ -143,20 +147,26 @@ class XRDMLParser:
                 for k_v_sep in self.key_val_sprtr:
                     if k_v_sep in key_val:
                         key, val = key_val.split(k_v_sep)
-                        key = key.replace(' ', '')
-                        self.__xrd_dict['/'.join([parent_path, key])] = val
+                        key = key.replace(" ", "")
+                        self.__xrd_dict["/".join([parent_path, key])] = val
                         break
         # Handling array data comes as node text
         else:
             try:
                 self.__xrd_dict[parent_path] = transform_to_intended_dt(node_txt)
             except ValueError:
-                warnings.warn(f'Element text {node_txt} is ignored from parseing!',
-                              IgnoreNodeTextWarning)
+                warnings.warn(
+                    f"Element text {node_txt} is ignored from parseing!",
+                    IgnoreNodeTextWarning,
+                )
 
-    def parse_each_elm(self, parent_path, xml_node,
-                       multi_childs_tag: str = '',
-                       tag_extensions: Optional[List[int]] = None):
+    def parse_each_elm(
+        self,
+        parent_path,
+        xml_node,
+        multi_childs_tag: str = "",
+        tag_extensions: Optional[List[int]] = None,
+    ):
         """Check each xml element and send the element to intended function.
 
         Parameters
@@ -178,22 +188,27 @@ class XRDMLParser:
 
         tag = remove_namespace_from_tag(xml_node.tag)
         # Take care of special node of 'entry' tag
-        if tag == 'entry':
-            parent_path = self.parse_entry_elm(parent_path, xml_node,
-                                               multi_childs_tag, tag_extensions)
+        if tag == "entry":
+            parent_path = self.parse_entry_elm(
+                parent_path, xml_node, multi_childs_tag, tag_extensions
+            )
         else:
-            parent_path = self.parse_general_elm(parent_path, xml_node,
-                                                 multi_childs_tag, tag_extensions)
+            parent_path = self.parse_general_elm(
+                parent_path, xml_node, multi_childs_tag, tag_extensions
+            )
 
         _, multi_childs_tag = self.has_multi_childs_with_same_tag(xml_node)
         # List of tag extensions for child nodes which have the same tag.
         tag_extensions = [0]
         for child in iter(xml_node):
             if child is not None:
-                self.parse_each_elm(parent_path, child,
-                                    multi_childs_tag, tag_extensions)
+                self.parse_each_elm(
+                    parent_path, child, multi_childs_tag, tag_extensions
+                )
 
-    def has_multi_childs_with_same_tag(self, parent_node: ET.Element) -> Tuple[bool, str]:
+    def has_multi_childs_with_same_tag(
+        self, parent_node: ET.Element
+    ) -> Tuple[bool, str]:
         """Check for multiple childs that have the same tag.
 
         Parameter:
@@ -215,10 +230,11 @@ class XRDMLParser:
                 if tag == temp_tag:
                     return (True, tag)
 
-        return (False, '')
+        return (False, "")
 
-    def parse_general_elm(self, parent_path, xml_node,
-                          multi_childs_tag, tag_extensions: List[int]):
+    def parse_general_elm(
+        self, parent_path, xml_node, multi_childs_tag, tag_extensions: List[int]
+    ):
         """Handle general element except entry element.
         Parameters
         ----------
@@ -240,22 +256,22 @@ class XRDMLParser:
         tag = remove_namespace_from_tag(xml_node.tag)
         if tag == multi_childs_tag:
             new_ext = tag_extensions[-1] + 1
-            tag = tag + '_' + str(new_ext)
+            tag = tag + "_" + str(new_ext)
             tag_extensions.append(new_ext)
 
-        if parent_path == '/':
+        if parent_path == "/":
             parent_path = parent_path + tag
         else:
             # New parent path ends with element tag
-            parent_path = '/'.join([parent_path, tag])
+            parent_path = "/".join([parent_path, tag])
 
         node_attr = xml_node.attrib
         if node_attr:
             for key, val in node_attr.items():
                 # Some attr has namespace
                 key = remove_namespace_from_tag(key)
-                key = key.replace(' ', '_')
-                path_extend = '/'.join([parent_path, key])
+                key = key.replace(" ", "_")
+                path_extend = "/".join([parent_path, key])
                 self.__xrd_dict[path_extend] = val
 
         node_txt = xml_node.text
@@ -264,8 +280,13 @@ class XRDMLParser:
 
         return parent_path
 
-    def parse_entry_elm(self, parent_path: str, xml_node: ET.Element,
-                        multi_childs_tag: str, tag_extensions: List[int]):
+    def parse_entry_elm(
+        self,
+        parent_path: str,
+        xml_node: ET.Element,
+        multi_childs_tag: str,
+        tag_extensions: List[int],
+    ):
         """Handle entry element.
 
         Parameters
@@ -291,20 +312,20 @@ class XRDMLParser:
         if tag == multi_childs_tag:
             new_ext = tag_extensions[-1] + 1
             tag_extensions.append(new_ext)
-            tag = tag + '_' + str(new_ext)
+            tag = tag + "_" + str(new_ext)
 
-        if parent_path == '/':
-            parent_path = '/' + tag
+        if parent_path == "/":
+            parent_path = "/" + tag
         else:
             # Parent path ends with element tag
-            parent_path = '/'.join([parent_path, tag])
+            parent_path = "/".join([parent_path, tag])
 
         node_attr = xml_node.attrib
         if node_attr:
             for key, val in node_attr.items():
                 # Some attributes have namespace
                 key = remove_namespace_from_tag(key)
-                path_extend = '/'.join([parent_path, key])
+                path_extend = "/".join([parent_path, key])
                 self.__xrd_dict[path_extend] = val
 
         # In entry element text must get special care on it
@@ -333,7 +354,7 @@ class FormatParser:
         self.file_path = file_path
         self.file_parser = XRDMLParser(self.file_path)
         # termilnological name of file to read config file
-        self.file_term = 'xrdml_' + self.file_parser.xrdml_version
+        self.file_term = "xrdml_" + self.file_parser.xrdml_version
 
     def get_file_format(self):
         """Identifies the format of a given file.
@@ -343,7 +364,7 @@ class FormatParser:
         str:
             The file extension of the file.
         """
-        file_extension = ''.join(Path(self.file_path).suffixes)
+        file_extension = "".join(Path(self.file_path).suffixes)
         return file_extension
 
     def parse_xrdml(self):
@@ -398,14 +419,20 @@ class FormatParser:
         """
 
         xrd_dict = self.parse()
-        if len(config_dict) == 0 and self.file_parser.xrdml_version == '1.5':
+        if len(config_dict) == 0 and self.file_parser.xrdml_version == "1.5":
             from pynxtools.dataconverter.readers.xrd.config import xrdml
+
             config_dict = xrdml
-        feed_xrdml_to_template(template, xrd_dict, eln_dict,
-                               file_term=self.file_term, config_dict=config_dict)
+        feed_xrdml_to_template(
+            template,
+            xrd_dict,
+            eln_dict,
+            file_term=self.file_term,
+            config_dict=config_dict,
+        )
 
     def parse(self):
-        '''Parses the file based on its format.
+        """Parses the file based on its format.
 
         Returns:
         dict
@@ -413,7 +440,7 @@ class FormatParser:
 
         Raises:
             ValueError: If the file format is unsupported.
-        '''
+        """
         file_format = self.get_file_format()
         slash_sep_dict = {}
         if file_format == ".xrdml":

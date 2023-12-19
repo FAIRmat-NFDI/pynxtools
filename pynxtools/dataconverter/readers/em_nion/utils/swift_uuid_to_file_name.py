@@ -35,6 +35,6 @@ def encode(uuid_: uuid.UUID, alphabet: str) -> str:
 
 
 def uuid_to_file_name(data_item_uuid_str: str) -> str:
-    data_item_uuid_uuid = uuid.UUID(f'{data_item_uuid_str}')
+    data_item_uuid_uuid = uuid.UUID(f"{data_item_uuid_str}")
     return f'data_{encode(data_item_uuid_uuid, "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")}'
     # 25 character results

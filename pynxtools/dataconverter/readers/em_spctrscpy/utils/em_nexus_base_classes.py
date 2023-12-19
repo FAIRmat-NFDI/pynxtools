@@ -21,28 +21,29 @@
 
 from typing import Dict
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_versioning \
-    import NX_EM_ADEF_NAME, NX_EM_ADEF_VERSION, \
-    NX_EM_EXEC_NAME, NX_EM_EXEC_VERSION
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_versioning import (
+    NX_EM_ADEF_NAME,
+    NX_EM_ADEF_VERSION,
+    NX_EM_EXEC_NAME,
+    NX_EM_EXEC_VERSION,
+)
 
 
 class NxObject:  # pylint: disable=too-few-public-methods
     """An object in a graph e.g. a field or group in NeXus."""
 
-    def __init__(self,
-                 name: str = None,
-                 unit: str = None,
-                 dtype=str,
-                 value=None,
-                 **kwargs):
+    def __init__(
+        self, name: str = None, unit: str = None, dtype=str, value=None, **kwargs
+    ):
         if name is not None:
             assert name != "", "Argument name needs to be a non-empty string !"
         if unit is not None:
             assert unit != "", "Argument unit needs to be a non-empty string !"
         assert dtype is not None, "Argument dtype must not be None !"
         if dtype is not None:
-            assert isinstance(dtype, type), \
-                "Argument dtype needs a valid, ideally numpy, datatype !"
+            assert isinstance(
+                dtype, type
+            ), "Argument dtype needs a valid, ideally numpy, datatype !"
         # ##MK::if value is not None:
         self.is_a = "NXobject"
         self.is_attr = False  # if True indicates object is attribute
@@ -60,13 +61,14 @@ class NxObject:  # pylint: disable=too-few-public-methods
             self.value = None
         # value should be a numpy scalar, tensor, or string if possible
         if "is_attr" in kwargs:
-            assert isinstance(kwargs["is_attr"], bool), \
-                "Kwarg is_attr needs to be a boolean !"
+            assert isinstance(
+                kwargs["is_attr"], bool
+            ), "Kwarg is_attr needs to be a boolean !"
             self.is_attr = kwargs["is_attr"]
 
     def __repr__(self):
         """Report values."""
-        return f'''Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}'''
+        return f"""Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}"""
 
 
 class NxEmUser:  # pylint: disable=too-few-public-methods
@@ -96,12 +98,11 @@ class NxEmUser:  # pylint: disable=too-few-public-methods
         template[f"{prefix}/name"] = self.meta["name"].value
         template[f"{prefix}/orcid"] = self.meta["orcid"].value
         template[f"{prefix}/role"] = self.meta["role"].value
-        template[f"{prefix}/social_media_name"] \
-            = self.meta["social_media_name"].value
-        template[f"{prefix}/social_media_platform"] \
-            = self.meta["social_media_platform"].value
-        template[f"{prefix}/telephone_number"] \
-            = self.meta["telephone_number"].value
+        template[f"{prefix}/social_media_name"] = self.meta["social_media_name"].value
+        template[f"{prefix}/social_media_platform"] = self.meta[
+            "social_media_platform"
+        ].value
+        template[f"{prefix}/telephone_number"] = self.meta["telephone_number"].value
         return template
 
 
@@ -142,17 +143,14 @@ class NxEmAppDefHeader:  # pylint: disable=too-few-public-methods
 
     def __init__(self):
         self.meta: Dict[str, NxObject] = {}
-        self.meta["version"] \
-            = NxObject(value=NX_EM_ADEF_VERSION, is_attr=True)
-        self.meta["definition"] \
-            = NxObject(value=NX_EM_ADEF_NAME)
+        self.meta["version"] = NxObject(value=NX_EM_ADEF_VERSION, is_attr=True)
+        self.meta["definition"] = NxObject(value=NX_EM_ADEF_NAME)
         self.meta["experiment_identifier"] = NxObject()
         self.meta["experiment_description"] = NxObject()
         self.meta["start_time"] = NxObject()
         self.meta["end_time"] = NxObject()
         self.meta["program"] = NxObject(value=NX_EM_EXEC_NAME)
-        self.meta["program_version"] \
-            = NxObject(value=NX_EM_EXEC_VERSION, is_attr=True)
+        self.meta["program_version"] = NxObject(value=NX_EM_EXEC_VERSION, is_attr=True)
         self.meta["experiment_documentation"] = NxObject()
         self.meta["thumbnail"] = NxObject()
         self.meta["thumbnail_type"] = NxObject()
@@ -165,19 +163,19 @@ class NxEmAppDefHeader:  # pylint: disable=too-few-public-methods
         """
         template[f"{prefix}/@version"] = self.meta["version"].value
         template[f"{prefix}/definition"] = self.meta["definition"].value
-        template[f"{prefix}/experiment_identifier"] \
-            = self.meta["experiment_identifier"].value
-        template[f"{prefix}/experiment_description"] \
-            = self.meta["experiment_description"].value
+        template[f"{prefix}/experiment_identifier"] = self.meta[
+            "experiment_identifier"
+        ].value
+        template[f"{prefix}/experiment_description"] = self.meta[
+            "experiment_description"
+        ].value
         template[f"{prefix}/start_time"] = self.meta["start_time"].value
         template[f"{prefix}/end_time"] = self.meta["end_time"].value
         template[f"{prefix}/program"] = self.meta["program"].value
-        template[f"{prefix}/program/@version"] \
-            = self.meta["program_version"].value
-        template[f"{prefix}/experiment_documentation"] \
-            = self.meta["experiment_documentation"].value
-        template[f"{prefix}/thumbnail"] \
-            = self.meta["thumbnail"].value
-        template[f"{prefix}/thumbnail/@type"] \
-            = self.meta["thumbnail_type"].value
+        template[f"{prefix}/program/@version"] = self.meta["program_version"].value
+        template[f"{prefix}/experiment_documentation"] = self.meta[
+            "experiment_documentation"
+        ].value
+        template[f"{prefix}/thumbnail"] = self.meta["thumbnail"].value
+        template[f"{prefix}/thumbnail/@type"] = self.meta["thumbnail_type"].value
         return template
