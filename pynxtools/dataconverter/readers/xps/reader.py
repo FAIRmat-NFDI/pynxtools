@@ -246,7 +246,9 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
                     xps_data_dict, key_part, dt_typ=XPS_DETECTOR_TOKEN
                 )
 
-                fill_detector_group(key, entries_values, config_dict, template, entry_set)
+                fill_detector_group(
+                    key, entries_values, config_dict, template, entry_set
+                )
 
             elif XPS_TOKEN in str(value):
                 token = value.split(XPS_TOKEN)[-1]
@@ -258,7 +260,9 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
                     modified_key = key.replace("[entry]", f"[{entry}]")
                     template[modified_key] = ent_value
                     try:
-                        template[f"{modified_key}/@units"] = config_dict[f"{key}/@units"]
+                        template[f"{modified_key}/@units"] = config_dict[
+                            f"{key}/@units"
+                        ]
                     except KeyError:
                         pass
 
@@ -272,9 +276,11 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set)
                     modified_key = key.replace("[entry]", f"[{entry}]")
                     template[modified_key] = ent_value
                     try:
-                        template[f"{modified_key}/@units"] = config_dict[f"{key}/@units"]
+                        template[f"{modified_key}/@units"] = config_dict[
+                            f"{key}/@units"
+                        ]
                     except KeyError:
-                       pass
+                        pass
 
 
 # pylint: disable=too-many-branches
@@ -337,6 +343,7 @@ def _concatenate_values(value1, value2):
         concatenated = value1 + value2
 
     return concatenated
+
 
 def update_dict_without_replacing(existing_dict, new_dict):
     """
@@ -410,15 +417,13 @@ class XPSReader(BaseReader):
 
                 # If there are multiple input data files of the same type,
                 # make sure that existing keys are not overwritten.
-                xps_data_dict = update_dict_without_replacing(
-                    xps_data_dict, data_dict)
+                xps_data_dict = update_dict_without_replacing(xps_data_dict, data_dict)
 
             elif file_ext in XpsDataFileParser.__prmt_metadata_file_ext__:
                 parser = XpsDataFileParser([file])
                 data_dict = parser.get_dict(**kwargs)
 
-                xps_data_dict = update_dict_without_replacing(
-                    xps_data_dict, data_dict)
+                xps_data_dict = update_dict_without_replacing(xps_data_dict, data_dict)
 
             # This code is not very robust.
             elif file_ext == "json":
