@@ -69,7 +69,7 @@ class NxEmZippedNionProjectSubParser:
         # just get the *.h5 files irrespective whether parsed later or not
         self.configure()
         self.supported = False
-    
+
     def configure(self):
         self.tmp["cfg"]: Dict = {}
         self.tmp["cfg"]["event_data_written"] = False

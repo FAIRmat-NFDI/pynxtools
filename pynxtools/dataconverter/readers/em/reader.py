@@ -22,10 +22,10 @@
 from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.readers.em.concepts.nxs_concepts import NxEmAppDef
+# from pynxtools.dataconverter.readers.em.concepts.nxs_concepts import NxEmAppDef
 # from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
 # from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
-from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
+# from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
 from pynxtools.dataconverter.readers.em.subparsers.nxs_nion import NxEmZippedNionProjectSubParser
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 # from pynxtools.dataconverter.readers.em.geometry.convention_mapper import NxEmConventionMapper
