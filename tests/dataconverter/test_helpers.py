@@ -352,7 +352,13 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
-            remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
+            alter_dict(
+                remove_from_dict(
+                    TEMPLATE, "/ENTRY[my_entry]/required_group/description"
+                ),
+                "/ENTRY[my_entry]/required_group",
+                None,
+            ),
             "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
             id="allow-required-and-empty-group",
         ),
