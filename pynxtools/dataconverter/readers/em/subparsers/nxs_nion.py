@@ -80,11 +80,13 @@ class NxEmZippedNionProjectSubParser:
 
     def check_if_zipped_nionswift_project_file(self, verbose=False):
         """Inspect the content of the compressed project file to check if supported."""
-        with open(self.file_path, 'rb', 0) as file:
-            s = mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ)
+        with open(self.file_path, 'rb', 0) as fp:
+            s = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
             magic = s.read(8)
             if verbose is True:
-                print(f"Expecting pfile: {self.file_path}: __{magic}__")
+                fp.seek(0, 2)
+                eof_byte_offset = fp.tell()
+                print(f"Expecting zip-compressed file: ___{self.file_path}___{magic}___{get_sha256_of_file_content(fp)}___{eof_byte_offset}___")
             """
             if magic != b'PK\x03\x04':  # https://en.wikipedia.org/wiki/List_of_file_signatures
                 print(f"Test 1 failed, {self.file_path} is not a ZIP archive !")
@@ -99,7 +101,7 @@ class NxEmZippedNionProjectSubParser:
                         if verbose is True:
                             fp.seek(0, 2)
                             eof_byte_offset = fp.tell()
-                            print(f"Expecting hfive: {file}: __{magic}___{get_sha256_of_file_content(fp)}__{eof_byte_offset}")
+                            print(f"Expecting hfive: ___{file}___{magic}___{get_sha256_of_file_content(fp)}___{eof_byte_offset}___")
                         key = file[file.rfind("/") + 1:].replace(".h5", "")
                         if key not in self.hfive_file_dict:
                             self.hfive_file_dict[key] = file
@@ -109,7 +111,7 @@ class NxEmZippedNionProjectSubParser:
                         if verbose is True:
                             fp.seek(0, 2)
                             eof_byte_offset = fp.tell()
-                            print(f"Expecting ndata: {file}: __{magic}__{get_sha256_of_file_content(fp)}__{eof_byte_offset}")
+                            print(f"Expecting ndata: ___{file}___{magic}___{get_sha256_of_file_content(fp)}___{eof_byte_offset}___")
                         key = file[file.rfind("/") + 1:].replace(".ndata", "")
                         if key not in self.ndata_file_dict:
                             self.ndata_file_dict[key] = file
@@ -119,7 +121,7 @@ class NxEmZippedNionProjectSubParser:
                         if verbose is True:
                             fp.seek(0, 2)
                             eof_byte_offset = fp.tell()
-                            print(f"Expecting nsproj: {file}: __{magic}__{get_sha256_of_file_content(fp)}__{eof_byte_offset}")
+                            print(f"Expecting nsproj: ___{file}___{magic}___{get_sha256_of_file_content(fp)}___{eof_byte_offset}___")
                         key = file[file.rfind("/") + 1:].replace(".nsproj", "")
                         if key not in self.proj_file_dict:
                             self.proj_file_dict[key] = file
@@ -135,11 +137,11 @@ class NxEmZippedNionProjectSubParser:
         self.supported = True
         if verbose is True:
             for key, val in self.proj_file_dict.items():
-                print(f"{key}, {val}")
+                print(f"nsprj: ___{key}___{val}___")
             for key, val in self.ndata_file_dict.items():
-                print(f"{key}, {val}")
+                print(f"ndata: ___{key}___{val}___")
             for key, val in self.hfive_file_dict.items():
-                print(f"{key}, {val}")
+                print(f"hfive: ___{key}___{val}___")
         return True
 
     def update_event_identifier(self):
@@ -160,30 +162,28 @@ class NxEmZippedNionProjectSubParser:
         # TODO::
         return template
 
-    def process_ndata(self, file_hdl, full_path, template):
+    def process_ndata(self, file_hdl, full_path, template, verbose=False):
         """Handle reading and processing of opened *.ndata inside the ZIP file."""
         # assure that we start reading that file_hdl/pointer from the beginning...
         file_hdl.seek(0)
         local_files, dir_files, eocd = nsnd.parse_zip(file_hdl)
-        # ...now that pointer might point somewhere...
         flat_metadata_dict = {}
         """
         data_arr = None
         nx_concept_name = ""
         """
-
+        print(f"Inspecting {full_path} with len(local_files.keys()) ___{len(local_files.keys())}___")
         for offset, tpl in local_files.items():
-            print(f"{offset}__{tpl}")
-            continue
-            # print(f"{tpl}")
-            if tpl[0] == b'metadata.json':
-                print(f"Extract metadata.json from {full_path} at offset {offset}")
+            print(f"{offset}___{tpl}")
+            # report to know there are more than metadata.json files in the ndata swift container format
+            if tpl[0] == b"metadata.json":
+                print(f"Extract metadata.json from ___{full_path}___ at offset ___{offset}___")
                 # ... explicit jump back to beginning of the file
                 file_hdl.seek(0)
                 metadata_dict = nsnd.read_json(file_hdl,
                                                local_files,
                                                dir_files,
-                                               b'metadata.json')
+                                               b"metadata.json")
                 """
                 nx_concept_key = identify_nexus_concept_key(metadata_dict)
                 nx_concept_name = nexus_concept_dict[nx_concept_key]
@@ -191,29 +191,36 @@ class NxEmZippedNionProjectSubParser:
                 """
 
                 flat_metadata_dict = fd.FlatDict(metadata_dict, delimiter='/')
-                break
-                # because we expect (based on Benedikt's example) to find only one json file
+                if verbose is True:
+                    print(f"Flattened content of this metadata.json")
+                    for key, value in flat_metadata_dict.items():
+                        print(f"ndata, metadata.json, flat: ___{key}___{value}___")
+                # no break here, because we would like to inspect all content
+                # expect (based on Benedikt's example) to find only one json file
                 # in that *.ndata file pointed to by file_hdl
         if flat_metadata_dict == {}:  # only continue if some metadata were retrieved
             return template
 
         for offset, tpl in local_files.items():
             # print(f"{tpl}")
-            if tpl[0] == b'data.npy':
-                print(f"Extract data.npy from {full_path} at offset {offset}")
+            if tpl[0] == b"data.npy":
+                print(f"Extract data.npy from ___{full_path}___ at offset ___{offset}___")
                 file_hdl.seek(0)
                 data_arr = nsnd.read_data(file_hdl,
                                           local_files,
                                           dir_files,
-                                          b'data.npy')
+                                          b"data.npy")
+                if isinstance(data_arr, np.ndarray):
+                    print(f"ndata, data.npy, type, shape, dtype: ___{type(data_arr)}___{np.shape(data_arr)}___{data_arr.dtype}___")
                 break
                 # because we expect (based on Benedikt's example) to find only one npy file
                 # in that *.ndata file pointed to by file_hdl
 
-        print(f"data_arr type {data_arr.dtype}, shape {np.shape(data_arr)}")
         # check on the integriety of the data_arr array that it is not None or empty
         # this should be done more elegantly by just writing the
         # data directly into the template and not creating another copy
+        # TODO::only during inspection
+        return template
 
         self.map_to_nexus(flat_metadata_dict, data_arr, nx_concept_name, template)
         del flat_metadata_dict
@@ -228,9 +235,10 @@ class NxEmZippedNionProjectSubParser:
         data_arr = None
         nx_concept_name = ""
         """
-
         file_hdl.seek(0)
         with h5py.File(file_hdl, "r") as h5r:
+            print(f"Inspecting {full_path} with len(h5r.keys()) ___{len(h5r.keys())}___")
+            print(f"{h5r.keys()}")
             metadata_dict = json.loads(h5r["data"].attrs["properties"])
 
             """
@@ -241,17 +249,17 @@ class NxEmZippedNionProjectSubParser:
 
             flat_metadata_dict = fd.FlatDict(metadata_dict, delimiter='/')
             if verbose is True:
-                for pkey, pdict in flat_metadata_dict.items():
-                    print(f"{pkey}")
-                    if isinstance(pdict, dict):
-                        for key, val in pdict.items():
-                            print(f"{key}, {val}")
+                print(f"Flattened content of this metadata.json")
+                for key, value in flat_metadata_dict.items():
+                    print(f"hfive, data, flat: ___{key}___{value}___")
 
             if flat_metadata_dict == {}:  # only continue if some metadata were retrieved
                 return template
 
             data_arr = h5r["data"][()]
 
+            if isinstance(data_arr, np.ndarray):
+                print(f"hfive, data, type, shape, dtype: ___{type(data_arr)}___{np.shape(data_arr)}___{data_arr.dtype}___")
             """
             print(f"data_arr type {data_arr.dtype}, shape {np.shape(data_arr)}")
             # check on the integriety of the data_arr array that it is not None or empty
@@ -273,11 +281,9 @@ class NxEmZippedNionProjectSubParser:
                     nionswift_proj_mdata = fd.FlatDict(yaml.safe_load(file_hdl), delimiter='/')
                     # TODO::inspection phase, maybe with yaml to file?
                     if verbose is True:
-                        for pkey, pdict in nionswift_proj_mdata.items():  # ["display_items"]:
-                            print(f"{pkey}")
-                            if isinstance(pdict, dict):
-                                for key, val in pdict.items():
-                                    print(f"{key}, {val}")
+                        print(f"Flattened content of {proj_file_name}")
+                        for key, value in nionswift_proj_mdata.items():  # ["display_items"]:
+                            print(f"nsprj, flat: ___{key}___{value}___")
         if nionswift_proj_mdata == {}:
             return template
 
@@ -295,7 +301,7 @@ class NxEmZippedNionProjectSubParser:
                                 with zip_file_hdl.open(self.ndata_file_dict[key]) as file_hdl:
                                     self.process_ndata(file_hdl,
                                                        self.ndata_file_dict[key],
-                                                       template)
+                                                       template, verbose)
                         elif key in self.hfive_file_dict.keys():
                             print(f"Key {key} is *.h5 maps to {self.hfive_file_dict[key]}")
                             with ZipFile(self.file_path) as zip_file_hdl:
@@ -303,7 +309,7 @@ class NxEmZippedNionProjectSubParser:
                                 with zip_file_hdl.open(self.hfive_file_dict[key]) as file_hdl:
                                     self.process_hfive(file_hdl,
                                                        self.hfive_file_dict[key],
-                                                       template)
+                                                       template, verbose)
                         else:
                             print(f"Key {key} has no corresponding data file")
         return template
