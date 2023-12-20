@@ -17,14 +17,16 @@
 #
 """Test cases for the helper functions used by the DataConverter."""
 
-import xml.etree.ElementTree as ET
-import os
 import logging
-from setuptools import distutils
-import pytest
+import os
+import xml.etree.ElementTree as ET
+
 import numpy as np
+import pytest
+from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.logger import logger as pynx_logger
 from pynxtools.dataconverter.template import Template
 
 
@@ -213,6 +215,7 @@ TEMPLATE["lone_groups"] = [
 TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 
 
+# pylint: disable=too-many-arguments
 @pytest.mark.parametrize(
     "data_dict,error_message",
     [
@@ -354,9 +357,9 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                     TEMPLATE, "/ENTRY[my_entry]/required_group/description"
                 ),
                 "/ENTRY[my_entry]/required_group",
-                {},
+                None,
             ),
-            (""),
+            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
             id="allow-required-and-empty-group",
         ),
         pytest.param(
@@ -367,8 +370,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't been "
-                "supplied while its optional parent, /ENTRY[entry]/optional_parent/"
-                "req_group_in_opt_group, is supplied."
+                "supplied while its optional parent, /ENTRY[entry]/optional_parent, is supplied."
             ),
             id="req-group-in-opt-parent-removed",
         ),
@@ -377,8 +379,10 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         ),
     ],
 )
-def test_validate_data_dict(data_dict, error_message, template, nxdl_root, request):
-    """Unit test for the data validation routine"""
+def test_validate_data_dict(
+    caplog, data_dict, error_message, template, nxdl_root, request
+):
+    """Unit test for the data validation routine."""
     if request.node.callspec.id in (
         "valid-data-dict",
         "lists",
@@ -388,13 +392,25 @@ def test_validate_data_dict(data_dict, error_message, template, nxdl_root, reque
         "no-child-provided-optional-parent",
         "int-instead-of-chars",
         "link-dict-instead-of-bool",
-        "allow-required-and-empty-group",
         "opt-group-completely-removed",
     ):
-        helpers.validate_data_dict(template, data_dict, nxdl_root)
+        helpers.validate_data_dict(template, data_dict, nxdl_root, logger=pynx_logger)
+    # Missing required fields caught by logger with warning
+    elif request.node.callspec.id in (
+        "empty-required-field",
+        "allow-required-and-empty-group",
+        "req-group-in-opt-parent-removed",
+        "missing-empty-yet-required-group",
+        "missing-empty-yet-required-group2",
+    ):
+        assert "" == caplog.text
+        # logger records
+        captured_logs = caplog.records
+        helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
+        assert any(error_message in rec.message for rec in captured_logs)
     else:
         with pytest.raises(Exception) as execinfo:
-            helpers.validate_data_dict(template, data_dict, nxdl_root)
+            helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
         assert (error_message) == str(execinfo.value)
 
 
