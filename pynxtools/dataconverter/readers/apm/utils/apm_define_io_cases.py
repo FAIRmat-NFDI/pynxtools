@@ -20,6 +20,9 @@
 # pylint: disable=no-member,duplicate-code
 
 from typing import Tuple, Dict, List
+VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
+VALID_FILE_NAME_SUFFIX_RANGE = [".rng", ".rrng", ".env", ".fig.txt", "range_.h5"]
+VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
 
 
 class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
@@ -41,50 +44,58 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         self.reconstruction: List[str] = []
         self.ranging: List[str] = []
         self.is_valid = False
-        self.supported_mime_types = [
-            "pos", "epos", "apt", "rrng", "rng", "txt", "yaml", "yml"]
-        for mime_type in self.supported_mime_types:
-            self.case[mime_type] = []
-
-        self.sort_files_by_mime_type(file_paths)
+        self.supported_file_name_suffixes = VALID_FILE_NAME_SUFFIX_RECON \
+            + VALID_FILE_NAME_SUFFIX_RANGE + VALID_FILE_NAME_SUFFIX_CONFIG
+        print(f"self.supported_file_name_suffixes: {self.supported_file_name_suffixes}")
+        self.sort_files_by_file_name_suffix(file_paths)
         self.check_validity_of_file_combinations()
 
-    def sort_files_by_mime_type(self, file_paths: Tuple[str] = None):
-        """Sort all input-files based on their mimetype to prepare validity check."""
-        for file_name in file_paths:
-            index = file_name.lower().rfind(".")
-            if index >= 0:
-                suffix = file_name.lower()[index + 1::]
-                if suffix in self.supported_mime_types:
-                    if file_name not in self.case[suffix]:
-                        self.case[suffix].append(file_name)
+    def sort_files_by_file_name_suffix(self, file_paths: Tuple[str] = None):
+        """Sort all input-files based on their name suffix to prepare validity check."""
+        for suffix in self.supported_file_name_suffixes:
+            self.case[suffix] = []
+        for fpath in file_paths:
+            for suffix in self.supported_file_name_suffixes:
+                if suffix not in [".h5", "range_.h5"]:
+                    if (fpath.lower().endswith(suffix)) and (fpath not in self.case[suffix]):
+                        self.case[suffix].append(fpath)
+                else:
+                    if fpath.lower().endswith("range_.h5") is True:
+                        self.case["range_.h5"].append(fpath)
+                    elif fpath.lower().endswith(".h5") is True:
+                        self.case[".h5"].append(fpath)
+                    else:
+                        continue
+                # HDF5 files need special treatment, this already shows that magic numbers
+                # should better have been used or signatures to avoid having to have as
+                # complicated content checks as we had to implement e.g. for the em reader
 
     def check_validity_of_file_combinations(self):
         """Check if this combination of types of files is supported."""
-        recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT
-        range_input = 0  # ranging definition file, e.g. RNG, RRNG
+        recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT, ATO, CSV
+        range_input = 0  # ranging definition file, e.g. RNG, RRNG, ENV, FIG.TXT
         other_input = 0  # generic ELN or OASIS-specific configurations
-        for mime_type, value in self.case.items():
-            if mime_type in ["pos", "epos", "apt"]:
+        for suffix, value in self.case.items():
+            if suffix in VALID_FILE_NAME_SUFFIX_RECON:
                 recon_input += len(value)
-            elif mime_type in ["rrng", "rng", "txt"]:
+            elif suffix in VALID_FILE_NAME_SUFFIX_RANGE:
                 range_input += len(value)
-            elif mime_type in ["yaml", "yml"]:
+            elif suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
                 other_input += len(value)
             else:
                 continue
 
-        if (recon_input == 1) and (range_input == 1) and (1 <= other_input <= 2):
+        if (recon_input == 1) and (range_input == 1):  # and (1 <= other_input <= 2):
             self.is_valid = True
             self.reconstruction: List[str] = []
             self.ranging: List[str] = []
-            for mime_type in ["pos", "epos", "apt"]:
-                self.reconstruction += self.case[mime_type]
-            for mime_type in ["rrng", "rng", "txt"]:
-                self.ranging += self.case[mime_type]
+            for suffix in VALID_FILE_NAME_SUFFIX_RECON:
+                self.reconstruction += self.case[suffix]
+            for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
+                self.ranging += self.case[suffix]
             yml: List[str] = []
-            for mime_type in ["yaml", "yml"]:
-                yml += self.case[mime_type]
+            for suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
+                yml += self.case[suffix]
             for entry in yml:
                 if entry.endswith(".oasis.specific.yaml") \
                         or entry.endswith(".oasis.specific.yml"):

@@ -20,17 +20,13 @@
 # pylint: disable=no-member,duplicate-code,too-many-nested-blocks
 
 import flatdict as fd
-
 import yaml
 
 from ase.data import chemical_symbols
-
 from pynxtools.dataconverter.readers.apm.map_concepts.apm_eln_to_nx_map \
     import NxApmElnInput, NxUserFromListOfDict
-
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import variadic_path_to_specific_path, apply_modifier
-
 from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table \
     import parse_composition_table
 
@@ -53,17 +49,17 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
     during the verification of the template dictionary.
     """
 
-    def __init__(self, file_name: str, entry_id: int):
-        print(f"Extracting data from ELN file: {file_name}")
-        if (file_name.rsplit('/', 1)[-1].startswith("eln_data")
-                or file_name.startswith("eln_data")) and entry_id > 0:
+    def __init__(self, file_path: str, entry_id: int):
+        print(f"Extracting data from ELN file: {file_path}")
+        if (file_path.rsplit('/', 1)[-1].startswith("eln_data")
+                or file_path.startswith("eln_data")) and entry_id > 0:
             self.entry_id = entry_id
-            self.file_name = file_name
-            with open(self.file_name, "r", encoding="utf-8") as stream:
+            self.file_path = file_path
+            with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
         else:
             self.entry_id = 1
-            self.file_name = ""
+            self.file_path = ""
             self.yml = {}
 
     def parse_sample_composition(self, template: dict) -> dict:

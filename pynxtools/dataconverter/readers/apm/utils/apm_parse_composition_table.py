@@ -20,7 +20,6 @@
 # pylint: disable=no-member,too-many-branches
 
 import re
-
 import numpy as np
 
 from ase.data import chemical_symbols

@@ -15,33 +15,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 """Wrapping multiple parsers for vendor files with ranging definition files."""
 
 # pylint: disable=no-member
 
 from typing import Dict, Any
-
 import numpy as np
 
 from ase.data import chemical_symbols
-# ase encodes the zeroth entry as the unknown element X to have
-# atom_numbers all starting with 1 up to len(chemical_symbols) - 1
-
 from ifes_apt_tc_data_modeling.utils.utils \
     import create_isotope_vector, isotope_vector_to_nuclid_list, \
     isotope_vector_to_human_readable_name
-
 from ifes_apt_tc_data_modeling.utils.definitions \
-    import MAX_NUMBER_OF_ATOMS_PER_ION, MQ_EPSILON
-
-from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
-
-from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
-
+    import MAX_NUMBER_OF_ATOMS_PER_ION, MQ_EPSILON, MAX_NUMBER_OF_ION_SPECIES
+from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
-
+from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import ReadPyccaptRangingFileFormat
+from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
+from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
 from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
     import NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
+from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases \
+    import VALID_FILE_NAME_SUFFIX_RANGE
 
 
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
@@ -59,7 +55,6 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     nuclid_list = isotope_vector_to_nuclid_list(ivec)
     template[f"{trg}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
     template[f"{trg}name"] = isotope_vector_to_human_readable_name(ivec, 0)
-
     return template
 
 
@@ -69,16 +64,15 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
     for ion in ion_lst:
         path = f"{trg}ION[ion{ion_id}]/"
-
         template[f"{path}isotope_vector"] = np.reshape(
-            np.asarray(ion.isotope_vector.typed_value, np.uint16),
+            np.asarray(ion.isotope_vector.values, np.uint16),
             (1, MAX_NUMBER_OF_ATOMS_PER_ION))
-        template[f"{path}charge_state"] = np.int8(ion.charge_state.typed_value)
+        template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
         template[f"{path}mass_to_charge_range"] \
-            = np.array(ion.ranges.typed_value, np.float32)
+            = np.array(ion.ranges.values, np.float32)
         template[f"{path}mass_to_charge_range/@units"] = "Da"  # ion.ranges.unit
-        template[f"{path}nuclid_list"] = ion.nuclid_list.typed_value
-        template[f"{path}name"] = ion.name.typed_value
+        template[f"{path}nuclid_list"] = ion.nuclid_list.values
+        template[f"{path}name"] = ion.name.values
 
         path = f"{trg}ION[ion{ion_id}]/charge_state_model/"
         template[f"{path}min_abundance"] \
@@ -107,82 +101,98 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
             = {"compress": np.array(ion.charge_state_model["min_half_life_vector"],
                                     np.float64), "strength": 1}
         template[f"{path}min_half_life_vector/@units"] = "s"
-
         ion_id += 1
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
     template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
-
     return template
 
+# modify the template to take into account ranging
+# ranging is currently not resolved recursively because
+# ranging(NXprocess) is a group which has a minOccurs=1, \er
+#     maxOccurs="unbounded" set of possible named
+# NXion members, same case for more than one operator
+# ion indices are on the interval [0, 256)
 
-def extract_data_from_rng_file(file_name: str, template: dict, entry_id: int) -> dict:
-    """Add those required information which an RNG file has."""
-    # modify the template to take into account ranging
-    # ranging is currently not resolved recursively because
-    # ranging(NXprocess) is a group which has a minOccurs=1, \
-    #     maxOccurs="unbounded" set of possible named
-    # NXion members, same case for more than one operator
-    print(f"Extracting data from RNG file: {file_name}")
-    rangefile = ReadRngFileFormat(file_name)
 
-    # ion indices are on the interval [0, 256)
-    assert len(rangefile.rng["molecular_ions"]) <= np.iinfo(np.uint8).max + 1, \
-        "Current implementation does not support more than 256 ion types"
+def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) -> dict:
+    """Add those required information which a ENV file has."""
+    print(f"Extracting data from ENV file: {file_path}")
+    rangefile = ReadEnvFileFormat(file_path)
+    if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        raise ValueError(f"Current implementation does not support "
+                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
 
     add_standardize_molecular_ions(
-        rangefile.rng["molecular_ions"], template, entry_id)
-
+        rangefile.env["molecular_ions"], template, entry_id)
     return template
 
 
-def extract_data_from_rrng_file(file_name: str, template: dict, entry_id) -> dict:
-    """Add those required information which an RRNG file has."""
-    # modify the template to take into account ranging
-    # ranging is currently not resolved recursively because
-    # ranging(NXprocess) is a group which has a minOccurs=1, \er
-    #     maxOccurs="unbounded" set of possible named
-    # NXion members, same case for more than one operator
-    print(f"Extracting data from RRNG file: {file_name}")
-    rangefile = ReadRrngFileFormat(file_name)
-
-    # ion indices are on the interval [0, 256)
-    assert len(rangefile.rrng["molecular_ions"]) <= np.iinfo(np.uint8).max + 1, \
-        "Current implementation does not support more than 256 ion types"
-
-    add_standardize_molecular_ions(
-        rangefile.rrng["molecular_ions"], template, entry_id)
-
-    return template
-
-
-def extract_data_from_fig_txt_file(file_name: str, template: dict, entry_id) -> dict:
-    """Add those required information which an transcoded Matlab figure TXT file has."""
-    print(f"Extracting data from FIG.TXT file: {file_name}")
-    rangefile = ReadFigTxtFileFormat(file_name)
-
-    # ion indices are on the interval [0, 256)
-    assert len(rangefile.fig["molecular_ions"]) <= np.iinfo(np.uint8).max + 1, \
-        "Current implementation does not support more than 256 ion types"
+def extract_data_from_fig_txt_file(file_path: str, template: dict, entry_id: int) -> dict:
+    """Add those required information which a FIG.TXT file has."""
+    print(f"Extracting data from FIG.TXT file: {file_path}")
+    rangefile = ReadFigTxtFileFormat(file_path)
+    if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        raise ValueError(f"Current implementation does not support "
+                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
 
     add_standardize_molecular_ions(
         rangefile.fig["molecular_ions"], template, entry_id)
+    return template
 
+
+def extract_data_from_pyccapt_file(file_path: str, template: dict, entry_id: int) -> dict:
+    """Add those required information which a pyccapt/ranging HDF5 file has."""
+    print(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
+    rangefile = ReadPyccaptRangingFileFormat(file_path)
+    if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        raise ValueError(f"Current implementation does not support "
+                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+
+    add_standardize_molecular_ions(
+        rangefile.rng["molecular_ions"], template, entry_id)
+    return template
+
+
+def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) -> dict:
+    """Add those required information which an RNG file has."""
+    print(f"Extracting data from RNG file: {file_path}")
+    rangefile = ReadRngFileFormat(file_path)
+    if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        raise ValueError(f"Current implementation does not support "
+                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+
+    add_standardize_molecular_ions(
+        rangefile.rng["molecular_ions"], template, entry_id)
+    return template
+
+
+def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dict:
+    """Add those required information which an RRNG file has."""
+    print(f"Extracting data from RRNG file: {file_path}")
+    rangefile = ReadRrngFileFormat(file_path)
+    if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        raise ValueError(f"Current implementation does not support more "
+                         f"than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+
+    add_standardize_molecular_ions(
+        rangefile.rrng["molecular_ions"], template, entry_id)
     return template
 
 
 class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
     """Wrapper for multiple parsers for vendor specific files."""
 
-    def __init__(self, file_name: str, entry_id: int):
-        self.meta: Dict[str, Any] = {}
-        self.meta["file_format"] = "none"
-        self.meta["file_name"] = file_name
-        self.meta["entry_id"] = entry_id
-        index = file_name.lower().rfind(".")
-        if index >= 0:
-            mime_type = file_name.lower()[index + 1::]
-            self.meta["file_format"] = mime_type
+    def __init__(self, file_path: str, entry_id: int):
+        self.meta: Dict[str, Any] = {"file_format": None,
+                                     "file_path": file_path,
+                                     "entry_id": entry_id}
+        for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
+            if file_path.lower().endswith(suffix) is True:
+                self.meta["file_format"] = suffix
+                break
+        if self.meta["file_format"] is None:
+            raise ValueError(f"{file_path} is not a supported ranging definitions file!")
 
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
@@ -225,7 +235,8 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
         """
         # resolve the next two program references more informatively
         trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
-        template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
+        template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] \
+            = np.uint32(MAX_NUMBER_OF_ATOMS_PER_ION)
 
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
@@ -238,22 +249,22 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
 
         add_unknown_iontype(template, self.meta["entry_id"])
 
-        if self.meta["file_name"] != "" and self.meta["file_format"] != "none":
-            if self.meta["file_format"] == "rng":
-                extract_data_from_rng_file(
-                    self.meta["file_name"],
-                    template,
-                    self.meta["entry_id"])
-            elif self.meta["file_format"] == "rrng":
-                extract_data_from_rrng_file(
-                    self.meta["file_name"],
-                    template,
-                    self.meta["entry_id"])
-            elif self.meta["file_format"] == "txt":
-                extract_data_from_fig_txt_file(
-                    self.meta["file_name"],
-                    template,
-                    self.meta["entry_id"])
+        if self.meta["file_path"] != "" and self.meta["file_format"] is not None:
+            if self.meta["file_format"] == ".env":
+                extract_data_from_env_file(self.meta["file_path"],
+                                           template, self.meta["entry_id"])
+            elif self.meta["file_format"] == ".fig.txt":
+                extract_data_from_fig_txt_file(self.meta["file_path"],
+                                               template, self.meta["entry_id"])
+            elif self.meta["file_format"] == "range_.h5":
+                extract_data_from_pyccapt_file(self.meta["file_path"],
+                                               template, self.meta["entry_id"])
+            elif self.meta["file_format"] == ".rng":
+                extract_data_from_rng_file(self.meta["file_path"],
+                                           template, self.meta["entry_id"])
+            elif self.meta["file_format"] == ".rrng":
+                extract_data_from_rrng_file(self.meta["file_path"],
+                                            template, self.meta["entry_id"])
             else:
                 trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
                 template[f"{trg}number_of_ion_types"] = 1
@@ -262,5 +273,4 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
             template[f"{trg}number_of_ion_types"] = 1
 
         self.update_atom_types_ranging_definitions_based(template)
-
         return template
