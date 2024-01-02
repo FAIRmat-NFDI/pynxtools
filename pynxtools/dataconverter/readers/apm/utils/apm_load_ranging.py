@@ -74,33 +74,52 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
         template[f"{path}nuclid_list"] = ion.nuclid_list.values
         template[f"{path}name"] = ion.name.values
 
-        path = f"{trg}ION[ion{ion_id}]/charge_state_model/"
-        template[f"{path}min_abundance"] \
-            = np.float64(ion.charge_state_model["min_abundance"])
-        template[f"{path}min_abundance_product"] \
-            = np.float64(ion.charge_state_model["min_abundance_product"])
-        template[f"{path}min_half_life"] \
-            = np.float64(ion.charge_state_model["min_half_life"])
-        template[f"{path}min_half_life/@units"] = "s"
-        template[f"{path}sacrifice_isotopic_uniqueness"] \
-            = np.uint8(ion.charge_state_model["sacrifice_isotopic_uniqueness"])
-        template[f"{path}isotope_matrix"] \
-            = {"compress": np.array(ion.charge_state_model["isotope_matrix"],
-                                    np.uint16), "strength": 1}
-        template[f"{path}charge_state_vector"] \
-            = {"compress": np.array(ion.charge_state_model["charge_state_vector"],
-                                    np.int8), "strength": 1}
-        template[f"{path}mass_vector"] \
-            = {"compress": np.array(ion.charge_state_model["mass_vector"],
-                                    np.float64), "strength": 1}
-        template[f"{path}mass_vector/@units"] = "u"
-        template[f"{path}natural_abundance_product_vector"] \
-            = {"compress": np.array(ion.charge_state_model["nat_abun_prod_vector"],
-                                    np.float64), "strength": 1}
-        template[f"{path}min_half_life_vector"] \
-            = {"compress": np.array(ion.charge_state_model["min_half_life_vector"],
-                                    np.float64), "strength": 1}
-        template[f"{path}min_half_life_vector/@units"] = "s"
+        if ion.charge_state_model["n_cand"] > 0:
+            path = f"{trg}ION[ion{ion_id}]/charge_state_model/"
+            template[f"{path}min_abundance"] \
+                = np.float64(ion.charge_state_model["min_abundance"])
+            template[f"{path}min_abundance_product"] \
+                = np.float64(ion.charge_state_model["min_abundance_product"])
+            template[f"{path}min_half_life"] \
+                = np.float64(ion.charge_state_model["min_half_life"])
+            template[f"{path}min_half_life/@units"] = "s"
+            template[f"{path}sacrifice_isotopic_uniqueness"] \
+                = np.uint8(ion.charge_state_model["sacrifice_isotopic_uniqueness"])
+            if ion.charge_state_model["n_cand"] == 1:
+                template[f"{path}isotope_matrix"] \
+                    = np.asarray(ion.charge_state_model["isotope_matrix"], np.uint16)
+                template[f"{path}charge_state_vector"] \
+                    = np.int8(ion.charge_state_model["charge_state_vector"])
+                template[f"{path}mass_vector"] \
+                    = np.float64(ion.charge_state_model["mass_vector"])
+                template[f"{path}mass_vector/@units"] \
+                    = "u"
+                template[f"{path}natural_abundance_product_vector"] \
+                    = np.float64(ion.charge_state_model["nat_abun_prod_vector"])
+                template[f"{path}min_half_life_vector"] \
+                    = np.float64(ion.charge_state_model["min_half_life_vector"])
+                template[f"{path}min_half_life_vector/@units"] \
+                    = "s"
+            else:
+                template[f"{path}isotope_matrix"] \
+                    = {"compress": np.asarray(ion.charge_state_model["isotope_matrix"],
+                                            np.uint16), "strength": 1}
+                template[f"{path}charge_state_vector"] \
+                    = {"compress": np.asarray(ion.charge_state_model["charge_state_vector"],
+                                            np.int8), "strength": 1}
+                template[f"{path}mass_vector"] \
+                    = {"compress": np.asarray(ion.charge_state_model["mass_vector"],
+                                            np.float64), "strength": 1}
+                template[f"{path}mass_vector/@units"] \
+                    = "u"
+                template[f"{path}natural_abundance_product_vector"] \
+                    = {"compress": np.asarray(ion.charge_state_model["nat_abun_prod_vector"],
+                                            np.float64), "strength": 1}
+                template[f"{path}min_half_life_vector"] \
+                    = {"compress": np.asarray(ion.charge_state_model["min_half_life_vector"],
+                                            np.float64), "strength": 1}
+                template[f"{path}min_half_life_vector/@units"] \
+                    = "s"
         ion_id += 1
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
