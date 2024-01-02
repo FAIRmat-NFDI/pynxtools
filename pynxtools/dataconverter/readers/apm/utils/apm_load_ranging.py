@@ -39,6 +39,11 @@ from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
 from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases \
     import VALID_FILE_NAME_SUFFIX_RANGE
 
+WARNING_TOO_MANY_DEFINITIONS \
+    = f"WARNING::Range file contains more than {MAX_NUMBER_OF_ION_SPECIES} " \
+      f"WARNING::definitions! This is often a signature of duplicates or " \
+      f"WARNING::contradicting definitions."
+
 
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
@@ -139,8 +144,7 @@ def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) ->
     print(f"Extracting data from ENV file: {file_path}")
     rangefile = ReadEnvFileFormat(file_path)
     if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        raise ValueError(f"Current implementation does not support "
-                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+        print(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(
         rangefile.env["molecular_ions"], template, entry_id)
@@ -152,8 +156,7 @@ def extract_data_from_fig_txt_file(file_path: str, template: dict, entry_id: int
     print(f"Extracting data from FIG.TXT file: {file_path}")
     rangefile = ReadFigTxtFileFormat(file_path)
     if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        raise ValueError(f"Current implementation does not support "
-                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+        print(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(
         rangefile.fig["molecular_ions"], template, entry_id)
@@ -165,8 +168,7 @@ def extract_data_from_pyccapt_file(file_path: str, template: dict, entry_id: int
     print(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
     rangefile = ReadPyccaptRangingFileFormat(file_path)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        raise ValueError(f"Current implementation does not support "
-                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+        print(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(
         rangefile.rng["molecular_ions"], template, entry_id)
@@ -178,8 +180,7 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
     print(f"Extracting data from RNG file: {file_path}")
     rangefile = ReadRngFileFormat(file_path)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        raise ValueError(f"Current implementation does not support "
-                         f"more than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+        print(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(
         rangefile.rng["molecular_ions"], template, entry_id)
@@ -191,8 +192,7 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     print(f"Extracting data from RRNG file: {file_path}")
     rangefile = ReadRrngFileFormat(file_path)
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        raise ValueError(f"Current implementation does not support more "
-                         f"than {MAX_NUMBER_OF_ION_SPECIES} ion types")
+        print(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(
         rangefile.rrng["molecular_ions"], template, entry_id)
@@ -207,7 +207,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
                                      "file_path": file_path,
                                      "entry_id": entry_id}
         for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
-            if file_path.lower().endswith(suffix) is True:
+            if file_path.lower().endswith(suffix) == True:
                 self.meta["file_format"] = suffix
                 break
         if self.meta["file_format"] is None:

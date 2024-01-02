@@ -59,11 +59,14 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                 if suffix not in [".h5", "range_.h5"]:
                     if (fpath.lower().endswith(suffix)) and (fpath not in self.case[suffix]):
                         self.case[suffix].append(fpath)
+                        break
                 else:
-                    if fpath.lower().endswith("range_.h5") is True:
+                    if fpath.lower().endswith("range_.h5") == True:
                         self.case["range_.h5"].append(fpath)
-                    elif fpath.lower().endswith(".h5") is True:
+                        break
+                    elif fpath.lower().endswith(".h5") == True:
                         self.case[".h5"].append(fpath)
+                        break
                     else:
                         continue
                 # HDF5 files need special treatment, this already shows that magic numbers
@@ -76,14 +79,20 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
         range_input = 0  # ranging definition file, e.g. RNG, RRNG, ENV, FIG.TXT
         other_input = 0  # generic ELN or OASIS-specific configurations
         for suffix, value in self.case.items():
-            if suffix in VALID_FILE_NAME_SUFFIX_RECON:
-                recon_input += len(value)
-            elif suffix in VALID_FILE_NAME_SUFFIX_RANGE:
-                range_input += len(value)
-            elif suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
-                other_input += len(value)
+            if suffix not in [".h5", "range_.h5"]:
+                if suffix in VALID_FILE_NAME_SUFFIX_RECON:
+                    recon_input += len(value)
+                elif suffix in VALID_FILE_NAME_SUFFIX_RANGE:
+                    range_input += len(value)
+                elif suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
+                    other_input += len(value)
+                else:
+                    continue
             else:
-                continue
+                if suffix == "range_.h5":
+                    range_input += len(value)
+                if suffix == ".h5":
+                    recon_input += len(value)
 
         if (recon_input == 1) and (range_input == 1):  # and (1 <= other_input <= 2):
             self.is_valid = True

@@ -224,7 +224,7 @@ class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
                                      "file_path": file_path,
                                      "entry_id": entry_id}
         for suffix in VALID_FILE_NAME_SUFFIX_RECON:
-            if file_path.lower().endswith(suffix) is True:
+            if file_path.lower().endswith(suffix) == True:
                 self.meta["file_format"] = suffix
                 break
         if self.meta["file_format"] is None:
