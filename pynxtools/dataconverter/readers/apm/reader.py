@@ -75,6 +75,11 @@ class ApmReader(BaseReader):
         n_entries = 1
         entry_id = 1
         if len(file_paths) == 1:
+            """
+            # TODO::better make this an option rather than hijack and demand a
+            # specifically named file to trigger the synthesizer
+            # the synthesize functionality is currently deactivated, we have enough
+            # example datasets and the synthesizer is in need for a refactoring.
             if file_paths[0].startswith("synthesize"):
                 synthesis_id = int(file_paths[0].replace("synthesize", ""))
                 print(f"synthesis_id {synthesis_id}")
@@ -83,6 +88,7 @@ class ApmReader(BaseReader):
             print("Create one synthetic entry in one NeXus file...")
             synthetic = ApmCreateExampleData(synthesis_id)
             synthetic.synthesize(template)
+            """
         else:  # eln_data, and ideally recon and ranging definitions from technology partner file
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
