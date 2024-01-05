@@ -273,8 +273,8 @@ class HdfFiveBaseParser:
 
     def get_content(self):
         """Walk recursively through the file to get content."""
-        if self.h5r is not None:  # if self.file_path is not None:
-            # with h5py.File(self.file_path, "r") as h5r:
+        # if self.h5r is not None:  # if self.file_path is not None:
+        with h5py.File(self.file_path, "r") as self.h5r:
             # first step visit all groups and datasets recursively
             # get their full path within the HDF5 file
             self.h5r.visititems(self)
