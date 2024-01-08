@@ -23,7 +23,7 @@ import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_eln_to_nx_map \
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map \
     import NxApmElnInput, NxUserFromListOfDict
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import variadic_path_to_specific_path, apply_modifier
