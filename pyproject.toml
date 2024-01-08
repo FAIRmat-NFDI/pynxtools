@@ -68,6 +68,9 @@ dev = [
     "types-pytz",
     "types-requests",
     "pip-tools",
+    "jupyterlab",
+    "jupyterlab_h5web",
+    "nyaml"
 ]
 
 [project.scripts]

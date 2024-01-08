@@ -22,8 +22,8 @@
 import flatdict as fd
 import yaml
 
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_deployment_specifics_to_nx_map \
-    import NxApmDeploymentSpecificInput
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_oasis_cfg_to_nx_map \
+    import APM_OASIS_TO_NEXUS_CFG
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import apply_modifier, variadic_path_to_specific_path
 
@@ -39,6 +39,7 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
+                print(self.yml)
         else:
             self.entry_id = 1
             self.file_path = ""
@@ -46,10 +47,23 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
 
     def report(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
-        for nx_path, modifier in NxApmDeploymentSpecificInput.items():
-            if nx_path not in ("IGNORE", "UNCLEAR"):
-                trg = variadic_path_to_specific_path(nx_path, [self.entry_id, 1])
-                res = apply_modifier(modifier, self.yml)
-                if res is not None:
-                    template[trg] = res
+        for tpl in APM_OASIS_TO_NEXUS_CFG:
+            identifier = [self.entry_id]
+            if isinstance(tpl, tuple):
+                if tpl[0] not in ("IGNORE", "UNCLEAR"):
+                    trg = variadic_path_to_specific_path(tpl[0], identifier)
+                    print(f"processing tpl {tpl} ... trg {trg}")
+                    # print(f"Target {trg} after variadic name resolution identifier {identifier}")
+                    if len(tpl) == 2:
+                        # nxpath, value to use directly
+                        template[trg] = tpl[1]
+                    if len(tpl) == 3:
+                        # nxpath, modifier, value, modifier (function) evaluates value to use
+                        if tpl[1] == "load_from":
+                            if tpl[2] in self.yml.keys():
+                                template[trg] = self.yml[tpl[2]]
+                            else:
+                                raise ValueError(f"tpl2 {tpl[2]} not in self.yml.keys()!")
+                        else:
+                            raise ValueError(f"tpl1 {tpl[1]} is not load_from!")
         return template

@@ -93,8 +93,9 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                     range_input += len(value)
                 if suffix == ".h5":
                     recon_input += len(value)
+        print(f"{recon_input}, {range_input}, {other_input}")
 
-        if (recon_input == 1) and (range_input == 1):  # and (1 <= other_input <= 2):
+        if (recon_input == 1) and (range_input == 1) and (1 <= other_input <= 2):
             self.is_valid = True
             self.reconstruction: List[str] = []
             self.ranging: List[str] = []

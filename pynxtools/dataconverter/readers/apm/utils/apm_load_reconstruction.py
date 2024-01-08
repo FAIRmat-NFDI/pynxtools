@@ -41,14 +41,14 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = posfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = posfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -62,14 +62,14 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     trg = f"{prefix}reconstruction/"
     xyz = eposfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = eposfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
 
@@ -135,14 +135,14 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = aptfile.get_named_quantity("Position")
     template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = aptfile.get_named_quantity("Mass")
     template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     # all less explored optional branches in an APT6 file can also already
@@ -161,14 +161,14 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = atofile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = atofile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -182,14 +182,14 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = csvfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = csvfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -203,14 +203,14 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = pycfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.array(xyz.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = pycfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] \
-        = {"compress": np.array(m_z.values, np.float32), "strength": 1}
+        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template

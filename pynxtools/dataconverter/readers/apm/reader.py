@@ -92,8 +92,9 @@ class ApmReader(BaseReader):
         else:  # eln_data, and ideally recon and ranging definitions from technology partner file
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
-            assert case.is_valid is True, \
-                "Such a combination of input-file(s, if any) is not supported !"
+            if case.is_valid == False:
+                print("Such a combination of input-file(s, if any) is not supported !")
+                return {}
 
             """
             print("Parse (meta)data coming from an ELN...")
@@ -103,13 +104,13 @@ class ApmReader(BaseReader):
             else:
                 print("No input file defined for eln data !")
                 return {}
+            """
 
             print("Parse (meta)data coming from a configuration that specific OASIS...")
             if len(case.cfg) == 1:
                 nx_apm_cfg = NxApmNomadOasisConfigurationParser(case.cfg[0], entry_id)
                 nx_apm_cfg.report(template)
             # having and or using a deployment-specific configuration is optional
-            """
 
             print("Parse (numerical) data and metadata from ranging definitions file...")
             if len(case.reconstruction) == 1:
@@ -131,8 +132,8 @@ class ApmReader(BaseReader):
         """
 
         # print("Reporting state of template before passing to HDF5 writing...")
-        # for keyword in template.keys():
-        #     print(keyword)
+        for keyword in template.keys():
+            print(keyword)
         #     print(template[keyword])
 
         print("Forward instantiated template to the NXS writer...")

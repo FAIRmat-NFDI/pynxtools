@@ -82,17 +82,17 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the appdef
     template[f"{trg}DATA[data_counts]"] \
-        = {"compress": np.array(hist3d[0], np.uint32), "strength": 1}
+        = {"compress": np.asarray(hist3d[0], np.uint32), "strength": 1}
     template[f"{trg}AXISNAME[axis_x]"] \
-        = {"compress": np.array(hist3d[1][0][1::], np.float32), "strength": 1}
+        = {"compress": np.asarray(hist3d[1][0][1::], np.float32), "strength": 1}
     template[f"{trg}AXISNAME[axis_x]/@units"] = "nm"
     template[f"{trg}AXISNAME[axis_x]/@long_name"] = "x (nm)"
     template[f"{trg}AXISNAME[axis_y]"] \
-        = {"compress": np.array(hist3d[1][1][1::], np.float32), "strength": 1}
+        = {"compress": np.asarray(hist3d[1][1][1::], np.float32), "strength": 1}
     template[f"{trg}AXISNAME[axis_y]/@units"] = "nm"
     template[f"{trg}AXISNAME[axis_y]/@long_name"] = "y (nm)"
     template[f"{trg}AXISNAME[axis_z]"] \
-        = {"compress": np.array(hist3d[1][2][1::], np.float32), "strength": 1}
+        = {"compress": np.asarray(hist3d[1][2][1::], np.float32), "strength": 1}
     template[f"{trg}AXISNAME[axis_z]/@units"] = "nm"
     template[f"{trg}AXISNAME[axis_z]/@long_name"] = "z (nm)"
     print("Default plot 3D discretized reconstruction at 1 nm binning.")
@@ -130,9 +130,9 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}PROGRAM[program1]/program/@version"] = get_repo_last_commit()
 
     template[f"{trg}range_increment"] = mqincr
-    template[f"{trg}range_increment/@units"] = "Da"
-    template[f"{trg}range_minmax"] = np.array([mqmin, mqmax], np.float32)
-    template[f"{trg}range_minmax/@units"] = "Da"
+    template[f"{trg}range_increment/@units"] = "u"
+    template[f"{trg}range_minmax"] = np.asarray([mqmin, mqmax], np.float32)
+    template[f"{trg}range_minmax/@units"] = "u"
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" \
           f"mass_to_charge_distribution/mass_spectrum/"
@@ -141,11 +141,11 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}@axes"] = "axis_mass_to_charge"
     template[f"{trg}@AXISNAME_indices[axis_mass_to_charge]"] = np.uint32(0)
     template[f"{trg}DATA[data_counts]"] \
-        = {"compress": np.array(hist1d[0], np.uint32), "strength": 1}
+        = {"compress": np.asarray(hist1d[0], np.uint32), "strength": 1}
     template[f"{trg}DATA[data_counts]/@long_name"] = "Counts (1)"
     template[f"{trg}AXISNAME[axis_mass_to_charge]"] \
-        = {"compress": np.array(hist1d[1][1::], np.float32), "strength": 1}
-    template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "Da"
+        = {"compress": np.asarray(hist1d[1][1::], np.float32), "strength": 1}
+    template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "u"
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] \
         = "Mass-to-charge-state ratio (Da)"
     print("Plot mass spectrum at 0.01 Da binning was created.")

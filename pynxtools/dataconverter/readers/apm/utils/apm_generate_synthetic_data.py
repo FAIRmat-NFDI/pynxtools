@@ -274,7 +274,7 @@ class ApmCreateExampleData:
             template[f"{path}charge_state"] = np.int8(tpl[1])
             template[f"{path}mass_to_charge_range"] = np.reshape(
                 np.asarray([tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2))
-            template[f"{path}mass_to_charge_range/@units"] = "Da"
+            template[f"{path}mass_to_charge_range/@units"] = "u"
             nuclid_list = np.zeros([2, 32], np.uint16)
             nuclid_list = isotope_vector_to_nuclid_list(ivec)
             template[f"{path}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
@@ -552,6 +552,6 @@ class ApmCreateExampleData:
             trg = f"{prefix}mass_to_charge_conversion/"
             template[f"{trg}mass_to_charge"] \
                 = {"compress": np.asarray(self.m_z, np.float32), "strength": 1}
-            template[f"{trg}mass_to_charge/@units"] = "Da"
+            template[f"{trg}mass_to_charge/@units"] = "u"
 
         return template

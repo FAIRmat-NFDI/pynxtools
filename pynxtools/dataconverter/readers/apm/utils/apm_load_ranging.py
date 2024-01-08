@@ -56,7 +56,7 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     template[f"{trg}charge_state"] = np.int8(0)
     template[f"{trg}mass_to_charge_range"] \
         = np.reshape(np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2))
-    template[f"{trg}mass_to_charge_range/@units"] = "Da"
+    template[f"{trg}mass_to_charge_range/@units"] = "u"
     nuclid_list = isotope_vector_to_nuclid_list(ivec)
     template[f"{trg}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
     template[f"{trg}name"] = isotope_vector_to_human_readable_name(ivec, 0)
@@ -74,8 +74,8 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
             (1, MAX_NUMBER_OF_ATOMS_PER_ION))
         template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
         template[f"{path}mass_to_charge_range"] \
-            = np.array(ion.ranges.values, np.float32)
-        template[f"{path}mass_to_charge_range/@units"] = "Da"  # ion.ranges.unit
+            = np.asarray(ion.ranges.values, np.float32)
+        template[f"{path}mass_to_charge_range/@units"] = "u"  # ion.ranges.unit
         template[f"{path}nuclid_list"] = ion.nuclid_list.values
         template[f"{path}name"] = ion.name.values
 
