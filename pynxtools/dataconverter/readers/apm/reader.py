@@ -126,14 +126,12 @@ class ApmReader(BaseReader):
                 print("No input-file defined for ranging definitions!")
                 return {}
 
-        """
         print("Create NeXus default plottable data...")
-        apm_default_plot_generator(template, n_entries)
-        """
+        apm_default_plot_generator(template, entry_id)
 
         # print("Reporting state of template before passing to HDF5 writing...")
-        for keyword in template.keys():
-            print(keyword)
+        # for keyword in template.keys():
+        #     print(keyword)
         #     print(template[keyword])
 
         print("Forward instantiated template to the NXS writer...")
