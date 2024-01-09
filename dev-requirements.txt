@@ -4,6 +4,14 @@
 #
 #    pip-compile --extra=dev --output-file=dev-requirements.txt pyproject.toml
 #
+anyio==4.2.0
+    # via jupyter-server
+argon2-cffi==23.1.0
+    # via jupyter-server
+argon2-cffi-bindings==21.2.0
+    # via argon2-cffi
+arrow==1.3.0
+    # via isoduration
 asciitree==0.3.3
     # via zarr
 ase==3.22.1
@@ -16,12 +24,22 @@ astroid==3.0.1
     # via pylint
 asttokens==2.4.1
     # via stack-data
+async-lru==2.0.4
+    # via jupyterlab
 attrs==23.1.0
     # via
     #   cattrs
+    #   jsonschema
+    #   referencing
     #   requests-cache
+babel==2.14.0
+    # via jupyterlab-server
 backcall==0.2.0
     # via ipython
+beautifulsoup4==4.12.2
+    # via nbconvert
+bleach==6.1.0
+    # via nbconvert
 blosc2==2.0.0
     # via tables
 build==1.0.3
@@ -30,11 +48,14 @@ cattrs==23.2.2
     # via requests-cache
 certifi==2023.11.17
     # via requests
+cffi==1.16.0
+    # via argon2-cffi-bindings
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via
     #   dask
+    #   nyaml
     #   pip-tools
     #   pynxtools (pyproject.toml)
 cloudpickle==3.0.0
@@ -66,7 +87,9 @@ decorator==5.1.1
     #   ipyparallel
     #   ipython
 defusedxml==0.7.1
-    # via odfpy
+    # via
+    #   nbconvert
+    #   odfpy
 diffpy-structure==3.1.0
     # via
     #   diffsims
@@ -84,6 +107,7 @@ entrypoints==0.4
     # via ipyparallel
 exceptiongroup==1.2.0
     # via
+    #   anyio
     #   cattrs
     #   pytest
 executing==2.0.1
@@ -94,10 +118,14 @@ fabio==2023.10.0
     #   silx
 fasteners==0.19
     # via zarr
+fastjsonschema==2.19.1
+    # via nbformat
 flatdict==4.0.1
     # via pynxtools (pyproject.toml)
 fonttools==4.45.1
     # via matplotlib
+fqdn==1.5.1
+    # via jsonschema
 fsspec==2023.10.0
     # via
     #   dask
@@ -108,12 +136,16 @@ gitdb==4.0.11
     # via gitpython
 gitpython==3.1.40
     # via pynxtools (pyproject.toml)
+h5grove==1.3.0
+    # via jupyterlab-h5web
 h5py==3.10.0
     # via
     #   fabio
+    #   h5grove
     #   hdf5plugin
     #   hyperspy
     #   ifes-apt-tc-data-modeling
+    #   jupyterlab-h5web
     #   kikuchipy
     #   nionswift
     #   orix
@@ -129,7 +161,10 @@ hyperspy==1.7.6
     #   pynxtools (pyproject.toml)
     #   pyxem
 idna==3.6
-    # via requests
+    # via
+    #   anyio
+    #   jsonschema
+    #   requests
 ifes-apt-tc-data-modeling==0.1
     # via pynxtools (pyproject.toml)
 imageio==2.27.0
@@ -147,7 +182,9 @@ importlib-metadata==6.8.0
 iniconfig==2.0.0
     # via pytest
 ipykernel==6.27.1
-    # via ipyparallel
+    # via
+    #   ipyparallel
+    #   jupyterlab
 ipyparallel==8.6.1
     # via hyperspy
 ipython==8.12.3
@@ -155,22 +192,68 @@ ipython==8.12.3
     #   hyperspy
     #   ipykernel
     #   ipyparallel
+isoduration==20.11.0
+    # via jsonschema
 isort==5.12.0
     # via pylint
 jedi==0.19.1
     # via ipython
 jinja2==3.1.2
-    # via hyperspy
+    # via
+    #   hyperspy
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
+    #   nbconvert
 joblib==1.3.2
     # via scikit-learn
+json5==0.9.14
+    # via jupyterlab-server
+jsonpointer==2.4
+    # via jsonschema
+jsonschema[format-nongpl]==4.20.0
+    # via
+    #   jupyter-events
+    #   jupyterlab-server
+    #   nbformat
+jsonschema-specifications==2023.12.1
+    # via jsonschema
 jupyter-client==8.6.0
     # via
     #   ipykernel
     #   ipyparallel
+    #   jupyter-server
+    #   nbclient
 jupyter-core==5.5.0
     # via
     #   ipykernel
     #   jupyter-client
+    #   jupyter-server
+    #   jupyterlab
+    #   nbclient
+    #   nbconvert
+    #   nbformat
+jupyter-events==0.9.0
+    # via jupyter-server
+jupyter-lsp==2.2.1
+    # via jupyterlab
+jupyter-server==2.12.2
+    # via
+    #   jupyter-lsp
+    #   jupyterlab
+    #   jupyterlab-h5web
+    #   jupyterlab-server
+    #   notebook-shim
+jupyter-server-terminals==0.5.1
+    # via jupyter-server
+jupyterlab==4.0.10
+    # via pynxtools (pyproject.toml)
+jupyterlab-h5web==11.0.0
+    # via pynxtools (pyproject.toml)
+jupyterlab-pygments==0.3.0
+    # via nbconvert
+jupyterlab-server==2.25.2
+    # via jupyterlab
 kikuchipy==0.9.0
     # via pynxtools (pyproject.toml)
 kiwisolver==1.4.5
@@ -186,9 +269,13 @@ lmfit==1.2.2
 locket==1.0.0
     # via partd
 lxml==4.9.3
-    # via fabio
+    # via
+    #   fabio
+    #   nyaml
 markupsafe==2.1.3
-    # via jinja2
+    # via
+    #   jinja2
+    #   nbconvert
 matplotlib==3.7.4
     # via
     #   ase
@@ -210,6 +297,8 @@ mccabe==0.7.0
     # via pylint
 mergedeep==1.3.4
     # via pynxtools (pyproject.toml)
+mistune==3.0.2
+    # via nbconvert
 mpmath==1.3.0
     # via sympy
 msgpack==1.0.7
@@ -220,6 +309,15 @@ mypy-extensions==1.0.0
     # via mypy
 natsort==8.4.0
     # via hyperspy
+nbclient==0.9.0
+    # via nbconvert
+nbconvert==7.14.0
+    # via jupyter-server
+nbformat==5.9.2
+    # via
+    #   jupyter-server
+    #   nbclient
+    #   nbconvert
 nest-asyncio==1.5.8
     # via ipykernel
 networkx==3.1
@@ -242,6 +340,8 @@ nionutils==0.4.6
     #   nionswift
     #   nionswift-io
     #   nionui
+notebook-shim==0.2.3
+    # via jupyterlab
 numba==0.58.1
     # via
     #   diffsims
@@ -265,6 +365,7 @@ numpy==1.24.4
     #   dask
     #   diffsims
     #   fabio
+    #   h5grove
     #   h5py
     #   hyperspy
     #   ifes-apt-tc-data-modeling
@@ -300,6 +401,8 @@ numpy==1.24.4
     #   zarr
 numpy-quaternion==2022.4.3
     # via orix
+nyaml==0.0.6
+    # via pynxtools (pyproject.toml)
 odfpy==1.4.1
     # via pynxtools (pyproject.toml)
 orix==0.11.1
@@ -307,13 +410,21 @@ orix==0.11.1
     #   diffsims
     #   kikuchipy
     #   pyxem
+orjson==3.9.10
+    # via h5grove
+overrides==7.4.0
+    # via jupyter-server
 packaging==23.2
     # via
     #   build
     #   dask
     #   hyperspy
     #   ipykernel
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
     #   matplotlib
+    #   nbconvert
     #   pooch
     #   pytest
     #   scikit-image
@@ -324,6 +435,8 @@ pandas==2.0.3
     #   ifes-apt-tc-data-modeling
     #   pynxtools (pyproject.toml)
     #   xarray
+pandocfilters==1.5.0
+    # via nbconvert
 parso==0.8.3
     # via jedi
 partd==1.4.1
@@ -362,6 +475,8 @@ pooch==1.8.0
     #   orix
 prettytable==3.9.0
     # via hyperspy
+prometheus-client==0.19.0
+    # via jupyter-server
 prompt-toolkit==3.0.41
     # via ipython
 psutil==5.9.6
@@ -371,7 +486,9 @@ psutil==5.9.6
     #   ipyparallel
     #   pyxem
 ptyprocess==0.7.0
-    # via pexpect
+    # via
+    #   pexpect
+    #   terminado
 pure-eval==0.2.2
     # via stack-data
 py-cpuinfo==9.0.0
@@ -380,10 +497,14 @@ pycifrw==4.4.6
     # via diffpy-structure
 pycodestyle==2.11.1
     # via pynxtools (pyproject.toml)
+pycparser==2.21
+    # via cffi
 pyfai==2023.9.0
     # via pyxem
 pygments==2.17.2
-    # via ipython
+    # via
+    #   ipython
+    #   nbconvert
 pylint==3.0.2
     # via pynxtools (pyproject.toml)
 pyparsing==3.1.1
@@ -403,12 +524,15 @@ python-box==6.1.0
     # via rosettasciio
 python-dateutil==2.8.2
     # via
+    #   arrow
     #   hyperspy
     #   ipyparallel
     #   jupyter-client
     #   matplotlib
     #   pandas
     #   rosettasciio
+python-json-logger==2.0.7
+    # via jupyter-events
 pytz==2023.3.post1
     # via
     #   nionswift
@@ -424,7 +548,9 @@ pyyaml==6.0.1
     # via
     #   dask
     #   hyperspy
+    #   jupyter-events
     #   kikuchipy
+    #   nyaml
     #   pynxtools (pyproject.toml)
     #   rosettasciio
 pyzmq==25.1.1
@@ -432,18 +558,37 @@ pyzmq==25.1.1
     #   ipykernel
     #   ipyparallel
     #   jupyter-client
+    #   jupyter-server
 radioactivedecay==0.4.21
     # via ifes-apt-tc-data-modeling
+referencing==0.32.1
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+    #   jupyter-events
 requests==2.31.0
     # via
     #   hyperspy
+    #   jupyterlab-server
     #   pooch
     #   pynxtools (pyproject.toml)
     #   requests-cache
 requests-cache==1.1.1
     # via pynxtools (pyproject.toml)
+rfc3339-validator==0.1.4
+    # via
+    #   jsonschema
+    #   jupyter-events
+rfc3986-validator==0.1.1
+    # via
+    #   jsonschema
+    #   jupyter-events
 rosettasciio==0.2
     # via pynxtools (pyproject.toml)
+rpds-py==0.16.2
+    # via
+    #   jsonschema
+    #   referencing
 scikit-image==0.20.0
     # via
     #   hyperspy
@@ -470,16 +615,24 @@ scipy==1.9.1
     #   scikit-image
     #   scikit-learn
     #   sparse
+send2trash==1.8.2
+    # via jupyter-server
 silx==1.1.2
     # via pyfai
 six==1.16.0
     # via
     #   asttokens
+    #   bleach
     #   diffpy-structure
     #   python-dateutil
+    #   rfc3339-validator
     #   url-normalize
 smmap==5.0.1
     # via gitdb
+sniffio==1.3.0
+    # via anyio
+soupsieve==2.5
+    # via beautifulsoup4
 sparse==0.14.0
     # via hyperspy
 stack-data==0.6.3
@@ -492,16 +645,24 @@ sympy==1.12
     #   radioactivedecay
 tables==3.8.0
     # via ifes-apt-tc-data-modeling
+terminado==0.18.0
+    # via
+    #   jupyter-server
+    #   jupyter-server-terminals
 threadpoolctl==3.2.0
     # via scikit-learn
 tifffile==2023.7.10
     # via
+    #   h5grove
     #   hyperspy
     #   scikit-image
+tinycss2==1.2.1
+    # via nbconvert
 tomli==2.0.1
     # via
     #   build
     #   coverage
+    #   jupyterlab
     #   mypy
     #   pip-tools
     #   pylint
@@ -519,6 +680,9 @@ tornado==6.3.3
     #   ipykernel
     #   ipyparallel
     #   jupyter-client
+    #   jupyter-server
+    #   jupyterlab
+    #   terminado
 tqdm==4.66.1
     # via
     #   diffsims
@@ -535,7 +699,13 @@ traitlets==5.14.0
     #   ipython
     #   jupyter-client
     #   jupyter-core
+    #   jupyter-events
+    #   jupyter-server
+    #   jupyterlab
     #   matplotlib-inline
+    #   nbclient
+    #   nbconvert
+    #   nbformat
 traits==6.4.3
     # via
     #   hyperspy
@@ -544,6 +714,8 @@ transforms3d==0.4.1
     # via
     #   diffsims
     #   pyxem
+types-python-dateutil==2.8.19.20240106
+    # via arrow
 types-pytz==2023.3.1.1
     # via pynxtools (pyproject.toml)
 types-pyyaml==6.0.12.12
@@ -552,7 +724,9 @@ types-requests==2.31.0.10
     # via pynxtools (pyproject.toml)
 typing-extensions==4.8.0
     # via
+    #   anyio
     #   astroid
+    #   async-lru
     #   cattrs
     #   mypy
 tzdata==2023.3
@@ -565,6 +739,8 @@ tzlocal==4.3
     #   pynxtools (pyproject.toml)
 uncertainties==3.1.7
     # via lmfit
+uri-template==1.3.0
+    # via jsonschema
 url-normalize==1.4.3
     # via requests-cache
 urllib3==2.1.0
@@ -576,6 +752,14 @@ wcwidth==0.2.12
     # via
     #   prettytable
     #   prompt-toolkit
+webcolors==1.13
+    # via jsonschema
+webencodings==0.5.1
+    # via
+    #   bleach
+    #   tinycss2
+websocket-client==1.7.0
+    # via jupyter-server
 wheel==0.42.0
     # via pip-tools
 xarray==2023.1.0
