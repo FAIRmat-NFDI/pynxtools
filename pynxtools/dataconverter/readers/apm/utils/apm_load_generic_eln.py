@@ -101,24 +101,28 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                             ion_id += 1
         return template
 
-    def parse_user_section(self, template: dict) -> dict:
+    def parse_user(self, template: dict) -> dict:
         """Copy data from user section into template."""
         src = "user"
-        if src in self.yml.keys():
+        if src in self.yml:
             if isinstance(self.yml[src], list):
                 if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
                     user_id = 1
                     # custom schema delivers a list of dictionaries...
                     for user_dict in self.yml[src]:
-                        # ... for each of them inspect for fields mappable on NeXus
+                        if user_dict == {}:
+                            continue
                         identifier = [self.entry_id, user_id]
-                        # identifier to get instance NeXus path from variadic NeXus path
-                        # try to find all quantities on the left-hand side of the mapping
-                        # table and check if we can find these
-                        for tpl in APM_EXAMPLE_USER_TO_NEXUS:
-                            if isinstance(tpl, tuple) and len(tpl) >= 2:
-                                if len(tpl) == 3:
-                                    if tpl[1] == "load_from":
+                        for key in user_dict:
+                            for tpl in APM_EXAMPLE_USER_TO_NEXUS:
+                                # this currently N_user * M_nxpaths complexity implementation should
+                                # be replaced with a faster ideally N_user * log(M_nxpaths)
+                                # implementation also because the mapping table is defined
+                                # trg <- modifier, src, instead of src, modifier -> trg
+                                # but the first formulation is easier to read as typically
+                                # the nxpath is longer than the src path
+                                if isinstance(tpl, tuple) and (len(tpl) == 3):
+                                    if (tpl[1] == "load_from") and (tpl[2] == key):
                                         trg = variadic_path_to_specific_path(
                                             tpl[0], identifier)
                                         # res = apply_modifier(modifier, user_dict)
@@ -127,7 +131,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                         user_id += 1
         return template
 
-    def parse_laser_pulser_details(self, template: dict) -> dict:
+    def parse_pulser_source(self, template: dict) -> dict:
         """Copy data into the (laser)/source section of the pulser."""
         # additional laser-specific details only relevant when the laser was used
         if "atom_probe/pulser/pulse_mode" in self.yml.keys():
@@ -165,7 +169,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
         print("WARNING: pulse_mode != voltage but no laser details specified!")
         return template
 
-    def parse_other_sections(self, template: dict) -> dict:
+    def parse_other(self, template: dict) -> dict:
         """Copy data from custom schema into template."""
         identifier = [self.entry_id]
         for tpl in APM_EXAMPLE_OTHER_TO_NEXUS:
@@ -192,14 +196,10 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                             raise ValueError(f"tpl1 {tpl[1]} is an modifier (function)!")
         return template
 
-    def parse_workflow(self, template: dict) -> dict:
-        """Parse workflow-relevant details"""
-
-
     def report(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_sample_composition(template)
-        # self.parse_user_section(template)
-        self.parse_laser_pulser_details(template)
-        self.parse_other_sections(template)
+        self.parse_user(template)
+        self.parse_pulser_source(template)
+        self.parse_other(template)
         return template

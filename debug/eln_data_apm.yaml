@@ -58,7 +58,7 @@ entry:
 workflow:
   raw_dat_file: str.str
   hit_dat_file: hits.hits
-  recon_cfg_file: hits.root
+  recon_cfg_file: root.root
   # recon_res_file: recon.apt
   # range_dat_file: recon.rrng
 ranging:
@@ -118,5 +118,8 @@ specimen:
     unit: °
     value: 5.0
 user:
-- {}
+- name: MarkusK
+  orcid: '0000'
+  orcid_platform: orcid
+- name: AlexR
 - {}
