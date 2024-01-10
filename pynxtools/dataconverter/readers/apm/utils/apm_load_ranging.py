@@ -80,7 +80,7 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
         template[f"{path}name"] = ion.name.values
 
         if ion.charge_state_model["n_cand"] > 0:
-            path = f"{trg}ION[ion{ion_id}]/charge_state_model/"
+            path = f"{trg}ION[ion{ion_id}]/charge_state_analysis/"
             template[f"{path}min_abundance"] \
                 = np.float64(ion.charge_state_model["min_abundance"])
             template[f"{path}min_abundance_product"] \

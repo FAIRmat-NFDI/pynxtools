@@ -17,7 +17,7 @@
 #
 """Dict mapping values for a specifically configured NOMAD OASIS."""
 
-# pylint: disable=no-member,line-too-long
+# pylint: disable=line-too-long
 
 # currently by virtue of design NOMAD OASIS specific examples show how different tools and
 # services can be specifically coupled and implemented so that they work together
@@ -43,15 +43,16 @@
 import datetime as dt
 
 from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
-    import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION, NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
+    import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION
 
 
 APM_OASIS_TO_NEXUS_CFG \
     = [("/ENTRY[entry*]/@version", f"{NX_APM_ADEF_VERSION}"),
        ("/ENTRY[entry*]/definition", f"{NX_APM_ADEF_NAME}"),
-       ("/ENTRY[entry*]/operation_mode", "load_from", "operation_mode"),
+       ("/ENTRY[entry*]/operation_mode", "ignore", "operation_mode"),
        ("/ENTRY[entry*]/start_time", f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}")]
 
-#      ("/ENTRY[entry*]/PROGRAM[program1]/program", f"{NX_APM_EXEC_NAME}"),
-#      ("/ENTRY[entry*]/PROGRAM[program1]/program/@version", f"{NX_APM_EXEC_VERSION}"),
-#      ("/ENTRY[entry*]/atom_probe/location", "load_from", "location")]
+
+APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG \
+    = [("/ENTRY[entry*]/CITE[cite*]/doi", "load_from", "doi"),
+       ("/ENTRY[entry*]/CITE[cite*]/description", "load_from", "description")]

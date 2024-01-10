@@ -23,9 +23,9 @@ import flatdict as fd
 import yaml
 
 from pynxtools.dataconverter.readers.apm.map_concepts.apm_oasis_cfg_to_nx_map \
-    import APM_OASIS_TO_NEXUS_CFG
+    import APM_OASIS_TO_NEXUS_CFG, APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import apply_modifier, variadic_path_to_specific_path
+    import variadic_path_to_specific_path
 
 
 class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-methods
@@ -49,22 +49,38 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
 
     def report(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
+        identifier = [self.entry_id]
         for tpl in APM_OASIS_TO_NEXUS_CFG:
-            identifier = [self.entry_id]
             if isinstance(tpl, tuple) and len(tpl) >= 2:
-                if tpl[0] not in ("IGNORE", "UNCLEAR"):
+                if tpl[1] != "ignore":
                     trg = variadic_path_to_specific_path(tpl[0], identifier)
-                    # print(f"processing tpl {tpl} ... trg {trg}")
                     if len(tpl) == 2:
                         # nxpath, value to use directly
                         template[trg] = tpl[1]
                     if len(tpl) == 3:
                         # nxpath, modifier, value, modifier (function) evaluates value to use
-                        if tpl[1] == "load_from":
-                            if tpl[2] in self.yml.keys():
-                                template[trg] = self.yml[tpl[2]]
-                            else:
-                                raise ValueError(f"tpl2 {tpl[2]} not in self.yml.keys()!")
-                        else:
-                            raise ValueError(f"tpl1 {tpl[1]} is not load_from!")
+                        if (tpl[1] == "load_from") and (tpl[2] in self.yml):
+                            template[trg] = self.yml[tpl[2]]
+
+        # related to joint paper https://arxiv.org/abs/2205.13510 and NOMAD OASIS
+        src = "citation"
+        if src in self.yml:
+            if isinstance(self.yml[src], list):
+                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                    ref_id = 1
+                    # custom schema delivers a list of dictionaries...
+                    for cite_dict in self.yml[src]:
+                        if cite_dict == {}:
+                            continue
+                        identifier = [self.entry_id, ref_id]
+                        for key in cite_dict:
+                            for tpl in APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG:
+                                if isinstance(tpl, tuple) and (len(tpl) == 3):
+                                    if (tpl[1] == "load_from") and (key == tpl[2]):
+                                        trg = variadic_path_to_specific_path(
+                                            tpl[0], identifier)
+                                        # res = apply_modifier(modifier, user_dict)
+                                        # res is not None
+                                        template[trg] = cite_dict[tpl[2]]
+                        ref_id += 1
         return template

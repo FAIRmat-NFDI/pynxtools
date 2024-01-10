@@ -115,14 +115,8 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                         identifier = [self.entry_id, user_id]
                         for key in user_dict:
                             for tpl in APM_EXAMPLE_USER_TO_NEXUS:
-                                # this currently N_user * M_nxpaths complexity implementation should
-                                # be replaced with a faster ideally N_user * log(M_nxpaths)
-                                # implementation also because the mapping table is defined
-                                # trg <- modifier, src, instead of src, modifier -> trg
-                                # but the first formulation is easier to read as typically
-                                # the nxpath is longer than the src path
                                 if isinstance(tpl, tuple) and (len(tpl) == 3):
-                                    if (tpl[1] == "load_from") and (tpl[2] == key):
+                                    if (tpl[1] == "load_from") and (key == tpl[2]):
                                         trg = variadic_path_to_specific_path(
                                             tpl[0], identifier)
                                         # res = apply_modifier(modifier, user_dict)
@@ -146,7 +140,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                     # custom schema delivers a list of dictionaries...
                     for ldct in self.yml[src]:
                         trg_sta = f"/ENTRY[entry{self.entry_id}]/measurement/" \
-                                  f"pulser/SOURCE[source{laser_id}]"
+                                  f"instrument/pulser/SOURCE[source{laser_id}]"
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
                         quantities = ["wavelength"]
