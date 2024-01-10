@@ -34,8 +34,8 @@ from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging \
     import ApmRangingDefinitionsParser
 from pynxtools.dataconverter.readers.apm.utils.apm_create_nx_default_plots \
     import apm_default_plot_generator
-from pynxtools.dataconverter.readers.apm.utils.apm_generate_synthetic_data \
-    import ApmCreateExampleData
+# from pynxtools.dataconverter.readers.apm.utils.apm_generate_synthetic_data \
+#     import ApmCreateExampleData
 
 # this apm parser combines multiple sub-parsers
 # so we need the following input:
@@ -95,8 +95,8 @@ class ApmReader(BaseReader):
             if case.is_valid == False:
                 print("Such a combination of input-file(s, if any) is not supported !")
                 return {}
+            case.report_workflow(template, entry_id)
 
-            """
             print("Parse (meta)data coming from an ELN...")
             if len(case.eln) == 1:
                 nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
@@ -104,7 +104,6 @@ class ApmReader(BaseReader):
             else:
                 print("No input file defined for eln data !")
                 return {}
-            """
 
             print("Parse (meta)data coming from a configuration that specific OASIS...")
             if len(case.cfg) == 1:
@@ -131,8 +130,8 @@ class ApmReader(BaseReader):
 
         # print("Reporting state of template before passing to HDF5 writing...")
         # for keyword in template.keys():
-        #     print(keyword)
-        #     print(template[keyword])
+        #     print(f"keyword: {keyword}, template[keyword]: {template[keyword]}")
+        # exit(1)
 
         print("Forward instantiated template to the NXS writer...")
         return template

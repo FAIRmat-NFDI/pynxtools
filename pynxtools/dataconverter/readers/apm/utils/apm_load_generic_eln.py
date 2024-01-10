@@ -23,12 +23,13 @@ import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map \
-    import NxApmElnInput, NxUserFromListOfDict
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map import \
+    APM_EXAMPLE_OTHER_TO_NEXUS, APM_EXAMPLE_USER_TO_NEXUS
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
     import variadic_path_to_specific_path, apply_modifier
 from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table \
     import parse_composition_table
+from pynxtools.dataconverter.readers.shared.shared_utils import get_sha256_of_file_content
 
 
 class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
@@ -44,12 +45,12 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
     in an instance of NXapm
 
     The functionalities in this ELN YAML parser do not check if the
-    instantiated template yields an instance which is compliant NXapm.
+    instantiated template yields an instance which is compliant with NXapm.
     Instead, this task is handled by the generic part of the dataconverter
     during the verification of the template dictionary.
     """
 
-    def __init__(self, file_path: str, entry_id: int):
+    def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
         print(f"Extracting data from ELN file: {file_path}")
         if (file_path.rsplit('/', 1)[-1].startswith("eln_data")
                 or file_path.startswith("eln_data")) and entry_id > 0:
@@ -57,6 +58,9 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
+                if verbose == True:
+                    for key, val in self.yml.items():
+                        print(f"key: {key}, value: {val}")
         else:
             self.entry_id = 1
             self.file_path = ""
@@ -111,61 +115,91 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                         # identifier to get instance NeXus path from variadic NeXus path
                         # try to find all quantities on the left-hand side of the mapping
                         # table and check if we can find these
-                        for nx_path, modifier in NxUserFromListOfDict.items():
-                            if nx_path not in ("IGNORE", "UNCLEAR"):
-                                trg = variadic_path_to_specific_path(nx_path, identifier)
-                                res = apply_modifier(modifier, user_dict)
-                                if res is not None:
-                                    template[trg] = res
+                        for tpl in APM_EXAMPLE_USER_TO_NEXUS:
+                            if isinstance(tpl, tuple) and len(tpl) >= 2:
+                                if len(tpl) == 3:
+                                    if tpl[1] == "load_from":
+                                        trg = variadic_path_to_specific_path(
+                                            tpl[0], identifier)
+                                        # res = apply_modifier(modifier, user_dict)
+                                        # res is not None
+                                        template[trg] = user_dict[tpl[2]]
                         user_id += 1
         return template
 
     def parse_laser_pulser_details(self, template: dict) -> dict:
-        """Copy data in pulser section."""
+        """Copy data into the (laser)/source section of the pulser."""
         # additional laser-specific details only relevant when the laser was used
-        src = "atom_probe/pulser/pulse_mode"
-        if src in self.yml.keys():
-            if self.yml[src] == "voltage":
+        if "atom_probe/pulser/pulse_mode" in self.yml.keys():
+            if self.yml["atom_probe/pulser/pulse_mode"] == "voltage":
                 return template
-        else:
-            return template
+
         src = "atom_probe/pulser/laser_source"
         if src in self.yml.keys():
             if isinstance(self.yml[src], list):
                 if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
                     laser_id = 1
                     # custom schema delivers a list of dictionaries...
-                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser" \
-                          f"/SOURCE[source{laser_id}]"
-                    for laser_dict in self.yml[src]:
-                        if "name" in laser_dict.keys():
-                            template[f"{trg}/name"] = laser_dict["name"]
-                        quantities = ["power", "pulse_energy", "wavelength"]
-                        for quant in quantities:
-                            if isinstance(laser_dict[quant], dict):
-                                if ("value" in laser_dict[quant].keys()) \
-                                        and ("unit" in laser_dict[quant].keys()):
-                                    template[f"{trg}/{quant}"] \
-                                        = laser_dict[quant]["value"]
-                                    template[f"{trg}/{quant}/@units"] \
-                                        = laser_dict[quant]["unit"]
+                    for ldct in self.yml[src]:
+                        trg_sta = f"/ENTRY[entry{self.entry_id}]/measurement/" \
+                                  f"pulser/SOURCE[source{laser_id}]"
+                        if "name" in ldct:
+                            template[f"{trg_sta}/name"] = ldct["name"]
+                        quantities = ["wavelength"]
+                        for qnt in quantities:
+                            if ("value" in ldct[qnt]) and ("unit" in ldct[qnt]):
+                                template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
+                                template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
+
+                        trg_dyn = f"/ENTRY[entry{self.entry_id}]/measurement/" \
+                                  f"event_data_apm_set/EVENT_DATA_APM[event_data_apm]/" \
+                                  f"instrument/pulser/SOURCE[source{laser_id}]"
+                        quantities = ["power", "pulse_energy"]
+                        for qnt in quantities:
+                            if isinstance(ldct[qnt], dict):
+                                if ("value" in ldct[qnt]) and ("unit" in ldct[qnt]):
+                                    template[f"{trg_dyn}/{qnt}"] = ldct[qnt]["value"]
+                                    template[f"{trg_dyn}/{qnt}/@units"] = ldct[qnt]["unit"]
                         laser_id += 1
+                    return template
+        print("WARNING: pulse_mode != voltage but no laser details specified!")
         return template
 
     def parse_other_sections(self, template: dict) -> dict:
         """Copy data from custom schema into template."""
-        for nx_path, modifier in NxApmElnInput.items():
-            if nx_path not in ("IGNORE", "UNCLEAR"):
-                trg = variadic_path_to_specific_path(nx_path, [self.entry_id, 1])
-                res = apply_modifier(modifier, self.yml)
-                if res is not None:
-                    template[trg] = res
+        identifier = [self.entry_id]
+        for tpl in APM_EXAMPLE_OTHER_TO_NEXUS:
+            if isinstance(tpl, tuple) and len(tpl) >= 2:
+                if tpl[1] not in ("ignore"):
+                    trg = variadic_path_to_specific_path(tpl[0], identifier)
+                    # print(f"processing tpl {tpl} ... trg {trg}")
+                    if len(tpl) == 2:
+                        template[trg] = tpl[1]
+                    if len(tpl) == 3:
+                        # nxpath, modifier, value, modifier (function) evaluates value to use
+                        if tpl[1] == "load_from":
+                            if tpl[2] in self.yml.keys():
+                                template[trg] = self.yml[tpl[2]]
+                            else:
+                                raise ValueError(f"tpl2 {tpl[2]} not in self.yml.keys()!")
+                        elif tpl[1] == "sha256":
+                            if tpl[2] in self.yml.keys():
+                                with open(self.yml[tpl[2]], "rb") as fp:
+                                    template[trg] = get_sha256_of_file_content(fp)
+                            else:
+                                raise ValueError(f"tpl2 {tpl[2]} not in self.yml.keys()!")
+                        else:
+                            raise ValueError(f"tpl1 {tpl[1]} is an modifier (function)!")
         return template
+
+    def parse_workflow(self, template: dict) -> dict:
+        """Parse workflow-relevant details"""
+
 
     def report(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_sample_composition(template)
-        self.parse_user_section(template)
+        # self.parse_user_section(template)
         self.parse_laser_pulser_details(template)
         self.parse_other_sections(template)
         return template

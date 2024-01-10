@@ -104,9 +104,9 @@ def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
     # an example for nxpath
     # "/ENTRY[entry1]/atom_probe/ranging/mass_to_charge_distribution/mass_spectrum"
     # if nxpath in template.keys():
-    print(f"nxpath: {nxpath}")
+    # print(f"nxpath: {nxpath}")
     path = nxpath.split("/")
-    print(f"path: {path}")
+    # print(f"path: {path}")
     trg = f"/"
     for idx in np.arange(0, len(path) - 1):
         print(f"trg: {trg}")
@@ -119,5 +119,5 @@ def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
         else:
             template[f"{trg}@default"] = f"{path[idx + 1]}"
             trg += f"{path[idx + 1]}/"
-        print(f"trg: {trg}")
+        # print(f"trg: {trg}")
     return template

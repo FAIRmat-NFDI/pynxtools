@@ -15,17 +15,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility class to analyze which vendor/community files are passed to em reader."""
+"""Utility class to analyze which vendor/community files are passed to apm reader."""
 
 # pylint: disable=no-member,duplicate-code
 
 from typing import Tuple, Dict, List
+
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
+    import variadic_path_to_specific_path
+from pynxtools.dataconverter.readers.shared.shared_utils import get_sha256_of_file_content
+
 VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
 VALID_FILE_NAME_SUFFIX_RANGE = [".rng", ".rrng", ".env", ".fig.txt", "range_.h5"]
 VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
 
 
-class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
+class ApmUseCaseSelector:
     """Decision maker about what needs to be parsed given arbitrary input.
 
     Users might invoke this dataconverter with arbitrary input, no input, or
@@ -93,7 +98,7 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                     range_input += len(value)
                 if suffix == ".h5":
                     recon_input += len(value)
-        print(f"{recon_input}, {range_input}, {other_input}")
+        # print(f"{recon_input}, {range_input}, {other_input}")
 
         if (recon_input == 1) and (range_input == 1) and (1 <= other_input <= 2):
             self.is_valid = True
@@ -112,3 +117,48 @@ class ApmUseCaseSelector:  # pylint: disable=too-few-public-methods
                     self.cfg += [entry]
                 else:
                     self.eln += [entry]
+            print(f"recon_results: {self.reconstruction}\n" \
+                  f"range_results: {self.ranging}\n" \
+                  f"OASIS ELN: {self.eln}\n" \
+                  f"OASIS local config: {self.cfg}\n")
+
+    def report_workflow(self, template: dict, entry_id: int) -> dict:
+        """Initialize the reporting of the workflow."""
+        steps = ["/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]",
+                 "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]",
+                 "/ENTRY[entry*]/atom_probe/reconstruction/config",
+                 "/ENTRY[entry*]/atom_probe/reconstruction/results",
+                 "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]"]
+        defaults = [("type", "file"),
+                    ("path", ""),
+                    ("checksum", ""),
+                    ("algorithm", "SHA256")]
+        identifier = [entry_id]
+        # populate workflow first with default steps to communicate in the NeXus file
+        # which usually recommended files have not been provided for an NXentry
+        # keep in mind that already in 2013 D. Larson et al. documented clearly
+        # in their book which files one should ideally document to enable as best as
+        # possible the repeating of an analysis until the reconstruction and ranging
+        # when using IVAS/APSuite !
+        for step in steps:
+            trg = variadic_path_to_specific_path(step, identifier)
+            for dflt in defaults:
+                template[f"{trg}/{dflt[0]}"] = f"{dflt[1]}"
+        # populate automatically input-files used
+        # rely on assumption made in check_validity_of_file_combination
+        for fpath in self.reconstruction:
+            prfx = variadic_path_to_specific_path(
+                "/ENTRY[entry*]/atom_probe/reconstruction/results", identifier)
+            with open(fpath, "rb") as fp:
+                template[f"{prfx}/path"] = f"{fpath}"
+                template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
+        for fpath in self.ranging:
+            prfx = variadic_path_to_specific_path(
+                "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]", identifier)
+            with open(fpath, "rb") as fp:
+                template[f"{prfx}/path"] = f"{fpath}"
+                template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
+        # FAU/Erlangen's pyccapt control and calibration file have not functional
+        # distinction which makes it non-trivial to decide if a given HDF5 qualifies
+        # as control or calibration file TODO::for this reason it is currently ignored
+        return template

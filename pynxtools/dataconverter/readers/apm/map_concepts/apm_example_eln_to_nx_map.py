@@ -17,19 +17,14 @@
 #
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
-# "/ENTRY[entry*]/PROGRAM[program2]/program": "load_from", "atom_probe/control_software_program"),
-# "/ENTRY[entry*]/PROGRAM[program2]/program/@version": "load_from", "atom_probe/control_software_program__attr_version"),
-# ("/ENTRY[entry*]/atom_probe/specimen_monitoring/detection_rate", "load_from", "atom_probe/specimen_monitoring_detection_rate/value"),
-#  "/ENTRY[entry*]/atom_probe/specimen_monitoring/detection_rate/@units", "load_from", "atom_probe/specimen_monitoring_detection_rate/unit"),
 
-
-APM_EXAMPLE_ENTRIES_TO_NEXUS \
+APM_EXAMPLE_OTHER_TO_NEXUS \
     = [("/ENTRY[entry*]/run_number", "load_from", "entry/run_number"),
        ("/ENTRY[entry*]/start_time", "load_from", "entry/start_time"),
        ("/ENTRY[entry*]/end_time", "load_from", "entry/end_time"),
        ("/ENTRY[entry*]/operation_mode", "load_from", "entry/operation_mode"),
        ("/ENTRY[entry*]/experiment_description", "load_from", "entry/experiment_description"),
-       ("/ENTRY[entry*]/sample/method", "load_from", "sample/method"),
+       ("/ENTRY[entry*]/sample/method", "experiment"),
        ("/ENTRY[entry*]/sample/alias", "load_from", "sample/alias"),
        ("/ENTRY[entry*]/sample/grain_diameter", "load_from", "sample/grain_diameter/value"),
        ("/ENTRY[entry*]/sample/grain_diameter/@units", "load_from", "sample/grain_diameter/unit"),
@@ -44,7 +39,7 @@ APM_EXAMPLE_ENTRIES_TO_NEXUS \
        ("/ENTRY[entry*]/sample/heat_treatment_quenching_rate_error", "load_from", "sample/heat_treatment_quenching_rate_error/value"),
        ("/ENTRY[entry*]/sample/heat_treatment_quenching_rate_error/@units", "load_from", "sample/heat_treatment_quenching_rate_error/unit"),
        ("/ENTRY[entry*]/sample/description", "load_from", "sample/description"),
-       ("/ENTRY[entry*]/specimen/method", "load_from", "specimen/method"),
+       ("/ENTRY[entry*]/specimen/method", "experiment"),
        ("/ENTRY[entry*]/specimen/alias", "load_from", "specimen/alias"),
        ("/ENTRY[entry*]/specimen/preparation_date", "load_from", "specimen/preparation_date"),
        ("/ENTRY[entry*]/specimen/description", "load_from", "specimen/description"),
@@ -75,16 +70,27 @@ APM_EXAMPLE_ENTRIES_TO_NEXUS \
        ("/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/analysis_chamber/chamber_pressure/@units", "load_from", "atom_probe/chamber_pressure/unit"),
        ("/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/stage_lab/base_temperature", "load_from", "atom_probe/base_temperature/value"),
        ("/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/stage_lab/base_temperature/@units", "load_from", "atom_probe/base_temperature/unit"),
-       ("/ENTRY[entry*]/atom_probe/ranging/PROGRAM[program1]/program", "load_from", "atom_probe/ranging/program"),
-       ("/ENTRY[entry*]/atom_probe/ranging/PROGRAM[program1]/program/@version", "load_from", "atom_probe/ranging/program_version"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/PROGRAM[program1]/program", "load_from", "atom_probe/reconstruction/program"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/PROGRAM[program1]/program/@version", "load_from", "atom_probe/reconstruction/program_version"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/protocol_name", "load_from", "atom_probe/reconstruction/protocol_name"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/crystallographic_calibration", "load_from", "atom_probe/reconstruction/crystallographic_calibration"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/parameter", "load_from", "atom_probe/reconstruction/parameter"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/field_of_view", "load_from", "atom_probe/reconstruction/field_of_view/value"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/field_of_view/@units", "load_from", "atom_probe/reconstruction/field_of_view/unit"),
-       ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/type", "file"),
+       ("/ENTRY[entry*]/atom_probe/ranging/PROGRAM[program1]/program", "load_from", "ranging/program"),
+       ("/ENTRY[entry*]/atom_probe/ranging/PROGRAM[program1]/program/@version", "load_from", "ranging/program_version"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/PROGRAM[program1]/program", "load_from", "reconstruction/program"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/PROGRAM[program1]/program/@version", "load_from", "reconstruction/program_version"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/protocol_name", "load_from", "reconstruction/protocol_name"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/crystallographic_calibration", "load_from", "reconstruction/crystallographic_calibration"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/parameter", "load_from", "reconstruction/parameter"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/field_of_view", "load_from", "reconstruction/field_of_view/value"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/field_of_view/@units", "load_from", "reconstruction/field_of_view/unit"),
+       ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/path", "load_from", "workflow/raw_dat_file"),
+       ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/checksum", "sha256", "workflow/raw_dat_file"),
+       ("/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/path", "load_from", "workflow/hit_dat_file"),
+       ("/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/checksum", "sha256", "workflow/hit_dat_file"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/config/path", "load_from", "workflow/recon_cfg_file"),
+       ("/ENTRY[entry*]/atom_probe/reconstruction/config/checksum", "sha256", "workflow/recon_cfg_file")]
+
+"""
+# depending on the case some of these are populated by the I/O logic resolver
+# some of them will be loaded by the ELN parser
+APM_EXAMPLE_WORKFLOW_TO_NEXUS \
+    = [("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/type", "file"),
        ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/path", "load_from", "workflow/raw_dat_file"),
        ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/checksum", "sha256", "workflow/raw_dat_file"),
        ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/algorithm", "SHA256"),
@@ -104,10 +110,12 @@ APM_EXAMPLE_ENTRIES_TO_NEXUS \
        ("/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]/path", "load_from", "workflow/range_dat_file"),
        ("/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]/checksum", "sha256", "workflow/range_dat_file"),
        ("/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]/algorithm", "SHA256")]
+"""
 
 # NeXus concept specific mapping tables which require special treatment as the current
 # NOMAD OASIS custom schema implementation delivers them as a list of dictionaries instead
 # of a directly flattenable list of key, value pairs
+
 
 APM_EXAMPLE_USER_TO_NEXUS \
     = [("/ENTRY[entry*]/USER[user*]/name", "load_from", "name"),

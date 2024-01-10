@@ -59,8 +59,8 @@ workflow:
   raw_dat_file: str.str
   hit_dat_file: hits.hits
   recon_cfg_file: hits.root
-  recon_res_file: recon.apt
-  range_dat_file: recon.rrng
+  # recon_res_file: recon.apt
+  # range_dat_file: recon.rrng
 ranging:
   program: IVAS
   program_version: 3.6.8

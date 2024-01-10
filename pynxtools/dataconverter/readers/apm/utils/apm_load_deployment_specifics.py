@@ -31,7 +31,7 @@ from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
 class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-methods
     """Parse deployment specific configuration."""
 
-    def __init__(self, file_path: str, entry_id: int):
+    def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
         print(f"Extracting data from deployment specific configuration file: {file_path}")
         if (file_path.rsplit('/', 1)[-1].endswith(".oasis.specific.yaml")
                 or file_path.endswith(".oasis.specific.yml")) and entry_id > 0:
@@ -39,7 +39,9 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
-                print(self.yml)
+                if verbose == True:
+                    for key, val in self.yml.items():
+                        print(f"key: {key}, val: {val}")
         else:
             self.entry_id = 1
             self.file_path = ""
@@ -49,11 +51,10 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
         """Copy data from configuration applying mapping functors."""
         for tpl in APM_OASIS_TO_NEXUS_CFG:
             identifier = [self.entry_id]
-            if isinstance(tpl, tuple):
+            if isinstance(tpl, tuple) and len(tpl) >= 2:
                 if tpl[0] not in ("IGNORE", "UNCLEAR"):
                     trg = variadic_path_to_specific_path(tpl[0], identifier)
-                    print(f"processing tpl {tpl} ... trg {trg}")
-                    # print(f"Target {trg} after variadic name resolution identifier {identifier}")
+                    # print(f"processing tpl {tpl} ... trg {trg}")
                     if len(tpl) == 2:
                         # nxpath, value to use directly
                         template[trg] = tpl[1]
