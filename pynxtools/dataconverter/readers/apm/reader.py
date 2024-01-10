@@ -17,7 +17,7 @@
 #
 """Generic parser for loading atom probe microscopy data into NXapm."""
 
-# pylint: disable=no-member,too-few-public-methods
+# pylint: disable=no-member,too-few-public-methods,pointless-string-statement
 
 from typing import Tuple, Any
 
@@ -72,7 +72,6 @@ class ApmReader(BaseReader):
         """Read data from given file, return filled template dictionary apm."""
         template.clear()
 
-        n_entries = 1
         entry_id = 1
         if len(file_paths) == 1:
             """
@@ -92,7 +91,7 @@ class ApmReader(BaseReader):
         else:  # eln_data, and ideally recon and ranging definitions from technology partner file
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
-            if case.is_valid == False:
+            if case.is_valid is False:
                 print("Such a combination of input-file(s, if any) is not supported !")
                 return {}
             case.report_workflow(template, entry_id)

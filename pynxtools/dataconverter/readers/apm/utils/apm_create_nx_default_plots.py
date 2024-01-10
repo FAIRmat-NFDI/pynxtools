@@ -22,7 +22,7 @@
 import numpy as np
 
 from pynxtools.dataconverter.readers.shared.shared_utils import \
-    get_repo_last_commit, decorate_path_to_default_plot
+    decorate_path_to_default_plot
 from pynxtools.dataconverter.readers.apm.utils.apm_versioning import \
     NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION, \
     MASS_SPECTRUM_DEFAULT_BINNING, NAIVE_GRID_DEFAULT_VOXEL_SIZE
@@ -41,17 +41,16 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     xyz = template[f"{trg}reconstructed_positions"]["compress"]
 
     print(f"\tEnter histogram computation, np.shape(xyz) {np.shape(xyz)}")
-    resolution = NAIVE_GRID_DEFAULT_VOXEL_SIZE  # cubic voxel edge length in nm
-    # make the bounding box a quadric prism
-    aabb = {"x": [0., 0.],
-            "y": [0., 0.],
-            "z": [0., 0.],
-            "xedge": None,
-            "yedge": None,
-            "zedge": None}
+    # make the bounding box a quadric prism, discretized using cubic voxel edge in nm
+    aabb: dict = {"x": [0., 0.],
+                  "y": [0., 0.],
+                  "z": [0., 0.],
+                  "xedge": None,
+                  "yedge": None,
+                  "zedge": None}
     col = 0
     for dim in ["x", "y", "z"]:
-        aabb[f"{dim}"] = np.asarray((np.min(xyz[:, col]), np.max(xyz[:, col])))
+        aabb[f"{dim}"] = [np.min(xyz[:, col]), np.max(xyz[:, col])]
         imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE
         imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE
         aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)
@@ -60,7 +59,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     hist3d = np.histogramdd((xyz[:, 0], xyz[:, 1], xyz[:, 2]),
                             bins=(aabb["xedge"], aabb["yedge"], aabb["zedge"]))
     del xyz
-    if isinstance(hist3d[0], np.ndarray) == False:
+    if isinstance(hist3d[0], np.ndarray) is False:
         raise ValueError("Hist3d computation from the reconstruction failed!")
     if len(np.shape(hist3d[0])) != 3:
         raise ValueError("Hist3d computation from the reconstruction failed!")
@@ -117,7 +116,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
                     num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1,
                     endpoint=True))
     del m_z
-    if isinstance(hist1d[0], np.ndarray) == False:
+    if isinstance(hist1d[0], np.ndarray) is False:
         raise ValueError("Hist1d computation from the mass spectrum failed!")
     if len(np.shape(hist1d[0])) != 1:
         raise ValueError("Hist1d computation from the mass spectrum failed!")
@@ -170,24 +169,24 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
                 has_valid_xyz = True
     print(f"m_z, xyz: {has_valid_m_z}, {has_valid_xyz}")
 
-    if (has_valid_m_z == False) and (has_valid_xyz == False):
+    if (has_valid_m_z is False) and (has_valid_xyz is False):
         # NEW ISSUE: fall-back solution to plot something else, however
         # currently POS, EPOS and APT provide always xyz, and m_z data
         return template
 
     # generate default plottable and add path
-    if has_valid_m_z == True:
+    if has_valid_m_z is True:
         create_default_plot_mass_spectrum(template, entry_id)
         decorate_path_to_default_plot(
             template,
-            f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" \
+            f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
             f"mass_to_charge_distribution/mass_spectrum")
 
-    if has_valid_xyz == True:
+    if has_valid_xyz is True:
         create_default_plot_reconstruction(template, entry_id)
-        if has_valid_m_z == False:
+        if has_valid_m_z is False:
             decorate_path_to_default_plot(
                 template,
-                f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/" \
+                f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
                 f"naive_discretization/DATA[data]")
     return template

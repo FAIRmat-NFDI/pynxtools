@@ -23,13 +23,14 @@ import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map import \
-    APM_EXAMPLE_OTHER_TO_NEXUS, APM_EXAMPLE_USER_TO_NEXUS
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map \
+    import APM_EXAMPLE_OTHER_TO_NEXUS, APM_EXAMPLE_USER_TO_NEXUS
 from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import variadic_path_to_specific_path, apply_modifier
+    import variadic_path_to_specific_path
 from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table \
     import parse_composition_table
-from pynxtools.dataconverter.readers.shared.shared_utils import get_sha256_of_file_content
+from pynxtools.dataconverter.readers.shared.shared_utils \
+    import get_sha256_of_file_content
 
 
 class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
@@ -58,7 +59,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
-                if verbose == True:
+                if verbose is True:
                     for key, val in self.yml.items():
                         print(f"key: {key}, value: {val}")
         else:

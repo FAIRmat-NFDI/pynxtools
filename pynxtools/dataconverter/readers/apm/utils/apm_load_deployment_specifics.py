@@ -17,7 +17,7 @@
 #
 """Load deployment-specific quantities."""
 
-# pylint: disable=no-member
+# pylint: disable=no-member,too-many-branches,too-many-nested-blocks
 
 import flatdict as fd
 import yaml
@@ -39,7 +39,7 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
-                if verbose == True:
+                if verbose is True:
                     for key, val in self.yml.items():
                         print(f"key: {key}, val: {val}")
         else:

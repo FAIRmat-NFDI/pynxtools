@@ -103,21 +103,16 @@ def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
     """Write @default attribute to point to the default plot."""
     # an example for nxpath
     # "/ENTRY[entry1]/atom_probe/ranging/mass_to_charge_distribution/mass_spectrum"
-    # if nxpath in template.keys():
-    # print(f"nxpath: {nxpath}")
     path = nxpath.split("/")
-    # print(f"path: {path}")
-    trg = f"/"
+    trg = "/"
     for idx in np.arange(0, len(path) - 1):
-        print(f"trg: {trg}")
         symbol_s = path[idx + 1].find("[")
         symbol_e = path[idx + 1].find("]")
-        if (symbol_s >= 0) and (symbol_e > symbol_s):
+        if 0 <= symbol_s < symbol_e:
             template[f"{trg}@default"] \
                 = f"{path[idx + 1][symbol_s + 1:symbol_e]}"
             trg += f"{path[idx + 1][symbol_s + 1:symbol_e]}/"
         else:
             template[f"{trg}@default"] = f"{path[idx + 1]}"
             trg += f"{path[idx + 1]}/"
-        # print(f"trg: {trg}")
     return template

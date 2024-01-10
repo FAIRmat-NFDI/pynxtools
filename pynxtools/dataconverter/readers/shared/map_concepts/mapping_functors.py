@@ -112,7 +112,7 @@ def variadic_path_to_specific_path(path, instance_identifier: list):
                 nx_specific_path += f"{tmp[-1]}"
                 return nx_specific_path
         else:
-            raise ValueError(f"Insufficient len(identifier) to resolve variadic path\n" \
-                             f"path: {path}" \
+            raise ValueError(f"Insufficient len(identifier) to resolve variadic path\n"
+                             f"path: {path}"
                              f"instance_identifier: {instance_identifier}")
     return None

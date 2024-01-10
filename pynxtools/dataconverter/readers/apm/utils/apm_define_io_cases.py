@@ -17,7 +17,7 @@
 #
 """Utility class to analyze which vendor/community files are passed to apm reader."""
 
-# pylint: disable=no-member,duplicate-code
+# pylint: disable=no-member,duplicate-code,too-many-branches
 
 from typing import Tuple, Dict, List
 
@@ -66,14 +66,12 @@ class ApmUseCaseSelector:
                         self.case[suffix].append(fpath)
                         break
                 else:
-                    if fpath.lower().endswith("range_.h5") == True:
+                    if fpath.lower().endswith("range_.h5") is True:
                         self.case["range_.h5"].append(fpath)
                         break
-                    elif fpath.lower().endswith(".h5") == True:
+                    if fpath.lower().endswith(".h5") is True:
                         self.case[".h5"].append(fpath)
                         break
-                    else:
-                        continue
                 # HDF5 files need special treatment, this already shows that magic numbers
                 # should better have been used or signatures to avoid having to have as
                 # complicated content checks as we had to implement e.g. for the em reader
@@ -117,9 +115,9 @@ class ApmUseCaseSelector:
                     self.cfg += [entry]
                 else:
                     self.eln += [entry]
-            print(f"recon_results: {self.reconstruction}\n" \
-                  f"range_results: {self.ranging}\n" \
-                  f"OASIS ELN: {self.eln}\n" \
+            print(f"recon_results: {self.reconstruction}\n"
+                  f"range_results: {self.ranging}\n"
+                  f"OASIS ELN: {self.eln}\n"
                   f"OASIS local config: {self.cfg}\n")
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:

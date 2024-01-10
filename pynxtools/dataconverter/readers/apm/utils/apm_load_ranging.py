@@ -108,21 +108,21 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
             else:
                 template[f"{path}isotope_matrix"] \
                     = {"compress": np.asarray(ion.charge_state_model["isotope_matrix"],
-                                            np.uint16), "strength": 1}
+                                              np.uint16), "strength": 1}
                 template[f"{path}charge_state_vector"] \
                     = {"compress": np.asarray(ion.charge_state_model["charge_state_vector"],
-                                            np.int8), "strength": 1}
+                                              np.int8), "strength": 1}
                 template[f"{path}mass_vector"] \
                     = {"compress": np.asarray(ion.charge_state_model["mass_vector"],
-                                            np.float64), "strength": 1}
+                                              np.float64), "strength": 1}
                 template[f"{path}mass_vector/@units"] \
                     = "u"
                 template[f"{path}natural_abundance_product_vector"] \
                     = {"compress": np.asarray(ion.charge_state_model["nat_abun_prod_vector"],
-                                            np.float64), "strength": 1}
+                                              np.float64), "strength": 1}
                 template[f"{path}min_half_life_vector"] \
                     = {"compress": np.asarray(ion.charge_state_model["min_half_life_vector"],
-                                            np.float64), "strength": 1}
+                                              np.float64), "strength": 1}
                 template[f"{path}min_half_life_vector/@units"] \
                     = "s"
         ion_id += 1
@@ -207,7 +207,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
                                      "file_path": file_path,
                                      "entry_id": entry_id}
         for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
-            if file_path.lower().endswith(suffix) == True:
+            if file_path.lower().endswith(suffix) is True:
                 self.meta["file_format"] = suffix
                 break
         if self.meta["file_format"] is None:
