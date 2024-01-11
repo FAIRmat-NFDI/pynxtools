@@ -1,9 +1,0 @@
-category: application
-doc: |
-  Debugging.
-type: group
-NXem_refactoring(NXroot):
-  (NXentry):
-    exists: [min, 1, max, infty]
-    \@version:
-      exists: optional
