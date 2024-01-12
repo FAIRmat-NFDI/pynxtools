@@ -107,9 +107,72 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     self.parse_and_normalize_group_ebsd_data(h5r, ckey)
                                     cache_id += 1
 
-                                for prefix in ["Live Map", "Free Draw", "Full Area"]:
-                                    if not area_grp_nm.startswith(prefix):
-                                        continue
+                                # TODO: conceptually the content of the three
+                                # above-mentioned groups has and uses for some
+                                # groups the same formatting but fundamentally I assume
+                                # that they are three different concepts:
+                                # free draw polygonal region choosen via GUI interaction
+                                #   over which one integrates
+                                # full area rectangular region typically used
+                                # i.e. difference between free draw and full area
+                                #    is integration region
+                                # live map rectangular region plus child concepts
+                                # with (sum) spectrum SPC, spectrum stack (SPD)
+                                # with eventually different number of energy bins and
+                                # Live Map */ROIs for the individual elements aka
+                                # "element mappings"
+                                # TODO: LIVENETMAPS groups are not parsed cuz not requested
+                                # TODO: EBSD+EDS groups are not parsed cuz internal structure
+                                # TODO: ZAF WtLineScan 2
+                                #   mirrors concept tree behind an OIM Map and Live Map
+                                if area_grp_nm.startswith("Full Area") \
+                                        or area_grp_nm.startswith("Selected Area"):
+                                    # TODO: Selected Area groups have a REGION and I assume that this
+                                    # is the use case when one filters from the FOV a sub-set but
+                                    # not a free-form but a rectangular sub-FOV this is also substantiated
+                                    # by the metadata stored in region (x,y) pair (likely upperleft edge)
+                                    # and relative width/height of the sub-FOV
+                                    # also supported in that Full Area has a region with (x,y) 0,0
+                                    # and relative width/height 1./1.
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    print(f"Parsing {self.prfx}")
+
+                                    # SPC
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    print(f"Parsing {self.prfx}")
+                                    ckey = self.init_named_cache(f"eds{cache_id}")
+                                    self.parse_and_normalize_eds_spc(
+                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
+                                    cache_id += 1
+
+                                # there is a oned equivalent of the twod Free Draw called EDS Spot
+                                if area_grp_nm.startswith("EDS Spot"):
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    print(f"Parsing {self.prfx}")
+
+                                    # TODO: parse ../REGION x,y coordinate pair (relative coordinate)
+                                    # with respect to parent FOV, SPC
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    print(f"Parsing {self.prfx}")
+                                    ckey = self.init_named_cache(f"eds{cache_id}")
+                                    self.parse_and_normalize_eds_spc(
+                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
+                                    cache_id += 1
+
+                                if area_grp_nm.startswith("Free Draw"):
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    print(f"Parsing {self.prfx}")
+
+                                    # TODO: parse ../REGION x,y table (relative coordinate)
+                                    # with respect to parent FOV, SPC
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    print(f"Parsing {self.prfx}")
+                                    ckey = self.init_named_cache(f"eds{cache_id}")
+                                    self.parse_and_normalize_eds_spc(
+                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
+                                    cache_id += 1
+
+                                if area_grp_nm.startswith("Live Map"):
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
                                     print(f"Parsing {self.prfx}")
 
@@ -127,7 +190,12 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                         h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
                                     cache_id += 1
 
-                                if area_grp_nm.startswith("LineScan"):
+                                if area_grp_nm.startswith("LineScan") \
+                                        or area_grp_nm.startswith("ROILineScan"):
+                                    # "free form? or (which I assume) orthogonal line grid inside the FOV
+                                    # TODO::currently I assume that the internal organization of LineScan and ROILineScan
+                                    # groups is the same TODO but maybe the physical ROI which they reference
+                                    # respective differs (TODO:: LineScan refers to FOV that is in the parent of the group)
                                     ckey = self.init_named_cache(f"eds{cache_id}")
                                     self.parse_and_normalize_eds_lsd(
                                         h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
