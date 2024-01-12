@@ -201,6 +201,11 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                         h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
                                     cache_id += 1
 
+                                    ckey = self.init_named_cache(f"eds_map{cache_id}")
+                                    self.parse_and_normalize_eds_rois(
+                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
+                                    cache_id += 1
+
     def parse_and_normalize_group_ebsd_header(self, fp, ckey: str):
         # no official documentation yet from EDAX/APEX, deeply nested, chunking, virtual ds
         if f"{self.prfx}/EBSD/ANG/DATA/DATA" not in fp:
@@ -581,3 +586,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         for key, val in self.tmp[ckey].tmp.items():
             if key.startswith("spectrum_oned"):
                 print(f"spectrum_oned, key: {key}, val: {val}")
+
+    def parse_and_normalize_eds_rois(self, fp, src: str, ckey: str):
+        """Normalize and scale APEX-specific EDS element emission line maps to NeXus."""
+

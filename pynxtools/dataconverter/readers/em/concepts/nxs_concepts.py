@@ -17,7 +17,7 @@
 #
 """Implement NeXus-specific groups and fields to document software and versions used."""
 
-# pylint: disable=no-member
+# pylint: disable=no-member,too-few-members
 
 from typing import List
 from pynxtools.dataconverter.readers.em.concepts.concept_mapper \
@@ -59,3 +59,13 @@ class NxEmAppDef():
             template["/cs_profiling/@NX_class"] = "NXcs_profiling"
             template["/cs_profiling/command_line_call"] = cmd_line_args
         return template
+
+
+class NxConcept():
+    """"Define a NeXus concept object to handle paths.
+
+    """
+    def __init__(self, hdf_paths: List = []):
+        # TODO::remove redundant code for instantiating specific NxConcepts like
+        # NxSpectrum, NxImageRealSpaceSet, NxEmEdsIndexing
+        pass

@@ -17,9 +17,6 @@
 #
 """NXem spectrum set (element of a labelled property graph) to store instance data."""
 
-# pylint: disable=no-member,too-few-public-methods
-
-
 from typing import Dict
 
 from pynxtools.dataconverter.readers.em.concepts.nxs_object import NxObject
