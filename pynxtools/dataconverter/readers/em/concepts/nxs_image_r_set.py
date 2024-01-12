@@ -66,6 +66,7 @@ NX_IMAGE_REAL_SPACE_SET_HDF_PATH = ["image_oned/axis_x-field",
 class NxImageRealSpaceSet():
     def __init__(self):
         self.tmp: Dict = {}
+        self.tmp["source"] = None
         for entry in NX_IMAGE_REAL_SPACE_SET_HDF_PATH:
             if entry.endswith("-field") is True:
                 self.tmp[entry[0:len(entry) - len("-field")]] = NxObject(eqv_hdf="dataset")
