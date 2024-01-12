@@ -223,13 +223,36 @@ def fill_detector_group(key, entries_values, config_dict, template, entry_set):
                 template[modified_key_unit] = config_dict[f"{key}/@units"]
 
 
+def values_to_list(values):
+    """
+    Return a list of the values object, independent of its intial type
+
+    Parameters
+    ----------
+    values :
+        Dicitionary values.
+
+    Returns
+    -------
+    list.
+
+    """
+    # =============================================================================
+    #     if isinstance(values, list):
+    #         return value
+    # =============================================================================
+    if isinstance(values, bool):
+        return [values]
+    return list(values)
+
+
 def fill_template_with_xps_data(config_dict, xps_data_dict, template, entry_set):
     """Collect the xps data from xps_data_dict
     and store them into template. We use searching_keys
     for separating the data from xps_data_dict.
     """
-    for key, value_list in config_dict.items():
-        value_list = list(value_list)
+    for key, values in config_dict.items():
+        value_list = values_to_list(values)
 
         for value in value_list:
             if XPS_DATA_TOKEN in str(value):
