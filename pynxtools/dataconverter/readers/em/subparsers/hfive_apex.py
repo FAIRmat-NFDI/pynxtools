@@ -54,24 +54,39 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         """Init supported versions."""
         self.supported_version["tech_partner"] = ["EDAX, LLC"]
         self.supported_version["schema_name"] = ["EDAXH5"]
-        self.supported_version["schema_version"] = ["2.5.1001.0001"]
+        self.supported_version["schema_version"] = ["2.1.0009.0001",
+                                                    "2.2.0001.0001",
+                                                    "2.5.1001.0001"]
         self.supported_version["writer_name"] = ["APEX"]
-        self.supported_version["writer_version"] = ["2.5.1001.0001"]
+        self.supported_version["writer_version"] = ["2.1.0009.0001",
+                                                    "2.2.0001.0001",
+                                                    "2.5.1001.0001"]
 
     def check_if_supported(self):
         """Check if instance matches all constraints to qualify as supported H5OINA"""
         self.supported = 0  # voting-based
         with h5py.File(self.file_path, "r") as h5r:
-            # parse Company and PRODUCT_VERSION attribute values from the first group below / but these are not scalar but single value lists
+            # parse Company and PRODUCT_VERSION attribute values from the first group below
+            # but these are not scalar but single value lists
             # so much about interoperability
-            # but hehe for the APEX example from Sebastian and Sabine there is again no Company but PRODUCT_VERSION, 2 files, 2 "formats"
+            # but hehe for the APEX example from Sebastian and Sabine
+            # there is again no Company but PRODUCT_VERSION, 2 files, 2 "formats"
             grp_names = list(h5r["/"])
             if len(grp_names) == 1:
-                if read_strings_from_dataset(h5r[grp_names[0]].attrs["Company"][0]) in self.supported_version["tech_partner"]:
-                    self.supported += 1
-                if read_strings_from_dataset(h5r[grp_names[0]].attrs["PRODUCT_VERSION"][0]) in self.supported_version["schema_version"]:
-                    self.supported += 1
-            if self.supported == 2:
+                if "Company" in h5r[grp_names[0]].attrs:
+                    if read_strings_from_dataset(
+                        h5r[grp_names[0]].attrs["Company"][0]) \
+                            in self.supported_version["tech_partner"]:
+                        self.supported += 1
+                if "PRODUCT_VERSION" in h5r[grp_names[0]].attrs:
+                    if read_strings_from_dataset(
+                        h5r[grp_names[0]].attrs["PRODUCT_VERSION"][0]) \
+                            in self.supported_version["schema_version"]:
+                        self.supported += 1
+            if self.supported >= 1:
+                # this is not as strict because IKZ example does not contain Company EDAX, LLC
+                # but what if there are HDF5 files whose PRODUCT_VERSION is one of Apex but the file
+                # is not an APEX file, in this case be behavior is undefined but likely will fail
                 self.version = self.supported_version.copy()
                 self.supported = True
             else:
@@ -89,7 +104,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                     for sub_sub_grp_nm in sub_sub_grp_nms:
                         if sub_sub_grp_nm.startswith("Area"):
                             # get field-of-view (fov in edax jargon, i.e. roi)
-                            if "/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/FOVIMAGE" in h5r.keys():
+                            if f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/FOVIMAGE" in h5r.keys():
                                 ckey = self.init_named_cache(f"roi{cache_id}")
                                 self.parse_and_normalize_eds_fov(
                                     h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/FOVIMAGE", ckey)
@@ -105,6 +120,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     self.parse_and_normalize_group_ebsd_header(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_phases(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_data(h5r, ckey)
+                                    self.parse_and_normalize_group_ebsd_complete(ckey)
                                     cache_id += 1
 
                                 # TODO: conceptually the content of the three
@@ -134,9 +150,6 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     # and relative width/height of the sub-FOV
                                     # also supported in that Full Area has a region with (x,y) 0,0
                                     # and relative width/height 1./1.
-                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-
                                     # SPC
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
                                     print(f"Parsing {self.prfx}")
@@ -197,19 +210,20 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     # groups is the same TODO but maybe the physical ROI which they reference
                                     # respective differs (TODO:: LineScan refers to FOV that is in the parent of the group)
                                     ckey = self.init_named_cache(f"eds{cache_id}")
-                                    self.parse_and_normalize_eds_lsd(
+                                    self.parse_and_normalize_eds_line_lsd(
                                         h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
                                     cache_id += 1
 
                                     ckey = self.init_named_cache(f"eds_map{cache_id}")
-                                    self.parse_and_normalize_eds_rois(
+                                    self.parse_and_normalize_eds_line_rois(
                                         h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
                                     cache_id += 1
 
     def parse_and_normalize_group_ebsd_header(self, fp, ckey: str):
         # no official documentation yet from EDAX/APEX, deeply nested, chunking, virtual ds
         if f"{self.prfx}/EBSD/ANG/DATA/DATA" not in fp:
-            raise ValueError(f"Unable to parse {self.prfx}/EBSD/ANG/DATA/DATA !")
+            # raise ValueError(f"Unable to parse {self.prfx}/EBSD/ANG/DATA/DATA !")
+            return
 
         # for a regular tiling of R^2 with perfect hexagons
         n_pts = 0
@@ -243,7 +257,8 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
     def parse_and_normalize_group_ebsd_phases(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/ANG/HEADER/Phase"
         if f"{grp_name}" not in fp:
-            raise ValueError(f"Unable to parse {grp_name} !")
+            # raise ValueError(f"Unable to parse {grp_name} !")
+            return
 
         # Phases, contains a subgroup for each phase where the name
         # of each subgroup is the index of the phase starting at 1.
@@ -311,7 +326,8 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
     def parse_and_normalize_group_ebsd_data(self, fp, ckey: str):
         grp_name = f"{self.prfx}/EBSD/ANG/DATA/DATA"
         if f"{grp_name}" not in fp:
-            raise ValueError(f"Unable to parse {grp_name} !")
+            # raise ValueError(f"Unable to parse {grp_name} !")
+            return
 
         n_pts = self.tmp[ckey]["n_x"] * self.tmp[ckey]["n_y"]
         if np.shape(fp[f"{grp_name}"]) != (n_pts,) and n_pts > 0:
@@ -378,6 +394,11 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # almost two decades of commercialization of the technique now
         get_scan_point_coords(self.tmp[ckey])
 
+    def parse_and_normalize_group_ebsd_complete(ckey: str):
+        """Check if all relevant data for EBSD are available, if not clear the cache."""
+        # TODO::implement check and clearing procedure
+        pass
+
     def parse_and_normalize_eds_fov(self, fp, src: str, ckey: str):
         """Normalize and scale APEX-specific FOV/ROI image to NeXus."""
         reqs = ["FOVIMAGE", "FOVIMAGECOLLECTIONPARAMS", "FOVIPR"]
@@ -416,7 +437,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                 = f"Position along {dim} ({scan_unit[dim]})"
         for key, val in self.tmp[ckey].tmp.items():
             if key.startswith("image_twod"):
-                print(f"image_twod, key: {key}, val: {val}")
+                print(f"ckey: {ckey}, image_twod, key: {key}, val: {val}")
 
     def parse_and_normalize_eds_spc(self, fp, src: str, ckey: str):
         """Normalize and scale APEX-specific SPC (sum) spectrum to NeXus."""
@@ -426,31 +447,31 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             return
         if "NumberOfLines" in fp[f"{src}/SPC"].attrs.keys():
             return
-        reqs = ["eVOffset", "evPch", "NumberOfPoints", "SpectrumCount"]
+        reqs = ["eVOffset", "evPch", "NumberOfPoints", "SpectrumCounts"]
         for req in reqs:
-            if req not in fp[f"{src}/SPC"].attrs.keys():  # also check for shape
+            if req not in fp[f"{src}/SPC"].dtype.names:  # also check for shape
                 raise ValueError(f"Required attribute named {req} not found in {src}/SPC !")
 
         self.tmp[ckey] = NxSpectrumSet()
         self.tmp[ckey].tmp["source"] = f"{src}/SPC"
-        e_zero = fp[f"{src}/SPC"].attrs["eVOffset"][0]
-        e_delta = fp[f"{src}/SPC"].attrs["eVPCh"][0]
-        e_n = fp[f"{src}/SPC"].attrs["NumberOfPoints"][0]
+        e_zero = fp[f"{src}/SPC"]["eVOffset"][0]
+        e_delta = fp[f"{src}/SPC"]["evPch"][0]
+        e_n = fp[f"{src}/SPC"]["NumberOfPoints"][0]
         self.tmp[ckey].tmp["spectrum_zerod/axis_energy"].value \
             = e_zero + np.asarray(e_delta * np.linspace(0.,
                                                         int(e_n) - 1,
                                                         num=int(e_n),
                                                         endpoint=True),
-                                  e_zero.dtype)
+                                  e_zero.dtype) / 1000.  # eV to keV
         self.tmp[ckey].tmp["spectrum_zerod/axis_energy@long_name"].value \
             = "Energy (eV)"
         self.tmp[ckey].tmp["spectrum_zerod/intensity"].value \
-            = np.asarray(fp[f"{src}/SPC"].attrs["SpectrumCount"][0], np.int32)
+            = np.asarray(fp[f"{src}/SPC"]["SpectrumCounts"][0], np.int32)
         self.tmp[ckey].tmp["spectrum_zerod/intensity@long_name"].value \
             = f"Count (1)"
         for key, val in self.tmp[ckey].tmp.items():
             if key.startswith("spectrum_zerod"):
-                print(f"spectrum_zerod, key: {key}, val: {val}")
+                print(f"ckey: {ckey}, spectrum_zerod, key: {key}, val: {val}")
 
     def parse_and_normalize_eds_spd(self, fp, src: str, ckey: str):
         """Normalize and scale APEX-specific spectrum cuboid to NeXus."""
@@ -493,12 +514,17 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                 idx += chk_info[f"c{dim}"]
         for key, val in chk_bnds.items():
             print(f"{key}, {val}")
-        spd_chk = np.zeros((nyxe["y"], nyxe["x"], nyxe["e"]), fp[f"{src}/SPD"].dtype)
+        spd_chk = np.zeros((nyxe["y"], nyxe["x"], nyxe["e"]), fp[f"{src}/SPD"][0, 0][0].dtype)
         print(f"edax: {np.shape(spd_chk)}, {type(spd_chk)}, {spd_chk.dtype}")
+        print("WARNING::Currently the parsing of the SPD is switched off for debugging but works!")
+        return
         for chk_bnd_y in chk_bnds["y"]:
             for chk_bnd_x in chk_bnds["x"]:
                 spd_chk[chk_bnd_y[0]:chk_bnd_y[1], chk_bnd_x[0]:chk_bnd_x[1], :] \
                     = fp[f"{src}/SPD"][chk_bnd_y[0]:chk_bnd_y[1], chk_bnd_x[0]:chk_bnd_x[1]]
+        for key, val in self.tmp[ckey].tmp.items():
+            if key.startswith("spectrum_oned"):
+                print(f"ckey: {ckey}, spectrum_threed, key: {key}, val: {val}")
         # compared to naive reading, thereby we read the chunks as they are arranged in memory
         # and thus do not discard unnecessarily data cached in the hfive chunk cache
         # by contrast, if we were to read naively for each pixel the energy array most of the
@@ -515,7 +541,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # specification details the metadata, i.e. energy per channel, start and end
         # we do not use the SPD instance right now
 
-    def parse_and_normalize_eds_lsd(self, fp, src: str, ckey: str):
+    def parse_and_normalize_eds_line_lsd(self, fp, src: str, ckey: str):
         """Normalize and scale APEX-specific line scan with one spectrum each to NeXus."""
         # https://hyperspy.org/rosettasciio/_downloads/
         # c2e8b23d511a3c44fc30c69114e2873e/SpcMap-spd.file.format.pdf
@@ -585,8 +611,27 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             = f"Count (1)"
         for key, val in self.tmp[ckey].tmp.items():
             if key.startswith("spectrum_oned"):
-                print(f"spectrum_oned, key: {key}, val: {val}")
+                print(f"ckey: {ckey}, spectrum_oned, key: {key}, val: {val}")
 
-    def parse_and_normalize_eds_rois(self, fp, src: str, ckey: str):
+    def parse_and_normalize_eds_line_rois(self, fp, src: str, ckey: str):
         """Normalize and scale APEX-specific EDS element emission line maps to NeXus."""
-
+        # source of the information
+        pass
+        """
+        "indexing/element_names-field",
+        "indexing/IMAGE_R_SET-group",
+        "indexing/IMAGE_R_SET/PROCESS-group",
+        "indexing/IMAGE_R_SET/PROCESS/peaks-field",
+        "indexing/IMAGE_R_SET/PROCESS/weights-field",
+        "indexing/PEAK-group",
+        "indexing/PEAK/ION-group",
+        "indexing/PEAK/ION/energy-field",
+        "indexing/PEAK/ION/energy_range-field",
+        "indexing/PEAK/ION/iupac_line_names-field",
+        "indexing/PROGRAM-group",
+        "indexing/summary-group",
+        "indexing/summary/axis_energy-field",
+        "indexing/summary/axis_energy@long_name-attribute",
+        "indexing/summary/intensity-field",
+        "indexing/summary/intensity@long_name-attribute"
+        """

@@ -80,7 +80,7 @@ class NxEmZippedNionProjectSubParser:
 
     def check_if_zipped_nionswift_project_file(self, verbose=False):
         """Inspect the content of the compressed project file to check if supported."""
-        with open(self.file_path, 'rb', 0) as fp:
+        with open(self.file_path, "rb", 0) as fp:
             s = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
             magic = s.read(8)
             if verbose is True:

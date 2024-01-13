@@ -23,9 +23,9 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 # from pynxtools.dataconverter.readers.em.concepts.nxs_concepts import NxEmAppDef
-# from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
-# from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
-# from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
+from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSubParser
+from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
+from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
 from pynxtools.dataconverter.readers.em.subparsers.nxs_nion import NxEmZippedNionProjectSubParser
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 # from pynxtools.dataconverter.readers.em.geometry.convention_mapper import NxEmConventionMapper
@@ -119,9 +119,9 @@ class EmReader(BaseReader):
 
         # add further with resolving cases
         # if file_path is an HDF5 will use hfive parser
-        # sub_parser = "nxs_pyxem"
-        # subparser = NxEmNxsPyxemSubParser(entry_id, file_paths[0])
-        # subparser.parse(template)
+        sub_parser = "nxs_pyxem"
+        subparser = NxEmNxsPyxemSubParser(entry_id, file_paths[0])
+        subparser.parse(template)
         # TODO::check correct loop through!
 
         # sub_parser = "image_tiff"
@@ -129,8 +129,8 @@ class EmReader(BaseReader):
         # subparser.parse(template)
 
         # sub_parser = "zipped_nion_project"
-        subparser = NxEmZippedNionProjectSubParser(entry_id, file_paths[0])
-        subparser.parse(template, verbose=True)
+        # subparser = NxEmZippedNionProjectSubParser(entry_id, file_paths[0])
+        # subparser.parse(template, verbose=True)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")

@@ -28,7 +28,7 @@ class NxObject:
     def __init__(self,
                  name: str = None,
                  unit: str = None,
-                 dtype=str,
+                 dtype=None,
                  value=None,
                  **kwargs):
         if (name is not None) and (name == ""):
@@ -44,10 +44,9 @@ class NxObject:
         # use special values "unitless" for NX_UNITLESS (e.g. 1) and
         # "dimensionless" for NX_DIMENSIONLESS (e.g. 1m / 1m)
         self.dtype = dtype  # use np.dtype if possible
-        if value is None or dtype is str:
+        if value is None or isinstance(dtype, str):
             self.unit = "unitless"
-        if value is not None:
-            self.value = value
+        self.value = value
         # value should be a numpy scalar, tensor, or string if possible
         self.eqv_hdf = None
         if "eqv_hdf" in kwargs:
@@ -58,4 +57,4 @@ class NxObject:
 
     def __repr__(self):
         """Report values."""
-        return f"Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}, eqv_hdf: {self.eqv_hdf}"
+        return f"Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}, value: {self.value}, eqv_hdf: {self.eqv_hdf}"
