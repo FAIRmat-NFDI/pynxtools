@@ -2,8 +2,6 @@ name: build_docs
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
 permissions:
   contents: write
 jobs:
