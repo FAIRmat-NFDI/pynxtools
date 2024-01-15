@@ -59,6 +59,7 @@ from pynxtools.dataconverter.readers.em.subparsers.hfive_apex import HdfFiveEdax
 from pynxtools.dataconverter.readers.em.subparsers.hfive_ebsd import HdfFiveCommunityReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_emsoft import HdfFiveEmSoftReader
 from pynxtools.dataconverter.readers.em.subparsers.hfive_dreamthreed import HdfFiveDreamThreedReader
+from pynxtools.dataconverter.readers.em.concepts.nxs_image_r_set import NxImageRealSpaceSet
 
 
 PROJECTION_VECTORS = [Vector3d.xvector(), Vector3d.yvector(), Vector3d.zvector()]
@@ -92,7 +93,11 @@ class NxEmNxsPyxemSubParser:
         else:
             self.entry_id = 1
         self.file_path = input_file_name
-        self.event_id = 1
+        self.id_mgn = {"event": 1,
+                       "event_img": 1,
+                       "event_spc": 1,
+                       "roi": 1,
+                       "eds_img": 1}
         self.cache = {"is_filled": False}
 
     def parse(self, template: dict) -> dict:
@@ -313,8 +318,9 @@ class NxEmNxsPyxemSubParser:
     def process_roi_overview_eds_based(self,
                                        inp: dict,
                                        template: dict) -> dict:
-        trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/EVENT_DATA_EM" \
-              f"[event_data_em{self.event_id}]/IMAGE_R_SET[image_r_set1]/DATA[image_twod]"
+        trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/" \
+              f"EVENT_DATA_EM[event_data_em{self.id_mgn['event']}]/" \
+              f"IMAGE_R_SET[image_r_set{self.id_mgn['event_img']}]/DATA[image_twod]"
         template[f"{trg}/@NX_class"] = "NXdata"  # TODO::should be autodecorated
         template[f"{trg}/description"] = inp.tmp["source"]
         template[f"{trg}/title"] = f"Region-of-interest overview image"
@@ -333,8 +339,8 @@ class NxEmNxsPyxemSubParser:
                 = {"compress": inp.tmp[f"image_twod/axis_{dim[0]}"].value, "strength": 1}
             template[f"{trg}/AXISNAME[axis_{dim[0]}]/@long_name"] \
                 = inp.tmp[f"image_twod/axis_{dim[0]}@long_name"].value
-            # template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
-        self.event_id += 1
+        self.id_mgn["event_img"] += 1
+        self.id_mgn["event"] += 1
         return template
 
     def process_roi_ebsd_maps(self, inp: dict, template: dict) -> dict:
@@ -662,8 +668,9 @@ class NxEmNxsPyxemSubParser:
         for ckey in inp.keys():
             if ckey.startswith("eds_spc") and inp[ckey] != {}:
                 trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/" \
-                      f"EVENT_DATA_EM[event_data_em{self.event_id}]/" \
-                      f"SPECTRUM_SET[spectrum_set1]/DATA[spectrum_zerod]"
+                      f"EVENT_DATA_EM[event_data_em{self.id_mgn['event']}]/" \
+                      f"SPECTRUM_SET[spectrum_set{self.id_mgn['event_spc']}]/" \
+                      f"DATA[spectrum_zerod]"
                 # TODO::check if its a spectrum_zerod !!!
                 template[f"{trg}/@NX_class"] = "NXdata"  # TODO::should be autodecorated
                 template[f"{trg}/description"] = inp[ckey].tmp["source"]
@@ -673,17 +680,51 @@ class NxEmNxsPyxemSubParser:
                 template[f"{trg}/intensity"] \
                     = {"compress": inp[ckey].tmp["spectrum_zerod/intensity"].value,
                        "strength": 1}
-                template[f"{trg}/intensity/@long_name"] = f"Signal"
+                template[f"{trg}/intensity/@long_name"] \
+                    = inp[ckey].tmp["spectrum_zerod/intensity@long_name"].value  # f"Signal"
                 template[f"{trg}/@AXISNAME_indices[axis_energy_indices]"] = np.uint32(0)
                 template[f"{trg}/AXISNAME[axis_energy]"] \
                     = {"compress": inp[ckey].tmp[f"spectrum_zerod/axis_energy"].value,
                        "strength": 1}
                 template[f"{trg}/AXISNAME[axis_energy]/@long_name"] \
-                        = inp[ckey].tmp[f"spectrum_zerod/axis_energy@long_name"].value
-                    # template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
-                # TODO::increment spectrum_set1
-                self.event_id += 1
+                    = inp[ckey].tmp[f"spectrum_zerod/axis_energy@long_name"].value
+                self.id_mgn["event_spc"] += 1
+                self.id_mgn["event"] += 1
         return template
 
     def process_roi_eds_maps(self, inp: dict, template: dict) -> dict:
+        for ckey in inp.keys():
+            if ckey.startswith("eds_map") and inp[ckey] != {}:
+                trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{self.id_mgn['roi']}]/" \
+                      f"eds/indexing/"
+                template[f"{trg}/source"] = inp.tmp["source"]
+                for img in inp.tmp["IMAGE_R_SET"]:
+                    if not isinstance(img, NxImageRealSpaceSet):
+                        continue
+                    trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{self.id_mgn['roi']}]/eds/" \
+                          f"indexing/IMAGE_R_SET[image_r_set{self.id_mgn['eds_img']}]/"
+                    template[f"{trg}/description"] \
+                        = img.tmp["description"]
+                    template[f"{trg}/iupac_line_candidates"] \
+                        = img.tmp["iupac_line_candidates"]
+                    template[f"{trg}/@NX_class"] = "NXdata"  # TODO::should be autodecorated
+                    template[f"{trg}/title"] = f"EDS map"
+                    template[f"{trg}/@signal"] = "intensity"
+                    template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
+                    template[f"{trg}/intensity"] \
+                        = {"compress": img.tmp["image_twod/intensity"].value,
+                           "strength": 1}
+                    template[f"{trg}/intensity/@long_name"] = f"Signal"
+                    dims = [("x", 0), ("y", 1)]
+                    for dim in dims:
+                        template[f"{trg}/@AXISNAME_indices[axis_{dim[0]}_indices]"] \
+                            = np.uint32(dim[1])
+                        template[f"{trg}/AXISNAME[axis_{dim[0]}]"] \
+                            = {"compress": img.tmp[f"image_twod/axis_{dim[0]}"].value,
+                               "strength": 1}
+                        template[f"{trg}/AXISNAME[axis_{dim[0]}]/@long_name"] \
+                            = img.tmp[f"image_twod/axis_{dim[0]}"].value
+                    self.id_mgn["eds_img"] += 1
+                self.id_mgn["roi"] += 1
+
         return template

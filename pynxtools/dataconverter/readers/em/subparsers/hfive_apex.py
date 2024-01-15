@@ -123,8 +123,9 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     self.parse_and_normalize_group_ebsd_header(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_phases(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_data(h5r, ckey)
-                                    self.parse_and_normalize_group_ebsd_complete(ckey)
+                                    self.parse_and_normalize_group_ebsd_check(ckey)
                                     self.cache_id += 1
+                                continue
 
                                 # TODO: conceptually the content of the three
                                 # above-mentioned groups has and uses for some
@@ -270,6 +271,8 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                 space_group = None
                 if phase_name in ASSUME_PHASE_NAME_TO_SPACE_GROUP.keys():
                     space_group = ASSUME_PHASE_NAME_TO_SPACE_GROUP[phase_name]
+                else:
+                    raise ValueError(f"{phase_name} is not in ASSUME_PHASE_NAME_TO_SPACE_GROUP !")
                 self.tmp[ckey]["phases"][int(phase_id)]["space_group"] = space_group
 
                 if len(self.tmp[ckey]["space_group"]) > 0:
@@ -361,7 +364,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # almost two decades of commercialization of the technique now
         get_scan_point_coords(self.tmp[ckey])
 
-    def parse_and_normalize_group_ebsd_complete(ckey: str):
+    def parse_and_normalize_group_ebsd_check(self, ckey: str):
         """Check if all relevant data for EBSD are available, if not clear the cache."""
         # TODO::implement check and clearing procedure
         pass

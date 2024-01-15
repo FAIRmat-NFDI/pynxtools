@@ -316,4 +316,5 @@ ProjectIdToCitation = {"Forsterite.ctf.nxs.mtex": {"data": "someurl", "paper": "
 ASSUME_PHASE_NAME_TO_SPACE_GROUP = {"Silver": 225,
                                     "Copper": 225,
                                     "Ni (Nickel)": 225,
-                                    "Face Centered Cubic": 225}
+                                    "Face Centered Cubic": 225,
+                                    "Ge (Germanium)": 225}  # Ge (Germanium), really?
