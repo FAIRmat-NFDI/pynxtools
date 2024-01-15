@@ -107,7 +107,6 @@ class SleMapperSpecs(XPSMapper):
         key_map = {
             "user": [],
             "instrument": [
-                "workfunction",
                 "bias_voltage_ions [V]",
                 "bias_voltage_electrons [V]",
                 "polar_angle",
@@ -120,7 +119,9 @@ class SleMapperSpecs(XPSMapper):
                 "emission_current",
             ],
             "beam": ["excitation_energy"],
-            "analyser": [],
+            "analyser": [
+                "work_function",
+            ],
             "collectioncolumn": [
                 "lens1_voltage [nU]",
                 "lens2_voltage [nU]",
@@ -131,12 +132,12 @@ class SleMapperSpecs(XPSMapper):
                 "transmission_function/data",
                 "transmission_function/file",
                 "lens_mode",
+                "iris_diameter",
             ],
             "energydispersion": [
                 "scan_mode",
                 "entrance_slit",
                 "exit_slit",
-                "iris_diameter",
                 "pass_energy",
             ],
             "detector": [
@@ -284,7 +285,7 @@ class SleProdigyParser(ABC):
             "EpassOrRR": "pass_energy",
             "EnergyType": "x_units",
             "Samples": "n_values",
-            "Wf": "workfunction",
+            "Wf": "work_function",
             "Step": "step",
             "Ubias": "electron_bias",
             "DwellTime": "dwell_time",
