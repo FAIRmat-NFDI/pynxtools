@@ -35,6 +35,11 @@ from pynxtools.dataconverter.readers.em.concepts.nxs_image_r_set \
     import NxImageRealSpaceSet
 from pynxtools.dataconverter.readers.em.concepts.nxs_spectrum_set \
     import NxSpectrumSet
+from pynxtools.dataconverter.readers.em.concepts.nxs_em_eds_indexing \
+    import NxEmEdsIndexing
+from pynxtools.dataconverter.readers.em.utils.get_xrayline_iupac_names \
+    import get_xrayline_candidates
+from pynxtools.dataconverter.readers.em.concepts.nxs_object import NxObject
 
 
 class HdfFiveEdaxApexReader(HdfFiveBaseParser):
@@ -43,6 +48,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         super().__init__(file_path)
         self.prfx = None
         self.tmp = {}
+        self.cache_id = 1
         self.supported_version: Dict = {}
         self.version: Dict = {}
         self.supported = False
@@ -95,7 +101,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
     def parse_and_normalize(self):
         """Read and normalize away EDAX/APEX-specific formatting with an equivalent in NXem."""
         with h5py.File(f"{self.file_path}", "r") as h5r:
-            cache_id = 1
+            self.cache_id = 1
             grp_nms = list(h5r["/"])
             for grp_nm in grp_nms:
                 sub_grp_nms = list(h5r[grp_nm])
@@ -104,11 +110,8 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                     for sub_sub_grp_nm in sub_sub_grp_nms:
                         if sub_sub_grp_nm.startswith("Area"):
                             # get field-of-view (fov in edax jargon, i.e. roi)
-                            if f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/FOVIMAGE" in h5r.keys():
-                                ckey = self.init_named_cache(f"roi{cache_id}")
-                                self.parse_and_normalize_eds_fov(
-                                    h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/FOVIMAGE", ckey)
-                                cache_id += 1
+                            self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}"
+                            self.parse_and_normalize_eds_fov(h5r)
 
                             # get oim_maps, live_maps, or full area if available
                             area_grp_nms = list(h5r[f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}"])
@@ -116,12 +119,12 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                 if area_grp_nm.startswith("OIM Map"):
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
                                     print(f"Parsing {self.prfx}")
-                                    ckey = self.init_named_cache(f"ebsd{cache_id}")
+                                    ckey = self.init_named_cache(f"ebsd{self.cache_id}")
                                     self.parse_and_normalize_group_ebsd_header(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_phases(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_data(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_complete(ckey)
-                                    cache_id += 1
+                                    self.cache_id += 1
 
                                 # TODO: conceptually the content of the three
                                 # above-mentioned groups has and uses for some
@@ -150,58 +153,28 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     # and relative width/height of the sub-FOV
                                     # also supported in that Full Area has a region with (x,y) 0,0
                                     # and relative width/height 1./1.
-                                    # SPC
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-                                    ckey = self.init_named_cache(f"eds{cache_id}")
-                                    self.parse_and_normalize_eds_spc(
-                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
-                                    cache_id += 1
+                                    self.parse_and_normalize_eds_spc(h5r)
 
                                 # there is a oned equivalent of the twod Free Draw called EDS Spot
                                 if area_grp_nm.startswith("EDS Spot"):
-                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-
                                     # TODO: parse ../REGION x,y coordinate pair (relative coordinate)
                                     # with respect to parent FOV, SPC
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-                                    ckey = self.init_named_cache(f"eds{cache_id}")
-                                    self.parse_and_normalize_eds_spc(
-                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
-                                    cache_id += 1
+                                    self.parse_and_normalize_eds_spc(h5r)
 
                                 if area_grp_nm.startswith("Free Draw"):
-                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-
                                     # TODO: parse ../REGION x,y table (relative coordinate)
                                     # with respect to parent FOV, SPC
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-                                    ckey = self.init_named_cache(f"eds{cache_id}")
-                                    self.parse_and_normalize_eds_spc(
-                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
-                                    cache_id += 1
+                                    self.parse_and_normalize_eds_spc(h5r)
 
                                 if area_grp_nm.startswith("Live Map"):
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-
-                                    # SPC
-                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
-                                    print(f"Parsing {self.prfx}")
-                                    ckey = self.init_named_cache(f"eds{cache_id}")
-                                    self.parse_and_normalize_eds_spc(
-                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
-                                    cache_id += 1
-
-                                    # SPD
-                                    ckey = self.init_named_cache(f"eds{cache_id}")
-                                    self.parse_and_normalize_eds_spd(
-                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
-                                    cache_id += 1
+                                    self.parse_and_normalize_eds_spc(h5r)
+                                    self.parse_and_normalize_eds_spd(h5r)
+                                    # element-specific ROI (aka element map)
+                                    self.parse_and_normalize_eds_area_rois(h5r)
 
                                 if area_grp_nm.startswith("LineScan") \
                                         or area_grp_nm.startswith("ROILineScan"):
@@ -209,15 +182,9 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     # TODO::currently I assume that the internal organization of LineScan and ROILineScan
                                     # groups is the same TODO but maybe the physical ROI which they reference
                                     # respective differs (TODO:: LineScan refers to FOV that is in the parent of the group)
-                                    ckey = self.init_named_cache(f"eds{cache_id}")
-                                    self.parse_and_normalize_eds_line_lsd(
-                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
-                                    cache_id += 1
-
-                                    ckey = self.init_named_cache(f"eds_map{cache_id}")
-                                    self.parse_and_normalize_eds_line_rois(
-                                        h5r, f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}", ckey)
-                                    cache_id += 1
+                                    self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
+                                    self.parse_and_normalize_eds_line_lsd(h5r)
+                                    self.parse_and_normalize_eds_line_rois(h5r)
 
     def parse_and_normalize_group_ebsd_header(self, fp, ckey: str):
         # no official documentation yet from EDAX/APEX, deeply nested, chunking, virtual ds
@@ -399,8 +366,10 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # TODO::implement check and clearing procedure
         pass
 
-    def parse_and_normalize_eds_fov(self, fp, src: str, ckey: str):
+    def parse_and_normalize_eds_fov(self, fp):
         """Normalize and scale APEX-specific FOV/ROI image to NeXus."""
+        src = self.prfx
+        print(f"Parsing {src} ...")
         reqs = ["FOVIMAGE", "FOVIMAGECOLLECTIONPARAMS", "FOVIPR"]
         for req in reqs:
             if f"{src}/{req}" not in fp.keys():
@@ -411,20 +380,20 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                 raise ValueError(f"Required attribute named {req} not found in {src}/FOVIMAGE !")
         reqs = ["MicronsPerPixelX", "MicronsPerPixelY"]
         for req in reqs:
-            if req not in fp[f"{src}/FOVIPR"].attrs.keys():
+            if req not in fp[f"{src}/FOVIPR"].dtype.names:
                 raise ValueError(f"Required attribute named {req} not found in {src}/FOVIPR !")
 
+        ckey = self.init_named_cache(f"eds_roi{self.cache_id}")
         self.tmp[ckey] = NxImageRealSpaceSet()
         self.tmp[ckey].tmp["source"] = f"{src}/FOVIMAGE"
         nyx = {"y": fp[f"{src}/FOVIMAGE"].attrs["PixelHeight"][0],
                "x": fp[f"{src}/FOVIMAGE"].attrs["PixelWidth"][0]}
-        syx = {"x": fp[f"{src}/FOVIPR"].attrs["MicronsPerPixelX"][0],
-               "y": fp[f"{src}/FOVIPR"].attrs["MicronsPerPixelY"][0]}
+        syx = {"x": fp[f"{src}/FOVIPR"]["MicronsPerPixelX"][0],
+               "y": fp[f"{src}/FOVIPR"]["MicronsPerPixelY"][0]}
         scan_unit = {"x": "µm", "y": "µm"}
         # is micron because MicronsPerPixel{dim} used by EDAX
         self.tmp[ckey].tmp["image_twod/intensity"].value \
             = np.reshape(np.asarray(fp[f"{src}/FOVIMAGE"]), (nyx["y"], nyx["x"]))
-
         dims = ["y", "x"]
         for dim in dims:
             self.tmp[ckey].tmp[f"image_twod/axis_{dim}"].value \
@@ -435,14 +404,21 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                              syx["x"].dtype)
             self.tmp[ckey].tmp[f"image_twod/axis_{dim}@long_name"].value \
                 = f"Position along {dim} ({scan_unit[dim]})"
-        for key, val in self.tmp[ckey].tmp.items():
-            if key.startswith("image_twod"):
-                print(f"ckey: {ckey}, image_twod, key: {key}, val: {val}")
+        self.cache_id += 1
 
-    def parse_and_normalize_eds_spc(self, fp, src: str, ckey: str):
+        for key, obj in self.tmp[ckey].tmp.items():
+            if isinstance(obj, NxObject):
+                if obj.value is not None:
+                    print(f"ckey: {ckey}, key: {key}, obj: {obj}")
+            else:
+                print(f"ckey: {ckey}, key: {key}, obj: {obj}")
+
+    def parse_and_normalize_eds_spc(self, fp):
         """Normalize and scale APEX-specific SPC (sum) spectrum to NeXus."""
         # https://hyperspy.org/rosettasciio/_downloads/
         # 9e2f0ccf5287bb2d17f1b7550e1d626f/SPECTRUM-V70.pdf
+        src = self.prfx
+        print(f"Parsing {src} ...")
         if f"{src}/SPC" not in fp.keys():
             return
         if "NumberOfLines" in fp[f"{src}/SPC"].attrs.keys():
@@ -452,6 +428,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             if req not in fp[f"{src}/SPC"].dtype.names:  # also check for shape
                 raise ValueError(f"Required attribute named {req} not found in {src}/SPC !")
 
+        ckey = self.init_named_cache(f"eds_spc{self.cache_id}")
         self.tmp[ckey] = NxSpectrumSet()
         self.tmp[ckey].tmp["source"] = f"{src}/SPC"
         e_zero = fp[f"{src}/SPC"]["eVOffset"][0]
@@ -469,14 +446,21 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             = np.asarray(fp[f"{src}/SPC"]["SpectrumCounts"][0], np.int32)
         self.tmp[ckey].tmp["spectrum_zerod/intensity@long_name"].value \
             = f"Count (1)"
-        for key, val in self.tmp[ckey].tmp.items():
-            if key.startswith("spectrum_zerod"):
-                print(f"ckey: {ckey}, spectrum_zerod, key: {key}, val: {val}")
+        self.cache_id += 1
 
-    def parse_and_normalize_eds_spd(self, fp, src: str, ckey: str):
+        for key, obj in self.tmp[ckey].tmp.items():
+            if isinstance(obj, NxObject):
+                if obj.value is not None:
+                    print(f"ckey: {ckey}, key: {key}, obj: {obj}")
+            else:
+                print(f"ckey: {ckey}, key: {key}, obj: {obj}")
+
+    def parse_and_normalize_eds_spd(self, fp):
         """Normalize and scale APEX-specific spectrum cuboid to NeXus."""
         # https://hyperspy.org/rosettasciio/_downloads/
         # c2e8b23d511a3c44fc30c69114e2873e/SpcMap-spd.file.format.pdf
+        src = self.prfx
+        print(f"Parsing {src} ...")
         if f"{src}/SPD" not in fp.keys():
             return
         reqs = ["MicronPerPixelX",
@@ -488,6 +472,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             if req not in fp[f"{src}/SPD"].attrs.keys():  # also check for shape
                 raise ValueError(f"Required attribute named {req} not found in {src}/SPD !")
 
+        ckey = self.init_named_cache(f"eds_spc{self.cache_id}")
         self.tmp[ckey] = NxSpectrumSet()
         self.tmp[ckey].tmp["source"] = f"{src}/SPD"
         nyxe = {"y": fp[f"{src}/SPD"].attrs["NumberOfLines"][0],
@@ -517,14 +502,18 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         spd_chk = np.zeros((nyxe["y"], nyxe["x"], nyxe["e"]), fp[f"{src}/SPD"][0, 0][0].dtype)
         print(f"edax: {np.shape(spd_chk)}, {type(spd_chk)}, {spd_chk.dtype}")
         print("WARNING::Currently the parsing of the SPD is switched off for debugging but works!")
+        self.cache_id += 1
         return
         for chk_bnd_y in chk_bnds["y"]:
             for chk_bnd_x in chk_bnds["x"]:
                 spd_chk[chk_bnd_y[0]:chk_bnd_y[1], chk_bnd_x[0]:chk_bnd_x[1], :] \
                     = fp[f"{src}/SPD"][chk_bnd_y[0]:chk_bnd_y[1], chk_bnd_x[0]:chk_bnd_x[1]]
-        for key, val in self.tmp[ckey].tmp.items():
-            if key.startswith("spectrum_oned"):
-                print(f"ckey: {ckey}, spectrum_threed, key: {key}, val: {val}")
+        for key, obj in self.tmp[ckey].tmp.items():
+            if isinstance(obj, NxObject):
+                if obj.value is not None:
+                    print(f"ckey: {ckey}, key: {key}, obj: {obj}")
+            else:
+                print(f"ckey: {ckey}, key: {key}, obj: {obj}")
         # compared to naive reading, thereby we read the chunks as they are arranged in memory
         # and thus do not discard unnecessarily data cached in the hfive chunk cache
         # by contrast, if we were to read naively for each pixel the energy array most of the
@@ -541,7 +530,95 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # specification details the metadata, i.e. energy per channel, start and end
         # we do not use the SPD instance right now
 
-    def parse_and_normalize_eds_line_lsd(self, fp, src: str, ckey: str):
+    def parse_and_normalize_eds_area_rois(self, fp):
+        """Normalize and scale APEX-specific EDS element emission line maps to NeXus."""
+        src = self.prfx
+        print(f"Parsing {src} ...")
+        reqs = ["ELEMENTOVRLAYIMGCOLLECTIONPARAMS", "PHASES", "ROIs", "SPC"]
+        for req in reqs:
+            if f"{src}/{req}" not in fp.keys():
+                return
+        reqs = ["eVOffset", "evPch", "NumberOfPoints", "SpectrumCounts"]
+        for req in reqs:
+            if req not in fp[f"{src}/SPC"].dtype.names:  # also check for shape
+                raise ValueError(f"Required attribute named {req} not found in {src}/SPC !")
+        reqs = ["ResolutionX", "ResolutionY", "mmFieldWidth", "mmFieldHeight"]
+        for req in reqs:
+            if req not in fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"].dtype.names:
+                  # also check for shape
+                raise ValueError(f"Required attribute named {req} not found in "
+                                 f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS !")
+        # find relevant EDS maps (pairs of <symbol>.dat, <symbol>.ipr) groups
+        uniq = set()
+        for group_name in fp[f"{src}/ROIs"].keys():
+            token = group_name.split(".")
+            if (len(token) == 2) and (token[1] in ("dat", "ipr")):
+                uniq.add(token[0])
+        for entry in uniq:
+            if (f"{src}/ROIs/{entry}.dat" not in fp[f"{src}/ROIs"].keys()) \
+                    or (f"{src}/ROIs/{entry}.ipr" not in fp[f"{src}/ROIs"].keys()):
+                uniq.remove(entry)
+                continue
+            if ("RoiStartChan" not in fp[f"{src}/ROIs/{entry}.dat"].attrs) \
+                    or ("RoiEndChan" not in fp[f"{src}/ROIs/{entry}.dat"].attrs):
+                uniq.remove(entry)
+
+        ckey = self.init_named_cache(f"eds_map{self.cache_id}")
+        self.tmp[ckey] = NxEmEdsIndexing()
+        self.tmp[ckey].tmp["source"] = f"{src}/ROIs"
+        self.tmp[ckey].tmp["IMAGE_R_SET"] = []
+
+        e_zero = fp[f"{src}/SPC"]["eVOffset"][0]
+        e_delta = fp[f"{src}/SPC"]["evPch"][0]
+        e_n = fp[f"{src}/SPC"]["NumberOfPoints"][0]
+        e_channels = e_zero + np.asarray(e_delta * np.linspace(0.,
+                                                               e_n - 1.,
+                                                               num=int(e_n),
+                                                               endpoint=True),
+                                         e_zero.dtype)
+        nxy = {"x": fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"][0]["ResolutionX"],
+               "y": fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"][0]["ResolutionY"],
+               "lx": fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"][0]["mmFieldWidth"],
+               "ly": fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"][0]["mmFieldHeight"]}
+        sxy = {"x": nxy["lx"] / nxy["x"],
+               "y": nxy["ly"] / nxy["y"]}
+        scan_unit = {"x": "µm",
+                     "y": "µm"}
+        for entry in uniq:
+            eds_map = NxImageRealSpaceSet()
+            eds_map.tmp["source"] = f"{src}/ROIs/{entry}"
+            eds_map.tmp["description"] = f"{entry}"
+            # this can be a custom name e.g. InL or In L but it is not necessarily
+            # a clean description of an element plus a IUPAC line, hence get all
+            # theoretical candidates within integrated energy region [e_roi_s, e_roi_e]
+            e_roi_s = fp[f"{src}/ROIs/{entry}.dat"].attrs["RoiStartChan"][0]
+            e_roi_e = fp[f"{src}/ROIs/{entry}.dat"].attrs["RoiEndChan"][0]
+            eds_map.tmp["iupac_line_candidates"] \
+                = ", ".join(get_xrayline_candidates(e_channels[e_roi_s],
+                                                    e_channels[e_roi_e + 1]))
+            for dim in ["x", "y"]:
+                eds_map.tmp[f"image_twod/axis_{dim}"].value \
+                    = np.asarray(0. + sxy[dim] * np.linspace(0.,
+                                                             nxy[dim] - 1,
+                                                             num=int(nxy[dim]),
+                                                             endpoint=True),
+                                 np.float32)
+                eds_map.tmp[f"image_twod/axis_{dim}@long_name"].value \
+                    = f"{dim}-axis pixel coordinate ({scan_unit[dim]})"
+                eds_map.tmp["image_twod/intensity"].value \
+                    = np.asarray(fp[f"{src}/ROIs/{entry}.dat"])
+            self.tmp[ckey].tmp["IMAGE_R_SET"].append(eds_map)  # copy
+        self.cache_id += 1
+
+        for key, val in self.tmp[ckey].tmp.items():
+            if key.startswith("IMAGE_R_SET"):
+                for img in val:
+                    for kkey, vval in img.tmp.items():
+                        print(f"\t\timg, key: {kkey}, val: {vval}")
+            else:
+                print(f"ckey: {ckey}, eds_mapspectrum_oned, key: {key}, val: {val}")
+
+    def parse_and_normalize_eds_line_lsd(self, fp):
         """Normalize and scale APEX-specific line scan with one spectrum each to NeXus."""
         # https://hyperspy.org/rosettasciio/_downloads/
         # c2e8b23d511a3c44fc30c69114e2873e/SpcMap-spd.file.format.pdf
@@ -551,6 +628,8 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         # the absolute location of the line grid in the image of this LineScan group
         # and to get the spectra right
         # TODO: this can be an arbitrary free form line, right?
+        src = self.prfx
+        print(f"Parsing {src} ...")
         reqs = ["LSD", "SPC", "REGION", "LINEIMAGECOLLECTIONPARAMS"]
         for req in reqs:
             if f"{src}/{req}" not in fp.keys():
@@ -574,6 +653,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                 raise ValueError(f"Required attribute named {req} not found "
                                  f"in {src}/LINEMAPIMAGECOLLECTIONPARAMS !")
 
+        ckey = self.init_named_cache(f"eds_lsd{self.cache_id}")
         self.tmp[ckey] = NxSpectrumSet()
         self.tmp[ckey].tmp["source"] = f"{src}/LSD"
         e_zero = 0.  # strong assumption based on VInP_108_L2 example from IKZ
@@ -609,29 +689,16 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             = np.asarray(fp[f"{src}/LSD"][0], np.int32)
         self.tmp[ckey].tmp["spectrum_oned/intensity@long_name"].value \
             = f"Count (1)"
-        for key, val in self.tmp[ckey].tmp.items():
-            if key.startswith("spectrum_oned"):
-                print(f"ckey: {ckey}, spectrum_oned, key: {key}, val: {val}")
+        self.cache_id += 1
 
-    def parse_and_normalize_eds_line_rois(self, fp, src: str, ckey: str):
+        for key, val in self.tmp[ckey].tmp.items():
+            print(f"ckey: {ckey}, spectrum_oned, key: {key}, val: {val}")
+
+    def parse_and_normalize_eds_line_rois(self, fp):
         """Normalize and scale APEX-specific EDS element emission line maps to NeXus."""
         # source of the information
+        src = self.prfx
+        print(f"Parsing {src} ...")
+        # ckey = self.init_named_cache(f"eds_map{self.cache_id}")
+        # self.cache_id += 1
         pass
-        """
-        "indexing/element_names-field",
-        "indexing/IMAGE_R_SET-group",
-        "indexing/IMAGE_R_SET/PROCESS-group",
-        "indexing/IMAGE_R_SET/PROCESS/peaks-field",
-        "indexing/IMAGE_R_SET/PROCESS/weights-field",
-        "indexing/PEAK-group",
-        "indexing/PEAK/ION-group",
-        "indexing/PEAK/ION/energy-field",
-        "indexing/PEAK/ION/energy_range-field",
-        "indexing/PEAK/ION/iupac_line_names-field",
-        "indexing/PROGRAM-group",
-        "indexing/summary-group",
-        "indexing/summary/axis_energy-field",
-        "indexing/summary/axis_energy@long_name-attribute",
-        "indexing/summary/intensity-field",
-        "indexing/summary/intensity@long_name-attribute"
-        """

@@ -22,23 +22,21 @@ from typing import Dict, List
 from pynxtools.dataconverter.readers.em.concepts.nxs_object import NxObject
 
 
-NX_EM_EDS_INDEXING_HDF_PATH = ["indexing-group",
-                               "indexing/element_names-field",
-                               "indexing/IMAGE_R_SET-group",
+NX_EM_EDS_INDEXING_HDF_PATH = ["indexing/element_names-field",
                                "indexing/IMAGE_R_SET/PROCESS-group",
                                "indexing/IMAGE_R_SET/PROCESS/peaks-field",
+                               "indexing/IMAGE_R_SET/description-field",
+                               "indexing/IMAGE_R_SET/iupac_line_candidates-field",
                                "indexing/IMAGE_R_SET/PROCESS/weights-field",
-                               "indexing/PEAK-group",
-                               "indexing/PEAK/ION-group",
+                               "indexing/IMAGE_R_SET/PROCESS/weights-field",
+                               "indexing/IMAGE_R_SET/image_twod/axis_x-field",
+                               "indexing/IMAGE_R_SET/image_twod/axis_x@long_name-attribute",
+                               "indexing/IMAGE_R_SET/image_twod/axis_y-field",
+                               "indexing/IMAGE_R_SET/image_twod/axis_y@long_name-attribute",
+                               "indexing/IMAGE_R_SET/image_twod/intensity-field",
                                "indexing/PEAK/ION/energy-field",
                                "indexing/PEAK/ION/energy_range-field",
-                               "indexing/PEAK/ION/iupac_line_names-field",
-                               "indexing/PROGRAM-group",
-                               "indexing/summary-group",
-                               "indexing/summary/axis_energy-field",
-                               "indexing/summary/axis_energy@long_name-attribute",
-                               "indexing/summary/intensity-field",
-                               "indexing/summary/intensity@long_name-attribute"]
+                               "indexing/PEAK/ION/iupac_line_names-field"]
 
 
 class NxEmEdsIndexing():

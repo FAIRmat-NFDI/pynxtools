@@ -92,6 +92,7 @@ class NxEmNxsPyxemSubParser:
         else:
             self.entry_id = 1
         self.file_path = input_file_name
+        self.event_id = 1
         self.cache = {"is_filled": False}
 
     def parse(self, template: dict) -> dict:
@@ -204,6 +205,9 @@ class NxEmNxsPyxemSubParser:
 
         self.process_roi_overview(inp, template)
         self.process_roi_ebsd_maps(inp, template)
+        self.process_roi_eds_spectra(inp, template)
+        self.process_roi_eds_maps(inp, template)
+
         return template
 
     def get_named_axis(self, inp: dict, dim_name: str):
@@ -224,7 +228,10 @@ class NxEmNxsPyxemSubParser:
             if ckey.startswith("ebsd") and inp[ckey] != {}:
                 self.process_roi_overview_ebsd_based(
                     inp[ckey], ckey.replace("ebsd", ""), template)
-                break  # only one roi for now
+                # break  # only one roi for now
+            if ckey.startswith("eds_roi") and inp[ckey] != {}:
+                self.process_roi_overview_eds_based(
+                    inp[ckey], template)
         return template
 
     def process_roi_overview_ebsd_based(self,
@@ -302,6 +309,33 @@ class NxEmNxsPyxemSubParser:
                 = f"Coordinate along {dim}-axis ({scan_unit})"
             template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
         return template
+
+    def process_roi_overview_eds_based(self,
+                                       inp: dict,
+                                       template: dict) -> dict:
+        trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/EVENT_DATA_EM" \
+              f"[event_data_em{self.event_id}]/IMAGE_R_SET[image_r_set1]/DATA[image_twod]"
+        template[f"{trg}/@NX_class"] = "NXdata"  # TODO::should be autodecorated
+        template[f"{trg}/description"] = inp.tmp["source"]
+        template[f"{trg}/title"] = f"Region-of-interest overview image"
+        template[f"{trg}/@signal"] = "intensity"
+        dims = [("x", 0), ("y", 1)]
+        template[f"{trg}/@axes"] = []
+        for dim in dims[::-1]:
+            template[f"{trg}/@axes"].append(f"axis_{dim[0]}")
+        template[f"{trg}/intensity"] \
+            = {"compress": inp.tmp["image_twod/intensity"].value, "strength": 1}
+        template[f"{trg}/intensity/@long_name"] = f"Signal"
+        for dim in dims:
+            template[f"{trg}/@AXISNAME_indices[axis_{dim[0]}_indices]"] \
+                = np.uint32(dim[1])
+            template[f"{trg}/AXISNAME[axis_{dim[0]}]"] \
+                = {"compress": inp.tmp[f"image_twod/axis_{dim[0]}"].value, "strength": 1}
+            template[f"{trg}/AXISNAME[axis_{dim[0]}]/@long_name"] \
+                = inp.tmp[f"image_twod/axis_{dim[0]}@long_name"].value
+            # template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
+        return template
+
 
     def process_roi_ebsd_maps(self, inp: dict, template: dict) -> dict:
         for ckey in inp.keys():
@@ -622,4 +656,10 @@ class NxEmNxsPyxemSubParser:
                 template[f"{lgd}/AXISNAME[axis_{dim}]/@long_name"] \
                     = f"Pixel along {dim}-axis"
                 template[f"{lgd}/AXISNAME[axis_{dim}]/@units"] = "px"
+        return template
+
+    def process_roi_eds_spectra(self, inp: dict, template: dict) -> dict:
+        return template
+
+    def process_roi_eds_maps(self, inp: dict, template: dict) -> dict:
         return template

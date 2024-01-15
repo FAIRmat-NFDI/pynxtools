@@ -1,7 +1,7 @@
 #!/bin/bash
 
 datasource="../../../../../paper_paper_paper/scidat_nomad_ebsd/bb_analysis/data/development_spctrscpy/pdi/"
-datasource="../../../../../paper_paper_paper/scidat_nomad_ebsd/bb_analysis/data/development_spctrscpy/ikz/"
+#datasource="../../../../../paper_paper_paper/scidat_nomad_ebsd/bb_analysis/data/development_spctrscpy/ikz/"
 
 
 # apex examples ikz, pdi
@@ -9,7 +9,7 @@ datasource="../../../../../paper_paper_paper/scidat_nomad_ebsd/bb_analysis/data/
 examples="AlGaO.nxs"
 examples="GeSi.nxs"
 examples="VInP_108_L2.h5"
-#examples="InGaN_nanowires_spectra.edaxh5"
+examples="InGaN_nanowires_spectra.edaxh5"
 
 for example in $examples; do
 	echo $example

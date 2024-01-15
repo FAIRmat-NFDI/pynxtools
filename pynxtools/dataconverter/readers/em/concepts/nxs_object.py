@@ -19,6 +19,8 @@
 
 # pylint: disable=no-member,too-few-public-methods
 
+import numpy as np
+
 from typing import Dict
 
 
@@ -57,4 +59,4 @@ class NxObject:
 
     def __repr__(self):
         """Report values."""
-        return f"Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}, value: {self.value}, eqv_hdf: {self.eqv_hdf}"
+        return f"Name: {self.name}, unit: {self.unit}, dtype: {self.dtype}, np.shape(value): {np.shape(self.value)}, eqv_hdf: {self.eqv_hdf}"
