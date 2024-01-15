@@ -27,3 +27,9 @@ jobs:
             mkdocs-material-
       - run: pip install -r mkdocs-requirements.txt
       - run: mkdocs gh-deploy --force
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          clean: true
