@@ -201,6 +201,7 @@ cython_debug/
 *.txt
 !requirements.txt
 !dev-requirements.txt
+!mkdocs-requirements.txt
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version
