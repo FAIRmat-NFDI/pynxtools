@@ -439,9 +439,9 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                                         int(e_n) - 1,
                                                         num=int(e_n),
                                                         endpoint=True),
-                                  e_zero.dtype) / 1000.  # eV to keV
+                                  e_zero.dtype) / 1000.  # keV
         self.tmp[ckey].tmp["spectrum_zerod/axis_energy@long_name"].value \
-            = "Energy (eV)"
+            = "Energy (keV)"
         self.tmp[ckey].tmp["spectrum_zerod/intensity"].value \
             = np.asarray(fp[f"{src}/SPC"]["SpectrumCounts"][0], np.int32)
         self.tmp[ckey].tmp["spectrum_zerod/intensity@long_name"].value \
@@ -575,7 +575,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                                                e_n - 1.,
                                                                num=int(e_n),
                                                                endpoint=True),
-                                         e_zero.dtype)
+                                         e_zero.dtype)  # eV, as xraydb demands
         nxy = {"x": fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"][0]["ResolutionX"],
                "y": fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"][0]["ResolutionY"],
                "lx": fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"][0]["mmFieldWidth"],

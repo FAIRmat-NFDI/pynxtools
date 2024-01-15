@@ -334,8 +334,8 @@ class NxEmNxsPyxemSubParser:
             template[f"{trg}/AXISNAME[axis_{dim[0]}]/@long_name"] \
                 = inp.tmp[f"image_twod/axis_{dim[0]}@long_name"].value
             # template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
+        self.event_id += 1
         return template
-
 
     def process_roi_ebsd_maps(self, inp: dict, template: dict) -> dict:
         for ckey in inp.keys():
@@ -659,6 +659,30 @@ class NxEmNxsPyxemSubParser:
         return template
 
     def process_roi_eds_spectra(self, inp: dict, template: dict) -> dict:
+        for ckey in inp.keys():
+            if ckey.startswith("eds_spc") and inp[ckey] != {}:
+                trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/" \
+                      f"EVENT_DATA_EM[event_data_em{self.event_id}]/" \
+                      f"SPECTRUM_SET[spectrum_set1]/DATA[spectrum_zerod]"
+                # TODO::check if its a spectrum_zerod !!!
+                template[f"{trg}/@NX_class"] = "NXdata"  # TODO::should be autodecorated
+                template[f"{trg}/description"] = inp[ckey].tmp["source"]
+                template[f"{trg}/title"] = f"Region-of-interest overview image"
+                template[f"{trg}/@signal"] = "intensity"
+                template[f"{trg}/@axes"] = ["axis_energy"]
+                template[f"{trg}/intensity"] \
+                    = {"compress": inp[ckey].tmp["spectrum_zerod/intensity"].value,
+                       "strength": 1}
+                template[f"{trg}/intensity/@long_name"] = f"Signal"
+                template[f"{trg}/@AXISNAME_indices[axis_energy_indices]"] = np.uint32(0)
+                template[f"{trg}/AXISNAME[axis_energy]"] \
+                    = {"compress": inp[ckey].tmp[f"spectrum_zerod/axis_energy"].value,
+                       "strength": 1}
+                template[f"{trg}/AXISNAME[axis_energy]/@long_name"] \
+                        = inp[ckey].tmp[f"spectrum_zerod/axis_energy@long_name"].value
+                    # template[f"{trg}/AXISNAME[axis_{dim}]/@units"] = f"{scan_unit}"
+                # TODO::increment spectrum_set1
+                self.event_id += 1
         return template
 
     def process_roi_eds_maps(self, inp: dict, template: dict) -> dict:
