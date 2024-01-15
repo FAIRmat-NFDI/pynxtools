@@ -325,7 +325,7 @@ class SleProdigyParser(ABC):
         self.sql_metadata_map = {
             "EnergyType": "x_units",
             "EpassOrRR": "pass_energy",
-            "Wf": "workfunction",
+            "Wf": "work_function",
             "Timestamp": "time_stamp",
             "Samples": "n_values",
             "ElectronEnergy": "start_energy",
@@ -998,7 +998,7 @@ class SleProdigyParser(ABC):
             cur.execute(query)
             results = ET.fromstring(cur.fetchall()[0][0])
             for i in results.iter("AnalyzerSpectrumParameters"):
-                spectrum["workfunction"] = i.attrib["Workfunction"]
+                spectrum["work_function"] = i.attrib["Workfunction"]
                 spectrum["step_size"] = float(i.attrib["ScanDelta"])
 
     def _get_scan_metadata(self, raw_id):
