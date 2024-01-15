@@ -13,7 +13,7 @@ The very first thing you need to do is get a Nomad account if you don't have one
 1. Navigate to [nomad-lab.eu](https://nomad-lab.eu/prod/v1/gui/about/information)
 2. Click on ```Login / Register``` on the top right corner.
 
-<img src="media/login_register.gif" />
+<img src="media/login-register.gif" />
 
 ## Create an Upload
 
