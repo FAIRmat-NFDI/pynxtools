@@ -316,7 +316,7 @@ class NxEmNxsPyxemSubParser:
         return template
 
     def process_roi_overview_eds_based(self,
-                                       inp: dict,
+                                       inp,
                                        template: dict) -> dict:
         trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/" \
               f"EVENT_DATA_EM[event_data_em{self.id_mgn['event']}]/" \

@@ -31,7 +31,7 @@ class RsciioVeloxSubParser(RsciioBaseParser):
             self.entry_id = entry_id
         else:
             self.entry_id = 1
-        self.id_mgn = {}
+        self.id_mgn: Dict = {}
         self.prfx = None
         self.tmp: Dict = {}
         self.supported_version: Dict = {}
@@ -54,7 +54,6 @@ class RsciioVeloxSubParser(RsciioBaseParser):
     def parse_and_normalize_and_process_into_template(self, template: dict) -> dict:
         """Perform actual parsing filling cache self.tmp."""
         if self.supported is True:
-            print(f"Parsing with {self.__name__}...")
             self.tech_partner_to_nexus_normalization(template)
         else:
             print(f"{self.file_path} is not a Velox-specific "
@@ -67,6 +66,7 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         self.normalize_adf_content(template)  # (high-angle) annular dark field
         self.normalize_edxs_content(template)  # EDS in the TEM
         self.normalize_eels_content(template)  # electron energy loss spectroscopy
+        return template
 
     def normalize_bfdf_content(self, template: dict) -> dict:
         return template

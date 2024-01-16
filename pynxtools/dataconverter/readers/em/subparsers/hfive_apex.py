@@ -548,7 +548,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         reqs = ["ResolutionX", "ResolutionY", "mmFieldWidth", "mmFieldHeight"]
         for req in reqs:
             if req not in fp[f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS"].dtype.names:
-                  # also check for shape
+                # also check for shape
                 raise ValueError(f"Required attribute named {req} not found in "
                                  f"{src}/ELEMENTOVRLAYIMGCOLLECTIONPARAMS !")
         # find relevant EDS maps (pairs of <symbol>.dat, <symbol>.ipr) groups
@@ -596,8 +596,10 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             # theoretical candidates within integrated energy region [e_roi_s, e_roi_e]
             e_roi_s = fp[f"{src}/ROIs/{entry}.dat"].attrs["RoiStartChan"][0]
             e_roi_e = fp[f"{src}/ROIs/{entry}.dat"].attrs["RoiEndChan"][0]
-            eds_map.tmp["energy_range"] = NxObject(unit="eV",
-                value=np.asarray([e_channels[e_roi_s], e_channels[e_roi_e + 1]]))
+            eds_map.tmp["energy_range"] \
+                = NxObject(unit="eV",
+                           value=np.asarray([e_channels[e_roi_s],
+                                             e_channels[e_roi_e + 1]]))
             eds_map.tmp["iupac_line_candidates"] \
                 = ", ".join(get_xrayline_candidates(e_channels[e_roi_s],
                                                     e_channels[e_roi_e + 1]))
@@ -648,7 +650,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
         for req in reqs:
             if req not in fp[f"{src}/SPC"].attrs.keys():
                 raise ValueError(f"Required attribute named {req} not found in {src}/SPC !")
-        reqs = ["Step","X1", "X2", "Y1", "Y2"]
+        reqs = ["Step", "X1", "X2", "Y1", "Y2"]
         for req in reqs:
             if req not in fp[f"{src}/REGION"].attrs.keys():
                 raise ValueError(f"Required attribute named {req} not found in {src}/REGION !")
@@ -675,9 +677,9 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
 
         # vector representation of the line's physical length from mm to µm
         line = np.asarray([
-            (fp[f"{src}/REGION"].attrs["X2"][0] - fp[f"{src}/REGION"].attrs["X1"][0]) \
+            (fp[f"{src}/REGION"].attrs["X2"][0] - fp[f"{src}/REGION"].attrs["X1"][0])
             * fp[f"{src}/LINEMAPIMAGECOLLECTIONPARAMS"].attrs["mmFieldWidth"] * 1000.,
-            (fp[f"{src}/REGION"].attrs["Y2"][0] - fp[f"{src}/REGION"].attrs["Y1"][0]) \
+            (fp[f"{src}/REGION"].attrs["Y2"][0] - fp[f"{src}/REGION"].attrs["Y1"][0])
             * fp[f"{src}/LINEMAPIMAGECOLLECTIONPARAMS"].attrs["mmFieldHeight"] * 1000.])
         i_n = fp[f"{src}/LSD"].attrs["NumberOfSpectra"][0]
         line_length = np.sqrt(line[0]**2 + line[1]**2)
