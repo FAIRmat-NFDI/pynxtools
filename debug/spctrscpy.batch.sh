@@ -9,7 +9,8 @@ datasource="../../../../../paper_paper_paper/scidat_nomad_ebsd/bb_analysis/data/
 examples="InGaN_nanowires_spectra.edaxh5"
 examples="AlGaO.nxs"
 examples="GeSi.nxs"
-examples="VInP_108_L2.h5"
+examples="GeSn_13.nxs"
+# examples="VInP_108_L2.h5"
 
 for example in $examples; do
 	echo $example
