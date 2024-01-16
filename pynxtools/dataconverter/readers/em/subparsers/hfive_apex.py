@@ -116,6 +116,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                             # get oim_maps, live_maps, or full area if available
                             area_grp_nms = list(h5r[f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}"])
                             for area_grp_nm in area_grp_nms:
+
                                 if area_grp_nm.startswith("OIM Map"):
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
                                     print(f"Parsing {self.prfx}")
@@ -125,26 +126,23 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     self.parse_and_normalize_group_ebsd_data(h5r, ckey)
                                     self.parse_and_normalize_group_ebsd_check(ckey)
                                     self.cache_id += 1
-                                continue
 
-                                # TODO: conceptually the content of the three
-                                # above-mentioned groups has and uses for some
-                                # groups the same formatting but fundamentally I assume
-                                # that they are three different concepts:
-                                # free draw polygonal region choosen via GUI interaction
-                                #   over which one integrates
-                                # full area rectangular region typically used
-                                # i.e. difference between free draw and full area
-                                #    is integration region
-                                # live map rectangular region plus child concepts
+                                # EDAX, APEX distinguishes different concept/groups:
+                                # FOV*, full area rectangular region plus siblings
+                                # Live Map *, rectangular region plus childs
+                                # Free Draw *, polygonal region via GUI interaction
+                                # OIM Map *, EBSD, orientation data + metadata childs
                                 # with (sum) spectrum SPC, spectrum stack (SPD)
                                 # with eventually different number of energy bins and
-                                # Live Map */ROIs for the individual elements aka
-                                # "element mappings"
+                                # Live Map */ROIs for the individual elements/ EDS maps
+                                # TODO means here not planned for immediate implementation
                                 # TODO: LIVENETMAPS groups are not parsed cuz not requested
                                 # TODO: EBSD+EDS groups are not parsed cuz internal structure
-                                # TODO: ZAF WtLineScan 2
-                                #   mirrors concept tree behind an OIM Map and Live Map
+                                # TODO: ZAF WtLineScan 2 and other custom concepts like e.g.
+                                # /GeSn/GeSn_404b/Added Spectra/GeSn | GeSn_404b |
+                                # Area 1 | ZAF AtLineScan 1 | 2023-01-16-15-37-41
+                                # but mirror concept tree similar to those of the here
+                                # implemented OIM Map and Live Map concept trees
                                 if area_grp_nm.startswith("Full Area") \
                                         or area_grp_nm.startswith("Selected Area"):
                                     # TODO: Selected Area groups have a REGION and I assume that this
@@ -182,7 +180,9 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                                     # "free form? or (which I assume) orthogonal line grid inside the FOV
                                     # TODO::currently I assume that the internal organization of LineScan and ROILineScan
                                     # groups is the same TODO but maybe the physical ROI which they reference
-                                    # respective differs (TODO:: LineScan refers to FOV that is in the parent of the group)
+                                    # respective differs !?
+                                    # (TODO:: LineScan refers to the FOV that is
+                                    # in the parent of the LineScan group)
                                     self.prfx = f"/{grp_nm}/{sub_grp_nm}/{sub_sub_grp_nm}/{area_grp_nm}"
                                     self.parse_and_normalize_eds_line_lsd(h5r)
                                     self.parse_and_normalize_eds_line_rois(h5r)
@@ -596,6 +596,8 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
             # theoretical candidates within integrated energy region [e_roi_s, e_roi_e]
             e_roi_s = fp[f"{src}/ROIs/{entry}.dat"].attrs["RoiStartChan"][0]
             e_roi_e = fp[f"{src}/ROIs/{entry}.dat"].attrs["RoiEndChan"][0]
+            eds_map.tmp["energy_range"] = NxObject(unit="eV",
+                value=np.asarray([e_channels[e_roi_s], e_channels[e_roi_e + 1]]))
             eds_map.tmp["iupac_line_candidates"] \
                 = ", ".join(get_xrayline_candidates(e_channels[e_roi_s],
                                                     e_channels[e_roi_e + 1]))
@@ -619,7 +621,7 @@ class HdfFiveEdaxApexReader(HdfFiveBaseParser):
                     for kkey, vval in img.tmp.items():
                         print(f"\t\timg, key: {kkey}, val: {vval}")
             else:
-                print(f"ckey: {ckey}, eds_mapspectrum_oned, key: {key}, val: {val}")
+                print(f"ckey: {ckey}, eds_map, key: {key}, val: {val}")
 
     def parse_and_normalize_eds_line_lsd(self, fp):
         """Normalize and scale APEX-specific line scan with one spectrum each to NeXus."""

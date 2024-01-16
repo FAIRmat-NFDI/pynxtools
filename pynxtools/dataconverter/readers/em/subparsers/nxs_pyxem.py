@@ -696,21 +696,22 @@ class NxEmNxsPyxemSubParser:
         for ckey in inp.keys():
             if ckey.startswith("eds_map") and inp[ckey] != {}:
                 trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{self.id_mgn['roi']}]/" \
-                      f"eds/indexing/"
-                template[f"{trg}/source"] = inp.tmp["source"]
-                for img in inp.tmp["IMAGE_R_SET"]:
+                      f"eds/indexing"
+                template[f"{trg}/source"] = inp[ckey].tmp["source"]
+                for img in inp[ckey].tmp["IMAGE_R_SET"]:
                     if not isinstance(img, NxImageRealSpaceSet):
                         continue
                     trg = f"/ENTRY[entry{self.entry_id}]/ROI[roi{self.id_mgn['roi']}]/eds/" \
-                          f"indexing/IMAGE_R_SET[image_r_set{self.id_mgn['eds_img']}]/"
-                    template[f"{trg}/description"] \
-                        = img.tmp["description"]
-                    template[f"{trg}/iupac_line_candidates"] \
-                        = img.tmp["iupac_line_candidates"]
+                          f"indexing/IMAGE_R_SET[image_r_set{self.id_mgn['eds_img']}]"
+                    template[f"{trg}/source"] = img.tmp["source"]
+                    template[f"{trg}/description"] = img.tmp["description"]
+                    template[f"{trg}/energy_range"] = img.tmp["energy_range"].value
+                    template[f"{trg}/energy_range/@units"] = img.tmp["energy_range"].unit
+                    template[f"{trg}/iupac_line_candidates"] = img.tmp["iupac_line_candidates"]
                     template[f"{trg}/@NX_class"] = "NXdata"  # TODO::should be autodecorated
-                    template[f"{trg}/title"] = f"EDS map"
                     template[f"{trg}/@signal"] = "intensity"
                     template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
+                    template[f"{trg}/title"] = f"EDS map {img.tmp['description']}"
                     template[f"{trg}/intensity"] \
                         = {"compress": img.tmp["image_twod/intensity"].value,
                            "strength": 1}
@@ -723,7 +724,7 @@ class NxEmNxsPyxemSubParser:
                             = {"compress": img.tmp[f"image_twod/axis_{dim[0]}"].value,
                                "strength": 1}
                         template[f"{trg}/AXISNAME[axis_{dim[0]}]/@long_name"] \
-                            = img.tmp[f"image_twod/axis_{dim[0]}"].value
+                            = img.tmp[f"image_twod/axis_{dim[0]}@long_name"].value
                     self.id_mgn["eds_img"] += 1
                 self.id_mgn["roi"] += 1
 

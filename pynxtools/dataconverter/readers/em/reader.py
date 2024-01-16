@@ -27,6 +27,7 @@ from pynxtools.dataconverter.readers.em.subparsers.nxs_mtex import NxEmNxsMTexSu
 from pynxtools.dataconverter.readers.em.subparsers.nxs_pyxem import NxEmNxsPyxemSubParser
 from pynxtools.dataconverter.readers.em.subparsers.nxs_imgs import NxEmImagesSubParser
 from pynxtools.dataconverter.readers.em.subparsers.nxs_nion import NxEmZippedNionProjectSubParser
+from pynxtools.dataconverter.readers.em.subparsers.rsciio_velox import RsciioVeloxSubParser
 from pynxtools.dataconverter.readers.em.utils.default_plots import NxEmDefaultPlotResolver
 # from pynxtools.dataconverter.readers.em.geometry.convention_mapper import NxEmConventionMapper
 
@@ -130,6 +131,10 @@ class EmReader(BaseReader):
 
         # sub_parser = "zipped_nion_project"
         # subparser = NxEmZippedNionProjectSubParser(entry_id, file_paths[0])
+        # subparser.parse(template, verbose=True)
+
+        # sub_parser = "velox_emd"
+        # subparser = RsciioVeloxSubParser(entry_id, file_paths[0])
         # subparser.parse(template, verbose=True)
 
         # for dat_instance in case.dat_parser_type:
