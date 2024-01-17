@@ -205,7 +205,7 @@ short_notation_regex = re.compile(r"\*\{([\w,]+)\}")
 def flatten_json(
     json_data: Dict[str, Any],
     base_key: Optional[str] = None,
-    replace: Optional[str] = None,
+    replacement_key: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Flattens a json dict into a flat dictionary of absolute paths.
@@ -215,7 +215,7 @@ def flatten_json(
         base_key (Optional[str], optional):
             A base key to prefix to all keys.
             Defaults to None.
-        replace (Optional[str], optional):
+        replacement_key (Optional[str], optional):
             A replacement key which replaces all occurences of * with this string.
             Defaults to None.
 
@@ -223,39 +223,39 @@ def flatten_json(
         Dict[str, Any]: The flattened dict
     """
     flattened_config = {}
-    for key, value in json_data.items():
-        if base_key is not None:
-            key = f"{base_key}/{key}"
 
-        if replace is not None:
-            key = key.replace("*", replace)
-            if isinstance(value, str):
-                value = value.replace("*", replace)
-
-        expand_match = short_notation_regex.search(key)
-        if replace is None and expand_match is not None:
-            expand_keys = expand_match.group(1).split(",")
-            for ekey in expand_keys:
-                rkey = key.replace(expand_match.group(0), ekey)
-
-                if isinstance(value, dict):
-                    flattened_config.update(
-                        flatten_json(value, base_key=rkey, replace=ekey)
-                    )
-                elif isinstance(value, str) and value.startswith("@link:"):
-                    flattened_config[rkey] = {"link": value.removeprefix("@link:")}
-                elif isinstance(value, str):
-                    flattened_config[rkey.replace("*", ekey)] = value.replace("*", ekey)
-                else:
-                    flattened_config[rkey.replace("*", ekey)] = value
-            continue
-
+    def update_config(key, value, rkey):
         if isinstance(value, dict):
-            flattened_config.update(flatten_json(value, base_key=key))
+            flattened_config.update(
+                flatten_json(value, base_key=key, replacement_key=rkey)
+            )
         elif isinstance(value, str) and value.startswith("@link:"):
             flattened_config[key] = {"link": value.removeprefix("@link:")}
         else:
             flattened_config[key] = value
+
+    for key, value in json_data.items():
+        if base_key is not None:
+            key = f"{base_key}/{key}"
+
+        if replacement_key is not None:
+            key = key.replace("*", replacement_key)
+            if isinstance(value, str):
+                value = value.replace("*", replacement_key)
+
+        expand_match = short_notation_regex.search(key)
+        if replacement_key is None and expand_match is not None:
+            expand_keys = expand_match.group(1).split(",")
+            for ekey in expand_keys:
+                rkey = key.replace(expand_match.group(0), ekey)
+
+                if isinstance(value, str):
+                    value = value.replace("*", ekey)
+
+                update_config(rkey, value, ekey)
+            continue
+
+        update_config(key, value, None)
     return flattened_config
 
 
