@@ -35,7 +35,7 @@ from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points

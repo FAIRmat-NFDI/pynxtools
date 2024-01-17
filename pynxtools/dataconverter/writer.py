@@ -32,7 +32,7 @@ from pynxtools.nexus import nexus
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def does_path_exist(path, h5py_obj) -> bool:

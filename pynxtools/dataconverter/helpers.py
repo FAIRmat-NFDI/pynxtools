@@ -33,7 +33,7 @@ from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def is_a_lone_group(xml_element) -> bool:
