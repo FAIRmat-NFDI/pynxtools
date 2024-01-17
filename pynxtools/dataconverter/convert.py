@@ -33,7 +33,9 @@ from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
-from pynxtools.dataconverter.logger import logger as pynx_logger
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
@@ -145,7 +147,6 @@ def transfer_data_into_template(
     reader,
     nxdl_name,
     nxdl_root: Optional[ET.Element] = None,
-    logger: logging.Logger = pynx_logger,
     **kwargs,
 ):
     """Transfer parse and merged data from input experimental file, config file and eln.
@@ -183,7 +184,7 @@ def transfer_data_into_template(
 
     bulletpoint = "\n\u2022 "
     logger.info(
-        f"Using {reader} reader reader to convert the given files:"
+        f"Using {reader} reader to convert the given files:"
         f" {bulletpoint.join((' ', *input_file))}"
     )
 
@@ -198,7 +199,7 @@ def transfer_data_into_template(
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
-    helpers.validate_data_dict(template, data, nxdl_root, logger=logger)
+    helpers.validate_data_dict(template, data, nxdl_root)
     return data
 
 
@@ -211,7 +212,6 @@ def convert(
     generate_template: bool = False,
     fair: bool = False,
     undocumented: bool = False,
-    logger: logging.Logger = pynx_logger,
     **kwargs,
 ):
     """The conversion routine that takes the input parameters and calls the necessary functions.
@@ -245,7 +245,7 @@ def convert(
     if generate_template:
         template = Template()
         helpers.generate_template_from_nxdl(nxdl_root, template)
-        logger.info(template)
+        print(template)
         return
 
     data = transfer_data_into_template(
@@ -253,7 +253,6 @@ def convert(
         reader=reader,
         nxdl_name=nxdl,
         nxdl_root=nxdl_root,
-        logger=logger,
         **kwargs,
     )
 
@@ -270,9 +269,7 @@ def convert(
                 f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation."
             )
 
-    helpers.add_default_root_attributes(
-        data=data, filename=os.path.basename(output), logger=logger
-    )
+    helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
     logger.info(f"The output file generated: {output}.")
@@ -351,6 +348,7 @@ def convert_cli(
     mapping: str,
 ):
     """The CLI entrypoint for the convert function"""
+    logger.addHandler(logging.StreamHandler())
     if params_file:
         try:
             convert(**parse_params_file(params_file))
