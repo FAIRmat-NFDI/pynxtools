@@ -24,7 +24,7 @@
     "/ENTRY[entry]/INSTRUMENT[instrument]/source_probe/device_information/model":"@eln",
     "/ENTRY[entry]/INSTRUMENT[instrument]/source_probe/device_information/identifier":"@eln",
     "/ENTRY[entry]/INSTRUMENT[instrument]/source_probe/associated_beam":{
-       "link":"/entry/instrument/beam_probe"
+        "link":"/entry/instrument/beam_probe"
     },
     "/ENTRY[entry]/INSTRUMENT[instrument]/beam_probe/distance":"@eln",
     "/ENTRY[entry]/INSTRUMENT[instrument]/beam_probe/distance/@units":"@eln",
@@ -36,7 +36,7 @@
     "/ENTRY[entry]/INSTRUMENT[instrument]/beam_probe/incident_polarization/@units":"None",
     "/ENTRY[entry]/INSTRUMENT[instrument]/beam_probe/extent":"None",
     "/ENTRY[entry]/INSTRUMENT[instrument]/beam_probe/associated_source":{
-       "link":"/entry/instrument/source_probe"
+        "link":"/entry/instrument/source_probe"
     },
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/name":"@xps_token:analyser/name",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/description":"@eln",
@@ -53,8 +53,8 @@
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution/resolution/@units":"eV",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/transmission_function/@signal":"",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/transmission_function/@axes":[
-       "kinetic_energy",
-       "relative_intensity"
+        "kinetic_energy",
+        "relative_intensity"
     ],
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/transmission_function/kinetic_energy":"None",
     "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/transmission_function/kinetic_energy/@units":"eV",
@@ -167,7 +167,7 @@
     "/ENTRY[entry]/PROCESS[process]/energy_referencing/offset":"None",
     "/ENTRY[entry]/PROCESS[process]/energy_referencing/calibrated_axis":"None",
     "/ENTRY[entry]/PROCESS[process]/transmission_correction/transmission_function":{
-       "link":"/entry/instrument/electronanalyser/transmission_function"
+        "link":"/entry/instrument/electronanalyser/transmission_function"
     },
     "/ENTRY[entry]/PROCESS[process]/transmission_correction/calibration_object/type":"file",
     "/ENTRY[entry]/PROCESS[process]/transmission_correction/calibration_object/path":"@xps_token:collectioncolumn/transmission_function/file",
@@ -188,28 +188,28 @@
     "/ENTRY[entry]/SAMPLE[sample]/sample_history/PHYSICAL_PROCESS[sample_loading]/description":"@eln",
     "/ENTRY[entry]/SAMPLE[sample]/sample_history/PHYSICAL_PROCESS[sample_loading]/method":"@eln",
     "/ENTRY[entry]/SAMPLE[sample]/temperature/temperature_sensor":{
-       "link":"/entry/instrument/manipulator/temperature_sensor"
+        "link":"/entry/instrument/manipulator/temperature_sensor"
     },
     "/ENTRY[entry]/SAMPLE[sample]/temperature/sample_heater":{
-       "link":"/entry/instrument/manipulator/sample_heater"
+        "link":"/entry/instrument/manipulator/sample_heater"
     },
     "/ENTRY[entry]/SAMPLE[sample]/temperature/cryostat":{
-       "link":"/entry/instrument/manipulator/sample_heater"
+        "link":"/entry/instrument/manipulator/sample_heater"
     },
     "/ENTRY[entry]/SAMPLE[sample]/gas_pressure/pressure_gauge":{
-       "link":"/entry/instrument/pressure_gauge"
+        "link":"/entry/instrument/pressure_gauge"
     },
     "/ENTRY[entry]/SAMPLE[sample]/bias/potentiostat":{
-       "link":"/entry/instrument/manipulator/sample_bias_potentiostat"
+        "link":"/entry/instrument/manipulator/sample_bias_potentiostat"
     },
     "/ENTRY[entry]/SAMPLE[sample]/bias/voltmeter":{
-       "link":"/entry/instrument/manipulator/sample_bias_voltmeter"
+        "link":"/entry/instrument/manipulator/sample_bias_voltmeter"
     },
     "/ENTRY[entry]/SAMPLE[sample]/drain_current/amperemeter":{
-       "link":"/entry/instrument/manipulator/drain_current_amperemeter"
+        "link":"/entry/instrument/manipulator/drain_current_amperemeter"
     },
     "/ENTRY[entry]/SAMPLE[sample]/flood_gun_current/flood_gun":{
-       "link":"/entry/instrument/flood_gun"
+        "link":"/entry/instrument/flood_gun"
     },
     "/ENTRY[entry]/data/@signal":"",
     "/ENTRY[entry]/data/data":"@data:cycle",
@@ -219,4 +219,4 @@
     "/ENTRY[entry]/data/energy/@units":"eV",
     "/ENTRY[entry]/data/@energy_indices":"None",
     "/ENTRY[entry]/data/@energy_depends":"None"
- }
+}
