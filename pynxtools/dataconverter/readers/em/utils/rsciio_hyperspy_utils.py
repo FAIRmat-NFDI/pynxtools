@@ -32,15 +32,13 @@ def get_named_axis(axes_metadata, dim_name):
                         for req in reqs:
                             if req not in axis:
                                 raise ValueError(f"{req} not in {axis}!")
-                        retval = (
-                            np.asarray(
-                                axis["offset"] + (np.linspace(0.,
-                                                              axis["size"] - 1.,
-                                                              num=int(axis["size"]),
-                                                              endpoint=True)
-                                                  * axis["scale"]),
-                                       np.float64),
-                                  axis["units"])
+                        retval = (np.asarray(axis["offset"]
+                                             + (np.linspace(0.,
+                                                            axis["size"] - 1.,
+                                                            num=int(axis["size"]),
+                                                            endpoint=True)
+                                             * axis["scale"]),
+                                             np.float64), axis["units"])
     return retval
 
 

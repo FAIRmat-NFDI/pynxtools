@@ -14,6 +14,7 @@ examples="GeSn_13.nxs"
 examples="CG71113 1513 HAADF-DF4-DF2-BF 1.2 Mx STEM.emd"
 examples="CG71113 1138 Ceta 660 mm Camera.emd"
 examples="CG71113 1125 Ceta 1.1 Mx Camera.emd"
+examples="CG71113 1412 EDS-HAADF-DF4-DF2-BF 4.8 Mx SI.emd"
 
 for example in "$examples"; do
 	echo $example
