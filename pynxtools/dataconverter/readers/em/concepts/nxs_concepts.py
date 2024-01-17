@@ -34,9 +34,9 @@ NXEM_URL = "https://www.github.com/FAIRmat-NFDI/nexus_definitions"
 NxEmRoot = {"/ENTRY[entry*]/PROGRAM[program1]/program": "pynxtools/dataconverter/readers/em",
             "/ENTRY[entry*]/PROGRAM[program1]/program/@version": PYNXTOOLS_VERSION,
             "/ENTRY[entry*]/PROGRAM[program1]/program/@url": PYNXTOOLS_URL,
-            "/ENTRY[entry*]/@version": NXEM_VERSION,
             "/ENTRY[entry*]/@url": NXEM_URL,
-            "/ENTRY[entry*]/definition": NXEM_NAME}
+            "/ENTRY[entry*]/definition": NXEM_NAME,
+            "/ENTRY[entry*]/definition/@version": NXEM_VERSION}
 # alternatively the above-mentioned program1 entries to place under "/"
 
 
