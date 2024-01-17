@@ -22,8 +22,4 @@ import logging
 logger = logging.getLogger("pynxtools")
 
 # Lowest level log allows to other levels erros, crittical, info and debug
-handler = logging.StreamHandler()
-formatter = logging.Formatter("%(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
