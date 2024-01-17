@@ -177,6 +177,7 @@
     "/ENTRY[entry]/SAMPLE[sample]/situation":"@eln",
     "/ENTRY[entry]/SAMPLE[sample]/SUBSTANCE[substance]/name":"@eln",
     "/ENTRY[entry]/SAMPLE[sample]/SUBSTANCE[substance]/molecular_mass":"@eln",
+    "/ENTRY[entry]/SAMPLE[sample]/SUBSTANCE[substance]/molecular_mass/@units":"@eln",
     "/ENTRY[entry]/SAMPLE[sample]/SUBSTANCE[substance]/cas_number":"@eln",
     "/ENTRY[entry]/SAMPLE[sample]/SUBSTANCE[substance]/molecular_formula_hill":"@eln",
     "/ENTRY[entry]/SAMPLE[sample]/sample_history/sample_preparation/start_time":"@eln",
