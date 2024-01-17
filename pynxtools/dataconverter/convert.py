@@ -164,8 +164,6 @@ def transfer_data_into_template(
         Root name of nxdl file, e.g. NXmpes from NXmpes.nxdl.xml
     nxdl_root : ET.element
         Root element of nxdl file, otherwise provide nxdl_name
-    logger: looging.Logger
-        Logger to get log massages.
 
     Returns
     -------
@@ -233,8 +231,6 @@ def convert(
         in the template.
     undocumented : bool, default False
         If True, an undocumented warning is given.
-    logger: looging.Logger
-        Logger to get log massages.
 
     Returns
     -------
