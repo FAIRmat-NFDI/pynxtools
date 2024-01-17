@@ -23,6 +23,7 @@ from typing import Any, Dict, Set, List
 from typing import Tuple
 import sys
 import json
+import datetime
 
 import yaml
 import numpy as np
@@ -57,9 +58,11 @@ CONVERT_DICT = {
     "Energydispersion": "ENERGYDISPERSION[energydispersion]",
     "Detector": "DETECTOR[detector]",
     "Manipulator": "MANIPULATOR[manipulator]",
+    "PID": "PID[pid]",
     "Process": "PROCESS[process]",
     "Sample": "SAMPLE[sample]",
-    "Data": "DATA[data]",
+    "Substance": "SUBSTANCE[substance]",
+    # "Data": "DATA[data]",
 }
 
 REPLACE_NESTED: Dict[str, str] = {}
@@ -275,7 +278,10 @@ def fill_template_with_eln_data(eln_data_dict, config_dict, template, entry_set)
 
         for entry in entry_set:
             modified_key = key.replace("[entry]", f"[{entry}]")
+            if isinstance(field_value, datetime.datetime):
+                field_value = field_value.isoformat()
             template[modified_key] = field_value
+
             if atom_types:
                 modified_key = modified_key.replace("chemical_formula", "atom_types")
                 template[modified_key] = ", ".join(atom_types)
