@@ -80,116 +80,116 @@ DEBUG -
         
 DEBUG - documentation (NXdata.nxdl.xml:):
 DEBUG - 
-		:ref:`NXdata` describes the plottable data and related dimension scales. 
-		
-		.. index:: plotting
-		
-		It is strongly recommended that there is at least one :ref:`NXdata`
-		group in each :ref:`NXentry` group.
-		Note that the fields named ``AXISNAME`` and ``DATA``
-		can be defined with different names.  
-		(Upper case is used to indicate that the actual name is left to the user.)
-		The ``signal`` and ``axes`` attributes of the 
-		``data`` group define which items 
-		are plottable data and which are *dimension scales*, respectively.
-		
-		:ref:`NXdata` is used to implement one of the basic motivations in NeXus,
-		to provide a default plot for the data of this :ref:`NXentry`.  The actual data
-		might be stored in another group and (hard) linked to the :ref:`NXdata` group.
-
-		* Each :ref:`NXdata` group will define one field as the default
-		  plottable data.  The value of the ``signal`` attribute names this field.
-		  Additional fields may be used to describe the dimension scales and 
-		  uncertainities.
-		  The ``auxiliary_signals`` attribute is a list of the other fields
-		  to be plotted with the ``signal`` data.
-		* The plottable data may be of arbitrary rank up to a maximum
-		  of ``NX_MAXRANK=32`` (for compatibility with backend file formats).
-		* The plottable data will be named as the value of 
-		  the group ``signal`` attribute, such as::
-		  
-		    data:NXdata
-		      @signal = "counts"
-		      @axes = "mr"
-		      @mr_indices = 0
-		      counts: float[100]  --> the default dependent data
-		      mr: float[100]  --> the default independent data
-		  
-		  The field named in the ``signal`` attribute **must** exist, either
-		  directly as a NeXus field or defined through a link.
-		
-		* The group ``axes`` attribute will name the
-		  *dimension scale* associated with the plottable data.
-
-		If available, the standard deviations of the data are to be
-		stored in a data set of the same rank and dimensions, with the name ``errors``. 
-
-		* For each data dimension, there should be a one-dimensional array
-		  of the same length.
-		* These one-dimensional arrays are the *dimension scales* of the
-		  data,  *i.e*. the values of the independent variables at which the data
-		  is measured, such as scattering angle or energy transfer.
-		
-		.. index:: link
-		.. index:: axes (attribute)
-		
-		The preferred method to associate each data dimension with
-		its respective dimension scale is to specify the field name
-		of each dimension scale in the group ``axes`` attribute as a string list.
-		Here is an example for a 2-D data set *data* plotted 
-		against *time*, and *pressure*.  (An additional *temperature* data set 
-		is provided and could be selected as an alternate for the *pressure* axis.)::
-
-		  data_2d:NXdata
-		    @signal="data"
-		    @axes=["time", "pressure"]
-		    @pressure_indices=1
-		    @temperature_indices=1
-		    @time_indices=0
-		    data: float[1000,20]
-		    pressure: float[20]
-		    temperature: float[20]
-		    time: float[1000]
-
-		.. rubric:: Old methods to identify the plottable data
-		
-		There are two older methods of associating 
-		each data dimension to its respective dimension scale.
-		Both are now out of date and
-		should not be used when writing new data files.
-		However, client software should expect to see data files
-		written with any of these methods.
-		
-		  * One method uses the ``axes`` 
-		    attribute to specify the names of each *dimension scale*.
-		
-		  * The oldest method uses the ``axis`` attribute on each
-		    *dimension scale* to identify
-		    with an integer the axis whose value is the number of the dimension.
-
-		.. index: !plot; axis label
-		   plot, axis units
-		   units
-		   dimension scale
-
-		Each axis of the plot may be labeled with information from the 
-		dimension scale for that axis.  The optional ``@long_name`` attribute
-		is provided as the axis label default.  If ``@long_name`` is not
-		defined, then use the name of the dimension scale.  A ``@units`` attribute,
-		if available, may be added to the axis label for further description.
-		See the section :ref:`Design-Units` for more information.
-
-		.. index: !plot; axis title
-
-		The optional ``title`` field, if available, provides a suggested
-		title for the plot.  If no ``title`` field is found in the :ref:`NXdata`
-		group, look for a ``title`` field in the parent :ref:`NXentry` group,
-		with a fallback to displaying the path to the :ref:`NXdata` group.
-
-		NeXus is about how to find and annotate the data to be plotted 
-		but not to describe how the data is to be plotted.
-		(https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute)
-	
+         :ref:`NXdata` describes the plottable data and related dimension scales.
+         
+         .. index:: plotting
+         
+         It is strongly recommended that there is at least one :ref:`NXdata`
+         group in each :ref:`NXentry` group.
+         Note that the fields named ``AXISNAME`` and ``DATA``
+         can be defined with different names.
+         (Upper case is used to indicate that the actual name is left to the user.)
+         The ``signal`` and ``axes`` attributes of the
+         ``data`` group define which items
+         are plottable data and which are *dimension scales*, respectively.
+         
+         :ref:`NXdata` is used to implement one of the basic motivations in NeXus,
+         to provide a default plot for the data of this :ref:`NXentry`.  The actual data
+         might be stored in another group and (hard) linked to the :ref:`NXdata` group.
+         
+         * Each :ref:`NXdata` group will define one field as the default
+           plottable data.  The value of the ``signal`` attribute names this field.
+           Additional fields may be used to describe the dimension scales and
+           uncertainities.
+           The ``auxiliary_signals`` attribute is a list of the other fields
+           to be plotted with the ``signal`` data.
+         * The plottable data may be of arbitrary rank up to a maximum
+           of ``NX_MAXRANK=32`` (for compatibility with backend file formats).
+         * The plottable data will be named as the value of
+           the group ``signal`` attribute, such as::
+           
+             data:NXdata
+               @signal = "counts"
+               @axes = "mr"
+               @mr_indices = 0
+               counts: float[100]  --> the default dependent data
+               mr: float[100]  --> the default independent data
+           
+           The field named in the ``signal`` attribute **must** exist, either
+           directly as a NeXus field or defined through a link.
+         
+         * The group ``axes`` attribute will name the
+           *dimension scale* associated with the plottable data.
+         
+         If available, the standard deviations of the data are to be
+         stored in a data set of the same rank and dimensions, with the name ``errors``.
+         
+         * For each data dimension, there should be a one-dimensional array
+           of the same length.
+         * These one-dimensional arrays are the *dimension scales* of the
+           data,  *i.e*. the values of the independent variables at which the data
+           is measured, such as scattering angle or energy transfer.
+         
+         .. index:: link
+         .. index:: axes (attribute)
+         
+         The preferred method to associate each data dimension with
+         its respective dimension scale is to specify the field name
+         of each dimension scale in the group ``axes`` attribute as a string list.
+         Here is an example for a 2-D data set *data* plotted
+         against *time*, and *pressure*.  (An additional *temperature* data set
+         is provided and could be selected as an alternate for the *pressure* axis.)::
+         
+           data_2d:NXdata
+             @signal="data"
+             @axes=["time", "pressure"]
+             @pressure_indices=1
+             @temperature_indices=1
+             @time_indices=0
+             data: float[1000,20]
+             pressure: float[20]
+             temperature: float[20]
+             time: float[1000]
+         
+         .. rubric:: Old methods to identify the plottable data
+         
+         There are two older methods of associating
+         each data dimension to its respective dimension scale.
+         Both are now out of date and
+         should not be used when writing new data files.
+         However, client software should expect to see data files
+         written with any of these methods.
+         
+           * One method uses the ``axes``
+             attribute to specify the names of each *dimension scale*.
+         
+           * The oldest method uses the ``axis`` attribute on each
+             *dimension scale* to identify
+             with an integer the axis whose value is the number of the dimension.
+         
+         .. index: !plot; axis label
+            plot, axis units
+            units
+            dimension scale
+         
+         Each axis of the plot may be labeled with information from the
+         dimension scale for that axis.  The optional ``@long_name`` attribute
+         is provided as the axis label default.  If ``@long_name`` is not
+         defined, then use the name of the dimension scale.  A ``@units`` attribute,
+         if available, may be added to the axis label for further description.
+         See the section :ref:`Design-Units` for more information.
+         
+         .. index: !plot; axis title
+         
+         The optional ``title`` field, if available, provides a suggested
+         title for the plot.  If no ``title`` field is found in the :ref:`NXdata`
+         group, look for a ``title`` field in the parent :ref:`NXentry` group,
+         with a fallback to displaying the path to the :ref:`NXdata` group.
+         
+         NeXus is about how to find and annotate the data to be plotted
+         but not to describe how the data is to be plotted.
+         (https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute)
+    
 DEBUG - ===== ATTRS (//entry/data@NX_class)
 DEBUG - value: NXdata 
 DEBUG - classpath: ['NXentry', 'NXdata']
@@ -210,39 +210,39 @@ DEBUG - NXdata.nxdl.xml:@axes - [NX_CHAR]
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXdata.nxdl.xml:/axes):
 DEBUG - 
-			.. index:: plotting
-			
-			Array of strings holding the :ref:`names <validItemName>` of
-			the independent data fields used in the default plot for all of
-			the dimensions of the :ref:`signal </NXdata@signal-attribute>`
-			as well as any :ref:`auxiliary signals </NXdata@auxiliary_signals-attribute>`.
-			
-			One name is provided for every dimension in the *signal* or *auxiliary signal* fields.
-			
-			The *axes* values are the names of fields or links that *must* exist and be direct
-			children of this NXdata group.
-
-			An axis slice is specified using a field named ``AXISNAME_indices``
-			as described below (where the text shown here as ``AXISNAME`` is to be
-			replaced by the actual field name).
-			
-			When no default axis is available for a particular dimension 
-			of the plottable data, use a "." in that position.  
-			Such as::
-			
-				@axes=["time", ".", "."]
-			
-			Since there are three items in the list, the *signal* field
-			must be a three-dimensional array (rank=3). The first dimension
-			is described by the values of a one-dimensional array named ``time``
-			while the other two dimensions have no fields to be used as dimension scales.
-			
-			See examples provided on the NeXus wiki:
-			https://www.nexusformat.org/2014_axes_and_uncertainties.html
-			
-			If there are no axes at all (such as with a stack of images), 
-			the axes attribute can be omitted.
-		
+             .. index:: plotting
+             
+             Array of strings holding the :ref:`names <validItemName>` of
+             the independent data fields used in the default plot for all of
+             the dimensions of the :ref:`signal </NXdata@signal-attribute>`
+             as well as any :ref:`auxiliary signals </NXdata@auxiliary_signals-attribute>`.
+             
+             One name is provided for every dimension in the *signal* or *auxiliary signal* fields.
+             
+             The *axes* values are the names of fields or links that *must* exist and be direct
+             children of this NXdata group.
+             
+             An axis slice is specified using a field named ``AXISNAME_indices``
+             as described below (where the text shown here as ``AXISNAME`` is to be
+             replaced by the actual field name).
+             
+             When no default axis is available for a particular dimension
+             of the plottable data, use a "." in that position.
+             Such as::
+             
+                 @axes=["time", ".", "."]
+             
+             Since there are three items in the list, the *signal* field
+             must be a three-dimensional array (rank=3). The first dimension
+             is described by the values of a one-dimensional array named ``time``
+             while the other two dimensions have no fields to be used as dimension scales.
+             
+             See examples provided on the NeXus wiki:
+             https://www.nexusformat.org/2014_axes_and_uncertainties.html
+             
+             If there are no axes at all (such as with a stack of images),
+             the axes attribute can be omitted.
+        
 DEBUG - ===== ATTRS (//entry/data@signal)
 DEBUG - value: data 
 DEBUG - classpath: ['NXentry', 'NXdata']
@@ -254,19 +254,19 @@ DEBUG - NXdata.nxdl.xml:@signal - [NX_CHAR]
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXdata.nxdl.xml:/signal):
 DEBUG - 
-			.. index:: find the default plottable data
-			.. index:: plotting
-			.. index:: signal attribute value
-			
-			Declares which NeXus field is the default. 
-			The value is the :ref:`name <validItemName>` of the data field to be plotted.
-			This field or link *must* exist and be a direct child of this NXdata group.
-			
-			It is recommended (as of NIAC2014) to use this attribute
-			rather than adding a signal attribute to the field.
-			See https://www.nexusformat.org/2014_How_to_find_default_data.html
-			for a summary of the discussion.
-		
+             .. index:: find the default plottable data
+             .. index:: plotting
+             .. index:: signal attribute value
+             
+             Declares which NeXus field is the default.
+             The value is the :ref:`name <validItemName>` of the data field to be plotted.
+             This field or link *must* exist and be a direct child of this NXdata group.
+             
+             It is recommended (as of NIAC2014) to use this attribute
+             rather than adding a signal attribute to the field.
+             See https://www.nexusformat.org/2014_How_to_find_default_data.html
+             for a summary of the discussion.
+        
 DEBUG - ===== FIELD (//entry/data/angles): <HDF5 dataset "angles": shape (80,), type "<f8">
 DEBUG - value: [-1.96735314 -1.91500657 -1.86266001 -1.81031344 -1.75796688 -1.70562031 ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
@@ -276,12 +276,12 @@ DEBUG - <<OPTIONAL>>
 DEBUG - Dataset referenced as NXdata AXIS #0
 DEBUG - documentation (NXdata.nxdl.xml:/AXISNAME):
 DEBUG - 
-	 		Dimension scale defining an axis of the data.
-	 		Client is responsible for defining the dimensions of the data.
-	 		The name of this field may be changed to fit the circumstances.
-	 		Standard NeXus client tools will use the attributes to determine
-	 		how to use this field.
-	 	
+             Dimension scale defining an axis of the data.
+             Client is responsible for defining the dimensions of the data.
+             The name of this field may be changed to fit the circumstances.
+             Standard NeXus client tools will use the attributes to determine
+             how to use this field.
+        
 DEBUG - ===== ATTRS (//entry/data/angles@target)
 DEBUG - value: /entry/instrument/analyser/angles 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
@@ -296,7 +296,7 @@ DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
 DEBUG - NXdata.nxdl.xml:/AXISNAME@units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
 DEBUG - classes:
 NXdata.nxdl.xml:/DATA
@@ -304,15 +304,15 @@ DEBUG - <<OPTIONAL>>
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - documentation (NXdata.nxdl.xml:/DATA):
 DEBUG - 
-			.. index:: plotting
-		
-			This field contains the data values to be used as the 
-			NeXus *plottable data*.
-			Client is responsible for defining the dimensions of the data.
-			The name of this field may be changed to fit the circumstances.
-			Standard NeXus client tools will use the attributes to determine
-			how to use this field.
-		
+             .. index:: plotting
+             
+             This field contains the data values to be used as the
+             NeXus *plottable data*.
+             Client is responsible for defining the dimensions of the data.
+             The name of this field may be changed to fit the circumstances.
+             Standard NeXus client tools will use the attributes to determine
+             how to use this field.
+        
 DEBUG - ===== ATTRS (//entry/data/data@target)
 DEBUG - value: /entry/instrument/analyser/data 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
@@ -335,12 +335,12 @@ DEBUG - <<OPTIONAL>>
 DEBUG - Dataset referenced as NXdata AXIS #2
 DEBUG - documentation (NXdata.nxdl.xml:/AXISNAME):
 DEBUG - 
-	 		Dimension scale defining an axis of the data.
-	 		Client is responsible for defining the dimensions of the data.
-	 		The name of this field may be changed to fit the circumstances.
-	 		Standard NeXus client tools will use the attributes to determine
-	 		how to use this field.
-	 	
+             Dimension scale defining an axis of the data.
+             Client is responsible for defining the dimensions of the data.
+             The name of this field may be changed to fit the circumstances.
+             Standard NeXus client tools will use the attributes to determine
+             how to use this field.
+        
 DEBUG - ===== ATTRS (//entry/data/delays@target)
 DEBUG - value: /entry/instrument/analyser/delays 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
@@ -363,12 +363,12 @@ DEBUG - <<OPTIONAL>>
 DEBUG - Dataset referenced as NXdata AXIS #1
 DEBUG - documentation (NXdata.nxdl.xml:/AXISNAME):
 DEBUG - 
-	 		Dimension scale defining an axis of the data.
-	 		Client is responsible for defining the dimensions of the data.
-	 		The name of this field may be changed to fit the circumstances.
-	 		Standard NeXus client tools will use the attributes to determine
-	 		how to use this field.
-	 	
+             Dimension scale defining an axis of the data.
+             Client is responsible for defining the dimensions of the data.
+             The name of this field may be changed to fit the circumstances.
+             Standard NeXus client tools will use the attributes to determine
+             how to use this field.
+        
 DEBUG - ===== ATTRS (//entry/data/energies@target)
 DEBUG - value: /entry/instrument/analyser/energies 
 DEBUG - classpath: ['NXentry', 'NXdata', 'NX_NUMBER']
@@ -577,7 +577,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/data
@@ -1116,20 +1116,14 @@ DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/energy_resolution): <HDF5 dataset "energy_resolution": shape (), type "<i8">
 DEBUG - value: 100 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
-DEBUG - classes:
-NXinstrument.nxdl.xml:/energy_resolution
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXinstrument.nxdl.xml:/energy_resolution):
+DEBUG - classpath: ['NXentry', 'NXinstrument']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Energy resolution of the experiment (FWHM or gaussian broadening)
-        
 DEBUG - ===== ATTRS (//entry/instrument/energy_resolution@units)
 DEBUG - value: meV 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
-DEBUG - classes:
-NXinstrument.nxdl.xml:/energy_resolution
-DEBUG - NXinstrument.nxdl.xml:/energy_resolution@units [NX_ENERGY]
+DEBUG - classpath: ['NXentry', 'NXinstrument']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== GROUP (//entry/instrument/manipulator [NXarpes::/NXentry/NXinstrument/NXpositioner]): <HDF5 group "/entry/instrument/manipulator" (9 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - classes:
@@ -1351,7 +1345,10 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/SOURCE):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:):
 DEBUG - 
-         The neutron or x-ray storage ring/facility.
+         Radiation source emitting a beam.
+         
+         Examples include particle sources (electrons, neutrons, protons) or sources for electromagnetic radiation (photons).
+         This base class can also be used to describe neutron or x-ray storage ring/facilities.
     
 DEBUG - ===== ATTRS (//entry/instrument/source@NX_class)
 DEBUG - value: NXsource 
@@ -1526,6 +1523,7 @@ DEBUG - enumeration (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe):
 DEBUG - -> x-ray
 DEBUG - enumeration (NXsource.nxdl.xml:/probe):
 DEBUG - -> neutron
+DEBUG - -> photon
 DEBUG - -> x-ray
 DEBUG - -> muon
 DEBUG - -> electron
@@ -1589,7 +1587,10 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/SOURCE):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:):
 DEBUG - 
-         The neutron or x-ray storage ring/facility.
+         Radiation source emitting a beam.
+         
+         Examples include particle sources (electrons, neutrons, protons) or sources for electromagnetic radiation (photons).
+         This base class can also be used to describe neutron or x-ray storage ring/facilities.
     
 DEBUG - ===== ATTRS (//entry/instrument/source_pump@NX_class)
 DEBUG - value: NXsource 
@@ -1720,6 +1721,7 @@ DEBUG - enumeration (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe):
 DEBUG - -> x-ray
 DEBUG - enumeration (NXsource.nxdl.xml:/probe):
 DEBUG - -> neutron
+DEBUG - -> photon
 DEBUG - -> x-ray
 DEBUG - -> muon
 DEBUG - -> electron
@@ -1772,36 +1774,24 @@ DEBUG -
         
 DEBUG - ===== FIELD (//entry/instrument/spatial_resolution): <HDF5 dataset "spatial_resolution": shape (), type "<i8">
 DEBUG - value: 500 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
-DEBUG - classes:
-NXinstrument.nxdl.xml:/spatial_resolution
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXinstrument.nxdl.xml:/spatial_resolution):
+DEBUG - classpath: ['NXentry', 'NXinstrument']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Spatial resolution of the experiment (Airy disk radius)
-        
 DEBUG - ===== ATTRS (//entry/instrument/spatial_resolution@units)
 DEBUG - value: um 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
-DEBUG - classes:
-NXinstrument.nxdl.xml:/spatial_resolution
-DEBUG - NXinstrument.nxdl.xml:/spatial_resolution@units [NX_LENGTH]
+DEBUG - classpath: ['NXentry', 'NXinstrument']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/temporal_resolution): <HDF5 dataset "temporal_resolution": shape (), type "<i8">
 DEBUG - value: 100 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
-DEBUG - classes:
-NXinstrument.nxdl.xml:/temporal_resolution
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXinstrument.nxdl.xml:/temporal_resolution):
+DEBUG - classpath: ['NXentry', 'NXinstrument']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Temporal resolution of the experiment (FWHM)
-        
 DEBUG - ===== ATTRS (//entry/instrument/temporal_resolution@units)
 DEBUG - value: fs 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_FLOAT']
-DEBUG - classes:
-NXinstrument.nxdl.xml:/temporal_resolution
-DEBUG - NXinstrument.nxdl.xml:/temporal_resolution@units [NX_TIME]
+DEBUG - classpath: ['NXentry', 'NXinstrument']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== FIELD (//entry/run_cycle): <HDF5 dataset "run_cycle": shape (), type "|O">
 DEBUG - value: b'2018 User Run Block 2' 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
@@ -2009,7 +1999,7 @@ DEBUG - value: data
 DEBUG - 
 DEBUG - Signal has been identified: /entry/data/data
 DEBUG - ===== FIELD (//entry/data/data): <HDF5 dataset "data": shape (80, 146, 195), type "<f4">
-DEBUG - value: [[0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 0.0000000e+00 ...
+DEBUG - value: [[0. 0. 0. ... 0. 0. 0.] ...
 DEBUG - Dataset referenced as NXdata SIGNAL
 DEBUG - ===== ATTRS (//entry/data/data@target)
 DEBUG - value: /entry/instrument/analyser/data 
