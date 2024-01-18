@@ -25,6 +25,8 @@ import xml.etree.ElementTree as ET
 
 from pynxtools.nexus import nexus
 
+logger = logging.getLogger(__name__)
+
 
 def test_get_nexus_classes_units_attributes():
     """Check the correct parsing of a separate list for:
@@ -53,7 +55,6 @@ def test_nexus(tmp_path):
     """
     dirpath = os.path.join(os.path.dirname(__file__), "../data/nexus")
     example_data = os.path.join(dirpath, "201805_WSe2_arpes.nxs")
-    logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(os.path.join(tmp_path, "nexus_test.log"), "w")
     formatter = logging.Formatter("%(levelname)s - %(message)s")
@@ -194,7 +195,7 @@ def test_c_option(tmp_path):
     path_to_ref_files = os.path.join(local_path, "../data/nexus/")
     ref_file = path_to_ref_files + "Ref1_c_option_test.log"
     tmp_file = os.path.join(tmp_path, "c_option_1_test.log")
-    logger = logging.getLogger(__name__)
+
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(tmp_file, "w")
 
@@ -247,7 +248,7 @@ def test_d_option(tmp_path):
     """
 
     tmp_file = os.path.join(tmp_path, "d_option_1_test.log")
-    logger = logging.getLogger(__name__)
+
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(tmp_file, "w")
 

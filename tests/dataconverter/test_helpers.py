@@ -26,7 +26,6 @@ import pytest
 from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
-from pynxtools.dataconverter.logger import logger as pynx_logger
 from pynxtools.dataconverter.template import Template
 
 
@@ -394,7 +393,7 @@ def test_validate_data_dict(
         "link-dict-instead-of-bool",
         "opt-group-completely-removed",
     ):
-        helpers.validate_data_dict(template, data_dict, nxdl_root, logger=pynx_logger)
+        helpers.validate_data_dict(template, data_dict, nxdl_root)
     # Missing required fields caught by logger with warning
     elif request.node.callspec.id in (
         "empty-required-field",
@@ -406,11 +405,11 @@ def test_validate_data_dict(
         assert "" == caplog.text
         # logger records
         captured_logs = caplog.records
-        helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
+        helpers.validate_data_dict(template, data_dict, nxdl_root)
         assert any(error_message in rec.message for rec in captured_logs)
     else:
         with pytest.raises(Exception) as execinfo:
-            helpers.validate_data_dict(template, data_dict, nxdl_root, pynx_logger)
+            helpers.validate_data_dict(template, data_dict, nxdl_root)
         assert (error_message) == str(execinfo.value)
 
 
