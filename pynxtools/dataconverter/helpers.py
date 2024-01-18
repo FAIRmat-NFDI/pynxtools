@@ -385,9 +385,15 @@ def is_valid_data_field(value, nxdl_type, path):
 
 def path_in_data_dict(nxdl_path: str, data: dict) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
+    accepted_unfilled_key = None
     for key in data.keys():
         if nxdl_path == convert_data_converter_dict_to_nxdl_path(key):
+            if data[key] is None:
+                accepted_unfilled_key = key
+                continue
             return True, key
+    if accepted_unfilled_key:
+        return True, accepted_unfilled_key
     return False, None
 
 
