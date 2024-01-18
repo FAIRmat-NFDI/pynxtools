@@ -105,6 +105,8 @@ class RsciioVeloxSubParser(RsciioBaseParser):
                 self.normalize_diff_content(obj, template)  # diffraction images
             elif content_type == "eds_map":
                 self.normalize_eds_map_content(obj, template)  # ED(X)S in the TEM
+            elif content_type == "eds_spc":
+                self.normalize_eds_spc_content(obj, template)  # EDS spectrum/(a)
             elif content_type == "eels":
                 self.normalize_eels_content(obj, template)  # electron energy loss spectroscopy
             else:  # == "n/a"
@@ -148,6 +150,7 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         # all units indicating we are in real or complex i.e. reciprocal space
         if meta["General/title"] in ("EDS"):
             return "eds_spc"
+            # applies to multiple cases, sum spectrum, spectrum stack etc.
 
         for symbol in chemical_symbols[1::]:  # an eds_map
             # TODO::does rosettasciio via hyperspy identify the symbol or is the
@@ -294,6 +297,65 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         # template[f"{trg}/image_twod/magnitude/@units"]
         # TODO::add metadata
         self.id_mgn["event_img"] += 1
+        self.id_mgn["event"] += 1
+        return template
+
+    def normalize_eds_spc_content(self, obj: dict, template: dict) -> dict:
+        """Map relevant EDS spectrum/(a) to NeXus."""
+        meta = fd.FlatDict(obj["metadata"], "/")
+        dims = get_axes_dims(obj["axes"])
+        n_dims = None
+        if dims == [('Energy', 0)]:
+            n_dims = 1
+        elif dims == [('y', 0), ('x', 1), ('X-ray energy', 2)]:
+            n_dims = 3
+        else:
+            print(f"WARNING eds_spc for {dims} is not implemented!")
+            return
+        trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/" \
+              f"EVENT_DATA_EM[event_data_em{self.id_mgn['event']}]/" \
+              f"SPECTRUM_SET[spectrum_set{self.id_mgn['event_spc']}]"
+        template[f"{trg}/source"] = meta["General/title"]
+        template[f"{trg}/PROCESS[process]/source/type"] = "file"
+        template[f"{trg}/PROCESS[process]/source/path"] = self.file_path
+        template[f"{trg}/PROCESS[process]/source/checksum"] = self.file_path_sha256
+        template[f"{trg}/PROCESS[process]/source/algorithm"] = "SHA256"
+        template[f"{trg}/PROCESS[process]/detector_identifier"] \
+            = f"Check carefully how rsciio/hyperspy knows this {meta['General/title']}!"
+        trg = f"/ENTRY[entry{self.entry_id}]/measurement/event_data_em_set/" \
+              f"EVENT_DATA_EM[event_data_em{self.id_mgn['event']}]/" \
+              f"SPECTRUM_SET[spectrum_set{self.id_mgn['event_spc']}]" \
+              f"DATA[spectrum_zerod]"
+        template[f"{trg}/@NX_class"] = "NXdata"  # TODO::should be autodecorated
+        template[f"{trg}/@signal"] = "intensity"
+        if n_dims == 1:
+            template[f"{trg}/@axes"] = ["axis_energy"]
+            template[f"{trg}/@AXISNAME_indices[axis_energy_indices]"] = np.uint32(0)
+            support, unit = get_named_axis(obj["axes"], "Energy")
+            template[f"{trg}/AXISNAME[axis_energy]"] \
+                = {"compress": support, "strength": 1}
+            template[f"{trg}/AXISNAME[axis_energy]/@long_name"] \
+                = f"Energy ({unit})"
+        if n_dims == 3:
+            template[f"{trg}/@axes"] = ["axis_y", "axis_x", "axis_energy"]
+            template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(2)
+            template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(1)
+            template[f"{trg}/@AXISNAME_indices[axis_energy_indices]"] = np.uint32(0)
+            support, unit = get_named_axis(obj["axes"], "y")
+            template[f"{trg}/AXISNAME[axis_y]"] = {"compress": support, "strength": 1}
+            template[f"{trg}/AXISNAME[axis_y]/@long_name"] = f"y-axis position ({unit})"
+            support, unit = get_named_axis(obj["axes"], "x")
+            template[f"{trg}/AXISNAME[axis_x]"] = {"compress": support, "strength": 1}
+            template[f"{trg}/AXISNAME[axis_x]/@long_name"] = f"x-axis position ({unit})"
+            support, unit = get_named_axis(obj["axes"], "X-ray energy")
+            template[f"{trg}/AXISNAME[axis_energy]"] = {"compress": support, "strength": 1}
+            template[f"{trg}/AXISNAME[axis_energy]/@long_name"] = f"Energy ({unit})"
+        # template[f"{trg}/description"] = ""
+        template[f"{trg}/title"] = f"EDS spectrum {meta['General/title']}"
+        template[f"{trg}/intensity"] \
+            = {"compress": np.asarray(obj["data"]), "strength": 1}
+        # template[f"{trg}/intensity/@long_name"] = ""
+        self.id_mgn["event_spc"] += 1
         self.id_mgn["event"] += 1
         return template
 

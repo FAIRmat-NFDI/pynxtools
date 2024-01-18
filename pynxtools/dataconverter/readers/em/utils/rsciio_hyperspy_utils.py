@@ -28,7 +28,9 @@ def get_named_axis(axes_metadata, dim_name):
             if isinstance(axis, dict):
                 if ("name" in axis):
                     if axis["name"] == dim_name:
-                        reqs = ["index_in_array", "offset", "scale", "size", "units", "navigate"]  # "name"
+                        reqs = ["offset", "scale", "size", "units"]
+                        # "index_in_array" and "navigate" are currently not required
+                        # and ignored but might become important
                         for req in reqs:
                             if req not in axis:
                                 raise ValueError(f"{req} not in {axis}!")
@@ -48,8 +50,15 @@ def get_axes_dims(axes_metadata):
     if len(axes_metadata) >= 1:
         for axis in axes_metadata:
             if isinstance(axis, dict):
-                if ("name" in axis) and ("index_in_array" in axis):
-                    retval.append((axis["name"], axis["index_in_array"]))
+                if ("name" in axis):
+                    if "index_in_array" in axis:
+                        retval.append((axis["name"], axis["index_in_array"]))
+                    else:
+                        if len(axes_metadata) == 1:
+                            retval.append((axis["name"], 0))
+                        else:
+                            raise ValueError(f"get_axes_dims {axes_metadata} " \
+                                             f"is a case not implemented!")
     # TODO::it seems that hyperspy sorts this by index_in_array
     return retval
 
