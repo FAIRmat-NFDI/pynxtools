@@ -381,7 +381,7 @@
   },
   "/ENTRY[entry]/PROCESS[process]/energy_calibration":{
     "applied": true,
-    "coefficients": "@attrs:metadata/energy_correction/calibration/coefficients",
+    "coefficients": "@attrs:metadata/energy_correction/calibration/coeffs",
     "fit_function": "@attrs:metadata/energy_correction/calibration/fit_function",
     "original_axis": "@attrs:metadata/energy_correction/tof",
     "calibrated_axis": "@attrs:metadata/energy_correction/calibration/axis"
