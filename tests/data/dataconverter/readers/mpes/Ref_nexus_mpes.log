@@ -2438,16 +2438,6 @@ DEBUG - documentation (NXresolution.nxdl.xml:/resolution):
 DEBUG - 
              The resolution of the physical quantity.
         
-DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/energy_resolution/resolution@units)
-DEBUG - value: meV 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXresolution', 'NX_FLOAT']
-DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution/resolution
-NXelectronanalyser.nxdl.xml:/energy_resolution/resolution
-NXresolution.nxdl.xml:/resolution
-DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution/resolution@units - REQUIRED, but undefined unit category
-DEBUG - NXelectronanalyser.nxdl.xml:/energy_resolution/resolution@units [NX_ENERGY]
-DEBUG - NXresolution.nxdl.xml:/resolution@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/energy_resolution/type): <HDF5 dataset "type": shape (), type "|O">
 DEBUG - value: b'estimated' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXresolution', 'NX_CHAR']
@@ -3380,16 +3370,6 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
-DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_bias_voltmeter/value@units)
-DEBUG - value: V 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXsensor', 'NX_FLOAT']
-DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias_voltmeter/value
-NXmanipulator.nxdl.xml:/sample_bias_voltmeter/value
-NXsensor.nxdl.xml:/value
-DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias_voltmeter/value@units - REQUIRED, but undefined unit category
-DEBUG - NXmanipulator.nxdl.xml:/sample_bias_voltmeter/value@units [NX_VOLTAGE]
-DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== GROUP (//entry/instrument/manipulator/temperature_sensor [NXmpes::/NXentry/NXinstrument/NXmanipulator/NXsensor]): <HDF5 group "/entry/instrument/manipulator/temperature_sensor" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXsensor']
 DEBUG - classes:
@@ -3487,16 +3467,6 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
-DEBUG - ===== ATTRS (//entry/instrument/manipulator/temperature_sensor/value@units)
-DEBUG - value: K 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXsensor', 'NX_FLOAT']
-DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/temperature_sensor/value
-NXmanipulator.nxdl.xml:/temperature_sensor/value
-NXsensor.nxdl.xml:/value
-DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/temperature_sensor/value@units - REQUIRED, but undefined unit category
-DEBUG - NXmanipulator.nxdl.xml:/temperature_sensor/value@units [NX_TEMPERATURE]
-DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== GROUP (//entry/instrument/manipulator/transformations [NXmpes::/NXentry/NXinstrument/NXmanipulator/NXtransformations]): <HDF5 group "/entry/instrument/manipulator/transformations" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations']
 DEBUG - classes:
@@ -5511,12 +5481,6 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
-DEBUG - ===== ATTRS (//entry/sample/bias/voltmeter/value@units)
-DEBUG - value: V 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_FLOAT']
-DEBUG - classes:
-NXsensor.nxdl.xml:/value
-DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/sample/chemical_formula): <HDF5 dataset "chemical_formula": shape (), type "|O">
 DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
@@ -5787,15 +5751,69 @@ DEBUG -
              its details will be stored; the relevant components will be
              indicated by the entry in the sample_component member.
         
-DEBUG - ===== GROUP (//entry/sample/substance [NXmpes::/NXentry/NXsample/substance]): <HDF5 group "/entry/sample/substance" (1 members)>
-DEBUG - classpath: ['NXentry', 'NXsample']
-DEBUG - NOT IN SCHEMA
+DEBUG - ===== GROUP (//entry/sample/substance [NXmpes::/NXentry/NXsample/NXsubstance]): <HDF5 group "/entry/sample/substance" (1 members)>
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXsubstance']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/SUBSTANCE
+NXsample.nxdl.xml:/SUBSTANCE
+NXsubstance.nxdl.xml:
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/SUBSTANCE):
+DEBUG - 
+                     For samples containing a single pure substance. For mixtures use the
+                     NXsample_component_set and NXsample_component group in NXsample instead.
+                
+DEBUG - documentation (NXsample.nxdl.xml:/SUBSTANCE):
+DEBUG - 
+             If the sample is made from a pure substance and cannot be further divided using
+             NXsample_component.
+        
+DEBUG - documentation (NXsubstance.nxdl.xml:):
+DEBUG - 
+         A form of matter with a constant, definite chemical composition.
+         
+         Examples can be single chemical elements, chemical compunds, or alloys.
+         For further information, see https://en.wikipedia.org/wiki/Chemical_substance.
+    
+DEBUG - ===== ATTRS (//entry/sample/substance@NX_class)
+DEBUG - value: NXsubstance 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXsubstance']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/SUBSTANCE
+NXsample.nxdl.xml:/SUBSTANCE
+NXsubstance.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/substance/molecular_formula_hill): <HDF5 dataset "molecular_formula_hill": shape (), type "|O">
 DEBUG - value: b'MoTe2' 
-DEBUG - classpath: ['NXentry', 'NXsample']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXsubstance', 'NX_CHAR']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/SUBSTANCE/molecular_formula_hill
+NXsubstance.nxdl.xml:/molecular_formula_hill
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/SUBSTANCE/molecular_formula_hill):
 DEBUG - 
+                         The chemical formula of the sample (using CIF conventions).
+                    
+DEBUG - documentation (NXsubstance.nxdl.xml:/molecular_formula_hill):
+DEBUG - 
+             The chemical formula specified using CIF conventions.
+             Abbreviated version of CIF standard:107
+             This is the *Hill* system used by Chemical Abstracts.
+             
+             * Only recognized element symbols may be used.
+             * Each element symbol is followed by a 'count' number. A count of '1' may be omitted.
+             * A space or parenthesis must separate each cluster of (element symbol + count).
+             * Where a group of elements is enclosed in parentheses, the multiplier for the
+               group must follow the closing parentheses. That is, all element and group
+               multipliers are assumed to be printed as subscripted numbers.
+             * Unless the elements are ordered in a manner that corresponds to their chemical
+               structure, the order of the elements within any group or moiety depends on
+               whether or not carbon is present.
+             * If carbon is present, the order should be:
+               - C, then H, then the other elements in alphabetical order of their symbol.
+               - If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
+        
 DEBUG - ===== GROUP (//entry/sample/temperature [NXmpes::/NXentry/NXsample/NXenvironment]): <HDF5 group "/entry/sample/temperature" (1 members)>
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment']
 DEBUG - classes:
@@ -5896,12 +5914,6 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
-DEBUG - ===== ATTRS (//entry/sample/temperature/temperature_sensor/value@units)
-DEBUG - value: K 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_FLOAT']
-DEBUG - classes:
-NXsensor.nxdl.xml:/value
-DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== GROUP (//entry/sample/transformations [NXmpes::/NXentry/NXsample/NXtransformations]): <HDF5 group "/entry/sample/transformations" (7 members)>
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations']
 DEBUG - classes:
