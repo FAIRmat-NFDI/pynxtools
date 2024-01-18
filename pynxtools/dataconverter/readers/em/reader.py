@@ -136,8 +136,8 @@ class EmReader(BaseReader):
         # TODO::check correct loop through!
 
         # sub_parser = "velox_emd"
-        subparser = RsciioVeloxSubParser(entry_id, file_paths[0])
-        subparser.parse(template, verbose=True)
+        subparser = RsciioVeloxSubParser(entry_id, file_paths[0], verbose=True)
+        subparser.parse(template)
 
         # for dat_instance in case.dat_parser_type:
         #     print(f"Process pieces of information in {dat_instance} tech partner file...")

@@ -33,10 +33,19 @@ from pynxtools.dataconverter.readers.shared.shared_utils \
 REAL_SPACE = 0
 COMPLEX_SPACE = 1
 
+def all_req_keywords_in_dict(dct: dict, keywords: list) -> bool:
+    """Check if dict dct has all keywords in keywords as keys from."""
+    # falsifiable?
+    for key in keywords:
+        if key in dct:
+            continue
+        return False
+    return True
+
 
 class RsciioVeloxSubParser(RsciioBaseParser):
     """Read Velox EMD File Format emd."""
-    def __init__(self, entry_id: int = 1, file_path: str = ""):
+    def __init__(self, entry_id: int = 1, file_path: str = "", verbose=False):
         super().__init__(file_path)
         if entry_id > 0:
             self.entry_id = entry_id
@@ -49,9 +58,13 @@ class RsciioVeloxSubParser(RsciioBaseParser):
                              "eds_img": 1}
         self.file_path_sha256 = None
         self.tmp: Dict = {}
-        self.supported_version: Dict = {}
-        self.version: Dict = {}
-        self.supported = False
+        self.supported_version: Dict = {"Core/MetadataDefinitionVersion": ["7.9"],
+                                        "Core/MetadataSchemaVersion": ["v1/2013/07"]}
+        self.version: Dict = {"Core/MetadataDefinitionVersion": None,
+                              "Core/MetadataSchemaVersion": None}
+        self.obj_idx_supported = []
+        self.supported = True
+        self.verbose = verbose
         self.check_if_supported()
 
     def check_if_supported(self):
@@ -62,15 +75,37 @@ class RsciioVeloxSubParser(RsciioBaseParser):
             # only the collection of the concepts without the actual instance data
             # based on this one could then plan how much memory has to be reserved
             # in the template and stream out accordingly
+
             with open(self.file_path, "rb", 0) as fp:
                 self.file_path_sha256 = get_sha256_of_file_content(fp)
 
             print(f"Parsing {self.file_path} with SHA256 {self.file_path_sha256} ...")
-            self.supported = True
+
+            reqs = ["data", "axes", "metadata", "original_metadata", "mapping"]
+            for idx, obj in enumerate(self.objs):
+                if not isinstance(obj, dict):
+                    continue
+                if all_req_keywords_in_dict(obj, reqs) == False:
+                    continue
+                orgmeta = fd.FlatDict(obj["original_metadata"], "/")  # could be optimized
+                if "Core/MetadataDefinitionVersion" in orgmeta:
+                    if orgmeta["Core/MetadataDefinitionVersion"] not in \
+                            self.supported_version["Core/MetadataDefinitionVersion"]:
+                        continue
+                    if orgmeta["Core/MetadataSchemaVersion"] not in \
+                            self.supported_version["Core/MetadataSchemaVersion"]:
+                        continue
+                self.obj_idx_supported.append(idx)
+                if self.verbose == True:
+                    print(f"{idx}-th obj is supported")
+            if len(self.obj_idx_supported) > 0:  # there is at least some supported content
+                self.supported = True
+            else:
+                print(f"WARNING {self.file_path} has not supported content !")
         except IOError:
             print(f"Loading {self.file_path} using {self.__name__} is not supported !")
 
-    def parse(self, template: dict, verbose=False) -> dict:
+    def parse(self, template: dict) -> dict:
         """Perform actual parsing filling cache self.tmp."""
         if self.supported is True:
             self.tech_partner_to_nexus_normalization(template)
@@ -85,16 +120,13 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         for idx, obj in enumerate(self.objs):
             if not isinstance(obj, dict):
                 continue
-            parse = True
-            for req in reqs:
-                if req not in obj:
-                    parse = False
-            if parse is False:
+            if all_req_keywords_in_dict(obj, reqs) == False:
                 continue
 
             content_type = self.content_resolver(obj)
             print(f"Parsing {idx}-th object in {self.file_path} content type is {content_type}")
-            print(f"dims: {obj['axes']}")
+            if self.verbose == True:
+                print(f"dims: {obj['axes']}")
             if content_type == "imgs":
                 self.normalize_imgs_content(obj, template)  # generic imaging modes
                 # TODO:: could later make an own one for bright/dark field, but
