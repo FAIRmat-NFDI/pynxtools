@@ -41,6 +41,12 @@
       "resolution/@units": "1/angstrom",
       "physical_quantity": "momentum",
       "type": "estimated"
+    },
+    "pressure_gauge": {
+      "name": "sample_chamber_pressure",
+      "measurement": "pressure",
+      "value": "@attrs:metadata/file/trARPES:XGS600:PressureAC:P_RD",
+      "value/@units": "mbar"
     }
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]": {
@@ -227,12 +233,7 @@
       "value": "@attrs:metadata/file/KTOF:Lens:Sample:V",
       "value/@units": "V"
     },
-    "pressure_gauge": {
-      "name": "sample_chamber_pressure",
-      "measurement": "pressure",
-      "value": "@attrs:metadata/file/trARPES:XGS600:PressureAC:P_RD",
-      "value/@units": "mbar"
-    },
+
     "depends_on": "/entry/instrument/manipulator/transformations/trans_z",
     "TRANSFORMATIONS[transformations]": {
       "AXISNAME[trans_z]": -0.32,
