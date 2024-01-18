@@ -57,11 +57,11 @@ class XpsDataFileParser:
     }
 
     __file_err_msg__ = (
-        "Need a xps data file with the following extension: " f"{__prmt_file_ext__}"
+        "Need an XPS data file with the following extension: " f"{__prmt_file_ext__}"
     )
 
     __vndr_err_msg__ = (
-        "Need a xps data file from the following vendors: " f"{__vendors__}"
+        "Need an XPSdata file from the following vendors: " f"{__vendors__}"
     )
 
     def __init__(self, file_paths: List) -> None:
