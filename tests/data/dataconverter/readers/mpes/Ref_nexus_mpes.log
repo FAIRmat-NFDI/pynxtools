@@ -629,7 +629,7 @@ DEBUG - documentation (NXentry.nxdl.xml:/experiment_laboratory):
 DEBUG - 
              Name of the laboratory or beamline
         
-DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (10 members)>
+DEBUG - ===== GROUP (//entry/instrument [NXmpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (11 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT
@@ -3250,7 +3250,7 @@ DEBUG - documentation (NXresolution.nxdl.xml:/type):
 DEBUG - 
              The process by which the resolution was determined.
         
-DEBUG - ===== GROUP (//entry/instrument/manipulator [NXmpes::/NXentry/NXinstrument/NXmanipulator]): <HDF5 group "/entry/instrument/manipulator" (5 members)>
+DEBUG - ===== GROUP (//entry/instrument/manipulator [NXmpes::/NXentry/NXinstrument/NXmanipulator]): <HDF5 group "/entry/instrument/manipulator" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR
@@ -3284,30 +3284,6 @@ DEBUG -
              Refers to the last transformation specifying the positon of the manipulator in
              the NXtransformations chain.
         
-DEBUG - ===== GROUP (//entry/instrument/manipulator/pressure_gauge [NXmpes::/NXentry/NXinstrument/NXmanipulator/pressure_gauge]): <HDF5 group "/entry/instrument/manipulator/pressure_gauge" (3 members)>
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
-DEBUG - ===== FIELD (//entry/instrument/manipulator/pressure_gauge/measurement): <HDF5 dataset "measurement": shape (), type "|O">
-DEBUG - value: b'pressure' 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
-DEBUG - ===== FIELD (//entry/instrument/manipulator/pressure_gauge/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: b'sample_chamber_pressure' 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
-DEBUG - ===== FIELD (//entry/instrument/manipulator/pressure_gauge/value): <HDF5 dataset "value": shape (), type "<f8">
-DEBUG - value: 4.5599999999999996e-11 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
-DEBUG - ===== ATTRS (//entry/instrument/manipulator/pressure_gauge/value@units)
-DEBUG - value: mbar 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
 DEBUG - ===== GROUP (//entry/instrument/manipulator/sample_bias_voltmeter [NXmpes::/NXentry/NXinstrument/NXmanipulator/NXsensor]): <HDF5 group "/entry/instrument/manipulator/sample_bias_voltmeter" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXsensor']
 DEBUG - classes:
@@ -4101,6 +4077,102 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/name/short_name):
 DEBUG - 
                  short name for instrument, perhaps the acronym
             
+DEBUG - ===== GROUP (//entry/instrument/pressure_gauge [NXmpes::/NXentry/NXinstrument/NXsensor]): <HDF5 group "/entry/instrument/pressure_gauge" (3 members)>
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsensor']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge
+NXinstrument.nxdl.xml:/SENSOR
+NXsensor.nxdl.xml:
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge):
+DEBUG - 
+                     Device to measure the gas pressure around the sample.
+                
+DEBUG - documentation (NXinstrument.nxdl.xml:/SENSOR):
+DEBUG - 
+DEBUG - documentation (NXsensor.nxdl.xml:):
+DEBUG - 
+         A sensor used to monitor an external condition
+         
+         The condition itself is described in :ref:`NXenvironment`.
+    
+DEBUG - ===== ATTRS (//entry/instrument/pressure_gauge@NX_class)
+DEBUG - value: NXsensor 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsensor']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge
+NXinstrument.nxdl.xml:/SENSOR
+NXsensor.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
+DEBUG - 
+DEBUG - ===== FIELD (//entry/instrument/pressure_gauge/measurement): <HDF5 dataset "measurement": shape (), type "|O">
+DEBUG - value: b'pressure' 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsensor', 'NX_CHAR']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/measurement
+NXsensor.nxdl.xml:/measurement
+DEBUG - <<REQUIRED>>
+DEBUG - enumeration (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/measurement):
+DEBUG - -> pressure
+DEBUG - enumeration (NXsensor.nxdl.xml:/measurement):
+DEBUG - -> temperature
+DEBUG - -> pH
+DEBUG - -> magnetic_field
+DEBUG - -> electric_field
+DEBUG - -> current
+DEBUG - -> conductivity
+DEBUG - -> resistance
+DEBUG - -> voltage
+DEBUG - -> pressure
+DEBUG - -> flow
+DEBUG - -> stress
+DEBUG - -> strain
+DEBUG - -> shear
+DEBUG - -> surface_pressure
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/measurement):
+DEBUG - 
+DEBUG - documentation (NXsensor.nxdl.xml:/measurement):
+DEBUG - 
+             name for measured signal
+        
+DEBUG - ===== FIELD (//entry/instrument/pressure_gauge/name): <HDF5 dataset "name": shape (), type "|O">
+DEBUG - value: b'sample_chamber_pressure' 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsensor', 'NX_CHAR']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/name
+NXsensor.nxdl.xml:/name
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/name):
+DEBUG - 
+DEBUG - documentation (NXsensor.nxdl.xml:/name):
+DEBUG - 
+             Name for the sensor
+        
+DEBUG - ===== FIELD (//entry/instrument/pressure_gauge/value): <HDF5 dataset "value": shape (), type "<f8">
+DEBUG - value: 4.5599999999999996e-11 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/value
+NXsensor.nxdl.xml:/value
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/value):
+DEBUG - 
+                         In case of a single or averaged gas pressure measurement, this is the scalar gas pressure around
+                         the sample. It can also be an 1D array of measured pressures (without time stamps).
+                    
+DEBUG - documentation (NXsensor.nxdl.xml:/value):
+DEBUG - 
+             nominal setpoint or average value
+             - need [n] as may be a vector
+        
+DEBUG - ===== ATTRS (//entry/instrument/pressure_gauge/value@units)
+DEBUG - value: mbar 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/value
+NXsensor.nxdl.xml:/value
+DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/value@units [NX_PRESSURE]
+DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== GROUP (//entry/instrument/source_probe [NXmpes::/NXentry/NXinstrument/NXsource]): <HDF5 group "/entry/instrument/source_probe" (7 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - classes:
@@ -5528,30 +5600,91 @@ NXsample.nxdl.xml:/ENVIRONMENT
 NXenvironment.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== GROUP (//entry/sample/gas_pressure/pressure_gauge [NXmpes::/NXentry/NXsample/NXenvironment/pressure_gauge]): <HDF5 group "/entry/sample/gas_pressure/pressure_gauge" (3 members)>
-DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment']
-DEBUG - NOT IN SCHEMA
+DEBUG - ===== GROUP (//entry/sample/gas_pressure/pressure_gauge [NXmpes::/NXentry/NXsample/NXenvironment/NXsensor]): <HDF5 group "/entry/sample/gas_pressure/pressure_gauge" (3 members)>
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/gas_pressure/pressure_gauge
+NXenvironment.nxdl.xml:/SENSOR
+NXsensor.nxdl.xml:
+DEBUG - <<REQUIRED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/gas_pressure/pressure_gauge):
+DEBUG - 
+                         Gauge measuring the gas pressure.
+                         
+                         This should be a link to /entry/instrument/pressure_gauge.
+                    
+DEBUG - documentation (NXenvironment.nxdl.xml:/SENSOR):
+DEBUG - 
+             Any sensor used to monitor the environment. This can be linked to a sensor
+             defined in an NXinstrument instance.
+        
+DEBUG - documentation (NXsensor.nxdl.xml:):
+DEBUG - 
+         A sensor used to monitor an external condition
+         
+         The condition itself is described in :ref:`NXenvironment`.
+    
+DEBUG - ===== ATTRS (//entry/sample/gas_pressure/pressure_gauge@NX_class)
+DEBUG - value: NXsensor 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/SAMPLE/gas_pressure/pressure_gauge
+NXenvironment.nxdl.xml:/SENSOR
+NXsensor.nxdl.xml:
+DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/gas_pressure/pressure_gauge/measurement): <HDF5 dataset "measurement": shape (), type "|O">
 DEBUG - value: b'pressure' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_CHAR']
+DEBUG - classes:
+NXsensor.nxdl.xml:/measurement
+DEBUG - <<OPTIONAL>>
+DEBUG - enumeration (NXsensor.nxdl.xml:/measurement):
+DEBUG - -> temperature
+DEBUG - -> pH
+DEBUG - -> magnetic_field
+DEBUG - -> electric_field
+DEBUG - -> current
+DEBUG - -> conductivity
+DEBUG - -> resistance
+DEBUG - -> voltage
+DEBUG - -> pressure
+DEBUG - -> flow
+DEBUG - -> stress
+DEBUG - -> strain
+DEBUG - -> shear
+DEBUG - -> surface_pressure
+DEBUG - documentation (NXsensor.nxdl.xml:/measurement):
 DEBUG - 
+             name for measured signal
+        
 DEBUG - ===== FIELD (//entry/sample/gas_pressure/pressure_gauge/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'sample_chamber_pressure' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_CHAR']
+DEBUG - classes:
+NXsensor.nxdl.xml:/name
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXsensor.nxdl.xml:/name):
 DEBUG - 
+             Name for the sensor
+        
 DEBUG - ===== FIELD (//entry/sample/gas_pressure/pressure_gauge/value): <HDF5 dataset "value": shape (), type "<f8">
 DEBUG - value: 4.5599999999999996e-11 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment']
-DEBUG - NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXsensor.nxdl.xml:/value
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXsensor.nxdl.xml:/value):
 DEBUG - 
+             nominal setpoint or average value
+             - need [n] as may be a vector
+        
 DEBUG - ===== ATTRS (//entry/sample/gas_pressure/pressure_gauge/value@units)
 DEBUG - value: mbar 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment']
-DEBUG - NOT IN SCHEMA
-DEBUG - 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXsensor.nxdl.xml:/value
+DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/sample/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'MoTe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
