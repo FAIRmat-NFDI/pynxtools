@@ -18,8 +18,8 @@
 """Helper functions commonly used by the convert routine."""
 
 import json
-import re
 import logging
+import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from typing import Any, Callable, List, Optional, Tuple, Union
@@ -545,6 +545,11 @@ def try_undocumented(data, nxdl_root: ET.Element):
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
         if entry_name == "@units":
+            if (
+                path.rsplit("/", 1)[0] in data.get_documented()
+                and path in data.undocumented
+            ):
+                del data.undocumented[path]
             continue
 
         if entry_name[0] == "@" and "@" in nxdl_path:
