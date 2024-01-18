@@ -33,7 +33,6 @@ from pynxtools.dataconverter.exceptions import InvalidDictProvided
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def does_path_exist(path, h5py_obj) -> bool:
