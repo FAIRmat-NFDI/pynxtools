@@ -171,6 +171,7 @@ CONVERT_DICT = {
     "momentum_resolution": "RESOLUTION[momentum_resolution]/resolution",
     "temporal_resolution": "RESOLUTION[temporal_resolution]/resolution",
     "spatial_resolution": "RESOLUTION[spatial_resolution]/resolution",
+    "sample_temperature": "temperature_sensor/value",
 }
 
 REPLACE_NESTED = {

@@ -272,7 +272,7 @@
     "description": "@attrs:metadata/sample/chemical_formula",
     "name": "@attrs:metadata/sample/chemical_formula",
     "situation": "vacuum",
-    "SUSBTANCE[substance]/molecular_formula_hill": "@link:/entry/sample/chemical_formula",
+    "SUBSTANCE[substance]/molecular_formula_hill": "@link:/entry/sample/chemical_formula",
     "physical_form": "thin film",
     "temperature": {
       "temperature_sensor": "@link:/entry/instrument/manipulator/temperature_sensor"
