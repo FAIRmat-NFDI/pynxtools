@@ -16,11 +16,13 @@
 # limitations under the License.
 #
 """Utility functions for the NeXus reader classes."""
-import logging
-from dataclasses import dataclass, replace
-from typing import List, Any, Dict, Optional, Tuple
-from collections.abc import Mapping
 import json
+import logging
+import re
+from collections.abc import Mapping
+from dataclasses import dataclass, replace
+from typing import Any, Dict, List, Optional, Tuple
+
 import yaml
 
 logger = logging.getLogger(__name__)
@@ -197,6 +199,83 @@ def parse_yml(
         )
 
 
+short_notation_regex = re.compile(r"\*\{([\w,]+)\}")
+
+
+def flatten_json(
+    json_data: Dict[str, Any],
+    base_key: Optional[str] = None,
+    replacement_key: Optional[str] = None,
+    dont_flatten_link_dict: bool = False,
+) -> Dict[str, Any]:
+    """
+    Flattens a json dict into a flat dictionary of absolute paths.
+
+    Args:
+        json_data (Dict[str, Any]): The dictionary read from the json file.
+        base_key (Optional[str], optional):
+            A base key to prefix to all keys.
+            Defaults to None.
+        replacement_key (Optional[str], optional):
+            A replacement key which replaces all occurences of * with this string.
+            Defaults to None.
+        dont_flatten_link_dict (bool):
+            If true, the dict will not be flattened if it only contains a link key.
+            Defaults to False.
+
+    Returns:
+        Dict[str, Any]: The flattened dict
+    """
+    if (
+        dont_flatten_link_dict
+        and base_key is not None
+        and len(json_data) == 1
+        and "link" in json_data
+    ):
+        return {base_key: json_data}
+
+    flattened_config = {}
+
+    def update_config(key, value, rkey):
+        if isinstance(value, dict):
+            flattened_config.update(
+                flatten_json(
+                    value,
+                    base_key=key,
+                    replacement_key=rkey,
+                    dont_flatten_link_dict=dont_flatten_link_dict,
+                )
+            )
+        elif isinstance(value, str) and value.startswith("@link:"):
+            flattened_config[key] = {"link": value.removeprefix("@link:")}
+        else:
+            flattened_config[key] = value
+
+    for key, value in json_data.items():
+        if base_key is not None:
+            key = f"{base_key}/{key}"
+
+        if replacement_key is not None:
+            key = key.replace("*", replacement_key)
+            if isinstance(value, str):
+                value = value.replace("*", replacement_key)
+
+        expand_match = short_notation_regex.search(key)
+        if replacement_key is None and expand_match is not None:
+            expand_keys = expand_match.group(1).split(",")
+            for ekey in expand_keys:
+                rkey = key.replace(expand_match.group(0), ekey)
+
+                if isinstance(value, str):
+                    value = value.replace("*", ekey)
+
+                update_config(rkey, value, ekey)
+            continue
+
+        update_config(key, value, None)
+    return flattened_config
+
+
 def parse_json(file_path: str) -> Dict[str, Any]:
     """Parses a metadata json file into a dictionary.
 
@@ -208,6 +287,21 @@ def parse_json(file_path: str) -> Dict[str, Any]:
     """
     with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def parse_flatten_json(file_path: str) -> Dict[str, Any]:
+    """
+    Parses a metadata json file into a dictionary and
+    flattens it into a flat dictionary of absolute paths.
+
+    Args:
+        file_path (str): The file path of the json file.
+
+    Returns:
+        Dict[str, Any]:
+            The flattened dictionary containing the data readout from the json.
+    """
+    return flatten_json(parse_json(file_path))
 
 
 def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:

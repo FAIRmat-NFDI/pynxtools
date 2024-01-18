@@ -17,18 +17,20 @@
 #
 """MPES reader implementation for the DataConverter."""
 import errno
-import json
 import os
 from functools import reduce
-from typing import Any
-from typing import Tuple
+from typing import Any, Tuple
 
 import h5py
 import xarray as xr
 import yaml
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
+from pynxtools.dataconverter.readers.utils import (
+    FlattenSettings,
+    flatten_and_replace,
+    parse_flatten_json,
+)
 
 DEFAULT_UNITS = {
     "X": "step",
@@ -208,8 +210,7 @@ def handle_h5_and_json_file(file_paths, objects):
         if file_extension == ".h5":
             x_array_loaded = h5_to_xarray(file_path)
         elif file_extension == ".json":
-            with open(file_path, encoding="utf-8") as file:
-                config_file_dict = json.load(file)
+            config_file_dict = parse_flatten_json(file_path)
         elif file_extension in [".yaml", ".yml"]:
             with open(file_path, encoding="utf-8") as feln:
                 eln_data_dict = flatten_and_replace(
