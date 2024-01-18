@@ -162,18 +162,22 @@ CONVERT_DICT = {
     "Instrument": "INSTRUMENT[instrument]",
     "Analyzer": "ELECTRONANALYSER[electronanalyser]",
     "Manipulator": "MANIPULATOR[manipulator]",
-    "Beam": "BEAM[beam]",
+    "Beam": "beam_TYPE[beam]",
     "unit": "@units",
     "Sample": "SAMPLE[sample]",
-    "Source": "SOURCE[source]",
+    "Source": "source_TYPE[source]",
     "User": "USER[user]",
+    "energy_resolution": "energy_resolution/resolution",
+    "momentum_resolution": "RESOLUTION[momentum_resolution]/resolution",
+    "temporal_resolution": "RESOLUTION[temporal_resolution]/resolution",
+    "spatial_resolution": "RESOLUTION[spatial_resolution]/resolution",
 }
 
 REPLACE_NESTED = {
-    "SOURCE[source]/Probe": "SOURCE[source_probe]",
-    "SOURCE[source]/Pump": "SOURCE[source_pump]",
-    "BEAM[beam]/Probe": "BEAM[beam_probe]",
-    "BEAM[beam]/Pump": "BEAM[beam_pump]",
+    "source_TYPE[source]/Probe": "source_TYPE[source_probe]",
+    "source_TYPE[source]/Pump": "source_TYPE[source_pump]",
+    "beam_TYPE[beam]/Probe": "beam_TYPE[beam_probe]",
+    "beam_TYPE[beam]/Pump": "beam_TYPE[beam_pump]",
     "sample_history": "sample_history/notes",
 }
 
