@@ -170,11 +170,11 @@ CONVERT_DICT = {
 }
 
 REPLACE_NESTED = {
-    "SOURCE[source]/Probe": "SOURCE[source]",
+    "SOURCE[source]/Probe": "SOURCE[source_probe]",
     "SOURCE[source]/Pump": "SOURCE[source_pump]",
-    "BEAM[beam]/Probe": "BEAM[beam]",
+    "BEAM[beam]/Probe": "BEAM[beam_probe]",
     "BEAM[beam]/Pump": "BEAM[beam_pump]",
-    "sample_history": "sample_history/description",
+    "sample_history": "sample_history/notes",
 }
 
 
