@@ -51,8 +51,8 @@ CONVERT_DICT = {
     "version": "@version",
     "User": "USER[user]",
     "Instrument": "INSTRUMENT[instrument]",
-    "Source": "SOURCE[source]",
-    "Beam": "BEAM[beam]",
+    "Source": "SOURCE[source_probe]",
+    "Beam": "BEAM[beam_probe]",
     "Analyser": "ELECTRONANALYSER[electronanalyser]",
     "Collectioncolumn": "COLLECTIONCOLUMN[collectioncolumn]",
     "Energydispersion": "ENERGYDISPERSION[energydispersion]",
@@ -389,7 +389,7 @@ class XPSReader(BaseReader):
                     config_file = Path(file)
 
         with open(config_file, encoding="utf-8", mode="r") as cfile:
-            config_dict = json.load(cfile)
+            config_dict = parse_flatten_json(cfile)
 
         fill_template_with_xps_data(config_dict, xps_data_dict, template, ENTRY_SET)
         if eln_data_dict:
