@@ -247,7 +247,7 @@ def flatten_json(
                 )
             )
         elif isinstance(value, str) and value.startswith("@link:"):
-            flattened_config[key] = {"link": value.removeprefix("@link:")}
+            flattened_config[key] = {"link": value[6:]}
         else:
             flattened_config[key] = value
 
