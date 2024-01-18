@@ -206,6 +206,7 @@ def flatten_json(
     json_data: Dict[str, Any],
     base_key: Optional[str] = None,
     replacement_key: Optional[str] = None,
+    dont_flatten_link_dict: bool = False,
 ) -> Dict[str, Any]:
     """
     Flattens a json dict into a flat dictionary of absolute paths.
@@ -218,16 +219,32 @@ def flatten_json(
         replacement_key (Optional[str], optional):
             A replacement key which replaces all occurences of * with this string.
             Defaults to None.
+        dont_flatten_link_dict (bool):
+            If true, the dict will not be flattened if it only contains a link key.
+            Defaults to False.
 
     Returns:
         Dict[str, Any]: The flattened dict
     """
+    if (
+        dont_flatten_link_dict
+        and base_key is not None
+        and len(json_data) == 1
+        and "link" in json_data
+    ):
+        return {base_key: json_data}
+
     flattened_config = {}
 
     def update_config(key, value, rkey):
         if isinstance(value, dict):
             flattened_config.update(
-                flatten_json(value, base_key=key, replacement_key=rkey)
+                flatten_json(
+                    value,
+                    base_key=key,
+                    replacement_key=rkey,
+                    dont_flatten_link_dict=dont_flatten_link_dict,
+                )
             )
         elif isinstance(value, str) and value.startswith("@link:"):
             flattened_config[key] = {"link": value.removeprefix("@link:")}
