@@ -154,9 +154,10 @@
     "detector_voltage": "@attrs:metadata/file/KTOF:Lens:UDLD:V",
     "detector_voltage/@units": "V"
   },
-  "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_probe]": {
+  "/ENTRY[entry]/INSTRUMENT[instrument]/source_TYPE[source_probe]": {
     "name": "HHG @ TR-ARPES @ FHI",
     "probe": "photon",
+    "type": "HHG laser",
     "mode": "Single Bunch",
     "frequency": "@attrs:metadata/instrument/beam/probe/frequency",
     "frequency/@units": "kHz",
@@ -164,7 +165,7 @@
     "photon_energy/@units": "eV",
     "associated_beam": "/entry/instrument/beam_probe"
   },
-  "/ENTRY[entry]/INSTRUMENT[instrument]/BEAM[beam_probe]": {
+  "/ENTRY[entry]/INSTRUMENT[instrument]/beam_TYPE[beam_probe]": {
     "distance": 0.0,
     "distance/@units": "mm",
     "incident_energy": "@attrs:metadata/instrument/beam/probe/incident_energy",
@@ -179,7 +180,7 @@
     "extent/@units": "µm",
     "associated_source": "/entry/instrument/source_probe"
   },
-  "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source_pump]": {
+  "/ENTRY[entry]/INSTRUMENT[instrument]/source_TYPE[source_pump]": {
     "name": "OPCPA @ TR-ARPES @ FHI",
     "probe": "visible light",
     "type": "Optical Laser",
@@ -190,7 +191,7 @@
     "photon_energy/@units": "eV",
     "associated_beam": "/entry/instrument/beam_pump"
   },
-  "/ENTRY[entry]/INSTRUMENT[instrument]/BEAM[beam_pump]": {
+  "/ENTRY[entry]/INSTRUMENT[instrument]/beam_TYPE[beam_pump]": {
     "distance": 0.0,
     "distance/@units": "mm",
     "incident_energy": "@attrs:metadata/instrument/beam/pump/incident_energy",
