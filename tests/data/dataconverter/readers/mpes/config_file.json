@@ -278,7 +278,7 @@
       "temperature_sensor": "@link:/entry/instrument/manipulator/temperature_sensor"
     },
     "gas_pressure": {
-      "pressure_gauge": "@link:/entry/instrument/manipulator/pressure_gauge"
+      "pressure_gauge": "@link:/entry/instrument/pressure_gauge"
     },
     "bias": {
       "voltmeter": "@link:/entry/instrument/manipulator/sample_bias_voltmeter"
