@@ -438,7 +438,7 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
         if (
             nxdl_key[0 : nxdl_key.rfind("/")] == optional_parent_path
             and is_node_required(nxdl_key, nxdl_root)
-            and data[key] is None
+            and data[path_in_data_dict(nxdl_key, data)[1]] is None
         ):
             return False
 
