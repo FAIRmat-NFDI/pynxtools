@@ -397,7 +397,7 @@
     "offset": "@attrs:metadata/momentum_correction/offset_ky",
     "calibrated_axis": "@attrs:metadata/momentum_correction/calibration/axis_ky"
   },
-  "/ENTRY[entry]/DATA[data]": {
+  "/ENTRY[entry]/data": {
     "@axes": "@data:dims",
     "AXISNAME_indices[@*_indices]": "@data:*.index",
     "@signal": "data",
