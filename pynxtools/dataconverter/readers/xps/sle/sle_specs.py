@@ -400,7 +400,6 @@ class SleProdigyParser(ABC):
             "energy/@type": self._change_energy_type,
             "excitation_energy": self._convert_excitation_energy,
             "time_stamp": self._convert_date_time,
-            # "measurement_type": self._convert_date_measurement_type,
             "energy_scan_mode": self._convert_energy_scan_mode,
         }
 
