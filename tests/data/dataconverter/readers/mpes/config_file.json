@@ -66,13 +66,13 @@
         "physical_quantity": "energy",
         "type": "estimated"
       },
-      "RESOLUTION[momentum_resolution]": {
+      "momentum_resolution": {
         "resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
         "resolution/@units": "1/angstrom",
         "physical_quantity": "momentum",
         "type": "estimated"
       },
-      "RESOLUTION[spatial_resolution]": {
+      "spatial_resolution": {
         "resolution": "@attrs:metadata/instrument/analyzer/spatial_resolution",
         "resolution/@units": "µm",
         "physical_quantity": "length",
