@@ -187,6 +187,10 @@ REPLACE_NESTED = {
     "ELECTRONANALYSER[electronanalyser]/RESOLUTION[spatial_resolution]": (
         "ELECTRONANALYSER[electronanalyser]/spatial_resolution"
     ),
+    "SAMPLE[sample]/gas_pressure": "INSTRUMENT[instrument]/pressure_gauge/value",
+    "SAMPLE[sample]/temperature": (
+        "INSTRUMENT[instrument]/MANIPULATOR[manipulator]/temperature_sensor/value"
+    ),
 }
 
 

@@ -229,7 +229,6 @@
       "value": "@attrs:metadata/file/KTOF:Lens:Sample:V",
       "value/@units": "V"
     },
-
     "depends_on": "/entry/instrument/manipulator/transformations/trans_z",
     "TRANSFORMATIONS[transformations]": {
       "AXISNAME[trans_z]": -0.32,
