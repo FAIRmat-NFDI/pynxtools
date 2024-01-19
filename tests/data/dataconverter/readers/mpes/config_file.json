@@ -41,64 +41,70 @@
       "resolution/@units": "1/angstrom",
       "physical_quantity": "momentum",
       "type": "estimated"
-    }
-  },
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]": {
-    "description": "SPECS Metis 1000 Momentum Microscope",
-    "device_information": {
-      "vendor": "SPECS GmbH",
-      "model": "Metis 1000 Momentum Microscope"
     },
-    "fast_axes": [
-      "kx",
-      "ky",
-      "E"
-    ],
-    "slow_axes": "@attrs:metadata/instrument/analyzer/slow_axes",
-    "energy_resolution": {
-      "resolution": 110.0,
-      "resolution/@units": "meV",
-      "physical_quantity": "energy",
-      "type": "estimated"
+    "pressure_gauge": {
+      "name": "sample_chamber_pressure",
+      "measurement": "pressure",
+      "value": "@attrs:metadata/file/trARPES:XGS600:PressureAC:P_RD",
+      "value/@units": "mbar"
     },
-    "RESOLUTION[momentum_resolution]": {
-      "resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
-      "resolution/@units": "1/angstrom",
-      "physical_quantity": "momentum",
-      "type": "estimated"
-    },
-    "RESOLUTION[spatial_resolution]": {
-      "resolution": "@attrs:metadata/instrument/analyzer/spatial_resolution",
-      "resolution/@units": "µm",
-      "physical_quantity": "length",
-      "type": "estimated"
-    },
-    "depends_on": "/entry/instrument/electronanalyser/transformations/trans_z",
-    "TRANSFORMATIONS[transformations]": {
-      "AXISNAME[trans_z]": 4.0,
-      "AXISNAME[trans_z]/@depends_on": "rot_y",
-      "AXISNAME[trans_z]/@transformation_type": "translation",
-      "AXISNAME[trans_z]/@units": "mm",
-      "AXISNAME[trans_z]/@vector": [
-        0,
-        0,
-        1
+    "ELECTRONANALYSER[electronanalyser]": {
+      "description": "SPECS Metis 1000 Momentum Microscope",
+      "device_information": {
+        "vendor": "SPECS GmbH",
+        "model": "Metis 1000 Momentum Microscope"
+      },
+      "fast_axes": [
+        "kx",
+        "ky",
+        "E"
       ],
-      "AXISNAME[rot_y]": -115.0,
-      "AXISNAME[rot_y]/@depends_on": ".",
-      "AXISNAME[rot_y]/@transformation_type": "rotation",
-      "AXISNAME[rot_y]/@units": "degrees",
-      "AXISNAME[rot_y]/@vector": [
-        0,
-        1,
-        0
-      ]
+      "slow_axes": "@attrs:metadata/instrument/analyzer/slow_axes",
+      "energy_resolution": {
+        "resolution": 110.0,
+        "resolution/@units": "meV",
+        "physical_quantity": "energy",
+        "type": "estimated"
+      },
+      "momentum_resolution": {
+        "resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
+        "resolution/@units": "1/angstrom",
+        "physical_quantity": "momentum",
+        "type": "estimated"
+      },
+      "spatial_resolution": {
+        "resolution": "@attrs:metadata/instrument/analyzer/spatial_resolution",
+        "resolution/@units": "µm",
+        "physical_quantity": "length",
+        "type": "estimated"
+      },
+      "depends_on": "/entry/instrument/electronanalyser/transformations/trans_z",
+      "TRANSFORMATIONS[transformations]": {
+        "AXISNAME[trans_z]": 4.0,
+        "AXISNAME[trans_z]/@depends_on": "rot_y",
+        "AXISNAME[trans_z]/@transformation_type": "translation",
+        "AXISNAME[trans_z]/@units": "mm",
+        "AXISNAME[trans_z]/@vector": [
+          0,
+          0,
+          1
+        ],
+        "AXISNAME[rot_y]": -115.0,
+        "AXISNAME[rot_y]/@depends_on": ".",
+        "AXISNAME[rot_y]/@transformation_type": "rotation",
+        "AXISNAME[rot_y]/@units": "degrees",
+        "AXISNAME[rot_y]/@vector": [
+          0,
+          1,
+          0
+        ]
+      }
     }
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]": {
     "projection": "@attrs:metadata/instrument/analyzer/projection",
-    "scheme": "angular dispersive",
-    "mode": "@attrs:metadata/instrument/analyzer/lens_mode",
+    "scheme": "momentum dispersive",
+    "lens_mode": "@attrs:metadata/instrument/analyzer/lens_mode",
     "extractor_voltage": "@attrs:metadata/file/KTOF:Lens:Extr:V",
     "extractor_voltage/@units": "V",
     "extractor_current": "@attrs:metadata/file/KTOF:Lens:Extr:I",
@@ -161,8 +167,6 @@
     "mode": "Single Bunch",
     "frequency": "@attrs:metadata/instrument/beam/probe/frequency",
     "frequency/@units": "kHz",
-    "photon_energy": "@attrs:metadata/instrument/beam/probe/incident_energy",
-    "photon_energy/@units": "eV",
     "associated_beam": "/entry/instrument/beam_probe"
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/beam_TYPE[beam_probe]": {
@@ -187,8 +191,6 @@
     "mode": "Single Bunch",
     "frequency": "@attrs:metadata/instrument/beam/pump/frequency",
     "frequency/@units": "kHz",
-    "photon_energy": "@attrs:metadata/instrument/beam/pump/incident_energy",
-    "photon_energy/@units": "eV",
     "associated_beam": "/entry/instrument/beam_pump"
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/beam_TYPE[beam_pump]": {
@@ -227,12 +229,6 @@
       "value": "@attrs:metadata/file/KTOF:Lens:Sample:V",
       "value/@units": "V"
     },
-    "pressure_gauge": {
-      "name": "sample_chamber_pressure",
-      "measurement": "pressure",
-      "value": "@attrs:metadata/file/trARPES:XGS600:PressureAC:P_RD",
-      "value/@units": "mbar"
-    },
     "depends_on": "/entry/instrument/manipulator/transformations/trans_z",
     "TRANSFORMATIONS[transformations]": {
       "AXISNAME[trans_z]": -0.32,
@@ -267,17 +263,15 @@
   "/ENTRY[entry]/SAMPLE[sample]": {
     "preparation_date": "@attrs:metadata/sample/preparation_date",
     "sample_history/notes": "@attrs:metadata/sample/sample_history",
-    "chemical_formula": "@attrs:metadata/sample/chemical_formula",
     "description": "@attrs:metadata/sample/chemical_formula",
     "name": "@attrs:metadata/sample/chemical_formula",
     "situation": "vacuum",
-    "SUSBTANCE[substance]/molecular_formula_hill": "@link:/entry/sample/chemical_formula",
-    "physical_form": "thin film",
+    "SUBSTANCE[substance]/molecular_formula_hill": "@attrs:metadata/sample/chemical_formula",
     "temperature": {
       "temperature_sensor": "@link:/entry/instrument/manipulator/temperature_sensor"
     },
     "gas_pressure": {
-      "pressure_gauge": "@link:/entry/instrument/manipulator/pressure_gauge"
+      "pressure_gauge": "@link:/entry/instrument/pressure_gauge"
     },
     "bias": {
       "voltmeter": "@link:/entry/instrument/manipulator/sample_bias_voltmeter"
@@ -350,7 +344,6 @@
     }
   },
   "/ENTRY[entry]/PROCESS[process]/DISTORTION[distortion]": {
-    "applied": true,
     "symmetry": "@attrs:metadata/momentum_correction/rotsym",
     "original_centre": "@attrs:metadata/momentum_correction/pcent",
     "original_points": "@attrs:metadata/momentum_correction/pouter",
@@ -358,7 +351,6 @@
     "rdeform_field": "@attrs:metadata/momentum_correction/rdeform_field"
   },
   "/ENTRY[entry]/PROCESS[process]/REGISTRATION[registration]": {
-    "applied": true,
     "depends_on": "/entry/process/registration/tranformations/rot_z",
     "TRANSFORMATIONS[tranformations]": {
       "AXISNAME[trans_x]": "@attrs:metadata/momentum_correction/adjust_params/xtrans",
@@ -380,20 +372,17 @@
     }
   },
   "/ENTRY[entry]/PROCESS[process]/energy_calibration":{
-    "applied": true,
     "coefficients": "@attrs:metadata/energy_correction/calibration/coeffs",
     "fit_function": "@attrs:metadata/energy_correction/calibration/fit_function",
     "original_axis": "@attrs:metadata/energy_correction/tof",
     "calibrated_axis": "@attrs:metadata/energy_correction/calibration/axis"
   },
   "/ENTRY[entry]/PROCESS[process]/CALIBRATION[kx_calibration]": {
-    "applied": true,
     "scaling": "@attrs:metadata/momentum_correction/calibration/scale_kx",
     "offset": "@attrs:metadata/momentum_correction/offset_kx",
     "calibrated_axis": "@attrs:metadata/momentum_correction/calibration/axis_kx"
   },
   "/ENTRY[entry]/PROCESS[process]/CALIBRATION[ky_calibration]": {
-    "applied": true,
     "scaling": "@attrs:metadata/momentum_correction/calibration/scale_ky",
     "offset": "@attrs:metadata/momentum_correction/offset_ky",
     "calibrated_axis": "@attrs:metadata/momentum_correction/calibration/axis_ky"

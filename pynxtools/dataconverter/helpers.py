@@ -18,6 +18,7 @@
 """Helper functions commonly used by the convert routine."""
 
 import json
+import logging
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -28,9 +29,11 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.logger import logger as pynx_logger
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -501,7 +504,7 @@ def does_group_exist(path_to_group, data):
 
 
 # pylint: disable=W1203
-def ensure_all_required_fields_exist(template, data, nxdl_root, logger=pynx_logger):
+def ensure_all_required_fields_exist(template, data, nxdl_root):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
@@ -542,6 +545,16 @@ def try_undocumented(data, nxdl_root: ET.Element):
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
         if entry_name == "@units":
+            field_path = path.rsplit("/", 1)[0]
+            if field_path in data.get_documented() and path in data.undocumented:
+                field_requiredness = get_required_string(
+                    nexus.get_node_at_nxdl_path(
+                        nxdl_path=convert_data_converter_dict_to_nxdl_path(field_path),
+                        elem=nxdl_root,
+                    )
+                )
+                data[field_requiredness][path] = data.undocumented[path]
+                del data.undocumented[path]
             continue
 
         if entry_name[0] == "@" and "@" in nxdl_path:
@@ -560,7 +573,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element, logger=pynx_logger):
+def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
@@ -569,7 +582,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element, logger=pynx_logger
     nxdl_path_to_elm: dict = {}
 
     # Make sure all required fields exist.
-    ensure_all_required_fields_exist(template, data, nxdl_root, logger)
+    ensure_all_required_fields_exist(template, data, nxdl_root)
     try_undocumented(data, nxdl_root)
 
     for path in data.get_documented().keys():
@@ -666,7 +679,7 @@ def convert_to_hill(atoms_typ):
     return atom_list + list(atoms_typ)
 
 
-def add_default_root_attributes(data, filename, logger=pynx_logger):
+def add_default_root_attributes(data, filename):
     """
     Takes a dict/Template and adds NXroot fields/attributes that are inherently available
     """
