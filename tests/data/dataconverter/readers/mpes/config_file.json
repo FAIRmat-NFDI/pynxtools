@@ -103,8 +103,8 @@
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]": {
     "projection": "@attrs:metadata/instrument/analyzer/projection",
-    "scheme": "angular dispersive",
-    "mode": "@attrs:metadata/instrument/analyzer/lens_mode",
+    "scheme": "momentum dispersive",
+    "lens_mode": "@attrs:metadata/instrument/analyzer/lens_mode",
     "extractor_voltage": "@attrs:metadata/file/KTOF:Lens:Extr:V",
     "extractor_voltage/@units": "V",
     "extractor_current": "@attrs:metadata/file/KTOF:Lens:Extr:I",

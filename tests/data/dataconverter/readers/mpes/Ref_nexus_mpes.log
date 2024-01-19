@@ -2107,16 +2107,13 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollecti
 DEBUG - classes:
 NXlens_em.nxdl.xml:/voltage
 DEBUG - NXlens_em.nxdl.xml:/voltage@units [NX_VOLTAGE]
-DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/mode): <HDF5 dataset "mode": shape (), type "|O">
+DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/lens_mode): <HDF5 dataset "lens_mode": shape (), type "|O">
 DEBUG - value: b'6kV_kmodem2.0_30VTOF_MoTe2_2340VMCP.sav' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NX_CHAR']
 DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/mode
-NXcollectioncolumn.nxdl.xml:/mode
-DEBUG - <<RECOMMENDED>>
-DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/mode):
-DEBUG - 
-DEBUG - documentation (NXcollectioncolumn.nxdl.xml:/mode):
+NXcollectioncolumn.nxdl.xml:/lens_mode
+DEBUG - <<OPTIONAL>>
+DEBUG - documentation (NXcollectioncolumn.nxdl.xml:/lens_mode):
 DEBUG - 
              Labelling of the lens setting in use.
         
@@ -2137,7 +2134,7 @@ DEBUG -
              The space projected in the angularly dispersive directions, real or reciprocal
         
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/scheme): <HDF5 dataset "scheme": shape (), type "|O">
-DEBUG - value: b'angular dispersive' 
+DEBUG - value: b'momentum dispersive' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NX_CHAR']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/scheme
@@ -2146,6 +2143,7 @@ DEBUG - <<REQUIRED>>
 DEBUG - enumeration (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/scheme):
 DEBUG - -> angular dispersive
 DEBUG - -> spatial dispersive
+DEBUG - -> momentum dispersive
 DEBUG - -> non-dispersive
 DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/scheme):
 DEBUG - 
