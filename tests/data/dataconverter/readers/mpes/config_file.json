@@ -47,58 +47,58 @@
       "measurement": "pressure",
       "value": "@attrs:metadata/file/trARPES:XGS600:PressureAC:P_RD",
       "value/@units": "mbar"
-    }
-  },
-  "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]": {
-    "description": "SPECS Metis 1000 Momentum Microscope",
-    "device_information": {
-      "vendor": "SPECS GmbH",
-      "model": "Metis 1000 Momentum Microscope"
     },
-    "fast_axes": [
-      "kx",
-      "ky",
-      "E"
-    ],
-    "slow_axes": "@attrs:metadata/instrument/analyzer/slow_axes",
-    "energy_resolution": {
-      "resolution": 110.0,
-      "resolution/@units": "meV",
-      "physical_quantity": "energy",
-      "type": "estimated"
-    },
-    "RESOLUTION[momentum_resolution]": {
-      "resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
-      "resolution/@units": "1/angstrom",
-      "physical_quantity": "momentum",
-      "type": "estimated"
-    },
-    "RESOLUTION[spatial_resolution]": {
-      "resolution": "@attrs:metadata/instrument/analyzer/spatial_resolution",
-      "resolution/@units": "µm",
-      "physical_quantity": "length",
-      "type": "estimated"
-    },
-    "depends_on": "/entry/instrument/electronanalyser/transformations/trans_z",
-    "TRANSFORMATIONS[transformations]": {
-      "AXISNAME[trans_z]": 4.0,
-      "AXISNAME[trans_z]/@depends_on": "rot_y",
-      "AXISNAME[trans_z]/@transformation_type": "translation",
-      "AXISNAME[trans_z]/@units": "mm",
-      "AXISNAME[trans_z]/@vector": [
-        0,
-        0,
-        1
+    "ELECTRONANALYSER[electronanalyser]": {
+      "description": "SPECS Metis 1000 Momentum Microscope",
+      "device_information": {
+        "vendor": "SPECS GmbH",
+        "model": "Metis 1000 Momentum Microscope"
+      },
+      "fast_axes": [
+        "kx",
+        "ky",
+        "E"
       ],
-      "AXISNAME[rot_y]": -115.0,
-      "AXISNAME[rot_y]/@depends_on": ".",
-      "AXISNAME[rot_y]/@transformation_type": "rotation",
-      "AXISNAME[rot_y]/@units": "degrees",
-      "AXISNAME[rot_y]/@vector": [
-        0,
-        1,
-        0
-      ]
+      "slow_axes": "@attrs:metadata/instrument/analyzer/slow_axes",
+      "energy_resolution": {
+        "resolution": 110.0,
+        "resolution/@units": "meV",
+        "physical_quantity": "energy",
+        "type": "estimated"
+      },
+      "RESOLUTION[momentum_resolution]": {
+        "resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
+        "resolution/@units": "1/angstrom",
+        "physical_quantity": "momentum",
+        "type": "estimated"
+      },
+      "RESOLUTION[spatial_resolution]": {
+        "resolution": "@attrs:metadata/instrument/analyzer/spatial_resolution",
+        "resolution/@units": "µm",
+        "physical_quantity": "length",
+        "type": "estimated"
+      },
+      "depends_on": "/entry/instrument/electronanalyser/transformations/trans_z",
+      "TRANSFORMATIONS[transformations]": {
+        "AXISNAME[trans_z]": 4.0,
+        "AXISNAME[trans_z]/@depends_on": "rot_y",
+        "AXISNAME[trans_z]/@transformation_type": "translation",
+        "AXISNAME[trans_z]/@units": "mm",
+        "AXISNAME[trans_z]/@vector": [
+          0,
+          0,
+          1
+        ],
+        "AXISNAME[rot_y]": -115.0,
+        "AXISNAME[rot_y]/@depends_on": ".",
+        "AXISNAME[rot_y]/@transformation_type": "rotation",
+        "AXISNAME[rot_y]/@units": "degrees",
+        "AXISNAME[rot_y]/@vector": [
+          0,
+          1,
+          0
+        ]
+      }
     }
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/COLLECTIONCOLUMN[collectioncolumn]": {
