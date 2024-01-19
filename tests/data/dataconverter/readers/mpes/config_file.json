@@ -351,7 +351,6 @@
     }
   },
   "/ENTRY[entry]/PROCESS[process]/DISTORTION[distortion]": {
-    "applied": true,
     "symmetry": "@attrs:metadata/momentum_correction/rotsym",
     "original_centre": "@attrs:metadata/momentum_correction/pcent",
     "original_points": "@attrs:metadata/momentum_correction/pouter",
@@ -359,7 +358,6 @@
     "rdeform_field": "@attrs:metadata/momentum_correction/rdeform_field"
   },
   "/ENTRY[entry]/PROCESS[process]/REGISTRATION[registration]": {
-    "applied": true,
     "depends_on": "/entry/process/registration/tranformations/rot_z",
     "TRANSFORMATIONS[tranformations]": {
       "AXISNAME[trans_x]": "@attrs:metadata/momentum_correction/adjust_params/xtrans",
@@ -381,20 +379,17 @@
     }
   },
   "/ENTRY[entry]/PROCESS[process]/energy_calibration":{
-    "applied": true,
     "coefficients": "@attrs:metadata/energy_correction/calibration/coeffs",
     "fit_function": "@attrs:metadata/energy_correction/calibration/fit_function",
     "original_axis": "@attrs:metadata/energy_correction/tof",
     "calibrated_axis": "@attrs:metadata/energy_correction/calibration/axis"
   },
   "/ENTRY[entry]/PROCESS[process]/CALIBRATION[kx_calibration]": {
-    "applied": true,
     "scaling": "@attrs:metadata/momentum_correction/calibration/scale_kx",
     "offset": "@attrs:metadata/momentum_correction/offset_kx",
     "calibrated_axis": "@attrs:metadata/momentum_correction/calibration/axis_kx"
   },
   "/ENTRY[entry]/PROCESS[process]/CALIBRATION[ky_calibration]": {
-    "applied": true,
     "scaling": "@attrs:metadata/momentum_correction/calibration/scale_ky",
     "offset": "@attrs:metadata/momentum_correction/offset_ky",
     "calibrated_axis": "@attrs:metadata/momentum_correction/calibration/axis_ky"
