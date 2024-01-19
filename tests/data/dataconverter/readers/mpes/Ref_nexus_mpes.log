@@ -2436,6 +2436,16 @@ DEBUG - documentation (NXresolution.nxdl.xml:/resolution):
 DEBUG - 
              The resolution of the physical quantity.
         
+DEBUG - ===== ATTRS (//entry/instrument/electronanalyser/energy_resolution/resolution@units)
+DEBUG - value: meV 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXresolution', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution/resolution
+NXelectronanalyser.nxdl.xml:/energy_resolution/resolution
+NXresolution.nxdl.xml:/resolution
+DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution/resolution@units - REQUIRED, but undefined unit category
+DEBUG - NXelectronanalyser.nxdl.xml:/energy_resolution/resolution@units [NX_ENERGY]
+DEBUG - NXresolution.nxdl.xml:/resolution@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/instrument/electronanalyser/energy_resolution/type): <HDF5 dataset "type": shape (), type "|O">
 DEBUG - value: b'estimated' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXresolution', 'NX_CHAR']
@@ -3368,6 +3378,16 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/sample_bias_voltmeter/value@units)
+DEBUG - value: V 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias_voltmeter/value
+NXmanipulator.nxdl.xml:/sample_bias_voltmeter/value
+NXsensor.nxdl.xml:/value
+DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/sample_bias_voltmeter/value@units - REQUIRED, but undefined unit category
+DEBUG - NXmanipulator.nxdl.xml:/sample_bias_voltmeter/value@units [NX_VOLTAGE]
+DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== GROUP (//entry/instrument/manipulator/temperature_sensor [NXmpes::/NXentry/NXinstrument/NXmanipulator/NXsensor]): <HDF5 group "/entry/instrument/manipulator/temperature_sensor" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXsensor']
 DEBUG - classes:
@@ -3465,6 +3485,16 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
+DEBUG - ===== ATTRS (//entry/instrument/manipulator/temperature_sensor/value@units)
+DEBUG - value: K 
+DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/temperature_sensor/value
+NXmanipulator.nxdl.xml:/temperature_sensor/value
+NXsensor.nxdl.xml:/value
+DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/MANIPULATOR/temperature_sensor/value@units - REQUIRED, but undefined unit category
+DEBUG - NXmanipulator.nxdl.xml:/temperature_sensor/value@units [NX_TEMPERATURE]
+DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== GROUP (//entry/instrument/manipulator/transformations [NXmpes::/NXentry/NXinstrument/NXmanipulator/NXtransformations]): <HDF5 group "/entry/instrument/manipulator/transformations" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmanipulator', 'NXtransformations']
 DEBUG - classes:
@@ -5395,6 +5425,12 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
+DEBUG - ===== ATTRS (//entry/sample/bias/voltmeter/value@units)
+DEBUG - value: V 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXsensor.nxdl.xml:/value
+DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== FIELD (//entry/sample/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
 DEBUG - value: b'/entry/sample/transformations/corrected_phi' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
@@ -5787,6 +5823,12 @@ DEBUG -
              nominal setpoint or average value
              - need [n] as may be a vector
         
+DEBUG - ===== ATTRS (//entry/sample/temperature/temperature_sensor/value@units)
+DEBUG - value: K 
+DEBUG - classpath: ['NXentry', 'NXsample', 'NXenvironment', 'NXsensor', 'NX_FLOAT']
+DEBUG - classes:
+NXsensor.nxdl.xml:/value
+DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
 DEBUG - ===== GROUP (//entry/sample/transformations [NXmpes::/NXentry/NXsample/NXtransformations]): <HDF5 group "/entry/sample/transformations" (7 members)>
 DEBUG - classpath: ['NXentry', 'NXsample', 'NXtransformations']
 DEBUG - classes:
