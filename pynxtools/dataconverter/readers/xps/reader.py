@@ -248,7 +248,7 @@ def fill_data_group(key, entries_values, config_dict, template):
         key_nxclass = f"{modified_key}/@NX_class"
 
 
-def fill_detector_group(key, entries_values, config_dict, template):
+def fill_detector_group(key, entries_values, config_dict, xps_data_dict, template):
     """Fill out fileds and attributes for NXdetector/NXdata"""
 
     for entry, xr_data in entries_values.items():
@@ -256,22 +256,37 @@ def fill_detector_group(key, entries_values, config_dict, template):
         scan_count = "_scan"
         chan_count = "_chan"
 
+        # unit_key = config_dict[f"{key}/@units"]
+        # units = find_entry_and_value(xps_data_dict, unit_key, XPS_TOKEN)
+        units = "counts_per_second"
+
         # Iteration over scan
-        for data_var in xr_data.data_vars:
+        data_vars = [
+            data_var for data_var in xr_data.data_vars if chan_count in data_var
+        ]
+
+        detector_scans = {detector: [] for detector in DETECTOR_SET}
+
+        for data_var in data_vars:
             if chan_count in data_var:
                 detector_num = data_var.split("_chan_")[-1]
                 detector_nm = f"detector{detector_num}"
+                detector_scans[detector_nm] += [xr_data[data_var].data]
                 cycle_scan_num = data_var.split(chan_count)[0]
-                print(cycle_scan_num)
-                scan_num = 0
-                # (scan_count)[-1].split(chan_count)[0]
-                scan_nm = f"scan_{scan_num}"
                 modified_key = key.replace("entry", entry)
                 modified_key = modified_key.replace("[detector]", f"[{detector_nm}]")
-                modified_key_unit = modified_key + "/@units"
-                scan_key = modified_key.replace("raw_data/raw", f"raw_data/{scan_nm}")
+                cycle_scan_key = modified_key.replace(
+                    "raw_data/raw", f"raw_data/{cycle_scan_num}"
+                )
+                cycle_scan_key_unit = modified_key + "/@units"
+                template[cycle_scan_key] = xr_data[data_var].data
+                template[f"{cycle_scan_key}/@units"] = units
 
-                template[scan_key] = xr_data[data_var].data
+        # Add multi-dimensional `raw`array for each detector
+        for detector_nm, value in detector_scans.items():
+            modified_key = key.replace("entry", entry)
+            modified_key = modified_key.replace("[detector]", f"[{detector_nm}]")
+            template[modified_key] = np.array(value)
 
 
 def fill_template_with_value(key, value, template):
@@ -355,7 +370,9 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template):
                     xps_data_dict, key_part, dt_typ=XPS_DETECTOR_TOKEN
                 )
 
-                fill_detector_group(key, entries_values, config_dict, template)
+                fill_detector_group(
+                    key, entries_values, config_dict, xps_data_dict, template
+                )
 
             elif XPS_TOKEN in str(config_value):
                 token = config_value.split(XPS_TOKEN)[-1]
