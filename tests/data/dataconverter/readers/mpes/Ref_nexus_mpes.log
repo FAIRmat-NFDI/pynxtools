@@ -4143,7 +4143,7 @@ NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/value
 NXsensor.nxdl.xml:/value
 DEBUG - NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/pressure_gauge/value@units [NX_PRESSURE]
 DEBUG - NXsensor.nxdl.xml:/value@units [NX_ANY]
-DEBUG - ===== GROUP (//entry/instrument/source_probe [NXmpes::/NXentry/NXinstrument/NXsource]): <HDF5 group "/entry/instrument/source_probe" (7 members)>
+DEBUG - ===== GROUP (//entry/instrument/source_probe [NXmpes::/NXentry/NXinstrument/NXsource]): <HDF5 group "/entry/instrument/source_probe" (6 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/SOURCE
@@ -4210,23 +4210,6 @@ DEBUG - documentation (NXsource.nxdl.xml:/name):
 DEBUG - 
              Name of source
         
-DEBUG - ===== FIELD (//entry/instrument/source_probe/photon_energy): <HDF5 dataset "photon_energy": shape (), type "<f8">
-DEBUG - value: 21.7 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/photon_energy
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/photon_energy):
-DEBUG - 
-             The center photon energy of the source, before it is
-             monochromatized or converted
-        
-DEBUG - ===== ATTRS (//entry/instrument/source_probe/photon_energy@units)
-DEBUG - value: eV 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/photon_energy
-DEBUG - NXsource.nxdl.xml:/photon_energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/source_probe/probe): <HDF5 dataset "probe": shape (), type "|O">
 DEBUG - value: b'photon' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
@@ -4271,7 +4254,7 @@ DEBUG - documentation (NXsource.nxdl.xml:/type):
 DEBUG - 
              type of radiation source (pick one from the enumerated list and spell exactly)
         
-DEBUG - ===== GROUP (//entry/instrument/source_pump [NXmpes::/NXentry/NXinstrument/NXsource]): <HDF5 group "/entry/instrument/source_pump" (7 members)>
+DEBUG - ===== GROUP (//entry/instrument/source_pump [NXmpes::/NXentry/NXinstrument/NXsource]): <HDF5 group "/entry/instrument/source_pump" (6 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/SOURCE
@@ -4338,23 +4321,6 @@ DEBUG - documentation (NXsource.nxdl.xml:/name):
 DEBUG - 
              Name of source
         
-DEBUG - ===== FIELD (//entry/instrument/source_pump/photon_energy): <HDF5 dataset "photon_energy": shape (), type "<f8">
-DEBUG - value: 1.2 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/photon_energy
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsource.nxdl.xml:/photon_energy):
-DEBUG - 
-             The center photon energy of the source, before it is
-             monochromatized or converted
-        
-DEBUG - ===== ATTRS (//entry/instrument/source_pump/photon_energy@units)
-DEBUG - value: eV 
-DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_FLOAT']
-DEBUG - classes:
-NXsource.nxdl.xml:/photon_energy
-DEBUG - NXsource.nxdl.xml:/photon_energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/probe): <HDF5 dataset "probe": shape (), type "|O">
 DEBUG - value: b'visible light' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
@@ -4489,7 +4455,7 @@ NXentry.nxdl.xml:/PROCESS
 NXprocess.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== GROUP (//entry/process/distortion [NXmpes::/NXentry/NXprocess/NXdistortion]): <HDF5 group "/entry/process/distortion" (6 members)>
+DEBUG - ===== GROUP (//entry/process/distortion [NXmpes::/NXentry/NXprocess/NXdistortion]): <HDF5 group "/entry/process/distortion" (5 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXdistortion']
 DEBUG - classes:
 NXprocess.nxdl.xml:/DISTORTION
@@ -4511,16 +4477,6 @@ NXprocess.nxdl.xml:/DISTORTION
 NXdistortion.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== FIELD (//entry/process/distortion/applied): <HDF5 dataset "applied": shape (), type "|b1">
-DEBUG - value: True 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXdistortion', 'NX_BOOLEAN']
-DEBUG - classes:
-NXdistortion.nxdl.xml:/applied
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXdistortion.nxdl.xml:/applied):
-DEBUG - 
-             Has the distortion correction been applied?
-        
 DEBUG - ===== FIELD (//entry/process/distortion/cdeform_field): <HDF5 dataset "cdeform_field": shape (512, 512), type "<f8">
 DEBUG - value: [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. ...
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXdistortion', 'NX_FLOAT']
@@ -4579,7 +4535,7 @@ DEBUG -
              
                .. _symmetry-guided distortion correction: https://www.sciencedirect.com/science/article/abs/pii/S0304399118303474?via%3Dihub
         
-DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (5 members)>
+DEBUG - ===== GROUP (//entry/process/energy_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/energy_calibration" (4 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/PROCESS/energy_calibration
@@ -4612,16 +4568,6 @@ NXprocess.nxdl.xml:/CALIBRATION
 NXcalibration.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== FIELD (//entry/process/energy_calibration/applied): <HDF5 dataset "applied": shape (), type "|b1">
-DEBUG - value: True 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_BOOLEAN']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/applied
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/applied):
-DEBUG - 
-             Has the calibration been applied?
-        
 DEBUG - ===== FIELD (//entry/process/energy_calibration/calibrated_axis): <HDF5 dataset "calibrated_axis": shape (900,), type "<f8">
 DEBUG - value: [ 5.22069940e+01  5.10746894e+01  4.99673811e+01  4.88843387e+01 ...
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
@@ -4682,7 +4628,7 @@ DEBUG - documentation (NXcalibration.nxdl.xml:/original_axis):
 DEBUG - 
              Vector containing the data coordinates in the original uncalibrated axis
         
-DEBUG - ===== GROUP (//entry/process/kx_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/kx_calibration" (4 members)>
+DEBUG - ===== GROUP (//entry/process/kx_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/kx_calibration" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXprocess.nxdl.xml:/CALIBRATION
@@ -4704,16 +4650,6 @@ NXprocess.nxdl.xml:/CALIBRATION
 NXcalibration.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== FIELD (//entry/process/kx_calibration/applied): <HDF5 dataset "applied": shape (), type "|b1">
-DEBUG - value: True 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_BOOLEAN']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/applied
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/applied):
-DEBUG - 
-             Has the calibration been applied?
-        
 DEBUG - ===== FIELD (//entry/process/kx_calibration/calibrated_axis): <HDF5 dataset "calibrated_axis": shape (512,), type "<f8">
 DEBUG - value: [-2.68021375 -2.66974416 -2.65927458 -2.64880499 -2.63833541 -2.62786582 ...
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
@@ -4746,7 +4682,7 @@ DEBUG -
              For linear calibration. Scaling parameter.
              This should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
-DEBUG - ===== GROUP (//entry/process/ky_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/ky_calibration" (4 members)>
+DEBUG - ===== GROUP (//entry/process/ky_calibration [NXmpes::/NXentry/NXprocess/NXcalibration]): <HDF5 group "/entry/process/ky_calibration" (3 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration']
 DEBUG - classes:
 NXprocess.nxdl.xml:/CALIBRATION
@@ -4768,16 +4704,6 @@ NXprocess.nxdl.xml:/CALIBRATION
 NXcalibration.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== FIELD (//entry/process/ky_calibration/applied): <HDF5 dataset "applied": shape (), type "|b1">
-DEBUG - value: True 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_BOOLEAN']
-DEBUG - classes:
-NXcalibration.nxdl.xml:/applied
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXcalibration.nxdl.xml:/applied):
-DEBUG - 
-             Has the calibration been applied?
-        
 DEBUG - ===== FIELD (//entry/process/ky_calibration/calibrated_axis): <HDF5 dataset "calibrated_axis": shape (512,), type "<f8">
 DEBUG - value: [-2.68021375 -2.66974416 -2.65927458 -2.64880499 -2.63833541 -2.62786582 ...
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXcalibration', 'NX_FLOAT']
@@ -4810,7 +4736,7 @@ DEBUG -
              For linear calibration. Scaling parameter.
              This should yield the relation `calibrated_axis` = `scaling` * `original_axis` + `offset`.
         
-DEBUG - ===== GROUP (//entry/process/registration [NXmpes::/NXentry/NXprocess/NXregistration]): <HDF5 group "/entry/process/registration" (3 members)>
+DEBUG - ===== GROUP (//entry/process/registration [NXmpes::/NXentry/NXprocess/NXregistration]): <HDF5 group "/entry/process/registration" (2 members)>
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration']
 DEBUG - classes:
 NXprocess.nxdl.xml:/REGISTRATION
@@ -4832,16 +4758,6 @@ NXprocess.nxdl.xml:/REGISTRATION
 NXregistration.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
-DEBUG - ===== FIELD (//entry/process/registration/applied): <HDF5 dataset "applied": shape (), type "|b1">
-DEBUG - value: True 
-DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration', 'NX_BOOLEAN']
-DEBUG - classes:
-NXregistration.nxdl.xml:/applied
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXregistration.nxdl.xml:/applied):
-DEBUG - 
-             Has the registration been applied?
-        
 DEBUG - ===== FIELD (//entry/process/registration/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
 DEBUG - value: b'/entry/process/registration/tranformations/rot_z' 
 DEBUG - classpath: ['NXentry', 'NXprocess', 'NXregistration', 'NX_CHAR']
