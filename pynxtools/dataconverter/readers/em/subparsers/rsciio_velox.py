@@ -21,17 +21,24 @@ import flatdict as fd
 import numpy as np
 
 from typing import Dict, List
+from datetime import datetime
 from rsciio import emd
 from ase.data import chemical_symbols
 
-from pynxtools.dataconverter.readers.em.subparsers.rsciio_base import RsciioBaseParser
+from pynxtools.dataconverter.readers.em.subparsers.rsciio_base \
+    import RsciioBaseParser
 from pynxtools.dataconverter.readers.em.utils.rsciio_hyperspy_utils \
     import get_named_axis, get_axes_dims, get_axes_units
 from pynxtools.dataconverter.readers.shared.shared_utils \
     import get_sha256_of_file_content
+from pynxtools.dataconverter.readers.em.subparsers.rsciio_velox_concepts \
+    import NX_VELOX_TO_NX_EVENT_DATA_EM
+from pynxtools.dataconverter.readers.em.concepts.concept_mapper \
+    import variadic_path_to_specific_path
 
 REAL_SPACE = 0
 COMPLEX_SPACE = 1
+
 
 def all_req_keywords_in_dict(dct: dict, keywords: list) -> bool:
     """Check if dict dct has all keywords in keywords as keys from."""
@@ -207,9 +214,96 @@ class RsciioVeloxSubParser(RsciioBaseParser):
 
         return "n/a"
 
+    def add_various_event_metadata(self, orgmeta: fd.FlatDict,
+                                   identifier: list, template: dict) -> dict:
+        """Map various Velox/FEI-specific metadata on NeXus in event_data_em."""
+        if (len(identifier) != 3) or (not all(isinstance(x, int) for x in identifier)):
+            raise ValueError(f"Argument identifier {identifier} needs three int values!")
+        for tpl in NX_VELOX_TO_NX_EVENT_DATA_EM:
+            if not isinstance(tpl, tuple):
+                continue
+            if len(tpl) != 3:
+                continue
+            if tpl[1] == "ignore":
+                continue
+
+            trg = variadic_path_to_specific_path(tpl[0], identifier)
+            if tpl[1] == "is":
+                if self.verbose == True:
+                    print(f">>>> is >>>> tpl: {tpl}, trg: {trg}")
+                template[f"{trg}"] = tpl[2]
+            elif tpl[1] == "load_from":
+                if isinstance(tpl[2], str):
+                    if self.verbose == True:
+                        print(f">>>> load_from, str >>>> tpl: {tpl}, trg: {trg}")
+                    if tpl[2] in orgmeta:
+                        template[f"{trg}"] = orgmeta[tpl[2]]
+                elif isinstance(tpl[2], list) and all(isinstance(x, str) for x in tpl[2]):
+                    res = []
+                    for entry in tpl[2]:
+                        if entry in orgmeta:
+                            res.append(orgmeta[entry])
+                    if len(res) != len(tpl[2]):
+                        raise ValueError(">>>> load_from, list >>>> not all values found!")
+                    template[f"{trg}"] = np.asarray(res, np.float64)
+                    # TODO::add position information
+                else:
+                    raise ValueError(f">>>> load_from >>>> tpl[2] not a str {tpl[2]} !")
+            elif tpl[1] == "unix_to_iso8601":
+                if isinstance(tpl[2], str):
+                    if self.verbose == True:
+                        print(f">>>> unix_to_iso8601, str >>>> tpl: {tpl}, trg: {trg}")
+                    if tpl[2] in orgmeta:
+                        template[f"{trg}"] = datetime.fromtimestamp(
+                            int(orgmeta[tpl[2]])).isoformat()
+                        # TODO::is this really a UNIX timestamp, what about the timezone?
+            elif tpl[1] == "concatenate":
+                if isinstance(tpl[2], list) and all(isinstance(x, str) for x in tpl[2]):
+                    res = f""
+                    for idx in np.arange(0, len(tpl[2])):
+                        if tpl[2][idx] in orgmeta:
+                            res += f"{tpl[2][idx]}: {orgmeta[tpl[2][idx]]}, "
+                        else:
+                            continue
+                        template[f"{trg}"] = f"{res[0:len(res) - 2]}"
+            else:
+                # if self.verbose == True:
+                print(f"Found modifier {tpl[1]}")
+        return template
+
+    def add_lens_event_data(self, orgmeta: fd.FlatDict,
+                            identifier: list, template: dict) -> dict:
+        """Map lens-specific Velox/FEI metadata on NeXus NXlens_em instances."""
+        if (len(identifier) != 3) or (not all(isinstance(x, int) for x in identifier)):
+            raise ValueError(f"Argument identifier {identifier} needs three int values!")
+        trg = f"/ENTRY[entry{identifier[0]}]/measurement/event_data_em_set/EVENT_DATA_EM" \
+              f"[event_data_em{identifier[1]}]/em_lab/EBEAM_COLUMN[ebeam_column]"
+        lens_names = ["C1", "C2", "Diffraction", "Gun",
+                      "Intermediate", "MiniCondenser",
+                      "Objective", "Projector1", "Projector2"]
+        lens_idx = 1
+        for lens_name in lens_names:
+            toggle = False
+            if f"Optics/{lens_name}LensIntensity" in orgmeta:
+                template[f"{trg}/LENS_EM[lens_em{lens_idx}]/value"] \
+                    = orgmeta[f"Optics/{lens_name}LensIntensity"]
+                # TODO::unit?
+                toggle = True
+            if f"Optics/{lens_name}LensMode" in orgmeta:
+                template[f"{trg}/LENS_EM[lens_em{lens_idx}]/mode"] \
+                    = orgmeta[f"Optics/{lens_name}LensMode"]
+                toggle = True
+            if toggle == True:
+                template[f"{trg}/LENS_EM[lens_em{lens_idx}]/name"] \
+                    = f"{lens_name}"
+                lens_idx += 1
+        # Optics/GunLensSetting
+        return template
+
     def normalize_imgs_content(self, obj: dict, template: dict) -> dict:
         """Map generic scanned images (e.g. BF/DF) to NeXus."""
         meta = fd.FlatDict(obj["metadata"], "/")
+        orgmeta = fd.FlatDict(obj["original_metadata"], "/")
         dims = get_axes_dims(obj["axes"])
         if len(dims) != 2:
             raise ValueError(f"{obj['axes']}")
@@ -238,7 +332,11 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         template[f"{trg}/image_twod/intensity"] \
             = {"compress": np.asarray(obj["data"]), "strength": 1}
         # template[f"{trg}/image_twod/intensity/@units"]
-        # TODO::add metadata
+        self.add_various_event_metadata(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_img"]], template)
+        self.add_lens_event_data(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_img"]], template)
+        # TODO: add detector data
         self.id_mgn["event_img"] += 1
         self.id_mgn["event"] += 1
         return template
@@ -246,6 +344,7 @@ class RsciioVeloxSubParser(RsciioBaseParser):
     def normalize_adf_content(self, obj: dict, template: dict) -> dict:
         """Map relevant (high-angle) annular dark field images to NeXus."""
         meta = fd.FlatDict(obj["metadata"], "/")
+        orgmeta = fd.FlatDict(obj["original_metadata"], "/")
         dims = get_axes_dims(obj["axes"])
         if len(dims) != 2:
             raise ValueError(f"{obj['axes']}")
@@ -274,8 +373,12 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         template[f"{trg}/image_twod/intensity"] \
             = {"compress": np.asarray(obj["data"]), "strength": 1}
         # template[f"{trg}/image_twod/intensity/@units"]
+        self.add_various_event_metadata(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_img"]], template)
+        self.add_lens_event_data(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_img"]], template)
+        # TODO: add detector data
         # TODO::coll. angles given in original_metadata map to half_angle_interval
-        # TODO::add metadata
         self.id_mgn["event_img"] += 1
         self.id_mgn["event"] += 1
         return template
@@ -295,6 +398,7 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         # can one map y, x, on j, i indices
         idx_map = {"y": "j", "x": "i"}
         meta = fd.FlatDict(obj["metadata"], "/")
+        orgmeta = fd.FlatDict(obj["original_metadata"], "/")
         dims = get_axes_dims(obj["axes"])
         if len(dims) != 2:
             raise ValueError(f"{obj['axes']}")
@@ -327,7 +431,10 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         template[f"{trg}/image_twod/magnitude"] \
             = {"compress": np.asarray(obj["data"]), "strength": 1}
         # template[f"{trg}/image_twod/magnitude/@units"]
-        # TODO::add metadata
+        self.add_various_event_metadata(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_img"]], template)
+        self.add_lens_event_data(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_img"]], template)
         self.id_mgn["event_img"] += 1
         self.id_mgn["event"] += 1
         return template
@@ -335,6 +442,7 @@ class RsciioVeloxSubParser(RsciioBaseParser):
     def normalize_eds_spc_content(self, obj: dict, template: dict) -> dict:
         """Map relevant EDS spectrum/(a) to NeXus."""
         meta = fd.FlatDict(obj["metadata"], "/")
+        orgmeta = fd.FlatDict(obj["original_metadata"], "/")
         dims = get_axes_dims(obj["axes"])
         n_dims = None
         if dims == [('Energy', 0)]:
@@ -387,6 +495,10 @@ class RsciioVeloxSubParser(RsciioBaseParser):
         template[f"{trg}/intensity"] \
             = {"compress": np.asarray(obj["data"]), "strength": 1}
         # template[f"{trg}/intensity/@long_name"] = ""
+        self.add_various_event_metadata(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_spc"]], template)
+        self.add_lens_event_data(orgmeta,
+            [self.entry_id, self.id_mgn["event"], self.id_mgn["event_spc"]], template)
         self.id_mgn["event_spc"] += 1
         self.id_mgn["event"] += 1
         return template
