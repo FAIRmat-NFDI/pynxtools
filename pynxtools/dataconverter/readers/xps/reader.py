@@ -129,123 +129,60 @@ def fill_data_group(key, entries_values, config_dict, template):
     count = 0
 
     for entry, xr_data in entries_values.items():
-        modified_key = key.replace("entry", entry)
-        modified_key = modified_key.replace("[data]/data", "[data]")
+        # print(entry)
         root = key[0]
-        modified_entry = key[0:13]
-        modified_entry = modified_entry.replace("entry", entry)
-
-        template[f"{modified_entry}/@default"] = "data"
 
         # Set first Survey as default for .nxs file
         if "Survey" in entry and survey_count_ == 0:
-            survey_count_ = survey_count_ + 1
+            survey_count_ += 1
             template[f"{root}@default"] = entry
 
         # If no Survey set any scan for default
         if survey_count_ == 0 and count == 0:
-            count = count + 1
+            count += 1
             template[f"{root}@default"] = entry
 
-        binding_energy_coord = None
+        data_field_key = key.replace("entry", entry)
+        data_group_key = data_field_key.rsplit("/data", 1)[0]
+
+        # Define energy axis and energy_indices
+        # energy_key =
+        template[f"{data_group_key}/energy/@long_name"] = "energy"
+        template[f"{data_group_key}/@energy_indices"] = 0
+
+        units = "counts_per_second"
+
         chan_count = "_chan"
+        scan_count = "_scan"
         for data_var in xr_data.data_vars:
-            scan = data_var
+            cycle_scan = data_var
             # Collecting only accumulated counts
             # indivisual channeltron counts goes to detector data section
-            if chan_count not in scan:
-                key_indv_scn_dt = f"{modified_key}/{scan}"
+            if chan_count not in cycle_scan and scan_count in cycle_scan:
+                indv_scan_key = f"{data_group_key}/{cycle_scan}"
+                indv_scan_key_unit = f"{indv_scan_key}/@units"
+                template[indv_scan_key] = xr_data[data_var].data
+                template[indv_scan_key_unit] = units
 
-                key_indv_scn_dt_unit = f"{key_indv_scn_dt}/@units"
-
-                coord_nm = list(xr_data[data_var].coords)[0]
-                binding_energy_coord = np.array(xr_data[data_var][coord_nm])
-                template[key_indv_scn_dt] = xr_data[data_var].data
-                template[key_indv_scn_dt_unit] = config_dict[f"{key}/@units"]
-
-        data_key = f"{modified_key}/data"
-        data_unit_key = f"{data_key}/@units"
-        data_default_key = f"{modified_key}/@default"
-        data_signal_key = f"{modified_key}/@signal"
-        data_axis_key = f"{modified_key}/@axes"
-
-        energy_key = f"{modified_key}/energy"
-        energy_unit_key = f"{energy_key}/@units"
-        energy_indices_key = f"{modified_key}/@energy_indices"
-        energy_indices_key = f"{modified_key}/@energy_depends"
-
-        template[data_signal_key] = "data"
-
-        template[data_key] = np.mean(
+        template[data_field_key] = np.mean(
             [
                 xr_data[x_arr].data
                 for x_arr in xr_data.data_vars
-                if "_chan" not in x_arr
+                if (chan_count not in x_arr and scan_count in x_arr)
             ],
             axis=0,
         )
 
-        template[f"{data_key}_errors"] = np.std(
+        template[f"{data_field_key}_errors"] = np.std(
             [
                 xr_data[x_arr].data
                 for x_arr in xr_data.data_vars
-                if "_chan" not in x_arr
+                if (chan_count not in x_arr and scan_count in x_arr)
             ],
             axis=0,
         )
 
-        template[data_unit_key] = config_dict[f"{key}/@units"]
-        template[key_be_unit] = "eV"
-        template[key_be] = binding_energy_coord
-        template[key_be_axes] = energy_name
-        template[key_be_ind] = energy_index
-        template[key_nxclass] = "NXdata"
-        template[key_ax_ln_nm] = long_name
-        template[key_ax_mn] = energy_index
-
-        # =============================================================================
-        #         "data":{
-        #   "@signal":"",
-        #   "@default":"data",
-        #   "data":"@data:cycle",
-        #   "data/@units":"@xps_token:data/intensity/@units",
-        #   "energy":"@data:energy",
-        #   "energy/@type":"@xps_token:data/energy_type",
-        #   "energy/@units":"@xps_token:data/energy/@units",
-        #   "/@energy_indices":"None",
-        #   "@energy_depends":"None"
-        #
-        #
-        #
-        #
-        #
-        #         "data":{
-        #             "@signal":"",
-        #             "@":"data",
-        #             "data":"@data:cycle",
-        #             "data/@units":"@xps_token:data/intensity/@units",
-        #             "energy":"@data:energy",
-        #             "energy/@type":"@xps_token:data/energy_type",
-        #             "energy/@units":"@xps_token:data/energy/@units",
-        #             "/@":"None",
-        #             "@energy_depends":"None"
-        #
-        #
-        # =============================================================================
-        energy_name = "energy"
-        energy_index = 0
-        key_be = f"{modified_key}/{energy_name}"
-        key_be_unit = f"{key_be}/@units"
-        key_be_axes = f"{modified_key}/@axes"
-        key_be_ind = f"{modified_key}/@{energy_name}_indices"
-
-        # setting up AXISNAME
-        axisname = "AXISNAME[axisname]"
-        long_name = "Binding Energy"
-        key_ax_mn = f"{modified_key}/{axisname}"
-        key_ax_ln_nm = f"{modified_key}/{axisname}/@long_name"
-
-        key_nxclass = f"{modified_key}/@NX_class"
+        template[f"{data_field_key}/@long_name"] = "XPS intensity"
 
 
 def fill_detector_group(key, entries_values, config_dict, xps_data_dict, template):
@@ -354,15 +291,13 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template):
         if isinstance(config_value, str) and any(
             token in config_value for token in TOKEN_SET
         ):
-            # ===========================================================================
-            #             if XPS_DATA_TOKEN in str(config_value):
-            #                 key_part = config_value.split(XPS_DATA_TOKEN)[-1]
-            #                 entries_values = find_entry_and_value(
-            #                     xps_data_dict, key_part, dt_typ=XPS_DATA_TOKEN
-            #                 )
-            #
-            #                 fill_data_group(key, entries_values, config_dict, template)
-            # ===========================================================================
+            if XPS_DATA_TOKEN in str(config_value):
+                key_part = config_value.split(XPS_DATA_TOKEN)[-1]
+                entries_values = find_entry_and_value(
+                    xps_data_dict, key_part, dt_typ=XPS_DATA_TOKEN
+                )
+
+                fill_data_group(key, entries_values, config_dict, template)
 
             if XPS_DETECTOR_TOKEN in str(config_value):
                 key_part = config_value.split(XPS_DATA_TOKEN)[-1]
