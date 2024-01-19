@@ -198,7 +198,6 @@
         "name":"None",
         "physical_quantity":"None",
         "type":"None",
-        "heater_power":"None",
         "PID[pid]/setpoint":"None"
       },
       "drain_current_amperemeter":{
@@ -215,7 +214,7 @@
       },
       "sample_bias_potentiostat":{
         "name":"@eln",
-        "physical_quantity":"None",
+        "physical_quantity":"@eln",
         "type":"@eln",
         "PID[pid]/setpoint":"@eln"
       }
@@ -291,7 +290,7 @@
       "cryostat":"None"
     },
     "gas_pressure":{
-      "pressure_gauge":"@link:/entry/instrument/detector/pressure_gauge"
+      "pressure_gauge":"@link:/entry/instrument/pressure_gauge"
     },
     "bias":{
       "potentiostat":"@link:/entry/instrument/manipulator/sample_bias_potentiostat",
@@ -301,7 +300,7 @@
       "amperemeter":"@link:/entry/instrument/manipulator/drain_current_amperemeter"
     },
     "flood_gun_current":{
-      "flood_gun":"@link:/entry/instrument/detector0/flood_gun"
+      "flood_gun":"@link:/entry/instrument/flood_gun"
     }
   },
   "/ENTRY[entry]/data":{
