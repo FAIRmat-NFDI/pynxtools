@@ -459,7 +459,7 @@ class XPSReader(BaseReader):
             # This code is not very robust.
             elif file_ext == "json":
                 if "config" in file:
-                    config_file = Path(file)
+                    config_file = file
 
         config_dict = parse_flatten_json(config_file)
 
