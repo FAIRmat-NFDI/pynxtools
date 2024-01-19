@@ -70,8 +70,11 @@ class SleMapperSpecs(XPSMapper):
             "data/step_size": "eV",
             "detector/detector_voltage": "V",
             "detector/dwell_time": "s",
-            "detector/raw_data/raw": "counts",  #################
+            "detector/raw_data/raw": "counts_per_second ",
+            "instrument/polar_angle": "degree ",
+            "instrument/azimuth_angle": "degree",
             "energydispersion/pass_energy": "eV",
+            "region/start_energy": "eV",
             "source/emission_current": "A",
             "source/source_voltage": "V",
             "transmission_function/kinetic_energy": "eV",
@@ -142,7 +145,7 @@ class SleMapperSpecs(XPSMapper):
                 "focus_displacement_current [nU]",
                 "iris_diameter",
                 "lens_mode",
-                "transmission_function/data",
+                "transmission_function/relative_intensity",
                 "transmission_function/file",
                 "voltage_range",
             ],
@@ -155,25 +158,26 @@ class SleMapperSpecs(XPSMapper):
             "detector": [
                 "bias_voltage_electrons [V]",
                 "bias_voltage_ions [V]",
-                "calibration_file/dir",
-                "calibration_file",
                 "detector_voltage [V]",
                 "dwell_time",
             ],
             "manipulator": [],
-            "calibration": [
-                "transmission_function/data",
-                "transmission_function/file",
+            "process/energy_calibration": [
                 "calibration_file/dir",
-                "calibration_file",
+                "calibration_file/path",
+                "energy/@units",
+            ],
+            "process/transmission_correction": [
+                "transmission_function/kinetic_energy",
+                "transmission_function/relative_intensity",
+                "transmission_function/file",
             ],
             "data": [
-                "energy_type",
+                "energy/@type",
                 "energy/@units",
                 "intensity/@units",
                 "n_values",
                 "step_size",
-                "dwell_time",
             ],
             "region": [
                 "analysis_method",
@@ -208,7 +212,8 @@ class SleMapperSpecs(XPSMapper):
             "energydispersion": f"{analyser_parent}/energydispersion",
             "detector": f"{analyser_parent}/detector",
             "manipulator": f"{instrument_parent}/manipulator",
-            "calibration": f"{instrument_parent}/calibration",
+            "process/energy_calibration": f"{instrument_parent}/process/energy_calibration",
+            "process/transmission_correction": f"{instrument_parent}/process/transmission_correction",
             "sample": f"{region_parent}/sample",
             "data": f"{region_parent}/data",
             "region": f"{region_parent}/region",
@@ -221,7 +226,6 @@ class SleMapperSpecs(XPSMapper):
                 self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
 
                 unit_key = f"{grouping}/{spectrum_key}"
-
                 units = self._get_units_for_key(unit_key)
                 if units:
                     self._xps_dict[f"{root}/{mpes_key}/@units"] = units
@@ -235,6 +239,9 @@ class SleMapperSpecs(XPSMapper):
         detector_data_key_child = construct_detector_data_key(spectrum)
 
         energy = np.array(spectrum["data"]["x"])
+        # Add energy axis to energy_calibration
+        calib_energy_key = f'{path_map["process/energy_calibration"]}/energy'
+        self._xps_dict[calib_energy_key] = energy
 
         # If multiple spectra exist to entry, only create a new
         # xr.Dataset if the entry occurs for the first time.
@@ -284,6 +291,12 @@ class SleMapperSpecs(XPSMapper):
                 data=cps, coords={"energy": energy}
             )
 
+        # Add unit for detector data
+        detector_data_unit_key = f"{path_map['detector']}/raw_data/raw/@units"
+        self._xps_dict[detector_data_unit_key] = self._get_units_for_key(
+            "detector/raw_data/raw"
+        )
+
     def _get_units_for_key(self, unit_key):
         """
         Get correct units for a given key.
@@ -327,7 +340,7 @@ class SleProdigyParser(ABC):
             "ElectronEnergy": "start_energy",
             "SpectrumID": "spectrum_id",
             "EpassOrRR": "pass_energy",
-            "EnergyType": "energy_type",
+            "EnergyType": "energy/@type",
             "Samples": "n_values",
             "Wf": "work_function",
             "Step": "step",
@@ -367,7 +380,7 @@ class SleProdigyParser(ABC):
         }
 
         self.sql_metadata_map = {
-            "EnergyType": "energy_type",
+            "EnergyType": "energy/@type",
             "EpassOrRR": "pass_energy",
             "Wf": "work_function",
             "Timestamp": "time_stamp",
@@ -384,7 +397,8 @@ class SleProdigyParser(ABC):
         ]
 
         self.value_map = {
-            "energy_type": self._change_energy_type,
+            "energy/@type": self._change_energy_type,
+            "excitation_energy": self._convert_excitation_energy,
             "time_stamp": self._convert_date_time,
             # "measurement_type": self._convert_date_measurement_type,
             "energy_scan_mode": self._convert_energy_scan_mode,
@@ -526,7 +540,9 @@ class SleProdigyParser(ABC):
                 scan["cps_calib"] = copy.copy(scan["cps_ch_0"])
 
                 # Add transmission function
-                scan["transmission_function/data"] = np.array(transmission_data)
+                scan["transmission_function/relative_intensity"] = np.array(
+                    transmission_data
+                )
 
                 # add metadata including scan, loop no and datetime
                 scan_metadata = self._get_scan_metadata(raw_ids[scan_no])
@@ -1213,12 +1229,12 @@ class SleProdigyParser(ABC):
             List of uniformly separated energy values.
 
         """
-        if spectrum["energy_type"] == "binding":
+        if spectrum["energy/@type"] == "binding":
             start = spectrum["start_energy"]
             step = spectrum["step_size"]
             points = spectrum["n_values"]
             energy = [start - i * step for i in range(points)]
-        elif spectrum["energy_type"] == "kinetic":
+        elif spectrum["energy/@type"] == "kinetic":
             start = spectrum["start_energy"]
             step = spectrum["step_size"]
             points = spectrum["n_values"]
@@ -1313,6 +1329,13 @@ class SleProdigyParser(ABC):
         elif energy_type == "Kinetic":
             return "kinetic"
         return None
+
+    def _convert_excitation_energy(self, excitation_energy):
+        """
+        Convert the excitation_energy to a float.
+
+        """
+        return float(excitation_energy)
 
     def _convert_date_time(self, timestamp):
         """
@@ -1464,7 +1487,17 @@ class SleProdigyParser(ABC):
                 spec.pop(channel_key)
 
             spec["energy/@units"] = "eV"
-            spec["intensity/@units"] = "Counts per Second"
+            spec["intensity/@units"] = "counts_per_second"
+
+            # Add energy axis for TF data.
+            if spec["energy/@type"] == "binding":
+                tf_energy = np.array(
+                    [spec["excitation_energy"] - x for x in spec["data"]["x"]]
+                )
+            elif spec["energy/@type"] == "kinetic":
+                tf_energy = spec["data"]["x"]
+
+            spec["transmission_function/kinetic_energy"] = tf_energy
 
     def _remove_fixed_energies(self):
         """
@@ -1614,7 +1647,9 @@ class SleProdigyParserV1(SleProdigyParser):
                 common_spectrum_settings.update(setting.attrib)
             elif setting.tag == "EnergyChannelCalibration":
                 common_spectrum_settings["calibration_file/dir"] = setting.attrib["Dir"]
-                common_spectrum_settings["calibration_file"] = setting.attrib["File"]
+                common_spectrum_settings["calibration_file/path"] = setting.attrib[
+                    "File"
+                ]
             elif setting.tag == "Transmission":
                 common_spectrum_settings["transmission_function/file"] = setting.attrib[
                     "File"
@@ -1788,7 +1823,9 @@ class SleProdigyParserV4(SleProdigyParser):
                 common_spectrum_settings.update(setting.attrib)
             elif setting.tag == "EnergyChannelCalibration":
                 common_spectrum_settings["calibration_file/dir"] = setting.attrib["Dir"]
-                common_spectrum_settings["calibration_file"] = setting.attrib["File"]
+                common_spectrum_settings["calibration_file/path"] = setting.attrib[
+                    "File"
+                ]
             elif setting.tag == "Transmission":
                 common_spectrum_settings["transmission_function/file"] = setting.attrib[
                     "File"
