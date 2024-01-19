@@ -62,6 +62,7 @@
       "associated_source":"@link:/entry/instrument/source_probe"
     },
     "ELECTRONANALYSER[electronanalyser]":{
+      "@default": "detector0",
       "name":"@xps_token:analyser/name",
       "description":"@eln",
       "work_function":"@xps_token:analyser/work_function",
