@@ -545,10 +545,15 @@ def try_undocumented(data, nxdl_root: ET.Element):
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
         if entry_name == "@units":
-            if (
-                path.rsplit("/", 1)[0] in data.get_documented()
-                and path in data.undocumented
-            ):
+            field_path = path.rsplit("/", 1)[0]
+            if field_path in data.get_documented() and path in data.undocumented:
+                field_requiredness = get_required_string(
+                    nexus.get_node_at_nxdl_path(
+                        nxdl_path=convert_data_converter_dict_to_nxdl_path(field_path),
+                        elem=nxdl_root,
+                    )
+                )
+                data[field_requiredness][path] = data.undocumented[path]
                 del data.undocumented[path]
             continue
 
