@@ -306,12 +306,13 @@
   "/ENTRY[entry]/data":{
     "@signal":"data",
     "@default":"data",
+    "@axes":["energy"],
     "data":"@data:cycle",
     "data/@units":"@xps_token:data/intensity/@units",
-    "energy":"@data:energy",
+    "energy":"@link:/entry/process/energy_calibration/calibrated_axis",
     "energy/@type":"@xps_token:data/energy/@type",
     "energy/@units":"@xps_token:data/energy/@units",
-    "/@energy_indices":"None",
+    "@energy_indices":"None",
     "@energy_depends":"None"
   }
 }
