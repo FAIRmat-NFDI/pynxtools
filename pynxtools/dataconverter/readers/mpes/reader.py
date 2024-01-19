@@ -175,6 +175,7 @@ CONVERT_DICT = {
 }
 
 REPLACE_NESTED = {
+    "SAMPLE[sample]/chemical_formula": "SAMPLE[sample]/SUBSTANCE[substance]/molecular_formula_hill",
     "source_TYPE[source]/Probe": "source_TYPE[source_probe]",
     "source_TYPE[source]/Pump": "source_TYPE[source_pump]",
     "beam_TYPE[beam]/Probe": "beam_TYPE[beam_probe]",
