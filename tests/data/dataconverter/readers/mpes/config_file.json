@@ -264,12 +264,10 @@
   "/ENTRY[entry]/SAMPLE[sample]": {
     "preparation_date": "@attrs:metadata/sample/preparation_date",
     "sample_history/notes": "@attrs:metadata/sample/sample_history",
-    "chemical_formula": "@attrs:metadata/sample/chemical_formula",
     "description": "@attrs:metadata/sample/chemical_formula",
     "name": "@attrs:metadata/sample/chemical_formula",
     "situation": "vacuum",
-    "SUBSTANCE[substance]/molecular_formula_hill": "@link:/entry/sample/chemical_formula",
-    "physical_form": "thin film",
+    "SUBSTANCE[substance]/molecular_formula_hill": "@attrs:metadata/sample/chemical_formula",
     "temperature": {
       "temperature_sensor": "@link:/entry/instrument/manipulator/temperature_sensor"
     },

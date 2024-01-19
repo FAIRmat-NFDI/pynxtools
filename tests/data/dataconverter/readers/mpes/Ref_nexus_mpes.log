@@ -5253,7 +5253,7 @@ DEBUG -
 				increasing displacement. For general axes, an appropriate direction
 				should be chosen.
 			
-DEBUG - ===== GROUP (//entry/sample [NXmpes::/NXentry/NXsample]): <HDF5 group "/entry/sample" (13 members)>
+DEBUG - ===== GROUP (//entry/sample [NXmpes::/NXentry/NXsample]): <HDF5 group "/entry/sample" (11 members)>
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - classes:
 NXmpes.nxdl.xml:/ENTRY/SAMPLE
@@ -5394,33 +5394,6 @@ DEBUG - documentation (NXsensor.nxdl.xml:/value):
 DEBUG - 
              nominal setpoint or average value
              - need [n] as may be a vector
-        
-DEBUG - ===== FIELD (//entry/sample/chemical_formula): <HDF5 dataset "chemical_formula": shape (), type "|O">
-DEBUG - value: b'MoTe2' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/chemical_formula
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/chemical_formula):
-DEBUG - 
-             The chemical formula specified using CIF conventions.
-             Abbreviated version of CIF standard:
-             
-             * Only recognized element symbols may be used.
-             * Each element symbol is followed by a 'count' number. A count of '1' may be omitted.
-             * A space or parenthesis must separate each cluster of (element symbol + count).
-             * Where a group of elements is enclosed in parentheses, the multiplier for the
-               group must follow the closing parentheses. That is, all element and group
-               multipliers are assumed to be printed as subscripted numbers.
-             * Unless the elements are ordered in a manner that corresponds to their chemical
-               structure, the order of the elements within any group or moiety depends on
-               whether or not carbon is present.
-             * If carbon is present, the order should be:
-             
-               - C, then H, then the other elements in alphabetical order of their symbol.
-               - If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
-               
-             * This is the *Hill* system used by Chemical Abstracts.
         
 DEBUG - ===== FIELD (//entry/sample/depends_on): <HDF5 dataset "depends_on": shape (), type "|O">
 DEBUG - value: b'/entry/sample/transformations/corrected_phi' 
@@ -5575,20 +5548,6 @@ DEBUG -
 DEBUG - documentation (NXsample.nxdl.xml:/name):
 DEBUG - 
              Descriptive name of sample
-        
-DEBUG - ===== FIELD (//entry/sample/physical_form): <HDF5 dataset "physical_form": shape (), type "|O">
-DEBUG - value: b'thin film' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXmpes.nxdl.xml:/ENTRY/SAMPLE/physical_form
-NXsample.nxdl.xml:/physical_form
-DEBUG - <<RECOMMENDED>>
-DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/SAMPLE/physical_form):
-DEBUG - 
-DEBUG - documentation (NXsample.nxdl.xml:/physical_form):
-DEBUG - 
-             Physical form of the sample material.
-             Examples include single crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, amorphous.
         
 DEBUG - ===== FIELD (//entry/sample/preparation_date): <HDF5 dataset "preparation_date": shape (), type "|O">
 DEBUG - value: b'2019-05-22T14:00:00+00:00' 
