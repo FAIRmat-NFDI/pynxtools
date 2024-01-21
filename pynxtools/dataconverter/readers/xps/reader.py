@@ -59,8 +59,8 @@ CONVERT_DICT = {
     "version": "@version",
     "user": "USER[user]",
     "instrument": "INSTRUMENT[instrument]",
-    "source_probe": "SOURCE[source_probe]",
-    "beam_probe": "BEAM[beam_probe]",
+    "source_probe": "source_TYPE[source_probe]",
+    "beam_probe": "beam_TYPE[beam_probe]",
     "analyser": "ELECTRONANALYSER[electronanalyser]",
     "collectioncolumn": "COLLECTIONCOLUMN[collectioncolumn]",
     "energydispersion": "ENERGYDISPERSION[energydispersion]",
@@ -129,7 +129,6 @@ def fill_data_group(key, entries_values, config_dict, template):
     count = 0
 
     for entry, xr_data in entries_values.items():
-        # print(entry)
         root = key[0]
 
         # Set first Survey as default for .nxs file
