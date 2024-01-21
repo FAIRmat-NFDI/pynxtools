@@ -177,13 +177,19 @@
         "calibrated_axis":"None"
       },
       "energy_calibration":{
-        "calibrated_axis":"None",
+        "calibrated_axis":"None"
       },
       "energy_referencing":{
         "level":"None",
         "reference_peak":"None",
         "binding_energy":"None",
         "offset":"None",
+        "calibrated_axis":"None"
+      },
+      "momentum_calibration":{
+        "calibrated_axis":"None"
+      },
+      "spatial_calibration":{
         "calibrated_axis":"None"
       },
       "transmission_correction":{
