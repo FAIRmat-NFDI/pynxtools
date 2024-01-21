@@ -34,7 +34,7 @@
       "resolution":"@eln",
       "resolution/@units":"@eln"
     },
-    "SOURCE[source_probe]":{
+    "source_TYPE[source_probe]":{
       "type":"@eln",
       "name":"@xps_token:source/name",
       "probe":"@eln",
@@ -49,7 +49,7 @@
       },
       "associated_beam":"@link:/entry/instrument/beam_probe"
     },
-    "BEAM[beam_probe]":{
+    "beam_TYPE[beam_probe]":{
       "distance":"@eln",
       "distance/@units":"@eln",
       "incident_energy":"@xps_token:beam/excitation_energy",
