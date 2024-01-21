@@ -5,9 +5,15 @@
       "definition":"@eln",
       "definition/@version":"@eln",
       "title":"@eln",
-      "start_time":"@eln",
+      "start_time":"@xps_token:time_stamp",
       "end_time":"@eln",
-      "method":"@xps_token:region/analysis_method"
+      "method":"@xps_token:region/analysis_method",
+      "experiment_institution":"@eln",
+      "experiment_facility":"@eln",
+      "experiment_laboratory":"@eln",
+      "entry_identifier":"@eln",
+      "data_file": "@xps_token:file_info/data_file",
+      "sequence_file": "@xps_token:file_info/sequence_file"
     },
     "/ENTRY[entry]/USER[user]":{
       "name":"@eln",
@@ -54,9 +60,9 @@
       "ELECTRONANALYSER[electronanalyser]":{
         "@default": "None",
         "description":"@eln",
-        "name": @xps_token:analyser/analyser_name,
-        "work_function":"@xps_token:instrument/work_function",
-        "work_function/@units":"eV",
+        "name": "@eln",
+        "work_function":"@eln",
+        "work_function/@units":"@eln",
         "fast_axes":"None",
         "slow_axes":"energy",
         "device_information":{
@@ -89,9 +95,14 @@
           "scheme":"@eln",
           "pass_energy":"@xps_token:energydispersion/pass_energy",
           "pass_energy/@units":"eV",
-          "energy_scan_mode":"@xps_token:energydispersion/scan_mode",
-          "entrance_slit":"@eln",
-          "exit_slit":"@eln",
+          "energy_scan_mode":"@xps_token:energydispersion/acquisition_mode",
+          "entrance_slit":{
+            "description":"@eln",
+            "shape":"@eln",
+            "size":"@eln",
+            "size/@units": "@eln"
+          },
+          "exit_slit":"None",
           "device_information":{
             "vendor":"@eln",
             "model":"@eln",
@@ -102,10 +113,8 @@
           "@default":"raw_data",
           "amplifier_type":"@eln",
           "count_time": "@xps_token:region/dwell_time",
-          "count_time/@units": "s",
+          "count_time/@units": "@xps_token:region/dwell_time/time",
           "detector_type":"@eln",
-          "detector_voltage": "@xps_token:detector/detector_voltage",
-          "detector_voltage/@units": "V",
           "device_information":{
             "vendor":"@eln",
             "model":"@eln",
@@ -162,7 +171,23 @@
           "physical_quantity":"@eln",
           "type":"@eln",
           "PID[pid]/setpoint":"@eln"
-        }
+        },
+        "POSITIONER[positioner_x]":{
+            "value": "@eln",
+            "value/@units": "@eln"
+          },
+        "POSITIONER[positioner_y]":{
+        "value": "@eln",
+        "value/@units": "@eln"
+        },          
+        "POSITIONER[positioner_z]":{
+          "value": "@eln",
+          "value/@units": "@eln"
+        },
+        "POSITIONER[positioner_phi]":{
+            "value": "@eln",
+            "value/@units": "@eln"
+          },        
       },
       "pressure_gauge":{
         "name":"@eln",
