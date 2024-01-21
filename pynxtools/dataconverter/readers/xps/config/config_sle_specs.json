@@ -13,7 +13,8 @@
     "entry_identifier":"@eln",
     "duration":"None",
     "duration/@units":"s",
-    "method":"@xps_token:region/analysis_method"
+    "method":"@xps_token:region/analysis_method",
+    "program_name":"@eln"
   },
   "/ENTRY[entry]/USER[user]":{
     "name":"@eln",
