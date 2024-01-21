@@ -94,9 +94,7 @@ class VamasMapper(XPSMapper):
 
         key_map = {
             "user": [],
-            "instrument": [
-                "work_function",
-            ],
+            "instrument": [],
             "source": [
                 "source_label",
                 "source_analyzer_angle",
@@ -108,13 +106,17 @@ class VamasMapper(XPSMapper):
                 "analysis_width_x",
                 "analysis_width_y",
                 "target_bias",
+                "work_function",
             ],
             "collectioncolumn": [],
             "energydispersion": [
                 "scan_mode",
                 "pass_energy",
             ],
-            "detector": ["signal_mode"],
+            "detector": [
+                "signal_mode",
+                "dwell_time",
+            ],
             "manipulator": [],
             "sample": [],
             "calibration": [],
@@ -128,12 +130,10 @@ class VamasMapper(XPSMapper):
                 "n_values",
                 "start_energy",
                 "step_size",
-                "dwell_time",
             ],
             "region": [
                 "analysis_method",
                 "spectrum_type",
-                "dwell_time",
                 "comments",
                 "spectrum_id",
                 "time_stamp",
