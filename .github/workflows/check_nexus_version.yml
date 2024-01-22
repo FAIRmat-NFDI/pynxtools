@@ -19,6 +19,7 @@ jobs:
         run: |
           git submodule sync --recursive
           git submodule update --init --recursive --jobs=4
+          git submodule foreach --recursive 'git fetch --tags'
           cd pynxtools/definitions
           git describe --dirty --tags --long --match "*[0-9]*" > ../nexus-ref.txt
           cd ../
