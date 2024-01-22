@@ -145,8 +145,9 @@ def fill_data_group(key, key_part, entries_values, config_dict, template):
 
         if key_part == "energy":
             energy_field_key = f"{data_group_key}/energy"
-            binding_energy = np.array(xr_data.coords)
-            template[energy_field_key] = binding_energy
+            energy = np.array(xr_data.coords["energy"].values)
+            print(energy)
+            template[energy_field_key] = energy
 
         else:
             # Define energy axis and energy_indices
