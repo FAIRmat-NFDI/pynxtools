@@ -11,8 +11,6 @@
       "experiment_facility":"@eln",
       "experiment_laboratory":"@eln",
       "entry_identifier":"@eln",
-      "duration":"@eln",
-      "duration/@units":"@eln",
       "method":"@xps_token:region/analysis_method",
       "program_name":"@eln"
     },
@@ -77,14 +75,7 @@
           "resolution":"@xps_token:region/scan_delta",
           "resolution/@units":"eV"
         },
-        "transmission_function":{
-          "@default":"relative_intensity",
-          "@signal":"relative_intensity",
-          "@axes":["kinetic_energy"],
-          "kinetic_energy":"@xps_token:transmission_function/kinetic_energy",
-          "kinetic_energy/@units":"@xps_token:transmission_function/kinetic_energy/@units",
-          "relative_intensity":"@xps_token:collectioncolumn/transmission_function/relative_intensity"
-        },
+        "transmission_function":"None",
         "COLLECTIONCOLUMN[collectioncolumn]":{
           "scheme":"@eln",
           "lens_mode":"@xps_token:collectioncolumn/lens_mode",
@@ -93,10 +84,6 @@
           "spatial_acceptance":"None",
           "field_aperture":"None",
           "contrast_aperture":"None",
-          "iris":{
-            "size":"@xps_token:collectioncolumn/iris_diameter",
-            "size/@units":"@xps_token:collectioncolumn/iris_diameter/@units"
-          },
           "device_information":{
             "vendor":"@eln",
             "model":"@eln",
@@ -131,7 +118,7 @@
             "@signal":"raw",
             "@default":"raw",
             "raw":"@detector_data:cycles/Cycle_",
-            "raw/@units":"@xps_token:detector/raw_data/raw/@units"
+            "raw/@units":"counts"
           }
         }
       },
@@ -226,12 +213,6 @@
           "end_time":"@eln",
           "description":"@eln",
           "method":"@eln"
-        },
-        "PHYSICAL_PROCESS[sample_loading]":{
-          "start_time":"@eln",
-          "end_time":"@eln",
-          "description":"@eln",
-          "method":"@eln"
         }
       },
       "temperature":{
@@ -260,8 +241,8 @@
       "data":"@data:cycle",
       "data/@units":"counts",
       "energy":"@link:/entry/process/energy_calibration/calibrated_axis",
-      "energy/@type":"@xps_token:data/energy/@type",
-      "energy/@units":"@xps_token:data/energy/@units",
+      "energy/@type":"kinetic",
+      "energy/@units":"eV",
       "@energy_indices":"None",
       "@energy_depends":"None"
     }
