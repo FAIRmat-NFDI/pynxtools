@@ -21,7 +21,8 @@ import logging
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
-from typing import Any, Dict, List, Optional, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import yaml
 
@@ -276,7 +277,7 @@ def flatten_json(
     return flattened_config
 
 
-def parse_json(file_path: str) -> Dict[str, Any]:
+def parse_json(file_path: Union[str, Path]) -> Dict[str, Any]:
     """Parses a metadata json file into a dictionary.
 
     Args:
