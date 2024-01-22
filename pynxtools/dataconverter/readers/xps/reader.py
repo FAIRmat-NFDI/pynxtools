@@ -2,6 +2,9 @@
 A generic reader for loading XPS (X-ray Photoelectron Spectroscopy) data
 file into mpes nxdl (NeXus Definition Language) template.
 """
+import datetime
+import sys
+
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -19,25 +22,21 @@ file into mpes nxdl (NeXus Definition Language) template.
 # limitations under the License.
 #
 from pathlib import Path
-from typing import Any, Dict, Set, List, Tuple
-import sys
-import json
-import datetime
+from typing import Any, Dict, List, Set, Tuple
 
-import yaml
 import numpy as np
+import yaml
 
+from pynxtools.dataconverter.helpers import extract_atom_types
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import (
     FlattenSettings,
     flatten_and_replace,
     parse_flatten_json,
 )
-from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter.helpers import extract_atom_types
-
 from pynxtools.dataconverter.readers.xps.file_parser import XpsDataFileParser
 from pynxtools.dataconverter.readers.xps.reader_utils import construct_entry_name
+from pynxtools.dataconverter.template import Template
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -410,7 +409,7 @@ class XPSReader(BaseReader):
             # This code is not very robust.
             elif file_ext == "json":
                 if "config" in file:
-                    config_file = file
+                    config_file = Path(file)
 
         config_dict = parse_flatten_json(config_file)
 
