@@ -121,7 +121,7 @@ def get_entries_and_detectors(config_dict, xps_data_dict):
 
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-statements
-def fill_data_group(key, entries_values, config_dict, template):
+def fill_data_group(key, key_part, entries_values, config_dict, template):
     """Fill out fields and attributes for NXdata"""
 
     survey_count_ = 0
@@ -143,52 +143,55 @@ def fill_data_group(key, entries_values, config_dict, template):
         data_field_key = key.replace("entry", entry)
         data_group_key = data_field_key.rsplit("/data", 1)[0]
 
-        # Define energy axis and energy_indices
-        # energy_key =
-        template[f"{data_group_key}/energy/@long_name"] = "energy"
-        template[f"{data_group_key}/@energy_indices"] = 0
+        if key_part == "energy":
+            energy_field_key = f"{data_group_key}/energy"
+            binding_energy = np.array(xr_data.coords)
+            template[energy_field_key] = binding_energy
 
-        units = "counts_per_second"
+        else:
+            # Define energy axis and energy_indices
+            template[f"{data_group_key}/energy/@long_name"] = "energy"
+            template[f"{data_group_key}/@energy_indices"] = 0
 
-        chan_count = "_chan"
-        scan_count = "_scan"
-        for data_var in xr_data.data_vars:
-            cycle_scan = data_var
-            # Collecting only accumulated counts
-            # indivisual channeltron counts goes to detector data section
-            if chan_count not in cycle_scan and scan_count in cycle_scan:
-                indv_scan_key = f"{data_group_key}/{cycle_scan}"
-                indv_scan_key_unit = f"{indv_scan_key}/@units"
-                template[indv_scan_key] = xr_data[data_var].data
-                template[indv_scan_key_unit] = units
+            units = "counts_per_second"
 
-        template[data_field_key] = np.mean(
-            [
-                xr_data[x_arr].data
-                for x_arr in xr_data.data_vars
-                if (chan_count not in x_arr and scan_count in x_arr)
-            ],
-            axis=0,
-        )
+            chan_count = "_chan"
+            scan_count = "_scan"
+            for data_var in xr_data.data_vars:
+                cycle_scan = data_var
+                # Collecting only accumulated counts
+                # indivisual channeltron counts goes to detector data section
+                if chan_count not in cycle_scan and scan_count in cycle_scan:
+                    indv_scan_key = f"{data_group_key}/{cycle_scan}"
+                    indv_scan_key_unit = f"{indv_scan_key}/@units"
+                    template[indv_scan_key] = xr_data[data_var].data
+                    template[indv_scan_key_unit] = units
 
-        template[f"{data_field_key}_errors"] = np.std(
-            [
-                xr_data[x_arr].data
-                for x_arr in xr_data.data_vars
-                if (chan_count not in x_arr and scan_count in x_arr)
-            ],
-            axis=0,
-        )
+            template[data_field_key] = np.mean(
+                [
+                    xr_data[x_arr].data
+                    for x_arr in xr_data.data_vars
+                    if (chan_count not in x_arr and scan_count in x_arr)
+                ],
+                axis=0,
+            )
 
-        template[f"{data_field_key}/@long_name"] = "XPS intensity"
+            template[f"{data_field_key}_errors"] = np.std(
+                [
+                    xr_data[x_arr].data
+                    for x_arr in xr_data.data_vars
+                    if (chan_count not in x_arr and scan_count in x_arr)
+                ],
+                axis=0,
+            )
+
+            template[f"{data_field_key}/@long_name"] = "XPS intensity"
 
 
 def fill_detector_group(key, entries_values, config_dict, xps_data_dict, template):
     """Fill out fileds and attributes for NXdetector/NXdata"""
 
     for entry, xr_data in entries_values.items():
-        cycle_count = "cycle"
-        scan_count = "_scan"
         chan_count = "_chan"
 
         # unit_key = config_dict[f"{key}/@units"]
@@ -213,7 +216,6 @@ def fill_detector_group(key, entries_values, config_dict, xps_data_dict, templat
                 cycle_scan_key = modified_key.replace(
                     "raw_data/raw", f"raw_data/{cycle_scan_num}"
                 )
-                cycle_scan_key_unit = modified_key + "/@units"
                 template[cycle_scan_key] = xr_data[data_var].data
                 template[f"{cycle_scan_key}/@units"] = units
 
@@ -294,10 +296,9 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template):
                 entries_values = find_entry_and_value(
                     xps_data_dict, key_part, dt_typ=XPS_DATA_TOKEN
                 )
+                fill_data_group(key, key_part, entries_values, config_dict, template)
 
-                fill_data_group(key, entries_values, config_dict, template)
-
-            if XPS_DETECTOR_TOKEN in str(config_value):
+            elif XPS_DETECTOR_TOKEN in str(config_value):
                 key_part = config_value.split(XPS_DATA_TOKEN)[-1]
                 entries_values = find_entry_and_value(
                     xps_data_dict, key_part, dt_typ=XPS_DETECTOR_TOKEN
@@ -308,15 +309,15 @@ def fill_template_with_xps_data(config_dict, xps_data_dict, template):
                 )
 
             elif XPS_TOKEN in str(config_value):
-                token = config_value.split(XPS_TOKEN)[-1]
+                key_part = config_value.split(XPS_TOKEN)[-1]
                 entries_values = find_entry_and_value(
-                    xps_data_dict, token, dt_typ=XPS_TOKEN
+                    xps_data_dict, key_part, dt_typ=XPS_TOKEN
                 )
                 for entry, ent_value in entries_values.items():
-                    fill_template_with_value(key, ent_value, template)  #
+                    modified_key = key.replace("[entry]", f"[{entry}]")
+                    fill_template_with_value(modified_key, ent_value, template)
 
         else:
-            # Fill with config value.
             fill_template_with_value(key, config_value, template)
 
 
@@ -324,8 +325,11 @@ def fill_template_with_eln_data(eln_data_dict, config_dict, template):
     """Fill the template from provided eln data"""
     for key, config_value in config_dict.items():
         if ELN_TOKEN in str(config_value):
-            field_value = eln_data_dict[key]
-            fill_template_with_value(key, field_value, template)
+            try:
+                field_value = eln_data_dict[key]
+                fill_template_with_value(key, field_value, template)
+            except KeyError:
+                pass
         elif key in eln_data_dict:
             field_value = eln_data_dict[key]
             fill_template_with_value(key, field_value, template)
