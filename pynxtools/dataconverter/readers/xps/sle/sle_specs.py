@@ -134,6 +134,8 @@ class SleMapperSpecs(XPSMapper):
             ],
             "beam": ["excitation_energy"],
             "analyser": [
+                "voltage_range",
+                "voltage_range/@units",
                 "work_function",
             ],
             "collectioncolumn": [
@@ -147,7 +149,6 @@ class SleMapperSpecs(XPSMapper):
                 "lens_mode",
                 "transmission_function/relative_intensity",
                 "transmission_function/file",
-                "voltage_range",
             ],
             "energydispersion": [
                 "energy_scan_mode",
@@ -1639,11 +1640,17 @@ class SleProdigyParserV1(SleProdigyParser):
         for setting in comm_settings.iter():
             if setting.tag == "ScanMode":
                 energy_scan_mode = self.energy_scan_mode_map[setting.attrib["Name"]]
+                common_spectrum_settings[setting.tag] = energy_scan_mode
             elif setting.tag == "SlitInfo":
                 for key, val in setting.attrib.items():
                     common_spectrum_settings[key] = val
             elif setting.tag == "Lens":
-                common_spectrum_settings.update(setting.attrib)
+                voltage_range = setting.attrib["VoltageRange"]
+                split_text = re.split(r"([A-Z])", voltage_range, 1)
+                val = split_text[0]
+                unit = "".join(split_text[1:])
+                common_spectrum_settings["voltage_range"] = float(val)
+                common_spectrum_settings["voltage_range/@units"] = unit
             elif setting.tag == "EnergyChannelCalibration":
                 common_spectrum_settings["calibration_file/dir"] = setting.attrib["Dir"]
                 common_spectrum_settings["calibration_file/path"] = setting.attrib[
@@ -1814,12 +1821,19 @@ class SleProdigyParserV4(SleProdigyParser):
         common_spectrum_settings = {}
         for setting in comm_settings.iter():
             if setting.tag == "ScanMode":
-                common_spectrum_settings[setting.tag] = setting.attrib["Name"]
+                energy_scan_mode = self.energy_scan_mode_map[setting.attrib["Name"]]
+                common_spectrum_settings[setting.tag] = energy_scan_mode
             elif setting.tag == "SlitInfo":
                 for key, val in setting.attrib.items():
                     common_spectrum_settings[key] = val
             elif setting.tag == "Lens":
-                common_spectrum_settings.update(setting.attrib)
+                voltage_range = setting.attrib["VoltageRange"]
+                voltage_range = "400V"
+                split_text = re.split(r"([A-Z])", voltage_range, 1)
+                val = split_text[0]
+                unit = "".join(split_text[1:])
+                common_spectrum_settings["voltage_range"] = float(val)
+                common_spectrum_settings["voltage_range/@units"] = unit
             elif setting.tag == "EnergyChannelCalibration":
                 common_spectrum_settings["calibration_file/dir"] = setting.attrib["Dir"]
                 common_spectrum_settings["calibration_file/path"] = setting.attrib[

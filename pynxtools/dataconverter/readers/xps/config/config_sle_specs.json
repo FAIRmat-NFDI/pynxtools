@@ -66,6 +66,8 @@
       "@default": "detector0",
       "name":"@xps_token:analyser/name",
       "description":"@eln",
+      "voltage_energy_range":"@xps_token:analyser/voltage_energy_range",
+      "voltage_energy_range/@units":"@xps_token:analyser/voltage_energy_range/@units",
       "work_function":"@xps_token:analyser/work_function",
       "work_function/@units":"@xps_token:analyser/work_function/@units",
       "fast_axes":"None",
