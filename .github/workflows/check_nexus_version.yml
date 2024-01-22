@@ -1,0 +1,30 @@
+name: nexus version check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: 'true'
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Generate nexus git version
+        run: |
+          cd pynxtools/definitions
+          git describe --dirty --tags --long --match "*[0-9]*" > ../nexus-ref.txt
+          cd ../
+      - uses: GuillaumeFalourd/diff-action@v1
+        with:
+          first_file_path: pynxtools/nexus-version.txt
+          second_file_path: pynxtools/nexus-ref.txt
+          expected_result: PASSED
