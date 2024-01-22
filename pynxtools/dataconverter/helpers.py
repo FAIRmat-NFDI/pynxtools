@@ -607,7 +607,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
             # otherwise we just pass it along
             if (
                 elem is not None
-                and elem.attrib["name"] == entry_name
+                and elem.attrib.get("name") == entry_name
                 and remove_namespace_from_tag(elem.tag) in ("field", "attribute")
             ):
                 check_optionality_based_on_parent_group(
