@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
+          submodules: recursive
           fetch-depth: 0
-          submodules: 'true'
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
