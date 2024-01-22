@@ -428,7 +428,12 @@ def test_validate_data_dict(
 )
 def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
-    assert helpers.path_in_data_dict(nxdl_path, template) == expected
+    assert (
+        helpers.path_in_data_dict(
+            nxdl_path, helpers.convert_data_dict_path_to_hdf5_path(nxdl_path), template
+        )
+        == expected
+    )
 
 
 def test_atom_type_extractor_and_hill_conversion():
