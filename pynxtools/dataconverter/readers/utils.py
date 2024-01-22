@@ -290,13 +290,13 @@ def parse_json(file_path: Union[str, Path]) -> Dict[str, Any]:
         return json.load(file)
 
 
-def parse_flatten_json(file_path: str) -> Dict[str, Any]:
+def parse_flatten_json(file_path: Union[str, Path]) -> Dict[str, Any]:
     """
     Parses a metadata json file into a dictionary and
     flattens it into a flat dictionary of absolute paths.
 
     Args:
-        file_path (str): The file path of the json file.
+        file_path (Union[str, Path]): The file path of the json file.
 
     Returns:
         Dict[str, Any]:
