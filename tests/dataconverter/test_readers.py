@@ -59,7 +59,6 @@ def get_all_readers() -> List[ParameterSet]:
             "EmOmReader",
             "EmSpctrscpyReader",
             "EmNionReader",
-            "XPSReader",
         ):
             readers.append(
                 pytest.param(
