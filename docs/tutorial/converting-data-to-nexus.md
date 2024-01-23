@@ -1,9 +1,5 @@
 # Converting research data to NeXus
 
-!!! danger "Work in progress"
-
-    This part of the documentation is still being written and it might be confusing or incomplete.
-
 ## Who is this tutorial for?
 
 The document is for people who want to standardize their research data by converting their research data into
@@ -27,37 +23,41 @@ You will have
 
 We use a Python tool to make converting our research data easier. This has a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers) that support multiple file formats. You can browse the separate folders to find the reader that might work for you. A generic reader is the [JSON Map Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/json_map).
 
-We will use the [XPS Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/xps) with a [SpecsLabProdigy](https://www.specs-group.com/nc/specs/products/detail/prodigy/) file (.sle) as an example..
+We will use the [XPS Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/xps) with a [SpecsLabProdigy](https://www.specs-group.com/nc/specs/products/detail/prodigy/) file (.sle) as an example.
 
 #### Steps
 
-1. Download the example files from here: !!! **need to add link to files** !!!
-2. Install [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#installation)
-3. Verify you can run the ```dataconverter``` in a terminal window. Open a terminal with the Python environment where you installed ```pynxtools```. Then type the following:
-```console
-dataconverter --help
-```
-4. Copy the example files to your working directory. You can find the working directory by typing the following in your terminal:
+1. Download the example files from here: [Example files](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2FFAIRmat-NFDI%2Fpynxtools%2Ftree%2Fdocumentation%2Fexamples%2Fxps)
+2. **Extract** the zip and copy the files in your current working directory. You can find the working directory by typing the following in your terminal:
 ```console
 pwd
+```
+3. Install [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#installation)
+```console
+pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
+```
+4. Verify you can run the ```dataconverter``` in a terminal window. Open a terminal with the Python environment where you installed ```pynxtools```. Then type the following:
+```console
+dataconverter --help
 ```
 
 ## Converting the example files
 
-!!! **we might need a part to explain how to find an appdef to use and link to documents on creating an appdef**
-
 Once you have your files copied into the working directory. Your directory structure should look like this:
 ```
-├── main_data_file.sle
-├── metadata_file.slh
+├── README.md
+├── EX439_S718_Au.sle
+├── params.yaml
 └── eln_data_sle.yaml
 ```
 
-Next, you will run the conversion routine:
+Next, you will run the conversion routine from your Python environment:
 ```console
-dataconverter --reader xps --nxdl NXmpes --input-file "main_data_file.sle" --input-file "metadata_file.slh" --input-file "eln_data_sle.yaml" --output "output.nxs"
+dataconverter --params-file params.yaml
 ```
 
-This will create a file called ```output.nxs``` in your current directory.
+Here we use a params.yaml parameter file to configure the converter. You can try out [other examples from pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/documentation/examples)
+
+This will create a file called ```Au_25_mbar_O2_no_align.nxs``` in your current directory.
 
 **Congrats! You now have a FAIR NeXus file!**
