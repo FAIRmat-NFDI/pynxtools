@@ -6,10 +6,10 @@
 
 ## Who is this tutorial for?
 
-The document is for people who want to standardize their research data by converting their research data into 
+The document is for people who want to standardize their research data by converting their research data into
 a NeXus standardized format.
 We cover the basic principles and common principles of NeXus, here.
-For a more detailed description on the general principles of NeXus we recommend reading our 
+For a more detailed description on the general principles of NeXus we recommend reading our
 [learning page for NeXus](../learn/nexus-primer.md) or the [official NeXus user manual](https://manual.nexusformat.org/user_manual.html).
 
 ## What should you should know before this tutorial?
@@ -27,11 +27,11 @@ You will have
 
 We use a Python tool to make converting our research data easier. This has a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers) that support multiple file formats. You can browse the separate folders to find the reader that might work for you. A generic reader is the [JSON Map Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/json_map).
 
-We will use the [XPS Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/xps) with Vamas (.vms) files as an example. 
+We will use the [XPS Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/xps) with a [SpecsLabProdigy](https://www.specs-group.com/nc/specs/products/detail/prodigy/) file (.sle) as an example..
 
 #### Steps
 
-1. Download the example files from here:
+1. Download the example files from here: !!! **need to add link to files** !!!
 2. Install [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#installation)
 3. Verify you can run the ```dataconverter``` in a terminal window. Open a terminal with the Python environment where you installed ```pynxtools```. Then type the following:
 ```console
@@ -48,13 +48,14 @@ pwd
 
 Once you have your files copied into the working directory. Your directory structure should look like this:
 ```
-- file1.vms
-- otherfile.vms
+├── main_data_file.sle
+├── metadata_file.slh
+└── eln_data_sle.yaml
 ```
 
 Next, you will run the conversion routine:
 ```console
-dataconverter --reader xps 
+dataconverter --reader xps --nxdl NXmpes --input-file "main_data_file.sle" --input-file "metadata_file.slh" --input-file "eln_data_sle.yaml" --output "output.nxs"
 ```
 
 This will create a file called ```output.nxs``` in your current directory.
