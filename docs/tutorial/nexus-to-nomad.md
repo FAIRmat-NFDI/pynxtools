@@ -1,6 +1,6 @@
 # Uploading NeXus files to NOMAD
 
-Great choice! [Nomad](https://nomad-lab.eu/nomad-lab/tutorials.html) makes it easier than ever to work with your research data. At this point you are probably have an idea of what FAIR data is, [wilkinson et al](...). Even if you don't, it doesn't matter. Nomad provides a simple graphical interface that let's you collect and have your data ready for publication.
+Great choice! [Nomad](https://nomad-lab.eu/nomad-lab/tutorials.html) makes it easier than ever to work with your research data. At this point you are probably have an idea of what [FAIR data](https://www.nature.com/articles/sdata201618) is. Even if you don't, it doesn't matter. Nomad provides a simple graphical interface that let's you collect and have your data ready for publication.
 
 In this tutorial, we will go through how one can upload their NeXus files to Nomad.
 
@@ -8,7 +8,8 @@ Nomad, as a FAIR data platform, supports NeXus and allows users to upload their 
 
 ## Create an account
 
-The very first thing you need to do is get a Nomad account if you don't have one. **!!!You can go here and click this then that**
+The very first thing you need to do is get a Nomad account.
+If you don't have one you can register [here](https://nomad-lab.eu/fairdi/keycloak/auth/realms/fairdi_nomad_prod/login-actions/registration?client_id=nomad_public&tab_id=eWM6kat9MPc).
 
 1. Navigate to [nomad-lab.eu](https://nomad-lab.eu/prod/v1/gui/about/information)
 2. Click on ```Login / Register``` on the top right corner.
