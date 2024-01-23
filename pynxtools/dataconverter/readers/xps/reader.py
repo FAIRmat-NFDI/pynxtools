@@ -144,7 +144,9 @@ def fill_data_group(key, key_part, entries_values, config_dict, template):
         data_group_key = data_field_key.rsplit("/data", 1)[0]
 
         if key_part == "energy":
-            energy_field_key = f"{data_group_key}/energy"
+            # Here, we need to take here if the data/entry is
+            # written directly in the future.
+            energy_field_key = data_group_key
             energy = np.array(xr_data.coords["energy"].values)
             template[energy_field_key] = energy
 
@@ -253,8 +255,8 @@ def fill_template_with_value(key, value, template):
             value = value.isoformat()
 
         elif isinstance(value, dict) and LINK_TOKEN in value:
-            link_text = value[LINK_TOKEN]
-            link_text = link_text.replace("entry", f"{entry}")
+            initial_link_text = value[LINK_TOKEN]
+            link_text = initial_link_text.replace("entry", f"{entry}")
             value = {LINK_TOKEN: link_text}
 
         modified_key = key.replace("[entry]", f"[{entry}]")
@@ -280,6 +282,14 @@ def fill_template_with_value(key, value, template):
         if atom_types:
             modified_key = modified_key.replace("chemical_formula", "atom_types")
             template[modified_key] = ", ".join(atom_types)
+
+
+# =============================================================================
+#         # Reset link to original
+#         if isinstance(value, dict) and LINK_TOKEN in value:
+#             print(value, template[modified_key])
+#             value[LINK_TOKEN] = initial_link_text
+# =============================================================================
 
 
 def fill_template_with_xps_data(config_dict, xps_data_dict, template):
@@ -433,6 +443,10 @@ class XPSReader(BaseReader):
         for key, val in template.items():
             if ("/ENTRY[entry]" not in key) and (val is not None):
                 final_template[key] = val
+
+        for key, value in final_template.items():
+            if isinstance(value, dict) and LINK_TOKEN in value:
+                print(value)
 
         return final_template
 
