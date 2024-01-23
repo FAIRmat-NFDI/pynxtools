@@ -11,7 +11,7 @@ For a more detailed description on the general principles of NeXus we recommend 
 ## What should you should know before this tutorial?
 
 - You should have a basic understanding of NeXus - [A primer on NeXus](../learn/nexus-primer.md)
-- You should have a basic understanding of FAIR data - [wilkinson et al](...)
+- You should have a basic understanding of [FAIR data](https://www.nature.com/articles/sdata201618)
 
 ## What you will know at the end of this tutorial?
 
