@@ -112,7 +112,7 @@ def get_entries_and_detectors(config_dict, xps_data_dict):
                         # Iteration over scan
                         for data_var in data.data_vars:
                             if chan_count in data_var:
-                                detector_num = data_var.split("_chan_")[-1]
+                                detector_num = data_var.split(chan_count)[-1]
                                 detector_nm = f"detector{detector_num}"
                                 DETECTOR_SET.add(detector_nm)
             except AttributeError:
@@ -207,7 +207,7 @@ def fill_detector_group(key, entries_values, config_dict, xps_data_dict, templat
 
         for data_var in data_vars:
             if chan_count in data_var:
-                detector_num = data_var.split("_chan_")[-1]
+                detector_num = data_var.split(chan_count)[-1]
                 detector_nm = f"detector{detector_num}"
                 detector_scans[detector_nm] += [xr_data[data_var].data]
                 cycle_scan_num = data_var.split(chan_count)[0]
