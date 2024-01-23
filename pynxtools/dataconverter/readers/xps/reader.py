@@ -245,19 +245,21 @@ def fill_template_with_value(key, value, template):
     if value is None or str(value) == "None":
         return
 
+    atom_types: List = []
+    if "chemical_formula" in key:
+        atom_types = list(extract_atom_types(value))
+
+    if isinstance(value, datetime.datetime):
+        value = value.isoformat()
+
+    elif isinstance(value, dict) and LINK_TOKEN in value:
+        initial_link_text = value[LINK_TOKEN]
+
     # Do for all entry names
     for entry in ENTRY_SET:
-        atom_types: List = []
-        if "chemical_formula" in key:
-            atom_types = list(extract_atom_types(value))
-
-        if isinstance(value, datetime.datetime):
-            value = value.isoformat()
-
-        elif isinstance(value, dict) and LINK_TOKEN in value:
-            initial_link_text = value[LINK_TOKEN]
-            link_text = initial_link_text.replace("entry", f"{entry}")
-            value = {LINK_TOKEN: link_text}
+        if isinstance(value, dict) and LINK_TOKEN in value:
+            # Reset link to original
+            value[LINK_TOKEN] = initial_link_text.replace("entry", f"{entry}")
 
         modified_key = key.replace("[entry]", f"[{entry}]")
 
@@ -274,22 +276,14 @@ def fill_template_with_value(key, value, template):
                         # link.
                         link_text = link_text.replace("detector", f"{detector}")
                         value = {LINK_TOKEN: link_text}
-
                 template[detr_key] = value
+
         else:
             template[modified_key] = value
 
         if atom_types:
             modified_key = modified_key.replace("chemical_formula", "atom_types")
             template[modified_key] = ", ".join(atom_types)
-
-
-# =============================================================================
-#         # Reset link to original
-#         if isinstance(value, dict) and LINK_TOKEN in value:
-#             print(value, template[modified_key])
-#             value[LINK_TOKEN] = initial_link_text
-# =============================================================================
 
 
 def fill_template_with_xps_data(config_dict, xps_data_dict, template):
@@ -443,10 +437,6 @@ class XPSReader(BaseReader):
         for key, val in template.items():
             if ("/ENTRY[entry]" not in key) and (val is not None):
                 final_template[key] = val
-
-        for key, value in final_template.items():
-            if isinstance(value, dict) and LINK_TOKEN in value:
-                print(value)
 
         return final_template
 
