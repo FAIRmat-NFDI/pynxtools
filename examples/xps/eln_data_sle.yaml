@@ -15,7 +15,7 @@ user:
   address: Lukas Pielsticker
   orcid: 0000-0001-9361-8333
   email: lukas.pielsticker@cec.mpg.de
-Instrument:
+instrument:
   device_information:
     vendor: SPECS GmbH
     model: Custom NAP-XPS instrument
@@ -36,19 +36,19 @@ Instrument:
     distance:
       value: 0.0
       unit: mm
-  Electronanalyser:
+  analyser:
     description: hemispherical
     device_information:
       vendor: SPECS GmbH
       model: PHOIBOS 150 NAP
       identifier: null
-    Collectioncolumn:
+    collectioncolumn:
       scheme: angular dispersive
       device_information:
         vendor: SPECS GmbH
         model: PHOIBOS 150 NAP
         identifier: null
-    Energydispersion:
+    energydispersion:
       scheme: hemispherical
       diameter:
         unit: mm
@@ -57,14 +57,14 @@ Instrument:
         vendor: SPECS GmbH
         model: PHOIBOS 150
         identifier: null
-    Detector:
+    detector:
       amplifier_type: channeltron
-      detector_type: Multi-anode   
+      detector_type: Multi-anode
       device_information:
         vendor: Surface Concept GmbH
         model: 1D-DLD detector
         identifier: null
-  Manipulator:
+  manipulator:
     device_information:
       vendor: SPECS GmbH
       model: 5-axis manipulator
@@ -84,7 +84,7 @@ Instrument:
       heater_power:
         value: 0.0
         unit: W
-      Pid:
+      pid:
         setpoint:
           value: 298.0
           unit: K
@@ -92,7 +92,7 @@ Instrument:
       name: null
       physical_quantity: null
       type: null
-      Pid:
+      pid:
         setpoint: null
     drain_current_amperemeter:
       name: Amperemeter 1.0
@@ -113,7 +113,7 @@ Instrument:
       name: XPS sample potentiostat
       physical_quantity: voltage
       type: potentiostat
-      Pid:
+      pid:
         setpoint:
           value: 0.0
           unit: V
@@ -139,13 +139,13 @@ Instrument:
       value:
         value: null
         unit: null
-Sample:
+sample:
   name: Polycristalline Au foil
   sample_id: S718
   atom_types: Au
   physical_form: foil
   situation: vacuum
-  Substance:
+  substance:
     name: Au
     molecular_mass:
       value: 196.96657
