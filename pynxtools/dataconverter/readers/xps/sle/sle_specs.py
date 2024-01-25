@@ -278,7 +278,7 @@ class SleMapperSpecs(XPSMapper):
         channels = [key for key in spectrum["data"] if "cps_ch_" in key]
         for channel in channels:
             ch_no = channel.rsplit("_")[-1]
-            channel_key = f"{scan_key}_chan_{ch_no}"
+            channel_key = f"{scan_key}_chan{ch_no}"
             detector_data_key = (
                 f"{path_map['detector']}/{detector_data_key_child}"
                 f"_channels_Channel_{ch_no}/counts"
