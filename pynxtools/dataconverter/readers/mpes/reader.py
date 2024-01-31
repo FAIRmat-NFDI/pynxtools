@@ -17,18 +17,20 @@
 #
 """MPES reader implementation for the DataConverter."""
 import errno
-import json
 import os
 from functools import reduce
-from typing import Any
-from typing import Tuple
+from typing import Any, Tuple
 
 import h5py
 import xarray as xr
 import yaml
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
+from pynxtools.dataconverter.readers.utils import (
+    FlattenSettings,
+    flatten_and_replace,
+    parse_flatten_json,
+)
 
 DEFAULT_UNITS = {
     "X": "step",
@@ -160,19 +162,35 @@ CONVERT_DICT = {
     "Instrument": "INSTRUMENT[instrument]",
     "Analyzer": "ELECTRONANALYSER[electronanalyser]",
     "Manipulator": "MANIPULATOR[manipulator]",
-    "Beam": "BEAM[beam]",
+    "Beam": "beam_TYPE[beam]",
     "unit": "@units",
     "Sample": "SAMPLE[sample]",
-    "Source": "SOURCE[source]",
+    "Source": "source_TYPE[source]",
     "User": "USER[user]",
+    "energy_resolution": "energy_resolution/resolution",
+    "momentum_resolution": "RESOLUTION[momentum_resolution]/resolution",
+    "temporal_resolution": "RESOLUTION[temporal_resolution]/resolution",
+    "spatial_resolution": "RESOLUTION[spatial_resolution]/resolution",
+    "sample_temperature": "temperature_sensor/value",
 }
 
 REPLACE_NESTED = {
-    "SOURCE[source]/Probe": "SOURCE[source]",
-    "SOURCE[source]/Pump": "SOURCE[source_pump]",
-    "BEAM[beam]/Probe": "BEAM[beam]",
-    "BEAM[beam]/Pump": "BEAM[beam_pump]",
-    "sample_history": "sample_history/description",
+    "SAMPLE[sample]/chemical_formula": "SAMPLE[sample]/SUBSTANCE[substance]/molecular_formula_hill",
+    "source_TYPE[source]/Probe": "source_TYPE[source_probe]",
+    "source_TYPE[source]/Pump": "source_TYPE[source_pump]",
+    "beam_TYPE[beam]/Probe": "beam_TYPE[beam_probe]",
+    "beam_TYPE[beam]/Pump": "beam_TYPE[beam_pump]",
+    "sample_history": "sample_history/notes",
+    "ELECTRONANALYSER[electronanalyser]/RESOLUTION[momentum_resolution]": (
+        "ELECTRONANALYSER[electronanalyser]/momentum_resolution"
+    ),
+    "ELECTRONANALYSER[electronanalyser]/RESOLUTION[spatial_resolution]": (
+        "ELECTRONANALYSER[electronanalyser]/spatial_resolution"
+    ),
+    "SAMPLE[sample]/gas_pressure": "INSTRUMENT[instrument]/pressure_gauge/value",
+    "SAMPLE[sample]/temperature": (
+        "INSTRUMENT[instrument]/MANIPULATOR[manipulator]/temperature_sensor/value"
+    ),
 }
 
 
@@ -208,8 +226,7 @@ def handle_h5_and_json_file(file_paths, objects):
         if file_extension == ".h5":
             x_array_loaded = h5_to_xarray(file_path)
         elif file_extension == ".json":
-            with open(file_path, encoding="utf-8") as file:
-                config_file_dict = json.load(file)
+            config_file_dict = parse_flatten_json(file_path)
         elif file_extension in [".yaml", ".yml"]:
             with open(file_path, encoding="utf-8") as feln:
                 eln_data_dict = flatten_and_replace(

@@ -19,18 +19,18 @@
 
 import glob
 import os
-from typing import List
 import xml.etree.ElementTree as ET
+from typing import List
 
 import pytest
 from _pytest.mark.structures import ParameterSet
 
-from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
 from pynxtools.dataconverter.helpers import (
-    validate_data_dict,
     generate_template_from_nxdl,
+    validate_data_dict,
 )
+from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 
 

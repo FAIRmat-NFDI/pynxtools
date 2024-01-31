@@ -17,23 +17,23 @@
 #
 """Helper functions commonly used by the convert routine."""
 
-from typing import List, Optional, Any
-from typing import Tuple, Callable, Union
+import json
+import logging
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
-import logging
-import json
+from typing import Any, Callable, List, Optional, Tuple, Union
 
+import h5py
 import numpy as np
 from ase.data import chemical_symbols
-import h5py
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -386,11 +386,20 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
-def path_in_data_dict(nxdl_path: str, data: dict) -> Tuple[bool, str]:
+def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
+    accepted_unfilled_key = None
     for key in data.keys():
-        if nxdl_path == convert_data_converter_dict_to_nxdl_path(key):
+        if (
+            nxdl_path == convert_data_converter_dict_to_nxdl_path(key)
+            or convert_data_dict_path_to_hdf5_path(key) == hdf_path
+        ):
+            if data[key] is None:
+                accepted_unfilled_key = key
+                continue
             return True, key
+    if accepted_unfilled_key:
+        return True, accepted_unfilled_key
     return False, None
 
 
@@ -435,7 +444,12 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
         if (
             nxdl_key[0 : nxdl_key.rfind("/")] == optional_parent_path
             and is_node_required(nxdl_key, nxdl_root)
-            and data[key] is None
+            and data[
+                path_in_data_dict(
+                    nxdl_key, convert_data_dict_path_to_hdf5_path(key), data
+                )[1]
+            ]
+            is None
         ):
             return False
 
@@ -489,6 +503,7 @@ def does_group_exist(path_to_group, data):
     return False
 
 
+# pylint: disable=W1203
 def ensure_all_required_fields_exist(template, data, nxdl_root):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
@@ -496,7 +511,9 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
         if entry_name == "@units":
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
-        is_path_in_data_dict, renamed_path = path_in_data_dict(nxdl_path, data)
+        is_path_in_data_dict, renamed_path = path_in_data_dict(
+            nxdl_path, convert_data_dict_path_to_hdf5_path(path), data
+        )
 
         renamed_path = path if renamed_path is None else renamed_path
         if path in template["lone_groups"]:
@@ -505,18 +522,18 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                 if does_group_exist(opt_parent, data) and not does_group_exist(
                     renamed_path, data
                 ):
-                    raise ValueError(
+                    logger.warning(
                         f"The required group, {path}, hasn't been supplied"
-                        f" while its optional parent, {path}, is supplied."
+                        f" while its optional parent, {opt_parent}, is supplied."
                     )
                 continue
             if not does_group_exist(renamed_path, data):
-                raise ValueError(f"The required group, {path}, hasn't been supplied.")
-            continue
+                logger.warning(f"The required group, {path}, hasn't been supplied.")
+                continue
         if not is_path_in_data_dict or data[renamed_path] is None:
-            raise ValueError(
+            logger.warning(
                 f"The data entry corresponding to {path} is required "
-                f"and hasn't been supplied by the reader."
+                f"and hasn't been supplied by the reader.",
             )
 
 
@@ -528,6 +545,16 @@ def try_undocumented(data, nxdl_root: ET.Element):
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
         if entry_name == "@units":
+            field_path = path.rsplit("/", 1)[0]
+            if field_path in data.get_documented() and path in data.undocumented:
+                field_requiredness = get_required_string(
+                    nexus.get_node_at_nxdl_path(
+                        nxdl_path=convert_data_converter_dict_to_nxdl_path(field_path),
+                        elem=nxdl_root,
+                    )
+                )
+                data[field_requiredness][path] = data.undocumented[path]
+                del data.undocumented[path]
             continue
 
         if entry_name[0] == "@" and "@" in nxdl_path:
@@ -580,7 +607,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
             # otherwise we just pass it along
             if (
                 elem is not None
-                and elem.attrib["name"] == entry_name
+                and elem.attrib.get("name") == entry_name
                 and remove_namespace_from_tag(elem.tag) in ("field", "attribute")
             ):
                 check_optionality_based_on_parent_group(
@@ -660,11 +687,8 @@ def add_default_root_attributes(data, filename):
     def update_and_warn(key: str, value: str):
         if key in data and data[key] != value:
             logger.warning(
-                "The NXroot entry '%s' (value: %s) should not be populated by the reader. "
-                "This is overwritten by the actually used value '%s'",
-                key,
-                data[key],
-                value,
+                f"The NXroot entry '{key}' (value: {data[key]}) should not be populated by "
+                f"the reader. This is overwritten by the actually used value '{value}'"
             )
         data[key] = value
 
