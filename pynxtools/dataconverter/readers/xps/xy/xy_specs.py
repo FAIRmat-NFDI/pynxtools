@@ -62,8 +62,8 @@ class XyMapperSpecs(XPSMapper):
 
         Parameters
         ----------
-        file : TYPE
-            DESCRIPTION.
+        file : str
+            Filepath of the XY file.
         **kwargs : dict
             write_channels_to_data: bool
                 If True, the spectra of each individual channel is
@@ -81,7 +81,7 @@ class XyMapperSpecs(XPSMapper):
         return super().parse_file(file, **kwargs)
 
     def construct_data(self):
-        """Map TXT format to NXmpes-ready dict."""
+        """Map XY format to NXmpes-ready dict."""
         # pylint: disable=duplicate-code
         spectra = copy.deepcopy(self.raw_data)
 
