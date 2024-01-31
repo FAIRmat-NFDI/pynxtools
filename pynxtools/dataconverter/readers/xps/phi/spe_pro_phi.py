@@ -449,10 +449,15 @@ class MapperPhi(XPSMapper):
                 "no_depth_profile_data_cycles",
                 "no_pre_sputter_cycles",
                 "profiling_sputter_delay",
+                "profiling_sputter_delay/@units",
                 "profiling_xray_off_during_sputter",
                 "profiling_source_blank_during_sputter",
                 "profiling_zalar_high_accuracy_interval",
                 "profiling_sample_rotation",
+                "profiling_depth_recalibration",
+                "profiling_sputter_mode",
+                "depth_calibration_definition",
+                "profiling_no_depth_regions",
             ],
             # "unused": [
             # "peak_to_noise_ratio_state",
@@ -512,8 +517,8 @@ class MapperPhi(XPSMapper):
                 try:
                     mpes_key = spectrum_key
                     self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
-                except KeyError as e:
-                    print(e)  # pass
+                except KeyError:
+                    pass
 
 
 # =============================================================================
@@ -962,7 +967,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
             region.full_region = True
             region.region_definition = spectral_defs.pop(0).split(" ", 1)[1]
             region.region_definition2 = spectral_defs.pop(0).split(" ", 1)[1]
-            region.background = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_background = spectral_defs.pop(0).split(" ", 1)[1]
             region.region_hero = spectral_defs.pop(0).split(" ", 1)[1]
             region.region_ir = spectral_defs.pop(0).split(" ", 1)[1]
 
