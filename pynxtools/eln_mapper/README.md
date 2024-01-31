@@ -1,10 +1,11 @@
 # ELN generator
-This is a helper tool for generating eln
-- The simple eln generator that can be used in a console or jupyter-notebook
-- Scheme based eln generator that can be used in NOMAD and the eln can be used as a custom scheme in NOMAD.
+This is a helper tool for generating ELN files that can be used to add metadata to the dataconverter routine.
+Two types of ELN are supported (by passing the flag `eln-type`):
+- [**eln**]: The simple ELN generator that can be used in a console or jupyter-notebook.
+- [**scheme_eln**]: Scheme based ELN generator that can be used in NOMAD and the ELN can be used as a custom scheme in NOMAD.
 
 ```
-$ eln_generator --options <value>
+$ generate_eln --options <value>
 
 Options:
   --nxdl TEXT                  Name of NeXus definition without extension
@@ -14,6 +15,6 @@ Options:
                                /Entry[ENTRY]/Instrument[INSTRUMENT]/... will
                                be skiped.  [default: 1]
   --output-file TEXT           Name of  output file.
-  --eln-type [eln|scheme_eln]  Choose a type from the eln or scheme_eln.  [required]
+  --eln-type [eln|scheme_eln]  Choose a type of ELN output (eln or scheme_eln).  [required]
   --help                       Show this message and exit.
 ```

@@ -35,4 +35,4 @@ export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
 
 Following example dataset can be used to test `read_nexus` module `tests/data/nexus/201805_WSe2_arpes.nxs`.
 This is an angular-resolved photoelectron spectroscopy (ARPES) dataset and it is formatted according to
-the [NXarpes application definition of NEXUS](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes).
+the [NXarpes application definition of NeXus](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes).
