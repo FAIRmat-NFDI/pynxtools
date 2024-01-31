@@ -30,8 +30,6 @@ import numpy as np
 
 from pynxtools.dataconverter.readers.xps.reader_utils import (
     XPSMapper,
-    check_uniform_step_width,
-    get_minimal_step,
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key,
@@ -409,38 +407,38 @@ class MapperPhi(XPSMapper):
                 "intensity_calibration_coefficients",
                 "intensity_recalibration",
             ],
-            "data": [],
-            "file": [
+            "data": [
+                "energy",
+                "n_values",
+            ],
+            "file_info": [
                 "photo_filename",
                 "software_version",
             ],
             "region": [
                 "acquisition_file_date",
                 "acquisition_filename",
+                "area_definition",
+                "area_description",
+                "area_hr_photo_correction",
+                "area_id",
                 "experiment_id",
                 "file_date",
                 "file_description",
                 "file_type",
+                "full_region",
                 "image_size_x",
                 "image_size_y",
                 "no_spatial_areas",
                 "no_spectral_regions",
                 "no_spectral_regions_full",
                 "sem_field_of_view",
-                "spatial_area_definition",
-                "spatial_area_description",
-                "spatial_hr_photo_correction",
-                "spectral_region_background",
-                "spectral_region_background_full",
-                "spectral_region_definition",
-                "spectral_region_definition2",
-                "spectral_region_definition2_full",
-                "spectral_region_definition_full",
-                "spectral_region_hero",
-                "spectral_region_hero_full",
-                "spectral_region_ir",
-                "spectral_region_ir_full",
-                "spectrum_id",
+                "region_background",
+                "region_definition",
+                "region_definition2",
+                "region_hero",
+                "region_id",
+                "region_ir",
                 "survey_num_of_cycles",
                 "technique",
                 "technique_ex",
@@ -456,19 +454,20 @@ class MapperPhi(XPSMapper):
                 "profiling_zalar_high_accuracy_interval",
                 "profiling_sample_rotation",
             ],
-            "unused": [
-                "peak_to_noise_ratio_state",
-                "platform",
-                "platen_id",
-                "presputter",
-                "register_image",
-                "register_image_interval",
-                "register_image_last",
-                "register_image_mode",
-            ],
+            # "unused": [
+            # "peak_to_noise_ratio_state",
+            # "platform",
+            # "platen_id",
+            # "presputter",
+            # "register_image",
+            # "register_image_interval",
+            # "register_image_last",
+            # "register_image_mode",
+            # ],
         }
 
         for spectrum in spectra:
+            spectrum["group_name"] = "entry0"
             self._update_xps_dict_with_spectrum(spectrum, key_map)
 
     def _update_xps_dict_with_spectrum(self, spectrum, key_map):
@@ -478,7 +477,7 @@ class MapperPhi(XPSMapper):
         """
         # pylint: disable=too-many-locals,duplicate-code
         group_parent = f'{self._root_path}/RegionGroup_{spectrum["group_name"]}'
-        region_parent = f'{group_parent}/regions/RegionData_{spectrum["region_name"]}'
+        region_parent = f'{group_parent}/regions/RegionData_{spectrum["spectrum_type"]}'
         file_parent = f"{region_parent}/file_info"
         instrument_parent = f"{region_parent}/instrument"
         analyser_parent = f"{instrument_parent}/analyser"
@@ -494,14 +493,17 @@ class MapperPhi(XPSMapper):
             "energydispersion": f"{analyser_parent}/energydispersion",
             "detector": f"{analyser_parent}/detector",
             "manipulator": f"{instrument_parent}/manipulator",
+            "c60_ion_gun": f"{instrument_parent}/c60_ion_gun",
             "defect_positioner": f"{instrument_parent}/defect_positioner",
             "flood_gun": f"{instrument_parent}/flood_gun",
             "gcib": f"{instrument_parent}/gcib",
+            "neutral_ion_gun": f"{instrument_parent}/neutral_ion_gun",
             "sputter_gun": f"{instrument_parent}/sputter_gun",
             "process": f"{instrument_parent}/process",
             "sample": f"{region_parent}/sample",
             "data": f"{region_parent}/data",
-            "region": f"{region_parent}",
+            "region": f"{region_parent}/region",
+            "profiling": f"{region_parent}/profiling",
         }
 
         for grouping, spectrum_keys in key_map.items():
@@ -510,22 +512,18 @@ class MapperPhi(XPSMapper):
                 try:
                     mpes_key = spectrum_key
                     self._xps_dict[f"{root}/{mpes_key}"] = spectrum[spectrum_key]
-                except KeyError:
-                    pass
-
-        if self.parser.export_settings["Transmission Function"]:
-            path = f"{path_map['collectioncolumn']}/transmission_function"
-            self._xps_dict[path] = spectrum["data"]["transmission_function"]
-            self._xps_dict[f"{path}/units"] = spectrum["tf_units"]
-
-        # Create keys for writing to data and detector
-        entry = construct_entry_name(region_parent)
-        scan_key = construct_data_key(spectrum)
-        detector_data_key_child = construct_detector_data_key(spectrum)
-        detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
+                except KeyError as e:
+                    print(e)  # pass
 
 
 # =============================================================================
+#         # Create keys for writing to data and detector
+#         entry = construct_entry_name(region_parent)
+#         scan_key = construct_data_key(spectrum)
+#         detector_data_key_child = construct_detector_data_key(spectrum)
+#         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
+#
+#
 #         x_units = spectrum["x_units"]
 #         energy = np.array(spectrum["data"]["x"])
 #         intensity = np.array(spectrum["data"]["y"])
@@ -965,7 +963,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
             region.region_definition = spectral_defs.pop(0).split(" ", 1)[1]
             region.region_definition2 = spectral_defs.pop(0).split(" ", 1)[1]
             region.background = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_region_hero = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_hero = spectral_defs.pop(0).split(" ", 1)[1]
             region.region_ir = spectral_defs.pop(0).split(" ", 1)[1]
 
         for region in regions:
@@ -1756,11 +1754,10 @@ class PhiSpatialArea(PhiDataclass):
 # file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_102_20240122_SBenz_SnO2_10nm.spe"
 # file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_107_20240122_SBenz_SnO2_10nm_1.pro"
 
-file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.spe"
-# file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.pro"
-
+# file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.spe"
+file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.pro"
 
 if __name__ == "__main__":
-    parser = SpeParser()
+    parser = PhiParser()
     d = parser.parse_file(file)
     d0 = d[0]
