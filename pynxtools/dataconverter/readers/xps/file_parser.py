@@ -23,11 +23,10 @@ Generic Classes for reading XPS files into python dictionary.
 
 from typing import List, Dict
 
+from pynxtools.dataconverter.readers.xps.phi.spe_pro_phi import MapperPhi
 from pynxtools.dataconverter.readers.xps.sle.sle_specs import SleMapperSpecs
-from pynxtools.dataconverter.readers.xps.spe.spe_phi import SpeMapperPhi
 
 # from pynxtools.dataconverter.readers.xps.slh.slh_specs import SlhMapperSpecs
-from pynxtools.dataconverter.readers.xps.pro.pro_phi import ProMapperPhi
 from pynxtools.dataconverter.readers.xps.txt.txt_scienta import TxtMapperScienta
 
 # from pynxtools.dataconverter.readers.xps.txt.txt_specs import TxtMapperSpecs
@@ -42,12 +41,13 @@ from pynxtools.dataconverter.readers.xps.xml.xml_specs import XmlMapperSpecs
 class XpsDataFileParser:
     """Class intended for receiving any type of XPS data file."""
 
-    __prmt_file_ext__ = ["sle", "txt", "vms", "xml", "xy"]
+    __prmt_file_ext__ = ["pro", "sle", "spe", "txt", "vms", "xml", "xy"]
     __prmt_metadata_file_ext__ = ["slh"]
     __vendors__ = ["kratos", "phi", "scienta", "specs", "unkwown"]
     __prmt_vndr_cls: Dict[str, Dict] = {
+        "pro": {"phi": MapperPhi},
         "sle": {"specs": SleMapperSpecs},
-        "spe": {"phi": SpeMapperPhi},
+        "spe": {"phi": MapperPhi},
         # "slh": {"specs": SlhMapperSpecs},
         "txt": {
             "scienta": TxtMapperScienta,

@@ -1,9 +1,8 @@
 """
 Parser for reading XPS (X-ray Photoelectron Spectroscopy) data from
-Specs Lab Prodigy XY exports, to be passed to mpes nxdl
-(NeXus Definition Language) template.
+Phi PHI Versaprobe instruments (.spe or .pro format), to be passed to
+mpes nxdl (NeXus Definition Language) template.
 """
-
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -40,10 +39,10 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
 )
 
 
-class SpeMapperPhi(XPSMapper):
+class MapperPhi(XPSMapper):
     """
     Class for restructuring .xy data file from
-    Specs vendor into python dictionary.
+    Phi vendor into python dictionary.
     """
 
     config_file = "config_spe_phi.json"
@@ -53,11 +52,11 @@ class SpeMapperPhi(XPSMapper):
         self.write_channels_to_data = True
 
     def _select_parser(self):
-        return SpeParser()
+        return PhiParser()
 
     def parse_file(self, file, **kwargs):
         """
-        Parse the file using the Specs XY parser.
+        Parse the file using the Phi sle/pro parser.
 
         Parameters
         ----------
@@ -583,7 +582,7 @@ class SpeMapperPhi(XPSMapper):
 # =============================================================================
 
 
-class SpeParser:  # pylint: disable=too-few-public-methods
+class PhiParser:  # pylint: disable=too-few-public-methods
     """
     A parser for reading in PHI Versaprobe data in the .spe or
     .pro format.
