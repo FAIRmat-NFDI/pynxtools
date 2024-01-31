@@ -119,8 +119,6 @@ class MapperPhi(XPSMapper):
                 "xray_emission_control",
                 "xray_emission_current",
                 "xray_emission_current/@units",
-                "xray_energy",
-                "xray_energy/@units",
                 "xray_filament_current",
                 "xray_filament_current/@units",
                 "xray_high_power",
@@ -150,6 +148,8 @@ class MapperPhi(XPSMapper):
             "beam": [
                 "xray_beam_diameter",
                 "xray_beam_diameter/@units",
+                "xray_energy",
+                "xray_energy/@units",
             ],
             "analyser": [
                 "analyser_retardation_gain",
