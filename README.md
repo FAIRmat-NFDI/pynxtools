@@ -43,6 +43,10 @@ data into the NeXus standard and visualising the files content.
 
 - [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
 - [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
+- [**generate_eln**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/eln_mapper/README.md): Outputs ELN files that can be used to add metadata to the dataconverter routine.
+
+# Documentation
+Documentation for the different tools can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
 
 # Contributing
 
