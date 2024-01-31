@@ -49,7 +49,7 @@ class MapperPhi(XPSMapper):
     Phi vendor into python dictionary.
     """
 
-    config_file = "config_spe_phi.json"
+    config_file = "config_phi.json"
 
     def __init__(self):
         super().__init__()
