@@ -90,7 +90,6 @@ class SlhMapperSpecs:
         datamodel_version = self._get_version("Version")
         prodigy_version = self._get_version("AppVersion")
 
-        #############################
         parser = self.versions_map[datamodel_version]()
         self.raw_data = parser.parse_file(file, **kwargs)
 
@@ -400,6 +399,7 @@ class SlhProdigyParser:
     def _resample_df(self, df, interval="1s"):
         df_resampled = df.copy()
         # Resample to 1s intervals
+
         df_resampled = df_resampled.resample(
             interval, on="date_time", label="right"
         ).mean()
