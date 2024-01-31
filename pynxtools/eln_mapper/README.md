@@ -1,8 +1,8 @@
 # ELN generator
 This is a helper tool for generating ELN files that can be used to add metadata to the dataconverter routine.
 Two types of ELN are supported (by passing the flag `eln-type`):
-- [**eln**]: The simple ELN generator that can be used in a console or jupyter-notebook.
-- [**scheme_eln**]: Scheme based ELN generator that can be used in NOMAD and the ELN can be used as a custom scheme in NOMAD.
+- **eln**: The simple ELN generator that can be used in a console or jupyter-notebook.
+- **scheme_eln**: Scheme based ELN generator that can be used in NOMAD and the ELN can be used as a custom scheme in NOMAD.
 
 ```
 $ generate_eln --options <value>
