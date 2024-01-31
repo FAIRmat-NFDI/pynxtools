@@ -104,14 +104,37 @@
           "model":"@eln",
           "identifier":"@eln"
         },
+        "LENS_EM[lens_2]":{
+          "name":"Lens 2",
+          "voltage":"@xps_token:collectioncolumn/sxi_lens2_voltage",
+          "voltage/@units":"@xps_token:collectioncolumn/sxi_lens2_voltage/@units"
+        },
+        "LENS_EM[lens_3]":{
+          "name":"Lens 3",
+          "voltage":"@xps_token:collectioncolumn/sxi_lens3_voltage",
+          "voltage/@units":"@xps_token:collectioncolumn/sxi_lens3_voltage/@units"
+        },
+        "LENS_EM[lens_4]":{
+          "name":"Lens 4",
+          "voltage":"@xps_token:collectioncolumn/sxi_lens4_voltage",
+          "voltage/@units":"@xps_token:collectioncolumn/sxi_lens4_voltage/@units"
+        },
+        "LENS_EM[lens_5]":{
+          "name":"Lens 5",
+          "voltage":"@xps_token:collectioncolumn/sxi_lens5_voltage",
+          "voltage/@units":"@xps_token:collectioncolumn/sxi_lens5_voltage/@units"
+        },                     
+        "LENS_EM[lens_bias]":{
+          "name":"Lens bias",
+          "voltage":"@xps_token:collectioncolumn/sxi_lens_bias_voltage",
+          "voltage/@units":"@xps_token:collectioncolumn/sxi_lens_bias_voltage/@units"
+        }
       },
       "ENERGYDISPERSION[energydispersion]":{
         "scheme":"@eln",
-        "pass_energy":"@xps_token:energydispersion/pass_energy",
-        "pass_energy/@units":"@xps_token:energydispersion/pass_energy/@units",
+        "pass_energy":"@xps_token:energydispersion/sxi_pass_energy",
+        "pass_energy/@units":"@xps_token:energydispersion/sxi_pass_energy/@units",
         "energy_scan_mode":"@xps_token:energydispersion/scan_mode",
-        "entrance_slit/description":"@xps_token:energydispersion/entrance_slit",
-        "exit_slit/description":"@xps_token:energydispersion/exit_slit",
         "device_information":{
           "vendor":"@eln",
           "model":"@eln",
@@ -128,8 +151,8 @@
         "detector_voltage/@units":"@xps_token:detector/detector_voltage/@units",
         "amplifier_bias":"@xps_token:detector/bias_voltage_electrons",
         "amplifier_bias/@units":"@xps_token:detector/bias_voltage_electrons/@units",
-        "count_time":"@xps_token:detector/dwell_time",
-        "count_time/@units":"@xps_token:detector/dwell_time/@units",
+        "count_time":"@xps_token:detector/survey_dwell_time",
+        "count_time/@units":"@xps_token:detector/survey_dwell_time/@units",
         "device_information":{
           "vendor":"@eln",
           "model":"@eln",
@@ -186,7 +209,27 @@
         "physical_quantity":"@eln",
         "type":"@eln",
         "PID[pid]/setpoint":"@eln"
-      }
+      },
+      "POSITIONER[stage_x]":{
+        "value": "@xps_token:manipulator/stage_x",
+        "value/@units": "@xps_token:manipulator/stage_x/@units"
+      },
+      "POSITIONER[stage_y]":{
+        "value": "@xps_token:manipulator/stage_y",
+        "value/@units": "@xps_token:manipulator/stage_y/@units"
+      },          
+      "POSITIONER[stage_z]":{
+        "value": "@xps_token:manipulator/stage_z",
+        "value/@units": "@xps_token:manipulator/stage_z/@units"
+      },
+      "POSITIONER[stage_azimuth]":{
+        "value": "@xps_token:manipulator/stage_azimuth",
+        "value/@units": "@xps_token:manipulator/stage_azimuth/@units"
+      },
+      "POSITIONER[stage_polar]":{
+        "value": "@xps_token:manipulator/stage_polar",
+        "value/@units": "@xps_token:manipulator/stage_polar/@units"
+      }      
     },
     "pressure_gauge":{
       "name":"@eln",
@@ -199,24 +242,38 @@
       "name":"@eln",
       "physical_quantity":"@eln",
       "type":"@eln",
-      "current":"@eln",
-      "current_log/value":"@eln"
+      "current":"@xps_token:flood_gun/flood_gun_current",
+      "current/@units":"@xps_token:flood_gun/flood_gun_current/@units",
+      "energy":"@xps_token:flood_gun/flood_gun_energy",
+      "energy/@units":"@xps_token:flood_gun/flood_gun_energy/@units",
+      "extractor_voltage":"@xps_token:flood_gun/extractor_voltage",
+      "extractor_voltage/@units":"@xps_token:flood_gun/extractor_voltage/@units",
+      "filament_current":"@xps_token:flood_gun/flood_gun_filament_current",
+      "filament_currentrrent/@units":"@xps_token:flood_gun/flood_gun_filament_current/@units",
+      "gain":"@xps_token:flood_gun/flood_gun_gain",
+      "mode":"@xps_token:flood_gun/flood_gun_mode",
+      "pulse_frequency":"@xps_token:flood_gun/pulse_frequency",
+      "pulse_length":"@xps_token:flood_gun/flood_gun_pulse_length",
+      "pulse_length/@units":"@xps_token:flood_gun/flood_gun_pulse_length/@units",    
+      "ramp_rate":"@xps_token:flood_gun/flood_gun_ramp_rate",
+      "ramp_rate/@units":"@xps_token:flood_gun/flood_gun_ramp_rate/@units",
+      "time_per_step":"@xps_token:flood_gun/flood_gun_time_per_step",
+      "time_per_step/@units":"@xps_token:flood_gun/flood_gun_time_per_step/@units",
+      "x_steering":"@xps_token:flood_gun/flood_gun_x_steering",
+      "y_steering":"@xps_token:flood_gun/flood_gun_y_steering"
     }
   },
   "/ENTRY[entry]/PROCESS[process]":{
-    "energy_calibration":{
-      "calibrated_axis":"@xps_token:process/energy_calibration/energy",
-      "calibrated_axis/@units":"@xps_token:process/energy_calibration/energy/@units",
-    },
+    "energy_calibration":"None",
     "energy_referencing":{
       "level":"None",
-      "reference_peak":"None",
-      "binding_energy":"None",
+      "reference_peak":"@xps_token:process/energy_reference_peak",
+      "binding_energy":"@xps_token:process/energy_reference_energy",
+      "binding_energy/@units":"@xps_token:process/energy_reference_energy/@units",
       "offset":"None",
-      "calibrated_axis":"None"
+      "calibrated_axis":"@xps_token:data/energy_reference_energy",
     },
     "transmission_correction":"None"
-    }
   },
   "/ENTRY[entry]/SAMPLE[sample]":{
     "name":"@eln",
@@ -232,12 +289,6 @@
     },
     "sample_history":{
       "sample_preparation":{
-        "start_time":"@eln",
-        "end_time":"@eln",
-        "description":"@eln",
-        "method":"@eln"
-      },
-      "PHYSICAL_PROCESS[sample_loading]":{
         "start_time":"@eln",
         "end_time":"@eln",
         "description":"@eln",
@@ -269,7 +320,7 @@
     "@axes":["energy"],
     "data":"@data:cycle",
     "data/@units":"@xps_token:data/intensity/@units",
-    "energy":"@link:/entry/process/energy_calibration/calibrated_axis",
+    "energy":"@link:/entry/process/energy_reference/calibrated_axis",
     "energy/@type":"@xps_token:data/energy/@type",
     "energy/@units":"@xps_token:data/energy/@units",
     "@energy_indices":"None",
