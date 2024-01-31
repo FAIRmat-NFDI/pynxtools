@@ -36,6 +36,7 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
     construct_entry_name,
     construct_data_key,
     construct_detector_data_key,
+    safe_arange_with_edges,
 )
 
 
@@ -447,6 +448,15 @@ class SpeMapperPhi(XPSMapper):
                 "tfc_parameters",
                 "xps_scan_mode",
             ],
+            "profiling": [
+                "no_depth_profile_data_cycles",
+                "no_pre_sputter_cycles",
+                "profiling_sputter_delay",
+                "profiling_xray_off_during_sputter",
+                "profiling_source_blank_during_sputter",
+                "profiling_zalar_high_accuracy_interval",
+                "profiling_sample_rotation",
+            ],
             "unused": [
                 "peak_to_noise_ratio_state",
                 "platform",
@@ -575,7 +585,8 @@ class SpeMapperPhi(XPSMapper):
 
 class SpeParser:  # pylint: disable=too-few-public-methods
     """
-    A parser for reading in PHI Versaprobe data in the .spe format.
+    A parser for reading in PHI Versaprobe data in the .spe or
+    .pro format.
     Tested with Software version SS 3.3.3.2
     """
 
@@ -585,10 +596,7 @@ class SpeParser:  # pylint: disable=too-few-public-methods
 
         """
         self.lines = []
-        self.spectra = [
-            {"spectrum_id": 0},
-            {"spectrum_id": 1},
-        ]
+        self.spectra = []
         self.metadata = PhiMetadata()
 
         self.settings_map = {
@@ -624,6 +632,13 @@ class SpeParser:  # pylint: disable=too-few-public-methods
             "neutral_condensor_volt": "neutral_condenser_lens_voltage",
             "neutral_objective_volt": "neutral_objective_lens_voltage",
             "neutral_bend_volt": "neutral_bend_voltage",
+            "no_d_p_data_cyc": "no_depth_profile_data_cycles",
+            "no_pre_sputter_cyc": "no_pre_sputter_cycles",
+            "sample_rotation": "profiling_sample_rotation",
+            "depth_recal": "profiling_depth_recalibration",
+            "sputter_mode": "profiling_sputter_mode",
+            "no_depth_reg": "profiling_no_depth_regions",
+            "depth_cal_def": "depth_calibration_definition",
             "analyser_mode": "energy_scan_mode",
             "surv_num_cycles": "survey_num_of_cycles",
             "surv_time_per_step": "survey_dwell_time",
@@ -695,6 +710,7 @@ class SpeParser:  # pylint: disable=too-few-public-methods
             "neutral_emission",
             "neutral_deflection_bias",
             "neutral_ion_gun_gas_pressure",
+            "profiling_sputter_delay",
             "survey_dwell_time",
             "xray_anode_power",
             "xray_power",
@@ -780,6 +796,11 @@ class SpeParser:  # pylint: disable=too-few-public-methods
         header, data = self._separate_header_and_data()
 
         self.parse_header_into_metadata(header)
+        regions = self.parse_spectral_regions(header)
+        areas = self.parse_spatial_areas(header)
+
+        self.add_regions_and_areas_to_spectra(regions, areas)
+
         # self.parse_data_into_spectra(data)
 
         self.add_metadata_to_each_spectrum()
@@ -851,6 +872,9 @@ class SpeParser:  # pylint: disable=too-few-public-methods
             if key.startswith("neut"):
                 key = key.replace("neut_", "neutral_")
 
+            elif key.startswith("prof"):
+                key = key.replace("prof_", "profiling_")
+
             elif key.startswith("x_ray"):
                 key = key.replace("x_ray", "xray")
 
@@ -884,8 +908,6 @@ class SpeParser:  # pylint: disable=too-few-public-methods
         channel_count = 1
         datacls_fields = list(self.metadata.__dataclass_fields__.keys())
 
-        unchanged_files = datacls_fields
-
         for line in header:
             try:
                 key, value = line.split(": ")
@@ -903,7 +925,6 @@ class SpeParser:  # pylint: disable=too-few-public-methods
                 if key in self.keys_with_units:
                     value, unit = self.extract_unit(key, value)
                     setattr(self.metadata, f"{key}_units", unit)
-                    unchanged_files.remove(f"{key}_units")
 
                 if not key.startswith("channel_"):
                     value = self.map_values(key, value, field_type)
@@ -911,14 +932,115 @@ class SpeParser:  # pylint: disable=too-few-public-methods
                     value = _convert_channel_info(value)
 
                 setattr(self.metadata, key, value)
-                unchanged_files.remove(key)
-            else:
-                print(key, value)
 
         self.metadata.validate_types()
-        if unchanged_files:
-            # Make sure all metadata fields have been filled.
-            raise AttributeError("Some keys were not updated!")
+
+    def parse_spectral_regions(self, header):
+        """
+        Parse spectral regions definitions.
+
+        Parameters
+        ----------
+        header : list
+            List of header strings.
+
+        Returns
+        -------
+        regions_full : list
+            List of regions with `full` keyword.
+        regions : list
+            List of regions without `full` keyword.
+
+        """
+        spectral_defs = [line for line in header if line.startswith("SpectralReg")]
+
+        regions = []
+        regions_full = []
+        for n in range(self.metadata.no_spectral_regions_full):
+            regions_full += [PhiSpectralRegion(region_id=n)]
+        for n in range(self.metadata.no_spectral_regions):
+            regions += [PhiSpectralRegion(region_id=n)]
+
+        for region in regions_full:
+            region.full_region = True
+            region.region_definition = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_definition2 = spectral_defs.pop(0).split(" ", 1)[1]
+            region.background = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_region_hero = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_ir = spectral_defs.pop(0).split(" ", 1)[1]
+
+        for region in regions:
+            region.full_region = False
+            region.region_definition = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_definition2 = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_background = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_hero = spectral_defs.pop(0).split(" ", 1)[1]
+            region.region_ir = spectral_defs.pop(0).split(" ", 1)[1]
+
+        for region in regions_full + regions:
+            def_split = region.region_definition.split(" ")
+            region.spectrum_type = def_split[2]
+            # print(region.definition.split(" "))
+            region.n_values = int(def_split[4])
+            step = -float(def_split[5])
+            start = float(def_split[6])
+            stop = float(def_split[7])
+
+            region.energy = np.flip(safe_arange_with_edges(stop, start, step))
+
+            region.validate_types()
+
+        return regions_full + regions
+
+    def parse_spatial_areas(self, header):
+        """
+        Parse spatial areas definitions.
+
+        Parameters
+        ----------
+        header : list
+            List of header strings.
+
+        Returns
+        -------
+        areas: list
+            List of spatial areas and their definitions.
+
+        """
+        spatial_defs = [line for line in header if line.startswith("Spatial")]
+
+        areas = []
+        for n in range(self.metadata.no_spatial_areas):
+            areas += [PhiSpatialArea(area_id=n)]
+
+        for area in areas:
+            area.area_definition = spatial_defs.pop(0).split(" ", 1)[1]
+            area.area_description = spatial_defs.pop(0).split(" ", 1)[1]
+            area.area_hr_photo_correction = spatial_defs.pop(0).split(" ", 1)[1]
+
+        return areas
+
+    def add_regions_and_areas_to_spectra(self, regions, areas):
+        """
+        Define each spectra by its region and area defintions.
+
+        Parameters
+        ----------
+        regions : list
+            List of PhiSpectralRegion objects.
+        areas : list
+            List of PhiSpatialArea objects
+
+        Returns
+        -------
+        None.
+
+        """
+        for region in regions:
+            for area in areas:
+                concatenated = {**region.dict(), **area.dict()}
+
+                self.spectra += [concatenated]
 
     def extract_unit(self, key, value):
         """
@@ -970,6 +1092,7 @@ class SpeParser:  # pylint: disable=too-few-public-methods
             "defect_positioner_z": "mm",
             "defect_positioner_tilt": "degree",
             "defect_positioner_rotation": "degree",
+            "profiling_sputter_delay": "s",
         }
 
         try:
@@ -1022,6 +1145,9 @@ class SpeParser:  # pylint: disable=too-few-public-methods
             "sputter_raster_offset": _map_to_xy_with_units,
             "neutral_raster": _map_to_xy_with_units,
             "neutral_raster_offset": _map_to_xy_with_units,
+            "profiling_xray_off_during_sputter": _convert_bool,
+            "profiling_source_blank_during_sputter": _convert_bool,
+            "profiling_depth_recalibration": _convert_bool,
             "energy_scan_mode": _convert_energy_scan_mode,
             "xray_source": _convert_xray_source_params,
             "xray_stigmator": _map_to_xy,
@@ -1102,6 +1228,10 @@ class SpeParser:  # pylint: disable=too-few-public-methods
 def convert_pascal_to_snake(str_value):
     pattern = re.compile(r"(?<!^)(?=[A-Z])")
     return pattern.sub("_", str_value).lower()
+
+
+def convert_snake_to_pascal(str_value):
+    return str_value.replace("_", " ").title().replace(" ", "")
 
 
 def _map_file_type(value):
@@ -1272,7 +1402,26 @@ from dataclasses import field
 
 
 @dataclass
-class PhiMetadata:
+class PhiDataclass:
+    def validate_types(self):
+        ret = True
+        for field_name, field_def in self.__dataclass_fields__.items():
+            actual_type = type(getattr(self, field_name))
+            if actual_type != field_def.type:
+                print(f"\t{field_name}: '{actual_type}' instead of '{field_def.type}'")
+                ret = False
+        return ret
+
+    def __post_init__(self):
+        if not self.validate_types():
+            raise ValueError("Wrong types")
+
+    def dict(self):
+        return self.__dict__.copy()
+
+
+@dataclass
+class PhiMetadata(PhiDataclass):
     """An object to store the PHI Versaprobe metadata."""
 
     platform: str = ""
@@ -1386,22 +1535,23 @@ class PhiMetadata:
     survey_num_of_cycles: int = 0
     survey_dwell_time: float = 0.0
     survey_dwell_time_units: str = "s"
+
+    no_depth_profile_data_cycles: int = 0
+    no_pre_sputter_cycles: int = 0
+    profiling_sputter_delay: float = 0.0
+    profiling_sputter_delay_units: str = ""
+    profiling_xray_off_during_sputter: bool = False
+    profiling_source_blank_during_sputter: bool = False
+    profiling_zalar_high_accuracy_interval: int = 0
+    profiling_sample_rotation: str = ""
+    profiling_depth_recalibration: bool = False
+    profiling_sputter_mode: str = ""
+    depth_calibration_definition: str = ""
+    profiling_no_depth_regions: int = 0
+
     no_spectral_regions_full: int = 0
-    spectral_region_definition_full: str = ""
-    spectral_region_definition2_full: str = ""
-    spectral_region_background_full: str = ""
-    spectral_region_hero_full: str = ""
-    spectral_region_ir_full: str = ""
     no_spectral_regions: int = 0
-    spectral_region_definition: str = ""
-    spectral_region_definition2: str = ""
-    spectral_region_background: str = ""
-    spectral_region_hero: str = ""
-    spectral_region_ir: str = ""
     no_spatial_areas: int = 0
-    spatial_area_definition: str = ""
-    spatial_area_description: str = ""
-    spatial_hr_photo_correction: str = ""
 
     xray_source: dict = field(default_factory=dict)
     xray_anode_position: int = 0
@@ -1576,29 +1726,39 @@ class PhiMetadata:
     auto_neutral_ion_source: bool = False
     presputter: bool = False
 
-    def validate_types(self):
-        ret = True
-        for field_name, field_def in self.__dataclass_fields__.items():
-            actual_type = type(getattr(self, field_name))
-            if actual_type != field_def.type:
-                print(f"\t{field_name}: '{actual_type}' instead of '{field_def.type}'")
-                ret = False
-        return ret
 
-    def __post_init__(self):
-        if not self.validate_types():
-            raise ValueError("Wrong types")
+@dataclass
+class PhiSpectralRegion(PhiDataclass):
+    """An object to store the PHI Versaprobe metadata."""
 
-    def dict(self):
-        return self.__dict__.copy()
+    full_region: bool = False
+    region_id: int = 0
+    region_definition: str = ""
+    spectrum_type: str = ""
+    region_definition2: str = ""
+    region_background: str = ""
+    region_hero: str = ""
+    region_ir: str = ""
+    n_values: int = 0
+    energy: np.ndarray = np.array([])
+
+
+@dataclass
+class PhiSpatialArea(PhiDataclass):
+    """An object to store the PHI Versaprobe metadata."""
+
+    area_id: int = 0
+    area_definition: str = ""
+    area_description: str = ""
+    area_hr_photo_correction: str = ""
 
 
 # %%
 # file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_102_20240122_SBenz_SnO2_10nm.spe"
 # file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_107_20240122_SBenz_SnO2_10nm_1.pro"
 
-# file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.spe"
-file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.pro"
+file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.spe"
+# file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.pro"
 
 
 if __name__ == "__main__":
