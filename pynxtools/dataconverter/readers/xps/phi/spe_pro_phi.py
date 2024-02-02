@@ -164,18 +164,6 @@ class MapperPhi(XPSMapper):
                 "sxi_binding_energy/@units",
                 "sxi_display_mode",
                 "sxi_filename",
-                "sxi_lens2_voltage",
-                "sxi_lens2_voltage/@units",
-                "sxi_lens3_voltage",
-                "sxi_lens3_voltage/@units",
-                "sxi_lens4_voltage",
-                "sxi_lens4_voltage/@units",
-                "sxi_lens5_voltage",
-                "sxi_lens5_voltage/@units",
-                "sxi_lens_bias_voltage",
-                "sxi_lens_bias_voltage/@units",
-                "sxi_pass_energy",
-                "sxi_pass_energy/@units",
                 "sxi_persistence",
                 "sxi_rotator",
                 "sxi_rotator/@units",
@@ -186,9 +174,21 @@ class MapperPhi(XPSMapper):
             ],
             "collectioncolumn": [
                 "narrow_acceptance_angle",
+                "sxi_lens2_voltage",  #
+                "sxi_lens2_voltage/@units",  #
+                "sxi_lens3_voltage",  #
+                "sxi_lens3_voltage/@units",  #
+                "sxi_lens4_voltage",  #
+                "sxi_lens4_voltage/@units",  #
+                "sxi_lens5_voltage",  #
+                "sxi_lens5_voltage/@units",  #
+                "sxi_lens_bias_voltage",  #
+                "sxi_lens_bias_voltage/@units",  #
             ],
             "energydispersion": [
-                "energy_scan_mode",
+                "energy_scan_mode",  #
+                "sxi_pass_energy",  #
+                "sxi_pass_energy/@units",  #
             ],
             "detector": [
                 "channel_1_info",
@@ -229,22 +229,22 @@ class MapperPhi(XPSMapper):
                 "detector_acquisition_time/@units",
                 "number_of_channels",
                 "refresh_persistence",
-                "survey_dwell_time",
-                "survey_dwell_time/@units",
+                "survey_dwell_time",  #
+                "survey_dwell_time/@units",  #
             ],
             "manipulator": [
-                "stage_x",
-                "stage_x/@units",
-                "stage_y",
-                "stage_y/@units",
-                "stage_z",
-                "stage_z/@units",
-                "stage_azimuth",
-                "stage_azimuth/@units",
-                "stage_polar",
-                "stage_polar/@units",
-                "stage_current_rotation_speed",
-                "stage_current_rotation_speed/@units",
+                "stage_x",  #
+                "stage_x/@units",  #
+                "stage_y",  #
+                "stage_y/@units",  #
+                "stage_z",  #
+                "stage_z/@units",  #
+                "stage_azimuth",  #
+                "stage_azimuth/@units",  #
+                "stage_polar",  #
+                "stage_polar/@units",  #
+                "stage_current_rotation_speed",  #
+                "stage_current_rotation_speed/@units",  #
             ],
             "defect_positioner": [
                 "defect_positioner_alignment",
@@ -270,26 +270,26 @@ class MapperPhi(XPSMapper):
                 "c60_ion_gun",
             ],
             "flood_gun": [
-                "auto_flood_gun",
-                "flood_gun_current",
-                "flood_gun_current/@units",
-                "flood_gun_energy",
-                "flood_gun_energy/@units",
-                "flood_gun_extractor",
-                "flood_gun_extractor/@units",
-                "flood_gun_filament_current",
-                "flood_gun_filament_current/@units",
-                "flood_gun_gain",
-                "flood_gun_mode",
-                "flood_gun_pulse_frequency",
-                "flood_gun_pulse_length",
-                "flood_gun_pulse_length/@units",
-                "flood_gun_ramp_rate",
-                "flood_gun_ramp_rate/@units",
-                "flood_gun_time_per_step",
-                "flood_gun_time_per_step/@units",
-                "flood_gun_x_steering",
-                "flood_gun_y_steering",
+                "auto_flood_gun",  #
+                "flood_gun_current",  #
+                "flood_gun_current/@units",  #
+                "flood_gun_energy",  #
+                "flood_gun_energy/@units",  #
+                "flood_gun_extractor",  #
+                "flood_gun_extractor/@units",  #
+                "flood_gun_filament_current",  #
+                "flood_gun_filament_current/@units",  #
+                "flood_gun_gain",  #
+                "flood_gun_mode",  #
+                "flood_gun_pulse_frequency",  #
+                "flood_gun_pulse_length",  #
+                "flood_gun_pulse_length/@units",  #
+                "flood_gun_ramp_rate",  #
+                "flood_gun_ramp_rate/@units",  #
+                "flood_gun_time_per_step",  #
+                "flood_gun_time_per_step/@units",  #
+                "flood_gun_x_steering",  #
+                "flood_gun_y_steering",  #
             ],
             "gcib": [
                 "gcib_bend_voltage",
@@ -407,8 +407,8 @@ class MapperPhi(XPSMapper):
                 "deconvolution_pass_energy",
                 "deconvolution_pass_energy/@units",
                 "energy_recalibration",
-                "energy_reference_energy",
-                "energy_reference_energy/@units",
+                "energy_reference_energy",  #
+                "energy_reference_energy/@units",  #
                 "energy_reference_peak",
                 "intensity_calibration_coefficients",
                 "intensity_recalibration",
