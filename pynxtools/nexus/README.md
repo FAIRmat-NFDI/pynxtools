@@ -1,5 +1,4 @@
-# Debugger and
-
+# NeXus file reader and debugger
 
 This utility outputs a debug log for a given NeXus file by annotating the data and
 metadata entries with the schema definitions from the respective NeXus base classes
