@@ -4,25 +4,25 @@ This utility outputs a debug log for a given NeXus file by annotating the data a
 metadata entries with the schema definitions from the respective NeXus base classes
 and application definitions to which the file refers to.
 
-```
+```console
+user@box:~$ read_nexus --help
+Usage: read_nexus [OPTIONS]
+
+  The main function to call when used as a script.
+
 Options:
-    -f, --nexus-file : Name of nexus output file (.nxs) to enquiry.
-    -d, --documentation : Definition path in nexus output (.nxs) file. Returns debug
-                          log relavent with that definition path.
-                          Example: /entry/data/delays
-    -c, --concept : Concept path from application definition file (.nxdl,xml). Finds out
-                    all the available concept definition (IS-A realation) for rendered
-                    concept path.
-                    Example: /NXarpes/ENTRY/INSTRUMENT/analyser
-    --help : To get the documentaion above
-    NOTE: Only one option from (-d and -c) is acceptable.
+  -f, --nexus-file TEXT     NeXus file with extension .nxs to learn NeXus
+                            different concept documentation and concept.
+  -d, --documentation TEXT  Definition path in nexus output (.nxs) file.
+                            Returns debuglog relavent with that definition
+                            path. Example: /entry/data/delays
+  -c, --concept TEXT        Concept path from application definition file
+                            (.nxdl,xml). Finds outall the available concept
+                            definition (IS-A realation) for renderedconcept
+                            path. Example: /NXarpes/ENTRY/INSTRUMENT/analyser
+  --help                    Show this message and exit.
 
-In console:
-
-read_nexus [Options] <path_to_nexus_file>
-
-
-
+NOTE: Only one option from (-d and -c) is acceptable.
 ```
 
 The following example dataset can be used to test the `read_nexus` module: `tests/data/nexus/201805_WSe2_arpes.nxs`.
