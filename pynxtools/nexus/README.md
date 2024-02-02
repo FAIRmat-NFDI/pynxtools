@@ -36,3 +36,12 @@ export 'NEXUS_DEF_PATH'=<folder_path_that_contains_nexus_defs>
 Following example dataset can be used to test `read_nexus` module `tests/data/nexus/201805_WSe2_arpes.nxs`.
 This is an angular-resolved photoelectron spectroscopy (ARPES) dataset and it is formatted according to
 the [NXarpes application definition of NeXus](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes).
+
+
+A note to Windows users: if you run `read_nexus` from `git bash`, you need to set the environmental variable
+`MSYS_NO_PATHCONV` to avoid the [path translation in Windows Git MSys](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471).
+The easiest way is to prefix the `read_nexus` call with `MSYS_NO_PATHCONV=1`:
+
+```
+MSYS_NO_PATHCONV=1 read_nexus -c /NXarpes/ENTRY/INSTRUMENT/analyser
+```

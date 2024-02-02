@@ -776,10 +776,6 @@ class HandleNexus:
 )
 def main(nexus_file, documentation, concept):
     """The main function to call when used as a script."""
-    import platform
-
-    if platform.system() == "Windows" and "Git" in os.environ["SHELL"]:
-        os.environ["MSYS_NO_PATHCONV"] = "1"
     logging_format = "%(levelname)s: %(message)s"
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging.DEBUG)
