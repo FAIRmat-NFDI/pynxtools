@@ -187,7 +187,8 @@ class VamasMapper(XPSMapper):
         detector_data_key = f'{path_map["detector"]}/{detector_data_key_child}/counts'
 
         energy = np.array(spectrum["data"]["x"])
-        intensity = np.array(spectrum["data"]["y"])
+        intensity_raw = np.array(spectrum["data"]["y"])
+        intensity_cps = np.array(spectrum["data"]["y_cps"])
 
         if entry not in self._xps_dict["data"]:
             self._xps_dict["data"][entry] = xr.Dataset()
@@ -203,23 +204,24 @@ class VamasMapper(XPSMapper):
         averaged_scans = np.mean(all_scan_data, axis=0)
         if averaged_scans.size == 1:
             # on first scan in cycle
-            averaged_scans = intensity
+            averaged_scans = intensity_cps
 
         try:
             self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
                 data=averaged_scans,
                 coords={"energy": energy},
             )
+            print(averaged_scans)
         except ValueError:
             pass
 
         # Write scan data to 'data'.
         self._xps_dict["data"][entry][scan_key] = xr.DataArray(
-            data=intensity, coords={"energy": energy}
+            data=intensity_cps, coords={"energy": energy}
         )
 
         # Write raw intensities to 'detector'.
-        self._xps_dict[detector_data_key] = intensity
+        self._xps_dict[detector_data_key] = intensity_raw
 
 
 class VamasParser(ABC):
@@ -603,9 +605,16 @@ class VamasParser(ABC):
             for var in range(int(block.no_variables)):
                 if var == 0:
                     key = "y"
+
+                    data["y"] = getattr(block, "y")
+
+                    if block.variable_label_1 == "Intensity":
+                        y_cps = [np.round(y / block.dwell_time, 2) for y in block.y]
+                        data["y_cps"] = y_cps
+
                 else:
                     key = "y" + str(var)
-                data[key] = getattr(block, key)
+                    data[key] = getattr(block, key)
 
             spec_dict = {
                 "time_stamp": date_time,
