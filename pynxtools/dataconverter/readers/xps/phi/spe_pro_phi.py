@@ -187,8 +187,8 @@ class MapperPhi(XPSMapper):
             ],
             "energydispersion": [
                 "energy_scan_mode",  #
-                "sxi_pass_energy",  #
-                "sxi_pass_energy/@units",  #
+                "pass_energy",  #
+                "pass_energy/@units",  #
             ],
             "detector": [
                 "channel_1_info",
@@ -229,8 +229,8 @@ class MapperPhi(XPSMapper):
                 "detector_acquisition_time/@units",
                 "number_of_channels",
                 "refresh_persistence",
-                "survey_dwell_time",  #
-                "survey_dwell_time/@units",  #
+                "dwell_time",  #
+                "dwell_time/@units",  #
             ],
             "manipulator": [
                 "stage_x",  #
@@ -802,6 +802,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         """
         self.lines = self._read_lines(file)
         header, data = self._separate_header_and_data()
+        # l = b'\x01'.join(data)
 
         self.parse_header_into_metadata(header)
         regions = self.parse_spectral_regions(header)
@@ -809,7 +810,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
         self.add_regions_and_areas_to_spectra(regions, areas)
 
-        # self.parse_data_into_spectra(data)
+        self.parse_data_into_spectra(data)
 
         self.add_metadata_to_each_spectrum()
 
@@ -830,7 +831,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
         """
         lines = []
-        with open(file, encoding="ISO-8859-1") as txt_file:  # "utf-8"
+        with open(file, mode="rb") as txt_file:  # "utf-8"
             for line in txt_file:
                 lines += [line.strip()]
 
@@ -849,10 +850,10 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         n_headerlines = 0
 
         for i, line in enumerate(self.lines):
-            if "SOFH" in line:
+            if "SOFH" in line.decode("ascii"):
                 in_header = True
 
-            elif "EOFH" in line:
+            elif "EOFH" in line.decode("ascii"):
                 in_header = False
                 break
 
@@ -860,6 +861,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
                 n_headerlines += 1
 
         header = self.lines[1 : n_headerlines + 1]
+        header = [line.decode("ascii") for line in header]
         data = self.lines[n_headerlines + 2 :]
 
         return header, data
@@ -988,11 +990,12 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         for region in regions_full + regions:
             def_split = region.region_definition.split(" ")
             region.spectrum_type = def_split[2]
-            # print(region.definition.split(" "))
             region.n_values = int(def_split[4])
             step = -float(def_split[5])
             start = float(def_split[6])
             stop = float(def_split[7])
+            region.dwell_time = float(def_split[9])
+            region.pass_energy = float(def_split[-2])
 
             region.energy = np.flip(safe_arange_with_edges(stop, start, step))
 
@@ -1049,6 +1052,57 @@ class PhiParser:  # pylint: disable=too-few-public-methods
                 concatenated = {**region.dict(), **area.dict()}
 
                 self.spectra += [concatenated]
+
+    def parse_data_into_spectra(self, binary_data):
+        binary_header_lines, binary_data_lines = binary_data[:1], binary_data[1:]
+        binary_spectra_header = self.parse_binary_header(binary_header_lines)
+        parsed_data = self.parse_binary_data(binary_data_lines)
+
+        # =============================================================================
+        #         for i, spectrum in enumerate(self.spectra):
+        #             spectrum.update("binary_header": binary_header)
+        #             spectrum.update("data": parsed_data)
+        # =============================================================================
+
+        return binary_spectra_header, binary_data
+
+    def parse_binary_header(self, binary_header_lines):
+        n_spectra = len(binary_header_lines)
+
+        binary_spectra_header = np.zeros((n_spectra, 24), dtype=np.uint32)
+
+        for i, header_line in enumerate(binary_header_lines):
+            # Each spectrum gets 24 unsigned 4 byte integers
+            binary_header = np.frombuffer(
+                header_line, dtype=np.uint32, count=24 * n_spectra
+            )
+
+        binary_spectra_header[i] = binary_header
+
+        return binary_spectra_header
+
+    def parse_binary_data(self, binary_data_lines):
+        n_spectra = 1
+        npoints = 1751
+
+        c = 0
+        for d in binary_data_lines:
+            c += len(d)
+        print(c)
+        data = b"".join(binary_data_lines)
+        print(len(data))
+
+        parsed_data = np.zeros((n_spectra, 24), dtype=np.float64)
+
+        for i, data_line in enumerate(binary_data_lines):
+            spectrum_data = np.frombuffer(data_line, dtype=np.float64, count=npoints)
+            # Each spectrum gets 24 unsigned 4 byte integers
+        # binary_data_spec = np.frombuffer(data_line, dtype=np.float64)#, count=24*n_spectra)
+        # print(binary_data_spec)
+
+        parsed_data[i] = spectrum_data
+
+        return parsed_data
 
     def extract_unit(self, key, value):
         """
@@ -1406,11 +1460,8 @@ def _convert_stage_positions(value):
 
 
 # %%
-# file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_102_20240122_SBenz_SnO2_10nm.spe"
+file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_102_20240122_SBenz_SnO2_10nm.spe"
 # file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_107_20240122_SBenz_SnO2_10nm_1.pro"
-
-# file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.spe"
-file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\metadata.pro"
 
 if __name__ == "__main__":
     parser = PhiParser()

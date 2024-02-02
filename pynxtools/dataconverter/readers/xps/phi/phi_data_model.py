@@ -367,6 +367,10 @@ class PhiSpectralRegion(PhiDataclass):
     region_ir: str = ""
     n_values: int = 0
     energy: np.ndarray = field(default_factory=lambda: np.zeros(0))
+    dwell_time: float = 0.0
+    dwell_time_units: str = "s"
+    pass_energy: float = 0.0
+    pass_energy_units: str = "eV"
 
 
 @dataclass
