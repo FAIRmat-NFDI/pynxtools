@@ -366,7 +366,7 @@ class PhiSpectralRegion(PhiDataclass):
     region_hero: str = ""
     region_ir: str = ""
     n_values: int = 0
-    energy: np.ndarray = np.array([])
+    energy: np.ndarray = field(default_factory=lambda: np.zeros(0))
 
 
 @dataclass
