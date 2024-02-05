@@ -1,3 +1,4 @@
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pytest.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/pylint.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools/actions/workflows/publish.yml/badge.svg)
@@ -60,6 +61,14 @@ python -m pip install --upgrade pip
 python -m pip install -e .
 python -m pip install -e ".[dev]"
 ```
+
+There is also a [pre-commit hook](https://pre-commit.com/#intro) available
+which formats the code and checks the linting before actually commiting.
+It can be installed with
+```shell
+pre-commit install
+```
+from the root of this repository.
 
 ## Test this software
 
