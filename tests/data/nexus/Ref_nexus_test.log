@@ -444,7 +444,7 @@ NXentry.nxdl.xml:/entry_identifier
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXentry.nxdl.xml:/entry_identifier):
 DEBUG - 
-             Unique identifier for the measurement, defined by the facility.
+             unique identifier for the measurement, defined by the facility.
         
 DEBUG - ===== FIELD (//entry/experiment_identifier): <HDF5 dataset "experiment_identifier": shape (), type "|O">
 DEBUG - value: b'F-20170538' 
@@ -851,7 +851,10 @@ DEBUG -
          especially valuable in storing the results of instrument simulations in which it is useful
          to specify the beam profile, time distribution etc. at each beamline component. Otherwise,
          its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
-         scattering by the sample, e.g., energy transfer, polarizations.
+         scattering by the sample, e.g., energy transfer, polarizations. Finally, There are cases where the beam is
+         considered as a beamline component and this group may be defined as a subgroup directly inside
+         :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an
+         :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
          
          Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
          To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
@@ -959,7 +962,10 @@ DEBUG -
          especially valuable in storing the results of instrument simulations in which it is useful
          to specify the beam profile, time distribution etc. at each beamline component. Otherwise,
          its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
-         scattering by the sample, e.g., energy transfer, polarizations.
+         scattering by the sample, e.g., energy transfer, polarizations. Finally, There are cases where the beam is
+         considered as a beamline component and this group may be defined as a subgroup directly inside
+         :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an
+         :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
          
          Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
          To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
@@ -1564,9 +1570,6 @@ DEBUG - -> Optical Laser
 DEBUG - -> Ion Source
 DEBUG - -> UV Plasma Source
 DEBUG - -> Metal Jet X-ray
-DEBUG - -> Arc Lamp
-DEBUG - -> Halogen Lamp
-DEBUG - -> LED
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/type):
@@ -1761,9 +1764,6 @@ DEBUG - -> Optical Laser
 DEBUG - -> Ion Source
 DEBUG - -> UV Plasma Source
 DEBUG - -> Metal Jet X-ray
-DEBUG - -> Arc Lamp
-DEBUG - -> Halogen Lamp
-DEBUG - -> LED
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/type):
@@ -1842,68 +1842,39 @@ DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/bias): <HDF5 dataset "bias": shape (), type "<i8">
 DEBUG - value: 29 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXsample.nxdl.xml:/bias
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/bias):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Voltage applied to sample and sample holder.
-        
 DEBUG - ===== ATTRS (//entry/sample/bias@target)
 DEBUG - value: /entry/instrument/manipulator/sample_bias 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXsample.nxdl.xml:/bias
-DEBUG - @target - IS NOT IN SCHEMA
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/sample/bias@units)
 DEBUG - value: V 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXsample.nxdl.xml:/bias
-DEBUG - NXsample.nxdl.xml:/bias@units [NX_VOLTAGE]
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/chem_id_cas): <HDF5 dataset "chem_id_cas": shape (), type "|O">
 DEBUG - value: b'12067-46-8' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/chem_id_cas
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/chem_id_cas):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             CAS registry number of the sample chemical content.
-        
 DEBUG - ===== FIELD (//entry/sample/chemical_name): <HDF5 dataset "chemical_name": shape (), type "|O">
 DEBUG - value: b'Tungsten diselenide' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/chemical_name
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/chemical_name):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Full chemical name of the sample
-        
 DEBUG - ===== FIELD (//entry/sample/growth_method): <HDF5 dataset "growth_method": shape (), type "|O">
 DEBUG - value: b'Chemical Vapor Deposition' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/growth_method
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/growth_method):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Sample growth method (e. g. molecular beam epitaxy, chemical vapor deposition
-             etc.)
-        
 DEBUG - ===== FIELD (//entry/sample/layer): <HDF5 dataset "layer": shape (), type "|O">
 DEBUG - value: b'bulk' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/layer
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/layer):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Number of layers of the sample (e.g. bulk, monolayer, pentalayer, etc.)
-        
 DEBUG - ===== FIELD (//entry/sample/name): <HDF5 dataset "name": shape (), type "|O">
 DEBUG - value: b'WSe2' 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
@@ -1940,24 +1911,14 @@ NXsample.nxdl.xml:/pressure
 DEBUG - NXsample.nxdl.xml:/pressure@units [NX_PRESSURE]
 DEBUG - ===== FIELD (//entry/sample/purity): <HDF5 dataset "purity": shape (), type "<f8">
 DEBUG - value: 0.999 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_FLOAT']
-DEBUG - classes:
-NXsample.nxdl.xml:/purity
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/purity):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Chemical purity of the sample
-        
 DEBUG - ===== FIELD (//entry/sample/state): <HDF5 dataset "state": shape (), type "|O">
 DEBUG - value: b'monocrystalline solid' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/state
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/state):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Physical state of the sample
-        
 DEBUG - ===== FIELD (//entry/sample/surface_orientation): <HDF5 dataset "surface_orientation": shape (), type "|O">
 DEBUG - value: b'0001' 
 DEBUG - classpath: ['NXentry', 'NXsample']
@@ -2002,14 +1963,9 @@ NXsample.nxdl.xml:/thickness
 DEBUG - NXsample.nxdl.xml:/thickness@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/sample/vendor): <HDF5 dataset "vendor": shape (), type "|O">
 DEBUG - value: b'HQ Graphene' 
-DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
-DEBUG - classes:
-NXsample.nxdl.xml:/vendor
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXsample.nxdl.xml:/vendor):
+DEBUG - classpath: ['NXentry', 'NXsample']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
-             Name of the sample vendor (company or research group)
-        
 DEBUG - ===== FIELD (//entry/start_time): <HDF5 dataset "start_time": shape (), type "|O">
 DEBUG - value: b'2018-05-01T07:22:00+02:00' 
 DEBUG - classpath: ['NXentry', 'NX_DATE_TIME']

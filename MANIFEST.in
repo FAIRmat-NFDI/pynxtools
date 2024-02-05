@@ -1,5 +1,7 @@
 recursive-include pynxtools/definitions/base_classes/ *.xml
 recursive-include pynxtools/definitions/applications/ *.xml
 recursive-include pynxtools/definitions/contributed_definitions/ *.xml
-include pynxtools/definitions/ *.xsd
+include pynxtools/definitions/*.xsd
 include pynxtools/dataconverter/units *.txt
+include pynxtools/nexus-version.txt
+include pynxtools/definitions/NXDL_VERSION

@@ -1,0 +1,103 @@
+Data:
+  '@signal': null
+  data:
+    value: null
+    unit: null
+Instrument:
+  Beam:
+    distance:
+      value: null
+      unit: null
+    incident_energy:
+      value: null
+      unit: null
+    incident_energy_spread:
+      value: null
+      unit: null
+    incident_polarization:
+      value: null
+      unit: null
+  Electronanalyser:
+    Collectioncolumn:
+      contrast_aperture: null
+      field_aperture: null
+      mode: null
+      projection: null
+      scheme: null
+    Detector:
+      Data:
+        '@signal': null
+        raw: null
+      amplifier_type: null
+      detector_type: null
+    Energydispersion:
+      energy_scan_mode: null
+      entrance_slit: null
+      exit_slit: null
+      pass_energy:
+        value: null
+        unit: null
+      scheme: null
+    description: null
+    energy_resolution:
+      value: null
+      unit: null
+    fast_axes: null
+    slow_axes: null
+  Manipulator:
+    drain_current:
+      value: null
+      unit: null
+    sample_bias:
+      value: null
+      unit: null
+    sample_temperature:
+      value: null
+      unit: null
+  Source:
+    name: null
+    probe: null
+    type: null
+  energy_resolution:
+    value: null
+    unit: null
+Process:
+  angular_calibration:
+    applied: null
+    calibrated_axis: null
+  energy_calibration:
+    applied: null
+    calibrated_axis: null
+  momentum_calibration:
+    applied: null
+    calibrated_axis: null
+  spatial_calibration:
+    applied: null
+    calibrated_axis: null
+Sample:
+  atom_types: null
+  bias:
+    value: null
+    unit: null
+  chemical_formula: null
+  gas_pressure:
+    value: null
+    unit: null
+  name: null
+  preparation_date: null
+  preparation_description: null
+  sample_history: null
+  situation: null
+  temperature:
+    value: null
+    unit: null
+User:
+  address: null
+  affiliation: null
+  email: null
+  name: null
+  orcid: null
+definition:
+  '@version': null
+start_time: null
+title: null

@@ -19,14 +19,15 @@
 import os
 from typing import Tuple, Any
 import math
+from importlib.metadata import version
 import yaml
 import pandas as pd
 import numpy as np
-# import h5py
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
 from pynxtools.dataconverter.helpers import extract_atom_types
 from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
+from pynxtools import get_nexus_version, get_nexus_version_hash
 
 DEFAULT_HEADER = {'sep': '\t', 'skip': 0}
 
@@ -67,6 +68,8 @@ CONFIG_KEYS = [
 
 REPLACE_NESTED = {
     'Instrument/Beam_path': 'INSTRUMENT[instrument]/BEAM_PATH[beam_path]',
+    'Env_Conditions': 'INSTRUMENT[instrument]/sample_stage/environment_conditions',
+    'Instrument': 'INSTRUMENT[instrument]'
 }
 
 
@@ -361,7 +364,17 @@ class EllipsometryReader(BaseReader):
         header[f"data_collection/NAME_spectrum[{spectrum_type}_spectrum]"] = (
             whole_data[spectrum_type].to_numpy()[0:counts[0]].astype("float64"))
 
+        def write_scan_axis(name: str, values: list, units: str):
+            base_path = f"Env_Conditions/PARAMETER[{name}]"
+            header[f"{base_path}/values"] = values
+            header[f"{base_path}/values/@units"] = units
+            header[f"{base_path}/number_of_parameters"] = len(values)
+            header[f"{base_path}/number_of_parameters/@units"] = ""
+            header[f"{base_path}/parameter_type"] = name
+
         header["Instrument/angle_of_incidence"] = unique_angles
+        for axis in ["detection_angle", "incident_angle"]:
+            write_scan_axis(axis, unique_angles, "degree")
 
         # Create mocked ellipsometry data template:
         if is_mock:
@@ -404,7 +417,15 @@ class EllipsometryReader(BaseReader):
         template = populate_template_dict(header, template)
 
         spectrum_type = header["Data"]["spectrum_type"]
-        spectrum_unit = header["Data"]["spectrum_unit"]
+        if header["Data"]["spectrum_unit"] == "Angstroms":
+            spectrum_unit = "angstrom"
+        else:
+            spectrum_unit = header["Data"]["spectrum_unit"]
+        # MK:: Carola, Ron, Flo, Tamas, Sandor refactor the above-mentioned construct
+        # there has to be a unit parsing control logic already at the level of this reader
+        # because test-data.data has improper units like Angstroms or degrees
+        # the fix above prevents that these incorrect units are get just blindly carried
+        # over into the nxs file and thus causing nomas to fail
         template[f"/ENTRY[entry]/plot/AXISNAME[{spectrum_type}]"] = \
             {"link": f"/entry/data_collection/{spectrum_type}_spectrum"}
         template[f"/ENTRY[entry]/data_collection/NAME_spectrum[{spectrum_type}_spectrum]/@units"] \
@@ -420,16 +441,19 @@ class EllipsometryReader(BaseReader):
                         "link": "/entry/data_collection/measured_data",
                         "shape": np.index_exp[index, dindx, :]
                 }
-                template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degrees"
+                # MK:: Carola, Ron, Flo, Tamas, Sandor refactor the following line
+                # using a proper unit parsing logic
+                template[f"/ENTRY[entry]/plot/DATA[{key}]/@units"] = "degree"
                 if dindx == 0 and index == 0:
                     template[f"/ENTRY[entry]/plot/DATA[{key}]/@long_name"] = \
-                        f"{plot_name} (degrees)"
+                        f"{plot_name} (degree)"
                 template[f"/ENTRY[entry]/plot/DATA[{key}_errors]"] = \
                     {
                         "link": "/entry/data_collection/data_error",
                         "shape": np.index_exp[index, dindx, :]
                 }
-                template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degrees"
+                # MK:: Carola, Ron, Flo, Tamas, Sandor refactor the following line
+                template[f"/ENTRY[entry]/plot/DATA[{key}_errors]/@units"] = "degree"
 
         template["/ENTRY[entry]/data_collection/measured_data/@units"] = ""
         # Define default plot showing Psi and Delta at all angles:
@@ -443,6 +467,16 @@ class EllipsometryReader(BaseReader):
         template["/ENTRY[entry]/plot/@auxiliary_signals"] = data_list[0][1:]
         for index in range(1, len(data_list)):
             template["/ENTRY[entry]/plot/@auxiliary_signals"] += data_list[index]
+
+        template["/ENTRY[entry]/definition"] = "NXellipsometry"
+        template["/ENTRY[entry]/definition/@url"] = (
+            "https://github.com/FAIRmat-NFDI/nexus_definitions/"
+            f"blob/{get_nexus_version_hash()}/contributed_definitions/NXellipsometry.nxdl.xml"
+        )
+        template["/ENTRY[entry]/definition/@version"] = get_nexus_version()
+        template["/ENTRY[entry]/program_name"] = "pynxtools"
+        template["/ENTRY[entry]/program_name/@version"] = version("pynxtools")
+        template["/ENTRY[entry]/program_name/@url"] = "https://github.com/FAIRmat-NFDI/pynxtools"
 
         return template
 

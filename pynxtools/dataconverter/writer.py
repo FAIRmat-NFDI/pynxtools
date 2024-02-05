@@ -105,6 +105,7 @@ def handle_shape_entries(data, file, path):
     return layout
 
 
+# pylint: disable=too-many-locals, inconsistent-return-statements
 def handle_dicts_entries(data, grp, entry_name, output_path, path):
     """Handle function for dictionaries found as value of the nexus file.
 
@@ -163,7 +164,13 @@ Several cases can be encoutered:
         raise InvalidDictProvided("A dictionary was provided to the template but it didn't"
                                   " fall into any of the know cases of handling"
                                   " dictionaries. This occured for: " + entry_name)
-    return grp[entry_name]
+    # Check whether link has been stabilished or not
+    try:
+        return grp[entry_name]
+    except KeyError:
+        logger.warning("No path '%s' available to be linked.", path)
+        del grp[entry_name]
+        return None
 
 
 class Writer:
@@ -171,25 +178,27 @@ class Writer:
 
     Args:
         data (dict): Dictionary containing the data to convert.
-        nxdl_path (str): Path to the nxdl file to use during conversion.
+        nxdl_f_path (str): Path to the nxdl file to use during conversion.
         output_path (str): Path to the output NeXus file.
 
     Attributes:
         data (dict): Dictionary containing the data to convert.
-        nxdl_path (str): Path to the nxdl file to use during conversion.
+        nxdl_f_path (str): Path to the nxdl file to use during conversion.
         output_path (str): Path to the output NeXus file.
         output_nexus (h5py.File): The h5py file object to manipulate output file.
         nxdl_data (dict): Stores xml data from given nxdl file to use during conversion.
         nxs_namespace (str): The namespace used in the NXDL tags. Helps search for XML children.
     """
 
-    def __init__(self, data: dict = None, nxdl_path: str = None, output_path: str = None):
+    def __init__(self, data: dict = None,
+                 nxdl_f_path: str = None,
+                 output_path: str = None):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
-        self.nxdl_path = nxdl_path
+        self.nxdl_f_path = nxdl_f_path
         self.output_path = output_path
         self.output_nexus = h5py.File(self.output_path, "w")
-        self.nxdl_data = ET.parse(self.nxdl_path).getroot()
+        self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
     def __nxdl_to_attrs(self, path: str = '/') -> dict:
@@ -234,8 +243,9 @@ class Writer:
             return grp
         return self.output_nexus[parent_path_hdf5]
 
-    def write(self):
-        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+    def _put_data_into_hdf5(self):
+        """Store data in hdf5 in in-memory file or file."""
+
         hdf5_links_for_later = []
 
         def add_units_key(dataset, path):
@@ -273,6 +283,9 @@ class Writer:
 
         for links in hdf5_links_for_later:
             dataset = handle_dicts_entries(*links)
+            if dataset is None:
+                # If target of a link is invalid to be linked
+                del self.data[links[-1]]
 
         for path, value in self.data.items():
             try:
@@ -287,6 +300,7 @@ class Writer:
 
                 if entry_name[0] != "@":
                     path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(path)
+
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
                     # consider changing the name here the lvalue can also be group!
@@ -296,4 +310,9 @@ class Writer:
                 raise IOError(f"Unknown error occured writing the path: {path} "
                               f"with the following message: {str(exc)}") from exc
 
-        self.output_nexus.close()
+    def write(self):
+        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+        try:
+            self._put_data_into_hdf5()
+        finally:
+            self.output_nexus.close()

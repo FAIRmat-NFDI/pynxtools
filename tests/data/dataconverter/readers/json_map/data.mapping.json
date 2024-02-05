@@ -18,5 +18,6 @@
     "/ENTRY[entry]/optional_parent/required_child": "/required_child",
     "/ENTRY[entry]/program_name": "Example for listing exact data in the map file: Nexus Parser",
     "/ENTRY[entry]/required_group/description": "An example description",
-    "/ENTRY[entry]/required_group2/description": "An example description"
+    "/ENTRY[entry]/required_group2/description": "An example description",
+    "/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]": "/random_data"
 }

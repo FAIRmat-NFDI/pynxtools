@@ -1,6 +1,7 @@
 [build-system]
 requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+backend-path = ["pynxtools"]
+build-backend = "_build_wrapper"
 
 [project]
 name = "pynxtools"
@@ -8,14 +9,15 @@ dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
 ]
-description = "Extend NeXus for materials science experiment and serve as a NOMAD parser implementation for NeXus."
+description = "Extend NeXus for experiments and characterization in Materials Science and Materials Engineering and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
-license = { file = "LICENSE.txt" }
-requires-python = ">=3.8,<3.11"
+license = { file = "LICENSE" }
+requires-python = ">=3.8,!=3.12"
 classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
@@ -29,23 +31,21 @@ dependencies = [
     "ase>=3.19.0",
     "flatdict>=4.0.1",
     "hyperspy>=1.7.4",
-    "jupyterlab>=3.5.2,<3.6.0",
-    "jupyterlab_h5web>=7.0.0",
-    "ifes_apt_tc_data_modeling>=0.0.8",
+    "ifes_apt_tc_data_modeling>=0.0.9",
     "gitpython>=3.1.24",
     "pytz>=2021.1",
     "kikuchipy>=0.8.2",
     "pyxem>=0.14.2",
     "zipfile37==0.1.3",
-    "nionswift==0.16.8",
+    "nionswift>=0.16.8",
     "tzlocal<=4.3",
     "scipy>=1.7.1",
     "lark>=1.1.5",
     "requests",
     "requests_cache",
+    "mergedeep",
+    "importlib-metadata",
 ]
-
-#     "h5web @ git+https://github.com/silx-kit/h5web@3e21159",
 
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools"
@@ -69,8 +69,8 @@ dev = [
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
 dataconverter = "pynxtools.dataconverter.convert:convert_cli"
-nyaml2nxdl = "pynxtools.nyaml2nxdl.nyaml2nxdl:launch_tool"
 verify_nexus = "pynxtools.dataconverter.verify:verify"
+generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
@@ -82,5 +82,5 @@ pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 exclude = ["pynxtools/definitions*"]
 
 [tool.setuptools_scm]
-version_scheme = "guess-next-dev"
+version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"

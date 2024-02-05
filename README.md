@@ -11,7 +11,7 @@ It allows to develop ontologies and to create ontological instances based on the
 
 # Installation
 
-It is recommended to use python 3.8 with a dedicated virtual environment for this package.
+It is recommended to use python 3.10 with a dedicated virtual environment for this package.
 Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
@@ -40,7 +40,6 @@ data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**nyaml2nxdl**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nyaml2nxdl/README.md): Converts, easy to read, YAML [NeXus schemas](https://nexusformat.org) into NeXus XML definition language (NXDL).
 - [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
 - [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
 
@@ -71,6 +70,18 @@ Especially relevant for developers, there exists a basic test framework written 
 python -m pytest -sv tests
 ```
 
+## Run examples
+
+A number of examples exist which document how the tools can be used. For a standalone
+usage convenient jupyter notebooks are available for each tool. To use them jupyter
+and related tools have to be installed in the development environment as follows:
+
+```shell
+python -m pip install jupyter
+python -m pip install jupyterlab
+python -m pip install jupyterlab_h5web
+```
+
 # Questions, suggestions?
 
 To ask further questions, to make suggestions how we can improve these tools, to get advice
@@ -84,3 +95,8 @@ on how to build on this work, or to get your parser included into NOMAD, you can
 ### Does this software require NOMAD or NOMAD OASIS ?
 
 No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe.
+
+# Troubleshooting
+
+Please check this [guide](TROUBLESHOOTING.md) for any issues you face with the tool. If you don't find a solution there, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).
+

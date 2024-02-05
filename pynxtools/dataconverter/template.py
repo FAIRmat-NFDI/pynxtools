@@ -114,6 +114,24 @@ class Template(dict):
         """Returns a dictionary of all the optionalities merged into one."""
         return {**self.optional, **self.recommended, **self.required}
 
+    def __contains__(self, k):
+        """
+        Supports in operator for the nested Template keys
+        """
+        return any([
+            k in self.optional,
+            k in self.recommended,
+            k in self.undocumented,
+            k in self.required
+        ])
+
+    def get(self, key: str, default=None):
+        """Proxies the get function to our internal __getitem__"""
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def __getitem__(self, k):
         """Handles how values are accessed from the Template object."""
         # Try setting item in all else throw error. Does not append to default.
@@ -130,7 +148,10 @@ class Template(dict):
                         return self.required[k]
                     except KeyError:
                         return self.undocumented[k]
-        return self.get_optionality(k)
+        if k in ("required", "optional", "recommended", "undocumented"):
+            return self.get_optionality(k)
+        raise KeyError("Only paths starting with '/' or one of [optional_parents, "
+                       "lone_groups, required, optional, recommended, undocumented] can be used.")
 
     def clear(self):
         """Clears all data stored in the Template object."""
@@ -171,12 +192,15 @@ class Template(dict):
 
     def __delitem__(self, key):
         """Delete a dictionary key or template key"""
-
         if key in self.optional.keys():
             del self.optional[key]
 
-        if key in self.required.keys():
+        elif key in self.required.keys():
             del self.required[key]
 
-        if key in self.recommended.keys():
+        elif key in self.recommended.keys():
             del self.recommended[key]
+        elif key in self.undocumented.keys():
+            del self.undocumented[key]
+        else:
+            raise KeyError(f"{key} does not exist.")

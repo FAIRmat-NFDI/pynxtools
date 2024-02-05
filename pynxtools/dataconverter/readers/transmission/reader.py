@@ -22,7 +22,7 @@ import pandas as pd
 
 from pynxtools.dataconverter.readers.json_yml.reader import YamlJsonReader
 import pynxtools.dataconverter.readers.transmission.metadata_parsers as mpars
-from pynxtools.dataconverter.readers.utils import parse_json, parse_yml
+from pynxtools.dataconverter.readers.utils import parse_json, parse_yml, handle_objects
 
 
 # Dictionary mapping metadata in the asc file to the paths in the NeXus file.
@@ -37,6 +37,10 @@ METADATA_MAP: Dict[str, Any] = {
         mpars.read_sample_attenuator,
     "/ENTRY[entry]/instrument/ref_attenuator/attenuator_transmission":
         mpars.read_ref_attenuator,
+    "/ENTRY[entry]/instrument/common_beam_mask/y_gap": 45,
+    "/ENTRY[entry]/instrument/polarizer": 48,
+    "/ENTRY[entry]/instrument/common_beam_depolarizer":
+        mpars.is_depolarizer_on,
     "/ENTRY[entry]/instrument/spectrometer/GRATING[grating]/wavelength_range":
         mpars.read_uv_monochromator_range,
     "/ENTRY[entry]/instrument/spectrometer/GRATING[grating1]/wavelength_range":
@@ -250,6 +254,7 @@ class TransmissionReader(YamlJsonReader):
         ".yml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
         ".yaml": lambda fname: parse_yml(fname, CONVERT_DICT, REPLACE_NESTED),
         "default": lambda _: add_def_info(),
+        "objects": handle_objects,
     }
 
 

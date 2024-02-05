@@ -1,8 +1,0 @@
-category: base
-doc: Test case for verifying that the parser can handle links correctly.
-NXentry:
-   (NXdata):
-     polar_angle(link):
-       target: here1
-     target_angle(link):
-       target: here2
