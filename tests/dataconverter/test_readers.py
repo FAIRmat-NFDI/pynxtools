@@ -26,10 +26,11 @@ import pytest
 from _pytest.mark.structures import ParameterSet
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.convert import \
-    get_names_of_all_readers, get_reader
-from pynxtools.dataconverter.helpers import \
-    validate_data_dict, generate_template_from_nxdl
+from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
+from pynxtools.dataconverter.helpers import (
+    validate_data_dict,
+    generate_template_from_nxdl,
+)
 from pynxtools.dataconverter.template import Template
 
 
@@ -53,10 +54,17 @@ def get_all_readers() -> List[ParameterSet]:
 
     # Explicitly removing ApmReader and EmNionReader because we need to add test data
     for reader in [get_reader(x) for x in get_names_of_all_readers()]:
-        if reader.__name__ in ("ApmReader", "EmOmReader", "EmSpctrscpyReader", "EmNionReader"):
-            readers.append(pytest.param(reader,
-                                        marks=pytest.mark.skip(reason="Missing test data.")
-                                        ))
+        if reader.__name__ in (
+            "ApmReader",
+            "EmOmReader",
+            "EmSpctrscpyReader",
+            "EmNionReader",
+        ):
+            readers.append(
+                pytest.param(
+                    reader, marks=pytest.mark.skip(reason="Missing test data.")
+                )
+            )
         else:
             readers.append(pytest.param(reader))
 
@@ -98,15 +106,15 @@ def test_has_correct_read_func(reader):
             template = Template()
             generate_template_from_nxdl(root, template)
 
-            read_data = reader().read(template=Template(template), file_paths=tuple(input_files))
+            read_data = reader().read(
+                template=Template(template), file_paths=tuple(input_files)
+            )
 
             assert isinstance(read_data, Template)
             assert validate_data_dict(template, read_data, root)
 
 
-@pytest.mark.parametrize("reader_name,nxdl,undocumented_keys", [
-    ('mpes', 'NXmpes', [])
-])
+@pytest.mark.parametrize("reader_name,nxdl,undocumented_keys", [("mpes", "NXmpes", [])])
 def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
     """
     Checks whether the read function generates the correct warnings.
@@ -117,9 +125,7 @@ def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
     input_files = sorted(
         glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
     )
-    nxdl_file = os.path.join(
-        def_dir, "contributed_definitions", f"{nxdl}.nxdl.xml"
-    )
+    nxdl_file = os.path.join(def_dir, "contributed_definitions", f"{nxdl}.nxdl.xml")
 
     root = ET.parse(nxdl_file).getroot()
     template = Template()

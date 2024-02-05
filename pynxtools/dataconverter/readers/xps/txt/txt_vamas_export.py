@@ -113,11 +113,10 @@ class TxtMapperVamasExport(XPSMapper):
             "sample": [],
             "data": [
                 "dwell_time",
-                "x_units"
-                "y_units",
+                "x_units" "y_units",
                 "start_energy",
                 "stop_energy",
-                "step_size"
+                "step_size",
             ],
             "region": ["region_name"],
         }
@@ -311,8 +310,8 @@ class TextParser(ABC):  # pylint: disable=too-few-public-methods
         None.
 
         """
-        header = block[:self.n_headerlines]
-        data = block[self.n_headerlines:]
+        header = block[: self.n_headerlines]
+        data = block[self.n_headerlines :]
 
         return header, data
 
@@ -472,7 +471,7 @@ class TextParserColumns(TextParser):
         blocks = [
             list(g) for _, g in itertools.groupby(self.lines, lambda i: "Cycle " in i)
         ]
-        blocks = [operator.add(*blocks[i: i + 2]) for i in range(0, len(blocks), 2)]
+        blocks = [operator.add(*blocks[i : i + 2]) for i in range(0, len(blocks), 2)]
 
         return blocks
 

@@ -78,9 +78,7 @@ def _get_nxdl_root(nxdl: str) -> ET.Element:
         definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
     )
     if not os.path.exists(nxdl_path):
-        nxdl_path = os.path.join(
-            definitions_path, "applications", f"{nxdl}.nxdl.xml"
-        )
+        nxdl_path = os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml")
     if not os.path.exists(nxdl_path):
         raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 

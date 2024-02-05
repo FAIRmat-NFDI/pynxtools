@@ -33,67 +33,182 @@
 # results file directly into the template which the em_nion reader has to fill and pass
 # then to the data converter
 
-NxEmElnInput = {"IGNORE": {"fun": "load_from_dict_list", "terms": "em_lab/detector"},
-                "IGNORE": {"fun": "load_from", "terms": "em_lab/ebeam_column/aberration_correction/applied"},
-                "IGNORE": {"fun": "load_from_dict_list", "terms": "em_lab/ebeam_column/aperture_em"},
-                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/emitter_type": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_source/emitter_type"},
-                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage/@units": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_source/voltage/unit"},
-                "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage": {"fun": "load_from", "terms": "em_lab/ebeam_column/electron_source/voltage/value"},
-                "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/capabilities": {"fun": "load_from", "terms": "em_lab/fabrication/capabilities"},
-                "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/identifier": {"fun": "load_from", "terms": "em_lab/fabrication/identifier"},
-                "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/model": {"fun": "load_from", "terms": "em_lab/fabrication/model"},
-                "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/vendor": {"fun": "load_from", "terms": "em_lab/fabrication/vendor"},
-                "/ENTRY[entry*]/em_lab/instrument_name": {"fun": "load_from", "terms": "em_lab/instrument_name"},
-                "/ENTRY[entry*]/em_lab/location": {"fun": "load_from", "terms": "em_lab/location"},
-                "IGNORE": {"fun": "load_from", "terms": "em_lab/optical_system_em/beam_current/unit"},
-                "IGNORE": {"fun": "load_from", "terms": "em_lab/optical_system_em/beam_current/value"},
-                "IGNORE": {"fun": "load_from", "terms": "em_lab/optical_system_em/beam_current_description"},
-                "IGNORE": {"fun": "load_from", "terms": "em_lab/optical_system_em/magnification"},
-                "IGNORE": {"fun": "load_from", "terms": "em_lab/optical_system_em/semi_convergence_angle/unit"},
-                "IGNORE": {"fun": "load_from", "terms": "em_lab/optical_system_em/semi_convergence_angle/value"},
-                "/ENTRY[entry*]/em_lab/stage_lab/description": {"fun": "load_from", "terms": "em_lab/stage_lab/description"},
-                "/ENTRY[entry*]/em_lab/stage_lab/name": {"fun": "load_from", "terms": "em_lab/stage_lab/name"},
-                "/ENTRY[entry*]/@version": {"fun": "load_from", "terms": "entry/attr_version"},
-                "/ENTRY[entry*]/definition": {"fun": "load_from", "terms": "entry/definition"},
-                "/ENTRY[entry*]/end_time": {"fun": "load_from", "terms": "entry/end_time"},
-                "/ENTRY[entry*]/experiment_description": {"fun": "load_from", "terms": "entry/experiment_description"},
-                "/ENTRY[entry*]/experiment_identifier": {"fun": "load_from", "terms": "entry/experiment_identifier"},
-                "/ENTRY[entry*]/PROGRAM[program*]/program": {"fun": "load_from", "terms": "entry/program"},
-                "/ENTRY[entry*]/PROGRAM[program*]/program/@version": {"fun": "load_from", "terms": "entry/program__attr_version"},
-                "/ENTRY[entry*]/start_time": {"fun": "load_from", "terms": "entry/start_time"},
-                "IGNORE": {"fun": "load_from_list_of_dict", "terms": "user"}}
+NxEmElnInput = {
+    "IGNORE": {"fun": "load_from_dict_list", "terms": "em_lab/detector"},
+    "IGNORE": {
+        "fun": "load_from",
+        "terms": "em_lab/ebeam_column/aberration_correction/applied",
+    },
+    "IGNORE": {
+        "fun": "load_from_dict_list",
+        "terms": "em_lab/ebeam_column/aperture_em",
+    },
+    "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/emitter_type": {
+        "fun": "load_from",
+        "terms": "em_lab/ebeam_column/electron_source/emitter_type",
+    },
+    "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage/@units": {
+        "fun": "load_from",
+        "terms": "em_lab/ebeam_column/electron_source/voltage/unit",
+    },
+    "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/electron_source/voltage": {
+        "fun": "load_from",
+        "terms": "em_lab/ebeam_column/electron_source/voltage/value",
+    },
+    "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/capabilities": {
+        "fun": "load_from",
+        "terms": "em_lab/fabrication/capabilities",
+    },
+    "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/identifier": {
+        "fun": "load_from",
+        "terms": "em_lab/fabrication/identifier",
+    },
+    "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/model": {
+        "fun": "load_from",
+        "terms": "em_lab/fabrication/model",
+    },
+    "/ENTRY[entry*]/em_lab/FABRICATION[fabrication]/vendor": {
+        "fun": "load_from",
+        "terms": "em_lab/fabrication/vendor",
+    },
+    "/ENTRY[entry*]/em_lab/instrument_name": {
+        "fun": "load_from",
+        "terms": "em_lab/instrument_name",
+    },
+    "/ENTRY[entry*]/em_lab/location": {"fun": "load_from", "terms": "em_lab/location"},
+    "IGNORE": {
+        "fun": "load_from",
+        "terms": "em_lab/optical_system_em/beam_current/unit",
+    },
+    "IGNORE": {
+        "fun": "load_from",
+        "terms": "em_lab/optical_system_em/beam_current/value",
+    },
+    "IGNORE": {
+        "fun": "load_from",
+        "terms": "em_lab/optical_system_em/beam_current_description",
+    },
+    "IGNORE": {"fun": "load_from", "terms": "em_lab/optical_system_em/magnification"},
+    "IGNORE": {
+        "fun": "load_from",
+        "terms": "em_lab/optical_system_em/semi_convergence_angle/unit",
+    },
+    "IGNORE": {
+        "fun": "load_from",
+        "terms": "em_lab/optical_system_em/semi_convergence_angle/value",
+    },
+    "/ENTRY[entry*]/em_lab/stage_lab/description": {
+        "fun": "load_from",
+        "terms": "em_lab/stage_lab/description",
+    },
+    "/ENTRY[entry*]/em_lab/stage_lab/name": {
+        "fun": "load_from",
+        "terms": "em_lab/stage_lab/name",
+    },
+    "/ENTRY[entry*]/@version": {"fun": "load_from", "terms": "entry/attr_version"},
+    "/ENTRY[entry*]/definition": {"fun": "load_from", "terms": "entry/definition"},
+    "/ENTRY[entry*]/end_time": {"fun": "load_from", "terms": "entry/end_time"},
+    "/ENTRY[entry*]/experiment_description": {
+        "fun": "load_from",
+        "terms": "entry/experiment_description",
+    },
+    "/ENTRY[entry*]/experiment_identifier": {
+        "fun": "load_from",
+        "terms": "entry/experiment_identifier",
+    },
+    "/ENTRY[entry*]/PROGRAM[program*]/program": {
+        "fun": "load_from",
+        "terms": "entry/program",
+    },
+    "/ENTRY[entry*]/PROGRAM[program*]/program/@version": {
+        "fun": "load_from",
+        "terms": "entry/program__attr_version",
+    },
+    "/ENTRY[entry*]/start_time": {"fun": "load_from", "terms": "entry/start_time"},
+    "IGNORE": {"fun": "load_from_list_of_dict", "terms": "user"},
+}
 
 # NeXus concept specific mapping tables which require special treatment as the current
 # NOMAD OASIS custom schema implementation delivers them as a list of dictionaries instead
 # of a directly flattenable list of keyword, value pairs
 
-NxApertureEmFromListOfDict = {"/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/APERTURE_EM[aperture_em*]/name": {"fun": "load_from", "terms": "name"},
-                              "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/APERTURE_EM[aperture_em*]/value": {"fun": "load_from", "terms": "value"}}
+NxApertureEmFromListOfDict = {
+    "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/APERTURE_EM[aperture_em*]/name": {
+        "fun": "load_from",
+        "terms": "name",
+    },
+    "/ENTRY[entry*]/em_lab/EBEAM_COLUMN[ebeam_column]/APERTURE_EM[aperture_em*]/value": {
+        "fun": "load_from",
+        "terms": "value",
+    },
+}
 
-NxUserFromListOfDict = {"/ENTRY[entry*]/USER[user*]/name": {"fun": "load_from", "terms": "name"},
-                        "/ENTRY[entry*]/USER[user*]/affiliation": {"fun": "load_from", "terms": "affiliation"},
-                        "/ENTRY[entry*]/USER[user*]/address": {"fun": "load_from", "terms": "address"},
-                        "/ENTRY[entry*]/USER[user*]/email": {"fun": "load_from", "terms": "email"},
-                        "/ENTRY[entry*]/USER[user*]/orcid": {"fun": "load_from", "terms": "orcid"},
-                        "/ENTRY[entry*]/USER[user*]/orcid_platform": {"fun": "load_from", "terms": "orcid_platform"},
-                        "/ENTRY[entry*]/USER[user*]/telephone_number": {"fun": "load_from", "terms": "telephone_number"},
-                        "/ENTRY[entry*]/USER[user*]/role": {"fun": "load_from", "terms": "role"},
-                        "/ENTRY[entry*]/USER[user*]/social_media_name": {"fun": "load_from", "terms": "social_media_name"},
-                        "/ENTRY[entry*]/USER[user*]/social_media_platform": {"fun": "load_from", "terms": "social_media_platform"}}
+NxUserFromListOfDict = {
+    "/ENTRY[entry*]/USER[user*]/name": {"fun": "load_from", "terms": "name"},
+    "/ENTRY[entry*]/USER[user*]/affiliation": {
+        "fun": "load_from",
+        "terms": "affiliation",
+    },
+    "/ENTRY[entry*]/USER[user*]/address": {"fun": "load_from", "terms": "address"},
+    "/ENTRY[entry*]/USER[user*]/email": {"fun": "load_from", "terms": "email"},
+    "/ENTRY[entry*]/USER[user*]/orcid": {"fun": "load_from", "terms": "orcid"},
+    "/ENTRY[entry*]/USER[user*]/orcid_platform": {
+        "fun": "load_from",
+        "terms": "orcid_platform",
+    },
+    "/ENTRY[entry*]/USER[user*]/telephone_number": {
+        "fun": "load_from",
+        "terms": "telephone_number",
+    },
+    "/ENTRY[entry*]/USER[user*]/role": {"fun": "load_from", "terms": "role"},
+    "/ENTRY[entry*]/USER[user*]/social_media_name": {
+        "fun": "load_from",
+        "terms": "social_media_name",
+    },
+    "/ENTRY[entry*]/USER[user*]/social_media_platform": {
+        "fun": "load_from",
+        "terms": "social_media_platform",
+    },
+}
 
-NxDetectorListOfDict = {"/ENTRY[entry*]/em_lab/DETECTOR[detector*]/local_name": {"fun": "load_from", "terms": "local_name"}}
+NxDetectorListOfDict = {
+    "/ENTRY[entry*]/em_lab/DETECTOR[detector*]/local_name": {
+        "fun": "load_from",
+        "terms": "local_name",
+    }
+}
 
 # atom_types is a good example for specific cases where one cannot just blindly map
 # the list that comes from the custom schema ELN instance, because
 # people may enter invalid types of atoms (which would generate problems in NOMAD OASIS)
 # and for NeXus we would like to have a "string of a comma-separated list of element names"
 
-NxSample = {"IGNORE": {"fun": "load_from", "terms": "sample/atom_types"},
-            "/ENTRY[entry*]/sample/description": {"fun": "load_from", "terms": "sample/description"},
-            "/ENTRY[entry*]/sample/method": {"fun": "load_from", "terms": "sample/method"},
-            "/ENTRY[entry*]/sample/name": {"fun": "load_from", "terms": "sample/name"},
-            "/ENTRY[entry*]/sample/preparation_date": {"fun": "load_from", "terms": "sample/preparation_date"},
-            "/ENTRY[entry*]/sample/sample_history": {"fun": "load_from", "terms": "sample/sample_history"},
-            "/ENTRY[entry*]/sample/short_title": {"fun": "load_from", "terms": "sample/short_title"},
-            "/ENTRY[entry*]/sample/thickness": {"fun": "load_from", "terms": "sample/thickness/value"},
-            "/ENTRY[entry*]/sample/thickness/@units": {"fun": "load_from", "terms": "sample/thickness/unit"}}
+NxSample = {
+    "IGNORE": {"fun": "load_from", "terms": "sample/atom_types"},
+    "/ENTRY[entry*]/sample/description": {
+        "fun": "load_from",
+        "terms": "sample/description",
+    },
+    "/ENTRY[entry*]/sample/method": {"fun": "load_from", "terms": "sample/method"},
+    "/ENTRY[entry*]/sample/name": {"fun": "load_from", "terms": "sample/name"},
+    "/ENTRY[entry*]/sample/preparation_date": {
+        "fun": "load_from",
+        "terms": "sample/preparation_date",
+    },
+    "/ENTRY[entry*]/sample/sample_history": {
+        "fun": "load_from",
+        "terms": "sample/sample_history",
+    },
+    "/ENTRY[entry*]/sample/short_title": {
+        "fun": "load_from",
+        "terms": "sample/short_title",
+    },
+    "/ENTRY[entry*]/sample/thickness": {
+        "fun": "load_from",
+        "terms": "sample/thickness/value",
+    },
+    "/ENTRY[entry*]/sample/thickness/@units": {
+        "fun": "load_from",
+        "terms": "sample/thickness/unit",
+    },
+}

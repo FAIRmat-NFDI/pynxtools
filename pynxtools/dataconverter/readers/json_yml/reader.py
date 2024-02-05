@@ -60,9 +60,7 @@ class YamlJsonReader(BaseReader):
                 print(f"WARNING: File {file_path} does not exist, ignoring entry.")
                 continue
 
-            template.update(
-                self.extensions.get(extension, lambda _: {})(file_path)
-            )
+            template.update(self.extensions.get(extension, lambda _: {})(file_path))
 
         template.update(self.extensions.get("default", lambda _: {})(""))
         template.update(self.extensions.get("objects", lambda _: {})(objects))

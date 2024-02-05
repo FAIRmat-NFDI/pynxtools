@@ -49,9 +49,10 @@ class EmNionUseCaseSelector:
         for file_name in file_paths:
             index = file_name.lower().rfind(".")
             if index >= 0:
-                suffix = file_name.lower()[index + 1::]
-                add = (suffix in self.supported_mime_types) \
-                    and (file_name not in self.mime_types[suffix])
+                suffix = file_name.lower()[index + 1 : :]
+                add = (suffix in self.supported_mime_types) and (
+                    file_name not in self.mime_types[suffix]
+                )
                 if add is True:
                     self.mime_types[suffix].append(file_name)
         print(self.mime_types)

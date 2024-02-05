@@ -33,7 +33,7 @@ def parse_slice(slice_string):
     slices = slice_string.split(",")
     for index, item in enumerate(slices):
         values = item.split(":")
-        slices[index] = slice(*[None if x == '' else int(x) for x in values])
+        slices[index] = slice(*[None if x == "" else int(x) for x in values])
     return np.index_exp[tuple(slices)]
 
 
@@ -47,13 +47,15 @@ def get_val_nested_keystring_from_dict(keystring, data):
 
     current_key = keystring.split("/")[0]
     if isinstance(data[current_key], (dict, hdfdict.LazyHdfDict)):
-        return get_val_nested_keystring_from_dict(keystring[keystring.find("/") + 1:],
-                                                  data[current_key])
+        return get_val_nested_keystring_from_dict(
+            keystring[keystring.find("/") + 1 :], data[current_key]
+        )
     if isinstance(data[current_key], xarray.DataArray):
         return data[current_key].values
     if isinstance(data[current_key], xarray.core.dataset.Dataset):
-        raise NotImplementedError("Xarray datasets are not supported. "
-                                  "You can only use xarray dataarrays.")
+        raise NotImplementedError(
+            "Xarray datasets are not supported. " "You can only use xarray dataarrays."
+        )
 
     return data[current_key]
 
@@ -84,8 +86,9 @@ def fill_undocumented(mapping, template, data):
     """Fill the extra paths provided in the map file that are not in the NXDL"""
     for path, value in mapping.items():
         if is_path(value):
-            template["undocumented"][path] = get_val_nested_keystring_from_dict(value[1:],
-                                                                                data)
+            template["undocumented"][path] = get_val_nested_keystring_from_dict(
+                value[1:], data
+            )
             fill_attributes(path, value[1:], data, template)
         else:
             template["undocumented"][path] = value
@@ -98,8 +101,9 @@ def fill_documented(template, mapping, template_provided, data):
             try:
                 map_str = mapping[path]
                 if is_path(map_str):
-                    template[path] = get_val_nested_keystring_from_dict(map_str[1:],
-                                                                        data)
+                    template[path] = get_val_nested_keystring_from_dict(
+                        map_str[1:], data
+                    )
                     fill_attributes(path, map_str[1:], data, template)
                 else:
                     template[path] = map_str
@@ -137,7 +141,11 @@ def get_map_from_partials(partials, template, data):
             if template_path + "/" + part in template.keys():
                 template_path = template_path + "/" + part
             else:
-                nx_name = f"{attribs['NX_class'][2:].upper()}[{part}]" if attribs and "NX_class" in attribs else part  # pylint: disable=line-too-long
+                nx_name = (
+                    f"{attribs['NX_class'][2:].upper()}[{part}]"
+                    if attribs and "NX_class" in attribs
+                    else part
+                )  # pylint: disable=line-too-long
                 template_path = template_path + "/" + nx_name
         mapping[template_path] = path
 
@@ -152,10 +160,12 @@ class JsonMapReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls = ["NXtest", "*"]
 
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ) -> dict:
         """
         Reads data from given file and returns a filled template dictionary.
 
@@ -171,9 +181,9 @@ class JsonMapReader(BaseReader):
         data = objects[0] if objects else data
 
         for file_path in file_paths:
-            file_extension = file_path[file_path.rindex("."):]
+            file_extension = file_path[file_path.rindex(".") :]
             if file_extension == ".json":
-                with open(file_path, "r", encoding='utf-8') as input_file:
+                with open(file_path, "r", encoding="utf-8") as input_file:
                     if ".mapping" in file_path:
                         mapping = json.loads(input_file.read())
                     else:
@@ -184,7 +194,7 @@ class JsonMapReader(BaseReader):
             else:
                 is_hdf5 = False
                 with open(file_path, "rb") as input_file:
-                    if input_file.read(8) == b'\x89HDF\r\n\x1a\n':
+                    if input_file.read(8) == b"\x89HDF\r\n\x1a\n":
                         is_hdf5 = True
                 if is_hdf5:
                     hdf = hdfdict.load(file_path)
@@ -197,10 +207,14 @@ class JsonMapReader(BaseReader):
             if len(partials) > 0:
                 mapping = get_map_from_partials(partials, template, data)
             else:
-                template = Template({x: "/hierarchical/path/in/your/datafile" for x in template})
-                raise IOError("Please supply a JSON mapping file: --input-file"
-                              " my_nxdl_map.mapping.json\n\n You can use this "
-                              "template for the required fields: \n" + str(template))
+                template = Template(
+                    {x: "/hierarchical/path/in/your/datafile" for x in template}
+                )
+                raise IOError(
+                    "Please supply a JSON mapping file: --input-file"
+                    " my_nxdl_map.mapping.json\n\n You can use this "
+                    "template for the required fields: \n" + str(template)
+                )
 
         new_template = Template()
         convert_shapes_to_slice_objects(mapping)

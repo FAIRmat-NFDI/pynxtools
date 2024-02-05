@@ -23,17 +23,21 @@ from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-from pynxtools.dataconverter.readers.em_nion.utils.swift_define_io_cases \
-    import EmNionUseCaseSelector
+from pynxtools.dataconverter.readers.em_nion.utils.swift_define_io_cases import (
+    EmNionUseCaseSelector,
+)
 
-from pynxtools.dataconverter.readers.em_nion.utils.swift_load_generic_eln \
-    import NxEmNionElnSchemaParser
+from pynxtools.dataconverter.readers.em_nion.utils.swift_load_generic_eln import (
+    NxEmNionElnSchemaParser,
+)
 
-from pynxtools.dataconverter.readers.em_nion.utils.swift_zipped_project_parser \
-    import NxEmNionSwiftProjectParser
+from pynxtools.dataconverter.readers.em_nion.utils.swift_zipped_project_parser import (
+    NxEmNionSwiftProjectParser,
+)
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_plots \
-    import em_spctrscpy_default_plot_generator
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_plots import (
+    em_spctrscpy_default_plot_generator,
+)
 
 
 class EmNionReader(BaseReader):
@@ -49,10 +53,12 @@ class EmNionReader(BaseReader):
     supported_nxdls = ["NXem"]
 
     # pylint: disable=duplicate-code
-    def read(self,
-             template: dict = None,
-             file_paths: Tuple[str] = None,
-             objects: Tuple[Any] = None) -> dict:
+    def read(
+        self,
+        template: dict = None,
+        file_paths: Tuple[str] = None,
+        objects: Tuple[Any] = None,
+    ) -> dict:
         """Read data from given file, return filled template dictionary em."""
         # pylint: disable=duplicate-code
         template.clear()

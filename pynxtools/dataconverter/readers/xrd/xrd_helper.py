@@ -26,10 +26,12 @@ class KeyValueNotFoundWaring(Warning):
     """New Wanrning class"""
 
 
-def get_a_value_or_warn(return_value="",
-                        warning_catagory=KeyValueNotFoundWaring,
-                        message="Key-value not found.",
-                        stack_level=2):
+def get_a_value_or_warn(
+    return_value="",
+    warning_catagory=KeyValueNotFoundWaring,
+    message="Key-value not found.",
+    stack_level=2,
+):
     """It returns a value that and rase the warning massage."""
 
     warnings.warn(f"\033[1;31m {message}:\033[0m]", warning_catagory, stack_level)
@@ -42,8 +44,9 @@ def check_unit(unit: str):
     """
     if unit is None:
         return unit
-    unit_map = {'Angstrom': '\u212B',
-                }
+    unit_map = {
+        "Angstrom": "\u212B",
+    }
     correct_unit = unit_map.get(unit, None)
     if correct_unit is None:
         return unit
@@ -77,8 +80,9 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
          }
     """
 
-    def fill_template_from_config_data(config_dict: dict, template: Template,
-                                       xrd_dict: dict, file_term: str) -> None:
+    def fill_template_from_config_data(
+        config_dict: dict, template: Template, xrd_dict: dict, file_term: str
+    ) -> None:
         """
         Parameters
         ----------
@@ -100,29 +104,32 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
             if isinstance(val, dict):
                 raw_data_des: dict = val.get(file_term, None)
                 if raw_data_des is None:
-                    raise ValueError(f"conflict file config file does not have any data map"
-                                     f" for file {file_term}")
+                    raise ValueError(
+                        f"conflict file config file does not have any data map"
+                        f" for file {file_term}"
+                    )
                 # the field does not have any value
-                if not raw_data_des.get('value', None):
+                if not raw_data_des.get("value", None):
                     continue
                 # Note: path is the data path in raw file
                 for val_atr_key, path in raw_data_des.items():
                     # data or field val
-                    if val_atr_key == 'value':
+                    if val_atr_key == "value":
                         template[nx_key] = xrd_dict.get(path, None)
-                    elif path and val_atr_key == '@units':
-                        template[nx_key + '/' + val_atr_key] = check_unit(
-                            xrd_dict.get(path, None))
+                    elif path and val_atr_key == "@units":
+                        template[nx_key + "/" + val_atr_key] = check_unit(
+                            xrd_dict.get(path, None)
+                        )
                     # attr e.g. @AXISNAME
-                    elif path and val_atr_key.startswith('@'):
-                        template[nx_key + '/' + val_atr_key] = xrd_dict.get(path, None)
+                    elif path and val_atr_key.startswith("@"):
+                        template[nx_key + "/" + val_atr_key] = xrd_dict.get(path, None)
             if not isinstance(val, dict) and isinstance(val, str):
                 template[nx_key] = val
 
     def two_theta_plot():
-
-        intesity = transform_to_intended_dt(template.get("/ENTRY[entry]/2theta_plot/intensity",
-                                                         None))
+        intesity = transform_to_intended_dt(
+            template.get("/ENTRY[entry]/2theta_plot/intensity", None)
+        )
         if intesity is not None:
             intsity_len = np.shape(intesity)[0]
         else:
@@ -130,30 +137,41 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
 
         two_theta_gr = "/ENTRY[entry]/2theta_plot/"
         if template.get(f"{two_theta_gr}omega", None) is None:
-            omega_start = template.get("/ENTRY[entry]/COLLECTION[collection]/omega/start", None)
-            omega_end = template.get("/ENTRY[entry]/COLLECTION[collection]/omega/end", None)
+            omega_start = template.get(
+                "/ENTRY[entry]/COLLECTION[collection]/omega/start", None
+            )
+            omega_end = template.get(
+                "/ENTRY[entry]/COLLECTION[collection]/omega/end", None
+            )
 
-            template["/ENTRY[entry]/2theta_plot/omega"] = np.linspace(float(omega_start),
-                                                                      float(omega_end),
-                                                                      intsity_len)
+            template["/ENTRY[entry]/2theta_plot/omega"] = np.linspace(
+                float(omega_start), float(omega_end), intsity_len
+            )
 
         if template.get(f"{two_theta_gr}two_theta", None) is None:
-            tw_theta_start = template.get("/ENTRY[entry]/COLLECTION[collection]/2theta/start",
-                                          None)
-            tw_theta_end = template.get("/ENTRY[entry]/COLLECTION[collection]/2theta/end", None)
-            template[f"{two_theta_gr}two_theta"] = np.linspace(float(tw_theta_start),
-                                                               float(tw_theta_end),
-                                                               intsity_len)
+            tw_theta_start = template.get(
+                "/ENTRY[entry]/COLLECTION[collection]/2theta/start", None
+            )
+            tw_theta_end = template.get(
+                "/ENTRY[entry]/COLLECTION[collection]/2theta/end", None
+            )
+            template[f"{two_theta_gr}two_theta"] = np.linspace(
+                float(tw_theta_start), float(tw_theta_end), intsity_len
+            )
         template[two_theta_gr + "/" + "@axes"] = ["two_theta"]
         template[two_theta_gr + "/" + "@signal"] = "intensity"
 
     def q_plot():
         q_plot_gr = "/ENTRY[entry]/q_plot"
-        alpha_2 = template.get("/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/k_alpha_two",
-                               None)
-        alpha_1 = template.get("/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/k_alpha_one",
-                               None)
-        two_theta: np.ndarray = template.get("/ENTRY[entry]/2theta_plot/two_theta", None)
+        alpha_2 = template.get(
+            "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/k_alpha_two", None
+        )
+        alpha_1 = template.get(
+            "/ENTRY[entry]/INSTRUMENT[instrument]/SOURCE[source]/k_alpha_one", None
+        )
+        two_theta: np.ndarray = template.get(
+            "/ENTRY[entry]/2theta_plot/two_theta", None
+        )
         if two_theta is None:
             raise ValueError("Two-theta data is not found")
         if isinstance(two_theta, np.ndarray):
@@ -176,29 +194,40 @@ def feed_xrdml_to_template(template, xrd_dict, eln_dict, file_term, config_dict=
         key = "/ENTRY[entry]/COLLECTION[collection]/goniometer_x"
         gonio_x = template.get(key, None)
 
-        template[key] = gonio_x[0] if (isinstance(gonio_x, np.ndarray)
-                                       and gonio_x.shape == (1,)) else gonio_x
+        template[key] = (
+            gonio_x[0]
+            if (isinstance(gonio_x, np.ndarray) and gonio_x.shape == (1,))
+            else gonio_x
+        )
 
         key = "/ENTRY[entry]/COLLECTION[collection]/goniometer_y"
         gonio_y = template.get(key, None)
 
-        template[key] = gonio_y[0] if (isinstance(gonio_y, np.ndarray)
-                                       and gonio_y.shape == (1,)) else gonio_y
+        template[key] = (
+            gonio_y[0]
+            if (isinstance(gonio_y, np.ndarray) and gonio_y.shape == (1,))
+            else gonio_y
+        )
 
         key = "/ENTRY[entry]/COLLECTION[collection]/goniometer_z"
         gonio_z = template.get(key, None)
 
-        template[key] = gonio_z[0] if (isinstance(gonio_z, np.ndarray)
-                                       and gonio_z.shape == (1,)) else gonio_z
+        template[key] = (
+            gonio_z[0]
+            if (isinstance(gonio_z, np.ndarray) and gonio_z.shape == (1,))
+            else gonio_z
+        )
 
         key = "/ENTRY[entry]/COLLECTION[collection]/count_time"
         count_time = template.get(key, None)
 
-        template[key] = count_time[0] if (isinstance(count_time, np.ndarray)
-                                          and count_time.shape == (1,)) else count_time
+        template[key] = (
+            count_time[0]
+            if (isinstance(count_time, np.ndarray) and count_time.shape == (1,))
+            else count_time
+        )
 
-    fill_template_from_config_data(config_dict, template,
-                                   xrd_dict, file_term)
+    fill_template_from_config_data(config_dict, template, xrd_dict, file_term)
     two_theta_plot()
     q_plot()
     handle_special_fields()
@@ -273,11 +302,9 @@ def fill_template_from_eln_data(eln_data_dict, template):
         template[e_key] = transform_to_intended_dt(e_val)
 
 
-def fill_nxdata_from_xrdml(template,
-                           xrd_flattend_dict,
-                           dt_nevigator_from_config_file,
-                           data_group_concept
-                           ):
+def fill_nxdata_from_xrdml(
+    template, xrd_flattend_dict, dt_nevigator_from_config_file, data_group_concept
+):
     """_summary_
 
     Parameters

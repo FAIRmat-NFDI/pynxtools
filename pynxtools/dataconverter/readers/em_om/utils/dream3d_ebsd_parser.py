@@ -37,13 +37,13 @@ from PIL import Image as pil
 
 from pynxtools.dataconverter.readers.em_om.utils.image_transform import thumbnail
 
-from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import HFIVE_WEB_MAX_SIZE
+from pynxtools.dataconverter.readers.em_om.utils.em_nexus_plots import (
+    HFIVE_WEB_MAX_SIZE,
+)
 
 
 class NxEmOmDreamThreedEbsdParser:
-    """Parse DREAM3D EBSD data.
-
-    """
+    """Parse DREAM3D EBSD data."""
 
     def __init__(self, file_name, entry_id):
         """Class wrapping dream3d parser."""
@@ -84,9 +84,11 @@ class NxEmOmDreamThreedEbsdParser:
         # NEW ISSUE: interpret from filter!
         has_required_metadata = True
         has_correct_shape = True
-        req_field_names = [("dims", "DIMENSIONS"),
-                           ("origin", "ORIGIN"),
-                           ("spacing", "SPACING")]
+        req_field_names = [
+            ("dims", "DIMENSIONS"),
+            ("origin", "ORIGIN"),
+            ("spacing", "SPACING"),
+        ]
         for field_tuple in req_field_names:
             if f"{grpnm}/{field_tuple[1]}" in h5r:
                 self.stack_meta[field_tuple[0]] = h5r[f"{grpnm}/{field_tuple[1]}"][...]
@@ -130,11 +132,15 @@ class NxEmOmDreamThreedEbsdParser:
             #     * self.stack_meta["spacing"][i], num=self.stack_meta["dims"][i],
             #     endpoint=True), np.float32)  # DREAM.3D uses single precision
             self.xyz[axisname[1]] = np.asarray(
-                np.linspace(self.stack_meta["origin"][i],
-                            self.stack_meta["origin"][i] + self.stack_meta["dims"][i]
-                            * self.stack_meta["spacing"][i], num=self.stack_meta["dims"][i],
-                            endpoint=True),
-                np.float32)  # DREAM.3D uses single precision
+                np.linspace(
+                    self.stack_meta["origin"][i],
+                    self.stack_meta["origin"][i]
+                    + self.stack_meta["dims"][i] * self.stack_meta["spacing"][i],
+                    num=self.stack_meta["dims"][i],
+                    endpoint=True,
+                ),
+                np.float32,
+            )  # DREAM.3D uses single precision
 
         # endpoint true? voxel center or its min or max bound?
 
@@ -159,11 +165,14 @@ class NxEmOmDreamThreedEbsdParser:
 
         axes_names = [("axis_x", "x"), ("axis_y", "y"), ("axis_z", "z")]
         for axisname in axes_names:
-            trg = f"/ENTRY[entry{self.entry_id}]/correlation/region_of_interest" \
-                  f"/roi/AXISNAME[{axisname[0]}]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/correlation/region_of_interest"
+                f"/roi/AXISNAME[{axisname[0]}]"
+            )
             template[f"{trg}"] = {"compress": self.xyz[axisname[1]], "strength": 1}
-            template[f"{trg}/@long_name"] \
-                = f"Calibrated position along {axisname[1]}-axis (µm)"
+            template[
+                f"{trg}/@long_name"
+            ] = f"Calibrated position along {axisname[1]}-axis (µm)"
             template[f"{trg}/@units"] = "µm"  # parse from filter!
 
         return template
@@ -193,21 +202,31 @@ class NxEmOmDreamThreedEbsdParser:
             self.phases[identifier] = {}
             self.phases[identifier]["name"] = phase_names[identifier]
 
-            trg = f"/ENTRY[entry{self.entry_id}]/correlation" \
-                  f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL" \
-                  f"[em_ebsd_crystal_structure_model{identifier}]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/correlation"
+                f"/EM_EBSD_CRYSTAL_STRUCTURE_MODEL"
+                f"[em_ebsd_crystal_structure_model{identifier}]"
+            )
             template[f"{trg}/phase_identifier"] = np.uint32(identifier)
             template[f"{trg}/phase_name"] = str(phase_names[identifier])
             template[f"{trg}/unit_cell_abc"] = np.asarray(
-                [unit_cells[identifier, 0] * 0.1,
-                 unit_cells[identifier, 1] * 0.1,
-                 unit_cells[identifier, 2] * 0.1], np.float32)
+                [
+                    unit_cells[identifier, 0] * 0.1,
+                    unit_cells[identifier, 1] * 0.1,
+                    unit_cells[identifier, 2] * 0.1,
+                ],
+                np.float32,
+            )
             # ##? DREAM.3D reports in angstroem but no units attribute in dream3d file!
             template[f"{trg}/unit_cell_abc/@units"] = "nm"
             template[f"{trg}/unit_cell_alphabetagamma"] = np.asarray(
-                [unit_cells[identifier, 3],
-                 unit_cells[identifier, 4],
-                 unit_cells[identifier, 5]], np.float32)
+                [
+                    unit_cells[identifier, 3],
+                    unit_cells[identifier, 4],
+                    unit_cells[identifier, 5],
+                ],
+                np.float32,
+            )
             # ##? DREAM.3D reports in degree
             template[f"{trg}/unit_cell_alphabetagamma/@units"] = "°"
 
@@ -229,7 +248,9 @@ class NxEmOmDreamThreedEbsdParser:
         """Create default plot for the IPF-Z orientation mapping."""
         phase_id = identifier
         phase_name = self.phases[identifier]["name"]
-        print(f"Generate inverse pole figure (IPF) map for {identifier}, {phase_name}...")
+        print(
+            f"Generate inverse pole figure (IPF) map for {identifier}, {phase_name}..."
+        )
 
         trg = f"/ENTRY[entry{self.entry_id}]/correlation/PROCESS[ipf_map{phase_id}]"
         template[f"{trg}/bitdepth"] = np.uint32(8)
@@ -237,10 +258,14 @@ class NxEmOmDreamThreedEbsdParser:
         template[f"{trg}/phase_name"] = str(phase_name)
         template[f"{trg}/PROGRAM[program1]/program"] = str("dream3d")
         template[f"{trg}/PROGRAM[program1]/program/@version"] = "v6.5.163"
-        template[f"{trg}/projection_direction"] = np.asarray([0., 0., 1.], np.float32)
+        template[f"{trg}/projection_direction"] = np.asarray(
+            [0.0, 0.0, 1.0], np.float32
+        )
 
-        trg = f"/ENTRY[entry{self.entry_id}]/correlation" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_map"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/correlation"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_map"
+        )
         template[f"{trg}/title"] = str("DREAM.3D ROI inverse-pole-figure colored")
         template[f"{trg}/@signal"] = "data"
         # template[f"{trg}/@axes"] = ["axis_x", "axis_y", "axis_z"]
@@ -250,8 +275,10 @@ class NxEmOmDreamThreedEbsdParser:
         template[f"{trg}/@AXISNAME_indices[axis_z_indices]"] = np.uint32(2)
         # check again order x, y, z ??
 
-        trg = f"/ENTRY[entry{self.entry_id}]/correlation" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_map/data"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/correlation"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_map/data"
+        )
         # NEW ISSUE: needs one more check if precise currently
         ipf_map = np.asarray(np.zeros(np.shape(self.stack), np.uint8))  # 4d array
         # msk = self.phase_id == phase_id
@@ -274,11 +301,14 @@ class NxEmOmDreamThreedEbsdParser:
 
         axes_names = [("axis_x", "x"), ("axis_y", "y"), ("axis_z", "z")]
         for axisname in axes_names:
-            trg = f"/ENTRY[entry{self.entry_id}]/correlation" \
-                  f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_map/AXISNAME[{axisname[0]}]"
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/correlation"
+                f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_map/AXISNAME[{axisname[0]}]"
+            )
             template[f"{trg}"] = {"compress": self.xyz[axisname[1]], "strength": 1}
-            template[f"{trg}/@long_name"] \
-                = f"Calibrated position along {axisname[1]}-axis (µm)"
+            template[
+                f"{trg}/@long_name"
+            ] = f"Calibrated position along {axisname[1]}-axis (µm)"
             template[f"{trg}/@units"] = "µm"  # parse from filter!
 
         return template
@@ -290,7 +320,9 @@ class NxEmOmDreamThreedEbsdParser:
         # em_om reader uses
         phase_id = identifier
         phase_name = self.phases[identifier]["name"]
-        print(f"Parse inverse pole figure (IPF) color key {identifier}, {phase_name}...")
+        print(
+            f"Parse inverse pole figure (IPF) color key {identifier}, {phase_name}..."
+        )
 
         # the key problem is that the DREAM.3D pipeline does not store the point group
         # so we need to have a heuristic approach which selects the correct IPF
@@ -299,28 +331,37 @@ class NxEmOmDreamThreedEbsdParser:
         # OrientationAnalysis/Data/OrientationAnalysis/IPF_Legend
         # DREAM.3D stores a library of prerendered color keys as image files
         color_key_path = (__file__).replace(
-            "dream3d_ebsd_parser.py", "dream3d_v65163_color_keys")
+            "dream3d_ebsd_parser.py", "dream3d_v65163_color_keys"
+        )
         color_key_file_name = f"{color_key_path}/Cubic_High.png"
         # NEW ISSUE:must not be Cubic_High.png only, this holds only for this example!
 
         # constraint further to 8bit RGB and no flipping
         # im = np.asarray(imageio.v3.imread(symm_name))
-        img = np.asarray(thumbnail(pil.open(color_key_file_name, "r", ["png"]),
-                         size=HFIVE_WEB_MAX_SIZE), np.uint8)
+        img = np.asarray(
+            thumbnail(
+                pil.open(color_key_file_name, "r", ["png"]), size=HFIVE_WEB_MAX_SIZE
+            ),
+            np.uint8,
+        )
         img = img[:, :, 0:3]  # discard potential alpha channel
         # ##MK::need to constrain more the writing of the image that it is guaranteed
         # a specific type of image and bitdepth and color model, and avoid implicit
         # image transformations such as flips or rotations
 
-        trg = f"/ENTRY[entry{self.entry_id}]/correlation" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/correlation"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model"
+        )
         template[f"{trg}/title"] = str("Inverse pole figure color key with SST")
         template[f"{trg}/@signal"] = "data"
         template[f"{trg}/@axes"] = ["axis_y", "axis_x"]
         template[f"{trg}/@AXISNAME_indices[axis_x_indices]"] = np.uint32(0)
         template[f"{trg}/@AXISNAME_indices[axis_y_indices]"] = np.uint32(1)
-        trg = f"/ENTRY[entry{self.entry_id}]/correlation" \
-              f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/DATA[data]"
+        trg = (
+            f"/ENTRY[entry{self.entry_id}]/correlation"
+            f"/PROCESS[ipf_map{phase_id}]/ipf_rgb_color_model/DATA[data]"
+        )
         template[f"{trg}"] = {"compress": img, "strength": 1}
         template[f"{trg}/@CLASS"] = "IMAGE"
         template[f"{trg}/@IMAGE_VERSION"] = "1.2"
@@ -328,11 +369,22 @@ class NxEmOmDreamThreedEbsdParser:
 
         axes_names = [("axis_y", 0, "y-axis"), ("axis_x", 1, "x-axis")]
         for axis in axes_names:
-            trg = f"/ENTRY[entry{self.entry_id}]/correlation/PROCESS[ipf_map{phase_id}]" \
-                  f"/ipf_rgb_color_model/AXISNAME[{axis[0]}]"
-            template[f"{trg}"] = {"compress": np.asarray(
-                np.linspace(1, np.shape(img)[axis[1]], num=np.shape(img)[axis[1]],
-                            endpoint=True), np.uint32), "strength": 1}
+            trg = (
+                f"/ENTRY[entry{self.entry_id}]/correlation/PROCESS[ipf_map{phase_id}]"
+                f"/ipf_rgb_color_model/AXISNAME[{axis[0]}]"
+            )
+            template[f"{trg}"] = {
+                "compress": np.asarray(
+                    np.linspace(
+                        1,
+                        np.shape(img)[axis[1]],
+                        num=np.shape(img)[axis[1]],
+                        endpoint=True,
+                    ),
+                    np.uint32,
+                ),
+                "strength": 1,
+            }
             template[f"{trg}/@long_name"] = f"Pixel along {axis[2]}"
             template[f"{trg}/@units"] = "px"
 

@@ -25,8 +25,9 @@ import numpy as np
 
 import hyperspy.api as hs
 
-from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_base_classes \
-    import NxObject
+from pynxtools.dataconverter.readers.em_spctrscpy.utils.em_nexus_base_classes import (
+    NxObject,
+)
 
 
 class HspyRectRoiAdfImage:
@@ -48,29 +49,32 @@ class HspyRectRoiAdfImage:
 
     def is_supported(self, hspy_s2d):
         """Check if the input has supported axes_manager and key metadata."""
-        assert hspy_s2d.metadata["Signal"]["signal_type"] == "", \
-            "hspy_s2d is not a valid hyperspy generic instance !"
-        assert hspy_s2d.data.ndim == 2, \
-            "hspy_s2d is not a valid 2D dataset !"
+        assert (
+            hspy_s2d.metadata["Signal"]["signal_type"] == ""
+        ), "hspy_s2d is not a valid hyperspy generic instance !"
+        assert hspy_s2d.data.ndim == 2, "hspy_s2d is not a valid 2D dataset !"
         axes_dict = hspy_s2d.axes_manager.as_dictionary()
         required_axis_names = ["axis-0", "axis-1"]
         for req_key in required_axis_names:
-            assert req_key in axes_dict.keys(), \
+            assert req_key in axes_dict.keys(), (
                 req_key + " is unexpectedly not registered in the axes_manager !"
+            )
         required_keywords = ["_type", "name", "units", "size", "scale", "offset"]
         avail_axis_names = []
         for keyword in axes_dict.keys():
             for req_key in required_keywords:  # check if all required keys exist
-                assert req_key in axes_dict[keyword].keys(), \
+                assert req_key in axes_dict[keyword].keys(), (
                     "hspy_s2d axis " + keyword + " lacks " + req_key + " !"
-            assert axes_dict[keyword]["_type"] == "UniformDataAxis", \
+                )
+            assert axes_dict[keyword]["_type"] == "UniformDataAxis", (
                 keyword + ", this axis is not of type UniformDataAxis !"
+            )
             avail_axis_names.append(axes_dict[keyword]["name"])
 
-        axes_as_expected_emd \
-            = np.all(np.sort(avail_axis_names) == np.sort(["y", "x"]))
-        axes_as_expected_bcf \
-            = np.all(np.sort(avail_axis_names) == np.sort(["height", "width"]))
+        axes_as_expected_emd = np.all(np.sort(avail_axis_names) == np.sort(["y", "x"]))
+        axes_as_expected_bcf = np.all(
+            np.sort(avail_axis_names) == np.sort(["height", "width"])
+        )
         # ##MK::Adrien/Cecile"s BCF and EMD example contains at least one
         # such case where the hyperspy created view in metadata is not
         # consistent across representations generated with different parsers
@@ -98,24 +102,32 @@ class HspyRectRoiAdfImage:
             scale = np.float64(axes_dict[keyword]["scale"])
             size = np.uint32(axes_dict[keyword]["size"])
             unit = str(axes_dict[keyword]["units"])
-            y_axis = (axes_dict[keyword]["name"] == "y") \
-                or (axes_dict[keyword]["name"] == "height")
-            x_axis = (axes_dict[keyword]["name"] == "x") \
-                or (axes_dict[keyword]["name"] == "width")
+            y_axis = (axes_dict[keyword]["name"] == "y") or (
+                axes_dict[keyword]["name"] == "height"
+            )
+            x_axis = (axes_dict[keyword]["name"] == "x") or (
+                axes_dict[keyword]["name"] == "width"
+            )
             if y_axis is True:
-                assert axes_dict[keyword]["_type"] == "UniformDataAxis", \
+                assert axes_dict[keyword]["_type"] == "UniformDataAxis", (
                     keyword + ", this x axis is not of type UniformDataAxis !"
+                )
                 self.meta["ypos"].value = np.asarray(
-                    np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset / 2., np.float64)
+                    np.linspace(0.0, np.float64(size) * scale, num=size, endpoint=True)
+                    + offset / 2.0,
+                    np.float64,
+                )
                 self.meta["ypos"].unit = unit
                 self.meta["ypos_long_name"].value = "y"  # ##MK::name y always!
             if x_axis is True:
-                assert axes_dict[keyword]["_type"] == "UniformDataAxis", \
+                assert axes_dict[keyword]["_type"] == "UniformDataAxis", (
                     keyword + ", this y axis is not of type UniformDataAxis !"
+                )
                 self.meta["xpos"].value = np.asarray(
-                    np.linspace(0., np.float64(size) * scale, num=size,
-                                endpoint=True) + offset / 2., np.float64)
+                    np.linspace(0.0, np.float64(size) * scale, num=size, endpoint=True)
+                    + offset / 2.0,
+                    np.float64,
+                )
                 self.meta["xpos"].unit = unit
                 self.meta["xpos_long_name"].value = "x"  # ##MK::name x always!
             # ##MK::improve case handling
@@ -171,21 +183,20 @@ class NxImageSetEmAdf:
                         # if self.data[-1].is_valid is False:
                         #     self.is_valid = False
 
-    def report(self, prefix: str, frame_id: int,
-               ifo: dict, template: dict) -> dict:
+    def report(self, prefix: str, frame_id: int, ifo: dict, template: dict) -> dict:
         """Enter data from the NX-specific representation into the template."""
         if self.is_valid is False:
             print(f"\tIn function {__name__} reporting nothing!")
             return template
         print(f"\tIn function {__name__} reporting...")
-        assert (len(self.data) >= 0) and (len(self.data) <= 1), \
-            "More than one spectrum stack is currently not supported!"
+        assert (len(self.data) >= 0) and (
+            len(self.data) <= 1
+        ), "More than one spectrum stack is currently not supported!"
 
         if len(self.data) == 1:
             trg = f"{prefix}adf/PROCESS[process1]/"
             template[f"{trg}PROGRAM[program1]/program"] = "hyperspy"
-            template[f"{trg}PROGRAM[program1]/program/@version"] \
-                = hs.__version__
+            template[f"{trg}PROGRAM[program1]/program/@version"] = hs.__version__
             template[f"{trg}mode"] = "n/a"
             template[f"{trg}detector_identifier"] = "n/a"
             template[f"{trg}source"] = ifo["source_file_name"]
@@ -207,29 +218,41 @@ class NxImageSetEmAdf:
             template[f"{trg}@AXISNAME[axis_x_indices]"] = np.uint32(2)
             template[f"{trg}@AXISNAME[axis_y_indices]"] = np.uint32(1)
             template[f"{trg}@AXISNAME[axis_image_identifier]"] = np.uint32(0)
-            template[f"{trg}DATA[data_counts]"] \
-                = {"compress": np.reshape(
+            template[f"{trg}DATA[data_counts]"] = {
+                "compress": np.reshape(
                     np.atleast_3d(self.data[0].meta["intensity"].value),
-                    (1,
-                     np.shape(self.data[0].meta["intensity"].value)[0],
-                     np.shape(self.data[0].meta["intensity"].value)[1])),
-                    "strength": 1}
+                    (
+                        1,
+                        np.shape(self.data[0].meta["intensity"].value)[0],
+                        np.shape(self.data[0].meta["intensity"].value)[1],
+                    ),
+                ),
+                "strength": 1,
+            }
             # is the data layout correct?
             # I am pretty sure the last two have to be swopped also!!
             template[f"{trg}DATA[data_counts]/@long_name"] = "Counts (a.u.)"
-            template[f"{trg}AXISNAME[axis_x]"] \
-                = {"compress": self.data[0].meta["xpos"].value, "strength": 1}
+            template[f"{trg}AXISNAME[axis_x]"] = {
+                "compress": self.data[0].meta["xpos"].value,
+                "strength": 1,
+            }
             template[f"{trg}AXISNAME[axis_x]/@units"] = self.data[0].meta["xpos"].unit
-            template[f"{trg}AXISNAME[axis_x]/@long_name"] \
-                = f"x ({self.data[0].meta['xpos'].unit})"
-            template[f"{trg}AXISNAME[axis_y]"] \
-                = {"compress": self.data[0].meta["ypos"].value, "strength": 1}
+            template[
+                f"{trg}AXISNAME[axis_x]/@long_name"
+            ] = f"x ({self.data[0].meta['xpos'].unit})"
+            template[f"{trg}AXISNAME[axis_y]"] = {
+                "compress": self.data[0].meta["ypos"].value,
+                "strength": 1,
+            }
             template[f"{trg}AXISNAME[axis_y]/@units"] = self.data[0].meta["ypos"].unit
-            template[f"{trg}AXISNAME[axis_y]/@long_name"] \
-                = f"y ({self.data[0].meta['ypos'].unit})"
-            template[f"{trg}AXISNAME[axis_image_identifier]"] \
-                = np.atleast_1d(np.uint32(frame_id))
-            template[f"{trg}AXISNAME[axis_image_identifier]/@long_name"] \
-                = "image identifier"
+            template[
+                f"{trg}AXISNAME[axis_y]/@long_name"
+            ] = f"y ({self.data[0].meta['ypos'].unit})"
+            template[f"{trg}AXISNAME[axis_image_identifier]"] = np.atleast_1d(
+                np.uint32(frame_id)
+            )
+            template[
+                f"{trg}AXISNAME[axis_image_identifier]/@long_name"
+            ] = "image identifier"
 
         return template

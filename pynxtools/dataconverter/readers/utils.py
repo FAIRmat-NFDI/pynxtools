@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class FlattenSettings():
+class FlattenSettings:
     """Settings for flattening operations.
 
     Args:
@@ -38,6 +38,7 @@ class FlattenSettings():
             Parent key of the dictionary. Defaults to "/ENTRY[entry]".
         sep (str, optional): Separator for the keys. Defaults to "/".
     """
+
     dic: Mapping
     convert_dict: dict
     replace_nested: dict
@@ -141,11 +142,14 @@ def flatten_and_replace(settings: FlattenSettings) -> dict:
     for key, val in settings.dic.items():
         if settings.ignore_keys and key in settings.ignore_keys:
             continue
-        new_key = settings.parent_key + settings.sep + settings.convert_dict.get(key, key)
+        new_key = (
+            settings.parent_key + settings.sep + settings.convert_dict.get(key, key)
+        )
         if isinstance(val, Mapping):
             items.extend(
-                flatten_and_replace(replace(settings, dic=val, parent_key=new_key))
-                .items()
+                flatten_and_replace(
+                    replace(settings, dic=val, parent_key=new_key)
+                ).items()
                 if not (settings.is_in_section and is_value_unit_pair(val))
                 else [[new_key, val]]
             )
@@ -163,9 +167,9 @@ def flatten_and_replace(settings: FlattenSettings) -> dict:
 
 
 def parse_yml(
-        file_path: str,
-        convert_dict: Optional[dict] = None,
-        replace_nested: Optional[dict] = None
+    file_path: str,
+    convert_dict: Optional[dict] = None,
+    replace_nested: Optional[dict] = None,
 ) -> Dict[str, Any]:
     """Parses a metadata yaml file into a dictionary.
 
@@ -183,12 +187,12 @@ def parse_yml(
 
     convert_dict["unit"] = "@units"
 
-    with open(file_path, encoding='utf-8') as file:
+    with open(file_path, encoding="utf-8") as file:
         return flatten_and_replace(
             FlattenSettings(
                 dic=yaml.safe_load(file),
                 convert_dict=convert_dict,
-                replace_nested=replace_nested
+                replace_nested=replace_nested,
             )
         )
 

@@ -50,26 +50,26 @@ def retrieve_nxdl_file(nexus_def: str) -> str:
     """
     definition_path = get_nexus_definitions_path()
 
-    def_path = os.path.join(definition_path,
-                            'contributed_definitions',
-                            f"{nexus_def}.nxdl.xml")
+    def_path = os.path.join(
+        definition_path, "contributed_definitions", f"{nexus_def}.nxdl.xml"
+    )
     if os.path.exists(def_path):
         return def_path
 
-    def_path = os.path.join(definition_path,
-                            'base_definitions',
-                            f"{nexus_def}.nxdl.xml")
+    def_path = os.path.join(
+        definition_path, "base_definitions", f"{nexus_def}.nxdl.xml"
+    )
 
     if os.path.exists(def_path):
         return def_path
 
-    def_path = os.path.join(definition_path,
-                            'applications',
-                            f"{nexus_def}.nxdl.xml")
+    def_path = os.path.join(definition_path, "applications", f"{nexus_def}.nxdl.xml")
     if os.path.exists(def_path):
         return def_path
 
-    raise ValueError("Incorrect definition is rendered, try with correct definition name.")
+    raise ValueError(
+        "Incorrect definition is rendered, try with correct definition name."
+    )
 
 
 def get_empty_template(nexus_def: str) -> Template:
@@ -95,17 +95,17 @@ def get_empty_template(nexus_def: str) -> Template:
 
 def take_care_of_special_concepts(key: str):
     """For some special concepts such as @units."""
-    def unit_concept():
-        return {'value': None,
-                'unit': None}
 
-    if key == '@units':
+    def unit_concept():
+        return {"value": None, "unit": None}
+
+    if key == "@units":
         return unit_concept()
 
 
-def get_recursive_dict(concatenated_key: str,
-                       recursive_dict: Dict[str, Any],
-                       level_to_skip: int) -> None:
+def get_recursive_dict(
+    concatenated_key: str, recursive_dict: Dict[str, Any], level_to_skip: int
+) -> None:
     """Get recursive dict for concatenated string of keys.
 
     Parameters
@@ -119,14 +119,17 @@ def get_recursive_dict(concatenated_key: str,
     """
     # splitig keys like: '/entry[ENTRY]/position[POSITION]/xx'.
     # skiping the first empty '' and top parts as directed by users.
-    key_li = concatenated_key.split('/')[level_to_skip + 1:]
+    key_li = concatenated_key.split("/")[level_to_skip + 1 :]
     # list of key for special consideration
-    sp_key_li = ['@units']
+    sp_key_li = ["@units"]
     last_key = ""
     last_dict = {}
     for key in key_li:
-        if '[' in key and '/' not in key:
-            key = re.findall(r'\[(.*?)\]', key,)[0].capitalize()
+        if "[" in key and "/" not in key:
+            key = re.findall(
+                r"\[(.*?)\]",
+                key,
+            )[0].capitalize()
         if not key:
             continue
         last_key = key
@@ -152,7 +155,7 @@ def get_recursive_dict(concatenated_key: str,
         last_dict[last_key] = None
 
 
-def generate_eln(nexus_def: str, eln_file: str = '', level_to_skip: int = 1) -> None:
+def generate_eln(nexus_def: str, eln_file: str = "", level_to_skip: int = 1) -> None:
     """Genrate eln from application definition.
 
     Parameters
@@ -171,19 +174,21 @@ def generate_eln(nexus_def: str, eln_file: str = '', level_to_skip: int = 1) -> 
     for key, _ in template.items():
         get_recursive_dict(key, recursive_dict, level_to_skip)
 
-    name_split = eln_file.rsplit('.')
+    name_split = eln_file.rsplit(".")
     if not eln_file:
-        if nexus_def[0:2] == 'NX':
+        if nexus_def[0:2] == "NX":
             raw_name = nexus_def[2:]
-            eln_file = raw_name + '.yaml'
+            eln_file = raw_name + ".yaml"
 
     elif len(name_split) == 1:
-        eln_file = eln_file + '.yaml'
+        eln_file = eln_file + ".yaml"
 
-    elif len(name_split) == 2 and name_split[1] == 'yaml':
+    elif len(name_split) == 2 and name_split[1] == "yaml":
         pass
     else:
-        raise ValueError("Eln file should come with 'yaml' extension or without extension.")
+        raise ValueError(
+            "Eln file should come with 'yaml' extension or without extension."
+        )
 
-    with open(eln_file, encoding='utf-8', mode='w') as eln_f:
+    with open(eln_file, encoding="utf-8", mode="w") as eln_f:
         yaml.dump(recursive_dict, sort_keys=False, stream=eln_f)
