@@ -16,25 +16,23 @@
 # limitations under the License.
 #
 """Helper functions commonly used by the convert routine."""
-
-from typing import List, Optional, Any
-from typing import Tuple, Callable, Union
+import json
+import logging
 import re
+import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
-import logging
-import json
 from functools import lru_cache
+from typing import Any, Callable, List, Optional, Tuple, Union
 
+import h5py
 import numpy as np
 from ase.data import chemical_symbols
-import h5py
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.units import ureg
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError, get_inherited_nodes
-from pynxtools.dataconverter.units import ureg
-
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)
