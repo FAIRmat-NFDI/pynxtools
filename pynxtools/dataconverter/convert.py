@@ -34,6 +34,9 @@ from pynxtools.dataconverter.writer import Writer
 from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
 else:
@@ -46,12 +49,6 @@ else:
         def entry_points(group):
             """Dummy function for importlib_metadata"""
             return []
-
-
-logger = logging.getLogger(__name__)  # pylint: disable=C0103
-UNDOCUMENTED = 9
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def get_reader(reader_name) -> BaseReader:
@@ -146,7 +143,11 @@ def get_nxdl_root_and_path(nxdl: str):
 
 
 def transfer_data_into_template(
-    input_file, reader, nxdl_name, nxdl_root: Optional[ET.Element] = None, **kwargs
+    input_file,
+    reader,
+    nxdl_name,
+    nxdl_root: Optional[ET.Element] = None,
+    **kwargs,
 ):
     """Transfer parse and merged data from input experimental file, config file and eln.
 
@@ -181,9 +182,8 @@ def transfer_data_into_template(
 
     bulletpoint = "\n\u2022 "
     logger.info(
-        "Using %s reader to convert the given files: %s ",
-        reader,
-        bulletpoint.join((" ", *input_file)),
+        f"Using {reader} reader to convert the given files:"
+        f" {bulletpoint.join((' ', *input_file))}"
     )
 
     data_reader = get_reader(reader)
@@ -201,7 +201,7 @@ def transfer_data_into_template(
     return data
 
 
-# pylint: disable=too-many-arguments,too-many-locals
+# pylint: disable=too-many-arguments,too-many-locals,W1203
 def convert(
     input_file: Tuple[str, ...],
     reader: str,
@@ -238,11 +238,10 @@ def convert(
     """
 
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
-
     if generate_template:
         template = Template()
         helpers.generate_template_from_nxdl(nxdl_root, template)
-        logger.info(template)
+        print(template)
         return
 
     data = transfer_data_into_template(
@@ -252,26 +251,24 @@ def convert(
         nxdl_root=nxdl_root,
         **kwargs,
     )
-    if undocumented:
-        logger.setLevel(UNDOCUMENTED)
+
     if fair and data.undocumented.keys():
         logger.warning(
             "There are undocumented paths in the template. This is not acceptable!"
         )
         return
+    if undocumented:
+        for path in data.undocumented.keys():
+            if "/@default" in path:
+                continue
+            logger.info(
+                f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation."
+            )
 
-    for path in data.undocumented.keys():
-        if "/@default" in path:
-            continue
-        logger.log(
-            UNDOCUMENTED,
-            "The path, %s, is being written but has no documentation.",
-            path,
-        )
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
-    logger.info("The output file generated: %s", output)
+    logger.info(f"The output file generated: {output}.")
 
 
 def parse_params_file(params_file):
@@ -347,6 +344,7 @@ def convert_cli(
     mapping: str,
 ):
     """The CLI entrypoint for the convert function"""
+    logger.addHandler(logging.StreamHandler())
     if params_file:
         try:
             convert(**parse_params_file(params_file))

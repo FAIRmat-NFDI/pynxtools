@@ -34,7 +34,7 @@ from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
     type=int,
     show_default=True,
     help=(
-        "To skip the level of parent hierarchy level. E.g. for default 1 the part"
+        "To skip the level of parent hierarchy level. E.g. for default 1 the part "
         "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped."
     ),
 )
@@ -49,20 +49,10 @@ from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
     required=True,
     type=click.Choice(["eln", "scheme_eln"], case_sensitive=False),
     default="eln",
+    help=("Choose a type of ELN output (eln or scheme_eln)."),
 )
 def get_eln(nxdl: str, skip_top_levels: int, output_file: str, eln_type: str):
-    """To generate ELN in yaml file format.
-
-    Parameters
-    ----------
-
-        nxdl : str
-            Name of NeXus definition e.g. NXmpes
-        skip_top_levels : int
-            To skip hierarchical levels
-        output_file : str
-            Name of the output file.
-    """
+    """Helper tool for generating ELN files in YAML format."""
     eln_type = eln_type.lower()
     if eln_type == "eln":
         generate_eln(nxdl, output_file, skip_top_levels)

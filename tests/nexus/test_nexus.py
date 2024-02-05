@@ -19,11 +19,13 @@
 # limitations under the License.
 #
 
-import os
 import logging
+import os
 import xml.etree.ElementTree as ET
 
 from pynxtools.nexus import nexus
+
+logger = logging.getLogger(__name__)
 
 
 def test_get_nexus_classes_units_attributes():
@@ -51,13 +53,12 @@ def test_nexus(tmp_path):
     """
     The nexus test function
     """
-    local_dir = os.path.abspath(os.path.dirname(__file__))
-    example_data = os.path.join(local_dir, "../data/nexus/201805_WSe2_arpes.nxs")
-    logger = logging.getLogger(__name__)
+    dirpath = os.path.join(os.path.dirname(__file__), "../data/nexus")
+    example_data = os.path.join(dirpath, "201805_WSe2_arpes.nxs")
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(os.path.join(tmp_path, "nexus_test.log"), "w")
-    handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
+    handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     nexus_helper = nexus.HandleNexus(logger, example_data, None, None)
@@ -68,7 +69,7 @@ def test_nexus(tmp_path):
     ) as logfile:
         log = logfile.readlines()
     with open(
-        os.path.join(local_dir, "../data/nexus/Ref_nexus_test.log"),
+        os.path.join(dirpath, "Ref_nexus_test.log"),
         "r",
         encoding="utf-8",
     ) as reffile:
@@ -194,7 +195,7 @@ def test_c_option(tmp_path):
     path_to_ref_files = os.path.join(local_path, "../data/nexus/")
     ref_file = path_to_ref_files + "Ref1_c_option_test.log"
     tmp_file = os.path.join(tmp_path, "c_option_1_test.log")
-    logger = logging.getLogger(__name__)
+
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(tmp_file, "w")
 
@@ -247,7 +248,7 @@ def test_d_option(tmp_path):
     """
 
     tmp_file = os.path.join(tmp_path, "d_option_1_test.log")
-    logger = logging.getLogger(__name__)
+
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(tmp_file, "w")
 

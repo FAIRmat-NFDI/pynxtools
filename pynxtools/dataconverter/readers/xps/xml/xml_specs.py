@@ -31,23 +31,6 @@ from pynxtools.dataconverter.readers.xps.reader_utils import (
 )
 
 
-def _construct_entry_name_xml(key):
-    """Construction entry name."""
-    key_parts = key.split("/")
-    try:
-        # entry example : vendor__sample__name_of_scan_region
-        entry_name = (
-            f"{key_parts[2]}"
-            f"__"
-            f'{key_parts[3].split("_", 1)[1]}'
-            f"__"
-            f'{key_parts[5].split("_", 1)[1]}'
-        )
-    except IndexError:
-        entry_name = ""
-    return entry_name
-
-
 class XmlMapperSpecs(XPSMapper):
     """
     Class for restructuring xml data file from
@@ -180,13 +163,14 @@ class XmlMapperSpecs(XPSMapper):
                             f"{scan_nm}_chan_{row}"
                         ] = xr.DataArray(
                             data=channel_counts[row + 1, :],
-                            coords={"BE": binding_energy},
+                            coords={"energy": binding_energy},
                         )
 
                         # Storing callibrated and after accumulated each scan counts
                         if row == mcd_num - 1:
                             self._xps_dict["data"][entry][scan_nm] = xr.DataArray(
-                                data=channel_counts[0, :], coords={"BE": binding_energy}
+                                data=channel_counts[0, :],
+                                coords={"energy": binding_energy},
                             )
                 else:
                     for row in np.arange(mcd_num):
@@ -203,13 +187,14 @@ class XmlMapperSpecs(XPSMapper):
                             f"{scan_nm}_chan{row}"
                         ] = xr.DataArray(
                             data=channel_counts[row + 1, :],
-                            coords={"BE": binding_energy},
+                            coords={"energy": binding_energy},
                         )
 
                         # Storing callibrated and after accumulated each scan counts
                         if row == mcd_num - 1:
                             self._xps_dict["data"][entry][scan_nm] = xr.DataArray(
-                                data=channel_counts[0, :], coords={"BE": binding_energy}
+                                data=channel_counts[0, :],
+                                coords={"energy": binding_energy},
                             )
 
 
@@ -699,6 +684,7 @@ class XmlParserSpecs:
                 self.entry_to_data[entry]["raw_data"]["excitation_energy"] = val
 
             elif "region/scan_mode/name" in key:
+                val = self._convert_energy_scan_mode(val)
                 self.entry_to_data[entry]["raw_data"]["scan_mode"] = val
 
             elif "region/kinetic_energy" in key:
@@ -748,3 +734,22 @@ class XmlParserSpecs:
                 scan_name = f"cycle{cycle_num}_scan{scan_num}"
 
                 self.entry_to_data[entry]["raw_data"]["scans"][scan_name] = val
+
+    def _convert_energy_scan_mode(self, energy_scan_mode):
+        """
+        Convert the native names for the energy scan modes to the ones
+        used in NXmpes.
+
+        """
+        energy_scan_mode_map = {
+            "FixedAnalyzerTransmission": "fixed_analyser_transmission",
+            "FixedRetardationRatio": "fixed_retardation_ratio",
+            "FixedEnergies": "fixed_energy",
+            "Snapshot": "snapshot",
+        }
+
+        try:
+            energy_scan_mode = energy_scan_mode_map[energy_scan_mode]
+        except KeyError:
+            pass
+        return energy_scan_mode

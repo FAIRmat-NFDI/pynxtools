@@ -203,6 +203,8 @@ cython_debug/
 !dev-requirements.txt
 !pynxtools/dataconverter/units/default_en.txt
 !pynxtools/dataconverter/units/constants_en.txt
+!mkdocs-requirements.txt
+!pynxtools/nexus-version.txt
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version
