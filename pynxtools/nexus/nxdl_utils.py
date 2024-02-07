@@ -3,10 +3,11 @@
 """
 
 import os
+import re
+import textwrap
 import xml.etree.ElementTree as ET
 from functools import lru_cache
 from glob import glob
-import textwrap
 
 
 class NxdlAttributeError(Exception):
@@ -95,32 +96,41 @@ def get_nx_class(nxdl_elem):
 
 
 def get_nx_namefit(hdf_name, name, name_any=False):
-    """Checks if an HDF5 node name corresponds to a child of the NXDL element
-    uppercase letters in front can be replaced by arbitraty name, but
-    uppercase to lowercase match is preferred,
-    so such match is counted as a measure of the fit"""
+    """
+    Checks if an HDF5 node name corresponds to a child of the NXDL element.
+    A group of uppercase letters anywhere can be replaced by an arbitrary name.
+
+    Args:
+        hdf_name (str): The hdf_name, containing uppercase parts.
+        name (str): The string to match against hdf_name.
+        name_any (bool, optional):
+            Accept any name and just return the matching characters.
+            Defaults to False.
+
+    Returns:
+        int:
+            -1 if no match is found or the number of matching
+            characters (case insensitive) between for all uppercase groups.
+    """
     if name == hdf_name:
         return len(name) * 2
-    # count leading capitals
-    counting = 0
-    while counting < len(name) and name[counting].upper() == name[counting]:
-        counting += 1
-    if (
-        name_any
-        or counting == len(name)
-        or (counting > 0 and hdf_name.endswith(name[counting:]))
-    ):  # if potential fit
-        # count the matching chars
-        fit = 0
-        for i in range(min(counting, len(hdf_name))):
-            if hdf_name[i].upper() == name[i]:
+
+    uppercase_parts = re.findall("[A-Z]+", hdf_name)
+
+    for up in uppercase_parts:
+        name = name.replace(up, r"([a-z0-9_]+)")
+
+    name_match = re.search(rf"^{name}$", name)
+    if name_match is None:
+        return 0 if name_any else -1
+
+    fit = 0
+    for up, low in zip(uppercase_parts, name_match.groups()):
+        for i in range(min(len(up), len(low))):
+            if up[i].lower() == low[i]:
                 fit += 1
-            else:
-                break
-        if fit == min(counting, len(hdf_name)):  # accept only full fits as better fits
-            return fit
-        return 0
-    return -1  # no fit
+
+    return fit
 
 
 def get_nx_classes():
