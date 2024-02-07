@@ -408,6 +408,14 @@ def is_valid_unit(unit: str, nx_category: str) -> bool:
         ureg(unit)  # Check if unit is generally valid
         return True
     nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
+    if nx_category == "[NX_TRANSFORMATION]":
+        # NX_TRANSFORMATIONS is a pseudo unit
+        # and can be either an angle, a length or unitless
+        return (
+            ureg(unit).check("[NX_ANGLE]")
+            or ureg(unit).check("[NX_LENGTH]")
+            or ureg(unit).check("[NX_UNITLESS]")
+        )
     return ureg(unit).check(f"{nx_category}")
 
 
@@ -642,7 +650,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     ),
                     elem=nxdl_root,
                 )
-                nxdl_unit = field.attrib["units"]
+                nxdl_unit = field.attrib.get("units", "")
                 if not is_valid_unit(data[path], nxdl_unit):
                     raise ValueError(
                         f"Invalid unit in {path}. {data[path]} "
