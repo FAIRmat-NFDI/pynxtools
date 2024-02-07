@@ -151,6 +151,9 @@ pixel = [digital_image_resolution] = px = pel
 # Conversion factors are exact (except when noted),
 # although floating-point conversion may introduce inaccuracies
 
+# Unitless
+counts = []
+
 # Angle
 degree = π / 180 * radian = ° = deg = arcdeg = arcdegree = angular_degree
 arcminute = degree / 60 = arcmin = arc_minute = angular_minute
