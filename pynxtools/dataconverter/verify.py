@@ -16,13 +16,14 @@
 # limitations under the License.
 #
 """Verifies a nxs file"""
+import logging
 import os
 import sys
-from typing import Dict, Optional, Union
 import xml.etree.ElementTree as ET
-import logging
-from h5py import File, Dataset, Group
+from typing import Dict, Optional, Union
+
 import click
+from h5py import Dataset, File, Group
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
@@ -31,7 +32,7 @@ from pynxtools.nexus import nexus
 logger = logging.getLogger(__name__)
 
 DEBUG_TEMPLATE = 9
-logger.setLevel(DEBUG_TEMPLATE)
+logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
