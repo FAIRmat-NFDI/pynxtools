@@ -115,12 +115,12 @@ def get_nx_namefit(hdf_name, name, name_any=False):
     if name == hdf_name:
         return len(name) * 2
 
-    uppercase_parts = re.findall("[A-Z]+", hdf_name)
+    uppercase_parts = re.findall("[A-Z]+(?:_[A-Z]+)*", name)
 
     for up in uppercase_parts:
-        name = name.replace(up, r"([a-z0-9_]+)")
+        name = name.replace(up, r"([a-zA-Z0-9_]+)")
 
-    name_match = re.search(rf"^{name}$", name)
+    name_match = re.search(rf"^{name}$", hdf_name)
     if name_match is None:
         return 0 if name_any else -1
 
