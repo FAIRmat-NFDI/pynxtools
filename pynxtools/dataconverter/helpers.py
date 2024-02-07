@@ -532,6 +532,9 @@ def does_group_exist(path_to_group, data):
 def ensure_all_required_fields_exist(template, data, nxdl_root):
     """Checks whether all the required fields are in the returned data object."""
     for path in template["required"]:
+        entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
+        if entry_name == "@units":
+            continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(
             nxdl_path, convert_data_dict_path_to_hdf5_path(path), data
@@ -619,7 +622,11 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
             if entry_name == "@units":
                 elempath = get_inherited_nodes(nxdl_path, None, nxdl_root)[1]
                 elem = elempath[-2]
-                if "units" not in elem.attrib:
+                field_path = path.rsplit("/", 1)[0]
+                if (
+                    field_path not in data.get_documented()
+                    and "units" not in elem.attrib
+                ):
                     logger.warning(
                         "The unit, %s = %s, is being written but has no documentation.",
                         path,
@@ -627,7 +634,15 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     )
                     continue
 
-                nxdl_unit = elem.attrib["units"]
+                field = nexus.get_node_at_nxdl_path(
+                    nxdl_path=convert_data_converter_dict_to_nxdl_path(
+                        # The part below is the backwards compatible version of
+                        # nxdl_path.removesuffix("/units")
+                        nxdl_path[:-6] if nxdl_path.endswith("/units") else nxdl_path
+                    ),
+                    elem=nxdl_root,
+                )
+                nxdl_unit = field.attrib["units"]
                 if not is_valid_unit(data[path], nxdl_unit):
                     raise ValueError(
                         f"Invalid unit in {path}. {data[path]} "
