@@ -27,14 +27,14 @@ Instrument:
   Source:
     Probe:
       frequency:
-        unit: KHz
+        unit: kHz
         value: 500.0
       photon_energy:
         unit: eV
         value: 21.7
     Pump:
       frequency:
-        unit: KHz
+        unit: kHz
         value: 500.0
       photon_energy:
         unit: eV

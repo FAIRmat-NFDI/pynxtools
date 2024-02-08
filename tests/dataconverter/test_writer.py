@@ -19,13 +19,17 @@
 
 import os
 
-import pytest
 import h5py
+import pytest
+
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
-
-
 from pynxtools.dataconverter.writer import Writer
-from .test_helpers import fixture_filled_test_data, fixture_template, alter_dict  # pylint: disable=unused-import
+
+from .test_helpers import (  # pylint: disable=unused-import
+    alter_dict,
+    fixture_filled_test_data,
+    fixture_template,
+)
 
 
 @pytest.mark.usefixtures("filled_test_data")
@@ -51,7 +55,7 @@ def test_write(writer):
     writer.write()
     test_nxs = h5py.File(writer.output_path, "r")
     assert test_nxs["/my_entry/NXODD_name/int_value"][()] == 2
-    assert test_nxs["/my_entry/NXODD_name/int_value"].attrs["units"] == "eV"
+    assert test_nxs["/my_entry/NXODD_name/int_value"].attrs["units"] == "nm"
     assert test_nxs["/my_entry/NXODD_name/posint_value"].shape == (3,)  # pylint: disable=no-member
 
 

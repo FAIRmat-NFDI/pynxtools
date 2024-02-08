@@ -3,14 +3,14 @@
         "bool_value": true,
         "char_value": "A random string!",
         "float_value": 0.1,
-        "float_value_units": "Units are always strings.",
+        "float_value_units": "eV",
         "int_value": -3,
         "another_level_down":{
-            "int_value_units": "m/s^2",
+            "int_value_units": "nm",
             "posint_value": 7
         }
     },
-    "posint_value_units": "V",
+    "posint_value_units": "m",
     "definition": "NXtest",
     "definition_version": "0.0.1",
     "program_name": "Nexus Parser",

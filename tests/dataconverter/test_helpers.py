@@ -149,16 +149,16 @@ def fixture_filled_test_data(template, tmp_path):
 
     template.clear()
     template["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0
-    template["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"
+    template["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "eV"
     template["/ENTRY[my_entry]/optional_parent/required_child"] = 1
     template["/ENTRY[my_entry]/optional_parent/optional_child"] = 1
     template["/ENTRY[my_entry]/NXODD_name/bool_value"] = True
     template["/ENTRY[my_entry]/NXODD_name/int_value"] = 2
-    template["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"
+    template["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "nm"
     template["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array(
         [1, 2, 3], dtype=np.int8
     )
-    template["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"
+    template["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "m"
     template["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"
     template["/ENTRY[my_entry]/definition"] = "NXtest"
     template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
@@ -178,17 +178,17 @@ def fixture_filled_test_data(template, tmp_path):
 
 TEMPLATE = Template()
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value"] = 2.0  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "nm"  # pylint: disable=E1126
+TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name/float_value/@units"] = "eV"  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/bool_value"] = True  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value"] = 2  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "eV"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/int_value/@units"] = "nm"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value"] = np.array(
     [1, 2, 3],  # pylint: disable=E1126
     dtype=np.int8,
 )  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "kg"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/posint_value/@units"] = "m"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/char_value"] = "just chars"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126

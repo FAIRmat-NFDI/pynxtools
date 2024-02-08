@@ -2,12 +2,12 @@
 """Read files from different format and print it in a standard NeXus format
 """
 
-import os
-
-import sys
 import logging
-import h5py
+import os
+import sys
+
 import click
+import h5py
 
 from pynxtools.nexus.nxdl_utils import *  # pylint: disable=wildcard-import, unused-wildcard-import
 
@@ -776,7 +776,7 @@ class HandleNexus:
 )
 def main(nexus_file, documentation, concept):
     """The main function to call when used as a script."""
-    logging_format = "%(levelname)s: %(message)s"
+    logging_format = "%(message)s"
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging.DEBUG)
     logging.basicConfig(
