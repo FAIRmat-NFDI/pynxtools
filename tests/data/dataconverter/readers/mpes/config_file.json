@@ -37,7 +37,7 @@
       "type": "estimated"
     },
     "RESOLUTION[momentum_resolution]": {
-      "resolution": "@link:/entry/instrument/electronanalyser/momentum_resolution",
+      "resolution": "@attrs:metadata/instrument/analyzer/momentum_resolution",
       "resolution/@units": "1/angstrom",
       "physical_quantity": "momentum",
       "type": "estimated"
@@ -167,7 +167,7 @@
     "mode": "Single Bunch",
     "frequency": "@attrs:metadata/instrument/beam/probe/frequency",
     "frequency/@units": "kHz",
-    "associated_beam": "/entry/instrument/beam_probe"
+    "associated_beam": "@link:/entry/instrument/beam_probe"
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/beam_TYPE[beam_probe]": {
     "distance": 0.0,
@@ -182,7 +182,7 @@
     "incident_polarization/@units": "V^2/mm^2",
     "extent": "@attrs:metadata/instrument/beam/probe/extent",
     "extent/@units": "µm",
-    "associated_source": "/entry/instrument/source_probe"
+    "associated_source": "@link:/entry/instrument/source_probe"
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/source_TYPE[source_pump]": {
     "name": "OPCPA @ TR-ARPES @ FHI",
@@ -191,7 +191,7 @@
     "mode": "Single Bunch",
     "frequency": "@attrs:metadata/instrument/beam/pump/frequency",
     "frequency/@units": "kHz",
-    "associated_beam": "/entry/instrument/beam_pump"
+    "associated_beam": "@link:/entry/instrument/beam_pump"
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/beam_TYPE[beam_pump]": {
     "distance": 0.0,
@@ -214,7 +214,7 @@
     "extent/@units": "µm",
     "fluence": "@attrs:metadata/instrument/beam/pump/fluence",
     "fluence/@units": "mJ/cm^2",
-    "associated_source": "/entry/instrument/source_pump"
+    "associated_source": "@link:/entry/instrument/source_pump"
   },
   "/ENTRY[entry]/INSTRUMENT[instrument]/MANIPULATOR[manipulator]": {
     "temperature_sensor": {
@@ -262,7 +262,8 @@
   },
   "/ENTRY[entry]/SAMPLE[sample]": {
     "preparation_date": "@attrs:metadata/sample/preparation_date",
-    "sample_history/notes": "@attrs:metadata/sample/sample_history",
+    "sample_history/notes/type": "text/plain",
+    "sample_history/notes/description": "@attrs:metadata/sample/sample_history",
     "description": "@attrs:metadata/sample/chemical_formula",
     "name": "@attrs:metadata/sample/chemical_formula",
     "situation": "vacuum",
