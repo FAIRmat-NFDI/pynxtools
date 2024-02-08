@@ -227,8 +227,6 @@ def belongs_to(nxdl_elem, child, name, class_type=None, hdf_name=None):
     chk_name = hdf_name or name
     if act_htmlname == chk_name:
         return True
-    if not hdf_name:  # search for name fits is only allowed for hdf_nodes
-        return False
     try:  # check if nameType allows different name
         name_any = bool(child.attrib["nameType"] == "any")
     except KeyError:
@@ -341,10 +339,6 @@ def get_own_nxdl_child(
                 child.set(
                     "nxdlpath", nxdl_elem.get("nxdlpath") + "/" + get_node_name(child)
                 )
-            return child
-    for child in nxdl_elem:
-        if "name" in child.attrib and child.attrib["name"] == name:
-            child.set("nxdlbase", nxdl_elem.get("nxdlbase"))
             return child
 
     for child in nxdl_elem:
