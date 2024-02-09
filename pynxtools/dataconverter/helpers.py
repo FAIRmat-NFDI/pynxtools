@@ -553,15 +553,6 @@ def does_group_exist(path_to_group, data):
     return False
 
 
-def field_exists_for_empty_group(path_to_group, data):
-    """Returns True if the group or any children are set"""
-    path_to_group = convert_data_converter_dict_to_nxdl_path(path_to_group)
-    for path in data:
-        if is_group_part_of_path(path_to_group, path) and data[path] is not None:
-            return True
-    return False
-
-
 # pylint: disable=W1203
 def ensure_all_required_fields_exist(template, data, nxdl_root):
     """Checks whether all the required fields are in the returned data object."""
