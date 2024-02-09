@@ -419,7 +419,7 @@ def test_validate_data_dict(
         # logger records
         captured_logs = caplog.records
         helpers.validate_data_dict(template, data_dict, nxdl_root)
-        assert any(error_message in rec.message for rec in captured_logs)
+        assert all(error_message in rec.message for rec in captured_logs)
     else:
         with pytest.raises(Exception) as execinfo:
             helpers.validate_data_dict(template, data_dict, nxdl_root)
