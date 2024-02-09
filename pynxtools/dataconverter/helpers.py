@@ -143,11 +143,15 @@ def generate_template_from_nxdl(
         return
 
     suffix = ""
-    if "name" in root.attrib:
+    if "name" in root.attrib and not contains_uppercase(root.attrib["name"]):
         suffix = root.attrib["name"]
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
-        hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
+        hdf5name = (
+            "["
+            f"{convert_nexus_to_suggested_name(root.attrib['type'], root.attrib.get('name'))}"
+            "]"
+        )
         suffix = f"{nexus_class}{hdf5name}"
 
     path = path + "/" + (f"@{suffix}" if tag == "attribute" else suffix)
@@ -213,8 +217,17 @@ def convert_nexus_to_caps(nexus_name):
     return nexus_name[2:].upper()
 
 
-def convert_nexus_to_suggested_name(nexus_name):
+def contains_uppercase(field_name: Optional[str]) -> bool:
+    """Helper function to check if a field name contains uppercase characters."""
+    if field_name is None:
+        return False
+    return any(char.isupper() for char in field_name)
+
+
+def convert_nexus_to_suggested_name(nexus_name, field_name=None):
     """Helper function to suggest a name for a group from its NeXus class."""
+    if contains_uppercase(field_name):
+        return field_name
     return nexus_name[2:]
 
 
@@ -428,6 +441,7 @@ def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, 
         if (
             nxdl_path == convert_data_converter_dict_to_nxdl_path(key)
             or convert_data_dict_path_to_hdf5_path(key) == hdf_path
+            # TODO: Add fitting algorithm
         ):
             if data[key] is None:
                 accepted_unfilled_key = key
