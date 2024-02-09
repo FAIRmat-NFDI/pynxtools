@@ -148,7 +148,7 @@ def generate_template_from_nxdl(
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
         name = root.attrib.get("name")
-        nx_type = root.attrib.get("type").removeprefix("NX")
+        nx_type = root.attrib.get("type")[2:]  # .removeprefix("NX") (python > 3.8)
         suffix = (
             f"{name}[{name.lower()}]"
             if name is not None
