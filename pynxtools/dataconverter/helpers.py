@@ -363,6 +363,22 @@ def convert_str_to_bool_safe(value):
     return None
 
 
+def clean_str_attr(attr: Optional[Union[str, bytes]], encoding="utf-8") -> str:
+    """
+    Cleans the string attribute which means it will decode bytes to str if necessary.
+    """
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    raise TypeError(
+        "Invalid type {type} for attribute. Should be either None, bytes or str."
+    )
+
+
 def is_valid_data_field(value, nxdl_type, path):
     """Checks whether a given value is valid according to what is defined in the NXDL.
 
@@ -419,6 +435,7 @@ def is_valid_unit(unit: str, nx_category: str) -> bool:
     Returns:
         bool: The unit belongs to the provided category
     """
+    unit = clean_str_attr(unit)
     if nx_category in ("NX_ANY"):
         ureg(unit)  # Check if unit is generally valid
         return True
