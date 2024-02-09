@@ -17,9 +17,10 @@
 
 #
 """An example reader implementation for the DataConverter."""
-import os
-from typing import Tuple, Any
 import json
+import os
+from typing import Any, Tuple
+
 import numpy as np
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -82,7 +83,7 @@ class ExampleReader(BaseReader):
 
         # internal links
         template["/ENTRY[entry]/test_link/internal_link"] = {
-            "link": "/entry/NXODD_name/posint_value"
+            "link": "/entry/nxodd_name/posint_value"
         }
 
         # external links

@@ -147,12 +147,13 @@ def generate_template_from_nxdl(
         suffix = root.attrib["name"]
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
-        hdf5name = (
-            "["
-            f"{convert_nexus_to_suggested_name(root.attrib['type'], root.attrib.get('name'))}"
-            "]"
+        name = root.attrib.get("name")
+        nx_type = root.attrib.get("type").removeprefix("NX")
+        suffix = (
+            f"{name}[{name.lower()}]"
+            if name is not None
+            else f"{nexus_class}[{nx_type}]"
         )
-        suffix = f"{nexus_class}{hdf5name}"
 
     path = path + "/" + (f"@{suffix}" if tag == "attribute" else suffix)
 

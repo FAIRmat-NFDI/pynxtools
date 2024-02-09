@@ -34,15 +34,15 @@ The mapping files will always be based on the Template the dataconverter generat
 The right hand side values of the Template keys are what you can modify.
 
 Here are the three different ways you can fill the right hand side of the Template keys:
-* Write the nested path in your datafile. This is indicated by a leading `/` before the word `entry` to make `/entry/data/current_295C` below. 
+* Write the nested path in your datafile. This is indicated by a leading `/` before the word `entry` to make `/entry/data/current_295C` below.
 Example:
 
 ```json
   "/ENTRY[entry]/DATA[data]/current_295C": "/entry/data/current_295C",
-  "/ENTRY[entry]/NXODD_name/posint_value": "/a_level_down/another_level_down/posint_value",
+  "/ENTRY[entry]/NXODD_name[odd_name]/posint_value": "/a_level_down/another_level_down/posint_value",
 ```
 
-* Write the values directly in the mapping file for missing data from your data file. 
+* Write the values directly in the mapping file for missing data from your data file.
 
 ```json
 
@@ -50,7 +50,7 @@ Example:
   "/ENTRY[entry]/PROCESS[process]/program/@version": "1.6.7"
 ```
 
-* Write JSON objects with a link key. This follows the same link mechanism that the dataconverter implements. In the context of this reader, you can only use external links to your data files. In the example below, `current.nxs` is an already existing HDF5 file that we link to in our new NeXus file without copying over the data. The format is as follows: 
+* Write JSON objects with a link key. This follows the same link mechanism that the dataconverter implements. In the context of this reader, you can only use external links to your data files. In the example below, `current.nxs` is an already existing HDF5 file that we link to in our new NeXus file without copying over the data. The format is as follows:
 `"link": "<filename>:<path_in_file>"`
 Note: This only works for HDF5 files currently.
 

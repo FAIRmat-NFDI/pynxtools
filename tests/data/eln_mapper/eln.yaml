@@ -89,7 +89,7 @@ Instrument:
       name: null
       type: null
       value: null
-  beam_TYPE:
+  Beam_type:
     associated_source: null
     distance:
       value: null
@@ -136,7 +136,7 @@ Instrument:
       value:
         value: null
         unit: null
-  source_TYPE:
+  Source_type:
     associated_beam: null
     device_information:
       identifier: null
