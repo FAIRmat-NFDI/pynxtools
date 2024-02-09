@@ -284,7 +284,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[odd_name]/bool_value", "required"
             ),
             (
-                "The data entry corresponding to /ENTRY[entry]/NXODD_name[odd_name]/bool_value is"
+                "The data entry corresponding to /ENTRY[entry]/NXODD_name[nxodd_name]/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
