@@ -164,9 +164,9 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
     template["/ENTRY[my_entry]/program_name"] = "Testing program"
     template["/ENTRY[my_entry]/NXODD_name[odd_name]/type"] = "2nd type"
-    template["/ENTRY[my_entry]/NXODD_name[odd_name]/date_value"] = (
-        "2022-01-22T12" ":14:12.05018+00:00"
-    )
+    template[
+        "/ENTRY[my_entry]/NXODD_name[odd_name]/date_value"
+    ] = "2022-01-22T12:14:12.05018+00:00"
     template["/ENTRY[my_entry]/required_group/description"] = "An example description"
     template["/ENTRY[my_entry]/required_group2/description"] = "An example description"
     template["/ENTRY[my_entry]/does/not/exist"] = "random"
@@ -313,7 +313,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[odd_name]/date_value",
                 "2022-01-22T12:14:12.05018-00:00",
             ),
-            "The date at /ENTRY[my_entry]/NXODD_name[odd_name]/date_value should be a timezone aware"
+            "The date at /ENTRY[my_entry]/NXODD_name[odd_name]/date_value"
+            " should be a timezone aware"
             " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
             "T12:14:12.05018+00:00.",
             id="UTC-with--00:00",
@@ -324,7 +325,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[odd_name]/type", "Wrong option"
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[odd_name]/type should be on of the following"
+                "The value at /ENTRY[my_entry]/NXODD_name[odd_name]/type should"
+                " be on of the following"
                 " strings: [1st type,2nd type,3rd type,4th type]"
             ),
             id="wrong-enum-choice",
@@ -381,7 +383,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't been "
+                "The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group,"
+                " hasn't been "
                 "supplied while its optional parent, /ENTRY[entry]/optional_parent, is supplied."
             ),
             id="req-group-in-opt-parent-removed",
@@ -407,6 +410,7 @@ def test_validate_data_dict(
         "opt-group-completely-removed",
     ):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
+        assert not caplog.records
     # Missing required fields caught by logger with warning
     elif request.node.callspec.id in (
         "empty-required-field",
