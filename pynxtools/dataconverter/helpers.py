@@ -33,6 +33,7 @@ from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.units import ureg
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeError, get_inherited_nodes
+from pynxtools.nexus.nxdl_utils import get_nx_namefit
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)
@@ -435,6 +436,26 @@ def is_valid_unit(unit: str, nx_category: str) -> bool:
     return ureg(unit).check(f"{nx_category}")
 
 
+def is_matching_variation(nxdl_path: str, key: str) -> bool:
+    """
+    Checks if the given key is a matching variation of the given NXDL path.
+    """
+    hdf_tokens = [
+        g1 + g2
+        for (g1, g2) in re.findall(
+            r"\/[a-zA-Z0-9_]+\[([a-zA-Z0-9_]+)\]|\/([a-zA-Z0-9_]+)", key
+        )
+    ]
+    nxdl_path_tokens = nxdl_path[1:].split("/")
+    if len(hdf_tokens) != len(nxdl_path_tokens):
+        return False
+
+    for file_token, nxdl_token in zip(hdf_tokens, nxdl_path_tokens):
+        if get_nx_namefit(file_token, nxdl_token) < 0:
+            return False
+    return True
+
+
 def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
     accepted_unfilled_key = None
@@ -442,7 +463,7 @@ def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, 
         if (
             nxdl_path == convert_data_converter_dict_to_nxdl_path(key)
             or convert_data_dict_path_to_hdf5_path(key) == hdf_path
-            # TODO: Add fitting algorithm
+            or is_matching_variation(nxdl_path, key)
         ):
             if data[key] is None:
                 accepted_unfilled_key = key
@@ -579,7 +600,6 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                 continue
             if not does_group_exist(renamed_path, data):
                 logger.warning(f"The required group, {path}, hasn't been supplied.")
-                continue
             continue
         if not is_path_in_data_dict or data[renamed_path] is None:
             logger.warning(
