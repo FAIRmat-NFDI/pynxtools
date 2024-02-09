@@ -279,16 +279,16 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             "",
             id="empty-optional-field",
         ),
-        # pytest.param(
-        #     set_to_none_in_dict(
-        #         TEMPLATE, "/ENTRY[my_entry]/NXODD_name[odd_name]/bool_value", "required"
-        #     ),
-        #     (
-        #         "The data entry corresponding to /ENTRY[entry]/NXODD_name[odd_name]/bool_value is"
-        #         " required and hasn't been supplied by the reader."
-        #     ),
-        #     id="empty-required-field",
-        # ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name[odd_name]/bool_value", "required"
+            ),
+            (
+                "The data entry corresponding to /ENTRY[entry]/NXODD_name[odd_name]/bool_value is"
+                " required and hasn't been supplied by the reader."
+            ),
+            id="empty-required-field",
+        ),
         pytest.param(
             alter_dict(
                 TEMPLATE,
