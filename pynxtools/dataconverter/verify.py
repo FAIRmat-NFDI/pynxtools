@@ -48,14 +48,19 @@ def _get_def_map(file: str) -> Dict[str, str]:
     def_map: Dict[str, str] = {}
     with File(file, "r") as h5file:
         for entry_name, dataset in h5file.items():
-            if helpers.clean_str_attr(dataset.attrs.get("NX_class")) == "NXentry":
-                def_map = {
-                    entry_name: (
-                        definition := h5file[f"/{entry_name}/definition"][()].decode(
-                            "utf8"
+            if (
+                helpers.clean_str_attr(dataset.attrs.get("NX_class")) == "NXentry"
+                and f"/{entry_name}/definition" in h5file
+            ):
+                def_map.update(
+                    {
+                        entry_name: (
+                            definition := h5file[f"/{entry_name}/definition"][
+                                ()
+                            ].decode("utf8")
                         )
-                    )
-                }
+                    }
+                )
                 logger.debug("Reading entry '%s': '%s'", entry_name, definition)
 
     return def_map
