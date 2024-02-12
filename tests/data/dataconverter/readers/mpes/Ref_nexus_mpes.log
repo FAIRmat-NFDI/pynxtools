@@ -2550,8 +2550,11 @@ DEBUG - ===== FIELD (//entry/instrument/electronanalyser/collectioncolumn/lens_m
 DEBUG - value: b'6kV_kmodem2.0_30VTOF_MoTe2_2340VMCP.sav' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXelectronanalyser', 'NXcollectioncolumn', 'NX_CHAR']
 DEBUG - classes:
+NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/lens_mode
 NXcollectioncolumn.nxdl.xml:/lens_mode
-DEBUG - <<OPTIONAL>>
+DEBUG - <<RECOMMENDED>>
+DEBUG - documentation (NXmpes.nxdl.xml:/ENTRY/INSTRUMENT/ELECTRONANALYSER/COLLECTIONCOLUMN/lens_mode):
+DEBUG - 
 DEBUG - documentation (NXcollectioncolumn.nxdl.xml:/lens_mode):
 DEBUG - 
              Labelling of the lens setting in use.
