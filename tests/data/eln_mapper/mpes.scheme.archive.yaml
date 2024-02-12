@@ -350,7 +350,7 @@ definitions:
                                 component: StringEditQuantity
                                 defaultDisplayUnit: <No Default unit>
                             description: ' Scheme of the electron collection column. '
-                          mode:
+                          lens_mode:
                             type: str
                             m_annotations:
                               eln:
