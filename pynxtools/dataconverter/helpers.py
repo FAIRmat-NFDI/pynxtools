@@ -817,6 +817,7 @@ def add_default_root_attributes(data, filename):
         f"blob/{get_nexus_version_hash()}",
     )
     update_and_warn("/@NeXus_version", get_nexus_version())
+    # pylint: disable=c-extension-no-member
     update_and_warn("/@HDF5_version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
 

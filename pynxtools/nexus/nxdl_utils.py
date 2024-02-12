@@ -636,8 +636,11 @@ def get_enums(node):
 
 
 def add_base_classes(elist, nx_name=None, elem: ET.Element = None):
-    """Add the base classes corresponding to the last eleme in elist to the list. Note that if
-    elist is empty, a nxdl file with the name of nx_name or a rather room elem is used if provided"""
+    """
+    Add the base classes corresponding to the last eleme in elist to the list.
+    Note that if elist is empty, a nxdl file with the name of
+    nx_name or a rather room elem is used if provided
+    """
     if elist and nx_name is None:
         nx_name = get_nx_class(elist[-1])
     # to support recursive defintions, like NXsample in NXsample, the following test is removed
