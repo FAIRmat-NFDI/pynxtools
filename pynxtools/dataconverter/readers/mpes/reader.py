@@ -273,10 +273,7 @@ def fill_data_indices_in_config(config_file_dict, x_array_loaded):
                 new_key = key.replace("*", dim)
                 new_value = value.replace("*", dim)
 
-                if (
-                    new_key not in config_file_dict.keys()
-                    and new_value not in config_file_dict.values()
-                ):
+                if new_key not in config_file_dict.keys():
                     config_file_dict[new_key] = new_value
 
             config_file_dict.pop(key)
