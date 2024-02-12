@@ -20,10 +20,11 @@ import logging
 import os
 import sys
 import xml.etree.ElementTree as ET
-from typing import Dict, Optional, Union
+from os import path
+from typing import Dict, Union
 
 import click
-from h5py import Dataset, File, Group
+from h5py import Dataset, File, Group, is_hdf5
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
@@ -77,6 +78,15 @@ def _get_nxdl_root(nxdl: str) -> ET.Element:
 @click.argument("file")
 def verify(file: str):
     """Verifies a nexus file"""
+
+    if not path.exists(file):
+        raise click.FileError(file, hint=f'File "{file}" does not exist.')
+
+    if not path.isfile(file):
+        raise click.FileError(file, hint=f'"{file}" is not a file.')
+
+    if not is_hdf5(file):
+        raise click.FileError(file, hint=f'"{file}" is not a valid HDF5 file.')
 
     def collect_entries(name: str, dataset: Union[Group, Dataset]):
         clean_name = _replace_group_names(class_map, name)
