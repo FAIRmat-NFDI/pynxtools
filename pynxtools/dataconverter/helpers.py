@@ -363,9 +363,12 @@ def convert_str_to_bool_safe(value):
     return None
 
 
-def clean_str_attr(attr: Optional[Union[str, bytes]], encoding="utf-8") -> str:
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding="utf-8"
+) -> Optional[str]:
     """
     Cleans the string attribute which means it will decode bytes to str if necessary.
+    If `attr` is not str, bytes or None it raises a TypeError.
     """
     if attr is None:
         return attr
