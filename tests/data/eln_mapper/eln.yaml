@@ -9,7 +9,7 @@ Instrument:
         vendor: null
       field_aperture: null
       iris: null
-      mode: null
+      lens_mode: null
       projection: null
       scheme: null
       spatial_acceptance: null
