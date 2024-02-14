@@ -25,6 +25,7 @@ mpes nxdl (NeXus Definition Language) template.
 import re
 import copy
 import datetime
+import struct
 import xarray as xr
 import numpy as np
 
@@ -603,7 +604,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         Construct the parser.
 
         """
-        self.lines = []
+        self.raw_data: str = ""
         self.spectra = []
         self.metadata = PhiMetadata()
 
@@ -800,7 +801,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
             Flat list of dictionaries containing one spectrum each.
 
         """
-        self.lines = self._read_lines(file)
+        self.raw_data = self._read_lines(file)
         header, data = self._separate_header_and_data()
         # l = b'\x01'.join(data)
 
@@ -830,12 +831,10 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         None.
 
         """
-        lines = []
         with open(file, mode="rb") as txt_file:  # "utf-8"
-            for line in txt_file:
-                lines += [line.strip()]
+            data = txt_file.read()
 
-        return lines
+        return data
 
     def _separate_header_and_data(self):
         """
@@ -846,23 +845,15 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         None.
 
         """
-        in_header = False
-        n_headerlines = 0
+        try:  # Windows
+            header, data = self.raw_data.split(b"EOFH\r\n")
+            header = header.decode("ascii").split("\r")
+            header = [line.strip() for line in header if line.strip()]
 
-        for i, line in enumerate(self.lines):
-            if "SOFH" in line.decode("ascii"):
-                in_header = True
-
-            elif "EOFH" in line.decode("ascii"):
-                in_header = False
-                break
-
-            elif in_header:
-                n_headerlines += 1
-
-        header = self.lines[1 : n_headerlines + 1]
-        header = [line.decode("ascii") for line in header]
-        data = self.lines[n_headerlines + 2 :]
+        except ValueError:  # Linux, MacOS
+            header, data = self.raw_data.split(b"EOFH\n")
+            header = header.decode("ascii").split("\n")
+            header = [line.strip() for line in header if line.strip()]
 
         return header, data
 
@@ -967,25 +958,32 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         regions = []
         regions_full = []
         for n in range(self.metadata.no_spectral_regions_full):
-            regions_full += [PhiSpectralRegion(region_id=n)]
+            regions_full += [PhiSpectralRegion(region_id=n + 1)]
         for n in range(self.metadata.no_spectral_regions):
-            regions += [PhiSpectralRegion(region_id=n)]
+            regions += [PhiSpectralRegion(region_id=n + 1)]
+
+        concept_map = {
+            "SpectralRegDef": "region_definition",
+            "SpectralRegDef2": "region_definition2",
+            "SpectralRegBackground": "region_background",
+            "SpectralRegHero": "region_hero",
+            "SpectralRegIR": "region_ir",
+        }
 
         for region in regions_full:
             region.full_region = True
-            region.region_definition = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_definition2 = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_background = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_hero = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_ir = spectral_defs.pop(0).split(" ", 1)[1]
+            for file_key, metadata_key in concept_map.items():
+                if spectral_defs and spectral_defs[0].startswith(file_key):
+                    setattr(region, metadata_key, spectral_defs[0].split(" ", 1)[1])
+                    spectral_defs.pop(0)
 
         for region in regions:
             region.full_region = False
-            region.region_definition = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_definition2 = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_background = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_hero = spectral_defs.pop(0).split(" ", 1)[1]
-            region.region_ir = spectral_defs.pop(0).split(" ", 1)[1]
+
+            for file_key, metadata_key in concept_map.items():
+                if spectral_defs and spectral_defs[0].startswith(file_key):
+                    setattr(region, metadata_key, spectral_defs[0].split(" ", 1)[1])
+                    spectral_defs.pop(0)
 
         for region in regions_full + regions:
             def_split = region.region_definition.split(" ")
@@ -1024,10 +1022,17 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         for n in range(self.metadata.no_spatial_areas):
             areas += [PhiSpatialArea(area_id=n)]
 
+        concept_map = {
+            "SpatialAreaDef": "area_definition",
+            "SpatialAreaDesc": "area_description",
+            "SpatialHRPhotoCor": "area_hr_photo_correction",
+        }
+
         for area in areas:
-            area.area_definition = spatial_defs.pop(0).split(" ", 1)[1]
-            area.area_description = spatial_defs.pop(0).split(" ", 1)[1]
-            area.area_hr_photo_correction = spatial_defs.pop(0).split(" ", 1)[1]
+            for file_key, metadata_key in concept_map.items():
+                if spatial_defs and spatial_defs[0].startswith(file_key):
+                    setattr(area, metadata_key, spatial_defs[0].split(" ", 1)[1])
+                    spatial_defs.pop(0)
 
         return areas
 
@@ -1054,55 +1059,135 @@ class PhiParser:  # pylint: disable=too-few-public-methods
                 self.spectra += [concatenated]
 
     def parse_data_into_spectra(self, binary_data):
-        binary_header_lines, binary_data_lines = binary_data[:1], binary_data[1:]
-        binary_spectra_header = self.parse_binary_header(binary_header_lines)
-        parsed_data = self.parse_binary_data(binary_data_lines)
+        n_spectra = self.metadata.no_spectral_regions
+
+        binary_header, spectra_header = self.parse_binary_header(binary_data)
+
+        for spectrum_no in range(n_spectra):
+            n_points = spectra_header[spectrum_no][8]
+            parsed_data = self.parse_binary_data(binary_data, spectrum_no, n_points)
 
         # =============================================================================
         #         for i, spectrum in enumerate(self.spectra):
-        #             spectrum.update("binary_header": binary_header)
-        #             spectrum.update("data": parsed_data)
+        #             spectrum.update({
+        #                 "binary_header": binary_header,
+        #                 "spectra_header": spectra_header[i],
+        #                 "data": parsed_data[i]
+        #                 }
+        #             )
         # =============================================================================
 
-        return binary_spectra_header, binary_data
+        return spectra_header, binary_data
 
-    def parse_binary_header(self, binary_header_lines):
-        n_spectra = len(binary_header_lines)
+    def parse_binary_header(self, binary_data):
+        n_spectra = self.metadata.no_spectral_regions
+        # Read the binary headers
+        # Assuming the headers are 4 bytes unsigned integers
+        # Each spectrum gets 24 unsigned 4 byte integers
+        binary_header_length = 4
+        spectra_header_length = 24
 
-        binary_spectra_header = np.zeros((n_spectra, 24), dtype=np.uint32)
+        binary_header = struct.unpack("I", binary_data[:binary_header_length])[0]
 
-        for i, header_line in enumerate(binary_header_lines):
-            # Each spectrum gets 24 unsigned 4 byte integers
-            binary_header = np.frombuffer(
-                header_line, dtype=np.uint32, count=24 * n_spectra
+        spectra_header = np.zeros((n_spectra, 24), dtype=np.uint32)
+
+        for i in range(n_spectra):
+            start = (
+                binary_header_length * spectra_header_length * i + binary_header_length
             )
+            stop = start + binary_header_length * spectra_header_length
+            spectra_header[i] = struct.unpack(
+                "I" * spectra_header_length, binary_data[start:stop]
+            )
+            print(stop)
 
-        binary_spectra_header[i] = binary_header
+        spectra_header = np.array(spectra_header)
 
-        return binary_spectra_header
+        return binary_header, spectra_header
 
-    def parse_binary_data(self, binary_data_lines):
-        n_spectra = 1
-        npoints = 1751
+    def parse_binary_data(self, binary_data, spectrum_no, n_points):
+        parsed_data = 0
+        stop = 100
+        # format is 64 bit float
+        encoding = ["f", 4]
+        buffer = encoding[1]
+        encoding = encoding[0]
 
-        c = 0
-        for d in binary_data_lines:
-            c += len(d)
-        print(c)
-        data = b"".join(binary_data_lines)
-        print(len(data))
+        stream = []
+        for result in data:
+            length = result[1] * buffer
+            data = result[0]
+        for i in range(0, length, buffer):
+            stream.append(struct.unpack(encoding, data[i : i + buffer])[0])
 
-        parsed_data = np.zeros((n_spectra, 24), dtype=np.float64)
+        spectrum_data = struct.unpack_from(
+            "<f", binary_data[100:104], 4
+        )  # n_points * 24 + 4 * 5)#[0]
+        print(spectrum_data)
 
-        for i, data_line in enumerate(binary_data_lines):
-            spectrum_data = np.frombuffer(data_line, dtype=np.float64, count=npoints)
-            # Each spectrum gets 24 unsigned 4 byte integers
+        # Assuming the 5th element of each 24-byte header contains the points per spectrum
+        # and is stored as an unsigned 4-byte integer.
+
+        # =============================================================================
+        #         spectrum_data = np.frombuffer(
+        #             binary_data,
+        #             dtype=float,
+        #             count=200,#n_points,
+        #             offset=524,#n_spectra * 24 + 4 * 5,
+        #             )
+        #         if spectrum_no == 0:
+        #             print(spectrum_data)
+        # =============================================================================
+
+        #  print(spectrum_data)
+
+        #    print(spectrum_data)
+
+        #     np.fromfile(v_file_ref, dtype=np.float64, count=npoints)
+
+        # =============================================================================
+        #
+        #         for i, data_line in enumerate(binary_data_lines):
+        #             spectrum_data = struct.unpack_from('<I', data, n_spectra * 24 + 4 * 5)[0]
+        #             print("ahsd")
+        #             print(spectrum_data)
+        # =============================================================================
+        #      spectrum_data = np.frombuffer(data_line, dtype=np.float64, count=npoints)
+        # Each spectrum gets 24 unsigned 4 byte integers
         # binary_data_spec = np.frombuffer(data_line, dtype=np.float64)#, count=24*n_spectra)
         # print(binary_data_spec)
 
-        parsed_data[i] = spectrum_data
+        # parsed_data[i] = spectrum_data
 
         return parsed_data
+
+    # =============================================================================
+    # def load_phispe_spectra(v_file_ref):
+    #     # Assuming the following global variables are defined elsewhere in the Python code:
+    #     # nSpectra, nVersion, wSpectrumNames, wSpectrumScales
+    #     global nSpectra, nVersion, wSpectrumNames, wSpectrumScales
+    #
+    #     # load spectra
+    #     for ic in range(nSpectra):
+    #         # set up
+    #         npoints = wSpectrumScales[ic][0]
+    #         sName = wSpectrumNames[ic]
+    #         # Create a numpy array for the spectrum
+    #         wSpectrum = np.zeros(npoints)
+    #
+    #         # Set scale for x-axis (not directly applicable in numpy, but keeping for reference)
+    #         x_scale_start = wSpectrumScales[ic][1]
+    #         x_scale_end = wSpectrumScales[ic][2]
+    #         x_scale = np.linspace(x_scale_start, x_scale_end, npoints)
+    #
+    #         wSpectrum = np.fromfile(v_file_ref, dtype=np.float64, count=npoints)
+    #
+    #
+    #         # Assign the spectrum to a variable with the name sName in the global scope
+    #         globals()[sName] = wSpectrum
+    #
+    #     return 0
+    # =============================================================================
 
     def extract_unit(self, key, value):
         """
@@ -1325,7 +1410,7 @@ def _parse_datetime(value):
         Datetime in ISO8601 format.
 
     """
-    year, month, day = value.split(" ")
+    year, month, day = value.strip().split(" ")
     date_object = datetime.datetime(year=int(year), month=int(month), day=int(day))
 
     return date_object.isoformat()
@@ -1462,7 +1547,7 @@ def _convert_stage_positions(value):
 # %%
 file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_102_20240122_SBenz_SnO2_10nm.spe"
 # file = r"C:\Users\pielsticker\Lukas\FAIRMat\user_cases\Benz_PHI_Versaprobe\20240122_SBenz_107_20240122_SBenz_SnO2_10nm_1.pro"
-
+# file = r"C:\Users\pielsticker\Downloads\C0ELR081_033.spe"
 if __name__ == "__main__":
     parser = PhiParser()
     d = parser.parse_file(file)
