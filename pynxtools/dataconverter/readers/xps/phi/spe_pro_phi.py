@@ -1052,8 +1052,8 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
         Parameters
         ----------
-        binary_data : TYPE
-            DESCRIPTION.
+        binary_data : bytes
+            Binary XPS data, format is 64 bit float.
 
         """
         binary_header = struct.unpack("I", binary_data[: self.binary_header_length])[0]
@@ -1087,7 +1087,6 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
 
         """
-        print(type(binary_data))
         offset = self.spectra_header_length + self.binary_header_length
 
         for i, spectrum in enumerate(self.spectra):
@@ -1095,7 +1094,6 @@ class PhiParser:  # pylint: disable=too-few-public-methods
             # print(n_values)
             start = (i + 1) * offset * self.float_buffer
             stop = (i + 1) * (n_values + offset) * self.float_buffer
-            print(start, stop)
 
             binary_spectrum_data = binary_data[start:stop]
             parsed_data = self._parse_binary_data(binary_spectrum_data)
@@ -1108,7 +1106,8 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
     def _parse_binary_data(self, binary_spectrum_data):
         """
-        For each spectrum, parse the XPS data by
+        For each spectrum, parse the XPS data by unpacking the
+        64 bit floats.
 
         Parameters
         ----------
@@ -1118,11 +1117,10 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
         Returns
         -------
-        parsed_data : TYPE
-            DESCRIPTION.
+        parsed_data : np.ndarray
+            One-dimensional array with spectrum intensities.
 
         """
-        # format is 64 bit float
         parsed_data = []
 
         n_values = int(len(binary_spectrum_data) / self.float_buffer)
