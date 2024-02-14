@@ -57,6 +57,7 @@ class MapperPhi(XPSMapper):
         self.write_channels_to_data = True
 
     def _select_parser(self):
+        """Select the proper Phi data parser."""
         return PhiParser()
 
     def parse_file(self, file, **kwargs):
@@ -573,7 +574,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
     """
     A parser for reading in PHI Versaprobe data in the .spe or
     .pro format.
-    Tested with Software version SS 3.3.3.2
+    Tested with Software version SS 3.3.3.2.
     """
 
     def __init__(self):
@@ -1078,13 +1079,12 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
     def parse_data_into_spectra(self, binary_data):
         """
-        Parse the data of all individual spectra.
+        Parse the data of all spectra.
 
         Parameters
         ----------
         binary_data : bytes
             Binary XPS data, format is 64 bit float.
-
 
         """
         offset = self.spectra_header_length + self.binary_header_length
@@ -1271,7 +1271,8 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
     def _flatten_dict(self, metadata_dict):
         """
-
+        Flatten metadata dict so that key-value pairs of nested
+        dictionaries are at the top level.
 
         Parameters
         ----------
@@ -1286,6 +1287,7 @@ class PhiParser:  # pylint: disable=too-few-public-methods
         """
 
         def shorten_supkey(supkey):
+            """Shorted the key for some nested dicts."""
             shortened_key_map = {
                 "xray_source": "xray",
                 "xray_settings": "xray",
@@ -1314,11 +1316,13 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
 
 def convert_pascal_to_snake(str_value):
+    """Convert pascal case text to snake case."""
     pattern = re.compile(r"(?<!^)(?=[A-Z])")
     return pattern.sub("_", str_value).lower()
 
 
 def convert_snake_to_pascal(str_value):
+    """Convert snakecase text to pascal case."""
     return str_value.replace("_", " ").title().replace(" ", "")
 
 
