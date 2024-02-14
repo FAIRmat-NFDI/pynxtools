@@ -569,62 +569,6 @@ class MapperPhi(XPSMapper):
         self._xps_dict[detector_data_key] = intensity
 
 
-# =============================================================================
-#
-#
-#
-#         if entry not in self._xps_dict["data"]:
-#             self._xps_dict["data"][entry] = xr.Dataset()
-#
-#         # Write raw data to detector.
-#         self._xps_dict[detector_data_key] = intensity
-#
-#         if not self.parser.export_settings["Separate Channel Data"]:
-#             averaged_channels = intensity
-#         else:
-#             all_channel_data = [
-#                 value
-#                 for key, value in self._xps_dict.items()
-#                 if detector_data_key.split("Channel_")[0] in key
-#             ]
-#             averaged_channels = np.mean(all_channel_data, axis=0)
-#
-#         if not self.parser.export_settings["Separate Scan Data"]:
-#             averaged_scans = intensity
-#         else:
-#             all_scan_data = [
-#                 value
-#                 for key, value in self._xps_dict.items()
-#                 if detector_data_key.split("Scan_")[0] in key
-#             ]
-#             averaged_scans = np.mean(all_scan_data, axis=0)
-#
-#         # Write to data in order: scan, cycle, channel
-#
-#         # Write averaged cycle data to 'data'.
-#         self._xps_dict["data"][entry][scan_key.split("_")[0]] = xr.DataArray(
-#             data=averaged_scans,
-#             coords={"energy": energy},
-#         )
-#         if self.parser.export_settings["Separate Scan Data"]:
-#             # Write average cycle data to 'data'.
-#             self._xps_dict["data"][entry][scan_key] = xr.DataArray(
-#                 data=averaged_channels,
-#                 coords={"energy": energy},
-#             )
-#
-#         if (
-#             self.parser.export_settings["Separate Channel Data"]
-#             and self.write_channels_to_data
-#         ):
-#             # Write channel data to 'data'.
-#             channel_no = spectrum["channel_no"]
-#             self._xps_dict["data"][entry][
-#                 f"{scan_key}_chan{channel_no}"
-#             ] = xr.DataArray(data=intensity, coords={"energy": energy})
-# =============================================================================
-
-
 class PhiParser:  # pylint: disable=too-few-public-methods
     """
     A parser for reading in PHI Versaprobe data in the .spe or
