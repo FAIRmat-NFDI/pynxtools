@@ -1091,18 +1091,11 @@ class PhiParser:  # pylint: disable=too-few-public-methods
 
         for i, spectrum in enumerate(self.spectra):
             n_values = spectrum["n_values"]
-            # print(n_values)
             start = (i + 1) * offset * self.float_buffer
             stop = (i + 1) * (n_values + offset) * self.float_buffer
 
             binary_spectrum_data = binary_data[start:stop]
-            parsed_data = self._parse_binary_data(binary_spectrum_data)
-
-            spectrum.update(
-                {
-                    "data": parsed_data,
-                }
-            )
+            spectrum["data"] = self._parse_binary_data(binary_spectrum_data)
 
     def _parse_binary_data(self, binary_spectrum_data):
         """
