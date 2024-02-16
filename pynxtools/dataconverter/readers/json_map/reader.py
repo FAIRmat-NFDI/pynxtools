@@ -17,9 +17,13 @@
 #
 """An example reader implementation for the DataConverter."""
 from typing import Tuple, Any
+import datetime
+import dateutil.parser
+import dateutil.tz
 import json
 import pickle
 import numpy as np
+import re
 import xarray
 from mergedeep import merge
 
@@ -152,6 +156,84 @@ def get_map_from_partials(partials, template, data):
     return mapping
 
 
+def parse_strings(mapping, data):
+    """
+    Parse strings, notably date and time, from custom format
+
+    The function can do the following operations, in the given order, on string data.
+    The result of each operation is passed on as input of the next one.
+
+    1. Extract element from array by index.
+    2. Match a regular expression.
+    3. Parse date and time using the datetime or dateutil parser.
+
+    The resulting string replaces the mapped value (dictionary) in the mapping dictionary.
+    If date parsing is enabled, the resulting string is ISO-formatted as required by the Nexus standard.
+    The operations are selected and tuned by the following dictionary items:
+
+    "parse_string": (required) Data path of the string (array) like for regular datasets.
+        If this item is missing, string parsing is skipped altogether.
+    "index": (optional) Element index to extract from string array.
+        The original data must be a string array.
+        If this option is not specified, the original data must be a singular string.
+    "regexp": (optional) Match regular expression, keeping only the matching part.
+        If the expression contains groups, the result will be a space-delimited concatenation of the matching groups.
+        If the expression does not contain explicit groups, the whole match is used.
+    "datetime": (optional) Format string for datetime.datetime.strptime function.
+        The "datetime" and "dateutil" options are mutually exclusive.
+    "dateutil": (optional) Date ordering for the dateutil.parser.parse function.
+        Possible values 'YMD', 'MDY', 'DMY' (or lower case).
+        The dateutil parsers recognizes many date and time formats, but may need the order of year, month and day.
+        The "datetime" and "dateutil" options are mutually exclusive.
+    "timezone": (optional) Specify the time zone if the date-time string does not include a UTC offset.
+        The time zone must be in a dateutil-supported format, e.g. "Europe/Berlin".
+        By default, the local time zone is used.
+    """
+
+    for key in mapping:
+        parse_opts = mapping[key]
+
+        try:
+            value = parse_opts["parse_string"]
+            if is_path(value):
+                value = get_val_nested_keystring_from_dict(value[1:], data)
+        except (KeyError, TypeError):
+            continue
+
+        if "index" in parse_opts:
+            value = value[int(parse_opts["index"])]
+
+        if "regexp" in parse_opts:
+            match = re.match(parse_opts["regexp"], value)
+            groups = match.groups('')
+            if groups:
+                value = " ".join(match.groups(""))
+            else:
+                value = match.group(0)
+
+        if "timezone" in parse_opts:
+            tz = dateutil.tz.gettz(parse_opts["timezone"])
+        else:
+            tz = dateutil.tz.gettz()
+
+        if "datetime" in parse_opts:
+            dt = datetime.datetime.strptime(value, parse_opts["datetime"])
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=tz)
+            value = dt.isoformat()
+        elif "dateutil" in parse_opts:
+            order = parse_opts["dateutil"].lower()
+            y = order.index("y")
+            m = order.index("m")
+            d = order.index("d")
+            dt = dateutil.parser.parse(value, yearfirst=y < m, dayfirst=d < m)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=tz)
+            value = dt.isoformat()
+
+        mapping[key] = value
+
+
 class JsonMapReader(BaseReader):
     """A reader that takes a mapping json file and a data file/object to return a template."""
 
@@ -217,6 +299,7 @@ class JsonMapReader(BaseReader):
                 )
 
         new_template = Template()
+        parse_strings(mapping, data)
         convert_shapes_to_slice_objects(mapping)
 
         fill_documented(new_template, mapping, template, data)
