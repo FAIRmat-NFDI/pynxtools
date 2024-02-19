@@ -112,7 +112,7 @@ def get_entries_and_detectors(config_dict, xps_data_dict):
                         # Iteration over scan
                         for data_var in data.data_vars:
                             if chan_count in data_var:
-                                detector_num = data_var.split("_chan_")[-1]
+                                detector_num = data_var.split(chan_count)[-1]
                                 detector_nm = f"detector{detector_num}"
                                 DETECTOR_SET.add(detector_nm)
             except AttributeError:
@@ -144,9 +144,10 @@ def fill_data_group(key, key_part, entries_values, config_dict, template):
         data_group_key = data_field_key.rsplit("/data", 1)[0]
 
         if key_part == "energy":
-            energy_field_key = f"{data_group_key}/energy"
+            # Here, we need to take here if the data/entry is
+            # written directly in the future.
+            energy_field_key = data_group_key
             energy = np.array(xr_data.coords["energy"].values)
-            print(energy)
             template[energy_field_key] = energy
 
         else:
@@ -208,7 +209,7 @@ def fill_detector_group(key, entries_values, config_dict, xps_data_dict, templat
 
         for data_var in data_vars:
             if chan_count in data_var:
-                detector_num = data_var.split("_chan_")[-1]
+                detector_num = data_var.split(chan_count)[-1]
                 detector_nm = f"detector{detector_num}"
                 detector_scans[detector_nm] += [xr_data[data_var].data]
                 cycle_scan_num = data_var.split(chan_count)[0]
@@ -244,19 +245,21 @@ def fill_template_with_value(key, value, template):
     if value is None or str(value) == "None":
         return
 
+    atom_types: List = []
+    if "chemical_formula" in key:
+        atom_types = list(extract_atom_types(value))
+
+    if isinstance(value, datetime.datetime):
+        value = value.isoformat()
+
+    elif isinstance(value, dict) and LINK_TOKEN in value:
+        initial_link_text = value[LINK_TOKEN]
+
     # Do for all entry names
     for entry in ENTRY_SET:
-        atom_types: List = []
-        if "chemical_formula" in key:
-            atom_types = list(extract_atom_types(value))
-
-        if isinstance(value, datetime.datetime):
-            value = value.isoformat()
-
-        elif isinstance(value, dict) and LINK_TOKEN in value:
-            link_text = value[LINK_TOKEN]
-            link_text = link_text.replace("entry", f"{entry}")
-            value = {LINK_TOKEN: link_text}
+        if isinstance(value, dict) and LINK_TOKEN in value:
+            # Reset link to original
+            value[LINK_TOKEN] = initial_link_text.replace("entry", f"{entry}")
 
         modified_key = key.replace("[entry]", f"[{entry}]")
 
@@ -273,8 +276,8 @@ def fill_template_with_value(key, value, template):
                         # link.
                         link_text = link_text.replace("detector", f"{detector}")
                         value = {LINK_TOKEN: link_text}
-
                 template[detr_key] = value
+
         else:
             template[modified_key] = value
 

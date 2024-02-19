@@ -206,7 +206,7 @@ class TxtMapperScienta(XPSMapper):
         )
 
         # Write channel data to 'data'.
-        channel_key = f"{scan_key}_chan_0"
+        channel_key = f"{scan_key}_chan0"
         self._xps_dict["data"][entry][channel_key] = xr.DataArray(
             data=intensity, coords={"energy": energy}
         )
