@@ -59,5 +59,44 @@ Note: This only works for HDF5 files currently.
   "/ENTRY[entry]/DATA[data]/current_300C": {"link": "current.nxs:/entry/data/current_300C"},
 ```
 
+* Convert custom date and time string to Nexus-compliant ISO format. 
+The following entry parses the date and time in a string array `/logs/logs` 
+with items like `22/10/22 15:18:26.0164 - Starting...`. 
+
+```json
+  "/ENTRY[entry]/end_time": {
+    "parse_string":  "/logs/logs",
+    "index": "-1",
+    "regexp": "[0-9.:/]+ [0-9.:/]+",
+    "dateutil": "dmy",
+    "timezone": "Europe/Berlin"
+  }
+```
+
+The properties correspond to operations that are applied to input data, in the order given below.
+The `datetime`, `dateutil` and `timestamp` properties are mutually exclusive.
+
+    "parse_string": (required) Data path of the string (array) like for regular datasets.
+    "index": (optional) Element index to extract from string array.
+        The original data must be a string array.
+        If this option is not specified, the original data must be a singular string.
+    "regexp": (optional) Match regular expression, keeping only the matching part.
+        If the expression contains groups, the result will be a space-delimited concatenation of the matching groups.
+        If the expression does not contain explicit groups, the whole match is used.
+    "datetime": (optional) Format string for datetime.datetime.strptime function.
+        If specified, use datetime.datetime.strptime for date parsing.
+    "dateutil": (optional) Date ordering for the dateutil.parser.parse function.
+        Possible values 'YMD', 'MDY', 'DMY' (or lower case).
+        The dateutil parsers recognizes many date and time formats, but may need the order of year, month and day.
+        If specified, use dateutil.parser.parse for date parsing.
+    "timestamp": (optional) Interpret the data item as POSIX timestamp.
+    "timezone": (optional) Specify the time zone if the date-time string does not include a UTC offset.
+        The time zone must be in a dateutil-supported format, e.g. "Europe/Berlin".
+        By default, the local time zone is used.
+
+The resulting string replaces the mapped value (dictionary) in the mapping dictionary.
+If date parsing is enabled, the resulting string is ISO-formatted as required by the Nexus standard.
+
+
 ## Contact person in FAIRmat for this reader
 Sherjeel Shabih
