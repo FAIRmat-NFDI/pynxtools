@@ -41,9 +41,6 @@ dependencies = [
     "nionswift>=0.16.8",
     "tzlocal<=4.3",
     "scipy>=1.7.1",
-    "lark>=1.1.5",
-    "requests",
-    "requests_cache",
     "mergedeep",
     "importlib-metadata",
 ]
