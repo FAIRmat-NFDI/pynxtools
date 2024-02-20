@@ -185,6 +185,7 @@ def parse_strings(mapping, data):
         Possible values 'YMD', 'MDY', 'DMY' (or lower case).
         The dateutil parsers recognizes many date and time formats, but may need the order of year, month and day.
         The "datetime" and "dateutil" options are mutually exclusive.
+    "timestamp": (optional) Interpret the data item as POSIX timestamp.
     "timezone": (optional) Specify the time zone if the date-time string does not include a UTC offset.
         The time zone must be in a dateutil-supported format, e.g. "Europe/Berlin".
         By default, the local time zone is used.
@@ -229,6 +230,9 @@ def parse_strings(mapping, data):
             dt = dateutil.parser.parse(value, yearfirst=y < m, dayfirst=d < m)
             if dt.tzinfo is None:
                 dt = dt.replace(tzinfo=tz)
+            value = dt.isoformat()
+        elif "timestamp" in parse_opts:
+            dt = datetime.datetime.fromtimestamp(float(value), tz=tz)
             value = dt.isoformat()
 
         mapping[key] = value
