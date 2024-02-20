@@ -21,10 +21,10 @@
 
 import os
 from typing import Dict
-from click import testing
-
 
 import yaml
+from click import testing
+
 from pynxtools.eln_mapper import eln_mapper
 
 
@@ -62,7 +62,7 @@ def test_reader_eln(tmp_path):
         eln_mapper.get_eln,
         [
             "--nxdl",
-            "NXmpes",
+            "NXscan",
             "--skip-top-levels",
             1,
             "--output-file",
@@ -91,13 +91,13 @@ def test_scheme_eln(tmp_path):
     """
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    ref_file = os.path.join(local_dir, "../data/eln_mapper/mpes.scheme.archive.yaml")
+    ref_file = os.path.join(local_dir, "../data/eln_mapper/scan.scheme.archive.yaml")
 
     test_file = os.path.join(tmp_path, ".scheme.archive.yaml")
     cli_run = testing.CliRunner()
     cli_run.invoke(
         eln_mapper.get_eln,
-        ["--nxdl", "NXmpes", "--output-file", test_file, "--eln-type", "scheme_eln"],
+        ["--nxdl", "NXscan", "--output-file", test_file, "--eln-type", "scheme_eln"],
     )
     with open(ref_file, encoding="utf-8", mode="r") as ref_f:
         ref_dict = yaml.safe_load(ref_f)

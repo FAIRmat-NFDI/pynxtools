@@ -1,0 +1,93 @@
+definitions:
+  name: <ADD PREFERED NAME>
+  sections:
+    scan:
+      base_sections:
+      - nomad.datamodel.metainfo.eln.NexusDataConverter
+      - nomad.datamodel.data.EntryData
+      m_annotations:
+        template:
+          reader: <READER_NAME>
+          nxdl: NX<NAME>.nxdl
+        eln:
+          hide: []
+      quantities:
+        title:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+              defaultDisplayUnit: <No Default unit>
+          description: ''
+        start_time:
+          type: Datetime
+          m_annotations:
+            eln:
+              component: DateTimeEditQuantity
+              defaultDisplayUnit: <No Default unit>
+          description: ''
+        end_time:
+          type: Datetime
+          m_annotations:
+            eln:
+              component: DateTimeEditQuantity
+              defaultDisplayUnit: <No Default unit>
+          description: ''
+        definition:
+          type: str
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+              defaultDisplayUnit: <No Default unit>
+          description: Official NeXus NXDL schema to which this file conforms
+      sub_sections:
+        Instrument:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            sub_sections:
+              Detector:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  quantities:
+                    data:
+                      type: int
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: <No Default unit>
+                      description: ''
+        Sample:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            quantities:
+              rotation_angle:
+                type: np.float64
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ''
+        Monitor:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            quantities:
+              data:
+                type: int
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: <No Default unit>
+                description: ''
+        Data:
+          section:
+            m_annotations:
+              eln:
+                overview: true
