@@ -33,7 +33,7 @@ This file is designed to let you fill in the requirements of a NeXus Application
 The mapping files will always be based on the Template the dataconverter generates. See above on how to generate a mapping file.
 The right hand side values of the Template keys are what you can modify.
 
-Here are the three different ways you can fill the right hand side of the Template keys:
+Here are the different ways you can fill the right hand side of the Template keys:
 * Write the nested path in your datafile. This is indicated by a leading `/` before the word `entry` to make `/entry/data/current_295C` below. 
 Example:
 
@@ -97,6 +97,25 @@ The `datetime`, `dateutil` and `timestamp` properties are mutually exclusive.
 The resulting string replaces the mapped value (dictionary) in the mapping dictionary.
 If date parsing is enabled, the resulting string is ISO-formatted as required by the Nexus standard.
 
+* Python expression.
+The following entry creates an axis array from scalar values in the input file.
+
+```json
+  "/ENTRY[entry]/DATA[image]/angular0": {
+    "eval": "np.linspace(arg0[0], arg1[0], int(arg2[0]))",
+    "arg0": "/scan1/attrs/ScientaSliceBegin",
+    "arg1": "/scan1/attrs/ScientaSliceEnd",
+    "arg2": "/scan1/attrs/ScientaNumSlices"
+  },
+```
+
+The properties of the mapping declare the expression and its arguments.
+
+    "eval": (required) Python expression to be evaluated by the `eval` built-in.
+        The expression can use the built-in and numpy (as np) namespaces
+        as well as the datasets declared by the `argXxx` values.
+    "argXxx", where Xxx is an integer number: (optional) path of dataset to read from the input data
+        and to be used in the expression under the same name.
 
 ## Contact person in FAIRmat for this reader
 Sherjeel Shabih

@@ -238,6 +238,47 @@ def parse_strings(mapping, data):
         mapping[key] = value
 
 
+def eval_expressions(mapping, data):
+    """
+    Evaluate Python expressions in mapping.
+
+    If a mapping entry contains a dictionary with a `eval` key,
+    the `eval` expression is evaluated using the Python built-in `eval`.
+    The expression can use built-in functions, numpy functions in namespace `np`,
+    and argXxx variables that are defined in the mapping and can refer to dataset paths.
+
+    The result of the expression replaces the value of the mapping.
+
+    :param mapping: Mapping dictionary
+    :param data: Data dictionary
+    :return: None
+    """
+
+    for key in mapping:
+        eval_args = mapping[key]
+
+        try:
+            expression = eval_args["eval"]
+        except (KeyError, TypeError):
+            continue
+
+        args = {}
+        for arg, value in eval_args.items():
+            if arg[0:3] == "arg":
+                if is_path(value):
+                    value = get_val_nested_keystring_from_dict(value[1:], data)
+                else:
+                    try:
+                        value = float(value)
+                    except TypeError:
+                        pass
+
+                args[arg] = value
+
+        value = eval(expression, {"np": np}, args)
+        mapping[key] = value
+
+
 class JsonMapReader(BaseReader):
     """A reader that takes a mapping json file and a data file/object to return a template."""
 
@@ -304,6 +345,7 @@ class JsonMapReader(BaseReader):
 
         new_template = Template()
         parse_strings(mapping, data)
+        eval_expressions(mapping, data)
         convert_shapes_to_slice_objects(mapping)
 
         fill_documented(new_template, mapping, template, data)
