@@ -286,7 +286,10 @@ def parse_params_file(params_file):
     "--input-file",
     default=[],
     multiple=True,
-    help="The path to the input data file to read. (Repeat for more than one file.)",
+    help=(
+        "The path to the input data file to read. (Repeat for more than one file.)"
+        "Deprecated: Please use the positional file arguments instead."
+    ),
 )
 @click.option(
     "--reader",
@@ -374,6 +377,11 @@ def convert_cli(
                     file_list.append(str(f))
             continue
         file_list.append(file)
+
+    if input_file:
+        logger.warning(
+            "The --input-file option is deprecated. Please use the positional arguments instead."
+        )
 
     convert(
         tuple(file_list) + input_file,
