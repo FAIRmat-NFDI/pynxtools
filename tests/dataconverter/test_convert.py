@@ -233,12 +233,14 @@ def test_eln_data_subsections(tmp_path):
 def test_params_file():
     """Check if the parameters file is read correctly."""
     dirpath = Path(__file__).parent.parent / "data" / "dataconverter"
+    current_workdir = os.getcwd()
     os.chdir(dirpath)
     runner = CliRunner()
     result = runner.invoke(
         dataconverter.convert_cli,
         ["--params-file", dirpath / "test_params.yaml"],
     )
+    os.chdir(current_workdir)
 
     (dirpath / "testdata.nxs").unlink()
 
