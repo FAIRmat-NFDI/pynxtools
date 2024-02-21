@@ -25,10 +25,11 @@ Options:
                                   arguments instead. The path to the input
                                   data file to read. (Repeat for more than one
                                   file.)
-  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|mpes|rii_database|transmission|xps|xrd|mpes]
+  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|rii_database|transmission|xps|xrd|mpes]
                                   The reader to use. default="example"
   --nxdl TEXT                     The name of the NXDL file to use without
-                                  extension.  [required]
+                                  extension.This option is required if no '--
+                                  params-file' is supplied.
   --output TEXT                   The path to the output NeXus file to be
                                   generated.
   --generate-template             Just print out the template generated from

@@ -300,7 +300,10 @@ def parse_params_file(params_file):
 @click.option(
     "--nxdl",
     default=None,
-    help="The name of the NXDL file to use without extension.",
+    help=(
+        "The name of the NXDL file to use without extension."
+        "This option is required if no '--params-file' is supplied."
+    ),
 )
 @click.option(
     "--output",
