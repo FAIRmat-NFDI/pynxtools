@@ -299,7 +299,7 @@ def parse_params_file(params_file):
 )
 @click.option(
     "--nxdl",
-    required=True,
+    default=None,
     help="The name of the NXDL file to use without extension.",
 )
 @click.option(
@@ -364,6 +364,8 @@ def convert_cli(
                     "put-file: value"
                 )
             ) from exc
+    if nxdl is None:
+        raise click.UsageError("Missing option '--nxdl'")
     if mapping:
         reader = "json_map"
         input_file = input_file + tuple([mapping])
