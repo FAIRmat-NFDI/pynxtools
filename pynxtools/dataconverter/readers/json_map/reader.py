@@ -229,4 +229,3 @@ class JsonMapReader(BaseReader):
 
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
 READER = JsonMapReader
-READER = JsonMapReader
