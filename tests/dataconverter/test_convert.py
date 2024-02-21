@@ -19,6 +19,7 @@
 
 import logging
 import os
+from pathlib import Path
 
 import h5py
 import pytest
@@ -27,7 +28,7 @@ from setuptools import distutils
 
 import pynxtools.dataconverter.convert as dataconverter
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.nexus import nexus  # noqa: E402  # noqa: E402
+from pynxtools.nexus import nexus  # noqa: E402
 
 
 def move_xarray_file_to_tmp(tmp_path):
@@ -142,7 +143,6 @@ def test_links_and_virtual_datasets(tmp_path):
             "NXtest",
             "--reader",
             "example",
-            "--input-file",
             os.path.join(dirpath, "testdata.json"),
             "--output",
             os.path.join(tmp_path, "test_output.h5"),
@@ -228,3 +228,20 @@ def test_eln_data_subsections(tmp_path):
         False,
         False,
     )
+
+
+def test_params_file():
+    """Check if the parameters file is read correctly."""
+    dirpath = Path(__file__).parent.parent / "data" / "dataconverter"
+    current_workdir = os.getcwd()
+    os.chdir(dirpath)
+    runner = CliRunner()
+    result = runner.invoke(
+        dataconverter.convert_cli,
+        ["--params-file", dirpath / "test_params.yaml"],
+    )
+    os.chdir(current_workdir)
+
+    (dirpath / "testdata.nxs").unlink()
+
+    assert result.exit_code == 0
