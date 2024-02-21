@@ -19,6 +19,7 @@
 
 import logging
 import os
+from pathlib import Path
 
 import h5py
 import pytest
@@ -227,3 +228,18 @@ def test_eln_data_subsections(tmp_path):
         False,
         False,
     )
+
+
+def test_params_file():
+    """Check if the parameters file is read correctly."""
+    dirpath = Path(__file__).parent.parent / "data" / "dataconverter"
+    os.chdir(dirpath)
+    runner = CliRunner()
+    result = runner.invoke(
+        dataconverter.convert_cli,
+        ["--params-file", dirpath / "test_params.yaml"],
+    )
+
+    (dirpath / "testdata.nxs").unlink()
+
+    assert result.exit_code == 0
