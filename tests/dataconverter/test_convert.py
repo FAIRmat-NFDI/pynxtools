@@ -32,9 +32,7 @@ from pynxtools.nexus import nexus  # noqa: E402
 
 def move_xarray_file_to_tmp(tmp_path):
     """Moves the xarray file, which is used to test linking into the tmp_path directory."""
-    test_file_path = os.path.join(
-        os.path.dirname(__file__), "../data/dataconverter/readers/mpes"
-    )
+    test_file_path = os.path.join(os.path.dirname(__file__), "../data/nexus")
     distutils.file_util.copy_file(
         os.path.join(test_file_path, "xarray_saved_small_calibration.h5"),
         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
@@ -43,9 +41,7 @@ def move_xarray_file_to_tmp(tmp_path):
 
 def restore_xarray_file_from_tmp(tmp_path):
     """Restores the xarray file from the tmp_path directory."""
-    test_file_path = os.path.join(
-        os.path.dirname(__file__), "../data/dataconverter/readers/mpes"
-    )
+    test_file_path = os.path.join(os.path.dirname(__file__), "../data/nexus")
     os.remove(os.path.join(test_file_path, "xarray_saved_small_calibration.h5"))
     distutils.file_util.move_file(
         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
@@ -211,64 +207,6 @@ def test_compression(tmp_path):
     assert test_nxs["/entry/test_compression/not_to_compress"].compression is None
 
     restore_xarray_file_from_tmp(tmp_path)
-
-
-def test_mpes_writing(tmp_path):
-    """Check if mpes example can be reproduced"""
-    # dataconverter
-    dirpath = os.path.join(
-        os.path.dirname(__file__), "../data/dataconverter/readers/mpes"
-    )
-    dataconverter.convert(
-        (
-            os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
-            os.path.join(dirpath, "config_file.json"),
-        ),
-        "mpes",
-        "NXmpes",
-        os.path.join(tmp_path, "mpes.small_test.nxs"),
-        False,
-        False,
-    )
-    # check generated nexus file
-    test_data = os.path.join(tmp_path, "mpes.small_test.nxs")
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    handler = logging.FileHandler(os.path.join(tmp_path, "mpes_test.log"), "w")
-    formatter = logging.Formatter("%(levelname)s - %(message)s")
-    handler.setLevel(logging.DEBUG)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, test_data, None, None)
-    nexus_helper.process_nexus_master_file(None)
-    with open(
-        os.path.join(tmp_path, "mpes_test.log"), "r", encoding="utf-8"
-    ) as logfile:
-        log = logfile.readlines()
-    with open(
-        os.path.join(dirpath, "Ref_nexus_mpes.log"), "r", encoding="utf-8"
-    ) as logfile:
-        ref_log = logfile.readlines()
-    assert log == ref_log
-
-
-def test_eln_data(tmp_path):
-    """Check if the subsections in the eln_data.yml file work."""
-    dirpath = os.path.join(
-        os.path.dirname(__file__), "../data/dataconverter/readers/mpes"
-    )
-    dataconverter.convert(
-        (
-            os.path.join(dirpath, "xarray_saved_small_calibration.h5"),
-            os.path.join(dirpath, "config_file.json"),
-            os.path.join(dirpath, "eln_data.yaml"),
-        ),
-        "mpes",
-        "NXmpes",
-        os.path.join(tmp_path, "mpes.small_test.nxs"),
-        False,
-        False,
-    )
 
 
 def test_eln_data_subsections(tmp_path):
