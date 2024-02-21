@@ -146,7 +146,6 @@ def test_links_and_virtual_datasets(tmp_path):
             "NXtest",
             "--reader",
             "example",
-            "--input-file",
             os.path.join(dirpath, "testdata.json"),
             "--output",
             os.path.join(tmp_path, "test_output.h5"),

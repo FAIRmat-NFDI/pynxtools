@@ -23,8 +23,8 @@ For XPS data you may use the data in [`tests/data/dataconverter/readers/xps`](ht
 ```shell
 dataconverter --reader xps \\
     --nxdl NXmpes \\
-    --input-file eln_data.yaml \\
-    --input-file In-situ_PBTTT_XPS_SPECS.xml \\
+    eln_data.yaml \\
+    In-situ_PBTTT_XPS_SPECS.xml \\
     --output xps_example.nxs
 ```
 
