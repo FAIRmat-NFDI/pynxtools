@@ -9,7 +9,7 @@ This is an example to use the dataconvert with the `ellips` reader and the `NXel
 Just execute
 
 ```shell
-dataconverter --reader ellips --nxdl NXellipsometry --input-file eln_data.yaml --output SiO2onSi.nxs
+dataconverter --reader ellips --nxdl NXellipsometry eln_data.yaml --output SiO2onSi.nxs
 ```
 
 in this directory.

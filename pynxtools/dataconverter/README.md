@@ -16,17 +16,17 @@ Converts experimental data to NeXus/HDF5 files based on any provided NXDL.
 
 ```console
 user@box:~$ dataconverter --help
-Usage: dataconverter [OPTIONS]
+Usage: dataconverter [OPTIONS] [FILES]...
 
   The CLI entrypoint for the convert function
 
 Options:
   --input-file TEXT               The path to the input data file to read.
                                   (Repeat for more than one file.)
-  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|mpes|rii_database|sts|transmission|xps]
+  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|mpes|rii_database|transmission|xps|xrd|mpes]
                                   The reader to use. default="example"
   --nxdl TEXT                     The name of the NXDL file to use without
-                                  extension.
+                                  extension.  [required]
   --output TEXT                   The path to the output NeXus file to be
                                   generated.
   --generate-template             Just print out the template generated from
@@ -45,13 +45,13 @@ Options:
 #### Merge partial NeXus files into one
 
 ```console
-user@box:~$ dataconverter --nxdl nxdl --input-file partial1.nxs --input-file partial2.nxs
+user@box:~$ dataconverter --nxdl nxdl partial1.nxs partial2.nxs
 ```
 
 #### Map an HDF5/JSON/(Python Dict pickled in a pickle file)
 
 ```console
-user@box:~$ dataconverter --nxdl nxdl --input-file any_data.hdf5 --mapping my_custom_map.mapping.json
+user@box:~$ dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
 ```
 
 #### You can find actual examples with data files at [`examples/json_map`](../../examples/json_map/).
@@ -60,7 +60,7 @@ user@box:~$ dataconverter --nxdl nxdl --input-file any_data.hdf5 --mapping my_cu
 #### Use with multiple input files
 
 ```console
-user@box:~$ dataconverter --nxdl nxdl --input_file metadata --input_file data.raw --input_file otherfile
+user@box:~$ dataconverter --nxdl nxdl metadata data.raw otherfile
 ```
 
 ## Writing a Reader

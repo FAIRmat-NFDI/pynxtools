@@ -32,8 +32,8 @@ The reader can be run from Jupyter-notebook or Jupyter-lab with the following co
  ! dataconverter \
 --reader xrd \
 --nxdl NXxrd_pan \
---input-file $<xps-file location> \
---input-file $<eln-file location> \
+$<xps-file location> \
+$<eln-file location> \
 --output <output-file location>.nxs
 ```
 

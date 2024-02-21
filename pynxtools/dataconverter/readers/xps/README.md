@@ -23,8 +23,8 @@ An example script to run the XPS reader:
  ! dataconverter \
 --reader xps \
 --nxdl NXmpes \
---input-file $<xps-file path> \
---input-file $<eln-file path> \
+$<xps-file path> \
+$<eln-file path> \
 --output <output-file path>.test.nxs
 ```
 Note that none of the supported file format have data/values for all required and recommended fields and attributes in NXmpes. In order for the validation step of the **XPS** reader to pass,
