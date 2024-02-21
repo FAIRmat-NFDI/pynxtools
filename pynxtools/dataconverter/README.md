@@ -22,7 +22,9 @@ Usage: dataconverter [OPTIONS] [FILES]...
 
 Options:
   --input-file TEXT               The path to the input data file to read.
-                                  (Repeat for more than one file.)
+                                  (Repeat for more than one file.)Deprecated:
+                                  Please use the positional file arguments
+                                  instead.
   --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|mpes|rii_database|transmission|xps|xrd|mpes]
                                   The reader to use. default="example"
   --nxdl TEXT                     The name of the NXDL file to use without
