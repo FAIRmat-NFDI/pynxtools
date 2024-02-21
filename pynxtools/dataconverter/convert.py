@@ -287,8 +287,8 @@ def parse_params_file(params_file):
     default=[],
     multiple=True,
     help=(
+        "Deprecated: Please use the positional file arguments instead. "
         "The path to the input data file to read. (Repeat for more than one file.)"
-        "Deprecated: Please use the positional file arguments instead."
     ),
 )
 @click.option(
