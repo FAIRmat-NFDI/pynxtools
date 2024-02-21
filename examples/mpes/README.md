@@ -18,7 +18,7 @@ dataconverter --reader mpes \\
 
 The reader is a tailored parser for research data in a common format. This particular example is able to read and map hdf5 files, as well as json and yaml files. Feel free to contact FAIRmat if you want to create a parser for your research data.
 
-For XPS data you may use the data in [`tests/data/dataconverter/readers/xps`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests/data/dataconverter/readers/xps) with the command
+For XPS data, you may install the [`pnyxtoools-xps`](https://github.com/FAIRmat-NFDI/pynxtools-xps) plugin and use its [example data in XML format](https://github.com/FAIRmat-NFDI/pynxtools-xps/tree/main/examples/xml) with the command
 
 ```shell
 dataconverter --reader xps \\
@@ -32,4 +32,4 @@ dataconverter --reader xps \\
 
 Yes, [here](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/mpes) you can find exhaustive examples how to use `pynxtools` for your ARPES research data pipeline.
 
-There is also an [example](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/xps) for using `pynxtools` for an XPS pipeline.
+There is also an [example](https://gitlab.mpcdf.mpg.de/nomad-lab/north/xps) for using `pynxtools` and `pnyxtoools-xps` for an XPS pipeline.
