@@ -38,6 +38,7 @@ from pynxtools.nexus import nexus
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
 else:
@@ -238,6 +239,8 @@ def convert(
     None.
     """
 
+    logger.addHandler(logging.StreamHandler())
+
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
     if generate_template:
         template = Template()
@@ -352,7 +355,6 @@ def convert_cli(
     mapping: str,
 ):
     """The CLI entrypoint for the convert function"""
-    logger.addHandler(logging.StreamHandler())
     if params_file:
         try:
             convert(**parse_params_file(params_file))
