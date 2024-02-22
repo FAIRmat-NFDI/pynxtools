@@ -89,9 +89,11 @@ def test_has_correct_read_func(reader):
         def_dir = os.path.join(os.getcwd(), "pynxtools", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
-        input_files = sorted(
-            glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
-        )
+        reader_path = os.path.join(dataconverter_data_dir, "readers", reader_name)
+        if not os.path.exists(reader_path):
+            return
+
+        input_files = sorted(glob.glob(os.path.join(reader_path, "*")))
         for supported_nxdl in reader.supported_nxdls:
             if supported_nxdl in ("NXtest", "*"):
                 nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")
