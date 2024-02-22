@@ -112,7 +112,7 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
 def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
     """Takes a list of child names and appends them to template for a given path."""
     for child in list_of_children_to_add:
-        child_path = f"{path.rsplit('/', 1)[0]}/{child}"
+        child_path = f"{path}/{child}"
         if child_path not in template.keys():
             optional_parent = check_for_optional_parent(child_path, nxdl_root)
             optionality = (
@@ -164,9 +164,9 @@ def generate_template_from_nxdl(
         ):
             template[optionality][f"{path}/@units"] = None
 
-        parent_path = convert_data_converter_dict_to_nxdl_path(path.rsplit("/", 1)[0])
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         list_of_children_to_add = get_all_defined_required_children(
-            parent_path, nxdl_name
+            nxdl_path, nxdl_name
         )
         add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
 
