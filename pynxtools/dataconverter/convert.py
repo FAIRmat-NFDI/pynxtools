@@ -37,6 +37,7 @@ from pynxtools.nexus import nexus
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
 
 
 if sys.version_info >= (3, 10):
@@ -238,8 +239,6 @@ def convert(
     -------
     None.
     """
-
-    logger.addHandler(logging.StreamHandler())
 
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
     if generate_template:
