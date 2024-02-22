@@ -19,17 +19,17 @@ user@box:~$ dataconverter --nxdl NXmynxdl --generate-template > mynxdl.mapping.j
 
 ### Automatically merge partial NeXus files
 ```console
-user@box:~$ dataconverter --nxdl NXiv_temp --input-file voltage_and_temperature.nxs --input-file current.nxs --output auto_merged.nxs
+user@box:~$ dataconverter --nxdl NXiv_temp voltage_and_temperature.nxs current.nxs --output auto_merged.nxs
 ```
 
 ### Map and copy over data to new NeXus file
 ```console
-user@box:~$ dataconverter --nxdl NXiv_temp --mapping merge_copied.mapping.json --input-file voltage_and_temperature.nxs --input-file current.nxs --output merged_copied.nxs
+user@box:~$ dataconverter --nxdl NXiv_temp --mapping merge_copied.mapping.json voltage_and_temperature.nxs current.nxs --output merged_copied.nxs
 ```
 
 ### Map and link over data to new NeXus file
 ```console
-user@box:~$ dataconverter --nxdl NXiv_temp --mapping merge_linked.mapping.json --input-file voltage_and_temperature.nxs --input-file current.nxs --output merged_linked.nxs
+user@box:~$ dataconverter --nxdl NXiv_temp --mapping merge_linked.mapping.json voltage_and_temperature.nxs current.nxs --output merged_linked.nxs
 ```
 
 ## Contact person in FAIRmat for this reader

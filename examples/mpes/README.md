@@ -10,9 +10,9 @@ If you want to use some example data you can find small example files in [`tests
 ```shell
 dataconverter --reader mpes \\
     --nxdl NXmpes \\
-    --input-file xarray_saved_small_calibration \\
-    --input-file config_file.json \\
-    --input-file eln_data.yaml \\
+    xarray_saved_small_calibration \\
+    config_file.json \\
+    eln_data.yaml \\
     --output mpes_example.nxs
 ```
 
@@ -23,8 +23,8 @@ For XPS data, you may install the [`pnyxtoools-xps`](https://github.com/FAIRmat-
 ```shell
 dataconverter --reader xps \\
     --nxdl NXmpes \\
-    --input-file eln_data.yaml \\
-    --input-file In-situ_PBTTT_XPS_SPECS.xml \\
+    eln_data.yaml \\
+    In-situ_PBTTT_XPS_SPECS.xml \\
     --output xps_example.nxs
 ```
 
