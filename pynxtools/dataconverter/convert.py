@@ -218,6 +218,7 @@ def convert(
     fair: bool = False,
     undocumented: bool = False,
     skip_verify: bool = False,
+    required: bool = False,
     **kwargs,
 ):
     """The conversion routine that takes the input parameters and calls the necessary functions.
@@ -251,6 +252,8 @@ def convert(
     if generate_template:
         template = Template()
         helpers.generate_template_from_nxdl(nxdl_root, template)
+        if required:
+            template = Template(template.get_optionality("required"))
         print(template)
         return
 
@@ -354,6 +357,11 @@ def parse_params_file(params_file):
     "--mapping",
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
+@click.option(
+    "--required",
+    help="Use this flag to with --generate-template to only get the required template.",
+    is_flag=True,
+)
 # pylint: disable=too-many-arguments
 def convert_cli(
     files: Tuple[str, ...],
@@ -367,6 +375,7 @@ def convert_cli(
     undocumented: bool,
     skip_verify: bool,
     mapping: str,
+    required: bool,
 ):
     """The CLI entrypoint for the convert function"""
     if params_file:
@@ -413,4 +422,5 @@ def convert_cli(
         fair,
         undocumented,
         skip_verify,
+        required,
     )
