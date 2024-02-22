@@ -73,7 +73,7 @@ dev = [
     "pre-commit",
 ]
 all = [
-    "pynxtools-mpes",
+    "pynxtools[mpes]",
 ]
 mpes = [
     "pynxtools-mpes",
