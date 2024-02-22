@@ -20,6 +20,7 @@ import os
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.readers.utils import parse_flatten_json, parse_yml
 from pynxtools.dataconverter.template import Template
 
 
@@ -30,7 +31,11 @@ class MultiFormatReader(BaseReader):
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: List[str] = []
-    extensions: Dict[str, Callable[[Any], dict]] = {}
+    extensions: Dict[str, Callable[[Any], dict]] = {
+        ".json": parse_flatten_json,
+        ".yaml": parse_yml,
+        ".yml": parse_yml,
+    }
     kwargs: Optional[Dict[str, Any]] = None
 
     def setup_template(self) -> Dict[str, Any]:
@@ -44,6 +49,12 @@ class MultiFormatReader(BaseReader):
     def handle_objects(self, objects: Tuple[Any]) -> Dict[str, Any]:
         """
         Handles the objects passed into the reader.
+        """
+        return {}
+
+    def get_data(self, path: str) -> Dict[str, Any]:
+        """
+        Returns the data from the given path.
         """
         return {}
 
@@ -61,7 +72,14 @@ class MultiFormatReader(BaseReader):
         template = Template()
         self.kwargs = kwargs
 
-        sorted_paths = sorted(file_paths, key=lambda f: os.path.splitext(f)[1])
+        def sort_keys(filename: str) -> str:
+            """
+            Makes sure to read json and yaml files last
+            """
+            ending = os.path.splitext(filename)[1]
+            return ".zzzzz" if ending in (".json", ".yaml", ".yml") else ending
+
+        sorted_paths = sorted(file_paths, key=sort_keys)
         for file_path in sorted_paths:
             extension = os.path.splitext(file_path)[1].lower()
             if extension not in self.extensions:
