@@ -482,6 +482,7 @@ def check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, te
 
 def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
     """Returns true if a group is contained in a path"""
+
     tokens_group = path_to_group.split("/")
     tokens_entry = convert_data_converter_dict_to_nxdl_path(path_of_entry).split("/")
 
@@ -491,6 +492,7 @@ def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
     for tog, toe in zip(tokens_group, tokens_entry):
         if tog != toe:
             return False
+
     return True
 
 
@@ -530,6 +532,7 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
             if not does_group_exist(renamed_path, data):
                 logger.warning(f"The required group, {path}, hasn't been supplied.")
                 continue
+            continue
         if not is_path_in_data_dict or data[renamed_path] is None:
             logger.warning(
                 f"The data entry corresponding to {path} is required "
