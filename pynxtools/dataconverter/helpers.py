@@ -118,7 +118,7 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
             optionality = (
                 "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
             )
-            template[optionality][f"{path.rsplit('/', 1)[0]}/{child}"] = None
+            template[optionality][f"{path}/{child}"] = None
     return template
 
 
