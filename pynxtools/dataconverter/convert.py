@@ -150,6 +150,7 @@ def transfer_data_into_template(
     reader,
     nxdl_name,
     nxdl_root: Optional[ET.Element] = None,
+    skip_verify: bool = False,
     **kwargs,
 ):
     """Transfer parse and merged data from input experimental file, config file and eln.
@@ -167,6 +168,8 @@ def transfer_data_into_template(
         Root name of nxdl file, e.g. NXmpes from NXmpes.nxdl.xml
     nxdl_root : ET.element
         Root element of nxdl file, otherwise provide nxdl_name
+    skip_verify: bool, default False
+        Skips verification routine if set to True
 
     Returns
     -------
@@ -200,7 +203,8 @@ def transfer_data_into_template(
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
-    helpers.validate_data_dict(template, data, nxdl_root)
+    if not skip_verify:
+        helpers.validate_data_dict(template, data, nxdl_root)
     return data
 
 
@@ -213,6 +217,7 @@ def convert(
     generate_template: bool = False,
     fair: bool = False,
     undocumented: bool = False,
+    skip_verify: bool = False,
     **kwargs,
 ):
     """The conversion routine that takes the input parameters and calls the necessary functions.
@@ -234,6 +239,8 @@ def convert(
         in the template.
     undocumented : bool, default False
         If True, an undocumented warning is given.
+    skip_verify: bool, default False
+        Skips verification routine if set to True
 
     Returns
     -------
@@ -252,6 +259,7 @@ def convert(
         reader=reader,
         nxdl_name=nxdl,
         nxdl_root=nxdl_root,
+        skip_verify=skip_verify,
         **kwargs,
     )
 
@@ -337,6 +345,12 @@ def parse_params_file(params_file):
     help="Shows a log output for all undocumented fields",
 )
 @click.option(
+    "--skip-verify",
+    is_flag=True,
+    default=False,
+    help="Skips the verification routine during conversion.",
+)
+@click.option(
     "--mapping",
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
@@ -351,6 +365,7 @@ def convert_cli(
     fair: bool,
     params_file: str,
     undocumented: bool,
+    skip_verify: bool,
     mapping: str,
 ):
     """The CLI entrypoint for the convert function"""
@@ -397,4 +412,5 @@ def convert_cli(
         generate_template,
         fair,
         undocumented,
+        skip_verify,
     )
