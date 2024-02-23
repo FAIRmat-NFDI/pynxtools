@@ -141,8 +141,7 @@ def fixture_filled_test_data(template, tmp_path):
     distutils.file_util.copy_file(
         f"{os.path.dirname(__file__)}"
         f"/../"
-        f"data/dataconverter/"
-        f"readers/mpes/"
+        f"data/nexus/"
         f"xarray_saved_small_calibration.h5",
         tmp_path,
     )

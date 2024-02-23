@@ -22,20 +22,23 @@ import importlib.util
 import logging
 import os
 import sys
-from typing import List, Tuple, Optional
 import xml.etree.ElementTree as ET
+from pathlib import Path
+from typing import List, Optional, Tuple
 
 import click
 import yaml
 
-from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter import helpers
-from pynxtools.dataconverter.writer import Writer
+from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
+
 
 if sys.version_info >= (3, 10):
     from importlib.metadata import entry_points
@@ -280,11 +283,15 @@ def parse_params_file(params_file):
 
 
 @click.command()
+@click.argument("files", nargs=-1, type=click.Path(exists=True))
 @click.option(
     "--input-file",
     default=[],
     multiple=True,
-    help="The path to the input data file to read. (Repeat for more than one file.)",
+    help=(
+        "Deprecated: Please use the positional file arguments instead. "
+        "The path to the input data file to read. (Repeat for more than one file.)"
+    ),
 )
 @click.option(
     "--reader",
@@ -295,8 +302,10 @@ def parse_params_file(params_file):
 @click.option(
     "--nxdl",
     default=None,
-    required=False,
-    help="The name of the NXDL file to use without extension.",
+    help=(
+        "The name of the NXDL file to use without extension."
+        "This option is required if no '--params-file' is supplied."
+    ),
 )
 @click.option(
     "--output",
@@ -333,6 +342,7 @@ def parse_params_file(params_file):
 )
 # pylint: disable=too-many-arguments
 def convert_cli(
+    files: Tuple[str, ...],
     input_file: Tuple[str, ...],
     reader: str,
     nxdl: str,
@@ -344,13 +354,13 @@ def convert_cli(
     mapping: str,
 ):
     """The CLI entrypoint for the convert function"""
-    logger.addHandler(logging.StreamHandler())
     if params_file:
         try:
             convert(**parse_params_file(params_file))
+            return
         except TypeError as exc:
             sys.tracebacklimit = 0
-            raise TypeError(
+            raise click.UsageError(
                 (
                     "Please make sure you have the following entries in your "
                     "parameter file:\n\n# NeXusParser Parameter File - v0.0.1"
@@ -358,19 +368,33 @@ def convert_cli(
                     "put-file: value"
                 )
             ) from exc
-    else:
-        if nxdl is None:
-            sys.tracebacklimit = 0
-            raise IOError(
-                "\nError: Please supply an NXDL file with the option:"
-                " --nxdl <path to NXDL>"
-            )
-        if mapping:
-            reader = "json_map"
-            if mapping:
-                input_file = input_file + tuple([mapping])
-        convert(input_file, reader, nxdl, output, generate_template, fair, undocumented)
+    if nxdl is None:
+        raise click.UsageError("Missing option '--nxdl'")
+    if mapping:
+        reader = "json_map"
+        input_file = input_file + tuple([mapping])
 
+    file_list = []
+    for file in files:
+        if os.path.isdir(file):
+            p = Path(file)
+            for f in p.rglob("*"):
+                if f.is_file():
+                    file_list.append(str(f))
+            continue
+        file_list.append(file)
 
-if __name__ == "__main__":
-    convert_cli()  # pylint: disable=no-value-for-parameter
+    if input_file:
+        logger.warning(
+            "The --input-file option is deprecated. Please use the positional arguments instead."
+        )
+
+    convert(
+        tuple(file_list) + input_file,
+        reader,
+        nxdl,
+        output,
+        generate_template,
+        fair,
+        undocumented,
+    )

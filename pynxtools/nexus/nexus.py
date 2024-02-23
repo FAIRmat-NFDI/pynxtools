@@ -560,7 +560,9 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
                 if ind and isinstance(ind, int):
                     if ind == a_item:
                         ax_list.append(nxdata[aax])
-            if not ax_list:  # positional determination of the dimension number
+            if not ax_list and a_item < len(
+                ax_datasets
+            ):  # positional determination of the dimension number
                 ax_list.append(nxdata[ax_datasets[a_item]])
     except KeyError:
         pass

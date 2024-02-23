@@ -53,6 +53,12 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"
 
 [project.optional-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocs-material-extensions",
+    "mkdocs-macros-plugin",
+]
 dev = [
     "mypy",
     "ruff",
@@ -65,6 +71,9 @@ dev = [
     "types-requests",
     "pip-tools",
     "pre-commit",
+]
+mpes = [
+    "pynxtools-mpes",
 ]
 
 [project.scripts]
@@ -88,12 +97,12 @@ local_scheme = "node-and-date"
 
 [tool.ruff]
 include = ["pynxtools/*.py", "tests/*.py"]
-select = [
+lint.select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
 ]
-ignore = [
+lint.ignore = [
     "E501", # Line too long ({width} > {limit} characters)
     "E701", # Multiple statements on one line (colon)
     "E731", # Do not assign a lambda expression, use a def
@@ -108,7 +117,7 @@ ignore = [
     "PLR1714", # consider-using-in
     "PLR5501", # else-if-used
 ]
-fixable = ["ALL"]
+lint.fixable = ["ALL"]
 exclude = ["pynxtools/definitions/*"]
 
 [tool.mypy]

@@ -89,9 +89,11 @@ def test_has_correct_read_func(reader):
         def_dir = os.path.join(os.getcwd(), "pynxtools", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
-        input_files = sorted(
-            glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
-        )
+        reader_path = os.path.join(dataconverter_data_dir, "readers", reader_name)
+        if not os.path.exists(reader_path):
+            return
+
+        input_files = sorted(glob.glob(os.path.join(reader_path, "*")))
         for supported_nxdl in reader.supported_nxdls:
             if supported_nxdl in ("NXtest", "*"):
                 nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")
@@ -112,28 +114,3 @@ def test_has_correct_read_func(reader):
 
             assert isinstance(read_data, Template)
             assert validate_data_dict(template, read_data, root)
-
-
-@pytest.mark.parametrize("reader_name,nxdl,undocumented_keys", [("mpes", "NXmpes", [])])
-def test_shows_correct_warnings(reader_name, nxdl, undocumented_keys):
-    """
-    Checks whether the read function generates the correct warnings.
-    """
-    def_dir = os.path.join(os.getcwd(), "pynxtools", "definitions")
-    dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
-
-    input_files = sorted(
-        glob.glob(os.path.join(dataconverter_data_dir, "readers", reader_name, "*"))
-    )
-    nxdl_file = os.path.join(def_dir, "contributed_definitions", f"{nxdl}.nxdl.xml")
-
-    root = ET.parse(nxdl_file).getroot()
-    template = Template()
-    generate_template_from_nxdl(root, template)
-
-    read_data = get_reader(reader_name)().read(
-        template=Template(template), file_paths=tuple(input_files)
-    )
-
-    assert validate_data_dict(template, read_data, root)
-    assert list(read_data.undocumented.keys()) == undocumented_keys

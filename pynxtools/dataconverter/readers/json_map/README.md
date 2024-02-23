@@ -21,7 +21,7 @@ There are some example files you can use:
 [data.json](/tests/data/dataconverter/readers/json_map/data.json)
 
 ```console
-user@box:~$ dataconverter --nxdl NXtest --input-file data.json --mapping data.mapping.json
+user@box:~$ dataconverter --nxdl NXtest data.json --mapping data.mapping.json
 ```
 
 ##### [Example](/examples/json_map/) with HDF5 files.

@@ -119,13 +119,13 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
 def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
     """Takes a list of child names and appends them to template for a given path."""
     for child in list_of_children_to_add:
-        child_path = f"{path.rsplit('/', 1)[0]}/{child}"
+        child_path = f"{path}/{child}"
         if child_path not in template.keys():
             optional_parent = check_for_optional_parent(child_path, nxdl_root)
             optionality = (
                 "required" if optional_parent == "<<NOT_FOUND>>" else "optional"
             )
-            template[optionality][f"{path.rsplit('/', 1)[0]}/{child}"] = None
+            template[optionality][f"{path}/{child}"] = None
     return template
 
 
@@ -176,9 +176,9 @@ def generate_template_from_nxdl(
         ):
             template[optionality][f"{path}/@units"] = None
 
-        parent_path = convert_data_converter_dict_to_nxdl_path(path.rsplit("/", 1)[0])
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         list_of_children_to_add = get_all_defined_required_children(
-            parent_path, nxdl_name
+            nxdl_path, nxdl_name
         )
         add_inherited_children(list_of_children_to_add, path, nxdl_root, template)
 
@@ -573,6 +573,7 @@ def check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, te
 
 def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
     """Returns true if a group is contained in a path"""
+
     tokens_group = path_to_group.split("/")
     tokens_entry = convert_data_converter_dict_to_nxdl_path(path_of_entry).split("/")
 
@@ -582,6 +583,7 @@ def is_group_part_of_path(path_to_group: str, path_of_entry: str) -> bool:
     for tog, toe in zip(tokens_group, tokens_entry):
         if tog != toe:
             return False
+
     return True
 
 

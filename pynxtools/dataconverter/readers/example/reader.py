@@ -87,17 +87,13 @@ class ExampleReader(BaseReader):
         }
 
         # external links
-        template[("/ENTRY" "[entry]/test_link" "/external_link")] = {
+        template[("/ENTRY[entry]/test_link/external_link")] = {
             "link": f"{os.path.dirname(__file__)}/../../../../tests/"
-            f"data/dataconverter/readers/mpes/"
-            f"xarray_saved_small_calibration.h5:/axes/ax3"
+            "data/nexus/xarray_saved_small_calibration.h5:/axes/ax3"
         }
 
         # virtual datasets concatenation
-        my_path = str(
-            f"{os.path.dirname(__file__)}/../../../../tests/"
-            f"data/dataconverter/readers/mpes"
-        )
+        my_path = str(f"{os.path.dirname(__file__)}/../../../../tests/data/nexus")
         my_datasets = {
             "link": [
                 f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax0",
@@ -110,10 +106,7 @@ class ExampleReader(BaseReader):
         ] = my_datasets
 
         # virtual datasets slicing
-        my_path = str(
-            f"{os.path.dirname(__file__)}/../../../../tests/"
-            f"data/dataconverter/readers/mpes"
-        )
+        my_path = str(f"{os.path.dirname(__file__)}/../../../../tests/data/nexus")
         template[("/ENTRY[entry]" "/test_virtual" "_dataset/sliced" "_dataset")] = {
             "link": (
                 f"{my_path}/xarray_saved_small_" "calibration.h5:/binned/BinnedData"

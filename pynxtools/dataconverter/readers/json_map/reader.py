@@ -16,16 +16,17 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
-from typing import Tuple, Any
 import json
 import pickle
+from typing import Any, Tuple
+
 import numpy as np
 import xarray
 from mergedeep import merge
 
+from pynxtools.dataconverter import hdfdict
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
-from pynxtools.dataconverter import hdfdict
 
 
 def parse_slice(slice_string):
@@ -211,7 +212,7 @@ class JsonMapReader(BaseReader):
                     {x: "/hierarchical/path/in/your/datafile" for x in template}
                 )
                 raise IOError(
-                    "Please supply a JSON mapping file: --input-file"
+                    "Please supply a JSON mapping file: "
                     " my_nxdl_map.mapping.json\n\n You can use this "
                     "template for the required fields: \n" + str(template)
                 )
