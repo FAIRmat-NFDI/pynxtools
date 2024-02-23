@@ -18,6 +18,7 @@
 """An example reader implementation for the DataConverter."""
 import os
 from dataclasses import dataclass, field
+from functools import partial
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -29,14 +30,26 @@ def fill_wildcard_data_indices(config_file_dict, dims):
     """
     Replaces the wildcard data indices (*) with the respective dimension entries.
     """
+
+    def get_vals_on_same_level(key):
+        key = key.rsplit("/", 1)[0]
+        for k, v in config_file_dict.items():
+            if k.startswith(key):
+                yield v
+
     for key, value in list(config_file_dict.items()):
         for dim in dims:
             new_key = key.replace("*", dim)
             new_val = value.replace("*", dim)
 
+            filter(
+                partial(lambda nk, x: x.startswith(nk.rsplit("/", 1)[0]), new_key),
+                config_file_dict,
+            )
+
             if (
                 new_key not in config_file_dict
-                and new_val not in config_file_dict.values()
+                and new_val not in get_vals_on_same_level(new_key)
             ):
                 config_file_dict[new_key] = new_val
 
