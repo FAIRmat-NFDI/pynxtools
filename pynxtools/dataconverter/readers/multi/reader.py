@@ -17,11 +17,87 @@
 #
 """An example reader implementation for the DataConverter."""
 import os
+from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.utils import parse_flatten_json, parse_yml
 from pynxtools.dataconverter.template import Template
+
+
+def fill_wildcard_data_indices(config_file_dict, dims):
+    """
+    Replaces the wildcard data indices (*) with the respective dimension entries.
+    """
+    for key, value in list(config_file_dict.items()):
+        for dim in dims:
+            new_key = key.replace("*", dim)
+            new_val = value.replace("*", dim)
+
+            if (
+                new_key not in config_file_dict
+                and new_val not in config_file_dict.values()
+            ):
+                config_file_dict[new_key] = new_val
+
+        config_file_dict.pop(key)
+
+
+@dataclass
+class ParseJsonCallbacks:
+    """
+    Callbacks for dealing special keys in the json file.
+
+    Args:
+        attrs_callback (Callable[[str], Any]):
+            The callback to retrieve attributes under the specified key.
+        data_callback (Callable[[str], Any]):
+            The callback to retrieve the data under the specified key.
+        dims (List[str]):
+            The dimension labels of the data. Defaults to None.
+    """
+
+    special_key_map = {
+        "@attrs": lambda _, v: ParseJsonCallbacks.attrs_callback(v),
+        "@link": lambda _, v: ParseJsonCallbacks.link_callback(v),
+        "@data": lambda _, v: ParseJsonCallbacks.data_callback(v),
+    }
+    attrs_callback: Callable[[str], Any] = lambda v: v
+    data_callback: Callable[[str], Any] = lambda v: v
+    link_callback: Callable[[str], Any] = lambda v: {"link": v}
+    dims: List[str] = []
+
+    def apply_special_key(self, precursor, key, value):
+        """
+        Apply the special key to the value.
+        """
+        ParseJsonCallbacks.special_key_map.get(precursor, lambda _, v: v)(key, value)
+
+
+def parse_json_config(
+    file_path: str,
+    callbacks: Optional[ParseJsonCallbacks] = None,
+) -> dict:
+    """
+    Parses a json file and returns the data as a dictionary.
+    """
+    if callbacks is None:
+        # Use default callbacks if none are explicitly provided
+        callbacks = ParseJsonCallbacks()
+
+    config_file_dict = parse_flatten_json(file_path)
+    fill_wildcard_data_indices(config_file_dict, callbacks.dims)
+
+    for key, value in config_file_dict.items():
+        if not isinstance(value, str) or ":" not in value:
+            continue
+
+        precursor = value.split(":")[0]
+        value = value[value.index(":") + 1 :]
+
+        config_file_dict[key] = callbacks.apply_special_key(precursor, key, value)
+
+    return config_file_dict
 
 
 class MultiFormatReader(BaseReader):
@@ -32,11 +108,20 @@ class MultiFormatReader(BaseReader):
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: List[str] = []
     extensions: Dict[str, Callable[[Any], dict]] = {
-        ".json": parse_flatten_json,
         ".yaml": parse_yml,
         ".yml": parse_yml,
     }
     kwargs: Optional[Dict[str, Any]] = None
+
+    def __init__(self):
+        self.extensions[".json"] = lambda fn: parse_json_config(
+            fn,
+            ParseJsonCallbacks(
+                attrs_callback=self.get_attr,
+                data_callback=self.get_data,
+                dims=self.get_data_dims,
+            ),
+        )
 
     def setup_template(self) -> Dict[str, Any]:
         """
@@ -52,11 +137,23 @@ class MultiFormatReader(BaseReader):
         """
         return {}
 
-    def get_data(self, path: str) -> Dict[str, Any]:
+    def get_attr(self, path: str) -> Any:
         """
-        Returns the data from the given path.
+        Returns an attributes from the given path.
         """
         return {}
+
+    def get_data(self, path: str) -> Any:
+        """
+        Returns data from the given path.
+        """
+        return {}
+
+    def get_data_dims(self, path: str) -> List[str]:
+        """
+        Returns the dimensions of the data from the given path.
+        """
+        return []
 
     def read(
         self,
