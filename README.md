@@ -16,13 +16,17 @@ It is recommended to use python 3.10 with a dedicated virtual environment for th
 Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
-Install this package with
+Install the latest stable version of this package from PyPI with
+
+```shell
+pip install pynxtools
+```
+
+You can also install the latest _development_ version with
 
 ```shell
 pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 ```
-
-for the latest development version.
 
 # Scope
 
