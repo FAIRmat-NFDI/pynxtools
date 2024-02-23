@@ -17,7 +17,7 @@
 #
 """An example reader implementation for the DataConverter."""
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -65,7 +65,7 @@ class ParseJsonCallbacks:
     attrs_callback: Callable[[str], Any] = lambda v: v
     data_callback: Callable[[str], Any] = lambda v: v
     link_callback: Callable[[str], Any] = lambda v: {"link": v}
-    dims: List[str] = []
+    dims: List[str] = field(default_factory=list)
 
     def apply_special_key(self, precursor, key, value):
         """
