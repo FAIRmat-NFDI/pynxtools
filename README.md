@@ -16,13 +16,17 @@ It is recommended to use python 3.10 with a dedicated virtual environment for th
 Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
-Install this package with
+Install the latest stable version of this package from PyPI with
+
+```shell
+pip install pynxtools
+```
+
+You can also install the latest _development_ version with
 
 ```shell
 pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 ```
-
-for the latest development version.
 
 # Scope
 
@@ -47,6 +51,23 @@ data into the NeXus standard and visualising the files content.
 
 # Documentation
 Documentation for the different tools can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
+
+# Plugins
+There are a number of plugins available for pynxtools. These are extensions of pynxtools used for reading data of specialized experimental techniques.
+- [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy data.
+- [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
+- [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data.
+
+You can install each of the plugins together with `pynxtools` by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
+```shell
+pip install pynxtools[mpes]
+```
+
+In addition, you can also install all of the `pynxtools` plugins which are maintained by FAIRmat by passing the `[all]` extra to the pip install call:
+```shell
+pip install pynxtools[all]
+```
+There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.
 
 # Contributing
 

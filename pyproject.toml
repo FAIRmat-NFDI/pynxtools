@@ -72,6 +72,9 @@ dev = [
     "pip-tools",
     "pre-commit",
 ]
+all = [
+    "pynxtools[mpes]",
+]
 mpes = [
     "pynxtools-mpes",
 ]
