@@ -42,11 +42,6 @@ def fill_wildcard_data_indices(config_file_dict, dims):
             new_key = key.replace("*", dim)
             new_val = value.replace("*", dim)
 
-            filter(
-                partial(lambda nk, x: x.startswith(nk.rsplit("/", 1)[0]), new_key),
-                config_file_dict,
-            )
-
             if (
                 new_key not in config_file_dict
                 and new_val not in get_vals_on_same_level(new_key)
