@@ -56,12 +56,12 @@ There are a number of plugins available for pynxtools. These are extensions of p
 
 You can install each of the plugins together with `pynxtools` by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
 ```shell
-pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git#egg=pynxtools[mpes]
+pip install pynxtools[mpes]
 ```
 
-In addition, you can also install ALL plugins with `pynxtools` by passing the `[all]` extra to the pip install call:
+In addition, you can also install all of the `pynxtools` plugins which are maintained by FAIRmat by passing the `[all]` extra to the pip install call:
 ```shell
-pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git#egg=pynxtools[all]
+pip install pynxtools[all]
 ```
 There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.
 
