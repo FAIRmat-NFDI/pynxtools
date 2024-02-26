@@ -18,8 +18,6 @@ babel==2.14.0
     # via mkdocs-material
 backcall==0.2.0
     # via ipython
-blosc2==2.0.0
-    # via tables
 build==1.0.3
     # via pip-tools
 certifi==2023.11.17
@@ -46,8 +44,6 @@ coverage[toml]==7.3.2
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
-cython==3.0.6
-    # via tables
 dask[array]==2023.5.0
     # via
     #   hyperspy
@@ -127,7 +123,7 @@ identify==2.5.33
     # via pre-commit
 idna==3.6
     # via requests
-ifes-apt-tc-data-modeling==0.1
+ifes-apt-tc-data-modeling==0.0.9
     # via pynxtools (pyproject.toml)
 imageio==2.27.0
     # via
@@ -230,8 +226,6 @@ mkdocs-material-extensions==1.3.1
     #   pynxtools (pyproject.toml)
 mpmath==1.3.0
     # via sympy
-msgpack==1.0.7
-    # via blosc2
 mypy==1.7.1
     # via pynxtools (pyproject.toml)
 mypy-extensions==1.0.0
@@ -277,7 +271,6 @@ numexpr==2.8.5
     #   hyperspy
     #   pyfai
     #   pyxem
-    #   tables
 numpy==1.24.4
     # via
     #   ase
@@ -313,7 +306,6 @@ numpy==1.24.4
     #   scipy
     #   silx
     #   sparse
-    #   tables
     #   tifffile
     #   xarray
     #   zarr
@@ -335,7 +327,6 @@ packaging==23.2
     #   pooch
     #   pytest
     #   scikit-image
-    #   tables
     #   xarray
 paginate==0.5.6
     # via mkdocs-material
@@ -396,8 +387,6 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-py-cpuinfo==9.0.0
-    # via tables
 pycifrw==4.4.6
     # via diffpy-structure
 pyfai==2023.9.0
@@ -515,8 +504,6 @@ sympy==1.12
     # via
     #   hyperspy
     #   radioactivedecay
-tables==3.8.0
-    # via ifes-apt-tc-data-modeling
 termcolor==2.4.0
     # via mkdocs-macros-plugin
 threadpoolctl==3.2.0
