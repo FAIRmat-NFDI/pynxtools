@@ -70,10 +70,13 @@ dev = [
     "pre-commit",
 ]
 all = [
-    "pynxtools[mpes]",
+    "pynxtools[mpes,xps]",
 ]
 mpes = [
     "pynxtools-mpes",
+]
+xps = [
+    "pynxtools-xps",
 ]
 
 [project.scripts]
