@@ -344,12 +344,6 @@ def main_cli():
     help="The path to the output NeXus file to be generated.",
 )
 @click.option(
-    "--generate-template",
-    is_flag=True,
-    default=False,
-    help="Just print out the template generated from given NXDL file.",
-)
-@click.option(
     "--fair",
     is_flag=True,
     default=False,
@@ -385,7 +379,6 @@ def convert_cli(
     reader: str,
     nxdl: str,
     output: str,
-    generate_template: bool,
     fair: bool,
     params_file: str,
     undocumented: bool,
@@ -446,6 +439,7 @@ def convert_cli(
     "--nxdl",
     default=None,
     help=("The name of the NXDL file to use without extension. For example: NXmpes"),
+    required=True,
 )
 @click.option(
     "--required",
