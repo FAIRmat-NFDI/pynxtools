@@ -293,7 +293,7 @@ class CustomClickGroup(DefaultGroup):
     ) -> None:
         """Writes all the options into the formatter if they exist."""
         opts = []
-        for param in self.get_params(ctx) + ctx.command.commands["convert"].params:
+        for param in self.get_params(ctx) + ctx.command.commands["convert"].params:  # type: ignore
             rv = param.get_help_record(ctx)
             if rv is not None:
                 opts.append(rv)
