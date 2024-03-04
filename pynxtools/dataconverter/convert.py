@@ -26,6 +26,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Optional, Tuple
+import json
 
 import click
 from click_default_group import DefaultGroup
@@ -446,11 +447,29 @@ def convert_cli(
     help="Use this flag to only get the required template.",
     is_flag=True,
 )
-def generate_template(nxdl: str, required: bool):
+@click.option(
+    "--json",
+    "to_json",
+    help="Prints valid JSON instead of of a Pythonic str",
+    is_flag=True,
+)
+def generate_template(nxdl: str, required: bool, to_json: bool):
     "Generates and prints a template to use for your nxdl."
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
+
     if required:
         template = Template(template.get_optionality("required"))
+
+    if to_json:
+        print(
+            json.dumps(
+                template.get_accumulated_dict(),
+                indent=4,
+                sort_keys=True,
+                ensure_ascii=False,
+            )
+        )
+        return
     print(template)
