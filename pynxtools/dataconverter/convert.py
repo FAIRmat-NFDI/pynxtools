@@ -340,6 +340,12 @@ def parse_params_file(params_file):
     "--mapping",
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
+@click.option(
+    "-c",
+    "--config",
+    type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True),
+    help="A json config file for the reader",
+)
 # pylint: disable=too-many-arguments
 def convert_cli(
     files: Tuple[str, ...],
@@ -352,6 +358,7 @@ def convert_cli(
     params_file: str,
     undocumented: bool,
     mapping: str,
+    config: str,
 ):
     """The CLI entrypoint for the convert function"""
     if params_file:
@@ -397,4 +404,5 @@ def convert_cli(
         generate_template,
         fair,
         undocumented,
+        config_file=config,
     )

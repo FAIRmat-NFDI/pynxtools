@@ -69,11 +69,13 @@ class ParseJsonCallbacks:
         "@attrs": lambda _, v: ParseJsonCallbacks.attrs_callback(v),
         "@link": lambda _, v: ParseJsonCallbacks.link_callback(v),
         "@data": lambda _, v: ParseJsonCallbacks.data_callback(v),
+        "@eln": lambda _, v: ParseJsonCallbacks.eln_callback(v),
     }
     attrs_callback: Callable[[str], Any] = lambda v: v
     data_callback: Callable[[str], Any] = lambda v: v
     link_callback: Callable[[str], Any] = lambda v: {"link": v}
-    dims: List[str] = field(default_factory=list)
+    eln_callback: Callable[[str], Any] = lambda v: v
+    dims: Callable[[str], List[str]] = lambda _: []
 
     def apply_special_key(self, precursor, key, value):
         """
@@ -115,21 +117,17 @@ class MultiFormatReader(BaseReader):
 
     # Whitelist for the NXDLs that the reader supports and can process
     supported_nxdls: List[str] = []
-    extensions: Dict[str, Callable[[Any], dict]] = {
-        ".yaml": parse_yml,
-        ".yml": parse_yml,
-    }
+    extensions: Dict[str, Callable[[Any], dict]] = {}
     kwargs: Optional[Dict[str, Any]] = None
 
-    def __init__(self):
-        self.extensions[".json"] = lambda fn: parse_json_config(
-            fn,
-            ParseJsonCallbacks(
-                attrs_callback=self.get_attr,
-                data_callback=self.get_data,
-                dims=self.get_data_dims,
-            ),
+    def __init__(self, config_file: Optional[str] = None):
+        self.callbacks = ParseJsonCallbacks(
+            attrs_callback=self.get_attr,
+            data_callback=self.get_data,
+            eln_callback=self.get_eln_data,
+            dims=self.get_data_dims,
         )
+        self.config_file = config_file
 
     def setup_template(self) -> Dict[str, Any]:
         """
@@ -157,6 +155,12 @@ class MultiFormatReader(BaseReader):
         """
         return {}
 
+    def get_eln_data(self, path: str) -> Any:
+        """
+        Returns data from the given eln path.
+        """
+        return parse_yml(path)
+
     def get_data_dims(self, path: str) -> List[str]:
         """
         Returns the dimensions of the data from the given path.
@@ -177,14 +181,10 @@ class MultiFormatReader(BaseReader):
         template = Template()
         self.kwargs = kwargs
 
-        def sort_keys(filename: str) -> str:
-            """
-            Makes sure to read json and yaml files last
-            """
-            ending = os.path.splitext(filename)[1]
-            return ".zzzzz" if ending in (".json", ".yaml", ".yml") else ending
+        if "config_file" in kwargs:
+            self.config_file = kwargs["config_file"]
 
-        sorted_paths = sorted(file_paths, key=sort_keys)
+        sorted_paths = sorted(file_paths, key=lambda x: os.path.splitext(x)[1])
         for file_path in sorted_paths:
             extension = os.path.splitext(file_path)[1].lower()
             if extension not in self.extensions:
@@ -201,6 +201,8 @@ class MultiFormatReader(BaseReader):
 
         template.update(self.setup_template())
         template.update(self.handle_objects(objects))
+        if self.config_file is not None:
+            template.update(parse_json_config(self.config_file, self.callbacks))
 
         return template
 
