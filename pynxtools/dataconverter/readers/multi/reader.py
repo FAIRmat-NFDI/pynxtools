@@ -16,13 +16,22 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
+import logging
 import os
+import re
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.readers.utils import parse_flatten_json, parse_yml
+from pynxtools.dataconverter.readers.utils import (
+    is_boolean,
+    is_integer,
+    is_number,
+    parse_flatten_json,
+    parse_yml,
+    to_bool,
+)
 from pynxtools.dataconverter.template import Template
 
 
@@ -91,6 +100,22 @@ def parse_json_config(
     """
     Parses a json file and returns the data as a dictionary.
     """
+
+    def try_convert(value: str) -> Union[str, float, int, bool]:
+        """
+        Try to convert the value to float, int or bool.
+        If not convertible returns the str itself.
+        """
+
+        if is_integer(value):
+            return int(value)
+        if is_number(value):
+            return float(value)
+        if is_boolean(value):
+            return to_bool(value)
+
+        return value
+
     if callbacks is None:
         # Use default callbacks if none are explicitly provided
         callbacks = ParseJsonCallbacks()
@@ -102,10 +127,24 @@ def parse_json_config(
         if not isinstance(value, str) or ":" not in value:
             continue
 
-        precursor = value.split(":")[0]
-        value = value[value.index(":") + 1 :]
+        prefix_part, value = value.split(":", 1)
+        prefixes = re.findall(r"@(\w+)", prefix_part)
 
-        config_file_dict[key] = callbacks.apply_special_key(precursor, key, value)
+        for prefix in prefixes:
+            config_file_dict[key] = callbacks.apply_special_key(prefix, key, value)
+
+            if config_file_dict[key] is not None:
+                break
+
+        last_value = prefix_part.rsplit(",", 1)[-1]
+        if config_file_dict[key] is None and not last_value.startswith("@"):
+            config_file_dict[key] = try_convert(last_value)
+
+        if prefixes and config_file_dict[key] is None:
+            logging.warning(
+                f"Could not find value for key {key} with value {value}.\n"
+                f"Tried prefixes: {prefixes}."
+            )
 
     return config_file_dict
 
@@ -147,13 +186,13 @@ class MultiFormatReader(BaseReader):
         """
         Returns an attributes from the given path.
         """
-        return {}
+        return None
 
     def get_data(self, path: str) -> Any:
         """
         Returns data from the given path.
         """
-        return {}
+        return None
 
     def get_eln_data(self, path: str) -> Any:
         """
