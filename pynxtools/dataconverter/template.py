@@ -41,14 +41,14 @@ class Template(dict):
             self.optional_parents: list = copy.deepcopy(template["optional_parents"])
             self.lone_groups: dict = copy.deepcopy(template["lone_groups"])
         else:
-            self.optional: dict = {}
-            self.recommended: dict = {}
-            self.required: dict = {}
-            self.undocumented: dict = {}
-            self.optional_parents: list = []
-            self.lone_groups: list = []
+            self.optional: dict = {}  # type: ignore[no-redef]
+            self.recommended: dict = {}  # type: ignore[no-redef]
+            self.required: dict = {}  # type: ignore[no-redef]
+            self.undocumented: dict = {}  # type: ignore[no-redef]
+            self.optional_parents: list = []  # type: ignore[no-redef]
+            self.lone_groups: list = []  # type: ignore[no-redef, assignment]
             if isinstance(template, dict):
-                self.undocumented: dict = copy.deepcopy(template)
+                self.undocumented: dict = copy.deepcopy(template)  # type: ignore[no-redef]
 
         self.overwrite_keys = overwrite_keys
 
