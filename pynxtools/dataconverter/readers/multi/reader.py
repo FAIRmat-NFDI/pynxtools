@@ -94,8 +94,7 @@ class ParseJsonCallbacks:
     dims: Callable[[str], List[str]] = lambda _: []
     entry_name: str = "entry"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __post_init__(self):
         self.link_callback = lambda v: {
             "link": v.replace("/entry/", f"/{self.entry_name}/")
         }
@@ -266,7 +265,11 @@ class MultiFormatReader(BaseReader):
         template.update(self.setup_template())
         template.update(self.handle_objects(objects))
         if self.config_file is not None:
-            template.update(parse_json_config(self.config_file, self.callbacks))
+            template.update(
+                parse_json_config(
+                    self.config_file, self.get_entry_names(), self.callbacks
+                )
+            )
 
         return template
 
