@@ -137,6 +137,7 @@ def parse_json_config(
     config_file_dict = parse_flatten_json(file_path)
     fill_wildcard_data_indices(config_file_dict, callbacks.dims)
 
+    dependent_keys: Dict[str, List[str]] = {}
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
         for key, value in config_file_dict.items():
@@ -147,21 +148,36 @@ def parse_json_config(
             prefix_part, value = value.split(":", 1)
             prefixes = re.findall(r"@(\w+)", prefix_part)
 
+            if prefix_part.startswith("?"):
+                config_file_dict[key] = value
+                main_key = f'{key.rsplit("/", 1)[0]}/{prefix_part[1:]}'
+                if main_key not in dependent_keys:
+                    dependent_keys[main_key] = []
+                dependent_keys[main_key].append(key)
+
             for prefix in prefixes:
                 config_file_dict[key] = callbacks.apply_special_key(prefix, key, value)
 
+                # We found a match. Stop resolving other prefixes.
                 if config_file_dict[key] is not None:
                     break
 
             last_value = prefix_part.rsplit(",", 1)[-1]
-            if config_file_dict[key] is None and not last_value.startswith("@"):
+            if config_file_dict[key] is None and last_value[0] not in ("@", "?"):
                 config_file_dict[key] = try_convert(last_value)
 
             if prefixes and config_file_dict[key] is None:
+                del config_file_dict[key]
                 logger.warning(
                     f"Could not find value for key {key} with value {value}.\n"
                     f"Tried prefixes: {prefixes}."
                 )
+
+    # Remove dependent keys who's main key is not present
+    for key, value in dependent_keys.items():
+        if key not in config_file_dict:
+            for dk in dependent_keys:
+                del config_file_dict[dk]
 
     return config_file_dict
 
@@ -203,18 +219,21 @@ class MultiFormatReader(BaseReader):
     def get_attr(self, path: str) -> Any:
         """
         Returns an attributes from the given path.
+        Should return None if the path does not exist.
         """
         return None
 
     def get_data(self, path: str) -> Any:
         """
         Returns data from the given path.
+        Should return None if the path does not exist.
         """
         return None
 
     def get_eln_data(self, path: str) -> Any:
         """
         Returns data from the given eln path.
+        Should return None if the path does not exist.
         """
         return parse_yml(path)
 
