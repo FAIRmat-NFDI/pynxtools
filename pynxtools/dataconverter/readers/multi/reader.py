@@ -33,6 +33,10 @@ from pynxtools.dataconverter.readers.utils import (
 )
 from pynxtools.dataconverter.template import Template
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
+
 
 def fill_wildcard_data_indices(config_file_dict, dims):
     """
@@ -62,15 +66,19 @@ def fill_wildcard_data_indices(config_file_dict, dims):
 @dataclass
 class ParseJsonCallbacks:
     """
-    Callbacks for dealing special keys in the json file.
+        Callbacks for dealing special keys in the json file.
 
-    Args:
-        attrs_callback (Callable[[str], Any]):
-            The callback to retrieve attributes under the specified key.
-        data_callback (Callable[[str], Any]):
-            The callback to retrieve the data under the specified key.
-        dims (List[str]):
-            The dimension labels of the data. Defaults to None.
+        Args:
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    logger.addHandler(logging.StreamHandler())
+            attrs_callback (Callable[[str], Any]):
+                The callback to retrieve attributes under the specified key.
+            data_callback (Callable[[str], Any]):
+                The callback to retrieve the data under the specified key.
+            dims (List[str]):
+                The dimension labels of the data. Defaults to None.
     """
 
     special_key_map = {
@@ -84,6 +92,13 @@ class ParseJsonCallbacks:
     link_callback: Callable[[str], Any] = lambda v: {"link": v}
     eln_callback: Callable[[str], Any] = lambda v: v
     dims: Callable[[str], List[str]] = lambda _: []
+    entry_name: str = "entry"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.link_callback = lambda v: {
+            "link": v.replace("/entry/", f"/{self.entry_name}/")
+        }
 
     def apply_special_key(self, precursor, key, value):
         """
@@ -94,6 +109,7 @@ class ParseJsonCallbacks:
 
 def parse_json_config(
     file_path: str,
+    entry_names: List[str],
     callbacks: Optional[ParseJsonCallbacks] = None,
 ) -> dict:
     """
@@ -122,28 +138,31 @@ def parse_json_config(
     config_file_dict = parse_flatten_json(file_path)
     fill_wildcard_data_indices(config_file_dict, callbacks.dims)
 
-    for key, value in config_file_dict.items():
-        if not isinstance(value, str) or ":" not in value:
-            continue
+    for entry_name in entry_names:
+        callbacks.entry_name = entry_name
+        for key, value in config_file_dict.items():
+            key = key.replace("/ENTRY[entry]/", f"/ENTRY[{entry_name}]/")
+            if not isinstance(value, str) or ":" not in value:
+                continue
 
-        prefix_part, value = value.split(":", 1)
-        prefixes = re.findall(r"@(\w+)", prefix_part)
+            prefix_part, value = value.split(":", 1)
+            prefixes = re.findall(r"@(\w+)", prefix_part)
 
-        for prefix in prefixes:
-            config_file_dict[key] = callbacks.apply_special_key(prefix, key, value)
+            for prefix in prefixes:
+                config_file_dict[key] = callbacks.apply_special_key(prefix, key, value)
 
-            if config_file_dict[key] is not None:
-                break
+                if config_file_dict[key] is not None:
+                    break
 
-        last_value = prefix_part.rsplit(",", 1)[-1]
-        if config_file_dict[key] is None and not last_value.startswith("@"):
-            config_file_dict[key] = try_convert(last_value)
+            last_value = prefix_part.rsplit(",", 1)[-1]
+            if config_file_dict[key] is None and not last_value.startswith("@"):
+                config_file_dict[key] = try_convert(last_value)
 
-        if prefixes and config_file_dict[key] is None:
-            logging.warning(
-                f"Could not find value for key {key} with value {value}.\n"
-                f"Tried prefixes: {prefixes}."
-            )
+            if prefixes and config_file_dict[key] is None:
+                logger.warning(
+                    f"Could not find value for key {key} with value {value}.\n"
+                    f"Tried prefixes: {prefixes}."
+                )
 
     return config_file_dict
 
@@ -157,6 +176,7 @@ class MultiFormatReader(BaseReader):
     supported_nxdls: List[str] = []
     extensions: Dict[str, Callable[[Any], dict]] = {}
     kwargs: Optional[Dict[str, Any]] = None
+    overwrite_keys: bool = True
 
     def __init__(self, config_file: Optional[str] = None):
         self.callbacks = ParseJsonCallbacks(
@@ -205,6 +225,13 @@ class MultiFormatReader(BaseReader):
         """
         return []
 
+    def get_entry_names(self) -> List[str]:
+        """
+        Returns a list of entry names which should be constructed from the data.
+        Defaults to creating a single entry named "entry".
+        """
+        return ["entry"]
+
     def read(
         self,
         template: dict = None,
@@ -216,23 +243,22 @@ class MultiFormatReader(BaseReader):
         Reads data from multiple files and passes them to the appropriate functions
         in the extensions dict.
         """
-        template = Template()
-        self.kwargs = kwargs
+        self.config_file = self.kwargs.get("config_file", self.config_file)
+        self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)
 
-        if "config_file" in kwargs:
-            self.config_file = kwargs["config_file"]
+        template = Template(overwrite_keys=self.overwrite_keys)
+        self.kwargs = kwargs
 
         sorted_paths = sorted(file_paths, key=lambda x: os.path.splitext(x)[1])
         for file_path in sorted_paths:
             extension = os.path.splitext(file_path)[1].lower()
             if extension not in self.extensions:
-                print(
-                    f"WARNING: "
+                logger.warning(
                     f"File {file_path} has an unsupported extension, ignoring file."
                 )
                 continue
             if not os.path.exists(file_path):
-                print(f"WARNING: File {file_path} does not exist, ignoring entry.")
+                logger.warning(f"File {file_path} does not exist, ignoring entry.")
                 continue
 
             template.update(self.extensions.get(extension, lambda _: {})(file_path))
