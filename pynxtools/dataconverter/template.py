@@ -19,14 +19,19 @@
 
 import copy
 import json
+import logging
 
 from pynxtools.dataconverter import helpers
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
 
 
 class Template(dict):
     """A Template object to control and separate template paths according to optionality"""
 
-    def __init__(self, template=None, **kwargs):
+    def __init__(self, template=None, overwrite_keys: bool = True, **kwargs):
         super().__init__(**kwargs)
         if isinstance(template, Template):
             self.optional: dict = copy.deepcopy(template["optional"])
@@ -44,6 +49,8 @@ class Template(dict):
             self.lone_groups: list = []
             if isinstance(template, dict):
                 self.undocumented: dict = copy.deepcopy(template)
+
+        self.overwrite_keys = overwrite_keys
 
     def get_accumulated_dict(self):
         """Returns a dictionary of all the optionalities merged into one."""
@@ -202,12 +209,28 @@ class Template(dict):
         or updates values from a dictionary if the type of :code:`template` is dict"""
         if isinstance(template, Template):
             for optionality in ("optional", "recommended", "required", "undocumented"):
-                self.get_optionality(optionality).update(
-                    template.get_optionality(optionality)
-                )
+                for key, value in template.get_optionality(optionality).items():
+                    opt_dict = self.get_optionality(optionality)
+                    if self.overwrite_keys or opt_dict.get(key) is None:
+                        opt_dict[key] = value
+                    else:
+                        logger.warning(
+                            f"Entry {key} already exists, not overwriting.\n"
+                            f"Value: {opt_dict[key]} / Attempted value: {value}."
+                            "If you want to overwrite the specific key allow "
+                            "overwriting keys in the reader"
+                        )
         else:
             for key, value in template.items():
-                self[key] = value
+                if self.overwrite_keys or self.get(key) is None:
+                    self[key] = value
+                else:
+                    logger.warning(
+                        f"Entry {key} already exists, not overwriting.\n"
+                        f"Value: {self[key]} / Attempted value: {value}."
+                        "If you want to overwrite the specific key allow "
+                        "overwriting keys in the reader"
+                    )
 
     def add_entry(self, entry_name):
         """Add the whole NXDL again with a new HDF5 name for the template."""
