@@ -16,18 +16,20 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
-import os
-from typing import Tuple, Any
 import math
-from importlib.metadata import version
-import yaml
-import pandas as pd
+import os
+from importlib.metadata import PackageNotFoundError, version
+from typing import Any, Tuple
+
 import numpy as np
+import pandas as pd
+import yaml
+
+from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.helpers import extract_atom_types
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.readers.ellips.mock import MockEllips
-from pynxtools.dataconverter.helpers import extract_atom_types
-from pynxtools.dataconverter.readers.utils import flatten_and_replace, FlattenSettings
-from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.readers.utils import FlattenSettings, flatten_and_replace
 
 DEFAULT_HEADER = {"sep": "\t", "skip": 0}
 
@@ -466,7 +468,10 @@ class EllipsometryReader(BaseReader):
         )
         template["/ENTRY[entry]/definition/@version"] = get_nexus_version()
         template["/ENTRY[entry]/program_name"] = "pynxtools"
-        template["/ENTRY[entry]/program_name/@version"] = version("pynxtools")
+        try:
+            template["/ENTRY[entry]/program_name/@version"] = version("pynxtools")
+        except PackageNotFoundError:
+            pass
         template[
             "/ENTRY[entry]/program_name/@url"
         ] = "https://github.com/FAIRmat-NFDI/pynxtools"
