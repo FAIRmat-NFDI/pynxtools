@@ -80,7 +80,7 @@ def get_names_of_all_readers() -> List[str]:
     path_prefix = (
         f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     )
-    files = sorted(glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py")))
+    files = glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py"))
     all_readers = []
     for file in files:
         if f"{os.sep}base{os.sep}" not in file:
@@ -92,7 +92,7 @@ def get_names_of_all_readers() -> List[str]:
                 file[index_of_readers_folder_name:index_of_last_path_sep]
             )
     plugins = list(map(lambda ep: ep.name, entry_points(group="pynxtools.reader")))
-    return all_readers + plugins
+    return sorted(all_readers + plugins)
 
 
 def get_nxdl_root_and_path(nxdl: str):
