@@ -778,7 +778,7 @@ class HandleNexus:
 )
 def main(nexus_file, documentation, concept):
     """The main function to call when used as a script."""
-    logging_format = "%(levelname)s: %(message)s"
+    logging_format = "%(message)s"
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging.DEBUG)
     logging.basicConfig(

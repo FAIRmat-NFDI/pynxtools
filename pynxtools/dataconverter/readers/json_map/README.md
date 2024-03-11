@@ -39,7 +39,7 @@ Example:
 
 ```json
   "/ENTRY[entry]/DATA[data]/current_295C": "/entry/data/current_295C",
-  "/ENTRY[entry]/NXODD_name/posint_value": "/a_level_down/another_level_down/posint_value",
+  "/ENTRY[entry]/NXODD_name[odd_name]/posint_value": "/a_level_down/another_level_down/posint_value",
 ```
 
 * Write the values directly in the mapping file for missing data from your data file.

@@ -16,12 +16,13 @@
 # limitations under the License.
 #
 """Helper functions commonly used by the convert routine."""
-
 import json
 import logging
 import re
+import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+from functools import lru_cache
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import h5py
@@ -29,8 +30,14 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.units import ureg
 from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeError
+from pynxtools.nexus.nexus import NxdlAttributeError, get_inherited_nodes
+from pynxtools.nexus.nxdl_utils import get_nx_namefit
+
+logger = logging.getLogger(__name__)  # pylint: disable=C0103
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -137,12 +144,17 @@ def generate_template_from_nxdl(
         return
 
     suffix = ""
-    if "name" in root.attrib:
+    if "name" in root.attrib and not contains_uppercase(root.attrib["name"]):
         suffix = root.attrib["name"]
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
-        hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
-        suffix = f"{nexus_class}{hdf5name}"
+        name = root.attrib.get("name")
+        nx_type = root.attrib.get("type")[2:]  # .removeprefix("NX") (python > 3.8)
+        suffix = (
+            f"{name}[{name.lower()}]"
+            if name is not None
+            else f"{nexus_class}[{nx_type}]"
+        )
 
     path = path + "/" + (f"@{suffix}" if tag == "attribute" else suffix)
 
@@ -207,8 +219,17 @@ def convert_nexus_to_caps(nexus_name):
     return nexus_name[2:].upper()
 
 
-def convert_nexus_to_suggested_name(nexus_name):
+def contains_uppercase(field_name: Optional[str]) -> bool:
+    """Helper function to check if a field name contains uppercase characters."""
+    if field_name is None:
+        return False
+    return any(char.isupper() for char in field_name)
+
+
+def convert_nexus_to_suggested_name(nexus_name, field_name=None):
     """Helper function to suggest a name for a group from its NeXus class."""
+    if contains_uppercase(field_name):
+        return field_name
     return nexus_name[2:]
 
 
@@ -342,6 +363,25 @@ def convert_str_to_bool_safe(value):
     return None
 
 
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding="utf-8"
+) -> Optional[str]:
+    """
+    Cleans the string attribute which means it will decode bytes to str if necessary.
+    If `attr` is not str, bytes or None it raises a TypeError.
+    """
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    raise TypeError(
+        "Invalid type {type} for attribute. Should be either None, bytes or str."
+    )
+
+
 def is_valid_data_field(value, nxdl_type, path):
     """Checks whether a given value is valid according to what is defined in the NXDL.
 
@@ -386,6 +426,56 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
+def is_valid_unit(unit: str, nx_category: str) -> bool:
+    """
+    The provided unit belongs to the provided nexus unit category.
+
+    Args:
+        unit (str): The unit to check. Should be according to pint.
+        nx_category (str): A nexus unit category, e.g. `NX_LENGTH`,
+            or derived unit category, e.g., `NX_LENGTH ** 2`.
+
+    Returns:
+        bool: The unit belongs to the provided category
+    """
+    unit = clean_str_attr(unit)
+    if nx_category in ("NX_ANY"):
+        ureg(unit)  # Check if unit is generally valid
+        return True
+    nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
+    if nx_category == "[NX_TRANSFORMATION]":
+        # NX_TRANSFORMATIONS is a pseudo unit
+        # and can be either an angle, a length or unitless
+        return True
+        # Currently disabled for the mpes tests
+        # return (
+        #     ureg(unit).check("[NX_ANGLE]")
+        #     or ureg(unit).check("[NX_LENGTH]")
+        #     or ureg(unit).check("[NX_UNITLESS]")
+        # )
+    return ureg(unit).check(f"{nx_category}")
+
+
+def is_matching_variation(nxdl_path: str, key: str) -> bool:
+    """
+    Checks if the given key is a matching variation of the given NXDL path.
+    """
+    hdf_tokens = [
+        g1 + g2
+        for (g1, g2) in re.findall(
+            r"\/[a-zA-Z0-9_]+\[([a-zA-Z0-9_]+)\]|\/([a-zA-Z0-9_]+)", key
+        )
+    ]
+    nxdl_path_tokens = nxdl_path[1:].split("/")
+    if len(hdf_tokens) != len(nxdl_path_tokens):
+        return False
+
+    for file_token, nxdl_token in zip(hdf_tokens, nxdl_path_tokens):
+        if get_nx_namefit(file_token, nxdl_token) < 0:
+            return False
+    return True
+
+
 def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
     accepted_unfilled_key = None
@@ -393,6 +483,7 @@ def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, 
         if (
             nxdl_path == convert_data_converter_dict_to_nxdl_path(key)
             or convert_data_dict_path_to_hdf5_path(key) == hdf_path
+            or is_matching_variation(nxdl_path, key)
         ):
             if data[key] is None:
                 accepted_unfilled_key = key
@@ -531,7 +622,6 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                 continue
             if not does_group_exist(renamed_path, data):
                 logger.warning(f"The required group, {path}, hasn't been supplied.")
-                continue
             continue
         if not is_path_in_data_dict or data[renamed_path] is None:
             logger.warning(
@@ -580,9 +670,9 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
-    # nxdl_path_set helps to skip validation check on the same type of nxdl signiture
-    # This reduces huge amount of runing time
-    nxdl_path_to_elm: dict = {}
+    @lru_cache
+    def get_xml_node(nxdl_path: str) -> ET.Element:
+        return nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
     # Make sure all required fields exist.
     ensure_all_required_fields_exist(template, data, nxdl_root)
@@ -593,18 +683,42 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
             entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
-            if entry_name == "@units":
-                continue
-
             if entry_name[0] == "@" and "@" in nxdl_path:
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1 :]
 
-            if nxdl_path in nxdl_path_to_elm:
-                elem = nxdl_path_to_elm[nxdl_path]
-            else:
-                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
-                nxdl_path_to_elm[nxdl_path] = elem
+            if entry_name == "@units":
+                elempath = get_inherited_nodes(nxdl_path, None, nxdl_root)[1]
+                elem = elempath[-2]
+                field_path = path.rsplit("/", 1)[0]
+                if (
+                    field_path not in data.get_documented()
+                    and "units" not in elem.attrib
+                ):
+                    logger.warning(
+                        "The unit, %s = %s, is being written but has no documentation.",
+                        path,
+                        data[path],
+                    )
+                    continue
+
+                field = nexus.get_node_at_nxdl_path(
+                    nxdl_path=convert_data_converter_dict_to_nxdl_path(
+                        # The part below is the backwards compatible version of
+                        # nxdl_path.removesuffix("/units")
+                        nxdl_path[:-6] if nxdl_path.endswith("/units") else nxdl_path
+                    ),
+                    elem=nxdl_root,
+                )
+                nxdl_unit = field.attrib.get("units", "")
+                if not is_valid_unit(data[path], nxdl_unit):
+                    raise ValueError(
+                        f"Invalid unit in {path}. {data[path]} "
+                        f"is not in unit category {nxdl_unit}"
+                    )
+                continue
+
+            elem = get_xml_node(nxdl_path)
 
             # Only check for validation in the NXDL if we did find the entry
             # otherwise we just pass it along
@@ -705,6 +819,7 @@ def add_default_root_attributes(data, filename):
         f"blob/{get_nexus_version_hash()}",
     )
     update_and_warn("/@NeXus_version", get_nexus_version())
+    # pylint: disable=c-extension-no-member
     update_and_warn("/@HDF5_version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
 
