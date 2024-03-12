@@ -62,4 +62,4 @@ Here we use a ```params.yaml``` parameter file to configure the converter.  This
 
 **Congrats! You now have a FAIR NeXus file!**
 
-You can try out [other examples from pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/documentation/examples).
+You can try out [other examples from pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples).
