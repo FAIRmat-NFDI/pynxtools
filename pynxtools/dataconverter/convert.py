@@ -448,13 +448,18 @@ def convert_cli(
     is_flag=True,
 )
 @click.option(
-    "--json",
-    "to_json",
-    help="Prints valid JSON instead of of a Pythonic str",
+    "--pythonic",
+    help="Prints a valid Python dictionary instead of JSON",
     is_flag=True,
 )
-def generate_template(nxdl: str, required: bool, to_json: bool):
+@click.option(
+    "--output",
+    help="Writes the output into the filepath provided.",
+    type=click.Path(),
+)
+def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
     "Generates and prints a template to use for your nxdl."
+    print_or_write = print
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
@@ -462,14 +467,21 @@ def generate_template(nxdl: str, required: bool, to_json: bool):
     if required:
         template = Template(template.get_optionality("required"))
 
-    if to_json:
-        print(
-            json.dumps(
-                template.get_accumulated_dict(),
-                indent=4,
-                sort_keys=True,
-                ensure_ascii=False,
-            )
-        )
+    if output:
+
+        def print_or_write(text: str):
+            f = open(output, "w")
+            f.write(text)
+            f.close()
+
+    if pythonic:
+        print_or_write(str(template))
         return
-    print(template)
+    print_or_write(
+        json.dumps(
+            template.get_accumulated_dict(),
+            indent=4,
+            sort_keys=True,
+            ensure_ascii=False,
+        )
+    )

@@ -117,7 +117,7 @@ def test_cli(caplog, cli_inputs):
     result = runner.invoke(dataconverter.main_cli, cli_inputs)
     if "generate-template" in cli_inputs:
         assert result.exit_code == 0
-        assert '"/ENTRY[entry]/NXODD_name/int_value": "None",' in result.stdout
+        assert '"/ENTRY[entry]/NXODD_name/int_value": null,' in result.stdout
     elif "--input-file" in cli_inputs:
         assert "test_input" in caplog.text
     elif result.exit_code == 2:
