@@ -458,20 +458,20 @@ def convert_cli(
 )
 def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
     "Generates and prints a template to use for your nxdl."
-    print_or_write = print
+
+    def write_to_file(text):
+        f = open(output, "w")
+        f.write(text)
+        f.close()
+
+    print_or_write = lambda txt: write_to_file(txt) if output else print(txt)
+
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
 
     if required:
         template = Template(template.get_optionality("required"))
-
-    if output:
-
-        def print_or_write(text: str):
-            f = open(output, "w")
-            f.write(text)
-            f.close()
 
     if pythonic:
         print_or_write(str(template))
