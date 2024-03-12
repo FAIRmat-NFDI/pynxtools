@@ -431,7 +431,6 @@ def convert_cli(
         fair,
         undocumented,
         skip_verify,
-        required,
     )
 
 
