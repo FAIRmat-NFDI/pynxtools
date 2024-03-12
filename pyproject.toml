@@ -24,6 +24,7 @@ classifiers = [
 ]
 dependencies = [
     "click>=7.1.2",
+    "click_default_group",
     "h5py>=3.6.0",
     "xarray>=0.20.2",
     "PyYAML>=6.0",
@@ -84,7 +85,7 @@ stm = [
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
-dataconverter = "pynxtools.dataconverter.convert:convert_cli"
+dataconverter = "pynxtools.dataconverter.convert:main_cli"
 generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 
 [tool.setuptools.package-data]
