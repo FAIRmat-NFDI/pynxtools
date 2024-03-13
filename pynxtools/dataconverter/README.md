@@ -8,7 +8,7 @@ You can read specific README's of the readers and find usage examples [here](../
 ## Installation
 
 ```console
-user@box:~$ pip install pynxtools
+user@box:~$ pip install pynxtools[convert]
 ```
 
 ## Usage
