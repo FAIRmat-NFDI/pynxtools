@@ -19,18 +19,18 @@
 import glob
 import importlib.machinery
 import importlib.util
+import json
 import logging
-from gettext import gettext
 import os
 import sys
 import xml.etree.ElementTree as ET
+from gettext import gettext
 from pathlib import Path
 from typing import List, Optional, Tuple
-import json
 
 import click
-from click_default_group import DefaultGroup
 import yaml
+from click_default_group import DefaultGroup
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -387,7 +387,6 @@ def convert_cli(
     mapping: str,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
-    logger.addHandler(logging.StreamHandler())
     if params_file:
         try:
             convert(**parse_params_file(params_file))
