@@ -33,7 +33,6 @@ dependencies = [
     "ase>=3.19.0",
     "flatdict>=4.0.1",
     "hyperspy>=1.7.4",
-    "ifes_apt_tc_data_modeling<0.2,>=0.0.9",
     "gitpython>=3.1.24",
     "pytz>=2021.1",
     "kikuchipy>=0.8.2",
