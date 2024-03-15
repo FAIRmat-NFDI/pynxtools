@@ -16,7 +16,7 @@ if it is not supported yet. Feel also free to [contact](../README.md#questions-s
 us if you need help.
 
 For giving specific feedback to specific parsers/readers/data extractors please contact the
-respective developers directly:
+respective developers directly and checkout the domain-specific pynxtools plugins:
 
 ### em_om, em_spctrscpy
 Markus Kühbach
@@ -26,7 +26,3 @@ Florian Dobner, Rubel Mozumder, Lukas Pielsticker
 
 ### ellipsometry
 Carola Emminger, Florian Dobner
-
-### apm
-Markus Kühbach
-
