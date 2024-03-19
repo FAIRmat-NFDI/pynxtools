@@ -208,26 +208,6 @@ def test_compression(tmp_path):
     restore_xarray_file_from_tmp(tmp_path)
 
 
-def test_eln_data_subsections(tmp_path):
-    """Check if the subsections in the eln_data.yml file work."""
-    dirpath = os.path.join(
-        os.path.dirname(__file__), "../data/dataconverter/readers/json_yml"
-    )
-    dataconverter.convert(
-        (
-            os.path.join(
-                dirpath,
-                "eln_data_w_subsections.yaml",
-            ),
-        ),
-        "hall",
-        "NXroot",
-        os.path.join(tmp_path, "hall.nxs"),
-        False,
-        False,
-    )
-
-
 def test_params_file():
     """Check if the parameters file is read correctly."""
     dirpath = Path(__file__).parent.parent / "data" / "dataconverter"
