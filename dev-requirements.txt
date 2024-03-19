@@ -156,9 +156,7 @@ python-dateutil==2.8.2
     #   mkdocs-macros-plugin
     #   pandas
 pytz==2023.3.post1
-    # via
-    #   pandas
-    #   pynxtools (pyproject.toml)
+    # via pandas
 pyyaml==6.0.1
     # via
     #   mkdocs
