@@ -40,16 +40,10 @@ exceptiongroup==1.2.0
     # via pytest
 filelock==3.13.1
     # via virtualenv
-flatdict==4.0.1
-    # via pynxtools (pyproject.toml)
 fonttools==4.45.1
     # via matplotlib
 ghp-import==2.1.0
     # via mkdocs
-gitdb==4.0.11
-    # via gitpython
-gitpython==3.1.40
-    # via pynxtools (pyproject.toml)
 h5py==3.10.0
     # via pynxtools (pyproject.toml)
 identify==2.5.33
@@ -165,8 +159,6 @@ pytz==2023.3.post1
     # via
     #   pandas
     #   pynxtools (pyproject.toml)
-pytz-deprecation-shim==0.1.0.post0
-    # via tzlocal
 pyyaml==6.0.1
     # via
     #   mkdocs
@@ -184,13 +176,9 @@ requests==2.31.0
 ruff==0.1.7
     # via pynxtools (pyproject.toml)
 scipy==1.9.1
-    # via
-    #   ase
-    #   pynxtools (pyproject.toml)
+    # via ase
 six==1.16.0
     # via python-dateutil
-smmap==5.0.1
-    # via gitdb
 structlog==23.2.0
     # via pynxtools (pyproject.toml)
 termcolor==2.4.0
@@ -212,11 +200,7 @@ types-requests==2.31.0.10
 typing-extensions==4.8.0
     # via mypy
 tzdata==2023.3
-    # via
-    #   pandas
-    #   pytz-deprecation-shim
-tzlocal==4.3
-    # via pynxtools (pyproject.toml)
+    # via pandas
 urllib3==2.1.0
     # via
     #   requests
@@ -228,8 +212,6 @@ watchdog==4.0.0
 wheel==0.42.0
     # via pip-tools
 xarray==2023.1.0
-    # via pynxtools (pyproject.toml)
-zipfile37==0.1.3
     # via pynxtools (pyproject.toml)
 zipp==3.17.0
     # via importlib-metadata
