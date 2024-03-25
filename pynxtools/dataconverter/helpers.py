@@ -30,7 +30,7 @@ from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeError
+from pynxtools.nexus.nexus import NxdlAttributeNotFoundError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -572,7 +572,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             if units in data.undocumented:
                 data[get_required_string(elem)][units] = data.undocumented[units]
                 del data.undocumented[units]
-        except NxdlAttributeError:
+        except NxdlAttributeNotFoundError:
             pass
 
 
