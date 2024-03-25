@@ -5,7 +5,7 @@ build-backend = "_build_wrapper"
 
 [project]
 name = "pynxtools"
-dynamic = ["version", "dependencies"]
+dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
 ]
@@ -92,9 +92,6 @@ pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 
 [tool.setuptools.packages.find]
 exclude = ["pynxtools/definitions*"]
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
