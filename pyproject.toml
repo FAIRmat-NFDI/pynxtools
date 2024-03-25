@@ -5,7 +5,7 @@ build-backend = "_build_wrapper"
 
 [project]
 name = "pynxtools"
-dynamic = ["version"]
+dynamic = ["version", "dependencies"]
 authors = [
     { name = "The NOMAD Authors" },
 ]
@@ -33,6 +33,7 @@ dependencies = [
     "ase>=3.19.0",
     "mergedeep",
     "importlib-metadata",
+    "lxml>=4.9.1", 
 ]
 
 [project.urls]
@@ -91,6 +92,9 @@ pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 
 [tool.setuptools.packages.find]
 exclude = ["pynxtools/definitions*"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
