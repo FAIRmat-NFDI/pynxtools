@@ -94,7 +94,7 @@ def get_names_of_all_readers() -> List[str]:
             all_readers.append(
                 file[index_of_readers_folder_name:index_of_last_path_sep]
             )
-    plugins = list(map(lambda ep: ep.name, entry_points(group="pynxtools.reader")))
+    plugins = list(set(map(lambda ep: ep.name, entry_points(group="pynxtools.reader"))))
     return sorted(all_readers + plugins)
 
 
