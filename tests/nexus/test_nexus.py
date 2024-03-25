@@ -21,7 +21,8 @@
 
 import logging
 import os
-import xml.etree.ElementTree as ET
+
+import lxml.etree as ET
 
 from pynxtools.nexus import nexus
 
@@ -109,6 +110,22 @@ def test_get_node_at_nxdl_path():
 
     node = nexus.get_node_at_nxdl_path("/ENTRY/measurement", elem=elem)
     assert node.attrib["type"] == "NXevent_data_em_set"
+
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection", elem=elem
+    )
+    assert node.attrib["type"] == "NXdata"
+
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/DATA", elem=elem
+    )
+    assert node.attrib["type"] == "NX_NUMBER"
+
+    node = nexus.get_node_at_nxdl_path(
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/AXISNAME_indices",
+        elem=elem,
+    )
+    assert node.attrib["name"] == "AXISNAME_indices"
 
     node = nexus.get_node_at_nxdl_path("/ENTRY/COORDINATE_SYSTEM_SET", elem=elem)
     assert node.attrib["type"] == "NXcoordinate_system_set"
