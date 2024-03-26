@@ -65,9 +65,6 @@ convert = [
 apm = [
     "pynxtools-apm",
 ]
-em = [
-    "pynxtools-em",
-]
 mpes = [
     "pynxtools-mpes",
 ]
