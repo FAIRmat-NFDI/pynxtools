@@ -60,7 +60,7 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[mpes,xps,stm,xrd]",
+    "pynxtools[mpes,xps,stm]",
 ]
 mpes = [
     "pynxtools-mpes",
@@ -71,9 +71,7 @@ xps = [
 stm = [
     "pynxtools-stm",
 ]
-xrd = [
-    "pynxtools-xrd",
-]
+
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
