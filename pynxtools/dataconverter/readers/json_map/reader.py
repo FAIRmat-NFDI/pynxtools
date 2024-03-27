@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
+
 import json
 import pickle
 from typing import Any, Tuple

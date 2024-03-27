@@ -1,6 +1,5 @@
 # pylint: disable=too-many-lines
-"""Read files from different format and print it in a standard NeXus format
-"""
+"""Read files from different format and print it in a standard NeXus format"""
 
 import logging
 import os

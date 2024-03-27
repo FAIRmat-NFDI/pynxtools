@@ -64,7 +64,7 @@ def get_all_defined_required_children_for_elem(xml_element):
     list_of_children_to_add = set()
     for child in xml_element:
         tag = remove_namespace_from_tag(child.tag)
-        if tag not in ('group','field','attribute'):
+        if tag not in ("group", "field", "attribute"):
             continue
         child.set("nxdlbase_class", xml_element.get("nxdlbase_class"))
         if child.attrib and get_required_string(child) == "required":
@@ -640,7 +640,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 def remove_namespace_from_tag(tag):
     """Helper function to remove the namespace from an XML tag."""
 
-    if not isinstance(tag,str):
+    if not isinstance(tag, str):
         return ""
     return tag.split("}")[-1]
 

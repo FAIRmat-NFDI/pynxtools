@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """The abstract class off of which to implement readers."""
+
 from abc import ABC, abstractmethod
 from typing import Tuple, Any
 
