@@ -61,7 +61,7 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[apm,em,mpes,xps,stm]",
+    "pynxtools[apm,em,mpes,xps,stm,xrd]",
 ]
 apm = [
     "pynxtools-apm",
@@ -77,6 +77,9 @@ xps = [
 ]
 stm = [
     "pynxtools-stm",
+]
+xrd = [
+    "pynxtools-xrd",
 ]
 
 [project.scripts]
