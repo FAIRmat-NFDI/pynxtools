@@ -60,7 +60,7 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[mpes,xps,stm]",
+    "pynxtools[mpes,xps,stm,xrd]",
 ]
 mpes = [
     "pynxtools-mpes",
@@ -70,6 +70,9 @@ xps = [
 ]
 stm = [
     "pynxtools-stm",
+]
+xrd = [
+    "pynxtools-xrd",
 ]
 
 
