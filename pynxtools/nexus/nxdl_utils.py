@@ -1,6 +1,5 @@
 # pylint: disable=too-many-lines
-"""Parse NeXus definition files
-"""
+"""Parse NeXus definition files"""
 
 import os
 import xml.etree.ElementTree as ET
