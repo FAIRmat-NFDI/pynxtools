@@ -8,7 +8,7 @@ from functools import lru_cache
 
 import click
 import h5py
-
+import lxml.etree as ET
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_hdf_info_parent,
     get_nxdl_child,
@@ -21,7 +21,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_best_child,
     get_node_name,
     add_base_classes,
-    ET,
     walk_elist,
     get_nx_class,
     try_find_default,
