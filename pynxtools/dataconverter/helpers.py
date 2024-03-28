@@ -20,17 +20,17 @@
 import json
 import logging
 import re
-import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import h5py
+import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeError
+from pynxtools.nexus.nexus import NxdlAttributeNotFoundError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -63,6 +63,9 @@ def get_all_defined_required_children_for_elem(xml_element):
     """Gets all possible inherited required children for a given NXDL element"""
     list_of_children_to_add = set()
     for child in xml_element:
+        tag = remove_namespace_from_tag(child.tag)
+        if tag not in ("group", "field", "attribute"):
+            continue
         child.set("nxdlbase_class", xml_element.get("nxdlbase_class"))
         if child.attrib and get_required_string(child) == "required":
             tag = remove_namespace_from_tag(child.tag)
@@ -572,7 +575,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             if units in data.undocumented:
                 data[get_required_string(elem)][units] = data.undocumented[units]
                 del data.undocumented[units]
-        except NxdlAttributeError:
+        except NxdlAttributeNotFoundError:
             pass
 
 
@@ -637,6 +640,8 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 def remove_namespace_from_tag(tag):
     """Helper function to remove the namespace from an XML tag."""
 
+    if not isinstance(tag, str):
+        return ""
     return tag.split("}")[-1]
 
 

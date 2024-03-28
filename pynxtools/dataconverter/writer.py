@@ -28,8 +28,8 @@ import h5py
 import numpy as np
 
 from pynxtools.dataconverter import helpers
-from pynxtools.nexus import nexus
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
+from pynxtools.nexus import nexus
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 logger.setLevel(logging.INFO)
@@ -222,7 +222,7 @@ class Writer:
             elem = nexus.get_node_at_nxdl_path(
                 nxdl_path, elem=copy.deepcopy(self.nxdl_data)
             )
-        except nexus.NxdlAttributeError:
+        except nexus.NxdlAttributeNotFoundError:
             return None
 
         # Remove the name attribute as we only use it to name the HDF5 entry
