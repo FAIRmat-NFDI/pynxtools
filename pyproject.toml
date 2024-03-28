@@ -75,7 +75,6 @@ xrd = [
     "pynxtools-xrd",
 ]
 
-
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
 dataconverter = "pynxtools.dataconverter.convert:main_cli"
@@ -96,12 +95,17 @@ local_scheme = "node-and-date"
 
 [tool.ruff]
 include = ["pynxtools/*.py", "tests/*.py"]
-lint.select = [
+exclude = ["pynxtools/definitions"]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
 ]
-lint.ignore = [
+ignore = [
     "E501", # Line too long ({width} > {limit} characters)
     "E701", # Multiple statements on one line (colon)
     "E731", # Do not assign a lambda expression, use a def
@@ -116,26 +120,13 @@ lint.ignore = [
     "PLR1714", # consider-using-in
     "PLR5501", # else-if-used
 ]
-lint.fixable = ["ALL"]
-exclude = ["pynxtools/definitions"]
-
-# Same as Black.
-line-length = 88
-indent-width = 4
+fixable = ["ALL"]
 
 [tool.ruff.format]
-# use double quotes for strings.
 quote-style = "double"
-
-# indent with spaces, rather than tabs.
 indent-style = "space"
-
-# Like Black, respect magic trailing commas.
 skip-magic-trailing-comma = false
-
-# Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
-
 
 [tool.mypy]
 strict = false
