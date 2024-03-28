@@ -49,7 +49,7 @@ docs = [
 ]
 dev = [
     "mypy",
-    "ruff",
+    "ruff==0.3.4",
     "pytest",
     "pytest-timeout",
     "pytest-cov",
@@ -102,12 +102,17 @@ local_scheme = "node-and-date"
 
 [tool.ruff]
 include = ["pynxtools/*.py", "tests/*.py"]
-lint.select = [
+exclude = ["pynxtools/definitions"]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
 ]
-lint.ignore = [
+ignore = [
     "E501", # Line too long ({width} > {limit} characters)
     "E701", # Multiple statements on one line (colon)
     "E731", # Do not assign a lambda expression, use a def
@@ -122,8 +127,13 @@ lint.ignore = [
     "PLR1714", # consider-using-in
     "PLR5501", # else-if-used
 ]
-lint.fixable = ["ALL"]
-exclude = ["pynxtools/definitions/*"]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.mypy]
 strict = false
