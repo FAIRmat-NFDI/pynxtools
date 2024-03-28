@@ -193,15 +193,15 @@ TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disabl
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/type"] = "2nd type"  # pylint: disable=E1126
-TEMPLATE["required"][
-    "/ENTRY[my_entry]/NXODD_name/date_value"
-] = "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
-TEMPLATE["optional"][
-    "/ENTRY[my_entry]/required_group/description"
-] = "An example description"
-TEMPLATE["optional"][
-    "/ENTRY[my_entry]/required_group2/description"
-] = "An example description"
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name/date_value"] = (
+    "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+)
+TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = (
+    "An example description"
+)
+TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = (
+    "An example description"
+)
 TEMPLATE["required"][
     "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"
 ] = 1

@@ -16,6 +16,7 @@
 #
 
 """A generic class for generating duplicate outputs for ellipsometry"""
+
 import random
 import numpy as np
 import ase
