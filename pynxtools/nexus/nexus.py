@@ -4,11 +4,11 @@
 import logging
 import os
 import sys
+from functools import lru_cache
 
 import click
 import h5py
 
-# from pynxtools.definitions.dev_tools.utils.nxdl_utils import *  # pylint: disable=wildcard-import, unused-wildcard-import
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_hdf_info_parent,
     get_nxdl_child,
@@ -21,12 +21,19 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_best_child,
     get_node_name,
     add_base_classes,
-    lru_cache,
     ET,
     walk_elist,
     get_nx_class,
     try_find_default,
     other_attrs,
+    get_nexus_definitions_path,
+    NxdlAttributeNotFoundError,
+    get_node_at_nxdl_path,
+    get_enums,
+    get_inherited_nodes,
+    get_nx_classes,
+    get_nx_units,
+    get_nx_attribute_type
 )
 
 
