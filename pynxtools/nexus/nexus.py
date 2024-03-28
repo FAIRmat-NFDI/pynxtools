@@ -33,7 +33,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_inherited_nodes,
     get_nx_classes,
     get_nx_units,
-    get_nx_attribute_type
+    get_nx_attribute_type,
 )
 
 
