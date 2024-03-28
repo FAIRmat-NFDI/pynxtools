@@ -117,7 +117,25 @@ lint.ignore = [
     "PLR5501", # else-if-used
 ]
 lint.fixable = ["ALL"]
-exclude = ["pynxtools/definitions/*"]
+exclude = ["pynxtools/definitions"]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+[tool.ruff.format]
+# use double quotes for strings.
+quote-style = "double"
+
+# indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
 
 [tool.mypy]
 strict = false
