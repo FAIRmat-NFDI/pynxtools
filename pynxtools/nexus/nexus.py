@@ -702,7 +702,7 @@ class NexusFileParser:
         """
 
         def process(name: str, dataset: Union[h5py.Dataset, h5py.Group]):
-            process_node(dataset, "/" + name, self.parser, self.logger)
+            process_node(dataset, "/" + name, parser, self.logger)
 
         self.parser = parser
         with h5py.File(
