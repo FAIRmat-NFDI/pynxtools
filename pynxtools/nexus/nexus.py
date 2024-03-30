@@ -247,6 +247,8 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
         hdf_path=hdf_info["hdf_path"] if "hdf_path" in hdf_info else None,
         hdf_root=hdf_info["hdf_root"] if "hdf_root" in hdf_info else None,
     )
+    # Copy the nxdl_path, otherwise the cached object is altered
+    nxdl_path = nxdl_path.copy()
     elem = elist[0] if class_path and elist else None
     if doc:
         logger.debug("classpath: " + str(class_path))
