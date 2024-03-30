@@ -2,8 +2,8 @@
 """Read files from different format and print it in a standard NeXus format"""
 
 import logging
-import os
 import sys
+from typing import Union
 
 import click
 import h5py
@@ -216,12 +216,14 @@ def get_nxdl_doc(hdf_info, logger, doc, attr=False):
     """Get nxdl documentation for an HDF5 node (or its attribute)"""
     hdf_node = hdf_info["hdf_node"]
     # new way: retrieve multiple inherited base classes
-    (class_path, nxdl_path, elist) = get_inherited_hdf_nodes(
+    class_path, nxdl_path, elist = get_inherited_hdf_nodes(
         nx_name=get_nxdl_entry(hdf_info),
         hdf_node=hdf_node,
         hdf_path=hdf_info["hdf_path"] if "hdf_path" in hdf_info else None,
         hdf_root=hdf_info["hdf_root"] if "hdf_root" in hdf_info else None,
     )
+    # Copy the nxdl_path, otherwise the cached object is altered
+    nxdl_path = nxdl_path.copy()
     elem = elist[0] if class_path and elist else None
     if doc:
         logger.debug("classpath: " + str(class_path))
@@ -341,6 +343,7 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     - follow variants
     - NOMAD parser: store in NOMAD"""
     hdf_info = {"hdf_path": hdf_path, "hdf_node": hdf_node}
+    req_str, nxdef, nxdl_path = get_nxdl_doc(hdf_info, logger, doc)
     if isinstance(hdf_node, h5py.Dataset):
         logger.debug(f"===== FIELD (/{hdf_path}): {hdf_node}")
         val = (
@@ -349,28 +352,28 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
             else str(hdf_node[0]).split("\n")
         )
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
+        if parser is not None:
+            parser(
+                {
+                    "hdf_info": hdf_info,
+                    "nxdef": nxdef,
+                    "nxdl_path": nxdl_path,
+                    "val": val,
+                    "logger": logger,
+                }
+            )
     else:
         logger.debug(
             f"===== GROUP (/{hdf_path} "
             f"[{get_nxdl_entry(hdf_info)}"
             f"::{get_nx_class_path(hdf_info)}]): {hdf_node}"
         )
-    (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc)
-    if parser is not None and isinstance(hdf_node, h5py.Dataset):
-        parser(
-            {
-                "hdf_info": hdf_info,
-                "nxdef": nxdef,
-                "nxdl_path": nxdl_path,
-                "val": val,
-                "logger": logger,
-            }
-        )
+
     for key, value in hdf_node.attrs.items():
         logger.debug(f"===== ATTRS (/{hdf_path}@{key})")
         val = str(value).split("\n")
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
-        (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc, attr=key)
+        req_str, nxdef, nxdl_path = get_nxdl_doc(hdf_info, logger, doc, attr=key)
         if (
             parser is not None
             and req_str is not None
@@ -625,122 +628,99 @@ def hdf_node_to_self_concept_path(hdf_info, logger):
     return con_path
 
 
-class HandleNexus:
-    """documentation"""
+class NexusFileParser:
+    """Parses nexus files"""
 
     # pylint: disable=too-many-instance-attributes
-    def __init__(
-        self, logger, nexus_file, d_inq_nd=None, c_inq_nd=None, is_in_memory_file=False
-    ):
+    def __init__(self, logger, nexus_file, document=None, concept_path=None):
         self.logger = logger
-        local_dir = os.path.abspath(os.path.dirname(__file__))
 
-        self.input_file_name = (
-            nexus_file
-            if nexus_file is not None
-            else os.path.join(local_dir, "../../tests/data/nexus/201805_WSe2_arpes.nxs")
-        )
+        self.input_file_name = nexus_file
         self.parser = None
-        self.in_file = None
-        self.is_hdf5_file_obj = is_in_memory_file
-        self.d_inq_nd = d_inq_nd
-        self.c_inq_nd = c_inq_nd
+        self.document = document
+        self.concept_path = concept_path
         # Aggregating hdf path corresponds to concept query node
-        self.hdf_path_list_for_c_inq_nd = []
+        self.hdf_path_list_for_concept = []
 
     def visit_node(self, hdf_name, hdf_node):
         """Function called by h5py that iterates on each node of hdf5file.
         It allows h5py visititems function to visit nodes."""
-        if self.d_inq_nd is None and self.c_inq_nd is None:
-            process_node(hdf_node, "/" + hdf_name, self.parser, self.logger)
-        elif self.d_inq_nd is not None and hdf_name in (
-            self.d_inq_nd,
-            self.d_inq_nd[1:],
+        if self.document is None and self.concept_path is None:
+            return
+
+        if self.document is not None and hdf_name in (
+            self.document,
+            self.document[1:],
         ):
             process_node(hdf_node, "/" + hdf_name, self.parser, self.logger)
-        elif self.c_inq_nd is not None:
-            attributed_concept = self.c_inq_nd.split("@")
-            attr = attributed_concept[1] if len(attributed_concept) > 1 else None
-            elist = get_all_is_a_rel_from_hdf_node(hdf_node, "/" + hdf_name)
-            if elist is None:
-                return
-            fnd_superclass = False
-            fnd_superclass_attr = False
-            for elem in reversed(elist):
-                tmp_path = elem.get("nxdlbase").split(".nxdl")[0]
-                con_path = "/NX" + tmp_path.split("NX")[-1] + elem.get("nxdlpath")
-                if fnd_superclass or con_path == attributed_concept[0]:
-                    fnd_superclass = True
-                    if attr is None:
-                        self.hdf_path_list_for_c_inq_nd.append(hdf_name)
-                        break
-                    for attribute in hdf_node.attrs.keys():
-                        attr_concept = get_nxdl_child(
-                            elem, attribute, nexus_type="attribute", go_base=False
-                        )
-                        if attr_concept is not None and attr_concept.get(
-                            "nxdlpath"
-                        ).endswith(attr):
-                            fnd_superclass_attr = True
-                            con_path = (
-                                "/NX"
-                                + tmp_path.split("NX")[-1]
-                                + attr_concept.get("nxdlpath")
-                            )
-                            self.hdf_path_list_for_c_inq_nd.append(
-                                hdf_name + "@" + attribute
-                            )
-                            break
-                if fnd_superclass_attr:
+            return
+
+        if self.concept_path is None:
+            return
+
+        attributed_concept = self.concept_path.split("@")
+        attr = attributed_concept[1] if len(attributed_concept) > 1 else None
+        elist = get_all_is_a_rel_from_hdf_node(hdf_node, "/" + hdf_name)
+        if elist is None:
+            return
+        fnd_superclass = False
+        fnd_superclass_attr = False
+        for elem in reversed(elist):
+            tmp_path = elem.get("nxdlbase").split(".nxdl")[0]
+            con_path = "/NX" + tmp_path.split("NX")[-1] + elem.get("nxdlpath")
+            if fnd_superclass or con_path == attributed_concept[0]:
+                fnd_superclass = True
+                if attr is None:
+                    self.hdf_path_list_for_concept.append(hdf_name)
                     break
+                for attribute in hdf_node.attrs.keys():
+                    attr_concept = get_nxdl_child(
+                        elem, attribute, nexus_type="attribute", go_base=False
+                    )
+                    if attr_concept is not None and attr_concept.get(
+                        "nxdlpath"
+                    ).endswith(attr):
+                        fnd_superclass_attr = True
+                        con_path = (
+                            "/NX"
+                            + tmp_path.split("NX")[-1]
+                            + attr_concept.get("nxdlpath")
+                        )
+                        self.hdf_path_list_for_concept.append(
+                            hdf_name + "@" + attribute
+                        )
+                        break
+            if fnd_superclass_attr:
+                break
 
-    def not_yet_visited(self, root, name):
-        """checking if a new node has already been visited in its path"""
-        path = name.split("/")
-        for i in range(1, len(path)):
-            act_path = "/".join(path[:i])
-            # print(act_path+' - '+name)
-            if root["/" + act_path] == root["/" + name]:
-                return False
-        return True
+    def parse_file(self, parser):
+        """
+        Process a nexus master file node by node.
 
-    def full_visit(self, root, hdf_node, name, func):
-        """visiting recursivly all children, but avoiding endless cycles"""
-        # print(name)
-        if len(name) > 0:
-            func(name, hdf_node)
-        if isinstance(hdf_node, h5py.Group):
-            for ch_name, child in hdf_node.items():
-                full_name = ch_name if len(name) == 0 else name + "/" + ch_name
-                if self.not_yet_visited(root, full_name):
-                    self.full_visit(root, child, full_name, func)
+        Args:
+            parser (_type_): The parsing function which will be called for each node.
+        """
 
-    def process_nexus_master_file(self, parser):
-        """Process a nexus master file by processing all its nodes and their attributes"""
+        def process(name: str, dataset: Union[h5py.Dataset, h5py.Group]):
+            process_node(dataset, "/" + name, self.parser, self.logger)
+
         self.parser = parser
-        try:
-            if not self.is_hdf5_file_obj:
-                self.in_file = h5py.File(
-                    self.input_file_name[0]
-                    if isinstance(self.input_file_name, list)
-                    else self.input_file_name,
-                    "r",
-                )
-            else:
-                self.in_file = self.input_file_name
+        with h5py.File(
+            self.input_file_name[0]
+            if isinstance(self.input_file_name, list)
+            else self.input_file_name,
+            "r",
+        ) as nxs_file:
+            if self.document is None and self.concept_path is None:
+                nxs_file.visititems(process)
+                get_default_plotable(nxs_file, self.logger)
+                return
+            nxs_file.visititems(self.visit_node)
 
-            self.full_visit(self.in_file, self.in_file, "", self.visit_node)
-
-            if self.d_inq_nd is None and self.c_inq_nd is None:
-                get_default_plotable(self.in_file, self.logger)
-            # To log the provided concept and concepts founded
-            if self.c_inq_nd is not None:
-                for hdf_path in self.hdf_path_list_for_c_inq_nd:
-                    self.logger.info(hdf_path)
-        finally:
-            # To test if hdf_file is open print(self.in_file.id.valid)
-            self.in_file.close()
-            # To test if hdf_file is open print(self.in_file.id.valid)
+        # Log the provided concept and respective found concepts
+        if self.concept_path is not None:
+            for hdf_path in self.hdf_path_list_for_concept:
+                self.logger.info(hdf_path)
 
 
 @click.command()
@@ -792,10 +772,10 @@ def main(nexus_file, documentation, concept):
             "Only one option either documentation (-d) or is_a relation "
             "with a concept (-c) can be requested."
         )
-    nexus_helper = HandleNexus(
-        logger, nexus_file, d_inq_nd=documentation, c_inq_nd=concept
+    nexus_parser = NexusFileParser(
+        logger, nexus_file, document=documentation, concept_path=concept
     )
-    nexus_helper.process_nexus_master_file(None)
+    nexus_parser.parse_file(None)
 
 
 if __name__ == "__main__":

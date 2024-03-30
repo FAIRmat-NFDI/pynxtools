@@ -59,8 +59,8 @@ def test_nexus(tmp_path):
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, example_data, None, None)
-    nexus_helper.process_nexus_master_file(None)
+    nexus_helper = nexus.NexusFileParser(logger, example_data, None, None)
+    nexus_helper.parse_file(None)
 
     with open(
         os.path.join(tmp_path, "nexus_test.log"), "r", encoding="utf-8"
@@ -205,8 +205,8 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, None, None, "/NXbeam")
-    nexus_helper.process_nexus_master_file(None)
+    nexus_helper = nexus.NexusFileParser(logger, None, None, "/NXbeam")
+    nexus_helper.parse_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
         tmp = tmp_f.readlines()
@@ -219,8 +219,8 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, None, None, "/NXdetector/data")
-    nexus_helper.process_nexus_master_file(None)
+    nexus_helper = nexus.NexusFileParser(logger, None, None, "/NXdetector/data")
+    nexus_helper.parse_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
         tmp = tmp_f.readlines()
@@ -232,8 +232,8 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, None, None, "/NXdata@signal")
-    nexus_helper.process_nexus_master_file(None)
+    nexus_helper = nexus.NexusFileParser(logger, None, None, "/NXdata@signal")
+    nexus_helper.parse_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
         tmp = tmp_f.readlines()
@@ -255,10 +255,10 @@ def test_d_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(
+    nexus_helper = nexus.NexusFileParser(
         logger, None, "/entry/instrument/analyser/data", None
     )
-    nexus_helper.process_nexus_master_file(None)
+    nexus_helper.parse_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
         tmp = tmp_f.readlines()
