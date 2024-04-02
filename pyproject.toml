@@ -33,6 +33,7 @@ dependencies = [
     "ase>=3.19.0",
     "mergedeep",
     "importlib-metadata",
+    "lxml>=4.9.1", 
 ]
 
 [project.urls]
@@ -60,7 +61,13 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[mpes,xps,stm,xrd]",
+    "pynxtools[apm,em,mpes,xps,stm,xrd]",
+]
+apm = [
+    "pynxtools-apm",
+]
+em = [
+    "pynxtools-em",
 ]
 mpes = [
     "pynxtools-mpes",
