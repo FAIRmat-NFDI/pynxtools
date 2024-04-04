@@ -171,6 +171,7 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
     """Get nxdl documentation for an attribute"""
     new_elem = []
     old_elem = elem
+    attr_inheritance_chain = []
     for elem_index, act_elem1 in enumerate(elist):
         act_elem = act_elem1
         # NX_class is a compulsory attribute for groups in a nexus file
@@ -187,13 +188,15 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
         # units category is a compulsory attribute for any fields
         if attr == "units" and isinstance(hdf_node, h5py.Dataset):
             req_str = "<<REQUIRED>>"
-            logger, act_elem, nxdl_path, doc, attr = try_find_units(
-                logger, act_elem, nxdl_path, doc, attr
+            logger, act_elem, attr_inheritance_chain, doc, attr = try_find_units(
+                logger, act_elem, attr_inheritance_chain, doc, attr
             )
         # units for attributes can be given as ATTRIBUTENAME_units
         elif attr.endswith("_units"):
-            logger, act_elem, nxdl_path, doc, attr, req_str = check_attr_name_nxdl(
-                (logger, act_elem, nxdl_path, doc, attr, req_str)
+            logger, act_elem, attr_inheritance_chain, doc, attr, req_str = (
+                check_attr_name_nxdl(
+                    (logger, act_elem, attr_inheritance_chain, doc, attr, req_str)
+                )
             )
         # default is allowed for groups
         elif attr == "default" and not isinstance(hdf_node, h5py.Dataset):
@@ -202,16 +205,16 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
             act_elem = get_nxdl_child(
                 act_elem, attr, nexus_type="attribute", go_base=False
             )
-            logger, act_elem, nxdl_path, doc, attr = try_find_default(
-                logger, act_elem1, act_elem, nxdl_path, doc, attr
+            logger, act_elem, attr_inheritance_chain, doc, attr = try_find_default(
+                logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
             )
         else:  # other attributes
             act_elem = get_nxdl_child(
                 act_elem, attr, nexus_type="attribute", go_base=False
             )
             if act_elem is not None:
-                logger, act_elem, nxdl_path, doc, attr = other_attrs(
-                    logger, act_elem1, act_elem, nxdl_path, doc, attr
+                logger, act_elem, attr_inheritance_chain, doc, attr = other_attrs(
+                    logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
                 )
         if act_elem is not None:
             new_elem.append(act_elem)
@@ -234,6 +237,10 @@ def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
         if attr != "NX_class":
             logger.debug("@" + attr + " - IS NOT IN SCHEMA")
         logger.debug("")
+
+    # Add the lowest child element to the nxdl_path
+    if attr_inheritance_chain:
+        nxdl_path.append(attr_inheritance_chain[0])
     return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
 
 
