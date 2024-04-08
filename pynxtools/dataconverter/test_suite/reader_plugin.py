@@ -1,0 +1,125 @@
+"""Generic test for reader plugins."""
+
+import logging
+import os
+from glob import glob
+
+from pynxtools.dataconverter.convert import get_nxdl_root_and_path
+from pynxtools.dataconverter.helpers import (
+    generate_template_from_nxdl,
+    validate_data_dict,
+)
+from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.writer import Writer
+from pynxtools.nexus import nexus
+
+
+def get_log_file(nxs_file, log_file_nm, tmp_path):
+    """Get log file for the nexus file with read_nexus tools."""
+    logger = logging.getLogger(__name__)
+    logger.handlers.clear()
+    logger.setLevel(logging.DEBUG)
+    log_file = os.path.join(tmp_path, log_file_nm)
+    handler = logging.FileHandler(log_file, "w")
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    handler.setLevel(logging.DEBUG)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    nexus_helper = nexus.HandleNexus(logger, nxs_file, None, None)
+    nexus_helper.process_nexus_master_file(None)
+    return log_file
+
+
+class ReaderTest:
+    """Generic test for reader plugins."""
+
+    def __init__(
+        self, nxdl, reader, files_or_dir, ref_nexus_file, tmp_path, caplog
+    ) -> None:
+        """Ininitialize the test object.
+
+        Parameters
+        ----------
+        nxdl : str
+            Nane of the NXDL file e.g NXsts, NXmps etc.
+        reader : class
+            The reader class (e.g. STMReader, MPESReader) to be tested.
+        files_or_dir : str
+            List of intput files or full path string to the example data directory that must.
+            contain all the files required for running launch the reader.
+        ref_nexus_file : str
+            Full path string to the reference nexus file generated from the same
+            set of input files.
+        tmp_path : pathlib.PosixPath
+            Pytest fixture variable, used to clean up the files generated during the test.
+        caplog : _pytest.logging.LogCaptureFixture
+            Pytest fixture variable, used to capture the log messages during the test.
+        """
+
+        self.nxdl = nxdl
+        self.reader = reader
+        self.files_or_dir = files_or_dir
+        self.ref_nexus_file = ref_nexus_file
+        self.tmp_path = tmp_path
+        self.caplog = caplog
+        self.brewed_nexus = f"{tmp_path}/{os.sep}/output.nxs"
+
+    def convert_to_nexus(self):
+        """
+        Test the example data for the stm reader
+        """
+
+        assert hasattr(
+            self.reader, "supported_nxdls"
+        ), f"Reader{self.reader} must have supported_nxdls attribute"
+        assert callable(self.reader.read), f"Reader{self.reader} must have read method"
+
+        if isinstance(self.files_or_dir, (list, tuple)):
+            input_files = self.files_or_dir
+        else:
+            input_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
+
+        assert (
+            self.nxdl in self.reader.supported_nxdls
+        ), f"Reader does not support {self.nxdl} NXDL."
+
+        root, nxdl_file = get_nxdl_root_and_path(self.nxdl)
+        assert os.path.exists(nxdl_file), f"NXDL file {nxdl_file} not found"
+        template = Template()
+        generate_template_from_nxdl(root, template)
+
+        read_data = self.reader().read(
+            template=Template(template), file_paths=tuple(input_files)
+        )
+
+        assert isinstance(read_data, Template)
+        with self.caplog.at_level("ERROR", "WARNING"):
+            is_success = validate_data_dict(template, read_data, root)
+        assert is_success, "Validation failed"
+        for record in self.caplog.records:
+            if record.levelname == "WARNING" or record.levelname == "ERROR":
+                assert False, record.message
+        Writer(read_data, nxdl_file, self.brewed_nexus).write()
+
+    def check_reproducibility_of_nexus(self):
+        """Reproducibility test for the generated nexus file."""
+        ref_log = get_log_file(self.ref_nexus_file, "ref_nexus.log", self.tmp_path)
+        gen_log = get_log_file(self.brewed_nexus, "gen_nexus.log", self.tmp_path)
+        with open(gen_log, "r", encoding="utf-8") as gen, open(
+            ref_log, "r", encoding="utf-8"
+        ) as ref:
+            gen_lines = gen.readlines()
+            ref_lines = ref.readlines()
+        if len(gen_lines) != len(ref_lines):
+            assert False, "Log files are different"
+        for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
+            if gen_l != ref_l:
+                # skip version conflicts
+                if gen_l.startswith("DEBUG - value: v") and ref_l.startswith(
+                    "DEBUG - value: v"
+                ):
+                    continue
+                assert False, (
+                    f"Log files are different at line {ind}"
+                    f" generated: {gen_l} \n referenced : {ref_l}"
+                )
