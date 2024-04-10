@@ -9,30 +9,31 @@ from functools import lru_cache
 import click
 import h5py
 import lxml.etree as ET
+
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_hdf_info_parent,
-    get_nxdl_child,
-    get_node_concept_path,
-    get_local_name_from_xml,
-    write_doc_string,
-    try_find_units,
-    check_attr_name_nxdl,
-    get_required_string,
-    get_best_child,
-    get_node_name,
-    add_base_classes,
-    walk_elist,
-    get_nx_class,
-    try_find_default,
-    other_attrs,
-    get_nexus_definitions_path,
     NxdlAttributeNotFoundError,
-    get_node_at_nxdl_path,
+    add_base_classes,
+    check_attr_name_nxdl,
+    get_best_child,
     get_enums,
+    get_hdf_info_parent,
     get_inherited_nodes,
+    get_local_name_from_xml,
+    get_nexus_definitions_path,
+    get_node_at_nxdl_path,
+    get_node_concept_path,
+    get_node_name,
+    get_nx_attribute_type,
+    get_nx_class,
     get_nx_classes,
     get_nx_units,
-    get_nx_attribute_type,
+    get_nxdl_child,
+    get_required_string,
+    other_attrs,
+    try_find_default,
+    try_find_units,
+    walk_elist,
+    write_doc_string,
 )
 
 
@@ -151,6 +152,8 @@ def check_deprecation_enum_axis(variables, doc, elist, attr, hdf_node):
             if doc:
                 logger.debug("enumeration (" + get_node_concept_path(base_elem) + "):")
             for item in sdoc:
+                if isinstance(item, ET._Comment):
+                    continue
                 if get_local_name_from_xml(item) == "item":
                     if doc:
                         logger.debug("-> " + item.attrib["value"])
