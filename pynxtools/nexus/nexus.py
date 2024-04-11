@@ -322,7 +322,7 @@ def get_hdf_path(hdf_info):
 @lru_cache(maxsize=None)
 def get_inherited_hdf_nodes(
     nx_name: str = None,
-    elem: ET.Element = None,
+    elem: ET._Element = None,
     hdf_node=None,
     hdf_path=None,
     hdf_root=None,
