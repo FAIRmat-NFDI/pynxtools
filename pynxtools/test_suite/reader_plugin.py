@@ -33,9 +33,7 @@ def get_log_file(nxs_file, log_file_nm, tmp_path):
 class ReaderTest:
     """Generic test for reader plugins."""
 
-    def __init__(
-        self, nxdl, reader, files_or_dir, ref_nexus_file, tmp_path, caplog
-    ) -> None:
+    def __init__(self, nxdl, reader, files_or_dir, tmp_path, caplog) -> None:
         """Ininitialize the test object.
 
         Parameters
@@ -59,7 +57,7 @@ class ReaderTest:
         self.nxdl = nxdl
         self.reader = reader
         self.files_or_dir = files_or_dir
-        self.ref_nexus_file = ref_nexus_file
+        self.ref_nexus_file = ""
         self.tmp_path = tmp_path
         self.caplog = caplog
         self.brewed_nexus = f"{tmp_path}/{os.sep}/output.nxs"
@@ -75,10 +73,14 @@ class ReaderTest:
         assert callable(self.reader.read), f"Reader{self.reader} must have read method"
 
         if isinstance(self.files_or_dir, (list, tuple)):
-            input_files = self.files_or_dir
+            example_files = self.files_or_dir
         else:
-            input_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
-
+            example_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
+        self.ref_nexus_file = [file for file in example_files if file.endswith(".nxs")][
+            0
+        ]
+        input_files = [file for file in example_files if not file.endswith(".nxs")]
+        assert self.ref_nexus_file, "Reference nexus (.nxs) file not found"
         assert (
             self.nxdl in self.reader.supported_nxdls
         ), f"Reader does not support {self.nxdl} NXDL."
