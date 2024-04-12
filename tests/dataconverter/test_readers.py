@@ -21,10 +21,13 @@ import glob
 import logging
 import os
 import xml.etree.ElementTree as ET
+from importlib import import_module
+from pathlib import Path
 from typing import List
 
 import pytest
 from _pytest.mark.structures import ParameterSet
+from importlib_metadata import entry_points
 
 from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
 from pynxtools.dataconverter.helpers import generate_template_from_nxdl
@@ -130,3 +133,81 @@ def test_has_correct_read_func(reader, caplog):
                 print(caplog.text)
 
             assert validate_data_dict(template, read_data, root)
+
+
+def get_reader_from_plugin(package_name, rader_name):
+    reader_full_path = [
+        file
+        for file in glob.glob(f"{str(package_name)}/**", recursive=True)
+        if file.endswith(f"{os.sep}reader.py")
+    ][0]
+
+    reader_spec = importlib.util.spec_from_file_location("reader", reader_full_path)
+    reader_module = importlib.util.module_from_spec(reader_spec)
+    reader_spec.loader.exec_module(reader_module)
+    reader = getattr(reader_module, rader_name)
+    return reader
+
+
+def parametrize_data_for_single_plugin(plugin_name):
+    """ """
+
+    nxdl = ""
+    reader = ""
+    plugin_name_ = ""
+    example_dir = ""
+    plug_pkg = import_module(plugin_name)
+
+    plugin_dir = Path(plug_pkg.__file__).parent.parent
+
+    example_dir = plugin_dir / "examples"
+    launch_file = plugin_dir / "launch.json"
+
+    try:
+        with open(launch_file, "r") as f:
+            launch_data = json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Incorrect syntax in Json file {launch_file} {e}")
+    except FileNotFoundError as e:
+        print(f"Error reading {launch_file} {e}")
+
+    for lanunch in launch_data["launch_data"]:
+        nxdl = lanunch["nxdl"]
+        reader = lanunch["reader"]
+        reader = get_reader_from_plugin(plugin_dir, reader)
+        # load reader
+        plugin_name_ = lanunch["plugin_name"]
+        lnch_example_dir = lanunch["example_dir"]
+        example_dirs = glob.glob(str(example_dir / lnch_example_dir))
+        for example_dir in example_dirs:
+            yield nxdl, reader, example_dir
+
+
+def get_parametrized_data():
+    """ """
+    plugin_list = list(
+        map(
+            lambda plg: plg.value.split(".")[0].replace("-", "_"),
+            entry_points(group="pynxtools.reader"),
+        )
+    )
+
+    for plugin_name in plugin_list:
+        print(f"**** Test for plugiin : {plugin_name} ****")
+        try:
+            yield from parametrize_data_for_single_plugin(plugin_name)
+        except Exception as e:
+            print(f"Unable to find test setup for {plugin_name} {e}")
+            continue
+
+
+reader_test_data = list(get_parametrized_data())
+
+
+def test_stm_reader(tmp_path, caplog):
+    # TODO Count total number of the plugins and check all the tests have been run
+    # test plugin reader
+    for nxdl, reader, example_data in list(get_parametrized_data()):
+        test = ReaderTest(nxdl, reader, example_data, tmp_path, caplog)
+        test.convert_to_nexus()
+        test.check_reproducibility_of_nexus()
