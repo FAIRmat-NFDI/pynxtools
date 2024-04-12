@@ -180,10 +180,10 @@ def parametrize_data_for_single_plugin(plugin_name):
         lnch_example_dir = lanunch["example_dir"]
         example_dirs = glob.glob(str(example_dir / lnch_example_dir))
         for example_dir in example_dirs:
-            yield nxdl, reader, example_dir
+            yield nxdl, reader, plugin_name, example_dir
 
 
-def get_parametrized_data():
+def get_plugin_list():
     """ """
     plugin_list = list(
         map(
@@ -191,6 +191,12 @@ def get_parametrized_data():
             entry_points(group="pynxtools.reader"),
         )
     )
+    return list(set(plugin_list))
+
+
+def get_parametrized_data():
+    """ """
+    plugin_list = get_plugin_list()
 
     for plugin_name in plugin_list:
         print(f"**** Test for plugiin : {plugin_name} ****")
@@ -201,13 +207,15 @@ def get_parametrized_data():
             continue
 
 
-reader_test_data = list(get_parametrized_data())
-
-
 def test_stm_reader(tmp_path, caplog):
-    # TODO Count total number of the plugins and check all the tests have been run
+    total_plugins = len(get_plugin_list())
+    tested_plugins = []
     # test plugin reader
-    for nxdl, reader, example_data in list(get_parametrized_data()):
+    for nxdl, reader, plugin_name, example_data in list(get_parametrized_data()):
         test = ReaderTest(nxdl, reader, example_data, tmp_path, caplog)
         test.convert_to_nexus()
         test.check_reproducibility_of_nexus()
+        tested_plugins.append(plugin_name)
+
+    # Check if all plugins pass the test
+    assert len(list(set(tested_plugins))) == total_plugins

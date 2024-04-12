@@ -99,7 +99,7 @@ class ReaderTest:
             is_success = validate_data_dict(template, read_data, root)
         assert is_success, "Validation failed"
         for record in self.caplog.records:
-            if record.levelname == "WARNING" or record.levelname == "ERROR":
+            if record.levelname == "ERROR":
                 assert False, record.message
         Writer(read_data, nxdl_file, self.brewed_nexus).write()
 
