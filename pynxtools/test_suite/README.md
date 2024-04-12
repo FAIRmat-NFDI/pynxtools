@@ -1,4 +1,5 @@
 # Generalized Test stuff for pynxtools plugin
+This pynxtools sub-package is to be utilized to write automated test for pynxtools plugins without having deep knowledge of the pynxtools architecture. The tool mainly supports for generalised test for all the reader plugins disregarding the technical details of file reader and internal desing of the plugin.
 ## Why it is needed
 To test plugin integartion with `pynxtools` core system. The integration test could come in two ways.
 1. Test is plugin's integration with `pynxtools` from the plugin itself.
@@ -31,7 +32,8 @@ pynxtools-FOO
        |---data/<test_data>
        |---plugin_test.py
 ```
-This hierarchical structure allows `pynxtools` to set up the integration for plugin test from its own test script. Plugin can add multiple example for multiple version and type of the raw data files from an experiment techniques. Plugin developers can wish to put other raw files related to the plugin owned test as they want (though usually they go to test/data/).
+
+This hierarchical structure allows `pynxtools` to set up the integration for plugin test from its own test script. Plugin can add multiple example for multiple version and type of the raw data files from an experiment techniques. Plugin developers can wish to put other raw files related to the plugin owned test as they want (though usually they go to test/data/ dir).
 
 **TODO**:
 **1. Think about to store the pynxtools versions in a file of plugin which sinifies of the plugin integration in pynxtools.**
