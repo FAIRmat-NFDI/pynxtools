@@ -1,6 +1,7 @@
 """
 Tests the version retrieval for the nexus definitions submodule
 """
+
 import re
 
 from pynxtools import get_nexus_version

@@ -58,14 +58,19 @@ There are a number of plugins available for pynxtools. These are extensions of p
 - [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
 - [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data.
 
+Respective readers for the research fields of electron microscopy and atom probe are currently refactored into pynxtools plugins.
+Until this refactoring will have become completed, users are advised to use the apm and em readers via pynxtools<=0.1.1.
+- [**pynxtools-apm**](https://github.com/FAIRmat-NFDI/pynxtools-apm): A reader for atom probe as well as related field ion microscopy data.
+- [**pynxtools-em**](https://github.com/FAIRmat-NFDI/pynxtools-em): A reader for electron microscopy data.
+
 You can install each of the plugins together with `pynxtools` by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
 ```shell
 pip install pynxtools[mpes]
 ```
 
-In addition, you can also install all of the `pynxtools` plugins which are maintained by FAIRmat by passing the `[all]` extra to the pip install call:
+In addition, you can also install all of the `pynxtools` reader plugins which are maintained by FAIRmat by passing the `[convert]` extra to the pip install call:
 ```shell
-pip install pynxtools[all]
+pip install pynxtools[convert]
 ```
 There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.
 

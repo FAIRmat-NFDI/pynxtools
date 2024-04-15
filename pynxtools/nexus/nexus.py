@@ -1,15 +1,39 @@
 # pylint: disable=too-many-lines
-"""Read files from different format and print it in a standard NeXus format
-"""
+"""Read files from different format and print it in a standard NeXus format"""
 
 import logging
 import os
 import sys
+from functools import lru_cache
 
 import click
 import h5py
-
-from pynxtools.nexus.nxdl_utils import *  # pylint: disable=wildcard-import, unused-wildcard-import
+import lxml.etree as ET
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_hdf_info_parent,
+    get_nxdl_child,
+    get_node_concept_path,
+    get_local_name_from_xml,
+    write_doc_string,
+    try_find_units,
+    check_attr_name_nxdl,
+    get_required_string,
+    get_best_child,
+    get_node_name,
+    add_base_classes,
+    walk_elist,
+    get_nx_class,
+    try_find_default,
+    other_attrs,
+    get_nexus_definitions_path,
+    NxdlAttributeNotFoundError,
+    get_node_at_nxdl_path,
+    get_enums,
+    get_inherited_nodes,
+    get_nx_classes,
+    get_nx_units,
+    get_nx_attribute_type,
+)
 
 
 def get_nxdl_entry(hdf_info):

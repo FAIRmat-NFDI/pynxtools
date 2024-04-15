@@ -16,18 +16,22 @@
 # limitations under the License.
 #
 """This script runs the conversion routine using a selected reader and write out a NeXus file."""
+
 import glob
 import importlib.machinery
 import importlib.util
+import json
 import logging
 import os
 import sys
 import xml.etree.ElementTree as ET
+from gettext import gettext
 from pathlib import Path
 from typing import List, Optional, Tuple
 
 import click
 import yaml
+from click_default_group import DefaultGroup
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -80,7 +84,7 @@ def get_names_of_all_readers() -> List[str]:
     path_prefix = (
         f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
     )
-    files = sorted(glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py")))
+    files = glob.glob(os.path.join(path_prefix, "readers", "*", "reader.py"))
     all_readers = []
     for file in files:
         if f"{os.sep}base{os.sep}" not in file:
@@ -92,7 +96,7 @@ def get_names_of_all_readers() -> List[str]:
                 file[index_of_readers_folder_name:index_of_last_path_sep]
             )
     plugins = list(map(lambda ep: ep.name, entry_points(group="pynxtools.reader")))
-    return all_readers + plugins
+    return sorted(all_readers + plugins)
 
 
 def get_nxdl_root_and_path(nxdl: str):
@@ -214,10 +218,10 @@ def convert(
     reader: str,
     nxdl: str,
     output: str,
-    generate_template: bool = False,
     fair: bool = False,
     undocumented: bool = False,
     skip_verify: bool = False,
+    required: bool = False,
     **kwargs,
 ):
     """The conversion routine that takes the input parameters and calls the necessary functions.
@@ -248,11 +252,6 @@ def convert(
     """
 
     nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
-    if generate_template:
-        template = Template()
-        helpers.generate_template_from_nxdl(nxdl_root, template)
-        print(template)
-        return
 
     data = transfer_data_into_template(
         input_file=input_file,
@@ -290,7 +289,33 @@ def parse_params_file(params_file):
     return params
 
 
-@click.command()
+class CustomClickGroup(DefaultGroup):
+    def format_options(
+        self, ctx: click.Context, formatter: click.HelpFormatter
+    ) -> None:
+        """Writes all the options into the formatter if they exist."""
+        opts = []
+        for param in self.get_params(ctx) + ctx.command.commands["convert"].params:  # type: ignore
+            rv = param.get_help_record(ctx)
+            if rv is not None:
+                opts.append(rv)
+
+        if opts:
+            with formatter.section(gettext("Options")):
+                formatter.write_dl(opts)
+        self.format_commands(ctx, formatter)
+        with formatter.section(gettext("Info")):
+            formatter.write_text(
+                "You can see more options by using --help for specific commands. For example: dataconverter generate-template --help"
+            )
+
+
+@click.group(cls=CustomClickGroup, default="convert", default_if_no_args=True)
+def main_cli():
+    pass
+
+
+@main_cli.command("convert")
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
 @click.option(
     "--input-file",
@@ -319,12 +344,6 @@ def parse_params_file(params_file):
     "--output",
     default="output.nxs",
     help="The path to the output NeXus file to be generated.",
-)
-@click.option(
-    "--generate-template",
-    is_flag=True,
-    default=False,
-    help="Just print out the template generated from given NXDL file.",
 )
 @click.option(
     "--fair",
@@ -367,7 +386,6 @@ def convert_cli(
     reader: str,
     nxdl: str,
     output: str,
-    generate_template: bool,
     fair: bool,
     params_file: str,
     undocumented: bool,
@@ -375,7 +393,7 @@ def convert_cli(
     mapping: str,
     config: str,
 ):
-    """The CLI entrypoint for the convert function"""
+    """This command allows you to use the converter functionality of the dataconverter."""
     if params_file:
         try:
             convert(**parse_params_file(params_file))
@@ -416,9 +434,60 @@ def convert_cli(
         reader,
         nxdl,
         output,
-        generate_template,
         fair,
         undocumented,
         skip_verify,
         config_file=config,
+    )
+
+
+@main_cli.command()
+@click.option(
+    "--nxdl",
+    default=None,
+    help=("The name of the NXDL file to use without extension. For example: NXmpes"),
+    required=True,
+)
+@click.option(
+    "--required",
+    help="Use this flag to only get the required template.",
+    is_flag=True,
+)
+@click.option(
+    "--pythonic",
+    help="Prints a valid Python dictionary instead of JSON",
+    is_flag=True,
+)
+@click.option(
+    "--output",
+    help="Writes the output into the filepath provided.",
+    type=click.Path(),
+)
+def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
+    "Generates and prints a template to use for your nxdl."
+
+    def write_to_file(text):
+        f = open(output, "w")
+        f.write(text)
+        f.close()
+
+    print_or_write = lambda txt: write_to_file(txt) if output else print(txt)
+
+    nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
+    template = Template()
+    helpers.generate_template_from_nxdl(nxdl_root, template)
+
+    if required:
+        template = Template(template.get_optionality("required"))
+
+    if pythonic:
+        print_or_write(str(template))
+        return
+    print_or_write(
+        json.dumps(
+            template.get_accumulated_dict(),
+            indent=4,
+            sort_keys=True,
+            ensure_ascii=False,
+        )
     )

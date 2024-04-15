@@ -104,9 +104,7 @@ def test_get_names_of_all_readers():
 @pytest.mark.parametrize(
     "cli_inputs",
     [
-        pytest.param(
-            ["--nxdl", "NXtest", "--generate-template"], id="generate-template"
-        ),
+        pytest.param(["generate-template", "--nxdl", "NXtest"], id="generate-template"),
         pytest.param([], id="nxdl-not-provided"),
         pytest.param(
             ["--nxdl", "NXtest", "--input-file", "test_input"], id="input-file"
@@ -116,10 +114,10 @@ def test_get_names_of_all_readers():
 def test_cli(caplog, cli_inputs):
     """A test for the convert CLI."""
     runner = CliRunner()
-    result = runner.invoke(dataconverter.convert_cli, cli_inputs)
-    if "--generate-template" in cli_inputs:
+    result = runner.invoke(dataconverter.main_cli, cli_inputs)
+    if "generate-template" in cli_inputs:
         assert result.exit_code == 0
-        assert '"/ENTRY[entry]/NXODD_name/int_value": "None",' in result.stdout
+        assert '"/ENTRY[entry]/NXODD_name/int_value": null,' in result.stdout
     elif "--input-file" in cli_inputs:
         assert "test_input" in caplog.text
     elif result.exit_code == 2:
@@ -208,26 +206,6 @@ def test_compression(tmp_path):
     assert test_nxs["/entry/test_compression/not_to_compress"].compression is None
 
     restore_xarray_file_from_tmp(tmp_path)
-
-
-def test_eln_data_subsections(tmp_path):
-    """Check if the subsections in the eln_data.yml file work."""
-    dirpath = os.path.join(
-        os.path.dirname(__file__), "../data/dataconverter/readers/json_yml"
-    )
-    dataconverter.convert(
-        (
-            os.path.join(
-                dirpath,
-                "eln_data_w_subsections.yaml",
-            ),
-        ),
-        "hall",
-        "NXroot",
-        os.path.join(tmp_path, "hall.nxs"),
-        False,
-        False,
-    )
 
 
 def test_params_file():

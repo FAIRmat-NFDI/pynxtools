@@ -1,48 +1,58 @@
 # Dataconverter
 
-This tool contains a set of [readers](readers/) to convert supported data files into a compliant NeXus file.
+This tool converts experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1).
+It contains a set of [readers](readers/) to convert supported data files into a compliant NeXus file.
 
-You can read specific Readme's of the readers and find usage examples [here](../../examples/).
+You can read specific README's of the readers and find usage examples [here](../../examples/).
 
 ## Installation
 
 ```console
-user@box:~$ pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
+user@box:~$ pip install pynxtools[convert]
 ```
 
 ## Usage
 
-Converts experimental data to NeXus/HDF5 files based on any provided NXDL.
+### Commands
+- **convert**: This is the top-level command that allows you to use the converter. It can be called directly with ```dataconverter```.
+- **generate-template**: This command generates a reader template dictionary for a given NXDL file. It can be called with ```dataconverter generate-template```.
 
 ```console
 user@box:~$ dataconverter --help
-Usage: dataconverter [OPTIONS] [FILES]...
-
-  The CLI entrypoint for the convert function
+Usage: dataconverter [OPTIONS] COMMAND [ARGS]...
 
 Options:
+  --help                          Show this message and exit.
   --input-file TEXT               Deprecated: Please use the positional file
                                   arguments instead. The path to the input
                                   data file to read. (Repeat for more than one
                                   file.)
-  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|rii_database|transmission|xps|xrd|mpes]
+  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|mpes|sts|transmission|xps|xrd]
                                   The reader to use. default="example"
   --nxdl TEXT                     The name of the NXDL file to use without
                                   extension.This option is required if no '--
                                   params-file' is supplied.
   --output TEXT                   The path to the output NeXus file to be
                                   generated.
-  --generate-template             Just print out the template generated from
-                                  given NXDL file.
   --fair                          Let the converter know to be stricter in
                                   checking the documentation.
   --params-file FILENAME          Allows to pass a .yaml file with all the
                                   parameters the converter supports.
   --undocumented                  Shows a log output for all undocumented
                                   fields
+  --skip-verify                   Skips the verification routine during
+                                  conversion.
   --mapping TEXT                  Takes a <name>.mapping.json file and
                                   converts data from given input files.
-  --help                          Show this message and exit.
+
+Commands:
+  convert*           This command allows you to use the converter...
+  generate-template  Generates and prints a template to use for your nxdl.
+
+Info:
+  You can see more options by using --help for specific commands. For example:
+  dataconverter generate-template --help
+
 ```
 
 #### Merge partial NeXus files into one
@@ -57,7 +67,7 @@ user@box:~$ dataconverter --nxdl nxdl partial1.nxs partial2.nxs
 user@box:~$ dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
 ```
 
-#### You can find actual examples with data files at [`examples/json_map`](../../examples/json_map/).
+You can find actual examples with data files at [`examples/json_map`](../../examples/json_map/).
 
 
 #### Use with multiple input files
@@ -69,10 +79,9 @@ user@box:~$ dataconverter --nxdl nxdl metadata data.raw otherfile
 ## Writing a Reader
 
 This converter allows extending support to other data formats by allowing extensions called readers.
-The converter provides a dev platform to build a NeXus compatible reader by providing checking
-against a chosen NeXus Application Definition.
+The converter provides a dev platform to build a NeXus compatible reader by providing checking against a chosen NeXus Application Definition.
 
-Readers have to be placed in the **readers** folder in there own subfolder.
+Readers have to be placed in the **readers** folder in their own subfolder.
 The reader folder should be named with the reader's name and contain a `reader.py`.\
 For example: The reader `Example Reader` is placed under [`readers/example/reader.py`](readers/example/reader.py).
 
@@ -111,17 +120,15 @@ READER = MyDataReader
 
 ```
 
-The read function takes a template dictionary based on the provided NXDL file (similar to `--generate-template`)
-and the list of all the file paths the user provides with `--input`.
+The read function takes a template dictionary based on the provided NXDL file (similar to `dataconverter generate-template`) and the list of all the file paths the user provides.
 The returned dictionary should contain keys that exist in the template as defined below.
 The values of these keys have to be data objects to be populated in the output NeXus file.
-They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints. Practically you can pass any value
-that can be handled by the `h5py` package.
+They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints. Practically you can pass any value that can be handled by the `h5py` package.
 
 The dataconverter can be executed using:
 
 ```console
-user@box:~$ dataconverter --reader mydata --nxdl NXmynxdl --output path_to_output.nxs
+user@box:~$ dataconverter --reader mydatareader --nxdl NXmynxdl --output path_to_output.nxs
 ```
 
 ### The reader template dictionary
@@ -164,6 +171,11 @@ You can also define links by setting the value to sub dictionary object with key
 
 ```python
 template["/entry/instrument/source"] = {"link": "/path/to/source/data"}
+```
+
+For a given NXDL schema, you can generate an empty template with the command
+```console
+user@box:~$ dataconverter generate-template` --nxdl NXmynxdl
 ```
 
 <img src="./convert_routine.svg" />
