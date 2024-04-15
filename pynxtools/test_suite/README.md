@@ -5,10 +5,10 @@ To test plugin integartion with `pynxtools` core system. The integration test co
 1. Test is plugin's integration with `pynxtools` from the plugin itself.
 2. Test if plugin has been integrated with pynxtools properly from pynxtools.
 
-## How to setup integration test from plugin
+## How integration test from `pynxtools` is build for reader plugin
 To setup the integration test from plugin itself one has to follow a definite directory structure in plugin. The plugin test also needs to include a specific test for that hooks from `test_suite` subpackage. Here, the discussion will be extended elaborately.
 
-Directory structure for `pynstools-FOO` plugin
+Directory structure for `pynstools-FOO` (a demo) plugin
 
 ```bash
 pynxtools-FOO
@@ -30,14 +30,15 @@ pynxtools-FOO
  |---pyproject.toml
  |---test
        |---data/<test_data>
-       |---plugin_test.py
+       |---test_plugin.py
 ```
 
-This hierarchical structure allows `pynxtools` to set up the integration for plugin test from its own test script. Plugin can add multiple example for multiple version and type of the raw data files from an experiment techniques. Plugin developers can wish to put other raw files related to the plugin owned test as they want (though usually they go to test/data/ dir). The `examples` folder must have one or multiple sub-directory where each directory represents a single example of input files (e.g. eln.yaml, raw_file.ext) to launch the plugin reader and a output file of `.nxs` extension genrated by reader from the given banch of input files. Beside the input files, a `test_config.json` file must be defined with the information of `nxdl` (e.g. `NXsts`, `NXmpes`), `reader` (e.g. `STMReader`, `MPESReader`), `plugin_name` (e.g. `pynxtools-stm`, `pynxtools-mpes`) and `example_dir` (e.g. `*`, `*_1`, `example_1`). Note that to define the value of the `exmaple_dir` unix style pathname pattern expansion (also used in [glob](https://docs.python.org/3/library/glob.html) lib), still we recomand to use simply the name of the example directory. A few examples forn `test_condig.json` has been added bellow.
+This hierarchical structure allows `pynxtools` to set up the integration for plugin test from its own test script. Plugin can add multiple example for multiple version and type of the raw data files from an experiment techniques. Plugin developers can wish to put other raw files related to the plugin owned test as they want (though usually they go to test/data/ dir). The `examples` folder must have one or multiple sub-directory where each directory represents a single example of input files (e.g. eln.yaml, raw_file.ext) to launch the plugin reader and a output file of `.nxs` extension genrated by reader from the given banch of input files. Beside the input files, a `test_config.json` file must be defined with the information of `nxdl` (e.g. `NXsts`, `NXmpes`), `reader` (e.g. `STMReader`, `MPESReader`), `plugin_name` (e.g. `pynxtools-stm`, `pynxtools-mpes`) and `example_dir` (e.g. `*`, `*_1`, `example_1`). Therfore, the `test_config.json` gives the content for reader where the test data and other infos to launch the reader. Note that to define the value of the `exmaple_dir` unix style pathname pattern expansion (also used in [glob](https://docs.python.org/3/library/glob.html) lib), still we recomand to use simply the name of the example directory. A few examples forn `test_condig.json` has been added bellow.
 
 The `test_config.json` can be defined to run on all available example.
 
 ```json
+# test_condig.json
 {"launch_data":
     [
         {"nxdl": "NXfoo",
@@ -49,6 +50,7 @@ The `test_config.json` can be defined to run on all available example.
 ```
 The `test_config.json` file can be expanded as
 ```json
+# test_condig.json
 {"launch_data":
     [
         {"nxdl": "NXfoo",
@@ -62,10 +64,37 @@ The `test_config.json` file can be expanded as
     ]
 }
 ```
-**Note** : There might be a case, a specific `exmaple` directory might be intended for a specific `nxdl`. In that case the value of the `nxdl` the be desired name of `nxdl`.
+**Note** : There might be a case, a specific `exmaple` directory might be intended for a specific `nxdl`. In that case the value of the `nxdl` must be the desired name of `nxdl`.
 
-## Test in plugin
+## How to write integration test from the reader plugin
 
-**TODO: Add how to create the package of the plugin of pynxtools.**
+It is very simple to write a test to verify the plugin integration with `pynxtools` from plugin test. The developer can write the test where they want, only they need to use the provided test interface from `pynxtools`. An example test for `pynxtools-FOO` (a demo) plugin as follows:
+
+```python
+# test_plugin.py
+
+import os
+
+from pynxtools_foo.reader import FOOReader
+import pytest
+from pynxtools.test_suite.reader_plugin import ReaderTest
+
+module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
+@pytest.mark.parametrize(
+    "nxdl,reader,files_or_dir",
+    [
+        ("NXfoo", FOOReader, f"{module_dir}/../examples/example_1"),
+        ("NXfoo", FOOReader, f"{module_dir}/../examples/example_2"),
+        ("NXfoo", FOOReader, f"{module_dir}/data/example_3"),
+    ],
+)
+def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
+    # test plugin reader
+    test = ReaderTest(nxdl, reader, files_or_dir, tmp_path, caplog)
+    test.convert_to_nexus()
+    test.check_reproducibility_of_nexus()
+```
+
+Alonside with the examples in the `examples`, it is also possible to add other examples inside the test directory of the plugin.
