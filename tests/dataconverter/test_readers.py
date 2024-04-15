@@ -154,7 +154,6 @@ def parametrize_data_for_single_plugin(plugin_name):
 
     nxdl = ""
     reader = ""
-    plugin_name_ = ""
     example_dir = ""
     plug_pkg = import_module(plugin_name)
 
@@ -164,22 +163,25 @@ def parametrize_data_for_single_plugin(plugin_name):
     launch_file = plugin_dir / "launch.json"
 
     try:
-        with open(launch_file, "r") as f:
+        with open(launch_file, "r", encoding="utf-8") as f:
             launch_data = json.load(f)
     except json.JSONDecodeError as e:
         print(f"Incorrect syntax in Json file {launch_file} {e}")
     except FileNotFoundError as e:
         print(f"Error reading {launch_file} {e}")
 
-    for lanunch in launch_data["launch_data"]:
-        nxdl = lanunch["nxdl"]
-        reader = lanunch["reader"]
+    for launch in launch_data["launch_data"]:
+        nxdl = launch["nxdl"]
+        reader = launch["reader"]
         reader = get_reader_from_plugin(plugin_dir, reader)
         # load reader
-        plugin_name_ = lanunch["plugin_name"]
-        lnch_example_dir = lanunch["example_dir"]
+        plugin_name_json = launch["plugin_name"]
+        lnch_example_dir = launch["example_dir"]
         example_dirs = glob.glob(str(example_dir / lnch_example_dir))
         for example_dir in example_dirs:
+            assert (
+                plugin_name_json == plugin_name
+            ), f"Plugin name mismatch: '{plugin_name}' from pynxtools plugin entry_points and '{plugin_name_json}' from test_config.json"
             yield nxdl, reader, plugin_name, example_dir
 
 
