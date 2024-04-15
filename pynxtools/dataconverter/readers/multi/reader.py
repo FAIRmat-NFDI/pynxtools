@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
+
 import logging
 import os
 import re
