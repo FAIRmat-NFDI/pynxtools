@@ -147,11 +147,11 @@ def parametrize_data_for_single_plugin(plugin_name):
     example_dir = ""
     plug_pkg = import_module(plugin_name)
 
-    plugin_dir = Path(plug_pkg.__file__).parent.parent
+    pkg_dir = Path(plug_pkg.__file__).parent
 
-    example_dir = plugin_dir / "examples"
+    example_dir = pkg_dir / "examples"
     assert os.path.isdir(example_dir), f"Example directory not found: {example_dir}"
-    launch_file = plugin_dir / "test_config.json"
+    launch_file = pkg_dir / "examples" / "test_config.json"
     assert os.path.isfile(launch_file), f"Test config file not found: {launch_file}"
     try:
         with open(launch_file, "r", encoding="utf-8") as f:
@@ -164,16 +164,19 @@ def parametrize_data_for_single_plugin(plugin_name):
     for launch in launch_data["launch_data"]:
         nxdl = launch["nxdl"]
         reader = launch["reader"]
-        reader = get_reader_from_plugin(plugin_dir, reader)
+        reader = get_reader_from_plugin(pkg_dir, reader)
         # load reader
         plugin_name_json = launch["plugin_name"]
         lnch_example_dir = launch["example_dir"]
         example_dirs = glob.glob(str(example_dir / lnch_example_dir))
-        for example_dir in example_dirs:
+        for single_dir in example_dirs:
+            if not os.path.isdir(single_dir):
+                continue
+
             assert (
                 plugin_name_json == plugin_name
             ), f"Plugin name mismatch: '{plugin_name}' from pynxtools plugin entry_points and '{plugin_name_json}' from test_config.json"
-            yield nxdl, reader, plugin_name, example_dir
+            yield nxdl, reader, plugin_name, single_dir
 
 
 def get_plugin_list():
@@ -192,7 +195,7 @@ def get_parametrized_data():
     plugin_list = get_plugin_list()
 
     for plugin_name in plugin_list:
-        print(f"**** Test for plugiin : {plugin_name} ****")
+        print(f"\n**** Test for plugiin : {plugin_name} ****")
         try:
             yield from parametrize_data_for_single_plugin(plugin_name)
         except Exception as e:
@@ -200,12 +203,15 @@ def get_parametrized_data():
             continue
 
 
-def test_general_readers(tmp_path, caplog):
+def test_plugin_integration_with_pynx(tmp_path, caplog):
     total_plugins = len(get_plugin_list())
     tested_plugins = []
     # test plugin reader
-    for nxdl, reader, plugin_name, example_data in list(get_parametrized_data()):
-        test = ReaderTest(nxdl, reader, example_data, tmp_path, caplog)
+    for nxdl, reader, plugin_name, example_dir in list(get_parametrized_data()):
+        print(
+            f"Test setup nxdl: {nxdl} reader: {reader} plugin: {plugin_name}, example_dir: {example_dir}"
+        )
+        test = ReaderTest(nxdl, reader, example_dir, tmp_path, caplog)
         test.convert_to_nexus()
         test.check_reproducibility_of_nexus()
         tested_plugins.append(plugin_name)
