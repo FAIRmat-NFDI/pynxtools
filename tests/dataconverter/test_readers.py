@@ -220,4 +220,7 @@ def test_general_readers(tmp_path, caplog):
         tested_plugins.append(plugin_name)
 
     # Check if all plugins pass the test
-    assert len(list(set(tested_plugins))) == total_plugins
+    assert len(list(set(tested_plugins))) == total_plugins, (
+        f"All plugin readers did not pass: teseted plugins: "
+        f"{tested_plugins} total plugins: {total_plugins}"
+    )
