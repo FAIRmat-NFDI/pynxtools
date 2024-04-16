@@ -33,7 +33,7 @@ dependencies = [
     "ase>=3.19.0",
     "mergedeep",
     "importlib-metadata",
-    "lxml>=4.9.1", 
+    "lxml>=4.9.1",
 ]
 
 [project.urls]
@@ -63,12 +63,12 @@ dev = [
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd]",
 ]
-apm = [
-    "pynxtools-apm",
-]
-em = [
-    "pynxtools-em",
-]
+# apm = [
+#     "pynxtools-apm",
+# ]
+# em = [
+#     "pynxtools-em",
+# ]
 mpes = [
     "pynxtools-mpes",
 ]
@@ -78,9 +78,9 @@ xps = [
 stm = [
     "pynxtools-stm",
 ]
-xrd = [
-    "pynxtools-xrd",
-]
+# xrd = [
+#     "pynxtools-xrd",
+# ]
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
