@@ -50,7 +50,7 @@ The `test_config.json` can be defined to run on all available example.
 ```
 The `test_config.json` file can be expanded as
 ```json
-# test_condig.json
+# test_config.json
 {"launch_data":
     [
         {"nxdl": "NXfoo",
