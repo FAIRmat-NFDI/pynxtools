@@ -199,7 +199,7 @@ def get_parametrized_data():
             continue
 
 
-def test_stm_reader(tmp_path, caplog):
+def test_general_readers(tmp_path, caplog):
     total_plugins = len(get_plugin_list())
     tested_plugins = []
     # test plugin reader
