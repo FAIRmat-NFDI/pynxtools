@@ -160,8 +160,9 @@ def parametrize_data_for_single_plugin(plugin_name):
     plugin_dir = Path(plug_pkg.__file__).parent.parent
 
     example_dir = plugin_dir / "examples"
-    launch_file = plugin_dir / "launch.json"
-
+    assert os.path.isdir(example_dir), f"Example directory not found: {example_dir}"
+    launch_file = plugin_dir / "test_config.json"
+    assert os.path.isfile(launch_file), f"Test config file not found: {launch_file}"
     try:
         with open(launch_file, "r", encoding="utf-8") as f:
             launch_data = json.load(f)
