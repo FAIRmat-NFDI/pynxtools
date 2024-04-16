@@ -34,7 +34,10 @@ dependencies = [
     "mergedeep",
     "importlib-metadata",
     "lxml>=4.9.1",
+<<<<<<< HEAD
     "anytree",
+=======
+>>>>>>> c64d3ec (comment out some of the readers.)
 ]
 
 [project.urls]
