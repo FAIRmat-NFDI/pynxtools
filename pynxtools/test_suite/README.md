@@ -99,3 +99,5 @@ def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
 ```
 
 Alonside with the examples in the `examples`, it is also possible to add other examples inside the test directory of the plugin.
+
+**Note**: While packaging the plugin also include the `examples` directory which required for verying the plugin integration with the `pynxtools` from `pynxtools`.
