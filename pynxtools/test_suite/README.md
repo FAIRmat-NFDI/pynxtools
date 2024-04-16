@@ -43,7 +43,7 @@ The `test_config.json` can be defined to run on all available example.
     [
         {"nxdl": "NXfoo",
         "reader": "FOOReader",
-        "plugin_name": "pynxtools-FOO",
+        "plugin_name": "pynxtools_FOO",
         "example_dir": "*"}
     ]
 }
@@ -55,11 +55,11 @@ The `test_config.json` file can be expanded as
     [
         {"nxdl": "NXfoo",
         "reader": "FOOReader",
-        "plugin_name": "pynxtools-FOO",
+        "plugin_name": "pynxtools_FOO",
         "example_dir": "example_1"},
         {"nxdl": "NXfoo",
         "reader": "FOOReader",
-        "plugin_name": "pynxtools-FOO",
+        "plugin_name": "pynxtools_FOO",
         "example_dir": "example_2"}
     ]
 }
