@@ -121,7 +121,6 @@ def test_has_correct_read_func(reader, caplog):
                 supported_nxdl = "NXtest"
 
             assert isinstance(read_data, Template)
-<<<<<<< HEAD
 
             # This is a temporary fix because the json_yml example data
             # does not produce a valid entry.
@@ -132,97 +131,5 @@ def test_has_correct_read_func(reader, caplog):
                     )
 
                 print(caplog.text)
-=======
+
             assert validate_data_dict(template, read_data, root)
-
-
-def get_reader_from_plugin(package_name, rader_name):
-    reader_full_path = [
-        file
-        for file in glob.glob(f"{str(package_name)}/**", recursive=True)
-        if file.endswith(f"{os.sep}reader.py")
-    ][0]
-
-    reader_spec = importlib.util.spec_from_file_location("reader", reader_full_path)
-    reader_module = importlib.util.module_from_spec(reader_spec)
-    reader_spec.loader.exec_module(reader_module)
-    reader = getattr(reader_module, rader_name)
-    return reader
-
-
-def parametrize_data_for_single_plugin(plugin_name):
-    """ """
-
-    nxdl = ""
-    reader = ""
-    example_dir = ""
-    plug_pkg = import_module(plugin_name)
-
-    plugin_dir = Path(plug_pkg.__file__).parent.parent
-
-    example_dir = plugin_dir / "examples"
-    launch_file = plugin_dir / "launch.json"
-
-    try:
-        with open(launch_file, "r", encoding="utf-8") as f:
-            launch_data = json.load(f)
-    except json.JSONDecodeError as e:
-        print(f"Incorrect syntax in Json file {launch_file} {e}")
-    except FileNotFoundError as e:
-        print(f"Error reading {launch_file} {e}")
-
-    for launch in launch_data["launch_data"]:
-        nxdl = launch["nxdl"]
-        reader = launch["reader"]
-        reader = get_reader_from_plugin(plugin_dir, reader)
-        # load reader
-        plugin_name_json = launch["plugin_name"]
-        lnch_example_dir = launch["example_dir"]
-        example_dirs = glob.glob(str(example_dir / lnch_example_dir))
-        for example_dir in example_dirs:
-            assert (
-                plugin_name_json == plugin_name
-            ), f"Plugin name mismatch: '{plugin_name}' from pynxtools plugin entry_points and '{plugin_name_json}' from test_config.json"
-            yield nxdl, reader, plugin_name, example_dir
-
-
-def get_plugin_list():
-    """ """
-    plugin_list = list(
-        map(
-            lambda plg: plg.value.split(".")[0].replace("-", "_"),
-            entry_points(group="pynxtools.reader"),
-        )
-    )
-    return list(set(plugin_list))
-
-
-def get_parametrized_data():
-    """ """
-    plugin_list = get_plugin_list()
-
-    for plugin_name in plugin_list:
-        print(f"**** Test for plugiin : {plugin_name} ****")
-        try:
-            yield from parametrize_data_for_single_plugin(plugin_name)
-        except Exception as e:
-            print(f"Unable to find test setup for {plugin_name} {e}")
-            continue
-
-
-def test_general_readers(tmp_path, caplog):
-    total_plugins = len(get_plugin_list())
-    tested_plugins = []
-    # test plugin reader
-    for nxdl, reader, plugin_name, example_data in list(get_parametrized_data()):
-        test = ReaderTest(nxdl, reader, example_data, tmp_path, caplog)
-        test.convert_to_nexus()
-        test.check_reproducibility_of_nexus()
-<<<<<<< HEAD
->>>>>>> 177afcb (Apparently everything works.)
-=======
-        tested_plugins.append(plugin_name)
-
-    # Check if all plugins pass the test
-    assert len(list(set(tested_plugins))) == total_plugins
->>>>>>> aa4b2bc (stm plugin passed.)
