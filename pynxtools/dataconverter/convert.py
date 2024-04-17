@@ -423,15 +423,20 @@ def convert_cli(
             "The --input-file option is deprecated. Please use the positional arguments instead."
         )
 
-    convert(
-        tuple(file_list) + input_file,
-        reader,
-        nxdl,
-        output,
-        fair,
-        undocumented,
-        skip_verify,
-    )
+    try:
+        convert(
+            tuple(file_list) + input_file,
+            reader,
+            nxdl,
+            output,
+            fair,
+            undocumented,
+            skip_verify,
+        )
+    except FileNotFoundError as exc:
+        raise click.BadParameter(
+            f"{nxdl} is not a valid application definition", param_hint="--nxdl"
+        ) from exc
 
 
 @main_cli.command()
