@@ -43,7 +43,6 @@ jobs:
         with:
           fetch-depth: 0
           repository: FAIRmat-NFDI/pynxtools-stm
-          path: pynxtools-stm
       - name: Run STM tests
         run: |
           cd pynxtools-stm
