@@ -21,6 +21,7 @@ import logging
 import os
 from pathlib import Path
 
+import click
 import h5py
 import pytest
 from click.testing import CliRunner
@@ -83,7 +84,11 @@ def test_find_nxdl(cli_inputs):
     runner = CliRunner()
     result = runner.invoke(dataconverter.convert_cli, cli_inputs)
     if "NXdoesnotexist" in cli_inputs:
-        assert isinstance(result.exception, FileNotFoundError)
+        assert result.exit_code == 2
+        assert result.output.endswith(
+            "Error: Invalid value for --nxdl: "
+            "NXdoesnotexist is not a valid application definition\n"
+        )
     else:
         assert isinstance(result.exception, Exception)
         assert "The chosen NXDL isn't supported by the selected reader." in str(
