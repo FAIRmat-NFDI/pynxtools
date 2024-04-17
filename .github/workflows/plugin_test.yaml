@@ -33,8 +33,6 @@ jobs:
       - name: Install package
         run: |
           pip install ".[dev]"
-<<<<<<< HEAD
-<<<<<<< HEAD
       # Test for STM Plugin
       - name: clone STM repo
         uses: actions/checkout@v4
@@ -115,24 +113,3 @@ jobs:
       #     git checkout main
       #     pip install .
       #     pytest tests/.
-=======
-      - name: Test with stm
-        run: |
-          git clone https://github.com/FAIRmat-NFDI/pynxtools-stm/tree/TestFromPynxtools
-=======
-      # - name: Test with stm
-      #   run: |
-      #     git clone https://github.com/FAIRmat-NFDI/pynxtools-stm/tree/TestFromPynxtools
->>>>>>> 8a4dff3 (Clone for stm reader and run test from there.-2)
-      #     cd pynxtools-stm
-      #     pip install .
-      # - name: Run test from stm plugin
-      #   run: |
-      #     pytest -sv --show-capture=no tests
-      # - name: Submit to coveralls
-      #   continue-on-error: true
-      #   env:
-      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #       coveralls --service=github
->>>>>>> aa91ac0 (Clone for stm reader and run test from there.)
