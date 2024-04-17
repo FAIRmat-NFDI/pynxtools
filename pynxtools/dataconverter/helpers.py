@@ -21,8 +21,8 @@ import json
 import logging
 import re
 from datetime import datetime, timezone
+from functools import lru_cache
 from typing import Any, Callable, List, Optional, Tuple, Union
-from functools import cache
 
 import h5py
 import lxml.etree as ET
@@ -392,7 +392,7 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
-@cache
+@lru_cache(maxsize=None)
 def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
     for key in data_keys:
