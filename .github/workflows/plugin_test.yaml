@@ -5,7 +5,11 @@ name: test plugin
 
 on:
   push:
+<<<<<<< HEAD
     branches: [*]
+=======
+    branches: [generic_test_in_ci_cd]
+>>>>>>> b0cf0fb (Clone for stm reader and run test from there.-1)
   pull_request:
     branches: [master]
 
