@@ -44,8 +44,11 @@ jobs:
         run: |
           cd pynxtools-stm
           git checkout TestFromPynxtools
+<<<<<<< HEAD
           git submodule sync --recursive
           git submodule update --init --recursive --jobs=4
+=======
+>>>>>>> e6476b9 (Clone for stm reader and run test from there-4)
           pip install .
           pytest tests/test_reader.py::test_stm_reader
       # # Test for MPES Plugin
