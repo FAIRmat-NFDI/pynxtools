@@ -1,7 +1,6 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-
 name: test plugin
 
 on:
@@ -34,6 +33,7 @@ jobs:
       - name: Install package
         run: |
           pip install ".[dev]"
+<<<<<<< HEAD
 <<<<<<< HEAD
       # Test for STM Plugin
       - name: clone STM repo
@@ -119,6 +119,11 @@ jobs:
       - name: Test with stm
         run: |
           git clone https://github.com/FAIRmat-NFDI/pynxtools-stm/tree/TestFromPynxtools
+=======
+      # - name: Test with stm
+      #   run: |
+      #     git clone https://github.com/FAIRmat-NFDI/pynxtools-stm/tree/TestFromPynxtools
+>>>>>>> 8a4dff3 (Clone for stm reader and run test from there.-2)
       #     cd pynxtools-stm
       #     pip install .
       # - name: Run test from stm plugin
