@@ -117,7 +117,9 @@ def test_cli(caplog, cli_inputs):
     result = runner.invoke(dataconverter.main_cli, cli_inputs)
     if "generate-template" in cli_inputs:
         assert result.exit_code == 0
-        assert '"/ENTRY[entry]/NXODD_name/int_value": null,' in result.stdout
+        assert (
+            '"/ENTRY[entry]/NXODD_name[nxodd_name]/int_value": null,' in result.stdout
+        )
     elif "--input-file" in cli_inputs:
         assert "test_input" in caplog.text
     elif result.exit_code == 2:
@@ -148,36 +150,44 @@ def test_links_and_virtual_datasets(tmp_path):
     )
 
     assert result.exit_code == 0
-    test_nxs = h5py.File(os.path.join(tmp_path, "test_output.h5"), "r")
-    assert "entry/test_link/internal_link" in test_nxs
-    assert isinstance(test_nxs["entry/test_link/internal_link"], h5py.Dataset)
-    assert "entry/test_link/external_link" in test_nxs
-    assert isinstance(test_nxs["entry/test_link/external_link"], h5py.Dataset)
-    assert "entry/test_virtual_dataset/concatenate_datasets" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset
-    )
-    assert "entry/test_virtual_dataset/sliced_dataset" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/sliced_dataset"], h5py.Dataset
-    )
-    # pylint: disable=no-member
-    assert test_nxs["entry/test_virtual_dataset/sliced_dataset"].shape == (10, 10, 5)
-    assert "entry/test_virtual_dataset/sliced_dataset2" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/sliced_dataset2"], h5py.Dataset
-    )
-    assert test_nxs["entry/test_virtual_dataset/sliced_dataset2"].shape == (10, 10, 10)
-    assert "entry/test_virtual_dataset/sliced_dataset3" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/sliced_dataset3"], h5py.Dataset
-    )
-    assert test_nxs["entry/test_virtual_dataset/sliced_dataset3"].shape == (
-        10,
-        10,
-        10,
-        2,
-    )
+    with h5py.File(os.path.join(tmp_path, "test_output.h5"), "r") as test_nxs:
+        assert "entry/test_link/internal_link" in test_nxs
+        assert isinstance(test_nxs["entry/test_link/internal_link"], h5py.Dataset)
+        assert "entry/test_link/external_link" in test_nxs
+        assert isinstance(test_nxs["entry/test_link/external_link"], h5py.Dataset)
+        assert "entry/test_virtual_dataset/concatenate_datasets" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset
+        )
+        assert "entry/test_virtual_dataset/sliced_dataset" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/sliced_dataset"], h5py.Dataset
+        )
+        # pylint: disable=no-member
+        assert test_nxs["entry/test_virtual_dataset/sliced_dataset"].shape == (
+            10,
+            10,
+            5,
+        )
+        assert "entry/test_virtual_dataset/sliced_dataset2" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/sliced_dataset2"], h5py.Dataset
+        )
+        assert test_nxs["entry/test_virtual_dataset/sliced_dataset2"].shape == (
+            10,
+            10,
+            10,
+        )
+        assert "entry/test_virtual_dataset/sliced_dataset3" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/sliced_dataset3"], h5py.Dataset
+        )
+        assert test_nxs["entry/test_virtual_dataset/sliced_dataset3"].shape == (
+            10,
+            10,
+            10,
+            2,
+        )
 
     restore_xarray_file_from_tmp(tmp_path)
 
