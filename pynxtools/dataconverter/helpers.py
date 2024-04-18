@@ -261,12 +261,12 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
-def is_value_valid_element_of_enum(value, elem) -> Tuple[bool, list]:
+def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
-    if elem is not None:
+    for elem in elist:
         has_enum, enums = nexus.get_enums(elem)
-        if has_enum and value not in enums:
-            return False, enums
+        if has_enum:
+            return value in enums, enums
     return True, []
 
 
@@ -625,7 +625,10 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     else "NXDL_TYPE_UNAVAILABLE"
                 )
                 data[path] = is_valid_data_field(data[path], nxdl_type, path)
-                is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
+                _, _, elist = nexus.get_inherited_nodes(
+                    nxdl_path, path.rsplit("/", 1)[-1], nxdl_root
+                )
+                is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elist)
                 if not is_valid_enum:
                     logger.warning(
                         f"The value at {path} should be on of the "
