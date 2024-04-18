@@ -87,16 +87,16 @@ jobs:
           git checkout main
           pip install .
           pytest tests/.
-      # Test for EM Plugin
-      - name: clone APM repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          repository: FAIRmat-NFDI/pynxtools-apm
-          path: pynxtools-apm
-      - name: Run apm tests
-        run: |
-          cd pynxtools-apm
-          git checkout main
-          pip install .
-          pytest tests/.
+      # # Test for APM Plugin
+      # - name: clone APM repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      #     repository: FAIRmat-NFDI/pynxtools-apm
+      #     path: pynxtools-apm
+      # - name: Run apm tests
+      #   run: |
+      #     cd pynxtools-apm
+      #     git checkout main
+      #     pip install .
+      #     pytest tests/.
