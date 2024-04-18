@@ -353,6 +353,20 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         ),
         pytest.param(
             alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_child",
+                5.0,
+            ),
+            (
+                "The data entry, /ENTRY[my_entry]/optional_parent/optional_child, has an "
+                "optional parent, /ENTRY[entry]/optional_parent, with required children set"
+                ". Either provide no children for /ENTRY[entry]/optional_parent or provide "
+                "all required ones."
+            ),
+            id="required-field-not-provided-in-optional-group",
+        ),
+        pytest.param(
+            alter_dict(
                 alter_dict(
                     TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", None
                 ),
