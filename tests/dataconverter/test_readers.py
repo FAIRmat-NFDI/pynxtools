@@ -21,13 +21,10 @@ import glob
 import logging
 import os
 import xml.etree.ElementTree as ET
-from importlib import import_module
-from pathlib import Path
 from typing import List
 
 import pytest
 from _pytest.mark.structures import ParameterSet
-from importlib_metadata import entry_points
 
 from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
 from pynxtools.dataconverter.helpers import generate_template_from_nxdl
