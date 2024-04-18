@@ -18,22 +18,25 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
+<<<<<<< HEAD
 import logging
+=======
+>>>>>>> 9bf8657 (Clone for stm reader and run test from there-11)
 import os
 import xml.etree.ElementTree as ET
-from importlib import import_module
-from pathlib import Path
 from typing import List
 
 import pytest
 from _pytest.mark.structures import ParameterSet
-from importlib_metadata import entry_points
 
 from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
 from pynxtools.dataconverter.helpers import generate_template_from_nxdl
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
+<<<<<<< HEAD
 from pynxtools.dataconverter.validation import validate_dict_against
+=======
+>>>>>>> 9bf8657 (Clone for stm reader and run test from there-11)
 
 
 def get_reader_name_from_reader_object(reader) -> str:
