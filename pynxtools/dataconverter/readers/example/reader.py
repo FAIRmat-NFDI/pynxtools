@@ -59,6 +59,7 @@ class ExampleReader(BaseReader):
             if (
                 k.startswith("/ENTRY[entry]/required_group")
                 or k == "/ENTRY[entry]/optional_parent/req_group_in_opt_group"
+                or k.startswith("/ENTRY[entry]/OPTIONAL_group")
             ):
                 continue
 

@@ -20,11 +20,11 @@
             </enumeration>
         </field>
         <group type="NXdata" name="OPTIONAL_group" optional="true">
-            <field name="required_field" type="NX_FLOAT" required="true" units="NX_UNITLESS">
-                <doc>A dummy entry for a required field.</doc>
+            <field name="required_field" required="true" type="NX_INT">
+                <doc>A dummy entry to test optional parent check for required child.</doc>
             </field>
-            <field name="optional_field" type="NX_FLOAT" optional="true" units="NX_UNITLESS">
-                <doc>A dummy entry for an optional field.</doc>
+            <field name="optional_field" optional="true" type="NX_INT">
+                <doc>A dummy entry to test optional parent check for required child.</doc>
             </field>
         </group>
         <group type="NXdata" name="NXODD_name">
