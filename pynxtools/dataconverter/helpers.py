@@ -264,8 +264,8 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
 def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
     for elem in elist:
-        has_enum, enums = nexus.get_enums(elem)
-        if has_enum:
+        enums = nexus.get_enums(elem)
+        if enums is not None:
             return value in enums, enums
     return True, []
 
