@@ -473,7 +473,7 @@ def check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, te
         if is_nxdl_path_a_child(
             nxdl_path, optional_parent_nxdl
         ) and not all_required_children_are_set(optional_parent, data, nxdl_root):
-            raise LookupError(
+            logger.warning(
                 f"The data entry, {path}, has an optional parent, "
                 f"{optional_parent}, with required children set. Either"
                 f" provide no children for {optional_parent} or provide"
@@ -627,7 +627,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 data[path] = is_valid_data_field(data[path], nxdl_type, path)
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
                 if not is_valid_enum:
-                    raise ValueError(
+                    logger.warning(
                         f"The value at {path} should be on of the "
                         f"following strings: {enums}"
                     )
