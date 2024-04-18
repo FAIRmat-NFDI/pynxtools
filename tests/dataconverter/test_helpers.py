@@ -354,7 +354,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(
             alter_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_child",
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field",
                 5.0,
             ),
             (
