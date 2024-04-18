@@ -48,7 +48,8 @@ jobs:
           git submodule update --init --recursive --jobs=4
           pip install .
           pytest tests/test_reader.py::test_stm_reader
-      - name: Test for MPES Plugin
+      # Test for MPES Plugin
+      - name: clone MPES repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -56,7 +57,7 @@ jobs:
           path: pynxtools-mpes
       - name: Run MPES tests
         run: |
-          cd pynxtools-stm
+          cd pynxtools-mpes
           git checkout main
           pip install .
           pytest tests/.
