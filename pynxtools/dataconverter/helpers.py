@@ -21,6 +21,7 @@ import json
 import logging
 import re
 from datetime import datetime, timezone
+from functools import lru_cache
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import h5py
@@ -142,6 +143,8 @@ def generate_template_from_nxdl(
     suffix = ""
     if "name" in root.attrib:
         suffix = root.attrib["name"]
+        if any(map(str.isupper, suffix)):
+            suffix = f"{suffix}[{suffix.lower()}]"
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
         hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
@@ -389,20 +392,12 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
-def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, str]:
+@lru_cache(maxsize=None)
+def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
-    accepted_unfilled_key = None
-    for key in data.keys():
-        if (
-            nxdl_path == convert_data_converter_dict_to_nxdl_path(key)
-            or convert_data_dict_path_to_hdf5_path(key) == hdf_path
-        ):
-            if data[key] is None:
-                accepted_unfilled_key = key
-                continue
+    for key in data_keys:
+        if nxdl_path == convert_data_converter_dict_to_nxdl_path(key):
             return True, key
-    if accepted_unfilled_key:
-        return True, accepted_unfilled_key
     return False, None
 
 
@@ -447,12 +442,7 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
         if (
             nxdl_key[0 : nxdl_key.rfind("/")] == optional_parent_path
             and is_node_required(nxdl_key, nxdl_root)
-            and data[
-                path_in_data_dict(
-                    nxdl_key, convert_data_dict_path_to_hdf5_path(key), data
-                )[1]
-            ]
-            is None
+            and data[path_in_data_dict(nxdl_key, tuple(data.keys()))[1]] is None
         ):
             return False
 
@@ -517,7 +507,7 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(
-            nxdl_path, convert_data_dict_path_to_hdf5_path(path), data
+            nxdl_path, tuple(data.keys())
         )
 
         renamed_path = path if renamed_path is None else renamed_path
