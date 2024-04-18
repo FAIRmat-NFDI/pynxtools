@@ -61,19 +61,19 @@ jobs:
       #     git checkout main
       #     pip install .
       #     pytest tests/.
-      # # Test for XPS Plugin
-      # - name: clone XPS repo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      #     repository: FAIRmat-NFDI/pynxtools-xps
-      #     path: pynxtools-xps
-      # - name: Run XPS tests
-      #   run: |
-      #     cd pynxtools-xps
-      #     git checkout main
-      #     pip install .
-      #     pytest tests/.
+      # Test for XPS Plugin
+      - name: clone XPS repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: FAIRmat-NFDI/pynxtools-xps
+          path: pynxtools-xps
+      - name: Run XPS tests
+        run: |
+          cd pynxtools-xps
+          git checkout main
+          pip install .
+          pytest tests/.
       # Test for EM Plugin
       - name: clone EM repo
         uses: actions/checkout@v4
@@ -87,18 +87,16 @@ jobs:
           git checkout main
           pip install .
           pytest tests/.
-
-      # - name: Test for XPS Plugin
-      #   run: |
-      #     git clone https://github.com/FAIRmat-NFDI/pynxtools-xps.git
-      #     cd pynxtools-xps
-      #     git checkout main
-      #     pip install .
-      #     pytest tests/test_reader.py::test_xps_reader
-      # - name: Test for MPES Plugin
-      #   run: |
-      #     git clone https://github.com/FAIRmat-NFDI/pynxtools-mpes.git
-      #     cd pynxtools-mpes
-      #     git checkout main
-      #     pip install .
-      #     pytest tests/test_reader.py::test_mpes_reader
+      # Test for EM Plugin
+      - name: clone APM repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: FAIRmat-NFDI/pynxtools-apm
+          path: pynxtools-apm
+      - name: Run apm tests
+        run: |
+          cd pynxtools-apm
+          git checkout main
+          pip install .
+          pytest tests/.
