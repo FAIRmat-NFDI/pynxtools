@@ -356,7 +356,14 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field", 1
             ),
             (""),
-            id="required-field-not-provided-in-optional-group",
+            id="required-field-not-provided-in-variadic-optional-group",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field", 1
+            ),
+            (""),
+            id="required-field-provided-in-variadic-optional-group",
         ),
         pytest.param(
             alter_dict(
@@ -422,6 +429,7 @@ def test_validate_data_dict(
         "int-instead-of-chars",
         "link-dict-instead-of-bool",
         "opt-group-completely-removed",
+        "required-field-provided-in-variadic-optional-group",
     ):
         helpers.validate_data_dict(template, data_dict, nxdl_root)
     # Missing required fields caught by logger with warning
