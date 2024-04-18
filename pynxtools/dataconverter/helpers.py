@@ -615,9 +615,9 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     else "NXDL_TYPE_UNAVAILABLE"
                 )
                 data[path] = is_valid_data_field(data[path], nxdl_type, path)
-                _, _, elist = nexus.get_inherited_nodes(
+                elist = nexus.get_inherited_nodes(
                     nxdl_path, path.rsplit("/", 1)[-1], nxdl_root
-                )
+                )[2]
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elist)
                 if not is_valid_enum:
                     logger.warning(
