@@ -48,13 +48,18 @@ jobs:
           git submodule update --init --recursive --jobs=4
           pip install .
           pytest tests/test_reader.py::test_stm_reader
-      # - name: Test for STM Plugin
-      #   run: |
-      #     git clone https://github.com/FAIRmat-NFDI/pynxtools-stm
-      #     cd pynxtools-stm
-      #     git checkout TestFromPynxtools
-      #     pip install .
-      #     pytest tests/test_reader.py::test_stm_reader
+      - name: Test for MPES Plugin
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: FAIRmat-NFDI/pynxtools-mpes
+          path: pynxtools-mpes
+      - name: Run MPES tests
+        run: |
+          cd pynxtools-stm
+          git checkout main
+          pip install .
+          pytest tests/.
       # - name: Test for XPS Plugin
       #   run: |
       #     git clone https://github.com/FAIRmat-NFDI/pynxtools-xps.git
