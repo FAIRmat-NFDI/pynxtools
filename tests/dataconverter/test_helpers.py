@@ -406,6 +406,14 @@ def test_validate_data_dict(
         captured_logs = caplog.records
         helpers.validate_data_dict(template, data_dict, nxdl_root)
         assert any(error_message in rec.message for rec in captured_logs)
+    elif request.node.callspec.id in (
+        "wrong-enum-choice",
+        "atleast-one-required-child-not-provided-optional-parent",
+    ):
+        with caplog.at_level(logging.WARNING):
+            helpers.validate_data_dict(template, data_dict, nxdl_root)
+
+        assert error_message in caplog.text
     else:
         with pytest.raises(Exception) as execinfo:
             helpers.validate_data_dict(template, data_dict, nxdl_root)
