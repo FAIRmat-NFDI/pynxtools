@@ -311,7 +311,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             alter_dict(TEMPLATE, "/ENTRY[my_entry]/NXODD_name/type", "Wrong option"),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name/type should be on of the following"
-                " strings: [1st type,2nd type,3rd type,4th type]"
+                " strings: ['1st type', '2nd type', '3rd type', '4th type']"
             ),
             id="wrong-enum-choice",
         ),
