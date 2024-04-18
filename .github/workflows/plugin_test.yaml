@@ -5,11 +5,7 @@ name: test plugin
 
 on:
   push:
-<<<<<<< HEAD
     branches: [*]
-=======
-    branches: [generic_test_in_ci_cd]
->>>>>>> b0cf0fb (Clone for stm reader and run test from there.-1)
   pull_request:
     branches: [master]
 
@@ -65,19 +61,19 @@ jobs:
       #     git checkout main
       #     pip install .
       #     pytest tests/.
-      # # Test for XPS Plugin
-      # - name: clone XPS repo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      #     repository: FAIRmat-NFDI/pynxtools-xps
-      #     path: pynxtools-xps
-      # - name: Run XPS tests
-      #   run: |
-      #     cd pynxtools-xps
-      #     git checkout main
-      #     pip install .
-      #     pytest tests/.
+      # Test for XPS Plugin
+      - name: clone XPS repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: FAIRmat-NFDI/pynxtools-xps
+          path: pynxtools-xps
+      - name: Run XPS tests
+        run: |
+          cd pynxtools-xps
+          git checkout main
+          pip install .
+          pytest tests/.
       # Test for EM Plugin
       - name: clone EM repo
         uses: actions/checkout@v4
