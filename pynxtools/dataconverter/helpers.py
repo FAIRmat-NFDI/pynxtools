@@ -432,17 +432,17 @@ def is_node_required(nxdl_key, nxdl_root):
 
 def all_required_children_are_set(optional_parent_path, data, nxdl_root):
     """Walks over optional parent's children and makes sure all required ones are set"""
-    optional_parent_path = convert_data_converter_dict_to_nxdl_path(
-        optional_parent_path
-    )
     for key in data:
         if key in data["lone_groups"]:
             continue
         nxdl_key = convert_data_converter_dict_to_nxdl_path(key)
+        name = nxdl_key[nxdl_key.rfind("/") + 1 :]
+        renamed_path = f"{optional_parent_path}/{name}"
         if (
-            nxdl_key[0 : nxdl_key.rfind("/")] == optional_parent_path
+            nxdl_key[: nxdl_key.rfind("/")]
+            == convert_data_converter_dict_to_nxdl_path(optional_parent_path)
             and is_node_required(nxdl_key, nxdl_root)
-            and data[path_in_data_dict(nxdl_key, tuple(data.keys()))[1]] is None
+            and (renamed_path not in data or data[renamed_path] is None)
         ):
             return False
 
@@ -460,12 +460,19 @@ def is_nxdl_path_a_child(nxdl_path: str, parent: str):
 
 def check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, template):
     """Checks whether field is part of an optional parent and then confirms its optionality"""
+
+    def trim_path_to(parent: str, path: str):
+        count = len(parent.split("/"))
+        return "/".join(path.split("/")[:count])
+
     for optional_parent in template["optional_parents"]:
         optional_parent_nxdl = convert_data_converter_dict_to_nxdl_path(optional_parent)
         if is_nxdl_path_a_child(
             nxdl_path, optional_parent_nxdl
-        ) and not all_required_children_are_set(optional_parent, data, nxdl_root):
-            raise LookupError(
+        ) and not all_required_children_are_set(
+            trim_path_to(optional_parent, path), data, nxdl_root
+        ):
+            logger.warning(
                 f"The data entry, {path}, has an optional parent, "
                 f"{optional_parent}, with required children set. Either"
                 f" provide no children for {optional_parent} or provide"
