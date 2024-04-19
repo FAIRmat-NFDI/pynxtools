@@ -195,6 +195,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@unit
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
@@ -202,6 +203,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
     "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 )
+TEMPLATE["optional"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field"] = 1
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = (
     "An example description"
 )
@@ -352,15 +354,24 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             id="atleast-one-required-child-not-provided-optional-parent",
         ),
         pytest.param(
-            alter_dict(
-                TEMPLATE, "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field", 1
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field",
+                "required",
             ),
-            (""),
+            (
+                "The data entry, /ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field, has an "
+                "optional parent, /ENTRY[entry]/OPTIONAL_group[optional_group], with required children set"
+                ". Either provide no children for /ENTRY[entry]/OPTIONAL_group[optional_group] or provide "
+                "all required ones."
+            ),
             id="required-field-not-provided-in-variadic-optional-group",
         ),
         pytest.param(
-            alter_dict(
-                TEMPLATE, "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field", 1
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field",
+                "required",
             ),
             (""),
             id="required-field-provided-in-variadic-optional-group",
@@ -448,6 +459,7 @@ def test_validate_data_dict(
     elif request.node.callspec.id in (
         "wrong-enum-choice",
         "atleast-one-required-child-not-provided-optional-parent",
+        "required-field-not-provided-in-variadic-optional-group",
     ):
         with caplog.at_level(logging.WARNING):
             helpers.validate_data_dict(template, data_dict, nxdl_root)
