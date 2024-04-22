@@ -373,7 +373,12 @@ def main_cli():
     "--mapping",
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
-
+@click.option(
+    "-c",
+    "--config",
+    type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True),
+    help="A json config file for the reader",
+)
 # pylint: disable=too-many-arguments
 def convert_cli(
     files: Tuple[str, ...],
@@ -386,6 +391,7 @@ def convert_cli(
     undocumented: bool,
     skip_verify: bool,
     mapping: str,
+    config: str,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
     if params_file:
@@ -431,6 +437,7 @@ def convert_cli(
         fair,
         undocumented,
         skip_verify,
+        config_file=config,
     )
 
 

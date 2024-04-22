@@ -321,3 +321,67 @@ def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:
         template.update(obj)
 
     return template
+
+
+def is_integer(expr: str) -> bool:
+    """Checks whether an expression is an integer number,
+    i.e. 3, +3 or -3. Also supports numbers in the form of 003.
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is an integer number
+    """
+    return bool(re.search(r"^[+-]?\d+$", expr))
+
+
+def is_number(expr: str) -> bool:
+    """Checks whether an expression is a number,
+    i.e. is of the form 0.3, 3, 1e-3, 1E5 etc.
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is a number
+    """
+    return bool(
+        re.search(r"^[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)$", expr)
+    )
+
+
+def is_boolean(expr: str) -> bool:
+    """Checks whether an expression is a boolean,
+    i.e. is equal to True or False (upper or lower case).
+
+    Args:
+        expr (str): The expression to check.
+
+    Returns:
+        bool: Returns true if the expr is a boolean
+    """
+    return bool(re.search(r"True|False|true|false|On|Off|Yes|No", expr))
+
+
+def to_bool(expr: str) -> bool:
+    """Converts boolean representations in strings to python booleans.
+
+    Args:
+        expr (str): The string to convert to boolean.
+
+    Returns:
+        bool: The boolean value.
+    """
+    replacements = {
+        "On": True,
+        "Off": False,
+        "Yes": True,
+        "No": False,
+        "True": True,
+        "False": False,
+        "true": True,
+        "false": False,
+    }
+
+    return replacements.get(expr)

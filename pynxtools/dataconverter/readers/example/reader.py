@@ -40,6 +40,7 @@ class ExampleReader(BaseReader):
         template: dict = None,
         file_paths: Tuple[str] = None,
         objects: Tuple[Any] = None,
+        **_,
     ) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
         data: dict = {}
