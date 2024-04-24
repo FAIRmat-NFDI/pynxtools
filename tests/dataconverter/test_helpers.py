@@ -455,7 +455,6 @@ def test_validate_data_dict(
         # logger records
         captured_logs = caplog.records
         helpers.validate_data_dict(template, data_dict, nxdl_root)
-        messages = [rec.message for rec in captured_logs]
         assert any(error_message in rec.message for rec in captured_logs)
     elif request.node.callspec.id in (
         "wrong-enum-choice",
