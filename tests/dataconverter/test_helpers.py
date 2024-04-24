@@ -476,12 +476,10 @@ def test_validate_data_dict(
     [
         pytest.param(
             "/ENTRY/definition/@version",
-            (True, "/ENTRY[entry]/definition/@version"),
+            ["/ENTRY[entry]/definition/@version"],
             id="path-exists-in-dict",
         ),
-        pytest.param(
-            "/RANDOM/does/not/@exist", (False, None), id="path-does-not-exist-in-dict"
-        ),
+        pytest.param("/RANDOM/does/not/@exist", [], id="path-does-not-exist-in-dict"),
     ],
 )
 def test_path_in_data_dict(nxdl_path, expected, template):
