@@ -567,14 +567,9 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
             continue
 
         if not renamed_paths:
-            logger.warning(
-                f"The data entry corresponding to {path} is required "
-                f"and hasn't been supplied by the reader.",
-            )
-            continue
+            renamed_paths = [path]
 
         for renamed_path in renamed_paths:
-            renamed_path = path if renamed_path is None else renamed_path
             if path in template["lone_groups"]:
                 opt_parent = check_for_optional_parent(path, nxdl_root)
                 if opt_parent != "<<NOT_FOUND>>":

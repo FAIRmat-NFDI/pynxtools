@@ -296,7 +296,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /ENTRY[entry]/NXODD_name[nxodd_name]/bool_value is"
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -403,7 +403,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 remove_from_dict(
                     TEMPLATE, "/ENTRY[my_entry]/required_group/description"
                 ),
-                "/ENTRY[my_entry]/required_group",
+                "/ENTRY[entry]/required_group",
                 None,
             ),
             "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
@@ -455,6 +455,7 @@ def test_validate_data_dict(
         # logger records
         captured_logs = caplog.records
         helpers.validate_data_dict(template, data_dict, nxdl_root)
+        messages = [rec.message for rec in captured_logs]
         assert any(error_message in rec.message for rec in captured_logs)
     elif request.node.callspec.id in (
         "wrong-enum-choice",
