@@ -155,7 +155,7 @@ class Template(dict):
                 return self.recommended[k]
             if k in self.required:
                 return self.required[k]
-            return self.undocumented[k]
+            return self.undocumented.get(k)
         if k in ("required", "optional", "recommended", "undocumented"):
             return self.get_optionality(k)
         raise KeyError(

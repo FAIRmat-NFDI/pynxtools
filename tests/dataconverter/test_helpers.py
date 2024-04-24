@@ -195,6 +195,27 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@unit
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] = True  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 2  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
+    "eV"  # pylint: disable=E1126
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = (
+    np.array(
+        [1, 2, 3],  # pylint: disable=E1126
+        dtype=np.int8,
+    )
+)  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value/@units"
+] = "kg"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value"] = (
+    "just chars"  # pylint: disable=E1126
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/type"] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/date_value"] = (
+    "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+)
 TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
@@ -292,6 +313,34 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(
             set_to_none_in_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                "required",
+            ),
+            (
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is"
+                " required and hasn't been supplied by the reader."
+            ),
+            id="empty-required-field",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
+                "required",
+            ),
+            (
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value is"
+                " required and hasn't been supplied by the reader."
+            ),
+            id="empty-required-field",
+        ),
+        pytest.param(
+            remove_from_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
+                    "required",
+                ),
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
                 "required",
             ),

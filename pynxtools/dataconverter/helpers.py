@@ -664,21 +664,17 @@ def ensure_all_required_fields_exist_in_variadic_groups(
         return True
 
     for base_path in check_basepaths:
-        missing_fields = set()
         for path in get_concept_variations(base_path):
             for required_field in get_required_fields_from(base_path):
                 if (
                     f"{path}/{required_field}" not in data
                     or data[f"{path}/{required_field}"] is None
                 ):
-                    missing_fields.add(f"{path}/{required_field}")
-                    continue
-
-        for missing_field in missing_fields:
-            if not are_all_entries_none(missing_field):
-                collector.insert_and_log(
-                    missing_field, ValidationProblem.MissingRequiredField, None
-                )
+                    missing_field = f"{path}/{required_field}"
+                    if not are_all_entries_none(missing_field):
+                        collector.insert_and_log(
+                            missing_field, ValidationProblem.MissingRequiredField, None
+                        )
 
 
 def ensure_all_required_fields_exist(template, data, nxdl_root):
