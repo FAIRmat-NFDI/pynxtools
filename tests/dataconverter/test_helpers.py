@@ -443,7 +443,9 @@ def test_validate_data_dict(
         "opt-group-completely-removed",
         "required-field-provided-in-variadic-optional-group",
     ):
-        helpers.validate_data_dict(template, data_dict, nxdl_root)
+        with caplog.at_level(logging.WARNING):
+            assert helpers.validate_data_dict(template, data_dict, nxdl_root)
+        assert caplog.text == ""
     # Missing required fields caught by logger with warning
     elif request.node.callspec.id in (
         "empty-required-field",
@@ -454,11 +456,11 @@ def test_validate_data_dict(
     ):
         assert "" == caplog.text
         captured_logs = caplog.records
-        helpers.validate_data_dict(template, data_dict, nxdl_root)
+        assert not helpers.validate_data_dict(template, data_dict, nxdl_root)
         assert any(error_message in rec.message for rec in captured_logs)
     else:
         with caplog.at_level(logging.WARNING):
-            helpers.validate_data_dict(template, data_dict, nxdl_root)
+            assert not helpers.validate_data_dict(template, data_dict, nxdl_root)
 
         assert error_message in caplog.text
 
