@@ -151,11 +151,11 @@ def generate_template_from_nxdl(
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
         name = root.attrib.get("name")
-        nx_type = root.attrib.get("type")[2:]  # .removeprefix("NX") (python > 3.8)
+        hdf_name = root.attrib.get("type")[2:]  # .removeprefix("NX") (python > 3.8)
         suffix = (
             f"{name}[{name.lower()}]"
             if name is not None
-            else f"{nexus_class}[{nx_type}]"
+            else f"{nexus_class}[{hdf_name}]"
         )
 
     path = path + "/" + (f"@{suffix}" if tag == "attribute" else suffix)
@@ -407,26 +407,6 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
-def is_matching_variation(nxdl_path: str, key: str) -> bool:
-    """
-    Checks if the given key is a matching variation of the given NXDL path.
-    """
-    hdf_tokens = [
-        g1 + g2
-        for (g1, g2) in re.findall(
-            r"\/[a-zA-Z0-9_]+\[([a-zA-Z0-9_]+)\]|\/([a-zA-Z0-9_]+)", key
-        )
-    ]
-    nxdl_path_tokens = nxdl_path[1:].split("/")
-    if len(hdf_tokens) != len(nxdl_path_tokens):
-        return False
-
-    for file_token, nxdl_token in zip(hdf_tokens, nxdl_path_tokens):
-        if get_nx_namefit(file_token, nxdl_token) < 0:
-            return False
-    return True
-
-
 @lru_cache(maxsize=None)
 def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> List[str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
@@ -551,45 +531,21 @@ def get_concept_basepath(path: str) -> str:
     return "/" + "/".join(concept_path)
 
 
-# pylint: disable=W1203
-def ensure_all_required_fields_exist(template, data, nxdl_root):
-    """Checks whether all the required fields are in the returned data object."""
-    check_basepaths = set()
-    for path in template["required"]:
-        entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
-        if entry_name == "@units":
-            continue
-        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
-        renamed_paths = path_in_data_dict(nxdl_path, tuple(data.keys()))
+def ensure_all_required_fields_exist_in_variadic_groups(
+    template: Template, data: Template, check_basepaths: Set[str]
+):
+    """
+    Checks whether all required fields (according to `template`)
+    in `data` are present in their respective
+    variadic groups given by `check_basepaths`.
 
-        if len(renamed_paths) > 1:
-            check_basepaths.add(get_concept_basepath(nxdl_path))
-            continue
-
-        if not renamed_paths:
-            renamed_paths = [path]
-
-        for renamed_path in renamed_paths:
-            if path in template["lone_groups"]:
-                opt_parent = check_for_optional_parent(path, nxdl_root)
-                if opt_parent != "<<NOT_FOUND>>":
-                    if does_group_exist(opt_parent, data) and not does_group_exist(
-                        renamed_path, data
-                    ):
-                        logger.warning(
-                            f"The required group, {path}, hasn't been supplied"
-                            f" while its optional parent, {opt_parent}, is supplied."
-                        )
-                    continue
-                if not does_group_exist(renamed_path, data):
-                    logger.warning(f"The required group, {path}, hasn't been supplied.")
-                    continue
-                continue
-            if data[renamed_path] is None:
-                logger.warning(
-                    f"The data entry corresponding to {renamed_path} is required "
-                    f"and hasn't been supplied by the reader.",
-                )
+    Args:
+        template (Template): The template to use as reference.
+        data (Template): The template containing the actual data
+        check_basepaths (Set[str]):
+            A set of basepaths of the form /ENTRY/MY_GROUP to check for missing fields.
+            All groups matching the basepath will be checked for missing fields.
+    """
 
     @lru_cache(maxsize=None)
     def get_required_fields_from(base_path: str) -> Set[str]:
@@ -645,6 +601,48 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                     f"The data entry corresponding to {missing_field} is required "
                     "and hasn't been supplied by the reader.",
                 )
+
+
+def ensure_all_required_fields_exist(template, data, nxdl_root):
+    """Checks whether all the required fields are in the returned data object."""
+    check_basepaths = set()
+    for path in template["required"]:
+        entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
+        if entry_name == "@units":
+            continue
+        nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
+        renamed_paths = path_in_data_dict(nxdl_path, tuple(data.keys()))
+
+        if len(renamed_paths) > 1:
+            check_basepaths.add(get_concept_basepath(nxdl_path))
+            continue
+
+        if not renamed_paths:
+            renamed_paths = [path]
+
+        for renamed_path in renamed_paths:
+            if path in template["lone_groups"]:
+                opt_parent = check_for_optional_parent(path, nxdl_root)
+                if opt_parent != "<<NOT_FOUND>>":
+                    if does_group_exist(opt_parent, data) and not does_group_exist(
+                        renamed_path, data
+                    ):
+                        logger.warning(
+                            f"The required group, {path}, hasn't been supplied"
+                            f" while its optional parent, {opt_parent}, is supplied."
+                        )
+                    continue
+                if not does_group_exist(renamed_path, data):
+                    logger.warning(f"The required group, {path}, hasn't been supplied.")
+                    continue
+                continue
+            if data[renamed_path] is None:
+                logger.warning(
+                    f"The data entry corresponding to {renamed_path} is required "
+                    f"and hasn't been supplied by the reader.",
+                )
+
+    ensure_all_required_fields_exist_in_variadic_groups(template, data, check_basepaths)
 
 
 def try_undocumented(data, nxdl_root: ET.Element):
