@@ -233,7 +233,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
-                "t_value should be of Python type: (<class 'int'>, <cla"
+                "t_value should be one of: (<class 'int'>, <cla"
                 "ss 'numpy.ndarray'>, <class 'numpy.signedinteger'>),"
                 " as defined in the NXDL as NX_INT."
             ),
@@ -247,7 +247,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
-                "ould be of Python type: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
+                "ould be one of: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
                 "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ),
             id="string-instead-of-int",
@@ -267,7 +267,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value "
-                "should be a positive int."
+                "should be a positive int, but is -1."
             ),
             id="negative-posint",
         ),
@@ -296,7 +296,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is"
+                "The data entry corresponding to /ENTRY[entry]/NXODD_name[nxodd_name]/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -325,7 +325,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018-00:00",
             ),
-            "The date at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value should be a timezone aware"
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
+            " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
             " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
             "T12:14:12.05018+00:00.",
             id="UTC-with--00:00",
@@ -452,23 +453,23 @@ def test_validate_data_dict(
         "missing-empty-yet-required-group2",
     ):
         assert "" == caplog.text
-        # logger records
         captured_logs = caplog.records
         helpers.validate_data_dict(template, data_dict, nxdl_root)
+        messages = [rec.message for rec in captured_logs]
         assert any(error_message in rec.message for rec in captured_logs)
-    elif request.node.callspec.id in (
-        "wrong-enum-choice",
-        "atleast-one-required-child-not-provided-optional-parent",
-        "required-field-not-provided-in-variadic-optional-group",
-    ):
+    else:
         with caplog.at_level(logging.WARNING):
             helpers.validate_data_dict(template, data_dict, nxdl_root)
 
         assert error_message in caplog.text
-    else:
-        with pytest.raises(Exception) as execinfo:
-            helpers.validate_data_dict(template, data_dict, nxdl_root)
-        assert (error_message) == str(execinfo.value)
+    # else:
+    #     with caplog.at_level(logging.WARNING):
+    #         helpers.validate_data_dict(template, data_dict, nxdl_root)
+
+    #     assert caplog.text
+    # with pytest.raises(Exception) as execinfo:
+    #     helpers.validate_data_dict(template, data_dict, nxdl_root)
+    # assert (error_message) == str(execinfo.value)
 
 
 @pytest.mark.parametrize(

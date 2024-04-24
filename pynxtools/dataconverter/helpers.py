@@ -21,6 +21,7 @@ import json
 import logging
 import re
 from datetime import datetime, timezone
+from enum import Enum
 from functools import lru_cache
 from typing import Any, Callable, List, Optional, Set, Tuple, Union
 
@@ -31,15 +32,99 @@ from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.template import Template
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_inherited_nodes,
-    get_nx_namefit,
-)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeNotFoundError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+class ValidationProblem(Enum):
+    UnitWithoutDocumentation = 1
+    InvalidEnum = 2
+    OptionalParentWithoutRequiredGroup = 3
+    OptionalParentWithoutRequiredField = 4
+    MissingRequiredGroup = 5
+    MissingRequiredField = 6
+    InvalidType = 7
+    InvalidDatetime = 8
+    IsNotPosInt = 9
+
+
+class Collector:
+    """A class to collect data and return it in a dictionary format."""
+
+    def __init__(self):
+        self.data = set()
+
+    def insert_and_log(
+        self, path: str, log_type: ValidationProblem, value: Optional[Any], *args
+    ):
+        """Inserts a path into the data dictionary and logs the action."""
+        if value is None:
+            value = "<unknown>"
+
+        if log_type == ValidationProblem.UnitWithoutDocumentation:
+            logger.warning(
+                f"The unit, {path} = {value}, "
+                "is being written but has no documentation"
+            )
+        elif log_type == ValidationProblem.InvalidEnum:
+            logger.warning(
+                f"The value at {path} should be on of the "
+                f"following strings: {value}"
+            )
+        elif log_type == ValidationProblem.OptionalParentWithoutRequiredGroup:
+            logger.warning(
+                f"The required group, {path}, hasn't been supplied"
+                f" while its optional parent, {value}, is supplied."
+            )
+        elif log_type == ValidationProblem.OptionalParentWithoutRequiredField:
+            logger.warning(
+                f"The data entry, {path}, has an optional parent, "
+                f"{value}, with required children set. Either"
+                f" provide no children for {value} or provide"
+                f" all required ones."
+            )
+        elif log_type == ValidationProblem.MissingRequiredGroup:
+            logger.warning(f"The required group, {path}, hasn't been supplied.")
+        elif log_type == ValidationProblem.MissingRequiredField:
+            logger.warning(
+                f"The data entry corresponding to {path} is required "
+                "and hasn't been supplied by the reader.",
+            )
+        elif log_type == ValidationProblem.InvalidType:
+            logger.warning(
+                f"The value at {path} should be one of: {value}"
+                f", as defined in the NXDL as {args[0] if args else '<unknown>'}."
+            )
+        elif log_type == ValidationProblem.InvalidDatetime:
+            logger.warning(
+                f"The value at {path} = {value} should be a timezone aware ISO8601 "
+                "formatted str. For example, 2022-01-22T12:14:12.05018Z"
+                " or 2022-01-22T12:14:12.05018+00:00."
+            )
+        elif log_type == ValidationProblem.IsNotPosInt:
+            logger.warning(
+                f"The value at {path} should be a positive int, but is {value}."
+            )
+        self.data.add(path)
+
+    def has_validation_problems(self):
+        """Returns True if there were any validation problems."""
+        return len(self.data) > 0
+
+    def get(self):
+        """Returns the set of problematic paths."""
+        return self.data
+
+    def clear(self):
+        """Clears the collected data."""
+        self.data = set()
+
+
+collector = Collector()
 
 
 def is_a_lone_group(xml_element) -> bool:
@@ -382,14 +467,13 @@ def is_valid_data_field(value, nxdl_type, path):
                 if value is None:
                     raise ValueError
             return accepted_types[0](value)
-        except ValueError as exc:
-            raise ValueError(
-                f"The value at {path} should be of Python type: {accepted_types}"
-                f", as defined in the NXDL as {nxdl_type}."
-            ) from exc
+        except ValueError:
+            collector.insert_and_log(
+                path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+            )
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
-        raise ValueError(f"The value at {path} should be a positive int.")
+        collector.insert_and_log(path, ValidationProblem.IsNotPosInt, value)
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(
@@ -398,11 +482,7 @@ def is_valid_data_field(value, nxdl_type, path):
         )
         results = iso8601.search(value)
         if results is None:
-            raise ValueError(
-                f"The date at {path} should be a timezone aware ISO8601 "
-                f"formatted str. For example, 2022-01-22T12:14:12.05018Z"
-                f" or 2022-01-22T12:14:12.05018+00:00."
-            )
+            collector.insert_and_log(path, ValidationProblem.InvalidDatetime, value)
 
     return value
 
@@ -488,11 +568,10 @@ def check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, te
         ) and not all_required_children_are_set(
             trim_path_to(optional_parent, path), data, nxdl_root
         ):
-            logger.warning(
-                f"The data entry, {path}, has an optional parent, "
-                f"{optional_parent}, with required children set. Either"
-                f" provide no children for {optional_parent} or provide"
-                f" all required ones."
+            collector.insert_and_log(
+                path,
+                ValidationProblem.OptionalParentWithoutRequiredField,
+                optional_parent,
             )
 
 
@@ -597,9 +676,8 @@ def ensure_all_required_fields_exist_in_variadic_groups(
 
         for missing_field in missing_fields:
             if not are_all_entries_none(missing_field):
-                logger.warning(
-                    f"The data entry corresponding to {missing_field} is required "
-                    "and hasn't been supplied by the reader.",
+                collector.insert_and_log(
+                    missing_field, ValidationProblem.MissingRequiredField, None
                 )
 
 
@@ -627,19 +705,21 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                     if does_group_exist(opt_parent, data) and not does_group_exist(
                         renamed_path, data
                     ):
-                        logger.warning(
-                            f"The required group, {path}, hasn't been supplied"
-                            f" while its optional parent, {opt_parent}, is supplied."
+                        collector.insert_and_log(
+                            path,
+                            ValidationProblem.OptionalParentWithoutRequiredGroup,
+                            opt_parent,
                         )
                     continue
                 if not does_group_exist(renamed_path, data):
-                    logger.warning(f"The required group, {path}, hasn't been supplied.")
+                    collector.insert_and_log(
+                        path, ValidationProblem.MissingRequiredGroup, None
+                    )
                     continue
                 continue
             if data[renamed_path] is None:
-                logger.warning(
-                    f"The data entry corresponding to {renamed_path} is required "
-                    f"and hasn't been supplied by the reader.",
+                collector.insert_and_log(
+                    path, ValidationProblem.MissingRequiredField, None
                 )
 
     ensure_all_required_fields_exist_in_variadic_groups(template, data, check_basepaths)
@@ -680,6 +760,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
 def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
+    collector.clear()
 
     @lru_cache(maxsize=None)
     def get_xml_node(nxdl_path: str) -> ET.Element:
@@ -706,10 +787,8 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     field_path not in data.get_documented()
                     and "units" not in elem.attrib
                 ):
-                    logger.warning(
-                        "The unit, %s = %s, is being written but has no documentation.",
-                        path,
-                        data[path],
+                    collector.insert_and_log(
+                        path, ValidationProblem.UnitWithoutDocumentation, data[path]
                     )
                     continue
 
@@ -755,12 +834,9 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 )[2]
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elist)
                 if not is_valid_enum:
-                    logger.warning(
-                        f"The value at {path} should be on of the "
-                        f"following strings: {enums}"
-                    )
+                    collector.insert_and_log(path, ValidationProblem.InvalidEnum, enums)
 
-    return True
+    return not collector.has_validation_problems()
 
 
 def remove_namespace_from_tag(tag):
