@@ -455,21 +455,12 @@ def test_validate_data_dict(
         assert "" == caplog.text
         captured_logs = caplog.records
         helpers.validate_data_dict(template, data_dict, nxdl_root)
-        messages = [rec.message for rec in captured_logs]
         assert any(error_message in rec.message for rec in captured_logs)
     else:
         with caplog.at_level(logging.WARNING):
             helpers.validate_data_dict(template, data_dict, nxdl_root)
 
         assert error_message in caplog.text
-    # else:
-    #     with caplog.at_level(logging.WARNING):
-    #         helpers.validate_data_dict(template, data_dict, nxdl_root)
-
-    #     assert caplog.text
-    # with pytest.raises(Exception) as execinfo:
-    #     helpers.validate_data_dict(template, data_dict, nxdl_root)
-    # assert (error_message) == str(execinfo.value)
 
 
 @pytest.mark.parametrize(
