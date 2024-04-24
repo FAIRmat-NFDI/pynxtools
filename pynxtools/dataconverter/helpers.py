@@ -22,7 +22,7 @@ import logging
 import re
 from datetime import datetime, timezone
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Set, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -30,6 +30,11 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.template import Template
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_inherited_nodes,
+    get_nx_namefit,
+)
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeNotFoundError
 
@@ -141,14 +146,17 @@ def generate_template_from_nxdl(
         return
 
     suffix = ""
-    if "name" in root.attrib:
+    if "name" in root.attrib and not contains_uppercase(root.attrib["name"]):
         suffix = root.attrib["name"]
-        if any(map(str.isupper, suffix)):
-            suffix = f"{suffix}[{suffix.lower()}]"
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
-        hdf5name = f"[{convert_nexus_to_suggested_name(root.attrib['type'])}]"
-        suffix = f"{nexus_class}{hdf5name}"
+        name = root.attrib.get("name")
+        nx_type = root.attrib.get("type")[2:]  # .removeprefix("NX") (python > 3.8)
+        suffix = (
+            f"{name}[{name.lower()}]"
+            if name is not None
+            else f"{nexus_class}[{nx_type}]"
+        )
 
     path = path + "/" + (f"@{suffix}" if tag == "attribute" else suffix)
 
@@ -213,8 +221,17 @@ def convert_nexus_to_caps(nexus_name):
     return nexus_name[2:].upper()
 
 
+def contains_uppercase(field_name: Optional[str]) -> bool:
+    """Helper function to check if a field name contains uppercase characters."""
+    if field_name is None:
+        return False
+    return any(char.isupper() for char in field_name)
+
+
 def convert_nexus_to_suggested_name(nexus_name):
     """Helper function to suggest a name for a group from its NeXus class."""
+    if contains_uppercase(nexus_name):
+        return nexus_name
     return nexus_name[2:]
 
 
@@ -390,13 +407,34 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
+def is_matching_variation(nxdl_path: str, key: str) -> bool:
+    """
+    Checks if the given key is a matching variation of the given NXDL path.
+    """
+    hdf_tokens = [
+        g1 + g2
+        for (g1, g2) in re.findall(
+            r"\/[a-zA-Z0-9_]+\[([a-zA-Z0-9_]+)\]|\/([a-zA-Z0-9_]+)", key
+        )
+    ]
+    nxdl_path_tokens = nxdl_path[1:].split("/")
+    if len(hdf_tokens) != len(nxdl_path_tokens):
+        return False
+
+    for file_token, nxdl_token in zip(hdf_tokens, nxdl_path_tokens):
+        if get_nx_namefit(file_token, nxdl_token) < 0:
+            return False
+    return True
+
+
 @lru_cache(maxsize=None)
-def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> Tuple[bool, str]:
+def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> List[str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
+    found_keys = []
     for key in data_keys:
         if nxdl_path == convert_data_converter_dict_to_nxdl_path(key):
-            return True, key
-    return False, None
+            found_keys.append(key)
+    return found_keys
 
 
 def check_for_optional_parent(path: str, nxdl_root: ET.Element) -> str:
@@ -503,39 +541,115 @@ def does_group_exist(path_to_group, data):
     return False
 
 
+def get_concept_basepath(path: str) -> str:
+    """Get the concept path from the path"""
+    path_list = path.split("/")
+    concept_path = []
+    for p in path_list:
+        if re.search(r"[A-Z]", p):
+            concept_path.append(p)
+    return "/" + "/".join(concept_path)
+
+
 # pylint: disable=W1203
 def ensure_all_required_fields_exist(template, data, nxdl_root):
     """Checks whether all the required fields are in the returned data object."""
+    check_basepaths = set()
     for path in template["required"]:
         entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
         if entry_name == "@units":
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
-        is_path_in_data_dict, renamed_path = path_in_data_dict(
-            nxdl_path, tuple(data.keys())
-        )
+        renamed_paths = path_in_data_dict(nxdl_path, tuple(data.keys()))
 
-        renamed_path = path if renamed_path is None else renamed_path
-        if path in template["lone_groups"]:
-            opt_parent = check_for_optional_parent(path, nxdl_root)
-            if opt_parent != "<<NOT_FOUND>>":
-                if does_group_exist(opt_parent, data) and not does_group_exist(
-                    renamed_path, data
-                ):
-                    logger.warning(
-                        f"The required group, {path}, hasn't been supplied"
-                        f" while its optional parent, {opt_parent}, is supplied."
-                    )
-                continue
-            if not does_group_exist(renamed_path, data):
-                logger.warning(f"The required group, {path}, hasn't been supplied.")
-                continue
+        if len(renamed_paths) > 1:
+            check_basepaths.add(get_concept_basepath(nxdl_path))
             continue
-        if not is_path_in_data_dict or data[renamed_path] is None:
+
+        if not renamed_paths:
             logger.warning(
                 f"The data entry corresponding to {path} is required "
                 f"and hasn't been supplied by the reader.",
             )
+            continue
+
+        for renamed_path in renamed_paths:
+            renamed_path = path if renamed_path is None else renamed_path
+            if path in template["lone_groups"]:
+                opt_parent = check_for_optional_parent(path, nxdl_root)
+                if opt_parent != "<<NOT_FOUND>>":
+                    if does_group_exist(opt_parent, data) and not does_group_exist(
+                        renamed_path, data
+                    ):
+                        logger.warning(
+                            f"The required group, {path}, hasn't been supplied"
+                            f" while its optional parent, {opt_parent}, is supplied."
+                        )
+                    continue
+                if not does_group_exist(renamed_path, data):
+                    logger.warning(f"The required group, {path}, hasn't been supplied.")
+                    continue
+                continue
+            if data[renamed_path] is None:
+                logger.warning(
+                    f"The data entry corresponding to {renamed_path} is required "
+                    f"and hasn't been supplied by the reader.",
+                )
+
+    @lru_cache(maxsize=None)
+    def get_required_fields_from(base_path: str) -> Set[str]:
+        required_fields = set()
+        for path in template["required"]:
+            if (
+                get_concept_basepath(convert_data_converter_dict_to_nxdl_path(path))
+                == base_path
+            ):
+                entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
+                if entry_name == "@units":
+                    required_fields.add(f"{path.rsplit('/', 2)[1]}/@units")
+                    continue
+                required_fields.add(
+                    get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
+                )
+
+        return required_fields
+
+    @lru_cache(maxsize=None)
+    def get_concept_variations(base_path: str) -> Set[str]:
+        paths = set()
+        for path in data:
+            if (
+                get_concept_basepath(convert_data_converter_dict_to_nxdl_path(path))
+                == base_path
+            ):
+                paths.add(get_concept_basepath(path))
+        return paths
+
+    @lru_cache(maxsize=None)
+    def are_all_entries_none(path: str) -> bool:
+        concept_path = get_concept_basepath(path)
+        for key in filter(lambda x: x.startswith(concept_path), data):
+            if data[key] is not None:
+                return False
+        return True
+
+    for base_path in check_basepaths:
+        missing_fields = set()
+        for path in get_concept_variations(base_path):
+            for required_field in get_required_fields_from(base_path):
+                if (
+                    f"{path}/{required_field}" not in data
+                    or data[f"{path}/{required_field}"] is None
+                ):
+                    missing_fields.add(f"{path}/{required_field}")
+                    continue
+
+        for missing_field in missing_fields:
+            if not are_all_entries_none(missing_field):
+                logger.warning(
+                    f"The data entry corresponding to {missing_field} is required "
+                    "and hasn't been supplied by the reader.",
+                )
 
 
 def try_undocumented(data, nxdl_root: ET.Element):
@@ -547,14 +661,9 @@ def try_undocumented(data, nxdl_root: ET.Element):
 
         if entry_name == "@units":
             field_path = path.rsplit("/", 1)[0]
-            if field_path in data.get_documented() and path in data.undocumented:
-                field_requiredness = get_required_string(
-                    nexus.get_node_at_nxdl_path(
-                        nxdl_path=convert_data_converter_dict_to_nxdl_path(field_path),
-                        elem=nxdl_root,
-                    )
-                )
-                data[field_requiredness][path] = data.undocumented[path]
+
+            # Remove units attribute if there is no associated field
+            if field_path not in data:
                 del data.undocumented[path]
             continue
 
@@ -564,11 +673,12 @@ def try_undocumented(data, nxdl_root: ET.Element):
 
         try:
             elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
-            data[get_required_string(elem)][path] = data.undocumented[path]
+            optionality = get_required_string(elem)
+            data[optionality][path] = data.undocumented[path]
             del data.undocumented[path]
             units = f"{path}/@units"
             if units in data.undocumented:
-                data[get_required_string(elem)][units] = data.undocumented[units]
+                data[optionality][units] = data.undocumented[units]
                 del data.undocumented[units]
         except NxdlAttributeNotFoundError:
             pass
@@ -578,9 +688,9 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
 
-    # nxdl_path_set helps to skip validation check on the same type of nxdl signiture
-    # This reduces huge amount of runing time
-    nxdl_path_to_elm: dict = {}
+    @lru_cache(maxsize=None)
+    def get_xml_node(nxdl_path: str) -> ET.Element:
+        return nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
     # Make sure all required fields exist.
     ensure_all_required_fields_exist(template, data, nxdl_root)
@@ -591,18 +701,43 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
             entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
             nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
 
-            if entry_name == "@units":
-                continue
-
             if entry_name[0] == "@" and "@" in nxdl_path:
                 index_of_at = nxdl_path.rindex("@")
                 nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1 :]
 
-            if nxdl_path in nxdl_path_to_elm:
-                elem = nxdl_path_to_elm[nxdl_path]
-            else:
-                elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
-                nxdl_path_to_elm[nxdl_path] = elem
+            if entry_name == "@units":
+                elempath = get_inherited_nodes(nxdl_path, None, nxdl_root)[1]
+                elem = elempath[-2]
+                field_path = path.rsplit("/", 1)[0]
+                if (
+                    field_path not in data.get_documented()
+                    and "units" not in elem.attrib
+                ):
+                    logger.warning(
+                        "The unit, %s = %s, is being written but has no documentation.",
+                        path,
+                        data[path],
+                    )
+                    continue
+
+                # TODO: If we want we could also enable unit validation here
+                # field = nexus.get_node_at_nxdl_path(
+                #     nxdl_path=convert_data_converter_dict_to_nxdl_path(
+                #         # The part below is the backwards compatible version of
+                #         # nxdl_path.removesuffix("/units")
+                #         nxdl_path[:-6] if nxdl_path.endswith("/units") else nxdl_path
+                #     ),
+                #     elem=nxdl_root,
+                # )
+                # nxdl_unit = field.attrib.get("units", "")
+                # if not is_valid_unit(data[path], nxdl_unit):
+                #     raise ValueError(
+                #         f"Invalid unit in {path}. {data[path]} "
+                #         f"is not in unit category {nxdl_unit}"
+                #     )
+                continue
+
+            elem = get_xml_node(nxdl_path)
 
             # Only check for validation in the NXDL if we did find the entry
             # otherwise we just pass it along
