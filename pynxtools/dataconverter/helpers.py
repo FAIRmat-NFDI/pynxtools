@@ -664,6 +664,7 @@ def ensure_all_required_fields_exist_in_variadic_groups(
         return True
 
     for base_path in check_basepaths:
+        count = 0
         for path in get_concept_variations(base_path):
             for required_field in get_required_fields_from(base_path):
                 if (
@@ -671,10 +672,18 @@ def ensure_all_required_fields_exist_in_variadic_groups(
                     or data[f"{path}/{required_field}"] is None
                 ):
                     missing_field = f"{path}/{required_field}"
+                    count += 1
                     if not are_all_entries_none(missing_field):
+                        count -= 1
                         collector.insert_and_log(
                             missing_field, ValidationProblem.MissingRequiredField, None
                         )
+
+        if count > 0:
+            # All entries in all variadic groups are None
+            collector.insert_and_log(
+                base_path, ValidationProblem.MissingRequiredGroup, None
+            )
 
 
 def ensure_all_required_fields_exist(template, data, nxdl_root):
@@ -692,31 +701,34 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
             continue
 
         if not renamed_paths:
-            renamed_paths = [path]
+            renamed_path = path
+        else:
+            renamed_path = renamed_paths[0]
 
-        for renamed_path in renamed_paths:
-            if path in template["lone_groups"]:
-                opt_parent = check_for_optional_parent(path, nxdl_root)
-                if opt_parent != "<<NOT_FOUND>>":
-                    if does_group_exist(opt_parent, data) and not does_group_exist(
-                        renamed_path, data
-                    ):
-                        collector.insert_and_log(
-                            path,
-                            ValidationProblem.OptionalParentWithoutRequiredGroup,
-                            opt_parent,
-                        )
-                    continue
-                if not does_group_exist(renamed_path, data):
+        if path in template["lone_groups"]:
+            opt_parent = check_for_optional_parent(path, nxdl_root)
+            if opt_parent != "<<NOT_FOUND>>":
+                if does_group_exist(opt_parent, data) and not does_group_exist(
+                    renamed_path, data
+                ):
                     collector.insert_and_log(
-                        path, ValidationProblem.MissingRequiredGroup, None
+                        renamed_path,
+                        ValidationProblem.OptionalParentWithoutRequiredGroup,
+                        opt_parent,
                     )
-                    continue
                 continue
-            if data[renamed_path] is None:
+            if not does_group_exist(renamed_path, data):
                 collector.insert_and_log(
-                    path, ValidationProblem.MissingRequiredField, None
+                    convert_data_converter_dict_to_nxdl_path(path),
+                    ValidationProblem.MissingRequiredGroup,
+                    None,
                 )
+                continue
+            continue
+        if data[renamed_path] is None:
+            collector.insert_and_log(
+                renamed_path, ValidationProblem.MissingRequiredField, None
+            )
 
     ensure_all_required_fields_exist_in_variadic_groups(template, data, check_basepaths)
 

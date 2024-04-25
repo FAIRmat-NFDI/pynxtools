@@ -20,6 +20,7 @@
 import logging
 import os
 import xml.etree.ElementTree as ET
+from typing import Optional
 
 import numpy as np
 import pytest
@@ -51,14 +52,28 @@ def alter_dict(data_dict: Template, key: str, value: object):
     return None
 
 
-def set_to_none_in_dict(data_dict: Template, key: str, optionality: str):
+def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: str):
     """Helper function to forcefully set path to 'None'"""
-    if data_dict is not None:
-        internal_dict = Template(data_dict)
-        internal_dict[optionality][key] = None
-        return internal_dict
+    if data_dict is None:
+        return None
 
-    return None
+    internal_dict = Template(data_dict)
+    internal_dict[optionality][key] = None
+    return internal_dict
+
+
+def set_whole_group_to_none(
+    data_dict: Optional[Template], key: str, optionality: str
+) -> Optional[Template]:
+    """Set a whole path to None in the dict"""
+    if data_dict is None:
+        return None
+
+    internal_dict = Template(data_dict)
+    for path in data_dict[optionality]:
+        if path.startswith(key):
+            internal_dict[optionality][path] = None
+    return internal_dict
 
 
 def remove_from_dict(data_dict: Template, key: str, optionality: str = "optional"):
@@ -351,6 +366,19 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             id="empty-required-field",
         ),
         pytest.param(
+            set_whole_group_to_none(
+                set_whole_group_to_none(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/NXODD_name",
+                "optional",
+            ),
+            ("The required group, /ENTRY/NXODD_name, hasn't been supplied."),
+            id="all-required-fields-set-to-none",
+        ),
+        pytest.param(
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
@@ -440,12 +468,12 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
+            "The required group, /ENTRY/required_group, hasn't been supplied.",
             id="missing-empty-yet-required-group",
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-            "The required group, /ENTRY[entry]/required_group2, hasn't been supplied.",
+            "The required group, /ENTRY/required_group2, hasn't been supplied.",
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
@@ -456,7 +484,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[entry]/required_group",
                 None,
             ),
-            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
+            "The required group, /ENTRY/required_group, hasn't been supplied.",
             id="allow-required-and-empty-group",
         ),
         pytest.param(
