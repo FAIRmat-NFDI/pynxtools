@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """Verifies a nxs file"""
+
 import logging
 import os
 import sys
@@ -146,12 +147,17 @@ def verify(file: str):
 
         logger.debug("Class map: %s", class_map)
         logger.log(DEBUG_TEMPLATE, "Processed template %s", data_template)
-        helpers.validate_data_dict(ref_template, Template(data_template), nxdl_root)
-
-        logger.info(
-            "The entry `%s` in file `%s` is a valid file"
-            " according to the `%s` application definition.",
-            entry,
-            file,
-            nxdl,
+        is_valid = helpers.validate_data_dict(
+            ref_template, Template(data_template), nxdl_root
         )
+
+        if is_valid:
+            logger.info(
+                f"The entry `{entry}` in file `{file}` is a valid file"
+                f" according to the `{nxdl}` application definition.",
+            )
+        else:
+            logger.info(
+                f"Invalid: The entry `{entry}` in file `{file}` is NOT a valid file"
+                f" according to the `{nxdl}` application definition.",
+            )
