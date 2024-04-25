@@ -721,16 +721,27 @@ def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
     Writes the used nexus definition and version to /ENTRY/definition
     """
 
-    def update_and_warn(key: str, value: str):
+    def update_and_warn(key: str, value: str, overwrite=False):
         if key in data and data[key] is not None and data[key] != value:
-            logger.warning(
-                f"The entry '{key}' (value: {data[key]}) should not be changed by "
-                f"the reader. This is overwritten by the actually used value '{value}'"
+            report = (
+                f"This is overwritten by the actually used value '{value}'"
+                if overwrite
+                else f"The provided version '{value}' is kept. We assume you know what you are doing."
             )
-        data[key] = value
+            logger.log(
+                logging.WARNING if overwrite else logging.INFO,
+                f"The entry '{key}' (value: {data[key]}) should not be changed by "
+                f"the reader. {report}",
+            )
+        if overwrite or data.get(key) is None:
+            data[key] = value
 
-    update_and_warn(f"/ENTRY[{entry_name}]/definition", nxdl_def)
-    update_and_warn(f"/ENTRY[{entry_name}]/definition/@version", get_nexus_version())
+    update_and_warn(f"/ENTRY[{entry_name}]/definition", nxdl_def, overwrite=True)
+    update_and_warn(
+        f"/ENTRY[{entry_name}]/definition/@version",
+        get_nexus_version(),
+        overwrite=False,
+    )
 
 
 def extract_atom_types(formula, mode="hill"):
