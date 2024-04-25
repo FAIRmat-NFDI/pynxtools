@@ -207,7 +207,7 @@ def transfer_data_into_template(
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
-    entry_names = helpers.get_all_entry_names(data)
+    entry_names = data.get_all_entry_names()
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
     if not skip_verify:

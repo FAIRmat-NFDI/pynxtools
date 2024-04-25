@@ -20,10 +20,9 @@
 import json
 import logging
 import re
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -31,7 +30,6 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeNotFoundError
 
@@ -203,15 +201,6 @@ def generate_template_from_nxdl(
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root, nxdl_name)
-
-
-def get_all_entry_names(template: Template) -> Set[str]:
-    entry_names = set()
-    for key in template:
-        entry_name_match = re.search(r"\/ENTRY\[([a-zA-Z0-9_\.]+)\]", key)
-        if entry_name_match is not None:
-            entry_names.add(entry_name_match.group(1))
-    return entry_names
 
 
 def get_required_string(elem):
