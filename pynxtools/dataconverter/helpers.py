@@ -53,6 +53,7 @@ class ValidationProblem(Enum):
     InvalidType = 7
     InvalidDatetime = 8
     IsNotPosInt = 9
+    InvalidUnit = 10
 
 
 class Collector:
@@ -111,6 +112,11 @@ class Collector:
         elif log_type == ValidationProblem.IsNotPosInt:
             logger.warning(
                 f"The value at {path} should be a positive int, but is {value}."
+            )
+        elif log_type == ValidationProblem.InvalidUnit:
+            logger.warning(
+                f"Invalid unit in {path}. {value} "
+                f"is not in unit category {args[0] if args else '<unknown>'}"
             )
         self.data.add(path)
 
@@ -862,9 +868,8 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                 )
                 nxdl_unit = field.attrib.get("units", "")
                 if not is_valid_unit(data[path], nxdl_unit):
-                    raise ValueError(
-                        f"Invalid unit in {path}. {data[path]} "
-                        f"is not in unit category {nxdl_unit}"
+                    collector.insert_and_log(
+                        path, ValidationProblem.InvalidUnit, data[path], nxdl_unit
                     )
                 continue
 
