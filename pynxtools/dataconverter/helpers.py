@@ -16,28 +16,24 @@
 # limitations under the License.
 #
 """Helper functions commonly used by the convert routine."""
+
 import json
 import logging
 import re
-import sys
-import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from functools import lru_cache
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import h5py
+import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.units import ureg
 from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeError, get_inherited_nodes
+from pynxtools.nexus.nexus import NxdlAttributeNotFoundError, get_inherited_nodes
 from pynxtools.nexus.nxdl_utils import get_nx_namefit
-
-logger = logging.getLogger(__name__)  # pylint: disable=C0103
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -70,6 +66,9 @@ def get_all_defined_required_children_for_elem(xml_element):
     """Gets all possible inherited required children for a given NXDL element"""
     list_of_children_to_add = set()
     for child in xml_element:
+        tag = remove_namespace_from_tag(child.tag)
+        if tag not in ("group", "field", "attribute"):
+            continue
         child.set("nxdlbase_class", xml_element.get("nxdlbase_class"))
         if child.attrib and get_required_string(child) == "required":
             tag = remove_namespace_from_tag(child.tag)
@@ -146,6 +145,8 @@ def generate_template_from_nxdl(
     suffix = ""
     if "name" in root.attrib and not contains_uppercase(root.attrib["name"]):
         suffix = root.attrib["name"]
+        if any(map(str.isupper, suffix)):
+            suffix = f"{suffix}[{suffix.lower()}]"
     elif "type" in root.attrib:
         nexus_class = convert_nexus_to_caps(root.attrib["type"])
         name = root.attrib.get("name")
@@ -279,14 +280,12 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
-def is_value_valid_element_of_enum(value, elem) -> Tuple[bool, list]:
+def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
-    if elem is not None:
-        has_enums, enums = nexus.get_enums(elem)
-        if has_enums and (
-            isinstance(value, list) or value not in enums[0:-1] or value == ""
-        ):
-            return False, enums
+    for elem in elist:
+        enums = nexus.get_enums(elem)
+        if enums is not None:
+            return value in enums, enums
     return True, []
 
 
@@ -476,21 +475,12 @@ def is_matching_variation(nxdl_path: str, key: str) -> bool:
     return True
 
 
-def path_in_data_dict(nxdl_path: str, hdf_path: str, data: dict) -> Tuple[bool, str]:
+@lru_cache(maxsize=None)
+def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> Tuple[bool, str]:
     """Checks if there is an accepted variation of path in the dictionary & returns the path."""
-    accepted_unfilled_key = None
-    for key in data.keys():
-        if (
-            nxdl_path == convert_data_converter_dict_to_nxdl_path(key)
-            or convert_data_dict_path_to_hdf5_path(key) == hdf_path
-            or is_matching_variation(nxdl_path, key)
-        ):
-            if data[key] is None:
-                accepted_unfilled_key = key
-                continue
+    for key in data_keys:
+        if nxdl_path == convert_data_converter_dict_to_nxdl_path(key):
             return True, key
-    if accepted_unfilled_key:
-        return True, accepted_unfilled_key
     return False, None
 
 
@@ -535,12 +525,7 @@ def all_required_children_are_set(optional_parent_path, data, nxdl_root):
         if (
             nxdl_key[0 : nxdl_key.rfind("/")] == optional_parent_path
             and is_node_required(nxdl_key, nxdl_root)
-            and data[
-                path_in_data_dict(
-                    nxdl_key, convert_data_dict_path_to_hdf5_path(key), data
-                )[1]
-            ]
-            is None
+            and data[path_in_data_dict(nxdl_key, tuple(data.keys()))[1]] is None
         ):
             return False
 
@@ -563,7 +548,7 @@ def check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, te
         if is_nxdl_path_a_child(
             nxdl_path, optional_parent_nxdl
         ) and not all_required_children_are_set(optional_parent, data, nxdl_root):
-            raise LookupError(
+            logger.warning(
                 f"The data entry, {path}, has an optional parent, "
                 f"{optional_parent}, with required children set. Either"
                 f" provide no children for {optional_parent} or provide"
@@ -605,7 +590,7 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
             continue
         nxdl_path = convert_data_converter_dict_to_nxdl_path(path)
         is_path_in_data_dict, renamed_path = path_in_data_dict(
-            nxdl_path, convert_data_dict_path_to_hdf5_path(path), data
+            nxdl_path, tuple(data.keys())
         )
 
         renamed_path = path if renamed_path is None else renamed_path
@@ -662,7 +647,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             if units in data.undocumented:
                 data[get_required_string(elem)][units] = data.undocumented[units]
                 del data.undocumented[units]
-        except NxdlAttributeError:
+        except NxdlAttributeNotFoundError:
             pass
 
 
@@ -738,9 +723,12 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     else "NXDL_TYPE_UNAVAILABLE"
                 )
                 data[path] = is_valid_data_field(data[path], nxdl_type, path)
-                is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elem)
+                elist = nexus.get_inherited_nodes(
+                    nxdl_path, path.rsplit("/", 1)[-1], nxdl_root
+                )[2]
+                is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elist)
                 if not is_valid_enum:
-                    raise ValueError(
+                    logger.warning(
                         f"The value at {path} should be on of the "
                         f"following strings: {enums}"
                     )
@@ -751,6 +739,8 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 def remove_namespace_from_tag(tag):
     """Helper function to remove the namespace from an XML tag."""
 
+    if not isinstance(tag, str):
+        return ""
     return tag.split("}")[-1]
 
 
@@ -804,7 +794,7 @@ def add_default_root_attributes(data, filename):
     def update_and_warn(key: str, value: str):
         if key in data and data[key] != value:
             logger.warning(
-                f"The NXroot entry '{key}' (value: {data[key]}) should not be populated by "
+                f"The NXroot entry '{key}' (value: {data[key]}) should not be changed by "
                 f"the reader. This is overwritten by the actually used value '{value}'"
             )
         data[key] = value
@@ -822,6 +812,34 @@ def add_default_root_attributes(data, filename):
     # pylint: disable=c-extension-no-member
     update_and_warn("/@HDF5_version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
+
+
+def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
+    """
+    Writes the used nexus definition and version to /ENTRY/definition
+    """
+
+    def update_and_warn(key: str, value: str, overwrite=False):
+        if key in data and data[key] is not None and data[key] != value:
+            report = (
+                f"This is overwritten by the actually used value '{value}'"
+                if overwrite
+                else f"The provided version '{value}' is kept. We assume you know what you are doing."
+            )
+            logger.log(
+                logging.WARNING if overwrite else logging.INFO,
+                f"The entry '{key}' (value: {data[key]}) should not be changed by "
+                f"the reader. {report}",
+            )
+        if overwrite or data.get(key) is None:
+            data[key] = value
+
+    update_and_warn(f"/ENTRY[{entry_name}]/definition", nxdl_def, overwrite=True)
+    update_and_warn(
+        f"/ENTRY[{entry_name}]/definition/@version",
+        get_nexus_version(),
+        overwrite=False,
+    )
 
 
 def extract_atom_types(formula, mode="hill"):

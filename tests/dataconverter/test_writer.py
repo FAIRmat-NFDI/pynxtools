@@ -54,9 +54,9 @@ def test_write(writer):
     """Test for the Writer's write function. Checks whether entries given above get written out."""
     writer.write()
     test_nxs = h5py.File(writer.output_path, "r")
-    assert test_nxs["/my_entry/odd_name/int_value"][()] == 2
-    assert test_nxs["/my_entry/odd_name/int_value"].attrs["units"] == "nm"
-    assert test_nxs["/my_entry/odd_name/posint_value"].shape == (3,)  # pylint: disable=no-member
+    assert test_nxs["/my_entry/nxodd_name/int_value"][()] == 2
+    assert test_nxs["/my_entry/nxodd_name/int_value"].attrs["units"] == "nm"
+    assert test_nxs["/my_entry/nxodd_name/posint_value"].shape == (3,)  # pylint: disable=no-member
 
 
 def test_write_link(writer):

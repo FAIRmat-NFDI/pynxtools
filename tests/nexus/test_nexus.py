@@ -1,6 +1,4 @@
-"""This is a code that performs several tests on nexus tool
-
-"""
+"""This is a code that performs several tests on nexus tool"""
 #
 # Copyright The NOMAD Authors.
 #
@@ -21,7 +19,8 @@
 
 import logging
 import os
-import xml.etree.ElementTree as ET
+
+import lxml.etree as ET
 
 from pynxtools.nexus import nexus
 
@@ -111,17 +110,17 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NXevent_data_em_set"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/summary", elem=elem
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection", elem=elem
     )
     assert node.attrib["type"] == "NXdata"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/summary/DATA", elem=elem
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/DATA", elem=elem
     )
     assert node.attrib["type"] == "NX_NUMBER"
 
     node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/summary/AXISNAME_indices",
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/AXISNAME_indices",
         elem=elem,
     )
     assert node.attrib["name"] == "AXISNAME_indices"

@@ -17,6 +17,7 @@
 
 #
 """An example reader implementation for the DataConverter."""
+
 import json
 import os
 from typing import Any, Tuple
@@ -101,9 +102,9 @@ class ExampleReader(BaseReader):
                 f"{my_path}/xarray_saved_small_calibration.h5:/axes/ax2",
             ]
         }
-        template[
-            "/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"
-        ] = my_datasets
+        template["/ENTRY[entry]/test_virtual_dataset/concatenate_datasets"] = (
+            my_datasets
+        )
 
         # virtual datasets slicing
         my_path = str(f"{os.path.dirname(__file__)}/../../../../tests/data/nexus")
@@ -130,9 +131,9 @@ class ExampleReader(BaseReader):
         my_compression_dict = {"compress": "string not to be compressed"}
         template["/ENTRY[entry]/test_compression/not_to_compress"] = my_compression_dict
         my_compression_dict2 = {"compress": np.array([1, 2, 3, 4])}
-        template[
-            "/ENTRY[entry]/test_compression/compressed_data"
-        ] = my_compression_dict2
+        template["/ENTRY[entry]/test_compression/compressed_data"] = (
+            my_compression_dict2
+        )
 
         # sh = h5py.File(file_names_to_concatenate[0], 'r')[entry_key].shape
         # layout = h5py.VirtualLayout(shape=(len(file_names_to_concatenate),) + sh,

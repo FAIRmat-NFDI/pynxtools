@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """An example reader implementation for the DataConverter."""
+
 from typing import Tuple, Any, Callable, Dict, List
 import os
 

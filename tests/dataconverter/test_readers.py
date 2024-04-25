@@ -94,6 +94,9 @@ def test_has_correct_read_func(reader):
             return
 
         input_files = sorted(glob.glob(os.path.join(reader_path, "*")))
+        if not reader.supported_nxdls:
+            # If there are no supported nxdls test against NXroot
+            reader.supported_nxdls = ["NXroot"]
         for supported_nxdl in reader.supported_nxdls:
             if supported_nxdl in ("NXtest", "*"):
                 nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")

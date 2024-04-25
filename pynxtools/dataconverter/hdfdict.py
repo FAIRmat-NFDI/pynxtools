@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Taken from: https://github.com/SiggiGue/hdfdict/blob/master/hdfdict/hdfdict.py"""
+
 from collections import UserDict
 from contextlib import contextmanager
 from datetime import datetime

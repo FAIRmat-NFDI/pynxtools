@@ -19,6 +19,8 @@
 
 import copy
 import json
+import re
+from typing import Set
 
 from pynxtools.dataconverter import helpers
 
@@ -196,6 +198,20 @@ class Template(dict):
                     value = internal_dict[key] if deepcopy else None
                     internal_dict[f"/ENTRY[{new_name}]{rest_of_path}"] = value
                     del internal_dict[key]
+
+    def get_all_entry_names(self) -> Set[str]:
+        """
+        Get all entry names in the template.
+
+        Returns:
+            Set[str]: A set of entry names.
+        """
+        entry_names = set()
+        for key in self:
+            entry_name_match = re.search(r"\/ENTRY\[([a-zA-Z0-9_\.]+)\]", key)
+            if entry_name_match is not None:
+                entry_names.add(entry_name_match.group(1))
+        return entry_names
 
     def update(self, template):
         """Merges second template to original

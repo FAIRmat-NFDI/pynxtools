@@ -1445,9 +1445,9 @@ NXsource.nxdl.xml:/energy
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXsource.nxdl.xml:/energy):
 DEBUG - 
-             Source energy.
-             For storage rings, this would be the particle beam energy.
-             For X-ray tubes, this would be the excitation voltage.
+             Source energy. Typically, this would be the energy of
+             the emitted beam. For storage rings, this would be
+             the particle beam energy.
         
 DEBUG - ===== ATTRS (//entry/instrument/source/energy@units)
 DEBUG - value: MeV 

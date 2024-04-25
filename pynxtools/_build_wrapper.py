@@ -2,6 +2,7 @@
 Build wrapper for setuptools to create a nexus-version.txt file
 containing the nexus definitions verison.
 """
+
 import os
 from subprocess import CalledProcessError, run
 from typing import Optional
