@@ -483,6 +483,8 @@ def test_writing_of_root_attributes(caplog):
     filename = "my_nexus_file.nxs"
     with caplog.at_level(logging.WARNING):
         helpers.add_default_root_attributes(template, filename)
+        helpers.write_nexus_def_to_entry(template, "entry", "NXtest")
+        helpers.write_nexus_def_to_entry(template, "entry1", "NXtest")
 
     assert "" == caplog.text
 
@@ -497,6 +499,10 @@ def test_writing_of_root_attributes(caplog):
     assert "/@NeXus_version" in keys_added
     assert "/@HDF5_version" in keys_added
     assert "/@h5py_version" in keys_added
+    assert "/ENTRY[entry]/definition" in keys_added
+    assert "/ENTRY[entry]/definition/@version" in keys_added
+    assert "/ENTRY[entry1]/definition" in keys_added
+    assert "/ENTRY[entry1]/definition/@version" in keys_added
 
 
 def test_warning_on_root_attribute_overwrite(caplog):
@@ -510,10 +516,26 @@ def test_warning_on_root_attribute_overwrite(caplog):
     with caplog.at_level(logging.WARNING):
         helpers.add_default_root_attributes(template, filname)
     error_text = (
-        "The NXroot entry '/@NX_class' (value: NXwrong) should not be populated by the reader. "
+        "The NXroot entry '/@NX_class' (value: NXwrong) should not be changed by the reader. "
         "This is overwritten by the actually used value 'NXroot'"
     )
     assert error_text in caplog.text
 
     assert "/@NX_class" in template.keys()
     assert template["/@NX_class"] == "NXroot"
+
+
+def test_warning_on_definition_changed_by_reader(caplog):
+    template = Template()
+    template["/ENTRY[entry]/definition"] = "NXwrong"
+    with caplog.at_level(logging.WARNING):
+        helpers.write_nexus_def_to_entry(template, "entry", "NXtest")
+
+    error_text = (
+        "The entry '/ENTRY[entry]/definition' (value: NXwrong) should not be changed by the reader. "
+        "This is overwritten by the actually used value 'NXtest'"
+    )
+    assert error_text in caplog.text
+
+    assert "/ENTRY[entry]/definition" in template.keys()
+    assert template["/ENTRY[entry]/definition"] == "NXtest"
