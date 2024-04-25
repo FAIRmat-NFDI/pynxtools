@@ -20,8 +20,9 @@
 import json
 import logging
 import re
+from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Set, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -29,6 +30,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.template import Template
 from pynxtools.nexus import nexus
 from pynxtools.nexus.nexus import NxdlAttributeNotFoundError
 
@@ -198,6 +200,15 @@ def generate_template_from_nxdl(
 
     for child in root:
         generate_template_from_nxdl(child, template, path, nxdl_root, nxdl_name)
+
+
+def get_all_entry_names(template: Template) -> Set[str]:
+    entry_names = set()
+    for key in template:
+        entry_name_match = re.search(r"\/ENTRY\[([a-zA-Z0-9_\.]+)\]", key)
+        if entry_name_match is not None:
+            entry_names.add(entry_name_match.group(1))
+    return entry_names
 
 
 def get_required_string(elem):
@@ -695,7 +706,7 @@ def add_default_root_attributes(data, filename):
     def update_and_warn(key: str, value: str):
         if key in data and data[key] != value:
             logger.warning(
-                f"The NXroot entry '{key}' (value: {data[key]}) should not be populated by "
+                f"The NXroot entry '{key}' (value: {data[key]}) should not be changed by "
                 f"the reader. This is overwritten by the actually used value '{value}'"
             )
         data[key] = value
@@ -712,6 +723,23 @@ def add_default_root_attributes(data, filename):
     update_and_warn("/@NeXus_version", get_nexus_version())
     update_and_warn("/@HDF5_version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
+
+
+def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
+    """
+    Writes the used nexus definition and version to /ENTRY/definition
+    """
+
+    def update_and_warn(key: str, value: str):
+        if key in data and data[key] is not None and data[key] != value:
+            logger.warning(
+                f"The entry '{key}' (value: {data[key]}) should not be changed by "
+                f"the reader. This is overwritten by the actually used value '{value}'"
+            )
+        data[key] = value
+
+    update_and_warn(f"/ENTRY[{entry_name}]/definition", nxdl_def)
+    update_and_warn(f"/ENTRY[{entry_name}]/definition/@version", get_nexus_version())
 
 
 def extract_atom_types(formula, mode="hill"):
