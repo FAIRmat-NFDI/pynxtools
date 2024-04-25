@@ -34,6 +34,7 @@ import yaml
 from click_default_group import DefaultGroup
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.helpers import set_default_group
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.writer import Writer
@@ -277,8 +278,8 @@ def convert(
             logger.info(
                 f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation."
             )
-
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
+    set_default_group(data)
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
 
     logger.info(f"The output file generated: {output}.")
