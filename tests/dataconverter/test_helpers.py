@@ -20,6 +20,7 @@
 import logging
 import os
 import xml.etree.ElementTree as ET
+from typing import Optional
 
 import numpy as np
 import pytest
@@ -51,14 +52,28 @@ def alter_dict(data_dict: Template, key: str, value: object):
     return None
 
 
-def set_to_none_in_dict(data_dict: Template, key: str, optionality: str):
+def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: str):
     """Helper function to forcefully set path to 'None'"""
-    if data_dict is not None:
-        internal_dict = Template(data_dict)
-        internal_dict[optionality][key] = None
-        return internal_dict
+    if data_dict is None:
+        return None
 
-    return None
+    internal_dict = Template(data_dict)
+    internal_dict[optionality][key] = None
+    return internal_dict
+
+
+def set_whole_group_to_none(
+    data_dict: Optional[Template], key: str, optionality: str
+) -> Optional[Template]:
+    """Set a whole path to None in the dict"""
+    if data_dict is None:
+        return None
+
+    internal_dict = Template(data_dict)
+    for path in data_dict[optionality]:
+        if path.startswith(key):
+            internal_dict[optionality][path] = None
+    return internal_dict
 
 
 def remove_from_dict(data_dict: Template, key: str, optionality: str = "optional"):
@@ -195,6 +210,28 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@unit
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] = True  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 2  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
+    "nm"  # pylint: disable=E1126
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = (
+    np.array(
+        [1, 2, 3],  # pylint: disable=E1126
+        dtype=np.int8,
+    )
+)  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value/@units"
+] = "m"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value"] = (
+    "just chars"  # pylint: disable=E1126
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/type"] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/date_value"] = (
+    "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
@@ -202,6 +239,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
     "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 )
+TEMPLATE["optional"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field"] = 1
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = (
     "An example description"
 )
@@ -231,7 +269,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
-                "t_value should be of Python type: (<class 'int'>, <cla"
+                "t_value should be one of: (<class 'int'>, <cla"
                 "ss 'numpy.ndarray'>, <class 'numpy.signedinteger'>),"
                 " as defined in the NXDL as NX_INT."
             ),
@@ -245,7 +283,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
-                "ould be of Python type: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
+                "ould be one of: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
                 "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ),
             id="string-instead-of-int",
@@ -265,7 +303,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value "
-                "should be a positive int."
+                "should be a positive int, but is -1."
             ),
             id="negative-posint",
         ),
@@ -294,10 +332,51 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is"
+                " required and hasn't been supplied by the reader."
+            ),
+            id="empty-required-field",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
+                "required",
+            ),
+            (
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value is"
+                " required and hasn't been supplied by the reader."
+            ),
+            id="empty-required-field",
+        ),
+        pytest.param(
+            remove_from_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                "required",
+            ),
+            (
                 "The data entry corresponding to /ENTRY[entry]/NXODD_name[nxodd_name]/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
+        ),
+        pytest.param(
+            set_whole_group_to_none(
+                set_whole_group_to_none(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/NXODD_name",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/NXODD_name",
+                "optional",
+            ),
+            ("The required group, /ENTRY/NXODD_name, hasn't been supplied."),
+            id="all-required-fields-set-to-none",
         ),
         pytest.param(
             alter_dict(
@@ -323,7 +402,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018-00:00",
             ),
-            "The date at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value should be a timezone aware"
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
+            " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
             " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
             "T12:14:12.05018+00:00.",
             id="UTC-with--00:00",
@@ -352,6 +432,29 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             id="atleast-one-required-child-not-provided-optional-parent",
         ),
         pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field",
+                "required",
+            ),
+            (
+                "The data entry, /ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field, has an "
+                "optional parent, /ENTRY[entry]/OPTIONAL_group[optional_group], with required children set"
+                ". Either provide no children for /ENTRY[entry]/OPTIONAL_group[optional_group] or provide "
+                "all required ones."
+            ),
+            id="required-field-not-provided-in-variadic-optional-group",
+        ),
+        pytest.param(
+            set_to_none_in_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field",
+                "required",
+            ),
+            (""),
+            id="required-field-provided-in-variadic-optional-group",
+        ),
+        pytest.param(
             alter_dict(
                 alter_dict(
                     TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", None
@@ -365,12 +468,12 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
+            "The required group, /ENTRY/required_group, hasn't been supplied.",
             id="missing-empty-yet-required-group",
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-            "The required group, /ENTRY[entry]/required_group2, hasn't been supplied.",
+            "The required group, /ENTRY/required_group2, hasn't been supplied.",
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
@@ -378,10 +481,10 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 remove_from_dict(
                     TEMPLATE, "/ENTRY[my_entry]/required_group/description"
                 ),
-                "/ENTRY[my_entry]/required_group",
+                "/ENTRY[entry]/required_group",
                 None,
             ),
-            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
+            "The required group, /ENTRY/required_group, hasn't been supplied.",
             id="allow-required-and-empty-group",
         ),
         pytest.param(
@@ -416,9 +519,11 @@ def test_validate_data_dict(
         "int-instead-of-chars",
         "link-dict-instead-of-bool",
         "opt-group-completely-removed",
+        "required-field-provided-in-variadic-optional-group",
     ):
-        helpers.validate_data_dict(template, data_dict, nxdl_root)
-        assert not caplog.records
+        with caplog.at_level(logging.WARNING):
+            assert helpers.validate_data_dict(template, data_dict, nxdl_root)
+        assert caplog.text == ""
     # Missing required fields caught by logger with warning
     elif request.node.callspec.id in (
         "empty-required-field",
@@ -428,22 +533,14 @@ def test_validate_data_dict(
         "missing-empty-yet-required-group2",
     ):
         assert "" == caplog.text
-        # logger records
         captured_logs = caplog.records
-        helpers.validate_data_dict(template, data_dict, nxdl_root)
+        assert not helpers.validate_data_dict(template, data_dict, nxdl_root)
         assert any(error_message in rec.message for rec in captured_logs)
-    elif request.node.callspec.id in (
-        "wrong-enum-choice",
-        "atleast-one-required-child-not-provided-optional-parent",
-    ):
+    else:
         with caplog.at_level(logging.WARNING):
-            helpers.validate_data_dict(template, data_dict, nxdl_root)
+            assert not helpers.validate_data_dict(template, data_dict, nxdl_root)
 
         assert error_message in caplog.text
-    else:
-        with pytest.raises(Exception) as execinfo:
-            helpers.validate_data_dict(template, data_dict, nxdl_root)
-        assert (error_message) == str(execinfo.value)
 
 
 @pytest.mark.parametrize(
@@ -451,12 +548,10 @@ def test_validate_data_dict(
     [
         pytest.param(
             "/ENTRY/definition/@version",
-            (True, "/ENTRY[entry]/definition/@version"),
+            ["/ENTRY[entry]/definition/@version"],
             id="path-exists-in-dict",
         ),
-        pytest.param(
-            "/RANDOM/does/not/@exist", (False, None), id="path-does-not-exist-in-dict"
-        ),
+        pytest.param("/RANDOM/does/not/@exist", [], id="path-does-not-exist-in-dict"),
     ],
 )
 def test_path_in_data_dict(nxdl_path, expected, template):
