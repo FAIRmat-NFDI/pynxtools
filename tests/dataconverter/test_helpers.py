@@ -474,7 +474,7 @@ def test_path_in_data_dict(nxdl_path, expected, template):
         }
     ],
 )
-def test_set_default_group(temp_dict):
+def test_set_default_attr_in_group(temp_dict):
     """_summary_
 
     Parameters
