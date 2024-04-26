@@ -35,10 +35,11 @@ from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.units import ureg
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    NxdlAttributeNotFoundError,
+    get_enums,
     get_inherited_nodes,
+    get_node_at_nxdl_path,
 )
-from pynxtools.nexus import nexus
-from pynxtools.nexus.nexus import NxdlAttributeNotFoundError, get_inherited_nodes
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -120,7 +121,7 @@ class Collector:
                 f"Invalid unit in {path}. {value} "
                 f"is not in unit category {args[0] if args else '<unknown>'}"
             )
-        elif log_type == ValidationProblem.InvalidUnit:
+        elif log_type == ValidationProblem.InvalidTransformationType:
             logger.warning(
                 f"Invalid transformation type in {path}: {value}. "
                 "Should be either not present or have the value 'translation' or 'rotation'."
@@ -385,7 +386,7 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
 def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
     for elem in elist:
-        enums = nexus.get_enums(elem)
+        enums = get_enums(elem)
         if enums is not None:
             return value in enums, enums
     return True, []
@@ -580,9 +581,9 @@ def check_for_optional_parent(path: str, nxdl_root: ET.Element) -> str:
         return "<<NOT_FOUND>>"
 
     parent_nxdl_path = convert_data_converter_dict_to_nxdl_path(parent_path)
-    elem = nexus.get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
+    elem = get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
 
-    if nexus.get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
+    if get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
         return parent_path
 
     return check_for_optional_parent(parent_path, nxdl_root)
@@ -597,8 +598,8 @@ def is_node_required(nxdl_key, nxdl_root):
             nxdl_key[0 : nxdl_key.rindex("/") + 1]
             + nxdl_key[nxdl_key.rindex("/") + 2 :]
         )
-    node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root, exc=False)
-    return nexus.get_required_string(node) == "<<REQUIRED>>"
+    node = get_node_at_nxdl_path(nxdl_key, elem=nxdl_root, exc=False)
+    return get_required_string(node) == "<<REQUIRED>>"
 
 
 def all_required_children_are_set(optional_parent_path, data, nxdl_root):
@@ -828,7 +829,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             field_path = path.rsplit("/", 1)[0]
             if field_path in data.get_documented() and path in data.undocumented:
                 field_requiredness = get_required_string(
-                    nexus.get_node_at_nxdl_path(
+                    get_node_at_nxdl_path(
                         nxdl_path=convert_data_converter_dict_to_nxdl_path(field_path),
                         elem=nxdl_root,
                     )
@@ -842,7 +843,7 @@ def try_undocumented(data, nxdl_root: ET.Element):
             nxdl_path = nxdl_path[0:index_of_at] + nxdl_path[index_of_at + 1 :]
 
         try:
-            elem = nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+            elem = get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
             optionality = get_required_string(elem)
             data[optionality][path] = data.undocumented[path]
             del data.undocumented[path]
@@ -861,7 +862,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
 
     @lru_cache(maxsize=None)
     def get_xml_node(nxdl_path: str) -> ET.Element:
-        return nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
+        return get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
     # Make sure all required fields exist.
     ensure_all_required_fields_exist(template, data, nxdl_root)
@@ -889,7 +890,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     )
                     continue
 
-                field = nexus.get_node_at_nxdl_path(
+                field = get_node_at_nxdl_path(
                     nxdl_path=convert_data_converter_dict_to_nxdl_path(
                         # The part below is the backwards compatible version of
                         # nxdl_path.removesuffix("/units")
@@ -938,7 +939,7 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     else "NXDL_TYPE_UNAVAILABLE"
                 )
                 data[path] = is_valid_data_field(data[path], nxdl_type, path)
-                elist = nexus.get_inherited_nodes(
+                elist = get_inherited_nodes(
                     nxdl_path, path.rsplit("/", 1)[-1], nxdl_root
                 )[2]
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elist)
