@@ -29,6 +29,7 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
+from pint import UndefinedUnitError
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.template import Template
@@ -528,21 +529,22 @@ def is_valid_unit(unit: str, nx_category: str) -> bool:
         bool: The unit belongs to the provided category
     """
     unit = clean_str_attr(unit)
-    if nx_category in ("NX_ANY"):
-        ureg(unit)  # Check if unit is generally valid
-        return True
-    nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
-    if nx_category == "[NX_TRANSFORMATION]":
-        # NX_TRANSFORMATIONS is a pseudo unit
-        # and can be either an angle, a length or unitless
-        return True
-        # Currently disabled for the mpes tests
-        # return (
-        #     ureg(unit).check("[NX_ANGLE]")
-        #     or ureg(unit).check("[NX_LENGTH]")
-        #     or ureg(unit).check("[NX_UNITLESS]")
-        # )
-    return ureg(unit).check(f"{nx_category}")
+    try:
+        if nx_category in ("NX_ANY"):
+            ureg(unit)  # Check if unit is generally valid
+            return True
+        nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
+        if nx_category == "[NX_TRANSFORMATION]":
+            # NX_TRANSFORMATIONS is a pseudo unit
+            # and can be either an angle, a length or unitless
+            return (
+                ureg(unit).check("[NX_ANGLE]")
+                or ureg(unit).check("[NX_LENGTH]")
+                or ureg(unit).check("[NX_UNITLESS]")
+            )
+        return ureg(unit).check(f"{nx_category}")
+    except UndefinedUnitError:
+        return False
 
 
 @lru_cache(maxsize=None)
