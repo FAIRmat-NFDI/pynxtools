@@ -745,8 +745,11 @@ def ensure_all_required_fields_exist_in_variadic_groups(
 
         if all_fields_are_none:
             # All entries in all variadic groups are None
+            generic_dict_path = "/" + "/".join(
+                map(lambda path: f"{path}[{path.lower()}]", base_path.split("/")[1:])
+            )
             collector.insert_and_log(
-                base_path, ValidationProblem.MissingRequiredGroup, None
+                generic_dict_path, ValidationProblem.MissingRequiredGroup, None
             )
 
 
@@ -783,7 +786,7 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                 continue
             if not does_group_exist(renamed_path, data):
                 collector.insert_and_log(
-                    convert_data_converter_dict_to_nxdl_path(path),
+                    path,
                     ValidationProblem.MissingRequiredGroup,
                     None,
                 )
