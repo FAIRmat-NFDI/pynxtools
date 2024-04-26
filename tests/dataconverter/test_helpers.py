@@ -471,6 +471,9 @@ def test_path_in_data_dict(nxdl_path, expected, template):
             "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/float_value": 8.0,
             "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data1]/data1": [3, 5, 6],
             "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data2]/data2": [3, 5, 6],
+            "/ENTRY[entry2]/@default": "nxodd_name_2",
+            "/ENTRY[entry2]/NXODD_name[nxodd_name]/float_value": 2.0,
+            "/ENTRY[entry2]/NXODD_name[nxodd_name_2]/float_value": 8.0,
         }
     ],
 )
@@ -511,6 +514,9 @@ def test_set_default_attr_in_group(temp_dict):
         "Group can not have a default attribute refering any field,"
         " unless it is not supplied by reader."
     )
+    assert (
+        template["/ENTRY[entry2]/@default"] == "nxodd_name_2"
+    ), "Default attribute supplied by reader can not be overwritten."
 
 
 def test_atom_type_extractor_and_hill_conversion():

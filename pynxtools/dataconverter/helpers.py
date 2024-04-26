@@ -867,9 +867,6 @@ def set_default_attr_in_group(template):
     for template_concept, val in template.items():
         # skip the last part which is field
         groups_list = template_concept.split("/")
-        # Cancel out the attribuutes
-        if groups_list[-1].startswith("@"):
-            continue
         # Cancel out the fields and end groups without fields
         groups_list = groups_list[0:-1]
         if not groups_list:
