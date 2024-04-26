@@ -29,7 +29,7 @@ from h5py import Dataset, File, Group, is_hdf5
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
-from pynxtools.nexus import nexus
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ def _get_def_map(file: str) -> Dict[str, str]:
 
 
 def _get_nxdl_root(nxdl: str) -> ET.Element:
-    definitions_path = nexus.get_nexus_definitions_path()
+    definitions_path = get_nexus_definitions_path()
     nxdl_path = os.path.join(
         definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
     )

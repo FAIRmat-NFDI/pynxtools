@@ -37,7 +37,7 @@ from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.writer import Writer
-from pynxtools.nexus import nexus
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -120,7 +120,7 @@ def get_nxdl_root_and_path(nxdl: str):
         Error if no file with the given nxdl name is found.
     """
     # Reading in the NXDL and generating a template
-    definitions_path = nexus.get_nexus_definitions_path()
+    definitions_path = get_nexus_definitions_path()
     if nxdl == "NXtest":
         nxdl_f_path = os.path.join(
             f"{os.path.abspath(os.path.dirname(__file__))}/../../",

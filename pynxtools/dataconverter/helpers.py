@@ -31,6 +31,7 @@ import numpy as np
 from ase.data import chemical_symbols
 from pint import UndefinedUnitError
 
+import pynxtools.definitions.dev_tools.utils.nxdl_utils as nexus
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.units import ureg
@@ -39,6 +40,9 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_enums,
     get_inherited_nodes,
     get_node_at_nxdl_path,
+)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_required_string as nexus_get_required_string,
 )
 
 logger = logging.getLogger(__name__)
@@ -212,7 +216,7 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
     if nxdl_name == "NXtest":
         return []
 
-    elist = nexus.get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
+    elist = get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
     list_of_children_to_add = set()
     for elem in elist:
         list_of_children_to_add.update(get_all_defined_required_children_for_elem(elem))
@@ -315,7 +319,7 @@ def generate_template_from_nxdl(
 
 def get_required_string(elem):
     """Helper function to return nicely formatted names for optionality."""
-    return nexus.get_required_string(elem)[2:-2].lower()
+    return nexus_get_required_string(elem)[2:-2].lower()
 
 
 def convert_nexus_to_caps(nexus_name):
