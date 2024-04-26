@@ -151,16 +151,13 @@ class Template(dict):
         if k in ("optional_parents", "lone_groups"):
             return getattr(self, k)
         if k.startswith("/"):
-            try:
+            if k in self.optional:
                 return self.optional[k]
-            except KeyError:
-                try:
-                    return self.recommended[k]
-                except KeyError:
-                    try:
-                        return self.required[k]
-                    except KeyError:
-                        return self.undocumented[k]
+            if k in self.recommended:
+                return self.recommended[k]
+            if k in self.required:
+                return self.required[k]
+            return self.undocumented.get(k)
         if k in ("required", "optional", "recommended", "undocumented"):
             return self.get_optionality(k)
         raise KeyError(
