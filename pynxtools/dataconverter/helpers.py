@@ -858,7 +858,7 @@ def set_default_group(template):
     # defalut attribute key to the list of immediate child group
     dflt_key_to_grp_li: Optional[dict[str, list]] = {}
     # defalut attribute key to the group set by reader
-    dflt_key_to_exist_grp: dict[str, str] = {}
+    dflt_key_to_exist_grp: Optional[dict[str, str]] = {}
 
     # "/abc[DATA]/XYe[anything]/mnf[MNYZ]/anything" -> ['DATA', 'anything', 'MNYZ']
     pattern = r"\[(.*?)\]"
@@ -870,7 +870,7 @@ def set_default_group(template):
         # Cancel out the attribuutes
         if groups_list[-1].startswith("@"):
             continue
-        # Cancel out the fields
+        # Cancel out the fields and end groups without fields
         groups_list = groups_list[0:-1]
         if not groups_list:
             continue
@@ -893,6 +893,7 @@ def set_default_group(template):
                 dflt_key_to_grp_li[last_default_atttr] = {}
                 # Data groups
                 dflt_key_to_grp_li[last_default_atttr]["data"] = []
+                # Entry groups
                 dflt_key_to_grp_li[last_default_atttr]["entry"] = []
                 # Other groups
                 dflt_key_to_grp_li[last_default_atttr]["other"] = []
@@ -915,8 +916,8 @@ def set_default_group(template):
 
     for deflt_key, value in dflt_key_to_grp_li.items():
         pre_defalt_grp = dflt_key_to_exist_grp.get(deflt_key, None)
-        # Verify if user added the group here
-        if not pre_defalt_grp:
+        # Verify if user has added the group in default attribute
+        if pre_defalt_grp:
             if (
                 pre_defalt_grp in value["entry"]
                 or pre_defalt_grp in value["data"]
@@ -928,6 +929,11 @@ def set_default_group(template):
         entry_default = "/entry/@default"
         if entry_default == deflt_key:
             template[entry_default] = entry_data_rnd
+            continue
+        # Handle root level default
+        root_deflt = "/@default"
+        if deflt_key == root_deflt:
+            template[root_deflt] = entry_data_rnd
             continue
 
         if value["entry"]:

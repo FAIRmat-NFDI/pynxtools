@@ -463,30 +463,48 @@ def test_path_in_data_dict(nxdl_path, expected, template):
     assert helpers.path_in_data_dict(nxdl_path, tuple(template.keys())) == expected
 
 
-def test_set_default_group(template):
+@pytest.mark.parametrize(
+    "temp_dict",
+    [
+        {
+            "/ENTRY[entry1]/NXODD_name[nxodd_name]/float_value": 2.0,
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/float_value": 8.0,
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data1]/data1": [3, 5, 6],
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data2]/data2": [3, 5, 6],
+        }
+    ],
+)
+def test_set_default_group(temp_dict):
     """_summary_
 
     Parameters
     ----------
     template : Template
     """
+    template = Template(temp_dict)
     assert (
         "/@default" not in template
     ), "To test the root level /@default should be empty."
     assert (
-        "/ENTRY[entry]/@default" not in template
+        "/ENTRY[entry1]/@default" not in template
     ), "To test default attribute, entry attribute should be empty."
 
     set_default_group(template)
 
-    assert (
-        template["/@default"] == "entry",
-        "To test the root level /@default should be empty.",
-    )
-    assert (
-        template["/ENTRY[entry]/@default"] == "nxodd_name",
-        "To test default attribute, entry attribute should be empty.",
-    )
+    assert template["/@default"] in [
+        "data1",
+        "data2",
+    ], "To test the root level /@default should be empty."
+
+    assert template["/ENTRY[entry1]/@default"] in [
+        "nxodd_name",
+        "nxodd_name_2",
+    ], "To test default attribute, entry attribute should be empty."
+
+    assert template["/ENTRY[entry1]/NXODD_name[nxodd_name_2]/@default"] in [
+        "data1",
+        "data2",
+    ], "To test default attribute, entry attribute should be empty."
 
 
 def test_atom_type_extractor_and_hill_conversion():
