@@ -375,7 +375,9 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name",
                 "optional",
             ),
-            ("The required group, /ENTRY/NXODD_name, hasn't been supplied."),
+            (
+                "The required group, /ENTRY[entry]/NXODD_name[nxodd_name], hasn't been supplied."
+            ),
             id="all-required-fields-set-to-none",
         ),
         pytest.param(
@@ -468,12 +470,12 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "The required group, /ENTRY/required_group, hasn't been supplied.",
+            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
             id="missing-empty-yet-required-group",
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-            "The required group, /ENTRY/required_group2, hasn't been supplied.",
+            "The required group, /ENTRY[entry]/required_group2, hasn't been supplied.",
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
@@ -484,7 +486,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[entry]/required_group",
                 None,
             ),
-            "The required group, /ENTRY/required_group, hasn't been supplied.",
+            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
             id="allow-required-and-empty-group",
         ),
         pytest.param(
