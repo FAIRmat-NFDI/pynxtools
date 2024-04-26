@@ -490,7 +490,6 @@ def test_set_default_group(temp_dict):
     ), "To test default attribute, entry attribute should be empty."
 
     set_default_group(template)
-
     assert (
         template["/@default"] == "entry1"
     ), "To test the root level /@default should be empty."
@@ -504,6 +503,14 @@ def test_set_default_group(temp_dict):
         "data1",
         "data2",
     ], "To test default attribute, entry attribute should be empty."
+
+    assert (
+        "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data2]/data2/@default"
+        not in template
+    ), (
+        "Group can not have a default attribute refering any field,"
+        " if it is not supplied by reader."
+    )
 
 
 def test_atom_type_extractor_and_hill_conversion():
