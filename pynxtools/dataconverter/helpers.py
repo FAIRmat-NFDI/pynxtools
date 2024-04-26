@@ -722,8 +722,9 @@ def ensure_all_required_fields_exist_in_variadic_groups(
         return True
 
     for base_path in check_basepaths:
-        count = 0
+        all_fields_are_none = True
         for path in get_concept_variations(base_path):
+            count = 0
             for required_field in get_required_fields_from(base_path):
                 if (
                     f"{path}/{required_field}" not in data
@@ -737,7 +738,12 @@ def ensure_all_required_fields_exist_in_variadic_groups(
                             missing_field, ValidationProblem.MissingRequiredField, None
                         )
 
-        if count > 0:
+                if count == 0:
+                    # There are either no required fields, all required fields are set,
+                    # or the missing fields already have been reported.
+                    all_fields_are_none = False
+
+        if all_fields_are_none:
             # All entries in all variadic groups are None
             collector.insert_and_log(
                 base_path, ValidationProblem.MissingRequiredGroup, None
@@ -800,9 +806,14 @@ def try_undocumented(data, nxdl_root: ET.Element):
 
         if entry_name == "@units":
             field_path = path.rsplit("/", 1)[0]
-
-            # Remove units attribute if there is no associated field
-            if field_path not in data:
+            if field_path in data.get_documented() and path in data.undocumented:
+                field_requiredness = get_required_string(
+                    nexus.get_node_at_nxdl_path(
+                        nxdl_path=convert_data_converter_dict_to_nxdl_path(field_path),
+                        elem=nxdl_root,
+                    )
+                )
+                data[field_requiredness][path] = data.undocumented[path]
                 del data.undocumented[path]
             continue
 
