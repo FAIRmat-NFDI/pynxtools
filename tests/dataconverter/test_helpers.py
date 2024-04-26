@@ -26,7 +26,7 @@ import pytest
 from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
-from pynxtools.dataconverter.helpers import set_default_group
+from pynxtools.dataconverter.helpers import set_default_attr_in_group
 from pynxtools.dataconverter.template import Template
 
 
@@ -489,7 +489,7 @@ def test_set_default_group(temp_dict):
         "/ENTRY[entry1]/@default" not in template
     ), "To test default attribute, entry attribute should be empty."
 
-    set_default_group(template)
+    set_default_attr_in_group(template)
     assert (
         template["/@default"] == "entry1"
     ), "To test the root level /@default should be empty."

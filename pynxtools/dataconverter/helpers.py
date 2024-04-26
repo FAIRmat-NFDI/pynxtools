@@ -843,7 +843,7 @@ def nested_dict_to_slash_separated_path(
             flattened_dict[path] = val
 
 
-def set_default_group(template):
+def set_default_attr_in_group(template):
     """Set default attribute for each group of Nexus file.
     Each group will have a /@default attrubute refering the immediate child group.
     e.g. /@default = "entry1"
