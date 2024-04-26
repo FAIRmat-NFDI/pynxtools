@@ -491,10 +491,9 @@ def test_set_default_group(temp_dict):
 
     set_default_group(template)
 
-    assert template["/@default"] in [
-        "data1",
-        "data2",
-    ], "To test the root level /@default should be empty."
+    assert (
+        template["/@default"] == "entry1"
+    ), "To test the root level /@default should be empty."
 
     assert template["/ENTRY[entry1]/@default"] in [
         "nxodd_name",

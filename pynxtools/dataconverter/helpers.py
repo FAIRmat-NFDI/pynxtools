@@ -930,11 +930,6 @@ def set_default_group(template):
         if entry_default == deflt_key:
             template[entry_default] = entry_data_rnd
             continue
-        # Handle root level default
-        root_deflt = "/@default"
-        if deflt_key == root_deflt:
-            template[root_deflt] = entry_data_rnd
-            continue
 
         if value["entry"]:
             template[deflt_key] = value["entry"][0]
