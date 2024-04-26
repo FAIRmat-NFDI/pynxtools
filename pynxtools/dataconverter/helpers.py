@@ -55,6 +55,7 @@ class ValidationProblem(Enum):
     InvalidDatetime = 8
     IsNotPosInt = 9
     InvalidUnit = 10
+    InvalidTransformationType = 11
 
 
 class Collector:
@@ -118,6 +119,11 @@ class Collector:
             logger.warning(
                 f"Invalid unit in {path}. {value} "
                 f"is not in unit category {args[0] if args else '<unknown>'}"
+            )
+        elif log_type == ValidationProblem.InvalidUnit:
+            logger.warning(
+                f"Invalid transformation type in {path}: {value}. "
+                "Should be either not present or have the value 'translation' or 'rotation'."
             )
         self.data.add(path)
 
@@ -898,6 +904,15 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     else None
                 )
                 if not is_valid_unit(data[path], nxdl_unit, transformation_type):
+                    if transformation_type is not None and transformation_type not in (
+                        "rotation",
+                        "translation",
+                    ):
+                        collector.insert_and_log(
+                            path,
+                            ValidationProblem.InvalidTransformationType,
+                            transformation_type,
+                        )
                     collector.insert_and_log(
                         path, ValidationProblem.InvalidUnit, data[path], nxdl_unit
                     )
