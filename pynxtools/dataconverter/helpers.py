@@ -516,7 +516,9 @@ def is_valid_data_field(value, nxdl_type, path):
     return value
 
 
-def is_valid_unit(unit: str, nx_category: str) -> bool:
+def is_valid_unit(
+    unit: str, nx_category: str, transformation_type: Optional[str]
+) -> bool:
     """
     The provided unit belongs to the provided nexus unit category.
 
@@ -524,6 +526,10 @@ def is_valid_unit(unit: str, nx_category: str) -> bool:
         unit (str): The unit to check. Should be according to pint.
         nx_category (str): A nexus unit category, e.g. `NX_LENGTH`,
             or derived unit category, e.g., `NX_LENGTH ** 2`.
+        transformation_type (Optional[str]):
+            The transformation type of an NX_TRANSFORMATION.
+            This parameter is ignored if the `nx_category` is not `NX_TRANSFORMATION`.
+            If `transformation_type` is not present this should be set to None.
 
     Returns:
         bool: The unit belongs to the provided category
@@ -537,11 +543,14 @@ def is_valid_unit(unit: str, nx_category: str) -> bool:
         if nx_category == "[NX_TRANSFORMATION]":
             # NX_TRANSFORMATIONS is a pseudo unit
             # and can be either an angle, a length or unitless
-            return (
-                ureg(unit).check("[NX_ANGLE]")
-                or ureg(unit).check("[NX_LENGTH]")
-                or ureg(unit).check("[NX_UNITLESS]")
-            )
+            # depending on the transformation type.
+            if transformation_type is None:
+                return ureg(unit).check("[NX_UNITLESS]")
+            if transformation_type == "translation":
+                return ureg(unit).check("[NX_LENGTH]")
+            if transformation_type == "rotation":
+                return ureg(unit).check("[NX_ANGLE]")
+            return False
         return ureg(unit).check(f"{nx_category}")
     except UndefinedUnitError:
         return False
@@ -883,7 +892,12 @@ def validate_data_dict(template, data, nxdl_root: ET.Element):
                     elem=nxdl_root,
                 )
                 nxdl_unit = field.attrib.get("units", "")
-                if not is_valid_unit(data[path], nxdl_unit):
+                transformation_type = (
+                    field.attrib.get("transformation_type")
+                    if nxdl_unit == "[NX_TRANSFORMATION]"
+                    else None
+                )
+                if not is_valid_unit(data[path], nxdl_unit, transformation_type):
                     collector.insert_and_log(
                         path, ValidationProblem.InvalidUnit, data[path], nxdl_unit
                     )
