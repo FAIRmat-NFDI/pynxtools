@@ -509,7 +509,7 @@ def test_set_default_attr_in_group(temp_dict):
         not in template
     ), (
         "Group can not have a default attribute refering any field,"
-        " if it is not supplied by reader."
+        " unless it is not supplied by reader."
     )
 
 
