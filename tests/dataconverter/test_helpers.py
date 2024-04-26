@@ -26,6 +26,7 @@ import pytest
 from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.helpers import set_default_group
 from pynxtools.dataconverter.template import Template
 
 
@@ -460,6 +461,32 @@ def test_validate_data_dict(
 def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
     assert helpers.path_in_data_dict(nxdl_path, tuple(template.keys())) == expected
+
+
+def test_set_default_group(template):
+    """_summary_
+
+    Parameters
+    ----------
+    template : Template
+    """
+    assert (
+        "/@default" not in template
+    ), "To test the root level /@default should be empty."
+    assert (
+        "/ENTRY[entry]/@default" not in template
+    ), "To test default attribute, entry attribute should be empty."
+
+    set_default_group(template)
+
+    assert (
+        template["/@default"] == "entry",
+        "To test the root level /@default should be empty.",
+    )
+    assert (
+        template["/ENTRY[entry]/@default"] == "nxodd_name",
+        "To test default attribute, entry attribute should be empty.",
+    )
 
 
 def test_atom_type_extractor_and_hill_conversion():
