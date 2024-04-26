@@ -34,6 +34,7 @@ dependencies = [
     "mergedeep",
     "importlib-metadata",
     "lxml>=4.9.1",
+    "pint>=0.17",
 ]
 
 [project.urls]
