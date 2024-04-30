@@ -74,7 +74,7 @@ class ReaderTest:
 
         if isinstance(self.files_or_dir, (list, tuple)):
             example_files = self.files_or_dir
-        else:
+        elif os.path.isdir(self.files_or_dir):
             example_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
         self.ref_nexus_file = [file for file in example_files if file.endswith(".nxs")][
             0

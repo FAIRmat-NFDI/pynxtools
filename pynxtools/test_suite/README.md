@@ -15,14 +15,14 @@ pynxtools-FOO
  |
  |---pynxtools-FOO
  |     |---<pynxtools-FOO package stuffs>
- |     |---examples
+ |     |---test_data
  |     |     |
- |     |     |---example_1
+ |     |     |---test_data_dir_1
  |     |     |     |
  |     |     |     |---input_file_1.ext
  |     |     |     |---input_file_2.ext
  |     |     |     |---out_file.nxs
- |     |     |---example_2
+ |     |     |---test_data_dir_2
  |     |     |     |
  |     |     |     |---input_file_1.ext
  |     |     |     |---input_file_2.ext
@@ -35,7 +35,7 @@ pynxtools-FOO
        |---test_plugin.py
 ```
 **TODO: Update the docs after final decision. Add explanation for MANIFEST.in file, Mention to put only light weight data into the examples dir to add a check point if plugin brocken.**
-This hierarchical structure allows `pynxtools` to set up the integration test for plugin from its own test script. The plugin can add multiple examples for multiple version and type of the raw data files from different experiment techniques. Plugin developers can wish to put other raw files related to the plugin owned test as they want (though usually they go to pynxtools-FOO/test/data/ dir). The `examples` folder must have one or multiple sub-directory where each directory represents a single example of input files (e.g. eln.yaml, raw_file.ext) to launch the plugin reader and a output file of `.nxs` extension genrated by reader from the given banch of input files. Beside the input files, a `test_config.json` (discussed below) file must be defined with the information of `nxdl` (e.g. `NXsts`, `NXmpes`), `reader` (e.g. `STMReader`, `MPESReader`), `plugin_name` (e.g. `pynxtools-stm`, `pynxtools-mpes`) and `example_dir` (e.g. `*`, `*_1`, `example_1`). Therfore, the `test_config.json` gives the content for reader where the test data and other infos. Note that to define the value of the `exmaple_dir` unix style pathname pattern expansion (also used in [glob](https://docs.python.org/3/library/glob.html) lib) can be used, still we recomand to use simply the name of the example directory. A few examples forn `test_condig.json` have been added bellow.
+This hierarchical structure allows `pynxtools` to set up the integration test for plugin from its own test script. The plugin can add multiple examples for multiple version and type of the raw data files from different experiment techniques. Plugin developers can wish to put other raw files related to the plugin owned test as they want (though usually they go to pynxtools-FOO/test/data/ dir). The `examples` folder must have one or multiple sub-directory where each directory represents a single example of input files (e.g. eln.yaml, raw_file.ext) to launch the plugin reader and a output file of `.nxs` extension genrated by reader from the given banch of input files. Beside the input files, a `test_config.json` (discussed below) file must be defined with the information of `nxdl` (e.g. `NXsts`, `NXmpes`), `reader` (e.g. `STMReader`, `MPESReader`), `plugin_name` (e.g. `pynxtools-stm`, `pynxtools-mpes`) and `test_data` (e.g. `*`, `*_1`, `test_data_dir_1`). Therfore, the `test_config.json` gives the content for reader where the test data and other infos. Note that to define the value of the `exmaple_dir` unix style pathname pattern expansion (also used in [glob](https://docs.python.org/3/library/glob.html) lib) can be used, still we recomand to use simply the name of the example directory. A few examples forn `test_condig.json` have been added bellow.
 
 The `test_config.json` can be defined to run on all available example.
 
@@ -46,7 +46,7 @@ The `test_config.json` can be defined to run on all available example.
         {"nxdl": "NXfoo",
         "reader": "FOOReader",
         "plugin_name": "pynxtools_FOO",
-        "example_dir": "*"}
+        "test_data": "*"}
     ]
 }
 ```
@@ -58,11 +58,11 @@ The `test_config.json` file can be expanded as
         {"nxdl": "NXfoo",
         "reader": "FOOReader",
         "plugin_name": "pynxtools_FOO",
-        "example_dir": "example_1"},
+        "test_data": "test_data_dir_1"},
         {"nxdl": "NXfoo",
         "reader": "FOOReader",
         "plugin_name": "pynxtools_FOO",
-        "example_dir": "example_2"}
+        "test_data": "test_data_dir_2"}
     ]
 }
 ```
@@ -89,8 +89,8 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 @pytest.mark.parametrize(
     "nxdl,reader,files_or_dir",
     [
-        ("NXfoo", FOOReader, f"{module_dir}/../examples/example_1"),
-        ("NXfoo", FOOReader, f"{module_dir}/../examples/example_2"),
+        ("NXfoo", FOOReader, f"{module_dir}/../examples/test_data_dir_1"),
+        ("NXfoo", FOOReader, f"{module_dir}/../examples/test_data_dir_2"),
         ("NXfoo", FOOReader, f"{module_dir}/data/example_3"),
     ],
 )

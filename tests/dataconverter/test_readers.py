@@ -126,6 +126,21 @@ def test_has_correct_read_func(reader):
 
 
 def get_reader_from_plugin(package_name, rader_name):
+    """Load reader class from the reader module in the plugin package.
+
+    Parameters
+    ----------
+    package_name : str
+        Name of the packag e.g. pynxtools-stm, pynxtools-mpes.
+    rader_name : str
+        Name of the reader class e.g. STMReader, MPESReader.
+
+    Returns
+    -------
+    class
+        Reaer class from the reader module.
+    """
+
     reader_full_path = [
         file
         for file in glob.glob(f"{str(package_name)}/**", recursive=True)
@@ -140,7 +155,15 @@ def get_reader_from_plugin(package_name, rader_name):
 
 
 def parametrize_data_for_single_plugin(plugin_name):
-    """ """
+    """Parametrize the test data for a single plugin.
+    Each plugin can have multiple test groups of input data and
+    yield each group of data for indivisual plugin.
+
+    Parameters:
+    -----------
+    plugin_name : str
+        Name of the plugin e.g. pynxtools-stm, pynxtools-mpes.
+    """
 
     nxdl = ""
     reader = ""
@@ -148,7 +171,8 @@ def parametrize_data_for_single_plugin(plugin_name):
     plug_pkg = import_module(plugin_name)
 
     pkg_dir = Path(plug_pkg.__file__).parent
-
+    # TODO: Refactor the path of example because it would go inside the package.
+    # TODO: Update the test_config.json file to have the correct path.
     example_dir = pkg_dir / "examples"
     assert os.path.isdir(example_dir), f"Example directory not found: {example_dir}"
     launch_file = pkg_dir / "examples" / "test_config.json"
@@ -166,7 +190,7 @@ def parametrize_data_for_single_plugin(plugin_name):
         reader = launch["reader"]
         reader = get_reader_from_plugin(pkg_dir, reader)
         # load reader
-        plugin_name_json = launch["plugin_name"]
+        plugin_name_in_json = launch["plugin_name"]
         lnch_example_dir = launch["example_dir"]
         example_dirs = glob.glob(str(example_dir / lnch_example_dir))
         for single_dir in example_dirs:
@@ -174,24 +198,24 @@ def parametrize_data_for_single_plugin(plugin_name):
                 continue
 
             assert (
-                plugin_name_json == plugin_name
+                plugin_name_in_json == plugin_name
             ), f"Plugin name mismatch: '{plugin_name}' from pynxtools plugin entry_points and '{plugin_name_json}' from test_config.json"
             yield nxdl, reader, plugin_name, single_dir
 
 
 def get_plugin_list():
-    """ """
+    """Get the list of plugins from the entry points."""
     plugin_list = list(
         map(
             lambda plg: plg.value.split(".")[0].replace("-", "_"),
             entry_points(group="pynxtools.reader"),
         )
     )
-    return list(set(plugin_list))
+    return plugin_list
 
 
 def get_parametrized_data():
-    """ """
+    """Yield the parametrized data for all the plugins."""
     plugin_list = get_plugin_list()
 
     for plugin_name in plugin_list:
@@ -203,7 +227,27 @@ def get_parametrized_data():
             continue
 
 
+def test_duplication_of_plugin_names():
+    """Test if there are no duplicate plugin names in the entry points."""
+    plugin_list = get_plugin_list()
+    assert len(plugin_list) == len(
+        set(plugin_list)
+    ), f"Duplicate plugins found: {plugin_list}"
+
+
 def test_plugin_integration_with_pynx(tmp_path, caplog):
+    """
+    Test the integration of the plugin with pynxtools.
+    This test will check if the plugin can read the example data
+    and convert it to nexus file properly.
+
+    Parameters:
+    -----------
+    tmp_path : pytest fixture
+        Temporary path for the test.
+    caplog : pytest fixture
+        Capture the log messages.
+    """
     total_plugins = len(get_plugin_list())
     tested_plugins = []
     # test plugin reader
