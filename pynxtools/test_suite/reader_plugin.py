@@ -1,8 +1,11 @@
 """Generic test for reader plugins."""
 
+import importlib.metadata as importlib_metadata
 import logging
 import os
 from glob import glob
+
+import toml
 
 from pynxtools.dataconverter.convert import get_nxdl_root_and_path
 from pynxtools.dataconverter.helpers import (
@@ -125,3 +128,85 @@ class ReaderTest:
                     f"Log files are different at line {ind}"
                     f" generated: {gen_l} \n referenced : {ref_l}"
                 )
+
+
+class NeXusParserInNomadTest:
+    """Generic test for reader plugins."""
+
+    def __init__(self, nx_f_path, caplog) -> None:
+        """Initialize the test object.
+        parameters
+        ----------
+        nx_f_path : str
+            Full path string to the NeXus file that is to be tested.
+        caplog : _pytest.logging.LogCaptureFixture
+        """
+        try:
+            from nomad.datamodel import EntryArchive
+            from nomad.parsing.nexus import NexusParser
+        except ImportError:
+            raise ImportError("Nomad-lab is not installed in python env.")
+
+        self.nx_f_path = nx_f_path
+        self.caplog = caplog
+
+    def verfy_nxs_file_with_nexus_parser(self):
+        """Test the NeXus file with nexus parser."""
+        archive = EntryArchive()
+        example_data = "tests/data/parsers/nexus/SiO2onSi.ellips.nxs"
+        NexusParser().parse(example_data, archive, self.caplog)
+        archive.m_to_dict(with_out_meta=True)
+
+
+def get_package_version(package_name):
+    """Read the version from installed packages."""
+    try:
+        version = importlib_metadata.version(package_name)
+        return version
+    except importlib_metadata.PackageNotFoundError:
+        return None
+
+
+def get_classifier_catagory_versions(toml_file, classifier_key):
+    """Get the classifier category for the test.
+
+    Parameters
+    ----------
+    toml_file : str
+        Path to the toml file.
+    classifier_key : str
+        Classifier key to get the version (e.g. Programming Language :: Python,
+        License :: OSI Approved).
+    """
+    version_ls = []
+    with open(toml_file, "r", encoding="utf-8") as f:
+        data = toml.load(f)
+    classfier_ls = data["project"]["classifiers"]
+    for classifier in classfier_ls:
+        if classifier.startswith(classifier_key):
+            version = classifier.split(classifier_key.strip() + " ::")[-1]
+            version_ls.append(version.strip())
+    return version_ls
+
+
+def verify_package_version(toml_file, package_name, classifier_key):
+    """Test to verify the package version."""
+    pkg_version = get_package_version(package_name)
+    versions_tml = get_classifier_catagory_versions(toml_file, classifier_key)
+    has_right_version = False
+    for version in versions_tml:
+        if pkg_version.startswith(version):
+            has_right_version = True
+    assert (
+        has_right_version
+    ), f"{package_name} version {pkg_version} not found in {versions_tml}"
+
+
+def test_verfy_pynxtools_version(toml_file, pynx_key="Pynxtools ::"):
+    """Test to verify the pynxtools version."""
+    verify_package_version(toml_file, "pynxtools", pynx_key)
+
+
+def test_verfy_nomad_version(toml_file, nomad_key="Nomad-Lab ::"):
+    """Test to verify the nomad version."""
+    verify_package_version(toml_file, "nomad-lab", nomad_key)
