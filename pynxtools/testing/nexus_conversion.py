@@ -191,7 +191,7 @@ def get_package_version(package_name):
         return None
 
 
-def get_classifier_catagory_versions(toml_file, classifier_key):
+def get_classifier_category_versions(toml_file, classifier_key):
     """Get the classifier category for the test.
 
     Parameters
@@ -220,7 +220,7 @@ def verify_package_version(toml_file, package_name, classifier_key):
     in the classifier category of toml file.
     """
     pkg_version = get_package_version(package_name)
-    versions_tml = get_classifier_catagory_versions(toml_file, classifier_key)
+    versions_tml = get_classifier_category_versions(toml_file, classifier_key)
     has_right_version = False
     for version in versions_tml:
         if pkg_version.startswith(version):
