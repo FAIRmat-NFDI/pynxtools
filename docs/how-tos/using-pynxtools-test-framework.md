@@ -1,22 +1,15 @@
 # Generalized Test Functionality for `pynxtools` plugins
 The `pynxtools` sub-package `testing` is to be utilized to write automated tests for pynxtools reader plugins without requiring in-depth knowledge of the pynxtools internal architecture. The tool supports generalised a general test for all reader plugins, irrespective of the technical details of the raw data files and the internal design of the plugin (note: it is assumed that the plugin was built from the [plugin template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) or has the same structure internally).
 ## Why it is needed
-<<<<<<< HEAD
 To test integration of a plugin with the `pynxtools` core system, we need to
 1. Test the plugin's integration with `pynxtools` from the plugin's CI/CD.
 2. Test in the pynxtools's CI/CD if the plugin has been integrated with `pynxtools` properly.
 ## How to write an integration test for a reader plugin with `pynxtools.testing`
 It is very simple to write a test to verify the plugin integration with `pynxtools` within the plugin's tests directory. The developer can place the test where they want, but they need to use the provided test interface from `pynxtools`. An example test for `pynxtools-FOO` (a demo plugin) plugin is given below:
-=======
-To test plugin integration with the `pynxtools` core system we need to
-1. Test the plugin's integration with `pynxtools` from the plugin's ci/cd.
-2. Test from pynxtools as pynxtools's ci/cd if plugin has been integrated with `pynxtools` properly.
 
 ## How to write integration-test for the reader plugin with `pynxtools.testing`
 
 It is very simple to write a test to verify the plugin integration with `pynxtools` from plugin tests directory. The developer can write the test where they want, only they need to use the provided test interface from `pynxtools`. An example test for `pynxtools-FOO` (a demo plugin name) plugin as follows:
->>>>>>> 92ab8fd (removinhg version test from test framework.)
-
 ```python
 # test_plugin.py
 
