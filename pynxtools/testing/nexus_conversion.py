@@ -235,7 +235,7 @@ def test_verfy_pynxtools_version(toml_file, pynx_key="Pynxtools"):
     verify_package_version(toml_file, "pynxtools", pynx_key)
 
 
-# TODO: Remove that
+# TODO: Remove this part of the code as nomad contains `pnxtools` as a dependency.
 # def test_verfy_nomad_version(toml_file, nomad_key="Nomad-Lab"):
 #     """Test to verify the nomad version."""
 #     verify_package_version(toml_file, "nomad-lab", nomad_key)
