@@ -130,36 +130,40 @@ class ReaderTest:
                 )
 
 
-class NeXusParserInNomadTest:
-    """Generic test for reader plugins."""
+# TODO: Remove this part of the code as nomad contains `pnxtools` as a dependency.
+#       The issue if the nomad-lab is installed which bring the specific version of the
+#       `pynxtools` package and therefore breaks the python environment.
 
-    def __init__(self, nx_f_path, caplog) -> None:
-        """Initialize the test object.
-        parameters
-        ----------
-        nx_f_path : str
-            Full path string to the NeXus file that is to be tested.
-        caplog : _pytest.logging.LogCaptureFixture
-        """
-        try:
-            from nomad.datamodel import EntryArchive
-            from nomad.parsing.nexus import NexusParser
-        except ImportError:
-            raise ImportError("Nomad-lab is not installed in python env.")
+# class NeXusParserInNomadTest:
+#     """Generic test for reader plugins."""
 
-        self.nx_f_path = nx_f_path
-        self.caplog = caplog
+#     def __init__(self, nx_f_path, caplog) -> None:
+#         """Initialize the test object.
+#         parameters
+#         ----------
+#         nx_f_path : str
+#             Full path string to the NeXus file that is to be tested.
+#         caplog : _pytest.logging.LogCaptureFixture
+#         """
+#         try:
+#             from nomad.datamodel import EntryArchive
+#             from nomad.parsing.nexus import NexusParser
+#         except ImportError:
+#             raise ImportError("Nomad-lab is not installed in python env.")
 
-    def verfy_nxs_file_with_nexus_parser(self):
-        """Test the NeXus file with nexus parser."""
-        archive = EntryArchive()
-        example_data = "tests/data/parsers/nexus/SiO2onSi.ellips.nxs"
-        NexusParser().parse(example_data, archive, self.caplog)
-        archive.m_to_dict(with_out_meta=True)
+#         self.nx_f_path = nx_f_path
+#         self.caplog = caplog
+
+#     def verfy_nxs_file_with_nexus_parser(self):
+#         """Test the NeXus file with nexus parser."""
+#         archive = EntryArchive()
+#         example_data = "tests/data/parsers/nexus/SiO2onSi.ellips.nxs"
+#         NexusParser().parse(example_data, archive, self.caplog)
+#         archive.m_to_dict(with_out_meta=True)
 
 
 def get_package_version(package_name):
-    """Read the version from installed packages."""
+    """Return version from the installed package."""
     try:
         version = importlib_metadata.version(package_name)
         return version
@@ -183,14 +187,18 @@ def get_classifier_catagory_versions(toml_file, classifier_key):
         data = toml.load(f)
     classfier_ls = data["project"]["classifiers"]
     for classifier in classfier_ls:
+        classifier_key = classifier_key.strip()
         if classifier.startswith(classifier_key):
-            version = classifier.split(classifier_key.strip() + " ::")[-1]
+            version = classifier.split(" ::")[-1]
             version_ls.append(version.strip())
     return version_ls
 
 
 def verify_package_version(toml_file, package_name, classifier_key):
-    """Test to verify the package version."""
+    """Verify the package version.
+    Check if the package version from the installed package is
+    in the classifier category of toml file.
+    """
     pkg_version = get_package_version(package_name)
     versions_tml = get_classifier_catagory_versions(toml_file, classifier_key)
     has_right_version = False
@@ -202,11 +210,11 @@ def verify_package_version(toml_file, package_name, classifier_key):
     ), f"{package_name} version {pkg_version} not found in {versions_tml}"
 
 
-def test_verfy_pynxtools_version(toml_file, pynx_key="Pynxtools ::"):
+def test_verfy_pynxtools_version(toml_file, pynx_key="Pynxtools"):
     """Test to verify the pynxtools version."""
     verify_package_version(toml_file, "pynxtools", pynx_key)
 
 
-def test_verfy_nomad_version(toml_file, nomad_key="Nomad-Lab ::"):
+def test_verfy_nomad_version(toml_file, nomad_key="Nomad-Lab"):
     """Test to verify the nomad version."""
     verify_package_version(toml_file, "nomad-lab", nomad_key)
