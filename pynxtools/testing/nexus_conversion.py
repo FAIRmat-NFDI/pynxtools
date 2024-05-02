@@ -1,14 +1,9 @@
 """Generic test for reader plugins."""
 
-<<<<<<< HEAD
-=======
-import importlib.metadata as importlib_metadata
->>>>>>> 4987f4b (rename test subpackage and module.)
 import logging
 import os
 from glob import glob
 
-<<<<<<< HEAD
 from pynxtools.dataconverter.helpers import (
     get_nxdl_root_and_path,
     generate_template_from_nxdl,
@@ -16,16 +11,6 @@ from pynxtools.dataconverter.helpers import (
 )
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
-=======
-import toml
-
-from pynxtools.dataconverter.convert import get_nxdl_root_and_path
-from pynxtools.dataconverter.helpers import (
-    generate_template_from_nxdl,
-    validate_data_dict,
-)
-from pynxtools.dataconverter.template import Template
->>>>>>> 4987f4b (rename test subpackage and module.)
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
 
@@ -78,11 +63,7 @@ class ReaderTest:
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
 
-<<<<<<< HEAD
     def convert_to_nexus(self, ignore_undocumented: bool = False):
-=======
-    def convert_to_nexus(self):
->>>>>>> 4987f4b (rename test subpackage and module.)
         """
         Test the example data for the reader plugin.
         """
