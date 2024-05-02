@@ -1,15 +1,30 @@
 """Generic test for reader plugins."""
 
+<<<<<<< HEAD
+=======
+import importlib.metadata as importlib_metadata
+>>>>>>> 3c7e217 (rename test subpackage and module.)
 import logging
 import os
 from glob import glob
 
+<<<<<<< HEAD
 from pynxtools.dataconverter.helpers import (
     generate_template_from_nxdl,
     get_nxdl_root_and_path,
 )
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
+=======
+import toml
+
+from pynxtools.dataconverter.convert import get_nxdl_root_and_path
+from pynxtools.dataconverter.helpers import (
+    generate_template_from_nxdl,
+    validate_data_dict,
+)
+from pynxtools.dataconverter.template import Template
+>>>>>>> 3c7e217 (rename test subpackage and module.)
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
 
@@ -62,7 +77,11 @@ class ReaderTest:
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
 
+<<<<<<< HEAD
     def convert_to_nexus(self, ignore_undocumented=False):
+=======
+    def convert_to_nexus(self):
+>>>>>>> 3c7e217 (rename test subpackage and module.)
         """
         Test the example data for the reader plugin.
         """
@@ -127,3 +146,97 @@ class ReaderTest:
                     f"Log files are different at line {ind}"
                     f" generated: {gen_l} \n referenced : {ref_l}"
                 )
+<<<<<<< HEAD
+=======
+
+
+# TODO: Remove this part of the code as nomad contains `pnxtools` as a dependency.
+#       The issue if the nomad-lab is installed which bring the specific version of the
+#       `pynxtools` package and therefore breaks the python environment.
+
+# class NeXusParserInNomadTest:
+#     """Generic test for reader plugins."""
+
+#     def __init__(self, nx_f_path, caplog) -> None:
+#         """Initialize the test object.
+#         parameters
+#         ----------
+#         nx_f_path : str
+#             Full path string to the NeXus file that is to be tested.
+#         caplog : _pytest.logging.LogCaptureFixture
+#         """
+#         try:
+#             from nomad.datamodel import EntryArchive
+#             from nomad.parsing.nexus import NexusParser
+#         except ImportError:
+#             raise ImportError("Nomad-lab is not installed in python env.")
+
+#         self.nx_f_path = nx_f_path
+#         self.caplog = caplog
+
+#     def verfy_nxs_file_with_nexus_parser(self):
+#         """Test the NeXus file with nexus parser."""
+#         archive = EntryArchive()
+#         example_data = "tests/data/parsers/nexus/SiO2onSi.ellips.nxs"
+#         NexusParser().parse(example_data, archive, self.caplog)
+#         archive.m_to_dict(with_out_meta=True)
+
+
+def get_package_version(package_name):
+    """Return version from the installed package."""
+    try:
+        version = importlib_metadata.version(package_name)
+        return version
+    except importlib_metadata.PackageNotFoundError:
+        return None
+
+
+def get_classifier_catagory_versions(toml_file, classifier_key):
+    """Get the classifier category for the test.
+
+    Parameters
+    ----------
+    toml_file : str
+        Path to the toml file.
+    classifier_key : str
+        Classifier key to get the version (e.g. Programming Language :: Python,
+        License :: OSI Approved).
+    """
+    version_ls = []
+    with open(toml_file, "r", encoding="utf-8") as f:
+        data = toml.load(f)
+    classfier_ls = data["project"]["classifiers"]
+    for classifier in classfier_ls:
+        classifier_key = classifier_key.strip()
+        if classifier.startswith(classifier_key):
+            version = classifier.split(" ::")[-1]
+            version_ls.append(version.strip())
+    return version_ls
+
+
+def verify_package_version(toml_file, package_name, classifier_key):
+    """Verify the package version.
+    Check if the package version from the installed package is
+    in the classifier category of toml file.
+    """
+    pkg_version = get_package_version(package_name)
+    versions_tml = get_classifier_catagory_versions(toml_file, classifier_key)
+    has_right_version = False
+    for version in versions_tml:
+        if pkg_version.startswith(version):
+            has_right_version = True
+    assert (
+        has_right_version
+    ), f"{package_name} version {pkg_version} not found in {versions_tml}"
+
+
+def test_verfy_pynxtools_version(toml_file, pynx_key="Pynxtools"):
+    """Test to verify the pynxtools version."""
+    verify_package_version(toml_file, "pynxtools", pynx_key)
+
+
+# TODO: Remove that
+# def test_verfy_nomad_version(toml_file, nomad_key="Nomad-Lab"):
+#     """Test to verify the nomad version."""
+#     verify_package_version(toml_file, "nomad-lab", nomad_key)
+>>>>>>> 3c7e217 (rename test subpackage and module.)
