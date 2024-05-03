@@ -39,38 +39,70 @@ class NexusGroup(NexusNode):
         )
 
 
+NexusType = Literal[
+    "ISO8601",
+    "NX_BINARY",
+    "NX_BOOLEAN",
+    "NX_CCOMPLEX",
+    "NX_CHAR",
+    "NX_CHAR_OR_NUMBER",
+    "NX_COMPLEX",
+    "NX_DATE_TIME",
+    "NX_FLOAT",
+    "NX_INT",
+    "NX_NUMBER",
+    "NX_PCOMPLEX",
+    "NX_POSINT",
+    "NX_QUATERNION",
+    "NX_UINT",
+]
+
+NexusUnitCategory = Literal[
+    "NX_ANGLE",
+    "NX_ANY",
+    "NX_AREA",
+    "NX_CHARGE",
+    "NX_COUNT",
+    "NX_CROSS_SECTION",
+    "NX_CURRENT",
+    "NX_DIMENSIONLESS",
+    "NX_EMITTANCE",
+    "NX_ENERGY",
+    "NX_FLUX",
+    "NX_FREQUENCY",
+    "NX_LENGTH",
+    "NX_MASS",
+    "NX_MASS_DENSITY",
+    "NX_MOLECULAR_WEIGHT",
+    "NX_PERIOD",
+    "NX_PER_AREA",
+    "NX_PER_LENGTH",
+    "NX_POWER",
+    "NX_PRESSURE",
+    "NX_PULSES",
+    "NX_SCATTERING_LENGTH_DENSITY",
+    "NX_SOLID_ANGLE",
+    "NX_TEMPERATURE",
+    "NX_TIME",
+    "NX_TIME_OF_FLIGHT",
+    "NX_TRANSFORMATION",
+    "NX_UNITLESS",
+    "NX_VOLTAGE",
+    "NX_VOLUME",
+    "NX_WAVELENGTH",
+    "NX_WAVENUMBER",
+]
+
+
 class NexusEntity(NexusNode):
     type: Literal["field", "attribute"]
-    # TODO: Unit can also be a literal
-    unit: Optional[str] = None
-    # TODO: Add complete list of all supported nexus types
-    # We can also restrict this to the nexus types that are supported by pynx
-    dtype: Optional[
-        Literal[
-            "NX_CHAR",
-            "NX_BINARY",
-            "NX_BOOLEAN",
-            "NX_CHAR",
-            "NX_DATE_TIME",
-            "ISO8601",
-            "NX_FLOAT",
-            "NX_INT",
-            "NX_UINT",
-            "NX_NUMBER",
-            "NX_POSINT",
-            "NX_COMPLEX",
-        ]
-    ] = None
+    unit: Optional[NexusUnitCategory] = None
+    dtype: Optional[NexusType] = None
 
     def __repr__(self) -> str:
         if self.type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
-
-
-def reset_check(graph: nx.DiGraph):
-    for node in graph.nodes:
-        node["is_valid"] = False
 
 
 if __name__ == "__main__":
