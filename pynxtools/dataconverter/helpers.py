@@ -23,7 +23,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, List, Literal, Optional, Set, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -31,6 +31,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.nexus_tree import NexusEntity, NexusGroup, NexusNode
 from pynxtools.dataconverter.template import Template
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
 from pynxtools.nexus import nexus
@@ -214,6 +215,58 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
             )
             template[optionality][f"{path}/{child}"] = None
     return template
+
+
+def generate_tree_from_nxdl(
+    root: ET._Element,
+    tree,
+    nxdl_root: Optional[ET._Element] = None,
+    nxdl_name: Optional[str] = None,
+):
+    if nxdl_root is None:
+        nxdl_name = root.attrib["name"]
+        nxdl_root = root
+        root = get_first_group(root)
+
+    tag = remove_namespace_from_tag(root.tag)
+
+    if tag == "doc":
+        return
+
+    optionality: Literal["required", "recommended", "optional"] = "required"
+    if root.attrib.get("recommended"):
+        optionality = "recommended"
+    elif root.attrib.get("optional"):
+        optionality = "optional"
+
+    is_variadic = contains_uppercase(root.attrib["name"])
+
+    if tag in ("field", "attribute"):
+        NexusEntity(
+            parent=root,
+            name=root.attrib["name"],
+            type=tag,
+            optionality=optionality,
+            variadic=is_variadic,
+            unit=root.attrib.get("units"),
+            dtype=root.attrib["type"],
+        )
+    elif tag == "group":
+        NexusGroup(
+            parent=root,
+            type=tag,
+            name=root.attrib["name"],
+            nx_class=root.attrib["type"],
+            optionality=optionality,
+            variadic=is_variadic,
+            occurrence_limits=(
+                root.attrib.get("minOccurs"),
+                root.attrib.get("maxOccurs"),
+            ),
+        )
+
+    for child in root:
+        generate_template_from_nxdl(child, tree, nxdl_root, nxdl_name)
 
 
 def generate_template_from_nxdl(

@@ -33,7 +33,9 @@ dependencies = [
     "ase>=3.19.0",
     "mergedeep",
     "importlib-metadata",
-    "lxml>=4.9.1", 
+    "lxml>=4.9.1",
+    "anytree",
+    "pydantic",
 ]
 
 [project.urls]
