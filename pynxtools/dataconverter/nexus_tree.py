@@ -1,8 +1,8 @@
-from typing import Literal, Optional, Tuple
+from typing import Annotated, Literal, Optional, Tuple
 
 from anytree import RenderTree, Resolver
 from anytree.node.nodemixin import NodeMixin
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ReadOnlyError(RuntimeError):
@@ -31,7 +31,10 @@ class NexusNode(BaseModel, NodeMixin):
 
 class NexusGroup(NexusNode):
     nx_class: str
-    occurrence_limits: Tuple[Optional[int], Optional[int]] = (None, None)
+    occurrence_limits: Tuple[
+        Optional[Annotated[int, Field(strict=True, ge=0)]],
+        Optional[Annotated[int, Field(strict=True, ge=0)]],
+    ] = (None, None)
 
     def __repr__(self) -> str:
         return (
