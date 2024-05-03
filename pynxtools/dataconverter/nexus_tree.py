@@ -1,6 +1,5 @@
 from typing import Annotated, Literal, Optional, Tuple
 
-from anytree import RenderTree, Resolver
 from anytree.node.nodemixin import NodeMixin
 from pydantic import BaseModel, Field
 
@@ -106,61 +105,3 @@ class NexusEntity(NexusNode):
         if self.type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
-
-
-if __name__ == "__main__":
-    root = NexusGroup(
-        name="/",
-        nx_class="NXroot",
-        type="group",
-        optionality="required",
-        variadic=False,
-        parent=None,
-    )
-    NexusEntity(
-        name="default",
-        type="attribute",
-        optionality="optional",
-        variadic=False,
-        parent=root,
-    )
-    entry = NexusGroup(
-        name="ENTRY",
-        nx_class="NXentry",
-        type="group",
-        optionality="optional",
-        variadic=True,
-        parent=root,
-    )
-    instrument = NexusGroup(
-        name="INSTRUMENT",
-        nx_class="NXinstrument",
-        type="group",
-        optionality="optional",
-        variadic=True,
-        parent=entry,
-    )
-    some_field = NexusEntity(
-        name="my_setting",
-        type="field",
-        optionality="required",
-        variadic=False,
-        parent=instrument,
-    )
-
-    print(RenderTree(root))
-    resolver = Resolver("name")
-    print(resolver.get(root, "ENTRY/INSTRUMENT/my_setting"))
-
-
-"""
-Double graph structure
-
-One graph holds the concepts for the nexus appdef structure.
-An entry is directly relatable to a node (split the path).
-This can be used to recursively validate the nexus structure.
-
-Two step process:
-1. Run to concept graph and validate if all directly required fields are present.
-2. Go through the entries, map them to the concept graph and validate them recursively.
-"""

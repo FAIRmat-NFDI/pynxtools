@@ -217,56 +217,69 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
     return template
 
 
-def generate_tree_from_nxdl(
-    root: ET._Element,
-    tree,
-    nxdl_root: Optional[ET._Element] = None,
-    nxdl_name: Optional[str] = None,
-):
-    if nxdl_root is None:
-        nxdl_name = root.attrib["name"]
-        nxdl_root = root
-        root = get_first_group(root)
+def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
+    def add_children_to(parent: NexusNode, xml_elem: ET._Element) -> None:
+        tag = remove_namespace_from_tag(xml_elem.tag)
 
-    tag = remove_namespace_from_tag(root.tag)
+        if tag == "doc":
+            return
 
-    if tag == "doc":
-        return
+        optionality: Literal["required", "recommended", "optional"] = "required"
+        if xml_elem.attrib.get("recommended"):
+            optionality = "recommended"
+        elif xml_elem.attrib.get("optional"):
+            optionality = "optional"
 
-    optionality: Literal["required", "recommended", "optional"] = "required"
-    if root.attrib.get("recommended"):
-        optionality = "recommended"
-    elif root.attrib.get("optional"):
-        optionality = "optional"
+        if tag in ("field", "attribute"):
+            is_variadic = contains_uppercase(xml_elem.attrib["name"])
+            current_elem = NexusEntity(
+                parent=parent,
+                name=xml_elem.attrib["name"],
+                type=tag,
+                optionality=optionality,
+                variadic=is_variadic,
+                unit=xml_elem.attrib.get("units"),
+                dtype=xml_elem.attrib.get("type", "NX_CHAR"),
+            )
+        elif tag == "group":
+            name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
+            is_variadic = contains_uppercase(name)
+            current_elem = NexusGroup(
+                parent=parent,
+                type=tag,
+                name=name,
+                nx_class=xml_elem.attrib["type"],
+                optionality=optionality,
+                variadic=is_variadic,
+                occurrence_limits=(
+                    xml_elem.attrib.get("minOccurs"),
+                    xml_elem.attrib.get("maxOccurs"),
+                ),
+            )
+        elif tag in ("enumeration", "dimensions"):
+            # TODO: Attach enum values and dims to parent
+            return
+        else:
+            # We don't know the tag, skip processing children of it
+            # TODO: Add logging or raise an error
+            return
 
-    is_variadic = contains_uppercase(root.attrib["name"])
+        for child in xml_elem:
+            add_children_to(current_elem, child)
 
-    if tag in ("field", "attribute"):
-        NexusEntity(
-            parent=root,
-            name=root.attrib["name"],
-            type=tag,
-            optionality=optionality,
-            variadic=is_variadic,
-            unit=root.attrib.get("units"),
-            dtype=root.attrib["type"],
-        )
-    elif tag == "group":
-        NexusGroup(
-            parent=root,
-            type=tag,
-            name=root.attrib["name"],
-            nx_class=root.attrib["type"],
-            optionality=optionality,
-            variadic=is_variadic,
-            occurrence_limits=(
-                root.attrib.get("minOccurs"),
-                root.attrib.get("maxOccurs"),
-            ),
-        )
+    entry = get_first_group(root)
 
-    for child in root:
-        generate_template_from_nxdl(child, tree, nxdl_root, nxdl_name)
+    tree = NexusGroup(
+        name=root.attrib["name"],
+        nx_class="NXroot",
+        type="group",
+        optionality="required",
+        variadic=False,
+        parent=None,
+    )
+    add_children_to(tree, entry)
+
+    return tree
 
 
 def generate_template_from_nxdl(
