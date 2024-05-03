@@ -7,7 +7,7 @@ technique specific plugins.
 
 The examples contain code snippets for creating a NeXus/HDF5 file for the experimental technique
 according to a standardized NeXus application definition (e.g. NXem, NXmpes, NXellipsometry,
-NXapm, NXopt, NXmpes_xps, NXraman).
+NXapm, NXopt, NXxps, NXraman).
 Respective [Jupyter Notebooks](https://jupyter.org/) are used for running these examples.
 
 There is also a documentation of the [dataconverter](../pynxtools/dataconverter) available.
