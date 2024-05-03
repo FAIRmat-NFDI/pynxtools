@@ -63,7 +63,7 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[apm,em,mpes,xps,stm,xrd]",
+    "pynxtools[apm,em,mpes,xps,stm,xrd,ellips]",
 ]
 apm = [
     "pynxtools-apm",
@@ -82,6 +82,9 @@ stm = [
 ]
 xrd = [
     "pynxtools-xrd",
+]
+ellips = [
+    "pynxtools-ellips",
 ]
 
 [project.scripts]
