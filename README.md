@@ -53,15 +53,17 @@ data into the NeXus standard and visualising the files content.
 Documentation for the different tools can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
 
 # Plugins
-There are a number of plugins available for pynxtools. These are extensions of pynxtools used for reading data of specialized experimental techniques.
+There are a number of plugins available for pynxtools. These are extensions of pynxtools used for reading data of specific experimental techniques.
 - [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy data.
 - [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
 - [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data.
-
-Respective readers for the research fields of electron microscopy and atom probe are currently refactored into pynxtools plugins.
-Until this refactoring will have become completed, users are advised to use the apm and em readers via pynxtools<=0.1.1.
 - [**pynxtools-apm**](https://github.com/FAIRmat-NFDI/pynxtools-apm): A reader for atom probe as well as related field ion microscopy data.
 - [**pynxtools-em**](https://github.com/FAIRmat-NFDI/pynxtools-em): A reader for electron microscopy data.
+- [**pynxtools-ellips**](https://github.com/FAIRmat-NFDI/pynxtools-ellips): A reader for ellipsometry data.
+
+Note that pynxtools-apm and pynxtools-em are currently refactored into pynxtools plugins.
+Until this refactoring will have become completed, users are advised to use the apm and em readers via pynxtools<=0.1.1.
+
 
 You can install each of the plugins together with `pynxtools` by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
 ```shell

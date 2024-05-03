@@ -27,8 +27,7 @@ Options:
                                   arguments instead. The path to the input
                                   data file to read. (Repeat for more than one
                                   file.)
-  --reader [apm|ellips|em_nion|em_om|em_spctrscpy|example|hall|json_map|json_yml|mpes|sts|transmission|xps|xrd]
-                                  The reader to use. default="example"
+  --reader [example]              The reader to use. default="example"
   --nxdl TEXT                     The name of the NXDL file to use without
                                   extension.This option is required if no '--
                                   params-file' is supplied.
