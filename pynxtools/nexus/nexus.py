@@ -328,7 +328,7 @@ def get_inherited_hdf_nodes(
     hdf_root=None,
     attr=False,
 ):
-    """Returns a list of ET.Element for the given path."""
+    """Returns a list of ET._Element for the given path."""
     # let us start with the given definition file
     if hdf_node is None:
         raise ValueError("hdf_node must not be None")

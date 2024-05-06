@@ -24,12 +24,12 @@ import json
 import logging
 import os
 import sys
-import xml.etree.ElementTree as ET
 from gettext import gettext
 from pathlib import Path
 from typing import List, Optional, Tuple
 
 import click
+import lxml.etree as ET
 import yaml
 from click_default_group import DefaultGroup
 
@@ -153,7 +153,7 @@ def transfer_data_into_template(
     input_file,
     reader,
     nxdl_name,
-    nxdl_root: Optional[ET.Element] = None,
+    nxdl_root: Optional[ET._Element] = None,
     skip_verify: bool = False,
     **kwargs,
 ):
