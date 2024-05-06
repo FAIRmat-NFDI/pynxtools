@@ -1,45 +1,8 @@
-from typing import Annotated, Literal, Optional, Tuple
+from typing import Annotated, List, Literal, Optional, Tuple
 
+import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
-from pydantic import BaseModel, Field
-
-
-class ReadOnlyError(RuntimeError):
-    pass
-
-
-class NexusNode(BaseModel, NodeMixin):
-    name: str
-    type: Literal["group", "field", "attribute"]
-    optionality: Literal["required", "recommended", "optional"]
-    variadic: bool
-
-    def __init__(self, parent, **data) -> None:
-        super().__init__(**data)
-        self.__readonly = False
-        self.parent = parent
-        self.__readonly = True
-
-    def _pre_attach(self, parent):
-        if self.__readonly:
-            raise ReadOnlyError()
-
-    def _pre_detach(self, parent):
-        raise ReadOnlyError()
-
-
-class NexusGroup(NexusNode):
-    nx_class: str
-    occurrence_limits: Tuple[
-        Optional[Annotated[int, Field(strict=True, ge=0)]],
-        Optional[Annotated[int, Field(strict=True, ge=0)]],
-    ] = (None, None)
-
-    def __repr__(self) -> str:
-        return (
-            f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality[:3]})"
-        )
-
+from pydantic import BaseModel, Field, InstanceOf
 
 NexusType = Literal[
     "ISO8601",
@@ -59,6 +22,7 @@ NexusType = Literal[
     "NX_UINT",
 ]
 
+# TODO: Get types from nxdlTypes.xsd
 NexusUnitCategory = Literal[
     "NX_ANGLE",
     "NX_ANY",
@@ -96,10 +60,50 @@ NexusUnitCategory = Literal[
 ]
 
 
+class ReadOnlyError(RuntimeError):
+    pass
+
+
+class NexusNode(BaseModel, NodeMixin):
+    name: str
+    type: Literal["group", "field", "attribute"]
+    optionality: Literal["required", "recommended", "optional"]
+    variadic: bool
+    inheritance: List[InstanceOf[ET._Element]] = []
+
+    def __init__(self, parent, **data) -> None:
+        super().__init__(**data)
+        self.__readonly = False
+        self.parent = parent
+        self.__readonly = True
+
+    def _pre_attach(self, parent):
+        if self.__readonly:
+            raise ReadOnlyError()
+
+    def _pre_detach(self, parent):
+        raise ReadOnlyError()
+
+
+class NexusGroup(NexusNode):
+    nx_class: str
+    occurrence_limits: Tuple[
+        Optional[Annotated[int, Field(strict=True, ge=0)]],
+        Optional[Annotated[int, Field(strict=True, ge=0)]],
+    ] = (None, None)
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality[:3]})"
+        )
+
+
 class NexusEntity(NexusNode):
     type: Literal["field", "attribute"]
     unit: Optional[NexusUnitCategory] = None
     dtype: Optional[NexusType] = None
+    items: Optional[List[str]] = None
+    shape: Optional[Tuple[int, ...]] = None
 
     def __repr__(self) -> str:
         if self.type == "attribute":

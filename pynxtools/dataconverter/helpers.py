@@ -253,19 +253,36 @@ def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
                 variadic=is_variadic,
                 occurrence_limits=(
                     xml_elem.attrib.get("minOccurs"),
+                    # TODO: Treat "unbounded" in maxOccurs properly
                     xml_elem.attrib.get("maxOccurs"),
                 ),
             )
-        elif tag in ("enumeration", "dimensions"):
-            # TODO: Attach enum values and dims to parent
+        elif tag == "enumeration":
+            items: List[str] = []
+            for item_tag in xml_elem:
+                if remove_namespace_from_tag(item_tag.tag) == "item":
+                    items.append(item_tag.attrib["value"])
+            parent.items = items
+            return
+        elif tag == "dimensions":
+            # TODO: Attach dims to parent
             return
         else:
+            # TODO: Tags: choice, link
             # We don't know the tag, skip processing children of it
             # TODO: Add logging or raise an error
             return
 
+        tags = ("enumeration", "dimensions")
+        check_tags_in_base_classes = False
         for child in xml_elem:
+            if remove_namespace_from_tag(child.tag) not in tags:
+                check_tags_in_base_classes = True
             add_children_to(current_elem, child)
+
+        if check_tags_in_base_classes:
+            # TODO: Search for enumeration and dimensions tags in elist parents
+            pass
 
     entry = get_first_group(root)
 
