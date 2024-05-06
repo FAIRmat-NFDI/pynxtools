@@ -23,7 +23,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Literal, Optional, Set, Tuple, Union
+from typing import Any, Callable, List, Optional, Set, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -31,12 +31,6 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.nexus_tree import (
-    NexusChoice,
-    NexusEntity,
-    NexusGroup,
-    NexusNode,
-)
 from pynxtools.dataconverter.template import Template
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
 from pynxtools.nexus import nexus
@@ -220,130 +214,6 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
             )
             template[optionality][f"{path}/{child}"] = None
     return template
-
-
-def get_enumeration_items(elem: ET._Element) -> List[str]:
-    items: List[str] = []
-    for item_tag in elem:
-        if remove_namespace_from_tag(item_tag.tag) == "item":
-            items.append(item_tag.attrib["value"])
-
-    return items
-
-
-def check_enumeration_in_parents_for(node: NexusNode) -> None:
-    # TODO
-    pass
-
-
-def check_dimensions_in_parents_for(node: NexusNode) -> None:
-    # TODO
-    pass
-
-
-def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
-    def add_children_to(parent: NexusNode, xml_elem: ET._Element) -> None:
-        tag = remove_namespace_from_tag(xml_elem.tag)
-
-        if tag == "doc":
-            return
-
-        optionality: Literal["required", "recommended", "optional"] = "required"
-        if xml_elem.attrib.get("recommended"):
-            optionality = "recommended"
-        elif xml_elem.attrib.get("optional"):
-            optionality = "optional"
-
-        if tag in ("field", "attribute"):
-            name = xml_elem.attrib.get("name")
-            is_variadic = contains_uppercase(xml_elem.attrib["name"])
-            current_elem = NexusEntity(
-                parent=parent,
-                name=name,
-                type=tag,
-                optionality=optionality,
-                variadic=is_variadic,
-                unit=xml_elem.attrib.get("units"),
-                dtype=xml_elem.attrib.get("type", "NX_CHAR"),
-            )
-        elif tag == "group":
-            name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
-            inheritance_chain = get_inherited_nodes("", elem=xml_elem)[2]
-            is_variadic = contains_uppercase(name)
-            max_occurs = (
-                None
-                if xml_elem.attrib.get("maxOccurs") == "unbounded"
-                else xml_elem.attrib.get("maxOccurs")
-            )
-            current_elem = NexusGroup(
-                parent=parent,
-                type=tag,
-                name=name,
-                nx_class=xml_elem.attrib["type"],
-                optionality=optionality,
-                variadic=is_variadic,
-                occurrence_limits=(
-                    xml_elem.attrib.get("minOccurs"),
-                    max_occurs,
-                ),
-                inheritance=inheritance_chain,
-            )
-        elif tag == "enumeration":
-            items = get_enumeration_items(xml_elem)
-            parent.items = items
-            return
-        elif tag == "dimensions":
-            rank = xml_elem.attrib["rank"]
-            dims: List[Optional[int]] = [None] * int(rank)
-            for dim in xml_elem.findall(f"{namespace}dim"):
-                idx = int(dim.attrib["index"])
-                try:
-                    value = int(dim.attrib["value"])
-                    dims[idx] = value
-                except ValueError:
-                    # TODO: Handling of symbols
-                    pass
-
-            parent.shape = tuple(dims)
-            return
-        elif tag == "choice":
-            current_elem = NexusChoice(
-                parent=parent,
-                name=xml_elem.attrib["name"],
-                optionality=optionality,
-                variadic=contains_uppercase(xml_elem.attrib["name"]),
-            )
-        else:
-            # TODO: Tags: link
-            # We don't know the tag, skip processing children of it
-            # TODO: Add logging or raise an error as this is not a known nxdl tag
-            return
-
-        tags = ("enumeration", "dimensions")
-        check_tags_in_base_classes = False
-        for child in xml_elem:
-            if remove_namespace_from_tag(child.tag) not in tags:
-                check_tags_in_base_classes = True
-            add_children_to(current_elem, child)
-
-        if check_tags_in_base_classes:
-            check_enumeration_in_parents_for(current_elem)
-            check_dimensions_in_parents_for(current_elem)
-
-    entry = get_first_group(root)
-    namespace = "{" + root.nsmap[None] + "}"
-
-    tree = NexusGroup(
-        name=root.attrib["name"],
-        nx_class="NXroot",
-        type="group",
-        optionality="required",
-        variadic=False,
-        parent=None,
-    )
-    add_children_to(tree, entry)
-
-    return tree
 
 
 def generate_template_from_nxdl(
