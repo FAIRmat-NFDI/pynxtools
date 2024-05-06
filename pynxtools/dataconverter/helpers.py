@@ -31,7 +31,12 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.nexus_tree import NexusEntity, NexusGroup, NexusNode
+from pynxtools.dataconverter.nexus_tree import (
+    NexusChoice,
+    NexusEntity,
+    NexusGroup,
+    NexusNode,
+)
 from pynxtools.dataconverter.template import Template
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
 from pynxtools.nexus import nexus
@@ -217,6 +222,25 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
     return template
 
 
+def get_enumeration_items(elem: ET._Element) -> List[str]:
+    items: List[str] = []
+    for item_tag in elem:
+        if remove_namespace_from_tag(item_tag.tag) == "item":
+            items.append(item_tag.attrib["value"])
+
+    return items
+
+
+def check_enumeration_in_parents_for(node: NexusNode) -> None:
+    # TODO
+    pass
+
+
+def check_dimensions_in_parents_for(node: NexusNode) -> None:
+    # TODO
+    pass
+
+
 def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
     def add_children_to(parent: NexusNode, xml_elem: ET._Element) -> None:
         tag = remove_namespace_from_tag(xml_elem.tag)
@@ -231,10 +255,11 @@ def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
             optionality = "optional"
 
         if tag in ("field", "attribute"):
+            name = xml_elem.attrib.get("name")
             is_variadic = contains_uppercase(xml_elem.attrib["name"])
             current_elem = NexusEntity(
                 parent=parent,
-                name=xml_elem.attrib["name"],
+                name=name,
                 type=tag,
                 optionality=optionality,
                 variadic=is_variadic,
@@ -243,7 +268,13 @@ def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
+            inheritance_chain = get_inherited_nodes("", elem=xml_elem)[2]
             is_variadic = contains_uppercase(name)
+            max_occurs = (
+                None
+                if xml_elem.attrib.get("maxOccurs") == "unbounded"
+                else xml_elem.attrib.get("maxOccurs")
+            )
             current_elem = NexusGroup(
                 parent=parent,
                 type=tag,
@@ -253,24 +284,39 @@ def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
                 variadic=is_variadic,
                 occurrence_limits=(
                     xml_elem.attrib.get("minOccurs"),
-                    # TODO: Treat "unbounded" in maxOccurs properly
-                    xml_elem.attrib.get("maxOccurs"),
+                    max_occurs,
                 ),
+                inheritance=inheritance_chain,
             )
         elif tag == "enumeration":
-            items: List[str] = []
-            for item_tag in xml_elem:
-                if remove_namespace_from_tag(item_tag.tag) == "item":
-                    items.append(item_tag.attrib["value"])
+            items = get_enumeration_items(xml_elem)
             parent.items = items
             return
         elif tag == "dimensions":
-            # TODO: Attach dims to parent
+            rank = xml_elem.attrib["rank"]
+            dims: List[Optional[int]] = [None] * int(rank)
+            for dim in xml_elem.findall(f"{namespace}dim"):
+                idx = int(dim.attrib["index"])
+                try:
+                    value = int(dim.attrib["value"])
+                    dims[idx] = value
+                except ValueError:
+                    # TODO: Handling of symbols
+                    pass
+
+            parent.shape = tuple(dims)
             return
+        elif tag == "choice":
+            current_elem = NexusChoice(
+                parent=parent,
+                name=xml_elem.attrib["name"],
+                optionality=optionality,
+                variadic=contains_uppercase(xml_elem.attrib["name"]),
+            )
         else:
-            # TODO: Tags: choice, link
+            # TODO: Tags: link
             # We don't know the tag, skip processing children of it
-            # TODO: Add logging or raise an error
+            # TODO: Add logging or raise an error as this is not a known nxdl tag
             return
 
         tags = ("enumeration", "dimensions")
@@ -281,10 +327,11 @@ def generate_tree_from_nxdl(root: ET._Element) -> NexusNode:
             add_children_to(current_elem, child)
 
         if check_tags_in_base_classes:
-            # TODO: Search for enumeration and dimensions tags in elist parents
-            pass
+            check_enumeration_in_parents_for(current_elem)
+            check_dimensions_in_parents_for(current_elem)
 
     entry = get_first_group(root)
+    namespace = "{" + root.nsmap[None] + "}"
 
     tree = NexusGroup(
         name=root.attrib["name"],
@@ -580,7 +627,7 @@ def path_in_data_dict(nxdl_path: str, data_keys: Tuple[str, ...]) -> List[str]:
     return found_keys
 
 
-def check_for_optional_parent(path: str, nxdl_root: ET.Element) -> str:
+def check_for_optional_parent(path: str, nxdl_root: ET._Element) -> str:
     """Finds a parent in the branch that is optional and returns it's path or s<<NOT_FOUND>>."""
     parent_path = path.rsplit("/", 1)[0]
 
@@ -825,7 +872,7 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
     ensure_all_required_fields_exist_in_variadic_groups(template, data, check_basepaths)
 
 
-def try_undocumented(data, nxdl_root: ET.Element):
+def try_undocumented(data, nxdl_root: ET._Element):
     """Tries to move entries used that are from base classes but not in AppDef"""
     for path in list(data.undocumented):
         entry_name = get_name_from_data_dict_entry(path[path.rindex("/") + 1 :])
@@ -862,13 +909,13 @@ def try_undocumented(data, nxdl_root: ET.Element):
             pass
 
 
-def validate_data_dict(template, data, nxdl_root: ET.Element):
+def validate_data_dict(template, data, nxdl_root: ET._Element):
     """Checks whether all the required paths from the template are returned in data dict."""
     assert nxdl_root is not None, "The NXDL file hasn't been loaded."
     collector.clear()
 
     @lru_cache(maxsize=None)
-    def get_xml_node(nxdl_path: str) -> ET.Element:
+    def get_xml_node(nxdl_path: str) -> ET._Element:
         return nexus.get_node_at_nxdl_path(nxdl_path=nxdl_path, elem=nxdl_root)
 
     # Make sure all required fields exist.

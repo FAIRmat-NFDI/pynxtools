@@ -66,10 +66,9 @@ class ReadOnlyError(RuntimeError):
 
 class NexusNode(BaseModel, NodeMixin):
     name: str
-    type: Literal["group", "field", "attribute"]
+    type: Literal["group", "field", "attribute", "choice"]
     optionality: Literal["required", "recommended", "optional"]
     variadic: bool
-    inheritance: List[InstanceOf[ET._Element]] = []
 
     def __init__(self, parent, **data) -> None:
         super().__init__(**data)
@@ -85,12 +84,17 @@ class NexusNode(BaseModel, NodeMixin):
         raise ReadOnlyError()
 
 
+class NexusChoice(NexusNode):
+    type: Literal["choice"] = "choice"
+
+
 class NexusGroup(NexusNode):
     nx_class: str
     occurrence_limits: Tuple[
         Optional[Annotated[int, Field(strict=True, ge=0)]],
         Optional[Annotated[int, Field(strict=True, ge=0)]],
     ] = (None, None)
+    inheritance: List[InstanceOf[ET._Element]] = []
 
     def __repr__(self) -> str:
         return (
@@ -103,7 +107,7 @@ class NexusEntity(NexusNode):
     unit: Optional[NexusUnitCategory] = None
     dtype: Optional[NexusType] = None
     items: Optional[List[str]] = None
-    shape: Optional[Tuple[int, ...]] = None
+    shape: Optional[Tuple[Optional[int], ...]] = None
 
     def __repr__(self) -> str:
         if self.type == "attribute":
