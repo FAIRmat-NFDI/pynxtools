@@ -17,12 +17,13 @@
 # limitations under the License.
 #
 
-from typing import Dict, Any
-import xml.etree.ElementTree as ET
-import yaml
-from pynxtools.eln_mapper.eln import retrieve_nxdl_file
-from pynxtools.dataconverter.helpers import remove_namespace_from_tag
+from typing import Any, Dict
 
+import lxml.etree as ET
+import yaml
+
+from pynxtools.dataconverter.helpers import remove_namespace_from_tag
+from pynxtools.eln_mapper.eln import retrieve_nxdl_file
 
 NEXUS_TYPE_TO_NUMPY_TYPE = {
     "NX_CHAR": {
@@ -108,7 +109,7 @@ def construct_field_structure(fld_elem, quntities_dict):
     construct_decription(fld_elem, fld_dict)
 
 
-def construct_decription(elm: ET.Element, concept_dict: Dict) -> None:
+def construct_decription(elm: ET._Element, concept_dict: Dict) -> None:
     """Collect doc from concept doc."""
     desc_text = ""
     for child_elm in elm:
@@ -121,7 +122,7 @@ def construct_decription(elm: ET.Element, concept_dict: Dict) -> None:
     concept_dict["description"] = desc_text
 
 
-def construct_group_structure(grp_elm: ET.Element, subsections: Dict) -> None:
+def construct_group_structure(grp_elm: ET._Element, subsections: Dict) -> None:
     """To construct group structure as follows:
     <group_name>:
         section:
@@ -131,7 +132,7 @@ def construct_group_structure(grp_elm: ET.Element, subsections: Dict) -> None:
 
     Parameters
     ----------
-    elm : ET.Element
+    elm : ET._Element
         Group element
     subsections : Dict
         Dict to include group recursively
@@ -158,12 +159,12 @@ def construct_group_structure(grp_elm: ET.Element, subsections: Dict) -> None:
     scan_xml_element_recursively(grp_elm, section)
 
 
-def _should_skip_iteration(elm: ET.Element) -> bool:
+def _should_skip_iteration(elm: ET._Element) -> bool:
     """Define some elements here that should be skipped.
 
     Parameters
     ----------
-    elm : ET.Element
+    elm : ET._Element
         The element to investigate to skip
     """
     attr = elm.attrib
@@ -176,7 +177,7 @@ def _should_skip_iteration(elm: ET.Element) -> bool:
 
 
 def scan_xml_element_recursively(
-    nxdl_element: ET.Element,
+    nxdl_element: ET._Element,
     recursive_dict: Dict,
     root_name: str = "",
     reader_name: str = "<READER_NAME>",
@@ -186,7 +187,7 @@ def scan_xml_element_recursively(
 
     Parameters
     ----------
-    nxdl_element : ET.Element
+    nxdl_element : ET._Element
         This xml element that will be scanned through the descendants.
     recursive_dict : Dict
         A dict that store hierarchical structure of scheme eln.
