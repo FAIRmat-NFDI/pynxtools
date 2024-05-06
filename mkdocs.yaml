@@ -14,6 +14,7 @@ nav:
     - learn/nexus-primer.md
     - learn/multiple-appdefs.md
   - Reference:
+    - reference/plugins.md
     - reference/definitions.md
 theme:
   name: material
