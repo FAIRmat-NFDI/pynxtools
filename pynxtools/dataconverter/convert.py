@@ -27,7 +27,7 @@ import sys
 import xml.etree.ElementTree as ET
 from gettext import gettext
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 import click
 import yaml
@@ -79,7 +79,7 @@ def get_reader(reader_name) -> BaseReader:
     return module.READER  # type: ignore[attr-defined]
 
 
-def get_names_of_all_readers() -> List[str]:
+def get_names_of_all_readers() -> Set[str]:
     """Helper function to populate a list of all available readers"""
     path_prefix = (
         f"{os.path.dirname(__file__)}{os.sep}" if os.path.dirname(__file__) else ""
@@ -96,7 +96,7 @@ def get_names_of_all_readers() -> List[str]:
                 file[index_of_readers_folder_name:index_of_last_path_sep]
             )
     plugins = list(map(lambda ep: ep.name, entry_points(group="pynxtools.reader")))
-    return sorted(all_readers + plugins)
+    return set(all_readers + plugins)
 
 
 def get_nxdl_root_and_path(nxdl: str):
