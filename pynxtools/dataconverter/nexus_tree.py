@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Annotated, List, Literal, Optional, Tuple
 
 import lxml.etree as ET
@@ -77,6 +78,7 @@ class NexusNode(BaseModel, NodeMixin):
     type: Literal["group", "field", "attribute", "choice"]
     optionality: Literal["required", "recommended", "optional"]
     variadic: bool
+    variadic_siblings: List[InstanceOf["NexusNode"]] = []
 
     def __init__(self, parent, **data) -> None:
         super().__init__(**data)
@@ -90,6 +92,15 @@ class NexusNode(BaseModel, NodeMixin):
 
     def _pre_detach(self, parent):
         raise ReadOnlyError()
+
+    @lru_cache(maxsize=None)
+    def get_path(self) -> str:
+        current_node = self
+        names: List[str] = []
+        while current_node.parent is not None:
+            names.insert(0, current_node.name)
+            current_node = current_node.parent
+        return "/" + "/".join(names)
 
 
 class NexusChoice(NexusNode):

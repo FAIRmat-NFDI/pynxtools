@@ -47,9 +47,13 @@ class ValidationProblem(Enum):
     OptionalParentWithoutRequiredField = 4
     MissingRequiredGroup = 5
     MissingRequiredField = 6
-    InvalidType = 7
-    InvalidDatetime = 8
-    IsNotPosInt = 9
+    MissingRequiredAttribute = 7
+    InvalidType = 8
+    InvalidDatetime = 9
+    IsNotPosInt = 10
+    ExpectedGroup = 11
+    MissingDocumentation = 12
+    MissingUnit = 13
 
 
 class Collector:
@@ -58,7 +62,7 @@ class Collector:
     def __init__(self):
         self.data = set()
 
-    def insert_and_log(
+    def collect_and_log(
         self, path: str, log_type: ValidationProblem, value: Optional[Any], *args
     ):
         """Inserts a path into the data dictionary and logs the action."""
@@ -108,6 +112,16 @@ class Collector:
         elif log_type == ValidationProblem.IsNotPosInt:
             logger.warning(
                 f"The value at {path} should be a positive int, but is {value}."
+            )
+        elif log_type == ValidationProblem.ExpectedGroup:
+            logger.warning(
+                f"Expected a group at {path} but found a field or attribute."
+            )
+        elif log_type == ValidationProblem.MissingDocumentation:
+            logger.warning(f"Field {path} written without documentation.")
+        elif log_type == ValidationProblem.MissingUnit:
+            logger.warning(
+                f"Field {path} requires a unit in the unit category {value}."
             )
         self.data.add(path)
 
@@ -330,6 +344,14 @@ def convert_data_converter_entry_to_nxdl_path_entry(entry) -> Union[str, None]:
     return entry if results is None else results.group(1)
 
 
+def convert_nxdl_path_entry_to_data_converter_entry(entry) -> str:
+    """
+    Helper function to convert NXDL style entry to data converter style entry:
+    ENTRY -> ENTRY[entry]
+    """
+    return f"{entry}[{entry.lower()}]"
+
+
 def convert_data_converter_dict_to_nxdl_path(path) -> str:
     """
     Helper function to convert data converter style path to NXDL style path:
@@ -468,12 +490,12 @@ def is_valid_data_field(value, nxdl_type, path):
                     raise ValueError
             return accepted_types[0](value)
         except ValueError:
-            collector.insert_and_log(
+            collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
-        collector.insert_and_log(path, ValidationProblem.IsNotPosInt, value)
+        collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(
@@ -482,7 +504,7 @@ def is_valid_data_field(value, nxdl_type, path):
         )
         results = iso8601.search(value)
         if results is None:
-            collector.insert_and_log(path, ValidationProblem.InvalidDatetime, value)
+            collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
 
     return value
 
@@ -568,7 +590,7 @@ def check_optionality_based_on_parent_group(path, nxdl_path, nxdl_root, data, te
         ) and not all_required_children_are_set(
             trim_path_to(optional_parent, path), data, nxdl_root
         ):
-            collector.insert_and_log(
+            collector.collect_and_log(
                 path,
                 ValidationProblem.OptionalParentWithoutRequiredField,
                 optional_parent,
@@ -676,7 +698,7 @@ def ensure_all_required_fields_exist_in_variadic_groups(
                     count += 1
                     if not are_all_entries_none(missing_field):
                         count -= 1
-                        collector.insert_and_log(
+                        collector.collect_and_log(
                             missing_field, ValidationProblem.MissingRequiredField, None
                         )
 
@@ -690,7 +712,7 @@ def ensure_all_required_fields_exist_in_variadic_groups(
             generic_dict_path = "/" + "/".join(
                 map(lambda path: f"{path}[{path.lower()}]", base_path.split("/")[1:])
             )
-            collector.insert_and_log(
+            collector.collect_and_log(
                 generic_dict_path, ValidationProblem.MissingRequiredGroup, None
             )
 
@@ -720,14 +742,14 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                 if does_group_exist(opt_parent, data) and not does_group_exist(
                     renamed_path, data
                 ):
-                    collector.insert_and_log(
+                    collector.collect_and_log(
                         renamed_path,
                         ValidationProblem.OptionalParentWithoutRequiredGroup,
                         opt_parent,
                     )
                 continue
             if not does_group_exist(renamed_path, data):
-                collector.insert_and_log(
+                collector.collect_and_log(
                     path,
                     ValidationProblem.MissingRequiredGroup,
                     None,
@@ -735,7 +757,7 @@ def ensure_all_required_fields_exist(template, data, nxdl_root):
                 continue
             continue
         if data[renamed_path] is None:
-            collector.insert_and_log(
+            collector.collect_and_log(
                 renamed_path, ValidationProblem.MissingRequiredField, None
             )
 
@@ -809,7 +831,7 @@ def validate_data_dict(template, data, nxdl_root: ET._Element):
                     field_path not in data.get_documented()
                     and "units" not in elem.attrib
                 ):
-                    collector.insert_and_log(
+                    collector.collect_and_log(
                         path, ValidationProblem.UnitWithoutDocumentation, data[path]
                     )
                     continue
@@ -856,7 +878,9 @@ def validate_data_dict(template, data, nxdl_root: ET._Element):
                 )[2]
                 is_valid_enum, enums = is_value_valid_element_of_enum(data[path], elist)
                 if not is_valid_enum:
-                    collector.insert_and_log(path, ValidationProblem.InvalidEnum, enums)
+                    collector.collect_and_log(
+                        path, ValidationProblem.InvalidEnum, enums
+                    )
 
     return not collector.has_validation_problems()
 
