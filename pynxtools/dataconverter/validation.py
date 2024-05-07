@@ -1,12 +1,9 @@
 from collections import defaultdict
-from dataclasses import dataclass
 from functools import reduce
 from operator import getitem
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, List, Mapping, Union
 
 import h5py
-import lxml.etree as ET
-import numpy as np
 
 from pynxtools.dataconverter.helpers import (
     Collector,
@@ -69,6 +66,9 @@ def validate_dict_against(appdef: str, mapping: Mapping[str, Any]) -> bool:
                 variations.append(key)
         return variations
 
+    def get_field_attributes(name: str, keys: Mapping[str, Any]) -> Mapping[str, Any]:
+        return {k.split("@")[1]: keys[k] for k in keys if k.startswith(f"{name}@")}
+
     def handle_group(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         variants = get_variations_of(node, keys)
         if not variants:
@@ -114,21 +114,50 @@ def validate_dict_against(appdef: str, mapping: Mapping[str, Any]) -> bool:
                     )
                 # TODO: Check unit
 
+            recurse_tree(
+                node,
+                get_field_attributes(variant, keys),
+                prev_path=f"{prev_path}/{variant}",
+            )
+
         # TODO: Build variadic map for fields and attributes
         # Introduce variadic siblings in NexusNode?
 
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
-        full_path = f"{prev_path}/@{node.name}"
-        if full_path in not_visited:
-            not_visited.remove(full_path)
-        if node.name not in keys:
-            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
+        full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
+        variants = get_variations_of(node, keys)
+        if not variants:
+            if node.optionality == "required" and node.type in missing_type_err:
+                collector.collect_and_log(
+                    full_path, missing_type_err.get(node.type), None
+                )
+            return
 
-        # TODO: Check variants
+        for variant in variants:
+            is_valid_data_field(
+                mapping[f"{prev_path}/@{variant}"],
+                node.dtype,
+                f"{prev_path}/@{variant}",
+            )
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
-        # TODO: Implement this
-        pass
+        global collector
+        old_collector = collector
+        collector = Collector()
+        collector.logging = False
+        for child in node.children:
+            collector.clear()
+            child.name = node.name
+            handle_group(child, keys, prev_path)
+
+            if not collector.has_validation_problems():
+                collector = old_collector
+                return
+
+        collector = old_collector
+        collector.collect_and_log(
+            f"{prev_path}/{node.name}", ValidationProblem.ChoiceValidationError, None
+        )
 
     def handle_unknown_type(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         # This should normally not happen if
@@ -161,6 +190,8 @@ def validate_dict_against(appdef: str, mapping: Mapping[str, Any]) -> bool:
     recurse_tree(tree, nested_keys)
 
     for not_visited_key in not_visited:
+        # TODO: Check if field is present in the inheritance chain
+        # and only report it as undocumented if it is not
         if not_visited_key.endswith("/@units"):
             collector.collect_and_log(
                 not_visited_key,

@@ -54,6 +54,7 @@ class ValidationProblem(Enum):
     ExpectedGroup = 11
     MissingDocumentation = 12
     MissingUnit = 13
+    ChoiceValidationError = 14
 
 
 class Collector:
@@ -61,11 +62,9 @@ class Collector:
 
     def __init__(self):
         self.data = set()
+        self.logging = True
 
-    def collect_and_log(
-        self, path: str, log_type: ValidationProblem, value: Optional[Any], *args
-    ):
-        """Inserts a path into the data dictionary and logs the action."""
+    def _log(self, path: str, log_type: ValidationProblem, value: Optional[Any], *args):
         if value is None:
             value = "<unknown>"
 
@@ -123,6 +122,13 @@ class Collector:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
             )
+        elif log_type == ValidationProblem.MissingRequiredAttribute:
+            logger.warning(f'Missing attribute: "{path}"')
+
+    def collect_and_log(self, path: str, *args, **kwargs):
+        """Inserts a path into the data dictionary and logs the action."""
+        if self.logging:
+            self._log(path, *args, **kwargs)
         self.data.add(path)
 
     def has_validation_problems(self):

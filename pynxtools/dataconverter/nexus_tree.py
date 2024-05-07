@@ -102,6 +102,14 @@ class NexusNode(BaseModel, NodeMixin):
             current_node = current_node.parent
         return "/" + "/".join(names)
 
+    def get_path_and_node(self) -> Tuple[str, List[ET._Element]]:
+        current_node = self
+        names: List[str] = []
+        while current_node is not None and not isinstance(current_node, NexusGroup):
+            names.insert(0, current_node.name)
+            current_node = current_node.parent
+        return "/".join(names), current_node.inheritance
+
 
 class NexusChoice(NexusNode):
     type: Literal["choice"] = "choice"
@@ -132,6 +140,60 @@ class NexusEntity(NexusNode):
         if self.type == "attribute":
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
+
+
+def get_unconnected_node_for(
+    nxdl_path: str, child_xml_elem: ET._Element
+) -> Optional[NexusNode]:
+    # TODO: Remove code duplication in this function and generate_tree_from(...)
+    *_, elist = get_inherited_nodes(nxdl_path=nxdl_path, elem=child_xml_elem)
+    if not elist:
+        return None
+    xml_elem = elist[0]
+    tag = remove_namespace_from_tag(xml_elem.tag)
+
+    optionality: Literal["required", "recommended", "optional"] = "required"
+    if xml_elem.attrib.get("recommended"):
+        optionality = "recommended"
+    elif xml_elem.attrib.get("optional"):
+        optionality = "optional"
+
+    if tag in ("attribute", "field"):
+        name = xml_elem.attrib.get("name")
+        is_variadic = contains_uppercase(xml_elem.attrib["name"])
+        return NexusEntity(
+            parent=None,
+            name=name,
+            type=tag,
+            optionality=optionality,
+            variadic=is_variadic,
+            unit=xml_elem.attrib.get("units"),
+            dtype=xml_elem.attrib.get("type", "NX_CHAR"),
+        )
+    elif tag == "group":
+        name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
+        inheritance_chain = get_inherited_nodes("", elem=xml_elem)[2]
+        is_variadic = contains_uppercase(name)
+        max_occurs = (
+            None
+            if xml_elem.attrib.get("maxOccurs") == "unbounded"
+            else xml_elem.attrib.get("maxOccurs")
+        )
+        return NexusGroup(
+            parent=None,
+            type=tag,
+            name=name,
+            nx_class=xml_elem.attrib["type"],
+            optionality=optionality,
+            variadic=is_variadic,
+            occurrence_limits=(
+                xml_elem.attrib.get("minOccurs"),
+                max_occurs,
+            ),
+            inheritance=inheritance_chain,
+        )
+
+    return None
 
 
 def get_enumeration_items(elem: ET._Element) -> List[str]:
@@ -253,6 +315,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
         optionality="required",
         variadic=False,
         parent=None,
+        inheritance=get_inherited_nodes("", elem=appdef_xml_root)[2],
     )
     add_children_to(tree, entry)
 
