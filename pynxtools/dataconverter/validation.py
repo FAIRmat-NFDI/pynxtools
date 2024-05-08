@@ -47,13 +47,17 @@ def build_tree_from(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
 
     # iterate input dictionary
     for k, v in mapping.items():
-        _, *keys, final_key = k.replace("/@", "@").split("/")
+        _, *keys, final_key = (
+            k.replace("/@", "@").split("/") if not k.startswith("/@") else k.split("/")
+        )
         get_from(data_tree, keys)[final_key] = v
 
     return default_to_regular_dict(data_tree)
 
 
-def validate_dict_against(appdef: str, mapping: Mapping[str, Any]) -> bool:
+def validate_dict_against(
+    appdef: str, mapping: Mapping[str, Any], ignore_undocumented: bool = False
+) -> bool:
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
         if not node.variadic and node.name in keys:
             return [node.name]
@@ -189,18 +193,19 @@ def validate_dict_against(appdef: str, mapping: Mapping[str, Any]) -> bool:
     nested_keys = build_tree_from(mapping)
     recurse_tree(tree, nested_keys)
 
-    for not_visited_key in not_visited:
-        # TODO: Check if field is present in the inheritance chain
-        # and only report it as undocumented if it is not
-        if not_visited_key.endswith("/@units"):
-            collector.collect_and_log(
-                not_visited_key,
-                ValidationProblem.UnitWithoutDocumentation,
-                mapping[not_visited_key],
-            )
-        else:
-            collector.collect_and_log(
-                not_visited_key, ValidationProblem.MissingDocumentation, None
-            )
+    if not ignore_undocumented:
+        for not_visited_key in not_visited:
+            # TODO: Check if field is present in the inheritance chain
+            # and only report it as undocumented if it is not
+            if not_visited_key.endswith("/@units"):
+                collector.collect_and_log(
+                    not_visited_key,
+                    ValidationProblem.UnitWithoutDocumentation,
+                    mapping[not_visited_key],
+                )
+            else:
+                collector.collect_and_log(
+                    not_visited_key, ValidationProblem.MissingDocumentation, None
+                )
 
     return not collector.has_validation_problems()

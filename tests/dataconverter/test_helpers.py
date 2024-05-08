@@ -24,10 +24,10 @@ from typing import Optional
 
 import numpy as np
 import pytest
-from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.validation import validate_dict_against
 
 
 def remove_optional_parent(data_dict: Template):
@@ -133,7 +133,7 @@ def test_transform_to_intended_dt(input_data, expected_output):
 def fixture_nxdl_root():
     """pytest fixture to load the same NXDL file for all tests."""
     nxdl_file = os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml")
-    yield ET.parse(nxdl_file).getroot()
+    return ET.parse(nxdl_file).getroot()
 
 
 @pytest.fixture(name="template")
@@ -142,52 +142,7 @@ def fixture_template():
     nxdl_root = ET.parse("tests/data/dataconverter/NXtest.nxdl.xml").getroot()
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
-    yield template
-
-
-@pytest.mark.usefixtures("template")
-@pytest.fixture(name="filled_test_data")
-def fixture_filled_test_data(template, tmp_path):
-    """pytest fixture to setup a filled in template."""
-
-    # Copy original measurement file to tmp dir,
-    # because h5py.ExternalLink is modifying it while
-    # linking the nxs file.
-    distutils.file_util.copy_file(
-        f"{os.path.dirname(__file__)}"
-        f"/../"
-        f"data/nexus/"
-        f"xarray_saved_small_calibration.h5",
-        tmp_path,
-    )
-
-    template.clear()
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = "nm"
-    template["/ENTRY[my_entry]/optional_parent/required_child"] = 1
-    template["/ENTRY[my_entry]/optional_parent/optional_child"] = 1
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
-        [1, 2, 3], dtype=np.int8
-    )
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units"] = "kg"
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = "just chars"
-    template["/ENTRY[my_entry]/definition"] = "NXtest"
-    template["/ENTRY[my_entry]/definition/@version"] = "2.4.6"
-    template["/ENTRY[my_entry]/program_name"] = "Testing program"
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type"
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
-        "2022-01-22T12" ":14:12.05018+00:00"
-    )
-    template["/ENTRY[my_entry]/required_group/description"] = "An example description"
-    template["/ENTRY[my_entry]/required_group2/description"] = "An example description"
-    template["/ENTRY[my_entry]/does/not/exist"] = "random"
-    template["/ENTRY[my_entry]/links/ext_link"] = {
-        "link": f"{tmp_path}/" f"xarray_saved_small_cali" f"bration.h5:/axes/ax3"
-    }
-    yield template
+    return template
 
 
 TEMPLATE = Template()
