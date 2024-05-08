@@ -274,6 +274,12 @@ def generate_tree_from(appdef: str) -> NexusNode:
             return
         elif tag == "dimensions":
             rank = xml_elem.attrib["rank"]
+            if not isinstance(rank, int):
+                try:
+                    int(rank)
+                except ValueError:
+                    # TODO: Handling of symbols
+                    return
             dims: List[Optional[int]] = [None] * int(rank)
             for dim in xml_elem.findall(f"{namespace}dim"):
                 idx = int(dim.attrib["index"])
