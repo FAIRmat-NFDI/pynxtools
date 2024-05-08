@@ -177,7 +177,8 @@ def get_unconnected_node_for(
         max_occurs = (
             None
             if xml_elem.attrib.get("maxOccurs") == "unbounded"
-            else xml_elem.attrib.get("maxOccurs")
+            or xml_elem.attrib.get("maxOccurs") is None
+            else int(xml_elem.attrib.get("maxOccurs"))
         )
         return NexusGroup(
             parent=None,
@@ -187,7 +188,9 @@ def get_unconnected_node_for(
             optionality=optionality,
             variadic=is_variadic,
             occurrence_limits=(
-                xml_elem.attrib.get("minOccurs"),
+                int(xml_elem.attrib.get("minOccurs"))
+                if xml_elem.attrib.get("minOccurs") is not None
+                else None,
                 max_occurs,
             ),
             inheritance=inheritance_chain,
@@ -247,7 +250,8 @@ def generate_tree_from(appdef: str) -> NexusNode:
             max_occurs = (
                 None
                 if xml_elem.attrib.get("maxOccurs") == "unbounded"
-                else xml_elem.attrib.get("maxOccurs")
+                or xml_elem.attrib.get("maxOccurs") is None
+                else int(xml_elem.attrib.get("maxOccurs"))
             )
             current_elem = NexusGroup(
                 parent=parent,
@@ -257,7 +261,9 @@ def generate_tree_from(appdef: str) -> NexusNode:
                 optionality=optionality,
                 variadic=is_variadic,
                 occurrence_limits=(
-                    xml_elem.attrib.get("minOccurs"),
+                    int(xml_elem.attrib.get("minOccurs"))
+                    if xml_elem.attrib.get("minOccurs") is not None
+                    else None,
                     max_occurs,
                 ),
                 inheritance=inheritance_chain,
@@ -273,7 +279,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
                 idx = int(dim.attrib["index"])
                 try:
                     value = int(dim.attrib["value"])
-                    dims[idx] = value
+                    dims[idx - 1] = value
                 except ValueError:
                     # TODO: Handling of symbols
                     pass
