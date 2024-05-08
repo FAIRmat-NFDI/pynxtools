@@ -24,6 +24,7 @@ from typing import Optional
 
 import numpy as np
 import pytest
+from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
