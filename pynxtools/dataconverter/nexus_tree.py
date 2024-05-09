@@ -68,10 +68,6 @@ NexusUnitCategory = Literal[
 namespaces = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 
-class ReadOnlyError(RuntimeError):
-    pass
-
-
 class NexusNode(BaseModel, NodeMixin):
     name: str
     type: Literal["group", "field", "attribute", "choice"]
@@ -91,16 +87,7 @@ class NexusNode(BaseModel, NodeMixin):
     def __init__(self, parent, **data) -> None:
         super().__init__(**data)
         self.variadic = contains_uppercase(self.name)
-        self.__readonly = False
         self.parent = parent
-        self.__readonly = True
-
-    def _pre_attach(self, parent):
-        if self.__readonly:
-            raise ReadOnlyError()
-
-    def _pre_detach(self, parent):
-        raise ReadOnlyError()
 
     def _construct_inheritance_chain_from_parent(self):
         if self.parent is None:
