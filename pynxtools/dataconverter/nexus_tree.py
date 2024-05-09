@@ -31,7 +31,6 @@ NexusType = Literal[
     "NX_UINT",
 ]
 
-# TODO: Write test against existing units in nxdlTypes.xsd
 NexusUnitCategory = Literal[
     "NX_ANGLE",
     "NX_ANY",
