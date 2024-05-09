@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Annotated, List, Literal, Optional, Tuple
+from typing import Annotated, List, Literal, Optional, Set, Tuple
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
@@ -126,6 +126,62 @@ class NexusNode(BaseModel, NodeMixin):
             names.insert(0, current_node.name)
             current_node = current_node.parent
         return "/" + "/".join(names)
+
+    def get_all_parent_names(self) -> Set[str]:
+        names = set()
+        for elem in self.inheritance:
+            for subelems in elem.xpath(
+                r"*[self::nx:field or self::nx:group or self::nx:attribute]",
+                namespaces=namespaces,
+            ):
+                if "name" in subelems.attrib:
+                    names.add(subelems.attrib["name"])
+                elif "type" in subelems.attrib:
+                    names.add(subelems.attrib["type"][2:].upper())
+
+        return names
+
+    def add_node_from(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
+        tag = remove_namespace_from_tag(xml_elem.tag)
+        if tag in ("field", "attribute"):
+            name = xml_elem.attrib.get("name")
+            current_elem = NexusEntity(
+                parent=self,
+                name=name,
+                type=tag,
+            )
+        elif tag == "group":
+            name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
+            *_, inheritance_chain = get_inherited_nodes("", elem=xml_elem)
+            current_elem = NexusGroup(
+                parent=self,
+                type=tag,
+                name=name,
+                nx_class=xml_elem.attrib["type"],
+                inheritance=inheritance_chain,
+            )
+        elif tag == "choice":
+            current_elem = NexusChoice(
+                parent=self,
+                name=xml_elem.attrib["name"],
+                variadic=contains_uppercase(xml_elem.attrib["name"]),
+            )
+        else:
+            # TODO: Tags: link
+            # We don't know the tag, skip processing children of it
+            # TODO: Add logging or raise an error as this is not a known nxdl tag
+            return None
+
+        return current_elem
+
+    def add_inherited_node(self, name: str) -> Optional["NexusNode"]:
+        for elem in self.inheritance:
+            xml_elem = elem.find(
+                f"nx:{self.type}[@name='{name}']", namespaces=namespaces
+            )
+            if xml_elem is not None:
+                return self.add_node_from(xml_elem)
+        return None
 
     def get_path_and_node(self) -> Tuple[str, List[ET._Element]]:
         current_node = self
@@ -259,71 +315,9 @@ class NexusEntity(NexusNode):
         return f"{self.name} ({self.optionality[:3]})"
 
 
-def get_unconnected_node_for(
-    nxdl_path: str, child_xml_elem: ET._Element
-) -> Optional[NexusNode]:
-    # TODO: Remove code duplication in this function and generate_tree_from(...)
-    *_, elist = get_inherited_nodes(nxdl_path=nxdl_path, elem=child_xml_elem)
-    if not elist:
-        return None
-    xml_elem = elist[0]
-    tag = remove_namespace_from_tag(xml_elem.tag)
-
-    if tag in ("attribute", "field"):
-        return NexusEntity(
-            parent=None,
-            name=xml_elem.attrib.get("name"),
-            type=tag,
-        )
-    elif tag == "group":
-        name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
-        *_, inheritance_chain = get_inherited_nodes("", elem=xml_elem)
-        return NexusGroup(
-            parent=None,
-            type=tag,
-            name=name,
-            nx_class=xml_elem.attrib["type"],
-            inheritance=inheritance_chain,
-        )
-
-    return None
-
-
 def generate_tree_from(appdef: str) -> NexusNode:
     def add_children_to(parent: NexusNode, xml_elem: ET._Element) -> None:
-        tag = remove_namespace_from_tag(xml_elem.tag)
-
-        if tag == "doc":
-            return
-
-        if tag in ("field", "attribute"):
-            name = xml_elem.attrib.get("name")
-            current_elem = NexusEntity(
-                parent=parent,
-                name=name,
-                type=tag,
-            )
-        elif tag == "group":
-            name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
-            *_, inheritance_chain = get_inherited_nodes("", elem=xml_elem)
-            current_elem = NexusGroup(
-                parent=parent,
-                type=tag,
-                name=name,
-                nx_class=xml_elem.attrib["type"],
-                inheritance=inheritance_chain,
-            )
-        elif tag == "choice":
-            current_elem = NexusChoice(
-                parent=parent,
-                name=xml_elem.attrib["name"],
-                variadic=contains_uppercase(xml_elem.attrib["name"]),
-            )
-        else:
-            # TODO: Tags: link
-            # We don't know the tag, skip processing children of it
-            # TODO: Add logging or raise an error as this is not a known nxdl tag
-            return
+        current_elem = parent.add_node_from(xml_elem)
 
         for child in xml_elem.xpath(
             r"*[self::nx:field or self::nx:group or self::nx:attribute]",

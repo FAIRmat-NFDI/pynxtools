@@ -27,7 +27,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
     data.visitems(validate)
 
 
-def build_tree_from(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
+def build_nested_dict_from(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
     # Based on https://stackoverflow.com/questions/50607128/creating-a-nested-dictionary-from-a-flattened-dictionary
     def get_from(data_tree, map_list):
         """Iterate nested dictionary"""
@@ -190,7 +190,7 @@ def validate_dict_against(
     tree = generate_tree_from(appdef)
     collector.clear()
     not_visited = list(mapping)
-    nested_keys = build_tree_from(mapping)
+    nested_keys = build_nested_dict_from(mapping)
     recurse_tree(tree, nested_keys)
 
     if not ignore_undocumented:
