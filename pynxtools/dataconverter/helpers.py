@@ -55,6 +55,7 @@ class ValidationProblem(Enum):
     MissingDocumentation = 12
     MissingUnit = 13
     ChoiceValidationError = 14
+    UnitWithoutField = 15
 
 
 class Collector:
@@ -124,6 +125,8 @@ class Collector:
             )
         elif log_type == ValidationProblem.MissingRequiredAttribute:
             logger.warning(f'Missing attribute: "{path}"')
+        elif log_type == ValidationProblem.UnitWithoutField:
+            logger.warning(f"Unit {path} in dataset without its field {value}")
 
     def collect_and_log(self, path: str, *args, **kwargs):
         """Inserts a path into the data dictionary and logs the action."""

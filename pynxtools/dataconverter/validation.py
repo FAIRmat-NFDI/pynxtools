@@ -198,6 +198,12 @@ def validate_dict_against(
             # TODO: Check if field is present in the inheritance chain
             # and only report it as undocumented if it is not
             if not_visited_key.endswith("/@units"):
+                if not_visited_key.rsplit("/", 1)[0] not in not_visited:
+                    collector.collect_and_log(
+                        not_visited_key,
+                        ValidationProblem.UnitWithoutField,
+                        not_visited_key.rsplit("/", 1)[0],
+                    )
                 collector.collect_and_log(
                     not_visited_key,
                     ValidationProblem.UnitWithoutDocumentation,
