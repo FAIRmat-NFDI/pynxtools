@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field, InstanceOf
 from pynxtools.dataconverter.convert import get_nxdl_root_and_path
 from pynxtools.dataconverter.helpers import (
     contains_uppercase,
-    get_first_group,
     remove_namespace_from_tag,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
@@ -114,9 +113,12 @@ class NexusNode(BaseModel, NodeMixin):
             current_node = current_node.parent
         return "/" + "/".join(names)
 
-    def get_all_parent_names(self) -> Set[str]:
+    def get_all_children_names(self, depth: Optional[int] = None) -> Set[str]:
+        if depth is not None and depth < 0:
+            raise ValueError("Depth must be a positive integer or None")
+
         names = set()
-        for elem in self.inheritance:
+        for elem in self.inheritance[:depth]:
             for subelems in elem.xpath(
                 r"*[self::nx:field or self::nx:group or self::nx:attribute]",
                 namespaces=namespaces,
@@ -163,11 +165,12 @@ class NexusNode(BaseModel, NodeMixin):
 
     def add_inherited_node(self, name: str) -> Optional["NexusNode"]:
         for elem in self.inheritance:
-            xml_elem = elem.find(
-                f"nx:{self.type}[@name='{name}']", namespaces=namespaces
+            xml_elem = elem.xpath(
+                f"*[self::nx:field or self::nx:group or self::nx:attribute][@name='{name}']",
+                namespaces=namespaces,
             )
-            if xml_elem is not None:
-                return self.add_node_from(xml_elem)
+            if xml_elem:
+                return self.add_node_from(xml_elem[0])
         return None
 
     def get_path_and_node(self) -> Tuple[str, List[ET._Element]]:
@@ -185,6 +188,7 @@ class NexusChoice(NexusNode):
     def __init__(self, **data) -> None:
         super().__init__(**data)
         self._construct_inheritance_chain_from_parent()
+        self._set_optionality()
 
 
 class NexusGroup(NexusNode):
@@ -231,11 +235,8 @@ class NexusEntity(NexusNode):
 
     def _set_type(self):
         for elem in self.inheritance:
-            dtype = elem.find(
-                f"nx:{self.type}[@name='{self.name}']", namespaces=namespaces
-            )
-            if dtype is not None and "type" in dtype.attrib:
-                self.dtype = dtype.attrib.get("type")
+            if "type" in elem.attrib:
+                self.dtype = elem.attrib["type"]
                 return
 
     def _set_unit(self):

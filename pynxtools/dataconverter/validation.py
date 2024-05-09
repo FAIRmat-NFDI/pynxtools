@@ -1,19 +1,19 @@
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
-from typing import Any, List, Mapping, Union
+from typing import Any, Iterable, List, Mapping, Optional, Union
 
 import h5py
+from anytree import Resolver
 
 from pynxtools.dataconverter.helpers import (
     Collector,
     ValidationProblem,
+    collector,
     is_valid_data_field,
 )
 from pynxtools.dataconverter.nexus_tree import NexusNode, generate_tree_from
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
-
-collector = Collector()
 
 
 def validate_hdf_group_against(appdef: str, data: h5py.Group):
@@ -53,6 +53,19 @@ def build_nested_dict_from(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
         get_from(data_tree, keys)[final_key] = v
 
     return default_to_regular_dict(data_tree)
+
+
+def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
+    if name in keys:
+        return name
+
+    best_match, score = max(
+        map(lambda x: (x, get_nx_namefit(name, x)), keys), key=lambda x: x[1]
+    )
+    if score < 0:
+        return None
+
+    return best_match
 
 
 def validate_dict_against(
@@ -170,6 +183,23 @@ def validate_dict_against(
         # TODO: Raise error or log the issue?
         pass
 
+    def is_documented(key: str, node: NexusNode) -> bool:
+        for name in key[1:].split("/"):
+            children = node.get_all_children_names()
+            best_name = best_namefit_of(name, children)
+            if best_name is None:
+                return False
+            if best_name not in node.get_all_children_names(depth=1):
+                node = node.add_inherited_node(best_name)
+            else:
+                resolver = Resolver("name")
+                node = resolver.get(node, best_name)
+
+        if node.type != "field":
+            return False
+
+        return is_valid_data_field(mapping[key], node.dtype, key)
+
     def recurse_tree(node: NexusNode, keys: Mapping[str, Any], prev_path: str = ""):
         for child in node.children:
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
@@ -195,8 +225,8 @@ def validate_dict_against(
 
     if not ignore_undocumented:
         for not_visited_key in not_visited:
-            # TODO: Check if field is present in the inheritance chain
-            # and only report it as undocumented if it is not
+            if is_documented(not_visited_key, tree):
+                continue
             if not_visited_key.endswith("/@units"):
                 if not_visited_key.rsplit("/", 1)[0] not in not_visited:
                     collector.collect_and_log(
