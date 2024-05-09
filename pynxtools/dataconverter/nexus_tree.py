@@ -14,12 +14,10 @@ from pynxtools.dataconverter.helpers import (
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
 
 NexusType = Literal[
-    "ISO8601",
     "NX_BINARY",
     "NX_BOOLEAN",
     "NX_CCOMPLEX",
     "NX_CHAR",
-    "NX_CHAR_OR_NUMBER",
     "NX_COMPLEX",
     "NX_DATE_TIME",
     "NX_FLOAT",
