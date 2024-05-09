@@ -332,7 +332,6 @@ def generate_tree_from(appdef: str) -> NexusNode:
             add_children_to(current_elem, child)
 
     appdef_xml_root, _ = get_nxdl_root_and_path(appdef)
-    entry = get_first_group(appdef_xml_root)
     global namespaces
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
@@ -345,6 +344,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
         parent=None,
         inheritance=get_inherited_nodes("", elem=appdef_xml_root)[2],
     )
+    entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
     add_children_to(tree, entry)
 
     return tree
