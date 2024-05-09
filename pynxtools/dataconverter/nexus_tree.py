@@ -235,6 +235,9 @@ class NexusEntity(NexusNode):
         dims: List[Optional[int]] = [None] * int(rank)
         for dim in xml_dim:
             idx = int(dim.attrib["index"])
+            if "value" not in dim.attrib:
+                # This is probably an old dim element with ref
+                return
             try:
                 value = int(dim.attrib["value"])
                 dims[idx - 1] = value
