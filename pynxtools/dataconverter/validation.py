@@ -36,7 +36,11 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 
 
 def validate_hdf_group_against(appdef: str, data: h5py.Group):
-    """Checks whether all the required paths from the template are returned in data dict."""
+    """
+    Checks whether all the required paths from the template are returned in data dict.
+
+    THIS IS JUST A FUNCTION SKELETON AND IS NOT WORKING YET!
+    """
 
     def validate(name: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
@@ -49,6 +53,21 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
 def build_nested_dict_from(
     mapping: Mapping[str, Any],
 ) -> Tuple[Mapping[str, Any], Mapping[str, Any]]:
+    """
+    Creates a nested mapping from a `/` separated flat mapping.
+    It also converts data dict paths to HDF5 paths, i.e.,
+    it converts the path `/ENTRY[my_entry]/TEST[test]` to `/my_entry/test`.
+
+    Args:
+        mapping (Mapping[str, Any]):
+            The mapping to nest.
+
+    Returns:
+        Tuple[Mapping[str, Any], Mapping[str, Any]]:
+            First element is the nested mapping.
+            Second element is the original dict in hdf5 path notation.
+    """
+
     # Based on
     # https://stackoverflow.com/questions/50607128/creating-a-nested-dictionary-from-a-flattened-dictionary
     def get_from(data_tree, map_list):
@@ -82,6 +101,16 @@ def build_nested_dict_from(
 
 
 def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
+    """
+    Get the best namefit of `name` in `keys`.
+
+    Args:
+        name (str): The name to fit against the keys.
+        keys (Iterable[str]): The keys to fit `name` against.
+
+    Returns:
+        Optional[str]: The best fitting key. None if no fit was found.
+    """
     if name in keys:
         return name
 
@@ -97,6 +126,24 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
 def validate_dict_against(
     appdef: str, mapping: Mapping[str, Any], ignore_undocumented: bool = False
 ) -> bool:
+    """
+    Validates a mapping against the NeXus tree for applicationd definition `appdef`.
+
+    Args:
+        appdef (str): The appdef name to validate against.
+        mapping (Mapping[str, Any]):
+            The mapping containing the data to validate.
+            This should be a dict of `/` separated paths.
+            Attributes are denoted with `@` in front of the last element.
+        ignore_undocumented (bool, optional):
+            Ignore all undocumented keys in the verification
+            and just check if the required fields are properly set.
+            Defaults to False.
+
+    Returns:
+        bool: True if the mapping is valid according to `appdef`, False otherwise.
+    """
+
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
         if not node.variadic and node.name in keys:
             return [node.name]

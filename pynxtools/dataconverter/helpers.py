@@ -377,8 +377,12 @@ def get_name_from_data_dict_entry(entry: str) -> str:
 
     ENTRY[entry] -> entry
     """
-    regex = re.compile(r"(?<=\[)(.*?)(?=\])")
-    results = regex.search(entry)
+
+    @lru_cache(maxsize=None)
+    def get_regex():
+        return re.compile(r"(?<=\[)(.*?)(?=\])")
+
+    results = get_regex().search(entry)
     if results is None:
         return entry
     if entry[0] == "@":
