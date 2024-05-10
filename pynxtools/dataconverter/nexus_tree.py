@@ -130,6 +130,18 @@ class NexusNode(BaseModel, NodeMixin):
 
         return names
 
+    def get_docstring(self, depth: Optional[int] = None) -> List[str]:
+        if depth is not None and depth < 0:
+            raise ValueError("Depth must be a positive integer or None")
+
+        docstrings = []
+        for elem in self.inheritance[:depth][::-1]:
+            doc = elem.find("nx:doc", namespaces=namespaces)
+            if doc is not None:
+                docstrings.append(doc.text)
+
+        return docstrings
+
     def add_node_from(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
         tag = remove_namespace_from_tag(xml_elem.tag)
         if tag in ("field", "attribute"):

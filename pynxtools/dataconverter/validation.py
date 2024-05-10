@@ -184,7 +184,7 @@ def validate_dict_against(
         pass
 
     def is_documented(key: str, node: NexusNode) -> bool:
-        for name in key[1:].split("/"):
+        for name in key[1:].replace("@", "").split("/"):
             children = node.get_all_children_names()
             best_name = best_namefit_of(name, children)
             if best_name is None:
@@ -195,7 +195,9 @@ def validate_dict_against(
                 resolver = Resolver("name")
                 node = resolver.get(node, best_name)
 
-        if node.type != "field":
+        if "@" not in key and node.type != "field":
+            return False
+        if "@" in key and node.type != "attribute":
             return False
 
         return is_valid_data_field(mapping[key], node.dtype, key)
@@ -223,25 +225,27 @@ def validate_dict_against(
     nested_keys = build_nested_dict_from(mapping)
     recurse_tree(tree, nested_keys)
 
-    if not ignore_undocumented:
-        for not_visited_key in not_visited:
-            if is_documented(not_visited_key, tree):
-                continue
-            if not_visited_key.endswith("/@units"):
-                if not_visited_key.rsplit("/", 1)[0] not in not_visited:
-                    collector.collect_and_log(
-                        not_visited_key,
-                        ValidationProblem.UnitWithoutField,
-                        not_visited_key.rsplit("/", 1)[0],
-                    )
+    if ignore_undocumented:
+        return not collector.has_validation_problems()
+
+    for not_visited_key in not_visited:
+        if is_documented(not_visited_key, tree):
+            continue
+        if not_visited_key.endswith("/@units"):
+            if not_visited_key.rsplit("/", 1)[0] not in not_visited:
                 collector.collect_and_log(
                     not_visited_key,
-                    ValidationProblem.UnitWithoutDocumentation,
-                    mapping[not_visited_key],
+                    ValidationProblem.UnitWithoutField,
+                    not_visited_key.rsplit("/", 1)[0],
                 )
-            else:
-                collector.collect_and_log(
-                    not_visited_key, ValidationProblem.MissingDocumentation, None
-                )
+            collector.collect_and_log(
+                not_visited_key,
+                ValidationProblem.UnitWithoutDocumentation,
+                mapping[not_visited_key],
+            )
+        else:
+            collector.collect_and_log(
+                not_visited_key, ValidationProblem.MissingDocumentation, None
+            )
 
     return not collector.has_validation_problems()
