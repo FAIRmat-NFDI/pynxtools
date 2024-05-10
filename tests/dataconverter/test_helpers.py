@@ -130,13 +130,6 @@ def test_transform_to_intended_dt(input_data, expected_output):
         assert result == expected_output
 
 
-@pytest.fixture(name="nxdl_root")
-def fixture_nxdl_root():
-    """pytest fixture to load the same NXDL file for all tests."""
-    nxdl_file = os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml")
-    return ET.parse(nxdl_file).getroot()
-
-
 @pytest.fixture(name="template")
 def fixture_template():
     """pytest fixture to use the same template in all tests"""
@@ -513,9 +506,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         ),
     ],
 )
-def test_validate_data_dict(
-    caplog, data_dict, error_message, template, nxdl_root, request
-):
+def test_validate_data_dict(caplog, data_dict, error_message, request):
     """Unit test for the data validation routine."""
     if request.node.callspec.id in (
         "valid-data-dict",

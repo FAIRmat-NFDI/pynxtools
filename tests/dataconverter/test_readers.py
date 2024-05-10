@@ -18,7 +18,6 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
-import logging
 import os
 import xml.etree.ElementTree as ET
 from typing import List
@@ -78,7 +77,7 @@ def test_if_readers_are_children_of_base_reader(reader):
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
-def test_has_correct_read_func(reader, caplog):
+def test_has_correct_read_func(reader):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
     if reader.__name__ not in ["BaseReader"]:
