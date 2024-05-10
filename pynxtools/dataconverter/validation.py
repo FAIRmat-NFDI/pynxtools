@@ -28,7 +28,8 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
 
 
 def build_nested_dict_from(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
-    # Based on https://stackoverflow.com/questions/50607128/creating-a-nested-dictionary-from-a-flattened-dictionary
+    # Based on
+    # https://stackoverflow.com/questions/50607128/creating-a-nested-dictionary-from-a-flattened-dictionary
     def get_from(data_tree, map_list):
         """Iterate nested dictionary"""
         return reduce(getitem, map_list, data_tree)
@@ -121,6 +122,15 @@ def validate_dict_against(
             is_valid_data_field(
                 mapping[f"{prev_path}/{variant}"], node.dtype, f"{prev_path}/{variant}"
             )
+            if (
+                node.items is not None
+                and mapping[f"{prev_path}/{variant}"] not in node.items
+            ):
+                collector.collect_and_log(
+                    f"{prev_path}/{variant}",
+                    ValidationProblem.InvalidEnum,
+                    node.items,
+                )
             if node.unit is not None:
                 remove_from_not_visited(f"{prev_path}/{variant}/@units")
                 if f"{variant}@units" not in keys:

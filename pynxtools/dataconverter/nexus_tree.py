@@ -258,13 +258,13 @@ class NexusEntity(NexusNode):
                 return
 
     def _set_items(self):
-        if not self.type == "NX_CHAR":
+        if not self.dtype == "NX_CHAR":
             return
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
             if enum is not None:
                 self.items = []
-                for items in elem.findall(f"nx:item", namespaces=namespaces):
+                for items in enum.findall(f"nx:item", namespaces=namespaces):
                     self.items.append(items.attrib["value"])
                 return
 
