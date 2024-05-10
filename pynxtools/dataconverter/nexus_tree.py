@@ -1,9 +1,9 @@
 from functools import lru_cache
-from typing import Annotated, List, Literal, Optional, Set, Tuple
+from typing import List, Literal, Optional, Set, Tuple
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
-from pydantic import BaseModel, Field, InstanceOf
+from pydantic import BaseModel, InstanceOf
 
 from pynxtools.dataconverter.convert import get_nxdl_root_and_path
 from pynxtools.dataconverter.helpers import (
@@ -232,8 +232,9 @@ class NexusChoice(NexusNode):
 class NexusGroup(NexusNode):
     nx_class: str
     occurrence_limits: Tuple[
-        Optional[Annotated[int, Field(strict=True, ge=0)]],
-        Optional[Annotated[int, Field(strict=True, ge=0)]],
+        # Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
+        Optional[int],
+        Optional[int],
     ] = (None, None)
 
     def _set_occurence_limits(self):
