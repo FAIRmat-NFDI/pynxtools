@@ -1,7 +1,25 @@
+#
+# Copyright The pynxtools Authors.
+#
+# This file is part of pynxtools.
+# See https://github.com/FAIRmat-NFDI/pynxtools for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
-from typing import Any, Iterable, List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
 
 import h5py
 from anytree import Resolver
@@ -10,6 +28,7 @@ from pynxtools.dataconverter.helpers import (
     Collector,
     ValidationProblem,
     collector,
+    convert_data_dict_path_to_hdf5_path,
     is_valid_data_field,
 )
 from pynxtools.dataconverter.nexus_tree import NexusNode, generate_tree_from
@@ -27,7 +46,9 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
     data.visitems(validate)
 
 
-def build_nested_dict_from(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
+def build_nested_dict_from(
+    mapping: Mapping[str, Any],
+) -> Tuple[Mapping[str, Any], Mapping[str, Any]]:
     # Based on
     # https://stackoverflow.com/questions/50607128/creating-a-nested-dictionary-from-a-flattened-dictionary
     def get_from(data_tree, map_list):
@@ -47,13 +68,17 @@ def build_nested_dict_from(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
     data_tree = tree()
 
     # iterate input dictionary
+    hdf_path_mapping = {}
     for k, v in mapping.items():
+        hdf_path_mapping[convert_data_dict_path_to_hdf5_path(k)] = v
         _, *keys, final_key = (
-            k.replace("/@", "@").split("/") if not k.startswith("/@") else k.split("/")
+            convert_data_dict_path_to_hdf5_path(k).replace("/@", "@").split("/")
+            if not k.startswith("/@")
+            else k.split("/")
         )
         get_from(data_tree, keys)[final_key] = v
 
-    return default_to_regular_dict(data_tree)
+    return default_to_regular_dict(data_tree), hdf_path_mapping
 
 
 def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
@@ -231,8 +256,8 @@ def validate_dict_against(
 
     tree = generate_tree_from(appdef)
     collector.clear()
+    nested_keys, mapping = build_nested_dict_from(mapping)
     not_visited = list(mapping)
-    nested_keys = build_nested_dict_from(mapping)
     recurse_tree(tree, nested_keys)
 
     if ignore_undocumented:
