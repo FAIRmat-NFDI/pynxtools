@@ -130,6 +130,32 @@ class NexusNode(BaseModel, NodeMixin):
 
         return names
 
+    def required_fields_and_attrs_names(
+        self,
+        prev_path: str = "",
+        level: Literal["required", "recommended"] = "required",
+    ) -> List[str]:
+        req_children = []
+        if level == "recommended":
+            optionalities: Tuple[str, ...] = ("recommended", "required")
+        else:
+            optionalities = ("required",)
+        for child in self.children:
+            if (
+                child.type in ("field", "attribute")
+                and child.optionality in optionalities
+            ):
+                req_children.append(f"{prev_path}/{child.name}")
+
+            if child.type in ("group", "choice") and child.optionality in optionalities:
+                req_children.extend(
+                    child.required_fields_and_attrs_names(
+                        prev_path=f"{prev_path}/{child.name}", level=level
+                    )
+                )
+
+        return req_children
+
     def get_docstring(self, depth: Optional[int] = None) -> List[str]:
         if depth is not None and depth < 0:
             raise ValueError("Depth must be a positive integer or None")
