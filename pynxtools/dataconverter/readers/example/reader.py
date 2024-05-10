@@ -66,15 +66,12 @@ class ExampleReader(BaseReader):
             field_name = k[k.rfind("/") + 1 :]
             if field_name != "@units":
                 template[k] = data[field_name]
-                if (
-                    f"{field_name}_units" in data.keys()
-                    and f"{k}/@units" in template.keys()
-                ):
+                if f"{field_name}_units" in data.keys():
                     template[f"{k}/@units"] = data[f"{field_name}_units"]
 
         template["required"]["/ENTRY[entry]/optional_parent/required_child"] = 1
         template["optional"][
-            ("/ENTRY[entry]/optional_parent/" "req_group_in_opt_group/DATA[data]")
+            "/ENTRY[entry]/optional_parent/req_group_in_opt_group/DATA[data]"
         ] = [0, 1]
 
         # Add non template key

@@ -35,9 +35,9 @@ import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 from pydantic import BaseModel, InstanceOf
 
-from pynxtools.dataconverter.convert import get_nxdl_root_and_path
 from pynxtools.dataconverter.helpers import (
     contains_uppercase,
+    get_nxdl_root_and_path,
     remove_namespace_from_tag,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
@@ -356,6 +356,12 @@ class NexusNode(BaseModel, NodeMixin):
                 f"*[self::nx:field or self::nx:group or self::nx:attribute][@name='{name}']",
                 namespaces=namespaces,
             )
+            if not xml_elem:
+                # Find group by naming convention
+                xml_elem = elem.xpath(
+                    f"*[self::nx:group][@type='NX{name.lower()}']",
+                    namespaces=namespaces,
+                )
             if xml_elem:
                 return self.add_node_from(xml_elem[0])
         return None
@@ -591,6 +597,12 @@ def generate_tree_from(appdef: str) -> NexusNode:
         parent=None,
         inheritance=get_inherited_nodes("", elem=appdef_xml_root)[2],
     )
+    # Set root attributes
+    nx_root, _ = get_nxdl_root_and_path("NXroot")
+    for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
+        child = tree.add_node_from(root_attrib)
+        child.optionality = "optional"
+
     entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
     add_children_to(tree, entry)
 

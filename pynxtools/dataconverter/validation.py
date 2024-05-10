@@ -89,6 +89,9 @@ def build_nested_dict_from(
     # iterate input dictionary
     hdf_path_mapping = {}
     for k, v in mapping.items():
+        print(f"{k}: {v}")
+        if v is None:
+            continue
         hdf_path_mapping[convert_data_dict_path_to_hdf5_path(k)] = v
         _, *keys, final_key = (
             convert_data_dict_path_to_hdf5_path(k).replace("/@", "@").split("/")
@@ -111,6 +114,8 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
     """
+    if not keys:
+        return None
     if name in keys:
         return name
 

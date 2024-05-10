@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import logging
-from typing import Any, Dict, List, Mapping, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pytest
