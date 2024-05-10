@@ -89,7 +89,6 @@ def build_nested_dict_from(
     # iterate input dictionary
     hdf_path_mapping = {}
     for k, v in mapping.items():
-        print(f"{k}: {v}")
         if v is None:
             continue
         hdf_path_mapping[convert_data_dict_path_to_hdf5_path(k)] = v
