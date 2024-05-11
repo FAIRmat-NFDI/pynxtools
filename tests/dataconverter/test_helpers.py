@@ -274,7 +274,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "not_a_num",
             ),
             (
-                "The value at /my_entry/nxodd_name/in"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
                 "t_value should be one of: (<class 'int'>, <cla"
                 "ss 'numpy.ndarray'>, <class 'numpy.signedinteger'>),"
                 " as defined in the NXDL as NX_INT."
@@ -288,7 +288,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "NOT_TRUE_OR_FALSE",
             ),
             (
-                "The value at /my_entry/nxodd_name/bool_value sh"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
                 "ould be one of: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
                 "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ),
@@ -297,7 +297,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(
             alter_dict(
                 TEMPLATE,
-                "/my_entry/nxodd_name/int_value",
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 {"link": "/a-link"},
             ),
             (""),
@@ -308,7 +308,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value", -1
             ),
             (
-                "The value at /my_entry/nxodd_name/posint_value "
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value "
                 "should be a positive int, but is -1."
             ),
             id="negative-posint",
@@ -338,7 +338,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /my_entry/nxodd_name/bool_value is"
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
+                "/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -350,7 +351,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /my_entry/nxodd_two_name/bool_value is"
+                "The data entry corresponding to /ENTRY[my_entry]/"
+                "NXODD_name[nxodd_two_name]/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -366,7 +368,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /my_entry/nxodd_name/bool_value is"
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
+                "/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -381,7 +384,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name",
                 "optional",
             ),
-            ("The required group, /my_entry/NXODD_name, hasn't been supplied."),
+            ("The required group, /ENTRY[my_entry]/NXODD_name, hasn't been supplied."),
             id="all-required-fields-set-to-none",
         ),
         pytest.param(
@@ -408,7 +411,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018-00:00",
             ),
-            "The value at /my_entry/nxodd_name/date_value"
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
             " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
             " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
             "T12:14:12.05018+00:00.",
@@ -420,7 +423,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
             ),
             (
-                "The value at /my_entry/nxodd_name/type should be on of the following"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
+                "be on of the following"
                 " strings: ['1st type', '2nd type', '3rd type', '4th type']"
             ),
             id="wrong-enum-choice",
@@ -430,7 +434,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
             ),
             (
-                "The data entry corresponding to /my_entry/optional_parent/"
+                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
                 "required_child is required and hasn't been supplied by the reader."
             ),
             id="atleast-one-required-child-not-provided-optional-parent",
@@ -442,7 +446,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /my_entry/my_group/required_field "
+                "The data entry corresponding to /ENTRY[my_entry]/"
+                "OPTIONAL_group[my_group]/required_field "
                 "is required and hasn't been supplied by the reader."
             ),
             id="required-field-not-provided-in-variadic-optional-group",
@@ -470,12 +475,12 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "The required group, /my_entry/required_group, hasn't been supplied.",
+            "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied.",
             id="missing-empty-yet-required-group",
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-            "The required group, /my_entry/required_group2, hasn't been supplied.",
+            "The required group, /ENTRY[my_entry]/required_group2, hasn't been supplied.",
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
@@ -486,7 +491,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[entry]/required_group",
                 None,
             ),
-            "The required group, /my_entry/required_group, hasn't been supplied.",
+            "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied.",
             id="allow-required-and-empty-group",
         ),
         pytest.param(
@@ -496,7 +501,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The required group, /my_entry/optional_parent/req_group_in_opt_group, "
+                "The required group, /ENTRY[my_entry]/"
+                "optional_parent/req_group_in_opt_group, "
                 "hasn't been supplied."
             ),
             id="req-group-in-opt-parent-removed",

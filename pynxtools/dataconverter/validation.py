@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import re
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
@@ -28,10 +29,13 @@ from pynxtools.dataconverter.helpers import (
     Collector,
     ValidationProblem,
     collector,
-    convert_data_dict_path_to_hdf5_path,
     is_valid_data_field,
 )
-from pynxtools.dataconverter.nexus_tree import NexusNode, generate_tree_from
+from pynxtools.dataconverter.nexus_tree import (
+    NexusEntity,
+    NexusNode,
+    generate_tree_from,
+)
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 
 
@@ -52,24 +56,21 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
 
 def build_nested_dict_from(
     mapping: Mapping[str, Any],
-) -> Tuple[Mapping[str, Any], Mapping[str, Any]]:
+) -> Mapping[str, Any]:
     """
     Creates a nested mapping from a `/` separated flat mapping.
-    It also converts data dict paths to HDF5 paths, i.e.,
-    it converts the path `/ENTRY[my_entry]/TEST[test]` to `/my_entry/test`.
 
     Args:
         mapping (Mapping[str, Any]):
             The mapping to nest.
 
     Returns:
-        Tuple[Mapping[str, Any], Mapping[str, Any]]:
-            First element is the nested mapping.
-            Second element is the original dict in hdf5 path notation.
+        Mapping[str, Any]: The nested mapping.
     """
 
     # Based on
-    # https://stackoverflow.com/questions/50607128/creating-a-nested-dictionary-from-a-flattened-dictionary
+    # https://stackoverflow.com/questions/50607128/
+    # creating-a-nested-dictionary-from-a-flattened-dictionary
     def get_from(data_tree, map_list):
         """Iterate nested dictionary"""
         return reduce(getitem, map_list, data_tree)
@@ -87,19 +88,47 @@ def build_nested_dict_from(
     data_tree = tree()
 
     # iterate input dictionary
-    hdf_path_mapping = {}
     for k, v in mapping.items():
         if v is None:
             continue
-        hdf_path_mapping[convert_data_dict_path_to_hdf5_path(k)] = v
-        _, *keys, final_key = (
-            convert_data_dict_path_to_hdf5_path(k).replace("/@", "@").split("/")
-            if not k.startswith("/@")
-            else k.split("/")
-        )
-        get_from(data_tree, keys)[final_key] = v
+        _, *keys, final_key = k.split("/")
+        # if final_key.startswith("@") and "/" + "/".join(keys) not in mapping:
+        # Don't add attributes if the field is not present
+        # continue
+        data = get_from(data_tree, keys)
+        if not isinstance(data, defaultdict):
+            # Deal with attributes for fields
+            # Store them in a new key with the name `field_name@attribute_name``
+            get_from(data_tree, keys[:-1])[f"{keys[-1]}{final_key}"] = v
+        else:
+            data[final_key] = v
 
-    return default_to_regular_dict(data_tree), hdf_path_mapping
+    return default_to_regular_dict(data_tree)
+
+
+def get_class_of(name: str) -> Tuple[Optional[str], str]:
+    """
+    Return the class and the name of a data dict entry of the form
+    `get_class_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
+    If this is a simple string it will just return this string, i.e.
+    `get_class_of("entry")` will return `None, "entry"`.
+
+    Args:
+        name (str): The data dict entry
+
+    Returns:
+        Tuple[Optional[str], str]:
+            First element is the class name of the entry, second element is the name.
+            The class name will be None if it is not present.
+    """
+    name_match = re.search(r"([^\[]+)\[([^\]]+)\](\@.*)?", name)
+    if name_match is None:
+        return None, name
+
+    prefix = name_match.group(3)
+    return name_match.group(
+        1
+    ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
 def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
@@ -115,11 +144,16 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
     """
     if not keys:
         return None
-    if name in keys:
-        return name
+
+    nx_name, name2fit = get_class_of(name)
+
+    if name2fit in keys:
+        return name2fit
+    if nx_name is not None and nx_name in keys:
+        return nx_name
 
     best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name, x)), keys), key=lambda x: x[1]
+        map(lambda x: (x, get_nx_namefit(name2fit, x)), keys), key=lambda x: x[1]
     )
     if score < 0:
         return None
@@ -154,9 +188,16 @@ def validate_dict_against(
 
         variations = []
         for key in keys:
-            if get_nx_namefit(key, node.name) >= 0 and key not in [
-                x.name for x in node.parent.children
-            ]:
+            nx_name, name2fit = get_class_of(key)
+            if node.type == "attribute":
+                # Remove the starting @ from attributes
+                name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
+            if nx_name is not None and nx_name != node.name:
+                continue
+            if (
+                get_nx_namefit(name2fit, node.name) >= 0
+                and key not in node.parent.get_all_children_names()
+            ):
                 variations.append(key)
         return variations
 
@@ -174,7 +215,9 @@ def validate_dict_against(
         for variant in variants:
             if not isinstance(keys[variant], Mapping):
                 collector.collect_and_log(
-                    f"{prev_path}/{variant}", ValidationProblem.ExpectedGroup, None
+                    f"{prev_path}/{variant}",
+                    ValidationProblem.ExpectedGroup,
+                    None,
                 )
                 return
             recurse_tree(node, keys[variant], prev_path=f"{prev_path}/{variant}")
@@ -192,12 +235,37 @@ def validate_dict_against(
                 collector.collect_and_log(
                     full_path, missing_type_err.get(node.type), None
                 )
+
             return
 
         for variant in variants:
+            if node.optionality == "required" and isinstance(keys[variant], Mapping):
+                # TODO: Check if all fields in the dict are actual attributes
+                # (startwith @)
+                all_attrs = True
+                for entry in keys[variant]:
+                    if not entry.startswith("@"):
+                        all_attrs = False
+                        break
+                if all_attrs:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}", missing_type_err.get(node.type), None
+                    )
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.AttributeForNonExistingField,
+                        None,
+                    )
+                    return
+            if variant not in keys or mapping.get(f"{prev_path}/{variant}") is None:
+                continue
+
+            # Check general validity
             is_valid_data_field(
                 mapping[f"{prev_path}/{variant}"], node.dtype, f"{prev_path}/{variant}"
             )
+
+            # Check enumeration
             if (
                 node.items is not None
                 and mapping[f"{prev_path}/{variant}"] not in node.items
@@ -207,6 +275,8 @@ def validate_dict_against(
                     ValidationProblem.InvalidEnum,
                     node.items,
                 )
+
+            # Check unit category
             if node.unit is not None:
                 remove_from_not_visited(f"{prev_path}/{variant}/@units")
                 if f"{variant}@units" not in keys:
@@ -215,7 +285,7 @@ def validate_dict_against(
                         ValidationProblem.MissingUnit,
                         node.unit,
                     )
-                # TODO: Check unit
+                # TODO: Check unit with pint
 
             recurse_tree(
                 node,
@@ -238,9 +308,11 @@ def validate_dict_against(
 
         for variant in variants:
             is_valid_data_field(
-                mapping[f"{prev_path}/@{variant}"],
+                mapping[
+                    f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
+                ],
                 node.dtype,
-                f"{prev_path}/@{variant}",
+                f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
             )
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
@@ -259,7 +331,9 @@ def validate_dict_against(
 
         collector = old_collector
         collector.collect_and_log(
-            f"{prev_path}/{node.name}", ValidationProblem.ChoiceValidationError, None
+            f"{prev_path}/{node.name}",
+            ValidationProblem.ChoiceValidationError,
+            None,
         )
 
     def handle_unknown_type(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
@@ -270,21 +344,39 @@ def validate_dict_against(
         pass
 
     def is_documented(key: str, node: NexusNode) -> bool:
+        if mapping.get(key) is None:
+            # This value is not really set. Skip checking it's documentation.
+            return True
+
         for name in key[1:].replace("@", "").split("/"):
             children = node.get_all_children_names()
             best_name = best_namefit_of(name, children)
             if best_name is None:
                 return False
-            if best_name not in node.get_all_children_names(depth=1):
-                node = node.add_inherited_node(best_name)
-            else:
-                resolver = Resolver("name")
-                node = resolver.get(node, best_name)
+
+            resolver = Resolver("name", relax=True)
+            child_node = resolver.get(node, best_name)
+            node = (
+                node.add_inherited_node(best_name) if child_node is None else child_node
+            )
+
+        if isinstance(mapping[key], dict) and "link" in mapping[key]:
+            # TODO: Follow link and check consistency with current field
+            return True
 
         if "@" not in key and node.type != "field":
             return False
         if "@" in key and node.type != "attribute":
             return False
+
+        if (
+            isinstance(node, NexusEntity)
+            and node.unit is not None
+            and f"{key}/@units" not in mapping
+        ):
+            collector.collect_and_log(
+                f"{key}", ValidationProblem.MissingUnit, node.unit
+            )
 
         return is_valid_data_field(mapping[key], node.dtype, key)
 
@@ -307,7 +399,7 @@ def validate_dict_against(
 
     tree = generate_tree_from(appdef)
     collector.clear()
-    nested_keys, mapping = build_nested_dict_from(mapping)
+    nested_keys = build_nested_dict_from(mapping)
     not_visited = list(mapping)
     recurse_tree(tree, nested_keys)
 
@@ -315,9 +407,9 @@ def validate_dict_against(
         return not collector.has_validation_problems()
 
     for not_visited_key in not_visited:
-        if is_documented(not_visited_key, tree):
-            continue
         if not_visited_key.endswith("/@units"):
+            if is_documented(not_visited_key.rsplit("/", 1)[0], tree):
+                continue
             if not_visited_key.rsplit("/", 1)[0] not in not_visited:
                 collector.collect_and_log(
                     not_visited_key,
@@ -329,9 +421,11 @@ def validate_dict_against(
                 ValidationProblem.UnitWithoutDocumentation,
                 mapping[not_visited_key],
             )
-        else:
-            collector.collect_and_log(
-                not_visited_key, ValidationProblem.MissingDocumentation, None
-            )
+        if is_documented(not_visited_key, tree):
+            continue
+
+        collector.collect_and_log(
+            not_visited_key, ValidationProblem.MissingDocumentation, None
+        )
 
     return not collector.has_validation_problems()

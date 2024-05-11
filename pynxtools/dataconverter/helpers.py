@@ -52,6 +52,7 @@ class ValidationProblem(Enum):
     MissingUnit = 11
     ChoiceValidationError = 12
     UnitWithoutField = 13
+    AttributeForNonExistingField = 14
 
 
 class Collector:
@@ -111,6 +112,11 @@ class Collector:
             logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
             logger.warning(f"Unit {path} in dataset without its field {value}")
+        elif log_type == ValidationProblem.AttributeForNonExistingField:
+            logger.warning(
+                f"There were attributes set for the field {path}, "
+                "but the field does not exist."
+            )
 
     def collect_and_log(self, path: str, *args, **kwargs):
         """Inserts a path into the data dictionary and logs the action."""
@@ -517,7 +523,7 @@ def convert_str_to_bool_safe(value):
     return None
 
 
-def is_valid_data_field(value, nxdl_type, path):
+def is_valid_data_field(value, nxdl_type, path) -> bool:
     """Checks whether a given value is valid according to what is defined in the NXDL.
 
     This function will also try to convert typical types, for example int to float,
@@ -553,7 +559,7 @@ def is_valid_data_field(value, nxdl_type, path):
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
 
-    return value
+    return True
 
 
 @lru_cache(maxsize=None)

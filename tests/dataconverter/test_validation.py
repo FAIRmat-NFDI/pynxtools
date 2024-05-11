@@ -93,7 +93,7 @@ def alter_dict(new_values: Dict[str, Any], data_dict: Dict[str, Any]) -> Dict[st
 )
 def test_valid_data_dict(caplog, data_dict):
     with caplog.at_level(logging.WARNING):
-        validate_dict_against("NXtest", data_dict, ignore_undocumented=True)
+        validate_dict_against("NXtest", data_dict)
     assert caplog.text == ""
 
 
@@ -109,6 +109,6 @@ def test_valid_data_dict(caplog, data_dict):
 )
 def test_validation_shows_warning(caplog, data_dict, error_message):
     with caplog.at_level(logging.WARNING):
-        validate_dict_against("NXtest", data_dict, ignore_undocumented=True)
+        assert not validate_dict_against("NXtest", data_dict)
 
     assert error_message in caplog.text
