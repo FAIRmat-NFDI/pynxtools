@@ -23,6 +23,7 @@ from operator import getitem
 from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
 
 import h5py
+import lxml.etree as ET
 from anytree import Resolver
 
 from pynxtools.dataconverter.helpers import (
@@ -429,3 +430,10 @@ def validate_dict_against(
         )
 
     return not collector.has_validation_problems()
+
+
+# Backwards compatibility
+def validate_data_dict(
+    _: Mapping[str, Any], read_data: Mapping[str, Any], root: ET._Element
+) -> bool:
+    return validate_dict_against(root.attrib["name"], read_data)
