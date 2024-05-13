@@ -258,6 +258,8 @@ class NexusNode(BaseModel, NodeMixin):
             ):
                 attr_prefix = "@" if child.type == "attribute" else ""
                 req_children.append(f"{prev_path}/{attr_prefix}{child.name}")
+                if child.unit:
+                    req_children.append(f"{prev_path}/{attr_prefix}{child.name}/@units")
 
             if (
                 child.type in ("field", "group", "choice")
