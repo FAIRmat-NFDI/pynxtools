@@ -26,7 +26,7 @@ import os
 import sys
 from gettext import gettext
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Literal, Optional, Tuple
 
 import click
 import lxml.etree as ET
@@ -34,6 +34,7 @@ import yaml
 from click_default_group import DefaultGroup
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.nexus_tree import generate_tree_from
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
@@ -423,21 +424,22 @@ def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
         f.write(text)
         f.close()
 
+    tree = generate_tree_from(nxdl)
+
     print_or_write = lambda txt: write_to_file(txt) if output else print(txt)
 
-    nxdl_root, nxdl_f_path = helpers.get_nxdl_root_and_path(nxdl)
-    template = Template()
-    helpers.generate_template_from_nxdl(nxdl_root, template)
-
+    level: Literal["required", "recommended", "optional"] = "optional"
     if required:
-        template = Template(template.get_optionality("required"))
+        level = "required"
+    reqs = tree.required_fields_and_attrs_names(level=level)
+    template = {req: None for req in reqs}
 
     if pythonic:
         print_or_write(str(template))
         return
     print_or_write(
         json.dumps(
-            template.get_accumulated_dict(),
+            template,
             indent=4,
             sort_keys=True,
             ensure_ascii=False,

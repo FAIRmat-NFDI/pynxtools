@@ -223,7 +223,7 @@ class NexusNode(BaseModel, NodeMixin):
     def required_fields_and_attrs_names(
         self,
         prev_path: str = "",
-        level: Literal["required", "recommended"] = "required",
+        level: Literal["required", "recommended", "optional"] = "required",
     ) -> List[str]:
         """
         Gets all required fields and attributes names of the current node and its children.
@@ -231,18 +231,23 @@ class NexusNode(BaseModel, NodeMixin):
         Args:
             prev_path (str, optional):
                 The path prefix to attach to the names found at this node. Defaults to "".
-            level (Literal["required", "recommended"], optional):
+            level (Literal["required", "recommended", "optional"], optional):
                 Denotes which level of requiredness should be returned.
                 Setting this to `required` will return only required fields and attributes.
                 Setting this to `recommended` will return
                 both required and recommended fields and attributes.
+                Setting this to "optional" will return all fields and attributes
+                directly present in the application definition but no fields
+                inherited from the base classes.
                 Defaults to "required".
 
         Returns:
             List[str]: A list of required fields and attributes names.
         """
         req_children = []
-        if level == "recommended":
+        if level == "optional":
+            optionalities: Tuple[str, ...] = ("optional", "recommended", "required")
+        elif level == "recommended":
             optionalities: Tuple[str, ...] = ("recommended", "required")
         else:
             optionalities = ("required",)
