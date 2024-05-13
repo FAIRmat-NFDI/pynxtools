@@ -432,7 +432,9 @@ def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
     if required:
         level = "required"
     reqs = tree.required_fields_and_attrs_names(level=level)
-    template = {req: None for req in reqs}
+    template = {
+        helpers.convert_nxdl_path_dict_to_data_converter_dict(req): None for req in reqs
+    }
 
     if pythonic:
         print_or_write(str(template))

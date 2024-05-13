@@ -401,6 +401,22 @@ def convert_nxdl_path_entry_to_data_converter_entry(entry) -> str:
     return f"{entry}[{entry.lower()}]"
 
 
+def convert_nxdl_path_dict_to_data_converter_dict(path) -> str:
+    """
+    Helper function to convert NXDL style path to data converter style path:
+    /ENTRY/entry -> /ENTRY[entry]/entry
+    """
+    data_converter_path = ""
+    for entry in path.split("/")[1:]:
+        if not contains_uppercase(entry):
+            data_converter_path += f"/{entry}"
+            continue
+        data_converter_path += "/" + convert_nxdl_path_entry_to_data_converter_entry(
+            entry
+        )
+    return data_converter_path
+
+
 def convert_data_converter_dict_to_nxdl_path(path) -> str:
     """
     Helper function to convert data converter style path to NXDL style path:

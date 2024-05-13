@@ -248,7 +248,7 @@ class NexusNode(BaseModel, NodeMixin):
         if level == "optional":
             optionalities: Tuple[str, ...] = ("optional", "recommended", "required")
         elif level == "recommended":
-            optionalities: Tuple[str, ...] = ("recommended", "required")
+            optionalities = ("recommended", "required")
         else:
             optionalities = ("required",)
         for child in self.children:
