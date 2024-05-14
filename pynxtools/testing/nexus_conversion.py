@@ -1,30 +1,15 @@
 """Generic test for reader plugins."""
 
-<<<<<<< HEAD
-=======
-import importlib.metadata as importlib_metadata
->>>>>>> 3c7e217 (rename test subpackage and module.)
 import logging
 import os
 from glob import glob
 
-<<<<<<< HEAD
 from pynxtools.dataconverter.helpers import (
     generate_template_from_nxdl,
     get_nxdl_root_and_path,
 )
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
-=======
-import toml
-
-from pynxtools.dataconverter.convert import get_nxdl_root_and_path
-from pynxtools.dataconverter.helpers import (
-    generate_template_from_nxdl,
-    validate_data_dict,
-)
-from pynxtools.dataconverter.template import Template
->>>>>>> 3c7e217 (rename test subpackage and module.)
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
 
@@ -147,6 +132,7 @@ class ReaderTest:
                     f" generated: {gen_l} \n referenced : {ref_l}"
                 )
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 
@@ -240,3 +226,5 @@ def test_verfy_pynxtools_version(toml_file, pynx_key="Pynxtools"):
 #     """Test to verify the nomad version."""
 #     verify_package_version(toml_file, "nomad-lab", nomad_key)
 >>>>>>> 3c7e217 (rename test subpackage and module.)
+=======
+>>>>>>> 92ab8fd (removinhg version test from test framework.)
