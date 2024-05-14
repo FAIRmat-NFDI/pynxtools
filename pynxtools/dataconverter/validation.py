@@ -107,7 +107,7 @@ def build_nested_dict_from(
     return default_to_regular_dict(data_tree)
 
 
-def get_class_of(name: str) -> Tuple[Optional[str], str]:
+def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     """
     Return the class and the name of a data dict entry of the form
     `get_class_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
@@ -146,7 +146,7 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
     if not keys:
         return None
 
-    nx_name, name2fit = get_class_of(name)
+    nx_name, name2fit = split_class_and_name_of(name)
 
     if name2fit in keys:
         return name2fit
@@ -189,7 +189,7 @@ def validate_dict_against(
 
         variations = []
         for key in keys:
-            nx_name, name2fit = get_class_of(key)
+            nx_name, name2fit = split_class_and_name_of(key)
             if node.type == "attribute":
                 # Remove the starting @ from attributes
                 name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
@@ -236,24 +236,26 @@ def validate_dict_against(
         keys: Mapping[str, Any], prev_path: str
     ) -> Optional[Mapping[str, Any]]:
         if len(keys) == 1 and "link" in keys:
-            first, *rest = keys["link"].split("/")
-            linked_keys = mapping.get(first)
-            for path_elem in rest:
-                if linked_keys is None:
+            current_keys = nested_keys
+            link_key = None
+            for path_elem in keys["link"][1:].split("/"):
+                link_key = None
+                for dict_path_elem in current_keys:
+                    _, hdf_name = split_class_and_name_of(dict_path_elem)
+                    if hdf_name == path_elem:
+                        link_key = hdf_name
+                        break
+                if link_key is None:
                     collector.collect_and_log(
                         prev_path, ValidationProblem.BrokenLink, keys["link"]
                     )
                     return None
-                linked_keys = linked_keys.get(path_elem)
-            return linked_keys
+                current_keys = current_keys[dict_path_elem]
+            return current_keys
         return keys
 
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
-        # TODO: Follow links
-        # keys = _follow_link(keys, prev_path)
-        # if keys is None:
-        #     return
         variants = get_variations_of(node, keys)
         if not variants:
             if node.optionality == "required" and node.type in missing_type_err:
@@ -407,6 +409,9 @@ def validate_dict_against(
 
     def recurse_tree(node: NexusNode, keys: Mapping[str, Any], prev_path: str = ""):
         for child in node.children:
+            keys = _follow_link(keys, prev_path)
+            if keys is None:
+                return
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
 
     missing_type_err = {
