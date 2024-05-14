@@ -244,32 +244,32 @@ class NexusNode(BaseModel, NodeMixin):
         Returns:
             List[str]: A list of required fields and attributes names.
         """
-        req_children = []
-        if level == "optional":
-            optionalities: Tuple[str, ...] = ("optional", "recommended", "required")
-        elif level == "recommended":
-            optionalities = ("recommended", "required")
-        else:
-            optionalities = ("required",)
-        for child in self.children:
-            if (
-                child.type in ("field", "attribute")
-                and child.optionality in optionalities
-            ):
-                attr_prefix = "@" if child.type == "attribute" else ""
-                req_children.append(f"{prev_path}/{attr_prefix}{child.name}")
-                if child.unit:
-                    req_children.append(f"{prev_path}/{attr_prefix}{child.name}/@units")
+        lvl_map = {
+            "required": ("required",),
+            "recommended": ("recommended", "required"),
+            "optional": ("optional", "recommended", "required"),
+        }
 
-            if (
-                child.type in ("field", "group", "choice")
-                and child.optionality in optionalities
-            ):
-                req_children.extend(
-                    child.required_fields_and_attrs_names(
-                        prev_path=f"{prev_path}/{child.name}", level=level
-                    )
+        req_children = []
+        optionalities = lvl_map.get(level, ("required",))
+        for child in self.children:
+            if child.optionality not in optionalities:
+                continue
+
+            if child.type == "attribute":
+                req_children.append(f"{prev_path}/@{child.name}")
+                continue
+
+            if child.type == "field":
+                req_children.append(f"{prev_path}/{child.name}")
+                if isinstance(child, NexusEntity) and child.unit is not None:
+                    req_children.append(f"{prev_path}/{child.name}/@units")
+
+            req_children.extend(
+                child.required_fields_and_attrs_names(
+                    prev_path=f"{prev_path}/{child.name}", level=level
                 )
+            )
 
         return req_children
 
