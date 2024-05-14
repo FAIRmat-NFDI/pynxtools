@@ -71,7 +71,7 @@ jobs:
       - name: Run XPS tests
         run: |
           cd pynxtools-xps
-          git checkout main
+          git checkout fix-nxs-validation
           pip install .
           pytest tests/.
       # # Test for EM Plugin

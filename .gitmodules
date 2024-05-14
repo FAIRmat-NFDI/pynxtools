@@ -1,3 +1,4 @@
 [submodule "pynxtools/definitions"]
 	path = pynxtools/definitions
 	url = https://github.com/FAIRmat-NFDI/nexus_definitions.git
+	branch = mpes-fixes-during-testing
