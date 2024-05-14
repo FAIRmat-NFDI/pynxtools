@@ -200,6 +200,10 @@ def validate_dict_against(
                 and key not in node.parent.get_all_children_names()
             ):
                 variations.append(key)
+            if nx_name is not None and not variations:
+                collector.collect_and_log(
+                    nx_name, ValidationProblem.FailedNamefitting, keys
+                )
         return variations
 
     def get_field_attributes(name: str, keys: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -353,7 +357,7 @@ def validate_dict_against(
             children = node.get_all_children_names()
             best_name = best_namefit_of(name, children)
             if best_name is None:
-                return False
+                return ignore_undocumented
 
             resolver = Resolver("name", relax=True)
             child_node = resolver.get(node, best_name)
@@ -403,9 +407,6 @@ def validate_dict_against(
     nested_keys = build_nested_dict_from(mapping)
     not_visited = list(mapping)
     recurse_tree(tree, nested_keys)
-
-    if ignore_undocumented:
-        return not collector.has_validation_problems()
 
     for not_visited_key in not_visited:
         if not_visited_key.endswith("/@units"):

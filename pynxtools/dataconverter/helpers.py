@@ -53,6 +53,8 @@ class ValidationProblem(Enum):
     ChoiceValidationError = 12
     UnitWithoutField = 13
     AttributeForNonExistingField = 14
+    BrokenLink = 15
+    FailedNamefitting = 16
 
 
 class Collector:
@@ -117,6 +119,10 @@ class Collector:
                 f"There were attributes set for the field {path}, "
                 "but the field does not exist."
             )
+        elif log_type == ValidationProblem.BrokenLink:
+            logger.warning(f"Broken link at {path} to {value}")
+        elif log_type == ValidationProblem.FailedNamefitting:
+            logger.warning(f"Found no namefit of {path} in {value}.")
 
     def collect_and_log(self, path: str, *args, **kwargs):
         """Inserts a path into the data dictionary and logs the action."""
