@@ -5,6 +5,7 @@ import os
 from glob import glob
 
 from pynxtools.dataconverter.helpers import (
+    get_nxdl_root_and_path,
     generate_template_from_nxdl,
     get_nxdl_root_and_path,
 )
