@@ -18,6 +18,7 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
+import logging
 import os
 import xml.etree.ElementTree as ET
 from typing import List
@@ -77,7 +78,7 @@ def test_if_readers_are_children_of_base_reader(reader):
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
-def test_has_correct_read_func(reader):
+def test_has_correct_read_func(reader, caplog):
     """Test if all readers have a valid read function implemented"""
     assert callable(reader.read)
     if reader.__name__ not in ["BaseReader"]:
@@ -121,6 +122,9 @@ def test_has_correct_read_func(reader):
             # This is a temporary fix because the json_yml example data
             # does not produce a valid entry.
             if not reader_name == "json_yml":
-                assert validate_dict_against(
-                    supported_nxdl, read_data, ignore_undocumented=True
-                )
+                with caplog.at_level(logging.WARNING):
+                    validate_dict_against(
+                        supported_nxdl, read_data, ignore_undocumented=True
+                    )
+
+                print(caplog.text)

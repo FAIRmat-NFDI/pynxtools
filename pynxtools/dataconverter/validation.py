@@ -232,8 +232,28 @@ def validate_dict_against(
             not_visited.remove(path)
         return path
 
+    def _follow_link(
+        keys: Mapping[str, Any], prev_path: str
+    ) -> Optional[Mapping[str, Any]]:
+        if len(keys) == 1 and "link" in keys:
+            first, *rest = keys["link"].split("/")
+            linked_keys = mapping.get(first)
+            for path_elem in rest:
+                if linked_keys is None:
+                    collector.collect_and_log(
+                        prev_path, ValidationProblem.BrokenLink, keys["link"]
+                    )
+                    return None
+                linked_keys = linked_keys.get(path_elem)
+            return linked_keys
+        return keys
+
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
+        # TODO: Follow links
+        # keys = _follow_link(keys, prev_path)
+        # if keys is None:
+        #     return
         variants = get_variations_of(node, keys)
         if not variants:
             if node.optionality == "required" and node.type in missing_type_err:
@@ -357,7 +377,7 @@ def validate_dict_against(
             children = node.get_all_children_names()
             best_name = best_namefit_of(name, children)
             if best_name is None:
-                return ignore_undocumented
+                return False
 
             resolver = Resolver("name", relax=True)
             child_node = resolver.get(node, best_name)
@@ -418,17 +438,19 @@ def validate_dict_against(
                     ValidationProblem.UnitWithoutField,
                     not_visited_key.rsplit("/", 1)[0],
                 )
-            collector.collect_and_log(
-                not_visited_key,
-                ValidationProblem.UnitWithoutDocumentation,
-                mapping[not_visited_key],
-            )
+            if not ignore_undocumented:
+                collector.collect_and_log(
+                    not_visited_key,
+                    ValidationProblem.UnitWithoutDocumentation,
+                    mapping[not_visited_key],
+                )
         if is_documented(not_visited_key, tree):
             continue
 
-        collector.collect_and_log(
-            not_visited_key, ValidationProblem.MissingDocumentation, None
-        )
+        if not ignore_undocumented:
+            collector.collect_and_log(
+                not_visited_key, ValidationProblem.MissingDocumentation, None
+            )
 
     return not collector.has_validation_problems()
 
