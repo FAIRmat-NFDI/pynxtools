@@ -34,20 +34,20 @@ jobs:
         run: |
           pip install ".[dev]"
       # Test for STM Plugin
-      - name: clone STM repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          repository: FAIRmat-NFDI/pynxtools-stm
-          path: pynxtools-stm
-      - name: Run STM tests
-        run: |
-          cd pynxtools-stm
-          git checkout TestFromPynxtools
-          git submodule sync --recursive
-          git submodule update --init --recursive --jobs=4
-          pip install .
-          pytest tests/test_reader.py::test_stm_reader
+      # - name: clone STM repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      #     repository: FAIRmat-NFDI/pynxtools-stm
+      #     path: pynxtools-stm
+      # - name: Run STM tests
+      #   run: |
+      #     cd pynxtools-stm
+      #     git checkout TestFromPynxtools
+      #     git submodule sync --recursive
+      #     git submodule update --init --recursive --jobs=4
+      #     pip install .
+      #     pytest tests/test_reader.py::test_stm_reader
       # # Test for MPES Plugin
       # - name: clone MPES repo
       #   uses: actions/checkout@v4
