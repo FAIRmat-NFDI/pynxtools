@@ -530,6 +530,7 @@ DEBUG - -> summed
 DEBUG - -> event
 DEBUG - -> histogrammed
 DEBUG - -> decimated
+DEBUG - -> pulse counting
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/acquisition_mode):
 DEBUG - 
 DEBUG - documentation (NXdetector.nxdl.xml:/acquisition_mode):
