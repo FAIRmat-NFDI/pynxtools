@@ -97,10 +97,17 @@ class ReaderTest:
 
         assert isinstance(read_data, Template)
         with self.caplog.at_level("ERROR", "WARNING"):
+<<<<<<< HEAD
             _ = validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
             )
         assert not self.caplog.records, "Validation is not successful. Check logs."
+=======
+            is_success = validate_dict_against(
+                self.nxdl, read_data, ignore_undocumented
+            )
+            assert is_success, "Validation failed"
+>>>>>>> 554b843 (use new pynx validation in test suite)
         for record in self.caplog.records:
             if record.levelname == "ERROR":
                 assert False, record.message
