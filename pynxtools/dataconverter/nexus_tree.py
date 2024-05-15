@@ -186,6 +186,21 @@ class NexusNode(BaseModel, NodeMixin):
     def search_child_with_name(
         self, names: Union[Tuple[str, ...], str]
     ) -> Optional["NexusNode"]:
+        """
+        This searches a child or children with `names` in the current node.
+        If the child is not found as a direct child,
+        it will search in the inheritance chain and add the child to the tree.
+
+        Args:
+            names (Union[Tuple[str, ...], str]):
+                Either a single string or a tuple of string.
+                In case this is a string the child with the specific name is searched.
+                If it is a tuple, the first match is used.
+
+        Returns:
+            Optional[NexusNode]:
+                The node of the child which was added. None if no child was found.
+        """
         if isinstance(names, str):
             names = (names,)
         for name in names:
