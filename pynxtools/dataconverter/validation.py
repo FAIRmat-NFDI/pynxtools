@@ -24,6 +24,7 @@ from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
 
 import h5py
 import lxml.etree as ET
+import numpy as np
 from anytree import Resolver
 
 from pynxtools.dataconverter.helpers import (
@@ -34,6 +35,7 @@ from pynxtools.dataconverter.helpers import (
 )
 from pynxtools.dataconverter.nexus_tree import (
     NexusEntity,
+    NexusGroup,
     NexusNode,
     generate_tree_from,
 )
@@ -209,7 +211,96 @@ def validate_dict_against(
     def get_field_attributes(name: str, keys: Mapping[str, Any]) -> Mapping[str, Any]:
         return {k.split("@")[1]: keys[k] for k in keys if k.startswith(f"{name}@")}
 
-    def handle_group(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
+    def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
+        keys = _follow_link(keys, prev_path)
+        signal = keys.get("@signal")
+        aux_signals = keys.get("@auxiliary_signals", [])
+        axes = keys.get("@axes", [])
+
+        if signal is None:
+            # TODO: Make proper log of missing signal
+            print(f"Missing signal in {prev_path}")
+
+        data = keys.get(signal)
+        if data is None:
+            # TODO: Make proper log of missing data
+            print(f"Missing data for @signal in {prev_path}/{signal}")
+        else:
+            # Attach the base class to the inheritance chain
+            # if the concept for signal is already defined in the appdef
+            data_node = node.search_child_with_name((signal, "DATA"))
+            data_bc_node = node.search_child_with_name("DATA")
+            data_node.inheritance.append(data_bc_node.inheritance[0])
+            for child in data_node.get_all_children_names():
+                data_node.search_child_with_name(child)
+
+            handle_field(
+                node.search_child_with_name((signal, "DATA")),
+                keys,
+                prev_path=f"{prev_path}",
+            )
+
+        for i, axis in enumerate(axes):
+            if axis == ".":
+                continue
+            index = keys.get(f"{axis}_indices", i)
+
+            axis_data = _follow_link(keys.get(axis), prev_path)
+            if axis_data is None:
+                # TODO: Proper log
+                print(f"Missing data for @axes in {prev_path}/{axis}")
+                break
+            else:
+                # Attach the base class to the inheritance chain
+                # if the concept for the axis is already defined in the appdef
+                axis_node = node.search_child_with_name((axis, "AXISNAME"))
+                axis_bc_node = node.search_child_with_name("AXISNAME")
+                axis_node.inheritance.append(axis_bc_node.inheritance[0])
+                for child in axis_node.get_all_children_names():
+                    axis_node.search_child_with_name(child)
+
+                handle_field(
+                    node.search_child_with_name((axis, "AXISNAME")),
+                    keys,
+                    prev_path=f"{prev_path}",
+                )
+            if data.shape[index] != len(axis_data):
+                # TODO: Proper log
+                print(
+                    f"Length of axis {prev_path}/{axis} does not "
+                    f"match to {prev_path}/{signal} in dimension {index}"
+                )
+
+        indices = map(lambda x: f"{x}_indices", axes)
+        errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
+
+        # Handle all remaining keys which are not part of NXdata
+        remaining_keys = {
+            x: keys[x]
+            for x in keys
+            if x not in [signal, *axes, *indices, *errors, *aux_signals]
+        }
+        recurse_tree(
+            node,
+            remaining_keys,
+            prev_path=f"{prev_path}",
+            ignore_names=[
+                "DATA",
+                "AXISNAME",
+                "AXISNAME_indices",
+                "FIELDNAME_errors",
+                "signal",
+                "auxiliary_signals",
+                "axes",
+                signal,
+                *axes,
+                *indices,
+                *errors,
+                *aux_signals,
+            ],
+        )
+
+    def handle_group(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         variants = get_variations_of(node, keys)
         if not variants:
             if node.optionality == "required" and node.type in missing_type_err:
@@ -225,16 +316,17 @@ def validate_dict_against(
                     None,
                 )
                 return
-            recurse_tree(node, keys[variant], prev_path=f"{prev_path}/{variant}")
+            if node.nx_class == "NXdata":
+                handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
+            else:
+                recurse_tree(node, keys[variant], prev_path=f"{prev_path}/{variant}")
 
     def remove_from_not_visited(path: str) -> str:
         if path in not_visited:
             not_visited.remove(path)
         return path
 
-    def _follow_link(
-        keys: Mapping[str, Any], prev_path: str
-    ) -> Optional[Mapping[str, Any]]:
+    def _follow_link(keys: Mapping[str, Any], prev_path: str) -> Optional[Any]:
         if len(keys) == 1 and "link" in keys:
             current_keys = nested_keys
             link_key = None
@@ -267,8 +359,7 @@ def validate_dict_against(
 
         for variant in variants:
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
-                # TODO: Check if all fields in the dict are actual attributes
-                # (startwith @)
+                # Check if all fields in the dict are actual attributes (startwith @)
                 all_attrs = True
                 for entry in keys[variant]:
                     if not entry.startswith("@"):
@@ -407,8 +498,15 @@ def validate_dict_against(
 
         return is_valid_data_field(mapping[key], node.dtype, key)
 
-    def recurse_tree(node: NexusNode, keys: Mapping[str, Any], prev_path: str = ""):
+    def recurse_tree(
+        node: NexusNode,
+        keys: Mapping[str, Any],
+        prev_path: str = "",
+        ignore_names: Optional[List[str]] = None,
+    ):
         for child in node.children:
+            if ignore_names is not None and child.name in ignore_names:
+                continue
             keys = _follow_link(keys, prev_path)
             if keys is None:
                 return

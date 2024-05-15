@@ -29,7 +29,7 @@ It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
 from functools import lru_cache
-from typing import List, Literal, Optional, Set, Tuple
+from typing import List, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
@@ -182,6 +182,19 @@ class NexusNode(BaseModel, NodeMixin):
             names.insert(0, current_node.name)
             current_node = current_node.parent
         return "/" + "/".join(names)
+
+    def search_child_with_name(
+        self, names: Union[Tuple[str, ...], str]
+    ) -> Optional["NexusNode"]:
+        if isinstance(names, str):
+            names = (names,)
+        for name in names:
+            direct_child = next((x for x in self.children if x.name == name), None)
+            if direct_child is not None:
+                return direct_child
+            if name in self.get_all_children_names():
+                return self.add_inherited_node(name)
+        return None
 
     def get_all_children_names(self, depth: Optional[int] = None) -> Set[str]:
         """
@@ -370,7 +383,9 @@ class NexusNode(BaseModel, NodeMixin):
                     namespaces=namespaces,
                 )
             if xml_elem:
-                return self.add_node_from(xml_elem[0])
+                new_node = self.add_node_from(xml_elem[0])
+                new_node.optionality = "optional"
+                return new_node
         return None
 
 
