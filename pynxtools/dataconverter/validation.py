@@ -264,7 +264,7 @@ def validate_dict_against(
                     keys,
                     prev_path=f"{prev_path}",
                 )
-            if data.shape[index] != len(axis_data):
+            if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
                 # TODO: Proper log
                 print(
                     f"Length of axis {prev_path}/{axis} does not "
