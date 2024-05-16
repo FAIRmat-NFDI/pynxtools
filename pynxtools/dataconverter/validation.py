@@ -326,7 +326,11 @@ def validate_dict_against(
             not_visited.remove(path)
         return path
 
-    def _follow_link(keys: Mapping[str, Any], prev_path: str) -> Optional[Any]:
+    def _follow_link(
+        keys: Optional[Mapping[str, Any]], prev_path: str
+    ) -> Optional[Any]:
+        if keys is None:
+            return None
         if len(keys) == 1 and "link" in keys:
             current_keys = nested_keys
             link_key = None
