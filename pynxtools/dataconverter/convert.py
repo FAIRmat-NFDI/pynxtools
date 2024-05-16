@@ -156,6 +156,12 @@ def transfer_data_into_template(
             "The chosen NXDL isn't supported by the selected reader."
         )
 
+    if "ignore_undocumented" in kwargs:
+        ignore_undocumented = kwargs["ignore_undocumented"]
+        del kwargs["ignore_undocumented"]
+    else:
+        ignore_undocumented = False
+
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
@@ -166,7 +172,7 @@ def transfer_data_into_template(
         validate_dict_against(
             nxdl_name,
             data,
-            ignore_undocumented=kwargs.get("ignore_undocumented", False),
+            ignore_undocumented=ignore_undocumented,
         )
     return data
 
