@@ -237,8 +237,6 @@ def validate_dict_against(
                     prev_path=f"{prev_path}",
                 )
 
-            if isinstance(axes, str):
-                axes = [axes]
             for i, axis in enumerate(axes):
                 if axis == ".":
                     continue
@@ -280,6 +278,8 @@ def validate_dict_against(
         signal = keys.get("@signal")
         aux_signals = keys.get("@auxiliary_signals", [])
         axes = keys.get("@axes", [])
+        if isinstance(axes, str):
+            axes = [axes]
 
         if signal is not None:
             check_nxdata()
