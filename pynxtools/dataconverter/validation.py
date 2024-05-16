@@ -218,16 +218,20 @@ def validate_dict_against(
         axes = keys.get("@axes", [])
 
         if signal is None:
-            # TODO: Make proper log of missing signal
-            print(f"Missing signal in {prev_path}")
+            collector.collect_and_log(
+                f"{prev_path}", ValidationProblem.NXdataMissingSignal, None
+            )
 
         data = keys.get(signal)
         if data is None:
-            # TODO: Make proper log of missing data
-            print(f"Missing data for @signal in {prev_path}/{signal}")
+            collector.collect_and_log(
+                f"{prev_path}/{signal}", ValidationProblem.NXdataMissingSignalData, None
+            )
         else:
             # Attach the base class to the inheritance chain
             # if the concept for signal is already defined in the appdef
+            # TODO: This appends the base class multiple times
+            # it should be done only once
             data_node = node.search_child_with_name((signal, "DATA"))
             data_bc_node = node.search_child_with_name("DATA")
             data_node.inheritance.append(data_bc_node.inheritance[0])
@@ -247,12 +251,15 @@ def validate_dict_against(
 
             axis_data = _follow_link(keys.get(axis), prev_path)
             if axis_data is None:
-                # TODO: Proper log
-                print(f"Missing data for @axes in {prev_path}/{axis}")
+                collector.collect_and_log(
+                    f"{prev_path}/{axis}", ValidationProblem.NXdataMissingAxisData, None
+                )
                 break
             else:
                 # Attach the base class to the inheritance chain
                 # if the concept for the axis is already defined in the appdef
+                # TODO: This appends the base class multiple times
+                # it should be done only once
                 axis_node = node.search_child_with_name((axis, "AXISNAME"))
                 axis_bc_node = node.search_child_with_name("AXISNAME")
                 axis_node.inheritance.append(axis_bc_node.inheritance[0])
@@ -265,10 +272,11 @@ def validate_dict_against(
                     prev_path=f"{prev_path}",
                 )
             if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
-                # TODO: Proper log
-                print(
-                    f"Length of axis {prev_path}/{axis} does not "
-                    f"match to {prev_path}/{signal} in dimension {index}"
+                collector.collect_and_log(
+                    f"{prev_path}/{axis}",
+                    ValidationProblem.NXdataAxisMismatch,
+                    f"{prev_path}/{signal}",
+                    index,
                 )
 
         indices = map(lambda x: f"{x}_indices", axes)
