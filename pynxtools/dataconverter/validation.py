@@ -562,6 +562,34 @@ def validate_dict_against(
     return not collector.has_validation_problems()
 
 
+def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int = 0):
+    """
+    Recursively populate the full tree.
+
+    Args:
+        node (NexusNode):
+            The current node from which to populate the full tree.
+        max_depth (Optional[int], optional):
+            The maximum depth to populate the tree. Defaults to 5.
+        depth (int, optional):
+            The current depth.
+            This is used as a recursive parameter and should be
+            kept at the default value when calling this function.
+            Defaults to 0.
+    """
+    if max_depth is not None and depth >= max_depth:
+        return
+    if node is None:
+        # TODO: node is None should actually not happen
+        # but it does while recursing the tree and it should
+        # be fixed.
+        return
+    for child in node.get_all_children_names():
+        print(child)
+        child_node = node.search_child_with_name(child)
+        populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
+
+
 # Backwards compatibility
 def validate_data_dict(
     _: Mapping[str, Any], read_data: Mapping[str, Any], root: ET._Element
