@@ -213,7 +213,11 @@ def validate_dict_against(
 
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         def check_nxdata():
-            data = keys.get(signal) if signal is not None else None
+            data = (
+                keys.get(f"DATA[{signal}]")
+                if f"DATA[{signal}]" in keys
+                else keys.get(signal)
+            )
             if data is None:
                 collector.collect_and_log(
                     f"{prev_path}/{signal}",
@@ -234,7 +238,7 @@ def validate_dict_against(
                 handle_field(
                     node.search_child_with_name((signal, "DATA")),
                     keys,
-                    prev_path=f"{prev_path}",
+                    prev_path=prev_path,
                 )
 
             for i, axis in enumerate(axes):
@@ -242,6 +246,8 @@ def validate_dict_against(
                     continue
                 index = keys.get(f"{axis}_indices", i)
 
+                if f"AXISNAME[{axis}]" in keys:
+                    axis = f"AXISNAME[{axis}]"
                 axis_data = _follow_link(keys.get(axis), prev_path)
                 if axis_data is None:
                     collector.collect_and_log(
@@ -264,7 +270,7 @@ def validate_dict_against(
                     handle_field(
                         node.search_child_with_name((axis, "AXISNAME")),
                         keys,
-                        prev_path=f"{prev_path}",
+                        prev_path=prev_path,
                     )
                 if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
                     collector.collect_and_log(
@@ -296,7 +302,7 @@ def validate_dict_against(
         recurse_tree(
             node,
             remaining_keys,
-            prev_path=f"{prev_path}",
+            prev_path=prev_path,
             ignore_names=[
                 "DATA",
                 "AXISNAME",
