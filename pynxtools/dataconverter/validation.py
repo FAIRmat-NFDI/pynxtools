@@ -212,72 +212,75 @@ def validate_dict_against(
         return {k.split("@")[1]: keys[k] for k in keys if k.startswith(f"{name}@")}
 
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
+        def check_nxdata():
+            data = keys.get(signal) if signal is not None else None
+            if data is None:
+                collector.collect_and_log(
+                    f"{prev_path}/{signal}",
+                    ValidationProblem.NXdataMissingSignalData,
+                    None,
+                )
+            else:
+                # Attach the base class to the inheritance chain
+                # if the concept for signal is already defined in the appdef
+                # TODO: This appends the base class multiple times
+                # it should be done only once
+                data_node = node.search_child_with_name((signal, "DATA"))
+                data_bc_node = node.search_child_with_name("DATA")
+                data_node.inheritance.append(data_bc_node.inheritance[0])
+                for child in data_node.get_all_children_names():
+                    data_node.search_child_with_name(child)
+
+                handle_field(
+                    node.search_child_with_name((signal, "DATA")),
+                    keys,
+                    prev_path=f"{prev_path}",
+                )
+
+            for i, axis in enumerate(axes):
+                if axis == ".":
+                    continue
+                index = keys.get(f"{axis}_indices", i)
+
+                axis_data = _follow_link(keys.get(axis), prev_path)
+                if axis_data is None:
+                    collector.collect_and_log(
+                        f"{prev_path}/{axis}",
+                        ValidationProblem.NXdataMissingAxisData,
+                        None,
+                    )
+                    break
+                else:
+                    # Attach the base class to the inheritance chain
+                    # if the concept for the axis is already defined in the appdef
+                    # TODO: This appends the base class multiple times
+                    # it should be done only once
+                    axis_node = node.search_child_with_name((axis, "AXISNAME"))
+                    axis_bc_node = node.search_child_with_name("AXISNAME")
+                    axis_node.inheritance.append(axis_bc_node.inheritance[0])
+                    for child in axis_node.get_all_children_names():
+                        axis_node.search_child_with_name(child)
+
+                    handle_field(
+                        node.search_child_with_name((axis, "AXISNAME")),
+                        keys,
+                        prev_path=f"{prev_path}",
+                    )
+                if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
+                    collector.collect_and_log(
+                        f"{prev_path}/{axis}",
+                        ValidationProblem.NXdataAxisMismatch,
+                        f"{prev_path}/{signal}",
+                        index,
+                    )
+
         keys = _follow_link(keys, prev_path)
         signal = keys.get("@signal")
         aux_signals = keys.get("@auxiliary_signals", [])
         axes = keys.get("@axes", [])
 
-        if signal is None:
-            collector.collect_and_log(
-                f"{prev_path}", ValidationProblem.NXdataMissingSignal, None
-            )
-
-        data = keys.get(signal)
-        if data is None:
-            collector.collect_and_log(
-                f"{prev_path}/{signal}", ValidationProblem.NXdataMissingSignalData, None
-            )
-        else:
-            # Attach the base class to the inheritance chain
-            # if the concept for signal is already defined in the appdef
-            # TODO: This appends the base class multiple times
-            # it should be done only once
-            data_node = node.search_child_with_name((signal, "DATA"))
-            data_bc_node = node.search_child_with_name("DATA")
-            data_node.inheritance.append(data_bc_node.inheritance[0])
-            for child in data_node.get_all_children_names():
-                data_node.search_child_with_name(child)
-
-            handle_field(
-                node.search_child_with_name((signal, "DATA")),
-                keys,
-                prev_path=f"{prev_path}",
-            )
-
-        for i, axis in enumerate(axes):
-            if axis == ".":
-                continue
-            index = keys.get(f"{axis}_indices", i)
-
-            axis_data = _follow_link(keys.get(axis), prev_path)
-            if axis_data is None:
-                collector.collect_and_log(
-                    f"{prev_path}/{axis}", ValidationProblem.NXdataMissingAxisData, None
-                )
-                break
-            else:
-                # Attach the base class to the inheritance chain
-                # if the concept for the axis is already defined in the appdef
-                # TODO: This appends the base class multiple times
-                # it should be done only once
-                axis_node = node.search_child_with_name((axis, "AXISNAME"))
-                axis_bc_node = node.search_child_with_name("AXISNAME")
-                axis_node.inheritance.append(axis_bc_node.inheritance[0])
-                for child in axis_node.get_all_children_names():
-                    axis_node.search_child_with_name(child)
-
-                handle_field(
-                    node.search_child_with_name((axis, "AXISNAME")),
-                    keys,
-                    prev_path=f"{prev_path}",
-                )
-            if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
-                collector.collect_and_log(
-                    f"{prev_path}/{axis}",
-                    ValidationProblem.NXdataAxisMismatch,
-                    f"{prev_path}/{signal}",
-                    index,
-                )
+        if signal is not None:
+            check_nxdata()
 
         indices = map(lambda x: f"{x}_indices", axes)
         errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])

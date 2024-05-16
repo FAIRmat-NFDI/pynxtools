@@ -55,10 +55,9 @@ class ValidationProblem(Enum):
     AttributeForNonExistingField = 14
     BrokenLink = 15
     FailedNamefitting = 16
-    NXdataMissingSignal = 17
-    NXdataMissingSignalData = 18
-    NXdataMissingAxisData = 19
-    NXdataAxisMismatch = 20
+    NXdataMissingSignalData = 17
+    NXdataMissingAxisData = 18
+    NXdataAxisMismatch = 19
 
 
 class Collector:
@@ -127,8 +126,6 @@ class Collector:
             logger.warning(f"Broken link at {path} to {value}")
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
-        elif log_type == ValidationProblem.NXdataMissingSignal:
-            logger.warning(f"Missing signal in {path}.")
         elif log_type == ValidationProblem.NXdataMissingSignalData:
             logger.warning(f"Missing data for signal in {path}.")
         elif log_type == ValidationProblem.NXdataMissingAxisData:
