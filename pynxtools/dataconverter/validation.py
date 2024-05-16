@@ -237,6 +237,8 @@ def validate_dict_against(
                     prev_path=f"{prev_path}",
                 )
 
+            if isinstance(axes, str):
+                axes = [axes]
             for i, axis in enumerate(axes):
                 if axis == ".":
                     continue
