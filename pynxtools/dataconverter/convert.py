@@ -163,7 +163,11 @@ def transfer_data_into_template(
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
     if not skip_verify:
-        validate_dict_against(nxdl_name, data)
+        validate_dict_against(
+            nxdl_name,
+            data,
+            ignore_undocumented=kwargs.get("ignore_undocumented", False),
+        )
     return data
 
 
@@ -319,6 +323,12 @@ def main_cli():
     help="Shows a log output for all undocumented fields",
 )
 @click.option(
+    "--ignore-undocumented",
+    is_flag=True,
+    default=False,
+    help="Ignore all undocumented fields during validation.",
+)
+@click.option(
     "--skip-verify",
     is_flag=True,
     default=False,
@@ -338,6 +348,7 @@ def convert_cli(
     output: str,
     fair: bool,
     params_file: str,
+    ignore_undocumented: bool,
     undocumented: bool,
     skip_verify: bool,
     mapping: str,
@@ -387,6 +398,7 @@ def convert_cli(
             fair,
             undocumented,
             skip_verify,
+            ignore_undocumented=ignore_undocumented,
         )
     except FileNotFoundError as exc:
         raise click.BadParameter(

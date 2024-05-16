@@ -19,8 +19,6 @@
 import os
 import re
 from datetime import datetime
-from glob import glob
-from typing import Union
 
 from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version

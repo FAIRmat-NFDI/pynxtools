@@ -124,10 +124,23 @@ class Collector:
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
 
-    def collect_and_log(self, path: str, *args, **kwargs):
+    def collect_and_log(
+        self,
+        path: str,
+        log_type: ValidationProblem,
+        value: Optional[Any],
+        *args,
+        **kwargs,
+    ):
         """Inserts a path into the data dictionary and logs the action."""
+        if log_type == ValidationProblem.MissingUnit and value in (
+            "NX_UNITLESS",
+            "NX_DIMENSIONLESS",
+            "NX_ANY",
+        ):
+            return
         if self.logging:
-            self._log(path, *args, **kwargs)
+            self._log(path, log_type, value, *args, **kwargs)
         self.data.add(path)
 
     def has_validation_problems(self):

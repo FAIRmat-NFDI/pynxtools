@@ -28,7 +28,6 @@ on the fly when the tree is generated.
 It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
-from functools import lru_cache
 from typing import List, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
@@ -40,7 +39,6 @@ from pynxtools.dataconverter.helpers import (
     get_nxdl_root_and_path,
     remove_namespace_from_tag,
 )
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_inherited_nodes
 
 NexusType = Literal[
     "NX_BINARY",
@@ -168,7 +166,6 @@ class NexusNode(BaseModel, NodeMixin):
             if elem is not None:
                 self.inheritance.append(elem)
 
-    @lru_cache(maxsize=None)
     def get_path(self) -> str:
         """
         Gets the path of the current node based on the node name.
@@ -328,6 +325,23 @@ class NexusNode(BaseModel, NodeMixin):
 
         return docstrings
 
+    def _build_inheritance_chain(self, xml_elem: ET._Element) -> List[ET._Element]:
+        name = xml_elem.attrib.get("name")
+        inheritance_chain = [xml_elem]
+        for elem in self.inheritance:
+            inherited_elem = elem.xpath(
+                f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
+                if name is not None
+                else f"nx:group[@type='{xml_elem.attrib['type']}']",
+                namespaces=namespaces,
+            )
+            if inherited_elem and inherited_elem[0] not in inheritance_chain:
+                inheritance_chain.append(inherited_elem[0])
+        bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
+        inheritance_chain.append(bc_xml_root)
+
+        return inheritance_chain
+
     def add_node_from(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
         """
         Adds a children node to this node based on an xml element.
@@ -352,7 +366,7 @@ class NexusNode(BaseModel, NodeMixin):
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
-            *_, inheritance_chain = get_inherited_nodes("", elem=xml_elem)
+            inheritance_chain = self._build_inheritance_chain(xml_elem)
             current_elem = NexusGroup(
                 parent=self,
                 type=tag,
@@ -632,7 +646,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
         optionality="required",
         variadic=False,
         parent=None,
-        inheritance=get_inherited_nodes("", elem=appdef_xml_root)[2],
+        inheritance=[appdef_xml_root],
     )
     # Set root attributes
     nx_root, _ = get_nxdl_root_and_path("NXroot")

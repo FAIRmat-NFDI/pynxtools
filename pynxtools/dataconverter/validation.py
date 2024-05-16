@@ -309,12 +309,14 @@ def validate_dict_against(
                 )
             return
         for variant in variants:
+            nx_class, _ = split_class_and_name_of(variant)
             if not isinstance(keys[variant], Mapping):
-                collector.collect_and_log(
-                    f"{prev_path}/{variant}",
-                    ValidationProblem.ExpectedGroup,
-                    None,
-                )
+                if nx_class is not None:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.ExpectedGroup,
+                        None,
+                    )
                 return
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
