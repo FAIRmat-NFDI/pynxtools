@@ -28,6 +28,7 @@ from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.validation import validate_dict_against
 
 
 def remove_optional_parent(data_dict: Template):
@@ -129,20 +130,13 @@ def test_transform_to_intended_dt(input_data, expected_output):
         assert result == expected_output
 
 
-@pytest.fixture(name="nxdl_root")
-def fixture_nxdl_root():
-    """pytest fixture to load the same NXDL file for all tests."""
-    nxdl_file = os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml")
-    yield ET.parse(nxdl_file).getroot()
-
-
 @pytest.fixture(name="template")
 def fixture_template():
     """pytest fixture to use the same template in all tests"""
     nxdl_root = ET.parse("tests/data/dataconverter/NXtest.nxdl.xml").getroot()
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
-    yield template
+    return template
 
 
 @pytest.mark.usefixtures("template")
@@ -187,7 +181,7 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/links/ext_link"] = {
         "link": f"{tmp_path}/" f"xarray_saved_small_cali" f"bration.h5:/axes/ax3"
     }
-    yield template
+    return template
 
 
 TEMPLATE = Template()
@@ -198,6 +192,7 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
@@ -210,7 +205,11 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@unit
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@units"] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] = True  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value/@units"
+] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
     "eV"  # pylint: disable=E1126
@@ -227,10 +226,16 @@ TEMPLATE["required"][
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
 )
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value/@units"
+] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/type"] = "2nd type"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/date_value"] = (
     "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 )
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/date_value/@units"
+] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
@@ -239,6 +244,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
     "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units"] = ""
 TEMPLATE["optional"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field"] = 1
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = (
     "An example description"
@@ -332,7 +338,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is"
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
+                "/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -344,7 +351,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value is"
+                "The data entry corresponding to /ENTRY[my_entry]/"
+                "NXODD_name[nxodd_two_name]/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -360,7 +368,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry corresponding to /ENTRY[entry]/NXODD_name[nxodd_name]/bool_value is"
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
+                "/bool_value is"
                 " required and hasn't been supplied by the reader."
             ),
             id="empty-required-field",
@@ -375,9 +384,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name",
                 "optional",
             ),
-            (
-                "The required group, /ENTRY[entry]/NXODD_name[nxodd_name], hasn't been supplied."
-            ),
+            ("The required group, /ENTRY[my_entry]/NXODD_name, hasn't been supplied."),
             id="all-required-fields-set-to-none",
         ),
         pytest.param(
@@ -416,7 +423,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should be on of the following"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
+                "be on of the following"
                 " strings: ['1st type', '2nd type', '3rd type', '4th type']"
             ),
             id="wrong-enum-choice",
@@ -426,10 +434,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
             ),
             (
-                "The data entry, /ENTRY[my_entry]/optional_parent/optional_child, has an "
-                "optional parent, /ENTRY[entry]/optional_parent, with required children set"
-                ". Either provide no children for /ENTRY[entry]/optional_parent or provide "
-                "all required ones."
+                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
+                "required_child is required and hasn't been supplied by the reader."
             ),
             id="atleast-one-required-child-not-provided-optional-parent",
         ),
@@ -440,10 +446,9 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The data entry, /ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field, has an "
-                "optional parent, /ENTRY[entry]/OPTIONAL_group[optional_group], with required children set"
-                ". Either provide no children for /ENTRY[entry]/OPTIONAL_group[optional_group] or provide "
-                "all required ones."
+                "The data entry corresponding to /ENTRY[my_entry]/"
+                "OPTIONAL_group[my_group]/required_field "
+                "is required and hasn't been supplied by the reader."
             ),
             id="required-field-not-provided-in-variadic-optional-group",
         ),
@@ -470,12 +475,12 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
+            "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied.",
             id="missing-empty-yet-required-group",
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-            "The required group, /ENTRY[entry]/required_group2, hasn't been supplied.",
+            "The required group, /ENTRY[my_entry]/required_group2, hasn't been supplied.",
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
@@ -486,7 +491,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[entry]/required_group",
                 None,
             ),
-            "The required group, /ENTRY[entry]/required_group, hasn't been supplied.",
+            "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied.",
             id="allow-required-and-empty-group",
         ),
         pytest.param(
@@ -496,8 +501,9 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "required",
             ),
             (
-                "The required group, /ENTRY[entry]/optional_parent/req_group_in_opt_group, hasn't been "
-                "supplied while its optional parent, /ENTRY[entry]/optional_parent, is supplied."
+                "The required group, /ENTRY[my_entry]/"
+                "optional_parent/req_group_in_opt_group, "
+                "hasn't been supplied."
             ),
             id="req-group-in-opt-parent-removed",
         ),
@@ -506,9 +512,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         ),
     ],
 )
-def test_validate_data_dict(
-    caplog, data_dict, error_message, template, nxdl_root, request
-):
+def test_validate_data_dict(caplog, data_dict, error_message, request):
     """Unit test for the data validation routine."""
     if request.node.callspec.id in (
         "valid-data-dict",
@@ -523,7 +527,7 @@ def test_validate_data_dict(
         "required-field-provided-in-variadic-optional-group",
     ):
         with caplog.at_level(logging.WARNING):
-            assert helpers.validate_data_dict(template, data_dict, nxdl_root)
+            assert validate_dict_against("NXtest", data_dict)
         assert caplog.text == ""
     # Missing required fields caught by logger with warning
     elif request.node.callspec.id in (
@@ -535,11 +539,11 @@ def test_validate_data_dict(
     ):
         assert "" == caplog.text
         captured_logs = caplog.records
-        assert not helpers.validate_data_dict(template, data_dict, nxdl_root)
+        assert not validate_dict_against("NXtest", data_dict)
         assert any(error_message in rec.message for rec in captured_logs)
     else:
         with caplog.at_level(logging.WARNING):
-            assert not helpers.validate_data_dict(template, data_dict, nxdl_root)
+            assert not validate_dict_against("NXtest", data_dict)
 
         assert error_message in caplog.text
 

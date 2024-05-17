@@ -24,18 +24,20 @@ import json
 import logging
 import os
 import sys
-import xml.etree.ElementTree as ET
 from gettext import gettext
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Literal, Optional, Tuple
 
 import click
+import lxml.etree as ET
 import yaml
 from click_default_group import DefaultGroup
 
 from pynxtools.dataconverter import helpers
+from pynxtools.dataconverter.nexus_tree import generate_tree_from
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
 
@@ -99,61 +101,11 @@ def get_names_of_all_readers() -> List[str]:
     return sorted(all_readers + plugins)
 
 
-def get_nxdl_root_and_path(nxdl: str):
-    """Get xml root element and file path from nxdl name e.g. NXapm.
-
-    Parameters
-    ----------
-    nxdl: str
-        Name of nxdl file e.g. NXapm from NXapm.nxdl.xml.
-
-    Returns
-    -------
-    ET.root
-        Root element of nxdl file.
-    str
-        Path of nxdl file.
-
-    Raises
-    ------
-    FileNotFoundError
-        Error if no file with the given nxdl name is found.
-    """
-    # Reading in the NXDL and generating a template
-    definitions_path = nexus.get_nexus_definitions_path()
-    if nxdl == "NXtest":
-        nxdl_f_path = os.path.join(
-            f"{os.path.abspath(os.path.dirname(__file__))}/../../",
-            "tests",
-            "data",
-            "dataconverter",
-            "NXtest.nxdl.xml",
-        )
-    elif nxdl == "NXroot":
-        nxdl_f_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
-    else:
-        nxdl_f_path = os.path.join(
-            definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
-        )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "applications", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "base_classes", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
-            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
-
-    return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
-
-
 def transfer_data_into_template(
     input_file,
     reader,
     nxdl_name,
-    nxdl_root: Optional[ET.Element] = None,
+    nxdl_root: Optional[ET._Element] = None,
     skip_verify: bool = False,
     **kwargs,
 ):
@@ -182,7 +134,7 @@ def transfer_data_into_template(
 
     """
     if nxdl_root is None:
-        nxdl_root, _ = get_nxdl_root_and_path(nxdl=nxdl_name)
+        nxdl_root, _ = helpers.get_nxdl_root_and_path(nxdl=nxdl_name)
 
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
@@ -204,6 +156,12 @@ def transfer_data_into_template(
             "The chosen NXDL isn't supported by the selected reader."
         )
 
+    if "ignore_undocumented" in kwargs:
+        ignore_undocumented = kwargs["ignore_undocumented"]
+        del kwargs["ignore_undocumented"]
+    else:
+        ignore_undocumented = False
+
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
@@ -211,7 +169,11 @@ def transfer_data_into_template(
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
     if not skip_verify:
-        helpers.validate_data_dict(template, data, nxdl_root)
+        validate_dict_against(
+            nxdl_name,
+            data,
+            ignore_undocumented=ignore_undocumented,
+        )
     return data
 
 
@@ -254,7 +216,7 @@ def convert(
     None.
     """
 
-    nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
+    nxdl_root, nxdl_f_path = helpers.get_nxdl_root_and_path(nxdl)
 
     data = transfer_data_into_template(
         input_file=input_file,
@@ -367,6 +329,12 @@ def main_cli():
     help="Shows a log output for all undocumented fields",
 )
 @click.option(
+    "--ignore-undocumented",
+    is_flag=True,
+    default=False,
+    help="Ignore all undocumented fields during validation.",
+)
+@click.option(
     "--skip-verify",
     is_flag=True,
     default=False,
@@ -386,6 +354,7 @@ def convert_cli(
     output: str,
     fair: bool,
     params_file: str,
+    ignore_undocumented: bool,
     undocumented: bool,
     skip_verify: bool,
     mapping: str,
@@ -435,6 +404,7 @@ def convert_cli(
             fair,
             undocumented,
             skip_verify,
+            ignore_undocumented=ignore_undocumented,
         )
     except FileNotFoundError as exc:
         raise click.BadParameter(
@@ -472,21 +442,24 @@ def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
         f.write(text)
         f.close()
 
+    tree = generate_tree_from(nxdl)
+
     print_or_write = lambda txt: write_to_file(txt) if output else print(txt)
 
-    nxdl_root, nxdl_f_path = get_nxdl_root_and_path(nxdl)
-    template = Template()
-    helpers.generate_template_from_nxdl(nxdl_root, template)
-
+    level: Literal["required", "recommended", "optional"] = "optional"
     if required:
-        template = Template(template.get_optionality("required"))
+        level = "required"
+    reqs = tree.required_fields_and_attrs_names(level=level)
+    template = {
+        helpers.convert_nxdl_path_dict_to_data_converter_dict(req): None for req in reqs
+    }
 
     if pythonic:
         print_or_write(str(template))
         return
     print_or_write(
         json.dumps(
-            template.get_accumulated_dict(),
+            template,
             indent=4,
             sort_keys=True,
             ensure_ascii=False,
