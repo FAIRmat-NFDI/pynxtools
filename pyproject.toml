@@ -76,12 +76,9 @@ em = [
 stm = [
     "pynxtools-stm",
 ]
-<<<<<<< HEAD
 xps = [
     "pynxtools-xps",
 ]
-=======
->>>>>>> 6ebdd95 (rb1.)
 xrd = [
     "pynxtools-xrd",
 ]
