@@ -36,6 +36,7 @@ dependencies = [
     "toposort>=1.10.0",
     "anytree",
     "pint",
+    "cachetools",
 ]
 
 [project.urls]

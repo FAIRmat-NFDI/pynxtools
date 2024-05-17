@@ -30,6 +30,9 @@ if DEBUG_VALIDATION:
 import h5py
 import lxml.etree as ET
 import numpy as np
+from anytree import Resolver
+from cachetools import LRUCache, cached
+from cachetools.keys import hashkey
 
 from pynxtools.dataconverter.helpers import (
     Collector,
@@ -53,6 +56,14 @@ if DEBUG_VALIDATION:
     # debugpy.breakpoint()
 
 
+def best_namefit_of_(
+    name: str, concepts: Set[str], nx_class: Optional[str] = None
+) -> str:
+    # TODO: Find the best namefit of name in concepts
+    # Consider nx_class if it is not None
+    ...
+
+
 def validate_hdf_group_against(appdef: str, data: h5py.Group):
     """
     Checks whether all the required paths from the template are returned in data dict.
@@ -60,12 +71,85 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
     THIS IS JUST A FUNCTION SKELETON AND IS NOT WORKING YET!
     """
 
-    def validate(name: str, data: Union[h5py.Group, h5py.Dataset]):
+    # Only cache based on path. That way we retain the nx_class information
+    # in the tree
+    # Allow for 10000 cache entries. This should be enough for most cases
+    @cached(
+        cache=LRUCache(maxsize=10000),
+        key=lambda path, _: hashkey(path),
+    )
+    def find_node_for(path: str, nx_class: Optional[str] = None) -> Optional[NexusNode]:
+        if path == "":
+            return tree
+
+        prev_path, last_elem = path.rsplit("/", 1)
+        node = find_node_for(prev_path)
+
+        best_child = best_namefit_of_(
+            last_elem,
+            # TODO: Consider renaming `get_all_children_names` to
+            # `get_all_direct_children_names`. Because that's what it is.
+            node.get_all_children_names(),
+            nx_class,
+        )
+        if best_child is None:
+            return None
+
+        return node.search_child_with_name(best_child)
+
+    def remove_from_req_fields(path: str):
+        if path in required_fields:
+            required_fields.remove(path)
+
+    def handle_group(path: str, data: h5py.Group):
+        node = find_node_for(path, data.attrs.get("NX_class"))
+        if node is None:
+            # TODO: Log undocumented
+            return
+
+        # TODO: Do actual group checks
+
+    def handle_field(path: str, data: h5py.Dataset):
+        node = find_node_for(path)
+        if node is None:
+            # TODO: Log undocumented
+            return
+        remove_from_req_fields(f"{path}")
+
+        # TODO: Do actual field checks
+
+    def handle_attributes(path: str, attribute_names: h5py.AttributeManager):
+        for attr_name in attribute_names:
+            node = find_node_for(f"{path}/{attr_name}")
+            if node is None:
+                # TODO: Log undocumented
+                continue
+            remove_from_req_fields(f"{path}/@{attr_name}")
+
+        # TODO: Do actual attribute checks
+
+    def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
-        pass
+        if isinstance(data, h5py.Group):
+            handle_group(path, data)
+        elif isinstance(data, h5py.Dataset):
+            handle_field(path, data)
+
+        handle_attributes(path, data.attrs)
 
     tree = generate_tree_from(appdef)
+    required_fields = tree.required_fields_and_attrs_names()
     data.visitems(validate)
+
+    for req_field in required_fields:
+        if "@" in req_field:
+            collector.collect_and_log(
+                req_field, ValidationProblem.MissingRequiredAttribute, None
+            )
+            continue
+        collector.collect_and_log(
+            req_field, ValidationProblem.MissingRequiredField, None
+        )
 
 
 def build_nested_dict_from(
