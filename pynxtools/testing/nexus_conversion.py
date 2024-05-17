@@ -95,14 +95,10 @@ class ReaderTest:
         )
 
         assert isinstance(read_data, Template)
-        with self.caplog.at_level("ERROR", "WARNING"):
-            _ = validate_dict_against(
-                self.nxdl, read_data, ignore_undocumented=ignore_undocumented
-            )
-        assert not self.caplog.records, "Validation is not successful. Check logs."
-        for record in self.caplog.records:
-            if record.levelname == "ERROR":
-                assert False, record.message
+
+        with caplog.at_level(logging.WARNING):
+            assert validate_dict_against(nxdl, read_data, ignore_undocumented=True)
+        assert caplog.text == ""
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
     def check_reproducibility_of_nexus(self):
