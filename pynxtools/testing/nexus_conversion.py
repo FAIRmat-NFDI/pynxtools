@@ -96,9 +96,9 @@ class ReaderTest:
 
         assert isinstance(read_data, Template)
 
-        with caplog.at_level(logging.WARNING):
-            assert validate_dict_against(nxdl, read_data, ignore_undocumented=True)
-        assert caplog.text == ""
+        with self.caplog.at_level(logging.WARNING):
+            assert validate_dict_against(self.nxdl, read_data, ignore_undocumented=True)
+        assert self.caplog.text == ""
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
     def check_reproducibility_of_nexus(self):
