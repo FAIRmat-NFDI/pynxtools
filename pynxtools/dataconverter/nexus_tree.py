@@ -139,7 +139,7 @@ class NexusNode(NodeMixin):
     type: Literal["group", "field", "attribute", "choice"]
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
-    inheritance: List[Any]
+    inheritance: List[ET._Element]
 
     def _set_optionality(self):
         if not self.inheritance:
@@ -157,7 +157,7 @@ class NexusNode(NodeMixin):
         variadic: Optional[bool] = None,
         parent: Optional["NexusNode"] = None,
         inheritance: Optional[List[Any]] = None,
-    ):
+    ) -> None:
         super().__init__()
         self.name = name
         self.type = type
@@ -492,7 +492,7 @@ class NexusGroup(NexusNode):
             max_occurs,
         )
 
-    def __init__(self, nx_class: str, **data):
+    def __init__(self, nx_class: str, **data) -> None:
         super().__init__(**data)
         self.nx_class = nx_class
         self._set_occurence_limits()
