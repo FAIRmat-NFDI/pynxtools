@@ -28,11 +28,10 @@ on the fly when the tree is generated.
 It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
-from typing import List, Literal, Optional, Set, Tuple, Union
+from typing import Any, List, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
-from pydantic import BaseModel, InstanceOf
 
 from pynxtools.dataconverter.helpers import (
     contains_uppercase,
@@ -97,7 +96,7 @@ NexusUnitCategory = Literal[
 namespaces = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 
-class NexusNode(BaseModel, NodeMixin):
+class NexusNode(NodeMixin):
     """
     A NexusNode represents one node in the NeXus tree.
     It can be either a `group`, `field`, `attribute` or `choice` for which it has
@@ -140,8 +139,7 @@ class NexusNode(BaseModel, NodeMixin):
     type: Literal["group", "field", "attribute", "choice"]
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
-    variadic_siblings: List[InstanceOf["NexusNode"]] = []
-    inheritance: List[InstanceOf[ET._Element]] = []
+    inheritance: List[Any]
 
     def _set_optionality(self):
         if not self.inheritance:
@@ -151,9 +149,26 @@ class NexusNode(BaseModel, NodeMixin):
         elif self.inheritance[0].attrib.get("optional"):
             self.optionality = "optional"
 
-    def __init__(self, parent: Optional["NexusNode"], **data) -> None:
-        super().__init__(**data)
+    def __init__(
+        self,
+        name: str,
+        type: Literal["group", "field", "attribute", "choice"],
+        optionality: Literal["required", "recommended", "optional"] = "required",
+        variadic: Optional[bool] = None,
+        parent: Optional["NexusNode"] = None,
+        inheritance: Optional[List[Any]] = None,
+    ):
+        super().__init__()
+        self.name = name
+        self.type = type
+        self.optionality = optionality
         self.variadic = contains_uppercase(self.name)
+        if variadic is not None:
+            self.variadic = variadic
+        if inheritance is not None:
+            self.inheritance = inheritance
+        else:
+            self.inheritance = []
         self.parent = parent
 
     def _construct_inheritance_chain_from_parent(self):
@@ -477,8 +492,9 @@ class NexusGroup(NexusNode):
             max_occurs,
         )
 
-    def __init__(self, **data) -> None:
+    def __init__(self, nx_class: str, **data):
         super().__init__(**data)
+        self.nx_class = nx_class
         self._set_occurence_limits()
         self._set_optionality()
 
