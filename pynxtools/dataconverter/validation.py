@@ -606,7 +606,6 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
         # be fixed.
         return
     for child in node.get_all_children_names():
-        print(child)
         child_node = node.search_child_with_name(child)
         populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
 
