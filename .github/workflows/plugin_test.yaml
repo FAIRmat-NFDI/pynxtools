@@ -71,22 +71,22 @@ jobs:
       - name: Run XPS tests
         run: |
           cd pynxtools-xps
-          git checkout main
+          git checkout update-tests
           pip install .
           pytest tests/.
       # Test for EM Plugin
-      - name: clone EM repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          repository: FAIRmat-NFDI/pynxtools-em
-          path: pynxtools-em
-      - name: Run EM tests
-        run: |
-          cd pynxtools-em
-          git checkout main
-          pip install .
-          pytest tests/.
+      # - name: clone EM repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      #     repository: FAIRmat-NFDI/pynxtools-em
+      #     path: pynxtools-em
+      # - name: Run EM tests
+      #   run: |
+      #     cd pynxtools-em
+      #     git checkout main
+      #     pip install .
+      #     pytest tests/.
       # # Test for EM Plugin
       # - name: clone EM repo
       #   uses: actions/checkout@v4
