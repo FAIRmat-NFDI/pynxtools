@@ -56,12 +56,20 @@ if DEBUG_VALIDATION:
     # debugpy.breakpoint()
 
 
-def best_namefit_of_(
-    name: str, concepts: Set[str], nx_class: Optional[str] = None
-) -> str:
-    # TODO: Find the best namefit of name in concepts
-    # Consider nx_class if it is not None
-    ...
+def best_namefit_of_(name: str, concepts: Set[str]) -> str:
+    if not concepts:
+        return None
+
+    if name in concepts:
+        return name
+
+    best_match, score = max(
+        map(lambda x: (x, get_nx_namefit(name, x)), concepts), key=lambda x: x[1]
+    )
+    if score < 0:
+        return None
+
+    return best_match
 
 
 def validate_hdf_group_against(appdef: str, data: h5py.Group):
@@ -76,9 +84,11 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
     # Allow for 10000 cache entries. This should be enough for most cases
     @cached(
         cache=LRUCache(maxsize=10000),
-        key=lambda path, _: hashkey(path),
+        key=lambda path, *_: hashkey(path),
     )
-    def find_node_for(path: str, nx_class: Optional[str] = None) -> Optional[NexusNode]:
+    def find_node_for(
+        path: str, node_type: Optional[str] = None, nx_class: Optional[str] = None
+    ) -> Optional[NexusNode]:
         if path == "":
             return tree
 
@@ -87,10 +97,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
 
         best_child = best_namefit_of_(
             last_elem,
-            # TODO: Consider renaming `get_all_children_names` to
-            # `get_all_direct_children_names`. Because that's what it is.
-            node.get_all_children_names(),
-            nx_class,
+            node.get_all_direct_children_names(nx_class=nx_class, node_type=node_type),
         )
         if best_child is None:
             return None
@@ -104,7 +111,9 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
     def handle_group(path: str, data: h5py.Group):
         node = find_node_for(path, data.attrs.get("NX_class"))
         if node is None:
-            # TODO: Log undocumented
+            collector.collect_and_log(
+                path, ValidationProblem.MissingDocumentation, None
+            )
             return
 
         # TODO: Do actual group checks
@@ -112,7 +121,9 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
     def handle_field(path: str, data: h5py.Dataset):
         node = find_node_for(path)
         if node is None:
-            # TODO: Log undocumented
+            collector.collect_and_log(
+                path, ValidationProblem.MissingDocumentation, None
+            )
             return
         remove_from_req_fields(f"{path}")
 
@@ -122,7 +133,9 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
         for attr_name in attribute_names:
             node = find_node_for(f"{path}/{attr_name}")
             if node is None:
-                # TODO: Log undocumented
+                collector.collect_and_log(
+                    path, ValidationProblem.MissingDocumentation, None
+                )
                 continue
             remove_from_req_fields(f"{path}/@{attr_name}")
 
@@ -468,7 +481,7 @@ def validate_dict_against(
                 data_bc_node = node.search_add_child_for("DATA")
                 data_node.inheritance.append(data_bc_node.inheritance[0])
                 for child in data_node.get_all_direct_children_names():
-                    data_node.search_add_child_for(child)
+                    data_node.search_child_with_name(child)
 
                 handle_field(
                     node.search_add_child_for_multiple((signal, "DATA")),
@@ -508,7 +521,7 @@ def validate_dict_against(
                     axis_bc_node = node.search_add_child_for("AXISNAME")
                     axis_node.inheritance.append(axis_bc_node.inheritance[0])
                     for child in axis_node.get_all_direct_children_names():
-                        axis_node.search_add_child_for(child)
+                        axis_node.search_child_with_name(child)
 
                     handle_field(
                         node.search_add_child_for_multiple((axis, "AXISNAME")),

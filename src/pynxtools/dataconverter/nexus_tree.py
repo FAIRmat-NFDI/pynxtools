@@ -287,6 +287,16 @@ class NexusNode(NodeMixin):
                 return self.add_node_from(xml_elem[0])
             return existing_child
         return None
+    
+        # if isinstance(names, str):
+        #         names = (names,)
+        #     for name in names:
+        #         direct_child = next((x for x in self.children if x.name == name), None)
+        #         if direct_child is not None:
+        #             return direct_child
+        #         if name in self.get_all_direct_children_names():
+        #             return self.add_inherited_node(name)
+        #     return None
 
     def get_child_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
         """
@@ -303,6 +313,16 @@ class NexusNode(NodeMixin):
         for child in self.children:
             if child.inheritance and child.inheritance[0] == xml_elem:
                 return child
+        return None
+
+        if isinstance(names, str):
+            names = (names,)
+        for name in names:
+            direct_child = next((x for x in self.children if x.name == name), None)
+            if direct_child is not None:
+                return direct_child
+            if name in self.get_all_direct_children_names():
+                return self.add_inherited_node(name)
         return None
 
     def get_all_direct_children_names(
@@ -352,11 +372,11 @@ class NexusNode(NodeMixin):
             tag_type = f"[@type='{nx_class}']"
 
         if node_type is not None:
-            search_tags = f"nx:{node_type}{tag_type}"
+            search_tags = f"*[self::nx:{node_type}{tag_type}]"
         else:
             search_tags = (
-                "*[self::nx:field or self::nx:group "
-                "or self::nx:attribute or self::nx:choice]"
+                r"*[self::nx:field or self::nx:group "
+                r"or self::nx:attribute or self::nx:choice]"
             )
 
         names = set()
