@@ -219,16 +219,32 @@ class NexusNode(NodeMixin):
             direct_child = next((x for x in self.children if x.name == name), None)
             if direct_child is not None:
                 return direct_child
-            if name in self.get_all_children_names():
+            if name in self.get_all_direct_children_names():
                 return self.add_inherited_node(name)
         return None
 
-    def get_all_children_names(self, depth: Optional[int] = None) -> Set[str]:
+    def get_all_direct_children_names(
+        self,
+        node_type: Optional[str] = None,
+        nx_class: Optional[str] = None,
+        depth: Optional[int] = None,
+    ) -> Set[str]:
         """
         Get all children names of the current node up to a certain depth.
         Only `field`, `group` `choice` or `attribute` are considered as children.
 
         Args:
+            node_type (Optional[str], optional):
+                The tags of the children to consider.
+                This should either be "field", "group", "choice" or "attribute".
+                If None all tags are considered.
+                Defaults to None.
+            nx_class (Optional[str], optional):
+                The NeXus class of the group to consider.
+                This is only used if `node_type` is "group".
+                It should contain the preceding `NX` and the class name in lowercase,
+                e.g., "NXentry".
+                Defaults to None.
             depth (Optional[int], optional):
                 The inheritance depth up to which get children names.
                 `depth=1` will return only the children of the current node.
@@ -244,15 +260,21 @@ class NexusNode(NodeMixin):
         if depth is not None and (not isinstance(depth, int) or depth < 0):
             raise ValueError("Depth must be a positive integer or None")
 
+        tag_type = ""
+        if node_type == "group" and nx_class is not None:
+            tag_type = f"[@type='{nx_class}']"
+
+        if node_type is not None:
+            search_tags = f"*[self::nx:{node_type}{tag_type}]"
+        else:
+            search_tags = (
+                r"*[self::nx:field or self::nx:group "
+                r"or self::nx:attribute or self::nx:choice]"
+            )
+
         names = set()
         for elem in self.inheritance[:depth]:
-            for subelems in elem.xpath(
-                (
-                    r"*[self::nx:field or self::nx:group "
-                    r"or self::nx:attribute or self::nx:choice]"
-                ),
-                namespaces=namespaces,
-            ):
+            for subelems in elem.xpath(search_tags, namespaces=namespaces):
                 if "name" in subelems.attrib:
                     names.add(subelems.attrib["name"])
                 elif "type" in subelems.attrib:
