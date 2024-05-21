@@ -7,6 +7,7 @@ from glob import glob
 from pynxtools.dataconverter.helpers import (
     generate_template_from_nxdl,
     get_nxdl_root_and_path,
+    write_nexus_def_to_entry,
 )
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
@@ -93,6 +94,10 @@ class ReaderTest:
         read_data = self.reader().read(
             template=Template(template), file_paths=tuple(input_files)
         )
+
+        entry_names = read_data.get_all_entry_names()  # type: ignore[attr-defined]
+        for entry_name in entry_names:
+            write_nexus_def_to_entry(read_data, entry_name, self.nxdl)
 
         assert isinstance(read_data, Template)
 
