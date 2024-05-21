@@ -35,7 +35,6 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
-    "pydantic",
 ]
 
 [project.urls]
