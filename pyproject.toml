@@ -64,20 +64,20 @@ dev = [
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd,ellips]",
 ]
+mpes = [
+    "pynxtools-mpes",
+]
 apm = [
     "pynxtools-apm",
 ]
 em = [
     "pynxtools-em",
 ]
-mpes = [
-    "pynxtools-mpes",
+stm = [
+    "pynxtools-stm",
 ]
 xps = [
     "pynxtools-xps",
-]
-stm = [
-    "pynxtools-stm",
 ]
 xrd = [
     "pynxtools-xrd",
