@@ -96,7 +96,9 @@ class ReaderTest:
 
         assert isinstance(read_data, Template)
         with self.caplog.at_level("ERROR", "WARNING"):
-            _ = validate_dict_against(self.nxdl, read_data, ignore_undocumented)
+            _ = validate_dict_against(
+                self.nxdl, read_data, ignore_undocumented=ignore_undocumented
+            )
         assert not self.caplog.records, "Validation is not successful. Check logs."
         for record in self.caplog.records:
             if record.levelname == "ERROR":
