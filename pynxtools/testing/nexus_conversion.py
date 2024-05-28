@@ -5,7 +5,7 @@ import os
 from glob import glob
 
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
-from pynxtools.dataconverter.convert import transfer_data_into_template
+from pynxtools.dataconverter.convert import get_reader, transfer_data_into_template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
@@ -30,14 +30,14 @@ def get_log_file(nxs_file, log_file, tmp_path):
 class ReaderTest:
     """Generic test for reader plugins."""
 
-    def __init__(self, nxdl, reader, files_or_dir, tmp_path, caplog) -> None:
+    def __init__(self, nxdl, reader_name, files_or_dir, tmp_path, caplog) -> None:
         """Initialize the test object.
 
         Parameters
         ----------
         nxdl : str
             Name of the NXDL application definition that is to be tested by this reader plugin (e.g. NXsts, NXmpes, etc).
-        reader : class
+        reader_name : str
             The name of the reader class (e.g. stm, mpes, xps, ...) to be tested.
         files_or_dir : str
             List of input files or full path string to the example data directory that contains all the files
@@ -52,7 +52,8 @@ class ReaderTest:
         """
 
         self.nxdl = nxdl
-        self.reader = reader
+        self.reader_name = reader
+        self.reader = get_reader(self.reader_name)
         self.files_or_dir = files_or_dir
         self.ref_nexus_file = ""
         self.tmp_path = tmp_path
@@ -87,7 +88,7 @@ class ReaderTest:
 
         read_data = transfer_data_into_template(
             input_file=input_files,
-            reader=self.reader,
+            reader=self.reader_name,
             nxdl_name=self.nxdl,
             nxdl_root=nxdl_root,
             skip_verify=True,
