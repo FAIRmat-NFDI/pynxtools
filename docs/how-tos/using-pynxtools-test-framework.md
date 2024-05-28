@@ -20,13 +20,13 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.mark.parametrize(
-    "nxdl,reader,files_or_dir",
+    "nxdl,reader_name,files_or_dir",
     [
         ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_1"),
         ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_2")
     ],
 )
-def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
+def test_foo_reader(nxdl, reader_name, files_or_dir, tmp_path, caplog):
     """Test for the FooReader or foo reader plugin.
 
     Parameters
@@ -34,7 +34,7 @@ def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
     nxdl : str
         Name of the NXDL application definition that is to be tested by
         this reader plugin (e.g. NXfoo), without the file ending .nxdl.xml.
-    reader : str
+    reader_name : str
         Name of the class of the reader (e.g. "foo")
     files_or_dir : class
         Name of the class of the reader.
@@ -45,7 +45,7 @@ def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
         Pytest fixture variable, used to capture the log messages during the test.
     """
     # test plugin reader
-    test = ReaderTest(nxdl, reader, files_or_dir, tmp_path, caplog)
+    test = ReaderTest(nxdl, reader_name, files_or_dir, tmp_path, caplog)
     test.convert_to_nexus()
     # Use `ignore_undocumented` to skip undocumented fields
     # test.convert_to_nexus(ignore_undocumented=True)
