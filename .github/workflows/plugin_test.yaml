@@ -74,16 +74,16 @@ jobs:
           git checkout update-tests
           pip install .
           pytest tests/.
-      # Test for EM Plugin
-      # - name: clone EM repo
+      # # Test for ellipsometry Plugin
+      # - name: clone ellipsometry repo
       #   uses: actions/checkout@v4
       #   with:
       #     fetch-depth: 0
-      #     repository: FAIRmat-NFDI/pynxtools-em
-      #     path: pynxtools-em
-      # - name: Run EM tests
+      #     repository: FAIRmat-NFDI/pynxtools-ellips
+      #     path: pynxtools-ellips
+      # - name: Run ellipsometry tests
       #   run: |
-      #     cd pynxtools-em
+      #     cd pynxtools-ellips
       #     git checkout main
       #     pip install .
       #     pytest tests/.
@@ -110,19 +110,6 @@ jobs:
       # - name: Run apm tests
       #   run: |
       #     cd pynxtools-apm
-      #     git checkout main
-      #     pip install .
-      #     pytest tests/.
-      # # Test for ellipsometry Plugin
-      # - name: clone ellipsometry repo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      #     repository: FAIRmat-NFDI/pynxtools-ellips
-      #     path: pynxtools-ellips
-      # - name: Run ellipsometry tests
-      #   run: |
-      #     cd pynxtools-ellips
       #     git checkout main
       #     pip install .
       #     pytest tests/.

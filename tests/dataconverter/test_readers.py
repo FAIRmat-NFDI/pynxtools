@@ -18,10 +18,7 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
-<<<<<<< HEAD
 import logging
-=======
->>>>>>> 9bf8657 (Clone for stm reader and run test from there-11)
 import os
 import xml.etree.ElementTree as ET
 from typing import List
@@ -33,10 +30,7 @@ from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
 from pynxtools.dataconverter.helpers import generate_template_from_nxdl
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
-<<<<<<< HEAD
 from pynxtools.dataconverter.validation import validate_dict_against
-=======
->>>>>>> 9bf8657 (Clone for stm reader and run test from there-11)
 
 
 def get_reader_name_from_reader_object(reader) -> str:
@@ -134,5 +128,3 @@ def test_has_correct_read_func(reader, caplog):
                     )
 
                 print(caplog.text)
-
-            assert validate_data_dict(template, read_data, root)

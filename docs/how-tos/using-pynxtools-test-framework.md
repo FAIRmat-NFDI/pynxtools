@@ -7,9 +7,6 @@ To test integration of a plugin with the `pynxtools` core system, we need to
 ## How to write an integration test for a reader plugin with `pynxtools.testing`
 It is very simple to write a test to verify the plugin integration with `pynxtools` within the plugin's tests directory. The developer can place the test where they want, but they need to use the provided test interface from `pynxtools`. An example test for `pynxtools-FOO` (a demo plugin) plugin is given below:
 
-## How to write integration-test for the reader plugin with `pynxtools.testing`
-
-It is very simple to write a test to verify the plugin integration with `pynxtools` from plugin tests directory. The developer can write the test where they want, only they need to use the provided test interface from `pynxtools`. An example test for `pynxtools-FOO` (a demo plugin name) plugin as follows:
 ```python
 # test_plugin.py
 
