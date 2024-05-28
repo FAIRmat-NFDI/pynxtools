@@ -43,6 +43,7 @@ jobs:
       - name: Run STM tests
         run: |
           cd pynxtools-stm
+          git checkout use-new-testing
           git submodule sync --recursive
           git submodule update --init --recursive --jobs=4
           pip install .
