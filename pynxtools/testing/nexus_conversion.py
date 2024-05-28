@@ -94,6 +94,9 @@ class ReaderTest:
             skip_verify=True,
         )
 
+        # Clear the log of `transfer_data_into_template`
+        self.caplog.clear()
+
         with self.caplog.at_level(logging.WARNING):
             assert validate_dict_against(self.nxdl, read_data, ignore_undocumented=True)
         assert self.caplog.text == ""
