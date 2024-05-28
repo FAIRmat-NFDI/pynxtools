@@ -4,12 +4,8 @@ import logging
 import os
 from glob import glob
 
-from pynxtools.dataconverter.helpers import (
-    generate_template_from_nxdl,
-    get_nxdl_root_and_path,
-    write_nexus_def_to_entry,
-)
-from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
+from pynxtools.dataconverter.convert import transfer_data_into_template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
@@ -86,20 +82,16 @@ class ReaderTest:
             self.nxdl in self.reader.supported_nxdls
         ), f"Reader does not support {self.nxdl} NXDL."
 
-        root, nxdl_file = get_nxdl_root_and_path(self.nxdl)
+        nxdl_root, nxdl_file = get_nxdl_root_and_path(self.nxdl)
         assert os.path.exists(nxdl_file), f"NXDL file {nxdl_file} not found"
-        template = Template()
-        generate_template_from_nxdl(root, template)
 
-        read_data = self.reader().read(
-            template=Template(template), file_paths=tuple(input_files)
+        read_data = transfer_data_into_template(
+            input_file=input_files,
+            reader=self.reader,
+            nxdl_name=self.nxdl,
+            nxdl_root=nxdl_root,
+            skip_verify=True,
         )
-
-        entry_names = read_data.get_all_entry_names()  # type: ignore[attr-defined]
-        for entry_name in entry_names:
-            write_nexus_def_to_entry(read_data, entry_name, self.nxdl)
-
-        assert isinstance(read_data, Template)
 
         with self.caplog.at_level(logging.WARNING):
             assert validate_dict_against(self.nxdl, read_data, ignore_undocumented=True)
