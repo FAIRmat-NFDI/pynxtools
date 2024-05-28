@@ -52,7 +52,7 @@ class ReaderTest:
         """
 
         self.nxdl = nxdl
-        self.reader_name = reader
+        self.reader_name = reader_name
         self.reader = get_reader(self.reader_name)
         self.files_or_dir = files_or_dir
         self.ref_nexus_file = ""
