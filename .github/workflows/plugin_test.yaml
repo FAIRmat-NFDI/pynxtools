@@ -5,7 +5,7 @@ name: test plugin
 
 on:
   push:
-    branches: [generic_test_in_ci_cd]
+    branches: [*]
   pull_request:
     branches: [master]
 
@@ -74,6 +74,19 @@ jobs:
           git checkout main
           pip install .
           pytest tests/.
+      # # Test for ellipsometry Plugin
+      # - name: clone ellipsometry repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      #     repository: FAIRmat-NFDI/pynxtools-ellips
+      #     path: pynxtools-ellips
+      # - name: Run ellipsometry tests
+      #   run: |
+      #     cd pynxtools-ellips
+      #     git checkout main
+      #     pip install .
+      #     pytest tests/.
       # # Test for EM Plugin
       # - name: clone EM repo
       #   uses: actions/checkout@v4
