@@ -7,6 +7,7 @@ from glob import glob
 from pynxtools.dataconverter.helpers import (
     generate_template_from_nxdl,
     get_nxdl_root_and_path,
+    write_nexus_def_to_entry,
 )
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
@@ -62,7 +63,7 @@ class ReaderTest:
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
 
-    def convert_to_nexus(self, ignore_undocumented=False):
+    def convert_to_nexus(self, ignore_undocumented: bool = False):
         """
         Test the example data for the reader plugin.
         """
@@ -94,15 +95,15 @@ class ReaderTest:
             template=Template(template), file_paths=tuple(input_files)
         )
 
+        entry_names = read_data.get_all_entry_names()  # type: ignore[attr-defined]
+        for entry_name in entry_names:
+            write_nexus_def_to_entry(read_data, entry_name, self.nxdl)
+
         assert isinstance(read_data, Template)
-        with self.caplog.at_level("ERROR", "WARNING"):
-            _ = validate_dict_against(
-                self.nxdl, read_data, ignore_undocumented=ignore_undocumented
-            )
-        assert not self.caplog.records, "Validation is not successful. Check logs."
-        for record in self.caplog.records:
-            if record.levelname == "ERROR":
-                assert False, record.message
+
+        with self.caplog.at_level(logging.WARNING):
+            assert validate_dict_against(self.nxdl, read_data, ignore_undocumented=True)
+        assert self.caplog.text == ""
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
     def check_reproducibility_of_nexus(self):

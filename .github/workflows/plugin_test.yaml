@@ -70,7 +70,7 @@ jobs:
       - name: Run XPS tests
         run: |
           cd pynxtools-xps
-          git checkout main
+          git checkout update-tests
           pip install .
           pytest tests/.
       # # Test for ellipsometry Plugin
