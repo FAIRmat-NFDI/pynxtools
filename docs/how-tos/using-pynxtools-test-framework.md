@@ -12,7 +12,6 @@ It is very simple to write a test to verify the plugin integration with `pynxtoo
 
 import os
 
-from pynxtools_foo.reader import FOOReader
 import pytest
 from pynxtools.testing.nexus_conversion import ReaderTest
 
@@ -23,8 +22,8 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 @pytest.mark.parametrize(
     "nxdl,reader,files_or_dir",
     [
-        ("NXfoo", FOOReader, f"{module_dir}/../test/data/test_data_dir_1"),
-        ("NXfoo", FOOReader, f"{module_dir}/../test/data/test_data_dir_2")
+        ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_1"),
+        ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_2")
     ],
 )
 def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
@@ -35,8 +34,8 @@ def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
     nxdl : str
         Name of the NXDL application definition that is to be tested by
         this reader plugin (e.g. NXfoo), without the file ending .nxdl.xml.
-    reader : class
-        Name of the class of the reader (e.g.READERFoo)
+    reader : str
+        Name of the class of the reader (e.g. "foo")
     files_or_dir : class
         Name of the class of the reader.
     tmp_path : pytest.fixture

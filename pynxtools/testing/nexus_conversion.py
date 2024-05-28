@@ -38,7 +38,7 @@ class ReaderTest:
         nxdl : str
             Name of the NXDL application definition that is to be tested by this reader plugin (e.g. NXsts, NXmpes, etc).
         reader : class
-            The reader class (e.g. STMReader, MPESReader) to be tested.
+            The name of the reader class (e.g. stm, mpes, xps, ...) to be tested.
         files_or_dir : str
             List of input files or full path string to the example data directory that contains all the files
             required for running the data conversion through the reader.
