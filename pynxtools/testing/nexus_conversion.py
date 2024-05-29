@@ -64,7 +64,7 @@ class ReaderTest:
 
     def convert_to_nexus(
         self,
-        log_level: Literal["error", "warning"] = "error",
+        caplog_level: Literal["ERROR", "WARNING"] = "ERROR",
         ignore_undocumented: bool = False,
     ):
         """
@@ -102,11 +102,8 @@ class ReaderTest:
         # Clear the log of `transfer_data_into_template`
         self.caplog.clear()
 
-        caplog_levels = {"warning": logging.WARNING, "error": logging.ERROR}
-        caplog_level = caplog_levels.get(log_level, logging.ERROR)
-
         with self.caplog.at_level(caplog_level):
-            assert validate_dict_against(
+            _ = validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
             )
         assert self.caplog.text == ""
