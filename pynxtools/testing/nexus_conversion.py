@@ -71,6 +71,16 @@ class ReaderTest:
         Test the example data for the reader plugin.
         """
 
+        def print_caplog_level():
+            log_records = self.caplog.record_tuples
+
+            if log_records:
+                current_level = max(record[1] for record in log_records)
+            else:
+                current_level = "NOTSET"  # Default level if no logs captured
+
+            print(current_level)
+
         assert hasattr(
             self.reader, "supported_nxdls"
         ), f"Reader{self.reader} must have supported_nxdls attribute"
@@ -106,12 +116,17 @@ class ReaderTest:
         caplog_levels = {"warning": logging.WARNING, "error": logging.ERROR}
         caplog_level = caplog_levels.get(log_level, logging.ERROR)
 
+        print(f"Before setting caplog level: {print_caplog_level()}")
+
         with self.caplog.at_level(caplog_level):
-            print(f"Caplog level: {self.caplog.level}")
+            print(f"Inside context manager: {print_caplog_level()}")
             assert validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
             )
         assert self.caplog.text == ""
+
+        print(f"After setting caplog level: {print_caplog_level()}")
+
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
     def check_reproducibility_of_nexus(self):
