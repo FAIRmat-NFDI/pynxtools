@@ -1,14 +1,13 @@
 """Generic test for reader plugins."""
 
+from typing import Literal
+
 import logging
 import os
 from glob import glob
 
-from pynxtools.dataconverter.helpers import (
-    generate_template_from_nxdl,
-    get_nxdl_root_and_path,
-)
-from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
+from pynxtools.dataconverter.convert import get_reader, transfer_data_into_template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus import nexus
@@ -33,15 +32,15 @@ def get_log_file(nxs_file, log_file, tmp_path):
 class ReaderTest:
     """Generic test for reader plugins."""
 
-    def __init__(self, nxdl, reader, files_or_dir, tmp_path, caplog) -> None:
+    def __init__(self, nxdl, reader_name, files_or_dir, tmp_path, caplog) -> None:
         """Initialize the test object.
 
         Parameters
         ----------
         nxdl : str
             Name of the NXDL application definition that is to be tested by this reader plugin (e.g. NXsts, NXmpes, etc).
-        reader : class
-            The reader class (e.g. STMReader, MPESReader) to be tested.
+        reader_name : str
+            The name of the reader class (e.g. stm, mpes, xps, ...) to be tested.
         files_or_dir : str
             List of input files or full path string to the example data directory that contains all the files
             required for running the data conversion through the reader.
@@ -55,18 +54,22 @@ class ReaderTest:
         """
 
         self.nxdl = nxdl
-        self.reader = reader
+        self.reader_name = reader_name
+        self.reader = get_reader(self.reader_name)
         self.files_or_dir = files_or_dir
         self.ref_nexus_file = ""
         self.tmp_path = tmp_path
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
 
-    def convert_to_nexus(self, ignore_undocumented=False):
+    def convert_to_nexus(
+        self,
+        caplog_level: Literal["ERROR", "WARNING"] = "ERROR",
+        ignore_undocumented: bool = False,
+    ):
         """
         Test the example data for the reader plugin.
         """
-
         assert hasattr(
             self.reader, "supported_nxdls"
         ), f"Reader{self.reader} must have supported_nxdls attribute"
@@ -85,24 +88,26 @@ class ReaderTest:
             self.nxdl in self.reader.supported_nxdls
         ), f"Reader does not support {self.nxdl} NXDL."
 
-        root, nxdl_file = get_nxdl_root_and_path(self.nxdl)
+        nxdl_root, nxdl_file = get_nxdl_root_and_path(self.nxdl)
         assert os.path.exists(nxdl_file), f"NXDL file {nxdl_file} not found"
-        template = Template()
-        generate_template_from_nxdl(root, template)
 
-        read_data = self.reader().read(
-            template=Template(template), file_paths=tuple(input_files)
+        read_data = transfer_data_into_template(
+            input_file=input_files,
+            reader=self.reader_name,
+            nxdl_name=self.nxdl,
+            nxdl_root=nxdl_root,
+            skip_verify=True,
         )
 
-        assert isinstance(read_data, Template)
-        with self.caplog.at_level("ERROR", "WARNING"):
+        # Clear the log of `transfer_data_into_template`
+        self.caplog.clear()
+
+        with self.caplog.at_level(caplog_level):
             _ = validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
             )
-        assert not self.caplog.records, "Validation is not successful. Check logs."
-        for record in self.caplog.records:
-            if record.levelname == "ERROR":
-                assert False, record.message
+        assert self.caplog.text == ""
+
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
     def check_reproducibility_of_nexus(self):

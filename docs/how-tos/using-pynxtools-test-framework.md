@@ -12,7 +12,6 @@ It is very simple to write a test to verify the plugin integration with `pynxtoo
 
 import os
 
-from pynxtools_foo.reader import FOOReader
 import pytest
 from pynxtools.testing.nexus_conversion import ReaderTest
 
@@ -21,13 +20,13 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.mark.parametrize(
-    "nxdl,reader,files_or_dir",
+    "nxdl,reader_name,files_or_dir",
     [
-        ("NXfoo", FOOReader, f"{module_dir}/../test/data/test_data_dir_1"),
-        ("NXfoo", FOOReader, f"{module_dir}/../test/data/test_data_dir_2")
+        ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_1"),
+        ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_2")
     ],
 )
-def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
+def test_foo_reader(nxdl, reader_name, files_or_dir, tmp_path, caplog):
     """Test for the FooReader or foo reader plugin.
 
     Parameters
@@ -35,8 +34,8 @@ def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
     nxdl : str
         Name of the NXDL application definition that is to be tested by
         this reader plugin (e.g. NXfoo), without the file ending .nxdl.xml.
-    reader : class
-        Name of the class of the reader (e.g.READERFoo)
+    reader_name : str
+        Name of the class of the reader (e.g. "foo")
     files_or_dir : class
         Name of the class of the reader.
     tmp_path : pytest.fixture
@@ -46,11 +45,17 @@ def test_foo_reader(nxdl, reader, files_or_dir, tmp_path, caplog):
         Pytest fixture variable, used to capture the log messages during the test.
     """
     # test plugin reader
-    test = ReaderTest(nxdl, reader, files_or_dir, tmp_path, caplog)
+    test = ReaderTest(nxdl, reader_name, files_or_dir, tmp_path, caplog)
     test.convert_to_nexus()
     # Use `ignore_undocumented` to skip undocumented fields
     # test.convert_to_nexus(ignore_undocumented=True)
     test.check_reproducibility_of_nexus()
 ```
 
-Alongside the test data in the `test/data`, it is also possible to add other type of test data inside the test directory of the plugin. It is also possible to pass the boolean `ignore_undocumented` to `test.convert_to_nexus`. If true, any undocumented keys are ignored in the verification and it is simply checked if the required fields are properly set.
+Alongside the test data in `test/data`, it is also possible to add other types of test data inside the test directory of the plugin.
+
+You can also pass additional parameters to `test.convert_to_nexus`:
+
+- `log_level` (str): Can be either "ERROR" (by default) or "warning". This parameter determines the level at which the caplog is set during testing. If it is "WARNING", the test will also fail if any warnings are reported by the reader.
+
+- `ignore_undocumented` (boolean): If true, the test skipts the verification of undocumented keys. Otherwise, a warning massages for undocumented keys is raised
