@@ -107,7 +107,7 @@ class ReaderTest:
         caplog_level = caplog_levels.get(log_level, logging.ERROR)
 
         with self.caplog.at_level(caplog_level):
-            print(self.caplog.level)
+            print(f"Caplog level: {self.caplog.level}")
             assert validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
             )
