@@ -70,9 +70,6 @@ class ReaderTest:
         """
         Test the example data for the reader plugin.
         """
-        logger = logging.getLogger(__name__)
-        logger.handlers.clear()
-
         assert hasattr(
             self.reader, "supported_nxdls"
         ), f"Reader{self.reader} must have supported_nxdls attribute"
@@ -108,7 +105,7 @@ class ReaderTest:
         caplog_levels = {"warning": logging.WARNING, "error": logging.ERROR}
         caplog_level = caplog_levels.get(log_level, logging.ERROR)
 
-        with self.caplog.at_level(caplog_level, logger=logger):
+        with self.caplog.at_level(caplog_level):
             assert validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
             )
