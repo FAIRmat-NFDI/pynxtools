@@ -30,10 +30,10 @@ jobs:
           #   branch: main
           #   tests_to_run: tests/.
           - plugin: pynxtools-stm
-            branch: use-new-testing
-            tests_to_run: tests/test_reader.py::test_stm_reader
+            branch: main
+            tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: update-tests
+            branch: main
             tests_to_run: tests/.
           # - plugin: pynxtools-xrd
           #   branch: update-tests

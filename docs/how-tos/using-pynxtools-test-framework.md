@@ -56,6 +56,6 @@ Alongside the test data in `test/data`, it is also possible to add other types o
 
 You can also pass additional parameters to `test.convert_to_nexus`:
 
-- `log_level` (str): Can be either "error" (by default) or "warning". This parameter determines the level at which the caplog is set during testing. If it is "warning", the test will also fail if any warnings are reported by the reader.
+- `log_level` (str): Can be either "ERROR" (by default) or "warning". This parameter determines the level at which the caplog is set during testing. If it is "WARNING", the test will also fail if any warnings are reported by the reader.
 
-- `ignore_undocumented` (boolean): If true, any undocumented keys are ignored in the verification and it is simply checked if the required fields are properly set.
+- `ignore_undocumented` (boolean): If true, the test skipts the verification of undocumented keys. Otherwise, a warning massages for undocumented keys is raised
