@@ -1,5 +1,7 @@
 """Generic test for reader plugins."""
 
+from typing import Literal
+
 import logging
 import os
 from glob import glob
@@ -60,7 +62,11 @@ class ReaderTest:
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
 
-    def convert_to_nexus(self, ignore_undocumented: bool = False):
+    def convert_to_nexus(
+        self,
+        log_level: Literal["error", "warning"] = "error",
+        ignore_undocumented: bool = False,
+    ):
         """
         Test the example data for the reader plugin.
         """
@@ -97,8 +103,13 @@ class ReaderTest:
         # Clear the log of `transfer_data_into_template`
         self.caplog.clear()
 
-        with self.caplog.at_level(logging.WARNING):
-            assert validate_dict_against(self.nxdl, read_data, ignore_undocumented=True)
+        caplog_levels = {"warning": logging.WARNING, "error": logging.ERROR}
+        caplog_level = caplog_levels.get(log_level, logging.ERROR)
+
+        with self.caplog.at_level(caplog_level):
+            assert validate_dict_against(
+                self.nxdl, read_data, ignore_undocumented=ignore_undocumented
+            )
         assert self.caplog.text == ""
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
