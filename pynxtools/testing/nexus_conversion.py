@@ -105,24 +105,10 @@ class ReaderTest:
         caplog_levels = {"warning": logging.WARNING, "error": logging.ERROR}
         caplog_level = caplog_levels.get(log_level, logging.ERROR)
 
-        print(f"Before setting caplog level: {logging.getLevelName(caplog_level)}")
-
         with self.caplog.at_level(caplog_level):
-            # Print inside
-            print(
-                f"Inside context manager - caplog level: {logging.getLevelName(caplog_level)}"
-            )
-
             assert validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
             )
-
-            # Get the minimal log level of captured log records
-            min_log_level = min(record[1] for record in self.caplog.record_tuples)
-            print(f"Minimal log level captured: {logging.getLevelName(min_log_level)}")
-
-        print(f"After setting caplog level: {logging.getLevelName(caplog_level)}")
-
         assert self.caplog.text == ""
 
         Writer(read_data, nxdl_file, self.created_nexus).write()
