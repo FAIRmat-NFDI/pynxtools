@@ -5,7 +5,7 @@ name: test plugin
 
 on:
   push:
-    branches: [*]
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -43,7 +43,6 @@ jobs:
       - name: Run STM tests
         run: |
           cd pynxtools-stm
-          git checkout TestFromPynxtools
           git submodule sync --recursive
           git submodule update --init --recursive --jobs=4
           pip install .
