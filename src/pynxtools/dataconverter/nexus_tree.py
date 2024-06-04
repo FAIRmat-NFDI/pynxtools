@@ -1185,7 +1185,11 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
     appdef_inheritance_chain = [appdef_xml_root]
-    appdef_inheritance_chain += get_all_parents_for(appdef_xml_root)
+    extends = appdef_xml_root.attrib.get("extends")
+    while extends is not None and extends != "NXobject":
+        parent_appdef, _ = get_nxdl_root_and_path(extends)
+        appdef_inheritance_chain.append(parent_appdef)
+        extends = parent_appdef.attrib.get("extends")
 
     tree = NexusGroup(
         name=appdef_xml_root.attrib["name"],
@@ -1196,7 +1200,10 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         variadic=False,
         parent=None,
         inheritance=appdef_inheritance_chain,
+<<<<<<< HEAD
         nxdl_base=appdef_xml_root.base,
+=======
+>>>>>>> 284333e5 (Read extends keyword from file)
     )
     # Set root attributes
     if set_root_attr:
