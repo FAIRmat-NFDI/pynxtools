@@ -92,7 +92,7 @@ NexusUnitCategory = Literal[
 ]
 
 # This is the NeXus namespace for finding tags.
-# It's updated from the nxdl file when `generate_tree_from`` is called.
+# It's updated from the nxdl file when `generate_tree_from` is called.
 namespaces = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 
@@ -117,10 +117,6 @@ class NexusNode(NodeMixin):
             This is set automatically on init and will be True if the name contains
             any uppercase characets and False otherwise.
             Defaults to False.
-        variadic_siblings (List[InstanceOf["NexusNode"]]):
-            Variadic siblings are names which are connected to each other, e.g.,
-            `AXISNAME` and `AXISNAME_indices` belong together and are variadic siblings.
-            Defaults to [].
         inheritance (List[InstanceOf[ET._Element]]):
             The inheritance chain of the node.
             The first element of the list is the xml representation of this node.
@@ -655,6 +651,13 @@ def generate_tree_from(appdef: str) -> NexusNode:
     global namespaces
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
+    appdef_inheritance_chain = [appdef_xml_root]
+    extends = appdef_xml_root.attrib.get("extends")
+    while extends is not None and extends != "NXobject":
+        parent_appdef, _ = get_nxdl_root_and_path(extends)
+        appdef_inheritance_chain.append(parent_appdef)
+        extends = parent_appdef.attrib.get("extends")
+
     tree = NexusGroup(
         name=appdef_xml_root.attrib["name"],
         nx_class="NXroot",
@@ -662,7 +665,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
         optionality="required",
         variadic=False,
         parent=None,
-        inheritance=[appdef_xml_root],
+        inheritance=appdef_inheritance_chain,
     )
     # Set root attributes
     nx_root, _ = get_nxdl_root_and_path("NXroot")
