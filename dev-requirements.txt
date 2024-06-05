@@ -27,7 +27,12 @@ click==8.1.7
 click-default-group==1.2.4
     # via pynxtools (pyproject.toml)
 colorama==0.4.6
-    # via mkdocs-material
+    # via
+    #   build
+    #   click
+    #   mkdocs
+    #   mkdocs-material
+    #   pytest
 contourpy==1.2.0
     # via matplotlib
 coverage[toml]==7.4.4
