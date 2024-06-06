@@ -88,7 +88,6 @@ cover/
 
 # Django stuff:
 *.log
-!tests/data/dataconverter/readers/mpes/Ref_nexus_mpes.log
 !tests/data/nexus/Ref_nexus_test.log
 local_settings.py
 db.sqlite3
@@ -202,7 +201,7 @@ cython_debug/
 !requirements.txt
 !dev-requirements.txt
 !mkdocs-requirements.txt
-!pynxtools/nexus-version.txt
+!src/pynxtools/nexus-version.txt
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version
