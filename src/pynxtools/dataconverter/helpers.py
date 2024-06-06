@@ -193,6 +193,36 @@ def get_nxdl_name_from_elem(xml_element) -> str:
     return name_to_add
 
 
+def get_nxdl_name_for(xml_elem: ET._Element) -> Optional[str]:
+    """Get the name of the element from the NXDL element."""
+    if "name" in xml_elem.attrib:
+        return xml_elem.attrib["name"]
+    if "type" in xml_elem.attrib:
+        return convert_nexus_to_caps(xml_elem.attrib["type"])
+    return None
+
+
+def get_appdef_root(xml_elem: ET._Element) -> ET._Element:
+    return xml_elem.getroottree().getroot()
+
+
+def is_appdef(xml_elem: ET._Element) -> bool:
+    return get_appdef_root(xml_elem).attrib.get("category") == "application"
+
+
+def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
+    """Get all parents extends from the nxdl."""
+    root = get_appdef_root(xml_elem)
+    inheritance_chain = []
+    extends = root.get("extends")
+    while extends is not None and extends != "NXobject":
+        parent_xml_root, _ = get_nxdl_root_and_path(extends)
+        extends = parent_xml_root.get("extends")
+        inheritance_chain.append(parent_xml_root)
+
+    return inheritance_chain
+
+
 def get_nxdl_root_and_path(nxdl: str):
     """Get xml root element and file path from nxdl name e.g. NXapm.
 

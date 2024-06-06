@@ -35,7 +35,10 @@ from anytree.node.nodemixin import NodeMixin
 
 from pynxtools.dataconverter.helpers import (
     contains_uppercase,
+    get_all_parents_for,
+    get_nxdl_name_for,
     get_nxdl_root_and_path,
+    is_appdef,
     remove_namespace_from_tag,
 )
 
@@ -340,16 +343,18 @@ class NexusNode(NodeMixin):
         name = xml_elem.attrib.get("name")
         inheritance_chain = [xml_elem]
         for elem in self.inheritance:
-            inherited_elem = elem.xpath(
-                f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
-                if name is not None
-                else f"nx:group[@type='{xml_elem.attrib['type']}']",
-                namespaces=namespaces,
-            )
-            if inherited_elem and inherited_elem[0] not in inheritance_chain:
-                inheritance_chain.append(inherited_elem[0])
+            for parent in get_all_parents_for(elem):
+                inherited_elem = parent.xpath(
+                    f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
+                    if name is not None
+                    else f"nx:group[@type='{xml_elem.attrib['type']}']",
+                    namespaces=namespaces,
+                )
+                if inherited_elem and inherited_elem[0] not in inheritance_chain:
+                    inheritance_chain.append(inherited_elem[0])
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
         inheritance_chain.append(bc_xml_root)
+        inheritance_chain += get_all_parents_for(bc_xml_root)
 
         return inheritance_chain
 
@@ -367,6 +372,7 @@ class NexusNode(NodeMixin):
                 The children node which was added.
                 None if the tag of the xml element is not known.
         """
+        default_optionality = "required" if is_appdef(xml_elem) else "optional"
         tag = remove_namespace_from_tag(xml_elem.tag)
         if tag in ("field", "attribute"):
             name = xml_elem.attrib.get("name")
@@ -374,6 +380,7 @@ class NexusNode(NodeMixin):
                 parent=self,
                 name=name,
                 type=tag,
+                optionality=default_optionality,
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
@@ -384,12 +391,14 @@ class NexusNode(NodeMixin):
                 name=name,
                 nx_class=xml_elem.attrib["type"],
                 inheritance=inheritance_chain,
+                optionality=default_optionality,
             )
         elif tag == "choice":
             current_elem = NexusChoice(
                 parent=self,
                 name=xml_elem.attrib["name"],
                 variadic=contains_uppercase(xml_elem.attrib["name"]),
+                optionality=default_optionality,
             )
         else:
             # TODO: Tags: link
@@ -424,7 +433,6 @@ class NexusNode(NodeMixin):
                 )
             if xml_elem:
                 new_node = self.add_node_from(xml_elem[0])
-                new_node.optionality = "optional"
                 return new_node
         return None
 
@@ -652,11 +660,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
     appdef_inheritance_chain = [appdef_xml_root]
-    extends = appdef_xml_root.attrib.get("extends")
-    while extends is not None and extends != "NXobject":
-        parent_appdef, _ = get_nxdl_root_and_path(extends)
-        appdef_inheritance_chain.append(parent_appdef)
-        extends = parent_appdef.attrib.get("extends")
+    appdef_inheritance_chain += get_all_parents_for(appdef_xml_root)
 
     tree = NexusGroup(
         name=appdef_xml_root.attrib["name"],
