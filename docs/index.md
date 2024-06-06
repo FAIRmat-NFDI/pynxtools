@@ -63,3 +63,5 @@ Or go directly to the [official NIAC](https://manual.nexusformat.org/classes/ind
 </div>
 
 <h2>Project and community</h2>
+
+[The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat).](https://gepris.dfg.de/gepris/projekt/460197019?language=en)
