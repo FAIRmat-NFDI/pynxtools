@@ -19,7 +19,7 @@ jobs:
     - name: Checkout NOMAD from GitLab
       run: |
         git clone https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
-        cd nomad-FAIR
+        cd nomad
         git checkout develop 
 
     - name: Set up Python
