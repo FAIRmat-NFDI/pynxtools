@@ -677,7 +677,7 @@ class HandleNexus:
         self.logger = logger
         local_dir = os.path.abspath(os.path.dirname(__file__))
 
-        self.input_file_name = nexus_file(
+        self.input_file_name = (
             nexus_file
             if nexus_file is not None
             else os.path.join(local_dir, "../data/201805_WSe2_arpes.nxs")
