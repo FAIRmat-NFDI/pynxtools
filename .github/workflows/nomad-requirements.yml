@@ -3,10 +3,10 @@ name: validate NOMAD dependencies compatibility
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   validate_nomad_dependencies:
