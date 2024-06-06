@@ -146,7 +146,7 @@ def test_get_node_at_nxdl_path():
 
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
+        "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
     )
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path(
@@ -165,7 +165,7 @@ def test_get_inherited_nodes():
     local_dir = os.path.abspath(os.path.dirname(__file__))
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
+        "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
     )
     elem = ET.parse(nxdl_file_path).getroot()
     (_, _, elist) = nexus.get_inherited_nodes(
