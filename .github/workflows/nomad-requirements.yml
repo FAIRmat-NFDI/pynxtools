@@ -40,7 +40,7 @@ jobs:
     - name: Combine and Check Dependencies
       run: |
         # Combine NOMADS requirements with pynxtools dependencies from pyproject.toml
-        cat nomad/requirements-dev > combined-requirements.txt
+        cat nomad/requirements-dev.txt > combined-requirements.txt
         echo "" >> combined-requirements.txt
         cat pyproject-requirements.txt >> combined-requirements.txt
 
