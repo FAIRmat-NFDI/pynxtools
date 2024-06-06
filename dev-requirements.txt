@@ -22,6 +22,7 @@ click==8.1.7
     # via
     #   click-default-group
     #   mkdocs
+    #   mkdocs-click
     #   pip-tools
     #   pynxtools (pyproject.toml)
 click-default-group==1.2.4
@@ -66,6 +67,7 @@ lxml==5.1.0
 markdown==3.6
     # via
     #   mkdocs
+    #   mkdocs-click
     #   mkdocs-material
     #   pymdown-extensions
 markupsafe==2.1.5
@@ -83,6 +85,8 @@ mkdocs==1.5.3
     #   mkdocs-macros-plugin
     #   mkdocs-material
     #   pynxtools (pyproject.toml)
+mkdocs-click==0.8.1
+    # via pynxtools (pyproject.toml)
 mkdocs-macros-plugin==1.0.5
     # via pynxtools (pyproject.toml)
 mkdocs-material==9.5.15
