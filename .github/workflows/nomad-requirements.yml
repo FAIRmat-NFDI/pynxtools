@@ -1,0 +1,58 @@
+name: validate NOMAD dependencies compatibility
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate_nomad_dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout pynxtools
+      uses: actions/checkout@v2
+
+    - name: Checkout NOMAD from GitLab
+      run: |
+        git clone https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
+        cd nomad-FAIR
+        git checkout develop 
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'  # or any other version you need
+
+    - name: Parse pynxtools pyproject.toml
+      id: parse_pyproject
+      run: |
+        python -c "
+          import toml
+          import json# Load the pyproject.toml
+        
+          with open('pyproject.toml', 'r') as file:
+              pyproject = toml.load(file)
+        
+          dependencies = pyproject.get('project', {}).get('dependencies', [])
+        
+          # Convert to requirements format and save
+          with open('pyproject-requirements.txt', 'w') as f:
+              for dep in dependencies:
+                  f.write(f'{dep}\n')"
+    
+    - name: Combine and Check Dependencies
+      run: |
+        # Combine repo1's requirements with repo2's dependencies from pyproject.toml
+        cat nomad/requirements-dev > combined-requirements.txt
+        echo "" >> combined-requirements.txt
+        cat pyproject-requirements.txt >> combined-requirements.txt
+
+        # Upgrade pip and install the combined dependencies
+        python -m pip install --upgrade pip
+        pip install -r combined-requirements.txt
+      env:
+        PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test
