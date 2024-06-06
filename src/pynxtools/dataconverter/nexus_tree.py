@@ -222,7 +222,9 @@ class NexusNode(NodeMixin):
                 return self.add_inherited_node(name)
         return None
 
-    def get_all_children_names(self, depth: Optional[int] = None) -> Set[str]:
+    def get_all_children_names(
+        self, depth: Optional[int] = None, only_appdef: bool = False
+    ) -> Set[str]:
         """
         Get all children names of the current node up to a certain depth.
         Only `field`, `group` `choice` or `attribute` are considered as children.
@@ -233,6 +235,9 @@ class NexusNode(NodeMixin):
                 `depth=1` will return only the children of the current node.
                 `depth=None` will return all children names of all parents.
                 Defaults to None.
+            only_appdef (bool, optional):
+                Only considers appdef nodes as children.
+                Defaults to False.
 
         Raises:
             ValueError: If depth is not int or negativ.
@@ -245,6 +250,9 @@ class NexusNode(NodeMixin):
 
         names = set()
         for elem in self.inheritance[:depth]:
+            if only_appdef and not is_appdef(elem):
+                break
+
             for subelems in elem.xpath(
                 (
                     r"*[self::nx:field or self::nx:group "
@@ -343,15 +351,14 @@ class NexusNode(NodeMixin):
         name = xml_elem.attrib.get("name")
         inheritance_chain = [xml_elem]
         for elem in self.inheritance:
-            for parent in get_all_parents_for(elem):
-                inherited_elem = parent.xpath(
-                    f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
-                    if name is not None
-                    else f"nx:group[@type='{xml_elem.attrib['type']}']",
-                    namespaces=namespaces,
-                )
-                if inherited_elem and inherited_elem[0] not in inheritance_chain:
-                    inheritance_chain.append(inherited_elem[0])
+            inherited_elem = elem.xpath(
+                f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
+                if name is not None
+                else f"nx:group[@type='{xml_elem.attrib['type']}']",
+                namespaces=namespaces,
+            )
+            if inherited_elem and inherited_elem[0] not in inheritance_chain:
+                inheritance_chain.append(inherited_elem[0])
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
         inheritance_chain.append(bc_xml_root)
         inheritance_chain += get_all_parents_for(bc_xml_root)
@@ -620,6 +627,19 @@ class NexusEntity(NexusNode):
         return f"{self.name} ({self.optionality[:3]})"
 
 
+def populate_tree_from_parents(node: NexusNode):
+    """
+    Recursively populate the tree from the appdef parents (via extends keyword).
+
+    Args:
+        node (NexusNode):
+            The current node from which to populate the tree.
+    """
+    for child in node.get_all_children_names(only_appdef=True):
+        child_node = node.search_child_with_name(child)
+        populate_tree_from_parents(child_node)
+
+
 def generate_tree_from(appdef: str) -> NexusNode:
     """
     Generates a NexusNode tree from an application definition.
@@ -679,5 +699,8 @@ def generate_tree_from(appdef: str) -> NexusNode:
 
     entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
     add_children_to(tree, entry)
+
+    # Add all fields and attributes from the parent appdefs
+    populate_tree_from_parents(tree)
 
     return tree
