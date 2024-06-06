@@ -37,7 +37,7 @@ making experimental data searchable and publishable.
 NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
 (NFDI).
 
-The software tools are located inside [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools) and they are
+The software tools are located inside [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools) and they are
 shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
 Some examples with real datasets are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples).
 It guides you through the process of converting instrument raw
@@ -45,9 +45,9 @@ data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
-- [**generate_eln**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/eln_mapper/README.md): Outputs ELN files that can be used to add metadata to the dataconverter routine.
+- [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
+- [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
+- [**generate_eln**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/eln_mapper/README.md): Outputs ELN files that can be used to add metadata to the dataconverter routine.
 
 # Documentation
 Documentation for the different tools can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
