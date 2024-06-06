@@ -47,6 +47,7 @@ docs = [
     "mkdocs-material",
     "mkdocs-material-extensions",
     "mkdocs-macros-plugin",
+    "mkdocs-click",
 ]
 dev = [
     "mypy",
