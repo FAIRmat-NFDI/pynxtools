@@ -24,7 +24,7 @@ jobs:
           python -m pip install -r dev-requirements.txt
       - name: ruff
         run: |
-          ruff pynxtools tests
+          ruff src/pynxtools tests
       - name: ruff formatting
         run: |
           ruff format --check src/pynxtools tests
