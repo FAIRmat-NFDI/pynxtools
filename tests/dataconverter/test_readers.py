@@ -85,7 +85,7 @@ def test_has_correct_read_func(reader, caplog):
         assert hasattr(reader, "supported_nxdls")
 
         reader_name = get_reader_name_from_reader_object(reader)
-        def_dir = os.path.join(os.getcwd(), "pynxtools", "definitions")
+        def_dir = os.path.join(os.getcwd(), "src", "pynxtools", "definitions")
         dataconverter_data_dir = os.path.join("tests", "data", "dataconverter")
 
         reader_path = os.path.join(dataconverter_data_dir, "readers", reader_name)
