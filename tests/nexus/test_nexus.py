@@ -189,10 +189,10 @@ def test_c_option(tmp_path):
     """
     To check -c option from IV_temp.nxs.
     """
-
     local_path = os.path.dirname(__file__)
     path_to_ref_files = os.path.join(local_path, "../data/nexus/")
-    ref_file = path_to_ref_files + "Ref1_c_option_test.log"
+
+    ref_file = os.path.join(path_to_ref_files, "Ref1_c_option_test.log")
     tmp_file = os.path.join(tmp_path, "c_option_1_test.log")
 
     logger.setLevel(logging.INFO)
@@ -206,6 +206,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+
     nexus_helper = nexus.HandleNexus(logger, None, None, "/NXbeam")
     nexus_helper.process_nexus_master_file(None)
 
@@ -245,7 +246,6 @@ def test_d_option(tmp_path):
     """
     To check -d option for default NXarpes test data file.
     """
-
     tmp_file = os.path.join(tmp_path, "d_option_1_test.log")
 
     logger.setLevel(logging.DEBUG)

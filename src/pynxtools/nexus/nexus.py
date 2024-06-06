@@ -667,15 +667,20 @@ class HandleNexus:
 
     # pylint: disable=too-many-instance-attributes
     def __init__(
-        self, logger, nexus_file, d_inq_nd=None, c_inq_nd=None, is_in_memory_file=False
+        self,
+        logger,
+        nexus_file,
+        d_inq_nd=None,
+        c_inq_nd=None,
+        is_in_memory_file=False,
     ):
         self.logger = logger
         local_dir = os.path.abspath(os.path.dirname(__file__))
 
-        self.input_file_name = (
+        self.input_file_name = nexus_file(
             nexus_file
             if nexus_file is not None
-            else os.path.join(local_dir, "../../tests/data/nexus/201805_WSe2_arpes.nxs")
+            else os.path.join(local_dir, "../data/201805_WSe2_arpes.nxs")
         )
         self.parser = None
         self.in_file = None
