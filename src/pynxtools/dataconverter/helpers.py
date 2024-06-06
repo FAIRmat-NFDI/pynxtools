@@ -194,7 +194,20 @@ def get_nxdl_name_from_elem(xml_element) -> str:
 
 
 def get_nxdl_name_for(xml_elem: ET._Element) -> Optional[str]:
-    """Get the name of the element from the NXDL element."""
+    """
+    Get the name of the element from the NXDL element.
+    For an entity having a name this is just the name.
+    For groups it is the uppercase type without NX, e.g. "ENTRY" for "NXentry".
+
+    Args:
+        xml_elem (ET._Element): The xml element to get the name for.
+
+    Returns:
+        Optional[str]:
+            The name of the element.
+            None if the xml element has no name or type attribute.
+    """
+    """"""
     if "name" in xml_elem.attrib:
         return xml_elem.attrib["name"]
     if "type" in xml_elem.attrib:
@@ -203,15 +216,41 @@ def get_nxdl_name_for(xml_elem: ET._Element) -> Optional[str]:
 
 
 def get_appdef_root(xml_elem: ET._Element) -> ET._Element:
+    """
+    Get the root element of the tree of xml_elem
+
+    Args:
+        xml_elem (ET._Element): The element for which to get the root element.
+
+    Returns:
+        ET._Element: The root element of the tree.
+    """
     return xml_elem.getroottree().getroot()
 
 
 def is_appdef(xml_elem: ET._Element) -> bool:
+    """
+    Check whether the xml element is part of an application definition.
+
+    Args:
+        xml_elem (ET._Element): The xml_elem whose tree to check.
+
+    Returns:
+        bool: True if the xml_elem is part of an application definition.
+    """
     return get_appdef_root(xml_elem).attrib.get("category") == "application"
 
 
 def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
-    """Get all parents extends from the nxdl."""
+    """
+    Get all parents from the nxdl (via extends keyword)
+
+    Args:
+        xml_elem (ET._Element): The element to get the parents for.
+
+    Returns:
+        List[ET._Element]: The list of parents xml nodes.
+    """
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
     extends = root.get("extends")
