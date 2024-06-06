@@ -701,6 +701,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
     add_children_to(tree, entry)
 
     # Add all fields and attributes from the parent appdefs
-    populate_tree_from_parents(tree)
+    if len(appdef_inheritance_chain) > 1:
+        populate_tree_from_parents(tree)
 
     return tree
