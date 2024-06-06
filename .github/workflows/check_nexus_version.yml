@@ -21,4 +21,4 @@ jobs:
           cd ../
       - name: Diff
         run: |
-          diff -w pynxtools/nexus-version.txt pynxtools/nexus-ref.txt
+          diff -w src/pynxtools/nexus-version.txt pynxtools/nexus-ref.txt

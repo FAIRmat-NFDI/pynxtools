@@ -27,7 +27,7 @@ jobs:
           ruff pynxtools tests
       - name: ruff formatting
         run: |
-          ruff format --check pynxtools tests
+          ruff format --check src/pynxtools tests
       - name: mypy
         run: |
-          mypy pynxtools tests
+          mypy src/pynxtools tests
