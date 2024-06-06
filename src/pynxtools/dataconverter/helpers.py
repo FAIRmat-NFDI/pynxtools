@@ -343,20 +343,12 @@ def is_appdef(xml_elem: ET._Element) -> bool:
     return get_appdef_root(xml_elem).attrib.get("category") == "application"
 
 
-def get_all_parents_for(xml_elem: ET._Element) -> list[ET._Element]:
-    """
-    Get all parents from the nxdl (via extends keyword)
-
-    Args:
-        xml_elem (ET._Element): The element to get the parents for.
-
-    Returns:
-        list[ET._Element]: The list of parents xml nodes.
-    """
+def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
+    """Get all parents extends from the nxdl."""
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
     extends = root.get("extends")
-    while extends is not None:
+    while extends is not None and extends != "NXobject":
         parent_xml_root, _ = get_nxdl_root_and_path(extends)
         extends = parent_xml_root.get("extends")
         inheritance_chain.append(parent_xml_root)

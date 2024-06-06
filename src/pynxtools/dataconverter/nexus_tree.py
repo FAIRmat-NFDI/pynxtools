@@ -36,11 +36,19 @@ from anytree.node.nodemixin import NodeMixin
 
 from pynxtools import NX_DOC_BASES, get_definitions_url
 from pynxtools.dataconverter.helpers import (
+<<<<<<< HEAD
     NEXUS_TO_PYTHON_DATA_TYPES,
     get_all_parents_for,
     get_nxdl_root_and_path,
     is_appdef,
     is_variadic,
+=======
+    contains_uppercase,
+    get_all_parents_for,
+    get_nxdl_name_for,
+    get_nxdl_root_and_path,
+    is_appdef,
+>>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
     remove_namespace_from_tag,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -522,6 +530,7 @@ class NexusNode(NodeMixin):
         name = xml_elem.attrib.get("name")
 
         inheritance_chain = [xml_elem]
+<<<<<<< HEAD
         inheritance = iter(self.inheritance)
         for elem in inheritance:
             # Walk until the file the xml_elem is part of
@@ -574,6 +583,18 @@ class NexusNode(NodeMixin):
 
             if inherited_elem and inherited_elem[0] not in inheritance_chain:
                 inheritance_chain.append(inherited_elem[0])
+=======
+        for elem in self.inheritance:
+            for parent in get_all_parents_for(elem):
+                inherited_elem = parent.xpath(
+                    f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
+                    if name is not None
+                    else f"nx:group[@type='{xml_elem.attrib['type']}']",
+                    namespaces=namespaces,
+                )
+                if inherited_elem and inherited_elem[0] not in inheritance_chain:
+                    inheritance_chain.append(inherited_elem[0])
+>>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
         inheritance_chain.append(bc_xml_root)
         inheritance_chain += get_all_parents_for(bc_xml_root)
@@ -608,8 +629,11 @@ class NexusNode(NodeMixin):
                 name_type=name_type,
                 type=tag,
                 optionality=default_optionality,
+<<<<<<< HEAD
                 nxdl_base=xml_elem.base,
                 inheritance=[xml_elem],
+=======
+>>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name")
@@ -626,15 +650,23 @@ class NexusNode(NodeMixin):
                 nx_class=xml_elem.attrib["type"],
                 inheritance=inheritance_chain,
                 optionality=default_optionality,
+<<<<<<< HEAD
                 nxdl_base=xml_elem.base,
+=======
+>>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
             )
         elif tag == "choice":
             current_elem = NexusChoice(
                 parent=self,
                 name=xml_elem.attrib["name"],
+<<<<<<< HEAD
                 name_type=name_type,
                 optionality=default_optionality,
                 nxdl_base=xml_elem.base,
+=======
+                variadic=contains_uppercase(xml_elem.attrib["name"]),
+                optionality=default_optionality,
+>>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
             )
         else:
             # TODO: Tags: link
@@ -670,7 +702,12 @@ class NexusNode(NodeMixin):
                     namespaces=namespaces,
                 )
             if xml_elem:
+<<<<<<< HEAD
                 return self.add_node_from(xml_elem[0])
+=======
+                new_node = self.add_node_from(xml_elem[0])
+                return new_node
+>>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
         return None
 
 
@@ -1185,11 +1222,7 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
     appdef_inheritance_chain = [appdef_xml_root]
-    extends = appdef_xml_root.attrib.get("extends")
-    while extends is not None and extends != "NXobject":
-        parent_appdef, _ = get_nxdl_root_and_path(extends)
-        appdef_inheritance_chain.append(parent_appdef)
-        extends = parent_appdef.attrib.get("extends")
+    appdef_inheritance_chain += get_all_parents_for(appdef_xml_root)
 
     tree = NexusGroup(
         name=appdef_xml_root.attrib["name"],
