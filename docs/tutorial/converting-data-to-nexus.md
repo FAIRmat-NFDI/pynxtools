@@ -21,7 +21,7 @@ You will have
 
 ## Setup
 
-We use a Python tool to make converting our research data easier. This has a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers) that support multiple file formats. You can browse the separate folders to find the reader that might work for you. A generic reader is the [JSON Map Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/json_map). In addition, we provide multiple [reader plugins](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#plugins) for different experimental techniques.
+We use a Python tool to make converting our research data easier. This has a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) that support multiple file formats. You can browse the separate folders to find the reader that might work for you. A generic reader is the [JSON Map Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers/json_map). In addition, we provide multiple [reader plugins](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#plugins) for different experimental techniques.
 
 We will use the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xps) with a [SpecsLabProdigy](https://www.specs-group.com/nc/specs/products/detail/prodigy/) file (file extension: .sle) as an example.
 

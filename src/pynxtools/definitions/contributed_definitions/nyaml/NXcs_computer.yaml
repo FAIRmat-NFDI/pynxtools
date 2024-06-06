@@ -1,0 +1,39 @@
+category: base
+doc: |
+  Computer science description of a set of computing nodes.
+symbols:
+  doc: |
+    The symbols used in the schema to specify e.g. dimensions of arrays.
+type: group
+NXcs_computer(NXobject):
+  name(NX_CHAR):
+    doc: |
+      Given name/alias to the computing system, e.g. MyDesktop.
+  operating_system(NX_CHAR):
+    doc: |
+      Name of the operating system, e.g. Windows, Linux, Mac, Android.
+    \@version:
+      doc: |
+        Version plus build number, commit hash, or description of an ever
+        persistent resource where the source code of the program and build
+        instructions can be found so that the program can be configured in
+        such a manner that the result file is ideally recreatable yielding
+        the same results.
+  # difference e.g. in Win11 between hardware ID, UUID, and device ID
+  uuid(NX_CHAR):
+    doc: |
+      Ideally a (globally) unique persistent identifier of the computer, i.e.
+      the Universally Unique Identifier (UUID) of the computing node.
+  # when it comes to performance monitoring
+  (NXcs_cpu_sys):
+    doc: |
+      Details about (classical) processing units (CPUs) or a system thereof.
+  (NXcs_gpu_sys):
+    doc: |
+      Details about coprocessor/graphic cards/accelerator units or a system thereof.
+  (NXcs_mm_sys):
+    doc: |
+      Details about the memory sub-system.
+  (NXcs_io_sys):
+    doc: |
+      Details about the I/O sub-system.

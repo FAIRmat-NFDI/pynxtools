@@ -25,7 +25,7 @@ nav:
 plugins:
   - search
   - macros:
-      module_name: pynxtools/mkdocs
+      module_name: src/pynxtools/mkdocs
 
 theme:
   name: material

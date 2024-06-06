@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl"?>
+<!--
+# NeXus - Neutron and X-ray Common Data Format
+#
+# Copyright (C) 2014-2024 NeXus International Advisory Committee (NIAC)
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# For further information, see http://www.nexusformat.org
+-->
+<definition xmlns="http://definition.nexusformat.org/nxdl/3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="base" type="group" name="NXcorrector_cs" extends="NXcomponent_em" xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+    <symbols>
+        <doc>
+             The symbols used in the schema to specify e.g. dimensions of arrays.
+        </doc>
+        <symbol name="n_img">
+            <doc>
+                 Number of images taken, at least one.
+            </doc>
+        </symbol>
+    </symbols>
+    <doc>
+         Corrector for aberrations in an electron microscope.
+         
+         Different technology partners use different naming schemes and
+         models for quantifying the aberration coefficients.
+         
+         The corrector in an electron microscope is composed of multiple lenses
+         and multipole stigmators with details specific for the technology partner
+         and microscope. Many of their technical details is proprietary knowledge.
+    </doc>
+    <field name="applied" type="NX_BOOLEAN">
+        <doc>
+             Was the corrector used?
+        </doc>
+    </field>
+    <!--NEW ISSUE: clarify the mathematical details behind the-->
+    <group name="ZEMLIN_TABLEAU" type="NXprocess">
+        <doc>
+             Specific information about the concrete alignment procedure which is a
+             process during which the corrector is configured to enable a calibrated
+             usage of the instrument.
+             
+             This :ref:`NXprocess` group should also be used when one describes in a computer
+             simulation the specific details about the modelled or assumed aberration
+             corrections. In effect, this base class can also be used for harmonizing
+             the description of such simulation details across different computer codes
+             to enable that a research data management system can find these information
+             in a common place - formatted in a normalized representation.
+             This reduces the necessity to include substantial case-dependent verification
+             code in the research data management system.
+        </doc>
+        <field name="description" type="NX_CHAR">
+            <doc>
+                 Discouraged free-text field to add further details about
+                 the alignment procedure.
+            </doc>
+        </field>
+        <field name="tilt_angle" type="NX_NUMBER" units="NX_ANGLE">
+            <doc>
+                 The outer tilt angle of the beam in tableau acquisition.
+                 
+                 TODO: The relevant axes which span the tilt_angle need a
+                 cleaner description.
+            </doc>
+            <dimensions rank="1">
+                <dim index="1" value="n_img"/>
+            </dimensions>
+        </field>
+        <field name="exposure_time" type="NX_NUMBER" units="NX_TIME">
+            <doc>
+                 The exposure time of single tilt images.
+            </doc>
+            <dimensions rank="1">
+                <dim index="1" value="n_img"/>
+            </dimensions>
+        </field>
+        <field name="magnification" type="NX_NUMBER" units="NX_DIMENSIONLESS">
+            <doc>
+                 The factor of enlargement of the apparent size,
+                 not the physical size, of an object.
+            </doc>
+            <dimensions rank="1">
+                <dim index="1" value="n_img"/>
+            </dimensions>
+        </field>
+        <group type="NXimage_set">
+            <doc>
+                 The images taken during the alignment procedure.
+            </doc>
+        </group>
+        <group type="NXprocess">
+            <doc>
+                 Place for storing measured or estimated aberrations (for each image or final).
+            </doc>
+            <group name="ceos" type="NXaberration_model_ceos"/>
+            <group name="nion" type="NXaberration_model_nion"/>
+        </group>
+    </group>
+    <!--technical components of the corrector-->
+    <group type="NXlens_em"/>
+    <!--technical components of the corrector-->
+</definition>

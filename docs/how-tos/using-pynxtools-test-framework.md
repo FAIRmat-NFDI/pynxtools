@@ -22,8 +22,8 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 @pytest.mark.parametrize(
     "nxdl,reader_name,files_or_dir",
     [
-        ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_1"),
-        ("NXfoo", "foo", f"{module_dir}/../test/data/test_data_dir_2")
+        ("NXfoo", "foo", f"{module_dir}/../tests/data/test_data_dir_1"),
+        ("NXfoo", "foo", f"{module_dir}/../tests/data/test_data_dir_2")
     ],
 )
 def test_foo_reader(nxdl, reader_name, files_or_dir, tmp_path, caplog):
