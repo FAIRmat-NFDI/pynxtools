@@ -344,7 +344,15 @@ def is_appdef(xml_elem: ET._Element) -> bool:
 
 
 def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
-    """Get all parents extends from the nxdl."""
+    """
+    Get all parents from the nxdl (via extends keyword)
+
+    Args:
+        xml_elem (ET._Element): The element to get the parents for.
+
+    Returns:
+        List[ET._Element]: The list of parents xml nodes.
+    """
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
     extends = root.get("extends")
