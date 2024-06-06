@@ -27,32 +27,24 @@ jobs:
       with:
         python-version: '3.9'  # or any other version you need
 
-    - name: Parse pynxtools pyproject.toml
-      id: parse_pyproject
+    - name: Install pip-tools
       run: |
-        python -c "
-          import toml
-          import json# Load the pyproject.toml
+        python -m pip install --upgrade pip
+        pip install pip-tools
+
+    - name: Compile pyproject.toml to requirements.txt
+      run: |
+        # Use pip-compile to generate requirements.txt from pyproject.toml
+        pip-compile pyproject.toml --output-file=pyproject-requirements.txt
         
-          with open('pyproject.toml', 'r') as file:
-              pyproject = toml.load(file)
-        
-          dependencies = pyproject.get('project', {}).get('dependencies', [])
-        
-          # Convert to requirements format and save
-          with open('pyproject-requirements.txt', 'w') as f:
-              for dep in dependencies:
-                  f.write(f'{dep}\n')"
-    
     - name: Combine and Check Dependencies
       run: |
-        # Combine repo1's requirements with repo2's dependencies from pyproject.toml
+        # Combine NOMADS requirements with pynxtools dependencies from pyproject.toml
         cat nomad/requirements-dev > combined-requirements.txt
         echo "" >> combined-requirements.txt
         cat pyproject-requirements.txt >> combined-requirements.txt
 
-        # Upgrade pip and install the combined dependencies
-        python -m pip install --upgrade pip
+        # Install the combined dependencies
         pip install -r combined-requirements.txt
       env:
         PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test
