@@ -36,19 +36,11 @@ from anytree.node.nodemixin import NodeMixin
 
 from pynxtools import NX_DOC_BASES, get_definitions_url
 from pynxtools.dataconverter.helpers import (
-<<<<<<< HEAD
     NEXUS_TO_PYTHON_DATA_TYPES,
     get_all_parents_for,
     get_nxdl_root_and_path,
     is_appdef,
     is_variadic,
-=======
-    contains_uppercase,
-    get_all_parents_for,
-    get_nxdl_name_for,
-    get_nxdl_root_and_path,
-    is_appdef,
->>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
     remove_namespace_from_tag,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -585,6 +577,7 @@ class NexusNode(NodeMixin):
                 inheritance_chain.append(inherited_elem[0])
 =======
         for elem in self.inheritance:
+<<<<<<< HEAD
             for parent in get_all_parents_for(elem):
                 inherited_elem = parent.xpath(
                     f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
@@ -595,6 +588,16 @@ class NexusNode(NodeMixin):
                 if inherited_elem and inherited_elem[0] not in inheritance_chain:
                     inheritance_chain.append(inherited_elem[0])
 >>>>>>> 92a2be08 (Insert extends parents into the inheritance chain)
+=======
+            inherited_elem = elem.xpath(
+                f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
+                if name is not None
+                else f"nx:group[@type='{xml_elem.attrib['type']}']",
+                namespaces=namespaces,
+            )
+            if inherited_elem and inherited_elem[0] not in inheritance_chain:
+                inheritance_chain.append(inherited_elem[0])
+>>>>>>> 0e3b8441 (Automatically populate tree from appdef parents)
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
         inheritance_chain.append(bc_xml_root)
         inheritance_chain += get_all_parents_for(bc_xml_root)
@@ -1175,12 +1178,21 @@ def populate_tree_from_parents(node: NexusNode):
         node (NexusNode):
             The current node from which to populate the tree.
     """
+<<<<<<< HEAD
     for child in node.get_all_direct_children_names(only_appdef=True):
         child_node = node.search_add_child_for(child)
         populate_tree_from_parents(child_node)
 
 
 def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
+=======
+    for child in node.get_all_children_names(only_appdef=True):
+        child_node = node.search_child_with_name(child)
+        populate_tree_from_parents(child_node)
+
+
+def generate_tree_from(appdef: str) -> NexusNode:
+>>>>>>> 0e3b8441 (Automatically populate tree from appdef parents)
     """
     Generates a NexusNode tree from an application definition.
     NexusNode is based on anytree nodes and anytree's functions can be used
@@ -1249,6 +1261,11 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     add_children_to(tree, entry)
 
     # Add all fields and attributes from the parent appdefs
+<<<<<<< HEAD
     if len(appdef_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
+=======
+    populate_tree_from_parents(tree)
+
+>>>>>>> 0e3b8441 (Automatically populate tree from appdef parents)
     return tree
