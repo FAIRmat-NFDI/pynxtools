@@ -30,12 +30,7 @@ click==8.1.7
 click-default-group==1.2.4
     # via pynxtools (pyproject.toml)
 colorama==0.4.6
-    # via
-    #   build
-    #   click
-    #   mkdocs
-    #   mkdocs-material
-    #   pytest
+    # via mkdocs-material
 contourpy==1.2.0
     # via matplotlib
 coverage[toml]==7.4.4
@@ -145,10 +140,6 @@ pluggy==1.4.0
     # via pytest
 pre-commit==3.7.0
     # via pynxtools (pyproject.toml)
-pydantic==2.7.1
-    # via pynxtools (pyproject.toml)
-pydantic-core==2.18.2
-    # via pydantic
 pygments==2.17.2
     # via mkdocs-material
 pymdown-extensions==10.7.1
@@ -217,10 +208,7 @@ types-pyyaml==6.0.12.20240311
 types-requests==2.31.0.20240311
     # via pynxtools (pyproject.toml)
 typing-extensions==4.10.0
-    # via
-    #   mypy
-    #   pydantic
-    #   pydantic-core
+    # via mypy
 tzdata==2024.1
     # via pandas
 urllib3==2.2.1
