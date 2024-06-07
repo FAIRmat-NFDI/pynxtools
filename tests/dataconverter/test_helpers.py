@@ -149,10 +149,9 @@ def fixture_filled_test_data(template, tmp_path):
     # because h5py.ExternalLink is modifying it while
     # linking the nxs file.
     distutils.file_util.copy_file(
-        f"{os.path.dirname(__file__)}"
-        f"/../"
-        f"data/nexus/"
-        f"xarray_saved_small_calibration.h5",
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        ),
         tmp_path,
     )
 

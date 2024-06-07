@@ -25,7 +25,7 @@ Options:
 NOTE: Only one option from (-d and -c) is acceptable.
 ```
 
-The following example dataset can be used to test the `read_nexus` module: `tests/data/nexus/201805_WSe2_arpes.nxs`.
+The following example dataset can be used to test the `read_nexus` module: `src/pynxtools/data/201805_WSe2_arpes.nxs`.
 This is an angular-resolved photoelectron spectroscopy (ARPES) dataset and it is formatted according to
 the [NXarpes application definition of NeXus](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes).
 

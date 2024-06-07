@@ -34,20 +34,26 @@ from pynxtools.nexus import nexus  # noqa: E402
 
 def move_xarray_file_to_tmp(tmp_path):
     """Moves the xarray file, which is used to test linking into the tmp_path directory."""
-    test_file_path = os.path.join(os.path.dirname(__file__), "../data/nexus")
     distutils.file_util.copy_file(
-        os.path.join(test_file_path, "xarray_saved_small_calibration.h5"),
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        ),
         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
     )
 
 
 def restore_xarray_file_from_tmp(tmp_path):
     """Restores the xarray file from the tmp_path directory."""
-    test_file_path = os.path.join(os.path.dirname(__file__), "../data/nexus")
-    os.remove(os.path.join(test_file_path, "xarray_saved_small_calibration.h5"))
+    os.remove(
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        )
+    )
     distutils.file_util.move_file(
         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
-        os.path.join(test_file_path, "xarray_saved_small_calibration.h5"),
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        ),
     )
 
 
