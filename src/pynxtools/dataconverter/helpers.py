@@ -282,16 +282,20 @@ def get_nxdl_root_and_path(nxdl: str):
     FileNotFoundError
         Error if no file with the given nxdl name is found.
     """
+
     # Reading in the NXDL and generating a template
     definitions_path = nexus.get_nexus_definitions_path()
-    if nxdl == "NXtest":
-        nxdl_f_path = os.path.join(
-            f"{os.path.abspath(os.path.dirname(__file__))}/../",
-            "data",
-            "NXtest.nxdl.xml",
-        )
-    elif nxdl == "NXroot":
-        nxdl_f_path = os.path.join(definitions_path, "base_classes", "NXroot.nxdl.xml")
+    data_path = os.path.join(
+        f"{os.path.abspath(os.path.dirname(__file__))}/../",
+        "data",
+    )
+    special_names = {
+        "NXtest": os.path.join(data_path, "NXtest.nxdl.xml"),
+        "NXtest_extended": os.path.join(data_path, "NXtest_extended.nxdl.xml"),
+    }
+
+    if nxdl in special_names:
+        nxdl_f_path = special_names[nxdl]
     else:
         nxdl_f_path = os.path.join(
             definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
