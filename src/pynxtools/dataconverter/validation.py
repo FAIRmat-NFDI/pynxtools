@@ -72,11 +72,16 @@ def best_namefit_of_(name: str, concepts: Set[str]) -> str:
     return best_match
 
 
-def validate_hdf_group_against(appdef: str, data: h5py.Group):
+def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
     """
-    Checks whether all the required paths from the template are returned in data dict.
+    Validate an HDF5 group against the Nexus tree for the application definition `appdef`.
 
-    THIS IS JUST A FUNCTION SKELETON AND IS NOT WORKING YET!
+    Args:
+        appdef (str): The application definition to validate against.
+        data (h5py.Group): The h5py group to validate.
+
+    Returns:
+        bool: True if the group is valid according to `appdef`, False otherwise.
     """
 
     # Only cache based on path. That way we retain the nx_class information
@@ -125,9 +130,8 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
                 path, ValidationProblem.MissingDocumentation, None
             )
             return
-        remove_from_req_fields(f"{path}")
-
-        # TODO: Do actual field checks
+        remove_from_req_fields(path)
+        is_valid_data_field(data[()], node.dtype, path)
 
     def handle_attributes(path: str, attribute_names: h5py.AttributeManager):
         for attr_name in attribute_names:
@@ -138,8 +142,9 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
                 )
                 continue
             remove_from_req_fields(f"{path}/@{attr_name}")
-
-        # TODO: Do actual attribute checks
+            is_valid_data_field(
+                attribute_names.get(attr_name), node.dtype, f"{path}/@{attr_name}"
+            )
 
     def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
@@ -163,6 +168,8 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group):
         collector.collect_and_log(
             req_field, ValidationProblem.MissingRequiredField, None
         )
+
+    return not collector.has_validation_problems()
 
 
 def build_nested_dict_from(
