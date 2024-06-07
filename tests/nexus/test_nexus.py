@@ -52,6 +52,7 @@ def test_nexus(tmp_path):
     """
     The nexus test function
     """
+    dirpath = os.path.join(os.path.dirname(__file__), "../data/nexus")
     example_data = os.path.join(
         os.getcwd(), "src", "pynxtools", "data", "201805_WSe2_arpes.nxs"
     )
