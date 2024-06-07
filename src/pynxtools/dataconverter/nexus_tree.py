@@ -145,7 +145,10 @@ class NexusNode(NodeMixin):
             return
         if self.inheritance[0].attrib.get("recommended"):
             self.optionality = "recommended"
-        elif self.inheritance[0].attrib.get("optional"):
+        elif (
+            self.inheritance[0].attrib.get("optional")
+            or self.inheritance[0].attrib.get("minOccurs") == "0"
+        ):
             self.optionality = "optional"
 
     def __init__(
