@@ -40,11 +40,18 @@ def test_correct_extension_of_tree():
     nxtest = generate_tree_from("NXtest")
     nxtest_extended = generate_tree_from("NXtest_extended")
 
+<<<<<<< HEAD
     def get_node_fields(tree: NexusNode) -> list[tuple[str, Any]]:
         return list(
             filter(
                 lambda x: not x[0].startswith("_")
                 and x[0] not in ("inheritance", "is_a", "parent_of", "nxdl_base"),
+=======
+    def get_node_fields(tree: NexusNode) -> List[Tuple[str, Any]]:
+        return list(
+            filter(
+                lambda x: not x[0].startswith("_") and x[0] not in "inheritance",
+>>>>>>> 5cb15e43 (Add extended NXtest)
                 tree.__dict__.items(),
             )
         )
