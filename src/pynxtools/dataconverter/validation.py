@@ -1448,7 +1448,11 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
         # be fixed.
         return
     for child in node.get_all_direct_children_names():
+<<<<<<< HEAD
         child_node = node.search_add_child_for(child)
+=======
+        child_node = node.search_child_with_name(child)
+>>>>>>> aa6ac273 (Fix function name)
         populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
 
 
