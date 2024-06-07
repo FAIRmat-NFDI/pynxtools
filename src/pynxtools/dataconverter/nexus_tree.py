@@ -659,7 +659,7 @@ def populate_tree_from_parents(node: NexusNode):
         node (NexusNode):
             The current node from which to populate the tree.
     """
-    for child in node.get_all_children_names(only_appdef=True):
+    for child in node.get_all_direct_children_names(only_appdef=True):
         child_node = node.search_child_with_name(child)
         populate_tree_from_parents(child_node)
 

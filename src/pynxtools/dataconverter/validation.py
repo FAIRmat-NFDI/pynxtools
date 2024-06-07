@@ -708,7 +708,7 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
         # but it does while recursing the tree and it should
         # be fixed.
         return
-    for child in node.get_all_children_names():
+    for child in node.get_all_direct_children_names():
         child_node = node.search_child_with_name(child)
         populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
 
