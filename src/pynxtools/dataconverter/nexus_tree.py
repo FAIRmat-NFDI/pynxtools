@@ -181,8 +181,10 @@ class NexusNode(NodeMixin):
             and self.occurrence_limits[0] > 0
         ):
             self.optionality = "required"
-        elif self.inheritance[0].attrib.get("optional") or (
-            isinstance(self, NexusGroup) and self.occurrence_limits[0] == 0
+        elif (
+            self.inheritance[0].attrib.get("optional")
+            or self.inheritance[0].attrib.get("minOccurs") == "0"
+            or (isinstance(self, NexusGroup) and self.occurrence_limits[0] == 0)
         ):
             self.optionality = "optional"
 
