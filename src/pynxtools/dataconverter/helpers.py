@@ -217,10 +217,8 @@ def get_nxdl_root_and_path(nxdl: str):
     definitions_path = nexus.get_nexus_definitions_path()
     if nxdl == "NXtest":
         nxdl_f_path = os.path.join(
-            f"{os.path.abspath(os.path.dirname(__file__))}/../../",
-            "tests",
+            f"{os.path.abspath(os.path.dirname(__file__))}/../",
             "data",
-            "dataconverter",
             "NXtest.nxdl.xml",
         )
     elif nxdl == "NXroot":

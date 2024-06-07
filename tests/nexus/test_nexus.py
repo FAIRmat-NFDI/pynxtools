@@ -53,7 +53,9 @@ def test_nexus(tmp_path):
     The nexus test function
     """
     dirpath = os.path.join(os.path.dirname(__file__), "../data/nexus")
-    example_data = os.path.join(dirpath, "201805_WSe2_arpes.nxs")
+    example_data = os.path.join(
+        os.getcwd(), "src", "pynxtools", "data", "201805_WSe2_arpes.nxs"
+    )
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(os.path.join(tmp_path, "nexus_test.log"), "w")
     formatter = logging.Formatter("%(levelname)s - %(message)s")
@@ -84,7 +86,7 @@ def test_nexus(tmp_path):
 def test_get_node_at_nxdl_path():
     """Test to verify if we receive the right XML element for a given NXDL path"""
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    nxdl_file_path = os.path.join(local_dir, "../data/dataconverter/NXtest.nxdl.xml")
+    nxdl_file_path = os.path.join(local_dir, "../../src/pynxtools/data/NXtest.nxdl.xml")
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name", elem=elem)
     assert node.attrib["type"] == "NXdata"
@@ -146,7 +148,7 @@ def test_get_node_at_nxdl_path():
 
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
+        "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
     )
     elem = ET.parse(nxdl_file_path).getroot()
     node = nexus.get_node_at_nxdl_path(
@@ -165,7 +167,7 @@ def test_get_inherited_nodes():
     local_dir = os.path.abspath(os.path.dirname(__file__))
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
+        "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
     )
     elem = ET.parse(nxdl_file_path).getroot()
     (_, _, elist) = nexus.get_inherited_nodes(
@@ -189,10 +191,10 @@ def test_c_option(tmp_path):
     """
     To check -c option from IV_temp.nxs.
     """
-
     local_path = os.path.dirname(__file__)
     path_to_ref_files = os.path.join(local_path, "../data/nexus/")
-    ref_file = path_to_ref_files + "Ref1_c_option_test.log"
+
+    ref_file = os.path.join(path_to_ref_files, "Ref1_c_option_test.log")
     tmp_file = os.path.join(tmp_path, "c_option_1_test.log")
 
     logger.setLevel(logging.INFO)
@@ -206,6 +208,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+
     nexus_helper = nexus.HandleNexus(logger, None, None, "/NXbeam")
     nexus_helper.process_nexus_master_file(None)
 
@@ -245,7 +248,6 @@ def test_d_option(tmp_path):
     """
     To check -d option for default NXarpes test data file.
     """
-
     tmp_file = os.path.join(tmp_path, "d_option_1_test.log")
 
     logger.setLevel(logging.DEBUG)

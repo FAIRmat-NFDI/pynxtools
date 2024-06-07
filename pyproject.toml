@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-backend-path = ["pynxtools"]
+backend-path = ["src/pynxtools"]
 build-backend = "_build_wrapper"
 
 [project]
@@ -94,20 +94,22 @@ generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
-"pynxtools.dataconverter.readers.xps" = ["*.json"]
 "pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
 "pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
 [tool.setuptools.packages.find]
-exclude = ["pynxtools/definitions*"]
+where = [
+    "src",
+]
+exclude = ["src/pynxtools/definitions*"]
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
 
 [tool.ruff]
-include = ["pynxtools/*.py", "tests/*.py"]
-exclude = ["pynxtools/definitions"]
+include = ["src/*.py", "tests/*.py"]
+exclude = ["src/pynxtools/definitions"]
 line-length = 88
 indent-width = 4
 
@@ -146,4 +148,4 @@ ignore_missing_imports = true
 follow_imports = "silent"
 no_strict_optional = true
 disable_error_code = "import, annotation-unchecked"
-exclude = ["pynxtools/definitions/*"]
+exclude = ["src/pynxtools/definitions/*"]

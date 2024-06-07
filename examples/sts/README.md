@@ -5,7 +5,7 @@ Main goal of STS Reader is to transform different file formats from diverse STS 
 ## STS Example
 It has diverse examples from several versions (Generic 5e and Generic 4.5) of Nanonis software for STS experiments at [https://gitlab.mpcdf.mpg.de](https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-remote-tools-hub/-/tree/develop/docker/sts). But, to utilize that examples one must have an account at https://gitlab.mpcdf.mpg.de. If still you want to try the examples from the sts reader out, please reach out to [Rubel Mozumder](mozumder@physik.hu-berlin.de) or the docker container (discussed below).
 
-To get a detailed overview of the sts reader implementation visit [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools/dataconverter/readers/sts).
+To get a detailed overview of the sts reader implementation visit [pynxtools-stm](https://github.com/FAIRmat-NFDI/pynxtools-stm).
 
 ## STS deocker image
 STS docker image contains all prerequisite tools (e.g. jupyter-notebook) and library to run STS reader. To use the image user needs to [install docker engine](https://docs.docker.com/engine/install/).

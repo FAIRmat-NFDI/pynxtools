@@ -13,7 +13,7 @@ Please use the --generate-template function of the dataconverter to create a .ma
 ```console
 user@box:~$ dataconverter --nxdl NXmynxdl --generate-template > mynxdl.mapping.json
 ```
-##### Details on the [mapping.json](/pynxtools/dataconverter/readers/json_map/README.md#the-mappingjson-file) file.
+##### Details on the [mapping.json](../../src/pynxtools/dataconverter/readers/json_map/README.md#the-mappingjson-file) file.
 
 ## How to run these examples?
 

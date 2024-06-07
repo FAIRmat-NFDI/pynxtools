@@ -133,7 +133,8 @@ def test_transform_to_intended_dt(input_data, expected_output):
 @pytest.fixture(name="template")
 def fixture_template():
     """pytest fixture to use the same template in all tests"""
-    nxdl_root = ET.parse("tests/data/dataconverter/NXtest.nxdl.xml").getroot()
+    nxdl_root = ET.parse("src/pynxtools/data/NXtest.nxdl.xml").getroot()
+
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
     return template
@@ -148,10 +149,9 @@ def fixture_filled_test_data(template, tmp_path):
     # because h5py.ExternalLink is modifying it while
     # linking the nxs file.
     distutils.file_util.copy_file(
-        f"{os.path.dirname(__file__)}"
-        f"/../"
-        f"data/nexus/"
-        f"xarray_saved_small_calibration.h5",
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        ),
         tmp_path,
     )
 
