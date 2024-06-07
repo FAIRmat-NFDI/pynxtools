@@ -98,7 +98,9 @@ def test_has_correct_read_func(reader, caplog):
             reader.supported_nxdls = ["NXroot"]
         for supported_nxdl in reader.supported_nxdls:
             if supported_nxdl in ("NXtest", "*"):
-                nxdl_file = os.path.join(dataconverter_data_dir, "NXtest.nxdl.xml")
+                nxdl_file = os.path.join(
+                    os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"
+                )
             elif supported_nxdl == "NXroot":
                 nxdl_file = os.path.join(def_dir, "base_classes", "NXroot.nxdl.xml")
             else:

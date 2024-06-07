@@ -133,7 +133,8 @@ def test_transform_to_intended_dt(input_data, expected_output):
 @pytest.fixture(name="template")
 def fixture_template():
     """pytest fixture to use the same template in all tests"""
-    nxdl_root = ET.parse("tests/data/dataconverter/NXtest.nxdl.xml").getroot()
+    nxdl_root = ET.parse("src/pynxtools/data/NXtest.nxdl.xml").getroot()
+
     template = Template()
     helpers.generate_template_from_nxdl(nxdl_root, template)
     return template

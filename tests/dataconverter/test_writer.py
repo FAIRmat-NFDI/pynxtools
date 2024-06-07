@@ -38,7 +38,7 @@ def fixture_writer(filled_test_data, tmp_path):
     """pytest fixture to setup Writer object to be used by tests with dummy data."""
     writer = Writer(
         filled_test_data,
-        os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml"),
+        os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
         os.path.join(tmp_path, "test.nxs"),
     )
     yield writer
@@ -78,7 +78,7 @@ def test_wrong_dict_provided_in_template(filled_test_data, tmp_path):
             "/ENTRY[my_entry]/links/ext_link",
             {"not a link or anything": 2.0},
         ),
-        os.path.join("tests", "data", "dataconverter", "NXtest.nxdl.xml"),
+        os.path.join(os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"),
         os.path.join(tmp_path, "test.nxs"),
     )
     with pytest.raises(InvalidDictProvided) as execinfo:
