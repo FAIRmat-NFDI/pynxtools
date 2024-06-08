@@ -13,20 +13,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout pynxtools (current repository)
+    - name: Checkout pynxtools
       uses: actions/checkout@v2
 
     - name: Checkout NOMAD from GitLab
-      env:
-        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      with:
+        submodules: 'recursive'
       run: |
         git clone https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
         cd nomad
         git checkout develop
-
-    - name: Init NOMAD submodules
-      run:
-        git submodule update --init --recursive
+    
+    - name: Replace pynxtools dependency in NOMAD pyproject.toml
+      run: |
+        sed -i 's|pynxtools\[convert\]==0.3.1|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref }}|' pyproject.toml
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -35,12 +35,9 @@ jobs:
 
     - name: Install uv
       run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-    - name: Replace pynxtools dependency in NOMAD pyproject.toml
-      run: |
-        sed -i 's|pynxtools\[convert\]==0.3.1|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref }}|' pyproject.toml
+        curl -LsSf https://astral.sh/uv/install.sh | sh 
 
-    - name: Generate requirements.txt from pyproject.toml
+    - name: Generate (dev-)requirements.txt from modified pyproject.toml
       run: |
         uv pip compile -p 3.9 --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt dependencies/nomad-dos-fingerprints/pyproject.toml dependencies/parsers/eelsdb/pyproject.toml pyproject.toml
         uv pip compile -p 3.9 --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
