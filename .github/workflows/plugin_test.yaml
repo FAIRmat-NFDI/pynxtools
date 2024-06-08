@@ -49,11 +49,11 @@ jobs:
           python-version: 3.9
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install coverage coveralls
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv pip install --system coverage coveralls
       - name: Install package
         run: |
-          pip install ".[dev]"
+          uv pip install --system ".[dev]"
       - name: Clone ${{ matrix.plugin }} repo
         uses: actions/checkout@v4
         with:
@@ -64,7 +64,7 @@ jobs:
       - name: Install ${{ matrix.plugin }}
         run: |
           cd ${{ matrix.plugin }} 
-          pip install .      
+          uv pip install --system .
       - name: Run ${{ matrix.plugin }} tests
         run: |
           cd ${{ matrix.plugin }}
