@@ -24,6 +24,10 @@ jobs:
         cd nomad
         git checkout develop
 
+    - name: Init NOMAD submodules
+      run:
+        git submodule update --init --recursive
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
