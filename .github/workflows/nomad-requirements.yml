@@ -17,12 +17,11 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Checkout NOMAD from GitLab
-      with:
-        submodules: 'recursive'
       run: |
         git clone https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
         cd nomad
         git checkout develop
+        git submodule update --init --recursive
     
     - name: Replace pynxtools dependency in NOMAD pyproject.toml
       run: |
