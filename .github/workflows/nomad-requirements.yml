@@ -1,4 +1,4 @@
-name: validate NOMAD dependencies compatibility
+name: Validate Dependencies Compatibility
 
 on:
   push:
@@ -9,42 +9,45 @@ on:
       - master
 
 jobs:
-  validate_nomad_dependencies:
+  validate_dependencies:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout pynxtools
+    - name: Checkout pynxtools (current repository)
       uses: actions/checkout@v2
 
     - name: Checkout NOMAD from GitLab
+      env:
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       run: |
         git clone https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
         cd nomad
-        git checkout develop 
+        git checkout develop
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'  # or any other version you need
+        python-version: '3.9'
 
-    - name: Install pip-tools
+    - name: Install uv
       run: |
-        python -m pip install --upgrade pip
-        pip install pip-tools
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+    - name: Replace pynxtools dependency in NOMAD pyproject.toml
+      run: |
+        sed -i 's|pynxtools\[convert\]==0.3.1|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref }}|' pyproject.toml
 
-    - name: Compile pyproject.toml to requirements.txt
+    - name: Generate requirements.txt from pyproject.toml
       run: |
-        # Use pip-compile to generate requirements.txt from pyproject.toml
-        pip-compile pyproject.toml --output-file=pyproject-requirements.txt
-        
-    - name: Combine and Check Dependencies
-      run: |
-        # Combine NOMADS requirements with pynxtools dependencies from pyproject.toml
-        cat nomad/requirements-dev.txt > combined-requirements.txt
-        echo "" >> combined-requirements.txt
-        cat pyproject-requirements.txt >> combined-requirements.txt
+        uv pip compile -p 3.9 --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt dependencies/nomad-dos-fingerprints/pyproject.toml dependencies/parsers/eelsdb/pyproject.toml pyproject.toml
+        uv pip compile -p 3.9 --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
 
-        # Install the combined dependencies
-        pip install -r combined-requirements.txt
+    - name: Install NOMAD dependencies with pynxtools from current branch
+      run: |
+        uv pip install --system -r requirements.txt
+        uv pip install --system -r requirements-dev.txt
       env:
         PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test
+
+    - name: Run Tests
+      run: |
+        pytest
