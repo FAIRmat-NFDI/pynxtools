@@ -30,7 +30,7 @@ jobs:
     - name: Replace pynxtools dependency in NOMAD pyproject.toml
       working-directory: ./nomad
       run: |
-        sed -i 's|pynxtools\[convert\]==0.3.1|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref }}|' pyproject.toml
+            sed -i "s|pynxtools\\\[convert\\\].*|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref }}|" pyproject.toml
 
     - name: Set up Python
       uses: actions/setup-python@v2
