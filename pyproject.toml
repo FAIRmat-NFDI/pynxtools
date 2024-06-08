@@ -59,7 +59,7 @@ dev = [
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "pip-tools",
+    "uv",
     "pre-commit",
 ]
 convert = [
