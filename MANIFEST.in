@@ -9,5 +9,6 @@ recursive-include src/pynxtools/definitions/applications/ *.xml
 recursive-include src/pynxtools/definitions/contributed_definitions/ *.xml
 include src/pynxtools/definitions/*.xsd
 include src/pynxtools/nexus-version.txt
+include src/pynxtools/dataconverter/units *.txt
 include src/pynxtools/definitions/NXDL_VERSION
 

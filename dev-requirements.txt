@@ -6,6 +6,8 @@
 #
 anytree==2.12.1
     # via pynxtools (pyproject.toml)
+appdirs==1.4.4
+    # via pint
 ase==3.22.1
     # via pynxtools (pyproject.toml)
 babel==2.14.0
@@ -43,6 +45,10 @@ exceptiongroup==1.2.1
     # via pytest
 filelock==3.13.3
     # via virtualenv
+flexcache==0.3
+    # via pint
+flexparser==0.3.1
+    # via pint
 fonttools==4.50.0
     # via matplotlib
 ghp-import==2.1.0
@@ -130,6 +136,8 @@ pathspec==0.12.1
     # via mkdocs
 pillow==10.2.0
     # via matplotlib
+pint==0.24
+    # via pynxtools (pyproject.toml)
 pip-tools==7.4.1
     # via pynxtools (pyproject.toml)
 platformdirs==4.2.0
@@ -208,7 +216,11 @@ types-pyyaml==6.0.12.20240311
 types-requests==2.31.0.20240311
     # via pynxtools (pyproject.toml)
 typing-extensions==4.10.0
-    # via mypy
+    # via
+    #   flexcache
+    #   flexparser
+    #   mypy
+    #   pint
 tzdata==2024.1
     # via pandas
 urllib3==2.2.1

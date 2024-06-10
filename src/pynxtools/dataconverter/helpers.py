@@ -30,8 +30,10 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
+from pint import UndefinedUnitError
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.units import ureg
 from pynxtools.nexus import nexus
 
 logger = logging.getLogger(__name__)
@@ -638,6 +640,63 @@ def convert_str_to_bool_safe(value):
     if value.lower() == "false":
         return False
     return None
+
+
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding="utf-8"
+) -> Optional[str]:
+    """
+    Cleans the string attribute which means it will decode bytes to str if necessary.
+    If `attr` is not str, bytes or None it raises a TypeError.
+    """
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    raise TypeError(
+        "Invalid type {type} for attribute. Should be either None, bytes or str."
+    )
+
+
+def is_valid_unit(
+    unit: str, nx_category: str, transformation_type: Optional[str]
+) -> bool:
+    """
+    The provided unit belongs to the provided nexus unit category.
+    Args:
+        unit (str): The unit to check. Should be according to pint.
+        nx_category (str): A nexus unit category, e.g. `NX_LENGTH`,
+            or derived unit category, e.g., `NX_LENGTH ** 2`.
+        transformation_type (Optional[str]):
+            The transformation type of an NX_TRANSFORMATION.
+            This parameter is ignored if the `nx_category` is not `NX_TRANSFORMATION`.
+            If `transformation_type` is not present this should be set to None.
+    Returns:
+        bool: The unit belongs to the provided category
+    """
+    unit = clean_str_attr(unit)
+    try:
+        if nx_category in ("NX_ANY"):
+            ureg(unit)  # Check if unit is generally valid
+            return True
+        nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
+        if nx_category == "[NX_TRANSFORMATION]":
+            # NX_TRANSFORMATIONS is a pseudo unit
+            # and can be either an angle, a length or unitless
+            # depending on the transformation type.
+            if transformation_type is None:
+                return ureg(unit).check("[NX_UNITLESS]")
+            if transformation_type == "translation":
+                return ureg(unit).check("[NX_LENGTH]")
+            if transformation_type == "rotation":
+                return ureg(unit).check("[NX_ANGLE]")
+            return False
+        return ureg(unit).check(f"{nx_category}")
+    except UndefinedUnitError:
+        return False
 
 
 def is_valid_data_field(value, nxdl_type, path) -> bool:
