@@ -26,9 +26,9 @@ jobs:
           # - plugin: pynxtools-em
           #   branch: main
           #   tests_to_run: tests/.
-          # - plugin: pynxtools-mpes
-          #   branch: main
-          #   tests_to_run: tests/.
+          - plugin: pynxtools-mpes
+            branch: main
+            tests_to_run: tests/.
           - plugin: pynxtools-stm
             branch: main
             tests_to_run: tests/.
@@ -63,8 +63,8 @@ jobs:
           ref: ${{ matrix.branch }}
       - name: Install ${{ matrix.plugin }}
         run: |
-          cd ${{ matrix.plugin }} 
-          pip install .      
+          cd ${{ matrix.plugin }}
+          pip install .
       - name: Run ${{ matrix.plugin }} tests
         run: |
           cd ${{ matrix.plugin }}
