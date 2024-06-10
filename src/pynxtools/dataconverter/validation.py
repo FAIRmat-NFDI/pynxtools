@@ -40,6 +40,7 @@ from pynxtools.dataconverter.helpers import (
     collector,
     convert_nexus_to_caps,
     is_valid_data_field,
+    is_valid_unit,
 )
 from pynxtools.dataconverter.nexus_tree import (
     NexusEntity,
@@ -133,8 +134,8 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         remove_from_req_fields(path)
         is_valid_data_field(data[()], node.dtype, path)
 
-    def handle_attributes(path: str, attribute_names: h5py.AttributeManager):
-        for attr_name in attribute_names:
+    def handle_attributes(path: str, attrs: h5py.AttributeManager):
+        for attr_name in attrs:
             node = find_node_for(f"{path}/{attr_name}")
             if node is None:
                 collector.collect_and_log(
@@ -143,8 +144,11 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
                 continue
             remove_from_req_fields(f"{path}/@{attr_name}")
             is_valid_data_field(
-                attribute_names.get(attr_name), node.dtype, f"{path}/@{attr_name}"
+                attrs.get(attr_name), node.dtype, f"{path}/@{attr_name}"
             )
+
+            if attr_name == "units":
+                is_valid_unit(attrs.get(attr_name), node.units, None)
 
     def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
@@ -157,7 +161,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
 
     tree = generate_tree_from(appdef)
     required_fields = tree.required_fields_and_attrs_names()
-    data.visitems(validate)
+    data.visititems(validate)
 
     for req_field in required_fields:
         if "@" in req_field:
@@ -349,8 +353,29 @@ def is_valid_unit_for_node(
             hints["transformation_type"] may be used to determine the expected unit category
             if the node represents a transformation.
     """
+    def clean_str_attr(
+        attr: Optional[Union[str, bytes]], encoding="utf-8"
+    ) -> Optional[str]:
+        """
+        Cleans the string attribute which means it will decode bytes to str if necessary.
+        If `attr` is not str, bytes or None it raises a TypeError.
+        """
+        if attr is None:
+            return attr
+        if isinstance(attr, bytes):
+            return attr.decode(encoding)
+        if isinstance(attr, str):
+            return attr
+
+        raise TypeError(
+            "Invalid type {type} for attribute. Should be either None, bytes or str."
+        )
+    
     # Need to use a list as `NXtransformation` is a special use case
     if node.unit == "NX_TRANSFORMATION":
+        # NX_TRANSFORMATIONS is a pseudo unit
+        # and can be either an angle, a length or unitless
+        # depending on the transformation type.
         if (transformation_type := hints.get("transformation_type")) is not None:
             category_map: dict[str, str] = {
                 "translation": "NX_LENGTH",
@@ -363,6 +388,8 @@ def is_valid_unit_for_node(
     else:
         node_unit_category = node.unit
         log_input = None
+
+    unit = clean_str_attr(unit)
 
     if NXUnitSet.matches(node_unit_category, unit):
         return

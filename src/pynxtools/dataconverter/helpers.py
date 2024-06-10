@@ -31,6 +31,7 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
+from pint import UndefinedUnitError
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -38,11 +39,9 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_inherited_nodes,
     get_nexus_definitions_path,
     get_node_at_nxdl_path,
-)
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_required_string as nexus_get_required_string,
 )
-
+from pynxtools.units import ureg
 logger = logging.getLogger("pynxtools")
 
 
@@ -733,7 +732,6 @@ def convert_str_to_bool_safe(value: str) -> Optional[bool]:
     if value.lower() == "false":
         return False
     raise ValueError(f"Could not interpret string '{value}' as boolean.")
-
 
 def convert_int_to_float(value):
     """

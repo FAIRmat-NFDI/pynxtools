@@ -37,6 +37,7 @@ dependencies = [
     "anytree",
     "pint",
     "cachetools",
+    "pint>=0.17",
 ]
 
 [project.urls]
@@ -109,6 +110,7 @@ simple_nexus_example = "pynxtools.nomad.entrypoints:simple_nexus_example"
 read_nexus = "pynxtools.nexus.nexus:main"
 dataconverter = "pynxtools.dataconverter.convert:main_cli"
 generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
+verify_nexus = "pynxtools.dataconverter.verify:verify"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
