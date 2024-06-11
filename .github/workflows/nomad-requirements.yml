@@ -22,10 +22,8 @@ jobs:
 
     - name: Checkout NOMAD from GitLab
       run: |
-        git clone https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
-        cd nomad
-        git checkout develop
-        git submodule update --init --recursive
+        git clone --depth 1 --branch develop --recurse-submodules https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
+        git submodule update --init --recursive --depth 1
     
     - name: Replace pynxtools dependency in NOMAD pyproject.toml
       working-directory: ./nomad
