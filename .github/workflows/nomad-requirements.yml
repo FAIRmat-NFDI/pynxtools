@@ -1,4 +1,4 @@
-name: Validate Dependencies Compatibility
+name: validate Dependencies compatibility
 
 on:
   push:
