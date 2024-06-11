@@ -1,4 +1,4 @@
-name: validate Dependencies compatibility
+name: NOMAD dependencies compatibility
 
 on:
   push:
@@ -8,9 +8,9 @@ on:
     branches:
       - master
     # Run workflow only when there are changes in pyproject.toml or dev-requirements.txt
-    # paths:
-    # - 'pyproject.toml'
-    # - 'dev-requirements.txt'
+    paths:
+      - 'pyproject.toml'
+      - 'dev-requirements.txt'
 
 jobs:
   validate_dependencies:
