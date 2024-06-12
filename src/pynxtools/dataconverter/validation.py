@@ -90,7 +90,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
     # Allow for 10000 cache entries. This should be enough for most cases
     @cached(
         cache=LRUCache(maxsize=10000),
-        key=lambda path, *_: hashkey(path),
+        key=lambda path, node_type=None, nx_class=None: hashkey(path),
     )
     def find_node_for(
         path: str, node_type: Optional[str] = None, nx_class: Optional[str] = None
@@ -118,7 +118,9 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
             required_fields.remove(path)
 
     def handle_group(path: str, data: h5py.Group):
-        node = find_node_for(path, data.attrs.get("NX_class"))
+        node = find_node_for(
+            path, node_type="group", nx_class=data.attrs.get("NX_class")
+        )
         if node is None:
             collector.collect_and_log(
                 path, ValidationProblem.MissingDocumentation, None
@@ -134,24 +136,39 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
                 path, ValidationProblem.MissingDocumentation, None
             )
             return
-        remove_from_req_fields(path)
+        remove_from_req_fields(node.get_path())
         is_valid_data_field(data[()], node.dtype, path)
+
+        units = data.attrs.get("units")
+        if node.unit is not None:
+            if units is None:
+                collector.collect_and_log(
+                    f"{path}/@units", ValidationProblem.MissingUnit, node.unit
+                )
+                return
+            remove_from_req_fields(f"{node.get_path()}/@units")
+            is_valid_unit(units, node.unit, None)
+        elif units is not None:
+            collector.collect_and_log(
+                f"{entry_name}/{path}/@units",
+                ValidationProblem.MissingDocumentation,
+                path,
+            )
 
     def handle_attributes(path: str, attrs: h5py.AttributeManager):
         for attr_name in attrs:
+            if attr_name in ("NX_class", "units"):
+                # Ignore special attrs
+                continue
+
             node = find_node_for(f"{path}/{attr_name}")
             if node is None:
                 collector.collect_and_log(
-                    path, ValidationProblem.MissingDocumentation, None
+                    f"{path}/@{attr_name}", ValidationProblem.MissingDocumentation, None
                 )
                 continue
-            remove_from_req_fields(f"{path}/@{attr_name}")
-            is_valid_data_field(
-                attrs.get(attr_name), node.dtype, f"{path}/@{attr_name}"
-            )
-
-            if attr_name == "units":
-                is_valid_unit(attrs.get(attr_name), node.units, None)
+            remove_from_req_fields(node.get_path())
+            is_valid_data_field(attrs.get(attr_name), node.dtype, node.get_path())
 
     def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
@@ -162,8 +179,10 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
 
         handle_attributes(path, data.attrs)
 
-    tree = generate_tree_from(appdef).search_child_with_name("ENTRY")
-    required_fields = tree.required_fields_and_attrs_names()
+    appdef = generate_tree_from(appdef)
+    required_fields = appdef.required_fields_and_attrs_names()
+    tree = appdef.search_child_with_name("ENTRY")
+    entry_name = data.name
     data.visititems(validate)
 
     for req_field in required_fields:
