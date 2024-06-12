@@ -98,8 +98,11 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         if path == "":
             return tree
 
-        prev_path, last_elem = path.rsplit("/", 1)
-        node = find_node_for(prev_path)
+        *prev_path, last_elem = path.rsplit("/", 1)
+        node = find_node_for(prev_path[0]) if prev_path else tree
+
+        if node is None:
+            return None
 
         best_child = best_namefit_of_(
             last_elem,
@@ -159,7 +162,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
 
         handle_attributes(path, data.attrs)
 
-    tree = generate_tree_from(appdef)
+    tree = generate_tree_from(appdef).search_child_with_name("ENTRY")
     required_fields = tree.required_fields_and_attrs_names()
     data.visititems(validate)
 
