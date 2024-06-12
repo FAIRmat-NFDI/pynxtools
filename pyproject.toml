@@ -114,6 +114,7 @@ verify_nexus = "pynxtools.dataconverter.verify:verify"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+"pynxtools.dataconverter.units" = ["*.txt"]
 "pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
 "pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
