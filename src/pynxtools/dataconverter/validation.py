@@ -130,7 +130,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         # TODO: Do actual group checks
 
     def handle_field(path: str, data: h5py.Dataset):
-        node = find_node_for(path)
+        node = find_node_for(path, node_type="field")
         if node is None:
             collector.collect_and_log(
                 path, ValidationProblem.MissingDocumentation, None
@@ -161,7 +161,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
                 # Ignore special attrs
                 continue
 
-            node = find_node_for(f"{path}/{attr_name}")
+            node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
             if node is None:
                 collector.collect_and_log(
                     f"{path}/@{attr_name}", ValidationProblem.MissingDocumentation, None
