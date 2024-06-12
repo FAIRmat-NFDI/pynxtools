@@ -194,6 +194,9 @@ class NexusNode(NodeMixin):
         while current_node.parent is not None:
             names.insert(0, current_node.name)
             current_node = current_node.parent
+
+        if self.type == "attribute" and names:
+            names[-1] = f"@{names[-1]}"
         return "/" + "/".join(names)
 
     def search_child_with_name(
