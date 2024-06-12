@@ -24,9 +24,20 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 import pytest
-
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
+
+
+def remove_optional_parent(data_dict: Template):
+    """Completely removes the optional group from the test Template."""
+    internal_dict = Template(data_dict)
+    del internal_dict["/ENTRY[my_entry]/optional_parent/required_child"]
+    del internal_dict["/ENTRY[my_entry]/optional_parent/optional_child"]
+    del internal_dict[
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"
+    ]
+
+    return internal_dict
 
 
 def alter_dict(data_dict: Template, key: str, value: object):
