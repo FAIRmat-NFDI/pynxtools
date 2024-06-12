@@ -126,10 +126,7 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.warning(
-                f"The data entry corresponding to {path} is required "
-                "and hasn't been supplied by the reader.",
-            )
+            logger.warning(f"Missing field: {path}")
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
                 f"The value at {path} should be one of the following Python types: {value}"
