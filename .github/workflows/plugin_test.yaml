@@ -26,9 +26,9 @@ jobs:
           # - plugin: pynxtools-em
           #   branch: main
           #   tests_to_run: tests/.
-          # - plugin: pynxtools-mpes
-          #   branch: main
-          #   tests_to_run: tests/.
+          - plugin: pynxtools-mpes
+            branch: main
+            tests_to_run: tests/.
           - plugin: pynxtools-stm
             branch: main
             tests_to_run: tests/.
