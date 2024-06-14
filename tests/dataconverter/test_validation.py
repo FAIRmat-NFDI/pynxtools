@@ -21,7 +21,6 @@ from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pytest
-
 from pynxtools.dataconverter.validation import validate_dict_against
 
 
@@ -102,7 +101,7 @@ def test_valid_data_dict(caplog, data_dict):
     [
         pytest.param(
             remove_from_dict("/my_entry/nxodd_name/bool_value", get_data_dict()),
-            "The data entry corresponding to /my_entry/nxodd_name/bool_value is required and hasn't been supplied by the reader.",
+            "Missing field: /my_entry/nxodd_name/bool_value",
             id="missing-required-value",
         )
     ],
