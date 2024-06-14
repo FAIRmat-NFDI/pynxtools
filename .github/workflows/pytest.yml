@@ -28,11 +28,11 @@ jobs:
           python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install coverage coveralls
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv pip install --system coverage coveralls
       - name: Install package
         run: |
-          pip install ".[dev]"
+          uv pip install --system ".[dev]"
       - name: Test with pytest
         run: |
           coverage run -m pytest -sv --show-capture=no tests

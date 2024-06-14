@@ -34,8 +34,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install ".[docs]"
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv pip install --system ".[docs]"
 
       - name: Build and Deploy
         run: |

@@ -37,6 +37,7 @@ dependencies = [
     "anytree",
     "cachetools",
     "pint>=0.17",
+    "setuptools>=64.0.1"
 ]
 
 [project.urls]
@@ -61,7 +62,7 @@ dev = [
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "pip-tools",
+    "uv",
     "pre-commit",
 ]
 convert = [
