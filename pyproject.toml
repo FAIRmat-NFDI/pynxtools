@@ -35,6 +35,7 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
+    "setuptools>=64.0.1"
 ]
 
 [project.urls]
@@ -59,7 +60,7 @@ dev = [
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "pip-tools",
+    "uv",
     "pre-commit",
 ]
 convert = [
