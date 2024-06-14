@@ -31,6 +31,7 @@ from pynxtools.dataconverter.helpers import (
     Collector,
     ValidationProblem,
     collector,
+    convert_nexus_to_caps,
     is_valid_data_field,
 )
 from pynxtools.dataconverter.nexus_tree import (
@@ -186,8 +187,14 @@ def validate_dict_against(
     """
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
-        if not node.variadic and node.name in keys:
-            return [node.name]
+        if not node.variadic:
+            if node.name in keys:
+                return [node.name]
+            elif (
+                hasattr(node, "nx_class")
+                and f"{convert_nexus_to_caps(node.nx_class)}[{node.name}]" in keys
+            ):
+                return [f"{convert_nexus_to_caps(node.nx_class)}[{node.name}]"]
 
         variations = []
         for key in keys:
