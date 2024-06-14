@@ -923,6 +923,115 @@ def nested_dict_to_slash_separated_path(
             flattened_dict[path] = val
 
 
+def dump_possible_groups_for_default_keys(
+    concept,
+    dflt_key_to_grp_li,
+    special_default_key_to_grp_li,
+    concept_level,
+    group_part,
+    group_name,
+):
+    """ """
+
+    # root level default
+    if concept_level == 0:
+        default_key = concept + "/@default"
+        if not special_default_key_to_grp_li.get("root", None):
+            special_default_key_to_grp_li["root"] = {default_key: []}
+        special_default_key_to_grp_li["root"][default_key].append(group_name)
+
+    # entry level default
+    elif concept_level == 1:
+        default_key = concept + "/@default"
+        if not special_default_key_to_grp_li.get("entry", None):
+            special_default_key_to_grp_li["entry"] = {default_key: None}
+        # Assuming multiple entries
+        if not special_default_key_to_grp_li["entry"].get(default_key, None):
+            special_default_key_to_grp_li["entry"][default_key] = {
+                "data": [],
+                "other": [],
+            }
+
+        if group_part.startswith("DATA"):
+            special_default_key_to_grp_li["entry"][default_key]["data"].append(
+                group_name
+            )
+        else:
+            special_default_key_to_grp_li["entry"][default_key]["other"].append(
+                group_name
+            )
+
+    else:
+        default_key = concept + "/@default"
+        if not dflt_key_to_grp_li.get(default_key, None):
+            dflt_key_to_grp_li[default_key] = {"data": [], "other": []}
+        if group_part.startswith("DATA"):
+            dflt_key_to_grp_li[default_key]["data"].append(group_name)
+        else:
+            dflt_key_to_grp_li[default_key]["other"].append(group_name)
+
+
+def set_default_from_key_grp_list_data(
+    template,
+    dflt_key_to_grp_li,
+    special_default_key_to_grp_li,
+    dflt_key_to_exist_grp,
+):
+    """Set default attribute for each group of Nexus file.
+
+    Each group will have a /@default attrubute refering the immediate child group in a
+    NeXus definition chain.
+
+    If the default attribute already refers to a group in the template that will
+    be persisted.
+
+    For root level attribute, the default will be first entry, if attribute is already empty.
+
+    For default attribute in the entry, NXdata group will dominate over other groups.
+    e.g. /@default = "entry1"
+        /entry1/@default = "data1"
+
+    Parameters
+    ----------
+    template : Template
+        Template from filled with datafile and eln.
+    dflt_key_to_grp_li : dict[str, dict[str, list]]
+        defalut attribute key to the list of immediate child group.
+    special_default_key_to_grp_li : dict[str, dict[str, dict[str, list]]]
+        special dict for root and entry.
+    dflt_key_to_exist_grp : dict[str, str]
+        defalut attribute key to the group set by reader.
+    """
+    for deflt_key, value in dflt_key_to_grp_li.items():
+        pre_defalt_grp = dflt_key_to_exist_grp.get(deflt_key, None)
+        # Verify if user added the group here
+        if pre_defalt_grp:
+            if pre_defalt_grp in value["data"] or pre_defalt_grp in value["other"]:
+                continue
+
+        else:
+            if value["data"]:
+                template[deflt_key] = value["data"][0]
+            elif value["other"]:
+                template[deflt_key] = value["other"][0]
+
+    for key, value in special_default_key_to_grp_li.items():
+        if key == "root":
+            if not dflt_key_to_exist_grp.get("/@default", None):
+                template["/@default"] = value["/@default"][0]
+
+        elif key == "entry":
+            # For muliple entries
+            for entry_defalt_key, entry_value in value.items():
+                # check already default set by reader
+                if dflt_key_to_exist_grp.get(entry_defalt_key, None):
+                    continue
+                if entry_value["data"]:
+                    template[entry_defalt_key] = entry_value["data"][0]
+                else:
+                    template[entry_defalt_key] = entry_value["other"][0]
+
+
 def set_default_from_child_group(template):
     """Set default attribute for each group of Nexus file.
 
@@ -945,86 +1054,53 @@ def set_default_from_child_group(template):
     """
     # defalut attribute key to the list of immediate child group
     dflt_key_to_grp_li: Optional[dict[str, list]] = {}
+    # special dict for root and entry
+    special_default_key_to_grp_li: Optional[dict[str, dict[str, dict[str, list]]]] = {}
     # defalut attribute key to the group set by reader
     dflt_key_to_exist_grp: dict[str, str] = {}
 
     # "/abc[DATA]/XYe[anything]/mnf[MNYZ]/anything" -> ['DATA', 'anything', 'MNYZ']
     pattern = r"\[(.*?)\]"
 
-    entry_data_rnd = ""
     for template_concept, val in template.items():
-        # skip the last part which is field
-        groups_list = template_concept.split("/")
-        # Cancel out the attribuutes
-        if groups_list[-1].startswith("@"):
-            continue
-        # Cancel out the fields
-        groups_list = groups_list[0:-1]
-        if not groups_list:
-            continue
-        last_default_key = ""
         if template_concept.endswith("/@default") and val:
             dflt_key_to_exist_grp[template_concept] = val
-
-        for group in groups_list:
-            if not group:
-                continue
-            modified_name = re.findall(pattern, group)
-            if modified_name:
-                modified_name = modified_name[0]
-            else:
-                modified_name = group
-            if modified_name.startswith("@"):
-                continue
-            last_default_atttr = f"{last_default_key}/@default"
-            if not dflt_key_to_grp_li.get(last_default_atttr, None):
-                dflt_key_to_grp_li[last_default_atttr] = {}
-                # Data groups
-                dflt_key_to_grp_li[last_default_atttr]["data"] = []
-                dflt_key_to_grp_li[last_default_atttr]["entry"] = []
-                # Other groupa
-                dflt_key_to_grp_li[last_default_atttr]["other"] = []
-
-            if template_concept.endswith("/@default"):
-                dflt_key_to_exist_grp[template_concept] = val
-
-            # Entry
-            if group.startswith("ENTRY"):
-                dflt_key_to_grp_li[last_default_atttr]["entry"].append(modified_name)
-            # Data
-            elif group.startswith("DATA"):
-                dflt_key_to_grp_li[last_default_atttr]["data"].append(modified_name)
-                if not entry_data_rnd:
-                    entry_data_rnd = modified_name
-            else:
-                dflt_key_to_grp_li[last_default_atttr]["other"].append(modified_name)
-
-            last_default_key = last_default_key + "/" + group
-
-    for deflt_key, value in dflt_key_to_grp_li.items():
-        pre_defalt_grp = dflt_key_to_exist_grp.get(deflt_key, None)
-        # Verify if user added the group here
-        if not pre_defalt_grp:
-            if (
-                pre_defalt_grp in value["entry"]
-                or pre_defalt_grp in value["data"]
-                or pre_defalt_grp in value["other"]
-            ):
-                continue
-
-        # Entry default group always a NXdata
-        entry_default = "/entry/@default"
-        if entry_default == deflt_key:
-            template[entry_default] = entry_data_rnd
             continue
 
-        if value["entry"]:
-            template[deflt_key] = value["entry"][0]
-        # Prioritize data group on other groups
-        elif value["data"]:
-            template[deflt_key] = value["data"][0]
-            # Randomly choose a NXdata group for entry
-        elif value["other"]:
-            template[deflt_key] = value["other"][0]
+        groups_list = template_concept.split("/")[1:]  # skip empty string
+
+        # skip other attributes like @units, @versions and so on
+        if groups_list[-1].startswith("@"):
+            continue
+        # Assume complete key refers to a field
+        # If key refers to a group, last chain group will be handled from other keys
         else:
-            template[deflt_key] = ""
+            groups_list = groups_list[0:-1]
+
+        if not groups_list:
+            continue
+        concept = ""
+
+        for ind, group in enumerate(groups_list):
+            grp_name = re.findall(pattern, group)
+            if grp_name:
+                grp_name = grp_name[0]
+            else:
+                grp_name = group
+            dump_possible_groups_for_default_keys(
+                concept,
+                dflt_key_to_grp_li,
+                special_default_key_to_grp_li,
+                ind,
+                group,
+                grp_name,
+            )
+
+            concept = concept + "/" + group
+
+    set_default_from_key_grp_list_data(
+        template,
+        dflt_key_to_grp_li,
+        special_default_key_to_grp_li,
+        dflt_key_to_exist_grp,
+    )

@@ -642,14 +642,15 @@ def test_warning_on_definition_changed_by_reader(caplog):
     assert template["/ENTRY[entry]/definition"] == "NXtest"
 
 
+# TODO add nxdata in temp_dict example
 @pytest.mark.parametrize(
     "temp_dict",
     [
         {
             "/ENTRY[entry1]/NXODD_name[nxodd_name]/float_value": 2.0,
             "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/float_value": 8.0,
-            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data1]/data1": [3, 5, 6],
-            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data2]/data2": [3, 5, 6],
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[grp_data1]/data1": [3, 5, 6],
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[grp_data2]/data2": [3, 5, 6],
             "/ENTRY[entry2]/@default": "nxodd_name_2",
             "/ENTRY[entry2]/NXODD_name[nxodd_name]/float_value": 2.0,
             "/ENTRY[entry2]/NXODD_name[nxodd_name_2]/float_value": 8.0,
@@ -681,8 +682,8 @@ def test_set_default_attr_in_group(temp_dict):
     ], "To test default attribute, entry attribute should be empty."
 
     assert template["/ENTRY[entry1]/NXODD_name[nxodd_name_2]/@default"] in [
-        "data1",
-        "data2",
+        "grp_data1",
+        "grp_data2",
     ], "To test default attribute, entry attribute should be empty."
 
     assert (
