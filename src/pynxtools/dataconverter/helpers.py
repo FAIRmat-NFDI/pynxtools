@@ -921,3 +921,110 @@ def nested_dict_to_slash_separated_path(
             nested_dict_to_slash_separated_path(val, flattened_dict, path)
         else:
             flattened_dict[path] = val
+
+
+def set_default_from_child_group(template):
+    """Set default attribute for each group of Nexus file.
+
+    Each group will have a /@default attrubute refering the immediate child group in a
+    NeXus definition chain.
+
+    If the default attribute already refers to a group in the template that will
+    be persisted.
+
+    For root level attribute, the default will be first entry, if attribute is already empty.
+
+    For default attribute in the entry, NXdata group will dominate over other groups.
+    e.g. /@default = "entry1"
+        /entry1/@default = "data1"
+
+    Parameters
+    ----------
+    template : Template
+        Template from filled with datafile and eln.
+    """
+    # defalut attribute key to the list of immediate child group
+    dflt_key_to_grp_li: Optional[dict[str, list]] = {}
+    # defalut attribute key to the group set by reader
+    dflt_key_to_exist_grp: dict[str, str] = {}
+
+    # "/abc[DATA]/XYe[anything]/mnf[MNYZ]/anything" -> ['DATA', 'anything', 'MNYZ']
+    pattern = r"\[(.*?)\]"
+
+    entry_data_rnd = ""
+    for template_concept, val in template.items():
+        # skip the last part which is field
+        groups_list = template_concept.split("/")
+        # Cancel out the attribuutes
+        if groups_list[-1].startswith("@"):
+            continue
+        # Cancel out the fields
+        groups_list = groups_list[0:-1]
+        if not groups_list:
+            continue
+        last_default_key = ""
+        if template_concept.endswith("/@default") and val:
+            dflt_key_to_exist_grp[template_concept] = val
+
+        for group in groups_list:
+            if not group:
+                continue
+            modified_name = re.findall(pattern, group)
+            if modified_name:
+                modified_name = modified_name[0]
+            else:
+                modified_name = group
+            if modified_name.startswith("@"):
+                continue
+            last_default_atttr = f"{last_default_key}/@default"
+            if not dflt_key_to_grp_li.get(last_default_atttr, None):
+                dflt_key_to_grp_li[last_default_atttr] = {}
+                # Data groups
+                dflt_key_to_grp_li[last_default_atttr]["data"] = []
+                dflt_key_to_grp_li[last_default_atttr]["entry"] = []
+                # Other groupa
+                dflt_key_to_grp_li[last_default_atttr]["other"] = []
+
+            if template_concept.endswith("/@default"):
+                dflt_key_to_exist_grp[template_concept] = val
+
+            # Entry
+            if group.startswith("ENTRY"):
+                dflt_key_to_grp_li[last_default_atttr]["entry"].append(modified_name)
+            # Data
+            elif group.startswith("DATA"):
+                dflt_key_to_grp_li[last_default_atttr]["data"].append(modified_name)
+                if not entry_data_rnd:
+                    entry_data_rnd = modified_name
+            else:
+                dflt_key_to_grp_li[last_default_atttr]["other"].append(modified_name)
+
+            last_default_key = last_default_key + "/" + group
+
+    for deflt_key, value in dflt_key_to_grp_li.items():
+        pre_defalt_grp = dflt_key_to_exist_grp.get(deflt_key, None)
+        # Verify if user added the group here
+        if not pre_defalt_grp:
+            if (
+                pre_defalt_grp in value["entry"]
+                or pre_defalt_grp in value["data"]
+                or pre_defalt_grp in value["other"]
+            ):
+                continue
+
+        # Entry default group always a NXdata
+        entry_default = "/entry/@default"
+        if entry_default == deflt_key:
+            template[entry_default] = entry_data_rnd
+            continue
+
+        if value["entry"]:
+            template[deflt_key] = value["entry"][0]
+        # Prioritize data group on other groups
+        elif value["data"]:
+            template[deflt_key] = value["data"][0]
+            # Randomly choose a NXdata group for entry
+        elif value["other"]:
+            template[deflt_key] = value["other"][0]
+        else:
+            template[deflt_key] = ""

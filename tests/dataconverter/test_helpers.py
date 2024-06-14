@@ -24,11 +24,10 @@ from typing import Optional
 
 import numpy as np
 import pytest
-from setuptools import distutils
-
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
+from setuptools import distutils
 
 
 def remove_optional_parent(data_dict: Template):
@@ -641,3 +640,58 @@ def test_warning_on_definition_changed_by_reader(caplog):
 
     assert "/ENTRY[entry]/definition" in template.keys()
     assert template["/ENTRY[entry]/definition"] == "NXtest"
+
+
+@pytest.mark.parametrize(
+    "temp_dict",
+    [
+        {
+            "/ENTRY[entry1]/NXODD_name[nxodd_name]/float_value": 2.0,
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/float_value": 8.0,
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data1]/data1": [3, 5, 6],
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data2]/data2": [3, 5, 6],
+            "/ENTRY[entry2]/@default": "nxodd_name_2",
+            "/ENTRY[entry2]/NXODD_name[nxodd_name]/float_value": 2.0,
+            "/ENTRY[entry2]/NXODD_name[nxodd_name_2]/float_value": 8.0,
+        }
+    ],
+)
+def test_set_default_attr_in_group(temp_dict):
+    """Test default attriute that consider child group.
+    Parameters
+    ----------
+    template : Template
+    """
+    template = Template(temp_dict)
+    assert (
+        "/@default" not in template
+    ), "To test the root level /@default should be empty."
+    assert (
+        "/ENTRY[entry1]/@default" not in template
+    ), "To test default attribute, entry attribute should be empty."
+
+    helpers.set_default_from_child_group(template)
+    assert (
+        template["/@default"] == "entry1"
+    ), "To test the root level /@default should be empty."
+
+    assert template["/ENTRY[entry1]/@default"] in [
+        "nxodd_name",
+        "nxodd_name_2",
+    ], "To test default attribute, entry attribute should be empty."
+
+    assert template["/ENTRY[entry1]/NXODD_name[nxodd_name_2]/@default"] in [
+        "data1",
+        "data2",
+    ], "To test default attribute, entry attribute should be empty."
+
+    assert (
+        "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[data2]/data2/@default"
+        not in template
+    ), (
+        "Group can not have a default attribute refering any field,"
+        " unless it is not supplied by reader."
+    )
+    assert (
+        template["/ENTRY[entry2]/@default"] == "nxodd_name_2"
+    ), "Default attribute supplied by reader can not be overwritten."
