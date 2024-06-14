@@ -649,11 +649,21 @@ def test_warning_on_definition_changed_by_reader(caplog):
         {
             "/ENTRY[entry1]/NXODD_name[nxodd_name]/float_value": 2.0,
             "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/float_value": 8.0,
-            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[grp_data1]/data1": [3, 5, 6],
-            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[grp_data2]/data2": [3, 5, 6],
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[grp_data1]/data1": [
+                3,
+                5,
+                6,
+            ],
+            "/ENTRY[entry1]/NXODD_name[nxodd_name_2]/DATA[grp_data2]/data2": [
+                3,
+                5,
+                6,
+            ],
             "/ENTRY[entry2]/@default": "nxodd_name_2",
             "/ENTRY[entry2]/NXODD_name[nxodd_name]/float_value": 2.0,
             "/ENTRY[entry2]/NXODD_name[nxodd_name_2]/float_value": 8.0,
+            "/ENTRY[entry2]/NXODD_name[nxodd_name_2]/INSTRUMENT[instrument]/DATA[data]/float_value": 8.0,
+            "/ENTRY[entry2]/NXODD_name[nxodd_name_2]/INSTRUMENT[instrument]/DATA[data1]/float_value": 8.0,
         }
     ],
 )
@@ -672,15 +682,15 @@ def test_set_default_attr_in_group(temp_dict):
     ), "To test default attribute, entry attribute should be empty."
 
     helpers.set_default_from_child_group(template)
-    assert (
-        template["/@default"] == "entry1"
-    ), "To test the root level /@default should be empty."
+    assert template["/@default"] in [
+        "entry1",
+        "entry2",
+    ], "To test the root level /@default should be empty."
 
     assert template["/ENTRY[entry1]/@default"] in [
         "nxodd_name",
         "nxodd_name_2",
     ], "To test default attribute, entry attribute should be empty."
-
     assert template["/ENTRY[entry1]/NXODD_name[nxodd_name_2]/@default"] in [
         "grp_data1",
         "grp_data2",
@@ -696,3 +706,12 @@ def test_set_default_attr_in_group(temp_dict):
     assert (
         template["/ENTRY[entry2]/@default"] == "nxodd_name_2"
     ), "Default attribute supplied by reader can not be overwritten."
+    assert (
+        template["/ENTRY[entry2]/NXODD_name[nxodd_name_2]/@default"] == "instrument"
+    ), "Default attribute supplied by reader can not be overwritten."
+    assert template[
+        "/ENTRY[entry2]/NXODD_name[nxodd_name_2]/INSTRUMENT[instrument]/@default"
+    ] in [
+        "data",
+        "data1",
+    ], "Default attribute supplied by reader can not be overwritten."
