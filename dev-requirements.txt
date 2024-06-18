@@ -2,11 +2,11 @@
 #    uv pip compile --extra=dev --extra=docs --output-file=dev-requirements.txt pyproject.toml
 anytree==2.12.1
     # via pynxtools (pyproject.toml)
-ase==3.22.1
+ase==3.23.0
     # via pynxtools (pyproject.toml)
-babel==2.14.0
+babel==2.15.0
     # via mkdocs-material
-certifi==2024.2.2
+certifi==2024.6.2
     # via requests
 cfgv==3.4.0
     # via pre-commit
@@ -21,14 +21,10 @@ click==8.1.7
 click-default-group==1.2.4
     # via pynxtools (pyproject.toml)
 colorama==0.4.6
-    # via
-    #   click
-    #   mkdocs
-    #   mkdocs-material
-    #   pytest
-contourpy==1.2.0
+    # via mkdocs-material
+contourpy==1.2.1
     # via matplotlib
-coverage==7.4.4
+coverage==7.5.3
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
@@ -36,30 +32,30 @@ distlib==0.3.8
     # via virtualenv
 exceptiongroup==1.2.1
     # via pytest
-filelock==3.13.3
+filelock==3.15.1
     # via virtualenv
-fonttools==4.50.0
+fonttools==4.53.0
     # via matplotlib
 ghp-import==2.1.0
     # via mkdocs
-h5py==3.10.0
+h5py==3.11.0
     # via pynxtools (pyproject.toml)
-identify==2.5.35
+identify==2.5.36
     # via pre-commit
-idna==3.6
+idna==3.7
     # via requests
 importlib-metadata==7.1.0
     # via pynxtools (pyproject.toml)
 iniconfig==2.0.0
     # via pytest
-jinja2==3.1.3
+jinja2==3.1.4
     # via
     #   mkdocs
     #   mkdocs-macros-plugin
     #   mkdocs-material
 kiwisolver==1.4.5
     # via matplotlib
-lxml==5.1.0
+lxml==5.2.2
     # via pynxtools (pyproject.toml)
 markdown==3.6
     # via
@@ -71,34 +67,37 @@ markupsafe==2.1.5
     # via
     #   jinja2
     #   mkdocs
-matplotlib==3.8.3
+matplotlib==3.9.0
     # via ase
 mergedeep==1.3.4
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs
-mkdocs==1.5.3
+    #   mkdocs-get-deps
+mkdocs==1.6.0
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs-macros-plugin
     #   mkdocs-material
 mkdocs-click==0.8.1
     # via pynxtools (pyproject.toml)
+mkdocs-get-deps==0.2.0
+    # via mkdocs
 mkdocs-macros-plugin==1.0.5
     # via pynxtools (pyproject.toml)
-mkdocs-material==9.5.15
+mkdocs-material==9.5.27
     # via pynxtools (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs-material
-mypy==1.9.0
+mypy==1.10.0
     # via pynxtools (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-nodeenv==1.8.0
+nodeenv==1.9.1
     # via pre-commit
-numpy==1.26.4
+numpy==2.0.0
     # via
     #   pynxtools (pyproject.toml)
     #   ase
@@ -108,7 +107,7 @@ numpy==1.26.4
     #   pandas
     #   scipy
     #   xarray
-packaging==24.0
+packaging==24.1
     # via
     #   matplotlib
     #   mkdocs
@@ -116,29 +115,29 @@ packaging==24.0
     #   xarray
 paginate==0.5.6
     # via mkdocs-material
-pandas==2.2.1
+pandas==2.2.2
     # via
     #   pynxtools (pyproject.toml)
     #   xarray
 pathspec==0.12.1
     # via mkdocs
-pillow==10.2.0
+pillow==10.3.0
     # via matplotlib
-platformdirs==4.2.0
+platformdirs==4.2.2
     # via
-    #   mkdocs
+    #   mkdocs-get-deps
     #   virtualenv
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
-pre-commit==3.7.0
+pre-commit==3.7.1
     # via pynxtools (pyproject.toml)
-pygments==2.17.2
+pygments==2.18.0
     # via mkdocs-material
-pymdown-extensions==10.7.1
+pymdown-extensions==10.8.1
     # via mkdocs-material
 pyparsing==3.1.2
     # via matplotlib
-pytest==8.1.1
+pytest==8.2.2
     # via
     #   pynxtools (pyproject.toml)
     #   pytest-cov
@@ -159,27 +158,28 @@ pyyaml==6.0.1
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs
+    #   mkdocs-get-deps
     #   mkdocs-macros-plugin
     #   pre-commit
     #   pymdown-extensions
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2023.12.25
+regex==2024.5.15
     # via mkdocs-material
-requests==2.31.0
+requests==2.32.3
     # via mkdocs-material
-ruff==0.3.4
+ruff==0.4.8
     # via pynxtools (pyproject.toml)
-scipy==1.12.0
+scipy==1.13.1
     # via ase
 setuptools==70.0.0
-    # via nodeenv
+    # via pynxtools (pyproject.toml)
 six==1.16.0
     # via
     #   anytree
     #   python-dateutil
-structlog==24.1.0
+structlog==24.2.0
     # via pynxtools (pyproject.toml)
 termcolor==2.4.0
     # via mkdocs-macros-plugin
@@ -188,27 +188,27 @@ tomli==2.0.1
     #   coverage
     #   mypy
     #   pytest
-types-pytz==2024.1.0.20240203
+types-pytz==2024.1.0.20240417
     # via pynxtools (pyproject.toml)
 types-pyyaml==6.0.12.20240311
     # via pynxtools (pyproject.toml)
-types-requests==2.31.0.20240311
+types-requests==2.32.0.20240602
     # via pynxtools (pyproject.toml)
-typing-extensions==4.10.0
+typing-extensions==4.12.2
     # via mypy
 tzdata==2024.1
     # via pandas
-urllib3==2.2.1
+urllib3==2.2.2
     # via
     #   requests
     #   types-requests
-uv==0.2.9
+uv==0.2.12
     # via pynxtools (pyproject.toml)
-virtualenv==20.25.1
+virtualenv==20.26.2
     # via pre-commit
-watchdog==4.0.0
+watchdog==4.0.1
     # via mkdocs
-xarray==2024.2.0
+xarray==2024.6.0
     # via pynxtools (pyproject.toml)
-zipp==3.18.1
+zipp==3.19.2
     # via importlib-metadata

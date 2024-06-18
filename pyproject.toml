@@ -52,7 +52,7 @@ docs = [
 ]
 dev = [
     "mypy",
-    "ruff==0.3.4",
+    "ruff==0.4.8",
     "pytest",
     "pytest-timeout",
     "pytest-cov",
@@ -119,6 +119,7 @@ select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
+    "NPY201",
 ]
 ignore = [
     "E501", # Line too long ({width} > {limit} characters)

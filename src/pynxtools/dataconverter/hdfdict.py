@@ -7,7 +7,7 @@ from datetime import datetime
 
 import h5py
 import yaml
-from numpy import string_
+from numpy import bytes_, string_
 
 TYPEID = "_type_"
 
@@ -160,15 +160,13 @@ def pack_dataset(hdfobject, key, value):
     try:
         dataset = hdfobject.create_dataset(name=key, data=value)
         if isdt:
-            dataset.attrs.create(name=TYPEID, data=string_("datetime"))
+            dataset.attrs.create(name=TYPEID, data=bytes_("datetime"))
     except TypeError:
         # Obviously the data was not serializable. To give it
         # a last try; serialize it to yaml
         # and save it to the hdf file:
-        dataset = hdfobject.create_dataset(
-            name=key, data=string_(yaml.safe_dump(value))
-        )
-        dataset.attrs.create(name=TYPEID, data=string_("yaml"))
+        dataset = hdfobject.create_dataset(name=key, data=bytes_(yaml.safe_dump(value)))
+        dataset.attrs.create(name=TYPEID, data=bytes_("yaml"))
         # if this fails again, restructure your data!
 
 
