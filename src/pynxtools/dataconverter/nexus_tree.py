@@ -438,7 +438,7 @@ class NexusNode(NodeMixin):
             if not xml_elem:
                 # Find group by naming convention
                 xml_elem = elem.xpath(
-                    f"*[self::nx:group][@type='NX{name.lower()}']",
+                    f"*[self::nx:group][@type='NX{name.lower()}' and not(@name)]",
                     namespaces=namespaces,
                 )
             if xml_elem:

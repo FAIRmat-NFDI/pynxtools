@@ -504,11 +504,7 @@ def validate_dict_against(
             if best_name is None:
                 return False
 
-            resolver = Resolver("name", relax=True)
-            child_node = resolver.get(node, best_name)
-            node = (
-                node.add_inherited_node(best_name) if child_node is None else child_node
-            )
+            node = node.search_child_with_name(best_name)
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field
