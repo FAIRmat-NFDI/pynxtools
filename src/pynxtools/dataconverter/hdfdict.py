@@ -7,7 +7,7 @@ from datetime import datetime
 
 import h5py
 import yaml
-from numpy import bytes_, string_
+from numpy import bytes_
 
 TYPEID = "_type_"
 
