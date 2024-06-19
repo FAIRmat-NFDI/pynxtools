@@ -41,6 +41,7 @@ from pynxtools.dataconverter.helpers import (
     is_appdef,
     remove_namespace_from_tag,
 )
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 
 NexusType = Literal[
     "NX_BINARY",
@@ -360,6 +361,33 @@ class NexusNode(NodeMixin):
                 else f"nx:group[@type='{xml_elem.attrib['type']}']",
                 namespaces=namespaces,
             )
+            if not inherited_elem and name is not None:
+                # Try to namefit
+                groups = elem.findall(
+                    f"nx:group[@type='{xml_elem.attrib['type']}']",
+                    namespaces=namespaces,
+                )
+                best_group = None
+                best_score = -1
+                for group in groups:
+                    if name in group.attrib and not contains_uppercase(
+                        group.attrib["name"]
+                    ):
+                        continue
+                    group_name = (
+                        group.attrib.get("name")
+                        if "name" in group.attrib
+                        else group.attrib["type"][2:].upper()
+                    )
+
+                    score = get_nx_namefit(name, group_name)
+                    if get_nx_namefit(name, group_name) >= best_score:
+                        best_group = group
+                        best_score = score
+
+                if best_group is not None:
+                    inherited_elem = [best_group]
+
             if inherited_elem and inherited_elem[0] not in inheritance_chain:
                 inheritance_chain.append(inherited_elem[0])
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
