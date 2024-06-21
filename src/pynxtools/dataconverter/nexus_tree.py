@@ -552,7 +552,7 @@ class NexusGroup(NexusNode):
         for sibling in self.parent.get_all_direct_children_names(
             node_type=self.type, nx_class=self.nx_class
         ):
-            if sibling == self.name:
+            if sibling == self.name or not contains_uppercase(sibling):
                 continue
             if get_nx_namefit(sibling, self.name) >= -1:
                 fit = self.parent.search_child_with_name(sibling)
