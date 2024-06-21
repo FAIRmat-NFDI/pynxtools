@@ -328,13 +328,24 @@ def validate_dict_against(
 
     def handle_group(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    f"{prev_path}/{node.name}", missing_type_err.get(node.type), None
-                )
+        if node.parent_of:
+            for child in node.parent_of:
+                variants += get_variations_of(child, keys)
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(
+                f"{prev_path}/{node.name}",
+                missing_type_err.get(node.type),
+                None,
+            )
             return
         for variant in variants:
+            if variant in [node.name for node in node.parent_of]:
+                # Don't process if this is actually a sub-variant of this group
+                continue
             nx_class, _ = split_class_and_name_of(variant)
             if not isinstance(keys[variant], Mapping):
                 if nx_class is not None:
