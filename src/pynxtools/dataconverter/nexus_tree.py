@@ -415,7 +415,7 @@ class NexusNode(NodeMixin):
             )
             if not inherited_elem and name is not None:
                 # Try to namefit
-                groups = elem.xpath(
+                groups = elem.findall(
                     f"nx:group[@type='{xml_elem.attrib['type']}']",
                     namespaces=namespaces,
                 )
