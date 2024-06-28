@@ -145,11 +145,21 @@ class NexusNode(NodeMixin):
     parent_of: List["NexusNode"]
 
     def _set_optionality(self):
+        """
+        Sets the optionality of the current node
+        if `recommended`, `required` or `optional` is set.
+        Also sets the field to optional if `maxOccurs == 0` or to required
+        if `maxOccurs > 0`.
+        """
         if not self.inheritance:
             return
         if self.inheritance[0].attrib.get("recommended"):
             self.optionality = "recommended"
-        elif self.inheritance[0].attrib.get("required"):
+        elif self.inheritance[0].attrib.get("required") or (
+            isinstance(self, NexusGroup)
+            and self.occurrence_limits[0] is not None
+            and self.occurrence_limits[0] > 0
+        ):
             self.optionality = "required"
         elif self.inheritance[0].attrib.get("optional") or (
             isinstance(self, NexusGroup) and self.occurrence_limits[0] == 0
@@ -181,6 +191,9 @@ class NexusNode(NodeMixin):
         self.parent_of = []
 
     def _construct_inheritance_chain_from_parent(self):
+        """
+        Builds the inheritance chain of the current node based on the parent node.
+        """
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
@@ -379,18 +392,30 @@ class NexusNode(NodeMixin):
         return docstrings
 
     def _build_inheritance_chain(self, xml_elem: ET._Element) -> List[ET._Element]:
+        """
+        Builds the inheritance chain based on the given xml node and the inheritance
+        chain of this node.
+
+        Args:
+            xml_elem (ET._Element): The xml element to build the inheritance chain for.
+
+        Returns:
+            List[ET._Element]:
+                The list of xml nodes representing the inheritance chain.
+                This represents the direct field or group inside the specific xml file.
+        """
         name = xml_elem.attrib.get("name")
         inheritance_chain = [xml_elem]
         for elem in self.inheritance:
             inherited_elem = elem.xpath(
                 f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
                 if name is not None
-                else f"nx:group[@type='{xml_elem.attrib['type']}']",
+                else f"nx:group[@type='{xml_elem.attrib['type']}' and not(@name)]",
                 namespaces=namespaces,
             )
             if not inherited_elem and name is not None:
                 # Try to namefit
-                groups = elem.findall(
+                groups = elem.xpath(
                     f"nx:group[@type='{xml_elem.attrib['type']}']",
                     namespaces=namespaces,
                 )
@@ -499,8 +524,7 @@ class NexusNode(NodeMixin):
                     namespaces=namespaces,
                 )
             if xml_elem:
-                new_node = self.add_node_from(xml_elem[0])
-                return new_node
+                return self.add_node_from(xml_elem[0])
         return None
 
 
@@ -547,18 +571,29 @@ class NexusGroup(NexusNode):
     ] = (None, None)
 
     def _check_sibling_namefit(self):
+        """
+        Namefits siblings at the current tree level if they are not part of the same
+        appdef or base class.
+        The function fills the `parent_of` property of this node and the `is_a` property
+        of the connected nodes to represent the relation.
+        It also adapts the optionality if enough required children are present.
+        """
         if not self.variadic:
             return
+
         for sibling in self.parent.get_all_direct_children_names(
             node_type=self.type, nx_class=self.nx_class
         ):
-            if sibling == self.name or not contains_uppercase(sibling):
+            if sibling == self.name or contains_uppercase(sibling):
                 continue
+            if sibling.lower() == self.name.lower():
+                continue
+
             if get_nx_namefit(sibling, self.name) >= -1:
                 fit = self.parent.search_child_with_name(sibling)
                 if (
                     self.inheritance[0] != fit.inheritance[0]
-                    and fit.inheritance[0] in self.inheritance
+                    and self.inheritance[0] in fit.inheritance
                 ):
                     fit.is_a.append(self)
                     self.parent_of.append(fit)
@@ -578,6 +613,11 @@ class NexusGroup(NexusNode):
                 self.optionality = "optional"
 
     def _set_occurence_limits(self):
+        """
+        Sets the occurence limits of the current group.
+        Searches the inheritance chain until a value is found.
+        Otherwise, the occurence_limits are set to (None, None).
+        """
         if not self.inheritance:
             return
         xml_elem = self.inheritance[0]
@@ -650,18 +690,31 @@ class NexusEntity(NexusNode):
     shape: Optional[Tuple[Optional[int], ...]] = None
 
     def _set_type(self):
+        """
+        Sets the dtype of the current entity based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         for elem in self.inheritance:
             if "type" in elem.attrib:
                 self.dtype = elem.attrib["type"]
                 return
 
     def _set_unit(self):
+        """
+        Sets the unit of the current entity based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         for elem in self.inheritance:
             if "units" in elem.attrib:
                 self.unit = elem.attrib["units"]
                 return
 
     def _set_items(self):
+        """
+        Sets the enumeration items of the current entity
+        based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         if not self.dtype == "NX_CHAR":
             return
         for elem in self.inheritance:
@@ -673,6 +726,10 @@ class NexusEntity(NexusNode):
                 return
 
     def _set_shape(self):
+        """
+        Sets the shape of the current entity based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         for elem in self.inheritance:
             dimension = elem.find(f"nx:dimensions", namespaces=namespaces)
             if dimension is not None:
