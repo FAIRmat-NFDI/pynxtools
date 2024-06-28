@@ -206,7 +206,7 @@ def validate_dict_against(
                 continue
             if (
                 get_nx_namefit(name2fit, node.name) >= 0
-                and key not in node.parent.get_all_children_names()
+                and key not in node.parent.get_all_direct_children_names()
             ):
                 variations.append(key)
             if nx_name is not None and not variations:
@@ -239,7 +239,7 @@ def validate_dict_against(
                 data_node = node.search_child_with_name((signal, "DATA"))
                 data_bc_node = node.search_child_with_name("DATA")
                 data_node.inheritance.append(data_bc_node.inheritance[0])
-                for child in data_node.get_all_children_names():
+                for child in data_node.get_all_direct_children_names():
                     data_node.search_child_with_name(child)
 
                 handle_field(
@@ -271,7 +271,7 @@ def validate_dict_against(
                     axis_node = node.search_child_with_name((axis, "AXISNAME"))
                     axis_bc_node = node.search_child_with_name("AXISNAME")
                     axis_node.inheritance.append(axis_bc_node.inheritance[0])
-                    for child in axis_node.get_all_children_names():
+                    for child in axis_node.get_all_direct_children_names():
                         axis_node.search_child_with_name(child)
 
                     handle_field(
@@ -328,13 +328,24 @@ def validate_dict_against(
 
     def handle_group(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    f"{prev_path}/{node.name}", missing_type_err.get(node.type), None
-                )
+        if node.parent_of:
+            for child in node.parent_of:
+                variants += get_variations_of(child, keys)
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(
+                f"{prev_path}/{node.name}",
+                missing_type_err.get(node.type),
+                None,
+            )
             return
         for variant in variants:
+            if variant in [node.name for node in node.parent_of]:
+                # Don't process if this is actually a sub-variant of this group
+                continue
             nx_class, _ = split_class_and_name_of(variant)
             if not isinstance(keys[variant], Mapping):
                 if nx_class is not None:
@@ -499,16 +510,12 @@ def validate_dict_against(
             return True
 
         for name in key[1:].replace("@", "").split("/"):
-            children = node.get_all_children_names()
+            children = node.get_all_direct_children_names()
             best_name = best_namefit_of(name, children)
             if best_name is None:
                 return False
 
-            resolver = Resolver("name", relax=True)
-            child_node = resolver.get(node, best_name)
-            node = (
-                node.add_inherited_node(best_name) if child_node is None else child_node
-            )
+            node = node.search_child_with_name(best_name)
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field
@@ -612,7 +619,7 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
         # but it does while recursing the tree and it should
         # be fixed.
         return
-    for child in node.get_all_children_names():
+    for child in node.get_all_direct_children_names():
         child_node = node.search_child_with_name(child)
         populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
 

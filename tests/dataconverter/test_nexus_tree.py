@@ -42,7 +42,8 @@ def test_correct_extension_of_tree():
     def get_node_fields(tree: NexusNode) -> List[Tuple[str, Any]]:
         return list(
             filter(
-                lambda x: not x[0].startswith("_") and x[0] not in "inheritance",
+                lambda x: not x[0].startswith("_")
+                and x[0] not in ("inheritance", "is_a", "parent_of"),
                 tree.__dict__.items(),
             )
         )
