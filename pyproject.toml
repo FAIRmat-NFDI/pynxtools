@@ -63,6 +63,10 @@ dev = [
     "uv",
     "pre-commit",
 ]
+nomad_plugin = [
+    "pydantic",
+    "nomad-lab",
+]
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd,ellips]",
 ]
@@ -87,6 +91,10 @@ xrd = [
 ellips = [
     "pynxtools-ellips",
 ]
+
+[project.entry-points.'nomad.plugin']
+nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
+nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"

@@ -1,16 +1,15 @@
 """Generic test for reader plugins."""
 
-from typing import Literal
-
 import logging
 import os
 from glob import glob
+from typing import Literal
 
-from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.convert import get_reader, transfer_data_into_template
+from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
-from pynxtools.nexus import nexus
+from pynxtools.nexus.nexus import HandleNexus
 
 
 def get_log_file(nxs_file, log_file, tmp_path):
@@ -24,7 +23,7 @@ def get_log_file(nxs_file, log_file, tmp_path):
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, nxs_file, None, None)
+    nexus_helper = HandleNexus(logger, nxs_file, None, None)
     nexus_helper.process_nexus_master_file(None)
     return log_file
 
