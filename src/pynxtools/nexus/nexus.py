@@ -11,22 +11,14 @@ import h5py
 import lxml.etree as ET
 
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    NxdlAttributeNotFoundError,
     add_base_classes,
     check_attr_name_nxdl,
     get_best_child,
-    get_enums,
     get_hdf_info_parent,
-    get_inherited_nodes,
     get_local_name_from_xml,
-    get_nexus_definitions_path,
-    get_node_at_nxdl_path,
     get_node_concept_path,
     get_node_name,
-    get_nx_attribute_type,
     get_nx_class,
-    get_nx_classes,
-    get_nx_units,
     get_nxdl_child,
     get_required_string,
     other_attrs,

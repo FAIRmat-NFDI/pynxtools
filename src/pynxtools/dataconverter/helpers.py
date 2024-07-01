@@ -705,9 +705,9 @@ def check_for_optional_parent(path: str, nxdl_root: ET._Element) -> str:
         return "<<NOT_FOUND>>"
 
     parent_nxdl_path = convert_data_converter_dict_to_nxdl_path(parent_path)
-    elem = nexus.get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
+    elem = get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
 
-    if nexus.get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
+    if nexus_get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
         return parent_path
 
     return check_for_optional_parent(parent_path, nxdl_root)
