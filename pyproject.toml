@@ -93,7 +93,8 @@ ellips = [
 ]
 
 [project.entry-points.'nomad.plugin']
-pynxtools = "pynxtools.nexus.nexus:nexusparser"
+nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
+nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
