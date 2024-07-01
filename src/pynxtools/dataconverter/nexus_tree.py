@@ -245,6 +245,9 @@ class NexusNode(NodeMixin):
                 return self.add_inherited_node(name)
         return None
 
+    def get_children_for(self, xml_elem: ET._Element) -> Optional[ET._Element]:
+        return next((x for x in self.children if x.inheritance[0] == xml_elem), None)
+
     def get_all_direct_children_names(
         self,
         node_type: Optional[str] = None,
@@ -446,9 +449,7 @@ class NexusNode(NodeMixin):
                 if best_group is not None:
                     inherited_elem = [best_group]
 
-            if inherited_elem and inherited_elem[0].base not in map(
-                lambda x: x.base, inheritance_chain
-            ):
+            if inherited_elem and inherited_elem[0] not in inheritance_chain:
                 inheritance_chain.append(inherited_elem[0])
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
         inheritance_chain.append(bc_xml_root)
@@ -586,39 +587,51 @@ class NexusGroup(NexusNode):
         of the connected nodes to represent the relation.
         It also adapts the optionality if enough required children are present.
         """
-        if not self.variadic:
+        if self.variadic:
             return
 
-        for sibling in self.parent.get_all_direct_children_names(
-            node_type=self.type, nx_class=self.nx_class
-        ):
-            if sibling == self.name or contains_uppercase(sibling):
+        for elem in self.inheritance[1:]:
+            parent = elem.getparent()
+            if parent is None:
                 continue
-            if sibling.lower() == self.name.lower():
-                continue
-
-            if get_nx_namefit(sibling, self.name) >= -1:
-                fit = self.parent.search_child_with_name(sibling)
-                if (
-                    self.inheritance[0] != fit.inheritance[0]
-                    and self.inheritance[0] in fit.inheritance
-                ):
-                    fit.is_a.append(self)
-                    self.parent_of.append(fit)
-
-            min_occurs = (
-                0 if self.occurrence_limits[0] is None else self.occurrence_limits[0]
-            )
-            min_occurs = 1 if self.optionality == "required" else min_occurs
-
-            required_children = reduce(
-                lambda x, y: x + (1 if y.optionality == "required" else 0),
-                self.parent_of,
-                0,
+            siblings = parent.findall(
+                f"nx:group[@type='{self.nx_class}']", namespaces=namespaces
             )
 
-            if required_children >= min_occurs:
-                self.optionality = "optional"
+            for sibling in siblings:
+                sibling_name = sibling.attrib.get(
+                    "name", sibling.attrib["type"][2:].upper()
+                )
+                if sibling_name == self.name or not contains_uppercase(sibling_name):
+                    continue
+                if get_nx_namefit(self.name, sibling_name) < 0:
+                    continue
+
+                sibling_node = self.parent.get_children_for(sibling)
+                if sibling_node is None:
+                    sibling_node = self.parent.add_node_from(sibling)
+                self.is_a.append(sibling_node)
+                sibling_node.parent_of.append(self)
+
+                min_occurs = (
+                    (1 if self.optionality == "required" else 0)
+                    if sibling_node.occurrence_limits[0] is None
+                    else sibling_node.occurrence_limits[0]
+                )
+                min_occurs = (
+                    1
+                    if self.optionality == "required" and min_occurs < 1
+                    else min_occurs
+                )
+
+                required_children = reduce(
+                    lambda x, y: x + (1 if y.optionality == "required" else 0),
+                    sibling_node.parent_of,
+                    0,
+                )
+
+                if required_children >= min_occurs:
+                    self.optionality = "optional"
 
     def _set_occurence_limits(self):
         """
