@@ -406,7 +406,13 @@ class NexusNode(NodeMixin):
         """
         name = xml_elem.attrib.get("name")
         inheritance_chain = [xml_elem]
-        for elem in self.inheritance:
+        inheritance = iter(self.inheritance)
+        for elem in inheritance:
+            # Walk until the file the xml_elem is part of
+            # and discard all previous files
+            if elem.base == xml_elem.base:
+                break
+        for elem in inheritance:
             inherited_elem = elem.xpath(
                 f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
                 if name is not None
@@ -440,7 +446,9 @@ class NexusNode(NodeMixin):
                 if best_group is not None:
                     inherited_elem = [best_group]
 
-            if inherited_elem and inherited_elem[0] not in inheritance_chain:
+            if inherited_elem and inherited_elem[0].base not in map(
+                lambda x: x.base, inheritance_chain
+            ):
                 inheritance_chain.append(inherited_elem[0])
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
         inheritance_chain.append(bc_xml_root)
