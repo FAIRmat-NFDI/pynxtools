@@ -644,8 +644,11 @@ class NexusGroup(NexusNode):
                     0,
                 )
 
-                if required_children >= min_occurs:
-                    self.optionality = "optional"
+                if (
+                    sibling_node.optionality == "required"
+                    and required_children >= min_occurs
+                ):
+                    sibling_node.optionality = "optional"
 
     def _set_occurence_limits(self):
         """
