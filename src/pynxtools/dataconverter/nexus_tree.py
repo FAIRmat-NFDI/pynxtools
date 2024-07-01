@@ -245,7 +245,18 @@ class NexusNode(NodeMixin):
                 return self.add_inherited_node(name)
         return None
 
-    def get_children_for(self, xml_elem: ET._Element) -> Optional[ET._Element]:
+    def get_children_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
+        """
+        Get the children of the current node which matches xml_elem.
+
+        Args:
+            xml_elem (ET._Element): The xml element to search in the children.
+
+        Returns:
+            Optional["NexusNode"]:
+                The NexusNode containing the children.
+                None if there is no initialised children for the xml_node.
+        """
         return next((x for x in self.children if x.inheritance[0] == xml_elem), None)
 
     def get_all_direct_children_names(
