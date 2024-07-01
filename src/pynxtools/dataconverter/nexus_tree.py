@@ -134,6 +134,14 @@ class NexusNode(NodeMixin):
             for a tree, i.e., setting the parent of a node is enough to add it to the tree
             and to its parent's children.
             For the root this is None.
+        is_a: List["NexusNode"]:
+            A list of NexusNodes the current node represents.
+            This is used for attaching siblings to the current node, e.g.,
+            if the parent appdef has a field `DATA(NXdata)` and the current appdef
+            has a field `my_data(NXdata)` the relation `my_data` `is_a` `DATA` is set.
+        parent_of: List["NexusNode"]:
+            The inverse of the above `is_a`. In the example case
+            `DATA` `parent_of` `my_data`.
     """
 
     name: str
@@ -245,9 +253,9 @@ class NexusNode(NodeMixin):
                 return self.add_inherited_node(name)
         return None
 
-    def get_children_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
+    def get_child_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
         """
-        Get the children of the current node which matches xml_elem.
+        Get the child of the current node, which matches xml_elem.
 
         Args:
             xml_elem (ET._Element): The xml element to search in the children.
@@ -618,21 +626,16 @@ class NexusGroup(NexusNode):
                 if get_nx_namefit(self.name, sibling_name) < 0:
                     continue
 
-                sibling_node = self.parent.get_children_for(sibling)
+                sibling_node = self.parent.get_child_for(sibling)
                 if sibling_node is None:
                     sibling_node = self.parent.add_node_from(sibling)
                 self.is_a.append(sibling_node)
                 sibling_node.parent_of.append(self)
 
                 min_occurs = (
-                    (1 if self.optionality == "required" else 0)
+                    (1 if sibling_node.optionality == "required" else 0)
                     if sibling_node.occurrence_limits[0] is None
                     else sibling_node.occurrence_limits[0]
-                )
-                min_occurs = (
-                    1
-                    if self.optionality == "required" and min_occurs < 1
-                    else min_occurs
                 )
 
                 required_children = reduce(
