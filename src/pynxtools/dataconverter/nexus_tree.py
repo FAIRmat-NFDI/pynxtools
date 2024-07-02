@@ -37,7 +37,6 @@ from anytree.node.nodemixin import NodeMixin
 from pynxtools.dataconverter.helpers import (
     contains_uppercase,
     get_all_parents_for,
-    get_nxdl_name_for,
     get_nxdl_root_and_path,
     is_appdef,
     remove_namespace_from_tag,
