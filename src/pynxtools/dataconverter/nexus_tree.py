@@ -228,6 +228,20 @@ class NexusNode(NodeMixin):
     def search_add_child_for_multiple(
         self, names: Tuple[str, ...]
     ) -> Optional["NexusNode"]:
+        """
+        Searchs and adds a child with one of the names in `names` to the current node.
+        This calls `search_add_child_for` repeatedly until a child is found.
+        The found child is then returned.
+
+        Args:
+            name (Tuple[str, ...]):
+                A tuple of names of the child to search for.
+
+        Returns:
+            Optional["NexusNode"]:
+                The first matching NexusNode for the child name.
+                If no child is found at all None is returned.
+        """
         for name in names:
             child = self.search_add_child_for(name)
             if child is not None:
