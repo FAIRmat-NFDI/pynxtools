@@ -373,7 +373,7 @@ class NexusParser(Parser):
         Parses the descriptive chemical formula from a nexus entry.
         """
         material = self.archive.m_setdefault("results.material")
-        element_set = Set[str] = set()
+        element_set: Set[str] = set()
         chemical_formulas: Set[str] = set()
 
         # DEBUG added here 'sample' only to test that I think the root cause
