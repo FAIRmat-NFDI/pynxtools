@@ -20,6 +20,7 @@ from typing import Optional, Set
 
 import lxml.etree as ET
 import numpy as np
+from ase.data import chemical_symbols
 from nomad.atomutils import Formula
 from nomad.datamodel import EntryArchive
 from nomad.datamodel.results import Material, Results
@@ -372,6 +373,7 @@ class NexusParser(Parser):
         Parses the descriptive chemical formula from a nexus entry.
         """
         material = self.archive.m_setdefault("results.material")
+        element_set = Set[str] = set()
         chemical_formulas: Set[str] = set()
 
         # DEBUG added here 'sample' only to test that I think the root cause
@@ -383,13 +385,21 @@ class NexusParser(Parser):
             if sample.get("atom_types__field") is not None:
                 atom_types = sample.atom_types__field
                 if isinstance(atom_types, list):
-                    atomlist = atom_types
+                    for symbol in atom_types:
+                        if symbol in chemical_symbols[1::]:
+                            # chemical_symbol from ase.data is ['X', 'H', 'He', ...]
+                            # but 'X' is not a valid chemical symbol just trick to
+                            # have array indices matching element number
+                            element_set.add(symbol)
                 else:
-                    atomlist = atom_types.replace(" ", "").split(",")
-                    chemical_formulas.add("".join(list(set(atomlist))))
+                    for symbol in atom_types.replace(" ", "").split(","):
+                        if symbol in chemical_symbols[1::]:
+                            element_set.add(symbol)
+                    if len(element_set) == 1:
+                        chemical_formulas.add("".join(list(element_set)))
                 # Caution: The element list will be overwritten
                 # in case a single chemical formula is found
-                material.elements = list(set(material.elements) | set(atomlist))
+                material.elements = list(set(material.elements) | element_set)
             if sample.get("chemical_formula__field") is not None:
                 chemical_formulas.add(sample.chemical_formula__field)
 
