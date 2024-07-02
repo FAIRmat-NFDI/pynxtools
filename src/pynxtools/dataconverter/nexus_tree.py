@@ -225,32 +225,49 @@ class NexusNode(NodeMixin):
             current_node = current_node.parent
         return "/" + "/".join(names)
 
-    def search_child_with_name(
-        self, names: Union[Tuple[str, ...], str]
+    def search_add_child_for_multiple(
+        self, names: Tuple[str, ...]
     ) -> Optional["NexusNode"]:
+        for name in names:
+            child = self.search_add_child_for(name)
+            if child is not None:
+                return child
+        return None
+
+    def search_add_child_for(self, name: str) -> Optional["NexusNode"]:
         """
-        This searches a child or children with `names` in the current node.
+        This searches a child with name `name` in the current node.
         If the child is not found as a direct child,
         it will search in the inheritance chain and add the child to the tree.
 
         Args:
-            names (Union[Tuple[str, ...], str]):
-                Either a single string or a tuple of string.
-                In case this is a string the child with the specific name is searched.
-                If it is a tuple, the first match is used.
+            name (str):
+                Name of the child to search for.
 
         Returns:
             Optional[NexusNode]:
                 The node of the child which was added. None if no child was found.
         """
-        if isinstance(names, str):
-            names = (names,)
-        for name in names:
-            direct_child = next((x for x in self.children if x.name == name), None)
-            if direct_child is not None:
-                return direct_child
-            if name in self.get_all_direct_children_names():
-                return self.add_inherited_node(name)
+        tags = (
+            "*[self::nx:field or self::nx:group "
+            "or self::nx:attribute or self::nx:choice]"
+        )
+        for elem in self.inheritance:
+            xml_elem = elem.xpath(
+                f"{tags}[@name='{name}']",
+                namespaces=namespaces,
+            )
+            if not xml_elem and name.isupper():
+                xml_elem = elem.xpath(
+                    f"{tags}[@type='NX{name.lower()}' and not(@name)]",
+                    namespaces=namespaces,
+                )
+            if not xml_elem:
+                continue
+            existing_child = self.get_child_for(xml_elem[0])
+            if existing_child is None:
+                return self.add_node_from(xml_elem[0])
+            return existing_child
         return None
 
     def get_child_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
@@ -265,7 +282,14 @@ class NexusNode(NodeMixin):
                 The NexusNode containing the children.
                 None if there is no initialised children for the xml_node.
         """
-        return next((x for x in self.children if x.inheritance[0] == xml_elem), None)
+        return next(
+            (
+                x
+                for x in self.children
+                if x.inheritance and x.inheritance[0] == xml_elem
+            ),
+            None,
+        )
 
     def get_all_direct_children_names(
         self,
@@ -649,6 +673,10 @@ class NexusGroup(NexusNode):
                     and required_children >= min_occurs
                 ):
                     sibling_node.optionality = "optional"
+                break
+            else:
+                continue
+            break
 
     def _set_occurence_limits(self):
         """
@@ -823,7 +851,7 @@ def populate_tree_from_parents(node: NexusNode):
             The current node from which to populate the tree.
     """
     for child in node.get_all_direct_children_names(only_appdef=True):
-        child_node = node.search_child_with_name(child)
+        child_node = node.search_add_child_for(child)
         populate_tree_from_parents(child_node)
 
 
