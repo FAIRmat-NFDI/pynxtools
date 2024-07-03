@@ -111,7 +111,7 @@ def test_assert_nexus_metainfo(path: str, value: Any):
 def test_nexus_example():
     archive = EntryArchive()
 
-    example_data = "tests/data/parsers/nexus/201805_WSe2_arpes.nxs"
+    example_data = "src/pynxtools/data/201805_WSe2_arpes.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
     assert archive.nexus.NXarpes.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
         "3.27e-10*millibar"
@@ -154,6 +154,6 @@ def test_nexus_example():
 
 def test_same_name_field_and_group():
     archive = EntryArchive()
-    example_data = "tests/data/parsers/nexus/SiO2onSi.ellips.nxs"
+    example_data = "tests/data/parser/SiO2onSi.ellips.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
     archive.m_to_dict(with_out_meta=True)
