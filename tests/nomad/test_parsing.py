@@ -17,6 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import sys
+
+import pytest
+
 if sys.version_info < (3, 9):
     pytest.skip("nomad requires python3.9", allow_module_level=True)
 else:
@@ -25,10 +29,8 @@ else:
     from nomad.units import ureg
     from nomad.utils import get_logger
 
-import sys
 from typing import Any
 
-import pytest
 from pynxtools.nomad.parser import NexusParser
 from pynxtools.nomad.schema import nexus_metainfo_package
 
