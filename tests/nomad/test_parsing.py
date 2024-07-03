@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 
+import sys
 from typing import Any
 
 import pytest
@@ -54,6 +55,7 @@ from pynxtools.nomad.schema import nexus_metainfo_package
         pytest.param("NXapm.nx_category", "application"),
     ],
 )
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="nomad requires python3.9")
 def test_assert_nexus_metainfo(path: str, value: Any):
     """
     Test the existence of nexus metainfo
@@ -108,6 +110,7 @@ def test_assert_nexus_metainfo(path: str, value: Any):
             assert base_section.nx_kind == current.nx_kind
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="nomad requires python3.9")
 def test_nexus_example():
     archive = EntryArchive()
 
