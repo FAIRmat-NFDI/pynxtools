@@ -32,7 +32,7 @@ jobs:
           uv pip install --system coverage coveralls
       - name: Install package
         run: |
-          uv pip install --system ".[dev]"
+          uv pip install --system ".[dev,nomad_plugin]"
       - name: Test with pytest
         run: |
           coverage run -m pytest -sv --show-capture=no tests
