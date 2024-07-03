@@ -27,7 +27,7 @@ nexus_schema = NexusSchemaEntryPoint(
     description="The NeXus metainfo package.",
 )
 
-nexus_dataconverter = NexusDataConverterEntryPoint(
+nexus_data_converter = NexusDataConverterEntryPoint(
     name="NeXus Dataconverter",
     description="The NeXus dataconverter to convert data into the NeXus format.",
 )
