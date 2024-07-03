@@ -16,21 +16,21 @@
 # limitations under the License.
 #
 
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 import lxml.etree as ET
 import numpy as np
-from ase.data import chemical_symbols
 from nomad.atomutils import Formula
 from nomad.datamodel import EntryArchive
 from nomad.datamodel.results import Material, Results
-from nomad.metainfo import MSection, nexus
+from nomad.metainfo import MSection
 from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
-from nomad.parsing import Parser
+from nomad.parsing import MatchingParser
 from nomad.units import ureg
 from nomad.utils import get_logger
 from pint.errors import UndefinedUnitError
 
+import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 
 # list of prefixes evaulated via startswith to categorize
@@ -128,12 +128,13 @@ def _get_value(hdf_node):
     return hdf_node[()].decode()
 
 
-class NexusParser(Parser):
+class NexusParser(MatchingParser):
     """
     NexusParser doc
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.archive: Optional[EntryArchive] = None
         self.nx_root = None
         self._logger = None
@@ -387,7 +388,6 @@ class NexusParser(Parser):
         Parses the descriptive chemical formula from a nexus entry.
         """
         material = self.archive.m_setdefault("results.material")
-        element_set: Set[str] = set()
         chemical_formulas: Set[str] = set()
 
         # DEBUG added here 'sample' only to test that I think the root cause
@@ -399,29 +399,13 @@ class NexusParser(Parser):
             if sample.get("atom_types__field") is not None:
                 atom_types = sample.atom_types__field
                 if isinstance(atom_types, list):
-                    for elm in atom_types:
-                        if elm in chemical_symbols[1:]:
-                            # chemical_symbol from ase.data is ['X', 'H', 'He', ...]
-                            # but 'X' is not a valid chemical symbol just trick to
-                            # have array indices matching element number
-                            element_set.add(elm)
-                        else:
-                            self._logger.warn(
-                                f"{elm} is not an element in the periodic table"
-                            )
-                elif isinstance(atom_types, str):
-                    for elm in atom_types.replace(" ", "").split(","):
-                        if elm in chemical_symbols[1:]:
-                            element_set.add(elm)
-                        else:
-                            self._logger.warn(
-                                f"{elm} is not an element in the periodic table"
-                            )
-                material.elements = list(set(material.elements) | element_set)
-                # given that the element list will be overwritten
-                # in case a single chemical formula is found we do not add
-                # a chemical formula here as this anyway be correct only
-                # if len(materials.element) == 1 !
+                    atomlist = atom_types
+                else:
+                    atomlist = atom_types.replace(" ", "").split(",")
+                    chemical_formulas.add("".join(list(set(atomlist))))
+                # Caution: The element list will be overwritten
+                # in case a single chemical formula is found
+                material.elements = list(set(material.elements) | set(atomlist))
             if sample.get("chemical_formula__field") is not None:
                 chemical_formulas.add(sample.chemical_formula__field)
 
@@ -471,10 +455,14 @@ class NexusParser(Parser):
             self._logger.warn("could not normalize material", exc_info=e)
 
     def parse(
-        self, mainfile: str, archive: EntryArchive, logger=None, child_archives=None
-    ):
+        self,
+        mainfile: str,
+        archive: EntryArchive,
+        logger=None,
+        child_archives: Dict[str, EntryArchive] = None,
+    ) -> None:
         self.archive = archive
-        self.archive.m_create(nexus.NeXus)  # type: ignore # pylint: disable=no-member
+        self.archive.m_create(nexus_schema.NeXus)  # type: ignore # pylint: disable=no-member
         self.nx_root = self.archive.nexus
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
@@ -505,14 +493,14 @@ class NexusParser(Parser):
                 if app_def.startswith(token):
                     scientific_domain.append(domain_key)
         if len(scientific_domain) == 1:
-            self.domain = scientific_domain[0]
+            # NeXusParser(Parser) hence super().domain is set to 'dft' in the constructor
+            archive.metadata.domain = scientific_domain[0]
         else:
-            self.domain = "exp"
+            archive.metadata.domain = "exp"
             if len(scientific_domain) > 1:
                 self._logger.warn(
                     f"cannot resolve domain for multi-domain {scientific_domain}"
                 )
-
         # Normalise element info
         if archive.results is None:
             archive.results = Results()
