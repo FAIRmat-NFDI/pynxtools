@@ -15,9 +15,21 @@ class NexusSchemaEntryPoint(SchemaPackageEntryPoint):
         return nexus_metainfo_package
 
 
+class NexusDataConverterEntryPoint(SchemaPackageEntryPoint):
+    def load(self):
+        from pynxtools.nomad.dataconverter import m_package
+
+        return m_package
+
+
 nexus_schema = NexusSchemaEntryPoint(
     name="NeXus",
     description="The NeXus metainfo package.",
+)
+
+nexus_dataconverter = NexusDataConverterEntryPoint(
+    name="NeXus Dataconverter",
+    description="The NeXus dataconverter to convert data into the NeXus format.",
 )
 
 nexus_parser = NexusParserEntryPoint(
