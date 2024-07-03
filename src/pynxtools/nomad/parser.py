@@ -33,6 +33,20 @@ from pint.errors import UndefinedUnitError
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 
+# list of prefixes evaulated via startswith to categorize
+# a parsed NeXus entry into a specific metainfo.domain other than dft
+NXDEF_TO_METAINFO_DOMAIN = {
+    "em": ["NXem"],
+    "mpes": ["NXmpes", "NXarpes"],
+    "xps": ["NXxps"],
+    "opt": ["NXopt", "NXellipsometry", "NXoptical_spectroscopy", "NXraman"],
+    "apm": ["NXapm"],
+    "spm": ["NXspm", "NXsensor_scan"],
+    "xrd": ["NXxrd"],
+    # "transport": ["NXiv_temp"],
+    "exp": [],  # all other without further specification
+}
+
 
 def _to_group_name(nx_node: ET.Element):
     """
@@ -471,6 +485,22 @@ class NexusParser(MatchingParser):
                 app_def = var
                 break
         archive.metadata.entry_type = app_def
+
+        # group parsed content from all appdefs of a scientific domain to metainfo.domain
+        scientific_domain: list[str] = []
+        for domain_key, prefix_list in NXDEF_TO_METAINFO_DOMAIN.items():
+            for token in prefix_list:
+                if app_def.startswith(token):
+                    scientific_domain.append(domain_key)
+        if len(scientific_domain) == 1:
+            # NeXusParser(Parser), domain is member of parser, therein initialized to 'dft'
+            archive.metainfo.domain = scientific_domain[0]
+        else:
+            archive.metainfo.domain = "exp"
+            if len(scientific_domain) > 1:
+                self._logger.warn(
+                    f"cannot resolve domain for multi-domain {scientific_domain}"
+                )
 
         # Normalise element info
         if archive.results is None:
