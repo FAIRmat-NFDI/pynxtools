@@ -16,20 +16,21 @@
 # limitations under the License.
 #
 
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 import lxml.etree as ET
 import numpy as np
 from nomad.atomutils import Formula
 from nomad.datamodel import EntryArchive
 from nomad.datamodel.results import Material, Results
-from nomad.metainfo import MSection, nexus
+from nomad.metainfo import MSection
 from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
-from nomad.parsing import Parser
+from nomad.parsing import MatchingParser
 from nomad.units import ureg
 from nomad.utils import get_logger
 from pint.errors import UndefinedUnitError
 
+import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 
 
@@ -113,12 +114,13 @@ def _get_value(hdf_node):
     return hdf_node[()].decode()
 
 
-class NexusParser(Parser):
+class NexusParser(MatchingParser):
     """
     NexusParser doc
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.archive: Optional[EntryArchive] = None
         self.nx_root = None
         self._logger = None
@@ -439,10 +441,14 @@ class NexusParser(Parser):
             self._logger.warn("could not normalize material", exc_info=e)
 
     def parse(
-        self, mainfile: str, archive: EntryArchive, logger=None, child_archives=None
-    ):
+        self,
+        mainfile: str,
+        archive: EntryArchive,
+        logger=None,
+        child_archives: Dict[str, EntryArchive] = None,
+    ) -> None:
         self.archive = archive
-        self.archive.m_create(nexus.NeXus)  # type: ignore # pylint: disable=no-member
+        self.archive.m_create(nexus_schema.NeXus)  # type: ignore # pylint: disable=no-member
         self.nx_root = self.archive.nexus
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
