@@ -386,20 +386,24 @@ class NexusParser(Parser):
                 atom_types = sample.atom_types__field
                 if isinstance(atom_types, list):
                     for symbol in atom_types:
-                        if symbol in chemical_symbols[1::]:
+                        if symbol in chemical_symbols[1:]:
                             # chemical_symbol from ase.data is ['X', 'H', 'He', ...]
                             # but 'X' is not a valid chemical symbol just trick to
                             # have array indices matching element number
                             element_set.add(symbol)
-                else:
+                        else:
+                            self._logger.warn(
+                                f"Ignoring {symbol} as it is not for an element from the periodic table"
+                            )
+                elif isinstance(atom_types, str):
                     for symbol in atom_types.replace(" ", "").split(","):
-                        if symbol in chemical_symbols[1::]:
+                        if symbol in chemical_symbols[1:]:
                             element_set.add(symbol)
-                    if len(element_set) == 1:
-                        chemical_formulas.add("".join(list(element_set)))
-                # Caution: The element list will be overwritten
-                # in case a single chemical formula is found
                 material.elements = list(set(material.elements) | element_set)
+                # given that the element list will be overwritten
+                # in case a single chemical formula is found we do not add
+                # a chemical formula here as this anyway be correct only
+                # if len(materials.element) == 1 !
             if sample.get("chemical_formula__field") is not None:
                 chemical_formulas.add(sample.chemical_formula__field)
 
