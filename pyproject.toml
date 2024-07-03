@@ -64,7 +64,6 @@ dev = [
     "pre-commit",
 ]
 nomad_plugin = [
-    "pydantic",
     "nomad-lab",
 ]
 convert = [
