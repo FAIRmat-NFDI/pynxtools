@@ -43,8 +43,6 @@ NXDEF_TO_METAINFO_DOMAIN = {
     "apm": ["NXapm"],
     "spm": ["NXspm", "NXsensor_scan"],
     "xrd": ["NXxrd"],
-    # "transport": ["NXiv_temp"],
-    "exp": [],  # all other without further specification
 }
 
 
@@ -488,10 +486,11 @@ class NexusParser(MatchingParser):
 
         # group parsed content from all appdefs of a scientific domain to metainfo.domain
         scientific_domain: list[str] = []
-        for domain_key, prefix_list in NXDEF_TO_METAINFO_DOMAIN.items():
-            for token in prefix_list:
-                if app_def.startswith(token):
-                    scientific_domain.append(domain_key)
+        for domain_key, domain_val in NXDEF_TO_METAINFO_DOMAIN.items():
+            if isinstance(domain_val, list):
+                for prefix in domain_val:
+                    if app_def.startswith(prefix):
+                        scientific_domain.append(domain_key)
         if len(scientific_domain) == 1:
             # NeXusParser(Parser), domain is member of parser, therein initialized to 'dft'
             archive.metainfo.domain = scientific_domain[0]
