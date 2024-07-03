@@ -295,14 +295,10 @@ class NexusNode(NodeMixin):
                 The NexusNode containing the children.
                 None if there is no initialised children for the xml_node.
         """
-        return next(
-            (
-                x
-                for x in self.children
-                if x.inheritance and x.inheritance[0] == xml_elem
-            ),
-            None,
-        )
+        for child in self.children:
+            if child.inheritance and child.inheritance[0] == xml_elem:
+                return child
+        return None
 
     def get_all_direct_children_names(
         self,
