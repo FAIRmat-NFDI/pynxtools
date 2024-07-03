@@ -1,4 +1,5 @@
 """This is a code that performs several tests on nexus tool"""
+
 #
 # Copyright The NOMAD Authors.
 #
@@ -16,15 +17,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+if sys.version_info < (3, 9):
+    pytest.skip("nomad requires python3.9", allow_module_level=True)
+else:
+    from nomad.datamodel import EntryArchive
+    from nomad.metainfo import Section
+    from nomad.units import ureg
+    from nomad.utils import get_logger
 
 import sys
 from typing import Any
 
 import pytest
-from nomad.datamodel import EntryArchive
-from nomad.metainfo import Section
-from nomad.units import ureg
-from nomad.utils import get_logger
 from pynxtools.nomad.parser import NexusParser
 from pynxtools.nomad.schema import nexus_metainfo_package
 
@@ -55,7 +59,6 @@ from pynxtools.nomad.schema import nexus_metainfo_package
         pytest.param("NXapm.nx_category", "application"),
     ],
 )
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="nomad requires python3.9")
 def test_assert_nexus_metainfo(path: str, value: Any):
     """
     Test the existence of nexus metainfo
@@ -110,7 +113,6 @@ def test_assert_nexus_metainfo(path: str, value: Any):
             assert base_section.nx_kind == current.nx_kind
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="nomad requires python3.9")
 def test_nexus_example():
     archive = EntryArchive()
 
