@@ -37,7 +37,6 @@ from anytree.node.nodemixin import NodeMixin
 from pynxtools.dataconverter.helpers import (
     contains_uppercase,
     get_all_parents_for,
-    get_nxdl_name_for,
     get_nxdl_root_and_path,
     is_appdef,
     remove_namespace_from_tag,
@@ -134,6 +133,14 @@ class NexusNode(NodeMixin):
             for a tree, i.e., setting the parent of a node is enough to add it to the tree
             and to its parent's children.
             For the root this is None.
+        is_a: List["NexusNode"]:
+            A list of NexusNodes the current node represents.
+            This is used for attaching siblings to the current node, e.g.,
+            if the parent appdef has a field `DATA(NXdata)` and the current appdef
+            has a field `my_data(NXdata)` the relation `my_data` `is_a` `DATA` is set.
+        parent_of: List["NexusNode"]:
+            The inverse of the above `is_a`. In the example case
+            `DATA` `parent_of` `my_data`.
     """
 
     name: str
@@ -217,37 +224,68 @@ class NexusNode(NodeMixin):
             current_node = current_node.parent
         return "/" + "/".join(names)
 
-    def search_child_with_name(
-        self, names: Union[Tuple[str, ...], str]
+    def search_add_child_for_multiple(
+        self, names: Tuple[str, ...]
     ) -> Optional["NexusNode"]:
         """
-        This searches a child or children with `names` in the current node.
+        Searchs and adds a child with one of the names in `names` to the current node.
+        This calls `search_add_child_for` repeatedly until a child is found.
+        The found child is then returned.
+
+        Args:
+            name (Tuple[str, ...]):
+                A tuple of names of the child to search for.
+
+        Returns:
+            Optional["NexusNode"]:
+                The first matching NexusNode for the child name.
+                If no child is found at all None is returned.
+        """
+        for name in names:
+            child = self.search_add_child_for(name)
+            if child is not None:
+                return child
+        return None
+
+    def search_add_child_for(self, name: str) -> Optional["NexusNode"]:
+        """
+        This searches a child with name `name` in the current node.
         If the child is not found as a direct child,
         it will search in the inheritance chain and add the child to the tree.
 
         Args:
-            names (Union[Tuple[str, ...], str]):
-                Either a single string or a tuple of string.
-                In case this is a string the child with the specific name is searched.
-                If it is a tuple, the first match is used.
+            name (str):
+                Name of the child to search for.
 
         Returns:
             Optional[NexusNode]:
                 The node of the child which was added. None if no child was found.
         """
-        if isinstance(names, str):
-            names = (names,)
-        for name in names:
-            direct_child = next((x for x in self.children if x.name == name), None)
-            if direct_child is not None:
-                return direct_child
-            if name in self.get_all_direct_children_names():
-                return self.add_inherited_node(name)
+        tags = (
+            "*[self::nx:field or self::nx:group "
+            "or self::nx:attribute or self::nx:choice]"
+        )
+        for elem in self.inheritance:
+            xml_elem = elem.xpath(
+                f"{tags}[@name='{name}']",
+                namespaces=namespaces,
+            )
+            if not xml_elem and name.isupper():
+                xml_elem = elem.xpath(
+                    f"{tags}[@type='NX{name.lower()}' and not(@name)]",
+                    namespaces=namespaces,
+                )
+            if not xml_elem:
+                continue
+            existing_child = self.get_child_for(xml_elem[0])
+            if existing_child is None:
+                return self.add_node_from(xml_elem[0])
+            return existing_child
         return None
 
-    def get_children_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
+    def get_child_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
         """
-        Get the children of the current node which matches xml_elem.
+        Get the child of the current node, which matches xml_elem.
 
         Args:
             xml_elem (ET._Element): The xml element to search in the children.
@@ -257,7 +295,10 @@ class NexusNode(NodeMixin):
                 The NexusNode containing the children.
                 None if there is no initialised children for the xml_node.
         """
-        return next((x for x in self.children if x.inheritance[0] == xml_elem), None)
+        for child in self.children:
+            if child.inheritance and child.inheritance[0] == xml_elem:
+                return child
+        return None
 
     def get_all_direct_children_names(
         self,
@@ -618,21 +659,16 @@ class NexusGroup(NexusNode):
                 if get_nx_namefit(self.name, sibling_name) < 0:
                     continue
 
-                sibling_node = self.parent.get_children_for(sibling)
+                sibling_node = self.parent.get_child_for(sibling)
                 if sibling_node is None:
                     sibling_node = self.parent.add_node_from(sibling)
                 self.is_a.append(sibling_node)
                 sibling_node.parent_of.append(self)
 
                 min_occurs = (
-                    (1 if self.optionality == "required" else 0)
+                    (1 if sibling_node.optionality == "required" else 0)
                     if sibling_node.occurrence_limits[0] is None
                     else sibling_node.occurrence_limits[0]
-                )
-                min_occurs = (
-                    1
-                    if self.optionality == "required" and min_occurs < 1
-                    else min_occurs
                 )
 
                 required_children = reduce(
@@ -641,8 +677,15 @@ class NexusGroup(NexusNode):
                     0,
                 )
 
-                if required_children >= min_occurs:
-                    self.optionality = "optional"
+                if (
+                    sibling_node.optionality == "required"
+                    and required_children >= min_occurs
+                ):
+                    sibling_node.optionality = "optional"
+                break
+            else:
+                continue
+            break
 
     def _set_occurence_limits(self):
         """
@@ -817,7 +860,7 @@ def populate_tree_from_parents(node: NexusNode):
             The current node from which to populate the tree.
     """
     for child in node.get_all_direct_children_names(only_appdef=True):
-        child_node = node.search_child_with_name(child)
+        child_node = node.search_add_child_for(child)
         populate_tree_from_parents(child_node)
 
 

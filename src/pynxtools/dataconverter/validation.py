@@ -235,14 +235,14 @@ def validate_dict_against(
                 # if the concept for signal is already defined in the appdef
                 # TODO: This appends the base class multiple times
                 # it should be done only once
-                data_node = node.search_child_with_name((signal, "DATA"))
-                data_bc_node = node.search_child_with_name("DATA")
+                data_node = node.search_add_child_for_multiple((signal, "DATA"))
+                data_bc_node = node.search_add_child_for("DATA")
                 data_node.inheritance.append(data_bc_node.inheritance[0])
                 for child in data_node.get_all_direct_children_names():
-                    data_node.search_child_with_name(child)
+                    data_node.search_add_child_for(child)
 
                 handle_field(
-                    node.search_child_with_name((signal, "DATA")),
+                    node.search_add_child_for_multiple((signal, "DATA")),
                     keys,
                     prev_path=prev_path,
                 )
@@ -267,14 +267,14 @@ def validate_dict_against(
                     # if the concept for the axis is already defined in the appdef
                     # TODO: This appends the base class multiple times
                     # it should be done only once
-                    axis_node = node.search_child_with_name((axis, "AXISNAME"))
-                    axis_bc_node = node.search_child_with_name("AXISNAME")
+                    axis_node = node.search_add_child_for_multiple((axis, "AXISNAME"))
+                    axis_bc_node = node.search_add_child_for("AXISNAME")
                     axis_node.inheritance.append(axis_bc_node.inheritance[0])
                     for child in axis_node.get_all_direct_children_names():
-                        axis_node.search_child_with_name(child)
+                        axis_node.search_add_child_for(child)
 
                     handle_field(
-                        node.search_child_with_name((axis, "AXISNAME")),
+                        node.search_add_child_for_multiple((axis, "AXISNAME")),
                         keys,
                         prev_path=prev_path,
                     )
@@ -514,7 +514,7 @@ def validate_dict_against(
             if best_name is None:
                 return False
 
-            node = node.search_child_with_name(best_name)
+            node = node.search_add_child_for(best_name)
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field
@@ -619,7 +619,7 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
         # be fixed.
         return
     for child in node.get_all_direct_children_names():
-        child_node = node.search_child_with_name(child)
+        child_node = node.search_add_child_for(child)
         populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
 
 
