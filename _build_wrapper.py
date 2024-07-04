@@ -28,7 +28,9 @@ def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
                     "--match",
                     tag_match,
                 ],
-                cwd=os.path.join(os.path.dirname(__file__), "../pynxtools/definitions"),
+                cwd=os.path.join(
+                    os.path.dirname(__file__), "src/pynxtools/definitions"
+                ),
                 check=True,
                 capture_output=True,
             )
