@@ -1,0 +1,36 @@
+
+on: ["push"]
+
+name: Test Coveralls
+
+jobs:
+
+  coveralls:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install dependencies
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv pip install --system coverage coveralls
+      - name: Install package
+        run: |
+          uv pip install --system ".[dev]"
+      - name: Test with pytest
+        continue-on-error: true
+        run: |
+          coverage run -m pytest -sv --show-capture=no tests
+      - name: Submit to coveralls
+        continue-on-error: true
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            coveralls --service=github
