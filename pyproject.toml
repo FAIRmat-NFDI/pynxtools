@@ -63,9 +63,6 @@ dev = [
     "uv",
     "pre-commit",
 ]
-nomad_plugin = [
-    "nomad-lab @ git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@pluginise-nexus-code",
-]
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd,ellips]",
 ]
