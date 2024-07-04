@@ -5,6 +5,14 @@ import os
 from glob import glob
 from typing import Literal
 
+try:
+    from nomad.client import parse
+
+    NOMAD_AVAILABE = True
+except ImportError:
+    NOMAD_AVAILABLE = False
+
+
 from pynxtools.dataconverter.convert import get_reader, transfer_data_into_template
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.validation import validate_dict_against
@@ -108,6 +116,17 @@ class ReaderTest:
         assert self.caplog.text == ""
 
         Writer(read_data, nxdl_file, self.created_nexus).write()
+
+        if NOMAD_AVAILABLE:
+            kwargs = dict(
+                strict=True,
+                parser_name=None,
+                server_context=False,
+                username=None,
+                password=None,
+            )
+
+            parse(self.created_nexus, **kwargs)
 
     def check_reproducibility_of_nexus(self):
         """Reproducibility test for the generated nexus file."""
