@@ -8,7 +8,7 @@ from typing import Literal
 try:
     from nomad.client import parse
 
-    NOMAD_AVAILABE = True
+    NOMAD_AVAILABLE = True
 except ImportError:
     NOMAD_AVAILABLE = False
 
