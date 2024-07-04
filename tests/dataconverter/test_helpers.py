@@ -21,10 +21,10 @@ import logging
 import os
 import xml.etree.ElementTree as ET
 from typing import Optional
+import shutil
 
 import numpy as np
 import pytest
-from setuptools import distutils
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
@@ -148,7 +148,7 @@ def fixture_filled_test_data(template, tmp_path):
     # Copy original measurement file to tmp dir,
     # because h5py.ExternalLink is modifying it while
     # linking the nxs file.
-    distutils.file_util.copy_file(
+    shutil.copy(
         os.path.join(
             os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
         ),
