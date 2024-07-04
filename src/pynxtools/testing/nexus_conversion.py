@@ -111,6 +111,10 @@ class ReaderTest:
 
     def check_reproducibility_of_nexus(self):
         """Reproducibility test for the generated nexus file."""
+        IGNORE_LINES = [
+            "DEBUG - value: v",
+            "DEBUG - value: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
+        ]
         ref_log = get_log_file(self.ref_nexus_file, "ref_nexus.log", self.tmp_path)
         gen_log = get_log_file(self.created_nexus, "gen_nexus.log", self.tmp_path)
         with open(gen_log, "r", encoding="utf-8") as gen, open(
@@ -122,12 +126,12 @@ class ReaderTest:
             assert False, "Log files are different"
         for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
             if gen_l != ref_l:
-                # skip version conflicts
-                if gen_l.startswith("DEBUG - value: v") and ref_l.startswith(
-                    "DEBUG - value: v"
-                ):
-                    continue
-                assert False, (
-                    f"Log files are different at line {ind}"
-                    f" generated: {gen_l} \n referenced : {ref_l}"
-                )
+                # skip ignored lines (mainly version conflicts)
+                for ignore_line in IGNORE_LINES:
+                    if gen_l.startswith(ignore_line) and ref_l.startswith(ignore_line):
+                        break
+                else:
+                    assert False, (
+                        f"Log files are different at line {ind}"
+                        f" generated: {gen_l} \n referenced : {ref_l}"
+                    )
