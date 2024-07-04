@@ -32,7 +32,15 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.nexus import nexus
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_enums,
+    get_inherited_nodes,
+    get_nexus_definitions_path,
+    get_node_at_nxdl_path,
+)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_required_string as nexus_get_required_string,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -284,7 +292,7 @@ def get_nxdl_root_and_path(nxdl: str):
     """
 
     # Reading in the NXDL and generating a template
-    definitions_path = nexus.get_nexus_definitions_path()
+    definitions_path = get_nexus_definitions_path()
     data_path = os.path.join(
         f"{os.path.abspath(os.path.dirname(__file__))}/../",
         "data",
@@ -359,7 +367,7 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
     if nxdl_name == "NXtest":
         return []
 
-    elist = nexus.get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
+    elist = get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
     list_of_children_to_add = set()
     for elem in elist:
         list_of_children_to_add.update(get_all_defined_required_children_for_elem(elem))
@@ -462,7 +470,7 @@ def generate_template_from_nxdl(
 
 def get_required_string(elem):
     """Helper function to return nicely formatted names for optionality."""
-    return nexus.get_required_string(elem)[2:-2].lower()
+    return nexus_get_required_string(elem)[2:-2].lower()
 
 
 def convert_nexus_to_caps(nexus_name):
@@ -561,7 +569,7 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
 def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
     for elem in elist:
-        enums = nexus.get_enums(elem)
+        enums = get_enums(elem)
         if enums is not None:
             return value in enums, enums
     return True, []
@@ -697,9 +705,9 @@ def check_for_optional_parent(path: str, nxdl_root: ET._Element) -> str:
         return "<<NOT_FOUND>>"
 
     parent_nxdl_path = convert_data_converter_dict_to_nxdl_path(parent_path)
-    elem = nexus.get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
+    elem = get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
 
-    if nexus.get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
+    if nexus_get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
         return parent_path
 
     return check_for_optional_parent(parent_path, nxdl_root)
@@ -714,8 +722,8 @@ def is_node_required(nxdl_key, nxdl_root):
             nxdl_key[0 : nxdl_key.rindex("/") + 1]
             + nxdl_key[nxdl_key.rindex("/") + 2 :]
         )
-    node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root, exc=False)
-    return nexus.get_required_string(node) == "<<REQUIRED>>"
+    node = get_node_at_nxdl_path(nxdl_key, elem=nxdl_root, exc=False)
+    return nexus_get_required_string(node) == "<<REQUIRED>>"
 
 
 def all_required_children_are_set(optional_parent_path, data, nxdl_root):
