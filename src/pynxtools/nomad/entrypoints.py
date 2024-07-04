@@ -1,4 +1,9 @@
-from nomad.config.models.plugins import ParserEntryPoint, SchemaPackageEntryPoint
+try:
+    from nomad.config.models.plugins import ParserEntryPoint, SchemaPackageEntryPoint
+except ImportError as exc:
+    raise ImportError(
+        "Could not import nomad package. Please install the package 'nomad-lab'."
+    ) from exc
 
 
 class NexusParserEntryPoint(ParserEntryPoint):

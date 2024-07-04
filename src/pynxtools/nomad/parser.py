@@ -20,15 +20,21 @@ from typing import Dict, Optional, Set
 
 import lxml.etree as ET
 import numpy as np
-from nomad.atomutils import Formula
-from nomad.datamodel import EntryArchive
-from nomad.datamodel.results import Material, Results
-from nomad.metainfo import MSection
-from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
-from nomad.parsing import MatchingParser
-from nomad.units import ureg
-from nomad.utils import get_logger
-from pint.errors import UndefinedUnitError
+
+try:
+    from nomad.atomutils import Formula
+    from nomad.datamodel import EntryArchive
+    from nomad.datamodel.results import Material, Results
+    from nomad.metainfo import MSection
+    from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
+    from nomad.parsing import MatchingParser
+    from nomad.units import ureg
+    from nomad.utils import get_logger
+    from pint.errors import UndefinedUnitError
+except ImportError as exc:
+    raise ImportError(
+        "Could not import nomad package. Please install the package 'nomad-lab'."
+    ) from exc
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus

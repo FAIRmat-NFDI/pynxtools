@@ -4,9 +4,15 @@ from typing import Optional
 
 import numpy as np
 import yaml
-from nomad.datamodel.data import EntryData
-from nomad.metainfo import MEnum, Package, Quantity
-from nomad.units import ureg
+
+try:
+    from nomad.datamodel.data import EntryData
+    from nomad.metainfo import MEnum, Package, Quantity
+    from nomad.units import ureg
+except ImportError as exc:
+    raise ImportError(
+        "Could not import nomad package. Please install the package 'nomad-lab'."
+    ) from exc
 
 from pynxtools.dataconverter import convert as pynxtools_converter
 from pynxtools.dataconverter import writer as pynxtools_writer
