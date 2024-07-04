@@ -20,12 +20,12 @@
 import logging
 import os
 from pathlib import Path
+import shutil
 
 import click
 import h5py
 import pytest
 from click.testing import CliRunner
-from setuptools import distutils
 
 import pynxtools.dataconverter.convert as dataconverter
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -34,7 +34,7 @@ from pynxtools.nexus import nexus  # noqa: E402
 
 def move_xarray_file_to_tmp(tmp_path):
     """Moves the xarray file, which is used to test linking into the tmp_path directory."""
-    distutils.file_util.copy_file(
+    shutil.copy(
         os.path.join(
             os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
         ),
@@ -49,7 +49,7 @@ def restore_xarray_file_from_tmp(tmp_path):
             os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
         )
     )
-    distutils.file_util.move_file(
+    shutil.move(
         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
         os.path.join(
             os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"

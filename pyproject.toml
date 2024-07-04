@@ -1,6 +1,5 @@
 [build-system]
 requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-backend-path = ["src/pynxtools"]
 build-backend = "_build_wrapper"
 
 [project]
@@ -35,7 +34,6 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
-    "setuptools>=64.0.1"
 ]
 
 [project.urls]
