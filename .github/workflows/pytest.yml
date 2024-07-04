@@ -37,7 +37,7 @@ jobs:
       - name: Install pynx with nomad plugin
         if: "${{ matrix.python_version != '3.8' }}"
         run: |
-          uv pip install nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@pluginise-nexus-code
+          uv pip install --system nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@pluginise-nexus-code
           uv pip install --system ".[dev]"
       - name: Test with pytest
         run: |
