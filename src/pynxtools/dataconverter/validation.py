@@ -25,7 +25,6 @@ from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
 import h5py
 import lxml.etree as ET
 import numpy as np
-from anytree import Resolver
 
 from pynxtools.dataconverter.helpers import (
     Collector,
