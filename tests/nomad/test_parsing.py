@@ -1,8 +1,5 @@
 """This is a code that performs several tests on nexus tool"""
-<<<<<<< HEAD
-=======
 
->>>>>>> master
 #
 # Copyright The NOMAD Authors.
 #
