@@ -477,6 +477,7 @@ class NexusParser(MatchingParser):
                 app_def = var
                 break
         archive.metadata.entry_type = app_def
+        archive.metadata.domain = "nexus"
 
         # Normalise element info
         if archive.results is None:
