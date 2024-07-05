@@ -39,7 +39,6 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
-from pynxtools.nexus import nexus
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -17,19 +17,15 @@
 #
 """Test cases for the convert script used to access the DataConverter."""
 
-import logging
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 
-import click
 import h5py
+import pynxtools.dataconverter.convert as dataconverter
 import pytest
 from click.testing import CliRunner
-
-import pynxtools.dataconverter.convert as dataconverter
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.nexus import nexus  # noqa: E402
 
 
 def move_xarray_file_to_tmp(tmp_path):
