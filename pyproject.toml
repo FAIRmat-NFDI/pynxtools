@@ -62,9 +62,6 @@ dev = [
     "uv",
     "pre-commit",
 ]
-nomad_plugin = [
-    "nomad-lab",
-]
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd,ellips]",
 ]
