@@ -7,8 +7,11 @@ import os
 from subprocess import CalledProcessError, run
 from typing import Optional
 
-from setuptools import build_meta as _orig
-from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
+try:
+    from setuptools import build_meta as _orig
+    from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
+except ImportError:
+    pass
 
 
 def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:

@@ -21,46 +21,49 @@ from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pytest
-
 from pynxtools.dataconverter.validation import validate_dict_against
 
 
 def get_data_dict():
     return {
-        "/my_entry/optional_parent/required_child": 1,
-        "/my_entry/optional_parent/optional_child": 1,
-        "/my_entry/nxodd_name/float_value": 2.0,
-        "/my_entry/nxodd_name/float_value/@units": "nm",
-        "/my_entry/nxodd_name/bool_value": True,
-        "/my_entry/nxodd_name/bool_value/@units": "",
-        "/my_entry/nxodd_name/int_value": 2,
-        "/my_entry/nxodd_name/int_value/@units": "eV",
-        "/my_entry/nxodd_name/posint_value": np.array([1, 2, 3], dtype=np.int8),
-        "/my_entry/nxodd_name/posint_value/@units": "kg",
-        "/my_entry/nxodd_name/char_value": "just chars",
-        "/my_entry/nxodd_name/char_value/@units": "",
-        "/my_entry/nxodd_name/type": "2nd type",
-        "/my_entry/nxodd_name/date_value": "2022-01-22T12:14:12.05018+00:00",
-        "/my_entry/nxodd_name/date_value/@units": "",
-        "/my_entry/nxodd_two_name/bool_value": True,
-        "/my_entry/nxodd_two_name/bool_value/@units": "",
-        "/my_entry/nxodd_two_name/int_value": 2,
-        "/my_entry/nxodd_two_name/int_value/@units": "eV",
-        "/my_entry/nxodd_two_name/posint_value": np.array([1, 2, 3], dtype=np.int8),
-        "/my_entry/nxodd_two_name/posint_value/@units": "kg",
-        "/my_entry/nxodd_two_name/char_value": "just chars",
-        "/my_entry/nxodd_two_name/char_value/@units": "",
-        "/my_entry/nxodd_two_name/type": "2nd type",
-        "/my_entry/nxodd_two_name/date_value": "2022-01-22T12:14:12.05018+00:00",
-        "/my_entry/nxodd_two_name/date_value/@units": "",
-        "/my_entry/my_group/required_field": 1,
-        "/my_entry/definition": "NXtest",
-        "/my_entry/definition/@version": "2.4.6",
-        "/my_entry/program_name": "Testing program",
-        "/my_entry/my_group/optional_field": 1,
-        "/my_entry/required_group/description": "An example description",
-        "/my_entry/required_group2/description": "An example description",
-        "/my_entry/optional_parent/req_group_in_opt_group/data": 1,
+        "/ENTRY[my_entry]/optional_parent/required_child": 1,
+        "/ENTRY[my_entry]/optional_parent/optional_child": 1,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value": 2.0,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units": "nm",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value": True,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units": "",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value": 2,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units": "eV",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value": np.array(
+            [1, 2, 3], dtype=np.int8
+        ),
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units": "kg",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value": "just chars",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@units": "",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type": "2nd type",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value": "2022-01-22T12:14:12.05018+00:00",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units": "",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value": True,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value/@units": "",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value": 2,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units": "eV",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value": np.array(
+            [1, 2, 3], dtype=np.int8
+        ),
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value/@units": "kg",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value": "just chars",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value/@units": "",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/type": "2nd type",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/date_value": "2022-01-22T12:14:12.05018+00:00",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/date_value/@units": "",
+        "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field": 1,
+        "/ENTRY[my_entry]/definition": "NXtest",
+        "/ENTRY[my_entry]/definition/@version": "2.4.6",
+        "/ENTRY[my_entry]/program_name": "Testing program",
+        "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field": 1,
+        "/ENTRY[my_entry]/required_group/description": "An example description",
+        "/ENTRY[my_entry]/required_group2/description": "An example description",
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/data": 1,
         "/@default": "Some NXroot attribute",
     }
 
@@ -86,7 +89,9 @@ def alter_dict(new_values: Dict[str, Any], data_dict: Dict[str, Any]) -> Dict[st
     [
         pytest.param(get_data_dict(), id="valid-unaltered-data-dict"),
         pytest.param(
-            remove_from_dict("/my_entry/nxodd_name/float_value", get_data_dict()),
+            remove_from_dict(
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value", get_data_dict()
+            ),
             id="removed-optional-value",
         ),
     ],
@@ -101,8 +106,10 @@ def test_valid_data_dict(caplog, data_dict):
     "data_dict, error_message",
     [
         pytest.param(
-            remove_from_dict("/my_entry/nxodd_name/bool_value", get_data_dict()),
-            "The data entry corresponding to /my_entry/nxodd_name/bool_value is required and hasn't been supplied by the reader.",
+            remove_from_dict(
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value", get_data_dict()
+            ),
+            "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader.",
             id="missing-required-value",
         )
     ],

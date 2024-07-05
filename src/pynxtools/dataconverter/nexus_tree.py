@@ -28,6 +28,7 @@ on the fly when the tree is generated.
 It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
+from functools import reduce
 from typing import Any, List, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
@@ -36,11 +37,11 @@ from anytree.node.nodemixin import NodeMixin
 from pynxtools.dataconverter.helpers import (
     contains_uppercase,
     get_all_parents_for,
-    get_nxdl_name_for,
     get_nxdl_root_and_path,
     is_appdef,
     remove_namespace_from_tag,
 )
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 
 NexusType = Literal[
     "NX_BINARY",
@@ -132,6 +133,14 @@ class NexusNode(NodeMixin):
             for a tree, i.e., setting the parent of a node is enough to add it to the tree
             and to its parent's children.
             For the root this is None.
+        is_a: List["NexusNode"]:
+            A list of NexusNodes the current node represents.
+            This is used for attaching siblings to the current node, e.g.,
+            if the parent appdef has a field `DATA(NXdata)` and the current appdef
+            has a field `my_data(NXdata)` the relation `my_data` `is_a` `DATA` is set.
+        parent_of: List["NexusNode"]:
+            The inverse of the above `is_a`. In the example case
+            `DATA` `parent_of` `my_data`.
     """
 
     name: str
@@ -139,15 +148,28 @@ class NexusNode(NodeMixin):
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
     inheritance: List[ET._Element]
+    is_a: List["NexusNode"]
+    parent_of: List["NexusNode"]
 
     def _set_optionality(self):
+        """
+        Sets the optionality of the current node
+        if `recommended`, `required` or `optional` is set.
+        Also sets the field to optional if `maxOccurs == 0` or to required
+        if `maxOccurs > 0`.
+        """
         if not self.inheritance:
             return
         if self.inheritance[0].attrib.get("recommended"):
             self.optionality = "recommended"
-        elif (
-            self.inheritance[0].attrib.get("optional")
-            or self.inheritance[0].attrib.get("minOccurs") == "0"
+        elif self.inheritance[0].attrib.get("required") or (
+            isinstance(self, NexusGroup)
+            and self.occurrence_limits[0] is not None
+            and self.occurrence_limits[0] > 0
+        ):
+            self.optionality = "required"
+        elif self.inheritance[0].attrib.get("optional") or (
+            isinstance(self, NexusGroup) and self.occurrence_limits[0] == 0
         ):
             self.optionality = "optional"
 
@@ -172,8 +194,13 @@ class NexusNode(NodeMixin):
         else:
             self.inheritance = []
         self.parent = parent
+        self.is_a = []
+        self.parent_of = []
 
     def _construct_inheritance_chain_from_parent(self):
+        """
+        Builds the inheritance chain of the current node based on the parent node.
+        """
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
@@ -197,42 +224,105 @@ class NexusNode(NodeMixin):
             current_node = current_node.parent
         return "/" + "/".join(names)
 
-    def search_child_with_name(
-        self, names: Union[Tuple[str, ...], str]
+    def search_add_child_for_multiple(
+        self, names: Tuple[str, ...]
     ) -> Optional["NexusNode"]:
         """
-        This searches a child or children with `names` in the current node.
+        Searchs and adds a child with one of the names in `names` to the current node.
+        This calls `search_add_child_for` repeatedly until a child is found.
+        The found child is then returned.
+
+        Args:
+            name (Tuple[str, ...]):
+                A tuple of names of the child to search for.
+
+        Returns:
+            Optional["NexusNode"]:
+                The first matching NexusNode for the child name.
+                If no child is found at all None is returned.
+        """
+        for name in names:
+            child = self.search_add_child_for(name)
+            if child is not None:
+                return child
+        return None
+
+    def search_add_child_for(self, name: str) -> Optional["NexusNode"]:
+        """
+        This searches a child with name `name` in the current node.
         If the child is not found as a direct child,
         it will search in the inheritance chain and add the child to the tree.
 
         Args:
-            names (Union[Tuple[str, ...], str]):
-                Either a single string or a tuple of string.
-                In case this is a string the child with the specific name is searched.
-                If it is a tuple, the first match is used.
+            name (str):
+                Name of the child to search for.
 
         Returns:
             Optional[NexusNode]:
                 The node of the child which was added. None if no child was found.
         """
-        if isinstance(names, str):
-            names = (names,)
-        for name in names:
-            direct_child = next((x for x in self.children if x.name == name), None)
-            if direct_child is not None:
-                return direct_child
-            if name in self.get_all_children_names():
-                return self.add_inherited_node(name)
+        tags = (
+            "*[self::nx:field or self::nx:group "
+            "or self::nx:attribute or self::nx:choice]"
+        )
+        for elem in self.inheritance:
+            xml_elem = elem.xpath(
+                f"{tags}[@name='{name}']",
+                namespaces=namespaces,
+            )
+            if not xml_elem and name.isupper():
+                xml_elem = elem.xpath(
+                    f"{tags}[@type='NX{name.lower()}' and not(@name)]",
+                    namespaces=namespaces,
+                )
+            if not xml_elem:
+                continue
+            existing_child = self.get_child_for(xml_elem[0])
+            if existing_child is None:
+                return self.add_node_from(xml_elem[0])
+            return existing_child
         return None
 
-    def get_all_children_names(
-        self, depth: Optional[int] = None, only_appdef: bool = False
+    def get_child_for(self, xml_elem: ET._Element) -> Optional["NexusNode"]:
+        """
+        Get the child of the current node, which matches xml_elem.
+
+        Args:
+            xml_elem (ET._Element): The xml element to search in the children.
+
+        Returns:
+            Optional["NexusNode"]:
+                The NexusNode containing the children.
+                None if there is no initialised children for the xml_node.
+        """
+        for child in self.children:
+            if child.inheritance and child.inheritance[0] == xml_elem:
+                return child
+        return None
+
+    def get_all_direct_children_names(
+        self,
+        node_type: Optional[str] = None,
+        nx_class: Optional[str] = None,
+        depth: Optional[int] = None,
+        only_appdef: bool = False,
     ) -> Set[str]:
         """
         Get all children names of the current node up to a certain depth.
         Only `field`, `group` `choice` or `attribute` are considered as children.
 
         Args:
+            node_type (Optional[str], optional):
+                The tags of the children to consider.
+                This should either be "field", "group", "choice" or "attribute".
+                If None all tags are considered.
+                Defaults to None.
+            nx_class (Optional[str], optional):
+                The NeXus class of the group to consider.
+                This is only used if `node_type` is "group".
+                It should contain the preceding `NX` and the class name in lowercase,
+                e.g., "NXentry".
+                Defaults to None.
             depth (Optional[int], optional):
                 The inheritance depth up to which get children names.
                 `depth=1` will return only the children of the current node.
@@ -251,18 +341,24 @@ class NexusNode(NodeMixin):
         if depth is not None and (not isinstance(depth, int) or depth < 0):
             raise ValueError("Depth must be a positive integer or None")
 
+        tag_type = ""
+        if node_type == "group" and nx_class is not None:
+            tag_type = f"[@type='{nx_class}']"
+
+        if node_type is not None:
+            search_tags = f"nx:{node_type}{tag_type}"
+        else:
+            search_tags = (
+                "*[self::nx:field or self::nx:group "
+                "or self::nx:attribute or self::nx:choice]"
+            )
+
         names = set()
         for elem in self.inheritance[:depth]:
             if only_appdef and not is_appdef(elem):
                 break
 
-            for subelems in elem.xpath(
-                (
-                    r"*[self::nx:field or self::nx:group "
-                    r"or self::nx:attribute or self::nx:choice]"
-                ),
-                namespaces=namespaces,
-            ):
+            for subelems in elem.xpath(search_tags, namespaces=namespaces):
                 if "name" in subelems.attrib:
                     names.add(subelems.attrib["name"])
                 elif "type" in subelems.attrib:
@@ -351,15 +447,60 @@ class NexusNode(NodeMixin):
         return docstrings
 
     def _build_inheritance_chain(self, xml_elem: ET._Element) -> List[ET._Element]:
+        """
+        Builds the inheritance chain based on the given xml node and the inheritance
+        chain of this node.
+
+        Args:
+            xml_elem (ET._Element): The xml element to build the inheritance chain for.
+
+        Returns:
+            List[ET._Element]:
+                The list of xml nodes representing the inheritance chain.
+                This represents the direct field or group inside the specific xml file.
+        """
         name = xml_elem.attrib.get("name")
         inheritance_chain = [xml_elem]
-        for elem in self.inheritance:
+        inheritance = iter(self.inheritance)
+        for elem in inheritance:
+            # Walk until the file the xml_elem is part of
+            # and discard all previous files
+            if elem.base == xml_elem.base:
+                break
+        for elem in inheritance:
             inherited_elem = elem.xpath(
                 f"nx:group[@type='{xml_elem.attrib['type']}' and @name='{name}']"
                 if name is not None
-                else f"nx:group[@type='{xml_elem.attrib['type']}']",
+                else f"nx:group[@type='{xml_elem.attrib['type']}' and not(@name)]",
                 namespaces=namespaces,
             )
+            if not inherited_elem and name is not None:
+                # Try to namefit
+                groups = elem.findall(
+                    f"nx:group[@type='{xml_elem.attrib['type']}']",
+                    namespaces=namespaces,
+                )
+                best_group = None
+                best_score = -1
+                for group in groups:
+                    if name in group.attrib and not contains_uppercase(
+                        group.attrib["name"]
+                    ):
+                        continue
+                    group_name = (
+                        group.attrib.get("name")
+                        if "name" in group.attrib
+                        else group.attrib["type"][2:].upper()
+                    )
+
+                    score = get_nx_namefit(name, group_name)
+                    if get_nx_namefit(name, group_name) >= best_score:
+                        best_group = group
+                        best_score = score
+
+                if best_group is not None:
+                    inherited_elem = [best_group]
+
             if inherited_elem and inherited_elem[0] not in inheritance_chain:
                 inheritance_chain.append(inherited_elem[0])
         bc_xml_root, _ = get_nxdl_root_and_path(xml_elem.attrib["type"])
@@ -432,18 +573,19 @@ class NexusNode(NodeMixin):
         """
         for elem in self.inheritance:
             xml_elem = elem.xpath(
-                f"*[self::nx:field or self::nx:group or self::nx:attribute][@name='{name}']",
+                "*[self::nx:field or self::nx:group or"
+                f" self::nx:attribute or self::nx:choice][@name='{name}']",
                 namespaces=namespaces,
             )
             if not xml_elem:
                 # Find group by naming convention
                 xml_elem = elem.xpath(
-                    f"*[self::nx:group][@type='NX{name.lower()}']",
+                    "*[self::nx:group or self::nx:choice]"
+                    f"[@type='NX{name.lower()}' and not(@name)]",
                     namespaces=namespaces,
                 )
             if xml_elem:
-                new_node = self.add_node_from(xml_elem[0])
-                return new_node
+                return self.add_node_from(xml_elem[0])
         return None
 
 
@@ -462,7 +604,7 @@ class NexusChoice(NexusNode):
     type: Literal["choice"] = "choice"
 
     def __init__(self, **data) -> None:
-        super().__init__(**data)
+        super().__init__(type=self.type, **data)
         self._construct_inheritance_chain_from_parent()
         self._set_optionality()
 
@@ -489,7 +631,68 @@ class NexusGroup(NexusNode):
         Optional[int],
     ] = (None, None)
 
+    def _check_sibling_namefit(self):
+        """
+        Namefits siblings at the current tree level if they are not part of the same
+        appdef or base class.
+        The function fills the `parent_of` property of this node and the `is_a` property
+        of the connected nodes to represent the relation.
+        It also adapts the optionality if enough required children are present.
+        """
+        if self.variadic:
+            return
+
+        for elem in self.inheritance[1:]:
+            parent = elem.getparent()
+            if parent is None:
+                continue
+            siblings = parent.findall(
+                f"nx:group[@type='{self.nx_class}']", namespaces=namespaces
+            )
+
+            for sibling in siblings:
+                sibling_name = sibling.attrib.get(
+                    "name", sibling.attrib["type"][2:].upper()
+                )
+                if sibling_name == self.name or not contains_uppercase(sibling_name):
+                    continue
+                if get_nx_namefit(self.name, sibling_name) < 0:
+                    continue
+
+                sibling_node = self.parent.get_child_for(sibling)
+                if sibling_node is None:
+                    sibling_node = self.parent.add_node_from(sibling)
+                self.is_a.append(sibling_node)
+                sibling_node.parent_of.append(self)
+
+                min_occurs = (
+                    (1 if sibling_node.optionality == "required" else 0)
+                    if sibling_node.occurrence_limits[0] is None
+                    else sibling_node.occurrence_limits[0]
+                )
+
+                required_children = reduce(
+                    lambda x, y: x + (1 if y.optionality == "required" else 0),
+                    sibling_node.parent_of,
+                    0,
+                )
+
+                if (
+                    sibling_node.optionality == "required"
+                    and required_children >= min_occurs
+                ):
+                    sibling_node.optionality = "optional"
+                break
+            else:
+                continue
+            break
+
     def _set_occurence_limits(self):
+        """
+        Sets the occurence limits of the current group.
+        Searches the inheritance chain until a value is found.
+        Otherwise, the occurence_limits are set to (None, None).
+        """
         if not self.inheritance:
             return
         xml_elem = self.inheritance[0]
@@ -511,6 +714,7 @@ class NexusGroup(NexusNode):
         self.nx_class = nx_class
         self._set_occurence_limits()
         self._set_optionality()
+        self._check_sibling_namefit()
 
     def __repr__(self) -> str:
         return (
@@ -561,18 +765,31 @@ class NexusEntity(NexusNode):
     shape: Optional[Tuple[Optional[int], ...]] = None
 
     def _set_type(self):
+        """
+        Sets the dtype of the current entity based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         for elem in self.inheritance:
             if "type" in elem.attrib:
                 self.dtype = elem.attrib["type"]
                 return
 
     def _set_unit(self):
+        """
+        Sets the unit of the current entity based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         for elem in self.inheritance:
             if "units" in elem.attrib:
                 self.unit = elem.attrib["units"]
                 return
 
     def _set_items(self):
+        """
+        Sets the enumeration items of the current entity
+        based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         if not self.dtype == "NX_CHAR":
             return
         for elem in self.inheritance:
@@ -584,6 +801,10 @@ class NexusEntity(NexusNode):
                 return
 
     def _set_shape(self):
+        """
+        Sets the shape of the current entity based on the values in the inheritance chain.
+        The first vale found is used.
+        """
         for elem in self.inheritance:
             dimension = elem.find(f"nx:dimensions", namespaces=namespaces)
             if dimension is not None:
@@ -638,8 +859,8 @@ def populate_tree_from_parents(node: NexusNode):
         node (NexusNode):
             The current node from which to populate the tree.
     """
-    for child in node.get_all_children_names(only_appdef=True):
-        child_node = node.search_child_with_name(child)
+    for child in node.get_all_direct_children_names(only_appdef=True):
+        child_node = node.search_add_child_for(child)
         populate_tree_from_parents(child_node)
 
 

@@ -61,9 +61,13 @@ jobs:
           repository: FAIRmat-NFDI/${{ matrix.plugin }}
           path: ${{ matrix.plugin }}
           ref: ${{ matrix.branch }}
+          lfs: true
+      - name: Install nomad
+        run: |
+          uv pip install --system nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@pluginise-nexus-code
       - name: Install ${{ matrix.plugin }}
         run: |
-          cd ${{ matrix.plugin }} 
+          cd ${{ matrix.plugin }}
           uv pip install --system .
       - name: Run ${{ matrix.plugin }} tests
         run: |
