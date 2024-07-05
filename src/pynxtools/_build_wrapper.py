@@ -4,41 +4,14 @@ containing the nexus definitions verison.
 """
 
 import os
-from subprocess import CalledProcessError, run
-from typing import Optional
 
-from setuptools import build_meta as _orig
-from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from pynxtools import get_vcs_version
 
-
-def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
-    """
-    The version of the Nexus standard and the NeXus Definition language
-    based on git tags and commits
-    """
-    try:
-        return (
-            run(
-                [
-                    "git",
-                    "describe",
-                    "--dirty",
-                    "--tags",
-                    "--long",
-                    "--match",
-                    tag_match,
-                ],
-                cwd=os.path.join(
-                    os.path.dirname(__file__), "src/pynxtools/definitions"
-                ),
-                check=True,
-                capture_output=True,
-            )
-            .stdout.decode("utf-8")
-            .strip()
-        )
-    except (FileNotFoundError, CalledProcessError):
-        return None
+try:
+    from setuptools import build_meta as _orig
+    from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
+except ImportError:
+    pass
 
 
 def _write_version_to_metadata():

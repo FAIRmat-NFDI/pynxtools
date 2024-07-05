@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-backend-path = ["."]
+backend-path = ["src/pynxtools"]
 build-backend = "_build_wrapper"
 
 [project]
