@@ -19,40 +19,11 @@
 import os
 import re
 from datetime import datetime
-from subprocess import CalledProcessError, run
-from typing import Optional
 
+from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
 
 MAIN_BRANCH_NAME = "fairmat"
-
-
-def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
-    """
-    The version of the Nexus standard and the NeXus Definition language
-    based on git tags and commits
-    """
-    try:
-        return (
-            run(
-                [
-                    "git",
-                    "describe",
-                    "--dirty",
-                    "--tags",
-                    "--long",
-                    "--match",
-                    tag_match,
-                ],
-                cwd=os.path.join(os.path.dirname(__file__), "../pynxtools/definitions"),
-                check=True,
-                capture_output=True,
-            )
-            .stdout.decode("utf-8")
-            .strip()
-        )
-    except (FileNotFoundError, CalledProcessError):
-        return None
 
 
 def _build_version(tag: str, distance: int, node: str, dirty: bool) -> str:

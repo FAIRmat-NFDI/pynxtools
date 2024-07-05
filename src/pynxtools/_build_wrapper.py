@@ -7,8 +7,11 @@ import os
 from subprocess import CalledProcessError, run
 from typing import Optional
 
-from setuptools import build_meta as _orig
-from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
+try:
+    from setuptools import build_meta as _orig
+    from setuptools.build_meta import *  # pylint: disable=wildcard-import,unused-wildcard-import
+except ImportError:
+    pass
 
 
 def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
@@ -28,9 +31,7 @@ def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
                     "--match",
                     tag_match,
                 ],
-                cwd=os.path.join(
-                    os.path.dirname(__file__), "src/pynxtools/definitions"
-                ),
+                cwd=os.path.join(os.path.dirname(__file__), "../pynxtools/definitions"),
                 check=True,
                 capture_output=True,
             )
