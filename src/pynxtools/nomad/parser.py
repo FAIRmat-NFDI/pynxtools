@@ -38,10 +38,6 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.appdef_to_domain_mapping import (
-    NXDEF_TO_METAINFO_DEFAULT,
-    NXDEF_TO_METAINFO_DOMAIN,
-)
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -481,15 +477,7 @@ class NexusParser(MatchingParser):
                 app_def = var
                 break
         archive.metadata.entry_type = app_def
-
-        # Normalise domain
-        if app_def in NXDEF_TO_METAINFO_DOMAIN:
-            # NeXusParser(Parser), domain is member of parser, therein initialized to 'dft'
-            # domain may become deprecated at some point
-            # archive.metadata.domain = NXDEF_TO_METAINFO_DOMAIN[app_def]
-            archive.metadata.domain = "nexus"
-        else:
-            archive.metadata.domain = NXDEF_TO_METAINFO_DEFAULT
+        archive.metadata.domain = "nexus"
 
         # Normalise element info
         if archive.results is None:
