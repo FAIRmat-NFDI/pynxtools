@@ -484,11 +484,12 @@ class NexusParser(MatchingParser):
 
         # Normalise domain
         if app_def in NXDEF_TO_METAINFO_DOMAIN:
-            # NeXusParser(Parser), domain is member of parser,
-            # therein initialized to 'dft'
-            archive.metainfo.domain = NXDEF_TO_METAINFO_DOMAIN[app_def]
+            # NeXusParser(Parser), domain is member of parser, therein initialized to 'dft'
+            # domain may become deprecated at some point
+            # archive.metadata.domain = NXDEF_TO_METAINFO_DOMAIN[app_def]
+            archive.metadata.domain = "nexus"
         else:
-            archive.metainfo.domain = NXDEF_TO_METAINFO_DEFAULT
+            archive.metadata.domain = NXDEF_TO_METAINFO_DEFAULT
 
         # Normalise element info
         if archive.results is None:
