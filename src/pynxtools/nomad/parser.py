@@ -22,6 +22,7 @@ import lxml.etree as ET
 import numpy as np
 
 try:
+    from ase.data import chemical_symbols
     from nomad.atomutils import Formula
     from nomad.datamodel import EntryArchive
     from nomad.datamodel.results import Material, Results
