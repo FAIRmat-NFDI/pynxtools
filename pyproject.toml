@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-backend-path = ["src/pynxtools"]
+backend-path = ["."]
 build-backend = "_build_wrapper"
 
 [project]
@@ -35,7 +35,6 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
-    "setuptools>=64.0.1"
 ]
 
 [project.urls]
@@ -94,6 +93,7 @@ ellips = [
 [project.entry-points.'nomad.plugin']
 nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
 nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
+nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"

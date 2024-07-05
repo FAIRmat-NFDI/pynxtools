@@ -20,30 +20,28 @@ from typing import Dict, Optional, Set
 
 import lxml.etree as ET
 import numpy as np
-from nomad.atomutils import Formula
-from nomad.datamodel import EntryArchive
-from nomad.datamodel.results import Material, Results
-from nomad.metainfo import MSection
-from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
-from nomad.parsing import MatchingParser
-from nomad.units import ureg
-from nomad.utils import get_logger
-from pint.errors import UndefinedUnitError
+
+try:
+    from nomad.atomutils import Formula
+    from nomad.datamodel import EntryArchive
+    from nomad.datamodel.results import Material, Results
+    from nomad.metainfo import MSection
+    from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
+    from nomad.parsing import MatchingParser
+    from nomad.units import ureg
+    from nomad.utils import get_logger
+    from pint.errors import UndefinedUnitError
+except ImportError as exc:
+    raise ImportError(
+        "Could not import nomad package. Please install the package 'nomad-lab'."
+    ) from exc
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-
-# list of prefixes evaulated via startswith to categorize
-# a parsed NeXus entry into a specific metainfo.domain other than dft
-NXDEF_TO_METAINFO_DOMAIN = {
-    "em": ["NXem"],
-    "mpes": ["NXmpes", "NXarpes"],
-    "xps": ["NXxps"],
-    "opt": ["NXopt", "NXellipsometry", "NXoptical_spectroscopy", "NXraman"],
-    "apm": ["NXapm"],
-    "spm": ["NXspm", "NXsensor_scan"],
-    "xrd": ["NXxrd"],
-}
+from pynxtools.nomad.appdef_to_domain_mapping import (
+    NXDEF_TO_METAINFO_DEFAULT,
+    NXDEF_TO_METAINFO_DOMAIN,
+)
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -484,22 +482,13 @@ class NexusParser(MatchingParser):
                 break
         archive.metadata.entry_type = app_def
 
-        # group parsed content from all appdefs of a scientific domain to metainfo.domain
-        scientific_domain: list[str] = []
-        for domain_key, domain_val in NXDEF_TO_METAINFO_DOMAIN.items():
-            if isinstance(domain_val, list):
-                for prefix in domain_val:
-                    if app_def.startswith(prefix):
-                        scientific_domain.append(domain_key)
-        if len(scientific_domain) == 1:
-            # NeXusParser(Parser), domain is member of parser, therein initialized to 'dft'
-            archive.metainfo.domain = scientific_domain[0]
+        # Normalise domain
+        if app_def in NXDEF_TO_METAINFO_DOMAIN:
+            # NeXusParser(Parser), domain is member of parser,
+            # therein initialized to 'dft'
+            archive.metainfo.domain = NXDEF_TO_METAINFO_DOMAIN[app_def]
         else:
-            archive.metainfo.domain = "exp"
-            if len(scientific_domain) > 1:
-                self._logger.warn(
-                    f"cannot resolve domain for multi-domain {scientific_domain}"
-                )
+            archive.metainfo.domain = NXDEF_TO_METAINFO_DEFAULT
 
         # Normalise element info
         if archive.results is None:

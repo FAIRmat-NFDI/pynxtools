@@ -26,32 +26,38 @@ import xml.etree.ElementTree as ET
 from typing import Dict, List, Optional, Union
 
 import numpy as np
-from nomad.datamodel import EntryArchive
-from nomad.metainfo import (
-    Attribute,
-    Bytes,
-    Datetime,
-    Definition,
-    MEnum,
-    Package,
-    Quantity,
-    Section,
-    SubSection,
-)
-from nomad.metainfo.data_type import (
-    Bytes,
-    Datatype,
-    Datetime,
-    Number,
-    m_bool,
-    m_complex128,
-    m_float64,
-    m_int,
-    m_int64,
-    m_str,
-)
-from nomad.utils import get_logger, strip
-from toposort import toposort_flatten
+
+try:
+    from nomad.datamodel import EntryArchive
+    from nomad.metainfo import (
+        Attribute,
+        Bytes,
+        Datetime,
+        Definition,
+        MEnum,
+        Package,
+        Quantity,
+        Section,
+        SubSection,
+    )
+    from nomad.metainfo.data_type import (
+        Bytes,
+        Datatype,
+        Datetime,
+        Number,
+        m_bool,
+        m_complex128,
+        m_float64,
+        m_int,
+        m_int64,
+        m_str,
+    )
+    from nomad.utils import get_logger, strip
+    from toposort import toposort_flatten
+except ImportError as exc:
+    raise ImportError(
+        "Could not import nomad package. Please install the package 'nomad-lab'."
+    ) from exc
 
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 

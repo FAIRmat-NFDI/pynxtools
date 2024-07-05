@@ -1253,18 +1253,17 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/MONOCHROMATOR):
 DEBUG - 
 DEBUG - documentation (NXmonochromator.nxdl.xml:):
 DEBUG - 
-        A  wavelength defining device.
-        
-        This is a base class for everything which
-        selects a wavelength or energy, be it a 
-        monochromator crystal, a velocity selector,
-        an undulator or whatever.
-        
-        The expected units are:
-        
-        * wavelength: angstrom
-        * energy:     eV
-        
+         A  wavelength defining device.
+         
+         This is a base class for everything which
+         selects a wavelength or energy, be it a
+         monochromator crystal, a velocity selector,
+         an undulator or whatever.
+         
+         The expected units are:
+         
+         * wavelength: angstrom
+         * energy: eV
     
 DEBUG - ===== ATTRS (//entry/instrument/monochromator@NX_class)
 DEBUG - value: NXmonochromator 
@@ -1297,7 +1296,9 @@ NXmonochromator.nxdl.xml:/energy_error
 DEBUG - <<OPTIONAL>>
 DEBUG - DEPRECATED - see https://github.com/nexusformat/definitions/issues/820
 DEBUG - documentation (NXmonochromator.nxdl.xml:/energy_error):
-DEBUG - energy standard deviation
+DEBUG - 
+             energy standard deviation
+        
 DEBUG - ===== ATTRS (//entry/instrument/monochromator/energy_error@units)
 DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator', 'NX_FLOAT']

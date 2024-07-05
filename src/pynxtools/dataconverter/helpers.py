@@ -892,6 +892,12 @@ def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
         get_nexus_version(),
         overwrite=False,
     )
+    update_and_warn(
+        f"/ENTRY[{entry_name}]/definition/@URL",
+        "https://github.com/FAIRmat-NFDI/nexus_definitions/"
+        f"blob/{get_nexus_version_hash()}",
+        overwrite=False,
+    )
 
 
 def extract_atom_types(formula, mode="hill"):
