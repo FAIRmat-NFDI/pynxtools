@@ -810,14 +810,14 @@ def check_for_valid_atom_types(atoms: Union[str, list]):
 
     if isinstance(atoms, list):
         for elm in atoms:
-            if elm not in chemical_symbols:
-                raise ValueError(
+            if elm not in chemical_symbols[1:]:
+                logger.warning(
                     f"The element {elm} is not found in periodictable, "
                     f"check for correct element name"
                 )
     elif isinstance(atoms, str):
-        if atoms not in chemical_symbols:
-            raise ValueError(
+        if atoms not in chemical_symbols[1:]:
+            logger.warning(
                 f"The element {atoms} is not found in periodictable, "
                 f"check for correct element name"
             )
