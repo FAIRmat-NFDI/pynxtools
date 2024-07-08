@@ -37,6 +37,8 @@ Options:
                                   parameters the converter supports.
   --ignore-undocumented           Ignore all undocumented fields during
                                   validation.
+  --fail                          Fail conversion and don't create an output
+                                  file if the validation fails.
   --skip-verify                   Skips the verification routine during
                                   conversion.
   --mapping TEXT                  Takes a <name>.mapping.json file and
