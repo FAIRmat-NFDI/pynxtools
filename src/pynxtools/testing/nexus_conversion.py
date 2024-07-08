@@ -91,7 +91,7 @@ class ReaderTest:
         self.reader = get_reader(self.reader_name)
 
         self.files_or_dir = files_or_dir
-        self.ref_log_path = ""
+        self.ref_log_path = ref_log_path
         self.tmp_path = tmp_path
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
