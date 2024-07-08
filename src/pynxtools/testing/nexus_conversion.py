@@ -39,7 +39,9 @@ def get_log_file(nxs_file, log_file, tmp_path):
 class ReaderTest:
     """Generic test for reader plugins."""
 
-    def __init__(self, nxdl, reader_name, files_or_dir, tmp_path, caplog) -> None:
+    def __init__(
+        self, nxdl, reader_name, files_or_dir, ref_log_file, tmp_path, caplog
+    ) -> None:
         """Initialize the test object.
 
         Parameters
@@ -51,8 +53,8 @@ class ReaderTest:
         files_or_dir : str
             List of input files or full path string to the example data directory that contains all the files
             required for running the data conversion through the reader.
-        ref_nexus_file : str
-            Full path string to the reference NeXus file generated from the same
+        ref_log_file : str
+            Full path string to the reference log file generated from the same
             set of input files.
         tmp_path : pathlib.PosixPath
             Pytest fixture variable, used to clean up the files generated during the test.
@@ -64,7 +66,7 @@ class ReaderTest:
         self.reader_name = reader_name
         self.reader = get_reader(self.reader_name)
         self.files_or_dir = files_or_dir
-        self.ref_nexus_file = ""
+        self.ref_log_file = ""
         self.tmp_path = tmp_path
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
@@ -86,11 +88,15 @@ class ReaderTest:
             example_files = self.files_or_dir
         else:
             example_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
-        self.ref_nexus_file = [file for file in example_files if file.endswith(".nxs")][
-            0
-        ]
+
+        if not self.ref_log_file:
+            self.ref_log_file = [
+                file for file in example_files if file.endswith(".log")
+            ][0]
+        assert self.ref_log_file, "Reference nexus .log file not found"
+
         input_files = [file for file in example_files if not file.endswith(".nxs")]
-        assert self.ref_nexus_file, "Reference nexus (.nxs) file not found"
+
         assert (
             self.nxdl in self.reader.supported_nxdls
         ), f"Reader does not support {self.nxdl} NXDL."
@@ -134,10 +140,9 @@ class ReaderTest:
             "DEBUG - value: v",
             "DEBUG - value: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
         ]
-        ref_log = get_log_file(self.ref_nexus_file, "ref_nexus.log", self.tmp_path)
         gen_log = get_log_file(self.created_nexus, "gen_nexus.log", self.tmp_path)
         with open(gen_log, "r", encoding="utf-8") as gen, open(
-            ref_log, "r", encoding="utf-8"
+            self.ref_log, "r", encoding="utf-8"
         ) as ref:
             gen_lines = gen.readlines()
             ref_lines = ref.readlines()
