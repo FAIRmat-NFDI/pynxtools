@@ -66,7 +66,7 @@ class ReaderTest:
         self.reader_name = reader_name
         self.reader = get_reader(self.reader_name)
         self.files_or_dir = files_or_dir
-        self.ref_log_file = ""
+        self.ref_log_file = ref_log_file
         self.tmp_path = tmp_path
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
@@ -142,7 +142,7 @@ class ReaderTest:
         ]
         gen_log = get_log_file(self.created_nexus, "gen_nexus.log", self.tmp_path)
         with open(gen_log, "r", encoding="utf-8") as gen, open(
-            self.ref_log, "r", encoding="utf-8"
+            self.ref_log_file, "r", encoding="utf-8"
         ) as ref:
             gen_lines = gen.readlines()
             ref_lines = ref.readlines()
