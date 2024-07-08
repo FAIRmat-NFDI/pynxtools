@@ -62,7 +62,7 @@ class ReaderTest:
     """Generic test for reader plugins."""
 
     def __init__(
-        self, nxdl, reader_name, files_or_dir, tmp_path, caplog, **kwargs
+        self, nxdl, reader_name, files_or_dir, ref_log_path, tmp_path, caplog, **kwargs
     ) -> None:
         """Initialize the test object.
 
@@ -75,8 +75,8 @@ class ReaderTest:
         files_or_dir : str
             List of input files or full path string to the example data directory that contains all the files
             required for running the data conversion through the reader.
-        ref_nexus_file : str
-            Full path string to the reference NeXus file generated from the same
+        ref_log_path : str
+            Full path string to the reference log file generated from the same
             set of input files.
         tmp_path : pathlib.PosixPath
             Pytest fixture variable, used to clean up the files generated during the test.
@@ -91,7 +91,7 @@ class ReaderTest:
         self.reader = get_reader(self.reader_name)
 
         self.files_or_dir = files_or_dir
-        self.ref_nexus_file = ""
+        self.ref_log_path = ""
         self.tmp_path = tmp_path
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
@@ -114,15 +114,14 @@ class ReaderTest:
             example_files = self.files_or_dir
         else:
             example_files = sorted(glob(os.path.join(self.files_or_dir, "*")))
-        self.ref_nexus_file = [file for file in example_files if file.endswith(".nxs")][
-            0
-        ]
-        input_files = [
-            file
-            for file in example_files
-            if not file.endswith((".nxs", "ref_output.txt"))
-        ]
-        assert self.ref_nexus_file, "Reference nexus (.nxs) file not found"
+
+        if not self.ref_log_path:
+            self.ref_log_path = [
+                file for file in example_files if file.endswith(".log")
+            ][0]
+        assert self.ref_log_path, "Reference nexus .log file not found"
+
+        input_files = [file for file in example_files if not file.endswith(".nxs")]
 
         assert (
             self.nxdl in self.reader.supported_nxdls
@@ -304,9 +303,8 @@ class ReaderTest:
                 raise AssertionError("\n".join(diffs))
 
         # Load log paths
-        ref_log_path = get_log_file(self.ref_nexus_file, "ref_nexus.log", self.tmp_path)
         gen_log_path = get_log_file(self.created_nexus, "gen_nexus.log", self.tmp_path)
-        gen_lines, ref_lines = load_logs(gen_log_path, ref_log_path)
+        gen_lines, ref_lines = load_logs(gen_log_path, self.ref_log_path)
 
         # Compare logs
         compare_logs(gen_lines, ref_lines)
