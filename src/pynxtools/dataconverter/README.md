@@ -18,7 +18,6 @@ user@box:~$ pip install pynxtools[convert]
 - **generate-template**: This command generates a reader template dictionary for a given NXDL file. It can be called with ```dataconverter generate-template```.
 
 ```console
-user@box:~$ dataconverter --help
 Usage: dataconverter [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -27,19 +26,17 @@ Options:
                                   arguments instead. The path to the input
                                   data file to read. (Repeat for more than one
                                   file.)
-  --reader [example|json_map|json_yml]
+  --reader [ellips|em|example|json_map|json_yml|mpes|sts|xps]
                                   The reader to use. default="example"
   --nxdl TEXT                     The name of the NXDL file to use without
                                   extension.This option is required if no '--
                                   params-file' is supplied.
   --output TEXT                   The path to the output NeXus file to be
                                   generated.
-  --fair                          Let the converter know to be stricter in
-                                  checking the documentation.
   --params-file FILENAME          Allows to pass a .yaml file with all the
                                   parameters the converter supports.
-  --undocumented                  Shows a log output for all undocumented
-                                  fields
+  --ignore-undocumented           Ignore all undocumented fields during
+                                  validation.
   --skip-verify                   Skips the verification routine during
                                   conversion.
   --mapping TEXT                  Takes a <name>.mapping.json file and
@@ -52,7 +49,6 @@ Commands:
 Info:
   You can see more options by using --help for specific commands. For example:
   dataconverter generate-template --help
-
 ```
 
 #### Merge partial NeXus files into one

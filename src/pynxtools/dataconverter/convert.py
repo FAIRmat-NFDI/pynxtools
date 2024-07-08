@@ -182,10 +182,7 @@ def convert(
     reader: str,
     nxdl: str,
     output: str,
-    fair: bool = False,
-    undocumented: bool = False,
     skip_verify: bool = False,
-    required: bool = False,
     **kwargs,
 ):
     """The conversion routine that takes the input parameters and calls the necessary functions.
@@ -225,19 +222,6 @@ def convert(
         skip_verify=skip_verify,
         **kwargs,
     )
-
-    if fair and data.undocumented.keys():
-        logger.warning(
-            "There are undocumented paths in the template. This is not acceptable!"
-        )
-        return
-    if undocumented:
-        for path in data.undocumented.keys():
-            if "/@default" in path:
-                continue
-            logger.info(
-                f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation."
-            )
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
@@ -310,22 +294,10 @@ def main_cli():
     help="The path to the output NeXus file to be generated.",
 )
 @click.option(
-    "--fair",
-    is_flag=True,
-    default=False,
-    help="Let the converter know to be stricter in checking the documentation.",
-)
-@click.option(
     "--params-file",
     type=click.File("r"),
     default=None,
     help="Allows to pass a .yaml file with all the parameters the converter supports.",
-)
-@click.option(
-    "--undocumented",
-    is_flag=True,
-    default=False,
-    help="Shows a log output for all undocumented fields",
 )
 @click.option(
     "--ignore-undocumented",
@@ -351,10 +323,8 @@ def convert_cli(
     reader: str,
     nxdl: str,
     output: str,
-    fair: bool,
     params_file: str,
     ignore_undocumented: bool,
-    undocumented: bool,
     skip_verify: bool,
     mapping: str,
 ):
@@ -400,8 +370,6 @@ def convert_cli(
             reader,
             nxdl,
             output,
-            fair,
-            undocumented,
             skip_verify,
             ignore_undocumented=ignore_undocumented,
         )
