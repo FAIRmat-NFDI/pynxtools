@@ -59,6 +59,10 @@ else:
             return []
 
 
+class ValidationFailed(Exception):
+    pass
+
+
 def get_reader(reader_name) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
     path_prefix = (
@@ -161,6 +165,12 @@ def transfer_data_into_template(
     else:
         ignore_undocumented = False
 
+    if "fail" in kwargs:
+        fail = kwargs["fail"]
+        del kwargs["fail"]
+    else:
+        fail = False
+
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
@@ -168,11 +178,17 @@ def transfer_data_into_template(
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
     if not skip_verify:
-        validate_dict_against(
+        valid = validate_dict_against(
             nxdl_name,
             data,
             ignore_undocumented=ignore_undocumented,
         )
+
+        if fail and not valid:
+            raise ValidationFailed(
+                "The data does not match the given NXDL. "
+                "Please check the log for more information."
+            )
     return data
 
 
@@ -306,6 +322,12 @@ def main_cli():
     help="Ignore all undocumented fields during validation.",
 )
 @click.option(
+    "--fail",
+    is_flag=True,
+    default=False,
+    help="Fail conversion and don't create an output file if the validation fails.",
+)
+@click.option(
     "--skip-verify",
     is_flag=True,
     default=False,
@@ -327,6 +349,7 @@ def convert_cli(
     ignore_undocumented: bool,
     skip_verify: bool,
     mapping: str,
+    fail: bool,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
     if params_file:
@@ -372,10 +395,15 @@ def convert_cli(
             output,
             skip_verify,
             ignore_undocumented=ignore_undocumented,
+            fail=fail,
         )
     except FileNotFoundError as exc:
         raise click.BadParameter(
             f"{nxdl} is not a valid application definition", param_hint="--nxdl"
+        ) from exc
+    except ValidationFailed as exc:
+        raise click.ClickException(
+            "Validation failed: No file written because '--fail' was requested."
         ) from exc
 
 
