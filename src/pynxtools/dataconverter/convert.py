@@ -59,6 +59,10 @@ else:
             return []
 
 
+class ValidationFailed(Exception):
+    pass
+
+
 def get_reader(reader_name) -> BaseReader:
     """Helper function to get the reader object from it's given name"""
     path_prefix = (
@@ -161,6 +165,12 @@ def transfer_data_into_template(
     else:
         ignore_undocumented = False
 
+    if "fail" in kwargs:
+        fail = kwargs["fail"]
+        del kwargs["fail"]
+    else:
+        fail = False
+
     data = data_reader().read(  # type: ignore[operator]
         template=Template(template), file_paths=input_file, **kwargs
     )
@@ -168,11 +178,17 @@ def transfer_data_into_template(
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
     if not skip_verify:
-        validate_dict_against(
+        valid = validate_dict_against(
             nxdl_name,
             data,
             ignore_undocumented=ignore_undocumented,
         )
+
+        if fail and not valid:
+            raise ValidationFailed(
+                "The data does not match the given NXDL. "
+                "Please check the log for more information."
+            )
     return data
 
 
@@ -182,10 +198,7 @@ def convert(
     reader: str,
     nxdl: str,
     output: str,
-    fair: bool = False,
-    undocumented: bool = False,
     skip_verify: bool = False,
-    required: bool = False,
     **kwargs,
 ):
     """The conversion routine that takes the input parameters and calls the necessary functions.
@@ -225,19 +238,6 @@ def convert(
         skip_verify=skip_verify,
         **kwargs,
     )
-
-    if fair and data.undocumented.keys():
-        logger.warning(
-            "There are undocumented paths in the template. This is not acceptable!"
-        )
-        return
-    if undocumented:
-        for path in data.undocumented.keys():
-            if "/@default" in path:
-                continue
-            logger.info(
-                f"NO DOCUMENTATION: The path, {path}, is being written but has no documentation."
-            )
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
     Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
@@ -310,28 +310,22 @@ def main_cli():
     help="The path to the output NeXus file to be generated.",
 )
 @click.option(
-    "--fair",
-    is_flag=True,
-    default=False,
-    help="Let the converter know to be stricter in checking the documentation.",
-)
-@click.option(
     "--params-file",
     type=click.File("r"),
     default=None,
     help="Allows to pass a .yaml file with all the parameters the converter supports.",
 )
 @click.option(
-    "--undocumented",
-    is_flag=True,
-    default=False,
-    help="Shows a log output for all undocumented fields",
-)
-@click.option(
     "--ignore-undocumented",
     is_flag=True,
     default=False,
     help="Ignore all undocumented fields during validation.",
+)
+@click.option(
+    "--fail",
+    is_flag=True,
+    default=False,
+    help="Fail conversion and don't create an output file if the validation fails.",
 )
 @click.option(
     "--skip-verify",
@@ -351,12 +345,11 @@ def convert_cli(
     reader: str,
     nxdl: str,
     output: str,
-    fair: bool,
     params_file: str,
     ignore_undocumented: bool,
-    undocumented: bool,
     skip_verify: bool,
     mapping: str,
+    fail: bool,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
     if params_file:
@@ -400,14 +393,17 @@ def convert_cli(
             reader,
             nxdl,
             output,
-            fair,
-            undocumented,
             skip_verify,
             ignore_undocumented=ignore_undocumented,
+            fail=fail,
         )
     except FileNotFoundError as exc:
         raise click.BadParameter(
             f"{nxdl} is not a valid application definition", param_hint="--nxdl"
+        ) from exc
+    except ValidationFailed as exc:
+        raise click.ClickException(
+            "Validation failed: No file written because '--fail' was requested."
         ) from exc
 
 
