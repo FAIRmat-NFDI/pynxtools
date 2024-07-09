@@ -17,17 +17,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import sys
 
 import pytest
 
-if sys.version_info < (3, 9):
-    pytest.skip("nomad requires python3.9", allow_module_level=True)
-else:
+try:
     from nomad.datamodel import EntryArchive
     from nomad.metainfo import Section
     from nomad.units import ureg
     from nomad.utils import get_logger
+except ImportError:
+    pytest.skip("nomad not installed", allow_module_level=True)
+
 
 from typing import Any
 
