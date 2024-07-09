@@ -12,6 +12,9 @@ on:
       - 'pyproject.toml'
       - 'dev-requirements.txt'
 
+env:
+  UV_SYSTEM_PYTHON: true
+
 jobs:
   validate_dependencies:
     runs-on: ubuntu-latest
@@ -48,7 +51,7 @@ jobs:
     - name: Install NOMAD dependencies with pynxtools from current branch
       working-directory: ./nomad
       run: |
-        uv pip install --system -r requirements.txt
-        uv pip install --system -r requirements-dev.txt
+        uv pip install -r requirements.txt
+        uv pip install -r requirements-dev.txt
       env:
         PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test

@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  UV_SYSTEM_PYTHON: true
+
 jobs:
   pytest:
     name: pytest (${{ matrix.plugin }})
@@ -57,7 +60,7 @@ jobs:
           uv pip install --system coverage coveralls
       - name: Install package
         run: |
-          uv pip install --system ".[dev]"
+          uv pip install ".[dev]"
       - name: Clone ${{ matrix.plugin }} repo
         uses: actions/checkout@v4
         with:
@@ -67,11 +70,11 @@ jobs:
           ref: ${{ matrix.branch }}
       - name: Install nomad
         run: |
-          uv pip install --system nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
+          uv pip install nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install ${{ matrix.plugin }}
         run: |
           cd ${{ matrix.plugin }}
-          uv pip install --system .
+          uv pip install .
       - name: Run ${{ matrix.plugin }} tests
         run: |
           cd ${{ matrix.plugin }}

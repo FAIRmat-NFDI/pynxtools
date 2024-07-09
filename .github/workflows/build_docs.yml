@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the main branch
+
+env:
+  UV_SYSTEM_PYTHON: true
+
 permissions:
    contents: write
 jobs:
@@ -35,7 +39,7 @@ jobs:
       - name: Install Dependencies
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv pip install --system ".[docs]"
+          uv pip install ".[docs]"
 
       - name: Build and Deploy
         run: |
