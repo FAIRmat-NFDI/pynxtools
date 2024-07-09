@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  linting:
+  nexus-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,9 +16,9 @@ jobs:
           git submodule sync --recursive
           git submodule update --init --recursive --jobs=4
           git submodule foreach --recursive 'git fetch --tags'
-          cd pynxtools/definitions
+          cd src/pynxtools/definitions
           git describe --dirty --tags --long --match "*[0-9]*" > ../nexus-ref.txt
           cd ../
       - name: Diff
         run: |
-          diff -w pynxtools/nexus-version.txt pynxtools/nexus-ref.txt
+          diff -w src/pynxtools/nexus-version.txt src/pynxtools/nexus-ref.txt

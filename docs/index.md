@@ -32,6 +32,7 @@ How-to guides provide step-by-step instructions for a wide range of tasks:
 - [Writing an application definition](how-tos/writing-an-appdef.md)
 - [Storing data in multiple application definitions](how-tos/using-multiple-appdefs.md)
 - [Representing experimental geometries](how-tos/transformations.md)
+- [Using pynxtools test framework](how-tos/using-pynxtools-test-framework.md)
 
 </div>
 
@@ -51,6 +52,8 @@ An introduction to NeXus and its design principles.
 
 ### Reference
 
+Within FAIRmat, we maintain a number of reader plugins for different experimental techniques. You can find more information [here](reference/plugins.md).
+
 [Here](reference/definitions.md), you find the detailed list of application definitions and base classes and their respective fields.
 
 Or go directly to the [official NIAC](https://manual.nexusformat.org/classes/index.html)
@@ -60,3 +63,5 @@ Or go directly to the [official NIAC](https://manual.nexusformat.org/classes/ind
 </div>
 
 <h2>Project and community</h2>
+
+[The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat).](https://gepris.dfg.de/gepris/projekt/460197019?language=en)

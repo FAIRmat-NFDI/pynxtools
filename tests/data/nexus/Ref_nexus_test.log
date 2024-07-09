@@ -392,7 +392,9 @@ DEBUG - <<REQUIRED>>
 DEBUG - enumeration (NXarpes.nxdl.xml:/ENTRY/definition):
 DEBUG - -> NXarpes
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/definition):
-DEBUG - Official NeXus NXDL schema to which this file conforms.
+DEBUG - 
+                 Official NeXus NXDL schema to which this file conforms.
+            
 DEBUG - documentation (NXentry.nxdl.xml:/definition):
 DEBUG - 
              (alternate use: see same field in :ref:`NXsubentry` for preferred)
@@ -530,6 +532,7 @@ DEBUG - -> summed
 DEBUG - -> event
 DEBUG - -> histogrammed
 DEBUG - -> decimated
+DEBUG - -> pulse counting
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/acquisition_mode):
 DEBUG - 
 DEBUG - documentation (NXdetector.nxdl.xml:/acquisition_mode):
@@ -554,10 +557,10 @@ NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles):
 DEBUG - 
-            Angular axis of the analyser data
-            which dimension the axis applies to is defined
-            using the normal NXdata methods.
-          
+                         Angular axis of the analyser data
+                         which dimension the axis applies to is defined
+                         using the normal NXdata methods.
+                    
 DEBUG - ===== ATTRS (//entry/instrument/analyser/angles@target)
 DEBUG - value: /entry/instrument/analyser/angles 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -664,10 +667,10 @@ NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/energies):
 DEBUG - 
-            Energy axis of the analyser data
-            which dimension the axis applies to is defined
-            using the normal NXdata methods.
-          
+                         Energy axis of the analyser data
+                         which dimension the axis applies to is defined
+                         using the normal NXdata methods.
+                    
 DEBUG - ===== ATTRS (//entry/instrument/analyser/energies@target)
 DEBUG - value: /entry/instrument/analyser/energies 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -688,7 +691,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_setting
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_setting):
-DEBUG - dial setting of the entrance slit
+DEBUG - 
+                         dial setting of the entrance slit
+                    
 DEBUG - ===== FIELD (//entry/instrument/analyser/entrance_slit_shape): <HDF5 dataset "entrance_slit_shape": shape (), type "|O">
 DEBUG - value: b'straight' 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
@@ -707,7 +712,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_size
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_size):
-DEBUG - size of the entrance slit
+DEBUG - 
+                         size of the entrance slit
+                    
 DEBUG - ===== ATTRS (//entry/instrument/analyser/entrance_slit_size@units)
 DEBUG - value: um 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -751,7 +758,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/lens_mode
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/lens_mode):
-DEBUG - setting for the electron analyser lens
+DEBUG - 
+                         setting for the electron analyser lens
+                    
 DEBUG - ===== FIELD (//entry/instrument/analyser/magnification): <HDF5 dataset "magnification": shape (), type "<f8">
 DEBUG - value: -1.5 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
@@ -764,7 +773,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy):
-DEBUG - energy of the electrons on the mean path of the analyser
+DEBUG - 
+                         energy of the electrons on the mean path of the analyser
+                    
 DEBUG - ===== ATTRS (//entry/instrument/analyser/pass_energy@units)
 DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -783,7 +794,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_origin
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_origin):
-DEBUG - origin of rectangular region selected for readout
+DEBUG - 
+                         origin of rectangular region selected for readout
+                    
 DEBUG - ===== FIELD (//entry/instrument/analyser/region_size): <HDF5 dataset "region_size": shape (2,), type "<i8">
 DEBUG - value: [ 80 146] 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
@@ -791,7 +804,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_size
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/region_size):
-DEBUG - size of rectangular region selected for readout
+DEBUG - 
+                         size of rectangular region selected for readout
+                    
 DEBUG - ===== FIELD (//entry/instrument/analyser/sensor_count): <HDF5 dataset "sensor_count": shape (), type "<i8">
 DEBUG - value: 4 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_INT']
@@ -809,7 +824,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/sensor_size
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/sensor_size):
-DEBUG - number of raw active elements in each dimension
+DEBUG - 
+                         number of raw active elements in each dimension
+                    
 DEBUG - ===== FIELD (//entry/instrument/analyser/time_per_channel): <HDF5 dataset "time_per_channel": shape (), type "<i8">
 DEBUG - value: 7200 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -817,7 +834,9 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/time_per_channel
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/time_per_channel):
-DEBUG - todo: define more clearly
+DEBUG - 
+                         todo: define more clearly
+                    
 DEBUG - ===== ATTRS (//entry/instrument/analyser/time_per_channel@units)
 DEBUG - value: s 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_NUMBER']
@@ -1252,18 +1271,17 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/MONOCHROMATOR):
 DEBUG - 
 DEBUG - documentation (NXmonochromator.nxdl.xml:):
 DEBUG - 
-        A  wavelength defining device.
-        
-        This is a base class for everything which
-        selects a wavelength or energy, be it a 
-        monochromator crystal, a velocity selector,
-        an undulator or whatever.
-        
-        The expected units are:
-        
-        * wavelength: angstrom
-        * energy:     eV
-        
+         A  wavelength defining device.
+         
+         This is a base class for everything which
+         selects a wavelength or energy, be it a
+         monochromator crystal, a velocity selector,
+         an undulator or whatever.
+         
+         The expected units are:
+         
+         * wavelength: angstrom
+         * energy: eV
     
 DEBUG - ===== ATTRS (//entry/instrument/monochromator@NX_class)
 DEBUG - value: NXmonochromator 
@@ -1296,7 +1314,9 @@ NXmonochromator.nxdl.xml:/energy_error
 DEBUG - <<OPTIONAL>>
 DEBUG - DEPRECATED - see https://github.com/nexusformat/definitions/issues/820
 DEBUG - documentation (NXmonochromator.nxdl.xml:/energy_error):
-DEBUG - energy standard deviation
+DEBUG - 
+             energy standard deviation
+        
 DEBUG - ===== ATTRS (//entry/instrument/monochromator/energy_error@units)
 DEBUG - value: eV 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator', 'NX_FLOAT']
@@ -1873,7 +1893,9 @@ NXarpes.nxdl.xml:/ENTRY/SAMPLE/name
 NXsample.nxdl.xml:/name
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/SAMPLE/name):
-DEBUG - Descriptive name of sample
+DEBUG - 
+                     Descriptive name of sample
+                
 DEBUG - documentation (NXsample.nxdl.xml:/name):
 DEBUG - 
              Descriptive name of sample

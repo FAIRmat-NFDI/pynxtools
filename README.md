@@ -32,12 +32,12 @@ pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 
 `pynxtools` (previously called `nexusutils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
 
-Additionally, the software is used in the research data management system NOMAD for
+Additionally, the software can be used as a plugin in the research data management system NOMAD for
 making experimental data searchable and publishable.
 NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
 (NFDI).
 
-The software tools are located inside [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/pynxtools) and they are
+The software tools are located inside [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools) and they are
 shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
 Some examples with real datasets are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples).
 It guides you through the process of converting instrument raw
@@ -45,34 +45,19 @@ data into the NeXus standard and visualising the files content.
 
 # Command line tools
 
-- [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
-- [**generate_eln**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/pynxtools/eln_mapper/README.md): Outputs ELN files that can be used to add metadata to the dataconverter routine.
+- [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
+- [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
+- [**generate_eln**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/eln_mapper/README.md): Outputs ELN files that can be used to add metadata to the dataconverter routine.
+
+# NOMAD integration
+
+To use pynxtools with NOMAD, simply install it in the same environment as the `nomad-lab` package.
+NOMAD will recognize pynxtools as a plugin automatically and offer automatic parsing of `.nxs` files
+and a schema for NeXus application definitions.
+pynxtools is already included in the NOMAD main deployment and NOMAD NeXus distribution images.
 
 # Documentation
 Documentation for the different tools can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
-
-# Plugins
-There are a number of plugins available for pynxtools. These are extensions of pynxtools used for reading data of specialized experimental techniques.
-- [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy data.
-- [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
-- [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data.
-
-Respective readers for the research fields of electron microscopy and atom probe are currently refactored into pynxtools plugins.
-Until this refactoring will have become completed, users are advised to use the apm and em readers via pynxtools<=0.1.1.
-- [**pynxtools-apm**](https://github.com/FAIRmat-NFDI/pynxtools-apm): A reader for atom probe as well as related field ion microscopy data.
-- [**pynxtools-em**](https://github.com/FAIRmat-NFDI/pynxtools-em): A reader for electron microscopy data.
-
-You can install each of the plugins together with `pynxtools` by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
-```shell
-pip install pynxtools[mpes]
-```
-
-In addition, you can also install all of the `pynxtools` reader plugins which are maintained by FAIRmat by passing the `[convert]` extra to the pip install call:
-```shell
-pip install pynxtools[convert]
-```
-There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.
 
 # Contributing
 
@@ -133,7 +118,7 @@ on how to build on this work, or to get your parser included into NOMAD, you can
 
 ### Does this software require NOMAD or NOMAD OASIS ?
 
-No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe.
+No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe. It can, however, be used as a NOMAD plugin to parse nexus files, please see the section above for details.
 
 # Troubleshooting
 

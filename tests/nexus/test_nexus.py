@@ -21,8 +21,14 @@ import logging
 import os
 
 import lxml.etree as ET
-
-from pynxtools.nexus import nexus
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_inherited_nodes,
+    get_node_at_nxdl_path,
+    get_nx_attribute_type,
+    get_nx_classes,
+    get_nx_units,
+)
+from pynxtools.nexus.nexus import HandleNexus
 
 logger = logging.getLogger(__name__)
 
@@ -35,16 +41,16 @@ def test_get_nexus_classes_units_attributes():
     the tested functions can be found in nexus.py file"""
 
     # Test 1
-    nexus_classes_list = nexus.get_nx_classes()
+    nexus_classes_list = get_nx_classes()
 
     assert "NXbeam" in nexus_classes_list
 
     # Test 2
-    nexus_units_list = nexus.get_nx_units()
+    nexus_units_list = get_nx_units()
     assert "NX_TEMPERATURE" in nexus_units_list
 
     # Test 3
-    nexus_attribute_list = nexus.get_nx_attribute_type()
+    nexus_attribute_list = get_nx_attribute_type()
     assert "NX_FLOAT" in nexus_attribute_list
 
 
@@ -53,14 +59,16 @@ def test_nexus(tmp_path):
     The nexus test function
     """
     dirpath = os.path.join(os.path.dirname(__file__), "../data/nexus")
-    example_data = os.path.join(dirpath, "201805_WSe2_arpes.nxs")
+    example_data = os.path.join(
+        os.getcwd(), "src", "pynxtools", "data", "201805_WSe2_arpes.nxs"
+    )
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(os.path.join(tmp_path, "nexus_test.log"), "w")
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, example_data, None, None)
+    nexus_helper = HandleNexus(logger, example_data, None, None)
     nexus_helper.process_nexus_master_file(None)
 
     with open(
@@ -84,61 +92,59 @@ def test_nexus(tmp_path):
 def test_get_node_at_nxdl_path():
     """Test to verify if we receive the right XML element for a given NXDL path"""
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    nxdl_file_path = os.path.join(local_dir, "../data/dataconverter/NXtest.nxdl.xml")
+    nxdl_file_path = os.path.join(local_dir, "../../src/pynxtools/data/NXtest.nxdl.xml")
     elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name", elem=elem)
+    node = get_node_at_nxdl_path("/ENTRY/NXODD_name", elem=elem)
     assert node.attrib["type"] == "NXdata"
     assert node.attrib["name"] == "NXODD_name"
 
-    node = nexus.get_node_at_nxdl_path("/ENTRY/NXODD_name/float_value", elem=elem)
+    node = get_node_at_nxdl_path("/ENTRY/NXODD_name/float_value", elem=elem)
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
 
-    node = nexus.get_node_at_nxdl_path(
-        "/ENTRY/NXODD_name/AXISNAME/long_name", elem=elem
-    )
+    node = get_node_at_nxdl_path("/ENTRY/NXODD_name/AXISNAME/long_name", elem=elem)
     assert node.attrib["name"] == "long_name"
 
     nxdl_file_path = os.path.join(local_dir, "../data/nexus/NXtest2.nxdl.xml")
     elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/USER/affiliation", elem=elem
     )
     assert node.attrib["name"] == "affiliation"
 
-    node = nexus.get_node_at_nxdl_path("/ENTRY/measurement", elem=elem)
+    node = get_node_at_nxdl_path("/ENTRY/measurement", elem=elem)
     assert node.attrib["type"] == "NXevent_data_em_set"
 
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection", elem=elem
     )
     assert node.attrib["type"] == "NXdata"
 
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/DATA", elem=elem
     )
     assert node.attrib["type"] == "NX_NUMBER"
 
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/AXISNAME_indices",
         elem=elem,
     )
     assert node.attrib["name"] == "AXISNAME_indices"
 
-    node = nexus.get_node_at_nxdl_path("/ENTRY/COORDINATE_SYSTEM_SET", elem=elem)
+    node = get_node_at_nxdl_path("/ENTRY/COORDINATE_SYSTEM_SET", elem=elem)
     assert node.attrib["type"] == "NXcoordinate_system_set"
 
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS", elem=elem
     )
     assert node.attrib["type"] == "NXtransformations"
 
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME", elem=elem
     )
     assert node.attrib["type"] == "NX_NUMBER"
 
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME/transformation_type",
         elem=elem,
     )
@@ -146,15 +152,15 @@ def test_get_node_at_nxdl_path():
 
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
+        "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
     )
     elem = ET.parse(nxdl_file_path).getroot()
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller", elem=elem
     )
     assert node.attrib["name"] == "voltage_controller"
 
-    node = nexus.get_node_at_nxdl_path(
+    node = get_node_at_nxdl_path(
         "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller/calibration_time", elem=elem
     )
     assert node.attrib["name"] == "calibration_time"
@@ -165,20 +171,20 @@ def test_get_inherited_nodes():
     local_dir = os.path.abspath(os.path.dirname(__file__))
     nxdl_file_path = os.path.join(
         local_dir,
-        "../../pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
+        "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
     )
     elem = ET.parse(nxdl_file_path).getroot()
-    (_, _, elist) = nexus.get_inherited_nodes(
+    (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT", elem=elem
     )
     assert len(elist) == 3
 
-    (_, _, elist) = nexus.get_inherited_nodes(
+    (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller", elem=elem
     )
     assert len(elist) == 4
 
-    (_, _, elist) = nexus.get_inherited_nodes(
+    (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
         nx_name="NXiv_temp",
     )
@@ -189,10 +195,10 @@ def test_c_option(tmp_path):
     """
     To check -c option from IV_temp.nxs.
     """
-
     local_path = os.path.dirname(__file__)
     path_to_ref_files = os.path.join(local_path, "../data/nexus/")
-    ref_file = path_to_ref_files + "Ref1_c_option_test.log"
+
+    ref_file = os.path.join(path_to_ref_files, "Ref1_c_option_test.log")
     tmp_file = os.path.join(tmp_path, "c_option_1_test.log")
 
     logger.setLevel(logging.INFO)
@@ -206,7 +212,8 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, None, None, "/NXbeam")
+
+    nexus_helper = HandleNexus(logger, None, None, "/NXbeam")
     nexus_helper.process_nexus_master_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
@@ -220,7 +227,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, None, None, "/NXdetector/data")
+    nexus_helper = HandleNexus(logger, None, None, "/NXdetector/data")
     nexus_helper.process_nexus_master_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
@@ -233,7 +240,7 @@ def test_c_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(logger, None, None, "/NXdata@signal")
+    nexus_helper = HandleNexus(logger, None, None, "/NXdata@signal")
     nexus_helper.process_nexus_master_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:
@@ -245,7 +252,6 @@ def test_d_option(tmp_path):
     """
     To check -d option for default NXarpes test data file.
     """
-
     tmp_file = os.path.join(tmp_path, "d_option_1_test.log")
 
     logger.setLevel(logging.DEBUG)
@@ -256,9 +262,7 @@ def test_d_option(tmp_path):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    nexus_helper = nexus.HandleNexus(
-        logger, None, "/entry/instrument/analyser/data", None
-    )
+    nexus_helper = HandleNexus(logger, None, "/entry/instrument/analyser/data", None)
     nexus_helper.process_nexus_master_file(None)
 
     with open(tmp_file, encoding="utf-8", mode="r") as tmp_f:

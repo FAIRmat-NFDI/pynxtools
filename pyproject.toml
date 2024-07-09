@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=64.0.1", "setuptools-scm[toml]>=6.2"]
-backend-path = ["pynxtools"]
+backend-path = ["src/pynxtools"]
 build-backend = "_build_wrapper"
 
 [project]
@@ -34,6 +34,7 @@ dependencies = [
     "mergedeep",
     "importlib-metadata",
     "lxml>=4.9.1",
+    "anytree",
 ]
 
 [project.urls]
@@ -46,10 +47,11 @@ docs = [
     "mkdocs-material",
     "mkdocs-material-extensions",
     "mkdocs-macros-plugin",
+    "mkdocs-click",
 ]
 dev = [
     "mypy",
-    "ruff==0.3.4",
+    "ruff==0.4.8",
     "pytest",
     "pytest-timeout",
     "pytest-cov",
@@ -57,11 +59,14 @@ dev = [
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "pip-tools",
+    "uv",
     "pre-commit",
 ]
 convert = [
-    "pynxtools[apm,em,mpes,xps,stm,xrd]",
+    "pynxtools[apm,em,mpes,xps,stm,xrd,ellips]",
+]
+mpes = [
+    "pynxtools-mpes",
 ]
 apm = [
     "pynxtools-apm",
@@ -69,18 +74,23 @@ apm = [
 em = [
     "pynxtools-em",
 ]
-mpes = [
-    "pynxtools-mpes",
+stm = [
+    "pynxtools-stm",
 ]
 xps = [
     "pynxtools-xps",
 ]
-stm = [
-    "pynxtools-stm",
-]
 xrd = [
     "pynxtools-xrd",
 ]
+ellips = [
+    "pynxtools-ellips",
+]
+
+[project.entry-points.'nomad.plugin']
+nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
+nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
+nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
@@ -89,20 +99,22 @@ generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
-"pynxtools.dataconverter.readers.xps" = ["*.json"]
 "pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
 "pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 
 [tool.setuptools.packages.find]
-exclude = ["pynxtools/definitions*"]
+where = [
+    "src",
+]
+exclude = ["src/pynxtools/definitions*"]
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
 
 [tool.ruff]
-include = ["pynxtools/*.py", "tests/*.py"]
-exclude = ["pynxtools/definitions"]
+include = ["src/*.py", "tests/*.py"]
+exclude = ["src/pynxtools/definitions"]
 line-length = 88
 indent-width = 4
 
@@ -111,6 +123,7 @@ select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
+    "NPY201",
 ]
 ignore = [
     "E501", # Line too long ({width} > {limit} characters)
@@ -141,4 +154,4 @@ ignore_missing_imports = true
 follow_imports = "silent"
 no_strict_optional = true
 disable_error_code = "import, annotation-unchecked"
-exclude = ["pynxtools/definitions/*"]
+exclude = ["src/pynxtools/definitions/*"]

@@ -28,11 +28,17 @@ jobs:
           python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install coverage coveralls
-      - name: Install package
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv pip install --system coverage coveralls
+      - name: Install pynx without nomad plugin
+        if: "${{ matrix.python_version == '3.8' }}"
         run: |
-          pip install ".[dev]"
+          uv pip install --system ".[dev]"
+      - name: Install pynx with nomad plugin
+        if: "${{ matrix.python_version != '3.8' }}"
+        run: |
+          uv pip install --system nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@pluginise-nexus-code
+          uv pip install --system ".[dev]"
       - name: Test with pytest
         run: |
           coverage run -m pytest -sv --show-capture=no tests

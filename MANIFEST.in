@@ -1,11 +1,13 @@
 prune *
 exclude *
-recursive-include pynxtools *.py
+recursive-include src/pynxtools *.py
 include pyproject.toml LICENSE README.md TROUBLESHOOTING.md dev-requirements.txt
+include src/pynxtools/data/*
 
-recursive-include pynxtools/definitions/base_classes/ *.xml
-recursive-include pynxtools/definitions/applications/ *.xml
-recursive-include pynxtools/definitions/contributed_definitions/ *.xml
-include pynxtools/definitions/*.xsd
-include pynxtools/nexus-version.txt
-include pynxtools/definitions/NXDL_VERSION
+recursive-include src/pynxtools/definitions/base_classes/ *.xml
+recursive-include src/pynxtools/definitions/applications/ *.xml
+recursive-include src/pynxtools/definitions/contributed_definitions/ *.xml
+include src/pynxtools/definitions/*.xsd
+include src/pynxtools/nexus-version.txt
+include src/pynxtools/definitions/NXDL_VERSION
+

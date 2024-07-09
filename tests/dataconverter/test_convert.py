@@ -17,36 +17,39 @@
 #
 """Test cases for the convert script used to access the DataConverter."""
 
-import logging
 import os
+import shutil
 from pathlib import Path
 
 import h5py
+import pynxtools.dataconverter.convert as dataconverter
 import pytest
 from click.testing import CliRunner
-from setuptools import distutils
-
-import pynxtools.dataconverter.convert as dataconverter
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.nexus import nexus  # noqa: E402
 
 
 def move_xarray_file_to_tmp(tmp_path):
     """Moves the xarray file, which is used to test linking into the tmp_path directory."""
-    test_file_path = os.path.join(os.path.dirname(__file__), "../data/nexus")
-    distutils.file_util.copy_file(
-        os.path.join(test_file_path, "xarray_saved_small_calibration.h5"),
+    shutil.copy(
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        ),
         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
     )
 
 
 def restore_xarray_file_from_tmp(tmp_path):
     """Restores the xarray file from the tmp_path directory."""
-    test_file_path = os.path.join(os.path.dirname(__file__), "../data/nexus")
-    os.remove(os.path.join(test_file_path, "xarray_saved_small_calibration.h5"))
-    distutils.file_util.move_file(
+    os.remove(
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        )
+    )
+    shutil.move(
         os.path.join(tmp_path, "xarray_saved_small_calibration.h5"),
-        os.path.join(test_file_path, "xarray_saved_small_calibration.h5"),
+        os.path.join(
+            os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
+        ),
     )
 
 
@@ -83,7 +86,11 @@ def test_find_nxdl(cli_inputs):
     runner = CliRunner()
     result = runner.invoke(dataconverter.convert_cli, cli_inputs)
     if "NXdoesnotexist" in cli_inputs:
-        assert isinstance(result.exception, FileNotFoundError)
+        assert result.exit_code == 2
+        assert result.output.endswith(
+            "Error: Invalid value for --nxdl: "
+            "NXdoesnotexist is not a valid application definition\n"
+        )
     else:
         assert isinstance(result.exception, Exception)
         assert "The chosen NXDL isn't supported by the selected reader." in str(
@@ -117,7 +124,9 @@ def test_cli(caplog, cli_inputs):
     result = runner.invoke(dataconverter.main_cli, cli_inputs)
     if "generate-template" in cli_inputs:
         assert result.exit_code == 0
-        assert '"/ENTRY[entry]/NXODD_name/int_value": null,' in result.stdout
+        assert (
+            '"/ENTRY[entry]/NXODD_name[nxodd_name]/int_value": null,' in result.stdout
+        )
     elif "--input-file" in cli_inputs:
         assert "test_input" in caplog.text
     elif result.exit_code == 2:
@@ -148,36 +157,44 @@ def test_links_and_virtual_datasets(tmp_path):
     )
 
     assert result.exit_code == 0
-    test_nxs = h5py.File(os.path.join(tmp_path, "test_output.h5"), "r")
-    assert "entry/test_link/internal_link" in test_nxs
-    assert isinstance(test_nxs["entry/test_link/internal_link"], h5py.Dataset)
-    assert "entry/test_link/external_link" in test_nxs
-    assert isinstance(test_nxs["entry/test_link/external_link"], h5py.Dataset)
-    assert "entry/test_virtual_dataset/concatenate_datasets" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset
-    )
-    assert "entry/test_virtual_dataset/sliced_dataset" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/sliced_dataset"], h5py.Dataset
-    )
-    # pylint: disable=no-member
-    assert test_nxs["entry/test_virtual_dataset/sliced_dataset"].shape == (10, 10, 5)
-    assert "entry/test_virtual_dataset/sliced_dataset2" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/sliced_dataset2"], h5py.Dataset
-    )
-    assert test_nxs["entry/test_virtual_dataset/sliced_dataset2"].shape == (10, 10, 10)
-    assert "entry/test_virtual_dataset/sliced_dataset3" in test_nxs
-    assert isinstance(
-        test_nxs["entry/test_virtual_dataset/sliced_dataset3"], h5py.Dataset
-    )
-    assert test_nxs["entry/test_virtual_dataset/sliced_dataset3"].shape == (
-        10,
-        10,
-        10,
-        2,
-    )
+    with h5py.File(os.path.join(tmp_path, "test_output.h5"), "r") as test_nxs:
+        assert "entry/test_link/internal_link" in test_nxs
+        assert isinstance(test_nxs["entry/test_link/internal_link"], h5py.Dataset)
+        assert "entry/test_link/external_link" in test_nxs
+        assert isinstance(test_nxs["entry/test_link/external_link"], h5py.Dataset)
+        assert "entry/test_virtual_dataset/concatenate_datasets" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/concatenate_datasets"], h5py.Dataset
+        )
+        assert "entry/test_virtual_dataset/sliced_dataset" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/sliced_dataset"], h5py.Dataset
+        )
+        # pylint: disable=no-member
+        assert test_nxs["entry/test_virtual_dataset/sliced_dataset"].shape == (
+            10,
+            10,
+            5,
+        )
+        assert "entry/test_virtual_dataset/sliced_dataset2" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/sliced_dataset2"], h5py.Dataset
+        )
+        assert test_nxs["entry/test_virtual_dataset/sliced_dataset2"].shape == (
+            10,
+            10,
+            10,
+        )
+        assert "entry/test_virtual_dataset/sliced_dataset3" in test_nxs
+        assert isinstance(
+            test_nxs["entry/test_virtual_dataset/sliced_dataset3"], h5py.Dataset
+        )
+        assert test_nxs["entry/test_virtual_dataset/sliced_dataset3"].shape == (
+            10,
+            10,
+            10,
+            2,
+        )
 
     restore_xarray_file_from_tmp(tmp_path)
 
