@@ -33,7 +33,7 @@ jobs:
       - name: Install nomad
         if: "${{ matrix.python_version != '3.8' }}"
         run: |
-          uv pip install --system nomad-lab --pre --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
+          UV_INDEX_URL="https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple" uv pip install --system nomad-lab
       - name: Install pynx
         run: |
           uv pip install --system ".[dev]"
