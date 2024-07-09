@@ -67,7 +67,7 @@ jobs:
           ref: ${{ matrix.branch }}
       - name: Install nomad
         run: |
-          uv pip install --system nomad-lab --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
+          uv pip install --system nomad-lab --pre --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
       - name: Install ${{ matrix.plugin }}
         run: |
           cd ${{ matrix.plugin }}
