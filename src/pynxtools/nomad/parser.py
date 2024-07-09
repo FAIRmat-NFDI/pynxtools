@@ -473,12 +473,9 @@ class NexusParser(MatchingParser):
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
 
-        if mainfile.endswith("nxs"):
-            *_, self.nxs_fname = mainfile.rsplit("/", 1)
-            nexus_helper = HandleNexus(logger, mainfile)
-            nexus_helper.process_nexus_master_file(self.__nexus_populate)
-        else:
-            raise ValueError("No Nexus file is found to populate the nexus definition.")
+        *_, self.nxs_fname = mainfile.rsplit("/", 1)
+        nexus_helper = HandleNexus(logger, mainfile)
+        nexus_helper.process_nexus_master_file(self.__nexus_populate)
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:
@@ -503,13 +500,3 @@ class NexusParser(MatchingParser):
 
         chemical_formulas = self._get_chemical_formulas()
         self.normalize_chemical_formula(chemical_formulas)
-
-    def is_mainfile(
-        self,
-        filename: str,
-        mime: str,
-        buffer: bytes,
-        decoded_buffer: str,
-        compression: str = None,
-    ):
-        return True
