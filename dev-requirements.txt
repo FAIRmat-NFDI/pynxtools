@@ -45,13 +45,7 @@ identify==2.5.36
 idna==3.7
     # via requests
 importlib-metadata==8.0.0
-    # via
-    #   pynxtools (pyproject.toml)
-    #   markdown
-    #   mkdocs
-    #   mkdocs-get-deps
-importlib-resources==6.4.0
-    # via matplotlib
+    # via pynxtools (pyproject.toml)
 iniconfig==2.0.0
     # via pytest
 jinja2==3.1.4
@@ -177,7 +171,7 @@ requests==2.32.3
     # via mkdocs-material
 ruff==0.4.8
     # via pynxtools (pyproject.toml)
-scipy==1.13.1
+scipy==1.14.0
     # via ase
 six==1.16.0
     # via
@@ -215,6 +209,4 @@ watchdog==4.0.1
 xarray==2024.6.0
     # via pynxtools (pyproject.toml)
 zipp==3.19.2
-    # via
-    #   importlib-metadata
-    #   importlib-resources
+    # via importlib-metadata
