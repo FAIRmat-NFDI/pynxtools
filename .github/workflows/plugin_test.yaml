@@ -67,7 +67,7 @@ jobs:
           ref: ${{ matrix.branch }}
       - name: Install nomad
         run: |
-          UV_INDEX_URL="https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple" uv pip install --system nomad-lab
+          uv pip install --system nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install ${{ matrix.plugin }}
         run: |
           cd ${{ matrix.plugin }}
