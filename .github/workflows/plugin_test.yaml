@@ -23,6 +23,9 @@ jobs:
           # - plugin: pynxtools-ellips
           #   branch: main
           #   tests_to_run: tests/.
+          - plugin: pynxtools-raman
+            branch: main
+            tests_to_run: tests/.
           # - plugin: pynxtools-em
           #   branch: main
           #   tests_to_run: tests/.
