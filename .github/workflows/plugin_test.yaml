@@ -17,15 +17,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - plugin: pynxtools-apm
-          #   branch: main
-          #   tests_to_run: tests/.
+
           - plugin: pynxtools-ellips
             branch: main
             tests_to_run: tests/.
-          # - plugin: pynxtools-em
-          #   branch: main
-          #   tests_to_run: tests/.
+          - plugin: pynxtools-raman
+            branch: main
+            tests_to_run: tests/.
           - plugin: pynxtools-mpes
             branch: main
             tests_to_run: tests/.
@@ -35,8 +33,14 @@ jobs:
           - plugin: pynxtools-xps
             branch: main
             tests_to_run: tests/.
+          # - plugin: pynxtools-apm
+          #   branch: main
+          #   tests_to_run: tests/.
           # - plugin: pynxtools-xrd
           #   branch: update-tests
+          #   tests_to_run: tests/.
+          # - plugin: pynxtools-em
+          #   branch: main
           #   tests_to_run: tests/.
     steps:
       - uses: actions/checkout@v3

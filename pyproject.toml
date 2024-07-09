@@ -63,7 +63,7 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[apm,em,mpes,xps,stm,xrd,ellips]",
+    "pynxtools[apm,em,mpes,xps,stm,xrd,ellips,raman]",
 ]
 mpes = [
     "pynxtools-mpes",
@@ -86,7 +86,9 @@ xrd = [
 ellips = [
     "pynxtools-ellips",
 ]
-
+raman = [
+    "pynxtools-raman",
+]
 [project.entry-points.'nomad.plugin']
 nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
 nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
