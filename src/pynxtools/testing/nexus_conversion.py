@@ -62,7 +62,7 @@ class ReaderTest:
     """Generic test for reader plugins."""
 
     def __init__(
-        self, nxdl, reader_name, files_or_dir, ref_log_path, tmp_path, caplog, **kwargs
+        self, nxdl, reader_name, files_or_dir, tmp_path, caplog, ref_log_path=None, **kwargs
     ) -> None:
         """Initialize the test object.
 
@@ -75,13 +75,15 @@ class ReaderTest:
         files_or_dir : str
             List of input files or full path string to the example data directory that contains all the files
             required for running the data conversion through the reader.
-        ref_log_path : str
-            Full path string to the reference log file generated from the same
-            set of input files.
         tmp_path : pathlib.PosixPath
             Pytest fixture variable, used to clean up the files generated during the test.
         caplog : _pytest.logging.LogCaptureFixture
             Pytest fixture variable, used to capture the log messages during the test.
+        ref_log_path : str
+            Full path string to the reference log file generated from the same
+            set of input files in files_or_dir. This can also be parsed automatically if files_or_dir
+            is the full path string to the example data directory and there is only one reference
+            log file.
         kwargs : dict[str, Any]
             Any additional keyword arguments to be passed to the readers' read function.
         """
@@ -91,11 +93,12 @@ class ReaderTest:
         self.reader = get_reader(self.reader_name)
 
         self.files_or_dir = files_or_dir
-        self.ref_log_path = ref_log_path
         self.tmp_path = tmp_path
         self.caplog = caplog
-        self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
+        self.ref_log_path = ref_log_path
         self.kwargs = kwargs
+        self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
+        
 
     def convert_to_nexus(
         self,
@@ -121,7 +124,9 @@ class ReaderTest:
             ][0]
         assert self.ref_log_path, "Reference nexus .log file not found"
 
-        input_files = [file for file in example_files if not file.endswith(".nxs")]
+        input_files = [
+            file for file in example_files if not file.endswith((".nxs", ".log"))
+        ]
 
         assert (
             self.nxdl in self.reader.supported_nxdls
