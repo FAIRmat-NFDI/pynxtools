@@ -19,13 +19,12 @@
 
 import logging
 import os
+import shutil
 import xml.etree.ElementTree as ET
 from typing import Optional
-import shutil
 
 import numpy as np
 import pytest
-
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
@@ -290,7 +289,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
                 "ould be one of: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
-                "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                "numpy.bool"
             ),
             id="string-instead-of-int",
         ),

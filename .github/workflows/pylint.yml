@@ -2,13 +2,16 @@ name: linting
 
 on: [push]
 
+env:
+  UV_SYSTEM_PYTHON: true
+
 jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python 3.10
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install dependencies
@@ -18,10 +21,10 @@ jobs:
           curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install package
         run: |
-          uv pip install --system --no-deps .
+          uv pip install --no-deps .
       - name: Install dev requirements
         run: |
-          uv pip install --system -r dev-requirements.txt
+          uv pip install -r dev-requirements.txt
       - name: ruff
         run: |
           ruff src/pynxtools tests
