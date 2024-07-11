@@ -28,13 +28,13 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
-            branch: main
+            branch: update-to-new-nxmpes
             tests_to_run: tests/.
           - plugin: pynxtools-stm
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: main
+            branch: update-configs-after-mpes-changes
             tests_to_run: tests/.
           # - plugin: pynxtools-apm
           #   branch: main
