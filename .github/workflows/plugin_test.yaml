@@ -42,7 +42,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: main
+            branch: adapt-testing
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
             branch: main
