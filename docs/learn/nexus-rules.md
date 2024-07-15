@@ -20,6 +20,8 @@ In general, the names of NeXus group and field items are validated according to 
 - Invalid names:
   - any name not matching this `validItemName` regular expression
 
+Note that this explicitly also means that it is not allowed to have whitestrings " " in NeXus names.
+
 In NeXus base classes and application definitions, there are two options for defining a concept name. If the group or field in the definition is lowercase, that means that any instance must have the exact same (**fixed**) name. As an example, if there is a field called `my_field` in an application definition, the only allowed name in a file would be `my_field`.
 
 Aside from this lower case notation, there is also the option to allow for **selectable** names. This is achieved by uppercase notation. As an example, if a field in an application definition is called `FIELD`, the name can be any name as long as it maches the regular expression above. For example, `field`, `field0`, `any_other_name` would be allowed names, while `any other name` would not be allowed.
