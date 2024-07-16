@@ -24,7 +24,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-ellips
-            branch: main
+            branches: main
             tests_to_run: tests/.
           - plugin: pynxtools-em
             branch: main
@@ -36,18 +36,38 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branch: main
+            branches: main
             tests_to_run: tests/.
+<<<<<<< HEAD
           - plugin: pynxtools-spm
             branch: main
+=======
+          - plugin: pynxtools-mpes
+            branches: update-to-new-nxmpes, main
+            tests_to_run: tests/.
+          - plugin: pynxtools-stm
+            branches: main
+>>>>>>> dc70f9d (allow multiple branches in plugin test CI/CD)
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: main
+            branches: use-multiformat-reader, main
             tests_to_run: tests/.
+<<<<<<< HEAD
           - plugin: pynxtools-xrd
             branch: main
             tests_to_run: tests/.
 
+=======
+          # - plugin: pynxtools-apm
+          #   branches: main
+          #   tests_to_run: tests/.
+          # - plugin: pynxtools-xrd
+          #   branches: main
+          #   tests_to_run: tests/.
+          # - plugin: pynxtools-em
+          #   branches: main
+          #   tests_to_run: tests/.
+>>>>>>> dc70f9d (allow multiple branches in plugin test CI/CD)
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,13 +83,34 @@ jobs:
       - name: Install package
         run: |
           uv pip install ".[dev]"
+      - name: Check if branch exists
+        id: check-branch
+        run: |
+          branch_exists=false
+          branches=(${{ matrix.branches }})
+          for branch in ${branches[@]}; do
+            echo "Checking branch: $branch"
+            if git ls-remote --heads https://github.com/FAIRmat-NFDI/${{ matrix.plugin }}.git $branch | grep -q "refs/heads/$branch"; then
+              echo "Branch $branch exists."
+              echo "branch=$branch" >> $GITHUB_ENV
+              branch_exists=true
+              break
+            fi
+          done
+          if [ "$branch_exists" = "false" ]; then
+            echo "No branches exist."
+            exit 1
+          fi
+      - name: Output environment variables for debugging
+        run: |
+          echo "Selected branch: ${{ env.branch }}"
       - name: Clone ${{ matrix.plugin }} repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           repository: FAIRmat-NFDI/${{ matrix.plugin }}
           path: ${{ matrix.plugin }}
-          ref: ${{ matrix.branch }}
+          ref: ${{ env.branch }}
       - name: Install nomad
         run: |
           uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
