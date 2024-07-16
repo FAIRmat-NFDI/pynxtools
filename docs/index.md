@@ -43,9 +43,8 @@ How-to guides provide step-by-step instructions for a wide range of tasks:
 An introduction to NeXus and its design principles.
 
 - [An introduction to NeXus](learn/nexus-primer.md)
+- [Rules for storing data in NeXus](learn/nexus-rules.md)
 - [The concept of multiple application definitions](learn/multiple-appdefs.md)
-
-
 
 </div>
 <div markdown="block">
