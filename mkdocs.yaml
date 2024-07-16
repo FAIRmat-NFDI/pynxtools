@@ -17,6 +17,7 @@ nav:
     - how-tos/using-pynxtools-test-framework.md
   - Learn:
     - learn/nexus-primer.md
+    - learn/nexus-rules.md
     - learn/multiple-appdefs.md
   - Reference:
     - reference/plugins.md
