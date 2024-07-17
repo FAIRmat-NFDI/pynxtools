@@ -1,16 +1,15 @@
 name: Simulate Upload of Python Package
 
 on:
-  workflow_dispatch:
-    branches:
-      - git-reset-in-build-step
+  push: # workflow_dispatch:
+    branches: [git-reset-in-build-step]
 
 env:
   UV_SYSTEM_PYTHON: true
 
 jobs:
   deploy:
-    name: Upload release to PyPI
+    name: Simulate upload release to PyPI
     runs-on: ubuntu-latest
     environment:
       name: pypi
