@@ -11,9 +11,9 @@ jobs:
   deploy:
     name: Simulate upload release to PyPI
     runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/pynxtools
+    # environment:
+    #   name: pypi
+    #   url: https://pypi.org/p/pynxtools
     permissions:
       id-token: write
     steps:
