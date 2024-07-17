@@ -28,7 +28,6 @@ jobs:
     - name: Install dependencies
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
-        git reset --hard HEAD
         uv pip install build
     - name: Build package
       run: |
