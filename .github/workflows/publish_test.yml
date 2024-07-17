@@ -35,6 +35,6 @@ jobs:
         git reset --hard HEAD
         git status
         python -m build
-        git status
+        git diff
     # - name: Publish package distributions to PyPI
     #   uses: pypa/gh-action-pypi-publish@release/v1
