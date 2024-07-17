@@ -20,7 +20,6 @@
 import logging
 import os
 import re
-from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
