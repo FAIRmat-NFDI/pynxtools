@@ -257,7 +257,7 @@ class MultiFormatReader(BaseReader):
         """
         return {}
 
-    def get_data_dims(self, path: str) -> List[str]:
+    def get_data_dims(self) -> List[str]:
         """
         Returns the dimensions of the data from the given path.
         """
