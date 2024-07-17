@@ -633,8 +633,8 @@ def test_warning_on_definition_changed_by_reader(caplog):
         helpers.write_nexus_def_to_entry(template, "entry", "NXtest")
 
     error_text = (
-        "The entry '/ENTRY[entry]/definition' (value: NXwrong) should not be changed by the reader. "
-        "This is overwritten by the actually used value 'NXtest'"
+        "The entry '/ENTRY[entry]/definition' (value: NXtest) should not be changed by the reader. "
+        "This is overwritten by the actually used value 'NXwrong'"
     )
     assert error_text in caplog.text
 
