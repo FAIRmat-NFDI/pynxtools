@@ -1,11 +1,8 @@
 name: Upload Python Package
 
-# on:
-#   release:
-#     types: [published]
 on:
-  workflow_dispatch:
-
+  release:
+    types: [published]
 
 env:
   UV_SYSTEM_PYTHON: true
@@ -31,9 +28,6 @@ jobs:
         uv pip install build
     - name: Build package
       run: |
-        git status
-        git reset --hard HEAD
-        git status
         python -m build
-    # - name: Publish package distributions to PyPI
-    #   uses: pypa/gh-action-pypi-publish@release/v1
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1

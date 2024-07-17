@@ -1,0 +1,35 @@
+name: Simulate Upload of Python Package
+
+on:
+  workflow_dispatch:
+
+env:
+  UV_SYSTEM_PYTHON: true
+
+jobs:
+  deploy:
+    name: Upload release to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pynxtools
+    permissions:
+      id-token: write
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+    - name: Install dependencies
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        uv pip install build
+    - name: Build package
+      run: |
+        git status
+        git reset --hard HEAD
+        git status
+        python -m build
+    # - name: Publish package distributions to PyPI
+    #   uses: pypa/gh-action-pypi-publish@release/v1
