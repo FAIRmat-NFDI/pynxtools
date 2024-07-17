@@ -35,10 +35,9 @@ from pynxtools.dataconverter.template import Template
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
 
 
-def fill_wildcard_data_indices(config_file_dict, dims):
+def fill_wildcard_data_indices(config_file_dict, dims_callback):
     """
     Replaces the wildcard data indices (*) with the respective dimension entries.
     """
@@ -49,7 +48,11 @@ def fill_wildcard_data_indices(config_file_dict, dims):
             if k.startswith(key):
                 yield v
 
+    dims = dims_callback()
+
     for key, value in list(config_file_dict.items()):
+        if "*" not in key:
+            continue
         for dim in dims:
             new_key = key.replace("*", dim)
             new_val = value.replace("*", dim)
@@ -60,50 +63,62 @@ def fill_wildcard_data_indices(config_file_dict, dims):
             ):
                 config_file_dict[new_key] = new_val
 
-        config_file_dict.pop(key)
+        del config_file_dict[key]
 
 
-@dataclass
 class ParseJsonCallbacks:
     """
-        Callbacks for dealing special keys in the json file.
+    Callbacks for dealing special keys in the json file.
 
-        Args:
-
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    logger.addHandler(logging.StreamHandler())
-            attrs_callback (Callable[[str], Any]):
-                The callback to retrieve attributes under the specified key.
-            data_callback (Callable[[str], Any]):
-                The callback to retrieve the data under the specified key.
-            dims (List[str]):
-                The dimension labels of the data. Defaults to None.
+    Args:
+        attrs_callback (Callable[[str], Any]):
+            The callback to retrieve attributes under the specified key.
+        data_callback (Callable[[str], Any]):
+            The callback to retrieve the data under the specified key.
+        link_callback (Callable[[str], Any]):
+            The callback to retrieve links under the specified key.
+        eln_callback (Callable[[str], Any]):
+            The callback to retrieve eln values under the specified key.
+        dims (List[str]):
+            The dimension labels of the data. Defaults to None.
+        entry_name (str):
+            The current entry name to use.
     """
 
-    special_key_map = {
-        "@attrs": lambda _, v: ParseJsonCallbacks.attrs_callback(v),
-        "@link": lambda _, v: ParseJsonCallbacks.link_callback(v),
-        "@data": lambda _, v: ParseJsonCallbacks.data_callback(v),
-        "@eln": lambda _, v: ParseJsonCallbacks.eln_callback(v),
-    }
-    attrs_callback: Callable[[str], Any] = lambda v: v
-    data_callback: Callable[[str], Any] = lambda v: v
-    link_callback: Callable[[str], Any] = lambda v: {"link": v}
-    eln_callback: Callable[[str], Any] = lambda v: v
-    dims: Callable[[str], List[str]] = lambda _: []
-    entry_name: str = "entry"
+    special_key_map: Dict[str, Callable[[str], Any]]
+    entry_name: str
+    dims: Callable[[], List[str]]
 
-    def __post_init__(self):
-        self.link_callback = lambda v: {
-            "link": v.replace("/entry/", f"/{self.entry_name}/")
+    def __init__(
+        self,
+        attrs_callback: Optional[Callable[[str], Any]] = None,
+        data_callback: Optional[Callable[[str], Any]] = None,
+        link_callback: Optional[Callable[[str], Any]] = None,
+        eln_callback: Optional[Callable[[str], Any]] = None,
+        dims: Optional[Callable[[], List[str]]] = None,
+        entry_name: str = "entry",
+    ):
+        self.special_key_map = {
+            "attrs": attrs_callback if attrs_callback is not None else self.identity,
+            "link": link_callback if link_callback is not None else self.link_callback,
+            "data": data_callback if data_callback is not None else self.identity,
+            "eln": eln_callback if eln_callback is not None else self.identity,
         }
+
+        self.dims = dims if dims is not None else lambda: []
+        self.entry_name = entry_name
+
+    def link_callback(self, value: str) -> Dict[str, Any]:
+        return {"link": value.replace("/entry/", f"/{self.entry_name}/")}
+
+    def identity(self, value: str) -> str:
+        return value
 
     def apply_special_key(self, precursor, key, value):
         """
         Apply the special key to the value.
         """
-        ParseJsonCallbacks.special_key_map.get(precursor, lambda _, v: v)(key, value)
+        return self.special_key_map.get(precursor, self.identity)(value)
 
 
 def parse_json_config(
@@ -140,7 +155,7 @@ def parse_json_config(
     optional_groups_to_remove: List[str] = []
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
-        for key, value in config_file_dict.items():
+        for key, value in list(config_file_dict.items()):
             key = key.replace("/ENTRY[entry]/", f"/ENTRY[{entry_name}]/")
             if not isinstance(value, str) or ":" not in value:
                 continue
@@ -196,6 +211,7 @@ class MultiFormatReader(BaseReader):
     kwargs: Optional[Dict[str, Any]] = None
     overwrite_keys: bool = True
     processing_order: Optional[List[str]] = None
+    config_file: Optional[str] = None
 
     def __init__(self, config_file: Optional[str] = None):
         self.callbacks = ParseJsonCallbacks(

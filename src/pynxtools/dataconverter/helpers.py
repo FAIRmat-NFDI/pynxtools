@@ -874,13 +874,13 @@ def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
     def update_and_warn(key: str, value: str, overwrite=False):
         if key in data and data[key] is not None and data[key] != value:
             report = (
-                f"This is overwritten by the actually used value '{value}'"
+                f"This is overwritten by the actually used value '{data[key]}'"
                 if overwrite
-                else f"The provided version '{value}' is kept. We assume you know what you are doing."
+                else f"The provided version '{data[key]}' is kept. We assume you know what you are doing."
             )
             logger.log(
                 logging.WARNING if overwrite else logging.INFO,
-                f"The entry '{key}' (value: {data[key]}) should not be changed by "
+                f"The entry '{key}' (value: {value}) should not be changed by "
                 f"the reader. {report}",
             )
         if overwrite or data.get(key) is None:
