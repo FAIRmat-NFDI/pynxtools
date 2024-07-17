@@ -29,7 +29,6 @@ from pynxtools.dataconverter.readers.utils import (
     is_integer,
     is_number,
     parse_flatten_json,
-    parse_yml,
     to_bool,
 )
 from pynxtools.dataconverter.template import Template
@@ -138,7 +137,7 @@ def parse_json_config(
     config_file_dict = parse_flatten_json(file_path)
     fill_wildcard_data_indices(config_file_dict, callbacks.dims)
 
-    dependent_keys: Dict[str, List[str]] = {}
+    optional_groups_to_remove: List[str] = []
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
         for key, value in config_file_dict.items():
@@ -149,12 +148,9 @@ def parse_json_config(
             prefix_part, value = value.split(":", 1)
             prefixes = re.findall(r"@(\w+)", prefix_part)
 
-            if prefix_part.startswith("?"):
-                config_file_dict[key] = value
-                main_key = f'{key.rsplit("/", 1)[0]}/{prefix_part[1:]}'
-                if main_key not in dependent_keys:
-                    dependent_keys[main_key] = []
-                dependent_keys[main_key].append(key)
+            if prefix_part.startswith("!"):
+                optional_groups_to_remove.append(key)
+                prefix_part = prefix_part[1:]
 
             for prefix in prefixes:
                 config_file_dict[key] = callbacks.apply_special_key(prefix, key, value)
@@ -174,11 +170,17 @@ def parse_json_config(
                     f"Tried prefixes: {prefixes}."
                 )
 
-    # Remove dependent keys who's main key is not present
-    for key, value in dependent_keys.items():
-        if key not in config_file_dict:
-            for dk in dependent_keys:
-                del config_file_dict[dk]
+    # remove groups that have main keys missing
+    for main_key in optional_groups_to_remove:
+        if config_file_dict.get(main_key) is None:
+            group_to_delete = key.rsplit("/", 1)[0]
+            logger.info(
+                f"Main element {key} not provided. "
+                f"Removing the parent group {group_to_delete}."
+            )
+            if key in config_file_dict.keys():
+                if key.startswith(group_to_delete):
+                    del config_file_dict[key]
 
     return config_file_dict
 
@@ -193,6 +195,7 @@ class MultiFormatReader(BaseReader):
     extensions: Dict[str, Callable[[Any], dict]] = {}
     kwargs: Optional[Dict[str, Any]] = None
     overwrite_keys: bool = True
+    processing_order: Optional[List[str]] = None
 
     def __init__(self, config_file: Optional[str] = None):
         self.callbacks = ParseJsonCallbacks(
@@ -236,7 +239,7 @@ class MultiFormatReader(BaseReader):
         Returns data from the given eln path.
         Should return None if the path does not exist.
         """
-        return parse_yml(path)
+        return {}
 
     def get_data_dims(self, path: str) -> List[str]:
         """
@@ -262,13 +265,22 @@ class MultiFormatReader(BaseReader):
         Reads data from multiple files and passes them to the appropriate functions
         in the extensions dict.
         """
+        self.kwargs = kwargs
         self.config_file = self.kwargs.get("config_file", self.config_file)
         self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)
 
         template = Template(overwrite_keys=self.overwrite_keys)
-        self.kwargs = kwargs
 
-        sorted_paths = sorted(file_paths, key=lambda x: os.path.splitext(x)[1])
+        def get_processing_order(path: str) -> Tuple[int, Union[str, int]]:
+            """
+            Returns the processing order of the file.
+            """
+            ext = os.path.splitext(path)[1]
+            if self.processing_order is None or ext not in self.processing_order:
+                return (1, ext)
+            return (0, self.processing_order.index(ext))
+
+        sorted_paths = sorted(file_paths, key=get_processing_order)
         for file_path in sorted_paths:
             extension = os.path.splitext(file_path)[1].lower()
             if extension not in self.extensions:
