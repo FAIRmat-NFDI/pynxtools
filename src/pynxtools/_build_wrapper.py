@@ -28,6 +28,7 @@ def get_vcs_version(tag_match="*[0-9]*") -> Optional[str]:
                     "--dirty",
                     "--tags",
                     "--long",
+                    "--abbrev=8",
                     "--match",
                     tag_match,
                 ],
