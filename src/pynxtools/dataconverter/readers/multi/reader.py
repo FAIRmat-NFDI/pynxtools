@@ -152,6 +152,7 @@ def parse_json_config(
     fill_wildcard_data_indices(config_file_dict, callbacks.dims)
 
     optional_groups_to_remove: List[str] = []
+    new_entry_dict = {}
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
         for key, value in list(config_file_dict.items()):
@@ -167,18 +168,18 @@ def parse_json_config(
                 prefix_part = prefix_part[1:]
 
             for prefix in prefixes:
-                config_file_dict[key] = callbacks.apply_special_key(prefix, key, value)
+                new_entry_dict[key] = callbacks.apply_special_key(prefix, key, value)
 
                 # We found a match. Stop resolving other prefixes.
-                if config_file_dict[key] is not None:
+                if new_entry_dict[key] is not None:
                     break
 
             last_value = prefix_part.rsplit(",", 1)[-1]
-            if config_file_dict[key] is None and last_value[0] not in ("@", "?"):
-                config_file_dict[key] = try_convert(last_value)
+            if new_entry_dict[key] is None and last_value[0] not in ("@", "?"):
+                new_entry_dict[key] = try_convert(last_value)
 
-            if prefixes and config_file_dict[key] is None:
-                del config_file_dict[key]
+            if prefixes and new_entry_dict[key] is None:
+                del new_entry_dict[key]
                 logger.warning(
                     f"Could not find value for key {key} with value {value}.\n"
                     f"Tried prefixes: {prefixes}."
@@ -186,17 +187,17 @@ def parse_json_config(
 
     # remove groups that have main keys missing
     for main_key in optional_groups_to_remove:
-        if config_file_dict.get(main_key) is None:
+        if new_entry_dict.get(main_key) is None:
             group_to_delete = key.rsplit("/", 1)[0]
             logger.info(
                 f"Main element {key} not provided. "
                 f"Removing the parent group {group_to_delete}."
             )
-            if key in config_file_dict.keys():
+            if key in new_entry_dict.keys():
                 if key.startswith(group_to_delete):
-                    del config_file_dict[key]
+                    del new_entry_dict[key]
 
-    return config_file_dict
+    return new_entry_dict
 
 
 class MultiFormatReader(BaseReader):
