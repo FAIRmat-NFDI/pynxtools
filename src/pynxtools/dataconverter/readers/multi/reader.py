@@ -269,6 +269,12 @@ class MultiFormatReader(BaseReader):
         """
         return ["entry"]
 
+    def post_process(self) -> None:
+        """
+        Do postprocessing after all files are read and before the
+        config file is evaluated.
+        """
+
     def read(
         self,
         template: dict = None,
@@ -311,6 +317,8 @@ class MultiFormatReader(BaseReader):
 
         template.update(self.setup_template())
         template.update(self.handle_objects(objects))
+
+        self.post_process()
         if self.config_file is not None:
             template.update(
                 parse_json_config(
