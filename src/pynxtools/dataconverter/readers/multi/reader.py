@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def fill_wildcard_data_indices(config_file_dict, dims_callback):
+def fill_wildcard_data_indices(config_file_dict, callbacks):
     """
     Replaces the wildcard data indices (*) with the respective dimension entries.
     """
@@ -47,7 +47,7 @@ def fill_wildcard_data_indices(config_file_dict, dims_callback):
             if k.startswith(key):
                 yield v
 
-    dims = dims_callback()
+    dims = callbacks.dims(callbacks.entry_name)
 
     for key, value in list(config_file_dict.items()):
         if "*" not in key:
@@ -149,14 +149,22 @@ def parse_json_config(
         callbacks = ParseJsonCallbacks()
 
     config_file_dict = parse_flatten_json(file_path)
-    fill_wildcard_data_indices(config_file_dict, callbacks.dims)
+    fill_wildcard_data_indices(config_file_dict, callbacks)
 
     optional_groups_to_remove: List[str] = []
     new_entry_dict = {}
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
-        for key, value in list(config_file_dict.items()):
+
+        # Process '!...' keys first
+        sorted_keys = sorted(config_file_dict, key=lambda x: not x.startswith("!"))
+        for key in sorted_keys:
+            value = config_file_dict[key]
             key = key.replace("/ENTRY[entry]/", f"/ENTRY[{entry_name}]/")
+
+            if key.rsplit("/", 1)[0] in optional_groups_to_remove:
+                continue
+
             if not isinstance(value, str) or ":" not in value:
                 new_entry_dict[key] = value
                 continue
@@ -165,6 +173,7 @@ def parse_json_config(
             prefixes = re.findall(r"@(\w+)", prefix_part)
 
             if prefix_part.startswith("!"):
+                optional_groups_to_remove.append(key.rsplit("/", 1)[0])
                 optional_groups_to_remove.append(key)
                 prefix_part = prefix_part[1:]
 
@@ -176,8 +185,17 @@ def parse_json_config(
                     break
 
             last_value = prefix_part.rsplit(",", 1)[-1]
-            if new_entry_dict[key] is None and last_value[0] not in ("@", "?"):
+            if new_entry_dict[key] is None and last_value[0] not in ("@", "!"):
                 new_entry_dict[key] = try_convert(last_value)
+
+            if prefix_part.startswith("!") and new_entry_dict[key] is None:
+                group_to_delete = key.rsplit("/", 1)[0]
+                logger.info(
+                    f"Main element {key} not provided. "
+                    f"Removing the parent group {group_to_delete}."
+                )
+                optional_groups_to_remove.append(group_to_delete)
+                continue
 
             if prefixes and new_entry_dict[key] is None:
                 del new_entry_dict[key]
@@ -191,18 +209,6 @@ def parse_json_config(
                 key
             ].startswith("@link:"):
                 new_entry_dict[key] = {"link": new_entry_dict[key][6:]}
-
-    # remove groups that have main keys missing
-    for main_key in optional_groups_to_remove:
-        if new_entry_dict.get(main_key) is None:
-            group_to_delete = key.rsplit("/", 1)[0]
-            logger.info(
-                f"Main element {key} not provided. "
-                f"Removing the parent group {group_to_delete}."
-            )
-            if key in new_entry_dict.keys():
-                if key.startswith(group_to_delete):
-                    del new_entry_dict[key]
 
     return new_entry_dict
 
