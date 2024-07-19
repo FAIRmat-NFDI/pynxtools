@@ -187,9 +187,9 @@ def parse_json_config(
                 )
 
             # after filling, resolve links again:
-            if isinstance(new_entry_dict.get(key), str) and new_entry_dict[key].startswith(
-                "@link:"
-            ):
+            if isinstance(new_entry_dict.get(key), str) and new_entry_dict[
+                key
+            ].startswith("@link:"):
                 new_entry_dict[key] = {"link": new_entry_dict[key][6:]}
 
     # remove groups that have main keys missing
