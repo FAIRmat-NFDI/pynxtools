@@ -187,7 +187,7 @@ def parse_json_config(
                 )
 
             # after filling, resolve links again:
-            if isinstance(new_entry_dict[key], str) and new_entry_dict[key].startswith(
+            if isinstance(new_entry_dict.get(key), str) and new_entry_dict[key].startswith(
                 "@link:"
             ):
                 new_entry_dict[key] = {"link": new_entry_dict[key][6:]}
