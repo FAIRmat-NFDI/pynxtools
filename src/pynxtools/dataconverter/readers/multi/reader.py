@@ -186,6 +186,12 @@ def parse_json_config(
                     f"Tried prefixes: {prefixes}."
                 )
 
+            # after filling, resolve links again:
+            if isinstance(new_entry_dict[key], str) and new_entry_dict[key].startswith(
+                "@link:"
+            ):
+                new_entry_dict[key] = {"link": new_entry_dict[key][6:]}
+
     # remove groups that have main keys missing
     for main_key in optional_groups_to_remove:
         if new_entry_dict.get(main_key) is None:
