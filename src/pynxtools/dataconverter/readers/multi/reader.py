@@ -158,6 +158,7 @@ def parse_json_config(
         for key, value in list(config_file_dict.items()):
             key = key.replace("/ENTRY[entry]/", f"/ENTRY[{entry_name}]/")
             if not isinstance(value, str) or ":" not in value:
+                new_entry_dict[key] = value
                 continue
 
             prefix_part, value = value.split(":", 1)
