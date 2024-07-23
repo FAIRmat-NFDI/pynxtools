@@ -183,8 +183,8 @@ def resolve_special_keys(
         new_entry_dict[key] = {"link": new_entry_dict[key][6:]}
 
 
-def parse_json_config(
-    file_path: str,
+def fill_from_config(
+    config_dict: Dict[str, Any],
     entry_names: List[str],
     callbacks: Optional[ParseJsonCallbacks] = None,
 ) -> dict:
@@ -196,17 +196,15 @@ def parse_json_config(
         # Use default callbacks if none are explicitly provided
         callbacks = ParseJsonCallbacks()
 
-    config_file_dict = parse_flatten_json(file_path)
-
     optional_groups_to_remove: List[str] = []
     new_entry_dict = {}
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
 
         # Process '!...' keys first
-        sorted_keys = sorted(config_file_dict, key=lambda x: not x.startswith("!"))
+        sorted_keys = sorted(config_dict, key=lambda x: not x.startswith("!"))
         for key in sorted_keys:
-            value = config_file_dict[key]
+            value = config_dict[key]
             key = key.replace("/ENTRY[entry]/", f"/ENTRY[{entry_name}]/")
 
             if key.rsplit("/", 1)[0] in optional_groups_to_remove:
@@ -214,9 +212,7 @@ def parse_json_config(
 
             if "*" in key:
                 dims = callbacks.dims(value)
-                dim_data = fill_wildcard_data_indices(
-                    config_file_dict, key, value, dims
-                )
+                dim_data = fill_wildcard_data_indices(config_dict, key, value, dims)
                 for k, v in dim_data.items():
                     resolve_special_keys(
                         dim_data, k, v, optional_groups_to_remove, callbacks
@@ -350,11 +346,15 @@ class MultiFormatReader(BaseReader):
         template.update(self.setup_template())
         template.update(self.handle_objects(objects))
 
-        self.post_process()
         if self.config_file is not None:
+            self.config_dict = parse_flatten_json(self.config_file)
+
+        self.post_process()
+
+        if self.config_dict:
             template.update(
-                parse_json_config(
-                    self.config_file, self.get_entry_names(), self.callbacks
+                fill_from_config(
+                    self.config_dict, self.get_entry_names(), self.callbacks
                 )
             )
 
