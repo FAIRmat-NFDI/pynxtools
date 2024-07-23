@@ -93,10 +93,10 @@ class ParseJsonCallbacks:
         entry_name: str = "entry",
     ):
         self.special_key_map = {
-            "attrs": attrs_callback if attrs_callback is not None else self.identity,
-            "link": link_callback if link_callback is not None else self.link_callback,
-            "data": data_callback if data_callback is not None else self.identity,
-            "eln": eln_callback if eln_callback is not None else self.identity,
+            "@attrs": attrs_callback if attrs_callback is not None else self.identity,
+            "@link": link_callback if link_callback is not None else self.link_callback,
+            "@data": data_callback if data_callback is not None else self.identity,
+            "@eln": eln_callback if eln_callback is not None else self.identity,
         }
 
         self.dims = dims if dims is not None else lambda *_, **__: []
@@ -141,26 +141,18 @@ def resolve_special_keys(
         new_entry_dict[key] = value
         return
 
-    prefix_part, value = value.split(":", 1)
-    prefixes = re.findall(r"@(\w+)", prefix_part)
-
-    if prefix_part.startswith("!"):
-        optional_groups_to_remove.append(key.rsplit("/", 1)[0])
-        optional_groups_to_remove.append(key)
-        prefix_part = prefix_part[1:]
-
-    for prefix in prefixes:
-        new_entry_dict[key] = callbacks.apply_special_key(prefix, key, value)
+    prefixes = re.findall(r"(@\w+)(\:([^,]+))?", value)
+    for prefix, _, path in prefixes:
+        if not prefix.startswith("@"):
+            new_entry_dict[key] = try_convert(path)
+            break
+        new_entry_dict[key] = callbacks.apply_special_key(prefix, key, path)
 
         # We found a match. Stop resolving other prefixes.
         if new_entry_dict[key] is not None:
             break
 
-    last_value = prefix_part.rsplit(",", 1)[-1]
-    if new_entry_dict[key] is None and last_value[0] not in ("@", "!"):
-        new_entry_dict[key] = try_convert(last_value)
-
-    if prefix_part.startswith("!") and new_entry_dict[key] is None:
+    if value.startswith("!") and new_entry_dict[key] is None:
         group_to_delete = key.rsplit("/", 1)[0]
         logger.info(
             f"Main element {key} not provided. "
