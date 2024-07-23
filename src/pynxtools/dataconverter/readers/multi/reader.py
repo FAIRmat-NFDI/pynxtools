@@ -299,8 +299,7 @@ class MultiFormatReader(BaseReader):
 
     def post_process(self) -> None:
         """
-        Do postprocessing after all files are read and before the
-        config file is evaluated.
+        Do postprocessing after all files and config file are read.
         """
 
     def read(
