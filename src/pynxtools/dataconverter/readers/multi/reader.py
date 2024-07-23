@@ -79,17 +79,17 @@ class ParseJsonCallbacks:
             The current entry name to use.
     """
 
-    special_key_map: Dict[str, Callable[[str], Any]]
+    special_key_map: Dict[str, Callable[[str, str], Any]]
     entry_name: str
-    dims: Callable[[str], List[str]]
+    dims: Callable[[str, str], List[str]]
 
     def __init__(
         self,
-        attrs_callback: Optional[Callable[[str], Any]] = None,
-        data_callback: Optional[Callable[[str], Any]] = None,
-        link_callback: Optional[Callable[[str], Any]] = None,
-        eln_callback: Optional[Callable[[str], Any]] = None,
-        dims: Optional[Callable[[str], List[str]]] = None,
+        attrs_callback: Optional[Callable[[str, str], Any]] = None,
+        data_callback: Optional[Callable[[str, str], Any]] = None,
+        link_callback: Optional[Callable[[str, str], Any]] = None,
+        eln_callback: Optional[Callable[[str, str], Any]] = None,
+        dims: Optional[Callable[[str, str], List[str]]] = None,
         entry_name: str = "entry",
     ):
         self.special_key_map = {
@@ -99,20 +99,20 @@ class ParseJsonCallbacks:
             "eln": eln_callback if eln_callback is not None else self.identity,
         }
 
-        self.dims = dims if dims is not None else lambda _: []
+        self.dims = dims if dims is not None else lambda *_, **__: []
         self.entry_name = entry_name
 
-    def link_callback(self, value: str) -> Dict[str, Any]:
+    def link_callback(self, key: str, value: str) -> Dict[str, Any]:
         return {"link": value.replace("/entry/", f"/{self.entry_name}/")}
 
-    def identity(self, value: str) -> str:
+    def identity(self, _: str, value: str) -> str:
         return value
 
     def apply_special_key(self, precursor, key, value):
         """
         Apply the special key to the value.
         """
-        return self.special_key_map.get(precursor, self.identity)(value)
+        return self.special_key_map.get(precursor, self.identity)(key, value)
 
 
 def resolve_special_keys(
@@ -211,7 +211,7 @@ def fill_from_config(
                 continue
 
             if "*" in key:
-                dims = callbacks.dims(value)
+                dims = callbacks.dims(key, value)
                 dim_data = fill_wildcard_data_indices(config_dict, key, value, dims)
                 for k, v in dim_data.items():
                     resolve_special_keys(
@@ -263,28 +263,28 @@ class MultiFormatReader(BaseReader):
         """
         return {}
 
-    def get_attr(self, path: str) -> Any:
+    def get_attr(self, key: str, path: str) -> Any:
         """
         Returns an attributes from the given path.
         Should return None if the path does not exist.
         """
         return None
 
-    def get_data(self, path: str) -> Any:
+    def get_data(self, key: str, path: str) -> Any:
         """
         Returns data from the given path.
         Should return None if the path does not exist.
         """
         return None
 
-    def get_eln_data(self, path: str) -> Any:
+    def get_eln_data(self, key: str, path: str) -> Any:
         """
         Returns data from the given eln path.
         Should return None if the path does not exist.
         """
         return {}
 
-    def get_data_dims(self, path: str) -> List[str]:
+    def get_data_dims(self, key: str, path: str) -> List[str]:
         """
         Returns the dimensions of the data from the given path.
         """
