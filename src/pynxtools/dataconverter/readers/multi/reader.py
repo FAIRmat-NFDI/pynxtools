@@ -205,7 +205,7 @@ def fill_from_config(
         sorted_keys = sorted(config_dict, key=lambda x: not x.startswith("!"))
         for key in sorted_keys:
             value = config_dict[key]
-            key = key.replace("/ENTRY[entry]/", f"/ENTRY[{entry_name}]/")
+            key = key.replace("/ENTRY/", f"/ENTRY[{entry_name}]/")
 
             if key.rsplit("/", 1)[0] in optional_groups_to_remove:
                 continue
