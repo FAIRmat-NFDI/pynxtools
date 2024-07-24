@@ -157,7 +157,7 @@ def resolve_special_keys(
         new_entry_dict[key] = value
         return
 
-    prefixes: List[Union[Tuple[str, str], str]] = []
+    prefixes: List[Tuple[str, str]] = []
 
     # Regular expression to check if the string contains a list
     if re.match(r"^\[.*\]$", value):
