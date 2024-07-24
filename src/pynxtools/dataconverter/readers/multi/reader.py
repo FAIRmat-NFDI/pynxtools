@@ -20,6 +20,7 @@
 import logging
 import os
 import re
+import ast
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -121,6 +122,7 @@ def resolve_special_keys(
     value: Any,
     optional_groups_to_remove: List[str],
     callbacks: ParseJsonCallbacks,
+    suppress_warning: bool = False,
 ) -> None:
     def try_convert(value: str) -> Union[str, float, int, bool]:
         """
@@ -137,12 +139,42 @@ def resolve_special_keys(
 
         return value
 
-    if not isinstance(value, str) or ":" not in value:
+    def parse_config_value(value: str) -> Tuple[str, Any]:
+        # Regex pattern to match @prefix:some_string
+        pattern = r"!?(@\w+)(?::(.*))?"
+        match = re.match(pattern, value)
+        if match:
+            prefix, suffix = match.groups()
+            if suffix is None:
+                suffix = ""
+            return (prefix, suffix)
+        else:
+            return ("", value)
+
+    if not isinstance(value, str) or "@" not in str(value):
+        if isinstance(value, str):
+            value = value.lstrip("!")
         new_entry_dict[key] = value
         return
 
-    prefixes = re.findall(r"(@\w+)(\:([^,]+))?", value)
-    for prefix, _, path in prefixes:
+    prefixes: List[Union[Tuple[str, str], str]] = []
+
+    # Regular expression to check if the string contains a list
+    if re.match(r"^\[.*\]$", value):
+        try:
+            # Safely evaluate the string to a list
+            list_value = ast.literal_eval(value)
+            if isinstance(list_value, list):
+                prefixes = [parse_config_value(v) for v in list_value]
+            else:
+                prefixes = [parse_config_value(value)]
+        except (SyntaxError, ValueError):
+            # If the evaluation fails, treat it as a single string
+            prefixes = [parse_config_value(value)]
+    else:
+        prefixes = [parse_config_value(value)]
+
+    for prefix, path in prefixes:
         if not prefix.startswith("@"):
             new_entry_dict[key] = try_convert(path)
             break
@@ -163,10 +195,11 @@ def resolve_special_keys(
 
     if prefixes and new_entry_dict[key] is None:
         del new_entry_dict[key]
-        logger.warning(
-            f"Could not find value for key {key} with value {value}.\n"
-            f"Tried prefixes: {prefixes}."
-        )
+        if not suppress_warning:
+            logger.warning(
+                f"Could not find value for key {key} with value {value}.\n"
+                f"Tried prefixes: {prefixes}."
+            )
 
     # after filling, resolve links again:
     if isinstance(new_entry_dict.get(key), str) and new_entry_dict[key].startswith(
@@ -179,6 +212,7 @@ def fill_from_config(
     config_dict: Dict[str, Any],
     entry_names: List[str],
     callbacks: Optional[ParseJsonCallbacks] = None,
+    suppress_warning: bool = False,
 ) -> dict:
     """
     Parses a json file and returns the data as a dictionary.
@@ -213,13 +247,23 @@ def fill_from_config(
                 dim_data = fill_wildcard_data_indices(config_dict, key, value, dims)
                 for k, v in dim_data.items():
                     resolve_special_keys(
-                        dim_data, k, v, optional_groups_to_remove, callbacks
+                        dim_data,
+                        k,
+                        v,
+                        optional_groups_to_remove,
+                        callbacks,
+                        suppress_warning,
                     )
                 new_entry_dict.update(dim_data)
                 continue
 
             resolve_special_keys(
-                new_entry_dict, key, value, optional_groups_to_remove, callbacks
+                new_entry_dict,
+                key,
+                value,
+                optional_groups_to_remove,
+                callbacks,
+                suppress_warning,
             )
 
     return new_entry_dict
@@ -349,11 +393,21 @@ class MultiFormatReader(BaseReader):
         self.post_process()
 
         if self.config_dict:
-            template.update(
-                fill_from_config(
-                    self.config_dict, self.get_entry_names(), self.callbacks
+            if "suppress_warning" in kwargs:
+                template.update(
+                    fill_from_config(
+                        self.config_dict,
+                        self.get_entry_names(),
+                        self.callbacks,
+                        kwargs["suppress_warning"],
+                    )
                 )
-            )
+            else:
+                template.update(
+                    fill_from_config(
+                        self.config_dict, self.get_entry_names(), self.callbacks
+                    )
+                )
 
         return template
 
