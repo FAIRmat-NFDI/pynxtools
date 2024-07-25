@@ -305,6 +305,7 @@ class MultiFormatReader(BaseReader):
     overwrite_keys: bool = True
     processing_order: Optional[List[str]] = None
     config_file: Optional[str] = None
+    config_dict: Dict[str, Any]
 
     def __init__(self, config_file: Optional[str] = None):
         self.callbacks = ParseJsonCallbacks(
@@ -314,6 +315,7 @@ class MultiFormatReader(BaseReader):
             dims=self.get_data_dims,
         )
         self.config_file = config_file
+        self.config_dict = {}
 
     def setup_template(self) -> Dict[str, Any]:
         """
