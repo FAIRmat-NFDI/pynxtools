@@ -17,6 +17,7 @@
 #
 """An example reader implementation for the DataConverter."""
 
+import ast
 import logging
 import os
 import re
@@ -103,9 +104,17 @@ class ParseJsonCallbacks:
         self.entry_name = entry_name
 
     def link_callback(self, key: str, value: str) -> Dict[str, Any]:
+        """
+        Modify links to dictionaries with the correct entry name.
+        """
         return {"link": value.replace("/entry/", f"/{self.entry_name}/")}
 
     def identity(self, _: str, value: str) -> str:
+        """
+        Returns the input value unchanged.
+
+        This method serves as an identity function in case no callback is set.
+        """
         return value
 
     def apply_special_key(self, precursor, key, value):
@@ -121,7 +130,15 @@ def resolve_special_keys(
     value: Any,
     optional_groups_to_remove: List[str],
     callbacks: ParseJsonCallbacks,
+    suppress_warning: bool = False,
 ) -> None:
+    """
+    Resolves the special keys (denoted by "@") through the callbacks.
+
+    Also takes care of the "!" notation, i.e., removes optional groups
+    if a required sub-element cannot be filled.
+    """
+
     def try_convert(value: str) -> Union[str, float, int, bool]:
         """
         Try to convert the value to float, int or bool.
@@ -137,12 +154,47 @@ def resolve_special_keys(
 
         return value
 
-    if not isinstance(value, str) or ":" not in value:
+    def parse_config_value(value: str) -> Tuple[str, Any]:
+        """
+        Separates the prefixes (denoted by "@") from the rest
+        of the value.
+
+        Parameters
+        ----------
+        value : str
+            Config dict value.
+
+        Returns
+        -------
+        Tuple[str, Any]
+            Tuple like (prefix, path).
+
+        """
+        # Regex pattern to match @prefix:some_string
+        pattern = r"!?(@\w+)(?::(.*))?"
+        prefixes = re.findall(pattern, value)
+        if not prefixes:
+            return ("", value)
+        return prefixes[0]
+
+    # Handle non-keyword values
+    if not isinstance(value, str) or "@" not in str(value):
+        if isinstance(value, str):
+            # Handle "!" notation for required fields in optional groups
+            value = value.lstrip("!")
         new_entry_dict[key] = value
         return
 
-    prefixes = re.findall(r"(@\w+)(\:([^,]+))?", value)
-    for prefix, _, path in prefixes:
+    prefixes: List[Tuple[str, str]] = []
+
+    try:
+        # Safely evaluate the string to a list
+        list_value = ast.literal_eval(value)
+        prefixes = [parse_config_value(v) for v in list_value]
+    except (SyntaxError, ValueError):
+        prefixes = [parse_config_value(value)]
+
+    for prefix, path in prefixes:
         if not prefix.startswith("@"):
             new_entry_dict[key] = try_convert(path)
             break
@@ -163,10 +215,11 @@ def resolve_special_keys(
 
     if prefixes and new_entry_dict[key] is None:
         del new_entry_dict[key]
-        logger.warning(
-            f"Could not find value for key {key} with value {value}.\n"
-            f"Tried prefixes: {prefixes}."
-        )
+        if not suppress_warning:
+            logger.warning(
+                f"Could not find value for key {key} with value {value}.\n"
+                f"Tried prefixes: {prefixes}."
+            )
 
     # after filling, resolve links again:
     if isinstance(new_entry_dict.get(key), str) and new_entry_dict[key].startswith(
@@ -179,12 +232,17 @@ def fill_from_config(
     config_dict: Dict[str, Any],
     entry_names: List[str],
     callbacks: Optional[ParseJsonCallbacks] = None,
+    suppress_warning: bool = False,
 ) -> dict:
     """
-    Parses a json file and returns the data as a dictionary.
+    Parses a config dictionary and returns the data as a dictionary.
     """
 
     def has_missing_main(key: str) -> bool:
+        """
+        Checks if a key starts with a name of a group that has
+        to be removed because a required child is missing.
+        """
         for optional_group in optional_groups_to_remove:
             if key.startswith(optional_group):
                 return True
@@ -213,13 +271,23 @@ def fill_from_config(
                 dim_data = fill_wildcard_data_indices(config_dict, key, value, dims)
                 for k, v in dim_data.items():
                     resolve_special_keys(
-                        dim_data, k, v, optional_groups_to_remove, callbacks
+                        dim_data,
+                        k,
+                        v,
+                        optional_groups_to_remove,
+                        callbacks,
+                        suppress_warning,
                     )
                 new_entry_dict.update(dim_data)
                 continue
 
             resolve_special_keys(
-                new_entry_dict, key, value, optional_groups_to_remove, callbacks
+                new_entry_dict,
+                key,
+                value,
+                optional_groups_to_remove,
+                callbacks,
+                suppress_warning,
             )
 
     return new_entry_dict
@@ -351,7 +419,10 @@ class MultiFormatReader(BaseReader):
         if self.config_dict:
             template.update(
                 fill_from_config(
-                    self.config_dict, self.get_entry_names(), self.callbacks
+                    self.config_dict,
+                    self.get_entry_names(),
+                    self.callbacks,
+                    **{k: v for k, v in kwargs.items() if k == "suppress_warning"},
                 )
             )
 

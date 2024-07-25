@@ -39,14 +39,14 @@ class FlattenSettings:
         convert_dict (dict): Dictionary for renaming keys in the flattend dict.
         replace_nested (dict): Dictionary for renaming nested keys.
         parent_key (str, optional):
-            Parent key of the dictionary. Defaults to "/ENTRY[entry]".
+            Parent key of the dictionary. Defaults to "/ENTRY".
         sep (str, optional): Separator for the keys. Defaults to "/".
     """
 
     dic: Mapping
     convert_dict: dict
     replace_nested: dict
-    parent_key: str = "/ENTRY[entry]"
+    parent_key: str = "/ENTRY"
     sep: str = "/"
     is_in_section: bool = False
     ignore_keys: Optional[list] = None
@@ -248,8 +248,6 @@ def flatten_json(
                     dont_flatten_link_dict=dont_flatten_link_dict,
                 )
             )
-        elif isinstance(value, str) and value.startswith("@link:"):
-            flattened_config[key] = {"link": value[6:]}
         else:
             flattened_config[key] = value
 
