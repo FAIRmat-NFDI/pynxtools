@@ -17,10 +17,10 @@
 #
 """An example reader implementation for the DataConverter."""
 
+import ast
 import logging
 import os
 import re
-import ast
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
