@@ -184,6 +184,12 @@ def fill_from_config(
     Parses a json file and returns the data as a dictionary.
     """
 
+    def has_missing_main(key: str) -> bool:
+        for optional_group in optional_groups_to_remove:
+            if key.startswith(optional_group):
+                return True
+        return False
+
     if callbacks is None:
         # Use default callbacks if none are explicitly provided
         callbacks = ParseJsonCallbacks()
@@ -199,7 +205,7 @@ def fill_from_config(
             value = config_dict[key]
             key = key.replace("/ENTRY/", f"/ENTRY[{entry_name}]/")
 
-            if key.rsplit("/", 1)[0] in optional_groups_to_remove:
+            if has_missing_main(key):
                 continue
 
             if "*" in key:
