@@ -39,7 +39,7 @@ class FlattenSettings:
         convert_dict (dict): Dictionary for renaming keys in the flattend dict.
         replace_nested (dict): Dictionary for renaming nested keys.
         parent_key (str, optional):
-            Parent key of the dictionary. Defaults to "/ENTRY[entry]".
+            Parent key of the dictionary. Defaults to "/ENTRY".
         sep (str, optional): Separator for the keys. Defaults to "/".
     """
 

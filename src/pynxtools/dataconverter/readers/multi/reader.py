@@ -104,9 +104,17 @@ class ParseJsonCallbacks:
         self.entry_name = entry_name
 
     def link_callback(self, key: str, value: str) -> Dict[str, Any]:
+        """
+        Modify links to dictionaries with the correct entry name.
+        """
         return {"link": value.replace("/entry/", f"/{self.entry_name}/")}
 
     def identity(self, _: str, value: str) -> str:
+        """
+        Returns the input value unchanged.
+
+        This method serves as an identity function in case no callback is set.
+        """
         return value
 
     def apply_special_key(self, precursor, key, value):
@@ -124,6 +132,13 @@ def resolve_special_keys(
     callbacks: ParseJsonCallbacks,
     suppress_warning: bool = False,
 ) -> None:
+    """
+    Resolves the special keys (denoted by "@") through the callbacks.
+
+    Also takes care of the "!" notation, i.e., removes optional groups
+    if a required sub-element cannot be filled.
+    """
+
     def try_convert(value: str) -> Union[str, float, int, bool]:
         """
         Try to convert the value to float, int or bool.
@@ -140,38 +155,43 @@ def resolve_special_keys(
         return value
 
     def parse_config_value(value: str) -> Tuple[str, Any]:
+        """
+        Separates the prefixes (denoted by "@") from the rest
+        of the value.
+
+        Parameters
+        ----------
+        value : str
+            Config dict value.
+
+        Returns
+        -------
+        Tuple[str, Any]
+            Tuple like (prefix, path).
+
+        """
         # Regex pattern to match @prefix:some_string
         pattern = r"!?(@\w+)(?::(.*))?"
-        match = re.match(pattern, value)
-        if match:
-            prefix, suffix = match.groups()
-            if suffix is None:
-                suffix = ""
-            return (prefix, suffix)
-        else:
+        prefixes = re.findall(pattern, value)
+        if not prefixes:
             return ("", value)
+        return prefixes[0]
 
+    # Handle non-keyword values
     if not isinstance(value, str) or "@" not in str(value):
         if isinstance(value, str):
+            # Handle "!" notation for required fields in optional groups
             value = value.lstrip("!")
         new_entry_dict[key] = value
         return
 
     prefixes: List[Tuple[str, str]] = []
 
-    # Regular expression to check if the string contains a list
-    if re.match(r"^\[.*\]$", value):
-        try:
-            # Safely evaluate the string to a list
-            list_value = ast.literal_eval(value)
-            if isinstance(list_value, list):
-                prefixes = [parse_config_value(v) for v in list_value]
-            else:
-                prefixes = [parse_config_value(value)]
-        except (SyntaxError, ValueError):
-            # If the evaluation fails, treat it as a single string
-            prefixes = [parse_config_value(value)]
-    else:
+    try:
+        # Safely evaluate the string to a list
+        list_value = ast.literal_eval(value)
+        prefixes = [parse_config_value(v) for v in list_value]
+    except (SyntaxError, ValueError):
         prefixes = [parse_config_value(value)]
 
     for prefix, path in prefixes:
@@ -215,10 +235,14 @@ def fill_from_config(
     suppress_warning: bool = False,
 ) -> dict:
     """
-    Parses a json file and returns the data as a dictionary.
+    Parses a config dictionary and returns the data as a dictionary.
     """
 
     def has_missing_main(key: str) -> bool:
+        """
+        Checks if a key starts with a name of a group that has
+        to be removed because a required child is missing.
+        """
         for optional_group in optional_groups_to_remove:
             if key.startswith(optional_group):
                 return True
@@ -393,21 +417,14 @@ class MultiFormatReader(BaseReader):
         self.post_process()
 
         if self.config_dict:
-            if "suppress_warning" in kwargs:
-                template.update(
-                    fill_from_config(
-                        self.config_dict,
-                        self.get_entry_names(),
-                        self.callbacks,
-                        kwargs["suppress_warning"],
-                    )
+            template.update(
+                fill_from_config(
+                    self.config_dict,
+                    self.get_entry_names(),
+                    self.callbacks,
+                    **{k: v for k, v in kwargs.items() if k == "suppress_warning"},
                 )
-            else:
-                template.update(
-                    fill_from_config(
-                        self.config_dict, self.get_entry_names(), self.callbacks
-                    )
-                )
+            )
 
         return template
 
