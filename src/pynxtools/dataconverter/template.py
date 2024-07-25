@@ -27,7 +27,6 @@ from pynxtools.dataconverter import helpers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
 
 
 class Template(dict):
