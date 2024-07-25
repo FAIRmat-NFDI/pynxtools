@@ -42,7 +42,6 @@ from pynxtools.dataconverter.writer import Writer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
 
 
 if sys.version_info >= (3, 10):

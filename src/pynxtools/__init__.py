@@ -16,12 +16,19 @@
 # limitations under the License.
 #
 
+import logging
 import os
 import re
 from datetime import datetime
 
 from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
+
+logging.basicConfig(level=logging.WARNING)
+root_logger = logging.getLogger()
+for handler in root_logger.handlers:
+    root_logger.removeHandler(handler)
+root_logger.addHandler(logging.StreamHandler())
 
 MAIN_BRANCH_NAME = "fairmat"
 
