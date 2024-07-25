@@ -46,7 +46,7 @@ class FlattenSettings:
     dic: Mapping
     convert_dict: dict
     replace_nested: dict
-    parent_key: str = "/ENTRY"
+    parent_key: str = "/ENTRY[entry]"
     sep: str = "/"
     is_in_section: bool = False
     ignore_keys: Optional[list] = None
@@ -174,6 +174,7 @@ def parse_yml(
     file_path: str,
     convert_dict: Optional[dict] = None,
     replace_nested: Optional[dict] = None,
+    parent_key: str = "/ENTRY[entry]",
 ) -> Dict[str, Any]:
     """Parses a metadata yaml file into a dictionary.
 
@@ -197,6 +198,7 @@ def parse_yml(
                 dic=yaml.safe_load(file),
                 convert_dict=convert_dict,
                 replace_nested=replace_nested,
+                parent_key=parent_key,
             )
         )
 
