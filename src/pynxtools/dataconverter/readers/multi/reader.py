@@ -248,6 +248,17 @@ def fill_from_config(
                 return True
         return False
 
+    def dict_sort_key(keyval: Tuple[str, Any]) -> bool:
+        """
+        The function to sort the dict by.
+        This just sets False for keys starting with "!" to put them at the beginning.
+        Besides, pythons sorted is stable, so this will keep the order of the keys
+        which have the same sort key.
+        """
+        if isinstance(keyval[1], str):
+            return not keyval[1].startswith("!")
+        return True
+
     if callbacks is None:
         # Use default callbacks if none are explicitly provided
         callbacks = ParseJsonCallbacks()
@@ -258,7 +269,7 @@ def fill_from_config(
         callbacks.entry_name = entry_name
 
         # Process '!...' keys first
-        sorted_keys = sorted(config_dict, key=lambda x: not x.startswith("!"))
+        sorted_keys = dict(sorted(config_dict.items(), key=dict_sort_key))
         for key in sorted_keys:
             value = config_dict[key]
             key = key.replace("/ENTRY/", f"/ENTRY[{entry_name}]/")
