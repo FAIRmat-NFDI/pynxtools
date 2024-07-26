@@ -67,8 +67,9 @@ jobs:
         id: check-branch
         run: |
           branch_exists=false
-          branches=(${{ matrix.branches }})
-          for branch in ${branches[@]}; do
+          IFS=',' read -ra branches <<< "${{ join(matrix.branches, ',') }}"
+
+          for branch in "${branches[@]}"; do
             echo "Checking branch: $branch"
             if git ls-remote --heads https://github.com/FAIRmat-NFDI/${{ matrix.plugin }}.git $branch | grep -q "refs/heads/$branch"; then
               echo "Branch $branch exists."
