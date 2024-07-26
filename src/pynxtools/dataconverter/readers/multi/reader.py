@@ -33,8 +33,7 @@ from pynxtools.dataconverter.readers.utils import (
 )
 from pynxtools.dataconverter.template import Template
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("pynxtools")
 
 
 def fill_wildcard_data_indices(config_file_dict, key, value, dims):
