@@ -22,28 +22,28 @@ jobs:
         include:
 
           - plugin: pynxtools-ellips
-            branches: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branches: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
-            branches: update-to-new-nxmpes, main
+            branches: [update-to-new-nxmpes, main]
             tests_to_run: tests/.
           - plugin: pynxtools-stm
-            branches: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branches: use-multiformat-reader, main
+            branches: [use-multiformat-reader, main]
             tests_to_run: tests/.
           # - plugin: pynxtools-apm
-          #   branches: main
+          #   branches: [main]
           #   tests_to_run: tests/.
           # - plugin: pynxtools-xrd
-          #   branches: main
+          #   branches: [main]
           #   tests_to_run: tests/.
           # - plugin: pynxtools-em
-          #   branches: main
+          #   branches: [main]
           #   tests_to_run: tests/.
     steps:
       - uses: actions/checkout@v4
