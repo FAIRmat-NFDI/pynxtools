@@ -20,7 +20,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-
           - plugin: pynxtools-ellips
             branches: [main]
             tests_to_run: tests/.
@@ -64,10 +63,9 @@ jobs:
       - name: Check if branch exists
         id: check-branch
         run: |
-          # Split the branches into an array
-          IFS=',' read -ra branches <<< "${{ matrix.branches }}"
+          branch_exists=false
+          IFS=',' read -ra branches <<< "${{ join(matrix.branches, ',') }}"
 
-          # Check each branch for existence
           for branch in "${branches[@]}"; do
             echo "Checking branch: $branch"
             if git ls-remote --heads https://github.com/FAIRmat-NFDI/${{ matrix.plugin }}.git $branch | grep -q "refs/heads/$branch"; then
