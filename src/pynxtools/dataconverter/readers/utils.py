@@ -252,6 +252,7 @@ def flatten_json(
                     base_key=key,
                     replacement_key=rkey,
                     dont_flatten_link_dict=dont_flatten_link_dict,
+                    create_link_dict=create_link_dict,
                 )
             )
         elif create_link_dict and isinstance(value, str) and value.startswith("@link:"):
@@ -297,19 +298,25 @@ def parse_json(file_path: Union[str, Path]) -> Dict[str, Any]:
         return json.load(file)
 
 
-def parse_flatten_json(file_path: Union[str, Path]) -> Dict[str, Any]:
+def parse_flatten_json(
+    file_path: Union[str, Path],
+    create_link_dict: bool = True,
+) -> Dict[str, Any]:
     """
     Parses a metadata json file into a dictionary and
     flattens it into a flat dictionary of absolute paths.
 
     Args:
         file_path (Union[str, Path]): The file path of the json file.
+        create_link_dict (bool):
+            If true, a value with `@link` will be converted to a `{link: value}` dict.
+            Defaults to True.
 
     Returns:
         Dict[str, Any]:
             The flattened dictionary containing the data readout from the json.
     """
-    return flatten_json(parse_json(file_path))
+    return flatten_json(parse_json(file_path), create_link_dict=create_link_dict)
 
 
 def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:

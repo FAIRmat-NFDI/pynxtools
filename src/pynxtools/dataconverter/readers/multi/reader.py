@@ -424,7 +424,10 @@ class MultiFormatReader(BaseReader):
         template.update(self.handle_objects(objects))
 
         if self.config_file is not None:
-            self.config_dict = parse_flatten_json(self.config_file)
+            self.config_dict = parse_flatten_json(
+                self.config_file,
+                **{k: v for k, v in kwargs.items() if k == "create_link_dict"},
+            )
 
         self.post_process()
 
