@@ -40,8 +40,7 @@ from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("pynxtools")
 
 
 if sys.version_info >= (3, 10):

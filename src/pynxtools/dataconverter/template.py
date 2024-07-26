@@ -25,8 +25,7 @@ from typing import Set
 
 from pynxtools.dataconverter import helpers
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("pynxtools")
 
 
 class Template(dict):
