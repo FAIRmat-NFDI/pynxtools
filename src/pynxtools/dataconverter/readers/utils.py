@@ -211,6 +211,7 @@ def flatten_json(
     base_key: Optional[str] = None,
     replacement_key: Optional[str] = None,
     dont_flatten_link_dict: bool = False,
+    create_link_dict: bool = True,
 ) -> Dict[str, Any]:
     """
     Flattens a json dict into a flat dictionary of absolute paths.
@@ -226,6 +227,9 @@ def flatten_json(
         dont_flatten_link_dict (bool):
             If true, the dict will not be flattened if it only contains a link key.
             Defaults to False.
+        create_link_dict (bool):
+            If true, a value with `@link` will be converted to a `{link: value}` dict.
+            Defaults to True.
 
     Returns:
         Dict[str, Any]: The flattened dict
@@ -250,7 +254,7 @@ def flatten_json(
                     dont_flatten_link_dict=dont_flatten_link_dict,
                 )
             )
-        elif isinstance(value, str) and value.startswith("@link:"):
+        elif create_link_dict and isinstance(value, str) and value.startswith("@link:"):
             flattened_config[key] = {"link": value[6:]}
         else:
             flattened_config[key] = value
