@@ -25,7 +25,6 @@ from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
 
 logger = logging.getLogger("pynxtools")
-logger.propagate = False
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
 
