@@ -30,6 +30,24 @@ from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 
 
+@pytest.yield_fixture
+def caplog(caplog):
+    import logging
+
+    restore = []
+    for logger in logging.Logger.manager.loggerDict.values():
+        try:
+            if not logger.propagate:
+                restore += [(logger, logger.propagate)]
+                logger.propagate = True
+        except AttributeError:
+            pass
+    yield caplog
+
+    for logger, value in restore:
+        logger.propagate = value
+
+
 def remove_optional_parent(data_dict: Template):
     """Completely removes the optional group from the test Template."""
     internal_dict = Template(data_dict)
