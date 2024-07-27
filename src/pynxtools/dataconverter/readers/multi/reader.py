@@ -205,7 +205,7 @@ def resolve_special_keys(
 
     if value.startswith("!") and new_entry_dict[key] is None:
         group_to_delete = key.rsplit("/", 1)[0]
-        logger.info(
+        logger.warning(
             f"Main element {key} not provided. "
             f"Removing the parent group {group_to_delete}."
         )
@@ -215,7 +215,7 @@ def resolve_special_keys(
     if prefixes and new_entry_dict[key] is None:
         del new_entry_dict[key]
         if not suppress_warning:
-            logger.warning(
+            logger.info(
                 f"Could not find value for key {key} with value {value}.\n"
                 f"Tried prefixes: {prefixes}."
             )
@@ -384,7 +384,7 @@ class MultiFormatReader(BaseReader):
         self,
         template: dict = None,
         file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        objects: Optional[Tuple[Any]] = None,
         **kwargs,
     ) -> dict:
         """
@@ -421,7 +421,8 @@ class MultiFormatReader(BaseReader):
             template.update(self.extensions.get(extension, lambda _: {})(file_path))
 
         template.update(self.setup_template())
-        template.update(self.handle_objects(objects))
+        if objects is not None:
+            template.update(self.handle_objects(objects))
 
         if self.config_file is not None:
             self.config_dict = parse_flatten_json(
