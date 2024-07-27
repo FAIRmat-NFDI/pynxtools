@@ -188,7 +188,7 @@ def resolve_special_keys(
 
     try:
         # Safely evaluate the string to a list
-        list_value = ast.literal_eval(value)
+        list_value = ast.literal_eval(value.lstrip("!"))
         prefixes = [parse_config_value(v) for v in list_value]
     except (SyntaxError, ValueError):
         prefixes = [parse_config_value(value)]
