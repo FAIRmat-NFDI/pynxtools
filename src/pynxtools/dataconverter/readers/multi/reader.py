@@ -202,7 +202,7 @@ def resolve_special_keys(
 
     if value.startswith("!") and new_entry_dict[key] is None:
         group_to_delete = key.rsplit("/", 1)[0]
-        logger.warning(
+        logger.info(
             f"Main element {key} not provided. "
             f"Removing the parent group {group_to_delete}."
         )
