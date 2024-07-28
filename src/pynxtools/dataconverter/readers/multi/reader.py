@@ -170,7 +170,7 @@ def resolve_special_keys(
 
         """
         # Regex pattern to match @prefix:some_string
-        pattern = r"!?(@\w+)(?::(.*))?"
+        pattern = r"(@\w+)(?::(.*))?"
         prefixes = re.findall(pattern, value)
         if not prefixes:
             return ("", value)
@@ -178,9 +178,6 @@ def resolve_special_keys(
 
     # Handle non-keyword values
     if not isinstance(value, str) or "@" not in str(value):
-        if isinstance(value, str):
-            # Handle "!" notation for required fields in optional groups
-            value = value.lstrip("!")
         new_entry_dict[key] = value
         return
 
