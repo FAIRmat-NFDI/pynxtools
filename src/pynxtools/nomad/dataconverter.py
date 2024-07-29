@@ -65,6 +65,7 @@ def populate_nexus_subsection(
     logger,
     output_file_path: Optional[str] = None,
     on_temp_file=False,
+    nxs_as_entry=True,
 ):
     """Populate nexus subsection in nomad from nexus template.
 
@@ -82,6 +83,7 @@ def populate_nexus_subsection(
         output_file_path: Output file should be a relative path not absolute path.
         logger: nomad logger.
         on_temp_file: Whether data will be written in temporary disk, by default False.
+        nxs_as_entry: If the nxs file should be as ann nonmad entry or a general file, by default True.
 
     Raises:
         Exception: could not trigger processing from NexusParser
@@ -102,21 +104,25 @@ def populate_nexus_subsection(
 
             nexus_parser = NexusParser()
             nexus_parser.parse(
-                mainfile=archive.data.output, archive=archive, logger=logger
+                mainfile=archive.data.output,
+                archive=archive,
+                logger=logger,
             )
-            try:
-                archive.m_context.process_updated_raw_file(
-                    output_file_path, allow_modify=True
-                )
-            except Exception as e:
-                logger.error(
-                    "could not trigger processing",
-                    mainfile=archive.data.output,
-                    exc_info=e,
-                )
-                raise e
-            else:
-                logger.info("triggered processing", mainfile=archive.data.output)
+            # If a NeXus file written a an entry e.g XRD use case
+            if nxs_as_entry:
+                try:
+                    archive.m_context.process_updated_raw_file(
+                        output_file_path, allow_modify=True
+                    )
+                except Exception as e:
+                    logger.error(
+                        "could not trigger processing",
+                        mainfile=archive.data.output,
+                        exc_info=e,
+                    )
+                    raise e
+                else:
+                    logger.info("triggered processing", mainfile=archive.data.output)
         except Exception as e:
             logger.error("could not trigger processing", exc_info=e)
             raise e
