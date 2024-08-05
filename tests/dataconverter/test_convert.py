@@ -28,6 +28,24 @@ from click.testing import CliRunner
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 
+@pytest.yield_fixture
+def caplog(caplog):
+    import logging
+
+    restore = []
+    for logger in logging.Logger.manager.loggerDict.values():
+        try:
+            if not logger.propagate:
+                restore += [(logger, logger.propagate)]
+                logger.propagate = True
+        except AttributeError:
+            pass
+    yield caplog
+
+    for logger, value in restore:
+        logger.propagate = value
+
+
 def move_xarray_file_to_tmp(tmp_path):
     """Moves the xarray file, which is used to test linking into the tmp_path directory."""
     shutil.copy(

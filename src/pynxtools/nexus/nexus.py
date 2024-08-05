@@ -644,7 +644,7 @@ def hdf_node_to_self_concept_path(hdf_info, logger):
     """Get concept or nxdl path from given hdf_node."""
     # The bellow logger is for deactivatine unnecessary debug message above
     if logger is None:
-        logger = logging.getLogger(__name__)
+        logger = logging.getLogger("pynxtools")
         logger.setLevel(logging.INFO)
     (_, _, nxdl_path) = get_nxdl_doc(hdf_info, logger, None)
     con_path = ""
@@ -817,7 +817,7 @@ def main(nexus_file, documentation, concept):
     logging.basicConfig(
         level=logging.INFO, format=logging_format, handlers=[stdout_handler]
     )
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("pynxtools")
     logger.addHandler(stdout_handler)
     logger.setLevel(logging.DEBUG)
     logger.propagate = False

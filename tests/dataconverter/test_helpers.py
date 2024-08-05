@@ -30,6 +30,24 @@ from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 
 
+@pytest.yield_fixture
+def caplog(caplog):
+    import logging
+
+    restore = []
+    for logger in logging.Logger.manager.loggerDict.values():
+        try:
+            if not logger.propagate:
+                restore += [(logger, logger.propagate)]
+                logger.propagate = True
+        except AttributeError:
+            pass
+    yield caplog
+
+    for logger, value in restore:
+        logger.propagate = value
+
+
 def remove_optional_parent(data_dict: Template):
     """Completely removes the optional group from the test Template."""
     internal_dict = Template(data_dict)
@@ -633,8 +651,8 @@ def test_warning_on_definition_changed_by_reader(caplog):
         helpers.write_nexus_def_to_entry(template, "entry", "NXtest")
 
     error_text = (
-        "The entry '/ENTRY[entry]/definition' (value: NXwrong) should not be changed by the reader. "
-        "This is overwritten by the actually used value 'NXtest'"
+        "The entry '/ENTRY[entry]/definition' (value: NXtest) should not be changed by the reader. "
+        "This is overwritten by the actually used value 'NXwrong'"
     )
     assert error_text in caplog.text
 
