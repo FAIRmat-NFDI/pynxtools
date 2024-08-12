@@ -24,24 +24,6 @@ import pytest
 from pynxtools.dataconverter.validation import validate_dict_against
 
 
-@pytest.yield_fixture
-def caplog(caplog):
-    import logging
-
-    restore = []
-    for logger in logging.Logger.manager.loggerDict.values():
-        try:
-            if not logger.propagate:
-                restore += [(logger, logger.propagate)]
-                logger.propagate = True
-        except AttributeError:
-            pass
-    yield caplog
-
-    for logger, value in restore:
-        logger.propagate = value
-
-
 def get_data_dict():
     return {
         "/ENTRY[my_entry]/optional_parent/required_child": 1,
