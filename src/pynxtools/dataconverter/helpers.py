@@ -39,6 +39,7 @@ else:
 from pint import UndefinedUnitError
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.units import ureg
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_enums,
     get_inherited_nodes,
