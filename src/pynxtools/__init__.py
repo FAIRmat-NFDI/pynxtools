@@ -24,8 +24,24 @@ from datetime import datetime
 from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
 
+
+class CustomFormatter(logging.Formatter):
+    """Formatter that specifically highlights errors and warnings."""
+
+    def format(self, record):
+        if not getattr(record, "prefixed", False):
+            if record.levelno in (logging.WARNING, logging.ERROR):
+                record.msg = f"{record.levelname}: {record.msg}"
+            # Mark the record as prefixed
+            record.prefixed = True
+        return super().format(record)
+
+
 logger = logging.getLogger("pynxtools")
-logger.addHandler(logging.StreamHandler())
+handler = logging.StreamHandler()
+formatter = CustomFormatter("%(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 MAIN_BRANCH_NAME = "fairmat"
