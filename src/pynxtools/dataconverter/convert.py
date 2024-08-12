@@ -403,7 +403,7 @@ def convert_cli(
             fail=fail,
         )
     except FileNotFoundError as exc:
-        raise click.BadParameter(exc) from exc
+        raise click.BadParameter(str(exc)) from exc
     except ValidationFailed as exc:
         raise click.ClickException(
             "Validation failed: No file written because '--fail' was requested."
