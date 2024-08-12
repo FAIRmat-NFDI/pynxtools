@@ -27,7 +27,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import yaml
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("pynxtools")
 
 
 @dataclass
@@ -174,6 +174,7 @@ def parse_yml(
     file_path: str,
     convert_dict: Optional[dict] = None,
     replace_nested: Optional[dict] = None,
+    parent_key: str = "/ENTRY[entry]",
 ) -> Dict[str, Any]:
     """Parses a metadata yaml file into a dictionary.
 
@@ -197,6 +198,7 @@ def parse_yml(
                 dic=yaml.safe_load(file),
                 convert_dict=convert_dict,
                 replace_nested=replace_nested,
+                parent_key=parent_key,
             )
         )
 
@@ -209,6 +211,7 @@ def flatten_json(
     base_key: Optional[str] = None,
     replacement_key: Optional[str] = None,
     dont_flatten_link_dict: bool = False,
+    create_link_dict: bool = True,
 ) -> Dict[str, Any]:
     """
     Flattens a json dict into a flat dictionary of absolute paths.
@@ -224,6 +227,9 @@ def flatten_json(
         dont_flatten_link_dict (bool):
             If true, the dict will not be flattened if it only contains a link key.
             Defaults to False.
+        create_link_dict (bool):
+            If true, a value with `@link` will be converted to a `{link: value}` dict.
+            Defaults to True.
 
     Returns:
         Dict[str, Any]: The flattened dict
@@ -246,9 +252,10 @@ def flatten_json(
                     base_key=key,
                     replacement_key=rkey,
                     dont_flatten_link_dict=dont_flatten_link_dict,
+                    create_link_dict=create_link_dict,
                 )
             )
-        elif isinstance(value, str) and value.startswith("@link:"):
+        elif create_link_dict and isinstance(value, str) and value.startswith("@link:"):
             flattened_config[key] = {"link": value[6:]}
         else:
             flattened_config[key] = value
@@ -291,19 +298,25 @@ def parse_json(file_path: Union[str, Path]) -> Dict[str, Any]:
         return json.load(file)
 
 
-def parse_flatten_json(file_path: Union[str, Path]) -> Dict[str, Any]:
+def parse_flatten_json(
+    file_path: Union[str, Path],
+    create_link_dict: bool = True,
+) -> Dict[str, Any]:
     """
     Parses a metadata json file into a dictionary and
     flattens it into a flat dictionary of absolute paths.
 
     Args:
         file_path (Union[str, Path]): The file path of the json file.
+        create_link_dict (bool):
+            If true, a value with `@link` will be converted to a `{link: value}` dict.
+            Defaults to True.
 
     Returns:
         Dict[str, Any]:
             The flattened dictionary containing the data readout from the json.
     """
-    return flatten_json(parse_json(file_path))
+    return flatten_json(parse_json(file_path), create_link_dict=create_link_dict)
 
 
 def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:
@@ -321,3 +334,67 @@ def handle_objects(objects: Tuple[Any]) -> Dict[str, Any]:
         template.update(obj)
 
     return template
+
+
+def is_integer(expr: str) -> bool:
+    """Checks whether an expression is an integer number,
+    i.e. 3, +3 or -3. Also supports numbers in the form of 003.
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is an integer number
+    """
+    return bool(re.search(r"^[+-]?\d+$", expr))
+
+
+def is_number(expr: str) -> bool:
+    """Checks whether an expression is a number,
+    i.e. is of the form 0.3, 3, 1e-3, 1E5 etc.
+
+    Args:
+        expr (str): The expression to check
+
+    Returns:
+        bool: Returns true if the expr is a number
+    """
+    return bool(
+        re.search(r"^[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)$", expr)
+    )
+
+
+def is_boolean(expr: str) -> bool:
+    """Checks whether an expression is a boolean,
+    i.e. is equal to True or False (upper or lower case).
+
+    Args:
+        expr (str): The expression to check.
+
+    Returns:
+        bool: Returns true if the expr is a boolean
+    """
+    return bool(re.search(r"True|False|true|false|On|Off|Yes|No", expr))
+
+
+def to_bool(expr: str) -> bool:
+    """Converts boolean representations in strings to python booleans.
+
+    Args:
+        expr (str): The string to convert to boolean.
+
+    Returns:
+        bool: The boolean value.
+    """
+    replacements = {
+        "On": True,
+        "Off": False,
+        "Yes": True,
+        "No": False,
+        "True": True,
+        "False": False,
+        "true": True,
+        "false": False,
+    }
+
+    return replacements.get(expr)
