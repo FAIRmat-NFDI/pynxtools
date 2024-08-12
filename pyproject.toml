@@ -36,6 +36,7 @@ dependencies = [
     "lxml>=4.9.1",
     "anytree",
     "cachetools",
+    "pint>=0.17",
 ]
 
 [project.urls]
