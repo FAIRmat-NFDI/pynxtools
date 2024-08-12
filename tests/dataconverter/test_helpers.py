@@ -28,7 +28,6 @@ import pytest
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
-from setuptools import distutils
 
 
 def remove_optional_parent(data_dict: Template):
