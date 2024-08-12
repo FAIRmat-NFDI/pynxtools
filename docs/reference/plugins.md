@@ -1,12 +1,29 @@
 # Plugins
 There are a number of plugins available for pynxtools that are maintained within FAIRmat. These are extensions of pynxtools used for reading data of specific experimental techniques.
 
-- [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy data.
-- [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
-- [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-xps/).
+### Photoemission spectroscopy
+- [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy (MPES) data.
+- [**pynxtools-igor**](https://github.com/FAIRmat-NFDI/pynxtools-igor): A reader for MPES data stored in the [Igor Binary Wave Format](https://www.wavemetrics.com/).
+- [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data from various vendors. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-xps/).
+<!-- - [**pynxtools-focus**](https://github.com/FAIRmat-NFDI/pynxtools-focus): A reader for MPES data obtained with a [FOCUS GmbH](https://www.focus-gmbh.com//) instrument. . -->
+
+### Electron microscopy
+- [**pynxtools-em**](https://github.com/FAIRmat-NFDI/pynxtools-em): A reader for electron microscopy data from various vendors. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-em/).
+
+### Atom probe tomography
 - [**pynxtools-apm**](https://github.com/FAIRmat-NFDI/pynxtools-apm): A reader for atom probe as well as related field ion microscopy data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-apm/).
-- [**pynxtools-em**](https://github.com/FAIRmat-NFDI/pynxtools-em): A reader for electron microscopy data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-em/).
+
+### Optical spectroscopy
 - [**pynxtools-ellips**](https://github.com/FAIRmat-NFDI/pynxtools-ellips): A reader for ellipsometry data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-ellips/).
+- [**pynxtools-raman**](https://github.com/FAIRmat-NFDI/pynxtools-raman): A reader for Raman data.
+
+### Scanning probe microscopy
+- [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
+
+### X-ray diffraction
+- [**pynxtools-xrd**](https://github.com/FAIRmat-NFDI/pynxtools-raman): A reader for X-ray diffraction data.
+### Others
+
 
 ## Installation
 
