@@ -19,6 +19,7 @@
 
 import logging
 import os
+import shutil
 import xml.etree.ElementTree as ET
 from typing import Optional
 
@@ -147,7 +148,7 @@ def fixture_filled_test_data(template, tmp_path):
     # Copy original measurement file to tmp dir,
     # because h5py.ExternalLink is modifying it while
     # linking the nxs file.
-    distutils.file_util.copy_file(
+    shutil.copy(
         os.path.join(
             os.getcwd(), "src", "pynxtools", "data", "xarray_saved_small_calibration.h5"
         ),
@@ -289,7 +290,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
                 "ould be one of: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
-                "numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
+                "numpy.bool"
             ),
             id="string-instead-of-int",
         ),
@@ -614,8 +615,8 @@ def test_warning_on_definition_changed_by_reader(caplog):
         helpers.write_nexus_def_to_entry(template, "entry", "NXtest")
 
     error_text = (
-        "The entry '/ENTRY[entry]/definition' (value: NXwrong) should not be changed by the reader. "
-        "This is overwritten by the actually used value 'NXtest'"
+        "The entry '/ENTRY[entry]/definition' (value: NXtest) should not be changed by the reader. "
+        "This is overwritten by the actually used value 'NXwrong'"
     )
     assert error_text in caplog.text
 

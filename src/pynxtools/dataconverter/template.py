@@ -19,16 +19,19 @@
 
 import copy
 import json
+import logging
 import re
 from typing import Set
 
 from pynxtools.dataconverter import helpers
 
+logger = logging.getLogger("pynxtools")
+
 
 class Template(dict):
     """A Template object to control and separate template paths according to optionality"""
 
-    def __init__(self, template=None, **kwargs):
+    def __init__(self, template=None, overwrite_keys: bool = True, **kwargs):
         super().__init__(**kwargs)
         if isinstance(template, Template):
             self.optional: dict = copy.deepcopy(template["optional"])
@@ -38,14 +41,16 @@ class Template(dict):
             self.optional_parents: list = copy.deepcopy(template["optional_parents"])
             self.lone_groups: dict = copy.deepcopy(template["lone_groups"])
         else:
-            self.optional: dict = {}
-            self.recommended: dict = {}
-            self.required: dict = {}
-            self.undocumented: dict = {}
-            self.optional_parents: list = []
-            self.lone_groups: list = []
+            self.optional: dict = {}  # type: ignore[no-redef]
+            self.recommended: dict = {}  # type: ignore[no-redef]
+            self.required: dict = {}  # type: ignore[no-redef]
+            self.undocumented: dict = {}  # type: ignore[no-redef]
+            self.optional_parents: list = []  # type: ignore[no-redef]
+            self.lone_groups: list = []  # type: ignore[no-redef, assignment]
             if isinstance(template, dict):
-                self.undocumented: dict = copy.deepcopy(template)
+                self.undocumented: dict = copy.deepcopy(template)  # type: ignore[no-redef]
+
+        self.overwrite_keys = overwrite_keys
 
     def get_accumulated_dict(self):
         """Returns a dictionary of all the optionalities merged into one."""
@@ -215,12 +220,28 @@ class Template(dict):
         or updates values from a dictionary if the type of :code:`template` is dict"""
         if isinstance(template, Template):
             for optionality in ("optional", "recommended", "required", "undocumented"):
-                self.get_optionality(optionality).update(
-                    template.get_optionality(optionality)
-                )
+                for key, value in template.get_optionality(optionality).items():
+                    opt_dict = self.get_optionality(optionality)
+                    if self.overwrite_keys or opt_dict.get(key) is None:
+                        opt_dict[key] = value
+                    else:
+                        logger.warning(
+                            f"Entry {key} already exists, not overwriting.\n"
+                            f"Value: {opt_dict[key]} / Attempted value: {value}."
+                            "If you want to overwrite the specific key allow "
+                            "overwriting keys in the reader"
+                        )
         else:
             for key, value in template.items():
-                self[key] = value
+                if self.overwrite_keys or self.get(key) is None:
+                    self[key] = value
+                else:
+                    logger.warning(
+                        f"Entry {key} already exists, not overwriting.\n"
+                        f"Value: {self[key]} / Attempted value: {value}."
+                        "If you want to overwrite the specific key allow "
+                        "overwriting keys in the reader"
+                    )
 
     def add_entry(self, entry_name):
         """Add the whole NXDL again with a new HDF5 name for the template."""

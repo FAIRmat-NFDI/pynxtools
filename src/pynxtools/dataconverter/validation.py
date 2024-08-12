@@ -25,7 +25,6 @@ from typing import Any, Iterable, List, Mapping, Optional, Set, Tuple, Union
 import h5py
 import lxml.etree as ET
 import numpy as np
-from anytree import Resolver
 from cachetools import LRUCache, cached
 from cachetools.keys import hashkey
 
@@ -365,14 +364,14 @@ def validate_dict_against(
                 # if the concept for signal is already defined in the appdef
                 # TODO: This appends the base class multiple times
                 # it should be done only once
-                data_node = node.search_child_with_name((signal, "DATA"))
-                data_bc_node = node.search_child_with_name("DATA")
+                data_node = node.search_add_child_for_multiple((signal, "DATA"))
+                data_bc_node = node.search_add_child_for("DATA")
                 data_node.inheritance.append(data_bc_node.inheritance[0])
                 for child in data_node.get_all_direct_children_names():
                     data_node.search_child_with_name(child)
 
                 handle_field(
-                    node.search_child_with_name((signal, "DATA")),
+                    node.search_add_child_for_multiple((signal, "DATA")),
                     keys,
                     prev_path=prev_path,
                 )
@@ -397,14 +396,14 @@ def validate_dict_against(
                     # if the concept for the axis is already defined in the appdef
                     # TODO: This appends the base class multiple times
                     # it should be done only once
-                    axis_node = node.search_child_with_name((axis, "AXISNAME"))
-                    axis_bc_node = node.search_child_with_name("AXISNAME")
+                    axis_node = node.search_add_child_for_multiple((axis, "AXISNAME"))
+                    axis_bc_node = node.search_add_child_for("AXISNAME")
                     axis_node.inheritance.append(axis_bc_node.inheritance[0])
                     for child in axis_node.get_all_direct_children_names():
                         axis_node.search_child_with_name(child)
 
                     handle_field(
-                        node.search_child_with_name((axis, "AXISNAME")),
+                        node.search_add_child_for_multiple((axis, "AXISNAME")),
                         keys,
                         prev_path=prev_path,
                     )
@@ -457,13 +456,24 @@ def validate_dict_against(
 
     def handle_group(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    f"{prev_path}/{node.name}", missing_type_err.get(node.type), None
-                )
+        if node.parent_of:
+            for child in node.parent_of:
+                variants += get_variations_of(child, keys)
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(
+                f"{prev_path}/{node.name}",
+                missing_type_err.get(node.type),
+                None,
+            )
             return
         for variant in variants:
+            if variant in [node.name for node in node.parent_of]:
+                # Don't process if this is actually a sub-variant of this group
+                continue
             nx_class, _ = split_class_and_name_of(variant)
             if not isinstance(keys[variant], Mapping):
                 if nx_class is not None:
@@ -633,11 +643,7 @@ def validate_dict_against(
             if best_name is None:
                 return False
 
-            resolver = Resolver("name", relax=True)
-            child_node = resolver.get(node, best_name)
-            node = (
-                node.add_inherited_node(best_name) if child_node is None else child_node
-            )
+            node = node.search_add_child_for(best_name)
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field

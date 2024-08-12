@@ -30,14 +30,21 @@ import h5py
 import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
+from numpy.char import chararray
 from pint import UndefinedUnitError
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.units import ureg
-from pynxtools.nexus import nexus
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_enums,
+    get_inherited_nodes,
+    get_nexus_definitions_path,
+    get_node_at_nxdl_path,
+)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_required_string as nexus_get_required_string,
+)
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("pynxtools")
 
 
 class ValidationProblem(Enum):
@@ -283,7 +290,7 @@ def get_nxdl_root_and_path(nxdl: str):
     """
 
     # Reading in the NXDL and generating a template
-    definitions_path = nexus.get_nexus_definitions_path()
+    definitions_path = get_nexus_definitions_path()
     data_path = os.path.join(
         f"{os.path.abspath(os.path.dirname(__file__))}/../",
         "data",
@@ -358,7 +365,7 @@ def get_all_defined_required_children(nxdl_path, nxdl_name):
     if nxdl_name == "NXtest":
         return []
 
-    elist = nexus.get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
+    elist = get_inherited_nodes(nxdl_path, nx_name=nxdl_name)[2]
     list_of_children_to_add = set()
     for elem in elist:
         list_of_children_to_add.update(get_all_defined_required_children_for_elem(elem))
@@ -461,7 +468,7 @@ def generate_template_from_nxdl(
 
 def get_required_string(elem):
     """Helper function to return nicely formatted names for optionality."""
-    return nexus.get_required_string(elem)[2:-2].lower()
+    return nexus_get_required_string(elem)[2:-2].lower()
 
 
 def convert_nexus_to_caps(nexus_name):
@@ -560,7 +567,7 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
 def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options."""
     for elem in elist:
-        enums = nexus.get_enums(elem)
+        enums = get_enums(elem)
         if enums is not None:
             return value in enums, enums
     return True, []
@@ -574,7 +581,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
     "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
-    "NX_CHAR": (str, np.ndarray, np.chararray),
+    "NX_CHAR": (str, np.ndarray, chararray),
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": (float, np.ndarray, np.floating),
     "NX_INT": (int, np.ndarray, np.signedinteger),
@@ -753,9 +760,9 @@ def check_for_optional_parent(path: str, nxdl_root: ET._Element) -> str:
         return "<<NOT_FOUND>>"
 
     parent_nxdl_path = convert_data_converter_dict_to_nxdl_path(parent_path)
-    elem = nexus.get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
+    elem = get_node_at_nxdl_path(nxdl_path=parent_nxdl_path, elem=nxdl_root)
 
-    if nexus.get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
+    if nexus_get_required_string(elem) in ("<<OPTIONAL>>", "<<RECOMMENDED>>"):
         return parent_path
 
     return check_for_optional_parent(parent_path, nxdl_root)
@@ -770,8 +777,8 @@ def is_node_required(nxdl_key, nxdl_root):
             nxdl_key[0 : nxdl_key.rindex("/") + 1]
             + nxdl_key[nxdl_key.rindex("/") + 2 :]
         )
-    node = nexus.get_node_at_nxdl_path(nxdl_key, elem=nxdl_root, exc=False)
-    return nexus.get_required_string(node) == "<<REQUIRED>>"
+    node = get_node_at_nxdl_path(nxdl_key, elem=nxdl_root, exc=False)
+    return nexus_get_required_string(node) == "<<REQUIRED>>"
 
 
 def all_required_children_are_set(optional_parent_path, data, nxdl_root):
@@ -858,14 +865,14 @@ def check_for_valid_atom_types(atoms: Union[str, list]):
 
     if isinstance(atoms, list):
         for elm in atoms:
-            if elm not in chemical_symbols:
-                raise ValueError(
+            if elm not in chemical_symbols[1:]:
+                logger.warning(
                     f"The element {elm} is not found in periodictable, "
                     f"check for correct element name"
                 )
     elif isinstance(atoms, str):
-        if atoms not in chemical_symbols:
-            raise ValueError(
+        if atoms not in chemical_symbols[1:]:
+            logger.warning(
                 f"The element {atoms} is not found in periodictable, "
                 f"check for correct element name"
             )
@@ -922,13 +929,13 @@ def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
     def update_and_warn(key: str, value: str, overwrite=False):
         if key in data and data[key] is not None and data[key] != value:
             report = (
-                f"This is overwritten by the actually used value '{value}'"
+                f"This is overwritten by the actually used value '{data[key]}'"
                 if overwrite
-                else f"The provided version '{value}' is kept. We assume you know what you are doing."
+                else f"The provided version '{data[key]}' is kept. We assume you know what you are doing."
             )
             logger.log(
                 logging.WARNING if overwrite else logging.INFO,
-                f"The entry '{key}' (value: {data[key]}) should not be changed by "
+                f"The entry '{key}' (value: {value}) should not be changed by "
                 f"the reader. {report}",
             )
         if overwrite or data.get(key) is None:
@@ -938,6 +945,12 @@ def write_nexus_def_to_entry(data, entry_name: str, nxdl_def: str):
     update_and_warn(
         f"/ENTRY[{entry_name}]/definition/@version",
         get_nexus_version(),
+        overwrite=False,
+    )
+    update_and_warn(
+        f"/ENTRY[{entry_name}]/definition/@URL",
+        "https://github.com/FAIRmat-NFDI/nexus_definitions/"
+        f"blob/{get_nexus_version_hash()}",
         overwrite=False,
     )
 

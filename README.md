@@ -32,7 +32,7 @@ pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 
 `pynxtools` (previously called `nexusutils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
 
-Additionally, the software is used in the research data management system NOMAD for
+Additionally, the software can be used as a plugin in the research data management system NOMAD for
 making experimental data searchable and publishable.
 NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
 (NFDI).
@@ -48,6 +48,13 @@ data into the NeXus standard and visualising the files content.
 - [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
 - [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
 - [**generate_eln**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/eln_mapper/README.md): Outputs ELN files that can be used to add metadata to the dataconverter routine.
+
+# NOMAD integration
+
+To use pynxtools with NOMAD, simply install it in the same environment as the `nomad-lab` package.
+NOMAD will recognize pynxtools as a plugin automatically and offer automatic parsing of `.nxs` files
+and a schema for NeXus application definitions.
+pynxtools is already included in the NOMAD main deployment and NOMAD NeXus distribution images.
 
 # Documentation
 Documentation for the different tools can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
@@ -111,7 +118,7 @@ on how to build on this work, or to get your parser included into NOMAD, you can
 
 ### Does this software require NOMAD or NOMAD OASIS ?
 
-No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe.
+No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe. It can, however, be used as a NOMAD plugin to parse nexus files, please see the section above for details.
 
 # Troubleshooting
 

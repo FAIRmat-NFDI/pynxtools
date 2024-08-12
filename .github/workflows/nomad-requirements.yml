@@ -12,13 +12,16 @@ on:
       - 'pyproject.toml'
       - 'dev-requirements.txt'
 
+env:
+  UV_SYSTEM_PYTHON: true
+
 jobs:
   validate_dependencies:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout pynxtools
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Checkout NOMAD from GitLab
       run: |
@@ -31,7 +34,7 @@ jobs:
         sed -i 's|pynxtools\[convert\]==[0-9]\+\(\.[0-9]\+\)\{0,2\}|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }} |' pyproject.toml
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -48,7 +51,7 @@ jobs:
     - name: Install NOMAD dependencies with pynxtools from current branch
       working-directory: ./nomad
       run: |
-        uv pip install --system -r requirements.txt
-        uv pip install --system -r requirements-dev.txt
+        uv pip install -r requirements.txt
+        uv pip install -r requirements-dev.txt
       env:
         PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test
