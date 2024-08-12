@@ -436,12 +436,13 @@ class MultiFormatReader(BaseReader):
         self.post_process()
 
         if self.config_dict:
+            suppress_warning = kwargs.pop("suppress_warning", False)
             template.update(
                 fill_from_config(
                     self.config_dict,
                     self.get_entry_names(),
                     self.callbacks,
-                    **{k: v for k, v in kwargs.items() if k == "suppress_warning"},
+                    suppress_warning=suppress_warning,
                 )
             )
 
