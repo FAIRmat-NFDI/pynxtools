@@ -335,16 +335,12 @@ def main_cli():
     "--mapping",
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
-<<<<<<< HEAD:src/pynxtools/dataconverter/convert.py
-
-=======
 @click.option(
     "-c",
     "--config",
     type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True),
     help="A json config file for the reader",
 )
->>>>>>> b56f942 (Adds eln callback and config argument):pynxtools/dataconverter/convert.py
 # pylint: disable=too-many-arguments
 def convert_cli(
     files: Tuple[str, ...],
@@ -356,11 +352,8 @@ def convert_cli(
     ignore_undocumented: bool,
     skip_verify: bool,
     mapping: str,
-<<<<<<< HEAD:src/pynxtools/dataconverter/convert.py
-    fail: bool,
-=======
     config: str,
->>>>>>> b56f942 (Adds eln callback and config argument):pynxtools/dataconverter/convert.py
+    fail: bool,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
     if params_file:
@@ -405,6 +398,7 @@ def convert_cli(
             nxdl,
             output,
             skip_verify,
+            config_file=config,
             ignore_undocumented=ignore_undocumented,
             fail=fail,
         )
