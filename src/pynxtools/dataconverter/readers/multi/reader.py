@@ -62,7 +62,14 @@ def fill_wildcard_data_indices(config_file_dict, key, value, dims):
 
 class ParseJsonCallbacks:
     """
-    Callbacks for dealing special keys in the json file.
+    Callbacks for dealing with special keys in the json file.
+
+    These callbacks are used to fill the template with (meta)data
+    from different sources, defined in the special_key_map:
+        "@attrs": instrument metadata from the experiment file
+        "@link": used for linking (meta)data
+        "@data": measurement data
+        "@eln": ELN data not provided within the experiment file
 
     Args:
         attrs_callback (Callable[[str], Any]):
