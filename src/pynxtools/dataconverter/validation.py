@@ -111,7 +111,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
         if best_child is None:
             return None
 
-        return node.search_child_with_name(best_child)
+        return node.search_add_child_for(best_child)
 
     def remove_from_req_fields(path: str):
         if path in required_fields:
@@ -181,7 +181,7 @@ def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
 
     appdef = generate_tree_from(appdef)
     required_fields = appdef.required_fields_and_attrs_names()
-    tree = appdef.search_child_with_name("ENTRY")
+    tree = appdef.search_add_child_for("ENTRY")
     entry_name = data.name
     data.visititems(validate)
 
@@ -537,7 +537,7 @@ def validate_dict_against(
                 data_bc_node = node.search_add_child_for("DATA")
                 data_node.inheritance.append(data_bc_node.inheritance[0])
                 for child in data_node.get_all_direct_children_names():
-                    data_node.search_child_with_name(child)
+                    data_node.search_add_child_for(child)
 
                 handle_field(
                     node.search_add_child_for_multiple((signal, "DATA")),
@@ -577,7 +577,7 @@ def validate_dict_against(
                     axis_bc_node = node.search_add_child_for("AXISNAME")
                     axis_node.inheritance.append(axis_bc_node.inheritance[0])
                     for child in axis_node.get_all_direct_children_names():
-                        axis_node.search_child_with_name(child)
+                        axis_node.search_add_child_for(child)
 
                     handle_field(
                         node.search_add_child_for_multiple((axis, "AXISNAME")),
@@ -1504,11 +1504,10 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
         # be fixed.
         return
     for child in node.get_all_direct_children_names():
-<<<<<<< HEAD
-        child_node = node.search_add_child_for(child)
-=======
+
+        # child_node = node.search_add_child_for(child)
         child_node = node.search_child_with_name(child)
->>>>>>> aa6ac273 (Fix function name)
+
         populate_full_tree(child_node, max_depth=max_depth, depth=depth + 1)
 
 
