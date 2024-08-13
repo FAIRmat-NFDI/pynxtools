@@ -17,11 +17,16 @@
 # limitations under the License.
 #
 import logging
+import os
+from pipes import Template
 from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pytest
+
+from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools.dataconverter.validation import validate_dict_against
+from pynxtools.dataconverter.writer import Writer
 
 
 def get_data_dict():
@@ -119,3 +124,32 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
         assert not validate_dict_against("NXtest", data_dict)
 
     assert error_message in caplog.text
+
+
+data_dict_list = [
+    {
+        "/ENTRY[entry]/version": "no version",
+        "/ENTRY[entry]/experiment_result/hdf5_validator_2_intensity": np.array(
+            [[11, 12, 13], [21, 22, 23]]
+        ),
+        "/ENTRY[entry]/hdf5_validator_1_program_name": "hdf5_file_validator",
+        "/ENTRY[entry]/hdf5_validator_1_required/required_field": "Required_field_from nxdl-1",
+        "/ENTRY[entry]/hdf5_validator_2_users_req/required_field": "Required_field_from_nxdl-2",
+    },
+]
+
+
+@pytest.mark.parametrize("data_dict")
+def test_hdf5_file(data_dict, tempath):
+    template = Template()
+    for key, val in data_dict.items():
+        template[key] = val
+
+    nxdl_name = "NXhdf5_validator_2"
+    _, nxdl_path = get_nxdl_root_and_path(nxdl=nxdl_name)
+    hdf_file_path = tempath + "hdf5_validator_test.nxs"
+    Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
+    # TODO: here use the verify function to check the file
+
+    # remove the file
+    os.remove(hdf_file_path)
