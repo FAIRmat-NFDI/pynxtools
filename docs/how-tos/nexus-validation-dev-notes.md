@@ -25,7 +25,7 @@ nexusformat.org listed two programs for the verification and validataion of NeXu
 
 1. Is C/C++ based
 
-2. Not possible for Windows (cmake did not found the libxml2 library. Other libs were found after some work)
+2. Difficult to install for windows (cmake did not found the libxml2 library. Other libs were found after some work)
 
 3. Last update 2 years ago - Repo is dead?
 
