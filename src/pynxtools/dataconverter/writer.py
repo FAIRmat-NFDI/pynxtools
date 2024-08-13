@@ -34,8 +34,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_node_at_nxdl_path,
 )
 
-logger = logging.getLogger(__name__)  # pylint: disable=C0103
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
 
 def does_path_exist(path, h5py_obj) -> bool:
