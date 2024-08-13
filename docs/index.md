@@ -35,20 +35,17 @@ A series of tutorials giving you an overview on how to store or convert your dat
 
 How-to guides provide step-by-step instructions for a wide range of tasks.
 
-- [Writing an application definition](how-tos/writing-an-appdef.md)
-- [Storing data in multiple application definitions](how-tos/using-multiple-appdefs.md)
 - [Build your own pynxtools plugin](how-tos/build-a-plugin.md)
 - [Implement a reader based on the MultiFormatReader](how-tos/use-multi-format-reader.md)
-- [Representing experimental geometries](how-tos/transformations.md)
-- [Using pynxtools test framework](how-tos/using-pynxtools-test-framework.md)
-- [Creation of NeXus files by Python](how-tos/create-nexus-files-by-python.md)
 - [Validation of NeXus files](how-tos/validate-nexus-file.md)
+- [Creation of NeXus files by hard-coding-in-python](how-tos/create-nexus-files-by-python.md)
+- [Using pynxtools test framework](how-tos/using-pynxtools-test-framework.md)
 
 __The following How-To guides are still under development:__
 
-- Writing an application definition
-- Storing data in multiple application definitions
-- Representing experimental geometries
+- [Writing an application definition](how-tos/writing-an-appdef.md)
+- [Storing data in multiple application definitions](how-tos/using-multiple-appdefs.md)
+- [Representing experimental geometries](how-tos/transformations.md)
 
 </div>
 
