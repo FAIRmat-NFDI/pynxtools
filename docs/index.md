@@ -30,6 +30,7 @@ A series of tutorials giving you an overview on how to store or convert your dat
 How-to guides provide step-by-step instructions for a wide range of tasks:
 
 - [Writing an application definition](how-tos/writing-an-appdef.md)
+- [Build your own pynxtools plugin](how-tos/build-a-plugin.md)
 - [Storing data in multiple application definitions](how-tos/using-multiple-appdefs.md)
 - [Representing experimental geometries](how-tos/transformations.md)
 - [Using pynxtools test framework](how-tos/using-pynxtools-test-framework.md)
