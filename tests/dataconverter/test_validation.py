@@ -1877,37 +1877,43 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
 
 
 data_dict_list = [
-    {
-        "/ENTRY[entry]/definition": "NXhdf5_validator_2",
-        "/ENTRY[entry]/version": "no version",
-        "/ENTRY[entry]/experiment_result/hdf5_validator_2_intensity": np.array(
-            [[11, 12, 13], [21, 22, 23]]
-        ),
-        "/ENTRY[entry]/hdf5_validator_1_program_name": "hdf5_file_validator",
-        "/ENTRY[entry]/hdf5_validator_1_required/required_field": "Required_field_from nxdl-1",
-        "/ENTRY[entry]/hdf5_validator_2_users_req/required_field": "Required_field_from_nxdl-2",
-    },
-    {
-        "error_messages": [
-            "WARNING: Field version written without documentation.",
-            'WARNING: Missing attribute: "/ENTRY/experiment_result/@long_name"',
-            'WARNING: Missing attribute: "/ENTRY/experiment_result/@AXISNAME_indices"',
-            'WARNING: Missing attribute: "/ENTRY/experiment_result/@axes"',
-            'WARNING: Missing attribute: "/ENTRY/experiment_result/@auxiliary_signals"',
-            "WARNING: Missing field: /ENTRY/experiment_result/DATA",
-            'WARNING: Missing attribute: "/ENTRY/experiment_result/DATA/@units"',
-            "WARNING: Missing field: /ENTRY/experiment_result/AXISNAME",
-            'WARNING: Missing attribute: "/ENTRY/experiment_result/AXISNAME/@units"',
-            'WARNING: Missing attribute: "/ENTRY/experiment_result/@signal"',
-            'WARNING: Missing attribute: "/ENTRY/definition/@version"',
-            "is NOT a valid file according to the `NXhdf5_validator_2` application definition.",
-        ]
-    },
+    (
+        {
+            "/ENTRY[entry]/definition": "NXhdf5_validator_2",
+            "/ENTRY[entry]/version": "no version",
+            "/ENTRY[entry]/experiment_result/hdf5_validator_2_intensity": np.array(
+                [[11, 12, 13], [21, 22, 23]]
+            ),
+            "/ENTRY[entry]/hdf5_validator_1_program_name": "hdf5_file_validator",
+            "/ENTRY[entry]/hdf5_validator_1_required/required_field": "Required_field_from nxdl-1",
+            "/ENTRY[entry]/hdf5_validator_2_users_req/required_field": "Required_field_from_nxdl-2",
+        },
+        {
+            "error_messages": [
+                "WARNING: Field version written without documentation.",
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@long_name"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@AXISNAME_indices"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@axes"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@auxiliary_signals"',
+                "WARNING: Missing field: /ENTRY/experiment_result/DATA",
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/DATA/@units"',
+                "WARNING: Missing field: /ENTRY/experiment_result/AXISNAME",
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/AXISNAME/@units"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@signal"',
+                'WARNING: Missing attribute: "/ENTRY/definition/@version"',
+                "is NOT a valid file according to the `NXhdf5_validator_2` application definition.",
+            ]
+        },
+    ),
+    ({}, {}),
 ]
 
 
-@pytest.mark.parametrize("data_dict", "error_massages", data_dict_list)
-def test_hdf5_file(data_dict, error_massages, tmp_path, caplog):
+@pytest.mark.parametrize("data_dict, error_massages", data_dict_list)
+def test_nexus_file_validate(data_dict, error_massages, tmp_path, caplog):
+    if not data_dict and not error_massages:
+        return
+
     caplog_level = "INFO"
     template = Template()
 
