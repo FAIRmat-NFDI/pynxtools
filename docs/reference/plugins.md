@@ -3,9 +3,8 @@ There are a number of plugins available for pynxtools that are maintained within
 
 ### Photoemission spectroscopy
 - [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy (MPES) data.
-- [**pynxtools-igor**](https://github.com/FAIRmat-NFDI/pynxtools-igor): A reader for MPES data stored in the [Igor Binary Wave Format](https://www.wavemetrics.com/).
 - [**pynxtools-xps**](https://github.com/FAIRmat-NFDI/pynxtools-xps): A reader for X-ray photoelectron spectroscopy (XPS) data from various vendors. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-xps/).
-<!-- - [**pynxtools-focus**](https://github.com/FAIRmat-NFDI/pynxtools-focus): A reader for MPES data obtained with a [FOCUS GmbH](https://www.focus-gmbh.com//) instrument. . -->
+<!-- - [**pynxtools-focus**](https://github.com/FAIRmat-NFDI/pynxtools-focus): A reader for MPES data obtained with a [FOCUS GmbH](https://www.focus-gmbh.com//) instrument.-->
 
 ### Electron microscopy
 - [**pynxtools-em**](https://github.com/FAIRmat-NFDI/pynxtools-em): A reader for electron microscopy data from various vendors. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-em/).
