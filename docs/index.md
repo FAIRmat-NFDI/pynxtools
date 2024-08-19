@@ -58,6 +58,7 @@ __The following How-To guides are still under development:__
 - [An introduction to NeXus](learn/nexus-primer.md)
 - [Rules for storing data in NeXus](learn/nexus-rules.md)
 - [The concept of multiple application definitions](learn/multiple-appdefs.md)
+- [The MultiFormatReader as a reader superclass](learn/multi-format-reader.md)
 
 #### pynxtools
 
