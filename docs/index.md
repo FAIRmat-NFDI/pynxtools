@@ -46,6 +46,7 @@ An introduction to NeXus and its design principles.
 - [An introduction to NeXus](learn/nexus-primer.md)
 - [Rules for storing data in NeXus](learn/nexus-rules.md)
 - [The concept of multiple application definitions](learn/multiple-appdefs.md)
+- [The MultiFormatReader as a reader superclass](learn/multi-format-reader.md)
 
 </div>
 <div markdown="block">

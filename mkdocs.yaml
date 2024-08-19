@@ -20,6 +20,7 @@ nav:
     - learn/nexus-primer.md
     - learn/nexus-rules.md
     - learn/multiple-appdefs.md
+    - learn/multi-format-reader.md
   - Reference:
     - reference/plugins.md
     - reference/definitions.md
