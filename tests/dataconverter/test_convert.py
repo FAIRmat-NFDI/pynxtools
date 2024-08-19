@@ -88,8 +88,7 @@ def test_find_nxdl(cli_inputs):
     if "NXdoesnotexist" in cli_inputs:
         assert result.exit_code == 2
         assert result.output.endswith(
-            "Error: Invalid value for --nxdl: "
-            "NXdoesnotexist is not a valid application definition\n"
+            "Error: Invalid value: The nxdl file, NXdoesnotexist, was not found.\n"
         )
     else:
         assert isinstance(result.exception, Exception)
