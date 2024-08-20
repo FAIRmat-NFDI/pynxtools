@@ -2,7 +2,7 @@
 
 Your current data is not supported yet by the [built-in pynxtools readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) or any of the officially supported [pynxtools plugins](../reference/plugins.md)? 
 
-Don't worry, the following how-to will guide you how to write a reader your own data.
+Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.
 
 
 ## Getting started
@@ -79,7 +79,7 @@ READER = MyDataReader
 ```
 ### The reader template dictionary
 
-The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the application definition. It contains keys based on the provided NXDL file (you can get an empty template by using `dataconverter generate-template`).
+The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the NeXus application definition. The template contains keys that match the concepts in the provided NXDL file (you can get an empty template by using `dataconverter generate-template`).
 
 The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file.
 They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints, ... . Practically you can pass any value that can be handled by the `h5py` package.
@@ -133,11 +133,11 @@ You can also define links by setting the value to sub dictionary object with key
 template["/entry/instrument/source"] = {"link": "/path/to/source/data"}
 ```
 
-### Building off the BaseReader
+### Building off of the BaseReader
 When building off the [`BaseReader`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py), the developer has the most flexibility. Any new reader must implement the `read` function, which must return a filled template object.
 
 
-### Building off the MultiFormatReader
+### Building off of the MultiFormatReader
 While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data.
 
 You can find an extensive how-to guide to build off the `MultiFormatReader` [here](./use-multi-format-reader.md).
@@ -146,7 +146,7 @@ You can find an extensive how-to guide to build off the `MultiFormatReader` [her
 ## Calling the reader from the command line
 
 The pynxtools converter allows extending support to other data formats by allowing extensions called readers.
-The converter provides a dev platform to build a NeXus compatible reader by providing checking against a chosen NeXus Application Definition.
+The converter provides a dev platform to build a NeXus compatible reader by providing checking against a chosen NeXus application definition.
 
 The dataconverter can be executed using:
 ```console
@@ -154,39 +154,6 @@ user@box:~$ dataconverter --reader mydatareader --nxdl NXmynxdl --output path_to
 ```
 Here, the ``--reader`` flag must match the reader name defined in `[project.entry-points."pynxtools.reader"]` in the pyproject.toml file. The NXDL name passed to ``--nxdl``must be a valid NeXus NXDL/XML file in `pynxtools.definitions`.
 
-Aside from this default structure, there are many more flags that can be passed to the dataconverter call. Here is an ouput if its ```help``` call:
-```console
-Usage: dataconverter [OPTIONS] COMMAND [ARGS]...
-
-Options:
-  --help                          Show this message and exit.
-  --input-file TEXT               Deprecated: Please use the positional file
-                                  arguments instead. The path to the input
-                                  data file to read. (Repeat for more than one
-                                  file.)
-  --reader [example|json_map|json_yml]
-                                  The reader to use. default="example"
-  --nxdl TEXT                     The name of the NXDL file to use without
-                                  extension.This option is required if no '--
-                                  params-file' is supplied.
-  --output TEXT                   The path to the output NeXus file to be
-                                  generated.
-  --params-file FILENAME          Allows to pass a .yaml file with all the
-                                  parameters the converter supports.
-  --ignore-undocumented           Ignore all undocumented fields during
-                                  validation.
-  --fail                          Fail conversion and don't create an output
-                                  file if the validation fails.
-  --skip-verify                   Skips the verification routine during
-                                  conversion.
-  --mapping TEXT                  Takes a <name>.mapping.json file and
-                                  converts data from given input files.
-
-Commands:
-  convert*           This command allows you to use the converter...
-  generate-template  Generates and prints a template to use for your nxdl.
-
-Info:
-  You can see more options by using --help for specific commands. For example:
-  dataconverter generate-template --help
-```
+Aside from this default structure, there are many more flags that can be passed to the
+dataconverter call. Here is an output of its ```help``` call:
+{!how-tos/dataconverter_help_output.md!}

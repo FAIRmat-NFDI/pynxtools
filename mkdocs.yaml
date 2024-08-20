@@ -31,6 +31,9 @@ plugins:
   - macros:
       module_name: src/pynxtools/mkdocs
 
+hooks:
+  - scripts/generate_dataconverter_help.py
+
 theme:
   name: material
   palette:
@@ -47,6 +50,8 @@ theme:
   custom_dir: docs/theme
 
 markdown_extensions:
+  - markdown_include.include:
+      base_path: docs
   - attr_list
   - md_in_html
   - admonition

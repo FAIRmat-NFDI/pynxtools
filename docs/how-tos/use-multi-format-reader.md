@@ -204,6 +204,9 @@ Note that here we are using `parent_key="/ENTRY[entry]"` as well as a `CONVERT_D
 ## Parsing the config file
 Next up, we can make us of the config file, which is a JSON file that tells the reader how to map the concepts from the HDF5 and ELN files in order to populate the template designed to match `NXsimple`. Essentially, the config file should contain all keys that are present in the NXDL. In our case, the config file looks like this:
 
+I recommend to make the statement even stronger, the choices made in the config file define how semantics from the src and trg (NeXus) side are mapped. 
+
+
 ```json
 {
   "/ENTRY/title": "@eln", 
@@ -269,9 +272,9 @@ def get_eln_data(self, key: str, path: str) -> Any:
     
     return self.eln_data.get(key)
 ```
-Here, we are making use of the fact that we have used `CONVERT_DICT` in the `parse_yml` function above. Thus, the keys of the `self.eln_data` dictionary are exactly the same as those in the config file. We can therefore just get this data using the `key` coming from the config file.
+Here, we are making use of the fact that we have used `CONVERT_DICT` in the `parse_yml` function above. Thus, the keys of the `self.eln_data` dictionary are exactly the same as those in the config file. Therefore, we can just get this data using the `key` coming from the config file.
 
-Finally, we also need to adddress the `@data` prefix, which gets used in the `data_callback` to populate the NXdata group in the template. Note that here we use the same `@data` prefix to fill the `x_values` as well as the `data` (from `y_values`) fields. We achieve this by using the path that follows `@data:` in the config file:
+Finally, we also need to address the `@data` prefix, which gets used in the `data_callback` to populate the NXdata group in the template. Note that here we use the same `@data` prefix to fill the `x_values` as well as the `data` (from `y_values`) fields. We achieve this by using the path that follows `@data:` in the config file:
 ```python
 def get_data(self, key: str, path: str) -> Any:
     """Returns measurement data from the given hdf5 path."""

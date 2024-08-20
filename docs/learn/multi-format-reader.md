@@ -83,7 +83,10 @@ If the reader has a `self.processing_order`, the input files get sorted in this 
 
         template.update(self.extensions.get(extension, lambda _: {})(file_path))
 ```
-This parts reads in the data from all data files. The `MultiFormatReader` has an `extensions` property, which is a dictionary that for each file extension calls a function that reads in data from files with that extension. If the reader shall handle e.g. an HDF5 file, a method for handling this type of file should be added, i.e., `self.extensions[".hdf5"] = self.handle_hdf5`. Any of these methods should take as input only the file path, e.g.
+This parts reads in the data from all data files. The `MultiFormatReader` has an `extensions` property, which is a dictionary that for each file extension calls a function that reads in data from files with that extension. If the reader shall handle e.g. an HDF5 file, a method for handling this type of file should be added, i.e., `self.extensions[".hdf5"] = self.handle_hdf5`. 
+Note that these method should also implement any case selection logic, i.e., it may not be sufficient to rely on the filename suffix, but when may also need to check for multiple versions, binary signature, mimetype, etc.
+
+Any of these methods should take as input only the file path, e.g.
 ```python
 def handle_eln_file(self, file_path: str) -> Dict[str, Any]
 ```
@@ -117,7 +120,7 @@ Aside from data file, it is also possible to directly pass any Python objects to
             self.config_file, create_link_dict=False
         )
 ```
-Next up, we can make use of the config file, which is a JSON file that tells the reader which input data to use to populate the template. Essentially, the config file should contain all keys that are present in the NXDL. A subset of a typical config file may look like this:
+Next up, we can make use of the config file, which is a JSON file that tells the reader which input data to use to populate the template. In other words, the config.json is used for ontology mapping between the input file paths and the NeXus application definition. Essentially, the config file should contain all keys that are present in the NXDL. A subset of a typical config file may look like this:
 ```json
 {
   "/ENTRY/title": "@attrs:metadata/title", 
