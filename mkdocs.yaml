@@ -39,6 +39,9 @@ plugins:
   - macros:
       module_name: src/pynxtools/mkdocs
 
+hooks:
+  - scripts/generate_dataconverter_help.py
+
 theme:
   name: material
   palette:
