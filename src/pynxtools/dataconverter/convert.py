@@ -403,9 +403,7 @@ def convert_cli(
             fail=fail,
         )
     except FileNotFoundError as exc:
-        raise click.BadParameter(
-            f"{nxdl} is not a valid application definition", param_hint="--nxdl"
-        ) from exc
+        raise click.BadParameter(str(exc)) from exc
     except ValidationFailed as exc:
         raise click.ClickException(
             "Validation failed: No file written because '--fail' was requested."
