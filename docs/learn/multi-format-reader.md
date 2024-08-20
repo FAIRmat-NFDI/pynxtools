@@ -1,15 +1,16 @@
 # The MultiFormatReader as a reader superclass
 
 There are three options for building a new pynxtools reader:
-1) build the reader from scratch
-2) inherit and extend the [**`BaseReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py)
-3) inherit and extend the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py)
 
-While option 1 is generally not recommended , inheriting and extending the `BaseReader` has traditionally been the default solution for all existing pynxtools readers and reader plugins. The `BaseReader`, which is a n abstract base class,  has an essentially empty ```read``` function and is  thus only helpful for implemeneting the correct input/ouput design of the ```reader```function of any reader which is implemented off of it.
+1. build the reader from scratch
+2. inherit and extend the [**`BaseReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py)
+3. inherit and extend the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py)
+
+While option 1 is generally not recommended, inheriting and extending the `BaseReader` has traditionally been the default solution for all existing pynxtools readers and reader plugins. The `BaseReader`, which is an abstract base class, has an essentially empty ```read``` function and is  thus only helpful for implementing the correct input/ouput design of the ```reader```function of any reader which is implemented off of it.
 
 While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for any new data.
 
-Here, we will explain the inner workings of the `MultiFormatReader`. Note that there is also a [how-to guide](../how-tos/multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete examples. In case you simply want to use the `MultiFormatReader` without understanding its inner logic, we recommend you start there.
+Here, we will explain the inner workings of the `MultiFormatReader`. Note that there is also a [how-to guide](../how-tos/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example. In case you simply want to use the `MultiFormatReader` without understanding its inner logic, we recommend you start there.
 
 ## The basic structure
 
@@ -36,7 +37,7 @@ class MyDataReader(MultiFormatReader):
 READER = MyDataReader
 ```
 
-In order to understand the capabilities of the `MultiFormatReader` and which method need to be implemented when extending it, we will have a look at its ```read``` method:
+In order to understand the capabilities of the `MultiFormatReader` and which methods need to be implemented when extending it, we will have a look at its ```read``` method:
 ```python
 def read(
     self,
@@ -116,7 +117,7 @@ Aside from data file, it is also possible to directly pass any Python objects to
             self.config_file, create_link_dict=False
         )
 ```
-Next up, we can make us of the config file, which is a JSON file that tells the reader which input data to use to populate the template. Essentially, the config file should contain all keys that are present in the NXDL. A subset of a typical config file may look like this:
+Next up, we can make use of the config file, which is a JSON file that tells the reader which input data to use to populate the template. Essentially, the config file should contain all keys that are present in the NXDL. A subset of a typical config file may look like this:
 ```json
 {
   "/ENTRY/title": "@attrs:metadata/title", 
@@ -146,8 +147,9 @@ Next up, we can make us of the config file, which is a JSON file that tells the 
 Here, the `parse_flatten_json` method is used that allows us to write the config dict in the structured manner above and internally flattens it (so that it has a similar structure as the Template).
 
 In the config file, one can
-1) hard-code values (like the unit `"K"` in `"/ENTRY/INSTRUMENT[instrument]/temperature_sensor/value/@units"`) or
-2) tell the reader where to search for data using the `@`-prefixes. For more on these prefixes, see below.
+
+1. hard-code values (like the unit `"K"` in `"/ENTRY/INSTRUMENT[instrument]/temperature_sensor/value/@units"`) or
+2. tell the reader where to search for data using the `@`-prefixes. For more on these prefixes, see below.
 
 Note that in order to use a `link_callback` (see below), `create_link_dict` must be set to `False`, which means that at this stage, config values of the form `"@link:"/path/to/source/data"` get NOT yet converted to `{"link": "/path/to/source/data"}`.
 
@@ -195,6 +197,7 @@ self.special_key_map = {
 That means, if the config file has an entry ```{"/ENTRY/title": "@attrs:metadata/title"}```, the `get_attr` method of the reader gets called and should return an attribute from the given path, i.e., in this case from `metadata/title`.
 
 By default, the MultiFormatReader supports the following special prefixes:
+
 - `@attrs`: To get metadata from the read-in experiment file(s). You need to implement the `get_attr` method in the reader.
 - `@data`: To get measurement data from the read-in experiment file(s). You need to implement the `get_data` method in the reader.
 - `@eln`: To get metadata from addtional ELN files. You need to implement the `get_eln_data` method in the reader.
@@ -206,14 +209,14 @@ All of `get_attr`, `get_data`, and `get_eln_data`  (as well as any similar metho
 ```python
 def get_data(self, key: str, path: str) -> Any:
 ```
-Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and path is the path that comes _after_ the prefix. In the example config dict above, `path` would be `mydata`. With these two inputs, the reader should be able to return the correct data for this template key.
+Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and path is the path that comes _after_ the prefix in the config file. In this example, `path` would be `mydata`. With these two inputs, the reader should be able to return the correct data for this template key.
 
 ### Special rules
 - **Lists as config value**: It is possible to write a list of possible configurations of the sort
   ```json
   "/ENTRY/title":"['@attrs:my_title', '@eln', 'no title']"
   ```
-  The value most be a str of a list, with each item being a string itself. This allows to provide different options depending if the data exists for the given callback. For each list item , it is checked if a value can be returned and if so, the value is written. In this example, the converter would check (in order) the `@attrs` (with path `"my_title"`) and `@eln` (with path `""`) tokens and write the respective value if it exists. If not, it defaults to "no title".
+  The value most be a string of a list, with each item being a string itself. This allows to provide different options depending if the data exists for a given callback. For each list item , it is checked if a value can be returned and if so, the value is written. In this example, the converter would check (in order) the `@attrs` (with path `"my_title"`) and `@eln` (with path `""`) tokens and write the respective value if it exists. If not, it defaults to "no title".
   This concept can be particularly useful if the same config file is used for multiple measurement configurations, where for some setup, the same metadata may or not be available.
 
     Note that if this notation is used, it may be helpful to pass the `suppress_warning` keyword as `True` to the read function. Otherwise, there will be a warning for every non-existent value.
@@ -245,7 +248,7 @@ Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and pa
     "physical_quantity": "energy"
   }
   ```
-  Now, if there is no data for `@attrs:metadata/instrument/electronanalyser/energy_resolution` available in a dataset, this will be skipped by the reader, and not available, yet the other entries are present. During validation, this means that the required field resolution of the optional group energy_resolution is not present, and thus an an error would be raised:
+  Now, if there is no data for `@attrs:metadata/instrument/electronanalyser/energy_resolution` available in a dataset, this will be skipped by the reader, and not available, yet the other entries are present. During validation, this means that the required field resolution of the optional group `energy_resolution` is not present, and thus an error would be raised:
   ```console
   LookupError: The data entry, /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution/physical_quantity, has an optional parent, /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution, with required children set. Either provide no children for /ENTRY[entry]/INSTRUMENT[instrument]/ELECTRONANALYSER[electronanalyser]/energy_resolution or provide all required ones.
   ```

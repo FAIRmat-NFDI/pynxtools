@@ -33,6 +33,7 @@ mydatareader = "pynxtools_plugin.reader:MyDataReader"
 ```
 
 Here, we will focus mostly on the `reader.py` file and how to build a reader. For guidelines on how to build the other parts of your plugin, you can have a look here:
+
 - [Documentation writing guide](https://nomad-lab.eu/prod/v1/staging/docs/writing_guide.html)
 - [Plugin testing framework](using-pynxtools-test-framework.md)
 
@@ -73,16 +74,17 @@ class MyDataReader(BaseReader):
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
 READER = MyDataReader
 
+
+
 ```
-The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the application definition. It contains keys based on the provided NXDL file (similar to `dataconverter generate-template`)
-
-The returned dictionary should contain keys that exist in the template as defined below.
-The values of these keys have to be data objects to be populated in the output NeXus file.
-They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints, ... . Practically you can pass any value that can be handled by the `h5py` package.
-
 ### The reader template dictionary
 
-Example:
+The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the application definition. It contains keys based on the provided NXDL file (you can get an empty template by using `dataconverter generate-template`).
+
+The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file.
+They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints, ... . Practically you can pass any value that can be handled by the `h5py` package.
+
+Example for a template entry:
 
 ```json
 {
@@ -90,17 +92,14 @@ Example:
 }
 ```
 
-**Units**: If there is a field defined in the NXDL, the converter expects a filled in /data/@units entry in the template dictionary corresponding to the right /data field unless it is specified as NX_UNITLESS in the NXDL. Otherwise, you will get an exception.
-
-```json
-{
-  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data": "None",
-  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units": "Should be set to a string value"
-}
+For a given NXDL schema, you can generate an empty template with the command
+```console
+user@box:~$ dataconverter generate-template` --nxdl NXmynxdl
 ```
 
+#### Naming of groups
 In case the NXDL does not define a `name` for the group the requested data belongs to, the template dictionary will list it as `/NAME_IN_NXDL[name_in_output_nexus]`
-You can choose any name you prefer instead of the suggested name. This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.
+You can choose any name you prefer instead of the suggested name (see [here](../learn/nexus-rules.md) for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.
 
 ```json
 {
@@ -108,6 +107,7 @@ You can choose any name you prefer instead of the suggested name. This allows th
 }
 ```
 
+#### Attributes
 For attributes defined in the NXDL, the reader template dictionary will have the assosciated key with a "@" prefix to the attributes name at the end of the path:
 
 ```json
@@ -116,23 +116,31 @@ For attributes defined in the NXDL, the reader template dictionary will have the
 }
 ```
 
+#### Units
+If there is a field defined in the NXDL, the converter expects a filled in /data/@units entry in the template dictionary corresponding to the right /data field unless it is specified as NX_UNITLESS in the NXDL. Otherwise, you will get an exception.
+
+```json
+{
+  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data": "None",
+  "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units": "Should be set to a string value"
+}
+```
+
+#### Links
 You can also define links by setting the value to sub dictionary object with key `link`:
 
 ```python
 template["/entry/instrument/source"] = {"link": "/path/to/source/data"}
 ```
 
-For a given NXDL schema, you can generate an empty template with the command
-```console
-user@box:~$ dataconverter generate-template` --nxdl NXmynxdl
-```
-
-### Building off the `BaseReader`
-When building off  the [`BaseReader`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py), the developer has the most flexibility. Any new reader must implement the `read` function, which must return a filled template object.
+### Building off the BaseReader
+When building off the [`BaseReader`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py), the developer has the most flexibility. Any new reader must implement the `read` function, which must return a filled template object.
 
 
-### Building off the `MultiFormatReader`
-While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data. You can find an extensive how-to guide to build off the `MultiFormatReader` [here](./use-multi-format-reader.md).
+### Building off the MultiFormatReader
+While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data.
+
+You can find an extensive how-to guide to build off the `MultiFormatReader` [here](./use-multi-format-reader.md).
 
 
 ## Calling the reader from the command line
