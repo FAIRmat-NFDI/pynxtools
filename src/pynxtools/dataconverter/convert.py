@@ -343,6 +343,7 @@ def main_cli():
 @click.option(
     "-c",
     "--config",
+    "config_file",
     type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True),
     default=None,
     help="A json config file for the reader",
@@ -358,8 +359,9 @@ def convert_cli(
     ignore_undocumented: bool,
     skip_verify: bool,
     mapping: str,
-    config: str,
+    config_file: str,
     fail: bool,
+    **kwargs,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
     if params_file:
@@ -399,27 +401,16 @@ def convert_cli(
         )
 
     try:
-        if config:  # most but not all readers demand a config.json file
-            convert(
-                tuple(file_list) + input_file,
-                reader,
-                nxdl,
-                output,
-                skip_verify,
-                config_file=config,
-                ignore_undocumented=ignore_undocumented,
-                fail=fail,
-            )
-        else:
-            convert(
-                tuple(file_list) + input_file,
-                reader,
-                nxdl,
-                output,
-                skip_verify,
-                ignore_undocumented=ignore_undocumented,
-                fail=fail,
-            )
+        convert(
+            tuple(file_list) + input_file,
+            reader,
+            nxdl,
+            output,
+            skip_verify,
+            ignore_undocumented=ignore_undocumented,
+            fail=fail,
+            **kwargs,
+        )
     except FileNotFoundError as exc:
         raise click.BadParameter(str(exc)) from exc
     except ValidationFailed as exc:
