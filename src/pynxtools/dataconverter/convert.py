@@ -294,7 +294,7 @@ def main_cli():
 )
 @click.option(
     "--reader",
-    default="json_map",
+    default=None,
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
     help=(
         "The reader to use. Examples are json_map or readers from a pynxtools plugin. "
@@ -340,6 +340,7 @@ def main_cli():
 )
 @click.option(
     "--mapping",
+    default=None,
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
 @click.option(
