@@ -46,6 +46,10 @@ jobs:
           curl -LsSf https://astral.sh/uv/install.sh | sh
           uv pip install --no-cache-dir ".[docs]"
 
+      - name: Check dataconverter Installation
+        run: |
+          dataconverter --help
+
       - name: Build and Deploy
         run: |
           mkdocs gh-deploy --force --remote-branch gh-pages

@@ -6,6 +6,8 @@ result = subprocess.run(
     ["dataconverter", "--help"], capture_output=True, text=True, check=False
 )
 
+print(result.stdout)
+
 # Write the output to a new Markdown file
 output_file = Path(__file__).parent.parent.joinpath(
     "docs", "how-tos", "dataconverter_help_output.md"
