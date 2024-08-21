@@ -18,7 +18,7 @@
 """The abstract class off of which to implement readers."""
 
 from abc import ABC, abstractmethod
-from typing import Tuple, Any
+from typing import Any, Tuple
 
 
 class BaseReader(ABC):

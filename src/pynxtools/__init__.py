@@ -16,12 +16,35 @@
 # limitations under the License.
 #
 
+import logging
 import os
 import re
 from datetime import datetime
 
 from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
+
+LOGGER_LEVELS_TO_HIGHLIGHT = (logging.WARNING, logging.ERROR)
+
+
+class CustomFormatter(logging.Formatter):
+    """Formatter that specifically highlights errors and warnings."""
+
+    def format(self, record):
+        if not getattr(record, "prefixed", False):
+            if record.levelno in LOGGER_LEVELS_TO_HIGHLIGHT:
+                record.msg = f"{record.levelname}: {record.msg}"
+            # Mark the record as prefixed
+            record.prefixed = True
+        return super().format(record)
+
+
+logger = logging.getLogger("pynxtools")
+handler = logging.StreamHandler()
+formatter = CustomFormatter("%(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 MAIN_BRANCH_NAME = "fairmat"
 
