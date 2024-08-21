@@ -284,28 +284,32 @@ def main_cli():
     default=[],
     multiple=True,
     help=(
-        "Deprecated: Please use the positional file arguments instead. "
-        "The path to the input data file to read. (Repeat for more than one file.)"
+        "Deprecated: Please use the positional file arguments instead. The path to the "
+        "input data file to read. Repeat for more than one file. default=[] This option "
+        "is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--reader",
-    default="json_map",
+    default=None,
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
-    help='The reader to use. default="example"',
+    help=(
+        "The reader to use. Examples are json_map or readers from a pynxtools plugin. "
+        "default=None This option is required if no '--params-file' is supplied."
+    ),
 )
 @click.option(
     "--nxdl",
     default=None,
     help=(
-        "The name of the NXDL file to use without extension."
-        "This option is required if no '--params-file' is supplied."
+        "The name of the NeXus application definition NXDL file to use without the "
+        "extension nxdl.xml. This option is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--output",
     default="output.nxs",
-    help="The path to the output NeXus file to be generated.",
+    help="The path to the output NeXus/HDF5 file to be generated.",
 )
 @click.option(
     "--params-file",
@@ -333,12 +337,14 @@ def main_cli():
 )
 @click.option(
     "--mapping",
+    default=None,
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
 @click.option(
     "-c",
     "--config",
     type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True),
+    default=None,
     help="A json config file for the reader",
 )
 # pylint: disable=too-many-arguments
