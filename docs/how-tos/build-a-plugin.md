@@ -1,11 +1,14 @@
 # Build your own pynxtools plugin
 
-Your current data is not supported yet by the [built-in pynxtools readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) or any of the officially supported [pynxtools plugins](../reference/plugins.md)? 
+The pynxtools [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) is used to convert experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1). The converter allows extending support to other data formats by allowing extensions called `readers`.  There exist a set of [built-in pynxtools readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) as well as [pynxtools plugins](../reference/plugins.md) to convert supported data files for some experimental techniques into compliant NeXus files.
+
+Your current data is not supported yet by the built-in pynxtools readers or the officially supported pynxtools plugins?
 
 Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.
 
 
 ## Getting started
+
 You should start by creating a clean repository that implements the following structure (for a plugin called ```pynxtools-plugin```):
 ```
 pynxtools-plugin
@@ -26,11 +29,13 @@ pynxtools-plugin
 └── pyproject.toml
 ```
 
-To identify `pynxtools-plugin` as a plugin for pynxtools, an entry point must be established:
+To identify `pynxtools-plugin` as a plugin for pynxtools, an entry point must be established (in the `pyproject.toml` file):
 ```
 [project.entry-points."pynxtools.reader"]
 mydatareader = "pynxtools_plugin.reader:MyDataReader"
 ```
+
+Note that it is also possible that your plugin contains multiple readers. In that case, each reader must have its unique entry point.
 
 Here, we will focus mostly on the `reader.py` file and how to build a reader. For guidelines on how to build the other parts of your plugin, you can have a look here:
 
@@ -46,7 +51,7 @@ After you have established the main structure, you can start writing your reader
 
 Then implement the reader function:
 
-```python
+```python title="reader.py"
 """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
 from typing import Tuple, Any
 
@@ -55,6 +60,10 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 class MyDataReader(BaseReader):
     """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
 
+    supported_nxdls = [
+        "NXmynxdl" # this needs to be changed during implementation.
+    ]
+
     def read(
         self,
         template: dict = None,
@@ -62,11 +71,9 @@ class MyDataReader(BaseReader):
         objects: Tuple[Any] = None
     ) -> dict:
         """Reads data from given file and returns a filled template dictionary"""
-        # Fill the template
-        for path in file_paths:
-            print(path)
-
-        template["/entry/instrument/scan"] = raw_scan_data
+        # Here, you must provide functionality to fill the the template, see below.
+        # Example:
+        # template["/entry/instrument/name"] = "my_instrument"
 
         return template
 
@@ -74,12 +81,10 @@ class MyDataReader(BaseReader):
 # This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".
 READER = MyDataReader
 
-
-
 ```
 ### The reader template dictionary
 
-The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the NeXus application definition. The template contains keys that match the concepts in the provided NXDL file (you can get an empty template by using `dataconverter generate-template`).
+The read function takes a [`Template`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/template.py) dictionary, which is used to map from the measurement (meta)data to the concepts defined in the NeXus application definition. The template contains keys that match the concepts in the provided NXDL file.
 
 The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file.
 They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints, ... . Practically you can pass any value that can be handled by the `h5py` package.
@@ -94,12 +99,11 @@ Example for a template entry:
 
 For a given NXDL schema, you can generate an empty template with the command
 ```console
-user@box:~$ dataconverter generate-template` --nxdl NXmynxdl
+user@box:~$ dataconverter generate-template --nxdl NXmynxdl
 ```
 
 #### Naming of groups
-In case the NXDL does not define a `name` for the group the requested data belongs to, the template dictionary will list it as `/NAME_IN_NXDL[name_in_output_nexus]`
-You can choose any name you prefer instead of the suggested name (see [here](../learn/nexus-rules.md) for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.
+In case the NXDL does not define a `name` for the group the requested data belongs to, the template dictionary will list it as `/NAME_IN_NXDL[name_in_output_nexus]`. You can choose any name you prefer instead of the suggested `name_in_output_nexus` (see [here](../learn/nexus-rules.md) for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.
 
 ```json
 {
@@ -117,7 +121,7 @@ For attributes defined in the NXDL, the reader template dictionary will have the
 ```
 
 #### Units
-If there is a field defined in the NXDL, the converter expects a filled in /data/@units entry in the template dictionary corresponding to the right /data field unless it is specified as NX_UNITLESS in the NXDL. Otherwise, you will get an exception.
+If there is a field defined in the NXDL, the converter expects a filled in /data/@units entry in the template dictionary corresponding to the right /data field unless it is specified as NX_UNITLESS in the NXDL. Otherwise, a warning will be shown.
 
 ```json
 {
@@ -142,11 +146,7 @@ While building on the ```BaseReader``` allows for the most flexibility, in most 
 
 You can find an extensive how-to guide to build off the `MultiFormatReader` [here](./use-multi-format-reader.md).
 
-
 ## Calling the reader from the command line
-
-The pynxtools converter allows extending support to other data formats by allowing extensions called readers.
-The converter provides a dev platform to build a NeXus compatible reader by providing checking against a chosen NeXus application definition.
 
 The dataconverter can be executed using:
 ```console

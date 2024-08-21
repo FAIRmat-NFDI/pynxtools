@@ -52,9 +52,6 @@ Info:
   You can see more options by using --help for specific commands. For example:
   dataconverter generate-template --help
 ```
-
-<img src="./convert_routine.svg" />
-
 #### Merge partial NeXus files into one
 
 ```console
@@ -78,4 +75,4 @@ user@box:~$ dataconverter --nxdl nxdl metadata data.raw otherfile
 
 ## Writing a Reader
 
-In case you want to write your own reader for a certain type of experiment, you can find documentation [here](https://fairmat-nfdi.github.io/pynxtools/how-tos/build_a_reader.html)
+In case you want to write your own reader for a certain type of experiment, you can find documentation [here](https://fairmat-nfdi.github.io/pynxtools/how-tos/build-a-plugin.html)

@@ -19,11 +19,6 @@ import numpy as np
 import h5py
 
 
-# Function to generate a Lorentzian curve
-def lorentzian(x, x0, gamma):
-    return (gamma**2) / ((x - x0) ** 2 + gamma**2)
-
-
 # Function to generate a Gaussian curve
 def gaussian(x, mu, sigma):
     return np.exp(-0.5 * ((x - mu) / sigma) ** 2)
