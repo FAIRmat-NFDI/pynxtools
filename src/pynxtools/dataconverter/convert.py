@@ -381,6 +381,7 @@ def convert_cli(
     if mapping:
         reader = "json_map"
         input_file = input_file + tuple([mapping])
+        # needs own call
 
     file_list = []
     for file in files:
@@ -398,16 +399,27 @@ def convert_cli(
         )
 
     try:
-        convert(
-            tuple(file_list) + input_file,
-            reader,
-            nxdl,
-            output,
-            skip_verify,
-            config_file=config,
-            ignore_undocumented=ignore_undocumented,
-            fail=fail,
-        )
+        if config:  # most but not all readers demand a config.json file
+            convert(
+                tuple(file_list) + input_file,
+                reader,
+                nxdl,
+                output,
+                skip_verify,
+                config_file=config,
+                ignore_undocumented=ignore_undocumented,
+                fail=fail,
+            )
+        else:
+            convert(
+                tuple(file_list) + input_file,
+                reader,
+                nxdl,
+                output,
+                skip_verify,
+                ignore_undocumented=ignore_undocumented,
+                fail=fail,
+            )
     except FileNotFoundError as exc:
         raise click.BadParameter(str(exc)) from exc
     except ValidationFailed as exc:
