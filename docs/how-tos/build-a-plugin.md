@@ -2,11 +2,8 @@
 
 The pynxtools [dataconverter](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter) is used to convert experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1). The converter allows extending support to other data formats by allowing extensions called `readers`.  There exist a set of [built-in pynxtools readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) as well as [pynxtools plugins](../reference/plugins.md) to convert supported data files for some experimental techniques into compliant NeXus files.
 
-<<<<<<< HEAD
 Your current data is not supported yet by the built-in pynxtools readers or the officially supported pynxtools plugins?
 
-=======
->>>>>>> f3b1b966 (use dynamic generation of help call in mkdocs)
 Don't worry, the following how-to will guide you through the steps of writing a reader for your own data.
 
 
