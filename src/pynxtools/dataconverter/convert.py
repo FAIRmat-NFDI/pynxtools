@@ -225,7 +225,6 @@ def convert(
     -------
     None.
     """
-
     nxdl_root, nxdl_f_path = helpers.get_nxdl_root_and_path(nxdl)
 
     data = transfer_data_into_template(
@@ -383,6 +382,9 @@ def convert_cli(
         reader = "json_map"
         input_file = input_file + tuple([mapping])
         # needs own call
+
+    if config_file:
+        kwargs["config_file"] = config_file
 
     file_list = []
     for file in files:
