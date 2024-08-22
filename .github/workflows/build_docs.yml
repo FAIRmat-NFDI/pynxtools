@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the main branch
-      - 398-add-documentation-pages-for-multi-format-reader
 
 env:
   UV_SYSTEM_PYTHON: true
@@ -44,11 +43,7 @@ jobs:
       - name: Install Dependencies
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv pip install --no-cache-dir ".[docs]"  # Install without cache to ensure latest version
-
-      - name: Check dataconverter Installation
-        run: |
-          dataconverter --help
+          uv pip install --no-cache-dir ".[docs]"
 
       - name: Build and Deploy
         run: |
