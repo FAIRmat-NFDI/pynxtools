@@ -31,8 +31,11 @@ How-to guides provide step-by-step instructions for a wide range of tasks:
 
 - [Writing an application definition](how-tos/writing-an-appdef.md)
 - [Storing data in multiple application definitions](how-tos/using-multiple-appdefs.md)
+- [Build your own pynxtools plugin](how-tos/build-a-plugin.md)
+- [Implement a reader based on the MultiFormatReader](how-tos/use-multi-format-reader.md)
 - [Representing experimental geometries](how-tos/transformations.md)
 - [Using pynxtools test framework](how-tos/using-pynxtools-test-framework.md)
+
 
 </div>
 
@@ -45,6 +48,7 @@ An introduction to NeXus and its design principles.
 - [An introduction to NeXus](learn/nexus-primer.md)
 - [Rules for storing data in NeXus](learn/nexus-rules.md)
 - [The concept of multiple application definitions](learn/multiple-appdefs.md)
+- [The MultiFormatReader as a reader superclass](learn/multi-format-reader.md)
 
 </div>
 <div markdown="block">
