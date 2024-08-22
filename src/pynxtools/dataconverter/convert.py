@@ -291,25 +291,25 @@ def main_cli():
 )
 @click.option(
     "--reader",
-    default=None,
+    default="json_map",
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
     help=(
         "The reader to use. Examples are json_map or readers from a pynxtools plugin. "
-        "default=None This option is required if no '--params-file' is supplied."
+        "default='json_map' This option is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--nxdl",
     default=None,
     help=(
-        "The name of the NeXus application definition NXDL file to use without the "
-        "extension nxdl.xml. This option is required if no '--params-file' is supplied."
+        "The name of the NeXus application definition file to use without the extension "
+        "nxdl.xml. This option is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--output",
     default="output.nxs",
-    help="The path to the output NeXus/HDF5 file to be generated.",
+    help="The path to the output NeXus file to be generated. default='output.nxs'",
 )
 @click.option(
     "--params-file",
@@ -337,7 +337,6 @@ def main_cli():
 )
 @click.option(
     "--mapping",
-    default=None,
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
 @click.option(
