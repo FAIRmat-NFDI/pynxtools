@@ -50,7 +50,7 @@ def read(
     self.config_file = self.kwargs.get("config_file", self.config_file)
     self.overwrite_keys = self.kwargs.get("overwrite_keys", self.overwrite_keys)   
 ```
-### Template initialization and processing order
+## Template initialization and processing order
 An empty `Template` object is initialized that later gets filled from the data files later.
 ```python title="multi/reader.py"
     template = Template(overwrite_keys=self.overwrite_keys)
@@ -69,7 +69,7 @@ An empty `Template` object is initialized that later gets filled from the data f
 If the reader has a `self.processing_order`, the input files get sorted in this order.
 If `self.overwrite_keys` is True, later files get precedent. For example, if `self.processing_order = [".yaml", ".hdf5"]`, any values coming from HDF5 files would overwrite values from the YAML files.
 
-### Reading of input files
+## Reading of input files
 ```python title="multi/reader.py"
     for file_path in sorted_paths:
         extension = os.path.splitext(file_path)[1].lower()
@@ -95,7 +95,7 @@ These methods must return a dictionary. One possibility is to return a dictionar
 
 Note that for several input formats, standardized parser functions already exist within the `MultiFormatReader`. For example, YAML files can be parsed using the `pynxtools.dataconverter.readers.utils.parse_yml` function.
 
-### Setting default values in the template
+## Setting default values in the template
 ```python title="multi/reader.py"
     template.update(self.setup_template())
 ```
@@ -107,14 +107,14 @@ Next, the `setup_template` method can be implemented, which is used to populate 
 }
 ```
 
-### Handling objects
+## Handling objects
 ```python title="multi/reader.py"
     if objects is not None:
         template.update(self.handle_objects(objects))
 ```
 Aside from data files, it is also possible to directly pass any Python objects to the `read` function (e.g., a numpy array with measurement data). In order to exploit this, the `handle_objects` method must implemented, which should return a dictionary that populates the template.
 
-### Parsing the config file
+## Parsing the config file
 ```python title="multi/reader.py"
     if self.config_file is not None:
         self.config_dict = parse_flatten_json(
@@ -157,13 +157,13 @@ In the config file, one can
 
 Note that in order to use a `link_callback` (see below), `create_link_dict` must be set to `False`, which means that at this stage, config values of the form `"@link:"/path/to/source/data"` get NOT yet converted to `{"link": "/path/to/source/data"}`.
 
-### Data post processing
+## Data post processing
 ```python title="multi/reader.py"
    self.post_process()
 ```
 In case there is the need for any post-processing on the data and/or config dictionary _after_ they have been read, the `post_process` method can be implemented. For example, this can be helpful if there are multiple entities of a given NX_CLASS (for example, multiple detectors) on the same level and the config dict shall be set up to fill the template with all of these entities.
 
-### Filling the template from the read-in data
+## Filling the template from the read-in data
 ```python title="multi/reader.py"
     if self.config_dict:
         suppress_warning = kwargs.pop("suppress_warning", False)
