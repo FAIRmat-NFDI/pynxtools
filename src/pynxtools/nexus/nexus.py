@@ -9,6 +9,7 @@ from functools import lru_cache
 import click
 import h5py
 import lxml.etree as ET
+import numpy as np
 
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     add_base_classes,
@@ -581,7 +582,7 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
                     ax_list.append(nxdata[ax_datasets])
             elif a_item == 0:  # positional determination of the dimension number
                 ax_list.append(nxdata[ax_datasets])
-        else:  # multiple axes are listed
+        elif isinstance(ax_datasets, (list, np.ndarray)):  # multiple axes are listed
             # explicite definition of dimension number
             for aax in ax_datasets:
                 ind = nxdata.attrs.get(aax + "_indices")
