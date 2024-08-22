@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the main branch
-      - 398-add-documentation-pages-for-multi-format-reader
 
 env:
   UV_SYSTEM_PYTHON: true
 
 permissions:
    contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Cache mkdocs-material enviroment
+      - name: Cache mkdocs-material environment
         uses: actions/cache@v3
         with:
           key: mkdocs-material-${{ env.cache_id }}
@@ -40,7 +40,7 @@ jobs:
       - name: Install Dependencies
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv pip install ".[docs]"
+          uv pip install --no-cache-dir ".[docs]"  # Install without cache to ensure latest version
 
       - name: Check dataconverter Installation
         run: |
