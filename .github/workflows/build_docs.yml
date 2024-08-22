@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the main branch
-      - 398-add-documentation-pages-for-multi-format-reader
 
 env:
   UV_SYSTEM_PYTHON: true
