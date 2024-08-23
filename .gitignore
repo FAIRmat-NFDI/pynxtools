@@ -202,7 +202,6 @@ cython_debug/
 !dev-requirements.txt
 !mkdocs-requirements.txt
 !src/pynxtools/nexus-version.txt
-docs/how-tos/dataconverter_help_output.md
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version

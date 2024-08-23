@@ -39,9 +39,6 @@ plugins:
   - macros:
       module_name: src/pynxtools/mkdocs
 
-hooks:
-  - scripts/generate_dataconverter_help.py
-
 theme:
   name: material
   palette:
@@ -85,6 +82,10 @@ markdown_extensions:
 extra:
   generator: false
   homepage: https://nomad-lab.eu
+  click:
+    show_subcommands: true
+    show_options: true
+    show_help: true
 
 use_directory_urls: false
 
