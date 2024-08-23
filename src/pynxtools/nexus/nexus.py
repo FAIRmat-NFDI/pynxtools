@@ -571,7 +571,7 @@ def find_attrib_axis_actual_dim_num(nxdata, a_item, ax_list):
                 ax_list.append(sax)
 
 
-def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
+def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
     """Gets either single or multiple axes from the NXDL"""
     try:
         if isinstance(ax_datasets, str):  # single axis is defined
@@ -593,7 +593,15 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list):
                 ax_datasets
             ):  # positional determination of the dimension number
                 ax_list.append(nxdata[ax_datasets[a_item]])
+        else:
+            logger.warning(
+                f"The 'axes' attribute is not a string or list or np.ndarray of string, check {nxdata.name}"
+            )
+
     except KeyError:
+        logger.warning(
+            f"Individual axis in 'axes' attribute for NXdata {nxdata.name} is not found"
+        )
         pass
     return ax_list
 
@@ -603,7 +611,9 @@ def axis_helper(dim, nxdata, signal, axes, logger):
     for a_item in range(dim):
         ax_list = []
         ax_datasets = nxdata.attrs.get("axes")  # primary axes listed in attribute axes
-        ax_list = get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list)
+        ax_list = get_single_or_multiple_axes(
+            nxdata, ax_datasets, a_item, ax_list, logger
+        )
         for attr in nxdata.attrs.keys():  # check for corresponding AXISNAME_indices
             if (
                 attr.endswith("_indices")
