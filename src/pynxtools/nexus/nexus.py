@@ -595,7 +595,7 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
                 ax_list.append(nxdata[ax_datasets[a_item]])
         else:
             logger.warning(
-                f"The 'axes' attribute is neither a string or a list or an np.ndarray of strings, check {nxdata.name}”
+                f"The 'axes' attribute is neither a string or a list or an np.ndarray of strings, check {nxdata.name}"
             )
 
     except KeyError:
