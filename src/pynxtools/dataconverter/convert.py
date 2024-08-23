@@ -272,7 +272,11 @@ class CustomClickGroup(DefaultGroup):
             )
 
 
-@click.group(cls=CustomClickGroup, default="convert", default_if_no_args=True)
+@click.group(
+    cls=CustomClickGroup,
+    default="convert",
+    default_if_no_args=True,
+)
 def main_cli():
     pass
 

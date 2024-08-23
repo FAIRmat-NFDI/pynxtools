@@ -23,6 +23,7 @@ nav:
     - learn/multiple-appdefs.md
     - learn/multi-format-reader.md
   - Reference:
+    - reference/cli-api.md
     - reference/plugins.md
     - reference/definitions.md
 
@@ -30,9 +31,6 @@ plugins:
   - search
   - macros:
       module_name: src/pynxtools/mkdocs
-
-hooks:
-  - scripts/generate_dataconverter_help.py
 
 theme:
   name: material
@@ -76,6 +74,10 @@ markdown_extensions:
 extra:
   generator: false
   homepage: https://nomad-lab.eu
+  click:
+    show_subcommands: true
+    show_options: true
+    show_help: true
 
 use_directory_urls: false
 

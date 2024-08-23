@@ -783,10 +783,7 @@ class HandleNexus:
     "--nexus-file",
     required=False,
     default=None,
-    help=(
-        "NeXus file with extension .nxs to learn NeXus different concept"
-        " documentation and concept."
-    ),
+    help=("NeXus file with extension .nxs."),
 )
 @click.option(
     "-d",
@@ -795,7 +792,7 @@ class HandleNexus:
     default=None,
     help=(
         "Definition path in nexus output (.nxs) file. Returns debug"
-        "log relavent with that definition path. Example: /entry/data/delays"
+        " log relevant with that definition path. Example: /entry/data/delays"
     ),
 )
 @click.option(
@@ -805,12 +802,15 @@ class HandleNexus:
     default=None,
     help=(
         "Concept path from application definition file (.nxdl,xml). Finds out"
-        "all the available concept definition (IS-A realation) for rendered"
-        "concept path. Example: /NXarpes/ENTRY/INSTRUMENT/analyser"
+        " all the available concept definition (IS-A realation) for rendered"
+        " concept path. Example: /NXarpes/ENTRY/INSTRUMENT/analyser"
     ),
 )
 def main(nexus_file, documentation, concept):
-    """The main function to call when used as a script."""
+    """
+    Functionality to extract documentation and concept definition
+    information about the individual parts of a NeXus/HDF5 file."""
+
     logging_format = "%(levelname)s: %(message)s"
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging.DEBUG)
