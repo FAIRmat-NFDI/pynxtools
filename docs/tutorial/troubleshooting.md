@@ -1,8 +1,8 @@
 # Troubleshooting Guide
 
-### If you don't find a solution here, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).
+!!! info "Work in progress"
 
-<br/>
+**If you don't find a solution here, please open a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).**
 
 ## Module import error
 
@@ -18,7 +18,7 @@ If you are working in a directory containing the repo folder, `pynxtools`, renam
 
 ```
 .
-├── pynxtools2                    # Renamed repo folder
+├── pynxtools2             # Renamed repo folder
 │   ├── pynxtools          # Actual module code is in here
 │   ├── tests
 │   └── ...

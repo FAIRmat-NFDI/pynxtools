@@ -30,11 +30,14 @@ Note that simply calling `dataconverter` defaults to `dataconverter convert`.
     :style: table
     :list_subcommands: True
 
+NOTE: Only one option from (`-d` and `-c`) is acceptable.
+
+
 ## ELN generation
 ::: mkdocs-click
     :module: pynxtools.eln_mapper.eln_mapper
     :command: get_eln
     :prog_name: generate_eln
-    :depth: 1
+    :depth: 2
     :style: table
     :list_subcommands: True

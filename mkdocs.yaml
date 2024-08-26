@@ -10,6 +10,7 @@ nav:
   - Tutorials:
     - tutorial/converting-data-to-nexus.md
     - tutorial/nexus-to-nomad.md
+    - tutorial/troubleshooting.md
   - How-tos:
     - how-tos/writing-an-appdef.md
     - how-tos/using-multiple-appdefs.md
@@ -18,14 +19,19 @@ nav:
     - how-tos/transformations.md
     - how-tos/using-pynxtools-test-framework.md
   - Learn:
-    - learn/nexus-primer.md
-    - learn/nexus-rules.md
-    - learn/multiple-appdefs.md
-    - learn/multi-format-reader.md
+    - NeXus:
+      - learn/nexus-primer.md
+      - learn/nexus-rules.md
+      - learn/multiple-appdefs.md
+    - pynxtools:
+      - learn/dataconverter-and-readers.md
+      - learn/nexus-verification.md
+      - learn/multi-format-reader.md
   - Reference:
-    - reference/cli-api.md
-    - reference/plugins.md
     - reference/definitions.md
+    - reference/cli-api.md
+    - reference/built-in-readers.md
+    - reference/plugins.md
 
 plugins:
   - search

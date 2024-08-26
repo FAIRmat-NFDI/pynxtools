@@ -10,6 +10,15 @@
 `pynxtools` is a tool designed for making your experimental data FAIR.
 It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
 
+# Scope
+
+`pynxtools` (previously called `nexusutils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
+
+Additionally, the software can be used as a plugin in the research data management system NOMAD for
+making experimental data searchable and publishable.
+NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
+(NFDI).
+
 # Installation
 
 It is recommended to use python 3.10 with a dedicated virtual environment for this package.
@@ -28,26 +37,13 @@ You can also install the latest _development_ version with
 pip install git+https://github.com/FAIRmat-NFDI/pynxtools.git
 ```
 
-# Scope
+# Documentation
+Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
 
-`pynxtools` (previously called `nexusutils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
+# Repository structure
 
-Additionally, the software can be used as a plugin in the research data management system NOMAD for
-making experimental data searchable and publishable.
-NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
-(NFDI).
-
-The software tools are located inside [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools) and they are
-shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
-Some examples with real datasets are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples).
-It guides you through the process of converting instrument raw
-data into the NeXus standard and visualising the files content.
-
-# Command line tools
-
-- [**dataconverter**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/README.md): Creates compliant instances of NeXus/HDF5 files to [NeXus schemas](https://nexusformat.org).
-- [**read_nexus**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/nexus/README.md): Outputs a debug log for a given NeXus file.
-- [**generate_eln**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/eln_mapper/README.md): Outputs ELN files that can be used to add metadata to the dataconverter routine.
+The software tools are located inside [`src/pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools) and they are shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
+Some examples with real datasets are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples). They guide you through the process of converting instrument raw data into the NeXus standard and visualising the files' content.
 
 # NOMAD integration
 
@@ -56,8 +52,9 @@ NOMAD will recognize pynxtools as a plugin automatically and offer automatic par
 and a schema for NeXus application definitions.
 pynxtools is already included in the NOMAD main deployment and NOMAD NeXus distribution images.
 
-# Documentation
-Documentation for the different tools can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
+### Does this software require NOMAD or NOMAD OASIS ?
+
+No. The data files produced here can be uploaded to NOMAD. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe. It can, however, be used as a NOMAD plugin to parse nexus files, please see the section above for details.
 
 # Contributing
 
@@ -97,7 +94,7 @@ python -m pytest -sv tests
 ## Run examples
 
 A number of examples exist which document how the tools can be used. For a standalone
-usage convenient jupyter notebooks are available for each tool. To use them jupyter
+usage convenient jupyter notebooks are available for each tool. To use them, jupyter
 and related tools have to be installed in the development environment as follows:
 
 ```shell
@@ -105,6 +102,9 @@ python -m pip install jupyter
 python -m pip install jupyterlab
 python -m pip install jupyterlab_h5web
 ```
+# Troubleshooting
+
+Please check this [guide](https://fairmat-nfdi.github.io/pynxtools/tutorial/troubleshooting.html) for any issues you face with the tool. If you don't find a solution there, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).
 
 # Questions, suggestions?
 
@@ -115,12 +115,3 @@ on how to build on this work, or to get your parser included into NOMAD, you can
 - Use our forums at [matsci.org](https://matsci.org/c/nomad/32)
 - Write to [support@nomad-lab.eu](mailto:support@nomad-lab.eu)
 - Contact directly the lead developers of the individual parsers.
-
-### Does this software require NOMAD or NOMAD OASIS ?
-
-No. The data files produced here can be uploaded to Nomad. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe. It can, however, be used as a NOMAD plugin to parse nexus files, please see the section above for details.
-
-# Troubleshooting
-
-Please check this [guide](TROUBLESHOOTING.md) for any issues you face with the tool. If you don't find a solution there, please make a new [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new?template=bug.yaml).
-
