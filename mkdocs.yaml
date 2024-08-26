@@ -23,6 +23,7 @@ nav:
     - learn/multiple-appdefs.md
     - learn/multi-format-reader.md
   - Reference:
+    - reference/cli-api.md
     - reference/plugins.md
     - reference/definitions.md
 
@@ -30,9 +31,6 @@ plugins:
   - search
   - macros:
       module_name: src/pynxtools/mkdocs
-
-hooks:
-  - scripts/generate_dataconverter_help.py
 
 theme:
   name: material

@@ -155,5 +155,11 @@ user@box:~$ dataconverter --reader mydatareader --nxdl NXmynxdl --output path_to
 Here, the ``--reader`` flag must match the reader name defined in `[project.entry-points."pynxtools.reader"]` in the pyproject.toml file. The NXDL name passed to ``--nxdl``must be a valid NeXus NXDL/XML file in `pynxtools.definitions`.
 
 Aside from this default structure, there are many more flags that can be passed to the
-dataconverter call. Here is an output of its ```help``` call:
-{!how-tos/dataconverter_help_output.md!}
+dataconverter call. Here is its API:
+::: mkdocs-click
+    :module: pynxtools.dataconverter.convert
+    :command: convert_cli
+    :prog_name: dataconverter
+    :depth: 2
+    :style: table
+    :list_subcommands: True

@@ -55,6 +55,9 @@ An introduction to NeXus and its design principles.
 
 ### Reference
 
+`pynxtools` has a number of command line tools that can be used to convert data and verify NeXus files. You can more information about the
+API [here](reference/cli-api.md).
+
 Within FAIRmat, we maintain a number of reader plugins for different experimental techniques. You can find more information [here](reference/plugins.md).
 
 [Here](reference/definitions.md), you find the detailed list of application definitions and base classes and their respective fields.
