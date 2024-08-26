@@ -471,6 +471,6 @@ def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
 
 @main_cli.command("get-readers")
 def get_reader_cli():
-    "Prints a list of all installed readers."
+    """Prints a list of all installed readers."""
     readers = get_names_of_all_readers()
     logger.info(f"The following readers are currently installed: {readers}.")
