@@ -513,6 +513,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Calling the reader from the command line">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dataconverter" class="md-nav__link">
+    <span class="md-ellipsis">
+      dataconverter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -762,6 +777,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/cli-api.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API for command line tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/plugins.html" class="md-nav__link">
         
   
@@ -930,6 +966,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Calling the reader from the command line">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dataconverter" class="md-nav__link">
+    <span class="md-ellipsis">
+      dataconverter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1060,42 +1111,91 @@ They can be lists, numpy arrays, numpy bytes, numpy floats, numpy ints, ... . Pr
 </code></pre></div>
 Here, the <code>--reader</code> flag must match the reader name defined in <code>[project.entry-points."pynxtools.reader"]</code> in the pyproject.toml file. The NXDL name passed to <code>--nxdl</code>must be a valid NeXus NXDL/XML file in <code>pynxtools.definitions</code>.</p>
 <p>Aside from this default structure, there are many more flags that can be passed to the
-dataconverter call. Here is an output of its <code>help</code> call:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Usage:<span class="w"> </span>dataconverter<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>Options:
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>--help<span class="w">                          </span>Show<span class="w"> </span>this<span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span>exit.
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span>--input-file<span class="w"> </span>TEXT<span class="w">               </span>Deprecated:<span class="w"> </span>Please<span class="w"> </span>use<span class="w"> </span>the<span class="w"> </span>positional<span class="w"> </span>file
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">                                  </span>arguments<span class="w"> </span>instead.<span class="w"> </span>The<span class="w"> </span>path<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>input
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">                                  </span>data<span class="w"> </span>file<span class="w"> </span>to<span class="w"> </span>read.<span class="w"> </span><span class="o">(</span>Repeat<span class="w"> </span><span class="k">for</span><span class="w"> </span>more<span class="w"> </span>than<span class="w"> </span>one
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">                                  </span>file.<span class="o">)</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span>--reader<span class="w"> </span><span class="o">[</span>example<span class="p">|</span>json_map<span class="p">|</span>json_yml<span class="p">|</span>multi<span class="o">]</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">                                  </span>The<span class="w"> </span>reader<span class="w"> </span>to<span class="w"> </span>use.<span class="w"> </span><span class="nv">default</span><span class="o">=</span><span class="s2">&quot;example&quot;</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">  </span>--nxdl<span class="w"> </span>TEXT<span class="w">                     </span>The<span class="w"> </span>name<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>NXDL<span class="w"> </span>file<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>without
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">                                  </span>extension.This<span class="w"> </span>option<span class="w"> </span>is<span class="w"> </span>required<span class="w"> </span><span class="k">if</span><span class="w"> </span>no<span class="w"> </span><span class="s1">&#39;--</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="s1">                                  params-file&#39;</span><span class="w"> </span>is<span class="w"> </span>supplied.
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">  </span>--output<span class="w"> </span>TEXT<span class="w">                   </span>The<span class="w"> </span>path<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>output<span class="w"> </span>NeXus<span class="w"> </span>file<span class="w"> </span>to<span class="w"> </span>be
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">                                  </span>generated.
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">  </span>--params-file<span class="w"> </span>FILENAME<span class="w">          </span>Allows<span class="w"> </span>to<span class="w"> </span>pass<span class="w"> </span>a<span class="w"> </span>.yaml<span class="w"> </span>file<span class="w"> </span>with<span class="w"> </span>all<span class="w"> </span>the
-<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">                                  </span>parameters<span class="w"> </span>the<span class="w"> </span>converter<span class="w"> </span>supports.
-<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">  </span>--ignore-undocumented<span class="w">           </span>Ignore<span class="w"> </span>all<span class="w"> </span>undocumented<span class="w"> </span>fields<span class="w"> </span>during
-<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">                                  </span>validation.
-<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">  </span>--fail<span class="w">                          </span>Fail<span class="w"> </span>conversion<span class="w"> </span>and<span class="w"> </span>don<span class="err">&#39;</span>t<span class="w"> </span>create<span class="w"> </span>an<span class="w"> </span>output
-<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">                                  </span>file<span class="w"> </span><span class="k">if</span><span class="w"> </span>the<span class="w"> </span>validation<span class="w"> </span>fails.
-<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">  </span>--skip-verify<span class="w">                   </span>Skips<span class="w"> </span>the<span class="w"> </span>verification<span class="w"> </span>routine<span class="w"> </span>during
-<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">                                  </span>conversion.
-<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">  </span>--mapping<span class="w"> </span>TEXT<span class="w">                  </span>Takes<span class="w"> </span>a<span class="w"> </span>&lt;name&gt;.mapping.json<span class="w"> </span>file<span class="w"> </span>and
-<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">                                  </span>converts<span class="w"> </span>data<span class="w"> </span>from<span class="w"> </span>given<span class="w"> </span>input<span class="w"> </span>files.
-<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">  </span>-c,<span class="w"> </span>--config<span class="w"> </span>FILE<span class="w">               </span>A<span class="w"> </span>json<span class="w"> </span>config<span class="w"> </span>file<span class="w"> </span><span class="k">for</span><span class="w"> </span>the<span class="w"> </span>reader
-<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>
-<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>Commands:
-<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="w">  </span>convert*<span class="w">           </span>This<span class="w"> </span><span class="nb">command</span><span class="w"> </span>allows<span class="w"> </span>you<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>the<span class="w"> </span>converter...
-<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">  </span>generate-template<span class="w">  </span>Generates<span class="w"> </span>and<span class="w"> </span>prints<span class="w"> </span>a<span class="w"> </span>template<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span><span class="k">for</span><span class="w"> </span>your<span class="w"> </span>nxdl.
-<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>
-<a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>Info:
-<a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a><span class="w">  </span>You<span class="w"> </span>can<span class="w"> </span>see<span class="w"> </span>more<span class="w"> </span>options<span class="w"> </span>by<span class="w"> </span>using<span class="w"> </span>--help<span class="w"> </span><span class="k">for</span><span class="w"> </span>specific<span class="w"> </span>commands.<span class="w"> </span>For<span class="w"> </span>example:
-<a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a><span class="w">  </span>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--help
-</code></pre></div></p>
+dataconverter call. Here is its API:</p>
+<h3 id="dataconverter">dataconverter<a class="headerlink" href="#dataconverter" title="Permanent link">&para;</a></h3>
+<p>This command allows you to use the converter functionality of the dataconverter.</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>dataconverter [OPTIONS] [FILES]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input-file</code></td>
+<td>text</td>
+<td>Deprecated: Please use the positional file arguments instead. The path to the input data file to read. (Repeat for more than one file.)</td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td><code>--reader</code></td>
+<td>choice (<code>example</code> &#x7C; <code>json_map</code> &#x7C; <code>json_yml</code> &#x7C; <code>multi</code>)</td>
+<td>The reader to use. default="example"</td>
+<td><code>json_map</code></td>
+</tr>
+<tr>
+<td><code>--nxdl</code></td>
+<td>text</td>
+<td>The name of the NXDL file to use without extension.This option is required if no '--params-file' is supplied.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--output</code></td>
+<td>text</td>
+<td>The path to the output NeXus file to be generated.</td>
+<td><code>output.nxs</code></td>
+</tr>
+<tr>
+<td><code>--params-file</code></td>
+<td>filename</td>
+<td>Allows to pass a .yaml file with all the parameters the converter supports.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--ignore-undocumented</code></td>
+<td>boolean</td>
+<td>Ignore all undocumented fields during validation.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--fail</code></td>
+<td>boolean</td>
+<td>Fail conversion and don't create an output file if the validation fails.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--skip-verify</code></td>
+<td>boolean</td>
+<td>Skips the verification routine during conversion.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--mapping</code></td>
+<td>text</td>
+<td>Takes a <name>.mapping.json file and converts data from given input files.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>-c</code>, <code>--config</code></td>
+<td>file</td>
+<td>A json config file for the reader</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
 
 
 
