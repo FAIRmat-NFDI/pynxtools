@@ -225,7 +225,6 @@ def convert(
     -------
     None.
     """
-
     nxdl_root, nxdl_f_path = helpers.get_nxdl_root_and_path(nxdl)
 
     data = transfer_data_into_template(
@@ -288,28 +287,32 @@ def main_cli():
     default=[],
     multiple=True,
     help=(
-        "Deprecated: Please use the positional file arguments instead. "
-        "The path to the input data file to read. (Repeat for more than one file.)"
+        "Deprecated: Please use the positional file arguments instead. The path to the "
+        "input data file to read. Repeat for more than one file. default=[] This option "
+        "is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--reader",
     default="json_map",
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
-    help='The reader to use. default="example"',
+    help=(
+        "The reader to use. Examples are json_map or readers from a pynxtools plugin. "
+        "default='json_map' This option is required if no '--params-file' is supplied."
+    ),
 )
 @click.option(
     "--nxdl",
     default=None,
     help=(
-        "The name of the NXDL file to use without extension."
-        "This option is required if no '--params-file' is supplied."
+        "The name of the NeXus application definition file to use without the extension "
+        "nxdl.xml. This option is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--output",
     default="output.nxs",
-    help="The path to the output NeXus file to be generated.",
+    help="The path to the output NeXus file to be generated. default='output.nxs'",
 )
 @click.option(
     "--params-file",
@@ -342,7 +345,9 @@ def main_cli():
 @click.option(
     "-c",
     "--config",
+    "config_file",
     type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True),
+    default=None,
     help="A json config file for the reader",
 )
 # pylint: disable=too-many-arguments
@@ -356,8 +361,9 @@ def convert_cli(
     ignore_undocumented: bool,
     skip_verify: bool,
     mapping: str,
-    config: str,
+    config_file: str,
     fail: bool,
+    **kwargs,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
     if params_file:
@@ -379,6 +385,10 @@ def convert_cli(
     if mapping:
         reader = "json_map"
         input_file = input_file + tuple([mapping])
+        # needs own call
+
+    if config_file:
+        kwargs["config_file"] = config_file
 
     file_list = []
     for file in files:
@@ -402,9 +412,9 @@ def convert_cli(
             nxdl,
             output,
             skip_verify,
-            config_file=config,
             ignore_undocumented=ignore_undocumented,
             fail=fail,
+            **kwargs,
         )
     except FileNotFoundError as exc:
         raise click.BadParameter(str(exc)) from exc

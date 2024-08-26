@@ -20,30 +20,6 @@ user@box:~$ pip install pynxtools[convert]
 ```console
 Usage: dataconverter [OPTIONS] COMMAND [ARGS]...
 
-Options:
-  --help                          Show this message and exit.
-  --input-file TEXT               Deprecated: Please use the positional file
-                                  arguments instead. The path to the input
-                                  data file to read. (Repeat for more than one
-                                  file.)
-  --reader [example|json_map|json_yml]
-                                  The reader to use. default="example"
-  --nxdl TEXT                     The name of the NXDL file to use without
-                                  extension.This option is required if no '--
-                                  params-file' is supplied.
-  --output TEXT                   The path to the output NeXus file to be
-                                  generated.
-  --params-file FILENAME          Allows to pass a .yaml file with all the
-                                  parameters the converter supports.
-  --ignore-undocumented           Ignore all undocumented fields during
-                                  validation.
-  --fail                          Fail conversion and don't create an output
-                                  file if the validation fails.
-  --skip-verify                   Skips the verification routine during
-                                  conversion.
-  --mapping TEXT                  Takes a <name>.mapping.json file and
-                                  converts data from given input files.
-
 Commands:
   convert*           This command allows you to use the converter...
   generate-template  Generates and prints a template to use for your nxdl.
