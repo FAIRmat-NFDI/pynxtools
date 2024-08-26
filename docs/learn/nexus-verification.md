@@ -11,7 +11,7 @@ This CLI tool can be used to verify _existing_ HDF5 files that claim to be NeXus
 
 ## read-nexus: NeXus file reader and debugger
 
-This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. See [here](reference/cli-api.html#verify-nexus) for the API documentation.
+This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. See [here](reference/cli-api.html#read-nexus) for the API documentation.
 
 The following example dataset can be used to test the `read_nexus` module: [src/pynxtools/data/201805_WSe2_arpes.nxs](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs).
 
