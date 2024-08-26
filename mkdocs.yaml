@@ -1,6 +1,6 @@
 site_name: Documentation
 site_description: |
-  The documentation the FAIRmat flavor of the NeXus definitions & pynxtools
+  The documentation of the FAIRmat-NeXus definitions & pynxtools
 site_author: The NOMAD authors
 repo_url: https://github.com/FAIRmat-NFDI/pynxtools
 edit_uri: ""
