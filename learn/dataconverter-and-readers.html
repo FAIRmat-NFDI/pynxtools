@@ -14,23 +14,25 @@
       
       
       
+        <link rel="prev" href="multiple-appdefs.html">
       
-        <link rel="next" href="tutorial/converting-data-to-nexus.html">
+      
+        <link rel="next" href="nexus-verification.html">
       
       
-      <link rel="icon" href="assets/favicon.png">
+      <link rel="icon" href="../assets/favicon.png">
       <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.33">
     
     
       
-        <title>Documentation</title>
+        <title>Data conversion in pynxtools - Documentation</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.3cba04c6.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.3cba04c6.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -49,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="stylesheets/extra.css">
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -75,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#fairmat-nexus-documentation" class="md-skip">
+        <a href="#data-conversion-in-pynxtools" class="md-skip">
           Skip to content
         </a>
       
@@ -91,7 +93,7 @@
   <nav class="md-header__inner md-grid" aria-label="header.title">
     <a href="https://nomad-lab.eu" title="Documentation" class="md-header__button md-logo" aria-label="Documentation" data-md-component="logo">
       
-  <img src="assets/nomad-logo.png" alt="logo">
+  <img src="../assets/nomad-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -107,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Data conversion in pynxtools
             
           </span>
         </div>
@@ -145,8 +147,6 @@
           
             
               
-                
-              
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -158,7 +158,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="https://nomad-lab.eu" title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
       
-  <img src="assets/nomad-logo.png" alt="logo">
+  <img src="../assets/nomad-logo.png" alt="logo">
 
     </a>
     Documentation
@@ -182,30 +182,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Home
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="index.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -214,110 +194,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#tutorial" class="md-nav__link">
-    <span class="md-ellipsis">
-      Tutorial
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-to-guides" class="md-nav__link">
-    <span class="md-ellipsis">
-      How-to guides
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#learn" class="md-nav__link">
-    <span class="md-ellipsis">
-      Learn
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Learn">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#an-introduction-to-nexus-and-its-design-principles" class="md-nav__link">
-    <span class="md-ellipsis">
-      An introduction to NeXus and its design principles
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pynxtools" class="md-nav__link">
-    <span class="md-ellipsis">
-      pynxtools
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Reference">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nexus-definitions" class="md-nav__link">
-    <span class="md-ellipsis">
-      NeXus definitions
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pynxtools_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      pynxtools
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -364,7 +240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorial/converting-data-to-nexus.html" class="md-nav__link">
+      <a href="../tutorial/converting-data-to-nexus.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -385,7 +261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorial/nexus-to-nomad.html" class="md-nav__link">
+      <a href="../tutorial/nexus-to-nomad.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -406,7 +282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorial/troubleshooting.html" class="md-nav__link">
+      <a href="../tutorial/troubleshooting.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -469,7 +345,7 @@
   
   
     <li class="md-nav__item">
-      <a href="how-tos/writing-an-appdef.html" class="md-nav__link">
+      <a href="../how-tos/writing-an-appdef.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -490,7 +366,7 @@
   
   
     <li class="md-nav__item">
-      <a href="how-tos/using-multiple-appdefs.html" class="md-nav__link">
+      <a href="../how-tos/using-multiple-appdefs.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -511,7 +387,7 @@
   
   
     <li class="md-nav__item">
-      <a href="how-tos/build-a-plugin.html" class="md-nav__link">
+      <a href="../how-tos/build-a-plugin.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -532,7 +408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="how-tos/use-multi-format-reader.html" class="md-nav__link">
+      <a href="../how-tos/use-multi-format-reader.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -553,7 +429,7 @@
   
   
     <li class="md-nav__item">
-      <a href="how-tos/transformations.html" class="md-nav__link">
+      <a href="../how-tos/transformations.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -574,7 +450,7 @@
   
   
     <li class="md-nav__item">
-      <a href="how-tos/using-pynxtools-test-framework.html" class="md-nav__link">
+      <a href="../how-tos/using-pynxtools-test-framework.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -599,17 +475,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -623,7 +501,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             Learn
@@ -672,7 +550,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/nexus-primer.html" class="md-nav__link">
+      <a href="nexus-primer.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -693,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/nexus-rules.html" class="md-nav__link">
+      <a href="nexus-rules.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -714,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/multiple-appdefs.html" class="md-nav__link">
+      <a href="multiple-appdefs.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -740,17 +618,19 @@
                 
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
         
           
           <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
@@ -764,7 +644,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_2">
             <span class="md-nav__icon md-icon"></span>
             pynxtools
@@ -775,10 +655,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="learn/dataconverter-and-readers.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Data conversion in pynxtools
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="dataconverter-and-readers.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -787,6 +687,95 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#matching-to-nexus-application-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matching to NeXus application definitions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting started
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-with-multiple-input-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use with multiple input files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#merge-partial-nexus-files-into-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merge partial NeXus files into one
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map-an-hdf5jsonpython-dict-pickled-in-a-pickle-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Map an HDF5/JSON/(Python Dict pickled in a pickle file)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-data-for-testing-and-development-purposes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example data for testing and development purposes
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -799,7 +788,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/nexus-verification.html" class="md-nav__link">
+      <a href="nexus-verification.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -820,7 +809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="learn/multi-format-reader.html" class="md-nav__link">
+      <a href="multi-format-reader.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -891,7 +880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/definitions.html" class="md-nav__link">
+      <a href="../reference/definitions.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -912,7 +901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/cli-api.html" class="md-nav__link">
+      <a href="../reference/cli-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -933,7 +922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/built-in-readers.html" class="md-nav__link">
+      <a href="../reference/built-in-readers.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -954,7 +943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/plugins.html" class="md-nav__link">
+      <a href="../reference/plugins.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -983,9 +972,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1004,46 +991,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tutorial" class="md-nav__link">
+  <a href="#matching-to-nexus-application-definitions" class="md-nav__link">
     <span class="md-ellipsis">
-      Tutorial
+      Matching to NeXus application definitions
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-to-guides" class="md-nav__link">
+  <a href="#getting-started" class="md-nav__link">
     <span class="md-ellipsis">
-      How-to guides
+      Getting started
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#learn" class="md-nav__link">
+  <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
-      Learn
+      Usage
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Learn">
+    <nav class="md-nav" aria-label="Usage">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#an-introduction-to-nexus-and-its-design-principles" class="md-nav__link">
+  <a href="#use-with-multiple-input-files" class="md-nav__link">
     <span class="md-ellipsis">
-      An introduction to NeXus and its design principles
+      Use with multiple input files
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#pynxtools" class="md-nav__link">
+  <a href="#merge-partial-nexus-files-into-one" class="md-nav__link">
     <span class="md-ellipsis">
-      pynxtools
+      Merge partial NeXus files into one
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map-an-hdf5jsonpython-dict-pickled-in-a-pickle-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Map an HDF5/JSON/(Python Dict pickled in a pickle file)
     </span>
   </a>
   
@@ -1055,35 +1051,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
+  <a href="#example-data-for-testing-and-development-purposes" class="md-nav__link">
     <span class="md-ellipsis">
-      Reference
+      Example data for testing and development purposes
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Reference">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nexus-definitions" class="md-nav__link">
-    <span class="md-ellipsis">
-      NeXus definitions
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pynxtools_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      pynxtools
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1102,72 +1074,52 @@
                   
 
 
-<h1 id="fairmat-nexus-documentation">FAIRmat NeXus documentation<a class="headerlink" href="#fairmat-nexus-documentation" title="Permanent link">&para;</a></h1>
-<!-- A single sentence that says what the product is, succinctly and memorably -->
-<p>Within <a href="https://www.fairmat-nfdi.eu/fairmat/">FAIRMat</a>, we are extending the <a href="https://www.nexusformat.org/">NeXus data format standard</a> to support the FAIR data principles for experimental data in materials science and and phyics. This is the documentation for both our contribution to the NeXus standard as well as for our tools for data conversion and verification.</p>
-<!-- A paragraph of one to three short sentences, that describe what the product does. -->
-<p><code>pynxtools</code>, which is the main tool under development, provides a dataconverter that maps from experimental data to the NeXus format as well as tools to verify NeXus files. It is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an HDF5 file according to NeXus application definitions.</p>
-<!-- A third paragraph of similar length, this time explaining what need the product meets -->
-<p><code>pynxtools</code> offers scientists a convenient way to use the NeXus format and solves the challenge of unstructured and non-standardized data in experimental materials science.</p>
-<!-- Finally, a paragraph that describes whom the product is useful for. -->
-<p>The new contribution to the standard, together with the tools provided through <code>pynxtools</code>, enable scientists and research groups working with data, as well as helping communities implement standardized FAIR research data.</p>
-<p>Additionally, the software is used as a plugin in the research data management system <a href="https://nomad-lab.eu/nomad-lab/">NOMAD</a> for making experimental data searchable and publishable. NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure (NFDI).</p>
-<div class="home-grid">
-<div>
-<h3 id="tutorial">Tutorial<a class="headerlink" href="#tutorial" title="Permanent link">&para;</a></h3>
-<p>A series of tutorials giving you an overview on how to store or convert your data to NeXus compliant files.</p>
-<ul>
-<li><a href="tutorial/converting-data-to-nexus.html">Converting your data to NeXus</a></li>
-<li><a href="tutorial/nexus-to-nomad.html">Uploading NeXus data to NOMAD</a></li>
-<li><a href="tutorial/troubleshooting.html">Troubleshooting guide</a></li>
-</ul>
-</div>
-<div>
-<h3 id="how-to-guides">How-to guides<a class="headerlink" href="#how-to-guides" title="Permanent link">&para;</a></h3>
-<p>How-to guides provide step-by-step instructions for a wide range of tasks.</p>
-<ul>
-<li><a href="how-tos/writing-an-appdef.html">Writing an application definition</a></li>
-<li><a href="how-tos/using-multiple-appdefs.html">Storing data in multiple application definitions</a></li>
-<li><a href="how-tos/build-a-plugin.html">Build your own pynxtools plugin</a></li>
-<li><a href="how-tos/use-multi-format-reader.html">Implement a reader based on the MultiFormatReader</a></li>
-<li><a href="how-tos/transformations.html">Representing experimental geometries</a></li>
-<li><a href="how-tos/using-pynxtools-test-framework.html">Using pynxtools test framework</a></li>
-</ul>
-</div>
-<div>
-<h3 id="learn">Learn<a class="headerlink" href="#learn" title="Permanent link">&para;</a></h3>
-<h4 id="an-introduction-to-nexus-and-its-design-principles">An introduction to NeXus and its design principles<a class="headerlink" href="#an-introduction-to-nexus-and-its-design-principles" title="Permanent link">&para;</a></h4>
-<ul>
-<li><a href="learn/nexus-primer.html">An introduction to NeXus</a></li>
-<li><a href="learn/nexus-rules.html">Rules for storing data in NeXus</a></li>
-<li><a href="learn/multiple-appdefs.html">The concept of multiple application definitions</a></li>
-</ul>
-<h4 id="pynxtools">pynxtools<a class="headerlink" href="#pynxtools" title="Permanent link">&para;</a></h4>
-<ul>
-<li><a href="learn/dataconverter-and-readers.html">Data conversion in <code>pynxtools</code></a></li>
-<li><a href="learn/nexus-verification.html">NeXus verification in <code>pynxtools</code></a></li>
-<li><a href="learn/multi-format-reader.html">The MultiFormatReader as a reader superclass</a></li>
-</ul>
-</div>
-<div>
-<h3 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h3>
-<h4 id="nexus-definitions">NeXus definitions<a class="headerlink" href="#nexus-definitions" title="Permanent link">&para;</a></h4>
-<p><a href="reference/definitions.html">Here</a>, you find the detailed list of application definitions and base classes and their respective fields.</p>
-<p>Or go directly to the <a href="https://manual.nexusformat.org/classes/index.html">official NIAC</a>
- or <a href="https://fairmat-nfdi.github.io/nexus_definitions/">latest FAIRmat</a> definitions.</p>
-<h4 id="pynxtools_1">pynxtools<a class="headerlink" href="#pynxtools_1" title="Permanent link">&para;</a></h4>
-<p><code>pynxtools</code> has a number of command line tools that can be used to convert data and verify NeXus files. You can more information about the
-API <a href="reference/cli-api.html">here</a>.</p>
-<p>Within FAIRmat, we maintain a number of pynxtools readers as well as reader plugins for different experimental techniques. Here you can find more information:</p>
-<ul>
-<li><a href="reference/built-in-readers.html">Built-in pynxtools readers</a></li>
-<li><a href="reference/plugins.html">FAIRMat-suppored pynxtools plugins</a></li>
-</ul>
-</div>
-</div>
-<h2>Project and community</h2>
-
-<p><a href="https://gepris.dfg.de/gepris/projekt/460197019?language=en">The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat).</a></p>
+<h1 id="data-conversion-in-pynxtools">Data conversion in pynxtools<a class="headerlink" href="#data-conversion-in-pynxtools" title="Permanent link">&para;</a></h1>
+<p>One of the main motivations for pynxtools is to develop a tool for combining various instrument output formats and electronic lab notebook (ELN) into an <a href="https://support.hdfgroup.org/HDF5/">HDF5</a> file according to <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/index.html">NeXus application definitions</a>.</p>
+<p>The <code>dataconverter</code> API in pynxtools provides exactly that: it converts experimental data to NeXus/HDF5 files based on any provided <a href="https://manual.nexusformat.org/nxdl.html#index-1">NXDL schemas</a>.</p>
+<p>The dataconverter has essentially three functionalities:</p>
+<ol>
+<li>read in experimental data using <code>readers</code></li>
+<li>validate the data and metadata against any of the NeXus application definitions</li>
+<li>write a valid NeXus/HDF5 file</li>
+</ol>
+<p>For step 1, a set of readers has been which the converter calls to accomplish this task for a specific set of application definition (NXDL XML file) plus a set of experiment/method-specific file(s). These files can be files in a proprietary format, or of a certain format used in the respective scientific community, or text files. Only in combination, these files hold all the required pieces of information which the application definition demands and which are thus required to make a NeXus/HDF5 file compliant. Users can store additional pieces of information in an NeXus/HDF5 file. In this case readers will issue a warning that these data are not properly documented from the perspective of NeXus.</p>
+<p>There exists two different subsets of readers:</p>
+<ol>
+<li><a href="../reference/built-in-readers.html">Built-in readers</a>, which are implemented directly in pynxtools and are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.</li>
+<li><a href="../reference/plugins.html">Reader plugins</a> for `pynxtools, which are used for reading data of specific experimental techniques and are typically available as their own Python packages.</li>
+</ol>
+<h2 id="matching-to-nexus-application-definitions">Matching to NeXus application definitions<a class="headerlink" href="#matching-to-nexus-application-definitions" title="Permanent link">&para;</a></h2>
+<p>The purpose of the dataconverter is to create NeXus/HDF5 files with content that matches a specific NeXus application definition. Such application definitions are useful for collecting a set of pieces of information about a specific experiment in a given scientific field. The pieces of information are metadata and numerical data. The application definition is used to provide these data in a format that serves a data delivery contract: The HDF5 file, or so-called NeXus file, delivers all those pieces of information which the application definition specifies. Required and optional pieces of information are distinguished. NeXus classes can recommend the inclusion of certain pieces of information. Recommended data are essentially optional. The idea is that flagging these data as recommended motivates users to collect them but does not require to write dummy
+or nonsense data if the user is unable to collect recommended data.</p>
+<h2 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
+<p>Each of the built-in reader comes with the main <code>pynxtools</code> package, therefore they are avaible after pip installation:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">user@box:~$ </span>pip<span class="w"> </span>install<span class="w"> </span>pynxtools
+</code></pre></div></p>
+<p>The different FAIRmat-supported plugins can be installed together with pynxtools by passing the name of the plugin as an extra to the pip install call. For example, for the <code>pynxtools-mpes</code> plugin:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">pip install pynxtools[mpes]</span>
+</code></pre></div></p>
+<p>In addition, it is also possible to install all of the pynxtools reader plugins which are maintained by FAIRmat by passing the <code>[convert]</code> extra to the pip install call:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">pip install pynxtools[convert]</span>
+</code></pre></div>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>See <a href="../reference/cli-api.html#data-conversion">here</a> for the documentation of the <code>dataconverter</code> API.</p>
+<h3 id="use-with-multiple-input-files">Use with multiple input files<a class="headerlink" href="#use-with-multiple-input-files" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>nxdl<span class="w"> </span>metadata<span class="w"> </span>data.raw<span class="w"> </span>otherfile
+</code></pre></div>
+<h3 id="merge-partial-nexus-files-into-one">Merge partial NeXus files into one<a class="headerlink" href="#merge-partial-nexus-files-into-one" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>nxdl<span class="w"> </span>partial1.nxs<span class="w"> </span>partial2.nxs
+</code></pre></div>
+<h3 id="map-an-hdf5jsonpython-dict-pickled-in-a-pickle-file">Map an HDF5/JSON/(Python Dict pickled in a pickle file)<a class="headerlink" href="#map-an-hdf5jsonpython-dict-pickled-in-a-pickle-file" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="gp">user@box:~$ </span>dataconverter<span class="w"> </span>--nxdl<span class="w"> </span>nxdl<span class="w"> </span>any_data.hdf5<span class="w"> </span>--mapping<span class="w"> </span>my_custom_map.mapping.json
+</code></pre></div>
+<p>You can find actual examples with data files at <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/"><code>examples/json_map</code></a>.</p>
+<h2 id="example-data-for-testing-and-development-purposes">Example data for testing and development purposes<a class="headerlink" href="#example-data-for-testing-and-development-purposes" title="Permanent link">&para;</a></h2>
+<p>Before using your own data we strongly encourage you to download a set of open-source test data for testing the plug-ins. For this purpose pynxtools comes with a tests directory with a data/dataconverter sub-directory including reader-specific jupyter-notebook examples. These examples can be used for downloading test data and use specific readers as a standalone converter to translate given data into a NeXus/HDF5 file.</p>
+<p>Once you have practised with these tools how to convert these examples, feel free to use the tools for converting your own data. You should feel invited to contact the respective corresponding author(s) of each reader if you run into issues with the reader or feel there is a necessity to include additional data into the NeXus file for the respective application.</p>
+<p>We are looking forward for learning from your experience and see the interesting use cases.
+You can find the contact persons in the respective README.md of each reader.</p>
+<p>You can read specific README's of the readers and find usage examples <a href="https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/">here</a>.</p>
 
 
 
@@ -1175,13 +1127,8 @@ API <a href="reference/cli-api.html">here</a>.</p>
 
 
 
-  
-  
 
 
-
-
-  
 
 
 
@@ -1214,12 +1161,12 @@ API <a href="reference/cli-api.html">here</a>.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "content.code.copy", "content.code.annotate"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.af256bd8.min.js"></script>
+      <script src="../assets/javascripts/bundle.af256bd8.min.js"></script>
       
-        <script src="javascript.js"></script>
+        <script src="../javascript.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
