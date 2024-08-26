@@ -1131,25 +1131,25 @@ dataconverter call. Here is its API:</p>
 <tr>
 <td><code>--input-file</code></td>
 <td>text</td>
-<td>Deprecated: Please use the positional file arguments instead. The path to the input data file to read. (Repeat for more than one file.)</td>
+<td>Deprecated: Please use the positional file arguments instead. The path to the input data file to read. Repeat for more than one file. default=[] This option is required if no '--params-file' is supplied.</td>
 <td><code>[]</code></td>
 </tr>
 <tr>
 <td><code>--reader</code></td>
 <td>choice (<code>example</code> &#x7C; <code>json_map</code> &#x7C; <code>json_yml</code> &#x7C; <code>multi</code>)</td>
-<td>The reader to use. default="example"</td>
+<td>The reader to use. Examples are json_map or readers from a pynxtools plugin. default='json_map' This option is required if no '--params-file' is supplied.</td>
 <td><code>json_map</code></td>
 </tr>
 <tr>
 <td><code>--nxdl</code></td>
 <td>text</td>
-<td>The name of the NXDL file to use without extension.This option is required if no '--params-file' is supplied.</td>
+<td>The name of the NeXus application definition file to use without the extension nxdl.xml. This option is required if no '--params-file' is supplied.</td>
 <td>None</td>
 </tr>
 <tr>
 <td><code>--output</code></td>
 <td>text</td>
-<td>The path to the output NeXus file to be generated.</td>
+<td>The path to the output NeXus file to be generated. default='output.nxs'</td>
 <td><code>output.nxs</code></td>
 </tr>
 <tr>
