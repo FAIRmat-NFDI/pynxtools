@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="The documentation of the FAIRmat-NeXus definitions & pynxtools
+        <meta name="description" content="The documentation the FAIRmat flavor of the NeXus definitions & pynxtools
 ">
       
       
@@ -14,8 +14,10 @@
       
       
       
-        <link rel="prev" href="built-in-readers.html">
+        <link rel="prev" href="cli-api.html">
       
+      
+        <link rel="next" href="definitions.html">
       
       
       <link rel="icon" href="../assets/favicon.png">
@@ -273,27 +275,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tutorial/troubleshooting.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Troubleshooting Guide
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -510,41 +491,6 @@
   
   
   
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    NeXus
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1">
-            <span class="md-nav__icon md-icon"></span>
-            NeXus
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../learn/nexus-primer.html" class="md-nav__link">
         
@@ -602,91 +548,6 @@
 
               
             
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    pynxtools
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
-            pynxtools
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../learn/dataconverter-and-readers.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Data conversion in pynxtools
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../learn/nexus-verification.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    NeXus verification
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
               
                 
   
@@ -703,14 +564,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -767,53 +620,11 @@
   
   
     <li class="md-nav__item">
-      <a href="definitions.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    NeXus definitions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="cli-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     API for command line tools
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="built-in-readers.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Built-in readers
   </span>
   
 
@@ -951,6 +762,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="definitions.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NeXus definitions
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1108,13 +940,13 @@
 </ul>
 <h3 id="others">Others<a class="headerlink" href="#others" title="Permanent link">&para;</a></h3>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p>You can install each of the plugins together with pynxtools by passing the name of the plugin as an extra to the pip install call. For example, for the <code>pynxtools-mpes</code> plugin:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pip install pynxtools[mpes]</span>
+<p>You can install each of the plugins together with pynxtools by passing the name of the plugin as an extra to the pip install call. For example, for the pynxtools-mpes plugin:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install pynxtools[mpes]
 </code></pre></div>
-<p>In addition, you can also install all of the pynxtools reader plugins which are maintained by FAIRmat by passing the <code>[convert]</code> extra to the pip install call:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">pip install pynxtools[convert]</span>
+<p>In addition, you can also install all of the pynxtools reader plugins which are maintained by FAIRmat by passing the [convert] extra to the pip install call:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip install pynxtools[convert]
 </code></pre></div>
-<!-- There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.-->
+<p>There is also a <a href="https://github.com/FAIRmat-NFDI/pynxtools-plugin-template">cookiecutter template</a> available for creating your own pynxtools plugin.</p>
 
 
 
