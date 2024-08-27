@@ -17,6 +17,8 @@ nav:
     - how-tos/use-multi-format-reader.md
     - how-tos/transformations.md
     - how-tos/using-pynxtools-test-framework.md
+    - how-tos/create-nexus-files-by-python.md
+    - how-tos/validate-nexus-file.md
   - Learn:
     - NeXus:
       - learn/nexus-primer.md

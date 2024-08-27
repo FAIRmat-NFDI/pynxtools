@@ -41,7 +41,15 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 - [Implement a reader based on the MultiFormatReader](how-tos/use-multi-format-reader.md)
 - [Representing experimental geometries](how-tos/transformations.md)
 - [Using pynxtools test framework](how-tos/using-pynxtools-test-framework.md)
-- [NeXus file by python and validate NeXus files](how-tos/create-nexus-files-by-python-and-validate-them.md)
+- [Creation of NeXus files by Python](how-tos/create-nexus-files-by-python.md)
+- [Validation of NeXus files](how-tos/validate-nexus-file.md)
+
+__The following How-To guides are still under development:__
+
+- Writing an application definition
+- Storing data in multiple application definitions
+- Representing experimental geometries
+
 </div>
 
 <div markdown="block">
