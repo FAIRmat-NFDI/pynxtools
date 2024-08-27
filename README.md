@@ -12,16 +12,14 @@ It allows to develop ontologies and to create ontological instances based on the
 
 # Scope
 
-`pynxtools` (previously called `nexusutils`) is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an hdf5 file according to NeXus application definitions.
+`pynxtools` is a parser for combining various instrument output formats and electronic lab notebook (ELN) formats into an [HDF5](https://support.hdfgroup.org/HDF5/) file according to NeXus application definitions.
 
 Additionally, the software can be used as a plugin in the research data management system NOMAD for
-making experimental data searchable and publishable.
-NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure
-(NFDI).
+making experimental data searchable and publishable. NOMAD is developed by the FAIRmat consortium which is a consortium of the German National Research Data Infrastructure (NFDI).
 
 # Installation
 
-It is recommended to use python 3.10 with a dedicated virtual environment for this package.
+It is recommended to use python 3.11 with a dedicated virtual environment for this package.
 Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
@@ -42,19 +40,20 @@ Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools/).
 
 # Repository structure
 
-The software tools are located inside [`src/pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools) and they are shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
-Some examples with real datasets are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples). They guide you through the process of converting instrument raw data into the NeXus standard and visualising the files' content.
+The software tools are located inside [`src/pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools). They are shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests).
+Some examples from the scientific community are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples). They guide you through the process of converting instrument data into the NeXus standard and visualising the files' content.
 
 # NOMAD integration
 
+## Does this software require NOMAD or NOMAD OASIS ?
+
+No. The data files produced here can be uploaded to NOMAD. Therefore, this tool acts as the framework to design schemas and instances of data within the NeXus universe. It can, however, be used as a NOMAD plugin to parse nexus files, please see the section below for details.
+
+## How to use pynxtools with NOMAD
+
 To use pynxtools with NOMAD, simply install it in the same environment as the `nomad-lab` package.
-NOMAD will recognize pynxtools as a plugin automatically and offer automatic parsing of `.nxs` files
-and a schema for NeXus application definitions.
-pynxtools is already included in the NOMAD main deployment and NOMAD NeXus distribution images.
-
-### Does this software require NOMAD or NOMAD OASIS ?
-
-No. The data files produced here can be uploaded to NOMAD. Therefore, this acts like the framework to design schemas and instances of data within the NeXus universe. It can, however, be used as a NOMAD plugin to parse nexus files, please see the section above for details.
+NOMAD will recognize pynxtools as a plugin automatically and offer automatic parsing of `.nxs` files. In addition, NOMAD will install a schema for NeXus application definitions.
+By default, `pynxtools` is already included in the NOMAD [production]https://nomad-lab.eu/prod/v1/gui/ and [staging](https://nomad-lab.eu/prod/v1/staging/gui/) deployments.
 
 # Contributing
 
@@ -94,7 +93,7 @@ python -m pytest -sv tests
 ## Run examples
 
 A number of examples exist which document how the tools can be used. For a standalone
-usage convenient jupyter notebooks are available for each tool. To use them, jupyter
+usage convenient jupyter notebooks are available for each tool. To use these notebooks, jupyter
 and related tools have to be installed in the development environment as follows:
 
 ```shell

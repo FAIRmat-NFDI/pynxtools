@@ -13,7 +13,7 @@ Note that simply calling `dataconverter` defaults to `dataconverter convert`.
     :style: table
     :list_subcommands: True
 
-## NeXus file verification
+## NeXus file validation
 <!-- ::: mkdocs-click
     :module: "pynxtools.dataconverter.verify
     :command: verify_nexus

@@ -2,18 +2,18 @@
 There exists a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) directly in pynxtools. These are typically used either as superclasses for new reader implementations or for generic reading purposes not directly related to any specific technique.
 
 ## The [BaseReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py)
-This is the most simple reader, which is an abstract base class, on top of which a new reader implementation can build. It has an essentially empty read function and is thus only helpful for implementing the correct input/ouput design of the ```read``` function of any reader which is implemented off of it.
+This is the most simple reader, which is an abstract base class, on top of which a new reader implementation can build. It has an essentially empty read function and is thus only helpful for implementing the correct input/ouput design of the ```read``` function of any reader that is inheriting from this base reader.
 ## The [MultiFormatReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py)
-Aside from the `BaseReader`, there exists another reader which can act as the basis for any reader implementation, the `MultiFormatReader`, which can be used to implement a reader that can read in multiple file formats and then populate the template based on the read data. Note that this reader has a lot of already built-in functionality, which is extensively described [here](../learn/multi-format-reader.md). There is also a [how-to guide](../how-tos/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example.
+Another reader that can act as the basis for any reader implementation is the `MultiFormatReader`, which can be used to implement a reader that can read in multiple file formats and then populate the NeXus file using the read data. Note that this reader has a lot of already built-in functionality, which is extensively described [here](../learn/multi-format-reader.md). There is also a [how-to guide](../how-tos/use-multi-format-reader.md) on how to implement a new reader off of the `MultiFormatReader` using a concrete example.
 
 ## The [JsonMapReader](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_map/reader.py)
-This reader is designed to allow users of `pynxtools` to convert their existing data with the help of a map file. The map file tells the reader what to pick from your data files and convert them to FAIR NeXus files. The following formats are supported as input files:
+This reader is designed to allow users of `pynxtools` to convert their existing data with the help of a map file. The map file tells the reader which concept and instance data to pick from the data files and how to convert these to NeXus files. The following formats are supported as input files:
 
-* HDF5 (any extension works i.e. h5, hdf5, nxs, etc)
+* HDF5
 * JSON
-* Python Dict Objects pickled with [pickle](https://docs.python.org/3/library/pickle.html). These can contain [xarray.DataArray](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html) objects as well as regular Python types and Numpy types.
+* Python Dict Objects pickled with [pickle](https://docs.python.org/3/library/pickle.html). These can contain [xarray.DataArray](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html) objects as well as regular Python types and Numpy types. Note that while it is supported, we strongly recommend note to use pickle due to its known [security concerns](https://huggingface.co/docs/hub/security-pickle).
 
-It accepts any NXDL file that you like as long as your mapping file contains all the fields.
+It accepts any XML file that follows the NXDL schema definition language file as long as your mapping file contains all the required fields.
 Please use the `--generate-template` function of the `dataconverter` to create a `.mapping.json` file:
 
 ```console
@@ -24,10 +24,9 @@ user@box:~$ dataconverter --nxdl NXmynxdl --generate-template > mynxdl.mapping.j
 
 This file is designed to let you fill in the requirements of a NeXus Application Definition without writing any code. If you already have data in the formats listed above, you just need to use this mapping file to help the dataconverter pick your data correctly.
 
-The mapping files will always be based on the Template the dataconverter generates. See above on how to generate a mapping file.
-The right hand side values of the Template keys are what you can modify.
+The mapping files will always be based on the template the dataconverter generates. See above on how to generate a mapping file. The right hand side values of the template keys are what you can modify. These keys are called NeXus template paths, because they combine the actual path that will be used in the HDF5 hierarchy with additional NeXus datatype hints to guide the dataconverter to add NX_class annotations.
 
-Here are the three different ways you can fill the right hand side of the Template keys:
+Here are the three different ways you can fill the right hand side of the template keys:
 * Write the nested path in your datafile. This is indicated by a leading `/` before the word `entry` to make `/entry/data/current_295C` below.
 Example:
 
@@ -35,6 +34,7 @@ Example:
   "/ENTRY[entry]/DATA[data]/current_295C": "/entry/data/current_295C",
   "/ENTRY[entry]/NXODD_name/posint_value": "/a_level_down/another_level_down/posint_value",
 ```
+Here, `"/entry/data/current_295C"` is the path in the original HDF5 file, while the key shown here is the template path (see above).
 
 * Write the values directly in the mapping file for missing data from your data file.
 
@@ -82,7 +82,7 @@ user@box:~$ dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapp
 
 ## Installation
 
-Each of the built-in reader comes with the main `pynxtools` package, therefore they are avaible after pip installation:
+Each of the built-in readers are shipped/installed with the main `pynxtools` package. Hence, these readers are available after pip installation:
 ```console
 user@box:~$ pip install pynxtools
 ```

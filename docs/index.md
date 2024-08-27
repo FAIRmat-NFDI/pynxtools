@@ -5,16 +5,16 @@ hide: toc
 # FAIRmat NeXus documentation
 
 <!-- A single sentence that says what the product is, succinctly and memorably -->
-Within [FAIRMat](https://www.fairmat-nfdi.eu/fairmat/), we are extending the [NeXus data format standard](https://www.nexusformat.org/) to support the FAIR data principles for experimental data in materials science and and phyics. This is the documentation for both our contribution to the NeXus standard as well as for our tools for data conversion and verification.
+Within [FAIRmat](https://www.fairmat-nfdi.eu/fairmat/), we are extending the [NeXus data format standard](https://www.nexusformat.org/) to support the FAIR data principles for experimental data in materials science (covering solid-state physics and the chemical physics of solids, as well as materials engineering). This is the documentation for both our contribution to the NeXus standard and for our tools for data conversion and verification.
 
 <!-- A paragraph of one to three short sentences, that describe what the product does. -->
-`pynxtools`, which is the main tool under development, provides a dataconverter that maps from experimental data to the NeXus format as well as tools to verify NeXus files. It is intended as a parser for combining various instrument output formats and electronic lab notebook (ELN) formats to an HDF5 file according to NeXus application definitions.
+`pynxtools`, the main tool under development, provides a data converter that maps experimental data and metadata to the NeXus format, performing parsing, normalization, visualization, and ontology matching. It combines various instrument output formats and electronic lab notebook (ELN) formats to an HDF5 file according to NeXus application definitions. In addition, `pynxtools` can be used to validate and verify NeXus files.
 
 <!-- A third paragraph of similar length, this time explaining what need the product meets -->
-`pynxtools` offers scientists a convenient way to use the NeXus format and solves the challenge of unstructured and non-standardized data in experimental materials science.
+`pynxtools` offers scientists a convenient way to use the NeXus format and solves the challenge of unstructured and non-standardized data in experimental materials science. We consider this package useful for meeting the following FAIR principle as defined in [FAIR Principles: Interpretations and Implementation Considerations](https://direct.mit.edu/dint/article/2/1-2/10/10017/FAIR-Principles-Interpretations-and-Implementation): F2-4, I2-I3, and R1.
 
 <!-- Finally, a paragraph that describes whom the product is useful for. -->
-The new contribution to the standard, together with the tools provided through `pynxtools`, enable scientists and research groups working with data, as well as helping communities implement standardized FAIR research data.
+FAIRmat's contribution to the existing NeXus standard, together with the tools provided through `pynxtools`, enable scientists and research groups working with data, as well as helping communities implement standardized FAIR research data.
 
 Additionally, the software is used as a plugin in the research data management system [NOMAD](https://nomad-lab.eu/nomad-lab/) for making experimental data searchable and publishable. NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure (NFDI).
 
@@ -58,7 +58,7 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 #### pynxtools
 
 - [Data conversion in `pynxtools`](learn/dataconverter-and-readers.md)
-- [NeXus verification in `pynxtools`](learn/nexus-verification.md)
+- [Validation of NeXus files](learn/nexus-validation.md)
 - [The MultiFormatReader as a reader superclass](learn/multi-format-reader.md)
 
 </div>
@@ -74,13 +74,12 @@ Or go directly to the [official NIAC](https://manual.nexusformat.org/classes/ind
 
 #### pynxtools
 
-`pynxtools` has a number of command line tools that can be used to convert data and verify NeXus files. You can more information about the
-API [here](reference/cli-api.md).
+`pynxtools` has a number of command line tools that can be used to convert data and verify NeXus files. You can find more information about the API [here](reference/cli-api.md).
 
-Within FAIRmat, we maintain a number of pynxtools readers as well as reader plugins for different experimental techniques. Here you can find more information:
+Within FAIRmat, we maintain a number of generic built-in pynxtools readers, together with reader plugins for different experimental techniques. Here you can find more information:
 
 - [Built-in pynxtools readers](reference/built-in-readers.md)
-- [FAIRMat-suppored pynxtools plugins](reference/plugins.md)
+- [FAIRMat-supported pynxtools plugins](reference/plugins.md)
 
 
 </div>

@@ -25,7 +25,7 @@ nav:
       - learn/multiple-appdefs.md
     - pynxtools:
       - learn/dataconverter-and-readers.md
-      - learn/nexus-verification.md
+      - learn/nexus-validation.md
       - learn/multi-format-reader.md
   - Reference:
     - reference/definitions.md
@@ -51,6 +51,7 @@ theme:
     - navigation.instant
     - content.code.copy
     - content.code.annotate
+    - search.suggest
   custom_dir: docs/theme
 
 markdown_extensions:
