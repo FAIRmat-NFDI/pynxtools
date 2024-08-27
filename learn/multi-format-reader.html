@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="The documentation the FAIRmat flavor of the NeXus definitions & pynxtools
+        <meta name="description" content="The documentation of the FAIRmat-NeXus definitions & pynxtools
 ">
       
       
@@ -14,10 +14,10 @@
       
       
       
-        <link rel="prev" href="multiple-appdefs.html">
+        <link rel="prev" href="nexus-validation.html">
       
       
-        <link rel="next" href="../reference/cli-api.html">
+        <link rel="next" href="../reference/definitions.html">
       
       
       <link rel="icon" href="../assets/favicon.png">
@@ -275,6 +275,27 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/troubleshooting.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -493,6 +514,41 @@
   
   
   
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    NeXus
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            NeXus
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="nexus-primer.html" class="md-nav__link">
         
@@ -541,6 +597,93 @@
   
   <span class="md-ellipsis">
     Multiple Application Definitions in NeXus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    pynxtools
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            pynxtools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dataconverter-and-readers.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Data conversion in pynxtools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="nexus-validation.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NeXus validation
   </span>
   
 
@@ -704,6 +847,14 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -747,6 +898,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/definitions.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NeXus definitions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/cli-api.html" class="md-nav__link">
         
   
@@ -768,11 +940,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/plugins.html" class="md-nav__link">
+      <a href="../reference/built-in-readers.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Plugins
+    Built-in readers
   </span>
   
 
@@ -789,11 +961,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/definitions.html" class="md-nav__link">
+      <a href="../reference/plugins.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    NeXus definitions
+    Plugins
   </span>
   
 
@@ -939,14 +1111,14 @@
 
 
 <h1 id="the-multiformatreader-as-a-reader-superclass">The MultiFormatReader as a reader superclass<a class="headerlink" href="#the-multiformatreader-as-a-reader-superclass" title="Permanent link">&para;</a></h1>
-<p>There are three options for building a new pynxtools reader:</p>
+<p>There are three options for building a new <code>pynxtools</code> reader:</p>
 <ol>
 <li>build the reader from scratch</li>
 <li>inherit and extend the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py"><strong><code>BaseReader</code></strong></a></li>
 <li>inherit and extend the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py"><strong><code>MultiFormatReader</code></strong></a></li>
 </ol>
-<p>While option 1 is generally not recommended, inheriting and extending the <code>BaseReader</code> has traditionally been the default solution for all existing pynxtools readers and reader plugins. The <code>BaseReader</code>, which is an abstract base class, has an essentially empty <code>read</code> function and is  thus only helpful for implementing the correct input/ouput design of the <code>reader</code>function of any reader which is implemented off of it.</p>
-<p>While building on the <code>BaseReader</code> allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, <code>pynxtools</code> has the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py"><strong><code>MultiFormatReader</code></strong></a>, which can be readily extended for any new data.</p>
+<p>While option 1 is generally not recommended, inheriting and extending the <code>BaseReader</code> has traditionally been the default solution for all existing pynxtools readers and reader plugins. The <code>BaseReader</code>, which is an abstract base class, has an essentially empty <code>read</code> function and is  thus only helpful for implementing the correct input/output design of the <code>read</code> function of any reader which is implemented off of it.</p>
+<p>While building on the <code>BaseReader</code> allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the NeXus file based on the read data, in compliance with a NeXus application definition. For this purpose, <code>pynxtools</code> has the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py"><strong><code>MultiFormatReader</code></strong></a>, which can be readily extended for any new data.</p>
 <p>Here, we will explain the inner workings of the <code>MultiFormatReader</code>. Note that there is also a <a href="../how-tos/use-multi-format-reader.html">how-to guide</a> on how to implement a new reader off of the <code>MultiFormatReader</code> using a concrete example. In case you simply want to use the <code>MultiFormatReader</code> without understanding its inner logic, we recommend you start there.</p>
 <h2 id="the-basic-structure">The basic structure<a class="headerlink" href="#the-basic-structure" title="Permanent link">&para;</a></h2>
 <p>For extending the <code>MultiFormatReader</code>, the following basic structure must be implemented:
@@ -1205,7 +1377,7 @@ the whole parent group <code>/ENTRY/INSTRUMENT[instrument]/energy_resolution</co
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../assets/javascripts/bundle.af256bd8.min.js"></script>
