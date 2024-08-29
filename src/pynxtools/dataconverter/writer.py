@@ -118,14 +118,12 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, docs):
     - Internal links
     - External links
     - compression label"""
-
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
     if "shape" in data.keys():
         layout = handle_shape_entries(data, file, path)
         dataset = grp.create_virtual_dataset(entry_name, layout)
-
     # multiple datasets to concatenate
     elif "link" in data.keys() and isinstance(data["link"], list):
         total_length = 0
@@ -211,10 +209,7 @@ class Writer:
     """
 
     def __init__(
-        self,
-        data: dict = None,
-        nxdl_f_path: str = None,
-        output_path: str = None,
+        self, data: dict = None, nxdl_f_path: str = None, output_path: str = None
     ):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
@@ -252,7 +247,7 @@ class Writer:
 
         return elem.attrib
 
-    def __nxdl_docs(self, path: str = "/") -> dict:
+    def __nxdl_docs(self, path: str = "/") -> str:
         """Get the NXDL docs for a path in the data."""
 
         def extract_and_format_docs(elem: ET.Element) -> str:
@@ -372,7 +367,6 @@ class Writer:
                 entry_name = helpers.get_name_from_data_dict_entry(
                     path[path.rindex("/") + 1 :]
                 )
-
                 if is_not_data_empty(value):
                     data = value
                 else:

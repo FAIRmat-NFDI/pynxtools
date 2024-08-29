@@ -373,6 +373,7 @@ def convert_cli(
     mapping: str,
     config_file: str,
     fail: bool,
+    write_docs: bool,
     **kwargs,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
