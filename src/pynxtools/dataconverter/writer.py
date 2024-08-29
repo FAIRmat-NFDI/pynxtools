@@ -21,7 +21,6 @@
 
 import copy
 import logging
-import sys
 import xml.etree.ElementTree as ET
 
 import h5py
@@ -32,6 +31,7 @@ from pynxtools.dataconverter.exceptions import InvalidDictProvided
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
+    get_inherited_nodes,
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
@@ -109,7 +109,7 @@ def handle_shape_entries(data, file, path):
 
 
 # pylint: disable=too-many-locals, inconsistent-return-statements
-def handle_dicts_entries(data, grp, entry_name, output_path, path):
+def handle_dicts_entries(data, grp, entry_name, output_path, path, docs):
     """Handle function for dictionaries found as value of the nexus file.
 
     Several cases can be encoutered:
@@ -118,12 +118,14 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
     - Internal links
     - External links
     - compression label"""
+
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
     if "shape" in data.keys():
         layout = handle_shape_entries(data, file, path)
-        grp.create_virtual_dataset(entry_name, layout)
+        dataset = grp.create_virtual_dataset(entry_name, layout)
+
     # multiple datasets to concatenate
     elif "link" in data.keys() and isinstance(data["link"], list):
         total_length = 0
@@ -141,7 +143,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
         for vsource in sources:
             layout[offset : offset + vsource.shape[0]] = vsource
             offset += vsource.shape[0]
-        grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
+        dataset = grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
     # internal and external links
     elif "link" in data.keys():
         if ":/" not in data["link"]:
@@ -159,7 +161,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             )
             if accept is True:
                 strength = data["strength"]
-            grp.create_dataset(
+            dataset = grp.create_dataset(
                 entry_name,
                 data=data["compress"],
                 compression="gzip",
@@ -167,13 +169,20 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
                 compression_opts=strength,
             )
         else:
-            grp.create_dataset(entry_name, data=data["compress"])
+            dataset = grp.create_dataset(entry_name, data=data["compress"])
     else:
         raise InvalidDictProvided(
             "A dictionary was provided to the template but it didn't"
             " fall into any of the know cases of handling"
             " dictionaries. This occured for: " + entry_name
         )
+
+    if docs:
+        try:
+            dataset.attrs["docs"] = docs
+        except NameError:
+            pass
+
     # Check whether link has been stabilished or not
     try:
         return grp[entry_name]
@@ -198,10 +207,14 @@ class Writer:
         output_nexus (h5py.File): The h5py file object to manipulate output file.
         nxdl_data (dict): Stores xml data from given nxdl file to use during conversion.
         nxs_namespace (str): The namespace used in the NXDL tags. Helps search for XML children.
+        write_docs (bool): Write docs for the individual NeXus concepts as HDF5 attributes.
     """
 
     def __init__(
-        self, data: dict = None, nxdl_f_path: str = None, output_path: str = None
+        self,
+        data: dict = None,
+        nxdl_f_path: str = None,
+        output_path: str = None,
     ):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
@@ -210,6 +223,8 @@ class Writer:
         self.output_nexus = h5py.File(self.output_path, "w")
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
+
+        self.write_docs: bool = False
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -237,7 +252,7 @@ class Writer:
 
         return elem.attrib
 
-    def get_nxdl_docs(self, path: str = "/", attr: bool = False) -> dict:
+    def __nxdl_docs(self, path: str = "/") -> dict:
         """Get the NXDL docs for a path in the data."""
 
         def extract_and_format_docs(elem: ET.Element) -> str:
@@ -247,123 +262,27 @@ class Writer:
                 return docs[0].text.strip().replace("\\n", "\n")
             return ""
 
+        def get_nxdl_attr_doc(nxdl_path):
+            return ""
+
+        docs: str = ""
+
+        if not self.write_docs:
+            return docs
+
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
 
-        try:
-            elem = get_node_at_nxdl_path(nxdl_path, elem=copy.deepcopy(self.nxdl_data))
-        except NxdlAttributeNotFoundError:
-            return None
+        _, _, elist = get_inherited_nodes(nxdl_path, elem=copy.deepcopy(self.nxdl_data))
 
-        if not attr:
-            return extract_and_format_docs(elem)
-        else:
-            from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-                get_inherited_nodes,
-            )
+        for elem in elist:
+            if not docs:
+                # Only use docs from superclasses if they are not extended.
+                docs += extract_and_format_docs(elem)
 
-            (class_path, nxdlpath, elist) = get_inherited_nodes(
-                nxdl_path, elem=copy.deepcopy(self.nxdl_data)
-            )
-            print(class_path, nxdlpath, elist)
-            if "data/@signal" in path:
-                print((class_path, nxdlpath, elist))
-                elem = get_node_at_nxdl_path(
-                    nxdl_path, elem=copy.deepcopy(self.nxdl_data)
-                )
-                print(path, nxdl_path, elem)
+        if not elist:
+            return get_nxdl_attr_doc(nxdl_path)
 
-            # return get_nxdl_attr_doc(elem)
-
-        # def append_docs(elem, doc: str):
-        #     """Append docs to existing docs."""
-        #     if isinstance(elem, (h5py.Group, h5py.Dataset)):
-        #         existing_doc = elem.attrs.get("doc", "")
-        #     # if isinstance(elem, (h5py.Attribute)):
-        #     #     existing_doc = str(elem)
-
-        #     if doc:
-        #         if isinstance(existing_doc, str):
-        #             return existing_doc + doc
-        #         else:
-        #             return doc
-
-    # def get_nxdl_attr_doc(  # pylint: disable=too-many-arguments,too-many-locals
-    #     elem, elist, attr, hdf_node, logger, doc, nxdl_path, req_str, path, hdf_info
-    # ):
-    #     """Get nxdl documentation for an attribute"""
-    #     new_elem = []
-    #     old_elem = elem
-    #     attr_inheritance_chain = []
-    #     for elem_index, act_elem1 in enumerate(elist):
-    #         act_elem = act_elem1
-    #         # NX_class is a compulsory attribute for groups in a nexus file
-    #         # which should match the type of the corresponding NXDL element
-    #         if (
-    #             attr == "NX_class"
-    #             and not isinstance(hdf_node, h5py.Dataset)
-    #             and elem_index == 0
-    #         ):
-    #             elem = None
-    #             logger, doc, attr = write_doc_string(logger, doc, attr)
-    #             new_elem = elem
-    #             break
-    #         # units category is a compulsory attribute for any fields
-    #         if attr == "units" and isinstance(hdf_node, h5py.Dataset):
-    #             req_str = "<<REQUIRED>>"
-    #             logger, act_elem, attr_inheritance_chain, doc, attr = try_find_units(
-    #                 logger, act_elem, attr_inheritance_chain, doc, attr
-    #             )
-    #         # units for attributes can be given as ATTRIBUTENAME_units
-    #         elif attr.endswith("_units"):
-    #             logger, act_elem, attr_inheritance_chain, doc, attr, req_str = (
-    #                 check_attr_name_nxdl(
-    #                     (logger, act_elem, attr_inheritance_chain, doc, attr, req_str)
-    #                 )
-    #             )
-    #         # default is allowed for groups
-    #         elif attr == "default" and not isinstance(hdf_node, h5py.Dataset):
-    #             req_str = "<<RECOMMENDED>>"
-    #             # try to find if default is defined as a child of the NXDL element
-    #             act_elem = get_nxdl_child(
-    #                 act_elem, attr, nexus_type="attribute", go_base=False
-    #             )
-    #             logger, act_elem, attr_inheritance_chain, doc, attr = try_find_default(
-    #                 logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
-    #             )
-    #         else:  # other attributes
-    #             act_elem = get_nxdl_child(
-    #                 act_elem, attr, nexus_type="attribute", go_base=False
-    #             )
-    #             if act_elem is not None:
-    #                 logger, act_elem, attr_inheritance_chain, doc, attr = other_attrs(
-    #                     logger, act_elem1, act_elem, attr_inheritance_chain, doc, attr
-    #                 )
-    #         if act_elem is not None:
-    #             new_elem.append(act_elem)
-    #             if req_str is None:
-    #                 req_str = get_required_string(act_elem)  # check for being required
-    #                 if doc:
-    #                     logger.debug(req_str)
-    #             variables = [logger, act_elem, path]
-    #             (
-    #                 logger,
-    #                 elem,
-    #                 path,
-    #                 doc,
-    #                 elist,
-    #                 attr,
-    #                 hdf_node,
-    #             ) = check_deprecation_enum_axis(variables, doc, elist, attr, hdf_node)
-    #     elem = old_elem
-    #     if req_str is None and doc:
-    #         if attr != "NX_class":
-    #             logger.debug("@" + attr + " - IS NOT IN SCHEMA")
-    #         logger.debug("")
-
-    #     # Add the lowest child element to the nxdl_path
-    #     if attr_inheritance_chain:
-    #         nxdl_path.append(attr_inheritance_chain[0])
-    #     return (req_str, get_nxdl_entry(hdf_info), nxdl_path)
+        return docs
 
     def ensure_and_get_parent_node(self, path: str, undocumented_paths) -> h5py.Group:
         """Returns the parent if it exists for a given path else creates the parent group."""
@@ -378,9 +297,9 @@ class Writer:
             if attrs is not None:
                 grp.attrs["NX_class"] = attrs["type"]
 
-            docs = self.get_nxdl_docs(parent_path)
+            docs = self.__nxdl_docs(parent_path)
             if docs:
-                grp.attrs["doc"] = docs
+                grp.attrs["docs"] = docs
 
             return grp
         return self.output_nexus[parent_path_hdf5]
@@ -396,10 +315,7 @@ class Writer:
                 dataset.attrs["units"] = self.data[units_key]
 
         for path, value in self.data.items():
-            if path.split("/")[-1][0] == "@":
-                docs = self.get_nxdl_docs(path, attr=True)
-            else:
-                docs = self.get_nxdl_docs(path)
+            docs = self.__nxdl_docs(path)
 
             try:
                 if path[path.rindex("/") + 1 :] == "@units":
@@ -421,19 +337,17 @@ class Writer:
                     if isinstance(data, dict):
                         if "compress" in data.keys():
                             dataset = handle_dicts_entries(
-                                data, grp, entry_name, self.output_path, path
+                                data, grp, entry_name, self.output_path, path, docs
                             )
-                            if docs:
-                                dataset.attrs["doc"] = docs
 
                         else:
                             hdf5_links_for_later.append(
-                                [data, grp, entry_name, self.output_path, path]
+                                [data, grp, entry_name, self.output_path, path, docs]
                             )
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
                         if docs:
-                            dataset.attrs["doc"] = docs
+                            dataset.attrs["docs"] = docs
 
             except InvalidDictProvided as exc:
                 print(str(exc))
@@ -450,7 +364,7 @@ class Writer:
                 del self.data[links[-1]]
 
         for path, value in self.data.items():
-            docs = self.get_nxdl_docs(path)
+            docs = self.__nxdl_docs(path)
             try:
                 if path[path.rindex("/") + 1 :] == "@units":
                     continue
@@ -458,6 +372,7 @@ class Writer:
                 entry_name = helpers.get_name_from_data_dict_entry(
                     path[path.rindex("/") + 1 :]
                 )
+
                 if is_not_data_empty(value):
                     data = value
                 else:
@@ -468,21 +383,27 @@ class Writer:
 
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
-                    # consider changing the name here the lvalue can also be group!
                     dataset = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
                     dataset.attrs[entry_name[1:]] = data
                     if docs:
-                        dataset.attrs["doc"] = docs
+                        # Write docs for attributes like <attr>__docs
+                        dataset.attrs[f"{entry_name[1:]}__docs"] = docs
             except Exception as exc:
                 raise IOError(
                     f"Unknown error occured writing the path: {path} "
                     f"with the following message: {str(exc)}"
                 ) from exc
 
-    def write(self):
-        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+    def write(self, write_docs=False):
+        """
+        Writes the NeXus file with previously validated data from the reader with NXDL attrs.
+
+        Args:
+            write_docs (bool): Write docs for the individual NeXus concepts as HDF5 attributes. The default is False.
+        """
+        self.write_docs = write_docs
         try:
             self._put_data_into_hdf5()
         finally:

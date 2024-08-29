@@ -59,6 +59,26 @@ def test_write(writer):
     assert test_nxs["/my_entry/nxodd_name/posint_value"].shape == (3,)  # pylint: disable=no-member
 
 
+def test_write_docs(writer):
+    """Test for the Writer's write_docs option. Checks whether docs are written for NeXus concepts."""
+    writer.write(write_docs=True)
+    test_nxs = h5py.File(writer.output_path, "r")
+    # print(writer.output_path)
+    assert (
+        test_nxs["/my_entry"].attrs["docs"]
+        == "This is a dummy NXDL to test out the dataconverter."
+    )
+    # assert test_nxs["/my_entry/definition"].attrs["version__docs"] == "This is the version of the definition."
+    assert (
+        test_nxs["/my_entry/nxodd_name/int_value"].attrs["docs"]
+        == "A dummy entry for an int value."
+    )
+    assert (
+        test_nxs["/my_entry/required_group"].attrs["docs"]
+        == "This is a required yet empty group."
+    )
+
+
 def test_write_link(writer):
     """Test for the Writer's write function.
 

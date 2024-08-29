@@ -237,7 +237,11 @@ def convert(
     )
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
-    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
+
+    write_docs = kwargs.pop("write_docs", False)
+    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write(
+        write_docs=write_docs
+    )
 
     logger.info(f"The output file generated: {output}.")
 
@@ -350,6 +354,12 @@ def main_cli():
     default=None,
     help="A json config file for the reader",
 )
+@click.option(
+    "--write-docs",
+    is_flag=True,
+    default=False,
+    help="Write docs for the individual NeXus concepts as HDF5 attributes.",
+)
 # pylint: disable=too-many-arguments
 def convert_cli(
     files: Tuple[str, ...],
@@ -389,6 +399,9 @@ def convert_cli(
 
     if config_file:
         kwargs["config_file"] = config_file
+
+    if write_docs:
+        kwargs["write_docs"] = write_docs
 
     file_list = []
     for file in files:
