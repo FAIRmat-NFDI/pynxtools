@@ -68,7 +68,10 @@ def test_write_docs(writer):
         test_nxs["/my_entry"].attrs["docs"]
         == "This is a dummy NXDL to test out the dataconverter."
     )
-    # assert test_nxs["/my_entry/definition"].attrs["version__docs"] == "This is the version of the definition."
+    assert (
+        test_nxs["/my_entry/definition"].attrs["version__docs"]
+        == "This is the version of the definition."
+    )
     assert (
         test_nxs["/my_entry/nxodd_name/int_value"].attrs["docs"]
         == "A dummy entry for an int value."
