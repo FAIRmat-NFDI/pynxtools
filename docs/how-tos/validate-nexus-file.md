@@ -2,7 +2,7 @@
 
 Note: This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation page](../learn/nexus-validation.md).
 
-# The goal
+## The goal
 
 Use a tool to validate NeXus files to a given set of NeXus definitions:
 
@@ -11,7 +11,7 @@ Use a tool to validate NeXus files to a given set of NeXus definitions:
   2. [NIAC](https://manual.nexusformat.org/)
 
 
-# Validation of a .nxs file
+## Validation of a .nxs file
 
 The validity of NeXus files is fundamental to ensure FAIR data. Without specific requirements, it is not possible to understand the data. What type of experiment? What Laser Wavelength? Which voltage? What data is represented at all in the table? What is the unit of the value? Which ISO norm does this refer to? Where was this measured? Which year was this measured?
 
@@ -25,7 +25,7 @@ The NeXus file is valid if it complies with the respective NeXus application def
 This validation is done by software.
 
 
-# Validation software
+## Validation software
 
 There are right now three tools, which can be used for validation of NeXus files. All are different and have individual advantages or disadvantages:
 
@@ -58,7 +58,9 @@ This is not a problem for big companies, but for smaller open software projects,
 If you are used to Windows, consider setting up a Linux operating system to eliminate problems in the installation process and ensure compatibility.
 
 
-# 1. pynxtools - Python Nexus Tools
+# pynxtools - Python Nexus Tools
+
+_[> learn more about validation in pynxtools <](../learn/nexus-validation.md)_
 
 This is a python package which is developed by the FAIRmat consortium.
 
@@ -74,7 +76,7 @@ The package can be installed via pip. Therefore you need to have installed:
 
 For validation purposes, we will use the "read\_nexus" and "verify\_nexus" command line tools from `pynxtools`.
 
-# 1.1 verify_nexus
+## verify_nexus
 
 This tool is currently in development. It enables a command like:
 
@@ -90,20 +92,13 @@ WARNING: Field /entry/instrument/beam_incident/wavelength/@units written without
 ...
 ```
 
-# 1.1.1 Installation of verify_nexus
+### Installation of verify_nexus
 
 The `verify_nexus` function is currently under development (Aug 2024). Therefore, you have to install pynxtools from its feature branch until this function is published.
-Do this to install pynxtools with verify\_nexus
+Do this to install pynxtools with verify\_nexus via;
 
 ```
-git clone https://github.com/FAIRmat-NFDI/pynxtools/tree/hdf-based-validation
-cd pynxtools
-git checkout git checkout hdf-based-validation
-git submodule sync --recursive
-git submodule update --init --recursive --jobs=4
-python -m pip install --upgrade pip
-python -m pip install -e .
-python -m pip install -e ".[dev]"
+pip install git+https://github.com/FAIRmat-NFDI/pynxtools@hdf-based-validation
 ```
 
 Then, you should be able to call its help function:
@@ -124,7 +119,7 @@ Options:
 ```
 
 
-# 1.1.2 Using verify_nexus
+### Using verify_nexus
 
 Open your terminal. Assuming there is a folder at:
 
@@ -160,7 +155,7 @@ Invalid: The entry `entry` in file `Raman.nxs` is NOT a valid file according to 
 ```
 
 
-# 1.2 read_nexus
+## read_nexus
 While `verify_nexus´ is used as a straightforward tool for validating a NeXus file, `read_nexus` outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.
 The command used is:
 
@@ -209,7 +204,7 @@ The second example was for the "software\_TYPE" attribute @URL entry in the "NXo
 
 
 
-# 1.2.1 Installation of read_nexus
+### Installation of read_nexus
 
 This is installed with pip:
 
@@ -218,7 +213,7 @@ pip install pynxtools
 ```
 
 
-# 1.2.2 Using the read_nexus function
+### Using the read_nexus function
 
 Open your terminal. Assuming there is a folder at:
 
@@ -271,7 +266,6 @@ Search for fields which are not found in the NeXus definition by searching for t
 
 Keep in mind that the output provides quite some information. This is useful for software development, but may be a bit too much for validation purposes.
 
-Similar features as the tables and messages provided from punx and cnxvalidate for pynxtools are [planned to be implemented in the future](<https://github.com/FAIRmat-NFDI/pynxtools/pull/333>).
 
 
 
@@ -282,7 +276,7 @@ Similar features as the tables and messages provided from punx and cnxvalidate f
 
 
 
-# 2. cnxvalidate
+# cnxvalidate
 
 This package is written in C. It is allows a command line evocation like:
 
@@ -304,9 +298,9 @@ definition=NXoptical_spectroscopy.nxdl.xml message="Required attribute URL missi
 
 and indicates the entry of the .nxs file, which is incorrect and what the respective problem is. It also points to the NeXus definition (.nxdl.xml file), in which this conflict was found.
 
-# 2.1. Installation (Linux only)
+## Installation (Linux only)
 
-This [did not work for me on windows](/installation_notes_nxvalidate.md) (The problem was the software cmake couldn't fine the libxml2 library. Though, if you solve this, this maybe work on windows).
+Note: You can find more information about installing nxvalidate [here](/installation_notes_nxvalidate.md). Note that installation on Windows can be tricky because cmake can sometimes not find the libxml2 library. Though, if you solve this, this maybe work on windows).
 
 Therefore: Use linux.
 
@@ -404,7 +398,7 @@ Now the above mentioned commands should be avaialble. The programm/executable is
 /home/USER/nexusvalidation/cnxvalidate/build/nxvalidate
 ```
 
-# 2.2. Using cnxvalidate
+## Using cnxvalidate
 
 Now you can start to validate your created [NeXus file](https://zenodo.org/records/13373909). But before the validation, we need to get a set of NeXus definitions, which we want to use as reference. This is done again by using git:
 
@@ -489,7 +483,7 @@ Now adjust the file creation, and add the respective fields to make your NeXus f
 
 
 
-# 3. Punx - Python Utilities for NeXus HDF5 files
+# Punx - Python Utilities for NeXus HDF5 files
 
 This is python package, and can therefore be used on Linux and Windows systems.
 
@@ -514,7 +508,7 @@ This is done by replacing REPORT with ={COMMENT,ERROR,NOTE,OK,TODO,UNUSED,WARN}
 
 [Official docs](<https://punx.readthedocs.io/en/latest/validate.html#validate>)
 
-# 3.1 Installation
+## Installation
 
 Open the terminal and install punx via pip:
 
@@ -629,7 +623,7 @@ Then you should be able to use this package.
 
 Official docs for [punx installation](<https://punx.readthedocs.io/en/latest/install.html>)
 
-# 3.2. Using punx
+## Using punx
 
 Open your terminal. Assuming there is a folder at:
 
@@ -661,7 +655,7 @@ punx validate C:\nexusvalidation\SiO2onSi.ellips.nxs
 
 The output tables "findings" and "summary statistics" can be used to find error present in the NeXus file.
 
-# 3.3. Example
+## Example
 
 ### Which NeXus definition?
 
@@ -735,7 +729,7 @@ The last error message:
 
 can be ignored and is a bug right now. If this is the only Error message, then your NeXus file is compliant with the NeXus definitions and you can share and publish your data.
 
-# 3.4. Further Notes
+## Further Notes
 
 1. Punx only uses the NeXus definiton from the NIAC [NeXus definiton from the NIAC](<https://manual.nexusformat.org/>). The use of the [FAIRmat NeXus definition](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>) is not possible right now.
 
@@ -764,21 +758,7 @@ As pynxtools verify_nexus method is right now in development, [not all situation
 
 ### Pynxtools Parsers:
 
-For a specifically structured set of data, a parser can be written, which uses the meta data and a pre-structured meta data file, to create a NeXus file. Tough, the parser depends on: Experimental Technique and Setup and has therefore to be written individually. This is another functionallity of [pynxtools with plugins for the techniques](https://fairmat-nfdi.github.io/pynxtools/reference/plugins.html):
-
-[electron microscopy (EM)](<https://github.com/FAIRmat-NFDI/pynxtools-em>)
-
-[x-ray photoelectron spectroscopy (XPS)](<https://github.com/FAIRmat-NFDI/pynxtools-xps>)
-
-[scanning tunneling spectroscopy/microscopy and atomic force microscopy (STS / STM /AFM)](<https://github.com/FAIRmat-NFDI/pynxtools-stm>)
-
-[x-ray diffraction (XRD)](<https://github.com/FAIRmat-NFDI/pynxtools-xrd>)
-
-[ellipsometry (ellips)](<https://github.com/FAIRmat-NFDI/pynxtools-ellips>)
-
-[Raman spectroscopy (raman)](<https://github.com/FAIRmat-NFDI/pynxtools-raman>)
-
-[atom probe microscopy (APM)](<https://github.com/FAIRmat-NFDI/pynxtools-apm>)
+For a specifically structured set of data, a parser can be written, which uses the meta data and a pre-structured meta data file, to create a NeXus file. Tough, the parser depends on: Experimental Technique and Setup and has therefore to be written individually. Take a look [here](../reference/plugins.md).
 
 
 

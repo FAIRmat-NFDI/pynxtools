@@ -13,6 +13,7 @@ You can find the necessary file downloads [here](https://zenodo.org/records/1337
 Install `h5py` via `pip`:
 ```console
 `pip install h5py`
+```
 
 Then you can create a NeXus file by the python script called [h5py_nexus_file_creation.py](https://zenodo.org/records/13373909/files/h5py_nexus_file_creation.py?download=1).
 
@@ -42,7 +43,7 @@ This proves a starting point of the NeXus file. We will go through these functio
 
 
 
-# 2. Fill the content of the .nxs file
+## Fill the content of the .nxs file
 
 Go to [FAIRmat NeXus definitions](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>)
 
@@ -70,7 +71,7 @@ In the following, it will be shown how the python script has to be extended for 
 
 
 
-# 3. Adding a NeXus attribute
+## Adding a NeXus attribute
 
 Search for the first concept/object in the NeXus file which is not created yet. It is:
 
@@ -125,14 +126,18 @@ On the right side, you should see below "Releases" the "tags" (Red box in the im
 Copy the latest tag, which should look similar to "v2024.02". Insert it as value for the "version" attribute.
 
 ### Disclaimer:
-When specifying this version tag, it would be better to include the "GitHub commit id" as well . In this way, a [pynxtools generated version tag](https://github.com/FAIRmat-NFDI/pynxtools/blob/c13716915bf8f69068c3b94d1423681b580fd437/src/pynxtools/_build_wrapper.py#L17) might look like this:
-`v2022.07.post1.dev1278+g1d7000f4`. For simplicity, this is omitted here.
+When specifying this version tag, it would be better to include the "GitHub commit id" as well. In this way, a [pynxtools generated version tag](https://github.com/FAIRmat-NFDI/pynxtools/blob/c13716915bf8f69068c3b94d1423681b580fd437/src/pynxtools/_build_wrapper.py#L17) might look like this:
+`v2022.07.post1.dev1278+g1d7000f4`. If you have pynxtools installed, you can get the tag by:
+
+```python
+>>> from pynxtools import get_nexus_version
+>>> get_nexus_version()
+'v2022.07.post1.dev1284+gf75a2983'
+```
 
 
 
-
-
-# 4. Adding a datafield
+## Adding a datafield
 
 Two attributes were added to "ENTRY/definition", both of which were required. By now, this part of the NeXus file fulfills the requirements of the application definition NXoptical\_spectroscopy.
 
@@ -170,11 +175,11 @@ f['/entry/experiment_type'] = 'transmission spectroscopy'
 
 
 
-# 5. Adding a group
+## Adding a group
 
 The first required group in NXoptical\_spectroscopy on the "ENTRY/" level is "**INSTRUMENT**: (required) [NXinstrument](<https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinstrument.html#nxinstrument>) [⤆"](<https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-instrument-group>)
 
-1. It is located in the tree at position: NXentry/experiment_type
+1. It is located in the tree at position: NXentry/
 
 2. There is no "@" in front of "**INSTRUMENT"** and because the "NXinstrument" is a NeXus class, this has to be implemented as group in the python script.
 
@@ -209,7 +214,7 @@ The second line assigns this group the attribute with the name "NX\_class" and i
 
 
 
-# 6. Finishing the .nxs file
+## Finishing the .nxs file
 
 This has to be done by using the respective NeXus definition website:
 
