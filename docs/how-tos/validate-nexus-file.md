@@ -327,7 +327,7 @@ and indicates the entry of the .nxs file, which is incorrect and what the respec
 
 # 3.1. Installation (Linux only)
 
-This did not work for me on windows. (The problem was the software cmake couldn't fine the libxml2 library. Though, if you solve this, this maybe work on windows).
+This [did not work for me on windows](/installation_notes_nxvalidate.md) (The problem was the software cmake couldn't fine the libxml2 library. Though, if you solve this, this maybe work on windows).
 
 Therefore: Use linux.
 
@@ -778,6 +778,10 @@ This tutorial showed:
 2. How to install these tools
 
 3. How to use them via Examples
+
+### Recommended methods:
+
+As pynxtools verify_nexus method is right now in development, [not all situations are covered right now](/testing-validation-tools.md). Therefore, the most reliable method right now is a combination of _Human Manual Validation_ + _1-2 Software solutions_.
 
 ### Pynxtools Parsers:
 

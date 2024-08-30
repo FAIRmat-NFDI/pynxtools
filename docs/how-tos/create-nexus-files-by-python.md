@@ -120,9 +120,11 @@ Go to "nexus\_definitions" (Step 2, Red box in the image)
 
 On the right side, you should see below "Releases" the "tags" (Red box in the image). Follow this link.
 
-Copy the latest Tag, which should look similar to "v2024.02". Insert it as value for the "version" attribute.
+Copy the latest tag, which should look similar to "v2024.02". Insert it as value for the "version" attribute.
 
-
+### Disclaimer:
+It would be better, to specify this version tag to include as well the "GitHub commit id". In this way, a [pynxtools generated version tag](https://github.com/FAIRmat-NFDI/pynxtools/blob/c13716915bf8f69068c3b94d1423681b580fd437/src/pynxtools/_build_wrapper.py#L17) might look like this:
+`v2022.07.post1.dev1278+g1d7000f4`. For simplicity, this is omitted here.
 
 
 
@@ -147,8 +149,8 @@ The next required concept of [NXoptical_spectrsocopy](https://fairmat-nfdi.githu
 5. The "NX\_CHAR" indicates the datatype. This should be a string: "The preferred string representation is UTF-8" (more information see [here](<https://manual.nexusformat.org/nxdl-types.html>)).
 
 6. The "NX\_CHAR" indicates that this is a datafield. It is NOT a group.  
-    A group would have a link to a NeXus class (i.e. for "**ENTRY**: (required) [NXentry"](<https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry>) to [a link with "classes" in it](<https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry>)).  
-    As it is a field, the link directs to a data type (i.e. [a link with "nxdl-types" in it](<https://fairmat-nfdi.github.io/nexus_definitions/nxdl-types.html#nx-char>)).
+    A group is a NeXus class. "NXentry" is for example is a NeXus class, while "NX_CHAR" indicates the datatype of the field.
+    Wheter or not the underscore "_" is present after NX, indicates therefore if it is a NeXus class or datafield.
 
 Read the documentation at "▶ Specify the type of the optical experiment. ..." by extending it via click on the triangle symbol. You should see something like this:
 
@@ -184,11 +186,11 @@ The first required group in NXoptical\_spectroscopy on the "ENTRY/" level is "**
 
 7. The uppercase notation of "**INSTRUMENT**" means:
 
-    1. You can give INSTRUMENT any name, such as "abc" or "Raman\_setup".
+    1. You can give INSTRUMENT [almost](https://manual.nexusformat.org/datarules.html) any name, such as "abc" or "Raman\_setup" (see "regex" or regular expression).
 
     2. You can create as many groups with the class NXinstrument as you want. Their names have to be different.
 
-    3. For more information see the [NeXus rules](<https://github.com/FAIRmat-NFDI/pynxtools/blob/master/docs/learn/nexus-rules.md>)
+    3. For more information see the [NeXus rules](../learn/nexus-rules.md)
 
 The respective python code to implement a NXinstrument class (or equivalently in python group) with the name "experiment\_setup\_1" is:
 
