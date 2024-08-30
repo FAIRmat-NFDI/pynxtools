@@ -225,7 +225,6 @@ def convert(
     -------
     None.
     """
-
     nxdl_root, nxdl_f_path = helpers.get_nxdl_root_and_path(nxdl)
 
     data = transfer_data_into_template(
@@ -272,7 +271,11 @@ class CustomClickGroup(DefaultGroup):
             )
 
 
-@click.group(cls=CustomClickGroup, default="convert", default_if_no_args=True)
+@click.group(
+    cls=CustomClickGroup,
+    default="convert",
+    default_if_no_args=True,
+)
 def main_cli():
     pass
 
@@ -291,25 +294,25 @@ def main_cli():
 )
 @click.option(
     "--reader",
-    default=None,
+    default="json_map",
     type=click.Choice(get_names_of_all_readers(), case_sensitive=False),
     help=(
         "The reader to use. Examples are json_map or readers from a pynxtools plugin. "
-        "default=None This option is required if no '--params-file' is supplied."
+        "default='json_map' This option is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--nxdl",
     default=None,
     help=(
-        "The name of the NeXus application definition NXDL file to use without the "
-        "extension nxdl.xml. This option is required if no '--params-file' is supplied."
+        "The name of the NeXus application definition file to use without the extension "
+        "nxdl.xml. This option is required if no '--params-file' is supplied."
     ),
 )
 @click.option(
     "--output",
     default="output.nxs",
-    help="The path to the output NeXus/HDF5 file to be generated.",
+    help="The path to the output NeXus file to be generated. default='output.nxs'",
 )
 @click.option(
     "--params-file",
@@ -337,7 +340,6 @@ def main_cli():
 )
 @click.option(
     "--mapping",
-    default=None,
     help="Takes a <name>.mapping.json file and converts data from given input files.",
 )
 @click.option(
@@ -384,6 +386,9 @@ def convert_cli(
         reader = "json_map"
         input_file = input_file + tuple([mapping])
         # needs own call
+
+    if config_file:
+        kwargs["config_file"] = config_file
 
     file_list = []
     for file in files:
@@ -474,3 +479,10 @@ def generate_template(nxdl: str, required: bool, pythonic: bool, output: str):
             ensure_ascii=False,
         )
     )
+
+
+@main_cli.command("get-readers")
+def get_reader_cli():
+    """Prints a list of all installed readers."""
+    readers = get_names_of_all_readers()
+    logger.info(f"The following readers are currently installed: {readers}.")
