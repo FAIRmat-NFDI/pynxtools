@@ -39,8 +39,8 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 - [Build your own pynxtools plugin](how-tos/build-a-plugin.md)
 - [Implement a reader based on the MultiFormatReader](how-tos/use-multi-format-reader.md)
 - [Validation of NeXus files](how-tos/validate-nexus-file.md)
-- [Creation of NeXus files by hard-coding-in-python](how-tos/create-nexus-files-by-python.md)
-- [Using pynxtools test framework](how-tos/using-pynxtools-test-framework.md)
+- [Creation of NeXus files in python via hard-coding ](how-tos/create-nexus-files-by-python.md)
+- [Using pynxtools test framework for plugins](how-tos/using-pynxtools-test-framework.md)
 
 __The following How-To guides are still under development:__
 
