@@ -1,8 +1,6 @@
 # Rules for storing data in NeXus
 
-!!! danger "Work in progress"
-
-There are several rules which apply for storing single data items in NeXus. There exists a [summary](https://manual.nexusformat.org/datarules.html) in the NeXus documentation outlining most of these rules. However, this explanation is not exhaustive and thus, we have compiled here additional information.
+There are several rules which apply for storing single data items in NeXus. There exists a [summary](https://manual.nexusformat.org/datarules.html) in the NeXus documentation outlining most of these rules. However, to guide data providers even further, we have compiled here additional information and explanations.
 
 
 ## Namefitting

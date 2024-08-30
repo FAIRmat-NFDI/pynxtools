@@ -26,16 +26,16 @@ There are a number of plugins available for pynxtools that are maintained within
 
 ## Installation
 
-You can install each of the plugins together with pynxtools by passing the name of the plugin as an extra to the pip install call. For example, for the pynxtools-mpes plugin:
+You can install each of the plugins together with pynxtools by passing the name of the plugin as an extra to the pip install call. For example, for the `pynxtools-mpes` plugin:
 
-```
+```console
 pip install pynxtools[mpes]
 ```
 
-In addition, you can also install all of the pynxtools reader plugins which are maintained by FAIRmat by passing the [convert] extra to the pip install call:
+In addition, you can also install all of the pynxtools reader plugins which are maintained by FAIRmat by passing the `[convert]` extra to the pip install call:
 
-```
+```console
 pip install pynxtools[convert]
 ```
 
-There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.
+<!-- There is also a [cookiecutter template](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) available for creating your own pynxtools plugin.-->
