@@ -1,4 +1,6 @@
-# Validate NeXus files
+# Validating NeXus files
+
+Note: This is a how-to guide for using different tools to validate NeXus files. If you want to learn more about how validation is done in `pynxtools`, please visit the [explanation page](../learn/nexus-validation.md).
 
 # The goal
 
@@ -9,25 +11,21 @@ Use a tool to validate NeXus files to a given set of NeXus definitions:
   2. [NIAC](https://manual.nexusformat.org/)
 
 
-
 # Validation of a .nxs file
 
-The validity of NeXus file is fundamental, to ensure FAIR data. Without specific requirements, it is not possible to understand the data. What type of experiment? What Laser Wavelength? Which voltage? What data is represented at all in the table? What is the unit of the value? Which ISO norm does this refer to? Where was this measured? Which year was this measured?
+The validity of NeXus files is fundamental to ensure FAIR data. Without specific requirements, it is not possible to understand the data. What type of experiment? What Laser Wavelength? Which voltage? What data is represented at all in the table? What is the unit of the value? Which ISO norm does this refer to? Where was this measured? Which year was this measured?
 
 Therefore you have enter all required fields in the NeXus definition. The requirements are set by the community via workshops or at conferences. You can as well comment the NeXus definitions, to initiate or propose changes/additions. Go to the NeXus definition, and sign-up/log-in and give us some feedback (Red boxes in the image. Expand this panel on the left by clicking on the arrow symbol).  
 ![image.png](<./attachments/9d748230d54a8059-image.png>)
 
-ftentimes, there will be errors in a generated NeXus file (be it by hand or automatically): Typos, missing required concepts, missing attributes, using the incorrect datatype or format (e.g., array instad of list, float instead of integer, etc.). Therefore, a validation is required, to ensure that the data you want to share, is FAIR.
+Oftentimes, there will be errors in a generated NeXus file (be it by hand or automatically): Typos, missing required concepts, missing attributes, using the incorrect datatype or format (e.g., array instad of list, float instead of integer, etc.). Therefore, a validation is required, to ensure that the data you want to share, is FAIR.
 
-The NeXus file is valid, if it complies with the respective NeXus application definition.
+The NeXus file is valid if it complies with the respective NeXus application definition.
 
 This validation is done by software.
 
 
-
-
-
-# 1. Validation software
+# Validation software
 
 There are right now three tools, which can be used for validation of NeXus files. All are different and have individual advantages or disadvantages:
 
@@ -37,16 +35,15 @@ There are right now three tools, which can be used for validation of NeXus files
 
 3. punx
 
-
 Open software is usually shared on Github - There you find usually the most accurate information, as documentation sometimes lags behind. There you see a box with folders and files. Below is the content of the README.md file displayed. This usually shows instructions for installation and handling of the software.
 
 Here are the GitHub links for the thee software packages:
 
+[pynxtools](<https://github.com/FAIRmat-NFDI/pynxtools>)
+
 [cnxvalidate](<https://github.com/nexusformat/cnxvalidate>)
 
 [punx](<https://github.com/prjemian/punx>)
-
-[pynxtools](<https://github.com/FAIRmat-NFDI/pynxtools>)
 
 In the following, each package and its capabilities is presented.
 
@@ -54,24 +51,18 @@ In the following, each package and its capabilities is presented.
 
 Almost all PC users are used to Windows as operating system.
 
-A lot of Software development is done on Linux as operating system.
+A lot of software development is done on Linux as operating system.
 
-This is not a problem for big company, but for smaller open software projects, which ared often developed without funding, this is a problem.
+This is not a problem for big companies, but for smaller open software projects, which are often developed without funding, this is a problem.
 
 If you are used to Windows, consider setting up a Linux operating system to eliminate problems in the installation process and ensure compatibility.
 
 
+# 1. pynxtools - Python Nexus Tools
 
+This is a python package which is developed by the FAIRmat consortium.
 
-
-
-
-
-# 2 pynxtools - Python Nexus Tools
-
-This is python package which is developed by the FAIRmat consortium.
-
-As python package, this can be used on Linux and Windows systems.
+As a python package, this can be used on Linux and Windows systems.
 
 The package can be installed via pip. Therefore you need to have installed:
 
@@ -92,7 +83,7 @@ This tool has 3 command line functions:
 
 For validation purposes, we will use the "read\_nexus" and "verify\_nexus" function.
 
-# 2.1 verify_nexus
+# 1.1 verify_nexus
 
 This tool is currently in development. It enables a command like:
 
@@ -101,16 +92,16 @@ verify_nexus C:\nexusvalidation\Raman.nxs
 ```
 
 
-The outpu warning looks like this:
+The output warning looks like this:
 ```
 ...
 WARNING: Field /entry/instrument/beam_incident/wavelength/@units written without documentation.
 ...
 ```
 
-# 2.1.1 Installation verfiy_nexus
+# 1.1.1 Installation of verify_nexus
 
-Aside of read_nexus, there is a second functionality from pynxtools. This method is currently in development (Aug 2024). This function is called: verify\_nexus. Therefore, you have to use the development install, until this function is published.
+Aside from read_nexus, there is a second functionality from pynxtools. This method is currently in development (Aug 2024). This function is called: verify\_nexus. Therefore, you have to use the development install, until this function is published.
 
 Do this to install pynxtools with verify\_nexus
 
@@ -143,7 +134,7 @@ Options:
 ```
 
 
-# 2.1.2 Using verify\_nexus
+# 1.1.2 Using verify_nexus
 
 Open your terminal. Assuming there is a folder at:
 
@@ -159,9 +150,9 @@ For Windows:
 C:\nexusvalidation
 ```
 
-Put into this folder your NeXus file, for example the [Raman.nxs file](https://zenodo.org/records/13373909/files/Raman.nxs?download=1).
+Put into this folder your NeXus file, for example this [Raman.nxs file](https://zenodo.org/records/13373909/files/Raman.nxs?download=1).
 
-Use verify nexus with the command:
+Use verify_nexus with the command:
 
 ```
 verify_nexus C:\nexusvalidation\Raman.nxs
@@ -179,9 +170,7 @@ Invalid: The entry `entry` in file `Raman.nxs` is NOT a valid file according to 
 ```
 
 
-
-
-# 2.2 read_nexus
+# 1.2 read_nexus
 
 The command used is:
 
@@ -230,7 +219,7 @@ The second example was for the "software\_TYPE" attribute @URL entry in the "NXo
 
 
 
-# 2.2.1 Installation read_nexus
+# 1.2.1 Installation of read_nexus
 
 This is installed with pip:
 
@@ -239,7 +228,7 @@ pip install pynxtools
 ```
 
 
-# 2.2.2 Using the read\_nexus function
+# 1.2.2 Using the read_nexus function
 
 Open your terminal. Assuming there is a folder at:
 
@@ -288,7 +277,7 @@ For Axis #0, 1 axes have been identified: [<HDF5 dataset "spectrum_data_x_Raman"
 DEBUG: For Axis #0, 1 axes have been identified: [<HDF5 dataset "spectrum_data_x_Raman": shape (1600,), type "<f8">]
 ```
 
-Search for filed which are not found in the NeXus definiton by searching for the line: "DEBUG: NOT IN SCHEMA". Recheck the used NeXus definition to eliminate the problem. Be careful with upper and lower case notation and correct spelling.
+Search for fields which are not found in the NeXus definition by searching for the line: "DEBUG: NOT IN SCHEMA". Recheck the used NeXus definition to eliminate the problem. Be careful with upper and lower case notation and correct spelling.
 
 Keep in mind, that the output provides quite some information. This is useful for software development, but may be a bit too much for validation purposes.
 
@@ -303,7 +292,7 @@ Similar features as the tables and messages provided from punx and cnxvalidate f
 
 
 
-# 3. cnxvalidate
+# 2. cnxvalidate
 
 This package is written in C. It is allows a command line evocation like:
 
@@ -325,7 +314,7 @@ definition=NXoptical_spectroscopy.nxdl.xml message="Required attribute URL missi
 
 and indicates the entry of the .nxs file, which is incorrect and what the respective problem is. It also points to the NeXus definition (.nxdl.xml file), in which this conflict was found.
 
-# 3.1. Installation (Linux only)
+# 2.1. Installation (Linux only)
 
 This [did not work for me on windows](/installation_notes_nxvalidate.md) (The problem was the software cmake couldn't fine the libxml2 library. Though, if you solve this, this maybe work on windows).
 
@@ -335,7 +324,7 @@ The installation process has to be build from source. This is eased significantl
 
 ### Install cmake, github, hdf5 & xml2 library, etc:
 
-open the terminal and install all parts required to install cnxvalidate via cmake:
+Open the terminal and install all parts required to install cnxvalidate via cmake:
 
 ```
 sudo apt-get update
@@ -425,7 +414,7 @@ Now the above mentioned commands should be avaialble. The programm/executable is
 /home/USER/nexusvalidation/cnxvalidate/build/nxvalidate
 ```
 
-# 3.2. Using cnxvalidate
+# 2.2. Using cnxvalidate
 
 Now you can start to validate your created [NeXus file](https://zenodo.org/records/13373909). But before the validation, we need to get a set of NeXus definitions, which we want to use as reference. This is done again by using git:
 
@@ -510,7 +499,7 @@ Now adjust the file creation, and add the respective fields to make your NeXus f
 
 
 
-# 4. Punx - Python Utilities for NeXus HDF5 files
+# 3. Punx - Python Utilities for NeXus HDF5 files
 
 This is python package, and can therefore be used on Linux and Windows systems.
 
@@ -535,7 +524,7 @@ This is done by replacing REPORT with ={COMMENT,ERROR,NOTE,OK,TODO,UNUSED,WARN}
 
 [Official docs](<https://punx.readthedocs.io/en/latest/validate.html#validate>)
 
-# 4.1 Installation
+# 3.1 Installation
 
 Open the terminal and install punx via pip:
 
@@ -650,7 +639,7 @@ Then you should be able to use this package.
 
 Official docs for [punx installation](<https://punx.readthedocs.io/en/latest/install.html>)
 
-# 4.2. Using punx
+# 3.2. Using punx
 
 Open your terminal. Assuming there is a folder at:
 
@@ -682,7 +671,7 @@ punx validate C:\nexusvalidation\SiO2onSi.ellips.nxs
 
 The output tables "findings" and "summary statistics" can be used to find error present in the NeXus file.
 
-# 4.3. Example
+# 3.3. Example
 
 ### Which NeXus definition?
 
@@ -756,7 +745,7 @@ The last error message:
 
 can be ignored and is a bug right now. If this is the only Error message, then your NeXus file is compliant with the NeXus definitions and you can share and publish your data.
 
-# 4.4. Further Notes
+# 3.4. Further Notes
 
 1. Punx only uses the NeXus definiton from the NIAC [NeXus definiton from the NIAC](<https://manual.nexusformat.org/>). The use of the [FAIRmat NeXus definition](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>) is not possible right now.
 
@@ -781,11 +770,11 @@ This tutorial showed:
 
 ### Recommended methods:
 
-As pynxtools verify_nexus method is right now in development, [not all situations are covered right now](/testing-validation-tools.md). Therefore, the most reliable method right now is a combination of _Human Manual Validation_ + _1-2 Software solutions_.
+As pynxtools verify_nexus method is right now in development, [not all situations are covered right now](/testing-validation-tools.md). Therefore, the most reliable method right now is a combination of _Human Manual Validation_ + _Software solutions_.
 
 ### Pynxtools Parsers:
 
-For a specifically structured set of data, a parser can be written, which uses the meta data and a pre-structured meta data file, to create a NeXus file. Tough, the parser depends on: Experimental Technique and Setup and has therefore to be written invidiually. This is another functionallity of [pynxtools with plugins for the techniques](https://fairmat-nfdi.github.io/pynxtools/reference/plugins.html):
+For a specifically structured set of data, a parser can be written, which uses the meta data and a pre-structured meta data file, to create a NeXus file. Tough, the parser depends on: Experimental Technique and Setup and has therefore to be written individually. This is another functionallity of [pynxtools with plugins for the techniques](https://fairmat-nfdi.github.io/pynxtools/reference/plugins.html):
 
 [electron microscopy (EM)](<https://github.com/FAIRmat-NFDI/pynxtools-em>)
 
