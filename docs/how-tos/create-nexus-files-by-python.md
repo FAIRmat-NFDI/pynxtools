@@ -185,7 +185,7 @@ The first required group in NXoptical\_spectroscopy on the "ENTRY/" level is "**
 
 3. The "required" indicates that this group has to be added to be in line with the NeXus definition "NXoptical\_spectroscopy".
 
-4. The "NXinstrument" indicates that it is a NeXus class (or group in python), as it starts with "NX".
+4. The "NXinstrument" indicates that it is a NeXus class (or group in python), as it starts with "NX" - without an underscore "_". It can also not be found at the [data types](https://manual.nexusformat.org/nxdl-types.html#data-types-allowed-in-nxdl-specifications).
 
 5. As this is a group, attributes or values may be assigned to it.
 
