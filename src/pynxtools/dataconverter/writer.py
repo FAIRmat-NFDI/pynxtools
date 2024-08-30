@@ -22,6 +22,7 @@
 import copy
 import logging
 import xml.etree.ElementTree as ET
+from typing import Optional
 
 import h5py
 import numpy as np
@@ -247,7 +248,7 @@ class Writer:
 
         return elem.attrib
 
-    def __nxdl_docs(self, path: str = "/") -> str:
+    def __nxdl_docs(self, path: str = "/") -> Optional[str]:
         """Get the NXDL docs for a path in the data."""
 
         def extract_and_format_docs(elem: ET.Element) -> str:
@@ -260,7 +261,7 @@ class Writer:
         docs: str = ""
 
         if not self.write_docs:
-            return
+            return None
 
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
 
