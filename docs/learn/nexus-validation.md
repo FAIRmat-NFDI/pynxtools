@@ -1,5 +1,7 @@
 # NeXus validation
-!!! info "Work in progress"
+!!! danger "Work in progress"
+
+!!! info "This page is intended to give more information about the validation tools that are part of `pynxtools`. Please also have a look at our comprehensive [how-to guide](../learn/nexus-validation.md) on NeXus validation."
 
 One of the main advantages of using pynxtools is that it comes with its own validation tools. That is, it can be used to validate that a given NeXus/HDF5 file is compliant with a NeXus application definition.
 
@@ -40,5 +42,7 @@ This workaround was tested with Windows 11, but should very likely also work wit
 ## Other approaches (not part of pynxtools)
 Aside from the tools we developed within FAIRmat, the [official NeXus website](https://manual.nexusformat.org/validation.htm) lists two more programs for the validation of NeXus files:
 
-1. nxvalidate
-2. punx
+1. [cnxvalidate](<https://github.com/nexusformat/cnxvalidate>)
+2. [punx](<https://github.com/prjemian/punx>)
+
+We will not discuss the details of these two programs here, but you can find some information about the in the how-to guide linked above.
