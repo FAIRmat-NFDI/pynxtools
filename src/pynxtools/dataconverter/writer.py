@@ -257,15 +257,18 @@ class Writer:
                 return docs[0].text.strip().replace("\\n", "\n")
             return ""
 
-        def get_nxdl_attr_doc(nxdl_path):
-            return ""
-
         docs: str = ""
 
         if not self.write_docs:
-            return docs
+            return
 
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
+
+        if nxdl_path == "/ENTRY":
+            # Special case for docs of application definition
+            app_def_docs = extract_and_format_docs(self.nxdl_data)
+            if app_def_docs:
+                return app_def_docs
 
         _, _, elist = get_inherited_nodes(nxdl_path, elem=copy.deepcopy(self.nxdl_data))
 
@@ -275,7 +278,14 @@ class Writer:
                 docs += extract_and_format_docs(elem)
 
         if not elist:
-            return get_nxdl_attr_doc(nxdl_path)
+            # Handle docs for attributeS
+            (_, inherited_nodes, _) = get_inherited_nodes(
+                nxdl_path, elem=copy.deepcopy(self.nxdl_data)
+            )
+            attrs = inherited_nodes[-1].findall(f"{self.nxs_namespace}attribute")
+            for attr in attrs:
+                if attr.attrib["name"] == path.split("@")[-1]:
+                    docs += extract_and_format_docs(attr)
 
         return docs
 
