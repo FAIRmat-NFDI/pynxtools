@@ -27,7 +27,6 @@ A series of tutorials giving you an overview on how to store or convert your dat
 
 - [Converting your data to NeXus](tutorial/converting-data-to-nexus.md)
 - [Uploading NeXus data to NOMAD](tutorial/nexus-to-nomad.md)
-- [Troubleshooting guide](tutorial/troubleshooting.md)
 
 </div>
 <div markdown="block">
@@ -71,6 +70,8 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 
 Or go directly to the [official NIAC](https://manual.nexusformat.org/classes/index.html)
  or [latest FAIRmat](https://fairmat-nfdi.github.io/nexus_definitions/) definitions.
+
+Note: To connect NeXus concepts with semantic web tools, efforts are underway to represent them using the [W3C Web Ontology Language (OWL)](https://www.w3.org/OWL/). See the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology) for more details.
 
 #### pynxtools
 

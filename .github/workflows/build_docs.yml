@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the main branch
-      - 405-move-readme-content-to-documentation
 
 env:
   UV_SYSTEM_PYTHON: true

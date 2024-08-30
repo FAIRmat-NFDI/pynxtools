@@ -7,11 +7,11 @@ One of the main advantages of using pynxtools is that it comes with its own vali
 During [data conversion](./dataconverter-and-readers.md), before writing the HDF5 file, the data is first checked against the provided application definition.
 
 <!--## verify-nexus: Testing existing NeXus/HDF5 files
-This CLI tool can be used to validate _existing_ HDF5 files that claim to be NeXus-compliant. See [here](reference/cli-api.html#verify-nexus) for the API documentation.-->
+This CLI tool can be used to validate _existing_ HDF5 files that claim to be NeXus-compliant. See [here](reference/cli-api.md#verify-nexus) for the API documentation.-->
 
 ## read_nexus: NeXus file reader and debugger
 
-This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. See [here](../reference/cli-api.html#read_nexus) for the API documentation.
+This utility outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. See [here](../reference/cli-api.md#read_nexus) for the API documentation.
 
 The following example dataset can be used to test the `read_nexus` module: [src/pynxtools/data/201805_WSe2_arpes.nxs](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/data/201805_WSe2_arpes.nxs).
 

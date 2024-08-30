@@ -10,7 +10,6 @@ nav:
   - Tutorials:
     - tutorial/converting-data-to-nexus.md
     - tutorial/nexus-to-nomad.md
-    - tutorial/troubleshooting.md
   - How-tos:
     - how-tos/writing-an-appdef.md
     - how-tos/using-multiple-appdefs.md
