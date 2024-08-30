@@ -15,10 +15,10 @@ Use a tool to validate NeXus files to a given set of NeXus definitions:
 
 The validity of NeXus files is fundamental to ensure FAIR data. Without specific requirements, it is not possible to understand the data. What type of experiment? What Laser Wavelength? Which voltage? What data is represented at all in the table? What is the unit of the value? Which ISO norm does this refer to? Where was this measured? Which year was this measured?
 
-Therefore you have enter all required fields in the NeXus definition. The requirements are set by the community via workshops or at conferences. You can as well comment the NeXus definitions, to initiate or propose changes/additions. Go to the NeXus definition, and sign-up/log-in and give us some feedback (Red boxes in the image. Expand this panel on the left by clicking on the arrow symbol).  
+The NeXus application definitions define the minimum set of terms that must be used in an instance of that class (i.e., the required terms that you must add to the file in order to be compliant with that application definition). Application definitions also may define terms that are optional in the NeXus data file. The requirements are set by the community via workshops or at conferences. To initiate or propose changes/additions, you can comment the FAIRMat NeXus proposal by going to the [NeXus definitions](https://fairmat-nfdi.github.io/nexus_definitions/index.html#), and using the hypothes.is tool (sign-up/log-in) to give us some feedback (Red boxes in the image. Expand this panel on the left by clicking on the arrow symbol).  
 ![image.png](<./attachments/9d748230d54a8059-image.png>)
 
-Oftentimes, there will be errors in a generated NeXus file (be it by hand or automatically): Typos, missing required concepts, missing attributes, using the incorrect datatype or format (e.g., array instad of list, float instead of integer, etc.). Therefore, a validation is required, to ensure that the data you want to share, is FAIR.
+Oftentimes, there will be errors in a generated NeXus file (be it by hand or automatically): Typos, missing required concepts, missing attributes, using the incorrect datatype or format (e.g., array instad of list, float instead of integer, etc.). Therefore, a validation is required, to ensure that the data you want to share is FAIR.
 
 The NeXus file is valid if it complies with the respective NeXus application definition.
 
@@ -37,7 +37,7 @@ There are right now three tools, which can be used for validation of NeXus files
 
 Open software is usually shared on Github - There you find usually the most accurate information, as documentation sometimes lags behind. There you see a box with folders and files. Below is the content of the README.md file displayed. This usually shows instructions for installation and handling of the software.
 
-Here are the GitHub links for the thee software packages:
+Here are the GitHub links for the three software packages:
 
 [pynxtools](<https://github.com/FAIRmat-NFDI/pynxtools>)
 
@@ -70,18 +70,9 @@ The package can be installed via pip. Therefore you need to have installed:
 
 2. pip
 
-This tool has 3 command line functions:
-
-1. [dataconverter](<https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/README.md>)
-
-2. [read\_nexus](<https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/nexus/README.md>)
-
-3. [generate\_eln](<https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/eln_mapper/README.md>)
-
-4. [verify\_nexus](https://github.com/FAIRmat-NFDI/pynxtools/pull/333)
 
 
-For validation purposes, we will use the "read\_nexus" and "verify\_nexus" function.
+For validation purposes, we will use the "read\_nexus" and "verify\_nexus" command line tools from `pynxtools`.
 
 # 1.1 verify_nexus
 
@@ -101,8 +92,7 @@ WARNING: Field /entry/instrument/beam_incident/wavelength/@units written without
 
 # 1.1.1 Installation of verify_nexus
 
-Aside from read_nexus, there is a second functionality from pynxtools. This method is currently in development (Aug 2024). This function is called: verify\_nexus. Therefore, you have to use the development install, until this function is published.
-
+The `verify_nexus` function is currently under development (Aug 2024). Therefore, you have to install pynxtools from its feature branch until this function is published.
 Do this to install pynxtools with verify\_nexus
 
 ```
@@ -116,7 +106,7 @@ python -m pip install -e .
 python -m pip install -e ".[dev]"
 ```
 
-then, the help function should be available:
+Then, you should be able to call its help function:
 
 ```
 verify_nexus --help
@@ -171,7 +161,7 @@ Invalid: The entry `entry` in file `Raman.nxs` is NOT a valid file according to 
 
 
 # 1.2 read_nexus
-
+While `verify_nexus´ is used as a straightforward tool for validating a NeXus file, `read_nexus` outputs a debug log for a given NeXus file by annotating the data and metadata entries with the schema definitions from the respective NeXus base classes and application definitions to which the file refers to. This can be helpful to extract documentation and understand the concept defined in the NeXus application definition.
 The command used is:
 
 ```
@@ -279,7 +269,7 @@ DEBUG: For Axis #0, 1 axes have been identified: [<HDF5 dataset "spectrum_data_x
 
 Search for fields which are not found in the NeXus definition by searching for the line: "DEBUG: NOT IN SCHEMA". Recheck the used NeXus definition to eliminate the problem. Be careful with upper and lower case notation and correct spelling.
 
-Keep in mind, that the output provides quite some information. This is useful for software development, but may be a bit too much for validation purposes.
+Keep in mind that the output provides quite some information. This is useful for software development, but may be a bit too much for validation purposes.
 
 Similar features as the tables and messages provided from punx and cnxvalidate for pynxtools are [planned to be implemented in the future](<https://github.com/FAIRmat-NFDI/pynxtools/pull/333>).
 
@@ -320,7 +310,7 @@ This [did not work for me on windows](/installation_notes_nxvalidate.md) (The pr
 
 Therefore: Use linux.
 
-The installation process has to be build from source. This is eased significantly by using another software called: cmake.
+The software has to be built from source. This is eased significantly by using another software called: cmake.
 
 ### Install cmake, github, hdf5 & xml2 library, etc:
 
@@ -338,9 +328,9 @@ sudo apt-get -y install cmake
 sudo apt-get install libxml2-dev
 ```
 
-### Directoty location
+### Directory location
 
-create a folder named "nexusvalidation" via terminal or file manager.
+Create a folder named "nexusvalidation" via terminal or file manager.
 
 The folder is located at `/home/USER/nexusvalidation`
 
@@ -348,7 +338,7 @@ The folder is located at `/home/USER/nexusvalidation`
 
 In the terminal, this is indicated by `~/nexusvalidation` ( \~ = /home/USER)
 
-open the thermal and go into this directory by:
+Open the thermal and go into this directory by:
 
 ```
 cd /home/USER/nexusvalidation
@@ -366,9 +356,9 @@ Copy the https link.
 
 ![image.png](<./attachments/e28ec15bb537c9b7-image.png>)
 
-open the terminal and ensure you are in the `nexusvalidation` folder.
+Open the terminal and ensure you are in the `nexusvalidation` folder.
 
-clone the github repository (= download the files of the software).
+Clone the github repository (= download the files of the software).
 
 ```
 git clone https://github.com/nexusformat/cnxvalidate.git
@@ -440,7 +430,7 @@ For the NIAC NeXus definitions, go to [this link](<https://github.com/nexusforma
 git clone https://github.com/nexusformat/definitions.git
 ```
 
-Now you have a folder called "definitions" in the "nexusvalidation" folder. The path to this definitions folder is used as option for cnxvalidate, to tell the program, which NeXus definitions shall be used.
+Now you have a folder called "definitions" in the "nexusvalidation" folder. The path to this definitions folder is used as option for cnxvalidate, to tell the program which NeXus definitions shall be used.
 
 The respective path would be:
 
@@ -515,11 +505,11 @@ You can then evoke a command like this:
 punx validate [-h] [--report REPORT] infile
 ```
 
-"validate" is tells the program, that we want to validate a file
+"validate" tells the program that we want to validate a file
 
 "[-h]" tells the program to show the help message
 
-"[--report REPORT]" tells the program, what findings should be reported.  
+"[--report REPORT]" tells the program what findings should be reported.  
 This is done by replacing REPORT with ={COMMENT,ERROR,NOTE,OK,TODO,UNUSED,WARN}
 
 [Official docs](<https://punx.readthedocs.io/en/latest/validate.html#validate>)
@@ -794,7 +784,7 @@ For a specifically structured set of data, a parser can be written, which uses t
 
 ### Feedback and contact:
 
-1. Best way is to contact the software development directly via a [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new).
+1. Best way is to contact the software development team directly via a [Github Issue](https://github.com/FAIRmat-NFDI/pynxtools/issues/new).
  
 2. ron.hildebrandt(at)physik.hu-berlin.de
 
