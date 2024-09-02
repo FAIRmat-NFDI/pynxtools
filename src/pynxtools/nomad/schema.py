@@ -298,6 +298,11 @@ def __to_section(name: str, **kwargs) -> Section:
     else:
         base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
 
+    name = base_section_cls.getattr("name", None)
+
+    if not name:
+        base_section_cls.setattr("name", None)
+
     section = base_section_cls(validate=VALIDATE, name=name, **kwargs)
 
     __section_definitions[name] = section
