@@ -92,12 +92,33 @@ __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
 __NX_DOC_BASE = "https://manual.nexusformat.org/classes"
 
 
-class NexusBaseSection(BaseSection, Section):
+class NexusBaseSection(Section, BaseSection):
     pass
 
 
-class NeXusInstrument(Instrument, Section):
+class NeXusInstrument(Section, Instrument):
     pass
+
+
+def create_nxs_basesection(name, base_section: BaseSection, **attrs):
+    """
+    Dynamically creates a new class that inherits from a BaseSection and from Section.
+
+    Parameters
+    ----------
+    name : str
+        The name of the new class.
+    base1 : BaseSection
+        The base section that this class shall inherit.
+    **attrs : dict
+        Additional attributes or methods to add to the class.
+
+    Returns
+    -------
+    type
+        The newly created class that inherits from BaseSection and from Section.
+    """
+    return type(name, (Section, base_section), attrs)
 
 
 BASESECTIONS_MAP: Dict[str, Any] = {
@@ -302,30 +323,20 @@ def __to_section(name: str, **kwargs) -> Section:
         section.more.update(**kwargs)
         return section
 
-    # BASESECTIONS_MAP: Dict[str, Any] = {
-    #     "NXinstrument": Instrument,
-    #     # "NXsample": CompositeSystem,
-    #     #"NXelectronanalyser": NXentity
-    # }
-
     if not name.startswith("NX"):
         nx_type = kwargs.get("nx_type")
-        name = name.split("NX")[-1]
-        base_section_cls = BASESECTIONS_MAP.get(nx_type, NexusBaseSection)
+        cls_name = nx_type
+        base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
         # base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
     else:
-        base_section_cls = BASESECTIONS_MAP.get(name, NexusBaseSection)
+        base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
+        cls_name = name
         # base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
 
-    base_section_obj = base_section_cls(name=name)
+    nxs_basesection = create_nxs_basesection(cls_name, base_section_cls)
 
-    # for key, val in kwargs.items():
-    #     if base_section_obj.m_get_section_attribute(key):
-    #         base_section_obj.m_set_section_attribute(key, val)
-    #     else:
-    #         pass
-
-    section = base_section_obj  # base_section_cls(name=name, **kwargs)
+    section = nxs_basesection(validate=VALIDATE, name=name, **kwargs)
+    # base_section_cls(name=name, **kwargs)
 
     __section_definitions[name] = section
 
@@ -756,6 +767,15 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
         section = __add_section_from_nxdl(nxdl_file)
         if section is not None:
             sections.append(section)
+            print(
+                section.m_to_dict(
+                    with_meta=True,
+                    with_root_def=True,
+                    # include_defaults=True,
+                    # include_derived=True,
+                    # resolve_references=True,
+                )
+            )
 
     sections.sort(key=lambda x: x.name)
 
