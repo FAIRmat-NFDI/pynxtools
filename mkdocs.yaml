@@ -11,6 +11,9 @@ nav:
     - tutorial/converting-data-to-nexus.md
     - tutorial/nexus-to-nomad.md
   - How-tos:
+    - how-tos/writing-an-appdef.md
+    - how-tos/using-multiple-appdefs.md
+    - how-tos/transformations.md
     - how-tos/build-a-plugin.md
     - how-tos/use-multi-format-reader.md
     - how-tos/using-pynxtools-test-framework.md
