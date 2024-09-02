@@ -92,12 +92,11 @@ __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
 __NX_DOC_BASE = "https://manual.nexusformat.org/classes"
 
 
-class NexusBaseSection(Section, BaseSection):
-    pass
-
-
-class NeXusInstrument(Section, Instrument):
-    pass
+BASESECTIONS_MAP: Dict[str, Any] = {
+    "NXinstrument": Instrument,
+    # "NXsample": CompositeSystem,
+    # "NXelectronanalyser": NXentity
+}
 
 
 def create_nxs_basesection(name, base_section: BaseSection, **attrs):
@@ -119,13 +118,6 @@ def create_nxs_basesection(name, base_section: BaseSection, **attrs):
         The newly created class that inherits from BaseSection and from Section.
     """
     return type(name, (Section, base_section), attrs)
-
-
-BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXinstrument": NeXusInstrument,
-    # "NXsample": CompositeSystem,
-    # "NXelectronanalyser": NXentity
-}
 
 
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
@@ -767,15 +759,16 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
         section = __add_section_from_nxdl(nxdl_file)
         if section is not None:
             sections.append(section)
-            print(
-                section.m_to_dict(
-                    with_meta=True,
-                    with_root_def=True,
-                    # include_defaults=True,
-                    # include_derived=True,
-                    # resolve_references=True,
-                )
-            )
+            print(section.__dict__)
+            # print(
+            #     section.m_to_dict(
+            #         with_meta=True,
+            #         with_root_def=True,
+            #         # include_defaults=True,
+            #         # include_derived=True,
+            #         # resolve_references=True,
+            #     )
+            # )
 
     sections.sort(key=lambda x: x.name)
 
