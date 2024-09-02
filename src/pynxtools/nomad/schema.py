@@ -40,6 +40,12 @@ try:
         Section,
         SubSection,
     )
+    from nomad.datamodel.metainfo.basesections import (
+        BaseSection,
+        Entity,
+        Activity,
+        Instrument,
+    )
     from nomad.metainfo.data_type import (
         Bytes,
         Datatype,
