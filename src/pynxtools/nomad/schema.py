@@ -23,7 +23,7 @@ import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 
 import numpy as np
 
@@ -298,7 +298,7 @@ def __to_section(name: str, **kwargs) -> Section:
     else:
         base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
 
-    section = Section(validate=VALIDATE, name=name, **kwargs)
+    section = base_section_cls(validate=VALIDATE, name=name, **kwargs)
 
     __section_definitions[name] = section
 
