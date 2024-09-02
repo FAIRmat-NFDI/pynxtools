@@ -44,6 +44,7 @@ try:
         BaseSection,
         Entity,
         Activity,
+        Measurement,
         Instrument,
         CompositeSystem,
     )
@@ -90,7 +91,7 @@ VALIDATE = False
 __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
 __NX_DOC_BASE = "https://manual.nexusformat.org/classes"
 
-BASESECTIONS_MAP = {
+BASESECTIONS_MAP: Dict[str, Any] = {
     "NXinstrument": Instrument,
     "NXsample": CompositeSystem,
 }
@@ -258,6 +259,26 @@ def __get_documentation_url(
     return f"{__NX_DOC_BASE}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
 
 
+# def __to_section(name: str, **kwargs) -> Section:
+#     """
+#     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
+
+#     This function ensures that sections for these base-classes are only created once.
+#     This allows to access the metainfo section even before it is generated from the base
+#     class nexus definition.
+#     """
+#     if name in __section_definitions:
+#         section = __section_definitions[name]
+#         section.more.update(**kwargs)
+#         return section
+
+#     section = Section(validate=VALIDATE, name=name, **kwargs)
+
+#     __section_definitions[name] = section
+
+#     return section
+
+
 def __to_section(name: str, **kwargs) -> Section:
     """
     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
@@ -270,6 +291,12 @@ def __to_section(name: str, **kwargs) -> Section:
         section = __section_definitions[name]
         section.more.update(**kwargs)
         return section
+
+    if not name.startswith("NX"):
+        nx_type = kwargs.get("nx_type")
+        base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
+    else:
+        base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
 
