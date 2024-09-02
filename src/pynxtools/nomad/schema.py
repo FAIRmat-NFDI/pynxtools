@@ -91,9 +91,19 @@ VALIDATE = False
 __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
 __NX_DOC_BASE = "https://manual.nexusformat.org/classes"
 
+
+class NexusBaseSection(BaseSection, Section):
+    pass
+
+
+class NeXusInstrument(Instrument, Section):
+    pass
+
+
 BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXinstrument": Instrument,
-    "NXsample": CompositeSystem,
+    "NXinstrument": NeXusInstrument,
+    # "NXsample": CompositeSystem,
+    # "NXelectronanalyser": NXentity
 }
 
 
@@ -292,18 +302,30 @@ def __to_section(name: str, **kwargs) -> Section:
         section.more.update(**kwargs)
         return section
 
+    # BASESECTIONS_MAP: Dict[str, Any] = {
+    #     "NXinstrument": Instrument,
+    #     # "NXsample": CompositeSystem,
+    #     #"NXelectronanalyser": NXentity
+    # }
+
     if not name.startswith("NX"):
         nx_type = kwargs.get("nx_type")
-        base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
+        name = name.split("NX")[-1]
+        base_section_cls = BASESECTIONS_MAP.get(nx_type, NexusBaseSection)
+        # base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
     else:
-        base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
+        base_section_cls = BASESECTIONS_MAP.get(name, NexusBaseSection)
+        # base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
 
-    name = base_section_cls.getattr("name", None)
+    base_section_obj = base_section_cls(name=name)
 
-    if not name:
-        base_section_cls.setattr("name", None)
+    # for key, val in kwargs.items():
+    #     if base_section_obj.m_get_section_attribute(key):
+    #         base_section_obj.m_set_section_attribute(key, val)
+    #     else:
+    #         pass
 
-    section = base_section_cls(validate=VALIDATE, name=name, **kwargs)
+    section = base_section_obj  # base_section_cls(name=name, **kwargs)
 
     __section_definitions[name] = section
 
