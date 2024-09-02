@@ -14,10 +14,6 @@
       
       
       
-        <link rel="prev" href="using-multiple-appdefs.html">
-      
-      
-        <link rel="next" href="build-a-plugin.html">
       
       
       <link rel="icon" href="../assets/favicon.png">
@@ -25,7 +21,7 @@
     
     
       
-        <title>Storing experimental geometries - Documentation</title>
+        <title>Installation notes nxvalidate - Documentation</title>
       
     
     
@@ -77,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#storing-experimental-geometries" class="md-skip">
+        <a href="#cnxvalidate-installation-on-ubuntu-2204" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +105,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Storing experimental geometries
+              Installation notes nxvalidate
             
           </span>
         </div>
@@ -286,19 +282,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -312,7 +306,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             How-tos
@@ -365,19 +359,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="transformations.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="transformations.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -386,7 +371,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -917,11 +901,54 @@
                   
 
 
-<h1 id="storing-experimental-geometries">Storing experimental geometries<a class="headerlink" href="#storing-experimental-geometries" title="Permanent link">&para;</a></h1>
-<div class="admonition danger">
-<p class="admonition-title">Work in progress</p>
-<p>This part of the documentation is still being written and it might be confusing or incomplete.</p>
-</div>
+<p>This lists some notes for installation of nxvalidate on Ubuntu and Windows. For windows, the installation of the XML2 library was not sucessful. This should be possible, but could not reproduced yet.</p>
+<h1 id="cnxvalidate-installation-on-ubuntu-2204">cnxvalidate installation on Ubuntu 22.04<a class="headerlink" href="#cnxvalidate-installation-on-ubuntu-2204" title="Permanent link">&para;</a></h1>
+<p>These commands install nxvaldiate on a fresh Ubuntu 22.04 system (tested with Linux running from USB stick).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo apt-get update
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo apt-get install git
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo apt-get install build-essential
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>sudo add-apt-repository universe
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo apt-get install libhdf5-serial-dev
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo apt-get -y install pkg-config
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>sudo apt upgrade -y
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo apt-get -y install cmake
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sudo apt-get install libxml2-dev
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>mkdir nexusvalidate
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>cd nexusvalidate
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>git clone https://github.com/nexusformat/cnxvalidate.git
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>cd cnxvalidate/
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>mkdir build
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>cd build/
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>cmake ../
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>make
+</code></pre></div>
+<h1 id="cnxvalidate-installation-on-windows">cnxvalidate installation on windows:<a class="headerlink" href="#cnxvalidate-installation-on-windows" title="Permanent link">&para;</a></h1>
+<h2 id="-cmake">-- CMAKE<a class="headerlink" href="#-cmake" title="Permanent link">&para;</a></h2>
+<p><a href="https://cmake.org/download/">https://cmake.org/download/</a></p>
+<p>--&gt; <a href="https://github.com/Kitware/CMake/releases/download/v3.30.2/cmake-3.30.2-windows-x86_64.msi">cmake-3.30.2-windows-x86_64.msi</a></p>
+<p>Install with .msi</p>
+<h2 id="-hdf5">-- HDF5<a class="headerlink" href="#-hdf5" title="Permanent link">&para;</a></h2>
+<p>Download <strong>hdf5-1.14.4-2-win-vs2022_</strong><a href="http://cl.zip"><strong>cl.zip</strong></a>** from **<a href="https://www.hdfgroup.org/downloads/hdf5/">https://www.hdfgroup.org/downloads/hdf5/</a></p>
+<p>unzip the .zip file</p>
+<p>put the file into the folder</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>C:\hdf5
+</code></pre></div>
+<p>(can be named differently, but no spaces are allowed for this path)</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>set PATH=%PATH%;C:\your\path\here\
+</code></pre></div>
+<h2 id="-libiconv">-- libiconv<a class="headerlink" href="#-libiconv" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/vovythevov/libiconv-cmake">https://github.com/vovythevov/libiconv-cmake</a></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git clone
+</code></pre></div>
+<p>cd to downloaded directory</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>mkdir build
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>cd build
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>cmake ..
+</code></pre></div>
+<h2 id="-xml2">-- XML2<a class="headerlink" href="#-xml2" title="Permanent link">&para;</a></h2>
+<p>??? Unsolved...</p>
+<p>Please create GitHub issue <a href="https://github.com/FAIRmat-NFDI/pynxtools/issues/new">here</a> if you could solve this.</p>
 
 
 
