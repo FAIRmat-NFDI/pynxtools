@@ -1,6 +1,6 @@
-# Creation of NeXus files in python via hard-coding
+# Use python to create NeXus files
 
-## The goal
+__The goal__
 
 Use python to create a NeXus file (.nxs) by hardcoding via the python package `h5py`. NeXus files can also be created by our software [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) automatically, but ONLY IF a reader for the specific device/instrument/data-structure exists. This How-To is intended as easy access to FAIR data structures _via_ NeXus. For static-datastructures (i.e., always the same type of standard measurement) or one-time examples (small data publications), this may provide a feasible solution. For large scaled automated file processing, storage, and validation, it is advisable to use [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) and its measurement method specific [plugins](../reference/plugins.md)
 
@@ -8,7 +8,7 @@ You can find the necessary file downloads [here](https://zenodo.org/records/1337
 
 
 
-## Create NeXus by hardcoding with python
+## Make NeXus file by python
 
 Install `h5py` via `pip`:
 ```console
@@ -43,7 +43,7 @@ This proves a starting point of the NeXus file. We will go through these functio
 
 
 
-## Fill the content of the .nxs file
+## Add NeXus concepts by python
 
 Go to [FAIRmat NeXus definitions](<https://fairmat-nfdi.github.io/nexus_definitions/index.html#>)
 
@@ -71,7 +71,7 @@ In the following, it will be shown how the python script has to be extended for 
 
 
 
-## Adding a NeXus attribute
+### Adding an attribute
 
 Search for the first concept/object in the NeXus file which is not created yet. It is:
 
@@ -103,7 +103,7 @@ f['/entry/definition'].attrs['URL'] = 'https://github.com/FAIRmat-NFDI/nexus_def
 
 For your use case, you may want to use a different version of the NeXus definitions, since these are changed over time. In the following, it is shown where to obtain the correct version and URL.
 
-### How to get the "version" and "URL" values
+__Get the values: *version* and *URL*__
 
 At the time, you create the NeXus definition. Go to the page of the respectively used NeXus concept, i.e. [NXoptical_spectroscopy](<https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html>)
 
@@ -125,7 +125,7 @@ On the right side, you should see below "Releases" the "tags" (Red box in the im
 
 Copy the latest tag, which should look similar to "v2024.02". Insert it as value for the "version" attribute.
 
-### Disclaimer:
+__Disclaimer__
 When specifying this version tag, it would be better to include the "GitHub commit id" as well. In this way, a [pynxtools generated version tag](https://github.com/FAIRmat-NFDI/pynxtools/blob/c13716915bf8f69068c3b94d1423681b580fd437/src/pynxtools/_build_wrapper.py#L17) might look like this:
 `v2022.07.post1.dev1278+g1d7000f4`. If you have pynxtools installed, you can get the tag by:
 
@@ -137,7 +137,7 @@ When specifying this version tag, it would be better to include the "GitHub comm
 
 
 
-## Adding a datafield
+### Adding a datafield
 
 Two attributes were added to "ENTRY/definition", both of which were required. By now, this part of the NeXus file fulfills the requirements of the application definition NXoptical\_spectroscopy.
 
@@ -175,7 +175,7 @@ f['/entry/experiment_type'] = 'transmission spectroscopy'
 
 
 
-## Adding a group
+### Adding a group
 
 The first required group in NXoptical\_spectroscopy on the "ENTRY/" level is "**INSTRUMENT**: (required) [NXinstrument](<https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinstrument.html#nxinstrument>) [⤆"](<https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-instrument-group>)
 
@@ -214,7 +214,7 @@ The second line assigns this group the attribute with the name "NX\_class" and i
 
 
 
-## Finishing the .nxs file
+### Finishing the NeXus file
 
 This has to be done by using the respective NeXus definition website:
 
@@ -228,14 +228,15 @@ And by searching for all "required" entries. The next required entries are locat
 
 Both are groups. "**beam\_TYPE"** could be named: "beam\_abc" or "beam\_Raman\_setup". Use the knowledge above to extend the python script to create those NeXus file entries.
 
-### Note for required concepts in optional fields/groups:
+__Note for required NeXus concepts__
 
 Above in the definition of NXoptical\_spectroscopy, you as well may found a required entry "**depends\_on**: (required) [NX\_CHAR](<https://fairmat-nfdi.github.io/nexus_definitions/nxdl-types.html#nx-char>) [⤆"](<https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcoordinate_system.html#nxcoordinate-system-depends-on-field>). This is at the level of "ENTRY/reference\_frames/beam\_ref\_frame". If you don't have the group "**beam\_ref\_frame"** because this is "optional", then you don't need to have this field.
 
 
 
+[_Continue by validating the NeXus file_](validate-nexus-file.md)
 
-### Feedback and contact:
+## Feedback and contact
 
 1. Best way is to contact the FAIRmat team directly by creating a [Github Issue](https://github.com/FAIRmat-NFDI/nexus_definitions/issues/new).
 
