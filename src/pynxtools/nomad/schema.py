@@ -45,6 +45,7 @@ try:
         Entity,
         Activity,
         Instrument,
+        CompositeSystem,
     )
     from nomad.metainfo.data_type import (
         Bytes,
@@ -88,6 +89,11 @@ VALIDATE = False
 
 __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
 __NX_DOC_BASE = "https://manual.nexusformat.org/classes"
+
+BASESECTIONS_MAP = {
+    "NXinstrument": Instrument,
+    "NXsample": CompositeSystem,
+}
 
 
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
