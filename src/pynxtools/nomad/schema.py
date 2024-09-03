@@ -23,7 +23,7 @@ import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
@@ -102,6 +102,8 @@ BASESECTIONS_MAP: Dict[str, Any] = {
     # "NXsample": CompositeSystem,
     # "NXelectronanalyser": Entity
 }
+
+setattr(BaseSection, "tags", [])
 
 
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
