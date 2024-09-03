@@ -42,11 +42,10 @@ try:
     )
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
-        Entity,
-        Activity,
-        Measurement,
+        # Entity,
+        # Activity,
+        # Measurement,
         Instrument,
-        CompositeSystem,
     )
     from nomad.metainfo.data_type import (
         Bytes,
@@ -93,7 +92,7 @@ __NX_DOC_BASE = "https://manual.nexusformat.org/classes"
 
 
 BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXinstrument": Instrument,
+    "NXfabrication": Instrument,
     # "NXsample": CompositeSystem,
     # "NXelectronanalyser": NXentity
 }
@@ -282,26 +281,6 @@ def __get_documentation_url(
     return f"{__NX_DOC_BASE}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
 
 
-# def __to_section(name: str, **kwargs) -> Section:
-#     """
-#     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
-
-#     This function ensures that sections for these base-classes are only created once.
-#     This allows to access the metainfo section even before it is generated from the base
-#     class nexus definition.
-#     """
-#     if name in __section_definitions:
-#         section = __section_definitions[name]
-#         section.more.update(**kwargs)
-#         return section
-
-#     section = Section(validate=VALIDATE, name=name, **kwargs)
-
-#     __section_definitions[name] = section
-
-#     return section
-
-
 def __to_section(name: str, **kwargs) -> Section:
     """
     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
@@ -315,24 +294,43 @@ def __to_section(name: str, **kwargs) -> Section:
         section.more.update(**kwargs)
         return section
 
-    if not name.startswith("NX"):
-        nx_type = kwargs.get("nx_type")
-        cls_name = nx_type
-        base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
-        # base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
-    else:
-        base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
-        cls_name = name
-        # base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
-
-    nxs_basesection = create_nxs_basesection(cls_name, base_section_cls)
-
-    section = nxs_basesection(validate=VALIDATE, name=name, **kwargs)
-    # base_section_cls(name=name, **kwargs)
+    section = Section(validate=VALIDATE, name=name, **kwargs)
 
     __section_definitions[name] = section
 
     return section
+
+
+# def __to_section(name: str, **kwargs) -> Section:
+#     """
+#     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
+
+#     This function ensures that sections for these base-classes are only created once.
+#     This allows to access the metainfo section even before it is generated from the base
+#     class nexus definition.
+#     """
+#     if name in __section_definitions:
+#         section = __section_definitions[name]
+#         section.more.update(**kwargs)
+#         return section
+
+#     if not name.startswith("NX"):
+#         nx_type = kwargs.get("nx_type")
+#         cls_name = nx_type
+#         base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
+#     else:
+#         base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
+#         cls_name = name
+
+#     nxs_basesection = create_nxs_basesection(cls_name, base_section_cls)
+
+#     section = nxs_basesection(validate=VALIDATE, name=name, **kwargs)
+#     # section = nxs_basesection(**kwargs)
+#     # base_section_cls(name=name, **kwargs)
+
+#     __section_definitions[name] = section
+
+#     return section
 
 
 def __get_enumeration(xml_node: ET.Element) -> Optional[MEnum]:
@@ -631,13 +629,17 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
+    base_section_cls = BASESECTIONS_MAP.get(nx_name, BaseSection)
+
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
+    if nx_name == "NXobject":
+        class_section.base_sections = [base_section_cls]
 
     if "extends" in xml_attrs:
         base_section = __to_section(xml_attrs["extends"])
-        class_section.base_sections = [base_section]
+        class_section.base_sections = [base_section, base_section_cls]
 
     __add_common_properties(xml_node, class_section)
 
