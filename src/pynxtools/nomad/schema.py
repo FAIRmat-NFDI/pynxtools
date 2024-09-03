@@ -305,38 +305,6 @@ def __to_section(name: str, **kwargs) -> Section:
     return section
 
 
-# def __to_section(name: str, **kwargs) -> Section:
-#     """
-#     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
-
-#     This function ensures that sections for these base-classes are only created once.
-#     This allows to access the metainfo section even before it is generated from the base
-#     class nexus definition.
-#     """
-#     if name in __section_definitions:
-#         section = __section_definitions[name]
-#         section.more.update(**kwargs)
-#         return section
-
-#     if not name.startswith("NX"):
-#         nx_type = kwargs.get("nx_type")
-#         cls_name = nx_type
-#         base_section_cls = BASESECTIONS_MAP.get(nx_type, BaseSection)
-#     else:
-#         base_section_cls = BASESECTIONS_MAP.get(name, BaseSection)
-#         cls_name = name
-
-#     nxs_basesection = create_nxs_basesection(cls_name, base_section_cls)
-
-#     section = nxs_basesection(validate=VALIDATE, name=name, **kwargs)
-#     # section = nxs_basesection(**kwargs)
-#     # base_section_cls(name=name, **kwargs)
-
-#     __section_definitions[name] = section
-
-#     return section
-
-
 def __get_enumeration(xml_node: ET.Element) -> Optional[MEnum]:
     """
     Get the enumeration field from xml node
