@@ -106,7 +106,8 @@ def _write_definitions_remote_url():
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
     """
     PEP 517 compliant build wheel hook.
-    This is a wrapper for setuptools and adds a nexus version file.
+    This is a wrapper for setuptools and adds a nexus version file and a
+    file with the remote of the definitions submodule.
     """
     _write_version_to_metadata()
     _write_definitions_remote_url()
@@ -117,7 +118,8 @@ def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
 def build_sdist(sdist_directory, config_settings=None):
     """
     PEP 517 compliant build sdist hook.
-    This is a wrapper for setuptools and adds a nexus version file.
+    This is a wrapper for setuptools and adds a nexus version file and a
+    file with the remote of the definitions submodule.
     """
     _write_version_to_metadata()
     _write_definitions_remote_url()
