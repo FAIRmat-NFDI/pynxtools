@@ -23,7 +23,7 @@ import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 
 import numpy as np
 
@@ -66,6 +66,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 
 # __URL_REGEXP from
@@ -88,35 +89,19 @@ __logger = get_logger(__name__)
 VALIDATE = False
 
 __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
-__NX_DOC_BASE = "https://manual.nexusformat.org/classes"
+__NX_DOC_BASES: Dict[str, str] = {
+    "https://github.com/nexusformat/definitions.git": "https://manual.nexusformat.org/classes",
+    "https://github.com/FAIRmat-NFDI/nexus_definitions.git": "https://fairmat-nfdi.github.io/nexus_definitions/classes",
+}
 
+__PACKAGE_NAME = "nexus"
+__GROUPING_NAME = "NeXus"
 
 BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": Instrument,
     # "NXsample": CompositeSystem,
-    # "NXelectronanalyser": NXentity
+    # "NXelectronanalyser": Entity
 }
-
-
-# def create_nxs_basesection(name, base_section: BaseSection, **attrs):
-#     """
-#     Dynamically creates a new class that inherits from a BaseSection and from Section.
-
-#     Parameters
-#     ----------
-#     name : str
-#         The name of the new class.
-#     base1 : BaseSection
-#         The base section that this class shall inherit.
-#     **attrs : dict
-#         Additional attributes or methods to add to the class.
-
-#     Returns
-#     -------
-#     type
-#         The newly created class that inherits from BaseSection and from Section.
-#     """
-#     return type(name, (Section, base_section), attrs)
 
 
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
@@ -276,16 +261,23 @@ def __get_documentation_url(
         if xml_node is None:
             break
 
+    definitions_url = get_definitions_url()
+
+    doc_base = __NX_DOC_BASES.get(
+        definitions_url, "https://manual.nexusformat.org/classes"
+    )
     nx_package = xml_parent.get("nxdl_base").split("/")[-1]
     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    return f"{__NX_DOC_BASE}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
+    return f"{doc_base}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
 
 
 def __rename_nx_to_nomad(name: str) -> str:
     """
-    Rename the nxdl name to nomad
+    Rename the NXDL name to NOMAD.
+    For example: NXobject -> NOMADObject
     """
     if name.startswith("NX"):
+        # ToDo: replace by a useful prefix
         return name.replace("NX", "NX")
     return name
 
@@ -761,7 +753,7 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
     Creates a metainfo package from the given nexus directory. Will generate the
     respective metainfo definitions from all the nxdl files in that directory.
     """
-    package = Package(name="nexus")
+    package = Package(name=__PACKAGE_NAME)
 
     folder_list = ("base_classes", "contributed_definitions", "applications")
     paths = [
@@ -773,17 +765,6 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
         section = __add_section_from_nxdl(nxdl_file)
         if section is not None:
             sections.append(section)
-            # print(section.__dict__)
-            # print(
-            #     section.m_to_dict(
-            #         with_meta=True,
-            #         with_root_def=True,
-            #         # include_defaults=True,
-            #         # include_derived=True,
-            #         # resolve_references=True,
-            #     )
-            # )
-
     sections.sort(key=lambda x: x.name)
 
     for section in sections:
@@ -829,7 +810,7 @@ def init_nexus_metainfo():
 
     # We take the application definitions and create a common parent section that allows
     # to include nexus in an EntryArchive.
-    nexus_section = Section(validate=VALIDATE, name="NeXus")
+    nexus_section = Section(validate=VALIDATE, name=__GROUPING_NAME)
 
     # try:
     #     load_nexus_schema('')
