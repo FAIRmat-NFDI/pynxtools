@@ -95,7 +95,7 @@ def _write_definitions_remote_url():
         return
 
     with open(
-        os.path.join(os.path.dirname(__file__), "remote_url.txt"),
+        os.path.join(os.path.dirname(__file__), "remote_definitions_url.txt"),
         "w+",
         encoding="utf-8",
     ) as file:
