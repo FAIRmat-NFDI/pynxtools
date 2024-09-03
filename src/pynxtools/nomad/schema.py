@@ -23,12 +23,19 @@ import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
 try:
     from nomad.datamodel import EntryArchive
+    from nomad.datamodel.metainfo.basesections import (
+        BaseSection,
+        # Entity,
+        # Activity,
+        # Measurement,
+        Instrument,
+    )
     from nomad.metainfo import (
         Attribute,
         Bytes,
@@ -39,13 +46,6 @@ try:
         Quantity,
         Section,
         SubSection,
-    )
-    from nomad.datamodel.metainfo.basesections import (
-        BaseSection,
-        # Entity,
-        # Activity,
-        # Measurement,
-        Instrument,
     )
     from nomad.metainfo.data_type import (
         Bytes,
@@ -281,6 +281,15 @@ def __get_documentation_url(
     return f"{__NX_DOC_BASE}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
 
 
+def __rename_nx_to_nomad(name: str) -> str:
+    """
+    Rename the nxdl name to nomad
+    """
+    if name.startswith("NX"):
+        return name.replace("NX", "NOMAD")
+    return name
+
+
 def __to_section(name: str, **kwargs) -> Section:
     """
     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
@@ -289,6 +298,9 @@ def __to_section(name: str, **kwargs) -> Section:
     This allows to access the metainfo section even before it is generated from the base
     class nexus definition.
     """
+
+    name = __rename_nx_to_nomad(name)
+
     if name in __section_definitions:
         section = __section_definitions[name]
         section.more.update(**kwargs)
@@ -761,7 +773,7 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
         section = __add_section_from_nxdl(nxdl_file)
         if section is not None:
             sections.append(section)
-            print(section.__dict__)
+            # print(section.__dict__)
             # print(
             #     section.m_to_dict(
             #         with_meta=True,
