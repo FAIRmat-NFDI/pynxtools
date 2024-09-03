@@ -98,25 +98,25 @@ BASESECTIONS_MAP: Dict[str, Any] = {
 }
 
 
-def create_nxs_basesection(name, base_section: BaseSection, **attrs):
-    """
-    Dynamically creates a new class that inherits from a BaseSection and from Section.
+# def create_nxs_basesection(name, base_section: BaseSection, **attrs):
+#     """
+#     Dynamically creates a new class that inherits from a BaseSection and from Section.
 
-    Parameters
-    ----------
-    name : str
-        The name of the new class.
-    base1 : BaseSection
-        The base section that this class shall inherit.
-    **attrs : dict
-        Additional attributes or methods to add to the class.
+#     Parameters
+#     ----------
+#     name : str
+#         The name of the new class.
+#     base1 : BaseSection
+#         The base section that this class shall inherit.
+#     **attrs : dict
+#         Additional attributes or methods to add to the class.
 
-    Returns
-    -------
-    type
-        The newly created class that inherits from BaseSection and from Section.
-    """
-    return type(name, (Section, base_section), attrs)
+#     Returns
+#     -------
+#     type
+#         The newly created class that inherits from BaseSection and from Section.
+#     """
+#     return type(name, (Section, base_section), attrs)
 
 
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
@@ -286,7 +286,7 @@ def __rename_nx_to_nomad(name: str) -> str:
     Rename the nxdl name to nomad
     """
     if name.startswith("NX"):
-        return name.replace("NX", "NOMAD")
+        return name.replace("NX", "NX")
     return name
 
 
