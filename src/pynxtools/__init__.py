@@ -109,6 +109,6 @@ def get_nexus_version_hash() -> str:
 
 def get_definitions_url() -> str:
     """Get the URL of the NeXus definitions that are submoduled in pynxtools."""
-    url_file = os.path.join(os.path.dirname(__file__), "remote_url.txt")
+    url_file = os.path.join(os.path.dirname(__file__), "remote_definitions_url.txt")
     with open(url_file, encoding="utf-8") as file:
         return file.read().strip()
