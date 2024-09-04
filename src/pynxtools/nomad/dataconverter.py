@@ -85,7 +85,7 @@ def populate_nexus_subsection(
         logger: nomad logger.
         on_temp_file: Whether data will be written in temporary disk, by default False.
         nxs_as_entry: If the nxs file should be as ann nonmad entry or a general file, by default True.
-        write_entry_type: If the attr entry_type in archive.meatadata.entry_type would be written or not.
+        write_entry_type: If the attr entry_type in archive.meatadata would be written or not.
 
     Raises:
         Exception: could not trigger processing from NexusParser
