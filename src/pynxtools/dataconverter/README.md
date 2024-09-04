@@ -1,54 +1,17 @@
 # Dataconverter
 
-This tool converts experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1).
-It contains a set of [readers](readers/) to convert supported data files into a compliant NeXus file.
+This tool converts experimental data to NeXus/HDF5 files based on any provided [NXDL schemas](https://manual.nexusformat.org/nxdl.html#index-1). It contains a set of [readers](readers/) to convert supported data files into a compliant NeXus file.
 
-You can read specific README's of the readers and find usage examples [here](../../examples/).
-
-## Installation
-
-```console
-user@box:~$ pip install pynxtools[convert]
-```
+You can find usage examples [here](../../examples/).
 
 ## Usage
+`pynxtools` has a number of command line tools that can be used to convert data and verify NeXus files. You can more information about the API [here](https://fairmat-nfdi.github.io/pynxtools/reference/cli-api.html).
 
-### Commands
-- **convert**: This is the top-level command that allows you to use the converter. It can be called directly with ```dataconverter```.
-- **generate-template**: This command generates a reader template dictionary for a given NXDL file. It can be called with ```dataconverter generate-template```.
+## Documentation
+In order to understand the dataconverter, these pages might be particularly helpful:
 
-```console
-Usage: dataconverter [OPTIONS] COMMAND [ARGS]...
-
-Commands:
-  convert*           This command allows you to use the converter...
-  generate-template  Generates and prints a template to use for your nxdl.
-
-Info:
-  You can see more options by using --help for specific commands. For example:
-  dataconverter generate-template --help
-```
-#### Merge partial NeXus files into one
-
-```console
-user@box:~$ dataconverter --nxdl nxdl partial1.nxs partial2.nxs
-```
-
-#### Map an HDF5/JSON/(Python Dict pickled in a pickle file)
-
-```console
-user@box:~$ dataconverter --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
-```
-
-You can find actual examples with data files at [`examples/json_map`](../../examples/json_map/).
-
-
-#### Use with multiple input files
-
-```console
-user@box:~$ dataconverter --nxdl nxdl metadata data.raw otherfile
-```
-
-## Writing a Reader
-
-In case you want to write your own reader for a certain type of experiment, you can find documentation [here](https://fairmat-nfdi.github.io/pynxtools/how-tos/build-a-plugin.html)
+- [Learn : The dataconverter in pynxtools](https://fairmat-nfdi.github.io/pynxtools/learn/dataconverter-and-readers.html)
+- [Tutorial: Converting research data to NeXus](https://fairmat-nfdi.github.io/pynxtools/tutorial/converting-data-to-nexus.html)
+- [Built-in readers of pynxtools](https://fairmat-nfdi.github.io/pynxtools/reference/built-in-readers.html)
+- [Existing reader plugins for different experimental techniques](https://fairmat-nfdi.github.io/pynxtools/reference/plugins.html)
+- [How-to guide for writing your own reader/plugin](https://fairmat-nfdi.github.io/pynxtools/how-tos/build-a-plugin.html)

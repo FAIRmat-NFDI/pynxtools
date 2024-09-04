@@ -1,6 +1,6 @@
 site_name: Documentation
 site_description: |
-  The documentation the FAIRmat flavor of the NeXus definitions & pynxtools
+  The documentation of the FAIRmat-NeXus definitions & pynxtools
 site_author: The NOMAD authors
 repo_url: https://github.com/FAIRmat-NFDI/pynxtools
 edit_uri: ""
@@ -13,19 +13,26 @@ nav:
   - How-tos:
     - how-tos/writing-an-appdef.md
     - how-tos/using-multiple-appdefs.md
+    - how-tos/transformations.md
     - how-tos/build-a-plugin.md
     - how-tos/use-multi-format-reader.md
-    - how-tos/transformations.md
     - how-tos/using-pynxtools-test-framework.md
+    - how-tos/create-nexus-files-by-python.md
+    - how-tos/validate-nexus-file.md
   - Learn:
-    - learn/nexus-primer.md
-    - learn/nexus-rules.md
-    - learn/multiple-appdefs.md
-    - learn/multi-format-reader.md
+    - NeXus:
+      - learn/nexus-primer.md
+      - learn/nexus-rules.md
+      - learn/multiple-appdefs.md
+    - pynxtools:
+      - learn/dataconverter-and-readers.md
+      - learn/nexus-validation.md
+      - learn/multi-format-reader.md
   - Reference:
-    - reference/cli-api.md
-    - reference/plugins.md
     - reference/definitions.md
+    - reference/cli-api.md
+    - reference/built-in-readers.md
+    - reference/plugins.md
 
 plugins:
   - search
@@ -45,6 +52,7 @@ theme:
     - navigation.instant
     - content.code.copy
     - content.code.annotate
+    - search.suggest
   custom_dir: docs/theme
 
 markdown_extensions:
