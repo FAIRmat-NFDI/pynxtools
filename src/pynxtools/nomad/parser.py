@@ -201,6 +201,7 @@ class NexusParser(MatchingParser):
                             self._logger.warning(
                                 f"{current.m_def} has no suitable property for {parent_field_name}",
                                 target_name=attr_name,
+                                exc_info=exc,
                             )
                         if parent_field_name in current.__dict__:
                             quantity = current.__dict__[parent_field_name]
