@@ -498,3 +498,8 @@ class NexusParser(MatchingParser):
 
         chemical_formulas = self._get_chemical_formulas()
         self.normalize_chemical_formula(chemical_formulas)
+
+        self._logger.info("###### NexusParser: parsing completed")
+        self._logger.info(
+            f"###### NexusParser: {archive.nexus.NXsts.ENTRY[0].definition} parsed"
+        )
