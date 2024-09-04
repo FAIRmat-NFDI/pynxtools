@@ -193,10 +193,11 @@ class NexusParser(MatchingParser):
                         parent_field_name = parent_html_name + "__field"
 
                         metainfo_def = None
-                        metainfo_def = resolve_variadic_name(
-                            current.m_def.all_properties, parent_field_name
-                        )
-                        if not metainfo_def:
+                        try:
+                            metainfo_def = resolve_variadic_name(
+                                current.m_def.all_properties, parent_field_name
+                            )
+                        except ValueError as exc:
                             self._logger.warning(
                                 f"{current.m_def} has no suitable property for {parent_field_name}",
                                 target_name=attr_name,
