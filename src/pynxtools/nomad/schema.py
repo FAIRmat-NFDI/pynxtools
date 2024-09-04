@@ -103,8 +103,6 @@ BASESECTIONS_MAP: Dict[str, Any] = {
     # "NXelectronanalyser": Entity
 }
 
-setattr(BaseSection, "tags", [])
-
 
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
     """
