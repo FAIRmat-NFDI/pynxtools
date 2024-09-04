@@ -465,6 +465,7 @@ class NexusParser(MatchingParser):
         mainfile: str,
         archive: EntryArchive,
         logger=None,
+        write_entry_type=True,
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
         self.archive = archive
@@ -487,7 +488,7 @@ class NexusParser(MatchingParser):
             if getattr(archive.nexus, var, None) is not None:
                 app_def = var
                 break
-        if archive.metadata.entry_type is None:
+        if write_entry_type:
             archive.metadata.entry_type = app_def
             archive.metadata.domain = "nexus"
 

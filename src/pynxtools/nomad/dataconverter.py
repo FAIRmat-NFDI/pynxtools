@@ -66,6 +66,7 @@ def populate_nexus_subsection(
     output_file_path: Optional[str] = None,
     on_temp_file=False,
     nxs_as_entry=True,
+    write_entry_type=True,
 ):
     """Populate nexus subsection in nomad from nexus template.
 
@@ -84,6 +85,7 @@ def populate_nexus_subsection(
         logger: nomad logger.
         on_temp_file: Whether data will be written in temporary disk, by default False.
         nxs_as_entry: If the nxs file should be as ann nonmad entry or a general file, by default True.
+        write_entry_type: If the attr entry_type in archive.meatadata.entry_type would be written or not.
 
     Raises:
         Exception: could not trigger processing from NexusParser
@@ -107,6 +109,7 @@ def populate_nexus_subsection(
                 mainfile=archive.data.output,
                 archive=archive,
                 logger=logger,
+                write_entry_type=write_entry_type,
             )
             # If a NeXus file written a an entry e.g XRD use case
             if nxs_as_entry:
