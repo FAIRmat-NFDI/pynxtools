@@ -94,8 +94,32 @@ __NX_DOC_BASES: Dict[str, str] = {
 __PACKAGE_NAME = "nexus"
 __GROUPING_NAME = "NeXus"
 
+from nomad import utils
+
+logger_ = utils.get_logger(__name__)
+
+
+class NxNomad_Instrument(Instrument):
+    test_attr = Quantity(
+        type=str,
+        description="A reference to a NOMAD `Instrument` entry.",
+    )
+
+    def normalize(self, archive, logger):
+        logger.info(" ###### : from : ##", type(self))
+        super(NxNomad_Instrument, self).normalize(archive, logger)
+        archive.results.eln.test_attr = "Hello"
+        self.test_attr = "Hello"
+
+
+# class NxNomad_BaseSection(BaseSection):
+#     def normalize(self, archive, logger):
+#         logger.info(" ###### : from : ##", type(self))
+#         super(NxNomad_BaseSection, self).normalize(archive, logger)
+
+
 BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": Instrument,
+    "NXfabrication": NxNomad_Instrument,
     "NXobject": BaseSection,
 }
 
@@ -823,7 +847,24 @@ for nx_name, section in __section_definitions.items():
     if nomad_base_sec_cls is not None:
         if section.base_sections and isinstance(section.base_sections, list):
             section.base_sections.append(nomad_base_sec_cls.m_def)
+            section.base_sections = section.base_sections[::-1]
         else:
             section.base_sections = [nomad_base_sec_cls.m_def]
-
+        nomad_base_sec_cls.m_def.init_metainfo()
         section.init_metainfo()
+
+# import types
+
+
+# def instrument_normalizer(self, archive, logger):
+#     print(" ###### self.__class__", self.__class__)
+#     super(type(self), self).normalize(archive, logger)
+#     print(" ######## test NXfabrication")
+#     logger.info(" ########## info from insturment normalizer")
+
+
+# setattr(
+#     __section_definitions["NXfabrication"].section_cls,
+#     "normalize",
+#     instrument_normalizer,
+# )
