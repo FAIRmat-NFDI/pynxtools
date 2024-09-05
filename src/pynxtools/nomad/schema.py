@@ -31,9 +31,6 @@ try:
     from nomad.datamodel import EntryArchive
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
-        # Entity,
-        # Activity,
-        # Measurement,
         Instrument,
     )
     from nomad.metainfo import (
@@ -99,8 +96,7 @@ __GROUPING_NAME = "NeXus"
 
 BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": Instrument,
-    # "NXsample": CompositeSystem,
-    # "NXelectronanalyser": Entity
+    "NXobject": BaseSection,
 }
 
 
@@ -299,7 +295,6 @@ def __to_section(name: str, **kwargs) -> Section:
         return section
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
-
     __section_definitions[name] = section
 
     return section
@@ -601,17 +596,13 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
-    base_section_cls = BASESECTIONS_MAP.get(nx_name, BaseSection)
-
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
-    if nx_name == "NXobject":
-        class_section.base_sections = [base_section_cls]
 
     if "extends" in xml_attrs:
-        base_section = __to_section(xml_attrs["extends"])
-        class_section.base_sections = [base_section, base_section_cls]
+        nx_base_sec = __to_section(xml_attrs["extends"])
+        class_section.base_sections = [nx_base_sec]
 
     __add_common_properties(xml_node, class_section)
 
@@ -788,7 +779,6 @@ def init_nexus_metainfo():
     #         save_nexus_schema('')
     #     except Exception:
     #         pass
-
     nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
 
     EntryArchive.nexus = SubSection(name="nexus", section_def=nexus_section)
@@ -825,3 +815,15 @@ def init_nexus_metainfo():
 
 
 init_nexus_metainfo()
+
+# Handling nomad BaseSection and other inherited Section from BaseSection
+for nx_name, section in __section_definitions.items():
+    nomad_base_sec_cls = BASESECTIONS_MAP.get(nx_name, None)
+
+    if nomad_base_sec_cls is not None:
+        if section.base_sections and isinstance(section.base_sections, list):
+            section.base_sections.append(nomad_base_sec_cls.m_def)
+        else:
+            section.base_sections = [nomad_base_sec_cls.m_def]
+
+        section.init_metainfo()
