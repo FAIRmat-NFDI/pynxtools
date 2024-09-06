@@ -106,7 +106,7 @@ class NxNomad_Instrument(Instrument):
     )
 
     def normalize(self, archive, logger):
-        logger.info(" ###### : from : ##", type(self))
+        logger.info(f" ###### : from : ##, {type(self)}")
         super(NxNomad_Instrument, self).normalize(archive, logger)
         archive.results.eln.test_attr = "Hello"
         self.test_attr = "Hello"
