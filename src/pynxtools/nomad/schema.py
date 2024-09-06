@@ -99,31 +99,6 @@ from nomad import utils
 logger_ = utils.get_logger(__name__)
 
 
-class NxNomad_Instrument(Instrument):
-    test_attr = Quantity(
-        type=str,
-        description="A reference to a NOMAD `Instrument` entry.",
-    )
-
-    def normalize(self, archive, logger):
-        logger.info(f" ###### : from : ##, {type(self)}")
-        super(NxNomad_Instrument, self).normalize(archive, logger)
-        archive.results.eln.test_attr = "Hello"
-        self.test_attr = "Hello"
-
-
-# class NxNomad_BaseSection(BaseSection):
-#     def normalize(self, archive, logger):
-#         logger.info(" ###### : from : ##", type(self))
-#         super(NxNomad_BaseSection, self).normalize(archive, logger)
-
-
-BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": NxNomad_Instrument,
-    "NXobject": BaseSection,
-}
-
-
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
     """
     Get the nexus type by name
@@ -840,9 +815,56 @@ def init_nexus_metainfo():
 
 init_nexus_metainfo()
 
+#################################################
+# Newly added
+
+# class NxNomad_Instrument(Instrument):
+#     test_attr = Quantity(
+#         type=str,
+#         description="A reference to a NOMAD `Instrument` entry.",
+#     )
+
+#     def normalize(self, archive, logger):
+#         logger.info(f" ###### : from : ##, {type(self)}")
+#         super(NxNomad_Instrument, self).normalize(archive, logger)
+#         archive.results.eln.test_attr = "Hello"
+#         self.test_attr = "Hello"
+
+
+# class NxNomad_BaseSection(BaseSection):
+#     def normalize(self, archive, logger):
+#         logger.info(" ###### : from : ##", type(self))
+#         super(NxNomad_BaseSection, self).normalize(archive, logger)
+
+
+def normalize_nxfabrication(self, archive, logger):
+    logger.info(f" ###### : from : ##, {type(self)}")
+    super(self.__class__, self).normalize(archive, logger)
+    archive.results.eln.test_attr = "Hello"
+    self.test_attr = "Hello"
+
+
+__BASESECTIONS_MAP: Dict[str, Any] = {
+    "NXfabrication": Instrument,  # NxNomad_Instrument,
+    # "NXobject": BaseSection,
+}
+
+__NORMALIZER_MAP: Dict[str, Any] = {
+    "NXfabrication": normalize_nxfabrication,
+}
+
+# __section_definitions["NXfabrication"].section_cls.normalize = normalize_nxfabrication
+
 # Handling nomad BaseSection and other inherited Section from BaseSection
 for nx_name, section in __section_definitions.items():
-    nomad_base_sec_cls = BASESECTIONS_MAP.get(nx_name, None)
+    if nx_name == "NXobject":
+        continue
+
+    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
+    normalize_func = __NORMALIZER_MAP.get(nx_name)
+
+    if normalize_func:
+        section.section_cls.normalize = normalize_func
 
     if nomad_base_sec_cls is not None:
         if section.base_sections and isinstance(section.base_sections, list):
@@ -852,19 +874,3 @@ for nx_name, section in __section_definitions.items():
             section.base_sections = [nomad_base_sec_cls.m_def]
         nomad_base_sec_cls.m_def.init_metainfo()
         section.init_metainfo()
-
-# import types
-
-
-# def instrument_normalizer(self, archive, logger):
-#     print(" ###### self.__class__", self.__class__)
-#     super(type(self), self).normalize(archive, logger)
-#     print(" ######## test NXfabrication")
-#     logger.info(" ########## info from insturment normalizer")
-
-
-# setattr(
-#     __section_definitions["NXfabrication"].section_cls,
-#     "normalize",
-#     instrument_normalizer,
-# )
