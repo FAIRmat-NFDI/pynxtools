@@ -815,28 +815,11 @@ def init_nexus_metainfo():
 
 init_nexus_metainfo()
 
+
 #################################################
-# Newly added
-
-# class NxNomad_Instrument(Instrument):
-#     test_attr = Quantity(
-#         type=str,
-#         description="A reference to a NOMAD `Instrument` entry.",
-#     )
-
-#     def normalize(self, archive, logger):
-#         logger.info(f" ###### : from : ##, {type(self)}")
-#         super(NxNomad_Instrument, self).normalize(archive, logger)
-#         archive.results.eln.test_attr = "Hello"
-#         self.test_attr = "Hello"
-
-
-# class NxNomad_BaseSection(BaseSection):
-#     def normalize(self, archive, logger):
-#         logger.info(" ###### : from : ##", type(self))
-#         super(NxNomad_BaseSection, self).normalize(archive, logger)
-
-
+# OUR NEW STUFF
+#################################################
+# Approach A: Appending the normalize method from a function
 def normalize_nxfabrication(self, archive, logger):
     logger.info(f" ###### : from : ##, {type(self)}")
     super(self.__class__, self).normalize(archive, logger)
@@ -845,7 +828,7 @@ def normalize_nxfabrication(self, archive, logger):
 
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": Instrument,  # NxNomad_Instrument,
+    "NXfabrication": Instrument,
     # "NXobject": BaseSection,
 }
 
@@ -874,3 +857,37 @@ for nx_name, section in __section_definitions.items():
             section.base_sections = [nomad_base_sec_cls.m_def]
         nomad_base_sec_cls.m_def.init_metainfo()
         section.init_metainfo()
+
+#################################################
+# Approach B: Using a new class
+# class NxNomad_Instrument(Instrument):
+#     test_attr = Quantity(
+#         type=str,
+#         description="A reference to a NOMAD `Instrument` entry.",
+#     )
+#     def normalize(self, archive, logger):
+#         logger.info(f" ###### : from : ##, {type(self)}")
+#         super(NxNomad_Instrument, self).normalize(archive, logger)
+#         archive.results.eln.test_attr = "Hello"
+#         self.test_attr = "Hello"
+
+# __BASESECTIONS_MAP: Dict[str, Any] = {
+#     "NXfabrication": NxNomad_Instrument,
+#     # "NXobject": BaseSection,
+# }
+
+# # Handling nomad BaseSection and other inherited Section from BaseSection
+# for nx_name, section in __section_definitions.items():
+#     if nx_name == "NXobject":
+#         continue
+
+#     nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
+
+#     if nomad_base_sec_cls is not None:
+#         if section.base_sections and isinstance(section.base_sections, list):
+#             section.base_sections.append(nomad_base_sec_cls.m_def)
+#             section.base_sections = section.base_sections[::-1]
+#         else:
+#             section.base_sections = [nomad_base_sec_cls.m_def]
+#         nomad_base_sec_cls.m_def.init_metainfo()
+#         section.init_metainfo()
