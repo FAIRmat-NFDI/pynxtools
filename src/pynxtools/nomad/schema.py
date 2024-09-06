@@ -83,6 +83,11 @@ __section_definitions: Dict[str, Section] = dict()
 
 __logger = get_logger(__name__)
 
+__BASESECTIONS_MAP: Dict[str, Any] = {
+    "NXfabrication": Instrument,
+    # "NXobject": BaseSection,
+}
+
 VALIDATE = False
 
 __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
@@ -599,9 +604,11 @@ def __create_class_section(xml_node: ET.Element) -> Section:
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
 
+    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
+
     if "extends" in xml_attrs:
         nx_base_sec = __to_section(xml_attrs["extends"])
-        class_section.base_sections = [nx_base_sec]
+        class_section.base_sections = [nx_base_sec, nomad_base_sec_cls.m_def]
 
     __add_common_properties(xml_node, class_section)
 
@@ -822,15 +829,11 @@ init_nexus_metainfo()
 # Approach A: Appending the normalize method from a function
 def normalize_nxfabrication(self, archive, logger):
     logger.info(f" ###### : from : ##, {type(self)}")
-    super(self.__class__, self).normalize(archive, logger)
-    archive.results.eln.test_attr = "Hello"
-    self.test_attr = "Hello"
-
-
-__BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": Instrument,
-    # "NXobject": BaseSection,
-}
+    # super().normalize(archive, logger)
+    super(__section_definitions["NXfabrication"].section_cls, self).normalize(archive, logger)
+    # Instrument.normalize(self, archive, logger)
+    # archive.results.eln.test_attr = "Hello"
+    self.model = "Hello"
 
 __NORMALIZER_MAP: Dict[str, Any] = {
     "NXfabrication": normalize_nxfabrication,
@@ -843,20 +846,20 @@ for nx_name, section in __section_definitions.items():
     if nx_name == "NXobject":
         continue
 
-    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
+    # nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
     normalize_func = __NORMALIZER_MAP.get(nx_name)
 
     if normalize_func:
         section.section_cls.normalize = normalize_func
 
-    if nomad_base_sec_cls is not None:
-        if section.base_sections and isinstance(section.base_sections, list):
-            section.base_sections.append(nomad_base_sec_cls.m_def)
-            section.base_sections = section.base_sections[::-1]
-        else:
-            section.base_sections = [nomad_base_sec_cls.m_def]
-        nomad_base_sec_cls.m_def.init_metainfo()
-        section.init_metainfo()
+    # if nomad_base_sec_cls is not None:
+    #     if section.base_sections and isinstance(section.base_sections, list):
+    #         # section.base_sections.append(nomad_base_sec_cls.m_def)
+    #         section.base_sections = section.base_sections[::-1]
+    #     else:
+    #         section.base_sections = [nomad_base_sec_cls.m_def]
+    #     nomad_base_sec_cls.m_def.init_metainfo()
+    #     section.init_metainfo()
 
 #################################################
 # Approach B: Using a new class
