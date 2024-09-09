@@ -33,14 +33,24 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 def get_nxdl_entry(hdf_info):
     """Get the nxdl application definition for an HDF5 node"""
     entry = hdf_info
-    while (
-        isinstance(entry["hdf_node"], h5py.Dataset)
-        or "NX_class" not in entry["hdf_node"].attrs.keys()
-        or entry["hdf_node"].attrs["NX_class"] != "NXentry"
-    ):
-        entry = get_hdf_info_parent(entry)
-        if entry["hdf_node"].name == "/":
-            return "NO NXentry found"
+    try:
+        while (
+            isinstance(entry["hdf_node"], h5py.Dataset)
+            or "NX_class" not in entry["hdf_node"].attrs.keys()
+            or entry["hdf_node"].attrs["NX_class"].decode("UTF-8") != "NXentry"
+        ):
+            entry = get_hdf_info_parent(entry)
+            if entry["hdf_node"].name == "/":
+                return "NO NXentry found"
+    except AttributeError:
+        while (
+            isinstance(entry["hdf_node"], h5py.Dataset)
+            or "NX_class" not in entry["hdf_node"].attrs.keys()
+            or entry["hdf_node"].attrs["NX_class"] != "NXentry"
+        ):
+            entry = get_hdf_info_parent(entry)
+            if entry["hdf_node"].name == "/":
+                return "NO NXentry found"
     try:
         nxdef = entry["hdf_node"]["definition"][()]
         return nxdef.decode()
@@ -55,15 +65,26 @@ def get_nx_class_path(hdf_info):
     if hdf_node.name == "/":
         return ""
     if isinstance(hdf_node, h5py.Group):
-        return (
-            get_nx_class_path(get_hdf_info_parent(hdf_info))
-            + "/"
-            + (
-                hdf_node.attrs["NX_class"]
-                if "NX_class" in hdf_node.attrs.keys()
-                else hdf_node.name.split("/")[-1]
+        try:
+            return (
+                get_nx_class_path(get_hdf_info_parent(hdf_info))
+                + "/"
+                + (
+                    hdf_node.attrs["NX_class"].decode("UTF-8")
+                    if "NX_class" in hdf_node.attrs.keys()
+                    else hdf_node.name.split("/")[-1]
+                )
             )
-        )
+        except AttributeError:
+            return (
+                get_nx_class_path(get_hdf_info_parent(hdf_info))
+                + "/"
+                + (
+                    hdf_node.attrs["NX_class"]
+                    if "NX_class" in hdf_node.attrs.keys()
+                    else hdf_node.name.split("/")[-1]
+                )
+            )
     if isinstance(hdf_node, h5py.Dataset):
         return (
             get_nx_class_path(get_hdf_info_parent(hdf_info))
@@ -373,11 +394,18 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     hdf_info = {"hdf_path": hdf_path, "hdf_node": hdf_node}
     if isinstance(hdf_node, h5py.Dataset):
         logger.debug(f"===== FIELD (/{hdf_path}): {hdf_node}")
-        val = (
-            str(hdf_node[()]).split("\n")
-            if len(hdf_node.shape) <= 1
-            else str(hdf_node[0]).split("\n")
-        )
+        try:
+            val = (
+                str(hdf_node[()].decode("UTF-8")).split("\n")
+                if len(hdf_node.shape) <= 1
+                else str(hdf_node[0].decode("UTF-8")).split("\n")
+            )
+        except AttributeError:
+            val = (
+                str(hdf_node[()]).split("\n")
+                if len(hdf_node.shape) <= 1
+                else str(hdf_node[0]).split("\n")
+            )
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
     else:
         logger.debug(
@@ -398,7 +426,10 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
         )
     for key, value in hdf_node.attrs.items():
         logger.debug(f"===== ATTRS (/{hdf_path}@{key})")
-        val = str(value).split("\n")
+        try:
+            val = str(value.decode("UTF-8")).split("\n")
+        except AttributeError:
+            val = str(value).split("\n")
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
         (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc, attr=key)
         if (
@@ -421,7 +452,10 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
 
 def logger_auxiliary_signal(logger, nxdata):
     """Handle the presence of auxiliary signal"""
-    aux = nxdata.attrs.get("auxiliary_signals")
+    try:
+        aux = nxdata.attrs.get("auxiliary_signals").decode("UTF-8")
+    except AttributeError:
+        aux = nxdata.attrs.get("auxiliary_signals")
     if aux is not None:
         if isinstance(aux, str):
             aux = [aux]
@@ -446,7 +480,10 @@ def get_default_plotable(root, logger):
     default_nxentry_group_name = root.attrs.get("default")
     if default_nxentry_group_name:
         try:
-            nxentry = root[default_nxentry_group_name]
+            try:
+                nxentry = root[default_nxentry_group_name.decode("UTF-8")]
+            except AttributeError:
+                nxentry = root[default_nxentry_group_name]
         except KeyError:
             nxentry = None
     if not nxentry:
@@ -501,12 +538,20 @@ def entry_helper(root):
     """Check entry related data"""
     nxentries = []
     for key in root.keys():
-        if (
-            isinstance(root[key], h5py.Group)
-            and root[key].attrs.get("NX_class")
-            and root[key].attrs["NX_class"] == "NXentry"
-        ):
-            nxentries.append(root[key])
+        try:
+            if (
+                isinstance(root[key], h5py.Group)
+                and root[key].attrs.get("NX_class")
+                and root[key].attrs["NX_class"].decode("UTF-8") == "NXentry"
+            ):
+                nxentries.append(root[key])
+        except AttributeError:
+            if (
+                isinstance(root[key], h5py.Group)
+                and root[key].attrs.get("NX_class")
+                and root[key].attrs["NX_class"] == "NXentry"
+            ):
+                nxentries.append(root[key])
     if len(nxentries) >= 1:
         return nxentries[0]
     return None
@@ -517,12 +562,20 @@ def nxdata_helper(nxentry):
     return its value"""
     lnxdata = []
     for key in nxentry.keys():
-        if (
-            isinstance(nxentry[key], h5py.Group)
-            and nxentry[key].attrs.get("NX_class")
-            and nxentry[key].attrs["NX_class"] == "NXdata"
-        ):
-            lnxdata.append(nxentry[key])
+        try:
+            if (
+                isinstance(nxentry[key], h5py.Group)
+                and nxentry[key].attrs.get("NX_class")
+                and nxentry[key].attrs["NX_class"].decode("UTF-8)") == "NXdata"
+            ):
+                lnxdata.append(nxentry[key])
+        except AttributeError:
+            if (
+                isinstance(nxentry[key], h5py.Group)
+                and nxentry[key].attrs.get("NX_class")
+                and nxentry[key].attrs["NX_class"] == "NXdata"
+            ):
+                lnxdata.append(nxentry[key])
     if len(lnxdata) >= 1:
         return lnxdata[0]
     return None
@@ -540,12 +593,20 @@ def signal_helper(nxdata):
         return signals[0]
     if len(signals) > 1:  # v2: select the one with an attribute signal="1" attribute
         for sig in signals:
-            if (
-                sig.attrs.get("signal")
-                and sig.attrs.get("signal") is str
-                and sig.attrs.get("signal") == "1"
-            ):
-                return sig
+            try:
+                if (
+                    sig.attrs.get("signal")
+                    and sig.attrs.get("signal").decode("UTF-8") is str
+                    and sig.attrs.get("signal").decode("UTF-8") == "1"
+                ):
+                    return sig
+            except AttributeError:
+                if (
+                    sig.attrs.get("signal")
+                    and sig.attrs.get("signal") is str
+                    and sig.attrs.get("signal") == "1"
+                ):
+                    return sig
     return None
 
 
@@ -576,7 +637,10 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
     try:
         if isinstance(ax_datasets, str):  # single axis is defined
             # explicite definition of dimension number
-            ind = nxdata.attrs.get(ax_datasets + "_indices")
+            try:
+                ind = nxdata.attrs.get(ax_datasets + "_indices").decode("UTF-8")
+            except AttributeError:
+                ind = nxdata.attrs.get(ax_datasets + "_indices")
             if ind and ind is int:
                 if ind == a_item:
                     ax_list.append(nxdata[ax_datasets])
@@ -585,7 +649,10 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
         elif isinstance(ax_datasets, (list, np.ndarray)):  # multiple axes are listed
             # explicite definition of dimension number
             for aax in ax_datasets:
-                ind = nxdata.attrs.get(aax + "_indices")
+                try:
+                    ind = nxdata.attrs.get(aax + "_indices").decode("UTF-8")
+                except AttributeError:
+                    ind = nxdata.attrs.get(aax + "_indices")
                 if ind and isinstance(ind, int):
                     if ind == a_item:
                         ax_list.append(nxdata[aax])
@@ -610,21 +677,37 @@ def axis_helper(dim, nxdata, signal, axes, logger):
     """Check axis related data"""
     for a_item in range(dim):
         ax_list = []
-        ax_datasets = nxdata.attrs.get("axes")  # primary axes listed in attribute axes
+        try:
+            ax_datasets = nxdata.attrs.get("axes").decode(
+                "UTF-8"
+            )  # primary axes listed in attribute axes
+        except AttributeError:
+            ax_datasets = nxdata.attrs.get("axes")
         ax_list = get_single_or_multiple_axes(
             nxdata, ax_datasets, a_item, ax_list, logger
         )
         for attr in nxdata.attrs.keys():  # check for corresponding AXISNAME_indices
-            if (
-                attr.endswith("_indices")
-                and nxdata.attrs[attr] == a_item
-                and nxdata[attr.split("_indices")[0]] not in ax_list
-            ):
-                ax_list.append(nxdata[attr.split("_indices")[0]])
+            try:
+                if (
+                    attr.endswith("_indices")
+                    and nxdata.attrs[attr].decode("UTF-8") == a_item
+                    and nxdata[attr.split("_indices")[0]].decode("UTF-8") not in ax_list
+                ):
+                    ax_list.append(nxdata[attr.split("_indices")[0]])
+            except AttributeError:
+                if (
+                    attr.endswith("_indices")
+                    and nxdata.attrs[attr] == a_item
+                    and nxdata[attr.split("_indices")[0]] not in ax_list
+                ):
+                    ax_list.append(nxdata[attr.split("_indices")[0]])
         # v2  # check for ':' separated axes defined in Signal
         if not ax_list:
             try:
-                ax_datasets = signal.attrs.get("axes").split(":")
+                try:
+                    ax_datasets = signal.attrs.get("axes").decode("UTF-8").split(":")
+                except AttributeError:
+                    ax_datasets = signal.attrs.get("axes").split(":")
                 ax_list.append(nxdata[ax_datasets[a_item]])
             except (KeyError, AttributeError):
                 pass
