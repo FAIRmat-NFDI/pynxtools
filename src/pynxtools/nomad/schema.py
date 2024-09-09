@@ -20,6 +20,7 @@ import os
 import os.path
 import re
 import sys
+
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Union
@@ -29,11 +30,29 @@ import numpy as np
 try:
     from nomad.datamodel import EntryArchive
     from nomad.datamodel.metainfo.basesections import BaseSection, Instrument
-    from nomad.metainfo import (Attribute, Bytes, Datetime, Definition, MEnum,
-                                Package, Quantity, Section, SubSection)
-    from nomad.metainfo.data_type import (Bytes, Datatype, Datetime, Number,
-                                          m_bool, m_complex128, m_float64,
-                                          m_int, m_int64, m_str)
+    from nomad.metainfo import (
+        Attribute,
+        Bytes,
+        Datetime,
+        Definition,
+        MEnum,
+        Package,
+        Quantity,
+        Section,
+        SubSection,
+    )
+    from nomad.metainfo.data_type import (
+        Bytes,
+        Datatype,
+        Datetime,
+        Number,
+        m_bool,
+        m_complex128,
+        m_float64,
+        m_int,
+        m_int64,
+        m_str,
+    )
     from nomad.utils import get_logger, strip
     from toposort import toposort_flatten
 except ImportError as exc:
@@ -42,8 +61,7 @@ except ImportError as exc:
     ) from exc
 
 from pynxtools import get_definitions_url
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import \
-    get_nexus_definitions_path
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -802,23 +820,20 @@ def init_nexus_metainfo():
 init_nexus_metainfo()
 
 
-#################################################
-# OUR NEW STUFF
-#################################################
-# Approach A: Appending the normalize method from a function
+# Appending the normalize method from a function
 def normalize_nxfabrication(self, archive, logger):
     logger.info(f" ###### : from : ##, {type(self)}")
     # super().normalize(archive, logger)
-    super(__section_definitions["NXfabrication"].section_cls, self).normalize(archive, logger)
-    # Instrument.normalize(self, archive, logger)
+    super(__section_definitions["NXfabrication"].section_cls, self).normalize(
+        archive, logger
+    )
     # archive.results.eln.test_attr = "Hello"
     self.lab_id = "Hello"
+
 
 __NORMALIZER_MAP: Dict[str, Any] = {
     "NXfabrication": normalize_nxfabrication,
 }
-
-# __section_definitions["NXfabrication"].section_cls.normalize = normalize_nxfabrication
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
 for nx_name, section in __section_definitions.items():
