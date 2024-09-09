@@ -29,7 +29,12 @@ import numpy as np
 
 try:
     from nomad.datamodel import EntryArchive
-    from nomad.datamodel.metainfo.basesections import BaseSection, Instrument
+    from nomad.datamodel.metainfo.basesections import (
+        BaseSection,
+        Instrument,
+        CompositeSystem,
+        CompositeSystemReference,
+    )
     from nomad.metainfo import (
         Attribute,
         Bytes,
@@ -82,6 +87,7 @@ __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": Instrument,
+    "NXsample": CompositeSystemReference,
     # "NXobject": BaseSection,
 }
 
@@ -828,11 +834,38 @@ def normalize_nxfabrication(self, archive, logger):
         archive, logger
     )
     # archive.results.eln.test_attr = "Hello"
-    self.lab_id = "Hello"
+    # self.lab_id = "Hello"
+
+
+def normalize_nxsample(self, archive, logger):
+    # super().normalize(archive, logger)
+    if self.sample_id__field:
+        logger.info(f"{self.sample_id__field}")
+
+        self.lab_id = self.sample_id__field
+
+        # If the lab_id exists somewhere in NOMAD, we make a reference to the data section in another entry that contains this lab_id
+        super(__section_definitions["NXsample"].section_cls, self).normalize(
+            archive, logger
+        )
+
+    # If the lab_id does not exist somewhere else in NOMAD, we make a new Entry for the sample and reference its data section here.
+    if not self.reference:
+        new_sample_archive = EntryArchive()
+
+        # Not working
+        new_sample_archive.add_section(self)
+
+        # Make a reference to the new entry
+        self.lab_id = archive_lab_id
+        super(__section_definitions["NXsample"].section_cls, self).normalize(
+            archive, logger
+        )
 
 
 __NORMALIZER_MAP: Dict[str, Any] = {
     "NXfabrication": normalize_nxfabrication,
+    "NXsample": normalize_nxsample,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
