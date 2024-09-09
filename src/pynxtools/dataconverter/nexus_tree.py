@@ -29,7 +29,7 @@ It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
 from functools import reduce
-from typing import Any, List, Literal, Optional, Set, Tuple, Union
+from typing import Any, List, Literal, Optional, Set, Tuple
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
@@ -222,6 +222,9 @@ class NexusNode(NodeMixin):
         while current_node.parent is not None:
             names.insert(0, current_node.name)
             current_node = current_node.parent
+
+        if self.type == "attribute" and names:
+            names[-1] = f"@{names[-1]}"
         return "/" + "/".join(names)
 
     def search_add_child_for_multiple(
@@ -793,10 +796,10 @@ class NexusEntity(NexusNode):
         if not self.dtype == "NX_CHAR":
             return
         for elem in self.inheritance:
-            enum = elem.find(f"nx:enumeration", namespaces=namespaces)
+            enum = elem.find("nx:enumeration", namespaces=namespaces)
             if enum is not None:
                 self.items = []
-                for items in enum.findall(f"nx:item", namespaces=namespaces):
+                for items in enum.findall("nx:item", namespaces=namespaces):
                     self.items.append(items.attrib["value"])
                 return
 
@@ -806,7 +809,7 @@ class NexusEntity(NexusNode):
         The first vale found is used.
         """
         for elem in self.inheritance:
-            dimension = elem.find(f"nx:dimensions", namespaces=namespaces)
+            dimension = elem.find("nx:dimensions", namespaces=namespaces)
             if dimension is not None:
                 break
         if not self.inheritance or dimension is None:

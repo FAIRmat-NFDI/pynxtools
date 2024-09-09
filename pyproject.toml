@@ -35,6 +35,8 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
+    "cachetools",
+    "pint>=0.17",
 ]
 
 [project.urls]
@@ -99,9 +101,11 @@ nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
 read_nexus = "pynxtools.nexus.nexus:main"
 dataconverter = "pynxtools.dataconverter.convert:main_cli"
 generate_eln = "pynxtools.eln_mapper.eln_mapper:get_eln"
+verify_nexus = "pynxtools.dataconverter.verify:verify"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+"pynxtools.dataconverter.units" = ["*.txt"]
 "pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
 "pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
 

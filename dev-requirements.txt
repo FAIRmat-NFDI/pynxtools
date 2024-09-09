@@ -2,10 +2,14 @@
 #    uv pip compile --extra=dev --extra=docs --output-file=dev-requirements.txt pyproject.toml
 anytree==2.12.1
     # via pynxtools (pyproject.toml)
+appdirs==1.4.4
+    # via pint
 ase==3.23.0
     # via pynxtools (pyproject.toml)
 babel==2.15.0
     # via mkdocs-material
+cachetools==5.4.0
+    # via pynxtools (pyproject.toml)
 certifi==2024.7.4
     # via requests
 cfgv==3.4.0
@@ -34,6 +38,10 @@ exceptiongroup==1.2.1
     # via pytest
 filelock==3.15.4
     # via virtualenv
+flexcache==0.3
+    # via pint
+flexparser==0.3.1
+    # via pint
 fonttools==4.53.1
     # via matplotlib
 ghp-import==2.1.0
@@ -123,6 +131,8 @@ pathspec==0.12.1
     # via mkdocs
 pillow==10.4.0
     # via matplotlib
+pint==0.24.3
+    # via pynxtools (pyproject.toml)
 platformdirs==4.2.2
     # via
     #   mkdocs-get-deps
@@ -169,7 +179,7 @@ regex==2024.5.15
     # via mkdocs-material
 requests==2.32.3
     # via mkdocs-material
-ruff==0.4.8
+ruff==0.5.5
     # via pynxtools (pyproject.toml)
 scipy==1.14.0
     # via ase
@@ -193,7 +203,11 @@ types-pyyaml==6.0.12.20240311
 types-requests==2.32.0.20240622
     # via pynxtools (pyproject.toml)
 typing-extensions==4.12.2
-    # via mypy
+    # via
+    #   flexcache
+    #   flexparser
+    #   mypy
+    #   pint
 tzdata==2024.1
     # via pandas
 urllib3==2.2.2

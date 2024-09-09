@@ -17,11 +17,17 @@
 # limitations under the License.
 #
 import logging
+import os
 from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pytest
+from click.testing import CliRunner
+from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
+from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
+from pynxtools.dataconverter.verify import verify
+from pynxtools.dataconverter.writer import Writer
 
 
 def get_data_dict():
@@ -109,7 +115,7 @@ def test_valid_data_dict(caplog, data_dict):
             remove_from_dict(
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value", get_data_dict()
             ),
-            "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader.",
+            "Missing field: /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
             id="missing-required-value",
         )
     ],
@@ -119,3 +125,68 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
         assert not validate_dict_against("NXtest", data_dict)
 
     assert error_message in caplog.text
+
+
+data_dict_list = [
+    (
+        {
+            "/ENTRY[entry]/definition": "NXhdf5_validator_2",
+            "/ENTRY[entry]/version": "no version",
+            "/ENTRY[entry]/experiment_result/hdf5_validator_2_intensity": np.array(
+                [[11, 12, 13], [21, 22, 23]]
+            ),
+            "/ENTRY[entry]/hdf5_validator_1_program_name": "hdf5_file_validator",
+            "/ENTRY[entry]/hdf5_validator_1_required/required_field": "Required_field_from nxdl-1",
+            "/ENTRY[entry]/hdf5_validator_2_users_req/required_field": "Required_field_from_nxdl-2",
+        },
+        {
+            "error_messages": [
+                "WARNING: Field version written without documentation.",
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@long_name"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@AXISNAME_indices"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@axes"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@auxiliary_signals"',
+                "WARNING: Missing field: /ENTRY/experiment_result/DATA",
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/DATA/@units"',
+                "WARNING: Missing field: /ENTRY/experiment_result/AXISNAME",
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/AXISNAME/@units"',
+                'WARNING: Missing attribute: "/ENTRY/experiment_result/@signal"',
+                'WARNING: Missing attribute: "/ENTRY/definition/@version"',
+                "is NOT a valid file according to the `NXhdf5_validator_2` application definition.",
+            ]
+        },
+    ),
+    ({}, {}),
+]
+
+
+@pytest.mark.parametrize("data_dict, error_massages", data_dict_list)
+def test_nexus_file_validate(data_dict, error_massages, tmp_path, caplog):
+    if not data_dict and not error_massages:
+        return
+
+    caplog_level = "INFO"
+    template = Template()
+
+    for key, val in data_dict.items():
+        template[key] = val
+
+    nxdl_name = "NXhdf5_validator_2"
+    _, nxdl_path = get_nxdl_root_and_path(nxdl=nxdl_name)
+    hdf_file_path = tmp_path / "hdf5_validator_test.nxs"
+    Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
+    with caplog.at_level(caplog_level):
+        _ = CliRunner().invoke(verify, [str(hdf_file_path)])
+    error_massages = error_massages["error_messages"]
+    for record in caplog.records:
+        try:
+            assert (
+                record.msg in error_massages
+            ), f"Error message not found: {record.msg}"
+        except AssertionError:
+            # Only for detecting entry or missing application definition massage
+            assert (
+                error_massages[-1] in record.msg
+            ), f"Error message not found: {record.msg}"
+
+    os.remove(hdf_file_path)

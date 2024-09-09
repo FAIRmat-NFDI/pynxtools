@@ -20,11 +20,13 @@ import re
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
-from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
+from typing import Any, Iterable, List, Mapping, Optional, Set, Tuple, Union
 
 import h5py
 import lxml.etree as ET
 import numpy as np
+from cachetools import LRUCache, cached
+from cachetools.keys import hashkey
 
 from pynxtools.dataconverter.helpers import (
     Collector,
@@ -32,6 +34,7 @@ from pynxtools.dataconverter.helpers import (
     collector,
     convert_nexus_to_caps,
     is_valid_data_field,
+    is_valid_unit,
 )
 from pynxtools.dataconverter.nexus_tree import (
     NexusEntity,
@@ -42,19 +45,145 @@ from pynxtools.dataconverter.nexus_tree import (
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 
 
-def validate_hdf_group_against(appdef: str, data: h5py.Group):
-    """
-    Checks whether all the required paths from the template are returned in data dict.
+def best_namefit_of_(name: str, concepts: Set[str]) -> str:
+    if not concepts:
+        return None
 
-    THIS IS JUST A FUNCTION SKELETON AND IS NOT WORKING YET!
+    if name in concepts:
+        return name
+
+    best_match, score = max(
+        map(lambda x: (x, get_nx_namefit(name, x)), concepts), key=lambda x: x[1]
+    )
+    if score < 0:
+        return None
+
+    return best_match
+
+
+def validate_hdf_group_against(appdef: str, data: h5py.Group) -> bool:
+    """
+    Validate an HDF5 group against the Nexus tree for the application definition `appdef`.
+
+    Args:
+        appdef (str): The application definition to validate against.
+        data (h5py.Group): The h5py group to validate.
+
+    Returns:
+        bool: True if the group is valid according to `appdef`, False otherwise.
     """
 
-    def validate(name: str, data: Union[h5py.Group, h5py.Dataset]):
+    # Only cache based on path. That way we retain the nx_class information
+    # in the tree
+    # Allow for 10000 cache entries. This should be enough for most cases
+    @cached(
+        cache=LRUCache(maxsize=10000),
+        key=lambda path, node_type=None, nx_class=None: hashkey(path),
+    )
+    def find_node_for(
+        path: str, node_type: Optional[str] = None, nx_class: Optional[str] = None
+    ) -> Optional[NexusNode]:
+        if path == "":
+            return tree
+
+        *prev_path, last_elem = path.rsplit("/", 1)
+        node = find_node_for(prev_path[0]) if prev_path else tree
+
+        if node is None:
+            return None
+
+        best_child = best_namefit_of_(
+            last_elem,
+            node.get_all_direct_children_names(nx_class=nx_class, node_type=node_type),
+        )
+        if best_child is None:
+            return None
+
+        return node.search_add_child_for(best_child)
+
+    def remove_from_req_fields(path: str):
+        if path in required_fields:
+            required_fields.remove(path)
+
+    def handle_group(path: str, data: h5py.Group):
+        node = find_node_for(
+            path, node_type="group", nx_class=data.attrs.get("NX_class")
+        )
+        if node is None:
+            collector.collect_and_log(
+                path, ValidationProblem.MissingDocumentation, None
+            )
+            return
+
+        # TODO: Do actual group checks
+
+    def handle_field(path: str, data: h5py.Dataset):
+        node = find_node_for(path, node_type="field")
+        if node is None:
+            collector.collect_and_log(
+                path, ValidationProblem.MissingDocumentation, None
+            )
+            return
+        remove_from_req_fields(node.get_path())
+        is_valid_data_field(data[()], node.dtype, path)
+
+        units = data.attrs.get("units")
+        if node.unit is not None:
+            if units is None:
+                collector.collect_and_log(
+                    f"{path}/@units", ValidationProblem.MissingUnit, node.unit
+                )
+                return
+            remove_from_req_fields(f"{node.get_path()}/@units")
+            is_valid_unit(units, node.unit, None)
+        elif units is not None:
+            collector.collect_and_log(
+                f"{entry_name}/{path}/@units",
+                ValidationProblem.MissingDocumentation,
+                path,
+            )
+
+    def handle_attributes(path: str, attrs: h5py.AttributeManager):
+        for attr_name in attrs:
+            if attr_name in ("NX_class", "units"):
+                # Ignore special attrs
+                continue
+
+            node = find_node_for(f"{path}/{attr_name}", node_type="attribute")
+            if node is None:
+                collector.collect_and_log(
+                    f"{path}/@{attr_name}", ValidationProblem.MissingDocumentation, None
+                )
+                continue
+            remove_from_req_fields(node.get_path())
+            is_valid_data_field(attrs.get(attr_name), node.dtype, node.get_path())
+
+    def validate(path: str, data: Union[h5py.Group, h5py.Dataset]):
         # Namefit name against tree (use recursive caching)
-        pass
+        if isinstance(data, h5py.Group):
+            handle_group(path, data)
+        elif isinstance(data, h5py.Dataset):
+            handle_field(path, data)
 
-    tree = generate_tree_from(appdef)
-    data.visitems(validate)
+        handle_attributes(path, data.attrs)
+
+    appdef = generate_tree_from(appdef)
+    required_fields = appdef.required_fields_and_attrs_names()
+    tree = appdef.search_add_child_for("ENTRY")
+    entry_name = data.name
+    data.visititems(validate)
+
+    for req_field in required_fields:
+        if "@" in req_field:
+            collector.collect_and_log(
+                req_field, ValidationProblem.MissingRequiredAttribute, None
+            )
+            continue
+        collector.collect_and_log(
+            req_field, ValidationProblem.MissingRequiredField, None
+        )
+
+    return not collector.has_validation_problems()
 
 
 def build_nested_dict_from(

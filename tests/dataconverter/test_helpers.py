@@ -336,11 +336,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
                 "required",
             ),
-            (
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
-                "/bool_value is"
-                " required and hasn't been supplied by the reader."
-            ),
+            "Missing field: /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
             id="empty-required-field",
         ),
         pytest.param(
@@ -349,11 +345,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
                 "required",
             ),
-            (
-                "The data entry corresponding to /ENTRY[my_entry]/"
-                "NXODD_name[nxodd_two_name]/bool_value is"
-                " required and hasn't been supplied by the reader."
-            ),
+            "Missing field: /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
             id="empty-required-field",
         ),
         pytest.param(
@@ -366,11 +358,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
                 "required",
             ),
-            (
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
-                "/bool_value is"
-                " required and hasn't been supplied by the reader."
-            ),
+            "Missing field: /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
             id="empty-required-field",
         ),
         pytest.param(
@@ -432,10 +420,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             set_to_none_in_dict(
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
             ),
-            (
-                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
-                "required_child is required and hasn't been supplied by the reader."
-            ),
+            "Missing field: /ENTRY[my_entry]/optional_parent/required_child",
             id="atleast-one-required-child-not-provided-optional-parent",
         ),
         pytest.param(
@@ -444,11 +429,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field",
                 "required",
             ),
-            (
-                "The data entry corresponding to /ENTRY[my_entry]/"
-                "OPTIONAL_group[my_group]/required_field "
-                "is required and hasn't been supplied by the reader."
-            ),
+            "Missing field: /ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field",
             id="required-field-not-provided-in-variadic-optional-group",
         ),
         pytest.param(

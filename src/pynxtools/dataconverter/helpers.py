@@ -31,7 +31,14 @@ import lxml.etree as ET
 import numpy as np
 from ase.data import chemical_symbols
 
+if np.lib.NumpyVersion(np.__version__) < "2.0.0":
+    from numpy import chararray
+else:
+    from numpy.char import chararray
+from pint import UndefinedUnitError
+
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.units import ureg
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_enums,
     get_inherited_nodes,
@@ -91,10 +98,7 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.warning(
-                f"The data entry corresponding to {path} is required "
-                "and hasn't been supplied by the reader.",
-            )
+            logger.warning(f"Missing field: {path}")
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
                 f"The value at {path} should be one of: {value}"
@@ -299,24 +303,35 @@ def get_nxdl_root_and_path(nxdl: str):
     special_names = {
         "NXtest": os.path.join(data_path, "NXtest.nxdl.xml"),
         "NXtest_extended": os.path.join(data_path, "NXtest_extended.nxdl.xml"),
+        "NXhdf5_validator_1": os.path.join(data_path, "NXhdf5_validator_1.nxdl.xml"),
+        "NXhdf5_validator_2": os.path.join(data_path, "NXhdf5_validator_2.nxdl.xml"),
     }
 
+    probable_file_paths = [
+        os.path.join(definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"),
+        os.path.join(definitions_path, "applications", f"{nxdl}.nxdl.xml"),
+        os.path.join(definitions_path, "base_classes", f"{nxdl}.nxdl.xml"),
+        os.path.join(
+            definitions_path, "dev_tools/tests/test_nxdls", f"{nxdl}.nxdl.xml"
+        ),
+    ]
     if nxdl in special_names:
         nxdl_f_path = special_names[nxdl]
     else:
-        nxdl_f_path = os.path.join(
-            definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
-        )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "applications", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
-            nxdl_f_path = os.path.join(
-                definitions_path, "base_classes", f"{nxdl}.nxdl.xml"
-            )
-        if not os.path.exists(nxdl_f_path):
-            raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
+        nxdl_f_path = next(x for x in probable_file_paths if os.path.exists(x))
+        # nxdl_f_path = os.path.join(
+        #     definitions_path, "contributed_definitions", f"{nxdl}.nxdl.xml"
+        # )
+        # if not os.path.exists(nxdl_f_path):
+        #     nxdl_f_path = os.path.join(
+        #         definitions_path, "applications", f"{nxdl}.nxdl.xml"
+        #     )
+        # if not os.path.exists(nxdl_f_path):
+        #     nxdl_f_path = os.path.join(
+        #         definitions_path, "base_classes", f"{nxdl}.nxdl.xml"
+        #     )
+        # if not os.path.exists(nxdl_f_path):
+        #     raise FileNotFoundError(f"The nxdl file, {nxdl}, was not found.")
 
     return ET.parse(nxdl_f_path).getroot(), nxdl_f_path
 
@@ -582,7 +597,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
     "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
-    "NX_CHAR": (str, np.ndarray, np.chararray),
+    "NX_CHAR": (str, np.ndarray, chararray),
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": (float, np.ndarray, np.floating),
     "NX_INT": (int, np.ndarray, np.signedinteger),
@@ -645,6 +660,63 @@ def convert_str_to_bool_safe(value):
     if value.lower() == "false":
         return False
     return None
+
+
+def clean_str_attr(
+    attr: Optional[Union[str, bytes]], encoding="utf-8"
+) -> Optional[str]:
+    """
+    Cleans the string attribute which means it will decode bytes to str if necessary.
+    If `attr` is not str, bytes or None it raises a TypeError.
+    """
+    if attr is None:
+        return attr
+    if isinstance(attr, bytes):
+        return attr.decode(encoding)
+    if isinstance(attr, str):
+        return attr
+
+    raise TypeError(
+        "Invalid type {type} for attribute. Should be either None, bytes or str."
+    )
+
+
+def is_valid_unit(
+    unit: str, nx_category: str, transformation_type: Optional[str]
+) -> bool:
+    """
+    The provided unit belongs to the provided nexus unit category.
+    Args:
+        unit (str): The unit to check. Should be according to pint.
+        nx_category (str): A nexus unit category, e.g. `NX_LENGTH`,
+            or derived unit category, e.g., `NX_LENGTH ** 2`.
+        transformation_type (Optional[str]):
+            The transformation type of an NX_TRANSFORMATION.
+            This parameter is ignored if the `nx_category` is not `NX_TRANSFORMATION`.
+            If `transformation_type` is not present this should be set to None.
+    Returns:
+        bool: The unit belongs to the provided category
+    """
+    unit = clean_str_attr(unit)
+    try:
+        if nx_category in ("NX_ANY"):
+            ureg(unit)  # Check if unit is generally valid
+            return True
+        nx_category = re.sub(r"(NX_[A-Z]+)", r"[\1]", nx_category)
+        if nx_category == "[NX_TRANSFORMATION]":
+            # NX_TRANSFORMATIONS is a pseudo unit
+            # and can be either an angle, a length or unitless
+            # depending on the transformation type.
+            if transformation_type is None:
+                return ureg(unit).check("[NX_UNITLESS]")
+            if transformation_type == "translation":
+                return ureg(unit).check("[NX_LENGTH]")
+            if transformation_type == "rotation":
+                return ureg(unit).check("[NX_ANGLE]")
+            return False
+        return ureg(unit).check(f"{nx_category}")
+    except UndefinedUnitError:
+        return False
 
 
 def is_valid_data_field(value, nxdl_type, path) -> bool:
