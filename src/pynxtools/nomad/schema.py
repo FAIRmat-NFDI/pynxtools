@@ -838,29 +838,50 @@ def normalize_nxfabrication(self, archive, logger):
 
 
 def normalize_nxsample(self, archive, logger):
+    from nomad.search import MetadataPagination, search
+
+    parent_cls = __section_definitions["NXsample"].section_cls
     # super().normalize(archive, logger)
     if self.sample_id__field:
         logger.info(f"{self.sample_id__field}")
 
         self.lab_id = self.sample_id__field
+        query = {"results.eln.lab_ids": self.lab_id}
+        search_result = search(
+            owner="all",
+            query=query,
+            pagination=MetadataPagination(page_size=1),
+            user_id=archive.metadata.main_author.user_id,
+        )
+        if search_result.pagination.total > 0:
+            entry_id = search_result.data[0]["entry_id"]
+            upload_id = search_result.data[0]["upload_id"]
+            self.reference = f"../uploads/{upload_id}/archive/{entry_id}#data"
+            if search_result.pagination.total > 1:
+                logger.warn(
+                    f"Found {search_result.pagination.total} entries with lab_id: "
+                    f'"{self.lab_id}". Will use the first one found.'
+                )
+        else:
+
 
         # If the lab_id exists somewhere in NOMAD, we make a reference to the data section in another entry that contains this lab_id
-        super(__section_definitions["NXsample"].section_cls, self).normalize(
-            archive, logger
-        )
+        super(parent_cls, self).normalize(archive, logger)
 
-    # If the lab_id does not exist somewhere else in NOMAD, we make a new Entry for the sample and reference its data section here.
-    if not self.reference:
-        new_sample_archive = EntryArchive()
+        # self.reference = CompositeSystemReference(lab_id=123456789)
 
-        # Not working
-        new_sample_archive.add_section(self)
+    # # If the lab_id does not exist somewhere else in NOMAD, we make a new Entry for the sample and reference its data section here.
+    # if not self.reference:
+    #     new_sample_archive = EntryArchive()
 
-        # Make a reference to the new entry
-        self.lab_id = archive_lab_id
-        super(__section_definitions["NXsample"].section_cls, self).normalize(
-            archive, logger
-        )
+    #     # Not working
+    #     new_sample_archive.add_section(self)
+
+    #     # Make a reference to the new entry
+    #     self.lab_id = archive_lab_id
+    #     super(__section_definitions["NXsample"].section_cls, self).normalize(
+    #         archive, logger
+    #     )
 
 
 __NORMALIZER_MAP: Dict[str, Any] = {
