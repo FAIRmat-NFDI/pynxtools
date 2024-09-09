@@ -34,6 +34,7 @@ try:
         Instrument,
         CompositeSystem,
         CompositeSystemReference,
+        Component,
     )
     from nomad.metainfo import (
         Attribute,
@@ -87,7 +88,9 @@ __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": Instrument,
-    "NXsample": CompositeSystemReference,
+    # "NXsample": CompositeSystemReference,
+    "NXsample": CompositeSystem,
+    "NXsample_component": Component,
     # "NXobject": BaseSection,
 }
 
@@ -837,15 +840,27 @@ def normalize_nxfabrication(self, archive, logger):
     # self.lab_id = "Hello"
 
 
+def normalize_nxsample_component(self, archive, logger):
+    parent_cls = __section_definitions["NXsample_component"].section_cls
+    super(parent_cls, self).normalize(archive, logger)
+    if self.name__field:
+        parent_cls.name = self.name__field
+    if self.mass__field:
+        parent_cls.mass = self.mass
+
+
 def normalize_nxsample(self, archive, logger):
     from nomad.search import MetadataPagination, search
 
     parent_cls = __section_definitions["NXsample"].section_cls
+    super(parent_cls, self).normalize(archive, logger)
     # super().normalize(archive, logger)
     if self.sample_id__field:
         logger.info(f"{self.sample_id__field}")
 
         self.lab_id = self.sample_id__field
+
+    if self.lab_id is not None:
         query = {"results.eln.lab_ids": self.lab_id}
         search_result = search(
             owner="all",
@@ -853,22 +868,36 @@ def normalize_nxsample(self, archive, logger):
             pagination=MetadataPagination(page_size=1),
             user_id=archive.metadata.main_author.user_id,
         )
+        # Rreference to the existing composite system
         if search_result.pagination.total > 0:
             entry_id = search_result.data[0]["entry_id"]
             upload_id = search_result.data[0]["upload_id"]
-            self.reference = f"../uploads/{upload_id}/archive/{entry_id}#data"
+            reference = f"../uploads/{upload_id}/archive/{entry_id}#data"
             if search_result.pagination.total > 1:
                 logger.warn(
                     f"Found {search_result.pagination.total} entries with lab_id: "
                     f'"{self.lab_id}". Will use the first one found.'
                 )
+            if reference:
+                self = CompositeSystemReference(reference=reference)
         else:
+            for sub_section in self.sub_sections:
+                if sub_section.__class__.__name__ == "NXsample_component":
+                    sub_section.section_def.normalize(archive, logger)
+            from nomad.datamodel.results import Results, ELN
 
+            if not archive.results:
+                archive.results = Results()
+            if not archive.results.eln:
+                archive.results.eln = ELN()
+            archive.results.eln.lab_ids = [self.lab_id]
 
-        # If the lab_id exists somewhere in NOMAD, we make a reference to the data section in another entry that contains this lab_id
-        super(parent_cls, self).normalize(archive, logger)
+    #     TODO. NXsample_component -> CompositeSystem
+    #     Write a normalize function for NXsample_component
 
-        # self.reference = CompositeSystemReference(lab_id=123456789)
+    #     If the lab_id exists somewhere in NOMAD, we make a reference to the data section in another entry that contains this lab_id
+
+    #     self.reference = CompositeSystemReference(lab_id=123456789)
 
     # # If the lab_id does not exist somewhere else in NOMAD, we make a new Entry for the sample and reference its data section here.
     # if not self.reference:
@@ -887,6 +916,7 @@ def normalize_nxsample(self, archive, logger):
 __NORMALIZER_MAP: Dict[str, Any] = {
     "NXfabrication": normalize_nxfabrication,
     "NXsample": normalize_nxsample,
+    "NXsample_component": normalize_nxsample_component,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
