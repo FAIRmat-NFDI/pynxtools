@@ -31,10 +31,10 @@ try:
     from nomad.datamodel import EntryArchive
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
-        Instrument,
+        Component,
         CompositeSystem,
         CompositeSystemReference,
-        Component,
+        Instrument,
     )
     from nomad.metainfo import (
         Attribute,
@@ -846,19 +846,47 @@ def normalize_nxsample_component(self, archive, logger):
     if self.name__field:
         parent_cls.name = self.name__field
     if self.mass__field:
-        parent_cls.mass = self.mass
+        parent_cls.mass = self.mass__field
+    if self.mass_fraction__field:
+        parent_cls.mass_fraction = self.mass_fraction__field
 
 
 def normalize_nxsample(self, archive, logger):
+    from nomad.datamodel.results import ELN, Results
     from nomad.search import MetadataPagination, search
+
+    def create_entry(cls, archive, f_name):
+        entity = cls()
+        import json
+
+        if not archive.m_context.raw_path_exists(f_name):
+            with archive.m_context.raw_file(f_name, "w") as f_obj:
+                json.dump({"data": entity}, f_obj, indent=4)
+            archive.m_context.process_updated_raw_fils(f_name)
+
+    def get_entry_reference(archive, f_name):
+        """Returns a reference to data from entry."""
+        from nomad.utils import hash
+
+        upload_id = archive.metadata.upload_id
+        entry_id = hash(upload_id, f_name)
+
+        return f"../uploads/{upload_id}/archive/{entry_id}#data"
 
     parent_cls = __section_definitions["NXsample"].section_cls
     super(parent_cls, self).normalize(archive, logger)
-    # super().normalize(archive, logger)
-    if self.sample_id__field:
-        logger.info(f"{self.sample_id__field}")
+    if not archive.results:
+        archive.results = Results()
+    if not archive.results.eln:
+        archive.results.eln = ELN()
 
+    if self.sample_id__field:
         self.lab_id = self.sample_id__field
+
+        if not archive.results.eln.lab_ids:
+            archive.results.eln.lab_ids = [self.lab_id]
+        else:
+            archive.results.eln.lab_ids.append(self.lab_id)
 
     if self.lab_id is not None:
         query = {"results.eln.lab_ids": self.lab_id}
@@ -870,6 +898,7 @@ def normalize_nxsample(self, archive, logger):
         )
         # Rreference to the existing composite system
         if search_result.pagination.total > 0:
+            logger.info(" test for composite system reference")
             entry_id = search_result.data[0]["entry_id"]
             upload_id = search_result.data[0]["upload_id"]
             reference = f"../uploads/{upload_id}/archive/{entry_id}#data"
@@ -878,19 +907,18 @@ def normalize_nxsample(self, archive, logger):
                     f"Found {search_result.pagination.total} entries with lab_id: "
                     f'"{self.lab_id}". Will use the first one found.'
                 )
-            if reference:
-                self = CompositeSystemReference(reference=reference)
-        else:
-            for sub_section in self.sub_sections:
-                if sub_section.__class__.__name__ == "NXsample_component":
-                    sub_section.section_def.normalize(archive, logger)
-            from nomad.datamodel.results import Results, ELN
 
-            if not archive.results:
-                archive.results = Results()
-            if not archive.results.eln:
-                archive.results.eln = ELN()
-            archive.results.eln.lab_ids = [self.lab_id]
+        else:
+            f_name = f"{parent_cls.__name__}_{self.lab_id}.archive.json"
+            create_entry(parent_cls, archive, f_name)
+            reference = get_entry_reference(archive, f_name)
+
+        sub_section = SubSection(
+            section_def=CompositeSystemReference.m_def,
+            name="Reference to CompositeSystem",
+        )
+        sub_section.reference = reference or None
+        self.sub_sections.append(sub_section)
 
     #     TODO. NXsample_component -> CompositeSystem
     #     Write a normalize function for NXsample_component
