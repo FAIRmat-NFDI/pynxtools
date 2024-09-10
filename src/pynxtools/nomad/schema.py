@@ -32,6 +32,7 @@ try:
     from nomad.datamodel.metainfo.basesections import (
         BaseSection, Component, CompositeSystem, CompositeSystemReference,
         Entity, EntityReference, Instrument)
+    from nomad.datamodel.metainfo.eln import BasicEln
     from nomad.metainfo import (Attribute, Bytes, Datetime, Definition, MEnum,
                                 Package, Quantity, Section, SubSection)
     from nomad.metainfo.data_type import (Bytes, Datatype, Datetime, Number,
@@ -839,8 +840,16 @@ def normalize_nxidentifier(self, archive, logger):
     def create_Entity(lab_id, archive, f_name):
         #entity = section.m_def
         #new_archive = EntryArchive()
-        entity=Entity()
+
+        #entity=Entity()
+        #entity.lab_id=lab_id
+        entity=BasicEln()
         entity.lab_id=lab_id
+        entity.entity=Entity()
+        entity.entity.lab_id=lab_id
+
+
+
         #new_archive.data=entity
         import json
 
@@ -855,7 +864,7 @@ def normalize_nxidentifier(self, archive, logger):
         upload_id = archive.metadata.upload_id
         entry_id = hash(upload_id, f_name)
 
-        return f"/entries/{entry_id}/archive#/data/data"
+        return f"/entries/{entry_id}/archive#/data"
 
 
 
