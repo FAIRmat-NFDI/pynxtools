@@ -35,6 +35,7 @@ try:
         CompositeSystem,
         CompositeSystemReference,
         Component,
+        EntityReference,
     )
     from nomad.metainfo import (
         Attribute,
@@ -87,10 +88,10 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": Instrument,
+    "NXfabrication": [Instrument],
     # "NXsample": CompositeSystemReference,
-    "NXsample": CompositeSystem,
-    "NXsample_component": Component,
+    "NXsample": [CompositeSystem, EntityReference],
+    "NXsample_component": [Component],
     # "NXobject": BaseSection,
 }
 
@@ -610,11 +611,11 @@ def __create_class_section(xml_node: ET.Element) -> Section:
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
 
-    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
+    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
         nx_base_sec = __to_section(xml_attrs["extends"])
-        class_section.base_sections = [nx_base_sec, nomad_base_sec_cls.m_def]
+        class_section.base_sections = [nx_base_sec] + [cls.m_def for cls in nomad_base_sec_cls]
 
     __add_common_properties(xml_node, class_section)
 
@@ -841,19 +842,19 @@ def normalize_nxfabrication(self, archive, logger):
 
 
 def normalize_nxsample_component(self, archive, logger):
-    parent_cls = __section_definitions["NXsample_component"].section_cls
-    super(parent_cls, self).normalize(archive, logger)
+    current_cls = __section_definitions["NXsample_component"].section_cls
+    super(current_cls, self).normalize(archive, logger)
     if self.name__field:
-        parent_cls.name = self.name__field
+        self.name = self.name__field
     if self.mass__field:
-        parent_cls.mass = self.mass
+        self.mass = self.mass__field
 
 
 def normalize_nxsample(self, archive, logger):
     from nomad.search import MetadataPagination, search
 
-    parent_cls = __section_definitions["NXsample"].section_cls
-    super(parent_cls, self).normalize(archive, logger)
+    current_cls = __section_definitions["NXsample"].section_cls
+    super(current_cls, self).normalize(archive, logger)
     # super().normalize(archive, logger)
     if self.sample_id__field:
         logger.info(f"{self.sample_id__field}")
