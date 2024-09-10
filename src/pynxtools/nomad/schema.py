@@ -35,6 +35,7 @@ try:
         CompositeSystem,
         CompositeSystemReference,
         Instrument,
+        EntityReference,
     )
     from nomad.metainfo import (
         Attribute,
@@ -87,10 +88,10 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": Instrument,
+    "NXfabrication": [Instrument],
     # "NXsample": CompositeSystemReference,
-    "NXsample": CompositeSystem,
-    "NXsample_component": Component,
+    "NXsample": [CompositeSystem, EntityReference],
+    "NXsample_component": [Component],
     # "NXobject": BaseSection,
 }
 
@@ -610,11 +611,13 @@ def __create_class_section(xml_node: ET.Element) -> Section:
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
 
-    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
+    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
         nx_base_sec = __to_section(xml_attrs["extends"])
-        class_section.base_sections = [nx_base_sec, nomad_base_sec_cls.m_def]
+        class_section.base_sections = [nx_base_sec] + [
+            cls.m_def for cls in nomad_base_sec_cls
+        ]
 
     __add_common_properties(xml_node, class_section)
 
@@ -751,7 +754,6 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
 nexus_metainfo_package: Optional[Package] = None  # pylint: disable=C0103
 
 import pickle
-import traceback
 
 
 def save_nexus_schema(suf):
@@ -841,28 +843,34 @@ def normalize_nxfabrication(self, archive, logger):
 
 
 def normalize_nxsample_component(self, archive, logger):
-    parent_cls = __section_definitions["NXsample_component"].section_cls
-    super(parent_cls, self).normalize(archive, logger)
+    current_cls = __section_definitions["NXsample_component"].section_cls
+    super(current_cls, self).normalize(archive, logger)
     if self.name__field:
-        parent_cls.name = self.name__field
+        self.name = self.name__field
     if self.mass__field:
-        parent_cls.mass = self.mass__field
+        self.mass = self.mass__field
     if self.mass_fraction__field:
-        parent_cls.mass_fraction = self.mass_fraction__field
+        self.mass_fraction = self.mass_fraction__field
 
 
 def normalize_nxsample(self, archive, logger):
     from nomad.datamodel.results import ELN, Results
     from nomad.search import MetadataPagination, search
 
-    def create_entry(cls, archive, f_name):
-        entity = cls()
+    def create_entry(section, archive, f_name):
+        entity = section.m_def
         import json
 
+        test_f = "test" + f_name
         if not archive.m_context.raw_path_exists(f_name):
             with archive.m_context.raw_file(f_name, "w") as f_obj:
-                json.dump({"data": entity}, f_obj, indent=4)
-            archive.m_context.process_updated_raw_fils(f_name)
+                json.dump({"data": entity.m_to_dict()}, f_obj, indent=4)
+            archive.m_context.process_updated_raw_file(f_name)
+
+        # if not archive.m_context.raw_path_exists(test_f):
+        #     with archive.m_context.raw_file(test_f, "w") as f_obj:
+        #         json.dump({"data": entity.m_def.m_to_dict()}, f_obj, indent=4)
+        #     archive.m_context.process_updated_raw_file(test_f)
 
     def get_entry_reference(archive, f_name):
         """Returns a reference to data from entry."""
@@ -873,8 +881,8 @@ def normalize_nxsample(self, archive, logger):
 
         return f"../uploads/{upload_id}/archive/{entry_id}#data"
 
-    parent_cls = __section_definitions["NXsample"].section_cls
-    super(parent_cls, self).normalize(archive, logger)
+    current_cls = __section_definitions["NXsample"].section_cls
+    super(current_cls, self).normalize(archive, logger)
     if not archive.results:
         archive.results = Results()
     if not archive.results.eln:
@@ -909,16 +917,18 @@ def normalize_nxsample(self, archive, logger):
                 )
 
         else:
-            f_name = f"{parent_cls.__name__}_{self.lab_id}.archive.json"
-            create_entry(parent_cls, archive, f_name)
+            f_name = f"{current_cls.__name__}_{self.lab_id}.archive.json"
+            create_entry(current_cls, archive, f_name)
             reference = get_entry_reference(archive, f_name)
 
-        sub_section = SubSection(
-            section_def=CompositeSystemReference.m_def,
-            name="Reference to CompositeSystem",
-        )
-        sub_section.reference = reference or None
-        self.sub_sections.append(sub_section)
+        # sub_section = SubSection(
+        #     section_def=CompositeSystemReference.m_def,
+        #     name="Reference to CompositeSystem",
+        # )
+        # sub_section.init_metainfo()
+        # sub_section.reference = reference or None
+        self.reference = reference or None
+        # self.sub_sections.append(sub_section)
 
     #     TODO. NXsample_component -> CompositeSystem
     #     Write a normalize function for NXsample_component
