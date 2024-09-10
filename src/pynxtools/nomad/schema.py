@@ -27,6 +27,7 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 
 try:
+    from nomad import utils
     from nomad.datamodel import EntryArchive, EntryData, EntryMetadata
     from nomad.datamodel.metainfo.basesections import (
         BaseSection, Component, CompositeSystem, CompositeSystemReference,
@@ -834,28 +835,78 @@ def normalize_nxsample(self, archive, logger):
 
 
 def normalize_nxidentifier(self, archive, logger):
-    current_cls = __section_definitions["NXsample"].section_cls
+
+    def create_Entity(lab_id, archive, f_name):
+        #entity = section.m_def
+        #new_archive = EntryArchive()
+        entity=Entity()
+        entity.lab_id=lab_id
+        #new_archive.data=entity
+        import json
+
+        with archive.m_context.raw_file(f_name, "w") as f_obj:
+            json.dump({"data": entity.m_to_dict(with_meta=True,include_derived=True)}, f_obj, indent=4)
+        archive.m_context.process_updated_raw_file(f_name)
+
+    def get_entry_reference(archive, f_name):
+        """Returns a reference to data from entry."""
+        from nomad.utils import hash
+
+        upload_id = archive.metadata.upload_id
+        entry_id = hash(upload_id, f_name)
+
+        return f"/entries/{entry_id}/archive#/data/data"
+
+
+
+
+    current_cls = __section_definitions["NXidentifier"].section_cls
     #super(current_cls, self).normalize(archive, logger)
     if self.identifier__field:
         logger.info(f"{self.identifier__field} - identifier received")
         self.lab_id = self.identifier__field  # + "__occurrence"
     EntityReference.normalize(self,archive,logger)
     if not self.reference:
-        logger.info(f"{self.lab_id} could not be referenced")
+        logger.info(f"{self.lab_id} to be created")
+
+        f_name = f"{current_cls.__name__}_{self.lab_id}.archive.json"
+        create_Entity(self.lab_id, archive, f_name)
+        self.reference = get_entry_reference(archive, f_name)
+        logger.info(f"{self.reference} - referenced directly")
+
+
+
+
         #self.reference = "Registered NOMAD Entry not found"
-        new_archive = EntryArchive()
-        if new_archive.data is None:
-            new_archive.data=EntryData()
-        #new_archive.m_create(EntryData)
-        new_archive.data.entity=Entity()
-        new_archive.data.entity.lab_id=self.lab_id
-        new_archive.metadata=EntryMetadata()
-        if new_archive.metadata.entry_type is None:
-            new_archive.metadata.entry_type = "Entity"
-            new_archive.metadata.domain = "nexus"
-        new_archive.normalize(new_archive,logger)
-        logger.info(f"New Entry for {self.lab_id}: " + new_archive.m_to_dict())
-        new_archive.save()
+        # new_archive = EntryArchive()
+        # entry_metadata = new_archive.metadata
+        # if entry_metadata is None:
+        #     entry_metadata = new_archive.m_create(EntryMetadata)
+
+        # entry_id=('{:%dd}' % utils.default_hash_len).format(0)
+        # entry_metadata.m_update(
+        #     entry_id=entry_id,
+        #     upload_id=archive.metadata.upload_id,
+        #     mainfile=archive.metadata.mainfile,
+        #     entry_hash=entry_id,
+        #     domain='nexus',
+        #     entry_create_time=datetime.utcnow(),
+        #     processed=True,
+        #     parser_name='parsers/internal',
+        # )
+
+        # if new_archive.data is None:
+        #     new_archive.data=EntryData()
+        # #new_archive.m_create(EntryData)
+        # new_archive.data.entity=Entity()
+        # new_archive.data.entity.lab_id=self.lab_id
+        # new_archive.metadata=EntryMetadata()
+        # if new_archive.metadata.entry_type is None:
+        #     new_archive.metadata.entry_type = "Entity"
+        #     new_archive.metadata.domain = "nexus"
+        # new_archive.normalize(new_archive,logger)
+        # logger.info(f"New Entry for {self.lab_id}: " + str(new_archive.m_to_dict()))
+        # new_archive.save()
 
 
 
