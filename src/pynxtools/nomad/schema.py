@@ -16,10 +16,13 @@
 # limitations under the License.
 #
 
+import json
 import os
 import os.path
+import pickle
 import re
 import sys
+
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Union
@@ -30,14 +33,37 @@ try:
     from nomad import utils
     from nomad.datamodel import EntryArchive, EntryData, EntryMetadata
     from nomad.datamodel.metainfo.basesections import (
-        BaseSection, Component, CompositeSystem, CompositeSystemReference,
-        Entity, EntityReference, Instrument)
+        BaseSection,
+        Component,
+        CompositeSystem,
+        Entity,
+        EntityReference,
+        Instrument,
+    )
     from nomad.datamodel.metainfo.eln import BasicEln
-    from nomad.metainfo import (Attribute, Bytes, Datetime, Definition, MEnum,
-                                Package, Quantity, Section, SubSection)
-    from nomad.metainfo.data_type import (Bytes, Datatype, Datetime, Number,
-                                          m_bool, m_complex128, m_float64,
-                                          m_int, m_int64, m_str)
+    from nomad.metainfo import (
+        Attribute,
+        Bytes,
+        Datetime,
+        Definition,
+        MEnum,
+        Package,
+        Quantity,
+        Section,
+        SubSection,
+    )
+    from nomad.metainfo.data_type import (
+        Bytes,
+        Datatype,
+        Datetime,
+        Number,
+        m_bool,
+        m_complex128,
+        m_float64,
+        m_int,
+        m_int64,
+        m_str,
+    )
     from nomad.utils import get_logger, strip
     from toposort import toposort_flatten
 except ImportError as exc:
@@ -46,8 +72,7 @@ except ImportError as exc:
     ) from exc
 
 from pynxtools import get_definitions_url
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import \
-    get_nexus_definitions_path
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -68,7 +93,6 @@ __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [Instrument],
-    # "NXsample": CompositeSystemReference,
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
     "NXidentifier": [EntityReference],
@@ -595,7 +619,9 @@ def __create_class_section(xml_node: ET.Element) -> Section:
 
     if "extends" in xml_attrs:
         nx_base_sec = __to_section(xml_attrs["extends"])
-        class_section.base_sections = [nx_base_sec] + [cls.m_def for cls in nomad_base_sec_cls]
+        class_section.base_sections = [nx_base_sec] + [
+            cls.m_def for cls in nomad_base_sec_cls
+        ]
 
     __add_common_properties(xml_node, class_section)
 
@@ -731,9 +757,6 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
 
 nexus_metainfo_package: Optional[Package] = None  # pylint: disable=C0103
 
-import pickle
-import traceback
-
 
 def save_nexus_schema(suf):
     nexus_metainfo_package
@@ -810,51 +833,48 @@ def init_nexus_metainfo():
 init_nexus_metainfo()
 
 
-# Appending the normalize method from a function
 def normalize_nxfabrication(self, archive, logger):
-    current_cls =__section_definitions["NXfabrication"].section_cls
+    """Normalizer for NXfabrication section."""
+    current_cls = __section_definitions["NXfabrication"].section_cls
     super(current_cls, self).normalize(archive, logger)
     self.lab_id = "Hello"
 
 
 def normalize_nxsample_component(self, archive, logger):
+    """Normalizer for NXsample_component section."""
     current_cls = __section_definitions["NXsample_component"].section_cls
     if self.name__field:
         self.name = self.name__field
     if self.mass__field:
         self.mass = self.mass__field
-    #we may want to add normalisation for mass_fraction (calculating from components)
+    # we may want to add normalisation for mass_fraction (calculating from components)
     super(current_cls, self).normalize(archive, logger)
 
 
 def normalize_nxsample(self, archive, logger):
+    """Normalizer for NXsample section."""
     current_cls = __section_definitions["NXsample"].section_cls
     if self.name__field:
         self.name = self.name__field
-    #one could also copy local ids to nxidentifier for search purposes
+    # one could also copy local ids to nxidentifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
 
 def normalize_nxidentifier(self, archive, logger):
+    """Normalizer for NXidentifier section."""
 
     def create_Entity(lab_id, archive, f_name):
-        #entity = section.m_def
-        #new_archive = EntryArchive()
-
-        #entity=Entity()
-        #entity.lab_id=lab_id
-        entity=BasicEln()
-        entity.lab_id=lab_id
-        entity.entity=Entity()
-        entity.entity.lab_id=lab_id
-
-
-
-        #new_archive.data=entity
-        import json
+        entity = BasicEln()
+        entity.lab_id = lab_id
+        entity.entity = Entity()
+        entity.entity.lab_id = lab_id
 
         with archive.m_context.raw_file(f_name, "w") as f_obj:
-            json.dump({"data": entity.m_to_dict(with_meta=True,include_derived=True)}, f_obj, indent=4)
+            json.dump(
+                {"data": entity.m_to_dict(with_meta=True, include_derived=True)},
+                f_obj,
+                indent=4,
+            )
         archive.m_context.process_updated_raw_file(f_name)
 
     def get_entry_reference(archive, f_name):
@@ -866,15 +886,12 @@ def normalize_nxidentifier(self, archive, logger):
 
         return f"/entries/{entry_id}/archive#/data"
 
-
-
-
     current_cls = __section_definitions["NXidentifier"].section_cls
-    #super(current_cls, self).normalize(archive, logger)
+    # super(current_cls, self).normalize(archive, logger)
     if self.identifier__field:
         logger.info(f"{self.identifier__field} - identifier received")
         self.lab_id = self.identifier__field  # + "__occurrence"
-    EntityReference.normalize(self,archive,logger)
+    EntityReference.normalize(self, archive, logger)
     if not self.reference:
         logger.info(f"{self.lab_id} to be created")
 
@@ -882,62 +899,6 @@ def normalize_nxidentifier(self, archive, logger):
         create_Entity(self.lab_id, archive, f_name)
         self.reference = get_entry_reference(archive, f_name)
         logger.info(f"{self.reference} - referenced directly")
-
-
-
-
-        #self.reference = "Registered NOMAD Entry not found"
-        # new_archive = EntryArchive()
-        # entry_metadata = new_archive.metadata
-        # if entry_metadata is None:
-        #     entry_metadata = new_archive.m_create(EntryMetadata)
-
-        # entry_id=('{:%dd}' % utils.default_hash_len).format(0)
-        # entry_metadata.m_update(
-        #     entry_id=entry_id,
-        #     upload_id=archive.metadata.upload_id,
-        #     mainfile=archive.metadata.mainfile,
-        #     entry_hash=entry_id,
-        #     domain='nexus',
-        #     entry_create_time=datetime.utcnow(),
-        #     processed=True,
-        #     parser_name='parsers/internal',
-        # )
-
-        # if new_archive.data is None:
-        #     new_archive.data=EntryData()
-        # #new_archive.m_create(EntryData)
-        # new_archive.data.entity=Entity()
-        # new_archive.data.entity.lab_id=self.lab_id
-        # new_archive.metadata=EntryMetadata()
-        # if new_archive.metadata.entry_type is None:
-        #     new_archive.metadata.entry_type = "Entity"
-        #     new_archive.metadata.domain = "nexus"
-        # new_archive.normalize(new_archive,logger)
-        # logger.info(f"New Entry for {self.lab_id}: " + str(new_archive.m_to_dict()))
-        # new_archive.save()
-
-
-
-    #     TODO. NXsample_component -> CompositeSystem
-    #     Write a normalize function for NXsample_component
-
-    #     If the lab_id exists somewhere in NOMAD, we make a reference to the data section in another entry that contains this lab_id
-
-    #     self.reference = CompositeSystemReference(lab_id=123456789)
-
-    # # If the lab_id does not exist somewhere else in NOMAD, we make a new Entry for the sample and reference its data section here.
-    # if not self.reference:
-    #     new_sample_archive = EntryArchive()
-
-    #     # Not working
-    #     new_sample_archive.add_section(self)
-
-    #     # Make a reference to the new entry
-    #     self.lab_id = archive_lab_id
-    #     super(__section_definitions["NXsample"].section_cls, self).normalize(
-    #         archive, logger
-    #     )
 
 
 __NORMALIZER_MAP: Dict[str, Any] = {
@@ -952,51 +913,8 @@ for nx_name, section in __section_definitions.items():
     if nx_name == "NXobject":
         continue
 
-    # nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
     normalize_func = __NORMALIZER_MAP.get(nx_name)
 
+    # Append the normalize method from a function
     if normalize_func:
         section.section_cls.normalize = normalize_func
-
-    # if nomad_base_sec_cls is not None:
-    #     if section.base_sections and isinstance(section.base_sections, list):
-    #         # section.base_sections.append(nomad_base_sec_cls.m_def)
-    #         section.base_sections = section.base_sections[::-1]
-    #     else:
-    #         section.base_sections = [nomad_base_sec_cls.m_def]
-    #     nomad_base_sec_cls.m_def.init_metainfo()
-    #     section.init_metainfo()
-
-#################################################
-# Approach B: Using a new class
-# class NxNomad_Instrument(Instrument):
-#     test_attr = Quantity(
-#         type=str,
-#         description="A reference to a NOMAD `Instrument` entry.",
-#     )
-#     def normalize(self, archive, logger):
-#         logger.info(f" ###### : from : ##, {type(self)}")
-#         super(NxNomad_Instrument, self).normalize(archive, logger)
-#         archive.results.eln.test_attr = "Hello"
-#         self.test_attr = "Hello"
-
-# __BASESECTIONS_MAP: Dict[str, Any] = {
-#     "NXfabrication": NxNomad_Instrument,
-#     # "NXobject": BaseSection,
-# }
-
-# # Handling nomad BaseSection and other inherited Section from BaseSection
-# for nx_name, section in __section_definitions.items():
-#     if nx_name == "NXobject":
-#         continue
-
-#     nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, BaseSection)
-
-#     if nomad_base_sec_cls is not None:
-#         if section.base_sections and isinstance(section.base_sections, list):
-#             section.base_sections.append(nomad_base_sec_cls.m_def)
-#             section.base_sections = section.base_sections[::-1]
-#         else:
-#             section.base_sections = [nomad_base_sec_cls.m_def]
-#         nomad_base_sec_cls.m_def.init_metainfo()
-#         section.init_metainfo()
