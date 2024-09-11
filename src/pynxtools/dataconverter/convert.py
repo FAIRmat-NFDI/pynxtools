@@ -428,7 +428,9 @@ def convert_cli(
 @click.option(
     "--nxdl",
     default=None,
-    help=("The name of the NXDL file to use without extension. For example: NXmpes"),
+    help=(
+        "The name of the NeXus application definition file to use without extension. For example: NXmpes"
+    ),
     required=True,
 )
 @click.option(

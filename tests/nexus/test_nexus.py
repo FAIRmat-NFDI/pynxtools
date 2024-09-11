@@ -116,17 +116,17 @@ def test_get_node_at_nxdl_path():
     assert node.attrib["type"] == "NXevent_data_em_set"
 
     node = get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection", elem=elem
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/stack_3d", elem=elem
     )
     assert node.attrib["type"] == "NXdata"
 
     node = get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/DATA", elem=elem
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/stack_3d/intensity", elem=elem
     )
     assert node.attrib["type"] == "NX_NUMBER"
 
     node = get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/collection/AXISNAME_indices",
+        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/stack_3d/AXISNAME_indices",
         elem=elem,
     )
     assert node.attrib["name"] == "AXISNAME_indices"
