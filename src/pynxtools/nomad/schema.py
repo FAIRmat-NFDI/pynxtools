@@ -31,7 +31,7 @@ import numpy as np
 
 try:
     from nomad import utils
-    from nomad.datamodel import EntryArchive, EntryData, EntryMetadata
+    from nomad.datamodel import EntryArchive
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
         Component,
@@ -73,6 +73,7 @@ except ImportError as exc:
 
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
+from pynxtools.nomad.utils import __REPLACEMNT_FOR_NX, __rename_nx_to_nomad
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -92,12 +93,13 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": [Instrument],
-    "NXsample": [CompositeSystem],
-    "NXsample_component": [Component],
-    "NXidentifier": [EntityReference],
-    # "NXobject": BaseSection,
+    "BSfabrication": [Instrument],
+    "BSsample": [CompositeSystem],
+    "BSsample_component": [Component],
+    "BSidentifier": [EntityReference],
+    # "BSobject": BaseSection,
 }
+
 
 VALIDATE = False
 
@@ -282,17 +284,6 @@ def __get_documentation_url(
     return f"{doc_base}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
 
 
-def __rename_nx_to_nomad(name: str) -> str:
-    """
-    Rename the NXDL name to NOMAD.
-    For example: NXobject -> NOMADObject
-    """
-    if name.startswith("NX"):
-        # ToDo: replace by a useful prefix
-        return name.replace("NX", "NX")
-    return name
-
-
 def __to_section(name: str, **kwargs) -> Section:
     """
     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
@@ -302,7 +293,7 @@ def __to_section(name: str, **kwargs) -> Section:
     class nexus definition.
     """
 
-    name = __rename_nx_to_nomad(name)
+    # name = __rename_nx_to_nomad(name)
 
     if name in __section_definitions:
         section = __section_definitions[name]
@@ -557,7 +548,7 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         xml_attrs = group.attrib
 
         assert "type" in xml_attrs, "Expecting type to be present"
-        nx_type = xml_attrs["type"]
+        nx_type = __rename_nx_to_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type)
         group_section = Section(validate=VALIDATE, nx_kind="group", name=nx_name)
@@ -565,7 +556,9 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         __attach_base_section(group_section, root_section, __to_section(nx_type))
         __add_common_properties(group, group_section)
 
-        nx_name = xml_attrs.get("name", nx_type.replace("NX", "").upper())
+        nx_name = xml_attrs.get(
+            "name", nx_type.replace(__REPLACEMNT_FOR_NX, "").upper()
+        )
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind="group",
@@ -611,6 +604,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
+    nx_name = __rename_nx_to_nomad(nx_name)
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
@@ -618,7 +612,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
-        nx_base_sec = __to_section(xml_attrs["extends"])
+        nx_base_sec = __to_section(__rename_nx_to_nomad(xml_attrs["extends"]))
         class_section.base_sections = [nx_base_sec] + [
             cls.m_def for cls in nomad_base_sec_cls
         ]
@@ -833,16 +827,16 @@ def init_nexus_metainfo():
 init_nexus_metainfo()
 
 
-def normalize_nxfabrication(self, archive, logger):
-    """Normalizer for NXfabrication section."""
-    current_cls = __section_definitions["NXfabrication"].section_cls
+def normalize_BSfabrication(self, archive, logger):
+    """Normalizer for BSfabrication section."""
+    current_cls = __section_definitions["BSfabrication"].section_cls
     super(current_cls, self).normalize(archive, logger)
     self.lab_id = "Hello"
 
 
-def normalize_nxsample_component(self, archive, logger):
-    """Normalizer for NXsample_component section."""
-    current_cls = __section_definitions["NXsample_component"].section_cls
+def normalize_BSsample_component(self, archive, logger):
+    """Normalizer for BSsample_component section."""
+    current_cls = __section_definitions["BSsample_component"].section_cls
     if self.name__field:
         self.name = self.name__field
     if self.mass__field:
@@ -851,17 +845,17 @@ def normalize_nxsample_component(self, archive, logger):
     super(current_cls, self).normalize(archive, logger)
 
 
-def normalize_nxsample(self, archive, logger):
-    """Normalizer for NXsample section."""
-    current_cls = __section_definitions["NXsample"].section_cls
+def normalize_BSsample(self, archive, logger):
+    """Normalizer for BSsample section."""
+    current_cls = __section_definitions["BSsample"].section_cls
     if self.name__field:
         self.name = self.name__field
-    # one could also copy local ids to nxidentifier for search purposes
+    # one could also copy local ids to BSidentifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
 
-def normalize_nxidentifier(self, archive, logger):
-    """Normalizer for NXidentifier section."""
+def normalize_BSidentifier(self, archive, logger):
+    """Normalizer for BSidentifier section."""
 
     def create_Entity(lab_id, archive, f_name):
         entity = BasicEln()
@@ -886,7 +880,7 @@ def normalize_nxidentifier(self, archive, logger):
 
         return f"/entries/{entry_id}/archive#/data"
 
-    current_cls = __section_definitions["NXidentifier"].section_cls
+    current_cls = __section_definitions["BSidentifier"].section_cls
     # super(current_cls, self).normalize(archive, logger)
     if self.identifier__field:
         logger.info(f"{self.identifier__field} - identifier received")
@@ -902,10 +896,10 @@ def normalize_nxidentifier(self, archive, logger):
 
 
 __NORMALIZER_MAP: Dict[str, Any] = {
-    "NXfabrication": normalize_nxfabrication,
-    "NXsample": normalize_nxsample,
-    "NXsample_component": normalize_nxsample_component,
-    "NXidentifier": normalize_nxidentifier,
+    "BSfabrication": normalize_BSfabrication,
+    "BSsample": normalize_BSsample,
+    "BSsample_component": normalize_BSsample_component,
+    "BSidentifier": normalize_BSidentifier,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
