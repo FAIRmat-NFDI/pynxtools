@@ -19,6 +19,8 @@
 
 import logging
 import os
+import pytest
+import numpy as np
 
 import lxml.etree as ET
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -28,9 +30,64 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_classes,
     get_nx_units,
 )
+from pynxtools.nexus.nexus import decode_string
 from pynxtools.nexus.nexus import HandleNexus
 
 logger = logging.getLogger(__name__)
+
+
+@pytest.mark.parametrize(
+    "string_obj, decode, expected",
+    [
+        # Test with np.ndarray
+        (np.array([b"fixed1", b"fixed2"], dtype="S10"), True, ["fixed1", "fixed2"]),
+        (
+            np.array([b"fixed1   ", b"fixed2   "], dtype="S10"),
+            False,
+            np.array([b"fixed1   ", b"fixed2   "], dtype="S10"),
+        ),
+        (np.array([b"var1", b"var2", b"var3"]), True, ["var1", "var2", "var3"]),
+        (
+            np.array([b"var1", b"var2", b"var3"]),
+            False,
+            np.array([b"var1", b"var2", b"var3"]),
+        ),
+        (np.array([], dtype=object), True, None),
+        (np.array([], dtype=object), False, np.array([])),
+        # # Test with bytes
+        (b"single", True, "single"),
+        (b"single", False, b"single"),
+        # Test with str
+        ("single", True, "single"),
+        ("single", False, "single"),
+        # Test with mixed np.ndarray
+        (np.array([b"bytes", "string"], dtype=object), True, ["bytes", "string"]),
+        # (np.array([b'bytes', 'string'], dtype=object), False, np.array([b'bytes', 'string'], dtype=object)),
+    ],
+)
+def test_decode_string(string_obj, decode, expected):
+    # Handle normal cases
+    result = decode_string(string_obj, decode)
+    if isinstance(expected, list):
+        assert list(result) == expected, f"Failed for {string_obj} with decode={decode}"
+    elif isinstance(expected, np.ndarray):
+        assert (
+            result == expected
+        ).all(), f"Failed for {string_obj} with decode={decode}"
+    else:
+        assert result == expected, f"Failed for {string_obj} with decode={decode}"
+
+
+@pytest.mark.parametrize(
+    "string_obj, decode",
+    [
+        (123, True),
+        (123, False),
+    ],
+)
+def test_decode_string_exceptions(string_obj, decode):
+    with pytest.raises(ValueError):
+        decode_string(string_obj, decode)
 
 
 def test_get_nexus_classes_units_attributes():
