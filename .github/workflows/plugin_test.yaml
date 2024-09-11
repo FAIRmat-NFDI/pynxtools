@@ -25,7 +25,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branch: main
+            branch: adjust_sample_name_and_id
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
             branch: main
