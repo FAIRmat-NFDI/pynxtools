@@ -40,10 +40,8 @@ except ImportError as exc:
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 
-# from pynxtools.nomad.utils import __rename_nx_to_nomad
-
-__REPLARCEMENT_FOR_NX = "BS"
-__REPLARCEMENT_LEN = len(__REPLARCEMENT_FOR_NX)
+__REPLACEMENT_FOR_NX = "BS"
+__REPLACEMENT_LEN = len(__REPLACEMENT_FOR_NX)
 
 
 def _rename_nx_to_nomad(name: str) -> Optional[str]:
@@ -56,7 +54,7 @@ def _rename_nx_to_nomad(name: str) -> Optional[str]:
         return name
     if name is not None:
         if name.startswith("NX"):
-            return name.replace("NX", __REPLARCEMENT_FOR_NX)
+            return name.replace("NX", __REPLACEMENT_FOR_NX)
     return name
 
 
@@ -66,7 +64,7 @@ def _to_group_name(nx_node: ET.Element):
     """
     # assuming always upper() is incorrect, e.g. NXem_msr is a specific one not EM_MSR!
     grp_nm = nx_node.attrib.get(
-        "name", nx_node.attrib["type"][__REPLARCEMENT_LEN:].upper()
+        "name", nx_node.attrib["type"][__REPLACEMENT_LEN:].upper()
     )
 
     return grp_nm

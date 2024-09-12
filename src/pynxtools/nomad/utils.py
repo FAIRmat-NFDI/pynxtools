@@ -18,7 +18,7 @@
 
 from typing import Optional
 
-__REPLACEMNT_FOR_NX = "BS"
+__REPLACEMENT_FOR_NX = "BS"
 
 
 def __rename_nx_to_nomad(name: str) -> Optional[str]:
@@ -31,5 +31,5 @@ def __rename_nx_to_nomad(name: str) -> Optional[str]:
         return name
     if name is not None:
         if name.startswith("NX"):
-            return name.replace("NX", __REPLACEMNT_FOR_NX)
+            return name.replace("NX", __REPLACEMENT_FOR_NX)
     return name

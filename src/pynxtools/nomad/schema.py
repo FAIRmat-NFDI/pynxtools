@@ -73,7 +73,7 @@ except ImportError as exc:
 
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
-from pynxtools.nomad.utils import __REPLACEMNT_FOR_NX, __rename_nx_to_nomad
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __rename_nx_to_nomad
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -557,7 +557,7 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         __add_common_properties(group, group_section)
 
         nx_name = xml_attrs.get(
-            "name", nx_type.replace(__REPLACEMNT_FOR_NX, "").upper()
+            "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
         )
         group_subsection = SubSection(
             section_def=group_section,
