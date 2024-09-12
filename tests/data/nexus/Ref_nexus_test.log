@@ -440,19 +440,13 @@ DEBUG -
         
 DEBUG - ===== FIELD (//entry/entry_identifier): <HDF5 dataset "entry_identifier": shape (), type "|O">
 DEBUG - value: Run 22118 
-DEBUG - classpath: ['NXentry', 'NX_CHAR']
-DEBUG - classes:
-NXentry.nxdl.xml:/entry_identifier
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXentry.nxdl.xml:/entry_identifier):
+DEBUG - classpath: ['NXentry']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/experiment_identifier): <HDF5 dataset "experiment_identifier": shape (), type "|O">
 DEBUG - value: F-20170538 
-DEBUG - classpath: ['NXentry', 'NX_CHAR']
-DEBUG - classes:
-NXentry.nxdl.xml:/experiment_identifier
-DEBUG - <<OPTIONAL>>
-DEBUG - documentation (NXentry.nxdl.xml:/experiment_identifier):
+DEBUG - classpath: ['NXentry']
+DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== GROUP (//entry/instrument [NXarpes::/NXentry/NXinstrument]): <HDF5 group "/entry/instrument" (11 members)>
 DEBUG - classpath: ['NXentry', 'NXinstrument']
