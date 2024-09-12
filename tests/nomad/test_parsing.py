@@ -125,14 +125,13 @@ def test_nexus_example():
 
     example_data = "src/pynxtools/data/201805_WSe2_arpes.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
-    # __REPLACEMENT_FOR_NX NXarpes -> BSarpes
-    assert archive.nexus.BSarpes.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
+    arpes_obj = getattr(archive.nexus, f"{__REPLACEMENT_FOR_NX}arpes")
+
+    assert arpes_obj.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
         "3.27e-10*millibar"
     )
 
-    # __REPLACEMENT_FOR_NX NXarpes -> BSarpes
-    instrument = archive.nexus.BSarpes.ENTRY[0].INSTRUMENT[0]
-
+    instrument = arpes_obj.ENTRY[0].INSTRUMENT[0]
     assert instrument.nx_name == "instrument"
     assert instrument.monochromator.energy__field == ureg.Quantity(
         "36.49699020385742*electron_volt"
@@ -146,8 +145,7 @@ def test_nexus_example():
     assert instrument.SOURCE[0].mode__field is None
     # wrong inherited ENUM for extended field - 'Free Electron Laser'
     assert instrument.SOURCE[0].type__field is None
-    # __REPLACEMENT_FOR_NX NXarpes -> BSarpes
-    data = archive.nexus.BSarpes.ENTRY[0].DATA[0]
+    data = arpes_obj.ENTRY[0].DATA[0]
     assert len(data.AXISNAME__field) == 3
     # there is still a bug in the variadic name resolution, so skip these
     # assert data.delays__field is not None
