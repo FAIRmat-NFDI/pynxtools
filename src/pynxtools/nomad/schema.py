@@ -20,7 +20,6 @@ import os
 import os.path
 import re
 import sys
-
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Union
@@ -28,38 +27,15 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 
 try:
-    from nomad.datamodel import EntryArchive
+    from nomad.datamodel import EntryArchive, EntryData, EntryMetadata
     from nomad.datamodel.metainfo.basesections import (
-        BaseSection,
-        Instrument,
-        CompositeSystem,
-        CompositeSystemReference,
-        Component,
-        EntityReference,
-    )
-    from nomad.metainfo import (
-        Attribute,
-        Bytes,
-        Datetime,
-        Definition,
-        MEnum,
-        Package,
-        Quantity,
-        Section,
-        SubSection,
-    )
-    from nomad.metainfo.data_type import (
-        Bytes,
-        Datatype,
-        Datetime,
-        Number,
-        m_bool,
-        m_complex128,
-        m_float64,
-        m_int,
-        m_int64,
-        m_str,
-    )
+        BaseSection, Component, CompositeSystem, CompositeSystemReference,
+        Entity, EntityReference, Instrument)
+    from nomad.metainfo import (Attribute, Bytes, Datetime, Definition, MEnum,
+                                Package, Quantity, Section, SubSection)
+    from nomad.metainfo.data_type import (Bytes, Datatype, Datetime, Number,
+                                          m_bool, m_complex128, m_float64,
+                                          m_int, m_int64, m_str)
     from nomad.utils import get_logger, strip
     from toposort import toposort_flatten
 except ImportError as exc:
@@ -68,7 +44,8 @@ except ImportError as exc:
     ) from exc
 
 from pynxtools import get_definitions_url
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import \
+    get_nexus_definitions_path
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -90,8 +67,9 @@ __logger = get_logger(__name__)
 __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [Instrument],
     # "NXsample": CompositeSystemReference,
-    "NXsample": [CompositeSystem, EntityReference],
+    "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
+    "NXidentifier": [EntityReference],
     # "NXobject": BaseSection,
 }
 
@@ -832,66 +810,54 @@ init_nexus_metainfo()
 
 # Appending the normalize method from a function
 def normalize_nxfabrication(self, archive, logger):
-    logger.info(f" ###### : from : ##, {type(self)}")
-    # super().normalize(archive, logger)
-    super(__section_definitions["NXfabrication"].section_cls, self).normalize(
-        archive, logger
-    )
-    # archive.results.eln.test_attr = "Hello"
-    # self.lab_id = "Hello"
+    current_cls =__section_definitions["NXfabrication"].section_cls
+    super(current_cls, self).normalize(archive, logger)
+    self.lab_id = "Hello"
 
 
 def normalize_nxsample_component(self, archive, logger):
     current_cls = __section_definitions["NXsample_component"].section_cls
-    super(current_cls, self).normalize(archive, logger)
     if self.name__field:
         self.name = self.name__field
     if self.mass__field:
         self.mass = self.mass__field
+    #we may want to add normalisation for mass_fraction (calculating from components)
+    super(current_cls, self).normalize(archive, logger)
 
 
 def normalize_nxsample(self, archive, logger):
-    from nomad.search import MetadataPagination, search
-
     current_cls = __section_definitions["NXsample"].section_cls
+    if self.name__field:
+        self.name = self.name__field
+    #one could also copy local ids to nxidentifier for search purposes
     super(current_cls, self).normalize(archive, logger)
-    # super().normalize(archive, logger)
-    if self.sample_id__field:
-        logger.info(f"{self.sample_id__field}")
 
-        self.lab_id = self.sample_id__field
 
-    if self.lab_id is not None:
-        query = {"results.eln.lab_ids": self.lab_id}
-        search_result = search(
-            owner="all",
-            query=query,
-            pagination=MetadataPagination(page_size=1),
-            user_id=archive.metadata.main_author.user_id,
-        )
-        # Rreference to the existing composite system
-        if search_result.pagination.total > 0:
-            entry_id = search_result.data[0]["entry_id"]
-            upload_id = search_result.data[0]["upload_id"]
-            reference = f"../uploads/{upload_id}/archive/{entry_id}#data"
-            if search_result.pagination.total > 1:
-                logger.warn(
-                    f"Found {search_result.pagination.total} entries with lab_id: "
-                    f'"{self.lab_id}". Will use the first one found.'
-                )
-            if reference:
-                self = CompositeSystemReference(reference=reference)
-        else:
-            for sub_section in self.sub_sections:
-                if sub_section.__class__.__name__ == "NXsample_component":
-                    sub_section.section_def.normalize(archive, logger)
-            from nomad.datamodel.results import Results, ELN
+def normalize_nxidentifier(self, archive, logger):
+    current_cls = __section_definitions["NXsample"].section_cls
+    #super(current_cls, self).normalize(archive, logger)
+    if self.identifier__field:
+        logger.info(f"{self.identifier__field} - identifier received")
+        self.lab_id = self.identifier__field  # + "__occurrence"
+    EntityReference.normalize(self,archive,logger)
+    if not self.reference:
+        logger.info(f"{self.lab_id} could not be referenced")
+        #self.reference = "Registered NOMAD Entry not found"
+        new_archive = EntryArchive()
+        if new_archive.data is None:
+            new_archive.data=EntryData()
+        #new_archive.m_create(EntryData)
+        new_archive.data.entity=Entity()
+        new_archive.data.entity.lab_id=self.lab_id
+        new_archive.metadata=EntryMetadata()
+        if new_archive.metadata.entry_type is None:
+            new_archive.metadata.entry_type = "Entity"
+            new_archive.metadata.domain = "nexus"
+        new_archive.normalize(new_archive,logger)
+        logger.info(f"New Entry for {self.lab_id}: " + new_archive.m_to_dict())
+        new_archive.save()
 
-            if not archive.results:
-                archive.results = Results()
-            if not archive.results.eln:
-                archive.results.eln = ELN()
-            archive.results.eln.lab_ids = [self.lab_id]
+
 
     #     TODO. NXsample_component -> CompositeSystem
     #     Write a normalize function for NXsample_component
@@ -918,6 +884,7 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     "NXfabrication": normalize_nxfabrication,
     "NXsample": normalize_nxsample,
     "NXsample_component": normalize_nxsample_component,
+    "NXidentifier": normalize_nxidentifier,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
