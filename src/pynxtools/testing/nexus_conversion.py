@@ -5,6 +5,8 @@ import os
 from glob import glob
 from typing import Literal
 
+# from click.testing import CliRunner
+
 try:
     from nomad.client import parse
 
@@ -127,16 +129,13 @@ class ReaderTest:
 
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
-        if NOMAD_AVAILABLE:
-            kwargs = dict(
-                strict=True,
-                parser_name=None,
-                server_context=False,
-                username=None,
-                password=None,
-            )
-
-            parse(self.created_nexus, **kwargs)
+    # This shall be reactivated once verify_nexus works!
+    # # def test_verify_nexus(
+    #     self,
+    #     caplog_level: Literal["ERROR", "WARNING"] = "ERROR",
+    # ):
+    #     with self.caplog.at_level(caplog_level):
+    #         _ = CliRunner().invoke(verify, [str(self.created_nexus)])
 
     def check_reproducibility_of_nexus(self):
         """Reproducibility test for the generated nexus file."""
@@ -163,3 +162,16 @@ class ReaderTest:
                         f"Log files are different at line {ind}"
                         f" generated: {gen_l} \n referenced : {ref_l}"
                     )
+
+    def test_parse_nomad(self):
+        """Check if the generated nexus file can be parse by NOMAD."""
+        if NOMAD_AVAILABLE:
+            kwargs = dict(
+                strict=True,
+                parser_name=None,
+                server_context=False,
+                username=None,
+                password=None,
+            )
+
+            parse(self.created_nexus, **kwargs)
