@@ -29,87 +29,84 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     try_find_units,
     walk_elist,
     write_doc_string,
+    decode_or_not,
 )
 
 
-def decode_string(
-    string_obj: Union[np.ndarray, bytes, str], decode: bool = True
-) -> Optional[Union[str, List[str], np.ndarray, bytes]]:
+from typing import Union, Optional, Any
+import numpy as np
+
+from typing import Any, Optional
+import numpy as np
+
+from typing import Any, Optional, Union
+import numpy as np
+
+
+def decode_if_string(
+    elem: Any, encoding: str = "utf-8", decode: bool = True
+) -> Optional[Any]:
     """
-    Decodes a numpy ndarray of byte objects to a Python string or list of strings.
-    Also handles single bytes and string objects. If `decode` is False, returns the
-    initial value without decoding.
+    Decodes a numpy ndarray or list of byte objects or byte strings to strings.
+    If `decode` is False, returns the input value unchanged. Non-byte/str types
+    are returned without modification.
 
     Args:
-        string_obj: A numpy ndarray, bytes, or str that may need decoding.
+        elem: A numpy ndarray, list, bytes, or any other object.
+        encoding: The encoding scheme to use. Default is "utf-8".
         decode: A boolean flag indicating whether to perform decoding.
 
     Returns:
-        A decoded string, a list of decoded strings, or the initial value if `decode` is False.
+        A decoded string, a numpy array of decoded strings, a list of decoded strings,
+        or the input value if not decodable.
         Returns None if the input is empty or invalid.
 
     Raises:
-        ValueError: If `string_obj` is not one of the supported types or decoding fails.
+        ValueError: If decoding fails on bytes or numpy array elements.
     """
+    # Early return if decoding is disabled
     if not decode:
-        # Return the initial value without decoding
-        if not isinstance(string_obj, (np.ndarray, bytes, str)):
-            raise ValueError(
-                f"Unsupported type {type(string_obj)}. Expected np.ndarray, bytes, or str."
-            )
-        if isinstance(string_obj, np.ndarray):
-            return string_obj.tolist() if string_obj.size > 0 else None
-        return string_obj
+        return elem
 
-    if isinstance(string_obj, np.ndarray):
-        if string_obj.size == 0:
-            return None
+    # Handle numpy arrays of bytes or strings
+    if isinstance(elem, np.ndarray):
+        if elem.size == 0:
+            return elem  # Return the empty array unchanged
 
-        # Handle fixed-length strings by stripping padding
-        if string_obj.dtype.kind == "S":
-            valid_entries = [
-                (
-                    entry.decode("utf-8").rstrip("\x00")
-                    if isinstance(entry, bytes)
-                    else entry
-                )
-                for entry in string_obj
-                if isinstance(entry, (str, bytes))
-            ]
-        else:
-            valid_entries = [
-                entry for entry in string_obj if isinstance(entry, (str, bytes))
-            ]
+        if elem.dtype.kind == "S":  # Check if it's a bytes array (fixed-length strings)
+            decoded_array = np.vectorize(
+                lambda x: x.decode(encoding).rstrip("\x00")
+                if isinstance(x, bytes)
+                else x
+            )(elem)
+            return decoded_array.astype(str)  # Ensure the dtype is str
 
-        # Decode bytes to strings where necessary
-        decoded_list = []
-        for entry in valid_entries:
-            if isinstance(entry, bytes):
-                try:
-                    decoded_list.append(entry.decode("utf-8"))
-                except UnicodeDecodeError as e:
-                    raise ValueError(f"Error decoding bytes: {e}")
-            else:
-                decoded_list.append(entry)
+        # Handle mixed-type arrays
+        if elem.dtype == object:
+            decoded_array = np.vectorize(
+                lambda x: x.decode(encoding) if isinstance(x, bytes) else x
+            )(elem)
+            return decoded_array.astype(str)  # Ensure all elements are strings
 
-        # Return a scalar string if there's only one element, otherwise return the list
-        if len(decoded_list) == 1:
-            return decoded_list[0]
-        return decoded_list if decoded_list else None
+    return decode_or_not(elem, encoding, decode)
 
-    elif isinstance(string_obj, bytes):
-        try:
-            return string_obj.decode("utf-8")
-        except UnicodeDecodeError as e:
-            raise ValueError(f"Error decoding bytes: {e}")
+    # # Handle lists of bytes or strings
+    # elif isinstance(elem, list):
+    #     if not elem:
+    #         return elem  # Return an empty list unchanged
 
-    elif isinstance(string_obj, str):
-        return string_obj
+    #     decoded_list = [decode_if_string(x, encoding, decode) for x in elem]
+    #     return decoded_list
 
-    else:
-        raise ValueError(
-            f"Unsupported type {type(string_obj)}. Expected np.ndarray, bytes, or str."
-        )
+    # # Handle byte strings
+    # elif isinstance(elem, bytes):
+    #     try:
+    #         return elem.decode(encoding)
+    #     except UnicodeDecodeError as e:
+    #         raise ValueError(f"Error decoding bytes: {e}")
+
+    # # For other types, just return the input value unchanged
+    # return elem
 
 
 def get_nxdl_entry(hdf_info):
@@ -118,7 +115,7 @@ def get_nxdl_entry(hdf_info):
     while (
         isinstance(entry["hdf_node"], h5py.Dataset)
         or "NX_class" not in entry["hdf_node"].attrs.keys()
-        or decode_string(entry["hdf_node"].attrs["NX_class"]) != "NXentry"
+        or decode_if_string(entry["hdf_node"].attrs["NX_class"]) != "NXentry"
     ):
         entry = get_hdf_info_parent(entry)
         if entry["hdf_node"].name == "/":
@@ -141,7 +138,7 @@ def get_nx_class_path(hdf_info):
             get_nx_class_path(get_hdf_info_parent(hdf_info))
             + "/"
             + (
-                decode_string(hdf_node.attrs["NX_class"])
+                decode_if_string(hdf_node.attrs["NX_class"])
                 if "NX_class" in hdf_node.attrs.keys()
                 else hdf_node.name.split("/")[-1]
             )
@@ -456,9 +453,9 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     if isinstance(hdf_node, h5py.Dataset):
         logger.debug(f"===== FIELD (/{hdf_path}): {hdf_node}")
         val = (
-            str(decode_string(hdf_node[()])).split("\n")
+            str(decode_if_string(hdf_node[()])).split("\n")
             if len(hdf_node.shape) <= 1
-            else str(decode_string(hdf_node[0])).split("\n")
+            else str(decode_if_string(hdf_node[0])).split("\n")
         )
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
     else:
@@ -480,7 +477,7 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
         )
     for key, value in hdf_node.attrs.items():
         logger.debug(f"===== ATTRS (/{hdf_path}@{key})")
-        val = str(decode_string(value)).split("\n")
+        val = str(decode_if_string(value)).split("\n")
         logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
         (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc, attr=key)
         if (
@@ -503,7 +500,7 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
 
 def logger_auxiliary_signal(logger, nxdata):
     """Handle the presence of auxiliary signal"""
-    aux = decode_string(nxdata.attrs.get("auxiliary_signals"))
+    aux = decode_if_string(nxdata.attrs.get("auxiliary_signals"))
     if aux is not None:
         if isinstance(aux, str):
             aux = [aux]
@@ -525,7 +522,7 @@ def get_default_plotable(root, logger):
     # v3 from 2014
     # nxentry
     nxentry = None
-    default_nxentry_group_name = decode_string(root.attrs.get("default"))
+    default_nxentry_group_name = decode_if_string(root.attrs.get("default"))
     if default_nxentry_group_name:
         try:
             nxentry = root[default_nxentry_group_name]
@@ -541,11 +538,11 @@ def get_default_plotable(root, logger):
     # nxdata
     nxdata = None
     nxgroup = nxentry
-    default_group_name = decode_string(nxgroup.attrs.get("default"))
+    default_group_name = decode_if_string(nxgroup.attrs.get("default"))
     while default_group_name:
         try:
             nxgroup = nxgroup[default_group_name]
-            default_group_name = decode_string(nxgroup.attrs.get("default"))
+            default_group_name = decode_if_string(nxgroup.attrs.get("default"))
         except KeyError:
             pass
     if nxgroup == nxentry:
@@ -560,7 +557,7 @@ def get_default_plotable(root, logger):
     process_node(nxdata, nxdata.name, None, logger, False)
     # signal
     signal = None
-    signal_dataset_name = decode_string(nxdata.attrs.get("signal"))
+    signal_dataset_name = decode_if_string(nxdata.attrs.get("signal"))
     try:
         signal = nxdata[signal_dataset_name]
     except (TypeError, KeyError):
@@ -586,7 +583,7 @@ def entry_helper(root):
         if (
             isinstance(root[key], h5py.Group)
             and root[key].attrs.get("NX_class")
-            and decode_string(root[key].attrs["NX_class"]) == "NXentry"
+            and decode_if_string(root[key].attrs["NX_class"]) == "NXentry"
         ):
             nxentries.append(root[key])
     if len(nxentries) >= 1:
@@ -602,7 +599,7 @@ def nxdata_helper(nxentry):
         if (
             isinstance(nxentry[key], h5py.Group)
             and nxentry[key].attrs.get("NX_class")
-            and decode_string(nxentry[key].attrs["NX_class"]) == "NXdata"
+            and decode_if_string(nxentry[key].attrs["NX_class"]) == "NXdata"
         ):
             lnxdata.append(nxentry[key])
     if len(lnxdata) >= 1:
@@ -622,7 +619,7 @@ def signal_helper(nxdata):
         return signals[0]
     if len(signals) > 1:  # v2: select the one with an attribute signal="1" attribute
         for sig in signals:
-            signal_attr = decode_string(sig.attrs.get("signal"))
+            signal_attr = decode_if_string(sig.attrs.get("signal"))
             if signal_attr and isinstance(signal_attr, str) and signal_attr == "1":
                 return sig
     return None
@@ -655,7 +652,7 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
     try:
         if isinstance(ax_datasets, str):  # single axis is defined
             # explicite definition of dimension number
-            ind = decode_string(nxdata.attrs.get(ax_datasets + "_indices"))
+            ind = decode_if_string(nxdata.attrs.get(ax_datasets + "_indices"))
             if ind and ind is int:
                 if ind == a_item:
                     ax_list.append(nxdata[ax_datasets])
@@ -664,7 +661,7 @@ def get_single_or_multiple_axes(nxdata, ax_datasets, a_item, ax_list, logger):
         elif isinstance(ax_datasets, (list, np.ndarray)):  # multiple axes are listed
             # explicite definition of dimension number
             for aax in ax_datasets:
-                ind = decode_string(nxdata.attrs.get(aax + "_indices"))
+                ind = decode_if_string(nxdata.attrs.get(aax + "_indices"))
                 if ind and isinstance(ind, int):
                     if ind == a_item:
                         ax_list.append(nxdata[aax])
@@ -690,21 +687,21 @@ def axis_helper(dim, nxdata, signal, axes, logger):
     for a_item in range(dim):
         ax_list = []
         # primary axes listed in attribute axes
-        ax_datasets = decode_string(nxdata.attrs.get("axes"))
+        ax_datasets = decode_if_string(nxdata.attrs.get("axes"))
         ax_list = get_single_or_multiple_axes(
             nxdata, ax_datasets, a_item, ax_list, logger
         )
         for attr in nxdata.attrs.keys():  # check for corresponding AXISNAME_indices
             if (
                 attr.endswith("_indices")
-                and decode_string(nxdata.attrs[attr]) == a_item
+                and decode_if_string(nxdata.attrs[attr]) == a_item
                 and nxdata[attr.split("_indices")[0]] not in ax_list
             ):
                 ax_list.append(nxdata[attr.split("_indices")[0]])
         # v2  # check for ':' separated axes defined in Signal
         if not ax_list:
             try:
-                ax_datasets = decode_string(signal.attrs.get("axes")).split(":")
+                ax_datasets = decode_if_string(signal.attrs.get("axes")).split(":")
                 ax_list.append(nxdata[ax_datasets[a_item]])
             except (KeyError, AttributeError):
                 pass
