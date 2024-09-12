@@ -62,7 +62,14 @@ class ReaderTest:
     """Generic test for reader plugins."""
 
     def __init__(
-        self, nxdl, reader_name, files_or_dir, tmp_path, caplog, ref_log_path=None, **kwargs
+        self,
+        nxdl,
+        reader_name,
+        files_or_dir,
+        tmp_path,
+        caplog,
+        ref_log_path=None,
+        **kwargs,
     ) -> None:
         """Initialize the test object.
 
@@ -98,7 +105,6 @@ class ReaderTest:
         self.ref_log_path = ref_log_path
         self.kwargs = kwargs
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
-        
 
     def convert_to_nexus(
         self,
