@@ -45,13 +45,15 @@ jobs:
     - name: Generate (dev-)requirements.txt from modified pyproject.toml
       working-directory: ./nomad
       run: |
-        uv pip compile -p 3.9 --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt dependencies/nomad-dos-fingerprints/pyproject.toml dependencies/parsers/eelsdb/pyproject.toml pyproject.toml
-        uv pip compile -p 3.9 --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
+        uv pip compile --universal -p 3.11 --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
+        uv pip compile --universal -p 3.11 --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt pyproject.toml
+        uv pip compile --universal -p 3.11 --annotation-style=line --output-file=requirements-plugins.txt --unsafe-package nomad-lab -c requirements-dev.txt default_plugins.txt
 
     - name: Install NOMAD dependencies with pynxtools from current branch
       working-directory: ./nomad
       run: |
         uv pip install -r requirements.txt
         uv pip install -r requirements-dev.txt
+        uv pip install -r requirements-plugins.txt
       env:
         PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test
