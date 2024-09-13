@@ -41,7 +41,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_required_string as nexus_get_required_string,
 )
-from numpy.char import chararray
 
 logger = logging.getLogger("pynxtools")
 
@@ -583,7 +582,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
     "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
-    "NX_CHAR": (str, np.ndarray, chararray),
+    "NX_CHAR": (str, np.ndarray, np.char.chararray),
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": (float, np.ndarray, np.floating),
     "NX_INT": (int, np.ndarray, np.signedinteger),
