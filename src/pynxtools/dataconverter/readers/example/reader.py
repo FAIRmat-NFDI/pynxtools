@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#
 """An example reader implementation for the DataConverter."""
 
 import json
