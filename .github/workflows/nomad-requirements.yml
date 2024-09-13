@@ -53,7 +53,6 @@ jobs:
       working-directory: ./nomad
       run: |
         uv pip install -r requirements.txt
-        uv pip install -r requirements-dev.txt
         uv pip install -r requirements-plugins.txt
       env:
         PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test
