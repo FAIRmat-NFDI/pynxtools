@@ -8,9 +8,9 @@ on:
     branches:
       - master
     # Run workflow only when there are changes in pyproject.toml or dev-requirements.txt
-    paths:
-      - 'pyproject.toml'
-      - 'dev-requirements.txt'
+    # paths:
+    #   - 'pyproject.toml'
+    #   - 'dev-requirements.txt'
 
 env:
   UV_SYSTEM_PYTHON: true
