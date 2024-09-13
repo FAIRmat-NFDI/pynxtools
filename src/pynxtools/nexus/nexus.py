@@ -33,16 +33,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 
-from typing import Union, Optional, Any
-import numpy as np
-
-from typing import Any, Optional
-import numpy as np
-
-from typing import Any, Optional, Union
-import numpy as np
-
-
 def decode_if_string(
     elem: Any, encoding: str = "utf-8", decode: bool = True
 ) -> Optional[Any]:
