@@ -647,7 +647,7 @@ def convert_str_to_bool_safe(value):
     return None
 
 
-def is_valid_data_field(value, nxdl_type, path) -> bool:
+def is_valid_data_field(value, nxdl_type, path):
     """Checks whether a given value is valid according to what is defined in the NXDL.
 
     This function will also try to convert typical types, for example int to float,
