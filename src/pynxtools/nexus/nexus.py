@@ -90,24 +90,6 @@ def decode_if_string(
 
     return decode_or_not(elem, encoding, decode)
 
-    # # Handle lists of bytes or strings
-    # elif isinstance(elem, list):
-    #     if not elem:
-    #         return elem  # Return an empty list unchanged
-
-    #     decoded_list = [decode_if_string(x, encoding, decode) for x in elem]
-    #     return decoded_list
-
-    # # Handle byte strings
-    # elif isinstance(elem, bytes):
-    #     try:
-    #         return elem.decode(encoding)
-    #     except UnicodeDecodeError as e:
-    #         raise ValueError(f"Error decoding bytes: {e}")
-
-    # # For other types, just return the input value unchanged
-    # return elem
-
 
 def get_nxdl_entry(hdf_info):
     """Get the nxdl application definition for an HDF5 node"""
