@@ -383,7 +383,7 @@ DEBUG - classes:
 NXdata.nxdl.xml:/AXISNAME
 DEBUG - NXdata.nxdl.xml:/AXISNAME@units - REQUIRED, but undefined unit category
 DEBUG - ===== FIELD (//entry/definition): <HDF5 dataset "definition": shape (), type "|O">
-DEBUG - value: b'NXarpes' 
+DEBUG - value: NXarpes 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/definition
@@ -429,7 +429,7 @@ DEBUG - classes:
 NXentry.nxdl.xml:/duration
 DEBUG - NXentry.nxdl.xml:/duration@units [NX_TIME]
 DEBUG - ===== FIELD (//entry/end_time): <HDF5 dataset "end_time": shape (), type "|O">
-DEBUG - value: b'2018-05-01T09:22:00+02:00' 
+DEBUG - value: 2018-05-01T09:22:00+02:00 
 DEBUG - classpath: ['NXentry', 'NX_DATE_TIME']
 DEBUG - classes:
 NXentry.nxdl.xml:/end_time
@@ -439,12 +439,12 @@ DEBUG -
              Ending time of measurement
         
 DEBUG - ===== FIELD (//entry/entry_identifier): <HDF5 dataset "entry_identifier": shape (), type "|O">
-DEBUG - value: b'Run 22118' 
+DEBUG - value: Run 22118 
 DEBUG - classpath: ['NXentry']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/experiment_identifier): <HDF5 dataset "experiment_identifier": shape (), type "|O">
-DEBUG - value: b'F-20170538' 
+DEBUG - value: F-20170538 
 DEBUG - classpath: ['NXentry']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -504,7 +504,7 @@ NXdetector.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/acquisition_mode): <HDF5 dataset "acquisition_mode": shape (), type "|O">
-DEBUG - value: b'fixed' 
+DEBUG - value: fixed 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/acquisition_mode
@@ -528,7 +528,7 @@ DEBUG -
              The acquisition mode of the detector.
         
 DEBUG - ===== FIELD (//entry/instrument/analyser/amplifier_type): <HDF5 dataset "amplifier_type": shape (), type "|O">
-DEBUG - value: b'MCP' 
+DEBUG - value: MCP 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXdetector.nxdl.xml:/amplifier_type
@@ -563,7 +563,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/angles@units [NX_ANGLE]
 DEBUG - ===== FIELD (//entry/instrument/analyser/contrast_aperture): <HDF5 dataset "contrast_aperture": shape (), type "|O">
-DEBUG - value: b'Out' 
+DEBUG - value: Out 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -633,7 +633,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/detector_type): <HDF5 dataset "detector_type": shape (), type "|O">
-DEBUG - value: b'DLD' 
+DEBUG - value: DLD 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXdetector.nxdl.xml:/detector_type
@@ -643,7 +643,7 @@ DEBUG -
              Description of the detector type, DLD, Phosphor+CCD, CMOS.
         
 DEBUG - ===== FIELD (//entry/instrument/analyser/dispersion_scheme): <HDF5 dataset "dispersion_scheme": shape (), type "|O">
-DEBUG - value: b'Time of flight' 
+DEBUG - value: Time of flight 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -683,7 +683,7 @@ DEBUG -
                          dial setting of the entrance slit
                     
 DEBUG - ===== FIELD (//entry/instrument/analyser/entrance_slit_shape): <HDF5 dataset "entrance_slit_shape": shape (), type "|O">
-DEBUG - value: b'straight' 
+DEBUG - value: straight 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/entrance_slit_shape
@@ -740,7 +740,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/lens_mode): <HDF5 dataset "lens_mode": shape (), type "|O">
-DEBUG - value: b'20180430_KPEEM_M_-2.5_FoV6.2_rezAA_20ToF_focused.sav' 
+DEBUG - value: 20180430_KPEEM_M_-2.5_FoV6.2_rezAA_20ToF_focused.sav 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/lens_mode
@@ -771,7 +771,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy
 DEBUG - NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser/pass_energy@units [NX_ENERGY]
 DEBUG - ===== FIELD (//entry/instrument/analyser/projection): <HDF5 dataset "projection": shape (), type "|O">
-DEBUG - value: b'reciprocal' 
+DEBUG - value: reciprocal 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1242,7 +1242,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/type): <HDF5 dataset "type": shape (), type "|O">
-DEBUG - value: b'Hexapod' 
+DEBUG - value: Hexapod 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1331,7 +1331,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: b'HEXTOF @ PG-2, Flash' 
+DEBUG - value: HEXTOF @ PG-2, Flash 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NX_CHAR']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/name
@@ -1480,7 +1480,7 @@ DEBUG - classes:
 NXsource.nxdl.xml:/frequency
 DEBUG - NXsource.nxdl.xml:/frequency@units [NX_FREQUENCY]
 DEBUG - ===== FIELD (//entry/instrument/source/mode): <HDF5 dataset "mode": shape (), type "|O">
-DEBUG - value: b'Burst' 
+DEBUG - value: Burst 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXsource.nxdl.xml:/mode
@@ -1493,7 +1493,7 @@ DEBUG -
              source operating mode
         
 DEBUG - ===== FIELD (//entry/instrument/source/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: b'FLASH' 
+DEBUG - value: FLASH 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/name
@@ -1521,7 +1521,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/probe): <HDF5 dataset "probe": shape (), type "|O">
-DEBUG - value: b'x-ray' 
+DEBUG - value: x-ray 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe
@@ -1556,7 +1556,7 @@ DEBUG -
              Is the synchrotron operating in top_up mode?
         
 DEBUG - ===== FIELD (//entry/instrument/source/type): <HDF5 dataset "type": shape (), type "|O">
-DEBUG - value: b'Free Electron Laser' 
+DEBUG - value: Free Electron Laser 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type
@@ -1678,7 +1678,7 @@ DEBUG - classes:
 NXsource.nxdl.xml:/frequency
 DEBUG - NXsource.nxdl.xml:/frequency@units [NX_FREQUENCY]
 DEBUG - ===== FIELD (//entry/instrument/source_pump/mode): <HDF5 dataset "mode": shape (), type "|O">
-DEBUG - value: b'Burst' 
+DEBUG - value: Burst 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXsource.nxdl.xml:/mode
@@ -1691,7 +1691,7 @@ DEBUG -
              source operating mode
         
 DEBUG - ===== FIELD (//entry/instrument/source_pump/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: b'User Laser @ FLASH' 
+DEBUG - value: User Laser @ FLASH 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/name
@@ -1719,7 +1719,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/probe): <HDF5 dataset "probe": shape (), type "|O">
-DEBUG - value: b'NIR' 
+DEBUG - value: NIR 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/probe
@@ -1754,7 +1754,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/type): <HDF5 dataset "type": shape (), type "|O">
-DEBUG - value: b'OPCPA' 
+DEBUG - value: OPCPA 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type
@@ -1801,7 +1801,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/run_cycle): <HDF5 dataset "run_cycle": shape (), type "|O">
-DEBUG - value: b'2018 User Run Block 2' 
+DEBUG - value: 2018 User Run Block 2 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXentry.nxdl.xml:/run_cycle
@@ -1854,27 +1854,27 @@ DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/chem_id_cas): <HDF5 dataset "chem_id_cas": shape (), type "|O">
-DEBUG - value: b'12067-46-8' 
+DEBUG - value: 12067-46-8 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/chemical_name): <HDF5 dataset "chemical_name": shape (), type "|O">
-DEBUG - value: b'Tungsten diselenide' 
+DEBUG - value: Tungsten diselenide 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/growth_method): <HDF5 dataset "growth_method": shape (), type "|O">
-DEBUG - value: b'Chemical Vapor Deposition' 
+DEBUG - value: Chemical Vapor Deposition 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/layer): <HDF5 dataset "layer": shape (), type "|O">
-DEBUG - value: b'bulk' 
+DEBUG - value: bulk 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/name): <HDF5 dataset "name": shape (), type "|O">
-DEBUG - value: b'WSe2' 
+DEBUG - value: WSe2 
 DEBUG - classpath: ['NXentry', 'NXsample', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE/name
@@ -1889,7 +1889,7 @@ DEBUG -
              Descriptive name of sample
         
 DEBUG - ===== FIELD (//entry/sample/preparation_method): <HDF5 dataset "preparation_method": shape (), type "|O">
-DEBUG - value: b'in-vacuum cleave' 
+DEBUG - value: in-vacuum cleave 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1915,12 +1915,12 @@ DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/state): <HDF5 dataset "state": shape (), type "|O">
-DEBUG - value: b'monocrystalline solid' 
+DEBUG - value: monocrystalline solid 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/surface_orientation): <HDF5 dataset "surface_orientation": shape (), type "|O">
-DEBUG - value: b'0001' 
+DEBUG - value: 0001 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
@@ -1962,12 +1962,12 @@ DEBUG - classes:
 NXsample.nxdl.xml:/thickness
 DEBUG - NXsample.nxdl.xml:/thickness@units [NX_LENGTH]
 DEBUG - ===== FIELD (//entry/sample/vendor): <HDF5 dataset "vendor": shape (), type "|O">
-DEBUG - value: b'HQ Graphene' 
+DEBUG - value: HQ Graphene 
 DEBUG - classpath: ['NXentry', 'NXsample']
 DEBUG - NOT IN SCHEMA
 DEBUG - 
 DEBUG - ===== FIELD (//entry/start_time): <HDF5 dataset "start_time": shape (), type "|O">
-DEBUG - value: b'2018-05-01T07:22:00+02:00' 
+DEBUG - value: 2018-05-01T07:22:00+02:00 
 DEBUG - classpath: ['NXentry', 'NX_DATE_TIME']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/start_time
@@ -1980,7 +1980,7 @@ DEBUG -
              Starting time of measurement
         
 DEBUG - ===== FIELD (//entry/title): <HDF5 dataset "title": shape (), type "|O">
-DEBUG - value: b'Excited-state dynamics of WSe2 in the Valence Band and Core-Levels' 
+DEBUG - value: Excited-state dynamics of WSe2 in the Valence Band and Core-Levels 
 DEBUG - classpath: ['NXentry', 'NX_CHAR']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/title
