@@ -8,9 +8,9 @@ on:
     branches:
       - master
     # Run workflow only when there are changes in pyproject.toml or dev-requirements.txt
-    paths:
-      - 'pyproject.toml'
-      - 'dev-requirements.txt'
+    # paths:
+    #   - 'pyproject.toml'
+    #   - 'dev-requirements.txt'
 
 env:
   UV_SYSTEM_PYTHON: true
@@ -31,12 +31,11 @@ jobs:
     - name: Replace pynxtools dependency in NOMAD pyproject.toml
       working-directory: ./nomad
       run: |
-        sed -i 's|pynxtools\[convert\]==[0-9]\+\(\.[0-9]\+\)\{0,2\}|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }} |' pyproject.toml
-
+        sed -i 's|pynxtools\[convert\]==[0-9]\+\(\.[0-9]\+\)\+\([0-9]\)|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }} |' default_plugins.txt
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.11'
 
     - name: Install uv
       run: |
@@ -45,13 +44,13 @@ jobs:
     - name: Generate (dev-)requirements.txt from modified pyproject.toml
       working-directory: ./nomad
       run: |
-        uv pip compile -p 3.9 --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt dependencies/nomad-dos-fingerprints/pyproject.toml dependencies/parsers/eelsdb/pyproject.toml pyproject.toml
-        uv pip compile -p 3.9 --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
+        uv pip compile --universal -p 3.11 --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt pyproject.toml
+        uv pip compile --universal -p 3.11 --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
+        uv pip compile --universal -p 3.11 --annotation-style=line --output-file=requirements-plugins.txt --unsafe-package nomad-lab -c requirements-dev.txt default_plugins.txt
 
     - name: Install NOMAD dependencies with pynxtools from current branch
       working-directory: ./nomad
       run: |
-        uv pip install -r requirements.txt
-        uv pip install -r requirements-dev.txt
+        uv pip install -r requirements-plugins.txt
       env:
         PYTHONPATH: ""  # Ensure no pre-installed packages interfere with the test
