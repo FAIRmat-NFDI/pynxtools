@@ -648,6 +648,8 @@ def convert_str_to_bool_safe(value):
 
 
 def is_valid_data_field(value, nxdl_type, path):
+    # todo: Check this funciton and wtire test for it. It seems the funciton is not
+    # working as expected.
     """Checks whether a given value is valid according to what is defined in the NXDL.
 
     This function will also try to convert typical types, for example int to float,
