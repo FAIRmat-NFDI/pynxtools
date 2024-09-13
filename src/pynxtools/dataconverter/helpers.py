@@ -582,7 +582,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
     "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
-    "NX_CHAR": (str, np.ndarray, np.chararray),
+    "NX_CHAR": (str, np.ndarray, np.char.chararray),
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": (float, np.ndarray, np.floating),
     "NX_INT": (int, np.ndarray, np.signedinteger),
@@ -647,7 +647,9 @@ def convert_str_to_bool_safe(value):
     return None
 
 
-def is_valid_data_field(value, nxdl_type, path) -> bool:
+def is_valid_data_field(value, nxdl_type, path):
+    # todo: Check this funciton and wtire test for it. It seems the funciton is not
+    # working as expected.
     """Checks whether a given value is valid according to what is defined in the NXDL.
 
     This function will also try to convert typical types, for example int to float,
