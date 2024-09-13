@@ -34,42 +34,47 @@ from typing import Any
 from pynxtools.nomad.parser import NexusParser
 from pynxtools.nomad.schema import nexus_metainfo_package
 
+__REPLACEMENT_FOR_NX = "BS"
+
 
 @pytest.mark.parametrize(
     "path,value",
     [
         pytest.param("name", "nexus"),
         pytest.param("NXobject.name", "NXobject"),
-        pytest.param("NXentry.nx_kind", "group"),
-        pytest.param("NXdetector.real_time__field", "*"),
-        pytest.param("NXentry.DATA.nx_optional", True),
-        pytest.param("NXentry.DATA.nx_kind", "group"),
-        pytest.param("NXentry.DATA.nx_optional", True),
-        pytest.param("NXdetector.real_time__field.name", "real_time__field"),
-        pytest.param("NXdetector.real_time__field.nx_type", "NX_NUMBER"),
-        pytest.param("NXdetector.real_time__field.nx_units", "NX_TIME"),
-        pytest.param("NXarpes.ENTRY.DATA.nx_optional", False),
-        pytest.param("NXentry.nx_category", "base"),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.nx_kind", "group"),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}detector.real_time__field", "*"),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_optional", True),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_kind", "group"),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_optional", True),
         pytest.param(
-            "NXdispersion_table.refractive_index__field.nx_type", "NX_COMPLEX"
+            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.name", "real_time__field"
         ),
         pytest.param(
-            "NXdispersive_material.ENTRY.dispersion_x."
+            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.nx_type", "NX_NUMBER"
+        ),
+        pytest.param(
+            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.nx_units", "NX_TIME"
+        ),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}arpes.ENTRY.DATA.nx_optional", False),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.nx_category", "base"),
+        pytest.param(
+            f"{__REPLACEMENT_FOR_NX}dispersion_table.refractive_index__field.nx_type",
+            "NX_COMPLEX",
+        ),
+        pytest.param(
+            f"{__REPLACEMENT_FOR_NX}dispersive_material.ENTRY.dispersion_x."
             "DISPERSION_TABLE.refractive_index__field.nx_type",
             "NX_COMPLEX",
         ),
-        pytest.param("NXapm.nx_category", "application"),
+        pytest.param(f"{__REPLACEMENT_FOR_NX}apm.nx_category", "application"),
     ],
 )
 def test_assert_nexus_metainfo(path: str, value: Any):
     """
     Test the existence of nexus metainfo
 
-
     pytest.param('NXdispersive_material.inner_section_definitions[0].sub_sections[1].sub_section.inner_section_definitions[0].quantities[4].more["nx_type"]
-
-
-
     """
     current = nexus_metainfo_package
     for name in path.split("."):
@@ -120,12 +125,13 @@ def test_nexus_example():
 
     example_data = "src/pynxtools/data/201805_WSe2_arpes.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
-    assert archive.nexus.NXarpes.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
+    arpes_obj = getattr(archive.nexus, f"{__REPLACEMENT_FOR_NX}arpes")
+
+    assert arpes_obj.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
         "3.27e-10*millibar"
     )
 
-    instrument = archive.nexus.NXarpes.ENTRY[0].INSTRUMENT[0]
-
+    instrument = arpes_obj.ENTRY[0].INSTRUMENT[0]
     assert instrument.nx_name == "instrument"
     assert instrument.monochromator.energy__field == ureg.Quantity(
         "36.49699020385742*electron_volt"
@@ -139,8 +145,7 @@ def test_nexus_example():
     assert instrument.SOURCE[0].mode__field is None
     # wrong inherited ENUM for extended field - 'Free Electron Laser'
     assert instrument.SOURCE[0].type__field is None
-
-    data = archive.nexus.NXarpes.ENTRY[0].DATA[0]
+    data = arpes_obj.ENTRY[0].DATA[0]
     assert len(data.AXISNAME__field) == 3
     # there is still a bug in the variadic name resolution, so skip these
     # assert data.delays__field is not None

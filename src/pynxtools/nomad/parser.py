@@ -40,13 +40,34 @@ except ImportError as exc:
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 
+__REPLACEMENT_FOR_NX = "BS"
+__REPLACEMENT_LEN = len(__REPLACEMENT_FOR_NX)
+
+
+def _rename_nx_to_nomad(name: str) -> Optional[str]:
+    """
+    Rename the NXDL name to NOMAD.
+    For example: NXdata -> BSdata,
+    except NXobject -> NXobject
+    """
+    if name == "NXobject":
+        return name
+    if name is not None:
+        if name.startswith("NX"):
+            return name.replace("NX", __REPLACEMENT_FOR_NX)
+    return name
+
 
 def _to_group_name(nx_node: ET.Element):
     """
     Normalise the given group name
     """
     # assuming always upper() is incorrect, e.g. NXem_msr is a specific one not EM_MSR!
-    return nx_node.attrib.get("name", nx_node.attrib["type"][2:].upper())
+    grp_nm = nx_node.attrib.get(
+        "name", nx_node.attrib["type"][__REPLACEMENT_LEN:].upper()
+    )
+
+    return grp_nm
 
 
 # noinspection SpellCheckingInspection
@@ -203,7 +224,6 @@ class NexusParser(MatchingParser):
                                 target_name=attr_name,
                                 exc_info=exc,
                             )
-
                         if parent_field_name in current.__dict__:
                             quantity = current.__dict__[parent_field_name]
                             if isinstance(quantity, dict):
@@ -328,7 +348,8 @@ class NexusParser(MatchingParser):
 
         hdf_path: str = hdf_info["hdf_path"]
         hdf_node = hdf_info["hdf_node"]
-
+        if nx_def is not None:
+            nx_def = _rename_nx_to_nomad(nx_def)
         if nx_path is None:
             return
 

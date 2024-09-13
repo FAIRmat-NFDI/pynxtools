@@ -16,19 +16,31 @@
 # limitations under the License.
 #
 
+import json
 import os
 import os.path
+import pickle
 import re
 import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
 try:
+    from nomad import utils
     from nomad.datamodel import EntryArchive
+    from nomad.datamodel.metainfo.basesections import (
+        BaseSection,
+        Component,
+        CompositeSystem,
+        Entity,
+        EntityReference,
+        Instrument,
+    )
+    from nomad.datamodel.metainfo.eln import BasicEln
     from nomad.metainfo import (
         Attribute,
         Bytes,
@@ -59,7 +71,9 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __rename_nx_to_nomad
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -78,10 +92,29 @@ __section_definitions: Dict[str, Section] = dict()
 
 __logger = get_logger(__name__)
 
+__BASESECTIONS_MAP: Dict[str, Any] = {
+    "BSfabrication": [Instrument],
+    "BSsample": [CompositeSystem],
+    "BSsample_component": [Component],
+    "BSidentifier": [EntityReference],
+    # "BSobject": BaseSection,
+}
+
+
 VALIDATE = False
 
 __XML_PARENT_MAP: Dict[ET.Element, ET.Element]
-__NX_DOC_BASE = "https://manual.nexusformat.org/classes"
+__NX_DOC_BASES: Dict[str, str] = {
+    "https://github.com/nexusformat/definitions.git": "https://manual.nexusformat.org/classes",
+    "https://github.com/FAIRmat-NFDI/nexus_definitions.git": "https://fairmat-nfdi.github.io/nexus_definitions/classes",
+}
+
+__PACKAGE_NAME = "nexus"
+__GROUPING_NAME = "NeXus"
+
+from nomad import utils
+
+logger_ = utils.get_logger(__name__)
 
 
 def get_nx_type(nx_type: str) -> Optional[Datatype]:
@@ -241,9 +274,14 @@ def __get_documentation_url(
         if xml_node is None:
             break
 
+    definitions_url = get_definitions_url()
+
+    doc_base = __NX_DOC_BASES.get(
+        definitions_url, "https://manual.nexusformat.org/classes"
+    )
     nx_package = xml_parent.get("nxdl_base").split("/")[-1]
     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    return f"{__NX_DOC_BASE}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
+    return f"{doc_base}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
 
 
 def __to_section(name: str, **kwargs) -> Section:
@@ -254,13 +292,15 @@ def __to_section(name: str, **kwargs) -> Section:
     This allows to access the metainfo section even before it is generated from the base
     class nexus definition.
     """
+
+    # name = __rename_nx_to_nomad(name)
+
     if name in __section_definitions:
         section = __section_definitions[name]
         section.more.update(**kwargs)
         return section
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
-
     __section_definitions[name] = section
 
     return section
@@ -508,7 +548,7 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         xml_attrs = group.attrib
 
         assert "type" in xml_attrs, "Expecting type to be present"
-        nx_type = xml_attrs["type"]
+        nx_type = __rename_nx_to_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type)
         group_section = Section(validate=VALIDATE, nx_kind="group", name=nx_name)
@@ -516,7 +556,9 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         __attach_base_section(group_section, root_section, __to_section(nx_type))
         __add_common_properties(group, group_section)
 
-        nx_name = xml_attrs.get("name", nx_type.replace("NX", "").upper())
+        nx_name = xml_attrs.get(
+            "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
+        )
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind="group",
@@ -562,13 +604,18 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
+    nx_name = __rename_nx_to_nomad(nx_name)
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
 
+    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
+
     if "extends" in xml_attrs:
-        base_section = __to_section(xml_attrs["extends"])
-        class_section.base_sections = [base_section]
+        nx_base_sec = __to_section(__rename_nx_to_nomad(xml_attrs["extends"]))
+        class_section.base_sections = [nx_base_sec] + [
+            cls.m_def for cls in nomad_base_sec_cls
+        ]
 
     __add_common_properties(xml_node, class_section)
 
@@ -678,7 +725,7 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
     Creates a metainfo package from the given nexus directory. Will generate the
     respective metainfo definitions from all the nxdl files in that directory.
     """
-    package = Package(name="nexus")
+    package = Package(name=__PACKAGE_NAME)
 
     folder_list = ("base_classes", "contributed_definitions", "applications")
     paths = [
@@ -690,7 +737,6 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
         section = __add_section_from_nxdl(nxdl_file)
         if section is not None:
             sections.append(section)
-
     sections.sort(key=lambda x: x.name)
 
     for section in sections:
@@ -704,9 +750,6 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
 
 
 nexus_metainfo_package: Optional[Package] = None  # pylint: disable=C0103
-
-import pickle
-import traceback
 
 
 def save_nexus_schema(suf):
@@ -736,7 +779,7 @@ def init_nexus_metainfo():
 
     # We take the application definitions and create a common parent section that allows
     # to include nexus in an EntryArchive.
-    nexus_section = Section(validate=VALIDATE, name="NeXus")
+    nexus_section = Section(validate=VALIDATE, name=__GROUPING_NAME)
 
     # try:
     #     load_nexus_schema('')
@@ -746,7 +789,6 @@ def init_nexus_metainfo():
     #         save_nexus_schema('')
     #     except Exception:
     #         pass
-
     nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
 
     EntryArchive.nexus = SubSection(name="nexus", section_def=nexus_section)
@@ -783,3 +825,90 @@ def init_nexus_metainfo():
 
 
 init_nexus_metainfo()
+
+
+def normalize_BSfabrication(self, archive, logger):
+    """Normalizer for BSfabrication section."""
+    current_cls = __section_definitions["BSfabrication"].section_cls
+    super(current_cls, self).normalize(archive, logger)
+    self.lab_id = "Hello"
+
+
+def normalize_BSsample_component(self, archive, logger):
+    """Normalizer for BSsample_component section."""
+    current_cls = __section_definitions["BSsample_component"].section_cls
+    if self.name__field:
+        self.name = self.name__field
+    if self.mass__field:
+        self.mass = self.mass__field
+    # we may want to add normalisation for mass_fraction (calculating from components)
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_BSsample(self, archive, logger):
+    """Normalizer for BSsample section."""
+    current_cls = __section_definitions["BSsample"].section_cls
+    if self.name__field:
+        self.name = self.name__field
+    # one could also copy local ids to BSidentifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_BSidentifier(self, archive, logger):
+    """Normalizer for BSidentifier section."""
+
+    def create_Entity(lab_id, archive, f_name):
+        entity = BasicEln()
+        entity.lab_id = lab_id
+        entity.entity = Entity()
+        entity.entity.lab_id = lab_id
+
+        with archive.m_context.raw_file(f_name, "w") as f_obj:
+            json.dump(
+                {"data": entity.m_to_dict(with_meta=True, include_derived=True)},
+                f_obj,
+                indent=4,
+            )
+        archive.m_context.process_updated_raw_file(f_name)
+
+    def get_entry_reference(archive, f_name):
+        """Returns a reference to data from entry."""
+        from nomad.utils import hash
+
+        upload_id = archive.metadata.upload_id
+        entry_id = hash(upload_id, f_name)
+
+        return f"/entries/{entry_id}/archive#/data"
+
+    current_cls = __section_definitions["BSidentifier"].section_cls
+    # super(current_cls, self).normalize(archive, logger)
+    if self.identifier__field:
+        logger.info(f"{self.identifier__field} - identifier received")
+        self.lab_id = self.identifier__field  # + "__occurrence"
+    EntityReference.normalize(self, archive, logger)
+    if not self.reference:
+        logger.info(f"{self.lab_id} to be created")
+
+        f_name = f"{current_cls.__name__}_{self.lab_id}.archive.json"
+        create_Entity(self.lab_id, archive, f_name)
+        self.reference = get_entry_reference(archive, f_name)
+        logger.info(f"{self.reference} - referenced directly")
+
+
+__NORMALIZER_MAP: Dict[str, Any] = {
+    "BSfabrication": normalize_BSfabrication,
+    "BSsample": normalize_BSsample,
+    "BSsample_component": normalize_BSsample_component,
+    "BSidentifier": normalize_BSidentifier,
+}
+
+# Handling nomad BaseSection and other inherited Section from BaseSection
+for nx_name, section in __section_definitions.items():
+    if nx_name == "NXobject":
+        continue
+
+    normalize_func = __NORMALIZER_MAP.get(nx_name)
+
+    # Append the normalize method from a function
+    if normalize_func:
+        section.section_cls.normalize = normalize_func
