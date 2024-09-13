@@ -4,9 +4,9 @@ anytree==2.12.1
     # via pynxtools (pyproject.toml)
 ase==3.23.0
     # via pynxtools (pyproject.toml)
-babel==2.15.0
+babel==2.16.0
     # via mkdocs-material
-certifi==2024.7.4
+certifi==2024.8.30
     # via requests
 cfgv==3.4.0
     # via pre-commit
@@ -22,17 +22,15 @@ click-default-group==1.2.4
     # via pynxtools (pyproject.toml)
 colorama==0.4.6
     # via mkdocs-material
-contourpy==1.2.1
+contourpy==1.3.0
     # via matplotlib
-coverage==7.5.4
+coverage==7.6.1
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
 distlib==0.3.8
     # via virtualenv
-exceptiongroup==1.2.1
-    # via pytest
-filelock==3.15.4
+filelock==3.16.0
     # via virtualenv
 fonttools==4.53.1
     # via matplotlib
@@ -40,11 +38,11 @@ ghp-import==2.1.0
     # via mkdocs
 h5py==3.11.0
     # via pynxtools (pyproject.toml)
-identify==2.5.36
+identify==2.6.0
     # via pre-commit
-idna==3.7
+idna==3.8
     # via requests
-importlib-metadata==8.0.0
+importlib-metadata==8.5.0
     # via pynxtools (pyproject.toml)
 iniconfig==2.0.0
     # via pytest
@@ -53,28 +51,31 @@ jinja2==3.1.4
     #   mkdocs
     #   mkdocs-macros-plugin
     #   mkdocs-material
-kiwisolver==1.4.5
+kiwisolver==1.4.7
     # via matplotlib
-lxml==5.2.2
+lxml==5.3.0
     # via pynxtools (pyproject.toml)
-markdown==3.6
+markdown==3.7
     # via
+    #   markdown-include
     #   mkdocs
     #   mkdocs-click
     #   mkdocs-material
     #   pymdown-extensions
+markdown-include==0.8.1
+    # via pynxtools (pyproject.toml)
 markupsafe==2.1.5
     # via
     #   jinja2
     #   mkdocs
-matplotlib==3.9.1
+matplotlib==3.9.2
     # via ase
 mergedeep==1.3.4
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs
     #   mkdocs-get-deps
-mkdocs==1.6.0
+mkdocs==1.6.1
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs-macros-plugin
@@ -85,19 +86,19 @@ mkdocs-get-deps==0.2.0
     # via mkdocs
 mkdocs-macros-plugin==1.0.5
     # via pynxtools (pyproject.toml)
-mkdocs-material==9.5.28
+mkdocs-material==9.5.34
     # via pynxtools (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs-material
-mypy==1.10.1
+mypy==1.11.2
     # via pynxtools (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
 nodeenv==1.9.1
     # via pre-commit
-numpy==2.0.0
+numpy==2.1.1
     # via
     #   pynxtools (pyproject.toml)
     #   ase
@@ -113,7 +114,7 @@ packaging==24.1
     #   mkdocs
     #   pytest
     #   xarray
-paginate==0.5.6
+paginate==0.5.7
     # via mkdocs-material
 pandas==2.2.2
     # via
@@ -123,21 +124,21 @@ pathspec==0.12.1
     # via mkdocs
 pillow==10.4.0
     # via matplotlib
-platformdirs==4.2.2
+platformdirs==4.3.2
     # via
     #   mkdocs-get-deps
     #   virtualenv
 pluggy==1.5.0
     # via pytest
-pre-commit==3.7.1
+pre-commit==3.8.0
     # via pynxtools (pyproject.toml)
 pygments==2.18.0
     # via mkdocs-material
-pymdown-extensions==10.8.1
+pymdown-extensions==10.9
     # via mkdocs-material
-pyparsing==3.1.2
+pyparsing==3.1.4
     # via matplotlib
-pytest==8.2.2
+pytest==8.3.3
     # via
     #   pynxtools (pyproject.toml)
     #   pytest-cov
@@ -152,9 +153,9 @@ python-dateutil==2.9.0.post0
     #   matplotlib
     #   mkdocs-macros-plugin
     #   pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   pynxtools (pyproject.toml)
     #   mkdocs
@@ -165,48 +166,43 @@ pyyaml==6.0.1
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2024.5.15
+regex==2024.9.11
     # via mkdocs-material
 requests==2.32.3
     # via mkdocs-material
-ruff==0.4.8
+ruff==0.5.5
     # via pynxtools (pyproject.toml)
-scipy==1.14.0
+scipy==1.14.1
     # via ase
 six==1.16.0
     # via
     #   anytree
     #   python-dateutil
-structlog==24.2.0
+structlog==24.4.0
     # via pynxtools (pyproject.toml)
 termcolor==2.4.0
     # via mkdocs-macros-plugin
-tomli==2.0.1
-    # via
-    #   coverage
-    #   mypy
-    #   pytest
-types-pytz==2024.1.0.20240417
+types-pytz==2024.2.0.20240913
     # via pynxtools (pyproject.toml)
-types-pyyaml==6.0.12.20240311
+types-pyyaml==6.0.12.20240808
     # via pynxtools (pyproject.toml)
-types-requests==2.32.0.20240622
+types-requests==2.32.0.20240907
     # via pynxtools (pyproject.toml)
 typing-extensions==4.12.2
     # via mypy
 tzdata==2024.1
     # via pandas
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   requests
     #   types-requests
-uv==0.2.21
+uv==0.4.9
     # via pynxtools (pyproject.toml)
-virtualenv==20.26.3
+virtualenv==20.26.4
     # via pre-commit
-watchdog==4.0.1
+watchdog==5.0.2
     # via mkdocs
-xarray==2024.6.0
+xarray==2024.9.0
     # via pynxtools (pyproject.toml)
-zipp==3.19.2
+zipp==3.20.1
     # via importlib-metadata
