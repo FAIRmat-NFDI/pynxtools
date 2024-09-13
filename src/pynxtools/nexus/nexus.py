@@ -6,7 +6,7 @@ import os
 import sys
 from functools import lru_cache
 
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Any
 
 import click
 import h5py
