@@ -603,6 +603,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
     ),  # > 0 is checked in is_valid_data_field()
     "NX_COMPLEX": (complex, np.ndarray, np.cdouble, np.csingle),
     "NXDL_TYPE_UNAVAILABLE": (str,),  # Defaults to a string if a type is not provided.
+    "NX_CHAR_OR_NUMBER": (str, int, float, np.ndarray, np.char.chararray),
 }
 
 
