@@ -1,0 +1,55 @@
+name: Version Check
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .[dev]
+
+    # Check if the CITATION.cff file is valid
+    - name: Validate CITATION.cff
+      run: |
+        cffconvert --validate
+    - name: Package version
+      id: package_version
+      run: |
+        PACKAGE_VERSION=$(python -c "import pynxtools; print(pynxtools.__version__)")
+        echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+        echo "Version from __init__.py: $PACKAGE_VERSION"
+
+    - name: Citation version
+      id: citation_version
+      run: |
+        # Parse the version from the CITATION.cff file)
+        CITATION_VERSION=$(grep '^version:' CITATION.cff | cut -d' ' -f2)
+        echo "CITATION_VERSION=$CITATION_VERSION" >> $GITHUB_ENV
+        echo "Version from CITATION.cff: $CITATION_VERSION"
+
+    - name: Compare versions
+      run: |
+        if [ "$PACKAGE_VERSION" != "$CITATION_VERSION" ]; then
+          echo "Version mismatch: package version is $PACKAGE_VERSION, CITATION.cff version is $CITATION_VERSION"
+          exit 1
+        fi
+        echo "All versions match: $GIT_TAG_VERSION"
+
