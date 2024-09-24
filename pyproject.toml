@@ -35,7 +35,6 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
-    "cffconvert",
 ]
 
 [project.urls]
@@ -63,6 +62,7 @@ dev = [
     "types-requests",
     "uv",
     "pre-commit",
+    "cffconvert",
 ]
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd,ellips,raman]",
