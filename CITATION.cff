@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: TODO
+title: A converter plugin of NOMAD to convert NeXus data format to NOMAD metainfo
 message:
   If you use this software, please cite it using the
   metadata from this file.
@@ -63,11 +63,24 @@ add contact:
 repository-code: 'https://github.com/FAIRmat-NFDI/pynxtools'
 # url: Not available yet
 abstract:
-  TODO
 
-  This project is a part of the FAIRmat project (project id 460197019)
-  funded by the Deutsche Forschungsgemeinschaft (DFG, German Research
-  Foundation)(https://gepris.dfg.de/gepris/projekt/460197019?language=en).
+  pynxools is a python library that provides core functionalities for converting experimental
+  data, if the experiment specific reader plugin (e.g. pynxtools-stm for Scanning Tunneling
+  Microscopy, pynxtools-em for for Electron Microscopy) is integrated with, into NeXus-compliant
+  HDF5 file following NeXus application definition
+  (https://manual.nexusformat.org/classes/applications/index.html). During the data
+  conversion process it performs data verification (e.g. expected type of data) to ensure
+  compliance in accordance with NeXus application definition. In addition to its standalone
+  capabilities, pynxtools offers an interface for developing custom reader plugins to
+  convert experimental raw data into structured HDF5 formats. The library is also integrated
+  with the NOMAD platform, a distributed web-based system for managing materials science data,
+  allowing users to convert experimental data directly into the NOMAD metainfo format. The
+  resulting HDF5 files are parsed and stored in the NOMAD central database, ensuring that
+  the data remains findable, accessible, interoperable, and reusable (FAIR).
+
+  The work is a part of the FAIRmat project (project id 460197019) funded by the Deutsche
+  Forschungsgemeinschaft (DFG, German Research Foundation)
+  (https://gepris.dfg.de/gepris/projekt/460197019?language=en).
 
 
 license: Apache-2.0
