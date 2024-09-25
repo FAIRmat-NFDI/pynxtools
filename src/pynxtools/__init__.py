@@ -25,7 +25,6 @@ from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
 
 LOGGER_LEVELS_TO_HIGHLIGHT = (logging.WARNING, logging.ERROR)
-__version__ = "0.7.2"
 
 
 class CustomFormatter(logging.Formatter):
