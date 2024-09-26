@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: A converter plugin of NOMAD to convert NeXus data format to NOMAD metainfo
+title: A Python Library for NeXus-Compliant Experimental Data Conversion and Integration with NOMAD Platform
 message:
   If you use this software, please cite it using the
   metadata from this file.
@@ -36,6 +36,9 @@ authors:
   - given-names: Laurenz
     family-names: Rettig
     orcid: 'https://orcid.org/0000-0002-0725-6696'
+  - given-names: Ron
+    family-names: Hildebrandt
+    orcid: https://orcid.org/0000-0001-6932-604X
   - given-names: Lev
     family-names: Ginzburg
     orcid: 'https://orcid.org/0000-0001-8929-1040'
@@ -48,17 +51,13 @@ authors:
   - given-names: Theodore
     family-names: Chang
     orcid: 'https://orcid.org/0000-0002-4911-0230'
+  - given-names: Sabine
+    family-names: Maier
+    orcid: 'https://orcid.org/0000-0002-6403-9022'
+  - given-names: Heiko B.
+    family-names: Weber
+    orcid: 'https://orcid.org/0000-0002-6403-9022'
 
-
-add contact:
-    Ron,
-
-
-# NOTE: After publishing this software in zenodo, replace add DOI and URL
-# Each indivisual version has a own doi, but DOI should be the all version
-# doi that will always points to the latest version
-# of the release. Similarly, zenodo will provide single URL for the published
-# software.
 # doi: Not available yet
 repository-code: 'https://github.com/FAIRmat-NFDI/pynxtools'
 # url: Not available yet
