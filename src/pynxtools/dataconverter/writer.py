@@ -19,6 +19,7 @@
 
 # pylint: disable=R0912
 
+import io
 import copy
 import logging
 import xml.etree.ElementTree as ET
@@ -120,6 +121,8 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, docs):
     - Internal links
     - External links
     - compression label"""
+
+    # print(data, grp, entry_name, output_path, path, docs)
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
@@ -256,28 +259,17 @@ class Writer:
     def __nxdl_docs(self, path: str = "/") -> Optional[str]:
         """Get the NXDL docs for a path in the data."""
 
-        def rst_to_html(rst_text: str) -> str:
-            """
-            Convert reStructuredText to HTML using Docutils.
-
-            Args:
-                rst_text (str): The input RST text to be converted.
-
-            Returns:
-                str: The resulting HTML content.
-            """
-            return publish_string(rst_text, writer_name="html").decode("utf-8")
-
         def extract_and_format_docs(elem: ET.Element) -> str:
             """Get the docstring for a given element in the NDXL tree."""
             docs_elements = elem.findall(f"{self.nxs_namespace}doc")
             if docs_elements:
                 docs = docs_elements[0].text
                 if self.docs_format != "default":
-                    docs = publish_string(docs, writer_name=self.docs_format).decode(
-                        "utf-8"
-                    )
-                print(docs.strip().replace("\\n", "\n"))
+                    docs = publish_string(
+                        docs,
+                        writer_name=self.docs_format,
+                        settings_overrides={"warning_stream": io.StringIO()},
+                    ).decode("utf-8")
                 return docs.strip().replace("\\n", "\n")
             return ""
 
@@ -417,7 +409,7 @@ class Writer:
                     dataset.attrs[entry_name[1:]] = data
                     if docs:
                         # Write docs for attributes like <attr>__docs
-                        dataset.attrs[f"{entry_name[1:]}__docs"] = docs
+                        dataset.attrs[f"{entry_name[1:]}_docs"] = docs
             except Exception as exc:
                 raise IOError(
                     f"Unknown error occured writing the path: {path} "
