@@ -593,7 +593,7 @@ np_int = (
     np.unsignedinteger,
     np.signedinteger,
 )
-np_float = (np.float16, np.float32, np.float64, np.float64, np.floating)
+np_float = (np.float16, np.float32, np.float64, np.floating)
 np_bytes = (np.bytes_, np.byte, np.ubyte)
 np_char = (np.str_, np.char.chararray, *np_bytes)
 np_bool = (np.bool_,)
