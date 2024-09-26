@@ -790,6 +790,64 @@ def get_concept_basepath(path: str) -> str:
     return "/" + "/".join(concept_path)
 
 
+def get_concept_path_from_elem(elem: ET.Element) -> str:
+    """
+    Process individual XML element to generate the NeXus concept path.
+
+    Output is e.g. "NXexperiment:/NXentry/NXinstrument/NXdetector".
+    """
+
+    name = elem.attrib.get("name", "")
+    elem_type = elem.attrib.get("type", "")
+    nxdlbase = elem.attrib.get("nxdlbase", "")  # .split("/")[-1]
+    nxdlbase_class = elem.attrib.get("nxdlbase_class", "")
+    nxdlpath = elem.attrib.get("nxdlpath", "")
+    category = elem.attrib.get("category", "")
+    # optional = elem.attrib.get("optional", "")
+    # extends = elem.attrib.get("extends", "")
+
+    # print(f"tag: {tag}")
+    # print(f"name: {name}")
+    # print(f"elem_type: {elem_type}")
+    # print(f"nxdlbase: {nxdlbase}")
+    # print(f"nxdlbase_class: {nxdlbase_class}")
+    # print(f"nxdlpath: {nxdlpath}")
+    # # print(f"optional: {optional}")
+    # # print(f"extends: {extends}")
+    # print("\n")
+
+    concept_path = ""
+
+    if elem.tag.endswith("group"):
+        if nxdlbase_class and nxdlbase_class == "application":
+            concept_path += "NXmpes:"
+            concept_path += nxdlpath  # + = f"(elem_type)"
+
+        else:
+            if nxdlbase:
+                concept_path += nxdlbase.replace(".nxdl.xml", "").split(os.path.sep)[-1]
+            concept_path += nxdlpath  # + = f"(elem_type)"
+
+    elif elem.tag.endswith("field"):
+        pass
+
+    elif elem.tag.endswith("attribute"):
+        pass
+    elif elem.tag.endswith("definition"):
+        concept_path += name
+
+    return concept_path
+
+    # if nxdlpath:
+    #     # Split the nxdlpath and construct the string
+    #     path_parts = nxdlpath.strip("/").split("/")
+    #     formatted_path = "/".join(path_parts)
+    #     return f"{formatted_path}({elem_type})"
+    # else:
+    #     # For elements with no path, return the name and type
+    #     return f"{name}({elem_type})"
+
+
 def remove_namespace_from_tag(tag):
     """Helper function to remove the namespace from an XML tag."""
 

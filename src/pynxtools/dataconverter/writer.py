@@ -286,12 +286,34 @@ class Writer:
             if app_def_docs:
                 return app_def_docs
 
-        _, _, elist = get_inherited_nodes(nxdl_path, elem=copy.deepcopy(self.nxdl_data))
+        class_path, nxdl_elem_path, elist = get_inherited_nodes(
+            nxdl_path, elem=copy.deepcopy(self.nxdl_data)
+        )
 
+        path_to_check = "/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution"  # /physical_quantity" # == "/ENTRY/SAMPLE/flood_gun_current_env/flood_gun"
+
+        if nxdl_path == path_to_check:
+            for thing in [
+                # path,
+                # nxdl_path,
+                # class_path,
+                # nxdl_elem_path,
+                # elist
+            ]:
+                print(thing, "\n")
         for elem in elist:
+            if nxdl_path == path_to_check:
+                # print(elem.tag)
+                # print("\t elem.attrib:", elem.attrib.keys())
+
+                if elem.tag.endswith(("group", "field", "attribute", "definition")):
+                    concept_path = helpers.get_concept_path_from_elem(elem), "\n"
+                #     print(concept_path)
+
             if not docs:
                 # Only use docs from superclasses if they are not extended.
                 docs += extract_and_format_docs(elem)
+        # print("\n")
 
         if not elist:
             # Handle docs for attributeS
