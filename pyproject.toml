@@ -62,7 +62,6 @@ dev = [
     "types-requests",
     "uv",
     "pre-commit",
-    "cffconvert",
 ]
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd,ellips,raman]",
