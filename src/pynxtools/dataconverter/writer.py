@@ -26,6 +26,7 @@ from typing import Optional
 
 import h5py
 import numpy as np
+from docutils.core import publish_string
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
@@ -210,7 +211,10 @@ class Writer:
     """
 
     def __init__(
-        self, data: dict = None, nxdl_f_path: str = None, output_path: str = None
+        self,
+        data: dict = None,
+        nxdl_f_path: str = None,
+        output_path: str = None,
     ):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
@@ -221,6 +225,7 @@ class Writer:
         self.nxs_namespace = get_namespace(self.nxdl_data)
 
         self.write_docs: bool = False
+        self.docs_format: str = "default"
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -251,11 +256,29 @@ class Writer:
     def __nxdl_docs(self, path: str = "/") -> Optional[str]:
         """Get the NXDL docs for a path in the data."""
 
+        def rst_to_html(rst_text: str) -> str:
+            """
+            Convert reStructuredText to HTML using Docutils.
+
+            Args:
+                rst_text (str): The input RST text to be converted.
+
+            Returns:
+                str: The resulting HTML content.
+            """
+            return publish_string(rst_text, writer_name="html").decode("utf-8")
+
         def extract_and_format_docs(elem: ET.Element) -> str:
             """Get the docstring for a given element in the NDXL tree."""
-            docs = elem.findall(f"{self.nxs_namespace}doc")
-            if docs:
-                return docs[0].text.strip().replace("\\n", "\n")
+            docs_elements = elem.findall(f"{self.nxs_namespace}doc")
+            if docs_elements:
+                docs = docs_elements[0].text
+                if self.docs_format != "default":
+                    docs = publish_string(docs, writer_name=self.docs_format).decode(
+                        "utf-8"
+                    )
+                print(docs.strip().replace("\\n", "\n"))
+                return docs.strip().replace("\\n", "\n")
             return ""
 
         docs: str = ""
@@ -401,7 +424,7 @@ class Writer:
                     f"with the following message: {str(exc)}"
                 ) from exc
 
-    def write(self, write_docs=False):
+    def write(self, write_docs: bool = False, docs_format: str = "default"):
         """
         Writes the NeXus file with previously validated data from the reader with NXDL attrs.
 
@@ -409,6 +432,7 @@ class Writer:
             write_docs (bool): Write docs for the individual NeXus concepts as HDF5 attributes. The default is False.
         """
         self.write_docs = write_docs
+        self.docs_format = docs_format
         try:
             self._put_data_into_hdf5()
         finally:
