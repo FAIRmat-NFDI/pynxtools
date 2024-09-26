@@ -577,23 +577,47 @@ def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
 NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
 NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
 NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
-
+# np int for np version 1.26.0
+np_int = (
+    np.intc,
+    np.int_,
+    np.intp,
+    np.int8,
+    np.int16,
+    np.int32,
+    np.int64,
+    np.uint8,
+    np.uint16,
+    np.uint32,
+    np.uint64,
+    np.unsignedinteger,
+    np.signedinteger,
+)
+np_float = (np.float16, np.float32, np.float64, np.floating)
+np_bytes = (np.bytes_, np.byte, np.ubyte)
+np_char = (np.str_, np.char.chararray, *np_bytes)
+np_bool = (np.bool_,)
+np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle)
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
-    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
-    "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
-    "NX_CHAR": (str, np.ndarray, np.char.chararray),
+    "NX_BINARY": (
+        bytes,
+        bytearray,
+        np.ndarray,
+        *np_bytes,
+    ),
+    "NX_BOOLEAN": (bool, np.ndarray, *np_bool),
+    "NX_CHAR": (str, np.ndarray, *np_char),
     "NX_DATE_TIME": (str,),
-    "NX_FLOAT": (float, np.ndarray, np.floating),
-    "NX_INT": (int, np.ndarray, np.signedinteger),
+    "NX_FLOAT": (float, np.ndarray, *np_float),
+    "NX_INT": (int, np.ndarray, *np_int),
     "NX_UINT": (np.ndarray, np.unsignedinteger),
     "NX_NUMBER": (
         int,
         float,
         np.ndarray,
-        np.signedinteger,
-        np.unsignedinteger,
-        np.floating,
+        *np_int,
+        *np_float,
         dict,
     ),
     "NX_POSINT": (
@@ -601,8 +625,18 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
         np.ndarray,
         np.signedinteger,
     ),  # > 0 is checked in is_valid_data_field()
-    "NX_COMPLEX": (complex, np.ndarray, np.cdouble, np.csingle),
+    "NX_COMPLEX": (complex, np.ndarray, *np_complex),
     "NXDL_TYPE_UNAVAILABLE": (str,),  # Defaults to a string if a type is not provided.
+    "NX_CHAR_OR_NUMBER": (
+        str,
+        int,
+        float,
+        np.ndarray,
+        *np_char,
+        *np_int,
+        *np_float,
+        dict,
+    ),
 }
 
 
