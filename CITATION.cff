@@ -6,27 +6,27 @@ message:
 type: software
 version: 0.7.2
 authors:
-  - given-names: Andrea
-    family-names: Albino
-    orcid: 'https://orcid.org/0000-0001-9280-7431'
+  - given-names: Sherjeel
+    family-names: Shabih
+    orcid: 'https://orcid.org/0009-0008-6635-4465'
   - given-names: Florian
     family-names: Dobener
     orcid: 'https://orcid.org/0000-0003-1987-6224'
-  - given-names: Lukas
-    family-names: Pielsticker
-    orcid: 'https://orcid.org/0000-0001-9361-8333'
   - given-names: Markus
     family-names: Kühbach
     orcid: 'https://orcid.org/0000-0002-7117-5196'
+  - given-names: Lukas
+    family-names: Pielsticker
+    orcid: 'https://orcid.org/0000-0001-9361-8333'
   - given-names: Rubel
     family-names: Mozumder
     orcid: 'https://orcid.org/0009-0007-5926-6646'
   - given-names: Sandor
     family-names: Brockhauser
     orcid: 'https://orcid.org/0000-0002-9700-4803'
-  - given-names: Sherjeel
-    family-names: Shabih
-    orcid: 'https://orcid.org/0009-0008-6635-4465'
+  - given-names: Andrea
+    family-names: Albino
+    orcid: 'https://orcid.org/0000-0001-9280-7431'
   - given-names: Sebastian
     family-names: Brückner
     orcid: 'https://orcid.org/0000-0002-5969-847X'
