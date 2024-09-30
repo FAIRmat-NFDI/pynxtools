@@ -64,8 +64,8 @@ repository-code: 'https://github.com/FAIRmat-NFDI/pynxtools'
 abstract:
 
   pynxtools is a Python package that provides core functionalities for converting experimental data into HDF5 files that are compliant with NeXus application definitions (https://manual.nexusformat.org/classes/applications/index.html). During the data
-  conversion process it performs data verification (e.g. expected type of data) to ensure
-  compliance in accordance with NeXus application definition. In addition to its standalone
+    conversion process it performs data verification (e.g., checking for expected data types) to ensure
+  compliance with the chosen NeXus application definition. In addition to its standalone
   capabilities, pynxtools offers an interface for developing custom reader plugins to
   convert experimental raw data into structured HDF5 formats. The library is also integrated
   with the NOMAD platform, a distributed web-based system for managing materials science data,
