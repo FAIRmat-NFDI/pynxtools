@@ -45,7 +45,7 @@ Some examples from the scientific community are provided in [`examples`](https:/
 
 # NOMAD integration
 
-## Does this software require NOMAD or NOMAD OASIS ?
+## Does this software require NOMAD or NOMAD OASIS?
 
 No. The data files produced here can be uploaded to NOMAD. Therefore, this tool acts as the framework to design schemas and instances of data within the NeXus universe. It can, however, be used as a NOMAD plugin to parse nexus files, please see the section below for details.
 
