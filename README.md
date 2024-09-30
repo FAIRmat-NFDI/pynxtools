@@ -6,6 +6,7 @@
 ![](https://img.shields.io/pypi/l/pynxtools)
 ![](https://img.shields.io/pypi/v/pynxtools)
 ![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1323437.svg)](https://doi.org/10.5281/zenodo.13862042)
 
 `pynxtools` is a tool designed for making your experimental data FAIR.
 It allows to develop ontologies and to create ontological instances based on the [NeXus format](https://www.nexusformat.org/).
