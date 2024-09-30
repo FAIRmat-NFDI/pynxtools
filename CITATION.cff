@@ -67,8 +67,7 @@ abstract:
     conversion process it performs data verification (e.g., checking for expected data types) to ensure
   compliance with the chosen NeXus application definition. In addition to its standalone
   capabilities, pynxtools offers an interface for developing custom reader plugins to
-  convert experimental raw data into structured HDF5 formats. The library is also integrated
-  with the NOMAD platform, a distributed web-based system for managing materials science data,
+  convert experimental raw data into structured HDF5 formats. The package can also be used as a plugin for the NOMAD platform (https://nomad-lab.eu/nomad-lab/), a distributed web-based system for managing materials science data,
   allowing users to convert experimental data directly into the NOMAD metainfo format. The
   resulting HDF5 files are parsed and stored in the NOMAD central database, ensuring that
   the data remains findable, accessible, interoperable, and reusable (FAIR).
