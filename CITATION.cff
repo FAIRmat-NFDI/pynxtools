@@ -15,45 +15,45 @@ authors:
   - given-names: Markus
     family-names: Kühbach
     orcid: 'https://orcid.org/0000-0002-7117-5196'
-  - given-names: Lukas
-    family-names: Pielsticker
-    orcid: 'https://orcid.org/0000-0001-9361-8333'
-  - given-names: Rubel
-    family-names: Mozumder
-    orcid: 'https://orcid.org/0009-0007-5926-6646'
-  - given-names: Sandor
-    family-names: Brockhauser
-    orcid: 'https://orcid.org/0000-0002-9700-4803'
   - given-names: Andrea
     family-names: Albino
     orcid: 'https://orcid.org/0000-0001-9280-7431'
+  - given-names: Sandor
+    family-names: Brockhauser
+    orcid: 'https://orcid.org/0000-0002-9700-4803'
   - given-names: Sebastian
     family-names: Brückner
     orcid: 'https://orcid.org/0000-0002-5969-847X'
-  - given-names: Tamás
-    family-names: Haraszti
-    orcid: 'https://orcid.org/0000-0002-7095-4358'
-  - given-names: Laurenz
-    family-names: Rettig
-    orcid: 'https://orcid.org/0000-0002-0725-6696'
-  - given-names: Ron
-    family-names: Hildebrandt
-    orcid: https://orcid.org/0000-0001-6932-604X
-  - given-names: Lev
-    family-names: Ginzburg
-    orcid: 'https://orcid.org/0000-0001-8929-1040'
-  - given-names: José A.
-    family-names: Márquez
-    orcid: 'https://orcid.org/0000-0002-8173-2566'
-  - given-names: Ádám
-    family-names: Fekete
-    orcid: 'https://orcid.org/0000-0002-6263-897X'
   - given-names: Theodore
     family-names: Chang
     orcid: 'https://orcid.org/0000-0002-4911-0230'
+  - given-names: Ádám
+    family-names: Fekete
+    orcid: 'https://orcid.org/0000-0002-6263-897X'
+  - given-names: Lev
+    family-names: Ginzburg
+    orcid: 'https://orcid.org/0000-0001-8929-1040'
+  - given-names: Tamás
+    family-names: Haraszti
+    orcid: 'https://orcid.org/0000-0002-7095-4358'
+  - given-names: Ron
+    family-names: Hildebrandt
+    orcid: https://orcid.org/0000-0001-6932-604X
   - given-names: Sabine
     family-names: Maier
     orcid: 'https://orcid.org/0000-0001-9589-6855'
+  - given-names: José A.
+    family-names: Márquez
+    orcid: 'https://orcid.org/0000-0002-8173-2566'
+  - given-names: Rubel
+    family-names: Mozumder
+    orcid: 'https://orcid.org/0009-0007-5926-6646'
+  - given-names: Lukas
+    family-names: Pielsticker
+    orcid: 'https://orcid.org/0000-0001-9361-8333'
+  - given-names: Laurenz
+    family-names: Rettig
+    orcid: 'https://orcid.org/0000-0002-0725-6696'
   - given-names: Heiko B.
     family-names: Weber
     orcid: 'https://orcid.org/0000-0002-6403-9022'
@@ -77,9 +77,10 @@ abstract:
   resulting HDF5 files are parsed and stored in the NOMAD central database, ensuring that
   the data remains findable, accessible, interoperable, and reusable (FAIR).
 
-  The work is a part of the FAIRmat project (project id 460197019) funded by the Deutsche
+  This work is part of the FAIRmat project (project ID 460197019), funded by the Deutsche
   Forschungsgemeinschaft (DFG, German Research Foundation)
-  (https://gepris.dfg.de/gepris/projekt/460197019?language=en).
+  (https://gepris.dfg.de/gepris/projekt/460197019?language=en). Visit the
+  [FAIRmat page](https://www.fairmat-nfdi.eu/fairmat/about-fairmat/consortium-fairmat) for more info.
 
 
 license: Apache-2.0
