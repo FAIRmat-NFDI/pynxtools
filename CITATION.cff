@@ -13,8 +13,8 @@ authors:
     family-names: Dobener
     orcid: 'https://orcid.org/0000-0003-1987-6224'
   - given-names: Markus
-    family-names: Kühbach
-    orcid: 'https://orcid.org/0000-0002-7117-5196'
+    family-names: Scheidgen
+    orcid: 'https://orcid.org/0000-0002-8038-2277'
   - given-names: Andrea
     family-names: Albino
     orcid: 'https://orcid.org/0000-0001-9280-7431'
@@ -36,6 +36,9 @@ authors:
   - given-names: Tamás
     family-names: Haraszti
     orcid: 'https://orcid.org/0000-0002-7095-4358'
+  - given-names: Markus
+    family-names: Kühbach
+    orcid: 'https://orcid.org/0000-0002-7117-5196'
   - given-names: Ron
     family-names: Hildebrandt
     orcid: https://orcid.org/0000-0001-6932-604X
@@ -54,9 +57,6 @@ authors:
   - given-names: Laurenz
     family-names: Rettig
     orcid: 'https://orcid.org/0000-0002-0725-6696'
-  - given-names: Markus
-    family-names: Scheidgen
-    orcid: 'https://orcid.org/0000-0002-8038-2277'
   - given-names: Heiko B.
     family-names: Weber
     orcid: 'https://orcid.org/0000-0002-6403-9022'
