@@ -29,6 +29,26 @@ jobs:
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
         uv pip install build
+    - name: Git tag version
+      id: git_tag_version
+      run: |
+        # Extract the version from the tag (e.g., 'v1.0.0' becomes '1.0.0')
+        GIT_TAG_VERSION=${GITHUB_REF#refs/tags/v}
+        echo "GIT_TAG_VERSION=$GIT_TAG_VERSION" >> $GITHUB_ENV
+        echo "Version from Git tag: $GIT_TAG_VERSION"
+    - name: Citation version
+      id: citation_version
+      run: |
+        # Parse the version from the CITATION.cff file
+        CITATION_VERSION=$(grep '^version:' CITATION.cff | cut -d' ' -f2)
+        echo "CITATION_VERSION=$CITATION_VERSION" >> $GITHUB_ENV
+        echo "Version from CITATION.cff: $CITATION_VERSION"
+    - name: Compare versions
+      run: |
+        if [ "$GIT_TAG_VERSION" != "$CITATION_VERSION" ]; then
+          echo "Version mismatch: Git tag version is $GIT_TAG_VERSION, CITATION.cff version is $CITATION_VERSION"
+          exit 1
+        fi
     - name: Build package
       run: |
         git reset --hard HEAD
