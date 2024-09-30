@@ -4,7 +4,7 @@ message:
   If you use this software, please cite it using the
   metadata from this file.
 type: software
-version: 0.7.2
+version: 0.7.3
 authors:
   - given-names: Sherjeel
     family-names: Shabih
@@ -61,9 +61,9 @@ authors:
     family-names: Weber
     orcid: 'https://orcid.org/0000-0002-6403-9022'
 
-# doi: Not available yet
+doi: 10.5281/zenodo.13862041
 repository-code: 'https://github.com/FAIRmat-NFDI/pynxtools'
-# url: Not available yet
+url: https://doi.org/10.5281/zenodo.13862042
 abstract:
 
   pynxtools is a Python package that provides core functionalities for converting experimental
