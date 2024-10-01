@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: 'pynxtools: A Python Library for NeXus-Compliant Experimental Data Conversion and Integration with NOMAD Platform'
+title: 'Pynxtools: A Python Library for NeXus-Compliant Experimental Data Conversion and Integration with NOMAD Platform'
 message:
   If you use this software, please cite it using the
   metadata from this file.
