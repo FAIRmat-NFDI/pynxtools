@@ -27,7 +27,7 @@ We will use the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xp
 
 #### Steps
 
-1. Download the example files from here: [Example files](https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools-xps/tree/main/examples/sle)
+1. Download the example files from here: [Example files](https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools-xps/tree/main/examples/specs/sle)
 2. **Extract** the zip and copy the files in your current working directory. You can find the working directory by typing the following in your terminal:
 ```console
 pwd
