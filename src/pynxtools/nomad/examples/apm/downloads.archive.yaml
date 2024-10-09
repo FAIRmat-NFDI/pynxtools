@@ -1,0 +1,8 @@
+data:
+  m_def: nomad.datamodel.metainfo.downloads.Downloads
+  mainfiles:
+    - apm.archive.json
+  downloads:
+    - url: https://zenodo.org/records/7986279/files/usa_denton_smith_apav_si.zip?download=1
+      output: usa_denton_smith_apav_si.zip
+      extract: true

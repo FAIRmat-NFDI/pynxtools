@@ -1,0 +1,77 @@
+Data:
+  data_identifier: 1
+  data_software: WVASE
+  data_software/@url: https://www.jawoollam.com/ellipsometry-software/wvase
+  data_software/version: '3.882'
+  data_type: Psi/Delta
+  spectrum_type: wavelength
+  spectrum_unit: angstrom
+instrument:
+  detector:
+    count_time:
+      unit: s
+      value: 1.0
+    detector_type: CCD
+  sample_stage:
+    stage_type: 'manual stage'
+  device_information:
+    model: 'RC2 (Vers. 0.0.1)'
+    vendor: J. A. Woollam Co.
+  ellipsometer_type: dual compensator
+  focussing_probes:
+    angular_spread:
+      unit: rad
+      value: 0.2
+    data_correction: false
+  instrument_calibration_RC2:
+    calibration_status: 'no calibration'
+  light_source:
+    source_type: arc lamp
+  rotating_element:
+    revolutions: 50.0
+  rotating_element_type: compensator (source side)
+  software_RC2: CompleteEASE
+  software_RC2/@url: https://www.jawoollam.com/ellipsometry-software/completeease
+  software_RC2/@version: '6.37'
+sample:
+  atom_types: Si, O
+  backside_roughness: false
+  chemical_formula: SiO2
+  environment:
+    sample_medium: air
+  history:
+    notes:
+      description: Commercially purchased sample
+  layer_structure: 2nm SiO2 on Si
+  physical_form: multi layer
+  sample_name: 2nm SiO2 on Si
+  substrate: Si
+user:
+  address: Zum Großen Windkanal 2, 12489 Berlin, Germany
+  affiliation: Humboldt-Universität zu Berlin
+  email: surname.name@physik.hu-berlin.de
+  name: Name Surname
+colnames:
+- type
+- wavelength
+- angle_of_incidence
+- Psi
+- Delta
+- err.Psi
+- err.Delta
+definition: NXellipsometry
+definition/@url: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/fairmat/contributed_definitions/NXellipsometry.nxdl.xml
+definition/@version: 0.0.2
+derived_parameter_type: depolarization
+ellipsometry_experiment_type: NIR-Vis-UV spectroscopic ellipsometry
+experiment_description: RC2 scan on 2nm SiO2 on Si in air
+experiment_identifier:
+  identifier: exp-ID
+  is_persistent: 'false'
+experiment_type: ellipsometry
+filename: test-data.dat
+plot_name: Psi and Delta
+sep: \t
+skip: 3
+start_time: '2022-01-27T03:35:00+00:00'
+title: RC2 Ellipsometry of 2nm SiO2 on Si
