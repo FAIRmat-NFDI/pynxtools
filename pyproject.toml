@@ -96,6 +96,14 @@ xrd = [
 nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
 nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
 nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
+apm_example = "pynxtools.nomad.entrypoints:apm_example"
+ellips_example = "pynxtools.nomad.entrypoints:apm_example"
+em_example = "pynxtools.nomad.entrypoints:em_example"
+iv_temp_example = "pynxtools.nomad.entrypoints:iv_temp_example"
+mpes_example = "pynxtools.nomad.entrypoints:mpes_example"
+stm_example = "pynxtools.nomad.entrypoints:stm_example"
+sts_example = "pynxtools.nomad.entrypoints:sts_example"
+xps_example = "pynxtools.nomad.entrypoints:xps_example"
 
 [project.scripts]
 read_nexus = "pynxtools.nexus.nexus:main"
@@ -128,7 +136,7 @@ select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
-    "NPY201",
+    # "NPY201", # reactivate when np>2.0 is used
 ]
 ignore = [
     "E501", # Line too long ({width} > {limit} characters)
