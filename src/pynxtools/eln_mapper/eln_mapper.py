@@ -17,6 +17,7 @@
 #
 
 import click
+
 from pynxtools.eln_mapper.eln import generate_eln
 from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
 
@@ -34,7 +35,7 @@ from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
     type=int,
     show_default=True,
     help=(
-        "To skip the level of parent hierarchy level. E.g. for default 1 the part "
+        "To skip upto a level of parent hierarchy. E.g. for default value 1 the first level"
         "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped."
     ),
 )
@@ -42,7 +43,7 @@ from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
     "--output-file",
     required=False,
     default="eln_data",
-    help=("Name of file that is neede to generated output file."),
+    help=("Name of output file."),
 )
 @click.option(
     "--eln-type",
