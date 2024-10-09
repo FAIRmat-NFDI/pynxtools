@@ -31,7 +31,8 @@ import numpy as np
 
 try:
     from nomad import utils
-    from nomad.datamodel import EntryArchive
+    from nomad.datamodel import EntryArchive, EntryMetadata
+    from nomad.datamodel.data import EntryData
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
         Component,
@@ -813,6 +814,9 @@ def init_nexus_metainfo():
                     sections.append(section)
 
     for section in sections:
+        # TODO: add when quantities with mixed use_full_storage are supported by GUI
+        # if not (str(section).startswith("nexus.")):
+        #    continue
         __add_additional_attributes(section)
         for quantity in section.quantities:
             __add_additional_attributes(quantity)
@@ -858,11 +862,18 @@ def normalize_BSidentifier(self, archive, logger):
     """Normalizer for BSidentifier section."""
 
     def create_Entity(lab_id, archive, f_name):
+        # TODO: use this instead of BasicEln() when use_full_storage is properly supported by the GUI
+        # entitySec = Entity()
+        # entitySec.lab_id = lab_id
+        # entity = EntryArchive (
+        #    data = entitySec,
+        #    m_context=archive.m_context,
+        #    metadata=EntryMetadata(entry_type = "BSidentifier"), #upload_id=archive.m_context.upload_id,
+        # )
+        # with archive.m_context.raw_file(f_name, 'w') as f_obj:
+        #    json.dump(entity.m_to_dict(with_meta=True), f_obj)
         entity = BasicEln()
         entity.lab_id = lab_id
-        entity.entity = Entity()
-        entity.entity.lab_id = lab_id
-
         with archive.m_context.raw_file(f_name, "w") as f_obj:
             json.dump(
                 {"data": entity.m_to_dict(with_meta=True, include_derived=True)},
