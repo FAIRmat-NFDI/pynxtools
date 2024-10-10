@@ -3,8 +3,7 @@ Here, we provide examples of how you can convert your data (raw data, numerical 
 from your acquisition software or electronic lab notebook (ELN), into a NeXus/HDF5 file
 using the [built-in readers of pynxtools](https://fairmat-nfdi.github.io/pynxtools/reference/built-in-readers.html).
 
-There is also [documentation](https://fairmat-nfdi.github.io/pynxtools/learn/dataconverter-and-readers.html) of the [dataconverter](../pynxtools/dataconverter) available. You can write a [reader](../pynxtools/dataconverter/readers) for your experimental technique
-if it is not supported yet, see documentation [here](https://fairmat-nfdi.github.io/pynxtools/how-tos/build-a-plugin.html).
+There is also [documentation](https://fairmat-nfdi.github.io/pynxtools/learn/dataconverter-and-readers.html) of the [dataconverter](../src/pynxtools/dataconverter/README.md) available. You can write a reader plugin if the data for your experimental technique is not supported yet, see documentation [here](https://fairmat-nfdi.github.io/pynxtools/how-tos/build-a-plugin.html).
 
 Note that `pynxtools` offers a number of FAIRmat-supported parsers/readers/data extractors for various experimental techniques via
 technique specific plugins. You can find the list [here](https://fairmat-nfdi.github.io/pynxtools/reference/plugins.html). You can find
