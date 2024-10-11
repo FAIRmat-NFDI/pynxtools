@@ -61,10 +61,9 @@ def parse_nomad_example(mainfile, no_warn):
     archive.m_to_dict()
 
 
-def example_upload_entry_point_valid(plugin_package, config, expected_local_path):
+def example_upload_entry_point_valid(entrypoint, plugin_package, expected_local_path):
     """Test if NOMAD ExampleUploadEntryPoint works."""
-    config["plugin_package"] = plugin_package
+    entrypoint.config["plugin_package"] = plugin_package
+    entrypoint.load()
     expected_local_path = f"{example_upload_path_prefix}/{expected_local_path}"
-    entry_point = ExampleUploadEntryPoint(**config)
-    entry_point.load()
     assert entry_point.local_path == expected_local_path

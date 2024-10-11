@@ -34,6 +34,8 @@ from pynxtools.testing.nomad_example import (
     example_upload_entry_point_valid,
 )
 
+from pynxtools.nomad.entrypoints import iv_temp_example
+
 
 @pytest.mark.parametrize(
     "mainfile", get_file_parameter("../../src/pynxtools/nomad/examples/")
@@ -44,24 +46,20 @@ def test_nomad_examples(mainfile, no_warn):
 
 
 @pytest.mark.parametrize(
-    "config, expected_local_path",
+    "entrypoint",
+    "expected_local_path",
     [
         pytest.param(
-            {
-                "title": "iv_temp_example",
-                "description": "iv_temp_example",
-                "category": "test",
-                "path": "nomad/examples/iv_temp",
-            },
+            iv_temp_example,
             f"examples/data/uploads/iv_temp.zip",
             id="iv_temp_example",
         ),
     ],
 )
-def test_nomad_example_upload_entry_point_valid(config, expected_local_path):
+def test_nomad_example_upload_entry_point_valid(entrypoint, expected_local_path):
     """Test if NOMAD ExampleUploadEntryPoint works."""
     example_upload_entry_point_valid(
+        entrypoint=entrypoint,
         plugin_package="pynxtools",
-        config=config,
         expected_local_path=expected_local_path,
     )
