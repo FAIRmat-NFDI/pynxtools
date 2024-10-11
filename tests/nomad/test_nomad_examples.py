@@ -38,16 +38,15 @@ from pynxtools.nomad.entrypoints import iv_temp_example
 
 
 @pytest.mark.parametrize(
-    "mainfile", get_file_parameter("../../src/pynxtools/nomad/examples/")
+    "mainfile", get_file_parameter("src/pynxtools/nomad/examples/")
 )
-def test_nomad_examples(mainfile, no_warn):
+def test_nomad_examples(mainfile):
     """Test if NOMAD examples work."""
     parse_nomad_example(mainfile)
 
 
 @pytest.mark.parametrize(
-    "entrypoint",
-    "expected_local_path",
+    ("entrypoint", "expected_local_path"),
     [
         pytest.param(
             iv_temp_example,

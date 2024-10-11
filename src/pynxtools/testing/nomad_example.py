@@ -26,7 +26,6 @@ try:
 
     from nomad.config.models.plugins import (
         ExampleUploadEntryPoint,
-        example_upload_path_prefix,
     )
 except ImportError:
     pytest.skip(
@@ -41,19 +40,23 @@ def get_file_parameter(example_path: str):
 
     plugin_name should be pynxtools_em, pynxtools_mpes, etc.
     """
-    example_files = [
+    example_files = (
         "schema.archive.yaml",
+        "schema.archive.yml",
+        "scheme.archive.yaml",
+        "scheme.archive.yml",
         "schema.archive.json",
+        "scheme.archive.json",
         "intra-entry.archive.json",
-    ]
-    path = os.walk(os.path.join(os.path.dirname(__file__), example_path))
+    )
+    path = os.walk(os.path.join(os.getcwd(), example_path))
     for root, _, files in path:
         for file in files:
-            if os.path.basename(file) in example_files:
+            if os.path.basename(file).endswith(example_files):
                 yield pytest.param(os.path.join(root, file), id=file)
 
 
-def parse_nomad_example(mainfile, no_warn):
+def parse_nomad_example(mainfile):
     """Test if NOMAD example works."""
     archive = EntryArchive()
     archive.m_context = Context()
@@ -63,7 +66,6 @@ def parse_nomad_example(mainfile, no_warn):
 
 def example_upload_entry_point_valid(entrypoint, plugin_package, expected_local_path):
     """Test if NOMAD ExampleUploadEntryPoint works."""
-    entrypoint.config["plugin_package"] = plugin_package
+    setattr(entrypoint, "plugin_package", plugin_package)
     entrypoint.load()
-    expected_local_path = f"{example_upload_path_prefix}/{expected_local_path}"
-    assert entry_point.local_path == expected_local_path
+    assert entrypoint.local_path == expected_local_path
