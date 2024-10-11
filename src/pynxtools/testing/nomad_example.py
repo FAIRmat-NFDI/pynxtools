@@ -53,7 +53,7 @@ def get_file_parameter(example_path: str):
                 yield pytest.param(os.path.join(root, file), id=file)
 
 
-def test_nomad_example(mainfile, no_warn):
+def parse_nomad_example(mainfile, no_warn):
     """Test if NOMAD example works."""
     archive = EntryArchive()
     archive.m_context = Context()
@@ -61,7 +61,7 @@ def test_nomad_example(mainfile, no_warn):
     archive.m_to_dict()
 
 
-def test_example_upload_entry_point_valid(plugin_package, config, expected_local_path):
+def example_upload_entry_point_valid(plugin_package, config, expected_local_path):
     """Test if NOMAD ExampleUploadEntryPoint works."""
     config["plugin_package"] = plugin_package
     expected_local_path = f"{example_upload_path_prefix}/{expected_local_path}"
