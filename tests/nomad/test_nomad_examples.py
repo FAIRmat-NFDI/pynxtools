@@ -28,7 +28,11 @@ except ImportError:
         allow_module_level=True,
     )
 
-from pynxtools.testing.nomad_example import get_file_parameter, test_nomad_example
+from pynxtools.testing.nomad_example import (
+    get_file_parameter,
+    test_nomad_example,
+    test_example_upload_entry_point_valid,
+)
 
 
 @pytest.mark.parametrize(
