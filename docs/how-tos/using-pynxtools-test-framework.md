@@ -60,3 +60,5 @@ You can also pass additional parameters to `test.convert_to_nexus`:
 - `caplog_level` (str): Can be either "ERROR" (by default) or "warning". This parameter determines the level at which the caplog is set during testing. If it is "WARNING", the test will also fail if any warnings are reported by the reader.
 
 - `ignore_undocumented` (boolean): If true, the test skipts the verification of undocumented keys. Otherwise, a warning massages for undocumented keys is raised
+
+## How to write an integration test for a NOMAD example in a reader plugin
