@@ -30,8 +30,8 @@ except ImportError:
 
 from pynxtools.testing.nomad_example import (
     get_file_parameter,
-    test_nomad_example,
-    test_example_upload_entry_point_valid,
+    parse_nomad_example,
+    example_upload_entry_point_valid,
 )
 
 
@@ -40,7 +40,7 @@ from pynxtools.testing.nomad_example import (
 )
 def test_nomad_examples(mainfile, no_warn):
     """Test if NOMAD examples work."""
-    test_nomad_example(mainfile)
+    parse_nomad_example(mainfile)
 
 
 @pytest.mark.parametrize(
@@ -60,7 +60,7 @@ def test_nomad_examples(mainfile, no_warn):
 )
 def test_nomad_example_upload_entry_point_valid(config, expected_local_path):
     """Test if NOMAD ExampleUploadEntryPoint works."""
-    test_example_upload_entry_point_valid(
+    example_upload_entry_point_valid(
         plugin_package="pynxtools",
         config=config,
         expected_local_path=expected_local_path,
