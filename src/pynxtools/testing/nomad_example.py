@@ -23,6 +23,11 @@ import pytest
 try:
     from nomad.parsing.parser import ArchiveParser
     from nomad.datamodel import EntryArchive, Context
+
+    from nomad.config.models.plugins import (
+        ExampleUploadEntryPoint,
+        example_upload_path_prefix,
+    )
 except ImportError:
     pytest.skip(
         "Skipping NOMAD example tests because nomad is not installed",
@@ -30,23 +35,36 @@ except ImportError:
     )
 
 
-def get_file_parameter():
+def get_file_parameter(example_path: str):
+    """
+    Get all examples for the plugin.
+
+    plugin_name should be pynxtools_em, pynxtools_mpes, etc.
+    """
     example_files = [
         "schema.archive.yaml",
         "schema.archive.json",
         "intra-entry.archive.json",
     ]
-    path = os.walk(os.path.join(os.path.dirname(__file__), "../../examples/nomad"))
+    path = os.walk(os.path.join(os.path.dirname(__file__), example_path))
     for root, _, files in path:
         for file in files:
             if os.path.basename(file) in example_files:
                 yield pytest.param(os.path.join(root, file), id=file)
 
 
-@pytest.mark.parametrize("mainfile", get_file_parameter())
 def test_nomad_example(mainfile, no_warn):
     """Test if NOMAD example works."""
     archive = EntryArchive()
     archive.m_context = Context()
     ArchiveParser().parse(mainfile, archive)
     archive.m_to_dict()
+
+
+def test_example_upload_entry_point_valid(plugin_package, config, expected_local_path):
+    """Test if NOMAD ExampleUploadEntryPoint works."""
+    config["plugin_package"] = plugin_package
+    expected_local_path = f"{example_upload_path_prefix}/{expected_local_path}"
+    entry_point = ExampleUploadEntryPoint(**config)
+    entry_point.load()
+    assert entry_point.local_path == expected_local_path
