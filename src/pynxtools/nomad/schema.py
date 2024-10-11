@@ -553,7 +553,9 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_name = xml_attrs.get("name", nx_type)
         group_section = Section(validate=VALIDATE, nx_kind="group", name=nx_name)
 
-        __attach_base_section(group_section, root_section, __to_section(nx_type))
+        __attach_base_section(
+            group_section, root_section, __to_section(nx_type), nx_type
+        )
         __add_common_properties(group, group_section)
 
         nx_name = xml_attrs.get(
@@ -577,7 +579,9 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         __create_field(field, root_section)
 
 
-def __attach_base_section(section: Section, container: Section, default: Section):
+def __attach_base_section(
+    section: Section, container: Section, default: Section, section_nx_type: str = ""
+):
     """
     Potentially adds a base section to the given section, if the given container has
     a base-section with a suitable base.
@@ -586,7 +590,11 @@ def __attach_base_section(section: Section, container: Section, default: Section
     if base_section:
         assert base_section.nx_kind == section.nx_kind, "Base section has wrong kind"
     else:
-        base_section = default
+        for base_sec_def in container.all_inner_section_definitions.values():
+            if base_sec_def.more["nx_type"][2:] == section_nx_type[2:]:
+                base_section = base_sec_def
+        if not base_section:
+            base_section = default
 
     section.base_sections = [base_section]
 
