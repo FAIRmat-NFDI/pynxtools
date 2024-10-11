@@ -22,31 +22,31 @@ jobs:
         include:
 
           - plugin: pynxtools-ellips
-            branch: main
+            branch: bring-in-examples
             tests_to_run: tests/.
           - plugin: pynxtools-raman
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
-            branch: main
+            branch: bring-in-examples
             tests_to_run: tests/.
           - plugin: pynxtools-stm
-            branch: main
+            branch: bring-in-examples
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: main
+            branch: bring-in-examples
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
-            branch: main
+            branch: bring-in-examples
             tests_to_run: tests/.
           # - plugin: pynxtools-apm
-          #   branch: main
+          #   branch: bring-in-examples
           #   tests_to_run: tests/.
           # - plugin: pynxtools-xrd
-          #   branch: update-tests
+          #   branch: bring-in-examples
           #   tests_to_run: tests/.
           # - plugin: pynxtools-em
-          #   branch: main
+          #   branch: bring-in-examples
           #   tests_to_run: tests/.
     steps:
       - uses: actions/checkout@v3
