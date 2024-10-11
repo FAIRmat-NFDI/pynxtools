@@ -94,11 +94,11 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "BSfabrication": [Instrument],
-    "BSsample": [CompositeSystem],
-    "BSsample_component": [Component],
-    "BSidentifier": [EntityReference],
-    # "BSobject": BaseSection,
+    "fabrication": [Instrument],
+    "sample": [CompositeSystem],
+    "sample_component": [Component],
+    "identifier": [EntityReference],
+    # "object": BaseSection,
 }
 
 
@@ -780,7 +780,9 @@ def init_nexus_metainfo():
 
     # We take the application definitions and create a common parent section that allows
     # to include nexus in an EntryArchive.
-    nexus_section = Section(validate=VALIDATE, name=__GROUPING_NAME)
+    nexus_section = Section(
+        validate=VALIDATE, name=__GROUPING_NAME, label=__GROUPING_NAME
+    )
 
     # try:
     #     load_nexus_schema('')
@@ -791,10 +793,6 @@ def init_nexus_metainfo():
     #     except Exception:
     #         pass
     nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
-
-    EntryArchive.nexus = SubSection(name="nexus", section_def=nexus_section)
-    EntryArchive.nexus.init_metainfo()
-    EntryArchive.m_def.sub_sections.append(EntryArchive.nexus)
 
     nexus_metainfo_package.section_definitions.append(nexus_section)
 
@@ -831,16 +829,16 @@ def init_nexus_metainfo():
 init_nexus_metainfo()
 
 
-def normalize_BSfabrication(self, archive, logger):
-    """Normalizer for BSfabrication section."""
-    current_cls = __section_definitions["BSfabrication"].section_cls
+def normalize_fabrication(self, archive, logger):
+    """Normalizer for fabrication section."""
+    current_cls = __section_definitions["fabrication"].section_cls
     super(current_cls, self).normalize(archive, logger)
     self.lab_id = "Hello"
 
 
-def normalize_BSsample_component(self, archive, logger):
-    """Normalizer for BSsample_component section."""
-    current_cls = __section_definitions["BSsample_component"].section_cls
+def normalize_sample_component(self, archive, logger):
+    """Normalizer for sample_component section."""
+    current_cls = __section_definitions["sample_component"].section_cls
     if self.name__field:
         self.name = self.name__field
     if self.mass__field:
@@ -849,17 +847,17 @@ def normalize_BSsample_component(self, archive, logger):
     super(current_cls, self).normalize(archive, logger)
 
 
-def normalize_BSsample(self, archive, logger):
-    """Normalizer for BSsample section."""
-    current_cls = __section_definitions["BSsample"].section_cls
+def normalize_sample(self, archive, logger):
+    """Normalizer for sample section."""
+    current_cls = __section_definitions["sample"].section_cls
     if self.name__field:
         self.name = self.name__field
-    # one could also copy local ids to BSidentifier for search purposes
+    # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
 
-def normalize_BSidentifier(self, archive, logger):
-    """Normalizer for BSidentifier section."""
+def normalize_identifier(self, archive, logger):
+    """Normalizer for identifier section."""
 
     def create_Entity(lab_id, archive, f_name):
         # TODO: use this instead of BasicEln() when use_full_storage is properly supported by the GUI
@@ -868,7 +866,7 @@ def normalize_BSidentifier(self, archive, logger):
         # entity = EntryArchive (
         #    data = entitySec,
         #    m_context=archive.m_context,
-        #    metadata=EntryMetadata(entry_type = "BSidentifier"), #upload_id=archive.m_context.upload_id,
+        #    metadata=EntryMetadata(entry_type = "identifier"), #upload_id=archive.m_context.upload_id,
         # )
         # with archive.m_context.raw_file(f_name, 'w') as f_obj:
         #    json.dump(entity.m_to_dict(with_meta=True), f_obj)
@@ -891,7 +889,7 @@ def normalize_BSidentifier(self, archive, logger):
 
         return f"/entries/{entry_id}/archive#/data"
 
-    current_cls = __section_definitions["BSidentifier"].section_cls
+    current_cls = __section_definitions["identifier"].section_cls
     # super(current_cls, self).normalize(archive, logger)
     if self.identifier__field:
         logger.info(f"{self.identifier__field} - identifier received")
@@ -907,10 +905,10 @@ def normalize_BSidentifier(self, archive, logger):
 
 
 __NORMALIZER_MAP: Dict[str, Any] = {
-    "BSfabrication": normalize_BSfabrication,
-    "BSsample": normalize_BSsample,
-    "BSsample_component": normalize_BSsample_component,
-    "BSidentifier": normalize_BSidentifier,
+    "fabrication": normalize_fabrication,
+    "sample": normalize_sample,
+    "sample_component": normalize_sample_component,
+    "identifier": normalize_identifier,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
