@@ -39,15 +39,12 @@ jobs:
           - plugin: pynxtools-xrd
             branch: bring-in-examples
             tests_to_run: tests/.
-          # - plugin: pynxtools-apm
-          #   branch: bring-in-examples
-          #   tests_to_run: tests/.
-          # - plugin: pynxtools-xrd
-          #   branch: bring-in-examples
-          #   tests_to_run: tests/.
-          # - plugin: pynxtools-em
-          #   branch: bring-in-examples
-          #   tests_to_run: tests/.
+          - plugin: pynxtools-apm
+            branch: bring-in-examples
+            tests_to_run: tests/.
+          - plugin: pynxtools-em
+            branch: bring-in-examples
+            tests_to_run: tests/.
     steps:
       - uses: actions/checkout@v3
         with:
