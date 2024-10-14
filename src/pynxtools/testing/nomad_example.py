@@ -61,7 +61,7 @@ def parse_nomad_examples(mainfile):
     archive = EntryArchive()
     archive.m_context = Context()
     ArchiveParser().parse(mainfile, archive)
-    archive.m_to_dict()
+    return archive.m_to_dict()
 
 
 def example_upload_entry_point_valid(entrypoint, plugin_package, expected_local_path):
