@@ -56,7 +56,7 @@ def get_file_parameter(example_path: str):
                 yield pytest.param(os.path.join(root, file), id=file)
 
 
-def parse_nomad_example(mainfile):
+def parse_nomad_examples(mainfile):
     """Test if NOMAD example works."""
     archive = EntryArchive()
     archive.m_context = Context()
