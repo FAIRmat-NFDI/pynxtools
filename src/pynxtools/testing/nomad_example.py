@@ -18,6 +18,7 @@
 """Test for NOMAD examples in reader plugins."""
 
 import os
+from typing import Dict, Any
 import pytest
 
 try:
@@ -36,9 +37,15 @@ except ImportError:
 
 def get_file_parameter(example_path: str):
     """
-    Get all examples for the plugin.
+    Get all example files for the plugin.
 
-    plugin_name should be pynxtools_em, pynxtools_mpes, etc.
+    This function searches for specific example files in the given directory path.
+
+    Args:
+        example_path (str): Path to the directory containing example files.
+
+    Yields:
+        pytest.param: A pytest parameter object with the file path and file ID.
     """
     example_files = (
         "schema.archive.yaml",
@@ -49,23 +56,56 @@ def get_file_parameter(example_path: str):
         "scheme.archive.json",
         "intra-entry.archive.json",
     )
-    path = os.walk(os.path.join(os.getcwd(), example_path))
-    for root, _, files in path:
+
+    # Check if the provided path exists
+    if not os.path.exists(example_path):
+        raise FileNotFoundError(f"The directory '{example_path}' does not exist.")
+
+    # Walk through the specified directory
+    for root, _, files in os.walk(example_path):
         for file in files:
-            if os.path.basename(file).endswith(example_files):
+            normalized_file = file.lower()  # Normalize to lower case
+            if os.path.basename(normalized_file).endswith(example_files):
                 yield pytest.param(os.path.join(root, file), id=file)
 
 
-def parse_nomad_examples(mainfile):
-    """Test if NOMAD example works."""
+def parse_nomad_examples(mainfile: str) -> Dict[str, Any]:
+    """Parse a NOMAD example file and return its dictionary representation.
+
+    Args:
+        mainfile (str): The path to the NOMAD example file to be parsed.
+
+    Returns:
+        Dict[str, Any]: A dictionary representation of the parsed NOMAD example.
+
+    Raises:
+        FileNotFoundError: If the mainfile does not exist.
+    """
+    if not os.path.exists(mainfile):
+        raise FileNotFoundError(f"The specified file '{mainfile}' does not exist.")
+
     archive = EntryArchive()
     archive.m_context = Context()
+
     ArchiveParser().parse(mainfile, archive)
     return archive.m_to_dict()
 
 
-def example_upload_entry_point_valid(entrypoint, plugin_package, expected_local_path):
-    """Test if NOMAD ExampleUploadEntryPoint works."""
+def example_upload_entry_point_valid(
+    entrypoint, plugin_package, expected_local_path
+) -> None:
+    """
+    Test if NOMAD ExampleUploadEntryPoint works.
+
+    Args:
+        entrypoint (nomad.config.models.plugins.xampleUploadEntryPoint): The entry point to test.
+        plugin_package (str): The plugin package to set on the entry point.
+        expected_local_path (str): The expected local path after loading.
+
+    """
     setattr(entrypoint, "plugin_package", plugin_package)
     entrypoint.load()
-    assert entrypoint.local_path == expected_local_path
+    assert entrypoint.local_path == expected_local_path, (
+        f"Expected local path '{expected_local_path}', "
+        f"but got '{entrypoint.local_path}'"
+    )

@@ -17,6 +17,7 @@
 #
 """Test for NOMAD examples in reader plugins."""
 
+import os
 import pytest
 
 try:
@@ -36,9 +37,19 @@ from pynxtools.testing.nomad_example import (
 
 from pynxtools.nomad.entrypoints import iv_temp_example
 
-
 @pytest.mark.parametrize(
-    "mainfile", get_file_parameter("src/pynxtools/nomad/examples/")
+    "mainfile",
+    get_file_parameter(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "src",
+            "pynxtools",
+            "nomad",
+            "examples",
+        )
+    ),
 )
 def test_nomad_examples(mainfile):
     """Test if NOMAD examples work."""
