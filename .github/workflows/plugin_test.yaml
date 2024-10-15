@@ -31,7 +31,7 @@ jobs:
             branch: bring-in-examples
             tests_to_run: tests/.
           - plugin: pynxtools-stm
-            branch: bring-in-examples
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: bring-in-examples
