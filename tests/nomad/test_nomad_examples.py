@@ -37,6 +37,7 @@ from pynxtools.testing.nomad_example import (
 
 from pynxtools.nomad.entrypoints import iv_temp_example
 
+
 @pytest.mark.parametrize(
     "mainfile",
     get_file_parameter(
