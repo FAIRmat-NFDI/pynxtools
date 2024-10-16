@@ -36,7 +36,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-stm
-            branch: main
+            branch: NomadExample
             tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: bring-in-examples
