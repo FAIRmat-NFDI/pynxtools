@@ -18,18 +18,18 @@
 
 from typing import Optional
 
-__REPLACEMENT_FOR_NX = "BS"
+__REPLACEMENT_FOR_NX = ""
 
 
 def __rename_nx_to_nomad(name: str) -> Optional[str]:
     """
     Rename the NXDL name to NOMAD.
-    For example: NXdata -> BSdata,
+    For example: NXdata -> data,
     except NXobject -> NXobject
     """
     if name == "NXobject":
         return name
     if name is not None:
         if name.startswith("NX"):
-            return name.replace("NX", __REPLACEMENT_FOR_NX)
+            return __REPLACEMENT_FOR_NX + name[2:]
     return name
