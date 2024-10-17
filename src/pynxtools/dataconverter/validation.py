@@ -431,7 +431,7 @@ def validate_dict_against(
         appdef (str): The appdef name to validate against.
         mapping (MutableMapping[str, Any]):
             The mapping containing the data to validate.
-            This should be a dict of `/` separated paths.
+            This should be a dict of `/` separated paths elements.
             Attributes are denoted with `@` in front of the last element.
         ignore_undocumented (bool, optional):
             Ignore all undocumented keys in the verification
