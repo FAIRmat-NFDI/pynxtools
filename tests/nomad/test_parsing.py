@@ -33,8 +33,8 @@ from typing import Any
 
 from pynxtools.nomad.parser import NexusParser
 from pynxtools.nomad.schema import nexus_metainfo_package
-
-__REPLACEMENT_FOR_NX = "BS"
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __rename_nx_to_nomad as rename_nx_to_nomad
 
 
 @pytest.mark.parametrize(
@@ -42,32 +42,35 @@ __REPLACEMENT_FOR_NX = "BS"
     [
         pytest.param("name", "nexus"),
         pytest.param("NXobject.name", "NXobject"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.nx_kind", "group"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}detector.real_time__field", "*"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_optional", True),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_kind", "group"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_optional", True),
+        pytest.param(rename_nx_to_nomad("NXentry") + ".nx_kind", "group"),
+        pytest.param(rename_nx_to_nomad("NXdetector") + ".real_time__field", "*"),
+        pytest.param(rename_nx_to_nomad("NXentry") + ".DATA.nx_optional", True),
+        pytest.param(rename_nx_to_nomad("NXentry") + ".DATA.nx_kind", "group"),
+        pytest.param(rename_nx_to_nomad("NXentry") + ".DATA.nx_optional", True),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.name", "real_time__field"
+            rename_nx_to_nomad("NXdetector") + ".real_time__field.name",
+            "real_time__field",
         ),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.nx_type", "NX_NUMBER"
+            rename_nx_to_nomad("NXdetector") + ".real_time__field.nx_type", "NX_NUMBER"
         ),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.nx_units", "NX_TIME"
+            rename_nx_to_nomad("NXdetector") + ".real_time__field.nx_units", "NX_TIME"
         ),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}arpes.ENTRY.DATA.nx_optional", False),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.nx_category", "base"),
+        pytest.param(rename_nx_to_nomad("NXarpes") + ".ENTRY.DATA.nx_optional", False),
+        pytest.param(rename_nx_to_nomad("NXentry") + ".nx_category", "base"),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}dispersion_table.refractive_index__field.nx_type",
+            rename_nx_to_nomad("NXdispersion_table")
+            + ".refractive_index__field.nx_type",
             "NX_COMPLEX",
         ),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}dispersive_material.ENTRY.dispersion_x."
-            "DISPERSION_TABLE.refractive_index__field.nx_type",
+            rename_nx_to_nomad("NXdispersive_material")
+            + ".ENTRY.dispersion_x."
+            + "DISPERSION_TABLE.refractive_index__field.nx_type",
             "NX_COMPLEX",
         ),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}apm.nx_category", "application"),
+        pytest.param(rename_nx_to_nomad("NXapm") + ".nx_category", "application"),
     ],
 )
 def test_assert_nexus_metainfo(path: str, value: Any):
@@ -125,7 +128,7 @@ def test_nexus_example():
 
     example_data = "src/pynxtools/data/201805_WSe2_arpes.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
-    arpes_obj = getattr(archive.nexus, f"{__REPLACEMENT_FOR_NX}arpes")
+    arpes_obj = getattr(archive.data, rename_nx_to_nomad("NXarpes"))
 
     assert arpes_obj.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
         "3.27e-10*millibar"

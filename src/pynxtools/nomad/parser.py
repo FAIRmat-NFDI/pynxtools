@@ -484,7 +484,7 @@ class NexusParser(MatchingParser):
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:
-            archine.metadata = EntryMetadata()
+            archive.metadata = EntryMetadata()
 
         # Normalise experiment type
         app_def = str(self.nx_root).split("(")[1].split(")")[0].split(",")[0]
