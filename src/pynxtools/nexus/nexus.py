@@ -5,8 +5,7 @@ import logging
 import os
 import sys
 from functools import lru_cache
-
-from typing import Optional, Union, List, Any
+from typing import Any, List, Optional, Union
 
 import click
 import h5py
@@ -16,6 +15,7 @@ import numpy as np
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     add_base_classes,
     check_attr_name_nxdl,
+    decode_or_not,
     get_best_child,
     get_hdf_info_parent,
     get_local_name_from_xml,
@@ -29,7 +29,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     try_find_units,
     walk_elist,
     write_doc_string,
-    decode_or_not,
 )
 
 
@@ -378,6 +377,8 @@ def get_inherited_hdf_nodes(
     # let us start with the given definition file
     if hdf_node is None:
         raise ValueError("hdf_node must not be None")
+    if nx_name == "NO NXentry found":
+        return (None, [], [])
     elist = []  # type: ignore[var-annotated]
     add_base_classes(elist, nx_name, elem)
     nxdl_elem_path = [elist[0]]
