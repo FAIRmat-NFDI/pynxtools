@@ -477,7 +477,7 @@ class NexusParser(MatchingParser):
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
         self.archive = archive
-        self.nx_root = nexus_schema.NeXus()
+        self.nx_root = nexus_schema.NeXus()  # type: ignore # pylint: disable=no-member
 
         self.archive.data = self.nx_root
         self._logger = logger if logger else get_logger(__name__)
