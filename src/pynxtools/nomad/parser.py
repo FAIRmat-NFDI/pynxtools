@@ -41,7 +41,8 @@ except ImportError as exc:
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
-from pynxtools.nomad.utils import __rename_nx_to_nomad as rename_nx_to_nomad
+from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
+from pynxtools.nomad.utils import XML_NAMESPACES
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -92,6 +93,8 @@ def _to_section(
     else:
         # no need to change section for quantities and attributes
         return current
+
+    nomad_def_name = remove_nx_for_nomad(nomad_def_name, is_group=True)
 
     # for groups, get the definition from the package
     new_def = current.m_def.all_sub_sections[nomad_def_name]
@@ -218,7 +221,7 @@ class NexusParser(MatchingParser):
                                 "setting attribute attempt before creating quantity"
                             )
                         current.m_set_quantity_attribute(
-                            metainfo_def, attr_name, attr_value, quantity=quantity
+                            quantity.name, attr_name, attr_value
                         )
                 except Exception as e:
                     self._logger.warning(
@@ -292,26 +295,26 @@ class NexusParser(MatchingParser):
             try:
                 current.m_set(metainfo_def, field)
                 current.m_set_quantity_attribute(
-                    metainfo_def, "m_nx_data_path", hdf_node.name, quantity=field
+                    data_instance_name, "m_nx_data_path", hdf_node.name
                 )
                 current.m_set_quantity_attribute(
-                    metainfo_def, "m_nx_data_file", self.nxs_fname, quantity=field
+                    data_instance_name, "m_nx_data_file", self.nxs_fname
                 )
                 if field_stats is not None:
                     # TODO _add_additional_attributes function has created these nx_data_*
                     # attributes speculatively already so if the field_stats is None
                     # this will cause unpopulated attributes in the GUI
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_mean", field_stats[0], quantity=field
+                        data_instance_name, "nx_data_mean", field_stats[0]
                     )
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_var", field_stats[1], quantity=field
+                        data_instance_name, "nx_data_var", field_stats[1]
                     )
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_min", field_stats[2], quantity=field
+                        data_instance_name, "nx_data_min", field_stats[2]
                     )
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_max", field_stats[3], quantity=field
+                        data_instance_name, "nx_data_max", field_stats[3]
                     )
             except Exception as e:
                 self._logger.warning(
@@ -333,7 +336,8 @@ class NexusParser(MatchingParser):
         hdf_path: str = hdf_info["hdf_path"]
         hdf_node = hdf_info["hdf_node"]
         if nx_def is not None:
-            nx_def = rename_nx_to_nomad(nx_def)
+            nx_def = remove_nx_for_nomad(nx_def)
+
         if nx_path is None:
             return
 
@@ -474,6 +478,7 @@ class NexusParser(MatchingParser):
     ) -> None:
         self.archive = archive
         self.nx_root = nexus_schema.NeXus()
+
         self.archive.data = self.nx_root
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
