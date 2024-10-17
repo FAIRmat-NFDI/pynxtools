@@ -1,4 +1,4 @@
-"""This is a code that performs several tests on nexus tool"""
+"""This tests that the nexus parsing still works."""
 
 #
 # Copyright The NOMAD Authors.
@@ -18,117 +18,29 @@
 # limitations under the License.
 #
 
+import os
 import pytest
 
 try:
     from nomad.datamodel import EntryArchive
-    from nomad.metainfo import Section
     from nomad.units import ureg
     from nomad.utils import get_logger
 except ImportError:
     pytest.skip("nomad not installed", allow_module_level=True)
-
 
 from typing import Any
 
 from pynxtools.nomad.parser import NexusParser
 from pynxtools.nomad.schema import nexus_metainfo_package
 from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
-from pynxtools.nomad.utils import __rename_nx_to_nomad as rename_nx_to_nomad
-
-
-@pytest.mark.parametrize(
-    "path,value",
-    [
-        pytest.param("name", "nexus"),
-        pytest.param("NXobject.name", "NXobject"),
-        pytest.param(rename_nx_to_nomad("NXentry") + ".nx_kind", "group"),
-        pytest.param(rename_nx_to_nomad("NXdetector") + ".real_time__field", "*"),
-        pytest.param(rename_nx_to_nomad("NXentry") + ".DATA.nx_optional", True),
-        pytest.param(rename_nx_to_nomad("NXentry") + ".DATA.nx_kind", "group"),
-        pytest.param(rename_nx_to_nomad("NXentry") + ".DATA.nx_optional", True),
-        pytest.param(
-            rename_nx_to_nomad("NXdetector") + ".real_time__field.name",
-            "real_time__field",
-        ),
-        pytest.param(
-            rename_nx_to_nomad("NXdetector") + ".real_time__field.nx_type", "NX_NUMBER"
-        ),
-        pytest.param(
-            rename_nx_to_nomad("NXdetector") + ".real_time__field.nx_units", "NX_TIME"
-        ),
-        pytest.param(rename_nx_to_nomad("NXarpes") + ".ENTRY.DATA.nx_optional", False),
-        pytest.param(rename_nx_to_nomad("NXentry") + ".nx_category", "base"),
-        pytest.param(
-            rename_nx_to_nomad("NXdispersion_table")
-            + ".refractive_index__field.nx_type",
-            "NX_COMPLEX",
-        ),
-        pytest.param(
-            rename_nx_to_nomad("NXdispersive_material")
-            + ".ENTRY.dispersion_x."
-            + "DISPERSION_TABLE.refractive_index__field.nx_type",
-            "NX_COMPLEX",
-        ),
-        pytest.param(rename_nx_to_nomad("NXapm") + ".nx_category", "application"),
-    ],
-)
-def test_assert_nexus_metainfo(path: str, value: Any):
-    """
-    Test the existence of nexus metainfo
-
-    pytest.param('NXdispersive_material.inner_section_definitions[0].sub_sections[1].sub_section.inner_section_definitions[0].quantities[4].more["nx_type"]
-    """
-    current = nexus_metainfo_package
-    for name in path.split("."):
-        elements: list = []
-        if name.endswith("__field"):
-            subelement_list = getattr(current, "quantities", None)
-            if subelement_list:
-                elements += subelement_list
-        else:
-            subelement_list = getattr(current, "section_definitions", None)
-            if subelement_list:
-                elements += subelement_list
-            subelement_list = getattr(current, "sub_sections", None)
-            if subelement_list:
-                elements += subelement_list
-            subelement_list = getattr(current, "attributes", None)
-            if subelement_list:
-                elements += subelement_list
-            subelement_list = current.m_contents()
-            if subelement_list:
-                elements += subelement_list
-        for content in elements:
-            if getattr(content, "name", None) == name:
-                current = content  # type: ignore
-                if getattr(current, "sub_section", None):
-                    current = current.section_definition
-                break
-        else:
-            current = getattr(current, name, None)
-        if current is None:
-            assert False, f"{path} does not exist"
-
-    if value == "*":
-        assert current is not None, f"{path} does not exist"
-    elif value is None:
-        assert current is None, f"{path} does exist"
-    else:
-        assert current == value, f"{path} has wrong value"
-
-    if isinstance(current, Section):
-        assert current.nx_kind is not None
-        for base_section in current.all_base_sections:
-            assert base_section.nx_kind == current.nx_kind
-
+from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
 
 def test_nexus_example():
     archive = EntryArchive()
 
     example_data = "src/pynxtools/data/201805_WSe2_arpes.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
-    arpes_obj = getattr(archive.data, rename_nx_to_nomad("NXarpes"))
+    arpes_obj = getattr(archive.data, remove_nx_for_nomad("NXarpes"))
 
     assert arpes_obj.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
         "3.27e-10*millibar"
@@ -172,3 +84,18 @@ def test_same_name_field_and_group():
     example_data = "tests/data/parser/SiO2onSi.ellips.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
     archive.m_to_dict(with_out_meta=True)
+
+
+def test_nexus_example_with_renamed_groups():
+    archive = EntryArchive()
+
+    lauetof_data = os.path.join(
+        os.path.dirname(__file__), "../data/nomad/NXlauetof.hdf5"
+    )
+    NexusParser().parse(lauetof_data, archive, get_logger(__name__))
+    lauetof_obj = getattr(archive.data, f"{__REPLACEMENT_FOR_NX}lauetof")
+
+    assert lauetof_obj.entry.name__group.time_of_flight__field == ureg.Quantity(
+        "1.0*second"
+    )
+    assert lauetof_obj.entry.sample.name__field == "SAMPLE-CHAR-DATA"
