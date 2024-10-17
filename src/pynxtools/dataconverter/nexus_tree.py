@@ -142,18 +142,24 @@ class NexusNode(NodeMixin):
             The inverse of the above `is_a`. In the example case
             `DATA` `parent_of` `my_data`.
     """
-
+    # TODO rename type to nx_type in every place
     name: str
     type: Literal["group", "field", "attribute", "choice"]
     optionality: Literal["required", "recommended", "optional"] = "required"
+    name_type: Literal["any", "partial"]
     variadic: bool = False
     inheritance: List[ET._Element]
     is_a: List["NexusNode"]
     parent_of: List["NexusNode"]
+    occurrence_limits: Tuple[
+        # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
+        Optional[int],
+        Optional[int],
+    ] = (None, None)
 
     def _set_optionality(self):
         """
-        Sets the optionality of the current node
+        Sets the optionality of the current node based on the inheritance chain.
         if `recommended`, `required` or `optional` is set.
         Also sets the field to optional if `maxOccurs == 0` or to required
         if `maxOccurs > 0`.
@@ -179,6 +185,7 @@ class NexusNode(NodeMixin):
         type: Literal["group", "field", "attribute", "choice"],
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: Optional[bool] = None,
+        name_type: Optional[Literal["any", "partial"]] = None,
         parent: Optional["NexusNode"] = None,
         inheritance: Optional[List[Any]] = None,
     ) -> None:
@@ -187,6 +194,7 @@ class NexusNode(NodeMixin):
         self.type = type
         self.optionality = optionality
         self.variadic = contains_uppercase(self.name)
+        self.name_type = name_type
         if variadic is not None:
             self.variadic = variadic
         if inheritance is not None:
