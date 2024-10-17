@@ -153,20 +153,26 @@ class NexusNode(NodeMixin):
         nxdl_base: str
             Base of the NXDL file where the XML element for this node is  defined
     """
-
+    # TODO rename type to nx_type in every place
     name: str
     type: Literal["group", "field", "attribute", "choice"]
     name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
+    name_type: Literal["any", "partial"]
     variadic: bool = False
     inheritance: list[ET._Element]
     is_a: list["NexusNode"]
     parent_of: list["NexusNode"]
     nxdl_base: str
+    occurrence_limits: tuple[
+        # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
+        Optional[int],
+        Optional[int],
+    ] = (None, None)
 
     def _set_optionality(self):
         """
-        Sets the optionality of the current node
+        Sets the optionality of the current node based on the inheritance chain.
         if `recommended`, `required` or `optional` is set.
         Also sets the field to optional if `maxOccurs == 0` or to required
         if `maxOccurs > 0`.
@@ -195,6 +201,7 @@ class NexusNode(NodeMixin):
         name_type: Optional[Literal["specified", "any", "partial"]] = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: Optional[bool] = None,
+        name_type: Optional[Literal["any", "partial"]] = None,
         parent: Optional["NexusNode"] = None,
         inheritance: Optional[list[Any]] = None,
         nxdl_base: Optional[str] = None,
