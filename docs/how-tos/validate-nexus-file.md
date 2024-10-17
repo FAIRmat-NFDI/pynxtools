@@ -120,6 +120,23 @@ Options:
   --help  Show this message and exit.
 ```
 
+*Development verion installation*
+
+If this installation procedure above does not work, you can use the devlopment installation by using git:
+```
+python -m venv .py39
+source .py39/bin/activate
+git clone https://github.com/FAIRmat-NFDI/pynxtools.git
+cd pynxtools/
+git checkout hdf-based-validation
+git submodule sync –recursive
+git submodule update --init --recursive --jobs=4
+python -m pip install --upgrade pip
+python -m pip install -e .
+python -m pip install -e ".[dev]“
+verify_nexus --help
+```
+
 
 ### Using *verify_nexus*
 
