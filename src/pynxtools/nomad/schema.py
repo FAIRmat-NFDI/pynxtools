@@ -74,7 +74,8 @@ except ImportError as exc:
 
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __rename_nx_to_nomad
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __remove_nx_for_nomad
+from pynxtools.nomad.utils import XML_NAMESPACES as __XML_NAMESPACES
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -83,8 +84,6 @@ __URL_REGEXP = re.compile(
     r"(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+"
     r'(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))'
 )
-# noinspection HttpUrlsUsage
-__XML_NAMESPACES = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 # TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
@@ -294,7 +293,7 @@ def __to_section(name: str, **kwargs) -> Section:
     class nexus definition.
     """
 
-    # name = __rename_nx_to_nomad(name)
+    # name = __remove_nx_for_nomad(name)
 
     if name in __section_definitions:
         section = __section_definitions[name]
@@ -549,10 +548,11 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         xml_attrs = group.attrib
 
         assert "type" in xml_attrs, "Expecting type to be present"
-        nx_type = __rename_nx_to_nomad(xml_attrs["type"])
+        nx_type = __remove_nx_for_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type)
-        group_section = Section(validate=VALIDATE, nx_kind="group", name=nx_name)
+        section_name = __remove_nx_for_nomad(nx_name, is_group=True)
+        group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
 
         __attach_base_section(group_section, root_section, __to_section(nx_type))
         __add_common_properties(group, group_section)
@@ -560,10 +560,11 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_name = xml_attrs.get(
             "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
         )
+        subsection_name = __remove_nx_for_nomad(nx_name, is_group=True)
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind="group",
-            name=nx_name,
+            name=subsection_name,
             repeats=__if_repeats(nx_name, xml_attrs.get("maxOccurs", "0")),
             variable=__if_template(nx_name),
         )
@@ -605,7 +606,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
-    nx_name = __rename_nx_to_nomad(nx_name)
+    nx_name = __remove_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
@@ -613,7 +614,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
-        nx_base_sec = __to_section(__rename_nx_to_nomad(xml_attrs["extends"]))
+        nx_base_sec = __to_section(__remove_nx_for_nomad(xml_attrs["extends"]))
         class_section.base_sections = [nx_base_sec] + [
             cls.m_def for cls in nomad_base_sec_cls
         ]
