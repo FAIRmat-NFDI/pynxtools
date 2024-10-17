@@ -31,7 +31,8 @@ import numpy as np
 
 try:
     from nomad import utils
-    from nomad.datamodel import EntryArchive
+    from nomad.datamodel import EntryArchive, EntryMetadata
+    from nomad.datamodel.data import EntryData
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
         Component,
@@ -73,7 +74,8 @@ except ImportError as exc:
 
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __rename_nx_to_nomad
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __remove_nx_for_nomad
+from pynxtools.nomad.utils import XML_NAMESPACES as __XML_NAMESPACES
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -82,8 +84,6 @@ __URL_REGEXP = re.compile(
     r"(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+"
     r'(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))'
 )
-# noinspection HttpUrlsUsage
-__XML_NAMESPACES = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 # TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
@@ -93,11 +93,11 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "BSfabrication": [Instrument],
-    "BSsample": [CompositeSystem],
-    "BSsample_component": [Component],
-    "BSidentifier": [EntityReference],
-    # "BSobject": BaseSection,
+    "fabrication": [Instrument],
+    "sample": [CompositeSystem],
+    "sample_component": [Component],
+    "identifier": [EntityReference],
+    # "object": BaseSection,
 }
 
 
@@ -293,7 +293,7 @@ def __to_section(name: str, **kwargs) -> Section:
     class nexus definition.
     """
 
-    # name = __rename_nx_to_nomad(name)
+    # name = __remove_nx_for_nomad(name)
 
     if name in __section_definitions:
         section = __section_definitions[name]
@@ -548,10 +548,11 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         xml_attrs = group.attrib
 
         assert "type" in xml_attrs, "Expecting type to be present"
-        nx_type = __rename_nx_to_nomad(xml_attrs["type"])
+        nx_type = __remove_nx_for_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type)
-        group_section = Section(validate=VALIDATE, nx_kind="group", name=nx_name)
+        section_name = __remove_nx_for_nomad(nx_name, is_group=True)
+        group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
 
         __attach_base_section(group_section, root_section, __to_section(nx_type))
         __add_common_properties(group, group_section)
@@ -559,10 +560,11 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_name = xml_attrs.get(
             "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
         )
+        subsection_name = __remove_nx_for_nomad(nx_name, is_group=True)
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind="group",
-            name=nx_name,
+            name=subsection_name,
             repeats=__if_repeats(nx_name, xml_attrs.get("maxOccurs", "0")),
             variable=__if_template(nx_name),
         )
@@ -604,7 +606,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
-    nx_name = __rename_nx_to_nomad(nx_name)
+    nx_name = __remove_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
@@ -612,7 +614,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
-        nx_base_sec = __to_section(__rename_nx_to_nomad(xml_attrs["extends"]))
+        nx_base_sec = __to_section(__remove_nx_for_nomad(xml_attrs["extends"]))
         class_section.base_sections = [nx_base_sec] + [
             cls.m_def for cls in nomad_base_sec_cls
         ]
@@ -779,7 +781,9 @@ def init_nexus_metainfo():
 
     # We take the application definitions and create a common parent section that allows
     # to include nexus in an EntryArchive.
-    nexus_section = Section(validate=VALIDATE, name=__GROUPING_NAME)
+    nexus_section = Section(
+        validate=VALIDATE, name=__GROUPING_NAME, label=__GROUPING_NAME
+    )
 
     # try:
     #     load_nexus_schema('')
@@ -790,10 +794,6 @@ def init_nexus_metainfo():
     #     except Exception:
     #         pass
     nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
-
-    EntryArchive.nexus = SubSection(name="nexus", section_def=nexus_section)
-    EntryArchive.nexus.init_metainfo()
-    EntryArchive.m_def.sub_sections.append(EntryArchive.nexus)
 
     nexus_metainfo_package.section_definitions.append(nexus_section)
 
@@ -813,6 +813,9 @@ def init_nexus_metainfo():
                     sections.append(section)
 
     for section in sections:
+        # TODO: add when quantities with mixed use_full_storage are supported by GUI
+        # if not (str(section).startswith("nexus.")):
+        #    continue
         __add_additional_attributes(section)
         for quantity in section.quantities:
             __add_additional_attributes(quantity)
@@ -827,16 +830,16 @@ def init_nexus_metainfo():
 init_nexus_metainfo()
 
 
-def normalize_BSfabrication(self, archive, logger):
-    """Normalizer for BSfabrication section."""
-    current_cls = __section_definitions["BSfabrication"].section_cls
+def normalize_fabrication(self, archive, logger):
+    """Normalizer for fabrication section."""
+    current_cls = __section_definitions["fabrication"].section_cls
     super(current_cls, self).normalize(archive, logger)
     self.lab_id = "Hello"
 
 
-def normalize_BSsample_component(self, archive, logger):
-    """Normalizer for BSsample_component section."""
-    current_cls = __section_definitions["BSsample_component"].section_cls
+def normalize_sample_component(self, archive, logger):
+    """Normalizer for sample_component section."""
+    current_cls = __section_definitions["sample_component"].section_cls
     if self.name__field:
         self.name = self.name__field
     if self.mass__field:
@@ -845,24 +848,31 @@ def normalize_BSsample_component(self, archive, logger):
     super(current_cls, self).normalize(archive, logger)
 
 
-def normalize_BSsample(self, archive, logger):
-    """Normalizer for BSsample section."""
-    current_cls = __section_definitions["BSsample"].section_cls
+def normalize_sample(self, archive, logger):
+    """Normalizer for sample section."""
+    current_cls = __section_definitions["sample"].section_cls
     if self.name__field:
         self.name = self.name__field
-    # one could also copy local ids to BSidentifier for search purposes
+    # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
 
-def normalize_BSidentifier(self, archive, logger):
-    """Normalizer for BSidentifier section."""
+def normalize_identifier(self, archive, logger):
+    """Normalizer for identifier section."""
 
     def create_Entity(lab_id, archive, f_name):
+        # TODO: use this instead of BasicEln() when use_full_storage is properly supported by the GUI
+        # entitySec = Entity()
+        # entitySec.lab_id = lab_id
+        # entity = EntryArchive (
+        #    data = entitySec,
+        #    m_context=archive.m_context,
+        #    metadata=EntryMetadata(entry_type = "identifier"), #upload_id=archive.m_context.upload_id,
+        # )
+        # with archive.m_context.raw_file(f_name, 'w') as f_obj:
+        #    json.dump(entity.m_to_dict(with_meta=True), f_obj)
         entity = BasicEln()
         entity.lab_id = lab_id
-        entity.entity = Entity()
-        entity.entity.lab_id = lab_id
-
         with archive.m_context.raw_file(f_name, "w") as f_obj:
             json.dump(
                 {"data": entity.m_to_dict(with_meta=True, include_derived=True)},
@@ -880,7 +890,7 @@ def normalize_BSidentifier(self, archive, logger):
 
         return f"/entries/{entry_id}/archive#/data"
 
-    current_cls = __section_definitions["BSidentifier"].section_cls
+    current_cls = __section_definitions["identifier"].section_cls
     # super(current_cls, self).normalize(archive, logger)
     if self.identifier__field:
         logger.info(f"{self.identifier__field} - identifier received")
@@ -896,10 +906,10 @@ def normalize_BSidentifier(self, archive, logger):
 
 
 __NORMALIZER_MAP: Dict[str, Any] = {
-    "BSfabrication": normalize_BSfabrication,
-    "BSsample": normalize_BSsample,
-    "BSsample_component": normalize_BSsample_component,
-    "BSidentifier": normalize_BSidentifier,
+    "fabrication": normalize_fabrication,
+    "sample": normalize_sample,
+    "sample_component": normalize_sample_component,
+    "identifier": normalize_identifier,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
