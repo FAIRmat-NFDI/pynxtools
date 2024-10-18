@@ -72,6 +72,7 @@ def __rename_nx_for_nomad(
 
     if name and name.startswith("NX"):
         name = __REPLACEMENT_FOR_NX + name[2:]
+        name = name[0].upper() + (name[1:] if len(name) > 1 else "")
 
     if is_group:
         name = __rename_classes_in_nomad(name)

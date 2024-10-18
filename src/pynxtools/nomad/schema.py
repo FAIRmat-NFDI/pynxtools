@@ -95,10 +95,10 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "fabrication": [Instrument],
-    "sample": [CompositeSystem],
-    "sample_component": [Component],
-    "identifier": [EntityReference],
+    __rename_nx_for_nomad("NXfabrication"): [Instrument],
+    __rename_nx_for_nomad("NXsample"): [CompositeSystem],
+    __rename_nx_for_nomad("NXsample_component"): [Component],
+    __rename_nx_for_nomad("NXidentifier"): [EntityReference],
     # "object": BaseSection,
 }
 
@@ -833,14 +833,18 @@ init_nexus_metainfo()
 
 def normalize_fabrication(self, archive, logger):
     """Normalizer for fabrication section."""
-    current_cls = __section_definitions["fabrication"].section_cls
+    current_cls = __section_definitions[
+        __rename_nx_for_nomad("NXfabrication")
+    ].section_cls
     super(current_cls, self).normalize(archive, logger)
     self.lab_id = "Hello"
 
 
 def normalize_sample_component(self, archive, logger):
     """Normalizer for sample_component section."""
-    current_cls = __section_definitions["sample_component"].section_cls
+    current_cls = __section_definitions[
+        __rename_nx_for_nomad("NXsample_component")
+    ].section_cls
     if self.name__field:
         self.name = self.name__field
     if self.mass__field:
@@ -851,7 +855,7 @@ def normalize_sample_component(self, archive, logger):
 
 def normalize_sample(self, archive, logger):
     """Normalizer for sample section."""
-    current_cls = __section_definitions["sample"].section_cls
+    current_cls = __section_definitions[__rename_nx_for_nomad("NXsample")].section_cls
     if self.name__field:
         self.name = self.name__field
     # one could also copy local ids to identifier for search purposes
@@ -891,7 +895,9 @@ def normalize_identifier(self, archive, logger):
 
         return f"/entries/{entry_id}/archive#/data"
 
-    current_cls = __section_definitions["identifier"].section_cls
+    current_cls = __section_definitions[
+        __rename_nx_for_nomad("NXidentifier")
+    ].section_cls
     # super(current_cls, self).normalize(archive, logger)
     if self.identifier__field:
         logger.info(f"{self.identifier__field} - identifier received")
@@ -907,10 +913,10 @@ def normalize_identifier(self, archive, logger):
 
 
 __NORMALIZER_MAP: Dict[str, Any] = {
-    "fabrication": normalize_fabrication,
-    "sample": normalize_sample,
-    "sample_component": normalize_sample_component,
-    "identifier": normalize_identifier,
+    __rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
+    __rename_nx_for_nomad("NXsample"): normalize_sample,
+    __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
+    __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
