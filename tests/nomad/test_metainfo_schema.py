@@ -28,7 +28,7 @@ except ImportError:
 from typing import Any
 
 from pynxtools.nomad.schema import nexus_metainfo_package
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
 
 
 @pytest.mark.parametrize(
@@ -36,39 +36,35 @@ from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
     [
         pytest.param("name", "nexus"),
         pytest.param("NXobject.name", "NXobject"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.nx_kind", "group"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}detector.real_time__field", "*"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_optional", True),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_kind", "group"),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.DATA.nx_optional", True),
+        pytest.param(remove_nx_for_nomad("NXentry") + ".nx_kind", "group"),
+        pytest.param(remove_nx_for_nomad("NXdetector") + ".real_time__field", "*"),
+        pytest.param(remove_nx_for_nomad("NXentry") + ".DATA.nx_optional", True),
+        pytest.param(remove_nx_for_nomad("NXentry") + ".DATA.nx_kind", "group"),
+        pytest.param(remove_nx_for_nomad("NXentry") + ".DATA.nx_optional", True),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.name", "real_time__field"
+            remove_nx_for_nomad("NXdetector") + ".real_time__field.name",
+            "real_time__field",
         ),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.nx_type", "NX_NUMBER"
+            remove_nx_for_nomad("NXdetector") + ".real_time__field.nx_type", "NX_NUMBER"
         ),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}detector.real_time__field.nx_units", "NX_TIME"
+            remove_nx_for_nomad("NXdetector") + ".real_time__field.nx_units", "NX_TIME"
         ),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}arpes.ENTRY.DATA.nx_optional", False),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}entry.nx_category", "base"),
+        pytest.param(remove_nx_for_nomad("NXarpes") + ".ENTRY.DATA.nx_optional", False),
+        pytest.param(remove_nx_for_nomad("NXentry") + ".nx_category", "base"),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}dispersion_table.refractive_index__field.nx_type",
+            remove_nx_for_nomad("NXdispersion_table")
+            + ".refractive_index__field.nx_type",
             "NX_COMPLEX",
         ),
         pytest.param(
-            f"{__REPLACEMENT_FOR_NX}dispersive_material.ENTRY.dispersion_x."
-            "DISPERSION_TABLE.refractive_index__field.nx_type",
+            remove_nx_for_nomad("NXdispersive_material")
+            + ".ENTRY.dispersion_x."
+            + "DISPERSION_TABLE.refractive_index__field.nx_type",
             "NX_COMPLEX",
         ),
-        pytest.param(f"{__REPLACEMENT_FOR_NX}apm.nx_category", "application"),
-        # This checks that the renaming for unallowed group names works.
-        pytest.param(
-            f"{__REPLACEMENT_FOR_NX}lauetof.entry.name__group.nx_type", "NXdata"
-        ),
-        pytest.param(
-            f"{__REPLACEMENT_FOR_NX}lauetof.entry.name__group.nx_name", "name"
-        ),
+        pytest.param(remove_nx_for_nomad("NXapm") + ".nx_category", "application"),
     ],
 )
 def test_assert_nexus_metainfo(path: str, value: Any):

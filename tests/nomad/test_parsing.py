@@ -32,8 +32,8 @@ from typing import Any
 
 from pynxtools.nomad.parser import NexusParser
 from pynxtools.nomad.schema import nexus_metainfo_package
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
 from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
+
 
 def test_nexus_example():
     archive = EntryArchive()
@@ -93,7 +93,7 @@ def test_nexus_example_with_renamed_groups():
         os.path.dirname(__file__), "../data/nomad/NXlauetof.hdf5"
     )
     NexusParser().parse(lauetof_data, archive, get_logger(__name__))
-    lauetof_obj = getattr(archive.data, f"{__REPLACEMENT_FOR_NX}lauetof")
+    lauetof_obj = getattr(archive.data, remove_nx_for_nomad("NXlauetof"))
 
     assert lauetof_obj.entry.name__group.time_of_flight__field == ureg.Quantity(
         "1.0*second"
