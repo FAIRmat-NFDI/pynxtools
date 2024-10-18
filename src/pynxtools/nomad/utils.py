@@ -74,7 +74,7 @@ def __rename_nx_for_nomad(
         name = __REPLACEMENT_FOR_NX + name[2:]
 
     if is_group:
-        name = __rename_classes_in_nomad(name).capitalize()
+        name = __rename_classes_in_nomad(name)
     elif is_field:
         name += "__field"
     elif is_attribute:
