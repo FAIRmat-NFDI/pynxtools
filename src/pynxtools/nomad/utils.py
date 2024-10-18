@@ -50,7 +50,7 @@ def __rename_nx_for_nomad(
 ) -> Optional[str]:
     """
     Rename NXDL names for compatibility with NOMAD, applying specific rules
-    based on the type of entity (group, field, or attribute).
+    based on the type of the NeXus concept. (group, field, or attribute).
 
     - NXobject is unchanged.
     - NX-prefixed names (e.g., NXdata) are renamed by replacing 'NX' with a custom string.
