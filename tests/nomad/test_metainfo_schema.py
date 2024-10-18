@@ -28,7 +28,7 @@ except ImportError:
 from typing import Any
 
 from pynxtools.nomad.schema import nexus_metainfo_package
-from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
+from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
 
 
 @pytest.mark.parametrize(
@@ -36,35 +36,35 @@ from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
     [
         pytest.param("name", "nexus"),
         pytest.param("NXobject.name", "NXobject"),
-        pytest.param(remove_nx_for_nomad("NXentry") + ".nx_kind", "group"),
-        pytest.param(remove_nx_for_nomad("NXdetector") + ".real_time__field", "*"),
-        pytest.param(remove_nx_for_nomad("NXentry") + ".DATA.nx_optional", True),
-        pytest.param(remove_nx_for_nomad("NXentry") + ".DATA.nx_kind", "group"),
-        pytest.param(remove_nx_for_nomad("NXentry") + ".DATA.nx_optional", True),
+        pytest.param(rename_nx_for_nomad("NXentry") + ".nx_kind", "group"),
+        pytest.param(rename_nx_for_nomad("NXdetector") + ".real_time__field", "*"),
+        pytest.param(rename_nx_for_nomad("NXentry") + ".DATA.nx_optional", True),
+        pytest.param(rename_nx_for_nomad("NXentry") + ".DATA.nx_kind", "group"),
+        pytest.param(rename_nx_for_nomad("NXentry") + ".DATA.nx_optional", True),
         pytest.param(
-            remove_nx_for_nomad("NXdetector") + ".real_time__field.name",
+            rename_nx_for_nomad("NXdetector") + ".real_time__field.name",
             "real_time__field",
         ),
         pytest.param(
-            remove_nx_for_nomad("NXdetector") + ".real_time__field.nx_type", "NX_NUMBER"
+            rename_nx_for_nomad("NXdetector") + ".real_time__field.nx_type", "NX_NUMBER"
         ),
         pytest.param(
-            remove_nx_for_nomad("NXdetector") + ".real_time__field.nx_units", "NX_TIME"
+            rename_nx_for_nomad("NXdetector") + ".real_time__field.nx_units", "NX_TIME"
         ),
-        pytest.param(remove_nx_for_nomad("NXarpes") + ".ENTRY.DATA.nx_optional", False),
-        pytest.param(remove_nx_for_nomad("NXentry") + ".nx_category", "base"),
+        pytest.param(rename_nx_for_nomad("NXarpes") + ".ENTRY.DATA.nx_optional", False),
+        pytest.param(rename_nx_for_nomad("NXentry") + ".nx_category", "base"),
         pytest.param(
-            remove_nx_for_nomad("NXdispersion_table")
+            rename_nx_for_nomad("NXdispersion_table")
             + ".refractive_index__field.nx_type",
             "NX_COMPLEX",
         ),
         pytest.param(
-            remove_nx_for_nomad("NXdispersive_material")
+            rename_nx_for_nomad("NXdispersive_material")
             + ".ENTRY.dispersion_x."
             + "DISPERSION_TABLE.refractive_index__field.nx_type",
             "NX_COMPLEX",
         ),
-        pytest.param(remove_nx_for_nomad("NXapm") + ".nx_category", "application"),
+        pytest.param(rename_nx_for_nomad("NXapm") + ".nx_category", "application"),
     ],
 )
 def test_assert_nexus_metainfo(path: str, value: Any):

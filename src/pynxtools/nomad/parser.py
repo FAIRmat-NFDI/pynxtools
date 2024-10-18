@@ -41,7 +41,7 @@ except ImportError as exc:
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
-from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
+from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -93,7 +93,7 @@ def _to_section(
         # no need to change section for quantities and attributes
         return current
 
-    nomad_def_name = remove_nx_for_nomad(nomad_def_name, is_group=True)
+    nomad_def_name = rename_nx_for_nomad(nomad_def_name, is_group=True)
 
     # for groups, get the definition from the package
     new_def = current.m_def.all_sub_sections[nomad_def_name]
@@ -335,7 +335,7 @@ class NexusParser(MatchingParser):
         hdf_path: str = hdf_info["hdf_path"]
         hdf_node = hdf_info["hdf_node"]
         if nx_def is not None:
-            nx_def = remove_nx_for_nomad(nx_def)
+            nx_def = rename_nx_for_nomad(nx_def)
 
         if nx_path is None:
             return
