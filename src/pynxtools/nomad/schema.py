@@ -85,7 +85,7 @@ __URL_REGEXP = re.compile(
 )
 
 # noinspection HttpUrlsUsage
-XML_NAMESPACES = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
+__XML_NAMESPACES = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 # TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
