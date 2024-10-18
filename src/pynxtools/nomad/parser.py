@@ -234,7 +234,7 @@ class NexusParser(MatchingParser):
                                 "setting attribute attempt before creating quantity"
                             )
                         current.m_set_quantity_attribute(
-                            metainfo_def, attr_name, attr_value, quantity=quantity
+                            quantity.name, attr_name, attr_value
                         )
                 except Exception as e:
                     self._logger.warning(
@@ -308,26 +308,26 @@ class NexusParser(MatchingParser):
             try:
                 current.m_set(metainfo_def, field)
                 current.m_set_quantity_attribute(
-                    metainfo_def, "m_nx_data_path", hdf_node.name, quantity=field
+                    data_instance_name, "m_nx_data_path", hdf_node.name
                 )
                 current.m_set_quantity_attribute(
-                    metainfo_def, "m_nx_data_file", self.nxs_fname, quantity=field
+                    data_instance_name, "m_nx_data_file", self.nxs_fname
                 )
                 if field_stats is not None:
                     # TODO _add_additional_attributes function has created these nx_data_*
                     # attributes speculatively already so if the field_stats is None
                     # this will cause unpopulated attributes in the GUI
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_mean", field_stats[0], quantity=field
+                        data_instance_name, "nx_data_mean", field_stats[0]
                     )
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_var", field_stats[1], quantity=field
+                        data_instance_name, "nx_data_var", field_stats[1]
                     )
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_min", field_stats[2], quantity=field
+                        data_instance_name, "nx_data_min", field_stats[2]
                     )
                     current.m_set_quantity_attribute(
-                        metainfo_def, "nx_data_max", field_stats[3], quantity=field
+                        data_instance_name, "nx_data_max", field_stats[3]
                     )
             except Exception as e:
                 self._logger.warning(
