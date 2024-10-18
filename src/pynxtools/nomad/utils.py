@@ -18,9 +18,6 @@
 
 from typing import Optional
 
-# noinspection HttpUrlsUsage
-XML_NAMESPACES = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
-
 __REPLACEMENT_FOR_NX = ""
 
 # This is a list of NeXus group names that are not allowed because they are defined as quantities in the BaseSection class.

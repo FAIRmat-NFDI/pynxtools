@@ -42,7 +42,6 @@ import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
 from pynxtools.nomad.utils import __remove_nx_for_nomad as remove_nx_for_nomad
-from pynxtools.nomad.utils import XML_NAMESPACES
 
 
 def _to_group_name(nx_node: ET.Element):
