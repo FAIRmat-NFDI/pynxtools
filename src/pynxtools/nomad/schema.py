@@ -74,7 +74,7 @@ except ImportError as exc:
 
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __remove_nx_for_nomad
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __rename_nx_for_nomad
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -295,8 +295,6 @@ def __to_section(name: str, **kwargs) -> Section:
     class nexus definition.
     """
 
-    # name = __remove_nx_for_nomad(name)
-
     if name in __section_definitions:
         section = __section_definitions[name]
         section.more.update(**kwargs)
@@ -374,7 +372,7 @@ def __create_attributes(xml_node: ET.Element, definition: Union[Section, Quantit
     todo: account for more attributes of attribute, e.g., default, minOccurs
     """
     for attribute in xml_node.findall("nx:attribute", __XML_NAMESPACES):
-        name = attribute.get("name") + "__attribute"
+        name = __rename_nx_for_nomad(attribute.get("name"), is_attribute=True)
 
         nx_enum = __get_enumeration(attribute)
         if nx_enum:
@@ -467,7 +465,8 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     # name
     assert "name" in xml_attrs, "Expecting name to be present"
-    name = xml_attrs["name"] + "__field"
+
+    name = __rename_nx_for_nomad(xml_attrs["name"], is_field=True)
 
     # type
     nx_type = xml_attrs.get("type", "NX_CHAR")
@@ -550,10 +549,10 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         xml_attrs = group.attrib
 
         assert "type" in xml_attrs, "Expecting type to be present"
-        nx_type = __remove_nx_for_nomad(xml_attrs["type"])
+        nx_type = __rename_nx_for_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type)
-        section_name = __remove_nx_for_nomad(nx_name, is_group=True)
+        section_name = __rename_nx_for_nomad(nx_name, is_group=True)
         group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
 
         __attach_base_section(group_section, root_section, __to_section(nx_type))
@@ -562,7 +561,7 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_name = xml_attrs.get(
             "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
         )
-        subsection_name = __remove_nx_for_nomad(nx_name, is_group=True)
+        subsection_name = __rename_nx_for_nomad(nx_name, is_group=True)
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind="group",
@@ -608,7 +607,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
-    nx_name = __remove_nx_for_nomad(nx_name)
+    nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
@@ -616,7 +615,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
-        nx_base_sec = __to_section(__remove_nx_for_nomad(xml_attrs["extends"]))
+        nx_base_sec = __to_section(__rename_nx_for_nomad(xml_attrs["extends"]))
         class_section.base_sections = [nx_base_sec] + [
             cls.m_def for cls in nomad_base_sec_cls
         ]
