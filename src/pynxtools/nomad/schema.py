@@ -75,7 +75,6 @@ except ImportError as exc:
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __remove_nx_for_nomad
-from pynxtools.nomad.utils import XML_NAMESPACES as __XML_NAMESPACES
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -84,6 +83,9 @@ __URL_REGEXP = re.compile(
     r"(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+"
     r'(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))'
 )
+
+# noinspection HttpUrlsUsage
+XML_NAMESPACES = {"nx": "http://definition.nexusformat.org/nxdl/3.1"}
 
 # TO DO the validation still show some problems. Most notably there are a few higher
 # dimensional fields with non number types, which the metainfo does not support
