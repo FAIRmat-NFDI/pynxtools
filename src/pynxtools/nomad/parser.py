@@ -219,9 +219,7 @@ class NexusParser(MatchingParser):
                             raise Warning(
                                 "setting attribute attempt before creating quantity"
                             )
-                        current.m_set_quantity_attribute(
-                            quantity.name, attr_name, attr_value
-                        )
+                        quantity.m_set_attribute(attr_name, attr_value)
                 except Exception as e:
                     self._logger.warning(
                         "error while setting attribute",
@@ -293,28 +291,16 @@ class NexusParser(MatchingParser):
             # may need to check if the given unit is in the allowable list
             try:
                 current.m_set(metainfo_def, field)
-                current.m_set_quantity_attribute(
-                    data_instance_name, "m_nx_data_path", hdf_node.name
-                )
-                current.m_set_quantity_attribute(
-                    data_instance_name, "m_nx_data_file", self.nxs_fname
-                )
+                field.m_set_attribute("m_nx_data_path", hdf_node.name)
+                field.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 if field_stats is not None:
                     # TODO _add_additional_attributes function has created these nx_data_*
                     # attributes speculatively already so if the field_stats is None
                     # this will cause unpopulated attributes in the GUI
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_mean", field_stats[0]
-                    )
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_var", field_stats[1]
-                    )
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_min", field_stats[2]
-                    )
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_max", field_stats[3]
-                    )
+                    field.m_set_attribute("nx_data_mean", field_stats[0])
+                    field.m_set_attribute("nx_data_var", field_stats[1])
+                    field.m_set_attribute("nx_data_min", field_stats[2])
+                    field.m_set_attribute("nx_data_max", field_stats[3])
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
