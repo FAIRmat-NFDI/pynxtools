@@ -36,7 +36,7 @@ jobs:
       - name: Install nomad
         if: "${{ matrix.python_version != '3.8' && matrix.python_version != '3.12'}}"
         run: |
-          uv pip install nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
+          uv pip install nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@Sprint_Nomad_BaseSection
       - name: Install pynx
         run: |
           uv pip install ".[dev]"

@@ -24,7 +24,8 @@ import numpy as np
 try:
     from ase.data import chemical_symbols
     from nomad.atomutils import Formula
-    from nomad.datamodel import EntryArchive
+    from nomad.datamodel import EntryArchive, EntryMetadata
+    from nomad.datamodel.data import EntryData
     from nomad.datamodel.results import Material, Results
     from nomad.metainfo import MSection
     from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
@@ -39,23 +40,8 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-
-__REPLACEMENT_FOR_NX = "BS"
-__REPLACEMENT_LEN = len(__REPLACEMENT_FOR_NX)
-
-
-def _rename_nx_to_nomad(name: str) -> Optional[str]:
-    """
-    Rename the NXDL name to NOMAD.
-    For example: NXdata -> BSdata,
-    except NXobject -> NXobject
-    """
-    if name == "NXobject":
-        return name
-    if name is not None:
-        if name.startswith("NX"):
-            return name.replace("NX", __REPLACEMENT_FOR_NX)
-    return name
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -63,9 +49,7 @@ def _to_group_name(nx_node: ET.Element):
     Normalise the given group name
     """
     # assuming always upper() is incorrect, e.g. NXem_msr is a specific one not EM_MSR!
-    grp_nm = nx_node.attrib.get(
-        "name", nx_node.attrib["type"][__REPLACEMENT_LEN:].upper()
-    )
+    grp_nm = nx_node.attrib.get("name", nx_node.attrib["type"][2:].upper())
 
     return grp_nm
 
@@ -108,6 +92,8 @@ def _to_section(
     else:
         # no need to change section for quantities and attributes
         return current
+
+    nomad_def_name = rename_nx_for_nomad(nomad_def_name, is_group=True)
 
     # for groups, get the definition from the package
     new_def = current.m_def.all_sub_sections[nomad_def_name]
@@ -233,9 +219,7 @@ class NexusParser(MatchingParser):
                             raise Warning(
                                 "setting attribute attempt before creating quantity"
                             )
-                        current.m_set_quantity_attribute(
-                            quantity.name, attr_name, attr_value
-                        )
+                        quantity.m_set_attribute(attr_name, attr_value)
                 except Exception as e:
                     self._logger.warning(
                         "error while setting attribute",
@@ -307,28 +291,16 @@ class NexusParser(MatchingParser):
             # may need to check if the given unit is in the allowable list
             try:
                 current.m_set(metainfo_def, field)
-                current.m_set_quantity_attribute(
-                    data_instance_name, "m_nx_data_path", hdf_node.name
-                )
-                current.m_set_quantity_attribute(
-                    data_instance_name, "m_nx_data_file", self.nxs_fname
-                )
+                field.m_set_attribute("m_nx_data_path", hdf_node.name)
+                field.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 if field_stats is not None:
                     # TODO _add_additional_attributes function has created these nx_data_*
                     # attributes speculatively already so if the field_stats is None
                     # this will cause unpopulated attributes in the GUI
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_mean", field_stats[0]
-                    )
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_var", field_stats[1]
-                    )
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_min", field_stats[2]
-                    )
-                    current.m_set_quantity_attribute(
-                        data_instance_name, "nx_data_max", field_stats[3]
-                    )
+                    field.m_set_attribute("nx_data_mean", field_stats[0])
+                    field.m_set_attribute("nx_data_var", field_stats[1])
+                    field.m_set_attribute("nx_data_min", field_stats[2])
+                    field.m_set_attribute("nx_data_max", field_stats[3])
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
@@ -349,7 +321,8 @@ class NexusParser(MatchingParser):
         hdf_path: str = hdf_info["hdf_path"]
         hdf_node = hdf_info["hdf_node"]
         if nx_def is not None:
-            nx_def = _rename_nx_to_nomad(nx_def)
+            nx_def = rename_nx_for_nomad(nx_def)
+
         if nx_path is None:
             return
 
@@ -489,8 +462,9 @@ class NexusParser(MatchingParser):
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
         self.archive = archive
-        self.archive.m_create(nexus_schema.NeXus)  # type: ignore # pylint: disable=no-member
-        self.nx_root = self.archive.nexus
+        self.nx_root = nexus_schema.NeXus()  # type: ignore # pylint: disable=no-member
+
+        self.archive.data = self.nx_root
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
 
@@ -500,14 +474,10 @@ class NexusParser(MatchingParser):
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:
-            return
+            archive.metadata = EntryMetadata()
 
         # Normalise experiment type
-        app_def: str = ""
-        for var in dir(archive.nexus):
-            if getattr(archive.nexus, var, None) is not None:
-                app_def = var
-                break
+        app_def = str(self.nx_root).split("(")[1].split(")")[0].split(",")[0]
         if archive.metadata.entry_type is None:
             archive.metadata.entry_type = app_def
             archive.metadata.domain = "nexus"
