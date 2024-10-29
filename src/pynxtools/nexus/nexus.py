@@ -85,6 +85,11 @@ def decode_if_string(
 def get_nxdl_entry(hdf_info):
     """Get the nxdl application definition for an HDF5 node"""
     entry = hdf_info
+    if (
+        "NX_class" in entry["hdf_node"].attrs.keys()
+        and decode_if_string(entry["hdf_node"].attrs["NX_class"]) == "NXroot"
+    ):
+        return "NXroot"
     while (
         isinstance(entry["hdf_node"], h5py.Dataset)
         or "NX_class" not in entry["hdf_node"].attrs.keys()
@@ -97,7 +102,7 @@ def get_nxdl_entry(hdf_info):
         nxdef = entry["hdf_node"]["definition"][()]
         return nxdef.decode()
     except KeyError:  # 'NO Definition referenced'
-        return "NXentry"
+        return "NXroot"
 
 
 def get_nx_class_path(hdf_info):
@@ -398,6 +403,8 @@ def get_inherited_hdf_nodes(
     path = hdf_path
 
     for pind in range(len(path)):
+        if len(path) == 1 and path[0] == "":
+            return (["NXroot"], ["/"], elist)
         hdf_info2 = [hdf_path, hdf_node, hdf_class_path]
         [
             hdf_path,
@@ -803,9 +810,7 @@ class HandleNexus:
 
     def full_visit(self, root, hdf_node, name, func):
         """visiting recursivly all children, but avoiding endless cycles"""
-        # print(name)
-        if len(name) > 0:
-            func(name, hdf_node)
+        func(name, hdf_node)
         if isinstance(hdf_node, h5py.Group):
             for ch_name, child in hdf_node.items():
                 full_name = ch_name if len(name) == 0 else name + "/" + ch_name
