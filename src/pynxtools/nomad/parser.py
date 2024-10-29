@@ -166,14 +166,14 @@ class NexusParser(MatchingParser):
         """
         if attr:
             # it is an attribute of either field or group
+            nx_root = False
             if nx_path[0] == "/":
                 nx_attr = nx_path[1]
                 nx_parent = nx_attr.getparent()
                 nx_root = True
             else:
-                nx_root = False
                 nx_attr = nx_path[depth]
-                nx_parent: ET.Element = nx_path[depth - 1]
+                nx_parent = nx_path[depth - 1]
 
             if isinstance(nx_attr, str):
                 if nx_attr != "units":
