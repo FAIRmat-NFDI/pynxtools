@@ -1,3 +1,32 @@
+DEBUG - ===== GROUP (// [NO NXentry found::]): <HDF5 file "201805_WSe2_arpes.nxs" (mode r)>
+DEBUG - classpath: None
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//@HDF5_Version)
+DEBUG - value: 1.10.5 
+DEBUG - classpath: None
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//@file_name)
+DEBUG - value: /home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs 
+DEBUG - classpath: None
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//@file_time)
+DEBUG - value: 2020-06-04T19:19:48.464472 
+DEBUG - classpath: None
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//@h5py_version)
+DEBUG - value: 2.10.0 
+DEBUG - classpath: None
+DEBUG - NOT IN SCHEMA
+DEBUG - 
+DEBUG - ===== ATTRS (//@nexusformat_version)
+DEBUG - value: 0.5.2 
+DEBUG - classpath: None
+DEBUG - NOT IN SCHEMA
+DEBUG - 
 DEBUG - ===== GROUP (//entry [NXarpes::/NXentry]): <HDF5 group "/entry" (12 members)>
 DEBUG - classpath: ['NXentry']
 DEBUG - classes:
