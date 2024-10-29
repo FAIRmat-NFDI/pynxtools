@@ -745,7 +745,9 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
 
     for section in sections:
         package.section_definitions.append(section)
-        if section.nx_category == "application":
+        if section.nx_category == "application" or (
+            section.nx_category == "base" and section.nx_name == "NXroot"
+        ):
             nexus_section.sub_sections.append(
                 SubSection(section_def=section, name=section.name)
             )

@@ -404,7 +404,7 @@ def get_inherited_hdf_nodes(
 
     for pind in range(len(path)):
         if len(path) == 1 and path[0] == "":
-            return (["NXroot"], ["/"], elist)
+            return ([""], ["/"], elist)
         hdf_info2 = [hdf_path, hdf_node, hdf_class_path]
         [
             hdf_path,

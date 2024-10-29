@@ -159,15 +159,21 @@ class NexusParser(MatchingParser):
             self._sample_class_refs[class_name].append(current)
 
     def _populate_data(
-        self, depth: int, nx_path: list, nx_def: str, hdf_node, current: MSection
+        self, depth: int, nx_path: list, nx_def: str, hdf_node, current: MSection, attr
     ):
         """
         Populate attributes and fields
         """
-        if depth < len(nx_path):
+        if attr:
             # it is an attribute of either field or group
-            nx_attr = nx_path[depth]
-            nx_parent: ET.Element = nx_path[depth - 1]
+            if nx_path[0] == "/":
+                nx_attr = nx_path[1]
+                nx_parent = nx_attr.getparent()
+                nx_root = True
+            else:
+                nx_root = False
+                nx_attr = nx_path[depth]
+                nx_parent: ET.Element = nx_path[depth - 1]
 
             if isinstance(nx_attr, str):
                 if nx_attr != "units":
@@ -191,7 +197,7 @@ class NexusParser(MatchingParser):
                 current = _to_section(attr_name, nx_def, nx_attr, current)
 
                 try:
-                    if nx_parent.tag.endswith("group"):
+                    if nx_root or nx_parent.tag.endswith("group"):
                         current.m_set_section_attribute(attr_name, attr_value)
                     else:
                         parent_html_name = nx_path[-2].get("name")
@@ -323,7 +329,7 @@ class NexusParser(MatchingParser):
         if nx_def is not None:
             nx_def = rename_nx_for_nomad(nx_def)
 
-        if nx_path is None:
+        if nx_path is None or nx_path == "/":
             return
 
         current: MSection = _to_section(None, nx_def, None, self.nx_root)
@@ -340,7 +346,7 @@ class NexusParser(MatchingParser):
                 if nx_node.tag.endswith("group"):
                     current.m_set_section_attribute("m_nx_data_path", current_hdf_path)
                     current.m_set_section_attribute("m_nx_data_file", self.nxs_fname)
-        self._populate_data(depth, nx_path, nx_def, hdf_node, current)
+        self._populate_data(depth, nx_path, nx_def, hdf_node, current, attr)
 
     def get_sub_element_names(self, elem: MSection):
         return elem.m_def.all_aliases.keys()
