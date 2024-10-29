@@ -18,21 +18,28 @@
 """Test for NOMAD examples in reader plugins."""
 
 import os
-from typing import Dict, Any
+from typing import Any, Dict
+
 import pytest
 
 try:
-    from nomad.parsing.parser import ArchiveParser
-    from nomad.datamodel import EntryArchive, Context
-
     from nomad.config.models.plugins import (
         ExampleUploadEntryPoint,
     )
+    from nomad.datamodel import Context, EntryArchive
+    from nomad.parsing.parser import ArchiveParser
 except ImportError:
     pytest.skip(
         "Skipping NOMAD example tests because nomad is not installed",
         allow_module_level=True,
     )
+
+from pynxtools_stm.nomad.nomad_example_paths import EXAMPLE_PATHS
+
+# TODO Auto collect the example path from reader plugins.
+PYNXTOOLS_READER_PLUGINS_NOMAD_EXAMPLES_PATH: dict[str, str] = {
+    "pynxtools-stm": EXAMPLE_PATHS
+}
 
 
 def get_file_parameter(example_path: str):
