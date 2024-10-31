@@ -142,6 +142,7 @@ class ReaderTest:
             "DEBUG - ===== GROUP (// [NXroot::]):",
         ]
         SECTION_IGNORE = {
+            "ATTRS (//@HDF5_version)": ["DEBUG - value:"],
             "ATTRS (//@file_name)": ["DEBUG - value:"],
             "ATTRS (//@file_time)": ["DEBUG - value:"],
             "ATTRS (//@file_update_time)": ["DEBUG - value:"],
