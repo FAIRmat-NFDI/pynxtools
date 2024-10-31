@@ -14,7 +14,10 @@ except ImportError:
 
 
 from pynxtools.dataconverter.convert import get_reader, transfer_data_into_template
-from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
+from pynxtools.dataconverter.helpers import (
+    get_nxdl_root_and_path,
+    add_default_root_attributes,
+)
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus.nexus import HandleNexus
@@ -115,6 +118,9 @@ class ReaderTest:
             )
         assert self.caplog.text == ""
 
+        add_default_root_attributes(
+            data=read_data, filename=os.path.basename(self.created_nexus)
+        )
         Writer(read_data, nxdl_file, self.created_nexus).write()
 
         if NOMAD_AVAILABLE:
@@ -133,7 +139,19 @@ class ReaderTest:
         IGNORE_LINES = [
             "DEBUG - value: v",
             "DEBUG - value: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
+            "DEBUG - ===== GROUP (// [NXroot::]):",
         ]
+        SECTION_IGNORE = {
+            "ATTRS (//@file_name)": ["DEBUG - value:"],
+            "ATTRS (//@file_time)": ["DEBUG - value:"],
+            "ATTRS (//@file_update_time)": ["DEBUG - value:"],
+            "ATTRS (//@h5py_version)": ["DEBUG - value:"],
+        }
+
+        section = None
+        section_ignore_lines = []
+        section_separator = "DEBUG - ===== "
+
         ref_log = get_log_file(self.ref_nexus_file, "ref_nexus.log", self.tmp_path)
         gen_log = get_log_file(self.created_nexus, "gen_nexus.log", self.tmp_path)
         with open(gen_log, "r", encoding="utf-8") as gen, open(
@@ -142,14 +160,33 @@ class ReaderTest:
             gen_lines = gen.readlines()
             ref_lines = ref.readlines()
         if len(gen_lines) != len(ref_lines):
-            assert False, "Log files are different"
+            assert False, (
+                f"Log files are different: mismatched line counts. "
+                f"Generated file has {len(gen_lines)} lines, "
+                f"while reference file has {len(ref_lines)} lines."
+            )
         for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
+            skip_it = False
+            if gen_l.startswith(section_separator) and ref_l.startswith(
+                section_separator
+            ):
+                section = gen_l.rsplit(section_separator)[-1].strip()
+                section_ignore_lines = SECTION_IGNORE.get(section, [])
             if gen_l != ref_l:
                 # skip ignored lines (mainly version conflicts)
                 for ignore_line in IGNORE_LINES:
                     if gen_l.startswith(ignore_line) and ref_l.startswith(ignore_line):
+                        skip_it = True
                         break
-                else:
+                if not skip_it:
+                    # skip ignored lines for this section
+                    for ignore_line in section_ignore_lines:
+                        if gen_l.startswith(ignore_line) and ref_l.startswith(
+                            ignore_line
+                        ):
+                            skip_it = True
+                            break
+                if not skip_it:
                     assert False, (
                         f"Log files are different at line {ind}"
                         f" generated: {gen_l} \n referenced : {ref_l}"
