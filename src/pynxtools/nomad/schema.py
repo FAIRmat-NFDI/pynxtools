@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+import hashlib
 import json
 import os
 import os.path
@@ -744,7 +745,9 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
 
     for section in sections:
         package.section_definitions.append(section)
-        if section.nx_category == "application":
+        if section.nx_category == "application" or (
+            section.nx_category == "base" and section.nx_name == "NXroot"
+        ):
             nexus_section.sub_sections.append(
                 SubSection(section_def=section, name=section.name)
             )
@@ -905,8 +908,10 @@ def normalize_identifier(self, archive, logger):
     EntityReference.normalize(self, archive, logger)
     if not self.reference:
         logger.info(f"{self.lab_id} to be created")
-
-        f_name = f"{current_cls.__name__}_{self.lab_id}.archive.json"
+        f_name = re.split("([0-9a-zA-Z.]+)", self.lab_id)[1]
+        if len(f_name) != len(self.lab_id):
+            f_name = f_name + hashlib.md5(self.lab_id.encode()).hexdigest()
+        f_name = f"{current_cls.__name__}_{f_name}.archive.json"
         create_Entity(self.lab_id, archive, f_name)
         self.reference = get_entry_reference(archive, f_name)
         logger.info(f"{self.reference} - referenced directly")
