@@ -112,7 +112,7 @@ __NX_DOC_BASES: Dict[str, str] = {
     "https://github.com/FAIRmat-NFDI/nexus_definitions.git": "https://fairmat-nfdi.github.io/nexus_definitions/classes",
 }
 
-__PACKAGE_NAME = "nexus"
+__PACKAGE_NAME = "pynxtools.nomad.schema"
 __GROUPING_NAME = "NeXus"
 
 from nomad import utils
@@ -817,9 +817,8 @@ def init_nexus_metainfo():
                     sections.append(section)
 
     for section in sections:
-        # TODO: add when quantities with mixed use_full_storage are supported by GUI
-        # if not (str(section).startswith("nexus.")):
-        #    continue
+        if not (str(section).startswith("pynxtools.")):
+            continue
         __add_additional_attributes(section)
         for quantity in section.quantities:
             __add_additional_attributes(quantity)
@@ -869,24 +868,18 @@ def normalize_identifier(self, archive, logger):
     """Normalizer for identifier section."""
 
     def create_Entity(lab_id, archive, f_name):
-        # TODO: use this instead of BasicEln() when use_full_storage is properly supported by the GUI
-        # entitySec = Entity()
-        # entitySec.lab_id = lab_id
-        # entity = EntryArchive (
-        #    data = entitySec,
-        #    m_context=archive.m_context,
-        #    metadata=EntryMetadata(entry_type = "identifier"), #upload_id=archive.m_context.upload_id,
-        # )
-        # with archive.m_context.raw_file(f_name, 'w') as f_obj:
-        #    json.dump(entity.m_to_dict(with_meta=True), f_obj)
-        entity = BasicEln()
-        entity.lab_id = lab_id
+        entitySec = Entity()
+        entitySec.lab_id = lab_id
+        entity = EntryArchive(
+            data=entitySec,
+            m_context=archive.m_context,
+            metadata=EntryMetadata(
+                entry_type="identifier", domain="nexus"
+            ),  # upload_id=archive.m_context.upload_id,
+        )
         with archive.m_context.raw_file(f_name, "w") as f_obj:
-            json.dump(
-                {"data": entity.m_to_dict(with_meta=True, include_derived=True)},
-                f_obj,
-                indent=4,
-            )
+            json.dump(entity.m_to_dict(with_meta=True), f_obj)
+            # json.dump(entity.m_to_dict(), f_obj)
         archive.m_context.process_updated_raw_file(f_name)
 
     def get_entry_reference(archive, f_name):
