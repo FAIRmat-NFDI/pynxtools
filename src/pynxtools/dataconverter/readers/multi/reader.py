@@ -421,8 +421,10 @@ class MultiFormatReader(BaseReader):
             if not os.path.exists(file_path):
                 logger.warning(f"File {file_path} does not exist, ignoring entry.")
                 continue
-
-            template.update(self.extensions.get(extension, lambda _: {})(file_path))
+            if self.extensions.get(extension, lambda _: {})(file_path) is None:
+                logger.warning(f"Function for parsing file type with extension '{extension}' not found.")
+            if self.extensions.get(extension, lambda _: {})(file_path) is not None:
+                template.update(self.extensions.get(extension, lambda _: {})(file_path))
 
         template.update(self.setup_template())
         if objects is not None:
