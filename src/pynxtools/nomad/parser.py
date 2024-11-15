@@ -491,8 +491,12 @@ class NexusParser(MatchingParser):
                 app_sec = getattr(self.nx_root, app)
                 try:
                     app_entry = getattr(app_sec, "ENTRY")
+                    if len(app_entry) < 1:
+                        raise AttributeError()
                 except AttributeError:
                     app_entry = getattr(app_sec, "entry")
+                    if len(app_entry) < 1:
+                        raise AttributeError()
                 app_def_list.append(
                     app if app != rename_nx_for_nomad("NXroot") else "Generic"
                 )
@@ -500,9 +504,12 @@ class NexusParser(MatchingParser):
                 pass
         if len(app_def_list) == 0:
             app_def = "Experiment"
-        app_def = ", ".join(app_def_list) + (
-            " Experiment" if len(app_def_list) == 1 else "Experiments"
-        )
+        else:
+            app_def = (
+                ", ".join(app_def_list)
+                + " Experiment"
+                + ("" if len(app_def_list) == 1 else "s")
+            )
         if archive.metadata.entry_type is None:
             archive.metadata.entry_type = app_def
             archive.metadata.domain = "nexus"
