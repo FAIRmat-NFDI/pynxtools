@@ -484,7 +484,6 @@ class NexusParser(MatchingParser):
 
         # Normalise experiment type
         app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
-        print(app_defs)
         app_def_list = []
         for app_elem in app_defs:
             app = app_elem.lstrip()
@@ -504,7 +503,6 @@ class NexusParser(MatchingParser):
         app_def = ", ".join(app_def_list) + (
             " Experiment" if len(app_def_list) == 1 else "Experiments"
         )
-        print(app_def)
         if archive.metadata.entry_type is None:
             archive.metadata.entry_type = app_def
             archive.metadata.domain = "nexus"
