@@ -483,7 +483,28 @@ class NexusParser(MatchingParser):
             archive.metadata = EntryMetadata()
 
         # Normalise experiment type
-        app_def = str(self.nx_root).split("(")[1].split(")")[0].split(",")[0]
+        app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
+        print(app_defs)
+        app_def_list = []
+        for app_elem in app_defs:
+            app = app_elem.lstrip()
+            try:
+                app_sec = getattr(self.nx_root, app)
+                try:
+                    app_entry = getattr(app_sec, "ENTRY")
+                except AttributeError:
+                    app_entry = getattr(app_sec, "entry")
+                app_def_list.append(
+                    app if app != rename_nx_for_nomad("NXroot") else "Generic"
+                )
+            except AttributeError:
+                pass
+        if len(app_def_list) == 0:
+            app_def = "Experiment"
+        app_def = ", ".join(app_def_list) + (
+            " Experiment" if len(app_def_list) == 1 else "Experiments"
+        )
+        print(app_def)
         if archive.metadata.entry_type is None:
             archive.metadata.entry_type = app_def
             archive.metadata.domain = "nexus"
