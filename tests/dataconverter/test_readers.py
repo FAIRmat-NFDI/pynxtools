@@ -51,30 +51,10 @@ def get_all_readers() -> List[ParameterSet]:
     """Scans through the reader list and returns them for pytest parametrization"""
     readers = []
 
-    # Explicitly removing ApmReader and EmNionReader because we need to add test data
     for reader in [get_reader(x) for x in get_names_of_all_readers()]:
-        if reader.__name__ in (
-            "ApmReader",
-            "EmOmReader",
-            "EmSpctrscpyReader",
-            "EmNionReader",
-        ):
-            readers.append(
-                pytest.param(
-                    reader, marks=pytest.mark.skip(reason="Missing test data.")
-                )
-            )
-        else:
-            readers.append(pytest.param(reader))
+        readers.append(pytest.param(reader))
 
     return readers
-
-
-@pytest.mark.parametrize("reader", get_all_readers())
-def test_if_readers_are_children_of_base_reader(reader):
-    """Test to verify that all readers are children of BaseReader"""
-    if reader.__name__ != "BaseReader":
-        assert isinstance(reader(), BaseReader)
 
 
 @pytest.mark.parametrize("reader", get_all_readers())

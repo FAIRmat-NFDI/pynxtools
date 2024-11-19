@@ -3,7 +3,7 @@
 import logging
 import os
 from glob import glob
-from typing import Literal, List, Tuple
+from typing import List, Literal, Tuple
 
 try:
     from nomad.client import parse
@@ -15,8 +15,8 @@ except ImportError:
 
 from pynxtools.dataconverter.convert import get_reader, transfer_data_into_template
 from pynxtools.dataconverter.helpers import (
-    get_nxdl_root_and_path,
     add_default_root_attributes,
+    get_nxdl_root_and_path,
 )
 from pynxtools.dataconverter.validation import validate_dict_against
 from pynxtools.dataconverter.writer import Writer
@@ -42,7 +42,9 @@ def get_log_file(nxs_file, log_file, tmp_path):
 class ReaderTest:
     """Generic test for reader plugins."""
 
-    def __init__(self, nxdl, reader_name, files_or_dir, tmp_path, caplog) -> None:
+    def __init__(
+        self, nxdl, reader_name, files_or_dir, tmp_path, caplog, **kwargs
+    ) -> None:
         """Initialize the test object.
 
         Parameters
@@ -61,16 +63,20 @@ class ReaderTest:
             Pytest fixture variable, used to clean up the files generated during the test.
         caplog : _pytest.logging.LogCaptureFixture
             Pytest fixture variable, used to capture the log messages during the test.
+        kwargs : Dict[str, Any]
+            Any additional keyword arguments to be passed to the readers' read function.
         """
 
         self.nxdl = nxdl
         self.reader_name = reader_name
         self.reader = get_reader(self.reader_name)
+
         self.files_or_dir = files_or_dir
         self.ref_nexus_file = ""
         self.tmp_path = tmp_path
         self.caplog = caplog
         self.created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
+        self.kwargs = kwargs
 
     def convert_to_nexus(
         self,
@@ -94,6 +100,7 @@ class ReaderTest:
         ]
         input_files = [file for file in example_files if not file.endswith(".nxs")]
         assert self.ref_nexus_file, "Reference nexus (.nxs) file not found"
+
         assert (
             self.nxdl in self.reader.supported_nxdls
         ), f"Reader does not support {self.nxdl} NXDL."
@@ -107,6 +114,7 @@ class ReaderTest:
             nxdl_name=self.nxdl,
             nxdl_root=nxdl_root,
             skip_verify=True,
+            **self.kwargs,
         )
 
         # Clear the log of `transfer_data_into_template`
