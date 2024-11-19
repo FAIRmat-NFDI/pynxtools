@@ -50,7 +50,12 @@ def fill_wildcard_data_indices(config_file_dict, key, value, dims):
     dim_dict = {}
     for dim in dims:
         new_key = key.replace("*", dim)
-        new_val = value.replace("*", dim)
+        if isinstance(value, str):
+            new_val = value.replace("*", dim)
+        elif isinstance(value, list):
+            new_val = [val.replace("*", dim) for val in value]
+        else:
+            new_val = value
 
         if new_key not in config_file_dict and new_val not in get_vals_on_same_level(
             new_key
