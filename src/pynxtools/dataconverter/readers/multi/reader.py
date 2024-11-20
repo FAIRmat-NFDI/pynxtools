@@ -288,7 +288,8 @@ def fill_from_config(
             if "*" in key:
                 dims = callbacks.dims(key, value)
                 dim_data = fill_wildcard_data_indices(config_dict, key, value, dims)
-                for k, v in dim_data.items():
+
+                for k, v in dim_data.copy().items():
                     resolve_special_keys(
                         dim_data,
                         k,
