@@ -583,11 +583,35 @@ def __create_group(xml_node: ET.Element, root_section: Section):
 
 
 def nexus_resolve_variadic_name(
-    definitions: dict, name: str, hint: Optional[str] = None, filter: Optional = None
+    definitions: dict,
+    name: str,
+    hint: Optional[str] = None,
+    filter: Optional[Section] = None,
 ):
     """
-    definitions is a dict of sub_sections definitng a search space which
-    we filter by checking for type
+    Resolves a variadic name from a set of possible definitions.
+
+    Parameters:
+        definitions (dict): A dictionary of sub-sections defining the search space.
+            The keys are the names of the definitions, and the values are objects
+            representing those definitions.
+        name (str): The variadic name to resolve.
+        hint (Optional[str]): An optional hint to refine the search.
+        filter (Optional[Section]): A Section object used to filter the definitions
+            by type. Only definitions inheriting from this section will be considered.
+
+    Returns:
+        str: The resolved name based on the provided definitions, filtered as needed.
+
+    Raises:
+        ValueError: If the `definitions` dictionary is empty or if the name cannot
+            be resolved.
+
+    Notes:
+        - The `resolve_variadic_name` function is assumed to handle the core logic
+          of resolving the name within the filtered definitions.
+        - Filtering by `inherited_sections` ensures that only definitions related
+          to the specified type are considered.
     """
     fitting_definitions = definitions
     if filter:
