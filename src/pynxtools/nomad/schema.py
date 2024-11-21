@@ -66,6 +66,7 @@ try:
         m_int64,
         m_str,
     )
+    from nomad.metainfo.metainfo import resolve_variadic_name
     from nomad.utils import get_logger, strip
     from toposort import toposort_flatten
 except ImportError as exc:
@@ -552,7 +553,7 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         assert "type" in xml_attrs, "Expecting type to be present"
         nx_type = __rename_nx_for_nomad(xml_attrs["type"])
 
-        nx_name = xml_attrs.get("name", nx_type)
+        nx_name = xml_attrs.get("name", nx_type.upper())
         section_name = __rename_nx_for_nomad(nx_name, is_group=True)
         group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
 
@@ -581,12 +582,35 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         __create_field(field, root_section)
 
 
+def nexus_resolve_variadic_name(
+    definitions: dict, name: str, hint: Optional[str] = None, filter: Optional = None
+):
+    """
+    definitions is a dict of sub_sections definitng a search space which
+    we filter by checking for type
+    """
+    fitting_definitions = definitions
+    if filter:
+        fitting_definitions = {}
+        for def_name in definitions:
+            definition = definitions[def_name]
+            if filter in definition.inherited_sections:
+                fitting_definitions[def_name] = definition
+    return resolve_variadic_name(fitting_definitions, name, hint)
+
+
 def __attach_base_section(section: Section, container: Section, default: Section):
     """
     Potentially adds a base section to the given section, if the given container has
     a base-section with a suitable base.
     """
-    base_section = container.all_inner_section_definitions.get(section.name)
+    try:
+        base_section = nexus_resolve_variadic_name(
+            container.all_inner_section_definitions, section.name, filter=default
+        )
+    except ValueError:
+        base_section = None
+
     if base_section:
         assert base_section.nx_kind == section.nx_kind, "Base section has wrong kind"
     else:

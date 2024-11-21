@@ -493,14 +493,14 @@ class NexusParser(MatchingParser):
                     app_entry = getattr(app_sec, "ENTRY")
                     if len(app_entry) < 1:
                         raise AttributeError()
-                except AttributeError:
+                except (AttributeError, TypeError):
                     app_entry = getattr(app_sec, "entry")
                     if len(app_entry) < 1:
                         raise AttributeError()
                 app_def_list.append(
                     app if app != rename_nx_for_nomad("NXroot") else "Generic"
                 )
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
         if len(app_def_list) == 0:
             app_def = "Experiment"
