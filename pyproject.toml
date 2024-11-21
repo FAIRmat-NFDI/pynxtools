@@ -66,30 +66,32 @@ dev = [
 convert = [
     "pynxtools[apm,em,mpes,xps,stm,xrd,ellips,raman]",
 ]
-mpes = [
-    "pynxtools-mpes",
-]
+
 apm = [
-    "pynxtools-apm",
-]
-em = [
-    "pynxtools-em",
-]
-stm = [
-    "pynxtools-stm",
-]
-xps = [
-    "pynxtools-xps",
-]
-xrd = [
-    "pynxtools-xrd",
+    "pynxtools-apm>=0.2.1",
 ]
 ellips = [
-    "pynxtools-ellips",
+    "pynxtools-ellips>=0.0.4",
+]
+em = [
+    "pynxtools-em>=0.3.0",
+]
+mpes = [
+    "pynxtools-mpes>=0.2.0",
 ]
 raman = [
-    "pynxtools-raman",
+    "pynxtools-raman>=0.0.3",
 ]
+stm = [
+    "pynxtools-stm>=1.0.8",
+]
+xps = [
+    "pynxtools-xps>=0.4.6",
+]
+xrd = [
+    "pynxtools-xrd>=0.0.3",
+]
+
 [project.entry-points.'nomad.plugin']
 nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
 nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
