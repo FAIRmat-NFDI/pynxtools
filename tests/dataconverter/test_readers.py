@@ -29,6 +29,7 @@ from _pytest.mark.structures import ParameterSet
 from pynxtools.dataconverter.convert import get_names_of_all_readers, get_reader
 from pynxtools.dataconverter.helpers import generate_template_from_nxdl
 from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
 
@@ -55,6 +56,15 @@ def get_all_readers() -> List[ParameterSet]:
         readers.append(pytest.param(reader))
 
     return readers
+
+
+@pytest.mark.parametrize("reader", get_all_readers())
+def test_if_readers_are_children_of_base_reader(reader):
+    """Test to verify that all readers are children of BaseReader or MultiFormatReader"""
+    if reader.__name__ != "BaseReader":
+        assert isinstance(reader(), BaseReader) or isinstance(
+            reader(), MultiFormatReader
+        )
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
