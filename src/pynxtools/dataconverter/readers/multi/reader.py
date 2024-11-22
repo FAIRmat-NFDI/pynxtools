@@ -212,6 +212,20 @@ def resolve_special_keys(
         if new_entry_dict[key] is not None:
             break
 
+    if (
+        value.startswith("!")
+        and isinstance(new_entry_dict[key], dict)
+        and "link" in new_entry_dict[key]
+    ):
+        link_target = new_entry_dict[key]["link"]
+        print("link_target", link_target)
+        logger.info(
+            f"There was no target at {link_target} for the  optional link for {key}. "
+            f"Removing the link."
+        )
+        del new_entry_dict[key]
+        return
+
     if value.startswith("!") and new_entry_dict[key] is None:
         group_to_delete = key.rsplit("/", 1)[0]
         logger.info(
@@ -258,14 +272,18 @@ def fill_from_config(
 
     def dict_sort_key(keyval: tuple[str, Any]) -> bool:
         """
-        The function to sort the dict by.
-        This just sets False for keys starting with "!" to put them at the beginning.
-        Besides, pythons sorted is stable, so this will keep the order of the keys
-        which have the same sort key.
+        Sort keys by their value's priority:
+        - Values starting with "!link" go last (return 2).
+        - Values starting with "!" but not "!link" go first (return 0).
+        - All other values are sorted normally (return 1).
         """
-        if isinstance(keyval[1], str):
-            return not keyval[1].startswith("!")
-        return True
+        value = keyval[1]
+        if isinstance(value, str):
+            if value.startswith("!@link"):
+                return (2, keyval[0])  # Last
+            if value.startswith("!"):
+                return (0, keyval[0])  # First
+        return (1, keyval[0])  # Middle
 
     if callbacks is None:
         # Use default callbacks if none are explicitly provided
@@ -273,11 +291,15 @@ def fill_from_config(
 
     optional_groups_to_remove: list[str] = []
     new_entry_dict = {}
+
+    # Process '!...' keys first, but '!link' keys last
+    sorted_keys = dict(sorted(config_dict.items(), key=dict_sort_key))
+    for key, val in sorted_keys.items():
+        print(key, val)
+
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
 
-        # Process '!...' keys first
-        sorted_keys = dict(sorted(config_dict.items(), key=dict_sort_key))
         for key in sorted_keys:
             value = config_dict[key]
             key = key.replace("/ENTRY/", f"/ENTRY[{entry_name}]/")
