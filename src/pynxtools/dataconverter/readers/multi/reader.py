@@ -140,6 +140,7 @@ def resolve_special_keys(
     key: str,
     value: Any,
     optional_groups_to_remove: list[str],
+    optional_groups_to_remove_from_links: list[str],
     callbacks: ParseJsonCallbacks,
     suppress_warning: bool = False,
 ) -> None:
@@ -188,6 +189,42 @@ def resolve_special_keys(
             return ("", value)
         return prefixes[0]
 
+    def extract_inner_path(key):
+        """
+        Extracts the relevant path parts from a Nexus concept path by
+        removing everything outside of brackets and converting it to
+        a normalized HDF5 target path format.
+
+        Args:
+            key (str): The Nexus concept path, containing bracketed
+            sections for variable parts.
+
+        Returns:
+            str: A normalized HDF5 target path
+
+        Example:
+            For a Nexus path like
+            'ENTRY[entry_name]/GROUP[group]/DATA[data]/attribute',
+            the function will return a normalized HDF5 path like
+            'entry_name/group/data/attribute'.
+        """
+        key = key.lstrip("ENTRY")
+
+        # Use regex to match either bracketed parts or normal path segments
+        parts = re.findall(r"\[([^\]]+)\]|([^/\[]+)", key)
+
+        return "/".join(
+            filter(
+                None,
+                [
+                    item[0]
+                    if item[0]
+                    else (item[1] if item[1] and not item[1].isupper() else "")
+                    for item in parts
+                ],
+            )
+        )
+
     # Handle non-keyword values
     if not isinstance(value, str) or "@" not in str(value):
         new_entry_dict[key] = value
@@ -213,17 +250,28 @@ def resolve_special_keys(
             break
 
     if isinstance(new_entry_dict[key], dict) and "link" in new_entry_dict[key]:
+        keys_as_hdf5_paths = {extract_inner_path(key) for key in new_entry_dict.keys()}
+
         link_target = new_entry_dict[key]["link"]
-        if (
-            link_target.startswith("!")
-            and link_target.lstrip("!") not in new_entry_dict
-        ):
+
+        if link_target.lstrip("/") not in keys_as_hdf5_paths:
+            if value.startswith("!"):
+                group_to_delete = key.rsplit("/", 1)[0]
+                if not suppress_warning:
+                    logger.info(
+                        f"Main element {key} not provided (broken link  at {link_target}). "
+                        f"Removing the parent group {group_to_delete}."
+                    )
+                optional_groups_to_remove_from_links.append(group_to_delete)
+
             if not suppress_warning:
                 logger.info(
-                    f"There was no target at {link_target.lstrip('!')} for the optional link defined for {key}. "
+                    f"There was no target at {link_target} "
+                    f"for the optional link defined for {key}. "
                     f"Removing the link."
                 )
             del new_entry_dict[key]
+
             return
 
     if value.startswith("!") and new_entry_dict[key] is None:
@@ -274,24 +322,43 @@ def fill_from_config(
     def dict_sort_key(keyval: tuple[str, Any]) -> bool:
         """
         Sort the dict by:
-        - Values starting with "@link:!" go last (return 2).
+        - Values starting with "link:" or "!link" go last (return 2).
           This is for optional links that are first check to work.
         - Values starting with "!" but not "!link" go first (return 0).
         - All other values are sorted normally (return 1).
         """
         value = keyval[1]
         if isinstance(value, str):
-            if value.startswith("@link:!"):
+            if value.startswith(("!@link:", "@link:")):
                 return (2, keyval[0])  # Last
             if value.startswith("!"):
                 return (0, keyval[0])  # First
         return (1, keyval[0])  # Middle
+
+    def remove_keys_matching_prefixes(d: dict, prefixes: list[str]) -> dict:
+        """
+        Removes all keys from the dictionary that start with any of the specified prefixes.
+
+        Args:
+            d (dict): The original dictionary.
+            prefixes (list[str]): A list of prefixes to check for.
+
+        Returns:
+            dict: A new dictionary with the matching keys removed.
+        """
+        # Create a new dictionary, keeping only the keys that do not match any prefix
+        return {
+            key: value
+            for key, value in d.items()
+            if not any(key.startswith(prefix) for prefix in prefixes)
+        }
 
     if callbacks is None:
         # Use default callbacks if none are explicitly provided
         callbacks = ParseJsonCallbacks()
 
     optional_groups_to_remove: list[str] = []
+    optional_groups_to_remove_from_links: list[str] = []
     new_entry_dict = {}
 
     # Process '!...' keys first, but optional link last
@@ -317,6 +384,7 @@ def fill_from_config(
                         k,
                         v,
                         optional_groups_to_remove,
+                        optional_groups_to_remove_from_links,
                         callbacks,
                         suppress_warning,
                     )
@@ -328,11 +396,15 @@ def fill_from_config(
                 key,
                 value,
                 optional_groups_to_remove,
+                optional_groups_to_remove_from_links,
                 callbacks,
                 suppress_warning,
             )
 
-    return new_entry_dict
+    # This removes those groups that had a  link with a "!" prefix
+    return remove_keys_matching_prefixes(
+        new_entry_dict, optional_groups_to_remove_from_links
+    )
 
 
 class MultiFormatReader(BaseReader):
