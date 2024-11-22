@@ -212,26 +212,27 @@ def resolve_special_keys(
         if new_entry_dict[key] is not None:
             break
 
-    if (
-        value.startswith("!")
-        and isinstance(new_entry_dict[key], dict)
-        and "link" in new_entry_dict[key]
-    ):
+    if isinstance(new_entry_dict[key], dict) and "link" in new_entry_dict[key]:
         link_target = new_entry_dict[key]["link"]
-        print("link_target", link_target)
-        logger.info(
-            f"There was no target at {link_target} for the  optional link for {key}. "
-            f"Removing the link."
-        )
-        del new_entry_dict[key]
-        return
+        if (
+            link_target.startswith("!")
+            and link_target.lstrip("!") not in new_entry_dict
+        ):
+            if not suppress_warning:
+                logger.info(
+                    f"There was no target at {link_target.lstrip('!')} for the optional link defined for {key}. "
+                    f"Removing the link."
+                )
+            del new_entry_dict[key]
+            return
 
     if value.startswith("!") and new_entry_dict[key] is None:
         group_to_delete = key.rsplit("/", 1)[0]
-        logger.info(
-            f"Main element {key} not provided. "
-            f"Removing the parent group {group_to_delete}."
-        )
+        if not suppress_warning:
+            logger.info(
+                f"Main element {key} not provided. "
+                f"Removing the parent group {group_to_delete}."
+            )
         optional_groups_to_remove.append(group_to_delete)
         return
 
@@ -272,14 +273,15 @@ def fill_from_config(
 
     def dict_sort_key(keyval: tuple[str, Any]) -> bool:
         """
-        Sort keys by their value's priority:
-        - Values starting with "!link" go last (return 2).
+        Sort the dict by:
+        - Values starting with "@link:!" go last (return 2).
+          This is for optional links that are first check to work.
         - Values starting with "!" but not "!link" go first (return 0).
         - All other values are sorted normally (return 1).
         """
         value = keyval[1]
         if isinstance(value, str):
-            if value.startswith("!@link"):
+            if value.startswith("@link:!"):
                 return (2, keyval[0])  # Last
             if value.startswith("!"):
                 return (0, keyval[0])  # First
@@ -292,10 +294,8 @@ def fill_from_config(
     optional_groups_to_remove: list[str] = []
     new_entry_dict = {}
 
-    # Process '!...' keys first, but '!link' keys last
+    # Process '!...' keys first, but optional link last
     sorted_keys = dict(sorted(config_dict.items(), key=dict_sort_key))
-    for key, val in sorted_keys.items():
-        print(key, val)
 
     for entry_name in entry_names:
         callbacks.entry_name = entry_name
