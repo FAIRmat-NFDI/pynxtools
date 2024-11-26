@@ -73,5 +73,5 @@ iv_temp_example = ExampleUploadEntryPoint(
         We use the Nexus ELN features of Nomad to generate a Nexus file.
     """,
     plugin_package="pynxtools",
-    resources=['nomad/examples/iv_temp/*']
+    resources=["nomad/examples/iv_temp/*"],
 )
