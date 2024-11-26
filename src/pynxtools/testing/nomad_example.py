@@ -18,8 +18,8 @@
 """Test for NOMAD examples in reader plugins."""
 
 import os
-from typing import Any, Dict
-
+from typing import Any, Dict, List
+import tempfile
 import pytest
 
 try:
@@ -33,13 +33,6 @@ except ImportError:
         "Skipping NOMAD example tests because nomad is not installed",
         allow_module_level=True,
     )
-
-from pynxtools_stm.nomad.nomad_example_paths import EXAMPLE_PATHS
-
-# TODO Auto collect the example path from reader plugins.
-PYNXTOOLS_READER_PLUGINS_NOMAD_EXAMPLES_PATH: dict[str, str] = {
-    "pynxtools-stm": EXAMPLE_PATHS
-}
 
 
 def get_file_parameter(example_path: str):
@@ -99,20 +92,33 @@ def parse_nomad_examples(mainfile: str) -> Dict[str, Any]:
 
 
 def example_upload_entry_point_valid(
-    entrypoint, plugin_package, expected_local_path
+    entrypoint: ExampleUploadEntryPoint, expected_upload_files: List[str]
 ) -> None:
     """
     Test if NOMAD ExampleUploadEntryPoint works.
 
     Args:
-        entrypoint (nomad.config.models.plugins.xampleUploadEntryPoint): The entry point to test.
-        plugin_package (str): The plugin package to set on the entry point.
-        expected_local_path (str): The expected local path after loading.
+        entrypoint (nomad.config.models.plugins.ExampleUploadEntryPoint): The entry point to test.
+        expected_upload_files List[str]: List of expected uploaded files.
 
     """
-    setattr(entrypoint, "plugin_package", plugin_package)
-    entrypoint.load()
-    assert entrypoint.local_path == expected_local_path, (
-        f"Expected local path '{expected_local_path}', "
-        f"but got '{entrypoint.local_path}'"
-    )
+
+    with tempfile.TemporaryDirectory() as tmp_upload_directory:
+        entrypoint.load(tmp_upload_directory)
+
+        # Add upload folder as root to all expected upload_filepath
+        expected_upload_files = [
+            os.path.join(tmp_upload_directory, path) for path in expected_upload_files
+        ]
+
+        # Check that all expected upload_files are created
+        real_upload_files = []
+        for dirpath, _, filenames in os.walk(tmp_upload_directory):
+            for filename in filenames:
+                real_upload_files.append(
+                    os.path.abspath(os.path.join(dirpath, filename))
+                )
+
+        assert (
+            sorted(real_upload_files) == sorted(expected_upload_files)
+        ), f"Uploaded files {real_upload_files} do not match the expected files: {expected_upload_files}"

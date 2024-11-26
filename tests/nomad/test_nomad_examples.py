@@ -37,40 +37,45 @@ from pynxtools.testing.nomad_example import (
 
 from pynxtools.nomad.entrypoints import iv_temp_example
 
+EXAMPLE_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "src",
+    "pynxtools",
+    "nomad",
+    "examples",
+)
+
 
 @pytest.mark.parametrize(
     "mainfile",
-    get_file_parameter(
-        os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "..",
-            "src",
-            "pynxtools",
-            "nomad",
-            "examples",
-        )
-    ),
+    get_file_parameter(EXAMPLE_PATH),
 )
-def test_nomad_examples(mainfile):
+def test_parse_nomad_examples(mainfile):
     """Test if NOMAD examples work."""
     archive_dict = parse_nomad_examples(mainfile)
 
 
 @pytest.mark.parametrize(
-    ("entrypoint", "expected_local_path"),
+    ("entrypoint", "example_path"),
     [
         pytest.param(
             iv_temp_example,
-            f"examples/data/uploads/iv_temp.zip",
+            os.path.join(EXAMPLE_PATH, "iv_temp"),
             id="iv_temp_example",
         ),
     ],
 )
-def test_nomad_example_upload_entry_point_valid(entrypoint, expected_local_path):
+def test_nomad_example_upload_entry_point_valid(entrypoint, example_path):
     """Test if NOMAD ExampleUploadEntryPoint works."""
+    expected_upload_files = []
+    for dirpath, dirnames, filenames in os.walk(example_path):
+        for filename in filenames:
+            file_path = os.path.relpath(os.path.join(dirpath, filename), example_path)
+            expected_upload_files.append(file_path)
+
     example_upload_entry_point_valid(
         entrypoint=entrypoint,
-        plugin_package="pynxtools",
-        expected_local_path=expected_local_path,
+        expected_upload_files=expected_upload_files,
     )
