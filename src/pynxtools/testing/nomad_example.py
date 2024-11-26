@@ -92,16 +92,21 @@ def parse_nomad_examples(mainfile: str) -> Dict[str, Any]:
 
 
 def example_upload_entry_point_valid(
-    entrypoint: ExampleUploadEntryPoint, expected_upload_files: List[str]
+    entrypoint: ExampleUploadEntryPoint, example_path: str
 ) -> None:
     """
     Test if NOMAD ExampleUploadEntryPoint works.
 
     Args:
         entrypoint (nomad.config.models.plugins.ExampleUploadEntryPoint): The entry point to test.
-        expected_upload_files List[str]: List of expected uploaded files.
+        expected_upload_files (str): String path of the example.
 
     """
+    expected_upload_files = []
+    for dirpath, dirnames, filenames in os.walk(example_path):
+        for filename in filenames:
+            file_path = os.path.relpath(os.path.join(dirpath, filename), example_path)
+            expected_upload_files.append(file_path)
 
     with tempfile.TemporaryDirectory() as tmp_upload_directory:
         entrypoint.load(tmp_upload_directory)
