@@ -72,6 +72,6 @@ iv_temp_example = ExampleUploadEntryPoint(
         This example shows users how to take data from a Python framework and map it out to a Nexus application definition for IV Temperature measurements, [NXiv_temp](https://fairmat-experimental.github.io/nexus-fairmat-proposal/1c3806dba40111f36a16d0205cc39a5b7d52ca2e/classes/contributed_definitions/NXiv_temp.html#nxiv-temp).
         We use the Nexus ELN features of Nomad to generate a Nexus file.
     """,
-    path="nomad/examples/iv_temp",
-    local_path="examples/data/uploads/iv_temp.zip",
+    plugin_package="pynxtools",
+    resources=['nomad/examples/iv_temp/*']
 )
