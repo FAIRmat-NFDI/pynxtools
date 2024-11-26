@@ -67,7 +67,7 @@ def test_parse_nomad_examples(mainfile):
         ),
     ],
 )
-def test_nomad_example_upload_entry_point_valid(entrypoint, example_path):
+def test_example_upload_entry_point_valid(entrypoint, example_path):
     """Test if NOMAD ExampleUploadEntryPoint works."""
     expected_upload_files = []
     for dirpath, dirnames, filenames in os.walk(example_path):
