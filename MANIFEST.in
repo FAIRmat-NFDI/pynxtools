@@ -11,4 +11,5 @@ include src/pynxtools/definitions/*.xsd
 include src/pynxtools/nexus-version.txt
 include src/pynxtools/remote_definitions_url.txt
 include src/pynxtools/definitions/NXDL_VERSION
-recursive-include src/pynxtools/nomad/examples
+
+graft src/pynxtools/nomad/examples
