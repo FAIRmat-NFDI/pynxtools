@@ -2,10 +2,10 @@
 
 # Introduction
 
-This is an example of a PID controlled sensor sweep scan. The temperature is set using a PID controller. Then for the set temperature a voltage sweep is performed. For each of the voltages, the current is measured. This is repeated for a given list of temperatures.
+This is an example of a PID controlled sensor sweep scan. The temperature is set using a PID controller. Then, for the set temperature, a voltage sweep is performed. For each of the voltages, the current is measured. This is repeated for a given list of temperatures.
 
-This specific data was capured using a Bluesky controlled system. This was then saved into a binary file using Pickle. This example shows how such a dataset could be converted using the JSONMapReader of the NexusParser.
-The data is mapped on to a Nexus application definition for IV Temperature measurements, [NXiv_temp](https://fairmat-experimental.github.io/nexus-fairmat-proposal/50433d9039b3f33299bab338998acb5335cd8951/classes/contributed_definitions/NXiv_temp.html#nxiv-temp).
+This specific data was captured using a Bluesky controlled system. This was then saved into a binary file using Pickle. This example illustrates how such a dataset could be converted using the [`JSONMapReader`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers/json_map) of the NOMAD plugin [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools-xps).
+The data is mapped on to a Nexus application definition for temperature-dependent IV curve measurements, [NXiv_temp](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html).
 
 # Viewing uploaded data
 
@@ -21,7 +21,7 @@ To do so open the **FILES** tab and just select a `.nxs` file.
 # Using a Jupyter Notebook
 
 This example comes with a very simple Jupyter Notebook that shows how one could easily get access to a Python environment with access to all your data in one place.
-To give this a go, click the **FILES** tab and select `iv_temp.ipynb`. Feel free to modify this or just create a new one to try!
+To give this a go, click the **FILES** tab and select `IV_temp.ipynb`. Feel free to modify this or just create a new one to try!
 
 # Where to go from here?
 
