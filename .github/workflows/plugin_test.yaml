@@ -1,6 +1,5 @@
-# This workflow will install Python 3.9 and run the tests of all supported plugins.
+# This workflow will install Python 3.11 and run the tests of all supported plugins.
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: test plugins
 
 on:
@@ -19,66 +18,32 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-
-          - plugin: pynxtools-ellips
-            branch: main
-            tests_to_run: tests/.
-          - plugin: pynxtools-raman
-            branch: main
-            tests_to_run: tests/.
-          - plugin: pynxtools-mpes
-            branch: main
-            tests_to_run: tests/.
-          - plugin: pynxtools-stm
-            branch: main
-            tests_to_run: tests/.
-          - plugin: pynxtools-xps
-            branch: main
-            tests_to_run: tests/.
-          - plugin: pynxtools-xrd
-            branch: main
-            tests_to_run: tests/.
-          # - plugin: pynxtools-apm
-          #   branch: main
-          #   tests_to_run: tests/.
-          # - plugin: pynxtools-xrd
-          #   branch: update-tests
-          #   tests_to_run: tests/.
-          # - plugin: pynxtools-em
-          #   branch: main
-          #   tests_to_run: tests/.
+        plugin:
+          - pynxtools-ellips
+          - pynxtools-raman
+          - pynxtools-mpes
+          - pynxtools-stm
+          - pynxtools-xps
+          - pynxtools-xrd
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive
-      - name: Set up Python 3.9
+          submodules: recursive      
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: Install dependencies
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv pip install --system coverage coveralls
-      - name: Install package
+          uv pip install coverage coveralls
+      - name: Install pynxtools
         run: |
           uv pip install ".[dev]"
-      - name: Clone ${{ matrix.plugin }} repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          repository: FAIRmat-NFDI/${{ matrix.plugin }}
-          path: ${{ matrix.plugin }}
-          ref: ${{ matrix.branch }}
       - name: Install nomad
         run: |
           uv pip install nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
-      - name: Install ${{ matrix.plugin }}
+      - name: Run plugin tests
         run: |
-          cd ${{ matrix.plugin }}
-          uv pip install .
-      - name: Run ${{ matrix.plugin }} tests
-        run: |
-          cd ${{ matrix.plugin }}
-          pytest ${{ matrix.tests_to_run }}
+          python scripts/plugin_test.py --plugin ${{ matrix.plugin }}
