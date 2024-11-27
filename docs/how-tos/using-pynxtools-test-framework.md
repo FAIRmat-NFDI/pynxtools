@@ -7,9 +7,7 @@ To test integration of a plugin with the `pynxtools` core system, we need to:
 ## How to write an integration test for a reader plugin with `pynxtools.testing`
 It is very simple to write a test to verify the plugin integration with `pynxtools` within the plugin's tests directory. The developer can place the test where they want, but they need to use the provided test interface from `pynxtools`. An example test for `pynxtools-FOO` (a demo plugin) plugin is given below:
 
-```python
-# test_plugin.py
-
+```python title="test_plugin.py"
 import os
 
 import pytest
@@ -61,4 +59,81 @@ You can also pass additional parameters to `test.convert_to_nexus`:
 
 - `ignore_undocumented` (boolean): If true, the test skipts the verification of undocumented keys. Otherwise, a warning massages for undocumented keys is raised
 
-## How to write an integration test for a NOMAD example in a reader plugin
+# How to write an integration test for a NOMAD example in a reader plugin
+It is also possible to ship examples for NOMAD directly with the reader plugin. As an example, `pynxtools-mpes` comes with its own NOMAD example (see [here](https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad)) using the ExampleUploadEntryPoint of NOMAD (see [here](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html) for more documentation).
+
+The `testing` sub-package of `pynxtools` provides two functionalities for testing the `ExampleUploadEntryPoint` defined in a `pynxtools` plugin:
+1) Test that the ExampleUploadEntryPoint can be properly loaded
+2) Test that the schemas and files in the example folder(s) can be parsed by NOMAD
+
+We will write a test for a `pynxtools_foo_example_entrypoint` defined in the pyproject.toml file of a demo `pynxtools-FOO` (here the actual example data resides in the folder `src/pynxtools_foo/nomad/examples`):
+
+```python title="pyproject.toml"
+[project.entry-points.'nomad.plugin']
+pynxtools_foo_example = "pynxtools_foo.nomad.entrypoints:pynxtools_foo_example_entrypoint"
+```
+
+```python title="src/pynxtools_foo/nomad/nomad_example_entrypoint.py"
+from nomad.config.models.plugins import ExampleUploadEntryPoint
+
+pynxtools_foo_example_entrypoint = ExampleUploadEntryPoint(
+    title="My example upload",
+    description="""
+        This is an example upload for the pynxtools-FOO package.
+    """,
+    plugin_package="pynxtools_foo",
+    resources=["nomad/examples/*"],
+)
+```
+A test for the `pynxtools_foo_example_entrypoint` could look like this:
+```python title="test_nomad_examples.py"
+import nomad
+
+from pynxtools.testing.nomad_example import (
+    get_file_parameter,
+    parse_nomad_examples,
+    example_upload_entry_point_valid,
+)
+
+from pynxtools_foo.nomad.entrypoints import pynxtools_foo_example_entrypoint
+
+
+EXAMPLE_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "src",
+    "pynxtools_foo",
+    "nomad",
+    "examples",
+)
+
+
+@pytest.mark.parametrize(
+    "mainfile",
+    get_file_parameter(EXAMPLE_PATH),
+)
+def test_parse_nomad_examples(mainfile):
+    """Test if NOMAD examples work."""
+    archive_dict = parse_nomad_examples(mainfile)
+    # Here, you can also implement more logic if you know the contents of the archive_dict
+
+
+@pytest.mark.parametrize(
+    ("entrypoint", "example_path"),
+    [
+        pytest.param(
+            pynxtools_foo_example_entrypoint,
+            EXAMPLE_PATH,
+            id="pynxtools_foo_example",
+        ),
+    ],
+)
+def test_example_upload_entry_point_valid(entrypoint, example_path):
+    """Test if NOMAD ExampleUploadEntryPoint works."""
+    example_upload_entry_point_valid(
+        entrypoint=entrypoint,
+        example_path=example_path,
+    )
+
+```
+
