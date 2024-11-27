@@ -21,8 +21,7 @@ import os
 import pytest
 
 try:
-    from nomad.parsing.parser import ArchiveParser
-    from nomad.datamodel import EntryArchive, Context
+    import nomad
 except ImportError:
     pytest.skip(
         "Skipping NOMAD example tests because nomad is not installed",
