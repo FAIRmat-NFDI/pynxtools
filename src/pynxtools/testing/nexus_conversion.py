@@ -169,15 +169,14 @@ class ReaderTest:
             "DEBUG - value: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
             "DEBUG - ===== GROUP (// [NXroot::]):",
         ]
-        IGNORE_SECTIONS: Dict[str, List[str]] = reader_ignore_sections.update(
-            {
-                "ATTRS (//@HDF5_version)": ["DEBUG - value:"],
-                "ATTRS (//@file_name)": ["DEBUG - value:"],
-                "ATTRS (//@file_time)": ["DEBUG - value:"],
-                "ATTRS (//@file_update_time)": ["DEBUG - value:"],
-                "ATTRS (//@h5py_version)": ["DEBUG - value:"],
-            }
-        )
+        IGNORE_SECTIONS: Dict[str, List[str]] = {
+            **reader_ignore_sections,
+            "ATTRS (//@HDF5_version)": ["DEBUG - value:"],
+            "ATTRS (//@file_name)": ["DEBUG - value:"],
+            "ATTRS (//@file_time)": ["DEBUG - value:"],
+            "ATTRS (//@file_update_time)": ["DEBUG - value:"],
+            "ATTRS (//@h5py_version)": ["DEBUG - value:"],
+        }
 
         SECTION_SEPARATOR = "DEBUG - ===== "
 
