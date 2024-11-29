@@ -99,7 +99,7 @@ def example_upload_entry_point_valid(
 
     Args:
         entrypoint (nomad.config.models.plugins.ExampleUploadEntryPoint): The entry point to test.
-        expected_upload_files (str): String path of the example.
+        example_path (str): String path of the example.
 
     """
     expected_upload_files = []
