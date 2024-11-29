@@ -20,7 +20,7 @@
 import logging
 import os
 from glob import glob
-from typing import List, Literal, Tuple
+from typing import List, Literal, Tuple, Dict
 
 try:
     from nomad.client import parse
@@ -159,20 +159,26 @@ class ReaderTest:
 
             parse(self.created_nexus, **kwargs)
 
-    def check_reproducibility_of_nexus(self):
+    def check_reproducibility_of_nexus(self, **kwargs):
         """Reproducibility test for the generated nexus file."""
-        IGNORE_LINES = [
+        reader_ignore_lines: List[str] = kwargs.get("ignore_lines", [])
+        reader_ignore_sections: Dict[str, List[str]] = kwargs.get("ignore_sections", {})
+
+        IGNORE_LINES: List[str] = reader_ignore_lines + [
             "DEBUG - value: v",
             "DEBUG - value: https://github.com/FAIRmat-NFDI/nexus_definitions/blob/",
             "DEBUG - ===== GROUP (// [NXroot::]):",
         ]
-        SECTION_IGNORE = {
-            "ATTRS (//@HDF5_version)": ["DEBUG - value:"],
-            "ATTRS (//@file_name)": ["DEBUG - value:"],
-            "ATTRS (//@file_time)": ["DEBUG - value:"],
-            "ATTRS (//@file_update_time)": ["DEBUG - value:"],
-            "ATTRS (//@h5py_version)": ["DEBUG - value:"],
-        }
+        IGNORE_SECTIONS: Dict[str, List[str]] = reader_ignore_sections.update(
+            {
+                "ATTRS (//@HDF5_version)": ["DEBUG - value:"],
+                "ATTRS (//@file_name)": ["DEBUG - value:"],
+                "ATTRS (//@file_time)": ["DEBUG - value:"],
+                "ATTRS (//@file_update_time)": ["DEBUG - value:"],
+                "ATTRS (//@h5py_version)": ["DEBUG - value:"],
+            }
+        )
+
         SECTION_SEPARATOR = "DEBUG - ===== "
 
         def should_skip_line(gen_l: str, ref_l: str, ignore_lines: List[str]) -> bool:
@@ -207,14 +213,14 @@ class ReaderTest:
                     SECTION_SEPARATOR
                 ):
                     section = gen_l.rsplit(SECTION_SEPARATOR)[-1].strip()
-                    section_ignore_lines = SECTION_IGNORE.get(section, [])
+                    section_ignore_lines = IGNORE_SECTIONS.get(section, [])
 
                 # Compare lines if not in ignore list
                 if gen_l != ref_l and not should_skip_line(
                     gen_l, ref_l, IGNORE_LINES + section_ignore_lines
                 ):
                     raise AssertionError(
-                        f"Log files are different at line {ind}\n"
+                        f"Log files are diqfferent at line {ind}\n"
                         f"generated: {gen_l}\nreferenced: {ref_l}"
                     )
 
