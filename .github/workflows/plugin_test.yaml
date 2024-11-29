@@ -21,25 +21,25 @@ jobs:
       matrix:
         include:
           - plugin: pynxtools-apm
-            branch: bring-in-examples
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-ellips
-            branch: fix-test
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-em
-            branch: bring-in-examples
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
-            branch: bring-in-examples
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-raman
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-stm
-            branch: NomadExample
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: bring-in-examples
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
             branch: main
