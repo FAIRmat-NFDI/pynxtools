@@ -999,49 +999,50 @@
 2. Test in the pynxtools's CI/CD if the plugin has been integrated with <code>pynxtools</code> properly.</p>
 <h2 id="how-to-write-an-integration-test-for-a-reader-plugin-with-pynxtoolstesting">How to write an integration test for a reader plugin with <code>pynxtools.testing</code><a class="headerlink" href="#how-to-write-an-integration-test-for-a-reader-plugin-with-pynxtoolstesting" title="Permanent link">&para;</a></h2>
 <p>It is very simple to write a test to verify the plugin integration with <code>pynxtools</code> within the plugin's tests directory. The developer can place the test where they want, but they need to use the provided test interface from <code>pynxtools</code>. An example test for <code>pynxtools-FOO</code> (a demo plugin) plugin is given below:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># test_plugin.py</span>
+<div class="highlight"><span class="filename">test_plugin.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">os</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">os</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">import</span> <span class="nn">pytest</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">from</span> <span class="nn">pynxtools.testing.nexus_conversion</span> <span class="kn">import</span> <span class="n">ReaderTest</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># e.g. module_dir = /pynxtools-foo/tests</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="s2">&quot;nxdl,reader_name,files_or_dir&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="p">[</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="p">(</span><span class="s2">&quot;NXfoo&quot;</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_dir</span><span class="si">}</span><span class="s2">/../tests/data/test_data_dir_1&quot;</span><span class="p">),</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="p">(</span><span class="s2">&quot;NXfoo&quot;</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_dir</span><span class="si">}</span><span class="s2">/../tests/data/test_data_dir_2&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="p">],</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="p">)</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="k">def</span> <span class="nf">test_foo_reader</span><span class="p">(</span><span class="n">nxdl</span><span class="p">,</span> <span class="n">reader_name</span><span class="p">,</span> <span class="n">files_or_dir</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test for the FooReader or foo reader plugin.</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="sd">    nxdl : str</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="sd">        Name of the NXDL application definition that is to be tested by</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="sd">        this reader plugin (e.g. NXfoo), without the file ending .nxdl.xml.</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="sd">    reader_name : str</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="sd">        Name of the class of the reader (e.g. &quot;foo&quot;)</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="sd">    files_or_dir : class</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="sd">        Name of the class of the reader.</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="sd">    tmp_path : pytest.fixture</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="sd">        Pytest fixture variable, used to create temporary file and clean up the generated files</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="sd">        after test.</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="sd">    caplog : pytest.fixture</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="sd">        Pytest fixture variable, used to capture the log messages during the test.</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>    <span class="c1"># test plugin reader</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    <span class="n">test</span> <span class="o">=</span> <span class="n">ReaderTest</span><span class="p">(</span><span class="n">nxdl</span><span class="p">,</span> <span class="n">reader_name</span><span class="p">,</span> <span class="n">files_or_dir</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">caplog</span><span class="p">)</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>    <span class="n">test</span><span class="o">.</span><span class="n">convert_to_nexus</span><span class="p">()</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>    <span class="c1"># test.convert_to_nexus(caplog_level=&quot;ERROR&quot;, ignore_undocumented=True)</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>    <span class="c1"># Use `ignore_undocumented` to skip undocumented fields</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>    <span class="c1"># caplog_level can be &quot;ERROR&quot; or &quot;WARNING&quot;</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>    <span class="n">test</span><span class="o">.</span><span class="n">check_reproducibility_of_nexus</span><span class="p">()</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">pytest</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">from</span> <span class="nn">pynxtools.testing.nexus_conversion</span> <span class="kn">import</span> <span class="n">ReaderTest</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># e.g. module_dir = /pynxtools-foo/tests</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="s2">&quot;nxdl,reader_name,files_or_dir&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="p">[</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="p">(</span><span class="s2">&quot;NXfoo&quot;</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_dir</span><span class="si">}</span><span class="s2">/../tests/data/test_data_dir_1&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="p">(</span><span class="s2">&quot;NXfoo&quot;</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_dir</span><span class="si">}</span><span class="s2">/../tests/data/test_data_dir_2&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="p">],</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="k">def</span> <span class="nf">test_foo_reader</span><span class="p">(</span><span class="n">nxdl</span><span class="p">,</span> <span class="n">reader_name</span><span class="p">,</span> <span class="n">files_or_dir</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test for the FooReader or foo reader plugin.</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="sd">    nxdl : str</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="sd">        Name of the NXDL application definition that is to be tested by</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="sd">        this reader plugin (e.g. NXfoo), without the file ending .nxdl.xml.</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="sd">    reader_name : str</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="sd">        Name of the class of the reader (e.g. &quot;foo&quot;)</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="sd">    files_or_dir : class</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="sd">        Name of the class of the reader.</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="sd">    tmp_path : pytest.fixture</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="sd">        Pytest fixture variable, used to create temporary file and clean up the generated files</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="sd">        after test.</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="sd">    caplog : pytest.fixture</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="sd">        Pytest fixture variable, used to capture the log messages during the test.</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>    <span class="c1"># test plugin reader</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>    <span class="n">test</span> <span class="o">=</span> <span class="n">ReaderTest</span><span class="p">(</span><span class="n">nxdl</span><span class="p">,</span> <span class="n">reader_name</span><span class="p">,</span> <span class="n">files_or_dir</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">caplog</span><span class="p">)</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>    <span class="n">test</span><span class="o">.</span><span class="n">convert_to_nexus</span><span class="p">()</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    <span class="c1"># test.convert_to_nexus(caplog_level=&quot;ERROR&quot;, ignore_undocumented=True)</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>    <span class="c1"># Use `ignore_undocumented` to skip undocumented fields</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>    <span class="c1"># caplog_level can be &quot;ERROR&quot; or &quot;WARNING&quot;</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>    <span class="n">test</span><span class="o">.</span><span class="n">check_reproducibility_of_nexus</span><span class="p">()</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>    <span class="c1"># Here, you can also pass `ignore_lines` (a list) or `ignore_sections` (a dict)</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>    <span class="c1"># if you want to ignore certain lines or lines within a section in the comparison</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>    <span class="c1"># of the log files of the reference -nxs file and the one created in the test.</span>
 </code></pre></div>
 <p>Alongside the test data in <code>test/data</code>, it is also possible to add other types of test data inside the test directory of the plugin.</p>
 <p>You can also pass additional parameters to <code>test.convert_to_nexus</code>:</p>
@@ -1053,6 +1054,75 @@
 <p><code>ignore_undocumented</code> (boolean): If true, the test skipts the verification of undocumented keys. Otherwise, a warning massages for undocumented keys is raised</p>
 </li>
 </ul>
+<h1 id="how-to-write-an-integration-test-for-a-nomad-example-in-a-reader-plugin">How to write an integration test for a NOMAD example in a reader plugin<a class="headerlink" href="#how-to-write-an-integration-test-for-a-nomad-example-in-a-reader-plugin" title="Permanent link">&para;</a></h1>
+<p>It is also possible to ship examples for NOMAD directly with the reader plugin. As an example, <code>pynxtools-mpes</code> comes with its own NOMAD example (see <a href="https://github.com/FAIRmat-NFDI/pynxtools-mpes/tree/bring-in-examples/src/pynxtools_mpes/nomad">here</a>) using the ExampleUploadEntryPoint of NOMAD (see <a href="https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/example_uploads.html">here</a> for more documentation).</p>
+<p>The <code>testing</code> sub-package of <code>pynxtools</code> provides two functionalities for testing the <code>ExampleUploadEntryPoint</code> defined in a <code>pynxtools</code> plugin:
+1) Test that the ExampleUploadEntryPoint can be properly loaded
+2) Test that the schemas and files in the example folder(s) can be parsed by NOMAD</p>
+<p>We will write a test for a <code>pynxtools_foo_example_entrypoint</code> defined in the pyproject.toml file of a demo <code>pynxtools-FOO</code> (here the actual example data resides in the folder <code>src/pynxtools_foo/nomad/examples</code>):</p>
+<div class="highlight"><span class="filename">pyproject.toml</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">[</span><span class="n">project</span><span class="o">.</span><span class="n">entry</span><span class="o">-</span><span class="n">points</span><span class="o">.</span><span class="s1">&#39;nomad.plugin&#39;</span><span class="p">]</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">pynxtools_foo_example</span> <span class="o">=</span> <span class="s2">&quot;pynxtools_foo.nomad.entrypoints:pynxtools_foo_example_entrypoint&quot;</span>
+</code></pre></div>
+<p><div class="highlight"><span class="filename">src/pynxtools_foo/nomad/nomad_example_entrypoint.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">nomad.config.models.plugins</span> <span class="kn">import</span> <span class="n">ExampleUploadEntryPoint</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">pynxtools_foo_example_entrypoint</span> <span class="o">=</span> <span class="n">ExampleUploadEntryPoint</span><span class="p">(</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;My example upload&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s2">        This is an example upload for the pynxtools-FOO package.</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">plugin_package</span><span class="o">=</span><span class="s2">&quot;pynxtools_foo&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">resources</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nomad/examples/*&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">)</span>
+</code></pre></div>
+A test for the <code>pynxtools_foo_example_entrypoint</code> could look like this:
+<div class="highlight"><span class="filename">test_nomad_examples.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span> <span class="nn">nomad</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span> <span class="nn">pynxtools.testing.nomad_example</span> <span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">get_file_parameter</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">parse_nomad_examples</span><span class="p">,</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">example_upload_entry_point_valid</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="kn">from</span> <span class="nn">pynxtools_foo.nomad.entrypoints</span> <span class="kn">import</span> <span class="n">pynxtools_foo_example_entrypoint</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">EXAMPLE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="s2">&quot;src&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="s2">&quot;pynxtools_foo&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>    <span class="s2">&quot;nomad&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="s2">&quot;examples&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="p">)</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>    <span class="s2">&quot;mainfile&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>    <span class="n">get_file_parameter</span><span class="p">(</span><span class="n">EXAMPLE_PATH</span><span class="p">),</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="p">)</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="k">def</span> <span class="nf">test_parse_nomad_examples</span><span class="p">(</span><span class="n">mainfile</span><span class="p">):</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test if NOMAD examples work.&quot;&quot;&quot;</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a>    <span class="n">archive_dict</span> <span class="o">=</span> <span class="n">parse_nomad_examples</span><span class="p">(</span><span class="n">mainfile</span><span class="p">)</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a>    <span class="c1"># Here, you can also implement more logic if you know the contents of the archive_dict</span>
+<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a>
+<a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a>
+<a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a>    <span class="p">(</span><span class="s2">&quot;entrypoint&quot;</span><span class="p">,</span> <span class="s2">&quot;example_path&quot;</span><span class="p">),</span>
+<a id="__codelineno-3-34" name="__codelineno-3-34" href="#__codelineno-3-34"></a>    <span class="p">[</span>
+<a id="__codelineno-3-35" name="__codelineno-3-35" href="#__codelineno-3-35"></a>        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+<a id="__codelineno-3-36" name="__codelineno-3-36" href="#__codelineno-3-36"></a>            <span class="n">pynxtools_foo_example_entrypoint</span><span class="p">,</span>
+<a id="__codelineno-3-37" name="__codelineno-3-37" href="#__codelineno-3-37"></a>            <span class="n">EXAMPLE_PATH</span><span class="p">,</span>
+<a id="__codelineno-3-38" name="__codelineno-3-38" href="#__codelineno-3-38"></a>            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;pynxtools_foo_example&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-39" name="__codelineno-3-39" href="#__codelineno-3-39"></a>        <span class="p">),</span>
+<a id="__codelineno-3-40" name="__codelineno-3-40" href="#__codelineno-3-40"></a>    <span class="p">],</span>
+<a id="__codelineno-3-41" name="__codelineno-3-41" href="#__codelineno-3-41"></a><span class="p">)</span>
+<a id="__codelineno-3-42" name="__codelineno-3-42" href="#__codelineno-3-42"></a><span class="k">def</span> <span class="nf">test_example_upload_entry_point_valid</span><span class="p">(</span><span class="n">entrypoint</span><span class="p">,</span> <span class="n">example_path</span><span class="p">):</span>
+<a id="__codelineno-3-43" name="__codelineno-3-43" href="#__codelineno-3-43"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test if NOMAD ExampleUploadEntryPoint works.&quot;&quot;&quot;</span>
+<a id="__codelineno-3-44" name="__codelineno-3-44" href="#__codelineno-3-44"></a>    <span class="n">example_upload_entry_point_valid</span><span class="p">(</span>
+<a id="__codelineno-3-45" name="__codelineno-3-45" href="#__codelineno-3-45"></a>        <span class="n">entrypoint</span><span class="o">=</span><span class="n">entrypoint</span><span class="p">,</span>
+<a id="__codelineno-3-46" name="__codelineno-3-46" href="#__codelineno-3-46"></a>        <span class="n">example_path</span><span class="o">=</span><span class="n">example_path</span><span class="p">,</span>
+<a id="__codelineno-3-47" name="__codelineno-3-47" href="#__codelineno-3-47"></a>    <span class="p">)</span>
+</code></pre></div></p>
 
 
 
