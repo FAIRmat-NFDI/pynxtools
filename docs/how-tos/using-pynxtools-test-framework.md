@@ -49,6 +49,9 @@ def test_foo_reader(nxdl, reader_name, files_or_dir, tmp_path, caplog):
     # Use `ignore_undocumented` to skip undocumented fields
     # caplog_level can be "ERROR" or "WARNING"
     test.check_reproducibility_of_nexus()
+    # Here, you can also pass `ignore_lines` (a list) or `ignore_sections` (a dict)
+    # if you want to ignore certain lines or lines within a section in the comparison
+    # of the log files of the reference -nxs file and the one created in the test.
 ```
 
 Alongside the test data in `test/data`, it is also possible to add other types of test data inside the test directory of the plugin.
