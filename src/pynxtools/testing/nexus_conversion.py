@@ -219,7 +219,7 @@ class ReaderTest:
                     gen_l, ref_l, IGNORE_LINES + section_ignore_lines
                 ):
                     raise AssertionError(
-                        f"Log files are diqfferent at line {ind}\n"
+                        f"Log files are different at line {ind}\n"
                         f"generated: {gen_l}\nreferenced: {ref_l}"
                     )
 
