@@ -24,7 +24,7 @@ jobs:
             branch: bring-in-examples
             tests_to_run: tests/.
           - plugin: pynxtools-ellips
-            branch: bring-in-examples
+            branch: fix-test
             tests_to_run: tests/.
           - plugin: pynxtools-em
             branch: bring-in-examples
