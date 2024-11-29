@@ -616,8 +616,7 @@ def nexus_resolve_variadic_name(
     fitting_definitions = definitions
     if filter:
         fitting_definitions = {}
-        for def_name in definitions:
-            definition = definitions[def_name]
+        for def_name, definition in definitions.items():
             if filter in definition.inherited_sections:
                 fitting_definitions[def_name] = definition
     return resolve_variadic_name(fitting_definitions, name, hint)
