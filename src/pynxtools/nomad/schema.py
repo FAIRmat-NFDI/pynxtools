@@ -33,7 +33,7 @@ import numpy as np
 try:
     from nomad import utils
     from nomad.datamodel import EntryArchive, EntryMetadata
-    from nomad.datamodel.data import EntryData
+    from nomad.datamodel.data import EntryData, Schema
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
         Component,
@@ -831,9 +831,9 @@ def init_nexus_metainfo():
     if nexus_metainfo_package is not None:
         return
 
-    # We take the application definitions and create a common parent section that allows
-    # to include nexus in an EntryArchive.
-    nexus_section = Section(
+    # We take the application definitions and create a Schema that allows
+    # to include NeXus in an EntryArchive.
+    nexus_section = Schema(
         validate=VALIDATE, name=__GROUPING_NAME, label=__GROUPING_NAME
     )
 
