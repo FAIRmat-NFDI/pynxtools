@@ -20,7 +20,7 @@
 import logging
 import os
 from glob import glob
-from typing import List, Literal, Tuple, Dict
+from typing import Dict, List, Literal, Tuple
 
 try:
     from nomad.client import parse
