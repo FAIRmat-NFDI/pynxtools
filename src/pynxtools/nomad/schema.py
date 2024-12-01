@@ -33,7 +33,7 @@ import numpy as np
 try:
     from nomad import utils
     from nomad.datamodel import EntryArchive, EntryMetadata
-    from nomad.datamodel.data import EntryData
+    from nomad.datamodel.data import EntryData, Schema
     from nomad.datamodel.metainfo.basesections import (
         BaseSection,
         Component,
@@ -800,6 +800,7 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
                 SubSection(section_def=section, name=section.name)
             )
 
+    package.section_definitions.append(nexus_section)
     return package
 
 
@@ -836,6 +837,7 @@ def init_nexus_metainfo():
     nexus_section = Section(
         validate=VALIDATE, name=__GROUPING_NAME, label=__GROUPING_NAME
     )
+    nexus_section.base_sections = [Schema.m_def]
 
     # try:
     #     load_nexus_schema('')
@@ -846,8 +848,6 @@ def init_nexus_metainfo():
     #     except Exception:
     #         pass
     nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
-
-    nexus_metainfo_package.section_definitions.append(nexus_section)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
