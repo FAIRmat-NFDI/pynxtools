@@ -1605,6 +1605,16 @@ DEBUG - -> Optical Laser
 DEBUG - -> Ion Source
 DEBUG - -> UV Plasma Source
 DEBUG - -> Metal Jet X-ray
+DEBUG - -> Laser
+DEBUG - -> Dye-Laser
+DEBUG - -> Broadband Tunable Light Source
+DEBUG - -> Halogen lamp
+DEBUG - -> LED
+DEBUG - -> Mercury Cadmium Telluride
+DEBUG - -> Deuterium Lamp
+DEBUG - -> Xenon Lamp
+DEBUG - -> Globar
+DEBUG - -> other
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/type):
@@ -1803,6 +1813,16 @@ DEBUG - -> Optical Laser
 DEBUG - -> Ion Source
 DEBUG - -> UV Plasma Source
 DEBUG - -> Metal Jet X-ray
+DEBUG - -> Laser
+DEBUG - -> Dye-Laser
+DEBUG - -> Broadband Tunable Light Source
+DEBUG - -> Halogen lamp
+DEBUG - -> LED
+DEBUG - -> Mercury Cadmium Telluride
+DEBUG - -> Deuterium Lamp
+DEBUG - -> Xenon Lamp
+DEBUG - -> Globar
+DEBUG - -> other
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE/type):
 DEBUG - 
 DEBUG - documentation (NXsource.nxdl.xml:/type):

@@ -20,14 +20,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-
+          - plugin: pynxtools-apm
+            branch: main
+            tests_to_run: tests/.
           - plugin: pynxtools-ellips
             branch: main
             tests_to_run: tests/.
-          - plugin: pynxtools-raman
+          - plugin: pynxtools-em
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-raman
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-stm
@@ -39,24 +44,16 @@ jobs:
           - plugin: pynxtools-xrd
             branch: main
             tests_to_run: tests/.
-          # - plugin: pynxtools-apm
-          #   branch: main
-          #   tests_to_run: tests/.
-          # - plugin: pynxtools-xrd
-          #   branch: update-tests
-          #   tests_to_run: tests/.
-          # - plugin: pynxtools-em
-          #   branch: main
-          #   tests_to_run: tests/.
+
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Set up Python 3.9
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: Install dependencies
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -73,7 +70,7 @@ jobs:
           ref: ${{ matrix.branch }}
       - name: Install nomad
         run: |
-          uv pip install nomad-lab@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
+          uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install ${{ matrix.plugin }}
         run: |
           cd ${{ matrix.plugin }}
