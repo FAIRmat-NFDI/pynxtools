@@ -775,6 +775,7 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
     """
     Creates a metainfo package from the given nexus directory. Will generate the
     respective metainfo definitions from all the nxdl files in that directory.
+    The parent Schema is also populated with all AppDefs and then is is also added to the package.
     """
     package = Package(name=__PACKAGE_NAME)
 
@@ -833,6 +834,7 @@ def init_nexus_metainfo():
 
     # We take the application definitions and create a common parent section that allows
     # to include nexus in an EntryArchive.
+    # To be able to register it into data section, it is expected that this section inherits from Schema.
     nexus_section = Section(
         validate=VALIDATE, name=__GROUPING_NAME, label=__GROUPING_NAME
     )
