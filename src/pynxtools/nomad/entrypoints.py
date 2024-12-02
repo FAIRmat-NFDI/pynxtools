@@ -58,7 +58,7 @@ from nomad.config.models.ui import (
     SearchQuantities,
 )
 
-schema = "*#pynxtools.nomad.schema.NeXus"
+schema = "pynxtools.nomad.schema.NeXus"
 
 nexus_app = AppEntryPoint(
     name="NexusApp",
@@ -79,29 +79,34 @@ nexus_app = AppEntryPoint(
         # syntax to load the entire package, or just a single schema from a
         # package.
         search_quantities=SearchQuantities(
-            include=[schema],
+            include=[f"*#{schema}"],
         ),
         # Controls which columns are shown in the results table
         columns=[
-            # Column(quantity='entry_id', selected=True),
-            # Column(
-            #     quantity=f'data.section.myquantity#{schema}',
-            #     selected=True
-            # ),
-            # Column(
-            #     quantity=f'data.my_repeated_section[*].myquantity#{schema}',
-            #     selected=True
-            # ),
-            Column(quantity="upload_create_time")
+            Column(quantity="entry_id", selected=True),
+            Column(quantity=f"entry_type", selected=True),
+            Column(
+                title="definition",
+                quantity=f"data.*.ENTRY[*].definition__field#{schema}",
+                selected=True,
+            ),
+            Column(
+                title="start_time",
+                quantity=f"data.*.ENTRY[*].start_time__field#{schema}",
+                selected=True,
+            ),
+            Column(
+                title="title",
+                quantity=f"data.*.ENTRY[*].title__field#{schema}",
+                selected=True,
+            ),
         ],
         # Dictionary of search filters that are always enabled for queries made
         # within this app. This is especially important to narrow down the
         # results to the wanted subset. Any available search filter can be
         # targeted here. This example makes sure that only entries that use
         # MySchema are included.
-        # filters_locked={
-        #     "section_defs.definition_qualified_name": ['#pynxtools.nomad.schema'] #schema]
-        # },
+        filters_locked={"section_defs.definition_qualified_name": [schema]},
         # Controls the menu shown on the left
         menu=Menu(
             title="Material",
@@ -130,27 +135,39 @@ nexus_app = AppEntryPoint(
             ],
         ),
         # Controls the default dashboard shown in the search interface
-        # dashboard={
-        #     'widgets': [
-        #         {
-        #             'type': 'histogram',
-        #             'show_input': False,
-        #             'autorange': True,
-        #             'nbins': 30,
-        #             'scale': 'linear',
-        #             'quantity': f'data.mysection.myquantity#{schema}',
-        #             'layout': {
-        #                 'lg': {
-        #                     'minH': 3,
-        #                     'minW': 3,
-        #                     'h': 4,
-        #                     'w': 12,
-        #                     'y': 0,
-        #                     'x': 0
-        #                 }
-        #             }
-        #         }
-        #     ]
-        # }
+        dashboard={
+            "widgets": [
+                {
+                    "type": "histogram",
+                    "show_input": False,
+                    "autorange": True,
+                    "nbins": 30,
+                    "scale": "linear",
+                    "quantity": f"data.Root.datetime#{schema}",
+                    "title": "Procesing Time",
+                    "layout": {
+                        "lg": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 0, "x": 0}
+                    },
+                },
+                {
+                    "type": "terms",
+                    "show_input": False,
+                    "scale": "linear",
+                    "quantity": f"entry_type",
+                    "title": "Entry Type",
+                    "layout": {
+                        "lg": {"minH": 3, "minW": 3, "h": 8, "w": 4, "y": 0, "x": 12}
+                    },
+                },
+                {
+                    "type": "periodic_table",
+                    "scale": "linear",
+                    "quantity": f"results.material.elements",
+                    "layout": {
+                        "lg": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0}
+                    },
+                },
+            ]
+        },
     ),
 )
