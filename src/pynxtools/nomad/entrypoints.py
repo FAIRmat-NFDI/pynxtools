@@ -18,9 +18,9 @@
 try:
     from nomad.config.models.plugins import (
         AppEntryPoint,
+        ExampleUploadEntryPoint,
         ParserEntryPoint,
         SchemaPackageEntryPoint,
-        ExampleUploadEntryPoint,
     )
 except ImportError as exc:
     raise ImportError(
@@ -188,9 +188,9 @@ nexus_app = AppEntryPoint(
             ]
         },
     ),
-  }
-  
-  iv_temp_example = ExampleUploadEntryPoint(
+)
+
+iv_temp_example = ExampleUploadEntryPoint(
     title="Sensor Scan - IV Temperature Curve",
     category="FAIRmat examples",
     description="""
@@ -199,4 +199,4 @@ nexus_app = AppEntryPoint(
     """,
     plugin_package="pynxtools",
     resources=["nomad/examples/iv_temp/*"],
-}
+)
