@@ -96,6 +96,7 @@ xrd = [
 nexus_parser = "pynxtools.nomad.entrypoints:nexus_parser"
 nexus_schema = "pynxtools.nomad.entrypoints:nexus_schema"
 nexus_data_converter = "pynxtools.nomad.entrypoints:nexus_data_converter"
+nexus_app = "pynxtools.nomad.entrypoints:nexus_app"
 iv_temp_example = "pynxtools.nomad.entrypoints:iv_temp_example"
 
 [project.scripts]
