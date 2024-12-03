@@ -68,25 +68,25 @@ convert = [
 ]
 
 apm = [
-    "pynxtools-apm>=0.2.1",
+    "pynxtools-apm>=0.2.2",
 ]
 ellips = [
-    "pynxtools-ellips>=0.0.4",
+    "pynxtools-ellips>=0.0.7",
 ]
 em = [
-    "pynxtools-em>=0.3.0",
+    "pynxtools-em>=0.3.1",
 ]
 mpes = [
-    "pynxtools-mpes>=0.2.0",
+    "pynxtools-mpes>=0.2.1",
 ]
 raman = [
-    "pynxtools-raman>=0.0.3",
+    "pynxtools-raman>=0.0.5",
 ]
 stm = [
-    "pynxtools-stm>=1.0.8",
+    "pynxtools-stm>=1.0.9",
 ]
 xps = [
-    "pynxtools-xps>=0.4.6",
+    "pynxtools-xps>=0.4.7",
 ]
 xrd = [
     "pynxtools-xrd>=0.0.3",
