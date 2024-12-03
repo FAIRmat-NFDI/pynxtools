@@ -86,7 +86,7 @@ stm = [
     "pynxtools-stm>=1.0.9",
 ]
 xps = [
-    "pynxtools-xps>=0.4.7",
+    "pynxtools-xps>=0.4.8",
 ]
 xrd = [
     "pynxtools-xrd>=0.0.3",
