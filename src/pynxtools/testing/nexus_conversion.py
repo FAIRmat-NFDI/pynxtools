@@ -120,6 +120,7 @@ class ReaderTest:
 
         assert (
             self.nxdl in self.reader.supported_nxdls
+            or "*" in self.reader.supported_nxdls
         ), f"Reader does not support {self.nxdl} NXDL."
 
         nxdl_root, nxdl_file = get_nxdl_root_and_path(self.nxdl)
