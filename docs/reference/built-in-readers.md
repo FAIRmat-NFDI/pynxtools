@@ -27,6 +27,7 @@ This file is designed to let you fill in the requirements of a NeXus Application
 The mapping files will always be based on the template the dataconverter generates. See above on how to generate a mapping file. The right hand side values of the template keys are what you can modify. These keys are called NeXus template paths, because they combine the actual path that will be used in the HDF5 hierarchy with additional NeXus datatype hints to guide the dataconverter to add NX_class annotations.
 
 Here are the three different ways you can fill the right hand side of the template keys:
+
 * Write the nested path in your datafile. This is indicated by a leading `/` before the word `entry` to make `/entry/data/current_295C` below.
 Example:
 
