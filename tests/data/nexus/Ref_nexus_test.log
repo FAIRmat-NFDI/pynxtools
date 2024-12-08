@@ -1170,7 +1170,7 @@ DEBUG - documentation (NXinstrument.nxdl.xml:/POSITIONER):
 DEBUG - 
 DEBUG - documentation (NXpositioner.nxdl.xml:):
 DEBUG - 
-        A generic positioner such as a motor or piezo-electric transducer.  
+         A generic positioner such as a motor or piezo-electric transducer.
     
 DEBUG - ===== ATTRS (//entry/instrument/manipulator@NX_class)
 DEBUG - value: NXpositioner 
