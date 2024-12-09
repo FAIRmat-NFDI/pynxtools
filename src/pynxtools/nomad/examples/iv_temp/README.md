@@ -4,7 +4,7 @@
 
 This is an example of a PID controlled sensor sweep scan. The temperature is set using a PID controller. Then, for the set temperature, a voltage sweep is performed. For each of the voltages, the current is measured. This is repeated for a given list of temperatures.
 
-This specific data was captured using a Bluesky controlled system. This was then saved into a binary file using Pickle. This example illustrates how such a dataset could be converted using the [`JSONMapReader`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers/json_map) of the NOMAD plugin [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools-xps).
+This specific data was captured using a Bluesky controlled system. This was then saved into a binary file using Pickle. This example illustrates how such a dataset could be converted using the [`JSONMapReader`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers/json_map) of the NOMAD plugin [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools).
 The data is mapped on to a Nexus application definition for temperature-dependent IV curve measurements, [NXiv_temp](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html).
 
 # Viewing uploaded data
