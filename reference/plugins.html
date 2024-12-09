@@ -1098,7 +1098,7 @@
 
 
 <h1 id="plugins">Plugins<a class="headerlink" href="#plugins" title="Permanent link">&para;</a></h1>
-<p>There are a number of plugins available for pynxtools that are maintained within FAIRmat. These are extensions of pynxtools used for reading data of specific experimental techniques.</p>
+<p>There are a number of plugins available for pynxtools that are maintained within FAIRmat. These are extensions of pynxtools used for reading data of specific experimental techniques and/or file formats.</p>
 <h3 id="photoemission-spectroscopy">Photoemission spectroscopy<a class="headerlink" href="#photoemission-spectroscopy" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="https://github.com/FAIRmat-NFDI/pynxtools-mpes"><strong>pynxtools-mpes</strong></a>: A reader for multi-dimensional photoelectron spectroscopy (MPES) data.</li>
@@ -1125,9 +1125,12 @@
 </ul>
 <h3 id="x-ray-diffraction">X-ray diffraction<a class="headerlink" href="#x-ray-diffraction" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-raman"><strong>pynxtools-xrd</strong></a>: A reader for X-ray diffraction data.</li>
+<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-xrd"><strong>pynxtools-xrd</strong></a>: A reader for X-ray diffraction data.</li>
 </ul>
 <h3 id="others">Others<a class="headerlink" href="#others" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://github.com/FAIRmat-NFDI/pynxtools-igor"><strong>pynxtools-igor</strong></a>: A general reader for <a href="https://www.wavemetrics.com/">Igor Pro</a> Binary Wave data. Documentation can be found <a href="https://fairmat-nfdi.github.io/pynxtools-igor/">here</a>.</li>
+</ul>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>You can install each of the plugins together with pynxtools by passing the name of the plugin as an extra to the pip install call. For example, for the <code>pynxtools-mpes</code> plugin:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pip install pynxtools[mpes]</span>
