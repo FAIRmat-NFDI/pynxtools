@@ -1,5 +1,5 @@
 # Plugins
-There are a number of plugins available for pynxtools that are maintained within FAIRmat. These are extensions of pynxtools used for reading data of specific experimental techniques.
+There are a number of plugins available for pynxtools that are maintained within FAIRmat. These are extensions of pynxtools used for reading data of specific experimental techniques and/or file formats.
 
 ### Photoemission spectroscopy
 - [**pynxtools-mpes**](https://github.com/FAIRmat-NFDI/pynxtools-mpes): A reader for multi-dimensional photoelectron spectroscopy (MPES) data.
@@ -20,8 +20,12 @@ There are a number of plugins available for pynxtools that are maintained within
 - [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
 
 ### X-ray diffraction
-- [**pynxtools-xrd**](https://github.com/FAIRmat-NFDI/pynxtools-raman): A reader for X-ray diffraction data.
+- [**pynxtools-xrd**](https://github.com/FAIRmat-NFDI/pynxtools-xrd): A reader for X-ray diffraction data.
+
 ### Others
+- [**pynxtools-igor**](https://github.com/FAIRmat-NFDI/pynxtools-igor): A general reader for [Igor Pro](https://www.wavemetrics.com/) Binary Wave data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-igor/).
+
+
 
 
 ## Installation
