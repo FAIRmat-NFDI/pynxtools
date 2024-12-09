@@ -23,7 +23,7 @@ There are a number of plugins available for pynxtools that are maintained within
 - [**pynxtools-xrd**](https://github.com/FAIRmat-NFDI/pynxtools-xrd): A reader for X-ray diffraction data.
 
 ### Others
-- [**pynxtools-igor**](https://github.com/FAIRmat-NFDI/pynxtools-igor): A general reader for [Igor Pro](https://www.wavemetrics.com/) Binary Wave data.
+- [**pynxtools-igor**](https://github.com/FAIRmat-NFDI/pynxtools-igor): A general reader for [Igor Pro](https://www.wavemetrics.com/) Binary Wave data. Documentation can be found [here](https://fairmat-nfdi.github.io/pynxtools-igor/).
 
 
 
