@@ -64,7 +64,7 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[apm,ellips,em,igor,mpes,stm,xps,xrd,raman]",
+    "pynxtools[apm,ellips,em,igor,mpes,raman,stm,xps,xrd]",
 ]
 
 apm = [
