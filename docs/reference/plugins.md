@@ -17,7 +17,7 @@ There are a number of plugins available for pynxtools that are maintained within
 - [**pynxtools-raman**](https://github.com/FAIRmat-NFDI/pynxtools-raman): A reader for Raman data.
 
 ### Scanning probe microscopy
-- [**pynxtools-stm**](https://github.com/FAIRmat-NFDI/pynxtools-stm): A reader for scanning tunneling microscopy (SPM) and spectroscopy (STS) data.
+- [**pynxtools-spm**](https://github.com/FAIRmat-NFDI/pynxtools-spm): A reader for scanning tunneling microscopy (SPM) domain data (STM, STS and AFM).
 
 ### X-ray diffraction
 - [**pynxtools-xrd**](https://github.com/FAIRmat-NFDI/pynxtools-xrd): A reader for X-ray diffraction data.

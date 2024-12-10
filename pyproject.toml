@@ -86,7 +86,7 @@ raman = [
     "pynxtools-raman>=0.0.5",
 ]
 stm = [
-    "pynxtools-stm>=1.0.9",
+    "pynxtools-spm>=0.0.0",
 ]
 xps = [
     "pynxtools-xps>=0.4.8",
