@@ -35,12 +35,14 @@ try:
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import EntryData, Schema
     from nomad.datamodel.metainfo.basesections import (
+        ActivityStep,
         BaseSection,
         Component,
         CompositeSystem,
         Entity,
         EntityReference,
         Instrument,
+        Measurement,
     )
     from nomad.datamodel.metainfo.eln import BasicEln
     from nomad.metainfo import (
@@ -97,12 +99,34 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    __rename_nx_for_nomad("NXfabrication"): [Instrument],
-    __rename_nx_for_nomad("NXsample"): [CompositeSystem],
-    __rename_nx_for_nomad("NXsample_component"): [Component],
-    __rename_nx_for_nomad("NXidentifier"): [EntityReference],
+    "NXfabrication": [Instrument],
+    "NXsample": [CompositeSystem],
+    "NXsample_component": [Component],
+    "NXidentifier": [EntityReference],
+    "NXentry": [ActivityStep],
     # "object": BaseSection,
 }
+
+
+class NexusMeasurement(Measurement):
+    def normalize(self, archive, logger):
+        try:
+            try:
+                app_entry = getattr(self, "ENTRY")
+                self.steps = app_entry
+                if len(app_entry) < 1:
+                    raise AttributeError()
+            except (AttributeError, TypeError):
+                app_entry = getattr(self, "entry")
+                if len(app_entry) < 1:
+                    raise AttributeError()
+            if self.m_def.name == "Root":
+                self.method = "Generic Experiment"
+            else:
+                self.method = self.m_def.name + " Experiment"
+        except (AttributeError, TypeError):
+            self.method = ""
+        super().normalize(archive, logger)
 
 
 VALIDATE = False
@@ -655,12 +679,15 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
+    if nx_category == "application" or (nx_category == "base" and nx_name == "NXroot"):
+        nomad_base_sec_cls = [NexusMeasurement]
+    else:
+        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
+
     nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
-
-    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
         nx_base_sec = __to_section(__rename_nx_for_nomad(xml_attrs["extends"]))
@@ -849,6 +876,7 @@ def init_nexus_metainfo():
     #     except Exception:
     #         pass
     nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
+    nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
@@ -913,6 +941,17 @@ def normalize_sample(self, archive, logger):
     super(current_cls, self).normalize(archive, logger)
 
 
+def normalize_entry(self, archive, logger):
+    """Normalizer for sample section."""
+    current_cls = __section_definitions[__rename_nx_for_nomad("NXentry")].section_cls
+    if self.start_time__field:
+        self.start_time = self.start_time__field
+    if self.title__field:
+        self.name = self.title__field
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
 def normalize_identifier(self, archive, logger):
     """Normalizer for identifier section."""
 
@@ -964,6 +1003,7 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXsample"): normalize_sample,
     __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
     __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
+    __rename_nx_for_nomad("NXentry"): normalize_entry,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
