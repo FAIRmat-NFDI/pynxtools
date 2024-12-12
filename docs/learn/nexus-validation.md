@@ -40,7 +40,7 @@ MSYS_NO_PATHCONV=1 read_nexus -c /NXarpes/ENTRY/INSTRUMENT/analyser
 This workaround was tested with Windows 11, but should very likely also work with Windows 10 and lower.
 
 ## Other approaches (not part of pynxtools)
-Aside from the tools we developed within FAIRmat, the [official NeXus website](https://manual.nexusformat.org/validation.htm) lists two more programs for the validation of NeXus files:
+Aside from the tools we developed within FAIRmat, the [official NeXus website](https://manual.nexusformat.org/validation.html) lists two more programs for the validation of NeXus files:
 
 1. [cnxvalidate](<https://github.com/nexusformat/cnxvalidate>)
 2. [punx](<https://github.com/prjemian/punx>)

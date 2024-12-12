@@ -16,14 +16,14 @@ Within [FAIRmat](https://www.fairmat-nfdi.eu/fairmat/), we are extending the [Ne
 <!-- Finally, a paragraph that describes whom the product is useful for. -->
 FAIRmat's contribution to the existing NeXus standard, together with the tools provided through `pynxtools`, enable scientists and research groups working with data, as well as helping communities implement standardized FAIR research data.
 
-Additionally, the software is used as a plugin in the research data management system [NOMAD](https://nomad-lab.eu/nomad-lab/) for making experimental data searchable and publishable. NOMAD is developed by the FAIRMAT consortium, as a part of the German National Research Data Infrastructure (NFDI).
+Additionally, the software is used as a plugin in the research data management system [NOMAD](https://nomad-lab.eu/nomad-lab/) for making experimental data searchable and publishable. NOMAD is developed by the FAIRmat consortium, as a part of the German National Research Data Infrastructure (NFDI).
 
 <div markdown="block" class="home-grid">
 <div markdown="block">
 
 ### Tutorial
 
-A series of tutorials giving you an overview on how to store or convert your data to NeXus compliant files.
+A series of tutorials giving you an overview on how to store or convert your data to NeXus-compliant files.
 
 - [Converting your data to NeXus](tutorial/converting-data-to-nexus.md)
 - [Uploading NeXus data to NOMAD](tutorial/nexus-to-nomad.md)
@@ -42,7 +42,7 @@ How-to guides provide step-by-step instructions for a wide range of tasks.
 - [Creation of NeXus files in python via hard-coding](how-tos/create-nexus-files-by-python.md)
 - [Using pynxtools test framework for plugins](how-tos/using-pynxtools-test-framework.md)
 
-__The following How-To guides are still under development:__
+__The following How-to guides are still under development:__
 
 - [Writing an application definition](how-tos/writing-an-appdef.md)
 - [Storing data in multiple application definitions](how-tos/using-multiple-appdefs.md)
@@ -87,7 +87,7 @@ Note: To connect NeXus concepts with semantic web tools, efforts are underway to
 Within FAIRmat, we maintain a number of generic built-in pynxtools readers, together with reader plugins for different experimental techniques. Here you can find more information:
 
 - [Built-in pynxtools readers](reference/built-in-readers.md)
-- [FAIRMat-supported pynxtools plugins](reference/plugins.md)
+- [FAIRmat-supported pynxtools plugins](reference/plugins.md)
 
 
 </div>

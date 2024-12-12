@@ -526,7 +526,10 @@ def get_default_plotable(root, logger):
             nxgroup = nxgroup[default_group_name]
             default_group_name = decode_if_string(nxgroup.attrs.get("default"))
         except KeyError:
-            pass
+            logger.debug(f"""No default group with a name
+                         {default_group_name} for {nxgroup} has been found.""")
+            break
+
     if nxgroup == nxentry:
         nxdata = nxdata_helper(nxentry)
     else:
@@ -833,7 +836,7 @@ class HandleNexus:
 
             self.full_visit(self.in_file, self.in_file, "", self.visit_node)
 
-            if self.d_inq_nd is None and self.c_inq_nd is None:
+            if self.d_inq_nd is None and self.c_inq_nd is None and parser is None:
                 get_default_plotable(self.in_file, self.logger)
             # To log the provided concept and concepts founded
             if self.c_inq_nd is not None:

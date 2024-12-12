@@ -20,7 +20,7 @@
 import logging
 import os
 from glob import glob
-from typing import List, Literal, Tuple, Dict
+from typing import Dict, List, Literal, Tuple
 
 try:
     from nomad.client import parse
@@ -120,6 +120,7 @@ class ReaderTest:
 
         assert (
             self.nxdl in self.reader.supported_nxdls
+            or "*" in self.reader.supported_nxdls
         ), f"Reader does not support {self.nxdl} NXDL."
 
         nxdl_root, nxdl_file = get_nxdl_root_and_path(self.nxdl)

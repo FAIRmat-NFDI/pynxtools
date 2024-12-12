@@ -24,7 +24,7 @@ In NeXus base classes and application definitions, there are two options for def
 
 Aside from this lower case notation, there is also the option to allow for **selectable** names. This is achieved by uppercase notation. As an example, if a field in an application definition is called `FIELD`, the name can be any name as long as it maches the regular expression above. For example, `field`, `field0`, `any_other_name` would be allowed names, while `any other name` would not be allowed.
 
-There is also the possibility of mixed lowercase and uppercase notation in base classes and application definitions. For example, there might be a `userID(NXuser)` group. In this case, allowed names include any name that start with `user`, e.g., `user0`, `user_abcde`, as long as the part that replaces the docstring is still valid according to the regex above. Note that here it is also **not** allowed to write `user` without replacing the uppercase part of the name.
+There is also the possibility of mixed lowercase and uppercase notation in base classes and application definitions. For example, there might be a `userID(NXuser)` group. In this case, allowed names include any name that start with `user`, e.g., `user0`, `user_abcde`, as long as the part that replaces the docstring is still valid according to the regex above. Note that here it is also allowed to write `user` without replacing the uppercase part of the name.
 
 The validation of names is performed by **namefitting**, i.e., fitting the name that is used by the data provider to the name given in the base class / application definitions.
 
