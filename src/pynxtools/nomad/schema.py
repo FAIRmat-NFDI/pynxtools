@@ -34,14 +34,16 @@ try:
     from nomad import utils
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import EntryData, Schema
+    from nomad.datamodel.metainfo import basesections
     from nomad.datamodel.metainfo.basesections import (
         ActivityStep,
         BaseSection,
         Component,
         CompositeSystem,
+        CompositeSystemReference,
         Entity,
         EntityReference,
-        Instrument,
+        InstrumentReference,
         Measurement,
     )
     from nomad.datamodel.metainfo.eln import BasicEln
@@ -99,7 +101,7 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": [Instrument],
+    "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
     "NXidentifier": [EntityReference],
@@ -112,27 +114,29 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
 class NexusMeasurement(Measurement):
     def normalize(self, archive, logger):
         try:
-            try:
-                app_entry = getattr(self, "ENTRY")
-                if len(app_entry) < 1:
-                    raise AttributeError()
-                self.steps = app_entry
-                for entry in app_entry:
-                    for sec_name in dir(entry):
-                        sec = getattr(entry, sec_name)
-                        if isinstance(sec, ActivityStep):
-                            self.steps.append(sec)
-            except (AttributeError, TypeError):
-                app_entry = getattr(self, "entry")
-                if len(app_entry) < 1:
-                    raise AttributeError()
+            app_entry = getattr(self, "ENTRY")
+            if len(app_entry) < 1:
+                raise AttributeError()
+            self.steps = app_entry
+            for entry in app_entry:
+                for sec in entry.m_all_contents():
+                    if isinstance(sec, ActivityStep):
+                        self.steps.append(sec)
+                    elif isinstance(sec, basesections.Instrument):
+                        ref = InstrumentReference(name=sec.name)
+                        ref.reference = sec
+                        self.instruments.append(ref)
+                    elif isinstance(sec, CompositeSystem):
+                        ref = CompositeSystemReference(name=sec.name)
+                        ref.reference = sec
+                        self.samples.append(ref)
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
                 self.method = self.m_def.name + " Experiment"
         except (AttributeError, TypeError):
-            self.method = ""
-        super(Measurement, self).normalize(archive, logger)
+            pass
+        super(NexusMeasurement, self).normalize(archive, logger)
 
 
 VALIDATE = False
