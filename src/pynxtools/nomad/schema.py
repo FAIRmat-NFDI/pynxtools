@@ -952,7 +952,7 @@ def normalize_sample(self, archive, logger):
 
 
 def normalize_entry(self, archive, logger):
-    """Normalizer for sample section."""
+    """Normalizer for Entry section."""
     current_cls = __section_definitions[__rename_nx_for_nomad("NXentry")].section_cls
     if self.start_time__field:
         self.start_time = self.start_time__field
@@ -965,7 +965,7 @@ def normalize_entry(self, archive, logger):
 
 
 def normalize_process(self, archive, logger):
-    """Normalizer for sample section."""
+    """Normalizer for Process section."""
     current_cls = __section_definitions[__rename_nx_for_nomad("NXprocess")].section_cls
     if self.date__field:
         self.start_time = self.date__field
@@ -975,7 +975,7 @@ def normalize_process(self, archive, logger):
 
 
 def normalize_identifier(self, archive, logger):
-    """Normalizer for identifier section."""
+    """Normalizer for Identifier section."""
 
     def create_Entity(lab_id, archive, f_name):
         entitySec = Entity()
