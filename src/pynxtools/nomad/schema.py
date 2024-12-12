@@ -104,6 +104,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXsample_component": [Component],
     "NXidentifier": [EntityReference],
     "NXentry": [ActivityStep],
+    "NXprocess": [ActivityStep],
     # "object": BaseSection,
 }
 
@@ -113,9 +114,14 @@ class NexusMeasurement(Measurement):
         try:
             try:
                 app_entry = getattr(self, "ENTRY")
-                self.steps = app_entry
                 if len(app_entry) < 1:
                     raise AttributeError()
+                self.steps = app_entry
+                for entry in app_entry:
+                    for sec_name in dir(entry):
+                        sec = getattr(entry, sec_name)
+                        if isinstance(sec, ActivityStep):
+                            self.steps.append(sec)
             except (AttributeError, TypeError):
                 app_entry = getattr(self, "entry")
                 if len(app_entry) < 1:
@@ -126,7 +132,7 @@ class NexusMeasurement(Measurement):
                 self.method = self.m_def.name + " Experiment"
         except (AttributeError, TypeError):
             self.method = ""
-        super().normalize(archive, logger)
+        super(Measurement, self).normalize(archive, logger)
 
 
 VALIDATE = False
@@ -946,8 +952,20 @@ def normalize_entry(self, archive, logger):
     current_cls = __section_definitions[__rename_nx_for_nomad("NXentry")].section_cls
     if self.start_time__field:
         self.start_time = self.start_time__field
-    if self.title__field:
+    if self.title__field is not None:
         self.name = self.title__field
+    else:
+        self.name = self.__dict__["nx_name"]
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_process(self, archive, logger):
+    """Normalizer for sample section."""
+    current_cls = __section_definitions[__rename_nx_for_nomad("NXprocess")].section_cls
+    if self.date__field:
+        self.start_time = self.date__field
+    self.name = self.__dict__["nx_name"]
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
@@ -1004,6 +1022,7 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
     __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
     __rename_nx_for_nomad("NXentry"): normalize_entry,
+    __rename_nx_for_nomad("NXprocess"): normalize_process,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
