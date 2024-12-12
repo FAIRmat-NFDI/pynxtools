@@ -36,6 +36,7 @@ try:
     from nomad.datamodel.data import EntryData, Schema
     from nomad.datamodel.metainfo import basesections
     from nomad.datamodel.metainfo.basesections import (
+        ActivityResult,
         ActivityStep,
         BaseSection,
         Component,
@@ -107,6 +108,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXidentifier": [EntityReference],
     "NXentry": [ActivityStep],
     "NXprocess": [ActivityStep],
+    "NXdata": [ActivityResult],
     # "object": BaseSection,
 }
 
@@ -130,6 +132,8 @@ class NexusMeasurement(Measurement):
                         ref = CompositeSystemReference(name=sec.name)
                         ref.reference = sec
                         self.samples.append(ref)
+                    elif isinstance(sec, ActivityResult):
+                        self.results.append(sec)
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
@@ -926,7 +930,6 @@ def normalize_fabrication(self, archive, logger):
         __rename_nx_for_nomad("NXfabrication")
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
-    self.lab_id = "Hello"
 
 
 def normalize_sample_component(self, archive, logger):
@@ -936,6 +939,8 @@ def normalize_sample_component(self, archive, logger):
     ].section_cls
     if self.name__field:
         self.name = self.name__field
+    else:
+        self.name = self.__dict__["nx_name"]
     if self.mass__field:
         self.mass = self.mass__field
     # we may want to add normalisation for mass_fraction (calculating from components)
@@ -947,6 +952,8 @@ def normalize_sample(self, archive, logger):
     current_cls = __section_definitions[__rename_nx_for_nomad("NXsample")].section_cls
     if self.name__field:
         self.name = self.name__field
+    else:
+        self.name = self.__dict__["nx_name"]
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
@@ -969,6 +976,14 @@ def normalize_process(self, archive, logger):
     current_cls = __section_definitions[__rename_nx_for_nomad("NXprocess")].section_cls
     if self.date__field:
         self.start_time = self.date__field
+    self.name = self.__dict__["nx_name"]
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_data(self, archive, logger):
+    """Normalizer for Data section."""
+    current_cls = __section_definitions[__rename_nx_for_nomad("NXdata")].section_cls
     self.name = self.__dict__["nx_name"]
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
@@ -1027,6 +1042,7 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
     __rename_nx_for_nomad("NXentry"): normalize_entry,
     __rename_nx_for_nomad("NXprocess"): normalize_process,
+    __rename_nx_for_nomad("NXdata"): normalize_data,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
