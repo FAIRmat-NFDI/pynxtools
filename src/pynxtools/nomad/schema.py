@@ -34,13 +34,18 @@ try:
     from nomad import utils
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import EntryData, Schema
+    from nomad.datamodel.metainfo import basesections
     from nomad.datamodel.metainfo.basesections import (
+        ActivityResult,
+        ActivityStep,
         BaseSection,
         Component,
         CompositeSystem,
+        CompositeSystemReference,
         Entity,
         EntityReference,
-        Instrument,
+        InstrumentReference,
+        Measurement,
     )
     from nomad.datamodel.metainfo.eln import BasicEln
     from nomad.metainfo import (
@@ -97,12 +102,45 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 __BASESECTIONS_MAP: Dict[str, Any] = {
-    __rename_nx_for_nomad("NXfabrication"): [Instrument],
-    __rename_nx_for_nomad("NXsample"): [CompositeSystem],
-    __rename_nx_for_nomad("NXsample_component"): [Component],
-    __rename_nx_for_nomad("NXidentifier"): [EntityReference],
+    "NXfabrication": [basesections.Instrument],
+    "NXsample": [CompositeSystem],
+    "NXsample_component": [Component],
+    "NXidentifier": [EntityReference],
+    "NXentry": [ActivityStep],
+    "NXprocess": [ActivityStep],
+    "NXdata": [ActivityResult],
     # "object": BaseSection,
 }
+
+
+class NexusMeasurement(Measurement):
+    def normalize(self, archive, logger):
+        try:
+            app_entry = getattr(self, "ENTRY")
+            if len(app_entry) < 1:
+                raise AttributeError()
+            self.steps = app_entry
+            for entry in app_entry:
+                for sec in entry.m_all_contents():
+                    if isinstance(sec, ActivityStep):
+                        self.steps.append(sec)
+                    elif isinstance(sec, basesections.Instrument):
+                        ref = InstrumentReference(name=sec.name)
+                        ref.reference = sec
+                        self.instruments.append(ref)
+                    elif isinstance(sec, CompositeSystem):
+                        ref = CompositeSystemReference(name=sec.name)
+                        ref.reference = sec
+                        self.samples.append(ref)
+                    elif isinstance(sec, ActivityResult):
+                        self.results.append(sec)
+            if self.m_def.name == "Root":
+                self.method = "Generic Experiment"
+            else:
+                self.method = self.m_def.name + " Experiment"
+        except (AttributeError, TypeError):
+            pass
+        super(NexusMeasurement, self).normalize(archive, logger)
 
 
 VALIDATE = False
@@ -655,12 +693,17 @@ def __create_class_section(xml_node: ET.Element) -> Section:
     nx_type = xml_attrs["type"]
     nx_category = xml_attrs["category"]
 
+    if nx_category == "application" or (nx_category == "base" and nx_name == "NXroot"):
+        nomad_base_sec_cls = (
+            [NexusMeasurement] if xml_attrs["extends"] == "NXobject" else []
+        )
+    else:
+        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
+
     nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
         nx_name, nx_kind=nx_type, nx_category=nx_category
     )
-
-    nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
 
     if "extends" in xml_attrs:
         nx_base_sec = __to_section(__rename_nx_for_nomad(xml_attrs["extends"]))
@@ -849,6 +892,7 @@ def init_nexus_metainfo():
     #     except Exception:
     #         pass
     nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
+    nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
@@ -888,7 +932,6 @@ def normalize_fabrication(self, archive, logger):
         __rename_nx_for_nomad("NXfabrication")
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
-    self.lab_id = "Hello"
 
 
 def normalize_sample_component(self, archive, logger):
@@ -898,6 +941,8 @@ def normalize_sample_component(self, archive, logger):
     ].section_cls
     if self.name__field:
         self.name = self.name__field
+    else:
+        self.name = self.__dict__["nx_name"]
     if self.mass__field:
         self.mass = self.mass__field
     # we may want to add normalisation for mass_fraction (calculating from components)
@@ -909,12 +954,45 @@ def normalize_sample(self, archive, logger):
     current_cls = __section_definitions[__rename_nx_for_nomad("NXsample")].section_cls
     if self.name__field:
         self.name = self.name__field
+    else:
+        self.name = self.__dict__["nx_name"]
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_entry(self, archive, logger):
+    """Normalizer for Entry section."""
+    current_cls = __section_definitions[__rename_nx_for_nomad("NXentry")].section_cls
+    if self.start_time__field:
+        self.start_time = self.start_time__field
+    if self.title__field is not None:
+        self.name = self.title__field
+    else:
+        self.name = self.__dict__["nx_name"]
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_process(self, archive, logger):
+    """Normalizer for Process section."""
+    current_cls = __section_definitions[__rename_nx_for_nomad("NXprocess")].section_cls
+    if self.date__field:
+        self.start_time = self.date__field
+    self.name = self.__dict__["nx_name"]
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_data(self, archive, logger):
+    """Normalizer for Data section."""
+    current_cls = __section_definitions[__rename_nx_for_nomad("NXdata")].section_cls
+    self.name = self.__dict__["nx_name"]
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
 
 def normalize_identifier(self, archive, logger):
-    """Normalizer for identifier section."""
+    """Normalizer for Identifier section."""
 
     def create_Entity(lab_id, archive, f_name):
         entitySec = Entity()
@@ -964,6 +1042,9 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXsample"): normalize_sample,
     __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
     __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
+    __rename_nx_for_nomad("NXentry"): normalize_entry,
+    __rename_nx_for_nomad("NXprocess"): normalize_process,
+    __rename_nx_for_nomad("NXdata"): normalize_data,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
