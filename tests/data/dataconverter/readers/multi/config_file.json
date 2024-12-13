@@ -1,4 +1,5 @@
 {
+  "@default":"data",
   "/ENTRY/title": "@eln",
   "/ENTRY/USER[user]": {
     "name":"@eln",
@@ -18,9 +19,11 @@
     "temperature/@units":"@eln"
   },
   "/ENTRY/data": {
-    "@axes":["x_values"],
-    "@signal": "data",
-    "data": "@data:y_values",
-    "x_values": "@data:x_values"
+    "@axes":["x_values", "y_values"],
+    "@signal":"itensity",
+    "AXIS[*]":"@data:*.axes",
+    "AXIS[*]/@units":"@attrs:data/*/@units",
+    "DATA[*]":"@data:*.data",
+    "DATA[*]/@units":"@attrs:data/*/@units",
   }
 }

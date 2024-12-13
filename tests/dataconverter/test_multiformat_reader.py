@@ -19,15 +19,17 @@
 
 import logging
 import os
+import glob
 import shutil
 import xml.etree.ElementTree as ET
-from typing import Optional
+from typing import Optional, Dict, Any, List
 
 import h5py
 import numpy as np
 import pytest
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
+from pynxtools.dataconverter.helpers import generate_template_from_nxdl
 from pynxtools.dataconverter.validation import validate_dict_against
 
 import pytest
@@ -54,7 +56,7 @@ CONVERT_DICT = {
 }
 
 
-@pytest.fixture
+# @pytest.fixture(scope="module")
 class MyDataReader(MultiFormatReader):
     """MyDataReader implementation for the DataConverter to convert mydata to NeXus."""
 
@@ -125,48 +127,123 @@ class MyDataReader(MultiFormatReader):
 
     def get_data(self, key: str, path: str) -> Any:
         """Returns measurement data from the given hdf5 path."""
-        if path.endswith(("x_values", "y_values")):
-            return self.hdf5_data.get(f"data/{path}")
+
+        def get_data_from_dict(data_dict, path):
+            return np.array(
+                [data for label, data in axes_dict.items() if "@units" not in label]
+            )
+
+        if path.endswith("*.axes"):
+            axes_dict = self.hdf5_data.get("axes", {})
+
+            return get_data_from_dict(axes_dict)
+
+        if path.endswith("*.data"):
+            axes_dict = self.hdf5_data.get("data", {})
+
+            return get_data_from_dict(axes_dict)
+
         else:
             logger.warning(f"No axis name corresponding to the path {path}.")
 
 
-@pytest.mark.parametrize("config_file_dict, key, value, dims, expected_result", [])
-def test_fill_wildcard_data_indices(
-    config_file_dict, key, value, dims, expected_result
-):
-    result = fill_wildcard_data_indices(config_file_dict, key, value, dims)
-    assert result == expected_result
+# reader = MyDataReader()
+# nxdl_file = "NXsimple.nxdl.xml"
+# root = ET.parse(nxdl_file).getroot()
+# template = Template()
+# generate_template_from_nxdl(root, template)
+
+# read_data = reader().read(
+#     template=Template(template), file_paths=tuple("mock_data.h5")
+# )
+# print(read_data)
+
+# # @pytest.mark.parametrize("reader", get_all_readers())
+# # def test_has_correct_read_func(reader, caplog):
+# #     """Test if all readers have a valid read function implemented"""
+# assert callable(reader.read)
+# if reader.__name__ not in ["BaseReader"]:
+#     assert hasattr(reader, "supported_nxdls")
+
+# # reader_name = get_reader_name_from_reader_object(reader)
+# multireader_data_dir = os.path.join("tests", "data", "dataconverter", "multi")
+
+# input_files = sorted(glob.glob(os.path.join(multireader_data_dir, "*")))
+#     if not reader.supported_nxdls:
+#         # If there are no supported nxdls test against NXroot
+#         reader.supported_nxdls = ["NXroot"]
+#     for supported_nxdl in reader.supported_nxdls:
+#         if supported_nxdl in ("NXtest", "*"):
+#             nxdl_file = os.path.join(
+#                 os.getcwd(), "src", "pynxtools", "data", "NXtest.nxdl.xml"
+#             )
+#         elif supported_nxdl == "NXroot":
+#             nxdl_file = os.path.join(def_dir, "base_classes", "NXroot.nxdl.xml")
+#         else:
+#             nxdl_file = os.path.join(
+#                 def_dir, "contributed_definitions", f"{supported_nxdl}.nxdl.xml"
+#             )
+
+#         root = ET.parse(nxdl_file).getroot()
+#         template = Template()
+#         generate_template_from_nxdl(root, template)
+
+#         read_data = reader().read(
+#             template=Template(template), file_paths=tuple(input_files)
+#         )
+
+#         if supported_nxdl == "*":
+#             supported_nxdl = "NXtest"
+
+#         assert isinstance(read_data, Template)
+
+#         # This is a temporary fix because the json_yml example data
+#         # does not produce a valid entry.
+#         if not reader_name == "json_yml":
+#             with caplog.at_level(logging.WARNING):
+#                 validate_dict_against(
+#                     supported_nxdl, read_data, ignore_undocumented=True
+#                 )
+
+#             print(caplog.text)
 
 
-def test_json_callbacks():
-    result = None
-    # assert result == expected_result
+# @pytest.mark.parametrize("key, value, dims, expected_result", [])
+# class test_multi_format_reader(MyDataReader, config_file):
+#     # config_file_dict =
+#     assert result == expected_result
 
 
-def test_resolve_special_keys(
-    new_entry_dict: Dict[str, Any],
-    key: str,
-    value: Any,
-    optional_groups_to_remove: List[str],
-    optional_groups_to_remove_from_links: List[str],
-    callbacks: ParseJsonCallbacks,
-    suppress_warning: bool = False,
-):
-    result = None
-    # assert result == expected_result
+# @pytest.mark.parametrize("config_file_dict, key, value, dims, expected_result", [])
+# def test_fill_wildcard_data_indices(
+#     config_file_dict, key, value, dims, expected_result
+# ):
+#     result = fill_wildcard_data_indices(config_file_dict, key, value, dims)
+#     assert result == expected_result
 
 
-def test_fill_from_config(
-    config_dict,
-    entry_names,
-    callbacks,
-    suppress_warning,
-):
-    pass
+# def test_json_callbacks():
+#     result = None
+#     # assert result == expected_result
 
 
-@pytest.mark.parametrize("config_file_dict, key, value, dims, expected_result", [])
-class test_multi_format_reader(MyDataReader, config_file):
-    pass
-    # assert result == expected_result
+# def test_resolve_special_keys(
+#     new_entry_dict: Dict[str, Any],
+#     key: str,
+#     value: Any,
+#     optional_groups_to_remove: List[str],
+#     optional_groups_to_remove_from_links: List[str],
+#     callbacks: ParseJsonCallbacks,
+#     suppress_warning: bool = False,
+# ):
+#     result = None
+#     # assert result == expected_result
+
+
+# def test_fill_from_config(
+#     config_dict,
+#     entry_names,
+#     callbacks,
+#     suppress_warning,
+# ):
+#     pass
