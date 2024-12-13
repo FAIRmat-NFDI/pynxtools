@@ -47,7 +47,6 @@ try:
         InstrumentReference,
         Measurement,
     )
-    from nomad.datamodel.metainfo.eln import BasicEln
     from nomad.metainfo import (
         Attribute,
         Bytes,
