@@ -47,6 +47,7 @@ try:
         InstrumentReference,
         Measurement,
     )
+    from nomad.datamodel.metainfo.workflow import Task
     from nomad.metainfo import (
         Attribute,
         Bytes,
@@ -105,8 +106,8 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
     "NXidentifier": [EntityReference],
-    "NXentry": [ActivityStep],
-    "NXprocess": [ActivityStep],
+    "NXentry": [ActivityStep, Task],
+    "NXprocess": [ActivityStep, Task],
     "NXdata": [ActivityResult],
     # "object": BaseSection,
 }
@@ -970,6 +971,11 @@ def normalize_entry(self, archive, logger):
     super(current_cls, self).normalize(archive, logger)
 
 
+def to_task_itself(self):
+    """takes advantage if an object itself is also a Task"""
+    return self
+
+
 def normalize_process(self, archive, logger):
     """Normalizer for Process section."""
     current_cls = __section_definitions[__rename_nx_for_nomad("NXprocess")].section_cls
@@ -1039,8 +1045,14 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXsample"): normalize_sample,
     __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
     __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
-    __rename_nx_for_nomad("NXentry"): normalize_entry,
-    __rename_nx_for_nomad("NXprocess"): normalize_process,
+    __rename_nx_for_nomad("NXentry"): {
+        "normalize": normalize_entry,
+        "to_task": to_task_itself,
+    },
+    __rename_nx_for_nomad("NXprocess"): {
+        "normalize": normalize_process,
+        "to_task": to_task_itself,
+    },
     __rename_nx_for_nomad("NXdata"): normalize_data,
 }
 
@@ -1053,4 +1065,8 @@ for nx_name, section in __section_definitions.items():
 
     # Append the normalize method from a function
     if normalize_func:
-        section.section_cls.normalize = normalize_func
+        if isinstance(normalize_func, dict):
+            for key, value in normalize_func.items():
+                setattr(section.section_cls, key, value)
+        else:
+            section.section_cls.normalize = normalize_func
