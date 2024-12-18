@@ -106,8 +106,8 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
     "NXidentifier": [EntityReference],
-    "NXentry": [ActivityStep, Task],
-    "NXprocess": [ActivityStep, Task],
+    "NXentry": [ActivityStep],  # , Task],
+    "NXprocess": [ActivityStep],  # , Task],
     "NXdata": [ActivityResult],
     # "object": BaseSection,
 }
@@ -140,7 +140,44 @@ class NexusMeasurement(Measurement):
                 self.method = self.m_def.name + " Experiment"
         except (AttributeError, TypeError):
             pass
-        super(NexusMeasurement, self).normalize(archive, logger)
+        super(Activity, self).normalize(archive, logger)
+
+        if archive.results.eln.methods is None:
+            archive.results.eln.methods = []
+        if self.method:
+            archive.results.eln.methods.append(self.method)
+        else:
+            archive.results.eln.methods.append(self.m_def.name)
+        if archive.workflow2 is None:
+            archive.workflow2 = Workflow(name=self.name)
+        # steps to tasks
+        act_array = archive.workflow2.tasks
+        existing_items = {(task.name, task.section) for task in act_array}
+        new_items = [
+            item.to_task()
+            for item in self.steps
+            if (item.name, item) not in existing_items
+        ]
+        act_array.extend(new_items)
+        # samples to inputs
+        act_array = archive.workflow2.inputs
+        existing_items = {(link.name, link.section) for link in act_array}
+        new_items = [
+            Link(name=item.name, section=item.reference)
+            for item in self.samples
+            if (item.name, item.reference) not in existing_items
+        ]
+        act_array.extend(new_items)
+
+        # results to outputs
+        act_array = archive.workflow2.outputs
+        existing_items = {(link.name, link.section) for link in act_array}
+        new_items = [
+            Link(name=item.name, section=item)
+            for item in self.results
+            if (item.name, item) not in existing_items
+        ]
+        act_array.extend(new_items)
 
 
 VALIDATE = False
@@ -971,9 +1008,10 @@ def normalize_entry(self, archive, logger):
     super(current_cls, self).normalize(archive, logger)
 
 
-def to_task_itself(self):
-    """takes advantage if an object itself is also a Task"""
-    return self
+# def to_task_itself(self):
+#     """takes advantage if an object itself is also a Task"""
+#     self.section=self
+#     return self
 
 
 def normalize_process(self, archive, logger):
@@ -1004,7 +1042,7 @@ def normalize_identifier(self, archive, logger):
             data=entitySec,
             m_context=archive.m_context,
             metadata=EntryMetadata(
-                entry_type="identifier", domain="nexus"
+                entry_type="identifier", domain="nexus", readonly=True
             ),  # upload_id=archive.m_context.upload_id,
         )
         with archive.m_context.raw_file(f_name, "w") as f_obj:
@@ -1047,11 +1085,11 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
     __rename_nx_for_nomad("NXentry"): {
         "normalize": normalize_entry,
-        "to_task": to_task_itself,
+        # "to_task": to_task_itself,
     },
     __rename_nx_for_nomad("NXprocess"): {
         "normalize": normalize_process,
-        "to_task": to_task_itself,
+        # "to_task": to_task_itself,
     },
     __rename_nx_for_nomad("NXdata"): normalize_data,
 }
