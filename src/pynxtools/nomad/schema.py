@@ -990,7 +990,7 @@ def normalize_sample(self, archive, logger):
     """Normalizer for sample section."""
     current_cls = __section_definitions[__rename_nx_for_nomad("NXsample")].section_cls
     self.name = self.__dict__["nx_name"] + (
-        "(" + self.name__field + ")" if self.name__field else ""
+        " (" + self.name__field + ")" if self.name__field else ""
     )
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
@@ -1002,7 +1002,7 @@ def normalize_entry(self, archive, logger):
     if self.start_time__field:
         self.start_time = self.start_time__field
     self.name = self.__dict__["nx_name"] + (
-        "(" + self.title__field + ")" if self.title__field is not None else ""
+        " (" + self.title__field + ")" if self.title__field is not None else ""
     )
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
