@@ -47,7 +47,7 @@ try:
         InstrumentReference,
         Measurement,
     )
-    from nomad.datamodel.metainfo.workflow import Task
+    from nomad.datamodel.metainfo.workflow import Link, Task, Workflow
     from nomad.metainfo import (
         Attribute,
         Bytes,
@@ -140,7 +140,7 @@ class NexusMeasurement(Measurement):
                 self.method = self.m_def.name + " Experiment"
         except (AttributeError, TypeError):
             pass
-        super(Activity, self).normalize(archive, logger)
+        super(basesections.Activity, self).normalize(archive, logger)
 
         if archive.results.eln.methods is None:
             archive.results.eln.methods = []
