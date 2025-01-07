@@ -17,9 +17,7 @@ except ImportError as exc:
 from pynxtools.dataconverter import convert as pynxtools_converter
 from pynxtools.dataconverter import writer as pynxtools_writer
 from pynxtools.dataconverter.template import Template
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_app_defs_names,  # pylint: disable=import-error
-)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_app_defs_names  # pylint: disable=import-error
 
 m_package = Package(name="nexus_data_converter")
 
@@ -96,6 +94,14 @@ def populate_nexus_subsection(
         archive.data.output = os.path.join(
             archive.m_context.raw_path(), output_file_path
         )
+        # remove the nexus file and ensure that NOMAD knows that it is removed
+        try:
+            os.remove(archive.data.output)
+            archive.m_context.process_updated_raw_file(
+                archive.data.output, allow_modify=True
+            )
+        except Exception as e:
+            pass
         pynxtools_writer.Writer(
             data=template, nxdl_f_path=nxdl_f_path, output_path=archive.data.output
         ).write()
@@ -220,6 +226,15 @@ class NexusDataConverter(EntryData):
             ],
             "output": os.path.join(raw_path, archive.data.output),
         }
+        # remove the nexus file and ensure that NOMAD knows that it is removed
+        try:
+            os.remove(os.path.join(raw_path, archive.data.output))
+            archive.m_context.process_updated_raw_file(
+                archive.data.output, allow_modify=True
+            )
+        except Exception as e:
+            pass
+        # create the new nexus file
         try:
             pynxtools_converter.logger = logger
             pynxtools_converter.helpers.logger = logger
@@ -229,7 +244,7 @@ class NexusDataConverter(EntryData):
                 "could not convert to nxs", mainfile=archive.data.output, exc_info=e
             )
             raise e
-
+        # parse the new nexus file
         try:
             archive.m_context.process_updated_raw_file(
                 archive.data.output, allow_modify=True
