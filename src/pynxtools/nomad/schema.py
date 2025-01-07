@@ -119,11 +119,14 @@ class NexusMeasurement(Measurement):
             app_entry = getattr(self, "ENTRY")
             if len(app_entry) < 1:
                 raise AttributeError()
-            self.steps = app_entry
+            self.steps = []
             for entry in app_entry:
+                sec_c = entry.m_copy()
+                self.steps.append(sec_c)
                 for sec in entry.m_all_contents():
                     if isinstance(sec, ActivityStep):
-                        self.steps.append(sec)
+                        sec_c = sec.m_copy()
+                        self.steps.append(sec_c)
                     elif isinstance(sec, basesections.Instrument):
                         ref = InstrumentReference(name=sec.name)
                         ref.reference = sec
@@ -133,7 +136,8 @@ class NexusMeasurement(Measurement):
                         ref.reference = sec
                         self.samples.append(ref)
                     elif isinstance(sec, ActivityResult):
-                        self.results.append(sec)
+                        sec_c = sec.m_copy()
+                        self.results.append(sec_c)
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
