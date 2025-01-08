@@ -513,7 +513,7 @@ class NexusParser(MatchingParser):
         if archive.metadata.entry_type is None:
             archive.metadata.entry_type = app_def
             archive.metadata.domain = "nexus"
-        archive.metadata.user_editable = False
+        archive.metadata.readonly = True
 
         # Normalise element info
         if archive.results is None:

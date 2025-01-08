@@ -47,6 +47,7 @@ try:
         InstrumentReference,
         Measurement,
     )
+    from nomad.datamodel.metainfo.workflow import Link, Task, Workflow
     from nomad.metainfo import (
         Attribute,
         Bytes,
@@ -118,11 +119,14 @@ class NexusMeasurement(Measurement):
             app_entry = getattr(self, "ENTRY")
             if len(app_entry) < 1:
                 raise AttributeError()
-            self.steps = app_entry
+            self.steps = []
             for entry in app_entry:
+                sec_c = entry.m_copy()
+                self.steps.append(sec_c)
                 for sec in entry.m_all_contents():
                     if isinstance(sec, ActivityStep):
-                        self.steps.append(sec)
+                        sec_c = sec.m_copy()
+                        self.steps.append(sec_c)
                     elif isinstance(sec, basesections.Instrument):
                         ref = InstrumentReference(name=sec.name)
                         ref.reference = sec
@@ -132,14 +136,52 @@ class NexusMeasurement(Measurement):
                         ref.reference = sec
                         self.samples.append(ref)
                     elif isinstance(sec, ActivityResult):
-                        self.results.append(sec)
+                        sec_c = sec.m_copy()
+                        self.results.append(sec_c)
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
                 self.method = self.m_def.name + " Experiment"
         except (AttributeError, TypeError):
             pass
-        super(NexusMeasurement, self).normalize(archive, logger)
+        super(basesections.Activity, self).normalize(archive, logger)
+
+        if archive.results.eln.methods is None:
+            archive.results.eln.methods = []
+        if self.method:
+            archive.results.eln.methods.append(self.method)
+        else:
+            archive.results.eln.methods.append(self.m_def.name)
+        if archive.workflow2 is None:
+            archive.workflow2 = Workflow(name=self.name)
+        # steps to tasks
+        act_array = archive.workflow2.tasks
+        existing_items = {(task.name, task.section) for task in act_array}
+        new_items = [
+            item.to_task()
+            for item in self.steps
+            if (item.name, item) not in existing_items
+        ]
+        act_array.extend(new_items)
+        # samples to inputs
+        act_array = archive.workflow2.inputs
+        existing_items = {(link.name, link.section) for link in act_array}
+        new_items = [
+            Link(name=item.name, section=item.reference)
+            for item in self.samples
+            if (item.name, item.reference) not in existing_items
+        ]
+        act_array.extend(new_items)
+
+        # results to outputs
+        act_array = archive.workflow2.outputs
+        existing_items = {(link.name, link.section) for link in act_array}
+        new_items = [
+            Link(name=item.name, section=item)
+            for item in self.results
+            if (item.name, item) not in existing_items
+        ]
+        act_array.extend(new_items)
 
 
 VALIDATE = False
@@ -952,7 +994,7 @@ def normalize_sample(self, archive, logger):
     """Normalizer for sample section."""
     current_cls = __section_definitions[__rename_nx_for_nomad("NXsample")].section_cls
     self.name = self.__dict__["nx_name"] + (
-        "(" + self.name__field + ")" if self.name__field else ""
+        " (" + self.name__field + ")" if self.name__field else ""
     )
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
@@ -964,7 +1006,7 @@ def normalize_entry(self, archive, logger):
     if self.start_time__field:
         self.start_time = self.start_time__field
     self.name = self.__dict__["nx_name"] + (
-        "(" + self.title__field + ")" if self.title__field is not None else ""
+        " (" + self.title__field + ")" if self.title__field is not None else ""
     )
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
@@ -998,7 +1040,7 @@ def normalize_identifier(self, archive, logger):
             data=entitySec,
             m_context=archive.m_context,
             metadata=EntryMetadata(
-                entry_type="identifier", domain="nexus"
+                entry_type="identifier", domain="nexus", readonly=True
             ),  # upload_id=archive.m_context.upload_id,
         )
         with archive.m_context.raw_file(f_name, "w") as f_obj:
@@ -1039,8 +1081,12 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXsample"): normalize_sample,
     __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
     __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
-    __rename_nx_for_nomad("NXentry"): normalize_entry,
-    __rename_nx_for_nomad("NXprocess"): normalize_process,
+    __rename_nx_for_nomad("NXentry"): {
+        "normalize": normalize_entry,
+    },
+    __rename_nx_for_nomad("NXprocess"): {
+        "normalize": normalize_process,
+    },
     __rename_nx_for_nomad("NXdata"): normalize_data,
 }
 
@@ -1053,4 +1099,8 @@ for nx_name, section in __section_definitions.items():
 
     # Append the normalize method from a function
     if normalize_func:
-        section.section_cls.normalize = normalize_func
+        if isinstance(normalize_func, dict):
+            for key, value in normalize_func.items():
+                setattr(section.section_cls, key, value)
+        else:
+            section.section_cls.normalize = normalize_func
