@@ -156,7 +156,11 @@ class NexusMeasurement(Measurement):
             archive.workflow2 = Workflow(name=self.name)
         # steps to tasks
         act_array = archive.workflow2.tasks
-        existing_items = {(task.name, task.section) for task in act_array}
+        existing_items = {
+            (task.name, task.section)
+            for task in act_array
+            if hasattr(task, "name") and hasattr(task.section, "section")
+        }
         new_items = [
             item.to_task()
             for item in self.steps
@@ -165,7 +169,11 @@ class NexusMeasurement(Measurement):
         act_array.extend(new_items)
         # samples to inputs
         act_array = archive.workflow2.inputs
-        existing_items = {(link.name, link.section) for link in act_array}
+        existing_items = {
+            (link.name, link.section)
+            for link in act_array
+            if hasattr(link, "name") and hasattr(link.section, "section")
+        }
         new_items = [
             Link(name=item.name, section=item.reference)
             for item in self.samples
@@ -175,7 +183,11 @@ class NexusMeasurement(Measurement):
 
         # results to outputs
         act_array = archive.workflow2.outputs
-        existing_items = {(link.name, link.section) for link in act_array}
+        existing_items = {
+            (link.name, link.section)
+            for link in act_array
+            if hasattr(link, "name") and hasattr(link.section, "section")
+        }
         new_items = [
             Link(name=item.name, section=item)
             for item in self.results
