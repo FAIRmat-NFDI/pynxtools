@@ -60,6 +60,7 @@ def _to_section(
     nx_def: str,
     nx_node: Optional[ET.Element],
     current: MSection,
+    nx_root,
 ) -> MSection:
     """
     Args:
@@ -105,7 +106,17 @@ def _to_section(
             new_section = section
             break
 
-    if new_section is None:
+    if new_section is not None:
+        return new_section
+    if current == nx_root:
+        cls = getattr(nexus_schema, nx_def, None)
+        sec = cls()
+        new_def_spec = sec.m_def.all_sub_sections[nomad_def_name]
+        sec.m_create(new_def_spec.section_def.section_cls)
+        new_section = sec.m_get_sub_section(new_def_spec, -1)
+        current.ENTRY.append(new_section)
+        new_section.__dict__["nx_name"] = hdf_name
+    else:
         current.m_create(new_def.section_def.section_cls)
         new_section = current.m_get_sub_section(new_def, -1)
         new_section.__dict__["nx_name"] = hdf_name
@@ -194,7 +205,7 @@ class NexusParser(MatchingParser):
                         # so values of non-scalar attribute will not end up in metainfo!
 
                 attr_name = attr_name + "__attribute"
-                current = _to_section(attr_name, nx_def, nx_attr, current)
+                current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
 
                 try:
                     if nx_root or nx_parent.tag.endswith("group"):
@@ -332,12 +343,13 @@ class NexusParser(MatchingParser):
         if nx_path is None or nx_path == "/":
             return
 
-        current: MSection = _to_section(None, nx_def, None, self.nx_root)
+        # current: MSection = _to_section(None, nx_def, None, self.nx_root)
+        current = self.nx_root
         depth: int = 1
         current_hdf_path = ""
         for name in hdf_path.split("/")[1:]:
             nx_node = nx_path[depth] if depth < len(nx_path) else name
-            current = _to_section(name, nx_def, nx_node, current)
+            current = _to_section(name, nx_def, nx_node, current, self.nx_root)
             self._collect_class(current)
             depth += 1
             if depth < len(nx_path):
@@ -468,7 +480,7 @@ class NexusParser(MatchingParser):
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
         self.archive = archive
-        self.nx_root = nexus_schema.NeXus()  # type: ignore # pylint: disable=no-member
+        self.nx_root = nexus_schema.Root()  # type: ignore # pylint: disable=no-member
 
         self.archive.data = self.nx_root
         self._logger = logger if logger else get_logger(__name__)
@@ -483,25 +495,18 @@ class NexusParser(MatchingParser):
             archive.metadata = EntryMetadata()
 
         # Normalise experiment type
-        app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
-        app_def_list = []
-        for app_elem in app_defs:
-            app = app_elem.lstrip()
-            try:
-                app_sec = getattr(self.nx_root, app)
+        # app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
+        app_def_list = set()
+        try:
+            app_entries = getattr(self.nx_root, "ENTRY")
+            for entry in app_entries:
                 try:
-                    app_entry = getattr(app_sec, "ENTRY")
-                    if len(app_entry) < 1:
-                        raise AttributeError()
+                    app = entry.definition__field
+                    app_def_list.add(rename_nx_for_nomad(app) if app else "Generic")
                 except (AttributeError, TypeError):
-                    app_entry = getattr(app_sec, "entry")
-                    if len(app_entry) < 1:
-                        raise AttributeError()
-                app_def_list.append(
-                    app if app != rename_nx_for_nomad("NXroot") else "Generic"
-                )
-            except (AttributeError, TypeError):
-                pass
+                    pass
+        except (AttributeError, TypeError):
+            pass
         if len(app_def_list) == 0:
             app_def = "Experiment"
         else:

@@ -113,7 +113,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
 }
 
 
-class NexusMeasurement(Measurement):
+class NexusMeasurement(Measurement, Schema):
     def normalize(self, archive, logger):
         try:
             app_entry = getattr(self, "ENTRY")
