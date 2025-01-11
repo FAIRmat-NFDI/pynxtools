@@ -46,14 +46,17 @@ theme:
     accent: '#008A67'
   font:
     text: 'Titillium Web'
-  logo: assets/nomad-logo.png
+  logo: assets/nomad-plugin-logo.png
   favicon: assets/favicon.png
   features:
     - navigation.instant
+    - navigation.footer
     - content.code.copy
     - content.code.annotate
     - search.suggest
   custom_dir: docs/theme
+  icon:
+    repo: fontawesome/brands/github
 
 markdown_extensions:
   - markdown_include.include:
