@@ -84,7 +84,7 @@ markdown_extensions:
 
 extra:
   generator: false
-  homepage: https://fairmat-nfdi.github.io/pynxtools/
+  # homepage: https://fairmat-nfdi.github.io/pynxtools/
 
 use_directory_urls: false
 
