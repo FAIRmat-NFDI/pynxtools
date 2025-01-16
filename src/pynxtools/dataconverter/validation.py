@@ -534,7 +534,7 @@ def validate_dict_against(
                 f"{key}", ValidationProblem.MissingUnit, node.unit
             )
 
-        return is_valid_data_field(mapping[key], node.dtype, key)
+        return is_valid_data_field(mapping[key], node.dtype, key)[0]
 
     def recurse_tree(
         node: NexusNode,
