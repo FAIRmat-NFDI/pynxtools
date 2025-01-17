@@ -80,13 +80,11 @@ class Collector:
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.warning(
-                f"The unit, {path} = {value}, "
-                "is being written but has no documentation"
+                f"The unit, {path} = {value}, is being written but has no documentation"
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be on of the "
-                f"following strings: {value}"
+                f"The value at {path} should be on of the following strings: {value}"
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
@@ -344,7 +342,7 @@ def get_all_defined_required_children_for_elem(xml_element):
                     list_of_children_to_add.add(f"{name_to_add}/@units")
             elif tag == "group":
                 nxdlpath = (
-                    f'{xml_element.get("nxdlpath")}/{get_nxdl_name_from_elem(child)}'
+                    f"{xml_element.get('nxdlpath')}/{get_nxdl_name_from_elem(child)}"
                 )
                 nxdlbase = xml_element.get("nxdlbase")
                 nx_name = nxdlbase[nxdlbase.rfind("/") + 1 : nxdlbase.rfind(".nxdl")]
@@ -691,9 +689,12 @@ def is_valid_data_field(value, nxdl_type, path):
 
     If it fails to convert, it raises an Exception.
 
-    As a default it just returns the value again.
+    Returns two values: first, boolean (True if the the value corresponds to nxdl_type,
+    False otherwise) and second, result of attempted conversion or the original value
+    (if conversion is not needed or impossible)
     """
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+    output_value = value
 
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
         try:
@@ -701,14 +702,16 @@ def is_valid_data_field(value, nxdl_type, path):
                 value = convert_str_to_bool_safe(value)
                 if value is None:
                     raise ValueError
-            return accepted_types[0](value)
+            output_value = accepted_types[0](value)
         except ValueError:
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
+            return False, value
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
+        return False, value
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(
@@ -718,8 +721,9 @@ def is_valid_data_field(value, nxdl_type, path):
         results = iso8601.search(value)
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
+            return False, value
 
-    return True
+    return True, output_value
 
 
 @lru_cache(maxsize=None)
