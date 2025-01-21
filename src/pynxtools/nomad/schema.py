@@ -364,7 +364,9 @@ def __get_documentation_url(
     )
     nx_package = xml_parent.get("nxdl_base").split("/")[-1]
     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    return f"{doc_base}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
+    return (
+        f"{doc_base}/{nx_package}/{anchor_segments[-1].replace("-", "_")}.html#{anchor}"
+    )
 
 
 def __to_section(name: str, **kwargs) -> Section:
