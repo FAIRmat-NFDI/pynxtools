@@ -900,9 +900,9 @@ def __create_package_from_nxdl_directories() -> Package:
             nexus_sections["_BaseSections"].sub_sections.append(
                 SubSection(section_def=section, name=section.name)
             )
-    for section_name in __section_definitions:
+    for section_name, section in __section_definitions.items():
         if "__" in section_name:
-            package.section_definitions.append(__section_definitions[section_name])
+            package.section_definitions.append(section)
 
     return package
 
