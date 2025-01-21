@@ -41,7 +41,7 @@ def test_nexus_example():
 
     example_data = "src/pynxtools/data/201805_WSe2_arpes.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
-    arpes_obj = getattr(archive.data, rename_nx_for_nomad("NXarpes"))
+    arpes_obj = archive.data
 
     assert arpes_obj.ENTRY[0].SAMPLE[0].pressure__field == ureg.Quantity(
         "3.27e-10*millibar"
@@ -94,9 +94,9 @@ def test_nexus_example_with_renamed_groups():
         os.path.dirname(__file__), "../data/nomad/NXlauetof.hdf5"
     )
     NexusParser().parse(lauetof_data, archive, get_logger(__name__))
-    lauetof_obj = getattr(archive.data, rename_nx_for_nomad("NXlauetof"))
+    lauetof_obj = archive.data
 
-    assert lauetof_obj.entry.name__group.time_of_flight__field == ureg.Quantity(
+    assert lauetof_obj.ENTRY[0].name__group.time_of_flight__field == ureg.Quantity(
         "1.0*second"
     )
-    assert lauetof_obj.entry.sample.name__field == "SAMPLE-CHAR-DATA"
+    assert lauetof_obj.ENTRY[0].sample.name__field == "SAMPLE-CHAR-DATA"

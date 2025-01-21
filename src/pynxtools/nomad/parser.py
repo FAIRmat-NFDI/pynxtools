@@ -96,19 +96,12 @@ def _to_section(
 
     nomad_def_name = rename_nx_for_nomad(nomad_def_name, is_group=True)
 
-    # for groups, get the definition from the package
-    new_def = current.m_def.all_sub_sections[nomad_def_name]
-
-    new_section: MSection = None  # type:ignore
-
-    for section in current.m_get_sub_sections(new_def):
-        if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
-            new_section = section
-            break
-
-    if new_section is not None:
-        return new_section
     if current == nx_root:
+        # for groups, get the definition from the package
+        new_def = current.m_def.all_sub_sections["ENTRY"]
+        for section in current.m_get_sub_sections(new_def):
+            if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
+                return section
         cls = getattr(nexus_schema, nx_def, None)
         sec = cls()
         new_def_spec = sec.m_def.all_sub_sections[nomad_def_name]
@@ -117,6 +110,11 @@ def _to_section(
         current.ENTRY.append(new_section)
         new_section.__dict__["nx_name"] = hdf_name
     else:
+        # for groups, get the definition from the package
+        new_def = current.m_def.all_sub_sections[nomad_def_name]
+        for section in current.m_get_sub_sections(new_def):
+            if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
+                return section
         current.m_create(new_def.section_def.section_cls)
         new_section = current.m_get_sub_section(new_def, -1)
         new_section.__dict__["nx_name"] = hdf_name
