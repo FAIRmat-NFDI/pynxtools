@@ -19,6 +19,7 @@ import h5py
 import hdf5plugin
 import lxml.etree as ET
 import numpy as np
+import pint
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.chunk import (
@@ -382,14 +383,16 @@ class Writer:
 
         def add_units_key(dataset, path):
             units_key = f"{path}/@units"
-            if units_key in self.data.keys() and self.data[units_key] is not None:
+            units = self.data.get(units_key)
+            if units is not None:
+                units = str(units) if isinstance(units, pint.Unit) else units
+
                 if "units" not in dataset.attrs:
-                    dataset.attrs["units"] = self.data[units_key]
-                else:
-                    if self.append:
-                        logger.info(
-                            f"Prevented the overwriting of attribute {path}/@units"
-                        )
+                    dataset.attrs["units"] = units
+                elif self.append:
+                    logger.info(
+                        f"Prevented the overwriting of attribute {path}/@units"
+                    )
 
         for path, value in self.data.items():
             try:
