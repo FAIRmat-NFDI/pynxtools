@@ -21,11 +21,11 @@
 
 import copy
 import logging
-import sys
 import xml.etree.ElementTree as ET
 
 import h5py
 import numpy as np
+import pint
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
@@ -259,8 +259,10 @@ class Writer:
 
         def add_units_key(dataset, path):
             units_key = f"{path}/@units"
-            if units_key in self.data.keys() and self.data[units_key] is not None:
-                dataset.attrs["units"] = self.data[units_key]
+            units = self.data.get(units_key, None)
+            units = str(units) if isinstance(units, pint.Unit) else units
+            if units:
+                dataset.attrs["units"] = units
 
         for path, value in self.data.items():
             try:
