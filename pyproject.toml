@@ -35,6 +35,7 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
+    "pint>=0.17",
 ]
 
 [project.urls]
