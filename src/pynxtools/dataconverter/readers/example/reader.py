@@ -106,22 +106,16 @@ class ExampleReader(BaseReader):
 
         # virtual datasets slicing
         my_path = str(f"{os.path.dirname(__file__)}/../../../data/")
-        template[("/ENTRY[entry]" "/test_virtual" "_dataset/sliced" "_dataset")] = {
-            "link": (
-                f"{my_path}/xarray_saved_small_" "calibration.h5:/binned/BinnedData"
-            ),
+        template[("/ENTRY[entry]/test_virtual_dataset/sliced_dataset")] = {
+            "link": (f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData"),
             "shape": np.index_exp[:, 1, :, :],
         }
-        template[("/ENTRY[entry]" "/test_virtual" "_dataset/slic" "ed_dataset2")] = {
-            "link": (
-                f"{my_path}/xarray_saved_small" "_calibration.h5:/binned/BinnedData"
-            ),
+        template[("/ENTRY[entry]/test_virtual_dataset/sliced_dataset2")] = {
+            "link": (f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData"),
             "shape": np.index_exp[:, :, :, 1],
         }
-        template[("/ENTRY[entry]" "/test_virtual" "_dataset/slic" "ed_dataset3")] = {
-            "link": (
-                f"{my_path}/xarray_saved_small" "_calibration.h5:/binned/BinnedData"
-            ),
+        template[("/ENTRY[entry]/test_virtual_dataset/sliced_dataset3")] = {
+            "link": (f"{my_path}/xarray_saved_small_calibration.h5:/binned/BinnedData"),
             "shape": np.index_exp[:, :, :, 2:4],
         }
 
