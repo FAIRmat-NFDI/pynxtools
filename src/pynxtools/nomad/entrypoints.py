@@ -63,7 +63,7 @@ nexus_parser = NexusParserEntryPoint(
     name="pynxtools parser",
     description="A parser for nexus files.",
     mainfile_name_re=r".*\.nxs",
-    mainfile_mime_re="application/x-hdf5",
+    mainfile_mime_re="application/x-hdf*",
 )
 
 from nomad.config.models.ui import (
