@@ -35,7 +35,6 @@ dependencies = [
     "importlib-metadata",
     "lxml>=4.9.1",
     "anytree",
-    "urllib3<=1.26.20",
 ]
 
 [project.urls]
@@ -64,6 +63,11 @@ dev = [
     "uv",
     "pre-commit",
 ]
+nomad = [
+    "urllib3<=1.26.20",
+    "filelock==3.3.1"
+]
+
 convert = [
     "pynxtools[apm,ellips,em,igor,mpes,raman,stm,xps,xrd]",
 ]
