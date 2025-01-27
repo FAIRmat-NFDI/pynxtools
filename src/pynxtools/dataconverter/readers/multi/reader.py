@@ -61,12 +61,11 @@ def evaluate_expression(expression: str, data: Dict[str, Any]) -> Any:
         # "unit_conversion": ??
     }
 
-    safe_conversions.update({"__builtins__": {}})  # Disable built-ins for safety
+    # Disable built-ins for safety
+    safe_conversions.update({"__builtins__": {}})
 
     def resolve_key(key: str) -> Any:
-        """Resolve a key by removing leading '/' and accessing the dictionary."""
-        if key.startswith("/"):
-            key = key.lstrip("/")
+        """Resolve a key by accessing the dictionary."""
         if key not in data:
             raise KeyError(f"Key '{key}' not found in data.")
         return data[key]
@@ -77,7 +76,8 @@ def evaluate_expression(expression: str, data: Dict[str, Any]) -> Any:
         return f"resolve_key('{key}')"
 
     # Match only valid dictionary keys (not operators or function calls)
-    pattern = r"(\/[\w\[\]\_\-/]+)"  # this is currently not yet working
+    # this is currently not yet working
+    pattern = r"(\/[\w\[\]\_\-/]+)"
 
     resolved_expression = re.sub(pattern, replace_keys, expression)
 
@@ -169,7 +169,7 @@ class ParseJsonCallbacks:
             "@data": data_callback if data_callback is not None else self.identity,
             "@eln": eln_callback if eln_callback is not None else self.identity,
             "@formula": formula_callback
-            if link_callback is not None
+            if formula_callback is not None
             else self.formula_callback,
         }
 
@@ -337,7 +337,7 @@ def fill_from_config(
         which have the same sort key.
         """
         value = keyval[1]
-        if isinstance(keyval, str):
+        if isinstance(value, str):
             if value.startswith(("!@formula:", "@formula:")):
                 return (2, keyval[0])  # Last
             if value.startswith("!"):
@@ -355,6 +355,7 @@ def fill_from_config(
 
         # Process '!...' keys first
         sorted_keys = dict(sorted(config_dict.items(), key=dict_sort_key))
+
         for key in sorted_keys:
             value = config_dict[key]
             key = key.replace("/ENTRY/", f"/ENTRY[{entry_name}]/")
