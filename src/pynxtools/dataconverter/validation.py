@@ -563,8 +563,8 @@ def validate_dict_against(
         keys_to_remove = []
 
         for key in mapping:
-            last_index=key.rfind("/")
-            if key[last_index+1] == "@":
+            last_index = key.rfind("/")
+            if key[last_index + 1] == "@":
                 # key is an attribute. Find a corresponding parent, check all the other children of this parent
                 attribute_parent_checked = False
                 # True if found the value (so, the parent is a field) or non-attribute children (so the parent is a group)
@@ -574,14 +574,16 @@ def validate_dict_against(
                             # the parent is a field
                             attribute_parent_checked = True
                             break
-                        elif key_iterating[last_index+1] != "@":
+                        elif key_iterating[last_index + 1] != "@":
                             # the parent is a group
                             attribute_parent_checked = True
                             break
                 if not attribute_parent_checked:
                     keys_to_remove.append(key)
                     collector.collect_and_log(
-                        key[0:last_index], ValidationProblem.AttributeForNonExistingField, None
+                        key[0:last_index],
+                        ValidationProblem.AttributeForNonExistingField,
+                        None,
                     )
         return keys_to_remove
 
