@@ -166,7 +166,7 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
 
 def validate_dict_against(
     appdef: str, mapping: Mapping[str, Any], ignore_undocumented: bool = False
-) -> bool:
+) -> Tuple[bool, List]:
     """
     Validates a mapping against the NeXus tree for applicationd definition `appdef`.
 
@@ -183,6 +183,7 @@ def validate_dict_against(
 
     Returns:
         bool: True if the mapping is valid according to `appdef`, False otherwise.
+        List: list of keys in mapping that correspond to attributes of non-existing fields
     """
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
@@ -550,6 +551,40 @@ def validate_dict_against(
                 return
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
 
+    def check_attributes_of_nonexisting_field() -> list:
+        """
+        This method runs through the mapping dictionary and checks if there are any
+        attributes assigned to the fields (not groups!) which are not expicitly present
+        in the mapping.
+        If there are any found, a warning is logged and the corresponding items are
+        added to the list returned by the method
+        """
+
+        keys_to_remove = []
+
+        for key in mapping:
+            last_index=key.rfind("/")
+            if key[last_index+1] == "@":
+                # key is an attribute. Find a corresponding parent, check all the other children of this parent
+                attribute_parent_checked = False
+                # True if found the value (so, the parent is a field) or non-attribute children (so the parent is a group)
+                for key_iterating in mapping:
+                    if key_iterating.startswith(key[0:last_index]):
+                        if len(key_iterating) == last_index:
+                            # the parent is a field
+                            attribute_parent_checked = True
+                            break
+                        elif key_iterating[last_index+1] != "@":
+                            # the parent is a group
+                            attribute_parent_checked = True
+                            break
+                if not attribute_parent_checked:
+                    keys_to_remove.append(key)
+                    collector.collect_and_log(
+                        key[0:last_index], ValidationProblem.AttributeForNonExistingField, None
+                    )
+        return keys_to_remove
+
     missing_type_err = {
         "field": ValidationProblem.MissingRequiredField,
         "group": ValidationProblem.MissingRequiredGroup,
@@ -593,7 +628,8 @@ def validate_dict_against(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
 
-    return not collector.has_validation_problems()
+    keys_to_remove = check_attributes_of_nonexisting_field()
+    return [not collector.has_validation_problems(), keys_to_remove]
 
 
 def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int = 0):
@@ -627,4 +663,4 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
 def validate_data_dict(
     _: Mapping[str, Any], read_data: Mapping[str, Any], root: ET._Element
 ) -> bool:
-    return validate_dict_against(root.attrib["name"], read_data)
+    return validate_dict_against(root.attrib["name"], read_data)[0]

@@ -141,7 +141,7 @@ class ReaderTest:
         with self.caplog.at_level(caplog_level):
             _ = validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
-            )
+            )[0]
         assert self.caplog.text == ""
 
         add_default_root_attributes(

@@ -536,7 +536,7 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "required-field-provided-in-variadic-optional-group",
     ):
         with caplog.at_level(logging.WARNING):
-            assert validate_dict_against("NXtest", data_dict)
+            assert validate_dict_against("NXtest", data_dict)[0]
         assert caplog.text == ""
     # Missing required fields caught by logger with warning
     elif request.node.callspec.id in (
@@ -548,11 +548,11 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
     ):
         assert "" == caplog.text
         captured_logs = caplog.records
-        assert not validate_dict_against("NXtest", data_dict)
+        assert not validate_dict_against("NXtest", data_dict)[0]
         assert any(error_message in rec.message for rec in captured_logs)
     else:
         with caplog.at_level(logging.WARNING):
-            assert not validate_dict_against("NXtest", data_dict)
+            assert not validate_dict_against("NXtest", data_dict)[0]
 
         assert error_message in caplog.text
 
