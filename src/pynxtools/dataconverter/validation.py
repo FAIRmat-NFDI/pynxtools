@@ -631,7 +631,7 @@ def validate_dict_against(
             )
 
     keys_to_remove = check_attributes_of_nonexisting_field()
-    return [not collector.has_validation_problems(), keys_to_remove]
+    return (not collector.has_validation_problems(), keys_to_remove)
 
 
 def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int = 0):
