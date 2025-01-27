@@ -121,7 +121,7 @@ def test_data_dict_attr_with_no_field(caplog, data_dict):
         validate_dict_against("NXtest", data_dict)[0]
     assert (
         caplog.text
-        == "WARNING: There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value, but the field does not exist."
+        == "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value, but the field does not exist."
     )
 
 
