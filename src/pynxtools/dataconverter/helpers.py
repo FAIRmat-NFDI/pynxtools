@@ -80,13 +80,11 @@ class Collector:
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.warning(
-                f"The unit, {path} = {value}, "
-                "is being written but has no documentation"
+                f"The unit, {path} = {value}, is being written but has no documentation"
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be on of the "
-                f"following strings: {value}"
+                f"The value at {path} should be on of the following strings: {value}"
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
@@ -344,7 +342,7 @@ def get_all_defined_required_children_for_elem(xml_element):
                     list_of_children_to_add.add(f"{name_to_add}/@units")
             elif tag == "group":
                 nxdlpath = (
-                    f'{xml_element.get("nxdlpath")}/{get_nxdl_name_from_elem(child)}'
+                    f"{xml_element.get('nxdlpath')}/{get_nxdl_name_from_elem(child)}"
                 )
                 nxdlbase = xml_element.get("nxdlbase")
                 nx_name = nxdlbase[nxdlbase.rfind("/") + 1 : nxdlbase.rfind(".nxdl")]

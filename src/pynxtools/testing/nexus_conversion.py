@@ -103,9 +103,9 @@ class ReaderTest:
         """
         Test the example data for the reader plugin.
         """
-        assert hasattr(
-            self.reader, "supported_nxdls"
-        ), f"Reader{self.reader} must have supported_nxdls attribute"
+        assert hasattr(self.reader, "supported_nxdls"), (
+            f"Reader{self.reader} must have supported_nxdls attribute"
+        )
         assert callable(self.reader.read), f"Reader{self.reader} must have read method"
 
         if isinstance(self.files_or_dir, (list, tuple)):
