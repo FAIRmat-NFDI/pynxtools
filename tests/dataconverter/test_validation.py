@@ -28,6 +28,7 @@ def get_data_dict():
     return {
         "/ENTRY[my_entry]/optional_parent/required_child": 1,
         "/ENTRY[my_entry]/optional_parent/optional_child": 1,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units": "nm",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value": True,
@@ -90,7 +91,7 @@ def alter_dict(new_values: Dict[str, Any], data_dict: Dict[str, Any]) -> Dict[st
         pytest.param(get_data_dict(), id="valid-unaltered-data-dict"),
         pytest.param(
             remove_from_dict(
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value", get_data_dict()
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr", get_data_dict()
             ),
             id="removed-optional-value",
         ),
@@ -101,6 +102,23 @@ def test_valid_data_dict(caplog, data_dict):
         validate_dict_against("NXtest", data_dict)[0]
     assert caplog.text == ""
 
+
+@pytest.mark.parametrize(
+    "data_dict",
+    [
+        pytest.param(get_data_dict(), id="valid-unaltered-data-dict"),
+        pytest.param(
+            remove_from_dict(
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value", get_data_dict()
+            ),
+            id="removed-optional-value",
+        ),
+    ],
+)
+def test_data_dict_attr_with_no_field(caplog, data_dict):
+    with caplog.at_level(logging.WARNING):
+        validate_dict_against("NXtest", data_dict)[0]
+    assert caplog.text == "WARNING  pynxtools:helpers.py:126 WARNING: There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value, but the field does not exist."
 
 @pytest.mark.parametrize(
     "data_dict, error_message",
