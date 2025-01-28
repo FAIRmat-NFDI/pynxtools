@@ -639,7 +639,7 @@ def validate_dict_against(
         next_child_class = split_class_and_name_of(path[1 : next_child_name_index + 1])[
             0
         ]
-        if next_child_class != None:
+        if next_child_class is not None:
             output = None
             for child in node.children:
                 # regex removes everything which is not the class of the node
@@ -652,7 +652,7 @@ def validate_dict_against(
                     output_new = check_type_with_tree(
                         child, path[next_child_name_index + 1 :]
                     )
-                    if output_new != None:
+                    if output_new is not None:
                         output = output_new
             return output
         else:
