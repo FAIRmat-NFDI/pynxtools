@@ -551,13 +551,22 @@ def validate_dict_against(
                 return
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
 
-    def check_attributes_of_nonexisting_field() -> list:
+    def check_attributes_of_nonexisting_field(
+        node: NexusNode,
+    ) -> list:
         """
-        This method runs through the mapping dictionary and checks if there are any
-        attributes assigned to the fields (not groups!) which are not expicitly present
-        in the mapping.
-        If there are any found, a warning is logged and the corresponding items are
-        added to the list returned by the method
+            This method runs through the mapping dictionary and checks if there are any
+            attributes assigned to the fields (not groups!) which are not expicitly
+            present in the mapping.
+            If there are any found, a warning is logged and the corresponding items are
+            added to the list returned by the method.
+
+        Args:
+            node (NexusNode): the tree generated from application definition.
+
+        Returns:
+            list: list of keys in mapping that correspond to attributes of
+            non-existing fields
         """
 
         keys_to_remove = []
@@ -565,9 +574,12 @@ def validate_dict_against(
         for key in mapping:
             last_index = key.rfind("/")
             if key[last_index + 1] == "@":
-                # key is an attribute. Find a corresponding parent, check all the other children of this parent
+                # key is an attribute. Find a corresponding parent, check all the other
+                # children of this parent
                 attribute_parent_checked = False
-                # True if found the value (so, the parent is a field) or non-attribute children (so the parent is a group)
+                # True if found the value (so, the parent is a field) or non-attribute
+                # children (so the parent is a group) or checked in the tree that
+                # the parent is a group
                 for key_iterating in mapping:
                     if key_iterating.startswith(key[0:last_index]):
                         if len(key_iterating) == last_index:
@@ -579,13 +591,58 @@ def validate_dict_against(
                             attribute_parent_checked = True
                             break
                 if not attribute_parent_checked:
-                    keys_to_remove.append(key)
-                    collector.collect_and_log(
-                        key[0:last_index],
-                        ValidationProblem.AttributeForNonExistingField,
-                        None,
-                    )
+                    type_of_parent_from_tree = check_type_with_tree(node, key[0:last_index])
+                    # last check: we can potentially have a parent which is a group which
+                    # has only attributes as children. In this case we should still write
+                    # the attributes as usual
+                    if type_of_parent_from_tree != "group":
+                        keys_to_remove.append(key)
+                        collector.collect_and_log(
+                            key[0:last_index],
+                            ValidationProblem.AttributeForNonExistingField,
+                            None,
+                        )
         return keys_to_remove
+
+    def check_type_with_tree(
+        node: NexusNode,
+        path: str,
+    ) -> Optional[str]:
+        """
+            Recursively search for the type of the object from Template
+            (described by path) using subtree hanging below the node.
+            The path should be relative to the current node.
+
+        Args:
+            node (NexusNode): the subtree to search in.
+            path (str): the string addressing the object from Mapping (the Template)
+            to search the type of.
+
+        Returns:
+            Optional str: type of the object as a string, if the object was found
+            in the tree, None otherwise.
+        """
+
+        # already arrived to the object
+        if path == "":
+            return node.type
+        # searching for object among the children of the node
+        next_child_name_index = path[1:].find("/")
+        if next_child_name_index == -1:     # the whole path from element #1 is the child name
+            next_child_name_index = len(path)-1     # -1 because we count from element #1, not #0
+        next_child_class = split_class_and_name_of(path[1:next_child_name_index+1])[0]
+        if next_child_class != None:
+            output = None
+            for child in node.children:
+                # regex removes everything which is not the class of the node
+                child_class_from_node = re.sub(r'(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*', '', child.__str__())
+                if child_class_from_node == next_child_class:
+                    output_new = check_type_with_tree(child, path[next_child_name_index+1:])
+                    if output_new != None:
+                        output = output_new
+            return output
+        else:
+            return None
 
     missing_type_err = {
         "field": ValidationProblem.MissingRequiredField,
@@ -630,7 +687,7 @@ def validate_dict_against(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
 
-    keys_to_remove = check_attributes_of_nonexisting_field()
+    keys_to_remove = check_attributes_of_nonexisting_field(tree)
     return (not collector.has_validation_problems(), keys_to_remove)
 
 
