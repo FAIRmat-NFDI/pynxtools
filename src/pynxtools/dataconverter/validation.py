@@ -591,7 +591,9 @@ def validate_dict_against(
                             attribute_parent_checked = True
                             break
                 if not attribute_parent_checked:
-                    type_of_parent_from_tree = check_type_with_tree(node, key[0:last_index])
+                    type_of_parent_from_tree = check_type_with_tree(
+                        node, key[0:last_index]
+                    )
                     # last check: we can potentially have a parent which is a group which
                     # has only attributes as children. In this case we should still write
                     # the attributes as usual
@@ -628,16 +630,28 @@ def validate_dict_against(
             return node.type
         # searching for object among the children of the node
         next_child_name_index = path[1:].find("/")
-        if next_child_name_index == -1:     # the whole path from element #1 is the child name
-            next_child_name_index = len(path)-1     # -1 because we count from element #1, not #0
-        next_child_class = split_class_and_name_of(path[1:next_child_name_index+1])[0]
+        if (
+            next_child_name_index == -1
+        ):  # the whole path from element #1 is the child name
+            next_child_name_index = (
+                len(path) - 1
+            )  # -1 because we count from element #1, not #0
+        next_child_class = split_class_and_name_of(path[1 : next_child_name_index + 1])[
+            0
+        ]
         if next_child_class != None:
             output = None
             for child in node.children:
                 # regex removes everything which is not the class of the node
-                child_class_from_node = re.sub(r'(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*', '', child.__str__())
+                child_class_from_node = re.sub(
+                    r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
+                    "",
+                    child.__str__(),
+                )
                 if child_class_from_node == next_child_class:
-                    output_new = check_type_with_tree(child, path[next_child_name_index+1:])
+                    output_new = check_type_with_tree(
+                        child, path[next_child_name_index + 1 :]
+                    )
                     if output_new != None:
                         output = output_new
             return output
