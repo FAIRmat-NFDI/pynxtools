@@ -54,12 +54,8 @@ def evaluate_expression(expression: str, data: Dict[str, Any]) -> Any:
         return None
 
     # Prepare the safe environment for evaluation
-    safe_conversions = {
-        "mean": np.mean,
-        "min": np.min,
-        "max": np.max,
-        # "unit_conversion": ??
-    }
+    # Dynamically allow all basic NumPy functions
+    safe_conversions = {name: func for name, func in vars(np).items() if callable(func)}
 
     # Disable built-ins for safety
     safe_conversions.update({"__builtins__": {}})
