@@ -33,8 +33,9 @@ import numpy as np
 try:
     from nomad import utils
     from nomad.datamodel import EntryArchive, EntryMetadata
-    from nomad.datamodel.data import EntryData, Schema
+    from nomad.datamodel.data import ArchiveSection, EntryData, Schema
     from nomad.datamodel.metainfo import basesections
+    from nomad.datamodel.metainfo.annotations import ELNAnnotation
     from nomad.datamodel.metainfo.basesections import (
         ActivityResult,
         ActivityStep,
@@ -101,14 +102,37 @@ __section_definitions: Dict[str, Section] = dict()
 
 __logger = get_logger(__name__)
 
+
+class NexusActivityStep(ActivityStep):
+    reference = Quantity(
+        type=ArchiveSection,
+        description="A reference to a NeXus Activity Step.",
+        a_eln=ELNAnnotation(
+            component="ReferenceEditQuantity",
+            label="section reference",
+        ),
+    )
+
+
+class NexusActivityResult(ActivityResult):
+    reference = Quantity(
+        type=ArchiveSection,
+        description="A reference to a NeXus Activity Result.",
+        a_eln=ELNAnnotation(
+            component="ReferenceEditQuantity",
+            label="section reference",
+        ),
+    )
+
+
 __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
     "NXidentifier": [EntityReference],
-    "NXentry": [ActivityStep],
-    "NXprocess": [ActivityStep],
-    "NXdata": [ActivityResult],
+    "NXentry": [NexusActivityStep],
+    "NXprocess": [NexusActivityStep],
+    "NXdata": [NexusActivityResult],
     # "object": BaseSection,
 }
 
@@ -121,23 +145,21 @@ class NexusMeasurement(Measurement, Schema):
                 raise AttributeError()
             self.steps = []
             for entry in app_entry:
-                sec_c = entry.m_copy()
-                self.steps.append(sec_c)
+                ref = NexusActivityStep(name=entry.name, reference=entry)
+                self.steps.append(ref)
                 for sec in entry.m_all_contents():
                     if isinstance(sec, ActivityStep):
-                        sec_c = sec.m_copy()
-                        self.steps.append(sec_c)
+                        ref = NexusActivityStep(name=sec.name, reference=sec)
+                        self.steps.append(ref)
                     elif isinstance(sec, basesections.Instrument):
-                        ref = InstrumentReference(name=sec.name)
-                        ref.reference = sec
+                        ref = InstrumentReference(name=sec.name, reference=sec)
                         self.instruments.append(ref)
                     elif isinstance(sec, CompositeSystem):
-                        ref = CompositeSystemReference(name=sec.name)
-                        ref.reference = sec
+                        ref = CompositeSystemReference(name=sec.name, reference=sec)
                         self.samples.append(ref)
                     elif isinstance(sec, ActivityResult):
-                        sec_c = sec.m_copy()
-                        self.results.append(sec_c)
+                        ref = NexusActivityResult(name=sec.name, reference=sec)
+                        self.results.append(ref)
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
@@ -158,7 +180,7 @@ class NexusMeasurement(Measurement, Schema):
         act_array = archive.workflow2.tasks
         existing_items = {(task.name, task.section) for task in act_array}
         new_items = [
-            item.to_task()
+            item.reference.to_task()
             for item in self.steps
             if (item.name, item) not in existing_items
         ]
@@ -177,9 +199,9 @@ class NexusMeasurement(Measurement, Schema):
         act_array = archive.workflow2.outputs
         existing_items = {(link.name, link.section) for link in act_array}
         new_items = [
-            Link(name=item.name, section=item)
+            Link(name=item.name, section=item.reference)
             for item in self.results
-            if (item.name, item) not in existing_items
+            if (item.name, item.reference) not in existing_items
         ]
         act_array.extend(new_items)
 
@@ -945,6 +967,8 @@ def init_nexus_metainfo():
     #         pass
     nexus_metainfo_package = __create_package_from_nxdl_directories()
     nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
@@ -983,6 +1007,13 @@ def normalize_fabrication(self, archive, logger):
     current_cls = __section_definitions[
         __rename_nx_for_nomad("NXfabrication")
     ].section_cls
+    self.name = (
+        self.__dict__["nx_name"]
+        + " ("
+        + ((self.vendor__field + " / ") if self.vendor__field else "")
+        + (self.model__field if self.model__field else "")
+        + ")"
+    )
     super(current_cls, self).normalize(archive, logger)
 
 
