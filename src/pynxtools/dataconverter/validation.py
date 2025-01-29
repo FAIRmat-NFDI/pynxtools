@@ -572,7 +572,6 @@ def validate_dict_against(
         keys_to_remove = []
 
         for key in mapping:
-            # print(f"#### {key}")
             last_index = key.rfind("/")
             if key[last_index + 1] == "@":
                 # key is an attribute. Find a corresponding parent, check all the other
@@ -582,54 +581,29 @@ def validate_dict_against(
                 # children (so the parent is a group) or checked in the tree that
                 # the parent is a group
                 for key_iterating in mapping:
-                    # print(f"1, key iterating = {key_iterating}")
-                    # if key_iterating.startswith(key[0:last_index]):
+                    # check if key_iterating starts with parent of the key OR any
+                    # allowed variation of the parent of the key
                     flag, extra_length = startswith_with_variations(
                         key_iterating, key[0:last_index]
                     )
-                    # if key_iterating[0:last_index] == key[0:last_index]:
+                    # the variation of the path to the parent might have different length
+                    # than the key itself, extra_length is adjusting for that
                     if flag:
                         if len(key_iterating) == last_index + extra_length:
-                            # print(1)
                             # the parent is a field
                             attribute_parent_checked = True
                             break
                         elif (key_iterating[last_index + extra_length] == "/") and (
                             key_iterating[last_index + extra_length + 1] != "@"
                         ):
-                            # print(2)
                             # the parent is a group
                             attribute_parent_checked = True
                             break
-                # if not attribute_parent_checked:
-                #     for key_iterating in mapping:
-                #         # print(f"1, key iterating = {key_iterating}")
-                #         flag = False
-                #         print(0)
-                #         for path_iteration_variation in path_variations("", key_iterating):
-                #             if path_iteration_variation.startswith(key[0:last_index]):
-                #                 flag = True
-                #                 key_iterating_version = path_iteration_variation
-                #                 break
-                #         if flag:
-                #             if len(key_iterating_version) == last_index:
-                #                 print(1)
-                #                 # the parent is a field
-                #                 attribute_parent_checked = True
-                #                 break
-                #             elif (key_iterating_version[last_index] == "/") and (
-                #                 key_iterating_version[last_index + 1] != "@"
-                #             ):
-                #                 print(2)
-                #                 # the parent is a group
-                #                 attribute_parent_checked = True
-                #                 break
                 if not attribute_parent_checked:
-                    # print(3)
                     type_of_parent_from_tree = check_type_with_tree(
                         node, key[0:last_index]
                     )
-                    # last two checks: 1. The parent is a group which has only attributes
+                    # last two options: 1. The parent is a group which has only attributes
                     # as children. We check for that in the tree built from
                     # application definition. In this case we should still write
                     # the attributes as usual. 2. The parent can not be found in the tree
@@ -708,43 +682,24 @@ def validate_dict_against(
         else:
             return None
 
-    def path_variations(path_checked: str, path_remaining: str) -> list:
-        # input()
-        output = []
-        first_brackets = re.search(r"\[.*?\]", path_remaining)
-        if first_brackets is None:
-            output.append(path_checked + path_remaining)
-        else:
-            name_start_index = path_remaining[0 : first_brackets.start()].rfind("/") + 1
-            name_end_index = (
-                path_remaining[name_start_index + 1 :].find("/") + name_start_index
-            )
-            if name_end_index == name_start_index - 1:
-                name_end_index = len(path_remaining) - 1
-                # print(f"symbol = {path_remaining[name_end_index]}")
-            # print(f"path_checked = {path_checked}, path_remaining = {path_remaining}")
-            path_checked_new_1 = path_checked + path_remaining[0 : name_end_index + 1]
-            path_checked_new_2 = (
-                path_checked
-                + path_remaining[0 : name_start_index - 1]
-                + "/"
-                + first_brackets.group(0)[1:-1]
-            )
-            path_remaining_new = path_remaining[name_end_index + 1 :]
-            # print(f"NEW: path_checked_new_1 = {path_checked_new_1}, path_checked_new_2 = {path_checked_new_2}, path_remaining_new = {path_remaining_new}")
-            output_unchanged = path_variations(path_checked_new_1, path_remaining_new)
-            output_changed = path_variations(path_checked_new_2, path_remaining_new)
-            output = output_unchanged + output_changed
-        return output
-
     def startswith_with_variations(
         large_str: str, baseline_str: str
     ) -> Tuple[bool, int]:
         """
-        returns bool + extra length of the actual match
+            Recursively check if the large_str starts with baseline_str or an allowed
+            equivalent (i.e. .../AXISNAME[energy]/... matches .../energy/...).
+
+        Args:
+            large_str (str): the string to be checked.
+            baseline_str (str): the string used as a baseline for comparison.
+
+        Returns:
+            bool: True if large_str starts with baseline_str or equivalent, else False.
+            int: The combined length difference between baseline_str and the equivalent
+            part of the large_str.
         """
-        # print(f"large_str = {large_str}, baseline_str = {baseline_str}, extra_length = {extra_length}")
         if len(baseline_str.split("/")) == 1:
+            # if baseline_str has no separators left, match already found
             return (True, 0)
         first_token_large_str = large_str.split("/")[1]
         first_token_baseline_str = baseline_str.split("/")[1]
@@ -752,14 +707,17 @@ def validate_dict_against(
         remaining_large_str = large_str[len(first_token_large_str) + 1 :]
         remaining_baseline_str = baseline_str[len(first_token_baseline_str) + 1 :]
         if first_token_large_str == first_token_baseline_str:
+            # exact match of n-th token
             return startswith_with_variations(
                 remaining_large_str, remaining_baseline_str
             )
         match_check = re.search(r"\[.*?\]", first_token_large_str)
         if match_check is None:
+            # tokens are different and do not contain []
             return (False, 0)
         variation_first_token_large = match_check.group(0)[1:-1]
         if variation_first_token_large == first_token_baseline_str:
+            # equivalents match
             extra_length_this_step = len(first_token_large_str) - len(
                 first_token_baseline_str
             )
@@ -767,6 +725,7 @@ def validate_dict_against(
                 remaining_large_str, remaining_baseline_str
             )
             return (a, b + extra_length_this_step)
+        # default
         return (False, 0)
 
     missing_type_err = {
@@ -812,10 +771,6 @@ def validate_dict_against(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
 
-    # print(path_variations("", "/ENTRY[entry]/data/AXISNAME[energy]/@units"))
-    # print(path_variations("", "/ENTRY[entry]/data/AXISNAME[energy]"))
-    # print(path_variations("", "/ENTRY[entry]/INSTRUMENT[instrument]/RESOLUTION[momentum_resolution]"))
-    # print(startswith_with_variations("/ENTRY[entry]/data/AXISNAME[energy]", "/entry/data/energy"))
     keys_to_remove = check_attributes_of_nonexisting_field(tree)
     return (not collector.has_validation_problems(), keys_to_remove)
 
