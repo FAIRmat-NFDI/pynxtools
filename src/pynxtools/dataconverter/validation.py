@@ -586,7 +586,9 @@ def validate_dict_against(
                             # the parent is a field
                             attribute_parent_checked = True
                             break
-                        elif key_iterating[last_index + 1] != "@":
+                        elif (key_iterating[last_index] == "/") and (
+                            key_iterating[last_index + 1] != "@"
+                        ):
                             # the parent is a group
                             attribute_parent_checked = True
                             break
@@ -594,10 +596,18 @@ def validate_dict_against(
                     type_of_parent_from_tree = check_type_with_tree(
                         node, key[0:last_index]
                     )
-                    # last check: we can potentially have a parent which is a group which
-                    # has only attributes as children. In this case we should still write
-                    # the attributes as usual
-                    if type_of_parent_from_tree != "group":
+                    # last two checks: 1. The parent is a group which has only attributes
+                    # as children. We check for that in the tree built from
+                    # application definition. In this case we should still write
+                    # the attributes as usual. 2. The parent can not be found in the tree
+                    # and therefore is not a part of the schema. The parent might
+                    # have been intended to be a group as in (1) or a field that is
+                    # missing by a mistake. As we have no way to distinguish,
+                    # we have to assume the former.
+                    if not (
+                        type_of_parent_from_tree == "group"
+                        or type_of_parent_from_tree is None
+                    ):
                         keys_to_remove.append(key)
                         collector.collect_and_log(
                             key[0:last_index],
@@ -636,19 +646,26 @@ def validate_dict_against(
             next_child_name_index = (
                 len(path) - 1
             )  # -1 because we count from element #1, not #0
-        next_child_class = split_class_and_name_of(path[1 : next_child_name_index + 1])[
-            0
-        ]
-        if next_child_class is not None:
+        next_child_class, next_child_name = split_class_and_name_of(
+            path[1 : next_child_name_index + 1]
+        )
+        if (next_child_class is not None) or (next_child_name is not None):
             output = None
             for child in node.children:
-                # regex removes everything which is not the class of the node
+                # regexs to separarte the class and the name from full name of the child
                 child_class_from_node = re.sub(
                     r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
                     "",
                     child.__str__(),
                 )
-                if child_class_from_node == next_child_class:
+                child_name_from_node = re.sub(
+                    r"(\@.*)*(\(.*?\))*(.*\[)*(\].*)*\s*",
+                    "",
+                    child.__str__(),
+                )
+                if (child_class_from_node == next_child_class) or (
+                    child_name_from_node == next_child_name
+                ):
                     output_new = check_type_with_tree(
                         child, path[next_child_name_index + 1 :]
                     )
