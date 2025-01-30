@@ -477,6 +477,12 @@ class NexusParser(MatchingParser):
         logger=None,
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
+        import debugpy  # will connect to dbgger if in dbg mode
+
+        debugpy.debug_this_thread()  # now anywhere can place manual breakpoint
+        # next line just an example
+        # debugpy.breakpoint()
+
         self.archive = archive
         self.nx_root = nexus_schema.Root()  # type: ignore # pylint: disable=no-member
 
@@ -534,3 +540,11 @@ class NexusParser(MatchingParser):
 
         chemical_formulas = self._get_chemical_formulas()
         self.normalize_chemical_formula(chemical_formulas)
+
+
+# import sys
+# if __name__ == "__main__":
+#     fpath = "/home/kaiobach/Research/hu_hu_hu/sprint26/pynx-apm/pynxtools_apm/tests/prod/ger_saarbruecken_pauly.073.0.nxs"
+#     print(f">>>>>>>{fpath}")
+#     empty_archive = EntryArchive()
+#     NexusParser().parse(mainfile=fpath, archive=empty_archive)
