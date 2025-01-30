@@ -202,12 +202,22 @@ class NexusParser(MatchingParser):
                             attr_value = attr_value[0]
                         # so values of non-scalar attribute will not end up in metainfo!
 
-                attr_name = attr_name + "__attribute"
                 current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
 
+                attribute = attr_value
+                # TODO: get unit from attribute <xxx>_units
                 try:
                     if nx_root or nx_parent.tag.endswith("group"):
-                        current.m_set_section_attribute(attr_name, attr_value)
+                        attribute_name = "___" + attr_name
+                        metainfo_def = resolve_variadic_name(
+                            current.m_def.all_properties, attribute_name
+                        )
+                        if metainfo_def.use_full_storage:
+                            attribute = MQuantity.wrap(attribute, attribute_name)
+                        current.m_set(metainfo_def, attribute)
+                        # if attributes are set before setting the quantity, a bug can cause them being set under a wrong variadic name
+                        attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
+                        attribute.m_set_attribute("m_nx_data_file", self.nxs_fname)
                     else:
                         parent_html_name = nx_path[-2].get("name")
 
@@ -216,25 +226,26 @@ class NexusParser(MatchingParser):
 
                         metainfo_def = None
                         try:
+                            attribute_name = parent_html_name + "___" + attr_name
                             metainfo_def = resolve_variadic_name(
-                                current.m_def.all_properties, parent_field_name
+                                current.m_def.all_properties, attribute_name
                             )
+                            data_instance_name = (
+                                hdf_node.name.split("/")[-1] + "___" + attr_name
+                            )
+                            if metainfo_def.use_full_storage:
+                                attribute = MQuantity.wrap(
+                                    attribute, data_instance_name
+                                )
                         except ValueError as exc:
                             self._logger.warning(
-                                f"{current.m_def} has no suitable property for {parent_field_name}",
+                                f"{current.m_def} has no suitable property for {parent_field_name} and {attr_name} as {attribute_name}",
                                 target_name=attr_name,
                                 exc_info=exc,
                             )
-                        if parent_field_name in current.__dict__:
-                            quantity = current.__dict__[parent_field_name]
-                            if isinstance(quantity, dict):
-                                quantity = quantity[parent_instance_name]
-                        else:
-                            quantity = None
-                            raise Warning(
-                                "setting attribute attempt before creating quantity"
-                            )
-                        quantity.m_set_attribute(attr_name, attr_value)
+                        current.m_set(metainfo_def, attribute)
+                        attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
+                        attribute.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 except Exception as e:
                     self._logger.warning(
                         "error while setting attribute",

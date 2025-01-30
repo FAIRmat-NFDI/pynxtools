@@ -468,16 +468,19 @@ def __add_common_properties(xml_node: ET.Element, definition: Definition):
         definition.more["nx_optional"] = __if_base(xml_node)
 
 
-def __create_attributes(xml_node: ET.Element, definition: Union[Section, Quantity]):
+def __create_attributes(
+    xml_node: ET.Element, definition: Union[Section, Quantity], field: Quantity = None
+):
     """
     Add all attributes in the given nexus XML node to the given
-    Quantity or SubSection using the Attribute class (new mechanism).
+    Quantity or SubSection using a specially named Quantity class.
 
     todo: account for more attributes of attribute, e.g., default, minOccurs
     """
     for attribute in xml_node.findall("nx:attribute", __XML_NAMESPACES):
         name = __rename_nx_for_nomad(attribute.get("name"), is_attribute=True)
 
+        shape: list = []
         nx_enum = __get_enumeration(attribute)
         if nx_enum:
             nx_type = nx_enum
@@ -496,8 +499,17 @@ def __create_attributes(xml_node: ET.Element, definition: Union[Section, Quantit
             else:
                 nx_shape = []
 
-        m_attribute = Attribute(
-            name=name, variable=__if_template(name), shape=nx_shape, type=nx_type
+        a_name = (field.more["nx_name"] if field else "") + "___" + name
+        m_attribute = Quantity(
+            name=a_name,
+            variable=__if_template(name)
+            or (__if_template(field.more["nx_name"]) if field else False),
+            shape=shape,
+            type=nx_type,
+            flexible_unit=True,
+        )
+        m_attribute.more.update(
+            dict(nx_kind="attribute")  # , nx_type=nx_type, nx_shape=nx_shape)
         )
 
         for name, value in attribute.items():
@@ -505,7 +517,7 @@ def __create_attributes(xml_node: ET.Element, definition: Union[Section, Quantit
 
         __add_common_properties(attribute, m_attribute)
 
-        definition.attributes.append(m_attribute)
+        definition.quantities.append(m_attribute)
 
 
 def __add_additional_attributes(definition: Definition):
@@ -637,7 +649,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     container.quantities.append(value_quantity)
 
-    __create_attributes(xml_node, value_quantity)
+    __create_attributes(xml_node, container, value_quantity)
 
     return value_quantity
 

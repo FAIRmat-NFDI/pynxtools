@@ -79,6 +79,5 @@ def __rename_nx_for_nomad(
     elif is_field:
         name += "__field"
     elif is_attribute:
-        name += "__attribute"
-
+        pass
     return name
