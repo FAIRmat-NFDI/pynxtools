@@ -124,6 +124,6 @@ def example_upload_entry_point_valid(
                     os.path.abspath(os.path.join(dirpath, filename))
                 )
 
-        assert (
-            sorted(real_upload_files) == sorted(expected_upload_files)
-        ), f"Uploaded files {real_upload_files} do not match the expected files: {expected_upload_files}"
+        assert sorted(real_upload_files) == sorted(expected_upload_files), (
+            f"Uploaded files {real_upload_files} do not match the expected files: {expected_upload_files}"
+        )
