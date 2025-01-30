@@ -37,9 +37,9 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_node_at_nxdl_path,
     get_nxdl_element_type,
 )
+from pynxtools.units import ureg
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
-
 
 def does_path_exist(path, h5py_obj) -> bool:
     """Returns true if the requested path exists in the given h5py object."""
@@ -385,7 +385,17 @@ class Writer:
             units_key = f"{path}/@units"
             units = self.data.get(units_key)
             if units is not None:
-                units = str(units) if isinstance(units, pint.Unit) else units
+                if isinstance(units, pint.Unit):
+                    units = str(units)
+                else:
+                    try:
+                        ureg.Unit(units)
+                    except pint.errors.UndefinedUnitError as exc:
+                        message = (
+                            f"Units provided for path: '{path}@units' are not valid."
+                            " Please provide a valid unit."
+                        )
+                        raise InvalidDictProvided(message) from exc
 
                 if "units" not in dataset.attrs:
                     dataset.attrs["units"] = units
