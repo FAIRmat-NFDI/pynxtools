@@ -124,12 +124,12 @@ def test_decode_if_string(string_obj, decode, expected):
 
     # Handle np.ndarray outputs
     if isinstance(expected, np.ndarray):
-        assert isinstance(result, np.ndarray), (
-            f"Expected ndarray, but got {type(result)}"
-        )
-        assert (result == expected).all(), (
-            f"Failed for {string_obj} with decode={decode}"
-        )
+        assert isinstance(
+            result, np.ndarray
+        ), f"Expected ndarray, but got {type(result)}"
+        assert (
+            result == expected
+        ).all(), f"Failed for {string_obj} with decode={decode}"
     # Handle list outputs
     elif isinstance(expected, list):
         assert isinstance(result, list), f"Expected list, but got {type(result)}"

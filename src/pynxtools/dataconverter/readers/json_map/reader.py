@@ -56,7 +56,7 @@ def get_val_nested_keystring_from_dict(keystring, data):
         return data[current_key].values
     if isinstance(data[current_key], xarray.core.dataset.Dataset):
         raise NotImplementedError(
-            "Xarray datasets are not supported. You can only use xarray dataarrays."
+            "Xarray datasets are not supported. " "You can only use xarray dataarrays."
         )
 
     return data[current_key]

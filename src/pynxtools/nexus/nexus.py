@@ -439,7 +439,7 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
             if len(hdf_node.shape) <= 1
             else str(decode_if_string(hdf_node[0])).split("\n")
         )
-        logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
+        logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
     else:
         logger.debug(
             f"===== GROUP (/{hdf_path} "
@@ -460,7 +460,7 @@ def process_node(hdf_node, hdf_path, parser, logger, doc=True):
     for key, value in hdf_node.attrs.items():
         logger.debug(f"===== ATTRS (/{hdf_path}@{key})")
         val = str(decode_if_string(value)).split("\n")
-        logger.debug(f"value: {val[0]} {'...' if len(val) > 1 else ''}")
+        logger.debug(f'value: {val[0]} {"..." if len(val) > 1 else ""}')
         (req_str, nxdef, nxdl_path) = get_nxdl_doc(hdf_info, logger, doc, attr=key)
         if (
             parser is not None
