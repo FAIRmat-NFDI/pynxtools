@@ -176,7 +176,7 @@ def transfer_data_into_template(
     for entry_name in entry_names:
         helpers.write_nexus_def_to_entry(data, entry_name, nxdl_name)
     if not skip_verify:
-        [valid, keys_to_remove] = validate_dict_against(
+        valid, keys_to_remove = validate_dict_against(
             nxdl_name,
             data,
             ignore_undocumented=ignore_undocumented,
@@ -185,7 +185,8 @@ def transfer_data_into_template(
         # remove attributes that belong to non-existing fields
 
         for key in keys_to_remove:
-            data.__delitem__(key)
+            # data.__delitem__(key)
+            del data[key]
 
         if fail and not valid:
             raise ValidationFailed(

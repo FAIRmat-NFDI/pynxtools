@@ -577,9 +577,6 @@ def validate_dict_against(
                 # key is an attribute. Find a corresponding parent, check all the other
                 # children of this parent
                 attribute_parent_checked = False
-                # True if found the value (so, the parent is a field) or non-attribute
-                # children (so the parent is a group) or checked in the tree that
-                # the parent is a group
                 for key_iterating in mapping:
                     # check if key_iterating starts with parent of the key OR any
                     # allowed variation of the parent of the key
@@ -603,14 +600,10 @@ def validate_dict_against(
                     type_of_parent_from_tree = check_type_with_tree(
                         node, key[0:last_index]
                     )
-                    # last two options: 1. The parent is a group which has only attributes
-                    # as children. We check for that in the tree built from
-                    # application definition. In this case we should still write
-                    # the attributes as usual. 2. The parent can not be found in the tree
-                    # and therefore is not a part of the schema. The parent might
-                    # have been intended to be a group as in (1) or a field that is
-                    # missing by a mistake. As we have no way to distinguish,
-                    # we have to assume the former.
+                    # The parent can be a group with only attributes as children; check
+                    # in the tree built from app. def. Alternatively, parent can be not
+                    # in the tree and then group with only attributes is indistinguishable
+                    # from missing field. Continue without warnings or changes.
                     if not (
                         type_of_parent_from_tree == "group"
                         or type_of_parent_from_tree is None
@@ -619,6 +612,11 @@ def validate_dict_against(
                         collector.collect_and_log(
                             key[0:last_index],
                             ValidationProblem.AttributeForNonExistingField,
+                            None,
+                        )
+                        collector.collect_and_log(
+                            key,
+                            ValidationProblem.KeyToBeRemoved,
                             None,
                         )
         return keys_to_remove
