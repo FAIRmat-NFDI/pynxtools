@@ -65,6 +65,7 @@ class ValidationProblem(Enum):
     NXdataMissingSignalData = 17
     NXdataMissingAxisData = 18
     NXdataAxisMismatch = 19
+    KeyToBeRemoved = 20
 
 
 class Collector:
@@ -139,6 +140,8 @@ class Collector:
             logger.warning(
                 f"Length of axis {path} does not match to {value} in dimension {args[0]}"
             )
+        elif log_type == ValidationProblem.KeyToBeRemoved:
+            logger.warning(f"The attribute {path} will not be written.")
 
     def collect_and_log(
         self,
