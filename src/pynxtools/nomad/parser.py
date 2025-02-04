@@ -136,7 +136,7 @@ def _get_value(hdf_node):
     if hdf_value.dtype.kind in "iufc":
         return hdf_value
     if len(hdf_value.shape) > 0:
-        return hdf_value.astype(str)
+        return str([i for i in hdf_value.astype(str)])
     return hdf_node[()].decode()
 
 
@@ -203,6 +203,8 @@ class NexusParser(MatchingParser):
                         attr_value = attr_value.tolist()
                         if len(attr_value) == 1:
                             attr_value = attr_value[0]
+                        else:
+                            attr_value = str(attr_value)
                         # so values of non-scalar attribute will not end up in metainfo!
 
                 current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
