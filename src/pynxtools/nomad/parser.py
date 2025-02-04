@@ -200,12 +200,11 @@ class NexusParser(MatchingParser):
                 attr_value = hdf_node.attrs[attr_name]
                 if not isinstance(attr_value, str):
                     if isinstance(attr_value, np.ndarray):
-                        attr_value = attr_value.tolist()
-                        if len(attr_value) == 1:
-                            attr_value = attr_value[0]
+                        attr_list = attr_value.tolist()
+                        if len(attr_list) == 1 or attr_value.dtype.kind in "iufc":
+                            attr_value = attr_list[0]
                         else:
-                            attr_value = str(attr_value)
-                        # so values of non-scalar attribute will not end up in metainfo!
+                            attr_value = str(attr_list)
 
                 current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
 
