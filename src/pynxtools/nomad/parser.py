@@ -129,6 +129,9 @@ def _get_value(hdf_node):
 
     hdf_value = hdf_node[...]
     if str(hdf_value.dtype) == "bool":
+        if isinstance(hdf_value, (list, tuple, np.ndarray)):
+            # temporary solution for boolean arrays
+            return bool(hdf_value[0])
         return bool(hdf_value)
     if hdf_value.dtype.kind in "iufc":
         return hdf_value
