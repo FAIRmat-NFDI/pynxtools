@@ -553,12 +553,17 @@ def __add_additional_attributes(definition: Definition):
         ):
             return
 
-        for nx_array_attr in [
-            "nx_data_mean",
-            "nx_data_var",
-            "nx_data_min",
-            "nx_data_max",
-        ]:
+        for nx_array_attr, dtype in zip(
+            [
+                "nx_data_mean",
+                "nx_data_var",
+                "nx_data_min",
+                "nx_data_max",
+                "nx_data_size",
+                "nx_data_ndim",
+            ],
+            [np.float64, np.float64, np.float64, np.float64, np.int32, np.int32],
+        ):
             if nx_array_attr in definition.all_attributes:
                 continue
             definition.attributes.append(
@@ -566,7 +571,7 @@ def __add_additional_attributes(definition: Definition):
                     name=nx_array_attr,
                     variable=False,
                     shape=[],
-                    type=np.float64,
+                    type=dtype,
                     description="This is a NeXus template property. "
                     "This attribute holds specific statistics of the NeXus data array.",
                 )

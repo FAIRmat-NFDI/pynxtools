@@ -272,14 +272,14 @@ class NexusParser(MatchingParser):
                 if isinstance(field, np.ndarray) and field.size > 1:
                     mask = np.isfinite(field)
                     if np.any(mask):
-                        field_stats = np.array(
-                            [
-                                np.mean(field[mask]),
-                                np.var(field[mask]),
-                                np.min(field[mask]),
-                                np.max(field[mask]),
-                            ]
-                        )
+                        field_stats = [
+                            np.mean(field[mask]),
+                            np.var(field[mask]),
+                            np.min(field[mask]),
+                            np.max(field[mask]),
+                            np.size(field),
+                            np.ndim(field),
+                        ]
                         field = field_stats[0]
                         if not np.isfinite(field):
                             self._logger.warning(
@@ -330,6 +330,8 @@ class NexusParser(MatchingParser):
                     field.m_set_attribute("nx_data_var", field_stats[1])
                     field.m_set_attribute("nx_data_min", field_stats[2])
                     field.m_set_attribute("nx_data_max", field_stats[3])
+                    field.m_set_attribute("nx_data_size", field_stats[4])
+                    field.m_set_attribute("nx_data_ndim", field_stats[5])
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
