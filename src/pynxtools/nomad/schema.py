@@ -544,14 +544,13 @@ def __add_quantity_stats(container: Section, quantity: Quantity):
     basename = get_quantity_base_name(quantity.name)
     for suffix, dtype in zip(
         [
-            "__mean",
             "__var",
             "__min",
             "__max",
             "__size",
             "__ndim",
         ],
-        [np.float64, np.float64, None, None, np.int32, np.int32],
+        [np.float64, np.float64, np.float64, np.int32, np.int32],
     ):
         container.quantities.append(
             Quantity(

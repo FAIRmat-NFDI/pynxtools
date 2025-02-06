@@ -327,12 +327,11 @@ class NexusParser(MatchingParser):
                     instancename = get_quantity_base_name(data_instance_name)
                     for suffix, stat in zip(
                         [
-                            "__mean",
                             "__var",
                             "__min",
                             "__max",
                             "__size",
-                            "__dim",
+                            "__ndim",
                         ],
                         field_stats[1:],
                     ):
