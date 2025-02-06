@@ -107,6 +107,13 @@ __section_definitions: Dict[str, Section] = dict()
 __logger = get_logger(__name__)
 
 
+class NexusBaseSection(BaseSection):
+    def normalize(self, archive, logger):
+        if self.__dict__["nx_name"]:
+            self.name = self.__dict__["nx_name"]
+        super().normalize(archive, logger)
+
+
 class NexusActivityStep(ActivityStep):
     reference = Quantity(
         type=ArchiveSection,
@@ -535,7 +542,6 @@ def __add_quantity_stats(container: Section, quantity: Quantity):
     ):
         return
     basename = get_quantity_base_name(quantity.name)
-    print(quantity.name, basename)
     for suffix, dtype in zip(
         [
             "__mean",
@@ -547,7 +553,6 @@ def __add_quantity_stats(container: Section, quantity: Quantity):
         ],
         [np.float64, np.float64, None, None, np.int32, np.int32],
     ):
-        print(basename + suffix)
         container.quantities.append(
             Quantity(
                 name=basename + suffix,
@@ -796,7 +801,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
             [NexusMeasurement] if xml_attrs["extends"] == "NXobject" else []
         )
     else:
-        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
+        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection])
 
     nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
@@ -997,6 +1002,7 @@ def init_nexus_metainfo():
     nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
     nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
     nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
