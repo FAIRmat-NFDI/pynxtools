@@ -82,7 +82,11 @@ except ImportError as exc:
 
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __rename_nx_for_nomad
+from pynxtools.nomad.utils import (
+    __REPLACEMENT_FOR_NX,
+    __rename_nx_for_nomad,
+    get_quantity_base_name,
+)
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -516,11 +520,47 @@ def __create_attributes(
             m_attribute.more[f"nx_{name}"] = value
 
         __add_common_properties(attribute, m_attribute)
+        # TODO: decide if stats should be made searchable for attributes, too
+        # __add_quantity_stats(definition,m_attribute)
 
         definition.quantities.append(m_attribute)
 
 
-def __add_additional_attributes(definition: Definition):
+def __add_quantity_stats(container: Section, quantity: Quantity):
+    # TODO We should also check the shape of the quantity and the datatype as
+    # the statistics are always mapping on float64 even if quantity values are ints
+    if not quantity.name.endswith("__field") or (
+        quantity.type not in [np.float64, np.int64, np.uint64]
+        and not isinstance(quantity.type, Number)
+    ):
+        return
+    basename = get_quantity_base_name(quantity.name)
+    print(quantity.name, basename)
+    for suffix, dtype in zip(
+        [
+            "__mean",
+            "__var",
+            "__min",
+            "__max",
+            "__size",
+            "__ndim",
+        ],
+        [np.float64, np.float64, None, None, np.int32, np.int32],
+    ):
+        print(basename + suffix)
+        container.quantities.append(
+            Quantity(
+                name=basename + suffix,
+                variable=quantity.variable,
+                shape=[],
+                type=dtype if dtype else quantity.type,
+                description="This is a NeXus template property. "
+                "This quantity holds specific statistics of the NeXus data array.",
+            )
+        )
+
+
+def __add_additional_attributes(definition: Definition, container: Section):
     if "m_nx_data_path" not in definition.attributes:
         definition.attributes.append(
             Attribute(
@@ -546,36 +586,7 @@ def __add_additional_attributes(definition: Definition):
         )
 
     if isinstance(definition, Quantity):
-        # TODO We should also check the shape of the quantity and the datatype as
-        # the statistics are always mapping on float64 even if quantity values are ints
-        if definition.type not in [np.float64, np.int64, np.uint64] and not isinstance(
-            definition.type, Number
-        ):
-            return
-
-        for nx_array_attr, dtype in zip(
-            [
-                "nx_data_mean",
-                "nx_data_var",
-                "nx_data_min",
-                "nx_data_max",
-                "nx_data_size",
-                "nx_data_ndim",
-            ],
-            [np.float64, np.float64, np.float64, np.float64, np.int32, np.int32],
-        ):
-            if nx_array_attr in definition.all_attributes:
-                continue
-            definition.attributes.append(
-                Attribute(
-                    name=nx_array_attr,
-                    variable=False,
-                    shape=[],
-                    type=dtype,
-                    description="This is a NeXus template property. "
-                    "This attribute holds specific statistics of the NeXus data array.",
-                )
-            )
+        __add_quantity_stats(container, definition)
 
 
 def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
@@ -1005,9 +1016,9 @@ def init_nexus_metainfo():
     for section in sections:
         if not (str(section).startswith("pynxtools.")):
             continue
-        __add_additional_attributes(section)
+        __add_additional_attributes(section, None)
         for quantity in section.quantities:
-            __add_additional_attributes(quantity)
+            __add_additional_attributes(quantity, section)
 
     # We skip the Python code generation for now and offer Python classes as variables
     # TO DO not necessary right now, could also be done case-by-case by the nexus parser

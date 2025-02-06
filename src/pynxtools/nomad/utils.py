@@ -81,3 +81,11 @@ def __rename_nx_for_nomad(
     elif is_attribute:
         pass
     return name
+
+
+def get_quantity_base_name(quantity_name):
+    return (
+        quantity_name[:-7]
+        if quantity_name.endswith("__field") and quantity_name[-8] != "_"
+        else quantity_name
+    )

@@ -40,7 +40,7 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, get_quantity_base_name
 from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
 
 
@@ -323,15 +323,24 @@ class NexusParser(MatchingParser):
                 field.m_set_attribute("m_nx_data_path", hdf_node.name)
                 field.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 if field_stats is not None:
-                    # TODO _add_additional_attributes function has created these nx_data_*
-                    # attributes speculatively already so if the field_stats is None
-                    # this will cause unpopulated attributes in the GUI
-                    field.m_set_attribute("nx_data_mean", field_stats[0])
-                    field.m_set_attribute("nx_data_var", field_stats[1])
-                    field.m_set_attribute("nx_data_min", field_stats[2])
-                    field.m_set_attribute("nx_data_max", field_stats[3])
-                    field.m_set_attribute("nx_data_size", field_stats[4])
-                    field.m_set_attribute("nx_data_ndim", field_stats[5])
+                    concept_basename = get_quantity_base_name(field.name)
+                    instancename = get_quantity_base_name(data_instance_name)
+                    for suffix, stat in zip(
+                        [
+                            "__mean",
+                            "__var",
+                            "__min",
+                            "__max",
+                            "__size",
+                            "__dim",
+                        ],
+                        field_stats[1:],
+                    ):
+                        stat_metainfo_def = resolve_variadic_name(
+                            current.m_def.all_properties, concept_basename + suffix
+                        )
+                        stat = MQuantity.wrap(stat, instancename + suffix)
+                        current.m_set(stat_metainfo_def, stat)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
