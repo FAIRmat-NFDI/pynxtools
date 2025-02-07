@@ -40,8 +40,9 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, get_quantity_base_name
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
 from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.nomad.utils import get_quantity_base_name
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -332,9 +333,9 @@ class NexusParser(MatchingParser):
                             "__min",
                             "__max",
                             "__size",
-                            "__dim",
+                            "__ndim",
                         ],
-                        field_stats[1:],
+                        field_stats,
                     ):
                         stat_metainfo_def = resolve_variadic_name(
                             current.m_def.all_properties, concept_basename + suffix
