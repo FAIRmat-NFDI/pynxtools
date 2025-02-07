@@ -67,7 +67,6 @@ try:
         m_bool,
         m_complex128,
         m_float64,
-        m_int,
         m_int64,
         m_str,
     )
@@ -113,7 +112,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
 }
 
 
-class NexusMeasurement(Measurement):
+class NexusMeasurement(Measurement, Schema):
     def normalize(self, archive, logger):
         try:
             app_entry = getattr(self, "ENTRY")
@@ -210,16 +209,17 @@ def get_nx_type(nx_type: str) -> Optional[Datatype]:
         "NX_CHAR": m_str,
         "NX_BOOLEAN": m_bool,
         "NX_INT": m_int64,
-        "NX_UINT": m_int,
+        "NX_UINT": m_int64,
+        # there is currently no proper support in NOMAD for unsigned int
         "NX_NUMBER": m_float64,
-        "NX_POSINT": m_int,
+        "NX_POSINT": m_int64,
         "NX_BINARY": Bytes,
         "NX_DATE_TIME": Datetime,
     }
 
     if nx_type in __NX_TYPES:
-        if nx_type in ("NX_UINT", "NX_POSINT"):
-            return __NX_TYPES[nx_type](dtype=np.uint64).no_type_check().no_shape_check()
+        # if nx_type in ("NX_UINT", "NX_POSINT"):
+        #     return __NX_TYPES[nx_type](dtype=np.uint64).no_type_check().no_shape_check()
         return __NX_TYPES[nx_type]().no_type_check().no_shape_check()
     return None
 
@@ -364,7 +364,8 @@ def __get_documentation_url(
     )
     nx_package = xml_parent.get("nxdl_base").split("/")[-1]
     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    return f"{doc_base}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
+    nx_file = anchor_segments[-1].replace("-", "_")
+    return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
 
 
 def __to_section(name: str, **kwargs) -> Section:
@@ -633,7 +634,9 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_type = __rename_nx_for_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type.upper())
-        section_name = __rename_nx_for_nomad(nx_name, is_group=True)
+        section_name = (
+            root_section.name + "__" + __rename_nx_for_nomad(nx_name, is_group=True)
+        )
         group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
 
         __attach_base_section(group_section, root_section, __to_section(nx_type))
@@ -651,8 +654,7 @@ def __create_group(xml_node: ET.Element, root_section: Section):
             variable=__if_template(nx_name),
         )
 
-        root_section.inner_section_definitions.append(group_section)
-
+        __section_definitions[section_name] = group_section
         root_section.sub_sections.append(group_subsection)
 
         __create_group(group, group_section)
@@ -707,8 +709,13 @@ def __attach_base_section(section: Section, container: Section, default: Section
     a base-section with a suitable base.
     """
     try:
+        newdefinitions = {}
+        for def_name, act_def in container.all_sub_sections.items():
+            newdefinitions[def_name] = act_def.sub_section
         base_section = nexus_resolve_variadic_name(
-            container.all_inner_section_definitions, section.name, filter=default
+            newdefinitions,
+            section.name.split("__")[-1],
+            filter=default,
         )
     except ValueError:
         base_section = None
@@ -855,7 +862,7 @@ def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Section]:
         return None
 
 
-def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
+def __create_package_from_nxdl_directories() -> Package:
     """
     Creates a metainfo package from the given nexus directory. Will generate the
     respective metainfo definitions from all the nxdl files in that directory.
@@ -875,16 +882,28 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
             sections.append(section)
     sections.sort(key=lambda x: x.name)
 
+    nexus_sections = {}
+    for section_name in ["_Applications", "_BaseSections"]:  # , '_InnerSections']:
+        nexus_sections[section_name] = Section(validate=VALIDATE, name=section_name)
+        package.section_definitions.append(nexus_sections[section_name])
     for section in sections:
         package.section_definitions.append(section)
-        if section.nx_category == "application" or (
-            section.nx_category == "base" and section.nx_name == "NXroot"
-        ):
-            nexus_section.sub_sections.append(
+        if section.nx_category == "application":
+            nexus_sections["_Applications"].sub_sections.append(
                 SubSection(section_def=section, name=section.name)
             )
+        elif section.nx_category == "base" and section.nx_name == "NXroot":
+            nexus_sections["_Applications"].sub_sections.append(
+                SubSection(section_def=section, name=section.name)
+            )
+        elif section.nx_category == "base":
+            nexus_sections["_BaseSections"].sub_sections.append(
+                SubSection(section_def=section, name=section.name)
+            )
+    for section_name, section in __section_definitions.items():
+        if "__" in section_name:
+            package.section_definitions.append(section)
 
-    package.section_definitions.append(nexus_section)
     return package
 
 
@@ -916,14 +935,6 @@ def init_nexus_metainfo():
     if nexus_metainfo_package is not None:
         return
 
-    # We take the application definitions and create a common parent section that allows
-    # to include nexus in an EntryArchive.
-    # To be able to register it into data section, it is expected that this section inherits from Schema.
-    nexus_section = Section(
-        validate=VALIDATE, name=__GROUPING_NAME, label=__GROUPING_NAME
-    )
-    nexus_section.base_sections = [Schema.m_def]
-
     # try:
     #     load_nexus_schema('')
     # except Exception:
@@ -932,7 +943,7 @@ def init_nexus_metainfo():
     #         save_nexus_schema('')
     #     except Exception:
     #         pass
-    nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
+    nexus_metainfo_package = __create_package_from_nxdl_directories()
     nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,

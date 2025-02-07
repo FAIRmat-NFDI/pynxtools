@@ -60,6 +60,7 @@ def _to_section(
     nx_def: str,
     nx_node: Optional[ET.Element],
     current: MSection,
+    nx_root,
 ) -> MSection:
     """
     Args:
@@ -95,17 +96,25 @@ def _to_section(
 
     nomad_def_name = rename_nx_for_nomad(nomad_def_name, is_group=True)
 
-    # for groups, get the definition from the package
-    new_def = current.m_def.all_sub_sections[nomad_def_name]
-
-    new_section: MSection = None  # type:ignore
-
-    for section in current.m_get_sub_sections(new_def):
-        if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
-            new_section = section
-            break
-
-    if new_section is None:
+    if current == nx_root:
+        # for groups, get the definition from the package
+        new_def = current.m_def.all_sub_sections["ENTRY"]
+        for section in current.m_get_sub_sections(new_def):
+            if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
+                return section
+        cls = getattr(nexus_schema, nx_def, None)
+        sec = cls()
+        new_def_spec = sec.m_def.all_sub_sections[nomad_def_name]
+        sec.m_create(new_def_spec.section_def.section_cls)
+        new_section = sec.m_get_sub_section(new_def_spec, -1)
+        current.ENTRY.append(new_section)
+        new_section.__dict__["nx_name"] = hdf_name
+    else:
+        # for groups, get the definition from the package
+        new_def = current.m_def.all_sub_sections[nomad_def_name]
+        for section in current.m_get_sub_sections(new_def):
+            if hdf_name is None or getattr(section, "nx_name", None) == hdf_name:
+                return section
         current.m_create(new_def.section_def.section_cls)
         new_section = current.m_get_sub_section(new_def, -1)
         new_section.__dict__["nx_name"] = hdf_name
@@ -194,7 +203,7 @@ class NexusParser(MatchingParser):
                         # so values of non-scalar attribute will not end up in metainfo!
 
                 attr_name = attr_name + "__attribute"
-                current = _to_section(attr_name, nx_def, nx_attr, current)
+                current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
 
                 try:
                     if nx_root or nx_parent.tag.endswith("group"):
@@ -332,12 +341,13 @@ class NexusParser(MatchingParser):
         if nx_path is None or nx_path == "/":
             return
 
-        current: MSection = _to_section(None, nx_def, None, self.nx_root)
+        # current: MSection = _to_section(None, nx_def, None, self.nx_root)
+        current = self.nx_root
         depth: int = 1
         current_hdf_path = ""
         for name in hdf_path.split("/")[1:]:
             nx_node = nx_path[depth] if depth < len(nx_path) else name
-            current = _to_section(name, nx_def, nx_node, current)
+            current = _to_section(name, nx_def, nx_node, current, self.nx_root)
             self._collect_class(current)
             depth += 1
             if depth < len(nx_path):
@@ -467,14 +477,26 @@ class NexusParser(MatchingParser):
         logger=None,
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
+        import debugpy  # will connect to dbgger if in dbg mode
+
+        debugpy.debug_this_thread()  # now anywhere can place manual breakpoint
+        # next line just an example
+        # debugpy.breakpoint()
+
         self.archive = archive
-        self.nx_root = nexus_schema.NeXus()  # type: ignore # pylint: disable=no-member
+        self.nx_root = nexus_schema.Root()  # type: ignore # pylint: disable=no-member
 
         self.archive.data = self.nx_root
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
 
-        *_, self.nxs_fname = mainfile.rsplit("/", 1)
+        mf = mainfile.split("/")
+        # if filename does not follow the pattern
+        # .volumes/fs/<upload type>/<upload 2char>/<upoad>/<raw/arch>/[subdirs?]/<filename>
+        if len(mf) < 7:
+            self.nxs_fname = mainfile
+        else:
+            self.nxs_fname = "/".join(mf[6:])
         nexus_helper = HandleNexus(logger, mainfile)
         nexus_helper.process_nexus_master_file(self.__nexus_populate)
 
@@ -483,25 +505,18 @@ class NexusParser(MatchingParser):
             archive.metadata = EntryMetadata()
 
         # Normalise experiment type
-        app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
-        app_def_list = []
-        for app_elem in app_defs:
-            app = app_elem.lstrip()
-            try:
-                app_sec = getattr(self.nx_root, app)
+        # app_defs = str(self.nx_root).split("(")[1].split(")")[0].split(",")
+        app_def_list = set()
+        try:
+            app_entries = getattr(self.nx_root, "ENTRY")
+            for entry in app_entries:
                 try:
-                    app_entry = getattr(app_sec, "ENTRY")
-                    if len(app_entry) < 1:
-                        raise AttributeError()
+                    app = entry.definition__field
+                    app_def_list.add(rename_nx_for_nomad(app) if app else "Generic")
                 except (AttributeError, TypeError):
-                    app_entry = getattr(app_sec, "entry")
-                    if len(app_entry) < 1:
-                        raise AttributeError()
-                app_def_list.append(
-                    app if app != rename_nx_for_nomad("NXroot") else "Generic"
-                )
-            except (AttributeError, TypeError):
-                pass
+                    pass
+        except (AttributeError, TypeError):
+            pass
         if len(app_def_list) == 0:
             app_def = "Experiment"
         else:
@@ -525,3 +540,11 @@ class NexusParser(MatchingParser):
 
         chemical_formulas = self._get_chemical_formulas()
         self.normalize_chemical_formula(chemical_formulas)
+
+
+# import sys
+# if __name__ == "__main__":
+#     fpath = "/home/kaiobach/Research/hu_hu_hu/sprint26/pynx-apm/pynxtools_apm/tests/prod/ger_saarbruecken_pauly.073.0.nxs"
+#     print(f">>>>>>>{fpath}")
+#     empty_archive = EntryArchive()
+#     NexusParser().parse(mainfile=fpath, archive=empty_archive)
