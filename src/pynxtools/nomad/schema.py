@@ -527,7 +527,7 @@ def __create_attributes(
             m_attribute.more[f"nx_{name}"] = value
 
         __add_common_properties(attribute, m_attribute)
-        # TODO: decide if stats should be made searchable for attributes, too
+        # TODO: decide if stats/instancename should be made searchable for attributes, too
         # __add_quantity_stats(definition,m_attribute)
 
         definition.quantities.append(m_attribute)
@@ -536,22 +536,39 @@ def __create_attributes(
 def __add_quantity_stats(container: Section, quantity: Quantity):
     # TODO We should also check the shape of the quantity and the datatype as
     # the statistics are always mapping on float64 even if quantity values are ints
-    if not quantity.name.endswith("__field") or (
-        quantity.type not in [np.float64, np.int64, np.uint64]
-        and not isinstance(quantity.type, Number)
-    ):
+    if not quantity.name.endswith("__field"):
+        return
+    isvariadic = any(char.isupper() for char in quantity.more["nx_name"])
+    notnumber = quantity.type not in [
+        np.float64,
+        np.int64,
+        np.uint64,
+    ] and not isinstance(quantity.type, Number)
+    if notnumber or not isvariadic:
         return
     basename = get_quantity_base_name(quantity.name)
+    if isvariadic:
+        container.quantities.append(
+            Quantity(
+                name=basename + "__name",
+                variable=quantity.variable,
+                shape=[],
+                type=str,
+                description="This is a NeXus template property. "
+                "This quantity holds the instance name of a NeXus Field.",
+            )
+        )
+    if notnumber:
+        return
     for suffix, dtype in zip(
         [
-            "__mean",
             "__var",
             "__min",
             "__max",
             "__size",
             "__ndim",
         ],
-        [np.float64, np.float64, None, None, np.int32, np.int32],
+        [np.float64, None, None, np.int32, np.int32],
     ):
         container.quantities.append(
             Quantity(
