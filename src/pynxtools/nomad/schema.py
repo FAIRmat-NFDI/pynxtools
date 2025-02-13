@@ -159,19 +159,17 @@ class NexusMeasurement(Measurement, Schema):
             for entry in app_entry:
                 ref = NexusActivityStep(name=entry.name, reference=entry)
                 self.steps.append(ref)
+                mapping = {
+                    ActivityStep: (NexusActivityStep, self.steps),
+                    basesections.Instrument: (InstrumentReference, self.instruments),
+                    CompositeSystem: (CompositeSystemReference, self.samples),
+                    ActivityResult: (NexusActivityResult, self.results),
+                }
                 for sec in entry.m_all_contents():
-                    if isinstance(sec, ActivityStep):
-                        ref = NexusActivityStep(name=sec.name, reference=sec)
-                        self.steps.append(ref)
-                    elif isinstance(sec, basesections.Instrument):
-                        ref = InstrumentReference(name=sec.name, reference=sec)
-                        self.instruments.append(ref)
-                    elif isinstance(sec, CompositeSystem):
-                        ref = CompositeSystemReference(name=sec.name, reference=sec)
-                        self.samples.append(ref)
-                    elif isinstance(sec, ActivityResult):
-                        ref = NexusActivityResult(name=sec.name, reference=sec)
-                        self.results.append(ref)
+                    for cls, (ref_cls, collection) in mapping.items():
+                        if isinstance(sec, cls):
+                            collection.append(ref_cls(name=sec.name, reference=sec))
+                            break
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
@@ -963,7 +961,9 @@ def __create_package_from_nxdl_directories() -> Package:
             key = None
 
         if key:
-            nexus_sections[key].sub_sections.append(SubSection(section_def=section, name=section.name))
+            nexus_sections[key].sub_sections.append(
+                SubSection(section_def=section, name=section.name)
+            )
     for section_name, section in __section_definitions.items():
         if "__" in section_name:
             package.section_definitions.append(section)
