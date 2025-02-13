@@ -40,7 +40,8 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import __FIELD_STATISTICS, __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __FIELD_STATISTICS as FIELD_STATISTICS
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
 from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
 from pynxtools.nomad.utils import get_quantity_base_name
 
@@ -277,8 +278,8 @@ class NexusParser(MatchingParser):
                         field_stats = [
                             func(field[mask] if ismask else field)
                             for func, ismask in zip(
-                                __FIELD_STATISTICS["function"],
-                                __FIELD_STATISTICS["mask"],
+                                FIELD_STATISTICS["function"],
+                                FIELD_STATISTICS["mask"],
                             )
                         ]
                         field = field_stats[0]
@@ -310,8 +311,11 @@ class NexusParser(MatchingParser):
                         pint_unit = ureg.parse_units("1")
                     field = ureg.Quantity(field, pint_unit)
                     if field_stats is not None:
-                        for i in range(4):
-                            field_stats[i] = ureg.Quantity(field_stats[i], pint_unit)
+                        for i in range(len(field_stats)):
+                            if FIELD_STATISTICS["mask"][i]:
+                                field_stats[i] = ureg.Quantity(
+                                    field_stats[i], pint_unit
+                                )
 
                 except (ValueError, UndefinedUnitError):
                     pass
@@ -340,7 +344,7 @@ class NexusParser(MatchingParser):
                     concept_basename = get_quantity_base_name(field.name)
                     instancename = get_quantity_base_name(data_instance_name)
                     for suffix, stat in zip(
-                        __FIELD_STATISTICS["suffix"][1:],
+                        FIELD_STATISTICS["suffix"][1:],
                         field_stats[1:],
                     ):
                         stat_metainfo_def = resolve_variadic_name(

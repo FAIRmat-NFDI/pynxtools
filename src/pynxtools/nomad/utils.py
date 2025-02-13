@@ -18,6 +18,8 @@
 
 from typing import Optional
 
+import numpy as np
+
 __REPLACEMENT_FOR_NX = ""
 
 # This is a list of NeXus group names that are not allowed because they are defined as quantities in the BaseSection class.
@@ -92,8 +94,8 @@ def get_quantity_base_name(quantity_name):
 
 
 __FIELD_STATISTICS = {
-    "suffix": ["__mean", "__var", "__min", "__max", "__size", "__ndim"],
-    "function": [np.mean, np.var, np.min, np.max, np.size, np.ndim],
+    "suffix": ["__mean", "__std", "__min", "__max", "__size", "__ndim"],
+    "function": [np.mean, np.std, np.min, np.max, np.size, np.ndim],
     "type": [np.float64, np.float64, None, None, np.int32, np.int32],
     "mask": [True, True, True, True, False, False],
 }
