@@ -89,3 +89,11 @@ def get_quantity_base_name(quantity_name):
         if quantity_name.endswith("__field") and quantity_name[-8] != "_"
         else quantity_name
     )
+
+
+__FIELD_STATISTICS = {
+    "suffix": ["__mean", "__var", "__min", "__max", "__size", "__ndim"],
+    "function": [np.mean, np.var, np.min, np.max, np.size, np.ndim],
+    "type": [np.float64, np.float64, None, None, np.int32, np.int32],
+    "mask": [True, True, True, True, False, False],
+}

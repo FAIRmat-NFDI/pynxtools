@@ -83,6 +83,7 @@ except ImportError as exc:
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad.utils import (
+    __FIELD_STATISTICS,
     __REPLACEMENT_FOR_NX,
     __rename_nx_for_nomad,
     get_quantity_base_name,
@@ -561,14 +562,8 @@ def __add_quantity_stats(container: Section, quantity: Quantity):
     if notnumber:
         return
     for suffix, dtype in zip(
-        [
-            "__var",
-            "__min",
-            "__max",
-            "__size",
-            "__ndim",
-        ],
-        [np.float64, None, None, np.int32, np.int32],
+        __FIELD_STATISTICS["suffix"][1:],
+        __FIELD_STATISTICS["type"][1:],
     ):
         container.quantities.append(
             Quantity(

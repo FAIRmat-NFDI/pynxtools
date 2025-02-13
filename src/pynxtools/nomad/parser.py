@@ -40,7 +40,7 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __FIELD_STATISTICS, __REPLACEMENT_FOR_NX
 from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
 from pynxtools.nomad.utils import get_quantity_base_name
 
@@ -275,12 +275,11 @@ class NexusParser(MatchingParser):
                     mask = np.isfinite(field)
                     if np.any(mask):
                         field_stats = [
-                            np.mean(field[mask]),
-                            np.var(field[mask]),
-                            np.min(field[mask]),
-                            np.max(field[mask]),
-                            np.size(field),
-                            np.ndim(field),
+                            func(field[mask] if ismask else field)
+                            for func, ismask in zip(
+                                __FIELD_STATISTICS["function"],
+                                __FIELD_STATISTICS["mask"],
+                            )
                         ]
                         field = field_stats[0]
                         if not np.isfinite(field):
@@ -341,13 +340,7 @@ class NexusParser(MatchingParser):
                     concept_basename = get_quantity_base_name(field.name)
                     instancename = get_quantity_base_name(data_instance_name)
                     for suffix, stat in zip(
-                        [
-                            "__var",
-                            "__min",
-                            "__max",
-                            "__size",
-                            "__ndim",
-                        ],
+                        __FIELD_STATISTICS["suffix"][1:],
                         field_stats[1:],
                     ):
                         stat_metainfo_def = resolve_variadic_name(
