@@ -955,18 +955,15 @@ def __create_package_from_nxdl_directories() -> Package:
         package.section_definitions.append(nexus_sections[section_name])
     for section in sections:
         package.section_definitions.append(section)
-        if section.nx_category == "application":
-            nexus_sections["_Applications"].sub_sections.append(
-                SubSection(section_def=section, name=section.name)
-            )
-        elif section.nx_category == "base" and section.nx_name == "NXroot":
-            nexus_sections["_Applications"].sub_sections.append(
-                SubSection(section_def=section, name=section.name)
-            )
+        if section.nx_category == "application" or section.nx_name == "NXroot":
+            key = "_Applications"
         elif section.nx_category == "base":
-            nexus_sections["_BaseSections"].sub_sections.append(
-                SubSection(section_def=section, name=section.name)
-            )
+            key = "_BaseSections"
+        else:
+            key = None
+
+        if key:
+            nexus_sections[key].sub_sections.append(SubSection(section_def=section, name=section.name))
     for section_name, section in __section_definitions.items():
         if "__" in section_name:
             package.section_definitions.append(section)
