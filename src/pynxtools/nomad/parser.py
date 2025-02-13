@@ -518,13 +518,9 @@ class NexusParser(MatchingParser):
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
 
-        mf = mainfile.split("/")
         # if filename does not follow the pattern
         # .volumes/fs/<upload type>/<upload 2char>/<upoad>/<raw/arch>/[subdirs?]/<filename>
-        if len(mf) < 7:
-            self.nxs_fname = mainfile
-        else:
-            self.nxs_fname = "/".join(mf[6:])
+        self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
         nexus_helper = HandleNexus(logger, mainfile)
         nexus_helper.process_nexus_master_file(self.__nexus_populate)
 
