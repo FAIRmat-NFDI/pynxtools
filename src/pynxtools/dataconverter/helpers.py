@@ -65,6 +65,7 @@ class ValidationProblem(Enum):
     NXdataMissingSignalData = 17
     NXdataMissingAxisData = 18
     NXdataAxisMismatch = 19
+    KeyToBeRemoved = 20
 
 
 class Collector:
@@ -139,6 +140,8 @@ class Collector:
             logger.warning(
                 f"Length of axis {path} does not match to {value} in dimension {args[0]}"
             )
+        elif log_type == ValidationProblem.KeyToBeRemoved:
+            logger.warning(f"The attribute {path} will not be written.")
 
     def collect_and_log(
         self,
@@ -689,9 +692,12 @@ def is_valid_data_field(value, nxdl_type, path):
 
     If it fails to convert, it raises an Exception.
 
-    As a default it just returns the value again.
+    Returns two values: first, boolean (True if the the value corresponds to nxdl_type,
+    False otherwise) and second, result of attempted conversion or the original value
+    (if conversion is not needed or impossible)
     """
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+    output_value = value
 
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
         try:
@@ -699,14 +705,16 @@ def is_valid_data_field(value, nxdl_type, path):
                 value = convert_str_to_bool_safe(value)
                 if value is None:
                     raise ValueError
-            return accepted_types[0](value)
+            output_value = accepted_types[0](value)
         except ValueError:
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
+            return False, value
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
+        return False, value
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(
@@ -716,8 +724,9 @@ def is_valid_data_field(value, nxdl_type, path):
         results = iso8601.search(value)
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
+            return False, value
 
-    return True
+    return True, output_value
 
 
 @lru_cache(maxsize=None)

@@ -117,6 +117,6 @@ def test_has_correct_read_func(reader, caplog):
                 with caplog.at_level(logging.WARNING):
                     validate_dict_against(
                         supported_nxdl, read_data, ignore_undocumented=True
-                    )
+                    )[0]
 
                 print(caplog.text)
