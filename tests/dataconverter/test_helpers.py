@@ -172,13 +172,13 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/program_name"] = "Testing program"
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type"
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
-        "2022-01-22T12" ":14:12.05018+00:00"
+        "2022-01-22T12:14:12.05018+00:00"
     )
     template["/ENTRY[my_entry]/required_group/description"] = "An example description"
     template["/ENTRY[my_entry]/required_group2/description"] = "An example description"
     template["/ENTRY[my_entry]/does/not/exist"] = "random"
     template["/ENTRY[my_entry]/links/ext_link"] = {
-        "link": f"{tmp_path}/" f"xarray_saved_small_cali" f"bration.h5:/axes/ax3"
+        "link": f"{tmp_path}/xarray_saved_small_calibration.h5:/axes/ax3"
     }
     return template
 
