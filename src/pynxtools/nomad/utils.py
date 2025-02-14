@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-from typing import Optional
+from typing import Dict, Optional
 
 import numpy as np
 
@@ -93,7 +93,7 @@ def get_quantity_base_name(quantity_name):
     )
 
 
-__FIELD_STATISTICS = {
+__FIELD_STATISTICS: Dict[str, list] = {
     "suffix": ["__mean", "__std", "__min", "__max", "__size", "__ndim"],
     "function": [np.mean, np.std, np.min, np.max, np.size, np.ndim],
     "type": [np.float64, np.float64, None, None, np.int32, np.int32],
