@@ -27,7 +27,7 @@ try:
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import EntryData
     from nomad.datamodel.results import Material, Results
-    from nomad.metainfo import MSection
+    from nomad.metainfo import MEnum, MSection
     from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
     from nomad.parsing import MatchingParser
     from nomad.units import ureg
@@ -199,61 +199,52 @@ class NexusParser(MatchingParser):
 
                 attr_name = nx_attr.get("name")  # could be 1D array, float or int
                 attr_value = hdf_node.attrs[attr_name]
-                if not isinstance(attr_value, str):
-                    if isinstance(attr_value, np.ndarray):
-                        attr_list = attr_value.tolist()
-                        if len(attr_list) == 1 or attr_value.dtype.kind in "iufc":
-                            attr_value = attr_list[0]
-                        else:
-                            attr_value = str(attr_list)
-
                 current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
-
-                attribute = attr_value
-                # TODO: get unit from attribute <xxx>_units
                 try:
                     if nx_root or nx_parent.tag.endswith("group"):
-                        attribute_name = "___" + attr_name
+                        parent_html_name = ""
+                        parent_name = ""
+                        parent_field_name = ""
+                    else:
+                        parent_html_name = nx_path[-2].get("name")
+                        parent_name = hdf_node.name.split("/")[-1]
+                        parent_field_name = parent_html_name + "__field"
+                    attribute_name = parent_html_name + "___" + attr_name
+                    data_instance_name = parent_name + "___" + attr_name
+                    metainfo_def = None
+                    try:
                         metainfo_def = resolve_variadic_name(
                             current.m_def.all_properties, attribute_name
                         )
+                        attribute = attr_value
+                        # TODO: get unit from attribute <xxx>_units
+                        if isinstance(metainfo_def.type, MEnum):
+                            attribute = str(attr_value)
+                        elif not isinstance(attr_value, str):
+                            if isinstance(attr_value, np.ndarray):
+                                attr_list = attr_value.tolist()
+                                if (
+                                    len(attr_list) == 1
+                                    or attr_value.dtype.kind in "iufc"
+                                ):
+                                    attribute = attr_list[0]
+                                else:
+                                    attribute = str(attr_list)
                         if metainfo_def.use_full_storage:
-                            attribute = MQuantity.wrap(attribute, attribute_name)
-                        current.m_set(metainfo_def, attribute)
-                        # if attributes are set before setting the quantity, a bug can cause them being set under a wrong variadic name
-                        attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
-                        attribute.m_set_attribute("m_nx_data_file", self.nxs_fname)
-                    else:
-                        parent_html_name = nx_path[-2].get("name")
-
-                        parent_instance_name = hdf_node.name.split("/")[-1] + "__field"
-                        parent_field_name = parent_html_name + "__field"
-
-                        metainfo_def = None
-                        try:
-                            attribute_name = parent_html_name + "___" + attr_name
-                            metainfo_def = resolve_variadic_name(
-                                current.m_def.all_properties, attribute_name
-                            )
-                            data_instance_name = (
-                                hdf_node.name.split("/")[-1] + "___" + attr_name
-                            )
-                            if metainfo_def.use_full_storage:
-                                attribute = MQuantity.wrap(
-                                    attribute, data_instance_name
-                                )
-                        except ValueError as exc:
-                            self._logger.warning(
-                                f"{current.m_def} has no suitable property for {parent_field_name} and {attr_name} as {attribute_name}",
-                                target_name=attr_name,
-                                exc_info=exc,
-                            )
-                        current.m_set(metainfo_def, attribute)
-                        attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
-                        attribute.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                            attribute = MQuantity.wrap(attribute, data_instance_name)
+                    except ValueError as exc:
+                        self._logger.warning(
+                            f"{current.m_def} has no suitable property for {parent_field_name} and {attr_name} as {attribute_name}",
+                            target_name=attr_name,
+                            exc_info=exc,
+                        )
+                    current.m_set(metainfo_def, attribute)
+                    # if attributes are set before setting the quantity, a bug can cause them being set under a wrong variadic name
+                    attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
+                    attribute.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 except Exception as e:
                     self._logger.warning(
-                        "error while setting attribute",
+                        f"error while setting attribute {data_instance_name} in {current.m_def} as {metainfo_def}",
                         target_name=attr_name,
                         exc_info=e,
                     )
