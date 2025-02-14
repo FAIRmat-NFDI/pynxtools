@@ -63,7 +63,7 @@ nexus_parser = NexusParserEntryPoint(
     name="pynxtools parser",
     description="A parser for nexus files.",
     mainfile_name_re=r".*\.nxs",
-    mainfile_mime_re="application/x-hdf5",
+    mainfile_mime_re="application/x-hdf*",
 )
 
 from nomad.config.models.ui import (
@@ -76,7 +76,7 @@ from nomad.config.models.ui import (
     SearchQuantities,
 )
 
-schema = "pynxtools.nomad.schema.NeXus"
+schema = "pynxtools.nomad.schema.Root"
 
 nexus_app = AppEntryPoint(
     name="NexusApp",
@@ -105,17 +105,17 @@ nexus_app = AppEntryPoint(
             Column(quantity=f"entry_type", selected=True),
             Column(
                 title="definition",
-                quantity=f"data.*.ENTRY[*].definition__field#{schema}",
+                quantity=f"data.ENTRY[*].definition__field#{schema}",
                 selected=True,
             ),
             Column(
                 title="start_time",
-                quantity=f"data.*.ENTRY[*].start_time__field#{schema}",
+                quantity=f"data.ENTRY[*].start_time__field#{schema}",
                 selected=True,
             ),
             Column(
                 title="title",
-                quantity=f"data.*.ENTRY[*].title__field#{schema}",
+                quantity=f"data.ENTRY[*].title__field#{schema}",
                 selected=True,
             ),
         ],
@@ -161,8 +161,8 @@ nexus_app = AppEntryPoint(
                     "autorange": True,
                     "nbins": 30,
                     "scale": "linear",
-                    "quantity": f"data.Root.datetime#{schema}",
-                    "title": "Procesing Time",
+                    "quantity": f"data.ENTRY.start_time__field#{schema}",
+                    "title": "Start Time",
                     "layout": {
                         "lg": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 0, "x": 0}
                     },
@@ -175,6 +175,16 @@ nexus_app = AppEntryPoint(
                     "title": "Entry Type",
                     "layout": {
                         "lg": {"minH": 3, "minW": 3, "h": 8, "w": 4, "y": 0, "x": 12}
+                    },
+                },
+                {
+                    "type": "terms",
+                    "show_input": False,
+                    "scale": "linear",
+                    "quantity": f"data.ENTRY.definition__field#{schema}",
+                    "title": "Definition",
+                    "layout": {
+                        "lg": {"minH": 3, "minW": 3, "h": 8, "w": 4, "y": 0, "x": 16}
                     },
                 },
                 {

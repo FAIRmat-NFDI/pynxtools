@@ -33,8 +33,9 @@ import numpy as np
 try:
     from nomad import utils
     from nomad.datamodel import EntryArchive, EntryMetadata
-    from nomad.datamodel.data import EntryData, Schema
+    from nomad.datamodel.data import ArchiveSection, EntryData, Schema
     from nomad.datamodel.metainfo import basesections
+    from nomad.datamodel.metainfo.annotations import ELNAnnotation
     from nomad.datamodel.metainfo.basesections import (
         ActivityResult,
         ActivityStep,
@@ -81,7 +82,12 @@ except ImportError as exc:
 
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, __rename_nx_for_nomad
+from pynxtools.nomad.utils import (
+    __FIELD_STATISTICS,
+    __REPLACEMENT_FOR_NX,
+    __rename_nx_for_nomad,
+    get_quantity_base_name,
+)
 
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -101,19 +107,49 @@ __section_definitions: Dict[str, Section] = dict()
 
 __logger = get_logger(__name__)
 
+
+class NexusBaseSection(BaseSection):
+    def normalize(self, archive, logger):
+        if self.__dict__["nx_name"]:
+            self.name = self.__dict__["nx_name"]
+        super().normalize(archive, logger)
+
+
+class NexusActivityStep(ActivityStep):
+    reference = Quantity(
+        type=ArchiveSection,
+        description="A reference to a NeXus Activity Step.",
+        a_eln=ELNAnnotation(
+            component="ReferenceEditQuantity",
+            label="section reference",
+        ),
+    )
+
+
+class NexusActivityResult(ActivityResult):
+    reference = Quantity(
+        type=ArchiveSection,
+        description="A reference to a NeXus Activity Result.",
+        a_eln=ELNAnnotation(
+            component="ReferenceEditQuantity",
+            label="section reference",
+        ),
+    )
+
+
 __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
     "NXidentifier": [EntityReference],
-    "NXentry": [ActivityStep],
-    "NXprocess": [ActivityStep],
-    "NXdata": [ActivityResult],
+    "NXentry": [NexusActivityStep],
+    "NXprocess": [NexusActivityStep],
+    "NXdata": [NexusActivityResult],
     # "object": BaseSection,
 }
 
 
-class NexusMeasurement(Measurement):
+class NexusMeasurement(Measurement, Schema):
     def normalize(self, archive, logger):
         try:
             app_entry = getattr(self, "ENTRY")
@@ -121,23 +157,19 @@ class NexusMeasurement(Measurement):
                 raise AttributeError()
             self.steps = []
             for entry in app_entry:
-                sec_c = entry.m_copy()
-                self.steps.append(sec_c)
+                ref = NexusActivityStep(name=entry.name, reference=entry)
+                self.steps.append(ref)
+                mapping = {
+                    ActivityStep: (NexusActivityStep, self.steps),
+                    basesections.Instrument: (InstrumentReference, self.instruments),
+                    CompositeSystem: (CompositeSystemReference, self.samples),
+                    ActivityResult: (NexusActivityResult, self.results),
+                }
                 for sec in entry.m_all_contents():
-                    if isinstance(sec, ActivityStep):
-                        sec_c = sec.m_copy()
-                        self.steps.append(sec_c)
-                    elif isinstance(sec, basesections.Instrument):
-                        ref = InstrumentReference(name=sec.name)
-                        ref.reference = sec
-                        self.instruments.append(ref)
-                    elif isinstance(sec, CompositeSystem):
-                        ref = CompositeSystemReference(name=sec.name)
-                        ref.reference = sec
-                        self.samples.append(ref)
-                    elif isinstance(sec, ActivityResult):
-                        sec_c = sec.m_copy()
-                        self.results.append(sec_c)
+                    for cls, (ref_cls, collection) in mapping.items():
+                        if isinstance(sec, cls):
+                            collection.append(ref_cls(name=sec.name, reference=sec))
+                            break
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
@@ -158,7 +190,7 @@ class NexusMeasurement(Measurement):
         act_array = archive.workflow2.tasks
         existing_items = {(task.name, task.section) for task in act_array}
         new_items = [
-            item.to_task()
+            item.reference.to_task()
             for item in self.steps
             if (item.name, item) not in existing_items
         ]
@@ -177,9 +209,9 @@ class NexusMeasurement(Measurement):
         act_array = archive.workflow2.outputs
         existing_items = {(link.name, link.section) for link in act_array}
         new_items = [
-            Link(name=item.name, section=item)
+            Link(name=item.name, section=item.reference)
             for item in self.results
-            if (item.name, item) not in existing_items
+            if (item.name, item.reference) not in existing_items
         ]
         act_array.extend(new_items)
 
@@ -364,7 +396,8 @@ def __get_documentation_url(
     )
     nx_package = xml_parent.get("nxdl_base").split("/")[-1]
     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    return f"{doc_base}/{nx_package}/{anchor_segments[-1]}.html#{anchor}"
+    nx_file = anchor_segments[-1].replace("-", "_")
+    return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
 
 
 def __to_section(name: str, **kwargs) -> Section:
@@ -445,16 +478,19 @@ def __add_common_properties(xml_node: ET.Element, definition: Definition):
         definition.more["nx_optional"] = __if_base(xml_node)
 
 
-def __create_attributes(xml_node: ET.Element, definition: Union[Section, Quantity]):
+def __create_attributes(
+    xml_node: ET.Element, definition: Union[Section, Quantity], field: Quantity = None
+):
     """
     Add all attributes in the given nexus XML node to the given
-    Quantity or SubSection using the Attribute class (new mechanism).
+    Quantity or SubSection using a specially named Quantity class.
 
     todo: account for more attributes of attribute, e.g., default, minOccurs
     """
     for attribute in xml_node.findall("nx:attribute", __XML_NAMESPACES):
         name = __rename_nx_for_nomad(attribute.get("name"), is_attribute=True)
 
+        shape: list = []
         nx_enum = __get_enumeration(attribute)
         if nx_enum:
             nx_type = nx_enum
@@ -473,19 +509,73 @@ def __create_attributes(xml_node: ET.Element, definition: Union[Section, Quantit
             else:
                 nx_shape = []
 
-        m_attribute = Attribute(
-            name=name, variable=__if_template(name), shape=nx_shape, type=nx_type
+        a_name = (field.more["nx_name"] if field else "") + "___" + name
+        m_attribute = Quantity(
+            name=a_name,
+            variable=__if_template(name)
+            or (__if_template(field.more["nx_name"]) if field else False),
+            shape=shape,
+            type=nx_type,
+            flexible_unit=True,
+        )
+        m_attribute.more.update(
+            dict(nx_kind="attribute")  # , nx_type=nx_type, nx_shape=nx_shape)
         )
 
         for name, value in attribute.items():
             m_attribute.more[f"nx_{name}"] = value
 
         __add_common_properties(attribute, m_attribute)
+        # TODO: decide if stats/instancename should be made searchable for attributes, too
+        # __add_quantity_stats(definition,m_attribute)
 
-        definition.attributes.append(m_attribute)
+        definition.quantities.append(m_attribute)
 
 
-def __add_additional_attributes(definition: Definition):
+def __add_quantity_stats(container: Section, quantity: Quantity):
+    # TODO We should also check the shape of the quantity and the datatype as
+    # the statistics are always mapping on float64 even if quantity values are ints
+    if not quantity.name.endswith("__field"):
+        return
+    isvariadic = any(char.isupper() for char in quantity.more["nx_name"])
+    notnumber = quantity.type not in [
+        np.float64,
+        np.int64,
+        np.uint64,
+    ] and not isinstance(quantity.type, Number)
+    if notnumber and not isvariadic:
+        return
+    basename = get_quantity_base_name(quantity.name)
+    if isvariadic:
+        container.quantities.append(
+            Quantity(
+                name=basename + "__name",
+                variable=quantity.variable,
+                shape=[],
+                type=str,
+                description="This is a NeXus template property. "
+                "This quantity holds the instance name of a NeXus Field.",
+            )
+        )
+    if notnumber:
+        return
+    for suffix, dtype in zip(
+        __FIELD_STATISTICS["suffix"][1:],
+        __FIELD_STATISTICS["type"][1:],
+    ):
+        container.quantities.append(
+            Quantity(
+                name=basename + suffix,
+                variable=quantity.variable,
+                shape=[],
+                type=dtype if dtype else quantity.type,
+                description="This is a NeXus template property. "
+                "This quantity holds specific statistics of the NeXus data array.",
+            )
+        )
+
+
+def __add_additional_attributes(definition: Definition, container: Section):
     if "m_nx_data_path" not in definition.attributes:
         definition.attributes.append(
             Attribute(
@@ -511,31 +601,7 @@ def __add_additional_attributes(definition: Definition):
         )
 
     if isinstance(definition, Quantity):
-        # TODO We should also check the shape of the quantity and the datatype as
-        # the statistics are always mapping on float64 even if quantity values are ints
-        if definition.type not in [np.float64, np.int64, np.uint64] and not isinstance(
-            definition.type, Number
-        ):
-            return
-
-        for nx_array_attr in [
-            "nx_data_mean",
-            "nx_data_var",
-            "nx_data_min",
-            "nx_data_max",
-        ]:
-            if nx_array_attr in definition.all_attributes:
-                continue
-            definition.attributes.append(
-                Attribute(
-                    name=nx_array_attr,
-                    variable=False,
-                    shape=[],
-                    type=np.float64,
-                    description="This is a NeXus template property. "
-                    "This attribute holds specific statistics of the NeXus data array.",
-                )
-            )
+        __add_quantity_stats(container, definition)
 
 
 def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
@@ -614,7 +680,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     container.quantities.append(value_quantity)
 
-    __create_attributes(xml_node, value_quantity)
+    __create_attributes(xml_node, container, value_quantity)
 
     return value_quantity
 
@@ -633,7 +699,9 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_type = __rename_nx_for_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type.upper())
-        section_name = __rename_nx_for_nomad(nx_name, is_group=True)
+        section_name = (
+            root_section.name + "__" + __rename_nx_for_nomad(nx_name, is_group=True)
+        )
         group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
 
         __attach_base_section(group_section, root_section, __to_section(nx_type))
@@ -651,8 +719,7 @@ def __create_group(xml_node: ET.Element, root_section: Section):
             variable=__if_template(nx_name),
         )
 
-        root_section.inner_section_definitions.append(group_section)
-
+        __section_definitions[section_name] = group_section
         root_section.sub_sections.append(group_subsection)
 
         __create_group(group, group_section)
@@ -707,8 +774,13 @@ def __attach_base_section(section: Section, container: Section, default: Section
     a base-section with a suitable base.
     """
     try:
+        newdefinitions = {}
+        for def_name, act_def in container.all_sub_sections.items():
+            newdefinitions[def_name] = act_def.sub_section
         base_section = nexus_resolve_variadic_name(
-            container.all_inner_section_definitions, section.name, filter=default
+            newdefinitions,
+            section.name.split("__")[-1],
+            filter=default,
         )
     except ValueError:
         base_section = None
@@ -739,7 +811,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
             [NexusMeasurement] if xml_attrs["extends"] == "NXobject" else []
         )
     else:
-        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [BaseSection])
+        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection])
 
     nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
@@ -855,7 +927,7 @@ def __add_section_from_nxdl(xml_node: ET.Element) -> Optional[Section]:
         return None
 
 
-def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
+def __create_package_from_nxdl_directories() -> Package:
     """
     Creates a metainfo package from the given nexus directory. Will generate the
     respective metainfo definitions from all the nxdl files in that directory.
@@ -875,16 +947,27 @@ def __create_package_from_nxdl_directories(nexus_section: Section) -> Package:
             sections.append(section)
     sections.sort(key=lambda x: x.name)
 
+    nexus_sections = {}
+    for section_name in ["_Applications", "_BaseSections"]:  # , '_InnerSections']:
+        nexus_sections[section_name] = Section(validate=VALIDATE, name=section_name)
+        package.section_definitions.append(nexus_sections[section_name])
     for section in sections:
         package.section_definitions.append(section)
-        if section.nx_category == "application" or (
-            section.nx_category == "base" and section.nx_name == "NXroot"
-        ):
-            nexus_section.sub_sections.append(
+        if section.nx_category == "application" or section.nx_name == "NXroot":
+            key = "_Applications"
+        elif section.nx_category == "base":
+            key = "_BaseSections"
+        else:
+            key = None
+
+        if key:
+            nexus_sections[key].sub_sections.append(
                 SubSection(section_def=section, name=section.name)
             )
+    for section_name, section in __section_definitions.items():
+        if "__" in section_name:
+            package.section_definitions.append(section)
 
-    package.section_definitions.append(nexus_section)
     return package
 
 
@@ -916,14 +999,6 @@ def init_nexus_metainfo():
     if nexus_metainfo_package is not None:
         return
 
-    # We take the application definitions and create a common parent section that allows
-    # to include nexus in an EntryArchive.
-    # To be able to register it into data section, it is expected that this section inherits from Schema.
-    nexus_section = Section(
-        validate=VALIDATE, name=__GROUPING_NAME, label=__GROUPING_NAME
-    )
-    nexus_section.base_sections = [Schema.m_def]
-
     # try:
     #     load_nexus_schema('')
     # except Exception:
@@ -932,8 +1007,11 @@ def init_nexus_metainfo():
     #         save_nexus_schema('')
     #     except Exception:
     #         pass
-    nexus_metainfo_package = __create_package_from_nxdl_directories(nexus_section)
+    nexus_metainfo_package = __create_package_from_nxdl_directories()
     nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
@@ -953,9 +1031,9 @@ def init_nexus_metainfo():
     for section in sections:
         if not (str(section).startswith("pynxtools.")):
             continue
-        __add_additional_attributes(section)
+        __add_additional_attributes(section, None)
         for quantity in section.quantities:
-            __add_additional_attributes(quantity)
+            __add_additional_attributes(quantity, section)
 
     # We skip the Python code generation for now and offer Python classes as variables
     # TO DO not necessary right now, could also be done case-by-case by the nexus parser
@@ -972,6 +1050,13 @@ def normalize_fabrication(self, archive, logger):
     current_cls = __section_definitions[
         __rename_nx_for_nomad("NXfabrication")
     ].section_cls
+    self.name = (
+        self.__dict__["nx_name"]
+        + " ("
+        + ((self.vendor__field + " / ") if self.vendor__field else "")
+        + (self.model__field if self.model__field else "")
+        + ")"
+    )
     super(current_cls, self).normalize(archive, logger)
 
 
