@@ -181,7 +181,7 @@ regex==2024.11.6
     # via mkdocs-material
 requests==2.32.3
     # via mkdocs-material
-ruff==0.8.2
+ruff==0.9.6
     # via pynxtools (pyproject.toml)
 scipy==1.14.1
     # via ase
