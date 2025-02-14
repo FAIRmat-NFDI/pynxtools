@@ -72,12 +72,10 @@ def test_nexus_example():
     assert data.energies__field.check("eV")
     # manual name resolution
     assert data.AXISNAME__field["angles__field"] is not None
-    assert (
-        data.AXISNAME__field["angles__field"].attributes["nx_data_max"]
-        == 2.168025463513032
-    )
+    assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
     assert (1 * data.AXISNAME__field["angles__field"].unit).check("1/Å")
     assert (1 * data.AXISNAME__field["delays__field"].unit).check("fs")
+    assert data.___axes == "['angles', 'energies', 'delays']"
 
 
 def test_same_name_field_and_group():
