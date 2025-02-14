@@ -543,7 +543,7 @@ def __add_quantity_stats(container: Section, quantity: Quantity):
         np.int64,
         np.uint64,
     ] and not isinstance(quantity.type, Number)
-    if notnumber or not isvariadic:
+    if notnumber and not isvariadic:
         return
     basename = get_quantity_base_name(quantity.name)
     if isvariadic:
