@@ -28,7 +28,16 @@ import sys
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Union
 
+import h5py
 import numpy as np
+import pandas as pd
+from ase import Atoms
+from ase.data import atomic_numbers
+from nomad.datamodel.results import Material, Relation, Results, System
+from nomad.metainfo import SchemaPackage
+from nomad.normalizing.common import nomad_atoms_from_ase_atoms
+from nomad.normalizing.topology import add_system, add_system_info
+from scipy.spatial import cKDTree
 
 try:
     from nomad import utils
@@ -1161,6 +1170,114 @@ def normalize_identifier(self, archive, logger):
         logger.info(f"{self.reference} - referenced directly")
 
 
+def normalize_atom_probe(self, archive, logger):
+    super(self.m_def.section_cls, self).normalize(archive, logger)
+
+    data_path = self.m_attributes["m_nx_data_path"]
+    with h5py.File(
+        os.path.join(archive.m_context.raw_path(), self.m_attributes["m_nx_data_file"]),
+        "r",
+    ) as fp:
+        # Load the reconstructed positions and mass-to-charge values
+        positions = fp[f"{data_path}/reconstruction/reconstructed_positions"][:]
+        mass_to_charge_values = fp[
+            f"{data_path}/mass_to_charge_conversion/mass_to_charge"
+        ][:].flatten()
+        # Build species mapping from ion peak identification groups
+        ion_species_map = {}
+        for ion in self.ranging.peak_identification.ionID:
+            if ion.mass_to_charge_range__field and ion.name__field:
+                mass_range = fp[
+                    f"{ion.m_attributes['m_nx_data_path']}/mass_to_charge_range"
+                ][:]
+                species_name = ion.name__field
+                # Extract only element name (remove charge states and molecular ions)
+                element_name = re.split(r"[^A-Za-z]", species_name)[0]
+                if element_name:  # Avoid empty strings
+                    ion_species_map[element_name] = mass_range
+    # Convert species mapping into an efficient lookup structure
+    species_names = list(set(ion_species_map.keys()))  # Ensure unique element names
+    mass_ranges = np.array(
+        [ion_species_map[s][:, 0] for s in species_names]
+    )  # Extract min/max mass
+    # Compute midpoints for KD-tree search
+    mass_midpoints = mass_ranges.mean(axis=1)
+    # Build a KD-tree for fast species assignment
+    mass_tree = cKDTree(mass_midpoints.reshape(-1, 1))
+    _, nearest_species_idx = mass_tree.query(mass_to_charge_values.reshape(-1, 1))
+    # Assign aggregated atomic element labels
+    atomic_labels = np.array(species_names)[nearest_species_idx]
+    # Filter valid atomic elements using ASE's atomic numbers
+    valid_atomic_labels = [
+        el if el in atomic_numbers else "X" for el in atomic_labels
+    ]  # Replace unknowns with 'X'
+    # Convert to a DataFrame for visualization
+    df = pd.DataFrame(positions, columns=["x", "y", "z"])
+    df["element"] = pd.Categorical(valid_atomic_labels)
+    # Downsample data for efficient rendering (adjust fraction as needed)
+    df_sampled = df.sample(
+        frac=0.02, random_state=42
+    )  # Adjust fraction for performance
+
+    # **Create ASE Atoms Object from Downsampled Data (Using Aggregated Elements)**
+    def create_ase_atoms(df):
+        symbols = df["element"].tolist()
+        positions = df[["x", "y", "z"]].values
+        return Atoms(symbols=symbols, positions=positions)
+
+    atoms_lamela = create_ase_atoms(df_sampled)
+
+    # **Build NOMAD Topology Structure with Individual Element Systems**
+    def build_nomad_topology(archive):
+        if not archive.results:
+            archive.results = Results()
+        if not archive.results.material:
+            archive.results.material = Material()
+
+        elements = list(set(atoms_lamela.get_chemical_symbols()))
+        if not archive.results.material.elements:
+            archive.results.material.elements = elements
+        else:
+            for i in range(len(elements)):
+                if archive.results.material.elements[i] != elements[i]:
+                    print("WARNING: elements are swapped")
+
+        topology = {}
+        system = System(
+            atoms=nomad_atoms_from_ase_atoms(atoms_lamela),
+            label="Atom Probe Tomography - Lamella",
+            description="Reconstructed 3D atom probe tomography dataset.",
+            structural_type="bulk",
+            dimensionality="3D",
+            system_relation=Relation(type="root"),
+        )
+        add_system_info(system, topology)
+        add_system(system, topology)
+
+        child_systems = []
+        for element in elements:
+            element_indices = (
+                np.where(df_sampled["element"] == element)[0].reshape(1, -1).tolist()
+            )
+            element_system = System(
+                atoms_ref=system.atoms,
+                indices=element_indices,
+                label=f"{element} - Subsystem",
+                description=f"Reconstructed subset containing only {element} atoms.",
+                structural_type="bulk",
+                dimensionality="3D",
+                system_relation=Relation(type="subsystem"),
+            )
+            add_system_info(element_system, topology)
+            add_system(element_system, topology, parent=system)
+            child_systems.append(f"results/material/topology/{len(topology) - 1}")
+
+        system.child_systems = child_systems
+        archive.results.material.topology = list(topology.values())
+
+    build_nomad_topology(archive)
+
+
 __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
     __rename_nx_for_nomad("NXsample"): normalize_sample,
@@ -1173,6 +1290,7 @@ __NORMALIZER_MAP: Dict[str, Any] = {
         "normalize": normalize_process,
     },
     __rename_nx_for_nomad("NXdata"): normalize_data,
+    f"{__rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe": normalize_atom_probe,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection
@@ -1188,4 +1306,5 @@ for nx_name, section in __section_definitions.items():
             for key, value in normalize_func.items():
                 setattr(section.section_cls, key, value)
         else:
+            section.section_cls.normalize = normalize_func
             section.section_cls.normalize = normalize_func
