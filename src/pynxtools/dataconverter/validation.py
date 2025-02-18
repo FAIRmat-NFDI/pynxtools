@@ -476,6 +476,20 @@ def validate_dict_against(
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
             )
 
+            # Check enumeration
+            if (
+                node.items is not None
+                and mapping[
+                    f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
+                ]
+                not in node.items
+            ):
+                collector.collect_and_log(
+                    f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
+                    ValidationProblem.InvalidEnum,
+                    node.items,
+                )
+
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
         old_collector = collector
