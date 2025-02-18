@@ -68,8 +68,8 @@ def construct_field_structure(fld_elem, quntities_dict):
     """Construct field structure such as unit, value.
     Parameters
     ----------
-    elem : _type_
-        _description_
+    fld_elem : ET._Element
+        Field element of a nexus definition.
     quntities_dict : _type_
         _description_
     """
@@ -204,7 +204,7 @@ def scan_xml_element_recursively(
         nxdl = "NX<NAME>.nxdl"
         recursive_dict[root_name] = {
             "base_sections": [
-                "nomad.datamodel.metainfo.eln.NexusDataConverter",
+                "pynxtools.nomad.dataconverter.NexusDataConverter",
                 "nomad.datamodel.data.EntryData",
             ]
         }
