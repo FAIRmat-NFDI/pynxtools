@@ -591,12 +591,13 @@ np_int = (
     np.uint16,
     np.uint32,
     np.uint64,
+    np.uint,
     np.unsignedinteger,
     np.signedinteger,
 )
 np_float = (np.float16, np.float32, np.float64, np.floating)
 np_bytes = (np.bytes_, np.byte, np.ubyte)
-np_char = (np.str_, np.char.chararray, *np_bytes)
+np_char = (np.str_, np.bytes_)  # Only numpy Unicode string and Byte string
 np_bool = (np.bool_,)
 np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle)
 NEXUS_TO_PYTHON_DATA_TYPES = {
@@ -608,7 +609,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
         *np_bytes,
     ),
     "NX_BOOLEAN": (bool, np.ndarray, *np_bool),
-    "NX_CHAR": (str, np.ndarray, *np_char),
+    "NX_CHAR": (str, *np_char),
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": (float, np.ndarray, *np_float),
     "NX_INT": (int, np.ndarray, *np_int),
