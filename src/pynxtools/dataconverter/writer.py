@@ -21,11 +21,11 @@
 
 import copy
 import logging
-import sys
 import xml.etree.ElementTree as ET
 
 import h5py
 import numpy as np
+import pint
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
@@ -35,6 +35,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
+ureg = pint.UnitRegistry()
 
 
 def does_path_exist(path, h5py_obj) -> bool:
@@ -259,8 +260,22 @@ class Writer:
 
         def add_units_key(dataset, path):
             units_key = f"{path}/@units"
-            if units_key in self.data.keys() and self.data[units_key] is not None:
-                dataset.attrs["units"] = self.data[units_key]
+            units = self.data.get(units_key, None)
+            if units is None:
+                return
+            if isinstance(units, pint.Unit):
+                units = str(units)
+            else:
+                try:
+                    ureg.Unit(units)
+                except pint.errors.UndefinedUnitError as exc:
+                    massage = (
+                        f"Units provided for path: '{path}@units' are not valid."
+                        f" Please provide a valid unit."
+                    )
+                    raise InvalidDictProvided(massage) from exc
+
+            dataset.attrs["units"] = units
 
         for path, value in self.data.items():
             try:
