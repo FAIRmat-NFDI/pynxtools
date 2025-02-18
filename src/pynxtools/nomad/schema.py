@@ -711,11 +711,15 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         section_name = (
             root_section.name + "__" + __rename_nx_for_nomad(nx_name, is_group=True)
         )
-        group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
-
-        __attach_base_section(group_section, root_section, __to_section(nx_type))
-        __add_common_properties(group, group_section)
-
+        if section_name == "Root__ENTRY":
+            group_section = __section_definitions["Entry"]
+        else:
+            group_section = Section(
+                validate=VALIDATE, nx_kind="group", name=section_name
+            )
+            __attach_base_section(group_section, root_section, __to_section(nx_type))
+            __add_common_properties(group, group_section)
+            __section_definitions[section_name] = group_section
         nx_name = xml_attrs.get(
             "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
         )
@@ -728,7 +732,6 @@ def __create_group(xml_node: ET.Element, root_section: Section):
             variable=__if_template(nx_name),
         )
 
-        __section_definitions[section_name] = group_section
         root_section.sub_sections.append(group_subsection)
 
         __create_group(group, group_section)
