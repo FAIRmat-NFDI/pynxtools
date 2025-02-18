@@ -25,6 +25,7 @@ from typing import Optional
 
 import numpy as np
 import pytest
+
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.validation import validate_dict_against
@@ -278,15 +279,14 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "not_a_num",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
-                "t_value should be one of: (<class 'int'>, <class 'numpy"
-                ".ndarray'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
-                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy"
-                ".int16'>, <class 'numpy.int32'>, <class 'numpy.int64'>, "
-                "<class 'numpy.uint8'>, <class 'numpy.uint16'>, <class 'numpy"
-                ".uint32'>, <class 'numpy.uint64'>, <class 'numpy.unsignedi"
-                "nteger'>, <class 'numpy.signedinteger'>), as defined in "
-                "the NXDL as NX_INT."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value "
+                "should be one of: (<class 'int'>, <class 'numpy.ndarray'>, <class "
+                "'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.int64'>, <class "
+                "'numpy.int8'>, <class 'numpy.int16'>, <class 'numpy.int32'>, <class "
+                "'numpy.int64'>, <class 'numpy.uint8'>, <class 'numpy.uint16'>, <class "
+                "'numpy.uint32'>, <class 'numpy.uint64'>, <class 'numpy.uint64'>, <class "
+                "'numpy.unsignedinteger'>, <class 'numpy.signedinteger'>), as defined in "
+                "the NXDL as NX_INT"
             ),
             id="string-instead-of-int",
         ),
