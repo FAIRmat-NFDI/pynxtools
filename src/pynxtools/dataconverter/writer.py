@@ -41,6 +41,7 @@ from pynxtools.units import ureg
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
+
 def does_path_exist(path, h5py_obj) -> bool:
     """Returns true if the requested path exists in the given h5py object."""
     try:
