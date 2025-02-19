@@ -279,14 +279,13 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "not_a_num",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value "
-                "should be one of: (<class 'int'>, <class 'numpy.ndarray'>, <class "
-                "'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.int64'>, <class "
-                "'numpy.int8'>, <class 'numpy.int16'>, <class 'numpy.int32'>, <class "
-                "'numpy.int64'>, <class 'numpy.uint8'>, <class 'numpy.uint16'>, <class "
-                "'numpy.uint32'>, <class 'numpy.uint64'>, <class 'numpy.uint64'>, <class "
-                "'numpy.unsignedinteger'>, <class 'numpy.signedinteger'>), as defined in "
-                "the NXDL as NX_INT"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should "
+                "be one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>"
+                ", <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>"
+                ", <class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>"
+                ", <class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>"
+                ", <class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy"
+                ".signedinteger'>), as defined in the NXDL as NX_INT"
             ),
             id="string-instead-of-int",
         ),
@@ -297,9 +296,9 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "NOT_TRUE_OR_FALSE",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
-                "ould be one of: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
-                "numpy.bool"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should "
+                "be one of: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the "
+                "NXDL as NX_BOOLEAN"
             ),
             id="string-instead-of-int",
         ),
@@ -327,7 +326,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be of Python type:"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should "
+                "be of Python type:"
                 " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
                 " as defined in the NXDL as NX_CHAR."
             ),
@@ -335,10 +335,31 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         ),
         pytest.param(
             alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                ["list", "of", "chars"],
+            ),
+            "",
+            id="list-of-char-instead-of-chars",
+        ),
+        pytest.param(
+            alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value", None
             ),
             "",
             id="empty-optional-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                [2],  # pylint: disable=E1126
+            ),
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be"
+            " one of: (<class 'float'>, <class 'numpy.float16'>, <class 'numpy.float32'>"
+            ", <class 'numpy.float64'>, <class 'numpy.floating'>), as defined in the "
+            "NXDL as NX_FLOAT",
+            id="list-of-int-instead-of-float",
         ),
         pytest.param(
             set_to_none_in_dict(
@@ -534,6 +555,7 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "link-dict-instead-of-bool",
         "opt-group-completely-removed",
         "required-field-provided-in-variadic-optional-group",
+        "list-of-char-instead-of-chars",
     ):
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]
