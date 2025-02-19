@@ -372,6 +372,8 @@ class NexusParser(MatchingParser):
 
         # current: MSection = _to_section(None, nx_def, None, self.nx_root)
         current = self.nx_root
+        current.m_set_section_attribute("m_nx_data_path", "/")
+        current.m_set_section_attribute("m_nx_data_file", self.nxs_fname)
         depth: int = 1
         current_hdf_path = ""
         for name in hdf_path.split("/")[1:]:
