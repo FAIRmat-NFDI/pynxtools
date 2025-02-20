@@ -258,7 +258,7 @@ class NexusParser(MatchingParser):
             metainfo_def = resolve_variadic_name(
                 current.m_def.all_properties, field_name
             )
-            isvariadic = any(char.isupper() for char in metainfo_def.more["nx_name"])
+            isvariadic = metainfo_def.variable
 
             # for data arrays only statistics if not all values NINF, Inf, or NaN
             field_stats = None

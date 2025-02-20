@@ -65,6 +65,7 @@ try:
         Definition,
         MEnum,
         Package,
+        Property,
         Quantity,
         Section,
         SubSection,
@@ -409,6 +410,26 @@ def __get_documentation_url(
     return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
 
 
+def nxdata_ensure_definition(
+    self,
+    def_or_name: Property | str,
+    *,
+    hint: str | None = None,
+) -> Property:
+    current_cls = __section_definitions[
+        f"{__rename_nx_for_nomad('NXdata')}"
+    ].section_cls
+    if isinstance(def_or_name, str):
+        return super(current_cls, self)._ensure_definition(
+            def_or_name,
+            hint,
+        )
+    return super(current_cls, self)._ensure_definition(
+        def_or_name,
+        hint,
+    )
+
+
 def __to_section(name: str, **kwargs) -> Section:
     """
     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
@@ -425,6 +446,9 @@ def __to_section(name: str, **kwargs) -> Section:
 
     section = Section(validate=VALIDATE, name=name, **kwargs)
     __section_definitions[name] = section
+
+    if name == "Data":
+        section._ensure_defintion = nxdata_ensure_definition
 
     return section
 
@@ -499,6 +523,11 @@ def __create_attributes(
     for attribute in xml_node.findall("nx:attribute", __XML_NAMESPACES):
         name = __rename_nx_for_nomad(attribute.get("name"), is_attribute=True)
 
+        # nameType
+        nx_name_type = attribute.get("nameType", "specified")
+        if nx_name_type == "any":
+            name = name.upper()
+
         shape: list = []
         nx_enum = __get_enumeration(attribute)
         if nx_enum:
@@ -521,8 +550,8 @@ def __create_attributes(
         a_name = (field.more["nx_name"] if field else "") + "___" + name
         m_attribute = Quantity(
             name=a_name,
-            variable=__if_template(name)
-            or (__if_template(field.more["nx_name"]) if field else False),
+            variable=(__if_template(name) and (nx_name_type in ["any", "partial"]))
+            or (field.variable if field else False),
             shape=shape,
             type=nx_type,
             flexible_unit=True,
@@ -546,7 +575,7 @@ def __add_quantity_stats(container: Section, quantity: Quantity):
     # the statistics are always mapping on float64 even if quantity values are ints
     if not quantity.name.endswith("__field"):
         return
-    isvariadic = any(char.isupper() for char in quantity.more["nx_name"])
+    isvariadic = quantity.variable
     notnumber = quantity.type not in [
         np.float64,
         np.int64,
@@ -624,6 +653,11 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     name = __rename_nx_for_nomad(xml_attrs["name"], is_field=True)
 
+    # nameType
+    nx_name_type = xml_attrs.get("nameType", "specified")
+    if nx_name_type == "any":
+        name = name.upper()
+
     # type
     nx_type = xml_attrs.get("type", "NX_CHAR")
     nx_nomad_type = get_nx_type(nx_type)
@@ -668,7 +702,9 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     if value_quantity is None:
         value_quantity = Quantity(name=name, flexible_unit=True)
 
-    value_quantity.variable = __if_template(name)
+    value_quantity.variable = __if_template(name) and (
+        nx_name_type in ["any", "partial"]
+    )
 
     # check parent type compatibility
     parent_type = getattr(value_quantity, "type", None)
@@ -708,6 +744,14 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_type = __rename_nx_for_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type.upper())
+
+        # nameType
+        nx_name_type = xml_attrs.get(
+            "nameType", "specified" if "name" in xml_attrs.keys() else "any"
+        )
+        if nx_name_type == "any":
+            nx_name = nx_name.upper()
+
         section_name = (
             root_section.name + "__" + __rename_nx_for_nomad(nx_name, is_group=True)
         )
@@ -715,21 +759,25 @@ def __create_group(xml_node: ET.Element, root_section: Section):
             group_section = __section_definitions["Entry"]
         else:
             group_section = Section(
-                validate=VALIDATE, nx_kind="group", name=section_name
+                validate=VALIDATE,
+                nx_kind="group",
+                name=section_name,
+                variable=__if_template(nx_name)
+                and (nx_name_type in ["any", "partial"]),
             )
-            __attach_base_section(group_section, root_section, __to_section(nx_type))
             __add_common_properties(group, group_section)
+            __attach_base_section(group_section, root_section, __to_section(nx_type))
             __section_definitions[section_name] = group_section
-        nx_name = xml_attrs.get(
-            "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
-        )
+        # nx_name = xml_attrs.get(
+        #     "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
+        # )
         subsection_name = __rename_nx_for_nomad(nx_name, is_group=True)
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind="group",
             name=subsection_name,
             repeats=__if_repeats(nx_name, xml_attrs.get("maxOccurs", "0")),
-            variable=__if_template(nx_name),
+            variable=__if_template(nx_name) and (nx_name_type in ["any", "partial"]),
         )
 
         root_section.sub_sections.append(group_subsection)
@@ -740,46 +788,6 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         __create_field(field, root_section)
 
 
-def nexus_resolve_variadic_name(
-    definitions: dict,
-    name: str,
-    hint: Optional[str] = None,
-    filter: Optional[Section] = None,
-):
-    """
-    Resolves a variadic name from a set of possible definitions.
-
-    Parameters:
-        definitions (dict): A dictionary of sub-sections defining the search space.
-            The keys are the names of the definitions, and the values are objects
-            representing those definitions.
-        name (str): The variadic name to resolve.
-        hint (Optional[str]): An optional hint to refine the search.
-        filter (Optional[Section]): A Section object used to filter the definitions
-            by type. Only definitions inheriting from this section will be considered.
-
-    Returns:
-        str: The resolved name based on the provided definitions, filtered as needed.
-
-    Raises:
-        ValueError: If the `definitions` dictionary is empty or if the name cannot
-            be resolved.
-
-    Notes:
-        - The `resolve_variadic_name` function is assumed to handle the core logic
-          of resolving the name within the filtered definitions.
-        - Filtering by `inherited_sections` ensures that only definitions related
-          to the specified type are considered.
-    """
-    fitting_definitions = definitions
-    if filter:
-        fitting_definitions = {}
-        for def_name, definition in definitions.items():
-            if filter in definition.inherited_sections:
-                fitting_definitions[def_name] = definition
-    return resolve_variadic_name(fitting_definitions, name, hint)
-
-
 def __attach_base_section(section: Section, container: Section, default: Section):
     """
     Potentially adds a base section to the given section, if the given container has
@@ -788,11 +796,15 @@ def __attach_base_section(section: Section, container: Section, default: Section
     try:
         newdefinitions = {}
         for def_name, act_def in container.all_sub_sections.items():
-            newdefinitions[def_name] = act_def.sub_section
-        base_section = nexus_resolve_variadic_name(
+            if (
+                "nx_type" in act_def.sub_section.more
+                and section.more["nx_type"] == act_def.sub_section.more["nx_type"]
+            ):
+                newdefinitions[def_name] = act_def.sub_section
+        base_section = resolve_variadic_name(
             newdefinitions,
             section.name.split("__")[-1],
-            filter=default,
+            # filter=default,
         )
     except ValueError:
         base_section = None
@@ -1312,5 +1324,4 @@ for nx_name, section in __section_definitions.items():
             for key, value in normalize_func.items():
                 setattr(section.section_cls, key, value)
         else:
-            section.section_cls.normalize = normalize_func
             section.section_cls.normalize = normalize_func
