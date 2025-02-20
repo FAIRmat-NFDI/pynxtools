@@ -422,7 +422,7 @@ def validate_dict_against(
                 continue
 
             # Check general validity
-            is_valid_data_field(
+            _, _ = is_valid_data_field(
                 mapping[f"{prev_path}/{variant}"], node.dtype, f"{prev_path}/{variant}"
             )
 
@@ -468,7 +468,7 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            is_valid_data_field(
+            _, _ = is_valid_data_field(
                 mapping[
                     f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
                 ],
