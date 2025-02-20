@@ -420,10 +420,26 @@ def nxdata_ensure_definition(
         f"{__rename_nx_for_nomad('NXdata')}"
     ].section_cls
     if isinstance(def_or_name, str):
-        return super(current_cls, self)._ensure_definition(
-            def_or_name,
-            hint,
-        )
+        # check enums for or actual values of signals and axes
+        # TODO: also check symbol table dimensions
+        acceptable_data = []
+        acceptable_axes = []
+        # set filter string according
+        chk_name = def_or_name.split("_errors")[0]
+        if chk_name in acceptable_data:
+            filters = ["DATA"]
+        elif chk_name in acceptable_axes:
+            filters = ["AXISNAME"]
+        else:
+            filters = ["DATA", "AXISNAME", "FIELDNAME_errors"]
+        # get the reduced options
+        newdefintions = {}
+        for dname, definition in self.m_def.all_aliases:
+            if dname not in filters:
+                newdefintions[dname] = definition
+        # run the query
+        definition = resolve_variadic_name(newdefintions, def_or_name, hint)
+        return definition
     return super(current_cls, self)._ensure_definition(
         def_or_name,
         hint,
@@ -655,8 +671,8 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     # nameType
     nx_name_type = xml_attrs.get("nameType", "specified")
-    if nx_name_type == "any":
-        name = name.upper()
+    # if nx_name_type == "any":
+    #     name = name.upper()
 
     # type
     nx_type = xml_attrs.get("type", "NX_CHAR")
@@ -693,6 +709,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     # copy from base to inherit from it
     if container.base_sections is not None:
+        # TODO: use resolve_variadic_name to find inheritance among non-exact matchings (also provide data type)
         base_quantity: Quantity = container.base_sections[0].all_quantities.get(name)
         if base_quantity:
             value_quantity = base_quantity.m_copy(deep=True)
@@ -749,8 +766,8 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_name_type = xml_attrs.get(
             "nameType", "specified" if "name" in xml_attrs.keys() else "any"
         )
-        if nx_name_type == "any":
-            nx_name = nx_name.upper()
+        # if nx_name_type == "any":
+        #     nx_name = nx_name.upper()
 
         section_name = (
             root_section.name + "__" + __rename_nx_for_nomad(nx_name, is_group=True)

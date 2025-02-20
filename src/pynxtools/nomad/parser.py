@@ -205,16 +205,20 @@ class NexusParser(MatchingParser):
                         parent_html_name = ""
                         parent_name = ""
                         parent_field_name = ""
+                        parent_html_base_name = ""
                     else:
-                        parent_html_name = nx_path[-2].get("name")
+                        parent_html_name = rename_nx_for_nomad(
+                            nx_path[-2].get("name"), is_field=True
+                        )
                         parent_name = hdf_node.name.split("/")[-1]
-                        parent_field_name = parent_html_name + "__field"
-                    attribute_name = parent_html_name + "___" + attr_name
+                        parent_field_name = parent_html_name
+                        parent_html_base_name = parent_html_name.split("__field")[0]
+                    attribute_name = parent_html_base_name + "___" + attr_name
                     data_instance_name = parent_name + "___" + attr_name
                     metainfo_def = None
                     try:
                         metainfo_def = resolve_variadic_name(
-                            current.m_def.all_properties, attribute_name
+                            current.m_def.all_quantities, attribute_name
                         )
                         attribute = attr_value
                         # TODO: get unit from attribute <xxx>_units
@@ -252,11 +256,11 @@ class NexusParser(MatchingParser):
             field = _get_value(hdf_node)
 
             # get the corresponding field name
-            html_name = nx_path[-1].get("name")
+            html_name = rename_nx_for_nomad(nx_path[-1].get("name"), is_field=True)
             data_instance_name = hdf_node.name.split("/")[-1] + "__field"
-            field_name = html_name + "__field"
+            field_name = html_name
             metainfo_def = resolve_variadic_name(
-                current.m_def.all_properties, field_name
+                current.m_def.all_quantities, field_name
             )
             isvariadic = metainfo_def.variable
 
@@ -325,7 +329,7 @@ class NexusParser(MatchingParser):
                     concept_basename = get_quantity_base_name(field.name)
                     instancename = get_quantity_base_name(data_instance_name)
                     name_metainfo_def = resolve_variadic_name(
-                        current.m_def.all_properties, concept_basename + "__name"
+                        current.m_def.all_quantities, concept_basename + "__name"
                     )
                     name_value = MQuantity.wrap(instancename, instancename + "__name")
                     current.m_set(name_metainfo_def, name_value)
@@ -339,7 +343,7 @@ class NexusParser(MatchingParser):
                         field_stats[1:],
                     ):
                         stat_metainfo_def = resolve_variadic_name(
-                            current.m_def.all_properties, concept_basename + suffix
+                            current.m_def.all_quantities, concept_basename + suffix
                         )
                         stat = MQuantity.wrap(stat, instancename + suffix)
                         current.m_set(stat_metainfo_def, stat)
