@@ -292,6 +292,58 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                ["1", "2", "3"],
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
+                " one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
+                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>, <"
+                "class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>, <"
+                "class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>, <"
+                "class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy."
+                "signedinteger'>), as defined in the NXDL as NX_INT."
+            ),
+            id="list-of-int-str-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                np.array([2.0, 3.0, 4.0], dtype=np.float32),
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
+                " one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
+                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>, <"
+                "class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>, <"
+                "class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>, <"
+                "class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy."
+                "signedinteger'>), as defined in the NXDL as NX_INT."
+            ),
+            id="array-of-float-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                [2, 3, 4],
+            ),
+            (""),
+            id="List-of-int-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                np.array([2, 3, 4], dtype=np.int32),
+            ),
+            (""),
+            id="array-of-int32-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
                 "NOT_TRUE_OR_FALSE",
             ),
@@ -323,6 +375,48 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         ),
         pytest.param(
             alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                [-1, 2],
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value "
+                "should be a positive int, but is [-1, 2]."
+            ),
+            id="negative-posint-list",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                np.array([-1, 2], dtype=np.int8),
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value should"
+                " be a positive int, but is [-1  2]."
+            ),
+            id="negative-posint-array",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                [1, 2],
+            ),
+            (""),
+            id="positive-posint-list",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
+                np.array([1, 2], dtype=np.int8),
+            ),
+            (""),
+            id="positive-posint-array",
+        ),
+        pytest.param(
+            alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
             ),
             (
@@ -332,7 +426,35 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             id="int-instead-of-chars",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array(["1", "2", "3"], dtype=np.str_),
+            ),
+            (""),
+            id="array-of-chars",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array(["1", "2", "3"], dtype=np.bytes_),
+            ),
+            (""),
+            id="array-of-bytes-chars",
+        ),
+        # pytest.param(
+        #     alter_dict(
+        #         TEMPLATE,
+        #         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+        #         np.char.chararray(["1", "2", "3"]),
+        #     ),
+        #     (""),
+        #     id="numpy-chararray",
+        # ),
         # TODO add test array of char
+        # TODO add test for numpy array of char and chararray
         pytest.param(
             alter_dict(
                 TEMPLATE,
@@ -340,7 +462,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 ["list", "of", "chars"],
             ),
             "",
-            id="list-of-char-instead-of-chars",
+            id="list-of-string-instead-of-chars",
         ),
         pytest.param(
             alter_dict(
@@ -348,6 +470,27 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             "",
             id="empty-optional-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                np.array([2.0, 3.0, 4.0], dtype=np.float32),
+            ),
+            "",
+            id="array-of-float-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                np.array(["2.0", "3.0"], dtype=np.str_),
+            ),
+            " The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should "
+            "be one of: (<class 'float'>, <class 'numpy.float16'>, <class 'numpy.float32"
+            "'>, <class 'numpy.float64'>, <class 'numpy.floating'>), as defined in the "
+            "NXDL as NX_FLOAT.",
+            id="array-of-str-instead-of-float",
         ),
         pytest.param(
             alter_dict(
@@ -554,7 +697,14 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "link-dict-instead-of-int",
         "opt-group-completely-removed",
         "required-field-provided-in-variadic-optional-group",
-        "list-of-char-instead-of-chars",
+        "list-of-string-instead-of-chars",
+        "array-of-int32-instead-of-int",
+        "List-of-int-instead-of-int",
+        "positive-posint-list",
+        "positive-posint-array",
+        "array-of-chars",
+        "array-of-bytes-chars",
+        "array-of-float-instead-of-float",
     ):
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]
