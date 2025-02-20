@@ -668,6 +668,7 @@ def check_all_children_for_callable(
         tmp_arr = objects
     if tmp_arr is not None:
         return any([np.issubdtype(tmp_arr.dtype, type_) for type_ in accepted_types])
+    return False
 
 
 def is_valid_data_type(value, accepted_types):
@@ -706,29 +707,30 @@ def convert_str_to_bool_safe(value):
 def is_valid_data_field(value, nxdl_type, path):
     # todo: Check this funciton and wtire test for it. It seems the funciton is not
     # working as expected.
-    """Checks whether a given value is valid according to what is defined in the NXDL.
+    """Checks whether a given value is valid according to the type defined in the NXDL.
 
-    This function will also try to convert typical types, for example int to float,
-    and return the successful conversion.
+    This function also converts bool value comes in str format. In case, it fails to
+    convert, it raises an Exception.
 
-    If it fails to convert, it raises an Exception.
-
-    Returns two values: first, boolean (True if the the value corresponds to nxdl_type,
-    False otherwise) and second, result of attempted conversion or the original value
-    (if conversion is not needed or impossible)
+    Returns two values:
+        boolean (True if the the value corresponds to nxdl_type, False otherwise)
+        converted_value bool value.
     """
-    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
-    output_value = value
 
+    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+    # Do not count the dict as it represents a link value
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
         try:
             if accepted_types[0] is bool and isinstance(value, str):
                 value = convert_str_to_bool_safe(value)
                 if value is None:
                     raise ValueError
-            output_value = accepted_types[0](value)
-        ## TODO recheck the the TypeError after discussion with Lev
-        ## of the above line
+                return True, value
+
+            collector.collect_and_log(
+                path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+            )
+            return False, value
         except (ValueError, TypeError):
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
@@ -749,7 +751,7 @@ def is_valid_data_field(value, nxdl_type, path):
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
             return False, value
 
-    return True, output_value
+    return True, value
 
 
 @lru_cache(maxsize=None)

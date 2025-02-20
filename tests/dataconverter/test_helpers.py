@@ -279,13 +279,13 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "not_a_num",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should "
-                "be one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>"
-                ", <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>"
-                ", <class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>"
-                ", <class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>"
-                ", <class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy"
-                ".signedinteger'>), as defined in the NXDL as NX_INT"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
+                " one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
+                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>, <"
+                "class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>, <"
+                "class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>, <"
+                "class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy."
+                "signedinteger'>), as defined in the NXDL as NX_INT."
             ),
             id="string-instead-of-int",
         ),
@@ -300,7 +300,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "be one of: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the "
                 "NXDL as NX_BOOLEAN"
             ),
-            id="string-instead-of-int",
+            id="string-instead-of-bool",
         ),
         pytest.param(
             alter_dict(
@@ -309,7 +309,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 {"link": "/a-link"},
             ),
             (""),
-            id="link-dict-instead-of-bool",
+            id="link-dict-instead-of-int",
         ),
         pytest.param(
             alter_dict(
@@ -326,13 +326,13 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should "
-                "be of Python type:"
-                " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
-                " as defined in the NXDL as NX_CHAR."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should"
+                " be one of: (<class 'str'>, <class 'numpy.str_'>, <class 'numpy.bytes_'>"
+                "), as defined in the NXDL as NX_CHAR."
             ),
             id="int-instead-of-chars",
         ),
+        # TODO add test array of char
         pytest.param(
             alter_dict(
                 TEMPLATE,
@@ -551,8 +551,7 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "UTC-with-+00:00",
         "UTC-with-Z",
         "no-child-provided-optional-parent",
-        "int-instead-of-chars",
-        "link-dict-instead-of-bool",
+        "link-dict-instead-of-int",
         "opt-group-completely-removed",
         "required-field-provided-in-variadic-optional-group",
         "list-of-char-instead-of-chars",
