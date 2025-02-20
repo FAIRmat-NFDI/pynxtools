@@ -422,8 +422,8 @@ def nxdata_ensure_definition(
     if isinstance(def_or_name, str):
         # check enums for or actual values of signals and axes
         # TODO: also check symbol table dimensions
-        acceptable_data = []
-        acceptable_axes = []
+        acceptable_data: List[str] = []
+        acceptable_axes: List[str] = []
         # set filter string according
         chk_name = def_or_name.split("_errors")[0]
         if chk_name in acceptable_data:
