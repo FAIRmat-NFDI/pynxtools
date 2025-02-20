@@ -1190,6 +1190,9 @@ def normalize_atom_probe(self, archive, logger):
         f"{__rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe"
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
+    # temporarily disable extra normalisation step
+    if archive:
+        return
 
     data_path = self.m_attributes["m_nx_data_path"]
     with h5py.File(
