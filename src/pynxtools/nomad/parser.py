@@ -259,10 +259,18 @@ class NexusParser(MatchingParser):
             html_name = rename_nx_for_nomad(nx_path[-1].get("name"), is_field=True)
             data_instance_name = hdf_node.name.split("/")[-1] + "__field"
             field_name = html_name
-            metainfo_def = resolve_variadic_name(
-                current.m_def.all_quantities, field_name
-            )
-            isvariadic = metainfo_def.variable
+            try:
+                metainfo_def = resolve_variadic_name(
+                    current.m_def.all_quantities, field_name
+                )
+                isvariadic = metainfo_def.variable
+            except Exception as e:
+                self._logger.warning(
+                    f"error while setting field {data_instance_name} in {current.m_def} as no proper definition found for {field_name}",
+                    target_name=field_name,
+                    exc_info=e,
+                )
+                return
 
             # for data arrays only statistics if not all values NINF, Inf, or NaN
             field_stats = None
@@ -564,4 +572,5 @@ class NexusParser(MatchingParser):
             results.material = Material()
 
         chemical_formulas = self._get_chemical_formulas()
+        self.normalize_chemical_formula(chemical_formulas)
         self.normalize_chemical_formula(chemical_formulas)
