@@ -26,7 +26,7 @@ import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import h5py
 import numpy as np
@@ -469,7 +469,7 @@ def __to_section(name: str, **kwargs) -> Section:
     return section
 
 
-def __get_enumeration(xml_node: ET.Element) -> (Optional[MEnum], bool):
+def __get_enumeration(xml_node: ET.Element) -> Tuple[Optional[MEnum], bool]:
     """
     Get the enumeration field from xml node
     """
@@ -478,7 +478,7 @@ def __get_enumeration(xml_node: ET.Element) -> (Optional[MEnum], bool):
         return None, None
 
     items = enumeration.findall("nx:item", __XML_NAMESPACES)
-    open = enumeration.attrib["open"] if "open" in enumeration.attrib else False
+    open = bool(enumeration.attrib["open"]) if "open" in enumeration.attrib else False
 
     return MEnum([value.attrib["value"] for value in items]), open
 
