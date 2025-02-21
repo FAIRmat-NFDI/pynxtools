@@ -469,17 +469,18 @@ def __to_section(name: str, **kwargs) -> Section:
     return section
 
 
-def __get_enumeration(xml_node: ET.Element) -> Optional[MEnum]:
+def __get_enumeration(xml_node: ET.Element) -> (Optional[MEnum], bool):
     """
     Get the enumeration field from xml node
     """
     enumeration = xml_node.find("nx:enumeration", __XML_NAMESPACES)
     if enumeration is None:
-        return None
+        return None, None
 
     items = enumeration.findall("nx:item", __XML_NAMESPACES)
+    open = enumeration.attrib["open"] if "open" in enumeration.attrib else False
 
-    return MEnum([value.attrib["value"] for value in items])
+    return MEnum([value.attrib["value"] for value in items]), open
 
 
 def __add_common_properties(xml_node: ET.Element, definition: Definition):
@@ -545,8 +546,8 @@ def __create_attributes(
             name = name.upper()
 
         shape: list = []
-        nx_enum = __get_enumeration(attribute)
-        if nx_enum:
+        nx_enum, nx_enum_open = __get_enumeration(attribute)
+        if nx_enum and not nx_enum_open:
             nx_type = nx_enum
             nx_shape: List[str] = []
         else:
@@ -683,7 +684,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
         )
 
     # enumeration
-    enum_type = __get_enumeration(xml_node)
+    enum_type, nx_enum_open = __get_enumeration(xml_node)
 
     # dimensionality
     nx_dimensionality = xml_attrs.get("units", None)
@@ -727,10 +728,12 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     parent_type = getattr(value_quantity, "type", None)
     if not isinstance(parent_type, MEnum):
         # if parent type is not MEnum then overwrite whatever given
-        value_quantity.type = enum_type if enum_type else nx_nomad_type
+        value_quantity.type = (
+            enum_type if enum_type and not nx_enum_open else nx_nomad_type
+        )
     elif enum_type:
         # only when derived type is also MEnum to allow overwriting
-        value_quantity.type = enum_type
+        value_quantity.type = enum_type if not nx_enum_open else nx_nomad_type
 
     value_quantity.dimensionality = dimensionality
     value_quantity.shape = shape
