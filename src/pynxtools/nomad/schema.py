@@ -469,7 +469,7 @@ def __to_section(name: str, **kwargs) -> Section:
     return section
 
 
-def __get_enumeration(xml_node: ET.Element) -> Tuple[Optional[MEnum], bool]:
+def __get_enumeration(xml_node: ET.Element) -> Tuple[Optional[MEnum], Optional[bool]]:
     """
     Get the enumeration field from xml node
     """
