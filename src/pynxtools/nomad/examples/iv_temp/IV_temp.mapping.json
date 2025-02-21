@@ -41,6 +41,8 @@
     "/ENTRY[entry]/definition/@version": "1",
     "/ENTRY[entry]/experiment_identifier": "/metadata_start/uid",
     "/ENTRY[entry]/experiment_description": "A simple IV temperature experiment.",
-    "/ENTRY[entry]/start_time": "/metadata_start/time"
+    "/ENTRY[entry]/start_time": "/metadata_start/time",
+    "/ENTRY[entry]/NOTE[note]/author": "@eln:author",
+    "/ENTRY[entry]/NOTE[note]/description": "@eln:note"
 
 }

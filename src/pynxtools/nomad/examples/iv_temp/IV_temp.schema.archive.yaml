@@ -1,7 +1,7 @@
 definitions:
   name: "IV Temp ELN Example"
   sections:
-    IV_TEMP:
+    IV_temp_ELN:
       base_sections:
         - "pynxtools.nomad.dataconverter.NexusDataConverter"
         - "nomad.datamodel.data.EntryData"
@@ -14,5 +14,22 @@ definitions:
             "IV_temp.pickle"
           ]
           output: IV_temp.nxs
+          nexus_view: "../upload/archive/mainfile/IV_temp.nxs#/data"
         eln:
           hide: []
+      quantities:
+        author:
+          type: str
+          description: Name of person providing a note
+          m_annotations:
+            eln:
+              component: StringEditQuantity
+        note:
+          type: str
+          description: Note for the experiment
+          m_annotations:
+            eln:
+              component: RichTextEditQuantity
+        nexus_view:
+          type: "nomad.datamodel.data.ArchiveSection"
+          description: Link to the NeXus Entry
