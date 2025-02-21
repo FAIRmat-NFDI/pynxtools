@@ -76,6 +76,9 @@ def __rename_nx_for_nomad(
         name = __REPLACEMENT_FOR_NX + name[2:]
         name = name[0].upper() + name[1:]
 
+    if name[0] in "0123456789":
+        name = f"_{name}"
+
     if is_group:
         name = __rename_classes_in_nomad(name)
     elif is_field:
