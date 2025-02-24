@@ -43,7 +43,13 @@ def create_eln_dict(archive):
         return value
 
     def exclude(quantity_def, section):
-        return quantity_def.name in ("reader", "input_files", "output", "nxdl")
+        return quantity_def.name in (
+            "reader",
+            "input_files",
+            "output",
+            "nxdl",
+            "nexus_view",
+        )
 
     eln_dict = archive.m_to_dict(transform=transform, exclude=exclude)
     del eln_dict["data"]["m_def"]
@@ -218,10 +224,11 @@ class NexusDataConverter(EntryData):
             archive.data.input_files = []
 
         if len(eln_dict["data"]) > 0:
-            write_yaml(archive, "eln_data.yaml", eln_dict)
+            eln_fname = f"{archive.data.output}_eln_data.yaml"
+            write_yaml(archive, eln_fname, eln_dict)
 
-            if "eln_data.yaml" not in archive.data.input_files:
-                archive.data.input_files.append("eln_data.yaml")
+            if eln_fname not in archive.data.input_files:
+                archive.data.input_files.append(eln_fname)
 
         converter_params = {
             "reader": archive.data.reader,

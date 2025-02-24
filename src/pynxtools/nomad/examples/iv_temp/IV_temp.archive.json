@@ -10,8 +10,8 @@
         "output": "IV_temp.nxs",
         "nexus_view": "../upload/archive/mainfile/IV_temp.nxs#/data",
         "notes": {
-            "author": "",
-            "note": ""
+            "author": "name",
+            "note": "example note"
         }
     },
     "m_ref_archives": {}
