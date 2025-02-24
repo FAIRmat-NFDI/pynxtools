@@ -6,7 +6,7 @@ import numpy as np
 import yaml
 
 try:
-    from nomad.datamodel.data import EntryData
+    from nomad.datamodel.data import ArchiveSection, EntryData
     from nomad.metainfo import MEnum, Package, Quantity
     from nomad.units import ureg
 except ImportError as exc:
@@ -203,6 +203,11 @@ class NexusDataConverter(EntryData):
         default="output.nxs",
     )
 
+    nexus_view = Quantity(
+        type=ArchiveSection,
+        description="Link to the NeXus Entry",
+    )
+
     def normalize(self, archive, logger):
         super(NexusDataConverter, self).normalize(archive, logger)
 
@@ -256,6 +261,16 @@ class NexusDataConverter(EntryData):
             raise e
         else:
             logger.info("triggered processing", mainfile=archive.data.output)
+        # reference the generated nexus file
+        try:
+            self.nexus_view = f"../upload/archive/mainfile/{archive.data.output}#/data"
+        except Exception as e:
+            logger.error(
+                "could not reference the generate nexus file",
+                mainfile=archive.data.output,
+                exc_info=e,
+            )
+            raise e
 
 
 m_package.__init_metainfo__()

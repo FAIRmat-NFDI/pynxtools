@@ -17,10 +17,6 @@ definitions:
           nexus_view: "../upload/archive/mainfile/IV_temp.nxs#/data"
         eln:
           hide: []
-      quantities:
-        nexus_view:
-          type: "nomad.datamodel.data.ArchiveSection"
-          description: Link to the NeXus Entry
       sub_sections:
         notes:
           section:
