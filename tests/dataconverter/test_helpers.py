@@ -433,8 +433,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
-                "be on of the following"
-                " strings: ['1st type', '2nd type', '3rd type', '4th type']"
+                "be one of the following"
+                ": ['1st type', '2nd type', '3rd type', '4th type']"
             ),
             id="wrong-enum-choice",
         ),
