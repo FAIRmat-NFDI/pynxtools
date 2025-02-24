@@ -85,7 +85,7 @@ class Collector:
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be on of the following strings: {value}"
+                f"The value at {path} should be one of the following: {value}"
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
