@@ -21,6 +21,9 @@ from typing import Dict, Optional, Set
 import lxml.etree as ET
 import numpy as np
 
+DEBUG_PYNXTOOLS_WITH_NOMAD = False
+
+
 try:
     from ase.data import chemical_symbols
     from nomad.atomutils import Formula
@@ -127,13 +130,19 @@ def _get_value(hdf_node):
     Get value from hdl5 node
     """
 
-    hdf_value = hdf_node[...]
+    if hdf_node.shape != ():
+        hdf_value = hdf_node[...]
+    else:
+        hdf_value = hdf_node[()]
+    if isinstance(hdf_value, bytes):
+        return hdf_value.decode()
     if str(hdf_value.dtype) == "bool":
         return bool(hdf_value)
     if hdf_value.dtype.kind in "iufc":
         return hdf_value
-    if len(hdf_value.shape) > 0:
-        return hdf_value.astype(str)
+    if hasattr(hdf_value, "shape"):
+        if len(hdf_value.shape) > 0:
+            return hdf_value.astype(str)
     return hdf_node[()].decode()
 
 
@@ -242,8 +251,6 @@ class NexusParser(MatchingParser):
                         exc_info=e,
                     )
         else:  # it is a field
-            field = _get_value(hdf_node)
-
             # get the corresponding field name
             html_name = nx_path[-1].get("name")
             data_instance_name = hdf_node.name.split("/")[-1] + "__field"
@@ -251,6 +258,8 @@ class NexusParser(MatchingParser):
             metainfo_def = resolve_variadic_name(
                 current.m_def.all_properties, field_name
             )
+
+            field = _get_value(hdf_node)
 
             # for data arrays only statistics if not all values NINF, Inf, or NaN
             field_stats = None
@@ -477,11 +486,12 @@ class NexusParser(MatchingParser):
         logger=None,
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
-        import debugpy  # will connect to dbgger if in dbg mode
+        if DEBUG_PYNXTOOLS_WITH_NOMAD:
+            import debugpy  # will connect to dbgger if in dbg mode
 
-        debugpy.debug_this_thread()  # now anywhere can place manual breakpoint
-        # next line just an example
-        # debugpy.breakpoint()
+            debugpy.debug_this_thread()  # now anywhere can place manual breakpoint
+            # next line just an example
+            # debugpy.breakpoint()
 
         self.archive = archive
         self.nx_root = nexus_schema.Root()  # type: ignore # pylint: disable=no-member

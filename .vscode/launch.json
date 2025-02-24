@@ -25,7 +25,10 @@
             "cwd": "${workspaceFolder}",
             "program": "../../.py3.11.11/bin/nomad",
             "justMyCode": false,
-            "args": ["parse", "--show-archive", "../../pynx-apm/pynxtools_apm/tests/prod/ger_saarbruecken_pauly.073.0.nxs"]
+            "args": ["parse",
+                     "--show-archive",
+                     "../../iuc09_dfg_demo/pyiron_apt/CompositionSpace.Results.1.nxs"]
+                     //"../../pynx-apm/pynxtools_apm/tests/prod/ger_saarbruecken_pauly.073.0.nxs"]
         },
     ]
 }
