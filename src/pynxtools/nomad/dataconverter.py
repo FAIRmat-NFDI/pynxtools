@@ -220,22 +220,18 @@ class NexusDataConverter(EntryData):
         raw_path = archive.m_context.raw_path()
         eln_dict = create_eln_dict(archive)
 
-        if archive.data.input_files is None:
-            archive.data.input_files = []
-
+        input_file_list = (
+            list(archive.data.input_files) if archive.data.input_files else []
+        )
         if len(eln_dict["data"]) > 0:
             eln_fname = f"{archive.data.output}_eln_data.yaml"
             write_yaml(archive, eln_fname, eln_dict)
-
-            if eln_fname not in archive.data.input_files:
-                archive.data.input_files.append(eln_fname)
+            input_file_list.append(eln_fname)
 
         converter_params = {
             "reader": archive.data.reader,
             "nxdl": re.sub(".nxdl$", "", archive.data.nxdl),
-            "input_file": [
-                os.path.join(raw_path, file) for file in archive.data.input_files
-            ],
+            "input_file": [os.path.join(raw_path, file) for file in input_file_list],
             "output": os.path.join(raw_path, archive.data.output),
         }
         # remove the nexus file and ensure that NOMAD knows that it is removed
