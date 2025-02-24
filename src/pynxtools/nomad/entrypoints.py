@@ -149,7 +149,20 @@ nexus_app = AppEntryPoint(
                             x="results.material.n_elements",
                         ),
                     ],
-                )
+                ),
+                Menu(
+                    title="test",
+                    items=[
+                        MenuItemTerms(
+                            quantity=f"data.ENTRY.definition__field#{schema}#str",
+                            width=6,
+                            options=0,
+                        ),
+                        MenuItemHistogram(
+                            x=f"data.ENTRY.start_time__field#{schema}#datetime",
+                        ),
+                    ],
+                ),
             ],
         ),
         # Controls the default dashboard shown in the search interface
