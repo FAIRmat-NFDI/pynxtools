@@ -18,18 +18,28 @@ definitions:
         eln:
           hide: []
       quantities:
-        author:
-          type: str
-          description: Name of person providing a note
-          m_annotations:
-            eln:
-              component: StringEditQuantity
-        note:
-          type: str
-          description: Note for the experiment
-          m_annotations:
-            eln:
-              component: RichTextEditQuantity
         nexus_view:
           type: "nomad.datamodel.data.ArchiveSection"
           description: Link to the NeXus Entry
+      sub_sections:
+        notes:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+              template:
+                author: ""
+                note: ""
+            quantities:
+              author:
+                type: str
+                description: Name of person providing a note
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+              note:
+                type: str
+                description: Note for the experiment
+                m_annotations:
+                  eln:
+                    component: RichTextEditQuantity
