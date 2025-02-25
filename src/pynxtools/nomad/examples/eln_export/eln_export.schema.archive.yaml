@@ -1,0 +1,32 @@
+definitions:
+  name: "ELN Export Example"
+  sections:
+    ELN_to_be_exported:
+      base_sections:
+        - "pynxtools.nomad.dataconverter.ElnYamlConverter"
+        - "nomad.datamodel.data.EntryData"
+      m_annotations:
+        eln:
+          hide: []
+      sub_sections:
+        notes:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+              template:
+                author: ""
+                note: ""
+            quantities:
+              author:
+                type: str
+                description: Name of person providing a note
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+              note:
+                type: str
+                description: Note for the experiment
+                m_annotations:
+                  eln:
+                    component: RichTextEditQuantity

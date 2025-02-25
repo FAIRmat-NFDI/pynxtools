@@ -16,12 +16,10 @@
 # limitations under the License.
 #
 try:
-    from nomad.config.models.plugins import (
-        AppEntryPoint,
-        ExampleUploadEntryPoint,
-        ParserEntryPoint,
-        SchemaPackageEntryPoint,
-    )
+    from nomad.config.models.plugins import (AppEntryPoint,
+                                             ExampleUploadEntryPoint,
+                                             ParserEntryPoint,
+                                             SchemaPackageEntryPoint)
 except ImportError as exc:
     raise ImportError(
         "Could not import nomad package. Please install the package 'nomad-lab'."
@@ -66,15 +64,9 @@ nexus_parser = NexusParserEntryPoint(
     mainfile_mime_re="application/x-hdf*",
 )
 
-from nomad.config.models.ui import (
-    App,
-    Column,
-    Menu,
-    MenuItemHistogram,
-    MenuItemPeriodicTable,
-    MenuItemTerms,
-    SearchQuantities,
-)
+from nomad.config.models.ui import (App, Column, Menu, MenuItemHistogram,
+                                    MenuItemPeriodicTable, MenuItemTerms,
+                                    SearchQuantities)
 
 schema = "pynxtools.nomad.schema.Root"
 
@@ -200,9 +192,33 @@ nexus_app = AppEntryPoint(
     ),
 )
 
+eln_export_example = ExampleUploadEntryPoint(
+    title="Simple ELN Export",
+    category="NeXus Experiment Examples",
+    description="""
+        This example shows users how a simple ELN can be set up in NOMAD which can be then
+        exported in to an RDM agnostic eln_data.yaml format. The example also shows how such
+        eln file can be used together with some experiment data to be converted by pynxtools
+        to a valid NeXus file.
+    """,
+    plugin_package="pynxtools",
+    resources=["nomad/examples/eln_export/*"],
+)
+
+nexus_conversion_example = ExampleUploadEntryPoint(
+    title="Data Conversion to NeXus Format",
+    category="NeXus Experiment Examples",
+    description="""
+        This example shows users how NOMAD GUI allows converting experiment data with
+        attached eln notes to NeXus file.
+    """,
+    plugin_package="pynxtools",
+    resources=["nomad/examples/nexus_conversion/*"],
+)
+
 iv_temp_example = ExampleUploadEntryPoint(
     title="Sensor Scan - IV Temperature Curve",
-    category="FAIRmat examples",
+    category="NeXus Experiment Examples",
     description="""
         This example shows users how to take data from a Python framework and map it out to a Nexus application definition for IV Temperature measurements, [`NXiv_temp`](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html).
         We use the Nexus ELN features of NOMAD to generate a Nexus file.
