@@ -248,6 +248,14 @@ def validate_dict_against(
                     prev_path=prev_path,
                 )
 
+            # check NXdata attributes
+            for attr in ("signal", "auxiliary_signals", "axes"):
+                handle_attribute(
+                    node.search_add_child_for(attr),
+                    keys,
+                    prev_path=prev_path,
+                )
+
             for i, axis in enumerate(axes):
                 if axis == ".":
                     continue
@@ -392,12 +400,12 @@ def validate_dict_against(
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    full_path, missing_type_err.get(node.type), None
-                )
-
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
             return
 
         for variant in variants:
@@ -460,11 +468,12 @@ def validate_dict_against(
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    full_path, missing_type_err.get(node.type), None
-                )
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
             return
 
         for variant in variants:
