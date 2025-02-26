@@ -285,7 +285,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
-                "t_value should be one of the following Python types: (<class 'int'>, <class 'numpy.ndarray'>, <class 'numpy.integer'>), as defined in "
+                "t_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
                 "the NXDL as NX_INT."
             ),
             id="string-instead-of-int",
@@ -298,9 +298,31 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
-                "ould be one of the following Python types: (<class 'bool'>, <class 'numpy.ndarray'>, <class 'numpy.bool_'>"
+                "ould be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>"
             ),
             id="string-instead-of-bool",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array([0.0, 2]),
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one"
+                " of the following Python types: (<class 'str'>, <class 'numpy.chararray'>), as"
+                " defined in the NXDL as NX_CHAR."
+            ),
+            id="wrong-type-ndarray-instead-of-char",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array(["x", "2"]),
+            ),
+            (""),
+            id="valid-ndarray-instead-of-char",
         ),
         pytest.param(
             alter_dict(
@@ -327,7 +349,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one of the following Python types:"
-                " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
+                " (<class 'str'>, <class 'numpy.chararray'>),"
                 " as defined in the NXDL as NX_CHAR."
             ),
             id="int-instead-of-chars",
@@ -552,6 +574,7 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "link-dict-instead-of-bool",
         "opt-group-completely-removed",
         "required-field-provided-in-variadic-optional-group",
+        "valid-ndarray-instead-of-char",
     ):
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]

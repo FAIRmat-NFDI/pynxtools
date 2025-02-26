@@ -582,16 +582,15 @@ NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str),
     "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
-    "NX_BOOLEAN": (bool, np.ndarray, np.bool_),
-    "NX_CHAR": (str, np.ndarray, np.chararray),
+    "NX_BOOLEAN": (bool, np.bool_),
+    "NX_CHAR": (str, np.chararray),
     "NX_DATE_TIME": (str),
-    "NX_FLOAT": (float, np.ndarray, np.floating),
-    "NX_INT": (int, np.ndarray, np.integer),
-    "NX_UINT": (np.ndarray, np.unsignedinteger),
-    "NX_NUMBER": (int, float, np.ndarray, np.integer, np.floating),
+    "NX_FLOAT": (float, np.floating),
+    "NX_INT": (int, np.integer),
+    "NX_UINT": (np.unsignedinteger),
+    "NX_NUMBER": (int, float, np.integer, np.floating),
     "NX_POSINT": (
         int,
-        np.ndarray,
         np.integer,
     ),  # > 0 is checked in is_valid_data_field()
     "NXDL_TYPE_UNAVAILABLE": (str),  # Defaults to a string if a type is not provided.
@@ -607,9 +606,14 @@ def check_all_children_for_callable(objects: list, check: Callable, *args) -> bo
     return True
 
 
+def is_list_like(object) -> bool:
+    """Checks whether the given object is a list-like object (ndarray, list)."""
+    return isinstance(object, (list, np.ndarray))
+
+
 def is_valid_data_type(value, accepted_types):
     """Checks whether the given value or its children are of an accepted type."""
-    if not isinstance(value, list):
+    if not is_list_like(value):
         return isinstance(value, accepted_types)
 
     return check_all_children_for_callable(value, isinstance, accepted_types)
@@ -621,7 +625,7 @@ def is_positive_int(value):
     def is_greater_than(num):
         return num.flat[0] > 0 if isinstance(num, np.ndarray) else num > 0
 
-    if isinstance(value, list):
+    if is_list_like(value):
         return check_all_children_for_callable(value, is_greater_than)
 
     return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
@@ -656,7 +660,7 @@ def is_valid_data_field(value, nxdl_type, path):
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
     output_value = value
 
-    if isinstance(value, list):
+    if is_list_like(value):
         return all(is_valid_data_field(v, nxdl_type, path) for v in value), output_value
 
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
