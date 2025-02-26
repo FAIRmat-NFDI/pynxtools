@@ -53,6 +53,12 @@
                     <item value="3rd type" />
                     <item value="4th type" />
                 </enumeration>
+                <attribute name="array" type="NX_INT">
+                    <enumeration>
+                        <item value="[0, 1, 2]" />
+                        <item value="[2, 3, 4]" />
+                    </enumeration>
+                </attribute>
             </field>
         </group>
         <group type="NXnote" name="required_group">

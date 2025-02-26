@@ -17,5 +17,6 @@
     "date_value_units": "",
     "required_child": 1,
     "optional_child": 1,
-    "@version": "1.0"
+    "@version": "1.0",
+    "@array": [0, 1, 2]
 }
