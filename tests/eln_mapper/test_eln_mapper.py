@@ -22,7 +22,6 @@ from typing import Dict
 
 import yaml
 from click import testing
-
 from pynxtools.eln_mapper import eln_mapper
 
 
