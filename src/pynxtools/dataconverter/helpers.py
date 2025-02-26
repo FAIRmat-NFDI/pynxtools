@@ -591,71 +591,93 @@ np_int = (
     np.uint16,
     np.uint32,
     np.uint64,
+    np.uint,
     np.unsignedinteger,
     np.signedinteger,
 )
 np_float = (np.float16, np.float32, np.float64, np.floating)
-np_bytes = (np.bytes_, np.byte, np.ubyte)
-np_char = (np.str_, np.char.chararray, *np_bytes)
+# Not to be confused with `np.byte` and `np.ubyte`, these store
+# and integer of `8bit` and `unsigned 8bit` respectively.
+np_bytes = (np.bytes_,)
+np_char = (np.str_, np.bytes_)  # Only numpy Unicode string and Byte string
 np_bool = (np.bool_,)
 np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle)
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (
         bytes,
-        bytearray,
-        np.ndarray,
         *np_bytes,
     ),
-    "NX_BOOLEAN": (bool, np.ndarray, *np_bool),
-    "NX_CHAR": (str, np.ndarray, *np_char),
+    "NX_BOOLEAN": (bool, *np_bool),
+    "NX_CHAR": (str, *np_char),
     "NX_DATE_TIME": (str,),
-    "NX_FLOAT": (float, np.ndarray, *np_float),
-    "NX_INT": (int, np.ndarray, *np_int),
-    "NX_UINT": (np.ndarray, np.unsignedinteger),
+    "NX_FLOAT": (float, *np_float),
+    "NX_INT": (int, *np_int),
+    "NX_UINT": (
+        np.unsignedinteger,
+        np.uint,
+    ),
     "NX_NUMBER": (
         int,
         float,
-        np.ndarray,
         *np_int,
         *np_float,
-        dict,
     ),
     "NX_POSINT": (
         int,
-        np.ndarray,
         np.signedinteger,
     ),  # > 0 is checked in is_valid_data_field()
-    "NX_COMPLEX": (complex, np.ndarray, *np_complex),
-    "NXDL_TYPE_UNAVAILABLE": (str,),  # Defaults to a string if a type is not provided.
+    "NX_COMPLEX": (complex, *np_complex),
+    "NXDL_TYPE_UNAVAILABLE": (
+        str,
+        *np_char,
+    ),  # Defaults to a string if a type is not provided.
     "NX_CHAR_OR_NUMBER": (
         str,
         int,
         float,
-        np.ndarray,
         *np_char,
         *np_int,
         *np_float,
-        dict,
     ),
 }
 
 
-def check_all_children_for_callable(objects: list, check: Callable, *args) -> bool:
-    """Checks whether all objects in list are validated by given callable."""
-    for obj in objects:
-        if not check(obj, *args):
-            return False
+def check_all_children_for_callable(
+    objects: Union[list, np.ndarray],
+    checker: Optional[Callable] = None,
+    accepted_types: Optional[tuple] = None,
+) -> bool:
+    """Checks whether all objects in list or numpy array are validated
+    by given callable and types.
+    """
 
-    return True
+    if checker is not None:
+        for obj in objects:
+            args = (obj, accepted_types) if accepted_types is not None else (obj,)
+            if not checker(*args):
+                return False
+        return True
+
+    # default checker
+    tmp_arr = None
+    if isinstance(objects, list):
+        # Handles list and list of list
+        tmp_arr = np.array(objects)
+    elif isinstance(objects, np.ndarray):
+        tmp_arr = objects
+    if tmp_arr is not None:
+        return any([np.issubdtype(tmp_arr.dtype, type_) for type_ in accepted_types])
+    return False
 
 
 def is_valid_data_type(value, accepted_types):
     """Checks whether the given value or its children are of an accepted type."""
-    if not isinstance(value, list):
+
+    if not isinstance(value, (list, np.ndarray)):
         return isinstance(value, accepted_types)
 
-    return check_all_children_for_callable(value, isinstance, accepted_types)
+    return check_all_children_for_callable(objects=value, accepted_types=accepted_types)
 
 
 def is_positive_int(value):
@@ -665,7 +687,7 @@ def is_positive_int(value):
         return num.flat[0] > 0 if isinstance(num, np.ndarray) else num > 0
 
     if isinstance(value, list):
-        return check_all_children_for_callable(value, is_greater_than)
+        return check_all_children_for_callable(objects=value, checker=is_greater_than)
 
     return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
 
@@ -685,28 +707,31 @@ def convert_str_to_bool_safe(value):
 def is_valid_data_field(value, nxdl_type, path):
     # todo: Check this funciton and wtire test for it. It seems the funciton is not
     # working as expected.
-    """Checks whether a given value is valid according to what is defined in the NXDL.
+    """Checks whether a given value is valid according to the type defined in the NXDL.
 
-    This function will also try to convert typical types, for example int to float,
-    and return the successful conversion.
+    This function also converts bool value comes in str format. In case, it fails to
+    convert, it raises an Exception.
 
-    If it fails to convert, it raises an Exception.
-
-    Returns two values: first, boolean (True if the the value corresponds to nxdl_type,
-    False otherwise) and second, result of attempted conversion or the original value
-    (if conversion is not needed or impossible)
+    Returns two values:
+        boolean (True if the the value corresponds to nxdl_type, False otherwise)
+        converted_value bool value.
     """
-    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
-    output_value = value
 
+    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+    # Do not count the dict as it represents a link value
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
         try:
             if accepted_types[0] is bool and isinstance(value, str):
                 value = convert_str_to_bool_safe(value)
                 if value is None:
                     raise ValueError
-            output_value = accepted_types[0](value)
-        except ValueError:
+                return True, value
+
+            collector.collect_and_log(
+                path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+            )
+            return False, value
+        except (ValueError, TypeError):
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
@@ -726,7 +751,7 @@ def is_valid_data_field(value, nxdl_type, path):
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
             return False, value
 
-    return True, output_value
+    return True, value
 
 
 @lru_cache(maxsize=None)
