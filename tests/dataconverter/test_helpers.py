@@ -100,6 +100,7 @@ def listify_template(data_dict: Template):
                 listified_template[optionality][path] = data_dict[optionality][path]
             else:
                 listified_template[optionality][path] = [data_dict[optionality][path]]
+        print([data_dict[optionality]])
     return listified_template
 
 
@@ -162,9 +163,7 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
-        [1, 2, 3], dtype=np.int8
-    )
+    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = 1
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units"] = "kg"
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = "just chars"
     template["/ENTRY[my_entry]/definition"] = "NXtest"
@@ -194,10 +193,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = Tru
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
-    [1, 2, 3],  # pylint: disable=E1126
-    dtype=np.int8,
-)  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = 1
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units"] = (
     "kg"  # pylint: disable=E1126
 )
@@ -213,12 +209,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
     "eV"  # pylint: disable=E1126
 )
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = (
-    np.array(
-        [1, 2, 3],  # pylint: disable=E1126
-        dtype=np.int8,
-    )
-)  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = 1  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value/@units"
 ] = "kg"  # pylint: disable=E1126

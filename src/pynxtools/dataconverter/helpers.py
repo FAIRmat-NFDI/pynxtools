@@ -158,9 +158,9 @@ class Collector:
             "NX_ANY",
         ):
             return
-        if self.logging:
+        if self.logging and path + str(log_type) + str(value) not in self.data:
             self._log(path, log_type, value, *args, **kwargs)
-        self.data.add(path)
+        self.data.add(path + str(log_type) + str(value))
 
     def has_validation_problems(self):
         """Returns True if there were any validation problems."""
@@ -660,10 +660,8 @@ def is_valid_data_field(value, nxdl_type, path):
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
     output_value = value
 
-    if is_list_like(value):
-        return all(is_valid_data_field(v, nxdl_type, path) for v in value), output_value
-
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
+        print(type(collector.data), collector.data)
         collector.collect_and_log(
             path, ValidationProblem.InvalidType, accepted_types, nxdl_type
         )
