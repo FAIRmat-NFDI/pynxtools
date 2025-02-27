@@ -579,29 +579,14 @@ NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
 NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
 NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
 # np int for np version 1.26.0
-np_int = (
-    np.intc,
-    np.int_,
-    np.intp,
-    np.int8,
-    np.int16,
-    np.int32,
-    np.int64,
-    np.uint8,
-    np.uint16,
-    np.uint32,
-    np.uint64,
-    np.uint,
-    np.unsignedinteger,
-    np.signedinteger,
-)
-np_float = (np.float16, np.float32, np.float64, np.floating)
+np_int = (np.integer,)
+np_float = (np.floating,)
 # Not to be confused with `np.byte` and `np.ubyte`, these store
 # an integer of `8bit` and `unsigned 8bit` respectively.
 np_bytes = (np.bytes_,)
 np_char = (np.str_, np.bytes_)  # Only numpy Unicode string and Byte string
 np_bool = (np.bool_,)
-np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle)
+np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle, np.complex_)
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (
@@ -710,9 +695,8 @@ def is_valid_data_field(value, nxdl_type, path):
     This function only tries to convert boolean value in str format (e.g. "true" ) to
     python Boolean (True). In case, it fails to convert, it raises an Exception.
 
-    Returns two values:
+    Return:
         Bool: (True if the the value corresponds to nxdl_type, False otherwise)
-        Any:  Converted_value bool value if possible otherwise original value.
     """
 
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
