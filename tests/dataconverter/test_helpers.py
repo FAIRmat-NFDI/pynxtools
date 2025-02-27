@@ -281,13 +281,9 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "not_a_num",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
-                " one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
-                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>, <"
-                "class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>, <"
-                "class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>, <"
-                "class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy."
-                "signedinteger'>), as defined in the NXDL as NX_INT."
+                " The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
+                " be one of: (<class 'int'>, <class 'numpy.integer'>), as defined in the"
+                " NXDL as NX_INT.\n"
             ),
             id="string-instead-of-int",
         ),
@@ -298,13 +294,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 ["1", "2", "3"],
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
-                " one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
-                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>, <"
-                "class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>, <"
-                "class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>, <"
-                "class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy."
-                "signedinteger'>), as defined in the NXDL as NX_INT."
+                " The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
+                " be one of: (<class 'int'>, <class 'numpy.integer'>)"
             ),
             id="list-of-int-str-instead-of-int",
         ),
@@ -316,12 +307,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
-                " one of: (<class 'int'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
-                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy.int16'>, <"
-                "class 'numpy.int32'>, <class 'numpy.int64'>, <class 'numpy.uint8'>, <"
-                "class 'numpy.uint16'>, <class 'numpy.uint32'>, <class 'numpy.uint64'>, <"
-                "class 'numpy.uint64'>, <class 'numpy.unsignedinteger'>, <class 'numpy."
-                "signedinteger'>), as defined in the NXDL as NX_INT."
+                " one of: (<class 'int'>, <class 'numpy.integer'>)"
             ),
             id="array-of-float-instead-of-int",
         ),
@@ -488,10 +474,9 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 np.array(["2.0", "3.0"], dtype=np.str_),
             ),
-            " The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should "
-            "be one of: (<class 'float'>, <class 'numpy.float16'>, <class 'numpy.float32"
-            "'>, <class 'numpy.float64'>, <class 'numpy.floating'>), as defined in the "
-            "NXDL as NX_FLOAT.",
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
+            "one of: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
+            "as NX_FLOAT.\n",
             id="array-of-str-instead-of-float",
         ),
         pytest.param(
@@ -501,9 +486,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 [2],  # pylint: disable=E1126
             ),
             "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be"
-            " one of: (<class 'float'>, <class 'numpy.float16'>, <class 'numpy.float32'>"
-            ", <class 'numpy.float64'>, <class 'numpy.floating'>), as defined in the "
-            "NXDL as NX_FLOAT",
+            " one of: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL"
+            " as NX_FLOAT.\n",
             id="list-of-int-instead-of-float",
         ),
         pytest.param(
