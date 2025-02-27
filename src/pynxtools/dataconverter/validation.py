@@ -422,7 +422,7 @@ def validate_dict_against(
                 continue
 
             # Check general validity
-            _, _ = is_valid_data_field(
+            _ = is_valid_data_field(
                 mapping[f"{prev_path}/{variant}"], node.dtype, f"{prev_path}/{variant}"
             )
 
@@ -468,7 +468,7 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            _, _ = is_valid_data_field(
+            _ = is_valid_data_field(
                 mapping[
                     f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
                 ],
@@ -534,7 +534,7 @@ def validate_dict_against(
             collector.collect_and_log(
                 f"{key}", ValidationProblem.MissingUnit, node.unit
             )
-        is_documented_flag, _ = is_valid_data_field(mapping[key], node.dtype, key)
+        is_documented_flag = is_valid_data_field(mapping[key], node.dtype, key)
         return is_documented_flag
 
     def recurse_tree(
