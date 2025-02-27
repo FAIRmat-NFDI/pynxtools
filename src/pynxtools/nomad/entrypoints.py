@@ -16,10 +16,12 @@
 # limitations under the License.
 #
 try:
-    from nomad.config.models.plugins import (AppEntryPoint,
-                                             ExampleUploadEntryPoint,
-                                             ParserEntryPoint,
-                                             SchemaPackageEntryPoint)
+    from nomad.config.models.plugins import (
+        AppEntryPoint,
+        ExampleUploadEntryPoint,
+        ParserEntryPoint,
+        SchemaPackageEntryPoint,
+    )
 except ImportError as exc:
     raise ImportError(
         "Could not import nomad package. Please install the package 'nomad-lab'."
@@ -64,9 +66,15 @@ nexus_parser = NexusParserEntryPoint(
     mainfile_mime_re="application/x-hdf*",
 )
 
-from nomad.config.models.ui import (App, Column, Menu, MenuItemHistogram,
-                                    MenuItemPeriodicTable, MenuItemTerms,
-                                    SearchQuantities)
+from nomad.config.models.ui import (
+    App,
+    Column,
+    Menu,
+    MenuItemHistogram,
+    MenuItemPeriodicTable,
+    MenuItemTerms,
+    SearchQuantities,
+)
 
 schema = "pynxtools.nomad.schema.Root"
 
