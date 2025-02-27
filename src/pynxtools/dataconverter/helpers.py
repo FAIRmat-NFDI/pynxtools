@@ -597,7 +597,7 @@ np_int = (
 )
 np_float = (np.float16, np.float32, np.float64, np.floating)
 # Not to be confused with `np.byte` and `np.ubyte`, these store
-# and integer of `8bit` and `unsigned 8bit` respectively.
+# an integer of `8bit` and `unsigned 8bit` respectively.
 np_bytes = (np.bytes_,)
 np_char = (np.str_, np.bytes_)  # Only numpy Unicode string and Byte string
 np_bool = (np.bool_,)
@@ -658,16 +658,14 @@ def check_all_children_for_callable(
             if not checker(*args):
                 return False
         return True
-
-    # default checker
-    tmp_arr = None
+    if isinstance(objects, tuple):
+        return False
     if isinstance(objects, list):
         # Handles list and list of list
-        tmp_arr = np.array(objects)
-    elif isinstance(objects, np.ndarray):
-        tmp_arr = objects
-    if tmp_arr is not None:
-        return any([np.issubdtype(tmp_arr.dtype, type_) for type_ in accepted_types])
+        return all([type(elem) in accepted_types for elem in objects])
+    if isinstance(objects, np.ndarray):
+        return any([np.issubdtype(objects.dtype, type_) for type_ in accepted_types])
+
     return False
 
 
@@ -709,12 +707,12 @@ def is_valid_data_field(value, nxdl_type, path):
     # working as expected.
     """Checks whether a given value is valid according to the type defined in the NXDL.
 
-    This function also converts bool value comes in str format. In case, it fails to
-    convert, it raises an Exception.
+    This function only tries to convert boolean value in str format (e.g. "true" ) to
+    python Boolean (True). In case, it fails to convert, it raises an Exception.
 
     Returns two values:
-        boolean (True if the the value corresponds to nxdl_type, False otherwise)
-        converted_value bool value.
+        Bool: (True if the the value corresponds to nxdl_type, False otherwise)
+        Any:  Converted_value bool value if possible otherwise original value.
     """
 
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
