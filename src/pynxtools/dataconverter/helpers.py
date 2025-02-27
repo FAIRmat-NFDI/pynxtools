@@ -723,21 +723,21 @@ def is_valid_data_field(value, nxdl_type, path):
                 value = convert_str_to_bool_safe(value)
                 if value is None:
                     raise ValueError
-                return True, value
+                return True
 
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
-            return False, value
+            return False
         except (ValueError, TypeError):
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
-            return False, value
+            return False
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
-        return False, value
+        return False
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(
@@ -747,9 +747,9 @@ def is_valid_data_field(value, nxdl_type, path):
         results = iso8601.search(value)
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
-            return False, value
+            return False
 
-    return True, value
+    return True
 
 
 @lru_cache(maxsize=None)

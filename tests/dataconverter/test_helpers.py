@@ -97,7 +97,9 @@ def listify_template(data_dict: Template):
                 "type",
                 "definition",
                 "date_value",
-            ):
+            ) or isinstance(
+                data_dict[optionality][path], np.ndarray
+            ):  # avoid list numpy array
                 listified_template[optionality][path] = data_dict[optionality][path]
             else:
                 listified_template[optionality][path] = [data_dict[optionality][path]]
