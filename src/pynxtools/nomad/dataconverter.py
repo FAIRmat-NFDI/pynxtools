@@ -261,7 +261,7 @@ class NexusDataConverter(EntryData):
                 output = f"{extra_input.replace('.', '_')}.nxs"
             else:
                 input = input_list
-                output = os.path.join(raw_path, archive.data.output)
+                output = archive.data.output
             converter_params = {
                 "reader": archive.data.reader,
                 "nxdl": re.sub(".nxdl$", "", archive.data.nxdl),
