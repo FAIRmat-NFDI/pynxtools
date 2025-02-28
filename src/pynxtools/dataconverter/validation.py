@@ -430,20 +430,12 @@ def validate_dict_against(
                 continue
 
             # Check general validity
-            _ = is_valid_data_field(
-                mapping[f"{prev_path}/{variant}"], node.dtype, f"{prev_path}/{variant}"
+            mapping[f"{prev_path}/{variant}"] = is_valid_data_field(
+                mapping[f"{prev_path}/{variant}"],
+                node.dtype,
+                node.items,
+                f"{prev_path}/{variant}",
             )
-
-            # Check enumeration
-            if (
-                node.items is not None
-                and mapping[f"{prev_path}/{variant}"] not in node.items
-            ):
-                collector.collect_and_log(
-                    f"{prev_path}/{variant}",
-                    ValidationProblem.InvalidEnum,
-                    node.items,
-                )
 
             # Check unit category
             if node.unit is not None:
@@ -477,27 +469,16 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            _ = is_valid_data_field(
+            mapping[
+                f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
+            ] = is_valid_data_field(
                 mapping[
                     f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
                 ],
                 node.dtype,
+                node.items,
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
             )
-
-            # Check enumeration
-            if (
-                node.items is not None
-                and mapping[
-                    f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
-                ]
-                not in node.items
-            ):
-                collector.collect_and_log(
-                    f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
-                    ValidationProblem.InvalidEnum,
-                    node.items,
-                )
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
@@ -553,15 +534,7 @@ def validate_dict_against(
         # We still do some further checks before returning.
 
         # Check general validity
-        _ = is_valid_data_field(mapping[key], node.dtype, key)
-
-        # Check enumeration
-        if node.items is not None and mapping[key] not in node.items:
-            collector.collect_and_log(
-                key,
-                ValidationProblem.InvalidEnum,
-                node.items,
-            )
+        mapping[key] = is_valid_data_field(mapping[key], node.dtype, node.items, key)
 
         # Check main field exists for units
         if (
