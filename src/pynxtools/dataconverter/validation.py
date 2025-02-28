@@ -534,8 +534,7 @@ def validate_dict_against(
             collector.collect_and_log(
                 f"{key}", ValidationProblem.MissingUnit, node.unit
             )
-        is_documented_flag = is_valid_data_field(mapping[key], node.dtype, key)
-        return is_documented_flag
+        return is_valid_data_field(mapping[key], node.dtype, key)
 
     def recurse_tree(
         node: NexusNode,
