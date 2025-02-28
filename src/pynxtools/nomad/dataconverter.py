@@ -1,3 +1,4 @@
+import os.listdir
 import os.path
 import re
 from typing import Optional
@@ -45,9 +46,10 @@ def create_eln_dict(archive):
     def exclude(quantity_def, section):
         return quantity_def.name in (
             "reader",
+            "nxdl",
             "input_files",
             "output",
-            "nxdl",
+            "filter",
             "nexus_view",
         )
 
@@ -209,6 +211,13 @@ class NexusDataConverter(EntryData):
         default="output.nxs",
     )
 
+    filter = Quantity(
+        type=str,
+        description="Filter to select additional input files to be converted to NeXus",
+        a_eln=dict(component="StringEditQuantity"),
+        default=False,
+    )
+
     nexus_view = Quantity(
         type=ArchiveSection,
         description="Link to the NeXus Entry",
@@ -228,52 +237,75 @@ class NexusDataConverter(EntryData):
             write_yaml(archive, eln_fname, eln_dict)
             input_file_list.append(eln_fname)
 
-        converter_params = {
-            "reader": archive.data.reader,
-            "nxdl": re.sub(".nxdl$", "", archive.data.nxdl),
-            "input_file": [os.path.join(raw_path, file) for file in input_file_list],
-            "output": os.path.join(raw_path, archive.data.output),
-        }
-        # remove the nexus file and ensure that NOMAD knows that it is removed
-        try:
-            os.remove(os.path.join(raw_path, archive.data.output))
-            archive.m_context.process_updated_raw_file(
-                archive.data.output, allow_modify=True
-            )
-        except Exception as e:
-            pass
-        # create the new nexus file
-        try:
-            pynxtools_converter.logger = logger
-            pynxtools_converter.helpers.logger = logger
-            pynxtools_converter.convert(**converter_params)
-        except Exception as e:
-            logger.error(
-                "could not convert to nxs", mainfile=archive.data.output, exc_info=e
-            )
-            raise e
-        # parse the new nexus file
-        try:
-            archive.m_context.process_updated_raw_file(
-                archive.data.output, allow_modify=True
-            )
-        except Exception as e:
-            logger.error(
-                "could not trigger processing", mainfile=archive.data.output, exc_info=e
-            )
-            raise e
+        # collect extra input files
+        input_list = [
+            os.path.join(raw_path, file) for file in input_file_list.append(extra_input)
+        ]
+        if self.filter:
+            try:
+                extra_inputs = [
+                    f for f in os.listdir(raw_path) if re.match(self.filter, f)
+                ]
+            except Exception as e:
+                logger.error(
+                    "could not get file list accordonf to the filter provided",
+                    mainfile=archive.data.output,
+                    exc_info=e,
+                )
+                extra_inputs = []
         else:
-            logger.info("triggered processing", mainfile=archive.data.output)
-        # reference the generated nexus file
-        try:
-            self.nexus_view = f"../upload/archive/mainfile/{archive.data.output}#/data"
-        except Exception as e:
-            logger.error(
-                "could not reference the generate nexus file",
-                mainfile=archive.data.output,
-                exc_info=e,
-            )
-            raise e
+            extra_inputs = []
+        extra_inputs += [""]
+        # convert all files
+        for extra_input in extra_inputs:
+            if len(extra_input) > 0:
+                input = input_list + [os.path.join(raw_path, extra_input)]
+                output = f"{extra_input.replace('.', '_')}.nxs"
+            else:
+                input = input_list
+                output = os.path.join(raw_path, archive.data.output)
+            converter_params = {
+                "reader": archive.data.reader,
+                "nxdl": re.sub(".nxdl$", "", archive.data.nxdl),
+                "input_file": input,
+                "output": os.path.join(raw_path, output),
+            }
+            # remove the nexus file and ensure that NOMAD knows that it is removed
+            try:
+                os.remove(os.path.join(raw_path, output))
+                archive.m_context.process_updated_raw_file(
+                    archive.data.output, allow_modify=True
+                )
+            except Exception as e:
+                pass
+            # create the new nexus file
+            try:
+                pynxtools_converter.logger = logger
+                pynxtools_converter.helpers.logger = logger
+                pynxtools_converter.convert(**converter_params)
+            except Exception as e:
+                logger.error("could not convert to nxs", mainfile=output, exc_info=e)
+                continue
+            # parse the new nexus file
+            try:
+                archive.m_context.process_updated_raw_file(output, allow_modify=True)
+            except Exception as e:
+                logger.error(
+                    "could not trigger processing", mainfile=output, exc_info=e
+                )
+                continue
+            else:
+                logger.info("triggered processing", mainfile=output)
+            # reference the generated nexus file
+            try:
+                self.nexus_view = f"../upload/archive/mainfile/{output}#/data"
+            except Exception as e:
+                logger.error(
+                    "could not reference the generate nexus file",
+                    mainfile=output,
+                    exc_info=e,
+                )
+                continue
 
 
 m_package.__init_metainfo__()
