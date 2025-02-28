@@ -20,7 +20,7 @@ import re
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
-from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
+from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -165,14 +165,14 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
 
 
 def validate_dict_against(
-    appdef: str, mapping: Mapping[str, Any], ignore_undocumented: bool = False
+    appdef: str, mapping: MutableMapping[str, Any], ignore_undocumented: bool = False
 ) -> Tuple[bool, List]:
     """
     Validates a mapping against the NeXus tree for application definition `appdef`.
 
     Args:
         appdef (str): The appdef name to validate against.
-        mapping (Mapping[str, Any]):
+        mapping (MutableMapping[str, Any]):
             The mapping containing the data to validate.
             This should be a dict of `/` separated paths.
             Attributes are denoted with `@` in front of the last element.
@@ -813,6 +813,6 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
 
 # Backwards compatibility
 def validate_data_dict(
-    _: Mapping[str, Any], read_data: Mapping[str, Any], root: ET._Element
+    _: MutableMapping[str, Any], read_data: MutableMapping[str, Any], root: ET._Element
 ) -> bool:
     return validate_dict_against(root.attrib["name"], read_data)[0]
