@@ -761,7 +761,7 @@ class NexusEntity(NexusNode):
     type: Literal["field", "attribute"]
     unit: Optional[NexusUnitCategory] = None
     dtype: NexusType = "NX_CHAR"
-    items: Optional[List[str]] = None
+    items: Optional[List[Any]] = None
     shape: Optional[Tuple[Optional[int], ...]] = None
 
     def _set_type(self):
@@ -790,14 +790,23 @@ class NexusEntity(NexusNode):
         based on the values in the inheritance chain.
         The first vale found is used.
         """
-        if not self.dtype == "NX_CHAR":
-            return
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
             if enum is not None:
                 self.items = []
                 for items in enum.findall(f"nx:item", namespaces=namespaces):
-                    self.items.append(items.attrib["value"])
+                    value = items.attrib["value"]
+                    if value[0] == "[" and value[-1] == "]":
+                        import ast
+
+                        try:
+                            self.items.append(ast.literal_eval(value))
+                        except (ValueError, SyntaxError):
+                            raise Exception(
+                                f"Error parsing enumeration item in the provided NXDL: {value}"
+                            )
+                    else:
+                        self.items.append(value)
                 return
 
     def _set_shape(self):
