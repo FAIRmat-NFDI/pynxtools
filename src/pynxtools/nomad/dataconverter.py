@@ -215,7 +215,6 @@ class NexusDataConverter(EntryData):
         type=str,
         description="Filter to select additional input files to be converted to NeXus",
         a_eln=dict(component="StringEditQuantity"),
-        default=False,
     )
 
     nexus_view = Quantity(
