@@ -526,6 +526,21 @@ def validate_dict_against(
         if "@" in key and node.type != "attribute":
             return False
 
+        # if we arrive here, the key is supposed to be documented.
+        # We still do some further checks before returning.
+
+        # Check general validity
+        _ = is_valid_data_field(mapping[key], node.dtype, key)
+
+        # Check enumeration
+        if node.items is not None and mapping[key] not in node.items:
+            collector.collect_and_log(
+                key,
+                ValidationProblem.InvalidEnum,
+                node.items,
+            )
+
+        # Check main field exists for units
         if (
             isinstance(node, NexusEntity)
             and node.unit is not None
@@ -534,7 +549,8 @@ def validate_dict_against(
             collector.collect_and_log(
                 f"{key}", ValidationProblem.MissingUnit, node.unit
             )
-        return is_valid_data_field(mapping[key], node.dtype, key)
+
+        return True
 
     def recurse_tree(
         node: NexusNode,
