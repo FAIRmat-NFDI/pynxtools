@@ -238,9 +238,7 @@ class NexusDataConverter(EntryData):
             input_file_list.append(eln_fname)
 
         # collect extra input files
-        input_list = [
-            os.path.join(raw_path, file) for file in input_file_list.append(extra_input)
-        ]
+        input_list = [os.path.join(raw_path, file) for file in input_file_list]
         if self.filter:
             try:
                 extra_inputs = [
