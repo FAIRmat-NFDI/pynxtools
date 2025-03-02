@@ -846,6 +846,8 @@ class HandleNexus:
             # To test if hdf_file is open print(self.in_file.id.valid)
             self.in_file.close()
             # To test if hdf_file is open print(self.in_file.id.valid)
+            # clear lru_cache to avoid memory pileup
+            get_inherited_hdf_nodes.cache_clear()
 
 
 @click.command()
