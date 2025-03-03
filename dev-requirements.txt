@@ -36,6 +36,10 @@ distlib==0.3.9
     # via virtualenv
 filelock==3.16.1
     # via virtualenv
+flexcache==0.3
+    # via pint
+flexparser==0.4
+    # via pint
 fonttools==4.55.2
     # via matplotlib
 ghp-import==2.1.0
@@ -135,9 +139,12 @@ pathspec==0.12.1
     #   mkdocs-macros-plugin
 pillow==11.0.0
     # via matplotlib
+pint==0.24.4
+    # via pynxtools (pyproject.toml)
 platformdirs==4.3.6
     # via
     #   mkdocs-get-deps
+    #   pint
     #   virtualenv
 pluggy==1.5.0
     # via pytest
@@ -204,7 +211,11 @@ types-pyyaml==6.0.12.20240917
 types-requests==2.32.0.20241016
     # via pynxtools (pyproject.toml)
 typing-extensions==4.12.2
-    # via mypy
+    # via
+    #   flexcache
+    #   flexparser
+    #   mypy
+    #   pint
 tzdata==2024.2
     # via pandas
 urllib3==2.2.3
