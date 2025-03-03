@@ -155,6 +155,9 @@ def fixture_filled_test_data(template, tmp_path):
     )
 
     template.clear()
+    template[
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
+    ] = 2
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = "nm"
     template["/ENTRY[my_entry]/optional_parent/required_child"] = 1
@@ -184,6 +187,9 @@ def fixture_filled_test_data(template, tmp_path):
 
 
 TEMPLATE = Template()
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
+] = 2
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = (
     "nm"  # pylint: disable=E1126
@@ -210,6 +216,9 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] =
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value/@units"
 ] = ""
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/anamethatRENAMES[anamethatichangetothis]"
+] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
     "eV"  # pylint: disable=E1126
@@ -276,6 +285,19 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]",
+                "not_a_num",
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
+                " should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
+                "the NXDL as NX_INT."
+            ),
+            id="variadic-field-str-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 "not_a_num",
             ),
@@ -293,8 +315,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "NOT_TRUE_OR_FALSE",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
-                "ould be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ),
             id="string-instead-of-bool",
         ),
@@ -305,7 +326,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 ["1", "2", "3"],
             ),
             (
-                " The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
                 " be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
             ),
             id="list-of-int-str-instead-of-int",
@@ -636,6 +657,10 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 )
 def test_validate_data_dict(caplog, data_dict, error_message, request):
     """Unit test for the data validation routine."""
+
+    def format_error_message(msg: str) -> str:
+        return msg[msg.rfind("G: ") + 3 :].rstrip("\n")
+
     if request.node.callspec.id in (
         "valid-data-dict",
         "lists",
@@ -664,12 +689,15 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         assert "" == caplog.text
         captured_logs = caplog.records
         assert not validate_dict_against("NXtest", data_dict)[0]
-        assert any(error_message in rec.message for rec in captured_logs)
+        assert any(
+            error_message == format_error_message(rec.message) for rec in captured_logs
+        )
     else:
         with caplog.at_level(logging.WARNING):
             assert not validate_dict_against("NXtest", data_dict)[0]
-
-        assert error_message in caplog.text
+        assert any(
+            error_message == format_error_message(rec.message) for rec in caplog.records
+        )
 
 
 @pytest.mark.parametrize(

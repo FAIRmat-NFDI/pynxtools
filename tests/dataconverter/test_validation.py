@@ -28,6 +28,7 @@ def get_data_dict():
     return {
         "/ENTRY[my_entry]/optional_parent/required_child": 1,
         "/ENTRY[my_entry]/optional_parent/optional_child": 1,
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]": 2,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units": "nm",
@@ -45,6 +46,7 @@ def get_data_dict():
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array": [0, 1, 2],
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value": "2022-01-22T12:14:12.05018+00:00",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units": "",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/anamethatRENAMES[anamethatichangetothis]": 2,
         "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value": True,
         "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value/@units": "",
         "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value": 2,

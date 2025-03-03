@@ -58,7 +58,11 @@ class ExampleReader(BaseReader):
             # outputs with --generate-template for a provided NXDL file
             if (
                 k.startswith("/ENTRY[entry]/required_group")
-                or k == "/ENTRY[entry]/optional_parent/req_group_in_opt_group"
+                or k
+                in (
+                    "/ENTRY[entry]/optional_parent/req_group_in_opt_group",
+                    "/ENTRY[entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatrenames]",
+                )
                 or k.startswith("/ENTRY[entry]/OPTIONAL_group")
             ):
                 continue

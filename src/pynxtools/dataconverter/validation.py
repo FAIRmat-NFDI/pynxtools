@@ -462,6 +462,8 @@ def validate_dict_against(
                 prev_path=f"{prev_path}/{variant}",
             )
 
+            remove_from_not_visited(f"{prev_path}/{variant}")
+
         # TODO: Build variadic map for fields and attributes
         # Introduce variadic siblings in NexusNode?
 
