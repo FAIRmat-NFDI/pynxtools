@@ -56,7 +56,6 @@ def test_write(writer):
     test_nxs = h5py.File(writer.output_path, "r")
     assert test_nxs["/my_entry/nxodd_name/int_value"][()] == 2
     assert test_nxs["/my_entry/nxodd_name/int_value"].attrs["units"] == "eV"
-    assert test_nxs["/my_entry/nxodd_name/posint_value"].shape == (3,)  # pylint: disable=no-member
 
 
 def test_write_link(writer):

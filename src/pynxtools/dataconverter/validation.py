@@ -168,7 +168,7 @@ def validate_dict_against(
     appdef: str, mapping: Mapping[str, Any], ignore_undocumented: bool = False
 ) -> Tuple[bool, List]:
     """
-    Validates a mapping against the NeXus tree for applicationd definition `appdef`.
+    Validates a mapping against the NeXus tree for application definition `appdef`.
 
     Args:
         appdef (str): The appdef name to validate against.
@@ -244,6 +244,14 @@ def validate_dict_against(
 
                 handle_field(
                     node.search_add_child_for_multiple((signal, "DATA")),
+                    keys,
+                    prev_path=prev_path,
+                )
+
+            # check NXdata attributes
+            for attr in ("signal", "auxiliary_signals", "axes"):
+                handle_attribute(
+                    node.search_add_child_for(attr),
                     keys,
                     prev_path=prev_path,
                 )
@@ -392,17 +400,17 @@ def validate_dict_against(
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    full_path, missing_type_err.get(node.type), None
-                )
-
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
             return
 
         for variant in variants:
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
-                # Check if all fields in the dict are actual attributes (startwith @)
+                # Check if all fields in the dict are actual attributes (startswith @)
                 all_attrs = True
                 for entry in keys[variant]:
                     if not entry.startswith("@"):
@@ -454,17 +462,20 @@ def validate_dict_against(
                 prev_path=f"{prev_path}/{variant}",
             )
 
+            remove_from_not_visited(f"{prev_path}/{variant}")
+
         # TODO: Build variadic map for fields and attributes
         # Introduce variadic siblings in NexusNode?
 
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    full_path, missing_type_err.get(node.type), None
-                )
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
             return
 
         for variant in variants:
@@ -475,6 +486,20 @@ def validate_dict_against(
                 node.dtype,
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
             )
+
+            # Check enumeration
+            if (
+                node.items is not None
+                and mapping[
+                    f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
+                ]
+                not in node.items
+            ):
+                collector.collect_and_log(
+                    f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
+                    ValidationProblem.InvalidEnum,
+                    node.items,
+                )
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
@@ -556,7 +581,7 @@ def validate_dict_against(
     ) -> list:
         """
             This method runs through the mapping dictionary and checks if there are any
-            attributes assigned to the fields (not groups!) which are not expicitly
+            attributes assigned to the fields (not groups!) which are not explicitly
             present in the mapping.
             If there are any found, a warning is logged and the corresponding items are
             added to the list returned by the method.
@@ -657,7 +682,7 @@ def validate_dict_against(
         if (next_child_class is not None) or (next_child_name is not None):
             output = None
             for child in node.children:
-                # regexs to separarte the class and the name from full name of the child
+                # regexs to separate the class and the name from full name of the child
                 child_class_from_node = re.sub(
                     r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
                     "",

@@ -96,7 +96,7 @@ def listify_template(data_dict: Template):
                 "type",
                 "definition",
                 "date_value",
-            ):
+            ) or isinstance(data_dict[optionality][path], list):
                 listified_template[optionality][path] = data_dict[optionality][path]
             else:
                 listified_template[optionality][path] = [data_dict[optionality][path]]
@@ -155,6 +155,9 @@ def fixture_filled_test_data(template, tmp_path):
     )
 
     template.clear()
+    template[
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
+    ] = 2
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = "nm"
     template["/ENTRY[my_entry]/optional_parent/required_child"] = 1
@@ -162,9 +165,9 @@ def fixture_filled_test_data(template, tmp_path):
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"
-    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
-        [1, 2, 3], dtype=np.int8
-    )
+    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value"] = 2
+    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units"] = "eV"
+    template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = 1
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units"] = "kg"
     template["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = "just chars"
     template["/ENTRY[my_entry]/definition"] = "NXtest"
@@ -184,6 +187,9 @@ def fixture_filled_test_data(template, tmp_path):
 
 
 TEMPLATE = Template()
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
+] = 2
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = (
     "nm"  # pylint: disable=E1126
@@ -194,10 +200,11 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = Tru
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
-    [1, 2, 3],  # pylint: disable=E1126
-    dtype=np.int8,
-)  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value"] = 2
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units"] = (
+    "eV"
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = 1
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units"] = (
     "kg"  # pylint: disable=E1126
 )
@@ -209,16 +216,14 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] =
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value/@units"
 ] = ""
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/anamethatRENAMES[anamethatichangetothis]"
+] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
     "eV"  # pylint: disable=E1126
 )
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = (
-    np.array(
-        [1, 2, 3],  # pylint: disable=E1126
-        dtype=np.int8,
-    )
-)  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = 1  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value/@units"
 ] = "kg"  # pylint: disable=E1126
@@ -229,6 +234,11 @@ TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value/@units"
 ] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/type"] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/type/@array"] = [
+    0,
+    1,
+    2,
+]
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/date_value"] = (
     "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 )
@@ -240,6 +250,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disabl
 TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array"] = [0, 1, 2]
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
     "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
 )
@@ -274,18 +285,25 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]",
+                "not_a_num",
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
+                " should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
+                "the NXDL as NX_INT."
+            ),
+            id="variadic-field-str-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 "not_a_num",
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
-                "t_value should be one of: (<class 'int'>, <class 'numpy"
-                ".ndarray'>, <class 'numpy.int32'>, <class 'numpy.int64'>,"
-                " <class 'numpy.int64'>, <class 'numpy.int8'>, <class 'numpy"
-                ".int16'>, <class 'numpy.int32'>, <class 'numpy.int64'>, "
-                "<class 'numpy.uint8'>, <class 'numpy.uint16'>, <class 'numpy"
-                ".uint32'>, <class 'numpy.uint64'>, <class 'numpy.unsignedi"
-                "nteger'>, <class 'numpy.signedinteger'>), as defined in "
+                "t_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
                 "the NXDL as NX_INT."
             ),
             id="string-instead-of-int",
@@ -297,11 +315,107 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "NOT_TRUE_OR_FALSE",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value sh"
-                "ould be one of: (<class 'bool'>, <class 'numpy.ndarray'>, <class '"
-                "numpy.bool"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
             ),
-            id="string-instead-of-int",
+            id="string-instead-of-bool",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                ["1", "2", "3"],
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
+                " be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ),
+            id="list-of-int-str-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                np.array([2.0, 3.0, 4.0], dtype=np.float32),
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
+                " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ),
+            id="array-of-float-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                [2, 3, 4],
+            ),
+            (""),
+            id="list-of-int-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                np.array([2, 3, 4], dtype=np.int32),
+            ),
+            (""),
+            id="array-of-int32-instead-of-int",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                "2022-01-22T12:14:12.05018-00:00",
+            ),
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
+            " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
+            " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
+            "T12:14:12.05018+00:00.",
+            id="int-instead-of-date",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                0,
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT."
+            ),
+            id="int-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
+                "0",
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: (<class 'int'>, <class 'float'>, <class 'numpy.integer'>, <class 'numpy.floating'>), as defined in the NXDL as NX_NUMBER."
+            ),
+            id="str-instead-of-number",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array([0.0, 2]),
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one"
+                " of the following Python types: (<class 'str'>, <class 'numpy.chararray'>), as"
+                " defined in the NXDL as NX_CHAR."
+            ),
+            id="wrong-type-ndarray-instead-of-char",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
+                np.array(["x", "2"]),
+            ),
+            (""),
+            id="valid-ndarray-instead-of-char",
         ),
         pytest.param(
             alter_dict(
@@ -327,8 +441,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be of Python type:"
-                " (<class 'str'>, <class 'numpy.ndarray'>, <class 'numpy.chararray'>),"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one of the following Python types:"
+                " (<class 'str'>, <class 'numpy.chararray'>),"
                 " as defined in the NXDL as NX_CHAR."
             ),
             id="int-instead-of-chars",
@@ -433,8 +547,8 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
-                "be on of the following"
-                " strings: ['1st type', '2nd type', '3rd type', '4th type']"
+                "be one of the following"
+                ": ['1st type', '2nd type', '3rd type', '4th type']"
             ),
             id="wrong-enum-choice",
         ),
@@ -519,10 +633,34 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
         pytest.param(
             remove_optional_parent(TEMPLATE), (""), id="opt-group-completely-removed"
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array",
+                ["0", 1, 2],
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]"
+            ),
+            id="wrong-type-array-in-attribute",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
+            ),
+            (
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]"
+            ),
+            id="wrong-value-array-in-attribute",
+        ),
     ],
 )
 def test_validate_data_dict(caplog, data_dict, error_message, request):
     """Unit test for the data validation routine."""
+
+    def format_error_message(msg: str) -> str:
+        return msg[msg.rfind("G: ") + 3 :].rstrip("\n")
+
     if request.node.callspec.id in (
         "valid-data-dict",
         "lists",
@@ -530,10 +668,12 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "UTC-with-+00:00",
         "UTC-with-Z",
         "no-child-provided-optional-parent",
-        "int-instead-of-chars",
         "link-dict-instead-of-bool",
         "opt-group-completely-removed",
         "required-field-provided-in-variadic-optional-group",
+        "valid-ndarray-instead-of-char",
+        "list-of-int-instead-of-int",
+        "array-of-int32-instead-of-int",
     ):
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]
@@ -549,12 +689,15 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         assert "" == caplog.text
         captured_logs = caplog.records
         assert not validate_dict_against("NXtest", data_dict)[0]
-        assert any(error_message in rec.message for rec in captured_logs)
+        assert any(
+            error_message == format_error_message(rec.message) for rec in captured_logs
+        )
     else:
         with caplog.at_level(logging.WARNING):
             assert not validate_dict_against("NXtest", data_dict)[0]
-
-        assert error_message in caplog.text
+        assert any(
+            error_message == format_error_message(rec.message) for rec in caplog.records
+        )
 
 
 @pytest.mark.parametrize(
