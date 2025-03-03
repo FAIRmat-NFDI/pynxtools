@@ -573,4 +573,3 @@ class NexusParser(MatchingParser):
 
         chemical_formulas = self._get_chemical_formulas()
         self.normalize_chemical_formula(chemical_formulas)
-        self.normalize_chemical_formula(chemical_formulas)

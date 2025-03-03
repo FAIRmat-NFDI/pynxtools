@@ -35,6 +35,7 @@ from ase import Atoms
 from ase.data import atomic_numbers
 from nomad.datamodel.results import Material, Relation, Results, System
 from nomad.metainfo import SchemaPackage
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.normalizing.common import nomad_atoms_from_ase_atoms
 from nomad.normalizing.topology import add_system, add_system_info
 from scipy.spatial import cKDTree
@@ -159,7 +160,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
 }
 
 
-class NexusMeasurement(Measurement, Schema):
+class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
         try:
             app_entry = getattr(self, "ENTRY")
@@ -1211,8 +1212,67 @@ def normalize_atom_probe(self, archive, logger):
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
     # temporarily disable extra normalisation step
-    if archive:
-        return
+
+    def plot_3d_plotly(df, palette="Set1"):
+        import h5py
+        import numpy as np
+        import pandas as pd
+        import plotly.graph_objects as go
+        import plotly.express as px
+        from scipy.spatial import cKDTree
+        import re
+
+        unique_species = df["element"].unique()
+        num_species = len(unique_species)
+        base_colors = getattr(px.colors.qualitative, palette)
+        colors = (base_colors * ((num_species // len(base_colors)) + 1))[:num_species]
+
+        fig = go.Figure()
+        for i, species in enumerate(unique_species):
+            subset = df[df["element"] == species]
+            fig.add_trace(
+                go.Scatter3d(
+                    x=subset["x"],
+                    y=subset["y"],
+                    z=subset["z"],
+                    mode="markers",
+                    marker=dict(size=1, opacity=0.6, color=colors[i]),
+                    name=str(species),
+                )
+            )
+
+        # Improve axis and box appearance
+        fig.update_layout(
+            title="3D Atom Probe Reconstruction with Plotly WebGL",
+            scene=dict(
+                xaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                yaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                zaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+            ),
+            margin=dict(l=0, r=0, b=0, t=40),
+            height=800,
+            autosize=True,
+            template="plotly_white",
+            showlegend=True,
+            legend=dict(
+                font=dict(size=16),
+                itemsizing="constant",
+                bgcolor="rgba(255,255,255,0.8)",
+            ),
+        )
+        return fig
+
+    # if archive:
+    #     return
 
     data_path = self.m_attributes["m_nx_data_path"]
     with h5py.File(
@@ -1260,6 +1320,14 @@ def normalize_atom_probe(self, archive, logger):
         frac=0.02, random_state=42
     )  # Adjust fraction for performance
 
+    # plotly figure
+    fig = plot_3d_plotly(df_sampled)
+    # find figures hosting subsesction
+    figure_host = archive.data
+    # apend the figure to the figures list
+    figure_host.figures = [PlotlyFigure(figure=fig.to_plotly_json())]
+
+    # normalize to results.material.topology
     # **Create ASE Atoms Object from Downsampled Data (Using Aggregated Elements)**
     def create_ase_atoms(df):
         symbols = df["element"].tolist()
