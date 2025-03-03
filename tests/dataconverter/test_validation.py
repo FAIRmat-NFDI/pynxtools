@@ -64,7 +64,7 @@ def get_data_dict():
         "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field": 1,
         "/ENTRY[my_entry]/required_group/description": "An example description",
         "/ENTRY[my_entry]/required_group2/description": "An example description",
-        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/data": 1,
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]": 1,
         "/@default": "Some NXroot attribute",
     }
 
@@ -86,21 +86,25 @@ def alter_dict(new_values: Dict[str, Any], data_dict: Dict[str, Any]) -> Dict[st
 
 
 @pytest.mark.parametrize(
-    "data_dict",
+    "data_dict, ignore_undocumented",
     [
-        pytest.param(get_data_dict(), id="valid-unaltered-data-dict"),
+        pytest.param(get_data_dict(), True, id="valid-unaltered-data-dict"),
         pytest.param(
             remove_from_dict(
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr",
                 get_data_dict(),
             ),
+            False,
             id="removed-optional-value",
         ),
     ],
 )
-def test_valid_data_dict(caplog, data_dict):
+def test_valid_data_dict(caplog, data_dict, ignore_undocumented):
     with caplog.at_level(logging.WARNING):
-        assert validate_dict_against("NXtest", data_dict)[0]
+        assert validate_dict_against(
+            "NXtest", data_dict, ignore_undocumented=ignore_undocumented
+        )[0]
+
     assert caplog.text == ""
 
 

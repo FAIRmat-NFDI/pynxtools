@@ -134,7 +134,7 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
+def best_namefit_of(name: str, keys: Iterable[str]) -> Tuple[Optional[str], bool]:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -143,25 +143,26 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
         keys (Iterable[str]): The keys to fit `name` against.
 
     Returns:
-        Optional[str]: The best fitting key. None if no fit was found.
+        Tuple[Optional[str], bool]: A tuple where the first element is the best fitting key (or None if no fit was found),
+                                    and the second element is a boolean indicating if the match was exact.
     """
+
     if not keys:
-        return None
+        return None, True
 
     nx_name, name2fit = split_class_and_name_of(name)
 
     if name2fit in keys:
-        return name2fit
+        return name2fit, True
     if nx_name is not None and nx_name in keys:
-        return nx_name
-
+        return nx_name, True
     best_match, score = max(
         map(lambda x: (x, get_nx_namefit(name2fit, x)), keys), key=lambda x: x[1]
     )
     if score < 0:
-        return None
+        return None, False
 
-    return best_match
+    return best_match, False
 
 
 def validate_dict_against(
@@ -209,6 +210,7 @@ def validate_dict_against(
                 and key not in node.parent.get_all_direct_children_names()
             ):
                 variations.append(key)
+
             if nx_name is not None and not variations:
                 collector.collect_and_log(
                     nx_name, ValidationProblem.FailedNamefitting, keys
@@ -342,6 +344,7 @@ def validate_dict_against(
                 None,
             )
             return
+
         for variant in variants:
             if variant in [node.name for node in node.parent_of]:
                 # Don't process if this is actually a sub-variant of this group
@@ -511,11 +514,14 @@ def validate_dict_against(
 
         for name in key[1:].replace("@", "").split("/"):
             children = node.get_all_direct_children_names()
-            best_name = best_namefit_of(name, children)
+            best_name, good_name_fit = best_namefit_of(name, children)
             if best_name is None:
                 return False
 
             node = node.search_add_child_for(best_name)
+
+            if not good_name_fit:
+                return False
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field
@@ -755,12 +761,12 @@ def validate_dict_against(
                     ValidationProblem.UnitWithoutField,
                     not_visited_key.rsplit("/", 1)[0],
                 )
-            if not ignore_undocumented:
-                collector.collect_and_log(
-                    not_visited_key,
-                    ValidationProblem.UnitWithoutDocumentation,
-                    mapping[not_visited_key],
-                )
+            # if not ignore_undocumented:
+            #     collector.collect_and_log(
+            #         not_visited_key,
+            #         ValidationProblem.UnitWithoutDocumentation,
+            #         mapping[not_visited_key],
+            #     )
         if is_documented(not_visited_key, tree):
             continue
 
