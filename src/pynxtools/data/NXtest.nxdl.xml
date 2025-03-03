@@ -31,6 +31,9 @@
             <field name="float_value" type="NX_FLOAT" optional="true" units="NX_ENERGY">
                 <doc>A dummy entry for a float value.</doc>
             </field>
+            <field name="number_value" type="NX_NUMBER" optional="true" units="NX_ENERGY">
+                <doc>A dummy entry for a number value.</doc>
+            </field>
             <field name="bool_value" type="NX_BOOLEAN" required="true" units="NX_UNITLESS">
                 <doc>A dummy entry for a bool value.</doc>
             </field>

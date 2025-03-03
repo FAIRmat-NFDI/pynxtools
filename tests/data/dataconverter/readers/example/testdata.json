@@ -7,6 +7,8 @@
     "float_value_units": "nm",
     "int_value": -3,
     "int_value_units": "eV",
+    "number_value": 3,
+    "number_value_units": "eV",
     "posint_value": 7,
     "posint_value_units": "kg",
     "definition": "NXtest",

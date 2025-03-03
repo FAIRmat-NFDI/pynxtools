@@ -581,7 +581,7 @@ NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str),
-    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte, np.ndarray),
+    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte),
     "NX_BOOLEAN": (bool, np.bool_),
     "NX_CHAR": (str, np.chararray),
     "NX_DATE_TIME": (str),
@@ -661,7 +661,12 @@ def is_valid_data_field(value, nxdl_type, path):
     output_value = value
 
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
-        print(type(collector.data), collector.data)
+        if accepted_types[0] is bool and isinstance(value, str):
+            converted_value = convert_str_to_bool_safe(value)
+            if converted_value is not None:
+                output_value = converted_value
+                return True, converted_value
+
         collector.collect_and_log(
             path, ValidationProblem.InvalidType, accepted_types, nxdl_type
         )
