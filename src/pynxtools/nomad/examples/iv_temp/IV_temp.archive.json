@@ -7,7 +7,12 @@
             "IV_temp.mapping.json",
             "IV_temp.pickle"
         ],
-        "output": "IV_temp.nxs"
+        "output": "IV_temp.nxs",
+        "nexus_view": "../upload/archive/mainfile/IV_temp.nxs#/data",
+        "notes": {
+            "author": "name",
+            "note": "example note"
+        }
     },
     "m_ref_archives": {}
 }
