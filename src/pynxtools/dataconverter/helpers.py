@@ -85,7 +85,7 @@ class Collector:
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be on of the following strings: {value}"
+                f"The value at {path} should be one of the following: {value}"
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
@@ -675,20 +675,20 @@ def is_positive_int(value):
     return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
 
 
-def convert_str_to_bool_safe(value):
+def convert_str_to_bool_safe(value: str) -> Optional[bool]:
     """Only returns True or False if someone mistakenly adds quotation marks but mean a bool.
 
-    For everything else it returns None.
+    For everything else it raises a ValueError.
     """
     if value.lower() == "true":
         return True
     if value.lower() == "false":
         return False
-    return None
+    raise ValueError(f"Could not interpret string '{value}' as boolean.")
 
 
-def is_valid_data_field(value, nxdl_type, path):
-    # todo: Check this funciton and wtire test for it. It seems the funciton is not
+def is_valid_data_field(value: Any, nxdl_type: str, nxdl_enum: list, path: str) -> Any:
+    # todo: Check this function and write test for it. It seems the function is not
     # working as expected.
     """Checks whether a given value is valid according to the type defined in the NXDL.
 
@@ -696,32 +696,27 @@ def is_valid_data_field(value, nxdl_type, path):
     python Boolean (True). In case, it fails to convert, it raises an Exception.
 
     Return:
-        Bool: (True if the the value corresponds to nxdl_type, False otherwise)
+        value: the possibly converted data value
     """
 
     accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
     # Do not count the dict as it represents a link value
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
-        try:
-            if accepted_types[0] is bool and isinstance(value, str):
+        # try to convert string to bool
+        if accepted_types[0] is bool and isinstance(value, str):
+            try:
                 value = convert_str_to_bool_safe(value)
-                if value is None:
-                    raise ValueError
-                return True
-
+            except (ValueError, TypeError):
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+                )
+        else:
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
-            return False
-        except (ValueError, TypeError):
-            collector.collect_and_log(
-                path, ValidationProblem.InvalidType, accepted_types, nxdl_type
-            )
-            return False
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
-        return False
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(
@@ -731,9 +726,16 @@ def is_valid_data_field(value, nxdl_type, path):
         results = iso8601.search(value)
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
-            return False
 
-    return True
+    # Check enumeration
+    if nxdl_enum is not None and value not in nxdl_enum:
+        collector.collect_and_log(
+            path,
+            ValidationProblem.InvalidEnum,
+            nxdl_enum,
+        )
+
+    return value
 
 
 @lru_cache(maxsize=None)
