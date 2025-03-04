@@ -96,7 +96,7 @@ class Collector:
             )
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
-                f"The value at {path} should be one of: {value}"
+                f"The value at {path} should be one of the following Python types: {value}"
                 f", as defined in the NXDL as {args[0] if args else '<unknown>'}."
             )
         elif log_type == ValidationProblem.InvalidDatetime:
@@ -158,9 +158,9 @@ class Collector:
             "NX_ANY",
         ):
             return
-        if self.logging:
+        if self.logging and path + str(log_type) + str(value) not in self.data:
             self._log(path, log_type, value, *args, **kwargs)
-        self.data.add(path)
+        self.data.add(path + str(log_type) + str(value))
 
     def has_validation_problems(self):
         """Returns True if there were any validation problems."""
@@ -584,7 +584,11 @@ np_float = (np.floating,)
 # Not to be confused with `np.byte` and `np.ubyte`, these store
 # an integer of `8bit` and `unsigned 8bit` respectively.
 np_bytes = (np.bytes_,)
-np_char = (np.str_, np.bytes_)  # Only numpy Unicode string and Byte string
+np_char = (
+    np.str_,
+    np.bytes_,
+    np.chararray,
+)  # Only numpy Unicode string and Byte string
 np_bool = (np.bool_,)
 np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle, np.complex_)
 NEXUS_TO_PYTHON_DATA_TYPES = {
@@ -647,9 +651,11 @@ def check_all_children_for_callable(
         return False
     if isinstance(objects, list):
         # Handles list and list of list
-        return all([type(elem) in accepted_types for elem in objects])
-    if isinstance(objects, np.ndarray):
-        return any([np.issubdtype(objects.dtype, type_) for type_ in accepted_types])
+        tmp_arr = np.array(objects)
+    elif isinstance(objects, np.ndarray):
+        tmp_arr = objects
+    if tmp_arr is not None:
+        return any([np.issubdtype(tmp_arr.dtype, type_) for type_ in accepted_types])
 
     return False
 
