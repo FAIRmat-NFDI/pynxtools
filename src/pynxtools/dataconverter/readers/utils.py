@@ -276,9 +276,9 @@ def flatten_json(
                 rkey = key.replace(expand_match.group(0), ekey)
 
                 if isinstance(value, str):
-                    value = value.replace("*", ekey)
+                    evalue = value.replace("*", ekey)
 
-                update_config(rkey, value, ekey)
+                update_config(rkey, evalue, ekey)
             continue
 
         update_config(key, value, None)
