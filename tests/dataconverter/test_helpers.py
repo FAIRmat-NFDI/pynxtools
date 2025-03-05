@@ -401,7 +401,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "0",
             ),
             (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: (<class 'int'>, <class 'float'>, <class 'numpy.integer'>, <class 'numpy.floating'>), as defined in the NXDL as NX_NUMBER."
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>, <class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_NUMBER."
             ),
             id="str-instead-of-number",
         ),
@@ -413,7 +413,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one"
-                " of the following Python types: (<class 'str'>, <class 'numpy.str_'>, <class 'numpy.bytes_'>, <class 'numpy.chararray'>), as"
+                " of the following Python types: (<class 'str'>, <class 'numpy.chararray'>), as"
                 " defined in the NXDL as NX_CHAR."
             ),
             id="wrong-type-ndarray-instead-of-char",
@@ -494,7 +494,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one of the following Python types:"
-                " (<class 'str'>, <class 'numpy.str_'>, <class 'numpy.bytes_'>, <class 'numpy.chararray'>),"
+                " (<class 'str'>, <class 'numpy.chararray'>),"
                 " as defined in the NXDL as NX_CHAR."
             ),
             id="int-instead-of-chars",
@@ -512,22 +512,11 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
-                np.array(["1", "2", "3"], dtype=np.bytes_),
+                np.char.array(["1", "2", "3"]),
             ),
             (""),
-            id="array-of-bytes-chars",
+            id="numpy-chararray",
         ),
-        # pytest.param(
-        #     alter_dict(
-        #         TEMPLATE,
-        #         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
-        #         np.char.chararray(["1", "2", "3"]),
-        #     ),
-        #     (""),
-        #     id="numpy-chararray",
-        # ),
-        # TODO add test array of char
-        # TODO add test for numpy array of char and chararray
         pytest.param(
             alter_dict(
                 TEMPLATE,
@@ -802,6 +791,7 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "array-of-chars",
         "array-of-bytes-chars",
         "array-of-float-instead-of-float",
+        "numpy-chararray",
     ):
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]
