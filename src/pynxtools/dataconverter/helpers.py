@@ -581,19 +581,19 @@ nx_float = (float, np.floating)
 nx_number = nx_int + nx_float
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
-    "ISO8601": (str),
+    "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte),
     "NX_BOOLEAN": (bool, np.bool_),
     "NX_CHAR": nx_char,
-    "NX_DATE_TIME": (str),
+    "NX_DATE_TIME": (str,),
     "NX_FLOAT": nx_float,
     "NX_INT": nx_int,
-    "NX_UINT": (np.unsignedinteger),
+    "NX_UINT": (np.unsignedinteger,),
     "NX_NUMBER": nx_number,
     "NX_POSINT": nx_int,  # > 0 is checked in is_valid_data_field()
-    "NX_COMPLEX": (complex, np.complexfloating),
+    "NX_COMPLEX": (complex, np.complexfloating,),
     "NX_CHAR_OR_NUMBER": nx_char + nx_number,
-    "NXDL_TYPE_UNAVAILABLE": (str),  # Defaults to a string if a type is not provided.
+    "NXDL_TYPE_UNAVAILABLE": (str,),  # Defaults to a string if a type is not provided.
 }
 
 
