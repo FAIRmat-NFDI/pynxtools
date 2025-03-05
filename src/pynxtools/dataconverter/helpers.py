@@ -575,60 +575,25 @@ def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     return True, []
 
 
-NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
-NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
-NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
-# np int for np version 1.26.0
-np_int = (np.integer,)
-np_float = (np.floating,)
-# Not to be confused with `np.byte` and `np.ubyte`, these store
-# an integer of `8bit` and `unsigned 8bit` respectively.
-np_bytes = (np.bytes_,)
-np_char = (
-    np.str_,
-    np.bytes_,
-    np.chararray,
-)  # Only numpy Unicode string and Byte string
-np_bool = (np.bool_,)
-np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle, np.complex_)
+nx_char = (str, np.chararray)
+nx_int = (int, np.integer)
+nx_float = (float, np.floating)
+nx_number = nx_int + nx_float
+
 NEXUS_TO_PYTHON_DATA_TYPES = {
-    "ISO8601": (str,),
-    "NX_BINARY": (
-        bytes,
-        *np_bytes,
-    ),
-    "NX_BOOLEAN": (bool, *np_bool),
-    "NX_CHAR": (str, *np_char),
-    "NX_DATE_TIME": (str,),
-    "NX_FLOAT": (float, *np_float),
-    "NX_INT": (int, *np_int),
-    "NX_UINT": (
-        np.unsignedinteger,
-        np.uint,
-    ),
-    "NX_NUMBER": (
-        int,
-        float,
-        *np_int,
-        *np_float,
-    ),
-    "NX_POSINT": (
-        int,
-        np.signedinteger,
-    ),  # > 0 is checked in is_valid_data_field()
-    "NX_COMPLEX": (complex, *np_complex),
-    "NXDL_TYPE_UNAVAILABLE": (
-        str,
-        *np_char,
-    ),  # Defaults to a string if a type is not provided.
-    "NX_CHAR_OR_NUMBER": (
-        str,
-        int,
-        float,
-        *np_char,
-        *np_int,
-        *np_float,
-    ),
+    "ISO8601": (str),
+    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte),
+    "NX_BOOLEAN": (bool, np.bool_),
+    "NX_CHAR": nx_char,
+    "NX_DATE_TIME": (str),
+    "NX_FLOAT": nx_float,
+    "NX_INT": nx_int,
+    "NX_UINT": (np.unsignedinteger),
+    "NX_NUMBER": nx_number,
+    "NX_POSINT": nx_int,  # > 0 is checked in is_valid_data_field()
+    "NX_COMPLEX": (complex, np.complexfloating),
+    "NX_CHAR_OR_NUMBER": nx_char + nx_number,
+    "NXDL_TYPE_UNAVAILABLE": (str),  # Defaults to a string if a type is not provided.
 }
 
 
