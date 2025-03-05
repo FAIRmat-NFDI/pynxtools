@@ -24,7 +24,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union, Sequence
 
 import h5py
 import lxml.etree as ET
@@ -598,52 +598,29 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
 
 
 def check_all_children_for_callable(
-    objects: Union[list, np.ndarray],
-    checker: Optional[Callable] = None,
-    accepted_types: Optional[tuple] = None,
+    objects: Union[list, np.ndarray], checker: Optional[Callable] = None, *args
 ) -> bool:
     """Checks whether all objects in list or numpy array are validated
     by given callable and types.
     """
+    if not isinstance(objects, np.ndarray):
+        objects = np.array(objects)
 
-    if checker is not None:
-        for obj in objects:
-            args = (obj, accepted_types) if accepted_types is not None else (obj,)
-            if not checker(*args):
-                return False
-        return True
-    if isinstance(objects, tuple):
-        return False
-    if isinstance(objects, list):
-        # Handles list and list of list
-        tmp_arr = np.array(objects)
-    elif isinstance(objects, np.ndarray):
-        tmp_arr = objects
-    if tmp_arr is not None:
-        return any([np.issubdtype(tmp_arr.dtype, type_) for type_ in accepted_types])
-
-    return False
+    return all([checker(o, *args) for o in objects.flat])
 
 
 def is_valid_data_type(value, accepted_types):
     """Checks whether the given value or its children are of an accepted type."""
-
-    if not isinstance(value, (list, np.ndarray)):
-        return isinstance(value, accepted_types)
-
-    return check_all_children_for_callable(objects=value, accepted_types=accepted_types)
+    return check_all_children_for_callable(value, isinstance, accepted_types)
 
 
 def is_positive_int(value):
     """Checks whether the given value or its children are positive."""
 
     def is_greater_than(num):
-        return num.flat[0] > 0 if isinstance(num, np.ndarray) else num > 0
+        return num > 0
 
-    if isinstance(value, list):
-        return check_all_children_for_callable(objects=value, checker=is_greater_than)
-
-    return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
+    return check_all_children_for_callable(objects=value, checker=is_greater_than)
 
 
 def convert_str_to_bool_safe(value: str) -> Optional[bool]:
