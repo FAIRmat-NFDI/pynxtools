@@ -28,7 +28,7 @@
             </field>
         </group>
         <group type="NXdata" name="NXODD_name">
-            <field name="anamethatRENAMES" nametype="any" type="NX_INT" units="NX_UNITLESS"/>
+            <field name="anamethatRENAMES" nameType="any" type="NX_INT" units="NX_UNITLESS"/>
             <field name="float_value" type="NX_FLOAT" optional="true" units="NX_ENERGY">
                 <doc>A dummy entry for a float value.</doc>
             </field>
