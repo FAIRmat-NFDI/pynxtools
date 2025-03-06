@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-from typing import Dict, Optional, Set
+from typing import Dict, Optional, Set, Tuple
 
 import lxml.etree as ET
 import numpy as np
@@ -429,19 +429,14 @@ class NexusParser(MatchingParser):
                 filtered.append(individual)
         return filtered
 
-    def _get_chemical_formulas(self) -> Set[str]:
+    def _get_chemical_formulas(self) -> Tuple[Set[str], Set[str]]:
         """
-        Parses the descriptive chemical formula from a nexus entry.
+        Parses the descriptive chemical formula and a set of elements from a nexus entry.
         """
         material = self.archive.m_setdefault("results.material")
         element_set: Set[str] = set()
         chemical_formulas: Set[str] = set()
 
-        # DEBUG added here 'sample' only to test that I think the root cause
-        # of the bug is that when the appdef defines at the level of the HDF5
-        # only sample the current logic does not resolve it is an NXsample thus
-        # not entering ever the chemical formula parsing code and not populating
-        # m_nx_data_file and m_nx_data_path variables
         for sample in self._sample_class_refs["NXsample"]:
             if sample.get("atom_types__field") is not None:
                 atom_types = sample.atom_types__field
@@ -460,7 +455,6 @@ class NexusParser(MatchingParser):
                     for symbol in atom_types.replace(" ", "").split(","):
                         if symbol in chemical_symbols[1:]:
                             element_set.add(symbol)
-                material.elements = list(set(material.elements) | element_set)
                 # given that the element list will be overwritten
                 # in case a single chemical formula is found we do not add
                 # a chemical formula here as this anyway be correct only
@@ -480,7 +474,7 @@ class NexusParser(MatchingParser):
             if substance.get("molecular_formula_hill__field") is not None:
                 chemical_formulas.add(substance.molecular_formula_hill__field)
 
-        return chemical_formulas
+        return chemical_formulas, element_set
 
     def normalize_chemical_formula(self, chemical_formulas) -> None:
         """
@@ -568,8 +562,14 @@ class NexusParser(MatchingParser):
             archive.results = Results()
         results = archive.results
 
-        if results.material is None:
-            results.material = Material()
+        chemical_formulas, element_set = self._get_chemical_formulas()
 
-        chemical_formulas = self._get_chemical_formulas()
-        self.normalize_chemical_formula(chemical_formulas)
+        if element_set and results.material is None:
+            results.material = Material()
+            results.material.elements = list(
+                set(results.material.elements) | element_set
+            )
+
+        if chemical_formulas and results.material is None:
+            # results.material = Material()
+            self.normalize_chemical_formula(chemical_formulas)
