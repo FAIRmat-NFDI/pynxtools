@@ -668,7 +668,6 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     # name
     assert "name" in xml_attrs, "Expecting name to be present"
-
     name = __rename_nx_for_nomad(xml_attrs["name"], is_field=True)
 
     # nameType
@@ -710,7 +709,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     value_quantity: Quantity = None  # type: ignore
 
     # copy from base to inherit from it
-    if container.base_sections is not None:
+    if container.base_sections is not None and len(container.base_sections) > 0:
         # TODO: use resolve_variadic_name to find inheritance among non-exact matchings (also provide data type)
         base_quantity: Quantity = container.base_sections[0].all_quantities.get(name)
         if base_quantity:
