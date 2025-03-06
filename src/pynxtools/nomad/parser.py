@@ -178,7 +178,6 @@ class NexusParser(MatchingParser):
             "NXsample": [],
             "NXsubstance": [],
             "NXsample_component": [],
-            "NXsample_component_set": [],
         }
 
     def _clear_class_refs(self):
@@ -454,19 +453,13 @@ class NexusParser(MatchingParser):
                 filtered.append(individual)
         return filtered
 
-    def _get_chemical_formulas(self) -> set[str]:
+    def _get_chemical_formulas(self) -> tuple[set[str], set[str]]:
         """
-        Parses the descriptive chemical formula from a nexus entry.
+        Parses the descriptive chemical formula and a set of elements from a NeXus entry.
         """
-        material = self.archive.m_setdefault("results.material")
         element_set: set[str] = set()
         chemical_formulas: set[str] = set()
 
-        # DEBUG added here 'sample' only to test that I think the root cause
-        # of the bug is that when the appdef defines at the level of the HDF5
-        # only sample the current logic does not resolve it is an NXsample thus
-        # not entering ever the chemical formula parsing code and not populating
-        # m_nx_data_file and m_nx_data_path variables
         for sample in self._sample_class_refs["NXsample"]:
             if sample.get("atom_types__field") is not None:
                 atom_types = sample.atom_types__field
@@ -485,7 +478,6 @@ class NexusParser(MatchingParser):
                     for symbol in atom_types.replace(" ", "").split(","):
                         if symbol in chemical_symbols[1:]:
                             element_set.add(symbol)
-                material.elements = list(set(material.elements) | element_set)
                 # given that the element list will be overwritten
                 # in case a single chemical formula is found we do not add
                 # a chemical formula here as this anyway be correct only
@@ -493,19 +485,15 @@ class NexusParser(MatchingParser):
             if sample.get("chemical_formula__field") is not None:
                 chemical_formulas.add(sample.chemical_formula__field)
 
-        for class_ref in (
-            "NXsample_component",
-            "NXsample_component_set",
-        ):
-            for section in self._sample_class_refs[class_ref]:
-                if section.get("chemical_formula__field") is not None:
-                    chemical_formulas.add(section.chemical_formula__field)
+        for section in self._sample_class_refs["NXsample_component"]:
+            if section.get("chemical_formula__field") is not None:
+                chemical_formulas.add(section.chemical_formula__field)
 
         for substance in self._sample_class_refs["NXsubstance"]:
             if substance.get("molecular_formula_hill__field") is not None:
                 chemical_formulas.add(substance.molecular_formula_hill__field)
 
-        return chemical_formulas
+        return chemical_formulas, element_set
 
     def normalize_chemical_formula(self, chemical_formulas) -> None:
         """
@@ -600,8 +588,16 @@ class NexusParser(MatchingParser):
             archive.results = Results()
         results = archive.results
 
-        if results.material is None:
-            results.material = Material()
+        chemical_formulas, element_set = self._get_chemical_formulas()
+        if element_set:
+            if results.material is None:
+                results.material = Material()
+            results.material.elements = list(
+                set(results.material.elements) | element_set
+            )
+            raise ValueError(chemical_formulas, element_set, results, results.material)
 
-        chemical_formulas = self._get_chemical_formulas()
-        self.normalize_chemical_formula(chemical_formulas)
+        if chemical_formulas and results.material is None:
+            if results.material is None:
+                results.material = Material()
+            self.normalize_chemical_formula(chemical_formulas)
