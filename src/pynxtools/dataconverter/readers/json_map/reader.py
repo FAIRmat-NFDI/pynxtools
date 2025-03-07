@@ -22,6 +22,7 @@ import pickle
 from typing import Any, Tuple
 
 import numpy as np
+import yaml
 import xarray
 from mergedeep import merge
 
@@ -193,6 +194,9 @@ class JsonMapReader(BaseReader):
             elif file_extension == ".pickle":
                 with open(file_path, "rb") as input_file:  # type: ignore[assignment]
                     data = pickle.load(input_file)  # type: ignore[arg-type]
+            elif file_extension == ".yaml":
+                with open(file_path, "r") as input_file:
+                    merge(data, yaml.safe_load(input_file))
             else:
                 is_hdf5 = False
                 with open(file_path, "rb") as input_file:

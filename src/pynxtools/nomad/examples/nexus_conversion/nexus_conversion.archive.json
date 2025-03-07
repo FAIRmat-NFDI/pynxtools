@@ -1,0 +1,15 @@
+{
+    "data": {
+        "m_def": "pynxtools.nomad.dataconverter.NexusDataConverter",
+        "reader": "json_map",
+        "nxdl": "NXiv_temp",
+        "input_files": [
+            "IV_temp.mapping.json",
+            "nexus_conversion/IV_temp.pickle",
+            "nexus_conversion/external_eln_data.yaml"
+        ],
+        "output": "nexus_conversion/converted.nxs",
+        "nexus_view": "../upload/archive/mainfile/nexus_conversion/converted.nxs#/data"
+    },
+    "m_ref_archives": {}
+}
