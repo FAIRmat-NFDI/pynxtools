@@ -167,6 +167,14 @@ def test_nexus(tmp_path):
     example_data = os.path.join(
         os.getcwd(), "src", "pynxtools", "data", "201805_WSe2_arpes.nxs"
     )
+
+    root_logger = logging.getLogger()
+
+    for logger_instance in (root_logger, logger):
+        if logger_instance.hasHandlers():
+            for handler in logger_instance.handlers[:]:
+                logger_instance.removeHandler(handler)
+
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(os.path.join(tmp_path, "nexus_test.log"), "w")
     formatter = logging.Formatter("%(levelname)s - %(message)s")
