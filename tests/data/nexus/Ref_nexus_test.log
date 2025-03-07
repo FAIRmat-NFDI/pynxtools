@@ -32,6 +32,7 @@ DEBUG - classpath: ['NXentry']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY
 NXentry.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY):
 DEBUG - 
@@ -43,12 +44,22 @@ DEBUG -
 		information that comprise a single measurement.
 		It is mandatory that there is at least one
 		group of this type in the NeXus file.	
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry@NX_class)
 DEBUG - value: NXentry 
 DEBUG - classpath: ['NXentry']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY
 NXentry.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/collection_time): <HDF5 dataset "collection_time": shape (), type "<i8">
@@ -73,7 +84,9 @@ DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
 NXentry.nxdl.xml:/DATA
+NXobject.nxdl.xml:/DATA
 NXdata.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/DATA):
 DEBUG - 
@@ -107,6 +120,8 @@ DEBUG -
 			      https://github.com/nexusformat/NIAC/issues/16
 
 		
+DEBUG - documentation (NXobject.nxdl.xml:/DATA):
+DEBUG - 
 DEBUG - documentation (NXdata.nxdl.xml:):
 DEBUG - 
          :ref:`NXdata` describes the plottable data and related dimension scales.
@@ -219,13 +234,24 @@ DEBUG -
          but not to describe how the data is to be plotted.
          (https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute)
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/data@NX_class)
 DEBUG - value: NXdata 
 DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
 NXentry.nxdl.xml:/DATA
+NXobject.nxdl.xml:/DATA
 NXdata.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== ATTRS (//entry/data@axes)
@@ -234,7 +260,9 @@ DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
 NXentry.nxdl.xml:/DATA
+NXobject.nxdl.xml:/DATA
 NXdata.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - NXdata.nxdl.xml:@axes - [NX_CHAR]
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXdata.nxdl.xml:/axes):
@@ -278,7 +306,9 @@ DEBUG - classpath: ['NXentry', 'NXdata']
 DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/DATA
 NXentry.nxdl.xml:/DATA
+NXobject.nxdl.xml:/DATA
 NXdata.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - NXdata.nxdl.xml:@signal - [NX_CHAR]
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXdata.nxdl.xml:/signal):
@@ -489,6 +519,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT
 NXentry.nxdl.xml:/INSTRUMENT
 NXinstrument.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT):
 DEBUG - 
@@ -505,6 +536,15 @@ DEBUG -
          This device allows the unique identification of beamline components in a way
          that is valid for both reactor and pulsed instrumentation.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument@NX_class)
 DEBUG - value: NXinstrument 
 DEBUG - classpath: ['NXentry', 'NXinstrument']
@@ -512,6 +552,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT
 NXentry.nxdl.xml:/INSTRUMENT
 NXinstrument.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== GROUP (//entry/instrument/analyser [NXarpes::/NXentry/NXinstrument/NXdetector]): <HDF5 group "/entry/instrument/analyser" (25 members)>
@@ -520,6 +561,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser
 NXinstrument.nxdl.xml:/DETECTOR
 NXdetector.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser):
 DEBUG - 
@@ -529,6 +571,15 @@ DEBUG - documentation (NXdetector.nxdl.xml:):
 DEBUG - 
          A detector, detector bank, or multidetector.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument/analyser@NX_class)
 DEBUG - value: NXdetector 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXdetector']
@@ -536,6 +587,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/analyser
 NXinstrument.nxdl.xml:/DETECTOR
 NXdetector.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/analyser/acquisition_mode): <HDF5 dataset "acquisition_mode": shape (), type "|O">
@@ -881,6 +933,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/BEAM
 NXbeam.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXinstrument.nxdl.xml:/BEAM):
 DEBUG - 
@@ -902,12 +955,22 @@ DEBUG -
          To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
          by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument/beam_probe_0@NX_class)
 DEBUG - value: NXbeam 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/BEAM
 NXbeam.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_probe_0/distance): <HDF5 dataset "distance": shape (), type "<i8">
@@ -992,6 +1055,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/BEAM
 NXbeam.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXinstrument.nxdl.xml:/BEAM):
 DEBUG - 
@@ -1013,12 +1077,22 @@ DEBUG -
          To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
          by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument/beam_pump_0@NX_class)
 DEBUG - value: NXbeam 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXbeam']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/BEAM
 NXbeam.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/beam_pump_0/average_power): <HDF5 dataset "average_power": shape (), type "<f8">
@@ -1171,6 +1245,7 @@ DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/POSITIONER
 NXpositioner.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<OPTIONAL>>
 DEBUG - documentation (NXinstrument.nxdl.xml:/POSITIONER):
 DEBUG - 
@@ -1178,12 +1253,22 @@ DEBUG - documentation (NXpositioner.nxdl.xml:):
 DEBUG - 
          A generic positioner such as a motor or piezo-electric transducer.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument/manipulator@NX_class)
 DEBUG - value: NXpositioner 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXpositioner']
 DEBUG - classes:
 NXinstrument.nxdl.xml:/POSITIONER
 NXpositioner.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/manipulator/pos_x1): <HDF5 dataset "pos_x1": shape (), type "<f8">
@@ -1287,6 +1372,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator
 NXinstrument.nxdl.xml:/MONOCHROMATOR
 NXmonochromator.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator):
 DEBUG - 
@@ -1306,6 +1392,15 @@ DEBUG -
          * wavelength: angstrom
          * energy: eV
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument/monochromator@NX_class)
 DEBUG - value: NXmonochromator 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXmonochromator']
@@ -1313,6 +1408,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/monochromator
 NXinstrument.nxdl.xml:/MONOCHROMATOR
 NXmonochromator.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/monochromator/energy): <HDF5 dataset "energy": shape (), type "<f8">
@@ -1381,6 +1477,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE
 NXinstrument.nxdl.xml:/SOURCE
 NXsource.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE):
 DEBUG - 
@@ -1393,6 +1490,15 @@ DEBUG -
          Examples include particle sources (electrons, neutrons, protons) or sources for electromagnetic radiation (photons).
          This base class can also be used to describe neutron or x-ray storage ring/facilities.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument/source@NX_class)
 DEBUG - value: NXsource 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1400,6 +1506,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE
 NXinstrument.nxdl.xml:/SOURCE
 NXsource.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source/bunch_distance): <HDF5 dataset "bunch_distance": shape (), type "<i8">
@@ -1633,6 +1740,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE
 NXinstrument.nxdl.xml:/SOURCE
 NXsource.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE):
 DEBUG - 
@@ -1645,6 +1753,15 @@ DEBUG -
          Examples include particle sources (electrons, neutrons, protons) or sources for electromagnetic radiation (photons).
          This base class can also be used to describe neutron or x-ray storage ring/facilities.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/instrument/source_pump@NX_class)
 DEBUG - value: NXsource 
 DEBUG - classpath: ['NXentry', 'NXinstrument', 'NXsource']
@@ -1652,6 +1769,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/INSTRUMENT/SOURCE
 NXinstrument.nxdl.xml:/SOURCE
 NXsource.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/instrument/source_pump/bunch_distance): <HDF5 dataset "bunch_distance": shape (), type "<i8">
@@ -1869,6 +1987,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE
 NXentry.nxdl.xml:/SAMPLE
 NXsample.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - <<REQUIRED>>
 DEBUG - documentation (NXarpes.nxdl.xml:/ENTRY/SAMPLE):
 DEBUG - 
@@ -1882,6 +2001,15 @@ DEBUG -
          are associated with one of the data dimensions, e.g. the magnetic field, or
          logged data, e.g. monitored temperature vs elapsed time.
     
+DEBUG - documentation (NXobject.nxdl.xml:):
+DEBUG - 
+        This is the base object of NeXus. The groups and fields contained 
+        within this file are allowed to be present in any derived base class.
+
+        If nameType="partial", the placeholders (e.g., FIELDNAME or GROUPNAME)
+        can be replaced by the name of any object (field or group, 
+        respectively) that exists within the same group.
+	
 DEBUG - ===== ATTRS (//entry/sample@NX_class)
 DEBUG - value: NXsample 
 DEBUG - classpath: ['NXentry', 'NXsample']
@@ -1889,6 +2017,7 @@ DEBUG - classes:
 NXarpes.nxdl.xml:/ENTRY/SAMPLE
 NXentry.nxdl.xml:/SAMPLE
 NXsample.nxdl.xml:
+NXobject.nxdl.xml:
 DEBUG - @NX_class [NX_CHAR]
 DEBUG - 
 DEBUG - ===== FIELD (//entry/sample/bias): <HDF5 dataset "bias": shape (), type "<i8">
