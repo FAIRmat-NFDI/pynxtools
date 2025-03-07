@@ -11,10 +11,10 @@ definitions:
           nxdl: NXiv_temp
           input_files": [
             "IV_temp.mapping.json",
-            "IV_temp.pickle"
+            "iv_temp/IV_temp.pickle"
           ]
-          output: IV_temp.nxs
-          nexus_view: "../upload/archive/mainfile/IV_temp.nxs#/data"
+          output: iv_temp/IV_temp.nxs
+          nexus_view: "../upload/archive/mainfile/iv_temp/IV_temp.nxs#/data"
         eln:
           hide: []
       sub_sections:

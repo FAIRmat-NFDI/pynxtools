@@ -5,11 +5,11 @@
         "nxdl": "NXiv_temp",
         "input_files": [
             "IV_temp.mapping.json",
-            "IV_temp.pickle",
-            "external_eln_data.yaml"
+            "nexus_conversion/IV_temp.pickle",
+            "nexus_conversion/external_eln_data.yaml"
         ],
-        "output": "converted.nxs",
-        "nexus_view": "../upload/archive/mainfile/converted.nxs#/data"
+        "output": "nexus_conversion/converted.nxs",
+        "nexus_view": "../upload/archive/mainfile/nexus_conversion/converted.nxs#/data"
     },
     "m_ref_archives": {}
 }

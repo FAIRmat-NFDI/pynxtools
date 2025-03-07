@@ -18,6 +18,7 @@
 """Test for NOMAD examples in reader plugins."""
 
 import os
+
 import pytest
 
 try:
@@ -28,13 +29,10 @@ except ImportError:
         allow_module_level=True,
     )
 
-from pynxtools.testing.nomad_example import (
-    get_file_parameter,
-    parse_nomad_examples,
-    example_upload_entry_point_valid,
-)
-
-from pynxtools.nomad.entrypoints import iv_temp_example
+from pynxtools.nomad.entrypoints import simple_nexus_example
+from pynxtools.testing.nomad_example import (example_upload_entry_point_valid,
+                                             get_file_parameter,
+                                             parse_nomad_examples)
 
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(__file__),
@@ -60,9 +58,9 @@ def test_parse_nomad_examples(mainfile):
     ("entrypoint", "example_path"),
     [
         pytest.param(
-            iv_temp_example,
-            os.path.join(EXAMPLE_PATH, "iv_temp"),
-            id="iv_temp_example",
+            simple_nexus_example,
+            os.path.join(EXAMPLE_PATH, "."),
+            id="simple_nexus_example",
         ),
     ],
 )
