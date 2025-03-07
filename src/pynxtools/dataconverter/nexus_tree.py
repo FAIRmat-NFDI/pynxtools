@@ -111,6 +111,9 @@ class NexusNode(NodeMixin):
             The name of the node.
         type (Literal["group", "field", "attribute", "choice"]):
             The type of the node, e.g., xml tag in the nxdl file.
+        name_type (Optional["specified", "any", "partial"]):
+            The nameType of the node.
+            Defaults to "specified".
         optionality (Literal["required", "recommended", "optional"], optional):
             The optionality of the node.
             This is automatically set on init (in the respective subclasses)
@@ -118,8 +121,8 @@ class NexusNode(NodeMixin):
             Defaults to "required".
         variadic (bool):
             True if the node name is variadic and can be matched against multiple names.
-            This is set automatically on init and will be True if the name contains
-            any uppercase characets and False otherwise.
+            This is set automatically on init and will be True if the `nameTYPE` is "any"
+            or "partial" and False otherwise.
             Defaults to False.
         inheritance (List[InstanceOf[ET._Element]]):
             The inheritance chain of the node.
@@ -145,6 +148,7 @@ class NexusNode(NodeMixin):
 
     name: str
     type: Literal["group", "field", "attribute", "choice"]
+    name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
     inheritance: List[ET._Element]
@@ -177,6 +181,7 @@ class NexusNode(NodeMixin):
         self,
         name: str,
         type: Literal["group", "field", "attribute", "choice"],
+        name_type: Optional[Literal["specified", "any", "partial"]] = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: Optional[bool] = None,
         parent: Optional["NexusNode"] = None,
@@ -185,8 +190,9 @@ class NexusNode(NodeMixin):
         super().__init__()
         self.name = name
         self.type = type
+        self.name_type = name_type
         self.optionality = optionality
-        self.variadic = contains_uppercase(self.name)
+        self.variadic = self._is_variadic(self.name, self.name_type)
         if variadic is not None:
             self.variadic = variadic
         if inheritance is not None:
@@ -196,6 +202,14 @@ class NexusNode(NodeMixin):
         self.parent = parent
         self.is_a = []
         self.parent_of = []
+
+    def _is_variadic(self, name: str, name_type: str) -> bool:
+        """
+        Determine if a name is variadic based on its nameType.
+        """
+        if name:
+            return True if name_type in ("any", "partial") else False
+        return True
 
     def _construct_inheritance_chain_from_parent(self):
         """
@@ -525,21 +539,31 @@ class NexusNode(NodeMixin):
         """
         default_optionality = "required" if is_appdef(xml_elem) else "optional"
         tag = remove_namespace_from_tag(xml_elem.tag)
+
+        name_type = xml_elem.attrib.get("nameType", "specified")
+
         if tag in ("field", "attribute"):
             name = xml_elem.attrib.get("name")
+
             current_elem = NexusEntity(
                 parent=self,
                 name=name,
+                name_type=name_type,
                 type=tag,
                 optionality=default_optionality,
             )
         elif tag == "group":
-            name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
+            name = xml_elem.attrib.get("name")
+            if not name:
+                name = xml_elem.attrib["type"][2:].upper()
+                name_type = None
+
             inheritance_chain = self._build_inheritance_chain(xml_elem)
             current_elem = NexusGroup(
                 parent=self,
                 type=tag,
                 name=name,
+                name_type=name_type,
                 nx_class=xml_elem.attrib["type"],
                 inheritance=inheritance_chain,
                 optionality=default_optionality,
@@ -548,7 +572,7 @@ class NexusNode(NodeMixin):
             current_elem = NexusChoice(
                 parent=self,
                 name=xml_elem.attrib["name"],
-                variadic=contains_uppercase(xml_elem.attrib["name"]),
+                name_type=name_type,
                 optionality=default_optionality,
             )
         else:
@@ -910,6 +934,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
         name=appdef_xml_root.attrib["name"],
         nx_class="NXroot",
         type="group",
+        name_type="specified",
         optionality="required",
         variadic=False,
         parent=None,
