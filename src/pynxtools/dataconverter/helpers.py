@@ -80,9 +80,7 @@ class Collector:
             value = "<unknown>"
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
-            logger.warning(
-                f"The unit, {path} = {value}, is being written but has no documentation"
-            )
+            logger.warning(f"The unit, {path} = {value} written without documentation.")
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
                 f"The value at {path} should be on of the following strings: {value}"
