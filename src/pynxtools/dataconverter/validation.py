@@ -134,13 +134,14 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
+def best_namefit_of(name: str, keys: Iterable[str], name_type: str) -> Optional[str]:
     """
     Get the best namefit of `name` in `keys`.
 
     Args:
         name (str): The name to fit against the keys.
         keys (Iterable[str]): The keys to fit `name` against.
+        name_type (str): nameType of the concept being fitted
 
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
@@ -155,9 +156,14 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
     if nx_name is not None and nx_name in keys:
         return nx_name
 
+    name_any = True if name_type == "any" else False
+    name_partial = True if name_type == "partial" else False
+
     best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name2fit, x)), keys), key=lambda x: x[1]
+        map(lambda x: (x, get_nx_namefit(name2fit, x, name_any, name_partial)), keys),
+        key=lambda x: x[1],
     )
+    print(nx_name, name2fit, best_match, score)
     if score < 0:
         return None
 
@@ -188,6 +194,9 @@ def validate_dict_against(
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
         if not node.variadic:
+            print(node.name, node.name_type, node.variadic)
+            if hasattr(node, "nx_class"):
+                print(f"{convert_nexus_to_caps(node.nx_class)}[{node.name}]")  # in keys
             if node.name in keys:
                 return [node.name]
             elif (
@@ -198,14 +207,21 @@ def validate_dict_against(
 
         variations = []
         for key in keys:
+            # print(key)
             nx_name, name2fit = split_class_and_name_of(key)
             if node.type == "attribute":
                 # Remove the starting @ from attributes
                 name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
             if nx_name is not None and nx_name != node.name:
                 continue
+            name_any = True if node.name_type == "any" else False
+            name_partial = True if node.name_type == "partial" else False
+
+            # if nx_name and "ENTRY" in nx_name:
+            #     print(nx_name, name2fit, key)
+
             if (
-                get_nx_namefit(name2fit, node.name) >= 0
+                get_nx_namefit(name2fit, node.name, name_any, name_partial) >= 0
                 and key not in node.parent.get_all_direct_children_names()
             ):
                 variations.append(key)
@@ -511,7 +527,7 @@ def validate_dict_against(
 
         for name in key[1:].replace("@", "").split("/"):
             children = node.get_all_direct_children_names()
-            best_name = best_namefit_of(name, children)
+            best_name = best_namefit_of(name, children, node.name_type)
             if best_name is None:
                 return False
 
