@@ -114,7 +114,7 @@ nxsensor_scan_app = AppEntryPoint(
             Column(title="Entry ID", search_quantity="entry_id", selected=True),
             Column(
                 title="File Name",
-                search_quantity=f"data.name#{schema}",
+                search_quantity=f"mainfile",
                 selected=True,
             ),
             Column(
@@ -159,6 +159,7 @@ nxsensor_scan_app = AppEntryPoint(
         filters_locked={
             f"data.ENTRY.definition__field#{schema}": nxdefs_inheriting_from_sensorscan,
         },
+        # filters_locked={"section_defs.definition_qualified_name": [schema]},
         # Controls the menu shown on the left
         menu=Menu(
             title="Menu",
