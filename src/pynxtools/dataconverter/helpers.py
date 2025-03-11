@@ -48,24 +48,25 @@ logger = logging.getLogger("pynxtools")
 class ValidationProblem(Enum):
     UnitWithoutDocumentation = 1
     InvalidEnum = 2
-    MissingRequiredGroup = 3
-    MissingRequiredField = 4
-    MissingRequiredAttribute = 5
-    InvalidType = 6
-    InvalidDatetime = 7
-    IsNotPosInt = 8
-    ExpectedGroup = 9
-    MissingDocumentation = 10
-    MissingUnit = 11
-    ChoiceValidationError = 12
-    UnitWithoutField = 13
-    AttributeForNonExistingField = 14
-    BrokenLink = 15
-    FailedNamefitting = 16
-    NXdataMissingSignalData = 17
-    NXdataMissingAxisData = 18
-    NXdataAxisMismatch = 19
-    KeyToBeRemoved = 20
+    OpenEnumWithNewItem = 3
+    MissingRequiredGroup = 4
+    MissingRequiredField = 5
+    MissingRequiredAttribute = 6
+    InvalidType = 7
+    InvalidDatetime = 8
+    IsNotPosInt = 9
+    ExpectedGroup = 10
+    MissingDocumentation = 11
+    MissingUnit = 12
+    ChoiceValidationError = 13
+    UnitWithoutField = 14
+    AttributeForNonExistingField = 15
+    BrokenLink = 16
+    FailedNamefitting = 17
+    NXdataMissingSignalData = 18
+    NXdataMissingAxisData = 19
+    NXdataAxisMismatch = 20
+    KeyToBeRemoved = 21
 
 
 class Collector:
@@ -81,11 +82,15 @@ class Collector:
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.warning(
-                f"The unit, {path} = {value}, is being written but has no documentation"
+                f"The unit, {path} = {value}, is being written but has no documentation."
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be on of the following strings: {value}"
+                f"The value at {path} should be on of the following strings: {value}."
+            )
+        elif log_type == ValidationProblem.OpenEnumWithNewItem:
+            logger.info(
+                f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
@@ -122,7 +127,7 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredAttribute:
             logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
-            logger.warning(f"Unit {path} in dataset without its field {value}")
+            logger.warning(f"Unit {path} in dataset without its field {value}.")
         elif log_type == ValidationProblem.AttributeForNonExistingField:
             logger.warning(
                 f"There were attributes set for the field {path}, "

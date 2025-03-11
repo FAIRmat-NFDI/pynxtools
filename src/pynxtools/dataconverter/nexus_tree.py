@@ -786,6 +786,7 @@ class NexusEntity(NexusNode):
     unit: Optional[NexusUnitCategory] = None
     dtype: NexusType = "NX_CHAR"
     items: Optional[List[str]] = None
+    open_enum: bool = False
     shape: Optional[Tuple[Optional[int], ...]] = None
 
     def _set_type(self):
@@ -808,7 +809,7 @@ class NexusEntity(NexusNode):
                 self.unit = elem.attrib["units"]
                 return
 
-    def _set_items(self):
+    def _set_items_and_enum_type(self):
         """
         Sets the enumeration items of the current entity
         based on the values in the inheritance chain.
@@ -818,7 +819,10 @@ class NexusEntity(NexusNode):
             return
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
+
             if enum is not None:
+                if enum.attrib.get("open") == "true":
+                    self.open_enum = True
                 self.items = []
                 for items in enum.findall(f"nx:item", namespaces=namespaces):
                     self.items.append(items.attrib["value"])
@@ -865,7 +869,7 @@ class NexusEntity(NexusNode):
         self._construct_inheritance_chain_from_parent()
         self._set_unit()
         self._set_type()
-        self._set_items()
+        self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
 

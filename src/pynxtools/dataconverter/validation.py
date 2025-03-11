@@ -439,11 +439,19 @@ def validate_dict_against(
                 node.items is not None
                 and mapping[f"{prev_path}/{variant}"] not in node.items
             ):
-                collector.collect_and_log(
-                    f"{prev_path}/{variant}",
-                    ValidationProblem.InvalidEnum,
-                    node.items,
-                )
+                if node.open_enum:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.OpenEnumWithNewItem,
+                        node.items,
+                    )
+
+                else:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.InvalidEnum,
+                        node.items,
+                    )
 
             # Check unit category
             if node.unit is not None:
