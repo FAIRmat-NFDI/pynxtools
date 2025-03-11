@@ -1,17 +1,4 @@
-<<<<<<< HEAD
 from pynxtools.dataconverter.template import Template
-
-
-def remove_optional_parent(data_dict: Template):
-    """Completely removes the optional group from the test Template."""
-    internal_dict = Template(data_dict)
-    del internal_dict["/ENTRY[my_entry]/optional_parent/required_child"]
-    del internal_dict["/ENTRY[my_entry]/optional_parent/optional_child"]
-    del internal_dict[
-        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"
-    ]
-
-    return internal_dict
 
 
 def set_to_none_in_dict(data_dict: Optional[Template], key: str, optionality: str):
@@ -72,6 +59,9 @@ TEMPLATE["optional"][
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = (
     "nm"  # pylint: disable=E1126
+)
+TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr"] = (
+    2.0,
 )
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
@@ -485,6 +475,42 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             id="empty-required-field",
         ),
         pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr",
+                "optional",
+            ),
+            "",
+            id="removed-optional-value",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                "optional",
+            ),
+            "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value, but the field does not exist.",
+            id="removed-optional-value-with-attribute-remaining",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                "optional",
+            ),
+            "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units will not be written.",
+            id="removed-optional-value-with-attribute-remaining",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                "required",
+            ),
+            "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader.",
+            id="missing-required-value",
+        ),
+        pytest.param(
             set_whole_group_to_none(
                 set_whole_group_to_none(
                     TEMPLATE,
@@ -669,6 +695,7 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "array-of-bytes-chars",
         "array-of-float-instead-of-float",
         "numpy-chararray",
+        "removed-optional-value",
     ):
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]
@@ -693,7 +720,6 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         assert any(
             error_message == format_error_message(rec.message) for rec in caplog.records
         )
-=======
 #
 # Copyright The pynxtools Authors.
 #
@@ -843,4 +869,5 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
         assert not validate_dict_against("NXtest", data_dict)[0]
 
     assert error_message in caplog.text
->>>>>>> 9023d8d9 (rename original targets)
+=======
+>>>>>>> 5bba3d30 (fix converted tests)
