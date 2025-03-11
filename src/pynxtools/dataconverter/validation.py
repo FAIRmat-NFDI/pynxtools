@@ -209,8 +209,8 @@ def validate_dict_against(
                 name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
             if nx_name is not None and nx_name != node.name:
                 continue
-            name_any = True if node.name_type in ("any", None) else False
-            name_partial = True if node.name_type == "partial" else False
+            name_any = node.name_type == "any"
+            name_partial = node.name_type == "partial"
 
             if (
                 get_nx_namefit(name2fit, node.name, name_any, name_partial) >= 0
@@ -362,7 +362,7 @@ def validate_dict_against(
                         ValidationProblem.ExpectedGroup,
                         None,
                     )
-                return
+                continue
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
             else:
@@ -527,8 +527,6 @@ def validate_dict_against(
 
         for name in key[1:].replace("@", "").split("/"):
             children = node.get_all_direct_children_names()
-            if name == "data":
-                print(name, children, node.name_type, node.__dict__)
             best_name = best_namefit_of(name, children, node.name_type)
             if best_name is None:
                 return False

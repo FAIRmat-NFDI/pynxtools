@@ -439,6 +439,15 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             id="wrong-enum-choice",
         ),
         pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                "a very different type",
+            ),
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
+            id="open-enum-with-new-item",
+        ),
+        pytest.param(
             set_to_none_in_dict(
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
             ),
@@ -523,7 +532,11 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
 )
 def test_validate_data_dict(caplog, data_dict, error_message, request):
     """Unit test for the data validation routine."""
-    if request.node.callspec.id in (
+    if request.node.callspec.id in ("open-enum-with-new-item",):
+        with caplog.at_level(logging.INFO):
+            assert not validate_dict_against("NXtest", data_dict)[0]
+        assert error_message in caplog.text
+    elif request.node.callspec.id in (
         "valid-data-dict",
         "lists",
         "empty-optional-field",
@@ -553,7 +566,6 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
     else:
         with caplog.at_level(logging.WARNING):
             assert not validate_dict_against("NXtest", data_dict)[0]
-
         assert error_message in caplog.text
 
 
