@@ -148,6 +148,12 @@ TEMPLATE["lone_groups"] = [
     "/ENTRY[entry]/optional_parent/req_group_in_opt_group",
 ]
 TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
+# keys not registered in appdef
+TEMPLATE["required"]["/ENTRY[my_entry]/duration"] = 1  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/duration/@units"] = "s"  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type"
+] = "Ion Source"  # pylint: disable=E1126
 
 # "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
 # "t_value should be one of: (<class 'int'>, <cla"
@@ -665,6 +671,85 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]"
             ),
             id="wrong-value-array-in-attribute",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units",
+                "required",
+            ),
+            "Field /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value requires a unit in the unit category NX_ENERGY.",
+            id="missing-unit",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/duration",
+                np.array([2.0, 3.0, 4.0], dtype=np.float32),
+            ),
+            (
+                "The value at /ENTRY[my_entry]/duration should be"
+                " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
+            ),
+            id="baseclass-wrong-dtype",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/duration/@units",
+                "required",
+            ),
+            "Field /ENTRY[my_entry]/duration requires a unit in the unit category NX_TIME.",
+            id="baseclass-missing-unit",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/duration",
+                "required",
+            ),
+            (
+                "There were attributes set for the field /ENTRY[my_entry]/duration, but the field does not exist."
+            ),
+            id="baseclass-attribute-missing-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
+                "Wrong source type",
+            ),
+            (
+                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type "
+                "should be one of the following: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', "
+                "'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', "
+                "'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', "
+                "'Metal Jet X-ray', 'Laser', 'Dye-Laser', 'Broadband Tunable Light Source', 'Halogen lamp', 'LED', "
+                "'Mercury Cadmium Telluride', 'Deuterium Lamp', 'Xenon Lamp', 'Globar', 'other']"
+            ),
+            id="baseclass-wrong-enum",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name",
+                1,
+            ),
+            (
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name written without documentation."
+            ),
+            id="add-undocumented-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal",
+                "illegal_attribute",
+            ),
+            (
+                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/illegal written without documentation."
+            ),
+            id="add-undocumented-attribute",
         ),
     ],
 )
