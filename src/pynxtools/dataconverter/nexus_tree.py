@@ -48,6 +48,7 @@ NexusType = Literal[
     "NX_BOOLEAN",
     "NX_CCOMPLEX",
     "NX_CHAR",
+    "NX_CHAR_OR_NUMBER",
     "NX_COMPLEX",
     "NX_DATE_TIME",
     "NX_FLOAT",
