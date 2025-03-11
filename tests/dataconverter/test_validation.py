@@ -147,7 +147,7 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
 
 
 @pytest.mark.parametrize(
-    "data_dict, message, expected_fail",
+    "data_dict, message, log_level",
     [
         pytest.param(
             alter_dict(
@@ -157,7 +157,7 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
                 get_data_dict(),
             ),
             "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should be on of the following strings: ['1st type', '2nd type', '3rd type', '4th type']",
-            True,
+            logging.WARNING,
             id="closed-enum-with-new-item",
         ),
         pytest.param(
@@ -168,12 +168,12 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
                 get_data_dict(),
             ),
             "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
-            False,
+            logging.INFO,
             id="open-enum-with-new-item",
         ),
     ],
 )
-def test_validation_enumeration(caplog, data_dict, message, expected_fail):
-    with caplog.at_level(logging.WARNING):
-        assert validate_dict_against("NXtest", data_dict)[0] == (not expected_fail)
+def test_validation_enumeration(caplog, data_dict, message, log_level):
+    with caplog.at_level(log_level):
+        assert not validate_dict_against("NXtest", data_dict)[0]
     assert message in caplog.text
