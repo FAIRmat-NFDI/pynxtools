@@ -512,7 +512,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
-                np.char.array(["1", "2", "3"]),
+                np.array(["1", "2", "3"], dtype=np.bytes_),
             ),
             (""),
             id="numpy-chararray",
