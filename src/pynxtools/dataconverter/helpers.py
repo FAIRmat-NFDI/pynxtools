@@ -575,7 +575,7 @@ def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     return True, []
 
 
-nx_char = (str, np.chararray)
+nx_char = (str, np.character)
 nx_int = (int, np.integer)
 nx_float = (float, np.floating)
 nx_number = nx_int + nx_float
