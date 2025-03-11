@@ -515,7 +515,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
                 np.array(["1", "2", "3"], dtype=np.bytes_),
             ),
             (""),
-            id="numpy-chararray",
+            id="array-of-bytes-chars",
         ),
         pytest.param(
             alter_dict(
