@@ -208,7 +208,7 @@ class NexusNode(NodeMixin):
         Determine if a name is variadic based on its nameType.
         """
         if name:
-            return True if name_type in ("any", "partial") else False
+            return False if name_type == "specified" else True
         return True
 
     def _construct_inheritance_chain_from_parent(self):
