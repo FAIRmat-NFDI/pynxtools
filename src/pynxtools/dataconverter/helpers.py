@@ -596,7 +596,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
         np.complexfloating,
     ),
     "NX_CHAR_OR_NUMBER": nx_char + nx_number,
-    "NXDL_TYPE_UNAVAILABLE": (str,),  # Defaults to a string if a type is not provided.
+    "NXDL_TYPE_UNAVAILABLE": (nx_char,),  # Defaults to a string if a type is not provided.
 }
 
 
