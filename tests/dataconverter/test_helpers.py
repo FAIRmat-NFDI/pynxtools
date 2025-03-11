@@ -413,7 +413,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one"
-                " of the following Python types: (<class 'str'>, <class 'numpy.chararray'>), as"
+                " of the following Python types: (<class 'str'>, <class 'numpy.character'>), as"
                 " defined in the NXDL as NX_CHAR."
             ),
             id="wrong-type-ndarray-instead-of-char",
@@ -494,7 +494,7 @@ TEMPLATE["optional"]["/@default"] = "Some NXroot attribute"
             ),
             (
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one of the following Python types:"
-                " (<class 'str'>, <class 'numpy.chararray'>),"
+                " (<class 'str'>, <class 'numpy.character'>),"
                 " as defined in the NXDL as NX_CHAR."
             ),
             id="int-instead-of-chars",
