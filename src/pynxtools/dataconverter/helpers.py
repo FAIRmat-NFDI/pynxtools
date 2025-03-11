@@ -215,7 +215,6 @@ def get_nxdl_name_for(xml_elem: ET._Element) -> Optional[str]:
             The name of the element.
             None if the xml element has no name or type attribute.
     """
-    """"""
     if "name" in xml_elem.attrib:
         return xml_elem.attrib["name"]
     if "type" in xml_elem.attrib:
