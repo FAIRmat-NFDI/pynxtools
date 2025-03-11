@@ -66,6 +66,8 @@ def get_data_dict():
         "/ENTRY[my_entry]/required_group/description": "An example description",
         "/ENTRY[my_entry]/required_group2/description": "An example description",
         "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/data": 1,
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/identifier": "my_identifier",
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/identifier1": "my_identifier1",
         "/@default": "Some NXroot attribute",
     }
 

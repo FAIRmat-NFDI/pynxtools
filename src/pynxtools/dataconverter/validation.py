@@ -534,11 +534,13 @@ def validate_dict_against(
         for name in key[1:].replace("@", "").split("/"):
             children_to_check = [
                 node.search_add_child_for(child)
-                for child in node.get_all_direct_children_names(depth=-1)
+                for child in node.get_all_direct_children_names()
             ]
             best_name = best_namefit_of(name, children_to_check)
-            if "float_value_no_attr" in name:
-                print(name, children_to_check, best_name)
+
+            # if "float_value_no_attr" in name or "identifier" in name:
+            #     print(name, best_name)
+
             if best_name is None:
                 return False
 
