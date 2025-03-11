@@ -19,7 +19,7 @@
                 <item value="NXtest"/>
             </enumeration>
         </field>
-        <group type="NXdata" name="OPTIONAL_group" optional="true">
+        <group type="NXdata" name="OPTIONAL_group" optional="true" nameType="partial">
             <field name="required_field" required="true" type="NX_INT">
                 <doc>A dummy entry to test optional parent check for a required child.</doc>
             </field>
@@ -27,7 +27,7 @@
                 <doc>A dummy entry to test optional parent check for an optional child.</doc>
             </field>
         </group>
-        <group type="NXdata" name="NXODD_name">
+        <group type="NXdata" name="NXODD_name" nameType="partial">
             <field name="float_value" type="NX_FLOAT" optional="true" units="NX_ENERGY">
                 <doc>A dummy entry for a float value.</doc>
             </field>
@@ -48,10 +48,16 @@
             </field>
             <field name="type">
                 <enumeration>
-                    <item value="1st type" />
-                    <item value="2nd type" />
-                    <item value="3rd type" />
-                    <item value="4th type" />
+                    <item value="1st type"/>
+                    <item value="2nd type"/>
+                    <item value="3rd type"/>
+                    <item value="4th type"/>
+                </enumeration>
+            </field>
+            <field name="type2" optional="true">
+                <enumeration open="true">
+                    <item value="1st type open"/>
+                    <item value="2nd type open"/>
                 </enumeration>
             </field>
         </group>

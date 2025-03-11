@@ -42,6 +42,7 @@ def get_data_dict():
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value": "just chars",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@units": "",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type": "2nd type",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2": "2nd type open",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value": "2022-01-22T12:14:12.05018+00:00",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units": "",
         "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value": True,
@@ -143,3 +144,36 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
         assert not validate_dict_against("NXtest", data_dict)[0]
 
     assert error_message in caplog.text
+
+
+@pytest.mark.parametrize(
+    "data_dict, message, expected_fail",
+    [
+        pytest.param(
+            alter_dict(
+                {
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type": "a very different type"
+                },
+                get_data_dict(),
+            ),
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should be on of the following strings: ['1st type', '2nd type', '3rd type', '4th type']",
+            True,
+            id="closed-enum-with-new-item",
+        ),
+        pytest.param(
+            alter_dict(
+                {
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2": "a very different type"
+                },
+                get_data_dict(),
+            ),
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
+            False,
+            id="open-enum-with-new-item",
+        ),
+    ],
+)
+def test_validation_enumeration(caplog, data_dict, message, expected_fail):
+    with caplog.at_level(logging.WARNING):
+        assert validate_dict_against("NXtest", data_dict)[0] == (not expected_fail)
+    assert message in caplog.text
