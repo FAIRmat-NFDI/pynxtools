@@ -697,16 +697,6 @@ class NexusGroup(NexusNode):
                 if not is_variadic(sibling_name, sibling_name_type):
                     continue
 
-                # sibling_name = sibling.attrib.get("name")
-                # if sibling_name:
-                #     sibling_name_type = sibling.attrib.get("nameType", "specified")
-                # else:
-                #     sibling_name = sibling.attrib["type"][2:].upper()
-                #     sibling_name_type = "any"
-
-                # if sibling_name == self.name or not is_variadic(, sibling_name_type):
-                #     continue
-
                 sibling_name_any = is_name_type(sibling, "any")
                 sibling_name_partial = is_name_type(sibling, "partial")
 
@@ -777,13 +767,18 @@ class NexusGroup(NexusNode):
         self._check_sibling_namefit()
 
     def __repr__(self) -> str:
-        inh_str = "\n   ".join(str(parent.attrib) for parent in self.inheritance)
-        sib_str = "\n   ".join(str(sibling) for sibling in self.is_a)
+        if self.type == "attribute":
+            return f"@{self.name} ({self.optionality[:3]})"
+        return f"{self.name} ({self.optionality[:3]})"
 
-        inh_part = f"\n inh:\n   {inh_str}" if inh_str else ""
-        sib_part = f"\n sib: {sib_str}" if sib_str else ""
+    # def __repr__(self) -> str:
+    #     inh_str = "\n   ".join(str(parent.attrib) for parent in self.inheritance)
+    #     sib_str = "\n   ".join(str(sibling) for sibling in self.is_a)
 
-        return f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality}, nameType: {self.name_type}{inh_part}{sib_part})"
+    #     inh_part = f"\n inh:\n   {inh_str}" if inh_str else ""
+    #     sib_part = f"\n sib: {sib_str}" if sib_str else ""
+
+    #     return f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality}, nameType: {self.name_type}{inh_part}{sib_part})"
 
 
 class NexusEntity(NexusNode):

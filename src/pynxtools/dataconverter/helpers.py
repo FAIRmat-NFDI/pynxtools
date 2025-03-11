@@ -267,7 +267,7 @@ def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
     extends = root.get("extends")
-    while extends is not None and extends != "NXobject":
+    while extends is not None:
         parent_xml_root, _ = get_nxdl_root_and_path(extends)
         extends = parent_xml_root.get("extends")
         inheritance_chain.append(parent_xml_root)
@@ -488,6 +488,15 @@ def contains_uppercase(field_name: Optional[str]) -> bool:
     if field_name is None:
         return False
     return any(char.isupper() for char in field_name)
+
+
+def is_variadic(name: str, name_type: str) -> bool:
+    """
+    Determine if a name is variadic based on its nameType.
+    """
+    if name:
+        return False if name_type == "specified" else True
+    return True
 
 
 def convert_nexus_to_suggested_name(nexus_name):

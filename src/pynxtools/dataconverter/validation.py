@@ -156,8 +156,8 @@ def best_namefit_of(name: str, keys: Iterable[str], name_type: str) -> Optional[
     if nx_name is not None and nx_name in keys:
         return nx_name
 
-    name_any = True if name_type == "any" else False
-    name_partial = True if name_type == "partial" else False
+    name_any = name_type == "any"
+    name_partial = name_type == "partial"
 
     best_match, score = max(
         map(lambda x: (x, get_nx_namefit(name2fit, x, name_any, name_partial)), keys),
@@ -522,11 +522,13 @@ def validate_dict_against(
 
     def is_documented(key: str, node: NexusNode) -> bool:
         if mapping.get(key) is None:
-            # This value is not really set. Skip checking it's documentation.
+            # This value is not really set. Skip checking its documentation.
             return True
 
         for name in key[1:].replace("@", "").split("/"):
             children = node.get_all_direct_children_names()
+            if name == "data":
+                print(name, children, node.name_type, node.__dict__)
             best_name = best_namefit_of(name, children, node.name_type)
             if best_name is None:
                 return False
