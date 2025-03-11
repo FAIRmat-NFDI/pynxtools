@@ -146,6 +146,7 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[str]:
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
     """
+    PRINT = False  # True if "float_value_no_attr" in name else False
     if not nodes:
         return None
 
@@ -538,9 +539,6 @@ def validate_dict_against(
             ]
             best_name = best_namefit_of(name, children_to_check)
 
-            # if "float_value_no_attr" in name or "identifier" in name:
-            #     print(name, best_name)
-
             if best_name is None:
                 return False
 
@@ -578,6 +576,7 @@ def validate_dict_against(
             keys = _follow_link(keys, prev_path)
             if keys is None:
                 return
+
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
 
     def check_attributes_of_nonexisting_field(

@@ -28,7 +28,6 @@ def get_data_dict():
     return {
         "/ENTRY[my_entry]/optional_parent/required_child": 1,
         "/ENTRY[my_entry]/optional_parent/optional_child": 1,
-        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units": "nm",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value": True,
@@ -94,7 +93,7 @@ def alter_dict(new_values: Dict[str, Any], data_dict: Dict[str, Any]) -> Dict[st
         pytest.param(get_data_dict(), id="valid-unaltered-data-dict"),
         pytest.param(
             remove_from_dict(
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr",
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 get_data_dict(),
             ),
             id="removed-optional-value",
