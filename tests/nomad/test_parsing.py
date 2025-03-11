@@ -87,6 +87,9 @@ def test_same_name_field_and_group():
 
 def test_nexus_example_with_renamed_groups():
     archive = EntryArchive()
+    import debugpy
+
+    debugpy.debug_this_thread()
 
     lauetof_data = os.path.join(
         os.path.dirname(__file__), "../data/nomad/NXlauetof.hdf5"

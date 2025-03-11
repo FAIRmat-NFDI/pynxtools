@@ -33,9 +33,9 @@ import numpy as np
 import pandas as pd
 from ase import Atoms
 from ase.data import atomic_numbers
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.datamodel.results import Material, Relation, Results, System
 from nomad.metainfo import SchemaPackage
-from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.normalizing.common import nomad_atoms_from_ase_atoms
 from nomad.normalizing.topology import add_system, add_system_info
 from scipy.spatial import cKDTree
@@ -152,7 +152,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    "NXidentifier": [EntityReference],
+    # "NXidentifier": [EntityReference],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
@@ -1213,13 +1213,14 @@ def normalize_atom_probe(self, archive, logger):
     # temporarily disable extra normalisation step
 
     def plot_3d_plotly(df, palette="Set1"):
+        import re
+
         import h5py
         import numpy as np
         import pandas as pd
-        import plotly.graph_objects as go
         import plotly.express as px
+        import plotly.graph_objects as go
         from scipy.spatial import cKDTree
-        import re
 
         unique_species = df["element"].unique()
         num_species = len(unique_species)

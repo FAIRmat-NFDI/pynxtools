@@ -287,13 +287,13 @@ def test_get_inherited_nodes():
     (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller", elem=elem
     )
-    assert len(elist) == 5
+    assert len(elist) == 6
 
     (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
         nx_name="NXiv_temp",
     )
-    assert len(elist) == 5
+    assert len(elist) == 6
 
 
 def test_c_option(tmp_path):
