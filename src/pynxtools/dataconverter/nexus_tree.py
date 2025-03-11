@@ -35,13 +35,16 @@ import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
 from pynxtools.dataconverter.helpers import (
-    contains_uppercase,
     get_all_parents_for,
     get_nxdl_root_and_path,
+    is_variadic,
     is_appdef,
     remove_namespace_from_tag,
 )
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_nx_namefit,
+    is_name_type,
+)
 
 NexusType = Literal[
     "NX_BINARY",
@@ -193,7 +196,7 @@ class NexusNode(NodeMixin):
         self.type = type
         self.name_type = name_type
         self.optionality = optionality
-        self.variadic = self._is_variadic(self.name, self.name_type)
+        self.variadic = is_variadic(self.name, self.name_type)
         if variadic is not None:
             self.variadic = variadic
         if inheritance is not None:
@@ -203,14 +206,6 @@ class NexusNode(NodeMixin):
         self.parent = parent
         self.is_a = []
         self.parent_of = []
-
-    def _is_variadic(self, name: str, name_type: str) -> bool:
-        """
-        Determine if a name is variadic based on its nameType.
-        """
-        if name:
-            return False if name_type == "specified" else True
-        return True
 
     def _construct_inheritance_chain_from_parent(self):
         """
@@ -475,6 +470,7 @@ class NexusNode(NodeMixin):
                 This represents the direct field or group inside the specific xml file.
         """
         name = xml_elem.attrib.get("name")
+
         inheritance_chain = [xml_elem]
         inheritance = iter(self.inheritance)
         for elem in inheritance:
@@ -498,18 +494,28 @@ class NexusNode(NodeMixin):
                 best_group = None
                 best_score = -1
                 for group in groups:
-                    if name in group.attrib and not contains_uppercase(
-                        group.attrib["name"]
-                    ):
-                        continue
                     group_name = (
                         group.attrib.get("name")
                         if "name" in group.attrib
                         else group.attrib["type"][2:].upper()
                     )
 
-                    score = get_nx_namefit(name, group_name)
-                    if get_nx_namefit(name, group_name) >= best_score:
+                    if "name" in group.attrib:
+                        group_name_type = group.attrib.get("nameType", "specified")
+
+                    else:
+                        group_name_type = group.attrib.get("nameType", "any")
+
+                    if not is_variadic(group_name, group_name_type):
+                        continue
+
+                    group_name_any = is_name_type(group, "any")
+                    group_name_partial = is_name_type(group, "partial")
+
+                    score = get_nx_namefit(
+                        name, group_name, group_name_any, group_name_partial
+                    )
+                    if score >= best_score:
                         best_group = group
                         best_score = score
 
@@ -557,7 +563,7 @@ class NexusNode(NodeMixin):
             name = xml_elem.attrib.get("name")
             if not name:
                 name = xml_elem.attrib["type"][2:].upper()
-                name_type = None
+                name_type = "any"
 
             inheritance_chain = self._build_inheritance_chain(xml_elem)
             current_elem = NexusGroup(
@@ -669,6 +675,7 @@ class NexusGroup(NexusNode):
 
         for elem in self.inheritance[1:]:
             parent = elem.getparent()
+
             if parent is None:
                 continue
             siblings = parent.findall(
@@ -676,15 +683,43 @@ class NexusGroup(NexusNode):
             )
 
             for sibling in siblings:
-                sibling_name = sibling.attrib.get(
-                    "name", sibling.attrib["type"][2:].upper()
+                sibling_name = (
+                    sibling.attrib.get("name")
+                    if "name" in sibling.attrib
+                    else sibling.attrib["type"][2:].upper()
                 )
-                if sibling_name == self.name or not contains_uppercase(sibling_name):
+
+                if "name" in sibling.attrib:
+                    sibling_name_type = sibling.attrib.get("nameType", "specified")
+                else:
+                    sibling_name_type = sibling.attrib.get("nameType", "any")
+
+                if not is_variadic(sibling_name, sibling_name_type):
                     continue
-                if get_nx_namefit(self.name, sibling_name) < 0:
+
+                # sibling_name = sibling.attrib.get("name")
+                # if sibling_name:
+                #     sibling_name_type = sibling.attrib.get("nameType", "specified")
+                # else:
+                #     sibling_name = sibling.attrib["type"][2:].upper()
+                #     sibling_name_type = "any"
+
+                # if sibling_name == self.name or not is_variadic(, sibling_name_type):
+                #     continue
+
+                sibling_name_any = is_name_type(sibling, "any")
+                sibling_name_partial = is_name_type(sibling, "partial")
+
+                if (
+                    get_nx_namefit(
+                        self.name, sibling_name, sibling_name_any, sibling_name_partial
+                    )
+                    < 0
+                ):
                     continue
 
                 sibling_node = self.parent.get_child_for(sibling)
+
                 if sibling_node is None:
                     sibling_node = self.parent.add_node_from(sibling)
                 self.is_a.append(sibling_node)
@@ -742,9 +777,13 @@ class NexusGroup(NexusNode):
         self._check_sibling_namefit()
 
     def __repr__(self) -> str:
-        return (
-            f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality[:3]})"
-        )
+        inh_str = "\n   ".join(str(parent.attrib) for parent in self.inheritance)
+        sib_str = "\n   ".join(str(sibling) for sibling in self.is_a)
+
+        inh_part = f"\n inh:\n   {inh_str}" if inh_str else ""
+        sib_part = f"\n sib: {sib_str}" if sib_str else ""
+
+        return f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality}, nameType: {self.name_type}{inh_part}{sib_part})"
 
 
 class NexusEntity(NexusNode):
