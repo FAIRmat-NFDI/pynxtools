@@ -30,9 +30,11 @@ except ImportError:
     )
 
 from pynxtools.nomad.entrypoints import simple_nexus_example
-from pynxtools.testing.nomad_example import (example_upload_entry_point_valid,
-                                             get_file_parameter,
-                                             parse_nomad_examples)
+from pynxtools.testing.nomad_example import (
+    example_upload_entry_point_valid,
+    get_file_parameter,
+    parse_nomad_examples,
+)
 
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(__file__),
