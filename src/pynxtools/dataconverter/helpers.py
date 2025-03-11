@@ -625,7 +625,9 @@ def is_positive_int(value):
     def is_greater_than(num):
         return num > 0
 
-    return check_all_children_for_callable(objects=value, check_function=is_greater_than)
+    return check_all_children_for_callable(
+        objects=value, check_function=is_greater_than
+    )
 
 
 def convert_str_to_bool_safe(value: str) -> Optional[bool]:
