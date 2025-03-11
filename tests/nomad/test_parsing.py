@@ -57,10 +57,10 @@ def test_nexus_example():
     )
     # good ENUM - x-ray
     assert instrument.SOURCE[0].probe__field == "x-ray"
-    # wrong inherited ENUM - Burst
-    assert instrument.SOURCE[0].mode__field is None
-    # wrong inherited ENUM for extended field - 'Free Electron Laser'
-    assert instrument.SOURCE[0].type__field is None
+    # wrong inherited ENUM - Burst (accepted for open enum)
+    assert instrument.SOURCE[0].mode__field == "Burst"
+    # wrong inherited ENUM for extended field - 'Free Electron Laser' (accepted for open enum)
+    assert instrument.SOURCE[0].type__field == "Free Electron Laser"
     data = arpes_obj.ENTRY[0].DATA[0]
     assert len(data.AXISNAME__field) == 3
     # there is still a bug in the variadic name resolution, so skip these
@@ -79,6 +79,9 @@ def test_nexus_example():
 
 
 def test_same_name_field_and_group():
+    import debugpy
+
+    debugpy.debug_this_thread()
     archive = EntryArchive()
     example_data = "tests/data/parser/SiO2onSi.ellips.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
