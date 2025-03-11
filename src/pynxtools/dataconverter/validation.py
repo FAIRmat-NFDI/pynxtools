@@ -134,7 +134,7 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, keys: Iterable[str], name_type: str) -> Optional[str]:
+def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[str]:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -146,24 +146,30 @@ def best_namefit_of(name: str, keys: Iterable[str], name_type: str) -> Optional[
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
     """
-    if not keys:
+    if not nodes:
         return None
 
     nx_name, name2fit = split_class_and_name_of(name)
 
-    if name2fit in keys:
-        return name2fit
-    if nx_name is not None and nx_name in keys:
-        return nx_name
+    best_match = 0
+    best_score = -1
 
-    name_any = name_type == "any"
-    name_partial = name_type == "partial"
+    for node in nodes:
+        if name2fit == node.name:
+            return name2fit
+        if nx_name is not None and nx_name == node.name:
+            return nx_name
 
-    best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name2fit, x, name_any, name_partial)), keys),
-        key=lambda x: x[1],
-    )
-    if score < 0:
+        name_any = node.name_type == "any"
+        name_partial = node.name_type == "partial"
+
+        score = get_nx_namefit(name2fit, node.name, name_any, name_partial)
+
+        if score > best_score:
+            best_score = score
+            best_match = node.name
+
+    if best_score < 0:
         return None
 
     return best_match
@@ -526,8 +532,13 @@ def validate_dict_against(
             return True
 
         for name in key[1:].replace("@", "").split("/"):
-            children = node.get_all_direct_children_names()
-            best_name = best_namefit_of(name, children, node.name_type)
+            children_to_check = [
+                node.search_add_child_for(child)
+                for child in node.get_all_direct_children_names(depth=-1)
+            ]
+            best_name = best_namefit_of(name, children_to_check)
+            if "float_value_no_attr" in name:
+                print(name, children_to_check, best_name)
             if best_name is None:
                 return False
 
@@ -673,7 +684,7 @@ def validate_dict_against(
         if (next_child_class is not None) or (next_child_name is not None):
             output = None
             for child in node.children:
-                # regexs to separarte the class and the name from full name of the child
+                # regexs to separate the class and the name from full name of the child
                 child_class_from_node = re.sub(
                     r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
                     "",

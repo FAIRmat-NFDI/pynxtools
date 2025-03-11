@@ -337,6 +337,7 @@ class NexusNode(NodeMixin):
                 The inheritance depth up to which get children names.
                 `depth=1` will return only the children of the current node.
                 `depth=None` will return all children names of all parents.
+                `depth=-1` will return all children names of all parents, except for NXobject.
                 Defaults to None.
             only_appdef (bool, optional):
                 Only considers appdef nodes as children.
@@ -348,8 +349,10 @@ class NexusNode(NodeMixin):
         Returns:
             Set[str]: A set of children names.
         """
-        if depth is not None and (not isinstance(depth, int) or depth < 0):
-            raise ValueError("Depth must be a positive integer or None")
+        if depth is not None and (
+            not isinstance(depth, int) or (depth < 0 and depth != -1)
+        ):
+            raise ValueError("Depth must be a positive integer, -1 or None")
 
         tag_type = ""
         if node_type == "group" and nx_class is not None:
