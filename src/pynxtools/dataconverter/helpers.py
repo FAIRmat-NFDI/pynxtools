@@ -582,7 +582,7 @@ nx_number = nx_int + nx_float
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
-    "NX_BINARY": (bytes, bytearray, np.byte, np.ubyte),
+    "NX_BINARY": (bytes, bytearray, np.bytes_),
     "NX_BOOLEAN": (bool, np.bool_),
     "NX_CHAR": nx_char,
     "NX_DATE_TIME": (str,),
@@ -601,7 +601,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
 
 
 def check_all_children_for_callable(
-    objects: Union[list, np.ndarray], checker: Optional[Callable] = None, *args
+    objects: Union[list, np.ndarray], check_function: Optional[Callable] = None, *args
 ) -> bool:
     """Checks whether all objects in list or numpy array are validated
     by given callable and types.
@@ -609,7 +609,7 @@ def check_all_children_for_callable(
     if not isinstance(objects, np.ndarray):
         objects = np.array(objects)
 
-    return all([checker(o, *args) for o in objects.flat])
+    return all([check_function(o, *args) for o in objects.flat])
 
 
 def is_valid_data_type(value, accepted_types):
