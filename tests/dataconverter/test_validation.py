@@ -748,6 +748,17 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/optional_parent/required_child/@units",
+                "s",
+            ),
+            (
+                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s, is being written but has no documentation."
+            ),
+            id="field-with-illegal-unit",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/duration",
                 np.array([2.0, 3.0, 4.0], dtype=np.float32),
             ),
@@ -848,6 +859,21 @@ TEMPLATE["required"][
                 "The attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units will not be written."
             ),
             id="baseclass-add-unit-of-missing-undocumented-field",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/required_group/author",
+                    "author",
+                ),
+                "/ENTRY[my_entry]/required_group/author/@units",
+                "s",
+            ),
+            (
+                "The unit, /ENTRY[my_entry]/required_group/author/@units = s, is being written but has no documentation."
+            ),
+            id="baseclass-field-with-illegal-unit",
         ),
     ],
 )
