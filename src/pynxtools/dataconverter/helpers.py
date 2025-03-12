@@ -917,7 +917,7 @@ def add_default_root_attributes(data, filename):
         "https://github.com/FAIRmat-NFDI/nexus_definitions/"
         f"blob/{get_nexus_version_hash()}",
     )
-    update_and_warn("/@NeXus_version", get_nexus_version())
+    update_and_warn("/@NeXus_release", get_nexus_version())
     update_and_warn("/@HDF5_version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
 
