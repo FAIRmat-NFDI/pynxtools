@@ -520,7 +520,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 "optional",
             ),
-            "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value, but the field does not exist.",
+            "Unit /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units in dataset without its field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value.",
             id="removed-optional-value-with-attribute-remaining",
         ),
         pytest.param(
@@ -705,6 +705,70 @@ TEMPLATE["required"][
             id="missing-unit",
         ),
         pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
+                "required",
+            ),
+            "Unit /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units in dataset without its field /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value.",
+            id="unit-missing-field",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
+                "required",
+            ),
+            "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units will not be written.",
+            id="unit-missing-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/required_group/illegal_name",
+                1,
+            ),
+            (
+                "Field /ENTRY[my_entry]/required_group/illegal_name written without documentation."
+            ),
+            id="add-undocumented-field",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/required_group/author",
+                    "author",
+                ),
+                "/ENTRY[my_entry]/required_group/author/@illegal",
+                "illegal_attribute",
+            ),
+            (
+                "Attribute /ENTRY[my_entry]/required_group/author/@illegal written without documentation."
+            ),
+            id="add-undocumented-attribute",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@default",
+                "unknown",
+            ),
+            "",
+            id="group-with-only-attributes",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal",
+                "unknown",
+            ),
+            (
+                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal written without documentation."
+            ),
+            id="group-with-illegal-attributes",
+        ),
+        pytest.param(
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/duration",
@@ -726,13 +790,24 @@ TEMPLATE["required"][
             id="baseclass-missing-unit",
         ),
         pytest.param(
-            remove_from_dict(
+            alter_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/duration",
-                "required",
+                "/ENTRY[my_entry]/collection_time/@illegal",
+                "s",
             ),
             (
-                "There were attributes set for the field /ENTRY[my_entry]/duration, but the field does not exist."
+                "There were attributes set for the field /ENTRY[my_entry]/collection_time, but the field does not exist."
+            ),
+            id="baseclass-attribute-missing-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/collection_time/@illegal",
+                "s",
+            ),
+            (
+                "The attribute /ENTRY[my_entry]/collection_time/@illegal will not be written."
             ),
             id="baseclass-attribute-missing-field",
         ),
@@ -761,7 +836,7 @@ TEMPLATE["required"][
             (
                 "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name written without documentation."
             ),
-            id="add-undocumented-field",
+            id="baseclass-add-undocumented-field",
         ),
         pytest.param(
             alter_dict(
@@ -770,9 +845,32 @@ TEMPLATE["required"][
                 "illegal_attribute",
             ),
             (
-                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/illegal written without documentation."
+                "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal written without documentation."
             ),
-            id="add-undocumented-attribute",
+            id="baseclass-add-undocumented-attribute",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units",
+                "illegal_attribute",
+            ),
+            (
+                "Unit /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units "
+                "in dataset without its field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal."
+            ),
+            id="baseclass-add-unit-of-missing-undocumented-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units",
+                "illegal_attribute",
+            ),
+            (
+                "The attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units will not be written."
+            ),
+            id="baseclass-add-unit-of-missing-undocumented-field",
         ),
     ],
 )
@@ -804,6 +902,7 @@ def test_validate_data_dict(caplog, data_dict, error_message, request):
         "array-of-float-instead-of-float",
         "numpy-chararray",
         "removed-optional-value",
+        "group-with-only-attributes",
     ):
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]
