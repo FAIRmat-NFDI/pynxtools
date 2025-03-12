@@ -146,7 +146,6 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[str]:
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
     """
-    PRINT = False  # True if "float_value_no_attr" in name else False
     if not nodes:
         return None
 
