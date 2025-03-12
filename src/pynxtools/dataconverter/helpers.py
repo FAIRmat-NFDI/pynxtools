@@ -81,7 +81,7 @@ class Collector:
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.warning(
-                f"The unit, {path} = {value}, is being written but has no documentation"
+                f"The unit, {path} = {value}, is being written but has no documentation."
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(

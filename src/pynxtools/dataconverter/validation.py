@@ -781,6 +781,15 @@ def validate_dict_against(
                     None,
                 )
                 keys_to_remove.append(not_visited_key)
+            else:
+                # check that parent has units
+                node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
+                if node.unit is None:
+                    collector.collect_and_log(
+                        not_visited_key,
+                        ValidationProblem.UnitWithoutDocumentation,
+                        mapping[not_visited_key],
+                    )
 
             # parent key will be checked on its own if it exists, because it is in the list
             continue
