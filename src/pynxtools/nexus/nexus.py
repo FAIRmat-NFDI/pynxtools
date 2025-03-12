@@ -357,6 +357,7 @@ def helper_get_inherited_nodes(hdf_info2, elist, pind, attr):
             elist[ind], hdf_node, hdf_name, hdf_class_name, act_nexus_type
         )
         if fit >= bestfit and newelem is not None:
+            bestfit = fit
             html_name = get_node_name(newelem)
     return hdf_path, hdf_node, hdf_class_path, elist, pind, attr, html_name
 

@@ -33,6 +33,7 @@ import numpy as np
 import pandas as pd
 from ase import Atoms
 from ase.data import atomic_numbers
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.datamodel.results import Material, Relation, Results, System
 from nomad.metainfo import SchemaPackage
 from nomad.normalizing.common import nomad_atoms_from_ase_atoms
@@ -151,7 +152,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    "NXidentifier": [EntityReference],
+    # "NXidentifier": [EntityReference],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
@@ -159,7 +160,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
 }
 
 
-class NexusMeasurement(Measurement, Schema):
+class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
         try:
             app_entry = getattr(self, "ENTRY")
@@ -257,6 +258,7 @@ def get_nx_type(nx_type: str) -> Optional[Datatype]:
         "NX_POSINT": m_int,
         "NX_BINARY": Bytes,
         "NX_DATE_TIME": Datetime,
+        "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
     }
 
     if nx_type in __NX_TYPES:
@@ -667,7 +669,6 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     # name
     assert "name" in xml_attrs, "Expecting name to be present"
-
     name = __rename_nx_for_nomad(xml_attrs["name"], is_field=True)
 
     # nameType
@@ -709,7 +710,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     value_quantity: Quantity = None  # type: ignore
 
     # copy from base to inherit from it
-    if container.base_sections is not None:
+    if container.base_sections is not None and len(container.base_sections) > 0:
         # TODO: use resolve_variadic_name to find inheritance among non-exact matchings (also provide data type)
         base_quantity: Quantity = container.base_sections[0].all_quantities.get(name)
         if base_quantity:
@@ -1211,8 +1212,68 @@ def normalize_atom_probe(self, archive, logger):
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
     # temporarily disable extra normalisation step
-    if archive:
-        return
+
+    def plot_3d_plotly(df, palette="Set1"):
+        import re
+
+        import h5py
+        import numpy as np
+        import pandas as pd
+        import plotly.express as px
+        import plotly.graph_objects as go
+        from scipy.spatial import cKDTree
+
+        unique_species = df["element"].unique()
+        num_species = len(unique_species)
+        base_colors = getattr(px.colors.qualitative, palette)
+        colors = (base_colors * ((num_species // len(base_colors)) + 1))[:num_species]
+
+        fig = go.Figure()
+        for i, species in enumerate(unique_species):
+            subset = df[df["element"] == species]
+            fig.add_trace(
+                go.Scatter3d(
+                    x=subset["x"],
+                    y=subset["y"],
+                    z=subset["z"],
+                    mode="markers",
+                    marker=dict(size=1, opacity=0.6, color=colors[i]),
+                    name=str(species),
+                )
+            )
+
+        # Improve axis and box appearance
+        fig.update_layout(
+            title="3D Atom Probe Reconstruction with Plotly WebGL",
+            scene=dict(
+                xaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                yaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                zaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+            ),
+            margin=dict(l=0, r=0, b=0, t=40),
+            height=800,
+            autosize=True,
+            template="plotly_white",
+            showlegend=True,
+            legend=dict(
+                font=dict(size=16),
+                itemsizing="constant",
+                bgcolor="rgba(255,255,255,0.8)",
+            ),
+        )
+        return fig
+
+    # if archive:
+    #     return
 
     data_path = self.m_attributes["m_nx_data_path"]
     with h5py.File(
@@ -1260,6 +1321,14 @@ def normalize_atom_probe(self, archive, logger):
         frac=0.02, random_state=42
     )  # Adjust fraction for performance
 
+    # plotly figure
+    fig = plot_3d_plotly(df_sampled)
+    # find figures hosting subsesction
+    figure_host = archive.data
+    # apend the figure to the figures list
+    figure_host.figures = [PlotlyFigure(figure=fig.to_plotly_json())]
+
+    # normalize to results.material.topology
     # **Create ASE Atoms Object from Downsampled Data (Using Aggregated Elements)**
     def create_ase_atoms(df):
         symbols = df["element"].tolist()
