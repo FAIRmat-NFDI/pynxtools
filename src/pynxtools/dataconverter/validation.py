@@ -152,7 +152,7 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[str]:
 
     nx_name, name2fit = split_class_and_name_of(name)
 
-    best_match = 0
+    best_match = None
     best_score = -1
 
     for node in nodes:
