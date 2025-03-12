@@ -39,6 +39,7 @@ from nomad.metainfo import SchemaPackage
 from nomad.normalizing.common import nomad_atoms_from_ase_atoms
 from nomad.normalizing.topology import add_system, add_system_info
 from scipy.spatial import cKDTree
+import pint
 
 try:
     from nomad import utils
@@ -690,11 +691,19 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     # dimensionality
     nx_dimensionality = xml_attrs.get("units", None)
     if nx_dimensionality:
-        if nx_dimensionality not in NXUnitSet.mapping:
-            raise NotImplementedError(
-                f"Unit {nx_dimensionality} is not supported for {name}."
-            )
-        dimensionality = NXUnitSet.mapping[nx_dimensionality]
+        dimensionality = NXUnitSet.mapping.get(nx_dimensionality)
+        if not dimensionality and nx_dimensionality != "NX_ANY":
+            nx_dimensionality = "asdjkalsdbasjdk"
+            try:
+                # nx_dimensionality = "some_chasdasdkasdn m"
+                from nomad.units import ureg
+
+                quantity = 1 * ureg(nx_dimensionality)
+                dimensionality = quantity.dimensionality
+            except pint.errors.UndefinedUnitError as err:
+                raise NotImplementedError(
+                    f"Unit {nx_dimensionality} is not supported for {name}."
+                ) from err
     else:
         dimensionality = None
 
