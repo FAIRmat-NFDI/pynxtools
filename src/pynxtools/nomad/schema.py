@@ -258,6 +258,7 @@ def get_nx_type(nx_type: str) -> Optional[Datatype]:
         "NX_POSINT": m_int,
         "NX_BINARY": Bytes,
         "NX_DATE_TIME": Datetime,
+        "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
     }
 
     if nx_type in __NX_TYPES:

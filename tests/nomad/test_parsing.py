@@ -67,21 +67,19 @@ def test_nexus_example():
     # assert data.delays__field is not None
     # assert data.angles__field.check("1/Å")
     # assert data.delays__field.check("fs")
-    # but the following still works
-    assert data.energies__field is not None
-    assert data.energies__field.check("eV")
+    # assert data.energies__field is not None
+    # assert data.energies__field.check("eV")
     # manual name resolution
     assert data.AXISNAME__field["angles__field"] is not None
     assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
     assert (1 * data.AXISNAME__field["angles__field"].unit).check("1/Å")
     assert (1 * data.AXISNAME__field["delays__field"].unit).check("fs")
+    assert (1 * data.AXISNAME__field["energies__field"].unit).check("eV")
+    assert (1 * data.DATA__field["data__field"].unit).check("1")
     assert data.___axes == "['angles', 'energies', 'delays']"
 
 
 def test_same_name_field_and_group():
-    import debugpy
-
-    debugpy.debug_this_thread()
     archive = EntryArchive()
     example_data = "tests/data/parser/SiO2onSi.ellips.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
@@ -90,9 +88,6 @@ def test_same_name_field_and_group():
 
 def test_nexus_example_with_renamed_groups():
     archive = EntryArchive()
-    import debugpy
-
-    debugpy.debug_this_thread()
 
     lauetof_data = os.path.join(
         os.path.dirname(__file__), "../data/nomad/NXlauetof.hdf5"
