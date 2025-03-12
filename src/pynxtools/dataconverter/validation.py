@@ -141,7 +141,6 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[str]:
     Args:
         name (str): The name to fit against the keys.
         keys (Iterable[str]): The keys to fit `name` against.
-        name_type (str): nameType of the concept being fitted
 
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
