@@ -285,7 +285,11 @@ nexus_app = AppEntryPoint(
                     "scale": "linear",
                     "quantity": f"results.material.elements",
                     "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 7, "w": 10, "y": 0, "x": 0}
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 8, "y": 0, "x": 0},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 12, "y": 0, "x": 0},
+                        "lg": {"minH": 3, "minW": 3, "h": 10, "w": 14, "y": 0, "x": 0},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 10, "y": 0, "x": 0},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 10, "y": 0, "x": 0},
                     },
                 },
                 {
@@ -295,7 +299,11 @@ nexus_app = AppEntryPoint(
                     "quantity": f"entry_type",
                     "title": "Entry Type",
                     "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 10}
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 0, "x": 8},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 0, "x": 12},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 0, "x": 14},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 10},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 10},
                     },
                 },
                 {
@@ -305,7 +313,11 @@ nexus_app = AppEntryPoint(
                     "quantity": f"data.ENTRY.definition__field#{schema}",
                     "title": "NeXus Class",
                     "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14}
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 0},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 0},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 0, "x": 19},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14},
                     },
                 },
                 {
@@ -315,7 +327,11 @@ nexus_app = AppEntryPoint(
                     "quantity": f"data.ENTRY.USER.name__field#{schema}",
                     "title": "Author",
                     "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 18}
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 4},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 6},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 5, "x": 14},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 18},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 18},
                     },
                 },
                 {
@@ -325,7 +341,11 @@ nexus_app = AppEntryPoint(
                     "quantity": f"data.ENTRY.SAMPLE.name__field#{schema}",
                     "title": "Sample",
                     "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 22}
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 8},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 12},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 5, "x": 19},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 22},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 22},
                     },
                 },
             ]
