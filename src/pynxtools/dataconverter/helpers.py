@@ -24,7 +24,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union, Sequence
 
 import h5py
 import lxml.etree as ET
@@ -81,7 +81,7 @@ class Collector:
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.warning(
-                f"The unit, {path} = {value}, is being written but has no documentation"
+                f"The unit, {path} = {value}, is being written but has no documentation."
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
@@ -114,7 +114,10 @@ class Collector:
                 f"Expected a group at {path} but found a field or attribute."
             )
         elif log_type == ValidationProblem.MissingDocumentation:
-            logger.warning(f"Field {path} written without documentation.")
+            if "@" in path.rsplit("/")[-1]:
+                logger.warning(f"Attribute {path} written without documentation.")
+            else:
+                logger.warning(f"Field {path} written without documentation.")
         elif log_type == ValidationProblem.MissingUnit:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
@@ -122,7 +125,7 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredAttribute:
             logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
-            logger.warning(f"Unit {path} in dataset without its field {value}")
+            logger.warning(f"Unit {path} in dataset without its field {value}.")
         elif log_type == ValidationProblem.AttributeForNonExistingField:
             logger.warning(
                 f"There were attributes set for the field {path}, "
@@ -215,7 +218,6 @@ def get_nxdl_name_for(xml_elem: ET._Element) -> Optional[str]:
             The name of the element.
             None if the xml element has no name or type attribute.
     """
-    """"""
     if "name" in xml_elem.attrib:
         return xml_elem.attrib["name"]
     if "type" in xml_elem.attrib:
@@ -575,110 +577,59 @@ def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     return True, []
 
 
-NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
-NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
-NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
-# np int for np version 1.26.0
-np_int = (np.integer,)
-np_float = (np.floating,)
-# Not to be confused with `np.byte` and `np.ubyte`, these store
-# an integer of `8bit` and `unsigned 8bit` respectively.
-np_bytes = (np.bytes_,)
-np_char = (
-    np.str_,
-    np.bytes_,
-    np.chararray,
-)  # Only numpy Unicode string and Byte string
-np_bool = (np.bool_,)
-np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle, np.complex_)
+nx_char = (str, np.character)
+nx_int = (int, np.integer)
+nx_float = (float, np.floating)
+nx_number = nx_int + nx_float
+
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
-    "NX_BINARY": (
-        bytes,
-        *np_bytes,
-    ),
-    "NX_BOOLEAN": (bool, *np_bool),
-    "NX_CHAR": (str, *np_char),
+    "NX_BINARY": (bytes, bytearray, np.bytes_),
+    "NX_BOOLEAN": (bool, np.bool_),
+    "NX_CHAR": nx_char,
     "NX_DATE_TIME": (str,),
-    "NX_FLOAT": (float, *np_float),
-    "NX_INT": (int, *np_int),
-    "NX_UINT": (
-        np.unsignedinteger,
-        np.uint,
+    "NX_FLOAT": nx_float,
+    "NX_INT": nx_int,
+    "NX_UINT": (np.unsignedinteger,),
+    "NX_NUMBER": nx_number,
+    "NX_POSINT": nx_int,  # > 0 is checked in is_valid_data_field()
+    "NX_COMPLEX": (
+        complex,
+        np.complexfloating,
     ),
-    "NX_NUMBER": (
-        int,
-        float,
-        *np_int,
-        *np_float,
-    ),
-    "NX_POSINT": (
-        int,
-        np.signedinteger,
-    ),  # > 0 is checked in is_valid_data_field()
-    "NX_COMPLEX": (complex, *np_complex),
+    "NX_CHAR_OR_NUMBER": nx_char + nx_number,
     "NXDL_TYPE_UNAVAILABLE": (
-        str,
-        *np_char,
+        nx_char,
     ),  # Defaults to a string if a type is not provided.
-    "NX_CHAR_OR_NUMBER": (
-        str,
-        int,
-        float,
-        *np_char,
-        *np_int,
-        *np_float,
-    ),
 }
 
 
 def check_all_children_for_callable(
-    objects: Union[list, np.ndarray],
-    checker: Optional[Callable] = None,
-    accepted_types: Optional[tuple] = None,
+    objects: Union[list, np.ndarray], check_function: Optional[Callable] = None, *args
 ) -> bool:
     """Checks whether all objects in list or numpy array are validated
     by given callable and types.
     """
+    if not isinstance(objects, np.ndarray):
+        objects = np.array(objects)
 
-    if checker is not None:
-        for obj in objects:
-            args = (obj, accepted_types) if accepted_types is not None else (obj,)
-            if not checker(*args):
-                return False
-        return True
-    if isinstance(objects, tuple):
-        return False
-    if isinstance(objects, list):
-        # Handles list and list of list
-        tmp_arr = np.array(objects)
-    elif isinstance(objects, np.ndarray):
-        tmp_arr = objects
-    if tmp_arr is not None:
-        return any([np.issubdtype(tmp_arr.dtype, type_) for type_ in accepted_types])
-
-    return False
+    return all([check_function(o, *args) for o in objects.flat])
 
 
 def is_valid_data_type(value, accepted_types):
     """Checks whether the given value or its children are of an accepted type."""
-
-    if not isinstance(value, (list, np.ndarray)):
-        return isinstance(value, accepted_types)
-
-    return check_all_children_for_callable(objects=value, accepted_types=accepted_types)
+    return check_all_children_for_callable(value, isinstance, accepted_types)
 
 
 def is_positive_int(value):
     """Checks whether the given value or its children are positive."""
 
     def is_greater_than(num):
-        return num.flat[0] > 0 if isinstance(num, np.ndarray) else num > 0
+        return num > 0
 
-    if isinstance(value, list):
-        return check_all_children_for_callable(objects=value, checker=is_greater_than)
-
-    return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
+    return check_all_children_for_callable(
+        objects=value, check_function=is_greater_than
+    )
 
 
 def convert_str_to_bool_safe(value: str) -> Optional[bool]:
