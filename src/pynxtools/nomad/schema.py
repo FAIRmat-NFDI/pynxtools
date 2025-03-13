@@ -155,7 +155,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    "NXobject": [NexusBaseSection, EntityReference],
+    # "NXobject": [NexusBaseSection, EntityReference],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
@@ -859,7 +859,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
             [NexusMeasurement] if xml_attrs["extends"] == "NXobject" else []
         )
     else:
-        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection]) # + [EntityReference]
+        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection]) + [EntityReference]
 
     nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
@@ -1165,17 +1165,8 @@ def normalize_data(self, archive, logger):
 def attach_identifier_normalizer(section_obj):
     def generic_normalize_identifier(self, archive, logger):
         """Normalizer for Identifier section."""
-
-        ####### TODO Remove this
-        # 1. Run normalise for each section
-        # 2. Search for field/quantity with `identifier*`
-        # 3. if the section has a field7quantity create an reference entity for that group
-        # 4. Think how to create a reference for all groups
-        #    Problems:
-        #       1. Indivisual link to a group will also create a reference for the source group
-        #          which in turn will be duplication of the reference
-        #
-        ###########
+        from nomad.processing import Entry
+        current_cls = section_obj.section_cls
 
         def create_Entity(lab_id, archive, f_name):
             entitySec = Entity()
@@ -1201,33 +1192,36 @@ def attach_identifier_normalizer(section_obj):
 
             return f"/entries/{entry_id}/archive#/data"
 
-        current_cls = section_obj.section_cls
         # In case of multiple identifiers exists in the same group
         identifiers = [key for key in self.__dict__.keys() if
                            key.startswith("identifier") and key.endswith("__field")]
 
         if not identifiers:
             return
-        for identifier in identifiers[0:1]:
-            # super(current_cls, self).normalize(archive, logger)
-            if id_ := getattr(self, identifier):
-                if not self.lab_id:
-                    logger.info(f"{id_} - identifier received")
-                    self.lab_id = id_
-                else:
-                    logger.info(f"Identifier {id_} refers to {self.lab_id}.")
+        for identifier in identifiers[0:]:
+            if not (id_:= getattr(self, identifier)):
+                continue
+            id_ = re.split("([0-9a-zA-Z.]+)", id_)[1] + hashlib.md5(id_.encode()).hexdigest()
+            if not self.lab_id:
+                logger.info(f"{id_} - identifier received")
+                self.lab_id = id_
+            else:
+                logger.info(f"Identifier {id_} refers to {self.lab_id}.")
 
-            EntityReference.normalize(self, archive, logger)
-            if not self.reference:
-                logger.info(f"{self.lab_id} to be created")
-                f_name = re.split("([0-9a-zA-Z.]+)", self.lab_id)[1]
-                if len(f_name) != len(self.lab_id):
-                    f_name = f_name + hashlib.md5(self.lab_id.encode()).hexdigest()
-                f_name = f"{current_cls.__name__}_{f_name}.archive.json"
+
+            logger.info(f"{self.lab_id} to be created")
+
+
+            f_name = f"{current_cls.__name__}_{id_}.archive.json"
+            entry = Entry.objects(
+                upload_id=archive.metadata.upload_id, mainfile=f_name
+            ).first()
+            if not entry:
                 create_Entity(self.lab_id, archive, f_name)
-                self.reference = get_entry_reference(archive, f_name)
-                logger.info(f"{self.reference} - referenced directly")
-        super(current_cls, self).normalize(archive, logger)
+            self.reference = get_entry_reference(archive, f_name)
+            logger.info(f"{self.reference} - referenced directly")
+            EntityReference.normalize(self, archive, logger)
+        # super(current_cls, self).normalize(archive, logger)
 
     section_obj.section_cls.normalize = generic_normalize_identifier
 
