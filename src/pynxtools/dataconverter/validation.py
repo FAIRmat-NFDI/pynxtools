@@ -508,18 +508,25 @@ def validate_dict_against(
         # TODO: Raise error or log the issue?
         pass
 
+    def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
+        for name in key[1:].replace("@", "").split("/"):
+            children = node.get_all_direct_children_names()
+            best_name = best_namefit_of(name, children)
+            if best_name is None:
+                return None
+
+            node = node.search_add_child_for(best_name)
+
+        return node
+
     def is_documented(key: str, node: NexusNode) -> bool:
         if mapping.get(key) is None:
             # This value is not really set. Skip checking it's documentation.
             return True
 
-        for name in key[1:].replace("@", "").split("/"):
-            children = node.get_all_direct_children_names()
-            best_name = best_namefit_of(name, children)
-            if best_name is None:
-                return False
-
-            node = node.search_add_child_for(best_name)
+        node = add_best_matches_for(key, node)
+        if node is None:
+            return False
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field
@@ -584,9 +591,10 @@ def validate_dict_against(
 
         for key in mapping:
             last_index = key.rfind("/")
-            if key[last_index + 1] == "@":
+            if key[last_index + 1] == "@" and key[last_index + 1 :] != "@units":
                 # key is an attribute. Find a corresponding parent, check all the other
                 # children of this parent
+                # ignore units here, they are checked separately
                 attribute_parent_checked = False
                 for key_iterating in mapping:
                     # check if key_iterating starts with parent of the key OR any
@@ -756,22 +764,55 @@ def validate_dict_against(
     not_visited = list(mapping)
     recurse_tree(tree, nested_keys)
 
+    keys_to_remove = check_attributes_of_nonexisting_field(tree)
+
     for not_visited_key in not_visited:
         if not_visited_key.endswith("/@units"):
-            if is_documented(not_visited_key.rsplit("/", 1)[0], tree):
-                continue
-            if not_visited_key.rsplit("/", 1)[0] not in not_visited:
+            # check that parent exists
+            if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
                 collector.collect_and_log(
                     not_visited_key,
                     ValidationProblem.UnitWithoutField,
                     not_visited_key.rsplit("/", 1)[0],
                 )
-            if not ignore_undocumented:
                 collector.collect_and_log(
                     not_visited_key,
-                    ValidationProblem.UnitWithoutDocumentation,
-                    mapping[not_visited_key],
+                    ValidationProblem.KeyToBeRemoved,
+                    None,
                 )
+                keys_to_remove.append(not_visited_key)
+            else:
+                # check that parent has units
+                node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
+                if node.unit is None:
+                    collector.collect_and_log(
+                        not_visited_key,
+                        ValidationProblem.UnitWithoutDocumentation,
+                        mapping[not_visited_key],
+                    )
+
+            # parent key will be checked on its own if it exists, because it is in the list
+            continue
+
+        if "@" in not_visited_key.rsplit("/")[-1]:
+            # check that parent exists
+            if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
+                # check that parent is not a group
+                node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
+                if node.type != "group":
+                    collector.collect_and_log(
+                        not_visited_key.rsplit("/", 1)[0],
+                        ValidationProblem.AttributeForNonExistingField,
+                        None,
+                    )
+                    collector.collect_and_log(
+                        not_visited_key,
+                        ValidationProblem.KeyToBeRemoved,
+                        None,
+                    )
+                    keys_to_remove.append(not_visited_key)
+                    continue
+
         if is_documented(not_visited_key, tree):
             continue
 
@@ -780,7 +821,6 @@ def validate_dict_against(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
 
-    keys_to_remove = check_attributes_of_nonexisting_field(tree)
     return (not collector.has_validation_problems(), keys_to_remove)
 
 

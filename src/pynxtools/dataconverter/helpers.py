@@ -81,7 +81,7 @@ class Collector:
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.warning(
-                f"The unit, {path} = {value}, is being written but has no documentation"
+                f"The unit, {path} = {value}, is being written but has no documentation."
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
@@ -114,7 +114,10 @@ class Collector:
                 f"Expected a group at {path} but found a field or attribute."
             )
         elif log_type == ValidationProblem.MissingDocumentation:
-            logger.warning(f"Field {path} written without documentation.")
+            if "@" in path.rsplit("/")[-1]:
+                logger.warning(f"Attribute {path} written without documentation.")
+            else:
+                logger.warning(f"Field {path} written without documentation.")
         elif log_type == ValidationProblem.MissingUnit:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
@@ -122,7 +125,7 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredAttribute:
             logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
-            logger.warning(f"Unit {path} in dataset without its field {value}")
+            logger.warning(f"Unit {path} in dataset without its field {value}.")
         elif log_type == ValidationProblem.AttributeForNonExistingField:
             logger.warning(
                 f"There were attributes set for the field {path}, "
