@@ -90,9 +90,9 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = (
     "nm"  # pylint: disable=E1126
 )
-TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr"] = (
-    2.0,
-)
+TEMPLATE["optional"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[float_value_no_attr]"
+] = (2.0,)
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
@@ -508,7 +508,7 @@ TEMPLATE["required"][
         pytest.param(
             remove_from_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr",
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[float_value_no_attr]",
                 "optional",
             ),
             "",
@@ -775,9 +775,20 @@ TEMPLATE["required"][
                 "s",
             ),
             (
-                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s, is being written but has no documentation."
+                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s written without documentation."
             ),
             id="field-with-illegal-unit",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type",
+                1,
+            ),
+            (
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type written without documentation."
+            ),
+            id="bad-namefitting",
         ),
         pytest.param(
             alter_dict(
@@ -894,7 +905,7 @@ TEMPLATE["required"][
                 "s",
             ),
             (
-                "The unit, /ENTRY[my_entry]/required_group/author/@units = s, is being written but has no documentation."
+                "The unit, /ENTRY[my_entry]/required_group/author/@units = s written without documentation."
             ),
             id="baseclass-field-with-illegal-unit",
         ),

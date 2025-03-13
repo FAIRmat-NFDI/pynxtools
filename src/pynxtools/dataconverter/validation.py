@@ -521,7 +521,7 @@ def validate_dict_against(
             node = node.search_add_child_for(best_name)
 
             if not good_name_fit:
-                return False
+                return None
 
         return node
 
