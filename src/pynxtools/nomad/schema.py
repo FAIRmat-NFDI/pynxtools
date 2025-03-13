@@ -91,6 +91,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad.utils import (
@@ -100,9 +101,6 @@ from pynxtools.nomad.utils import (
     get_quantity_base_name,
 )
 
-import debugpy
-debugpy.debug_this_thread()
-debugpy.breakpoint()
 # __URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
 __URL_REGEXP = re.compile(
@@ -140,6 +138,91 @@ class NexusActivityStep(ActivityStep):
     )
 
 
+class NexusIdentifier(EntityReference):
+    name = Quantity(
+        type=str,
+        description="The name of the identifier inferred from identifier value.",
+    )
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+        if not self.name:
+            self.name = self.lab_id
+
+
+class NexusReferences(ArchiveSection):
+    identifier = SubSection(
+        section_def=EntityReference,
+        repeats=True,
+        description="A reference corresponds to a NeXus identifierNAME field.",
+    )
+
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+        from nomad.processing import Entry
+
+        def create_Entity(lab_id, archive, f_name, qunt_name):
+            entitySec = Entity()
+            entitySec.lab_id = lab_id
+            entitySec.name = qunt_name
+            entity = EntryArchive(
+                data=entitySec,
+                m_context=archive.m_context,
+                metadata=EntryMetadata(
+                    entry_type="identifier", domain="nexus", readonly=True
+                ),  # upload_id=archive.m_context.upload_id,
+            )
+            with archive.m_context.raw_file(f_name, "w") as f_obj:
+                json.dump(entity.m_to_dict(with_meta=True), f_obj)
+            archive.m_context.process_updated_raw_file(f_name)
+
+        def get_entry_reference(archive, f_name):
+            """Returns a reference to data from entry."""
+            from nomad.utils import hash
+
+            upload_id = archive.metadata.upload_id
+            entry_id = hash(upload_id, f_name)
+            # return f'../uploads/{upload_id}/archive/{entry_id}#data'
+            return f"/entries/{entry_id}/archive#/data"
+
+        # Consider multiple identifiers exists in the same group/section
+        identifiers = [
+            key
+            for key in self.__dict__.keys()
+            if key.startswith("identifier") and key.endswith("__field")
+        ]
+        lab_id = None
+        if not identifiers:
+            return
+        self.identifier = []
+        for identifier in identifiers:
+            if not (val := getattr(self, identifier)):
+                continue
+            id_ = (
+                re.split("([0-9a-zA-Z.]+)", val)[1]
+                + hashlib.md5(val.encode()).hexdigest()
+            )
+            if not lab_id:
+                logger.info(f"{val} - identifier received")
+                lab_id = id_
+            else:
+                logger.info(f"Identifier {val} refers to {lab_id}.")
+
+            logger.info(f"{lab_id} to be created")
+
+            f_name = f"{self.m_def.name}_{id_}.archive.json"
+            quant_name = identifier.split("__field")[0]
+            # Chekc if the entry already exists
+            entry = Entry.objects(
+                upload_id=archive.metadata.upload_id, mainfile=f_name
+            ).first()
+            if not entry:
+                create_Entity(lab_id, archive, f_name, quant_name)
+            reference = get_entry_reference(archive, f_name)
+            self.identifier.append(
+                NexusIdentifier(lab_id=lab_id, reference=reference, name=val)
+            )
+
+
 class NexusActivityResult(ActivityResult):
     reference = Quantity(
         type=ArchiveSection,
@@ -155,11 +238,10 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    # "NXidentifier": [EntityReference],
+    "NXobject": [NexusReferences],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
-    # "object": BaseSection,
 }
 
 
@@ -859,7 +941,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
             [NexusMeasurement] if xml_attrs["extends"] == "NXobject" else []
         )
     else:
-        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection]) + [EntityReference]
+        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection])
 
     nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
@@ -871,6 +953,8 @@ def __create_class_section(xml_node: ET.Element) -> Section:
         class_section.base_sections = [nx_base_sec] + [
             cls.m_def for cls in nomad_base_sec_cls
         ]
+    elif __rename_nx_for_nomad(nx_name) == "Object":
+        class_section.base_sections = [cls.m_def for cls in nomad_base_sec_cls]
 
     __add_common_properties(xml_node, class_section)
 
@@ -1060,6 +1144,8 @@ def init_nexus_metainfo():
     nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
     nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
     nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusIdentifier.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusReferences.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
@@ -1162,74 +1248,6 @@ def normalize_data(self, archive, logger):
     # one could also copy local ids to identifier for search purposes
     super(current_cls, self).normalize(archive, logger)
 
-def attach_identifier_normalizer(section_obj):
-    def generic_normalize_identifier(self, archive, logger):
-        """Normalizer for Identifier section."""
-
-        ####### TODO Remove this
-        # 1. Run normalise for each section
-        # 2. Search for field/quantity with `identifier*`
-        # 3. if the section has a field7quantity create an reference entity for that group
-        # 4. Think how to create a reference for all groups
-        #    Problems:
-        #       1. Indivisual link to a group will also create a reference for the source group
-        #          which in turn will be duplication of the reference
-        #
-        ###########
-
-        def create_Entity(lab_id, archive, f_name):
-            entitySec = Entity()
-            entitySec.lab_id = lab_id
-            entity = EntryArchive(
-                data=entitySec,
-                m_context=archive.m_context,
-                metadata=EntryMetadata(
-                    entry_type="identifier", domain="nexus", readonly=True
-                ),  # upload_id=archive.m_context.upload_id,
-            )
-            with archive.m_context.raw_file(f_name, "w") as f_obj:
-                json.dump(entity.m_to_dict(with_meta=True), f_obj)
-                # json.dump(entity.m_to_dict(), f_obj)
-            archive.m_context.process_updated_raw_file(f_name)
-
-        def get_entry_reference(archive, f_name):
-            """Returns a reference to data from entry."""
-            from nomad.utils import hash
-
-            upload_id = archive.metadata.upload_id
-            entry_id = hash(upload_id, f_name)
-
-            return f"/entries/{entry_id}/archive#/data"
-
-        current_cls = section_obj.section_cls
-        # In case of multiple identifiers exists in the same group
-        identifiers = [key for key in self.__dict__.keys() if
-                           key.startswith("identifier") and key.endswith("__field")]
-
-        if not identifiers:
-            return
-        for identifier in identifiers:
-            # super(current_cls, self).normalize(archive, logger)
-            if id_ := getattr(self, identifier):
-                if not self.lab_id:
-                    logger.info(f"{id_} - identifier received")
-                    self.lab_id = id_
-                else:
-                    logger.info(f"Identifier {id_} refers to {self.lab_id}.")
-
-            EntityReference.normalize(self, archive, logger)
-            if not self.reference:
-                logger.info(f"{self.lab_id} to be created")
-                f_name = re.split("([0-9a-zA-Z.]+)", self.lab_id)[1]
-                if len(f_name) != len(self.lab_id):
-                    f_name = f_name + hashlib.md5(self.lab_id.encode()).hexdigest()
-                f_name = f"{current_cls.__name__}_{f_name}.archive.json"
-                create_Entity(self.lab_id, archive, f_name)
-                self.reference = get_entry_reference(archive, f_name)
-                logger.info(f"{self.reference} - referenced directly")
-
-    section_obj.section_cls.normalize = generic_normalize_identifier
-
 
 def normalize_atom_probe(self, archive, logger):
     current_cls = __section_definitions[
@@ -1239,11 +1257,6 @@ def normalize_atom_probe(self, archive, logger):
     # temporarily disable extra normalisation step
 
     def plot_3d_plotly(df, palette="Set1"):
-        import re
-
-        import h5py
-        import numpy as np
-        import pandas as pd
         import plotly.express as px
         import plotly.graph_objects as go
         from scipy.spatial import cKDTree
@@ -1427,7 +1440,6 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXdata"): normalize_data,
     f"{__rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe": normalize_atom_probe,
 }
-
 # Handling nomad BaseSection and other inherited Section from BaseSection
 for nx_name, section in __section_definitions.items():
     if nx_name == "NXobject":
@@ -1437,9 +1449,9 @@ for nx_name, section in __section_definitions.items():
 
     # Append the normalize method from a function
     if normalize_func:
+
         if isinstance(normalize_func, dict):
             for key, value in normalize_func.items():
                 setattr(section.section_cls, key, value)
         else:
             section.section_cls.normalize = normalize_func
-        attach_identifier_normalizer(section)
