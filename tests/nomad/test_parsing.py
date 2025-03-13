@@ -57,24 +57,25 @@ def test_nexus_example():
     )
     # good ENUM - x-ray
     assert instrument.SOURCE[0].probe__field == "x-ray"
-    # wrong inherited ENUM - Burst
-    assert instrument.SOURCE[0].mode__field is None
-    # wrong inherited ENUM for extended field - 'Free Electron Laser'
-    assert instrument.SOURCE[0].type__field is None
+    # wrong inherited ENUM - Burst (accepted for open enum)
+    assert instrument.SOURCE[0].mode__field == "Burst"
+    # wrong inherited ENUM for extended field - 'Free Electron Laser' (accepted for open enum)
+    assert instrument.SOURCE[0].type__field == "Free Electron Laser"
     data = arpes_obj.ENTRY[0].DATA[0]
     assert len(data.AXISNAME__field) == 3
     # there is still a bug in the variadic name resolution, so skip these
     # assert data.delays__field is not None
     # assert data.angles__field.check("1/Å")
     # assert data.delays__field.check("fs")
-    # but the following still works
-    assert data.energies__field is not None
-    assert data.energies__field.check("eV")
+    # assert data.energies__field is not None
+    # assert data.energies__field.check("eV")
     # manual name resolution
     assert data.AXISNAME__field["angles__field"] is not None
     assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
     assert (1 * data.AXISNAME__field["angles__field"].unit).check("1/Å")
     assert (1 * data.AXISNAME__field["delays__field"].unit).check("fs")
+    assert (1 * data.AXISNAME__field["energies__field"].unit).check("eV")
+    assert (1 * data.DATA__field["data__field"].unit).check("1")
     assert data.___axes == "['angles', 'energies', 'delays']"
 
 

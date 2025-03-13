@@ -19,6 +19,7 @@
 
 import logging
 import os
+import difflib
 
 import lxml.etree as ET
 import numpy as np
@@ -167,6 +168,8 @@ def test_nexus(tmp_path):
     example_data = os.path.join(
         os.getcwd(), "src", "pynxtools", "data", "201805_WSe2_arpes.nxs"
     )
+
+    logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(os.path.join(tmp_path, "nexus_test.log"), "w")
     formatter = logging.Formatter("%(levelname)s - %(message)s")
@@ -186,7 +189,19 @@ def test_nexus(tmp_path):
         encoding="utf-8",
     ) as reffile:
         ref = reffile.readlines()
-    assert log == ref
+
+    if log != ref:
+        differences = list(
+            difflib.unified_diff(
+                ref, log, fromfile="reference", tofile="actual", lineterm=""
+            )
+        )
+        diff_report = "\n".join(differences)
+        if diff_report:
+            pytest.fail(f"Log output does not match reference:\n{diff_report}")
+        pytest.fail(
+            f"Log output does not match reference even though each individual line matches."
+        )
 
     # import filecmp
     # # didn't work with filecmp library

@@ -73,13 +73,15 @@ from nomad.config.models.ui import (
     MenuItemHistogram,
     MenuItemPeriodicTable,
     MenuItemTerms,
+    MenuSizeEnum,
     SearchQuantities,
 )
 
 schema = "pynxtools.nomad.schema.Root"
 
+
 nexus_app = AppEntryPoint(
-    name="NexusApp",
+    name="NeXus App",
     description="Simple Generic NeXus app.",
     app=App(
         # Label of the App
@@ -91,7 +93,7 @@ nexus_app = AppEntryPoint(
         # Brief description used in the app menu
         description="A simple search app customized for generic NeXus data.",
         # Longer description that can also use markdown
-        readme="This is a simple App to support basic search for NeXus based Experiment Entries.",
+        readme="This page allows to search for generic NeXus Experiment Entries. It is similar to the entries search, but with reduced filter set, modified menu on the left and different shown columns. The dashboard directly shows useful interactive statistics about the data",
         # If you want to use quantities from a custom schema, you need to load
         # the search quantities from it first here. Note that you can use a glob
         # syntax to load the entire package, or just a single schema from a
@@ -101,47 +103,76 @@ nexus_app = AppEntryPoint(
         ),
         # Controls which columns are shown in the results table
         columns=[
-            Column(quantity="entry_id", selected=True),
-            Column(quantity=f"entry_type", selected=True),
+            Column(title="Entry ID", search_quantity="entry_id", selected=True),
             Column(
-                title="definition",
-                quantity=f"data.ENTRY[*].definition__field#{schema}",
+                title="File Name",
+                search_quantity=f"mainfile",
                 selected=True,
             ),
             Column(
-                title="start_time",
-                quantity=f"data.ENTRY[*].start_time__field#{schema}",
+                title="Start Time",
+                search_quantity=f"data.ENTRY[*].start_time#{schema}",
                 selected=True,
             ),
             Column(
-                title="title",
-                quantity=f"data.ENTRY[*].title__field#{schema}",
+                title="Description",
+                search_quantity=f"data.ENTRY[*].experiment_description__field#{schema}",
+                selected=True,
+            ),
+            Column(
+                title="Author",
+                search_quantity=f"[data.ENTRY[*].USER[*].name__field, data.ENTRY[*].userID[*].name__field]#{schema}",
+                selected=True,
+            ),
+            Column(
+                title="Sample",
+                search_quantity=f"data.ENTRY[*].SAMPLE[*].name__field#{schema}",
+                selected=True,
+            ),
+            Column(
+                title="Sample ID",
+                search_quantity=f"data.ENTRY[*].SAMPLE[*].sample_id__field#{schema}",
+                selected=False,
+            ),
+            Column(
+                title="Definition",
+                search_quantity=f"data.ENTRY[*].definition__field#{schema}",
                 selected=True,
             ),
         ],
         # Dictionary of search filters that are always enabled for queries made
         # within this app. This is especially important to narrow down the
-        # results to the wanted subset. Any available search filter can be
-        # targeted here. This example makes sure that only entries that use
-        # MySchema are included.
+        # results to the wanted subset.
         filters_locked={"section_defs.definition_qualified_name": [schema]},
         # Controls the menu shown on the left
         menu=Menu(
-            title="Material",
+            size=MenuSizeEnum.MD,
+            title="Menu",
             items=[
                 Menu(
-                    title="elements",
+                    title="Elements",
+                    size=MenuSizeEnum.XXL,
                     items=[
                         MenuItemPeriodicTable(
-                            quantity="results.material.elements",
+                            search_quantity="results.material.elements",
                         ),
                         MenuItemTerms(
-                            quantity="results.material.chemical_formula_hill",
+                            search_quantity="results.material.chemical_formula_hill",
                             width=6,
                             options=0,
                         ),
                         MenuItemTerms(
-                            quantity="results.material.chemical_formula_iupac",
+                            search_quantity="results.material.chemical_formula_iupac",
+                            width=6,
+                            options=0,
+                        ),
+                        MenuItemTerms(
+                            search_quantity="results.material.chemical_formula_reduced",
+                            width=6,
+                            options=0,
+                        ),
+                        MenuItemTerms(
+                            search_quantity="results.material.chemical_formula_anonymous",
                             width=6,
                             options=0,
                         ),
@@ -149,50 +180,172 @@ nexus_app = AppEntryPoint(
                             x="results.material.n_elements",
                         ),
                     ],
-                )
+                ),
+                Menu(
+                    title="Experiment type",
+                    size=MenuSizeEnum.LG,
+                    items=[
+                        MenuItemTerms(
+                            title="Entry Type",
+                            search_quantity=f"entry_type",
+                            width=12,
+                            options=12,
+                        ),
+                        MenuItemTerms(
+                            title="NeXus Class",
+                            search_quantity=f"data.ENTRY.definition__field#{schema}",
+                            width=12,
+                            options=12,
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="Instruments",
+                    size=MenuSizeEnum.LG,
+                    items=[
+                        MenuItemTerms(
+                            title="Model",
+                            search_quantity=f"data.ENTRY.INSTRUMENT.name__field#{schema}",
+                            width=12,
+                            options=12,
+                        ),
+                        MenuItemTerms(
+                            name="Name",
+                            search_quantity=f"data.ENTRY.INSTRUMENT.name#{schema}",
+                            width=12,
+                            options=12,
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="Samples",
+                    size=MenuSizeEnum.LG,
+                    items=[
+                        MenuItemTerms(
+                            title="Name",
+                            search_quantity=f"data.ENTRY.SAMPLE.name__field#{schema}",
+                            width=12,
+                            options=12,
+                        ),
+                        MenuItemTerms(
+                            title="Sample ID",
+                            search_quantity=f"data.ENTRY.SAMPLE.sample_id__field#{schema}",
+                            width=12,
+                            options=12,
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="Authors / Origin",
+                    size=MenuSizeEnum.LG,
+                    items=[
+                        MenuItemTerms(
+                            title="Entry Author",
+                            search_quantity=f"data.ENTRY.USER.name__field#{schema}",
+                            width=12,
+                            options=5,
+                        ),
+                        MenuItemTerms(
+                            title="User ID / Entry Author",
+                            search_quantity=f"data.ENTRY.userID.name__field#{schema}#str",
+                            width=12,
+                            options=5,
+                        ),
+                        MenuItemTerms(
+                            title="Upload Author",
+                            search_quantity=f"authors.name",
+                            width=12,
+                            options=5,
+                        ),
+                        MenuItemTerms(
+                            title="Affiliation",
+                            search_quantity=f"data.ENTRY.USER.affiliation__field#{schema}",
+                            width=12,
+                            options=5,
+                        ),
+                    ],
+                ),
+                MenuItemHistogram(
+                    title="Start Time",
+                    x=f"data.ENTRY.start_time#{schema}",
+                    autorange=True,
+                ),
+                MenuItemHistogram(
+                    title="Upload Creation Time",
+                    x=f"upload_create_time",
+                    autorange=True,
+                ),
             ],
         ),
         # Controls the default dashboard shown in the search interface
         dashboard={
             "widgets": [
                 {
-                    "type": "histogram",
-                    "show_input": False,
-                    "autorange": True,
-                    "nbins": 30,
-                    "scale": "linear",
-                    "quantity": f"data.ENTRY.start_time__field#{schema}",
-                    "title": "Start Time",
-                    "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 0, "x": 0}
-                    },
-                },
-                {
-                    "type": "terms",
-                    "show_input": False,
-                    "scale": "linear",
-                    "quantity": f"entry_type",
-                    "title": "Entry Type",
-                    "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 8, "w": 4, "y": 0, "x": 12}
-                    },
-                },
-                {
-                    "type": "terms",
-                    "show_input": False,
-                    "scale": "linear",
-                    "quantity": f"data.ENTRY.definition__field#{schema}",
-                    "title": "Definition",
-                    "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 8, "w": 4, "y": 0, "x": 16}
-                    },
-                },
-                {
                     "type": "periodic_table",
                     "scale": "linear",
                     "quantity": f"results.material.elements",
                     "layout": {
-                        "lg": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0}
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 8, "y": 0, "x": 0},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 12, "y": 0, "x": 0},
+                        "lg": {"minH": 3, "minW": 3, "h": 10, "w": 14, "y": 0, "x": 0},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 10, "y": 0, "x": 0},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 10, "y": 0, "x": 0},
+                    },
+                },
+                {
+                    "type": "terms",
+                    "show_input": True,
+                    "scale": "linear",
+                    "quantity": f"entry_type",
+                    "title": "Entry Type",
+                    "layout": {
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 0, "x": 8},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 0, "x": 12},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 0, "x": 14},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 10},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 10},
+                    },
+                },
+                {
+                    "type": "terms",
+                    "show_input": True,
+                    "scale": "linear",
+                    "quantity": f"data.ENTRY.definition__field#{schema}",
+                    "title": "NeXus Class",
+                    "layout": {
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 0},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 0},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 0, "x": 19},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 14},
+                    },
+                },
+                {
+                    "type": "terms",
+                    "show_input": True,
+                    "scale": "linear",
+                    "quantity": f"data.ENTRY.USER.name__field#{schema}",
+                    "title": "Author",
+                    "layout": {
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 4},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 6},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 5, "x": 14},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 18},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 18},
+                    },
+                },
+                {
+                    "type": "terms",
+                    "show_input": True,
+                    "scale": "linear",
+                    "quantity": f"data.ENTRY.SAMPLE.name__field#{schema}",
+                    "title": "Sample",
+                    "layout": {
+                        "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 8},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 6, "y": 7, "x": 12},
+                        "lg": {"minH": 3, "minW": 3, "h": 5, "w": 5, "y": 5, "x": 19},
+                        "xl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 22},
+                        "xxl": {"minH": 3, "minW": 3, "h": 7, "w": 4, "y": 0, "x": 22},
                     },
                 },
             ]
@@ -200,13 +353,29 @@ nexus_app = AppEntryPoint(
     ),
 )
 
-iv_temp_example = ExampleUploadEntryPoint(
-    title="Sensor Scan - IV Temperature Curve",
-    category="FAIRmat examples",
+simple_nexus_example = ExampleUploadEntryPoint(
+    title="Simple NeXus Example",
+    category="NeXus Experiment Examples",
     description="""
-        This example shows users how to take data from a Python framework and map it out to a Nexus application definition for IV Temperature measurements, [`NXiv_temp`](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html).
-        We use the Nexus ELN features of NOMAD to generate a Nexus file.
+        This example show 3 use cases on how NeXus experiment data can be handled in NOMAD.
+        Example 1 - ELN Export
+        This example shows how a simple ELN can be set up in NOMAD which can be then
+        exported in to an RDM agnostic eln_data.yaml format. The example also shows how such
+        eln file can be used together with some experiment data to be converted by pynxtools
+        to a valid NeXus file.
+        Example 2 - Interface for Data Conversion to NeXus Format
+        This example shows how NOMAD GUI allows converting experiment data with
+        attached eln notes to NeXus file.
+        Example 3 - Sensor Scan - IV Temperature Curve
+        This example shows how experimental data can be mapped to a Nexus application definition.
+        Here, data from an IV Temperature measurements as taken by a Python framework is
+        converted to [`NXiv_temp`](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html).
+        We also demonstrate the use of Nexus ELN features of NOMAD to add further details
+        which were not provided by the data acquisition software.
+        This example combines Example 1, and 2, and demonstrates how a NOMAD ELN can be built
+        to collect additional information, and combine it with experimental data to convert
+        them into exportable NeXus file, which is also directly searchable in NOMAD.
     """,
     plugin_package="pynxtools",
-    resources=["nomad/examples/iv_temp/*"],
+    resources=["nomad/examples/*"],
 )
