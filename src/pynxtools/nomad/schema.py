@@ -26,9 +26,19 @@ import sys
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+import h5py
 import numpy as np
+import pandas as pd
+from ase import Atoms
+from ase.data import atomic_numbers
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
+from nomad.datamodel.results import Material, Relation, Results, System
+from nomad.metainfo import SchemaPackage
+from nomad.normalizing.common import nomad_atoms_from_ase_atoms
+from nomad.normalizing.topology import add_system, add_system_info
+from scipy.spatial import cKDTree
 
 try:
     from nomad import utils
@@ -56,6 +66,7 @@ try:
         Definition,
         MEnum,
         Package,
+        Property,
         Quantity,
         Section,
         SubSection,
@@ -141,7 +152,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    "NXidentifier": [EntityReference],
+    # "NXidentifier": [EntityReference],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
@@ -149,7 +160,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
 }
 
 
-class NexusMeasurement(Measurement, Schema):
+class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
         try:
             app_entry = getattr(self, "ENTRY")
@@ -247,6 +258,7 @@ def get_nx_type(nx_type: str) -> Optional[Datatype]:
         "NX_POSINT": m_int,
         "NX_BINARY": Bytes,
         "NX_DATE_TIME": Datetime,
+        "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
     }
 
     if nx_type in __NX_TYPES:
@@ -400,6 +412,42 @@ def __get_documentation_url(
     return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
 
 
+def nxdata_ensure_definition(
+    self,
+    def_or_name: Property | str,
+    *,
+    hint: str | None = None,
+) -> Property:
+    current_cls = __section_definitions[
+        f"{__rename_nx_for_nomad('NXdata')}"
+    ].section_cls
+    if isinstance(def_or_name, str):
+        # check enums for or actual values of signals and axes
+        # TODO: also check symbol table dimensions
+        acceptable_data: List[str] = []
+        acceptable_axes: List[str] = []
+        # set filter string according
+        chk_name = def_or_name.split("_errors")[0]
+        if chk_name in acceptable_data:
+            filters = ["DATA"]
+        elif chk_name in acceptable_axes:
+            filters = ["AXISNAME"]
+        else:
+            filters = ["DATA", "AXISNAME", "FIELDNAME_errors"]
+        # get the reduced options
+        newdefintions = {}
+        for dname, definition in self.m_def.all_aliases:
+            if dname not in filters:
+                newdefintions[dname] = definition
+        # run the query
+        definition = resolve_variadic_name(newdefintions, def_or_name, hint)
+        return definition
+    return super(current_cls, self)._ensure_definition(
+        def_or_name,
+        hint,
+    )
+
+
 def __to_section(name: str, **kwargs) -> Section:
     """
     Returns the 'existing' metainfo section for a given top-level nexus base-class name.
@@ -417,20 +465,24 @@ def __to_section(name: str, **kwargs) -> Section:
     section = Section(validate=VALIDATE, name=name, **kwargs)
     __section_definitions[name] = section
 
+    if name == "Data":
+        section._ensure_defintion = nxdata_ensure_definition
+
     return section
 
 
-def __get_enumeration(xml_node: ET.Element) -> Optional[MEnum]:
+def __get_enumeration(xml_node: ET.Element) -> Tuple[Optional[MEnum], Optional[bool]]:
     """
     Get the enumeration field from xml node
     """
     enumeration = xml_node.find("nx:enumeration", __XML_NAMESPACES)
     if enumeration is None:
-        return None
+        return None, None
 
     items = enumeration.findall("nx:item", __XML_NAMESPACES)
+    open = bool(enumeration.attrib["open"]) if "open" in enumeration.attrib else False
 
-    return MEnum([value.attrib["value"] for value in items])
+    return MEnum([value.attrib["value"] for value in items]), open
 
 
 def __add_common_properties(xml_node: ET.Element, definition: Definition):
@@ -490,9 +542,14 @@ def __create_attributes(
     for attribute in xml_node.findall("nx:attribute", __XML_NAMESPACES):
         name = __rename_nx_for_nomad(attribute.get("name"), is_attribute=True)
 
+        # nameType
+        nx_name_type = attribute.get("nameType", "specified")
+        if nx_name_type == "any":
+            name = name.upper()
+
         shape: list = []
-        nx_enum = __get_enumeration(attribute)
-        if nx_enum:
+        nx_enum, nx_enum_open = __get_enumeration(attribute)
+        if nx_enum and not nx_enum_open:
             nx_type = nx_enum
             nx_shape: List[str] = []
         else:
@@ -512,8 +569,8 @@ def __create_attributes(
         a_name = (field.more["nx_name"] if field else "") + "___" + name
         m_attribute = Quantity(
             name=a_name,
-            variable=__if_template(name)
-            or (__if_template(field.more["nx_name"]) if field else False),
+            variable=(__if_template(name) and (nx_name_type in ["any", "partial"]))
+            or (field.variable if field else False),
             shape=shape,
             type=nx_type,
             flexible_unit=True,
@@ -537,7 +594,7 @@ def __add_quantity_stats(container: Section, quantity: Quantity):
     # the statistics are always mapping on float64 even if quantity values are ints
     if not quantity.name.endswith("__field"):
         return
-    isvariadic = any(char.isupper() for char in quantity.more["nx_name"])
+    isvariadic = quantity.variable
     notnumber = quantity.type not in [
         np.float64,
         np.int64,
@@ -612,8 +669,12 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
     # name
     assert "name" in xml_attrs, "Expecting name to be present"
-
     name = __rename_nx_for_nomad(xml_attrs["name"], is_field=True)
+
+    # nameType
+    nx_name_type = xml_attrs.get("nameType", "specified")
+    # if nx_name_type == "any":
+    #     name = name.upper()
 
     # type
     nx_type = xml_attrs.get("type", "NX_CHAR")
@@ -624,7 +685,7 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
         )
 
     # enumeration
-    enum_type = __get_enumeration(xml_node)
+    enum_type, nx_enum_open = __get_enumeration(xml_node)
 
     # dimensionality
     nx_dimensionality = xml_attrs.get("units", None)
@@ -649,7 +710,8 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     value_quantity: Quantity = None  # type: ignore
 
     # copy from base to inherit from it
-    if container.base_sections is not None:
+    if container.base_sections is not None and len(container.base_sections) > 0:
+        # TODO: use resolve_variadic_name to find inheritance among non-exact matchings (also provide data type)
         base_quantity: Quantity = container.base_sections[0].all_quantities.get(name)
         if base_quantity:
             value_quantity = base_quantity.m_copy(deep=True)
@@ -659,16 +721,20 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     if value_quantity is None:
         value_quantity = Quantity(name=name, flexible_unit=True)
 
-    value_quantity.variable = __if_template(name)
+    value_quantity.variable = __if_template(name) and (
+        nx_name_type in ["any", "partial"]
+    )
 
     # check parent type compatibility
     parent_type = getattr(value_quantity, "type", None)
     if not isinstance(parent_type, MEnum):
         # if parent type is not MEnum then overwrite whatever given
-        value_quantity.type = enum_type if enum_type else nx_nomad_type
+        value_quantity.type = (
+            enum_type if enum_type and not nx_enum_open else nx_nomad_type
+        )
     elif enum_type:
         # only when derived type is also MEnum to allow overwriting
-        value_quantity.type = enum_type
+        value_quantity.type = enum_type if not nx_enum_open else nx_nomad_type
 
     value_quantity.dimensionality = dimensionality
     value_quantity.shape = shape
@@ -699,73 +765,48 @@ def __create_group(xml_node: ET.Element, root_section: Section):
         nx_type = __rename_nx_for_nomad(xml_attrs["type"])
 
         nx_name = xml_attrs.get("name", nx_type.upper())
+
+        # nameType
+        nx_name_type = xml_attrs.get(
+            "nameType", "specified" if "name" in xml_attrs.keys() else "any"
+        )
+        # if nx_name_type == "any":
+        #     nx_name = nx_name.upper()
+
         section_name = (
             root_section.name + "__" + __rename_nx_for_nomad(nx_name, is_group=True)
         )
-        group_section = Section(validate=VALIDATE, nx_kind="group", name=section_name)
-
-        __attach_base_section(group_section, root_section, __to_section(nx_type))
-        __add_common_properties(group, group_section)
-
-        nx_name = xml_attrs.get(
-            "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
-        )
+        if section_name == "Root__ENTRY":
+            group_section = __section_definitions["Entry"]
+        else:
+            group_section = Section(
+                validate=VALIDATE,
+                nx_kind="group",
+                name=section_name,
+                variable=__if_template(nx_name)
+                and (nx_name_type in ["any", "partial"]),
+            )
+            __add_common_properties(group, group_section)
+            __attach_base_section(group_section, root_section, __to_section(nx_type))
+            __section_definitions[section_name] = group_section
+        # nx_name = xml_attrs.get(
+        #     "name", nx_type.replace(__REPLACEMENT_FOR_NX, "").upper()
+        # )
         subsection_name = __rename_nx_for_nomad(nx_name, is_group=True)
         group_subsection = SubSection(
             section_def=group_section,
             nx_kind="group",
             name=subsection_name,
             repeats=__if_repeats(nx_name, xml_attrs.get("maxOccurs", "0")),
-            variable=__if_template(nx_name),
+            variable=__if_template(nx_name) and (nx_name_type in ["any", "partial"]),
         )
 
-        __section_definitions[section_name] = group_section
         root_section.sub_sections.append(group_subsection)
 
         __create_group(group, group_section)
 
     for field in xml_node.findall("nx:field", __XML_NAMESPACES):
         __create_field(field, root_section)
-
-
-def nexus_resolve_variadic_name(
-    definitions: dict,
-    name: str,
-    hint: Optional[str] = None,
-    filter: Optional[Section] = None,
-):
-    """
-    Resolves a variadic name from a set of possible definitions.
-
-    Parameters:
-        definitions (dict): A dictionary of sub-sections defining the search space.
-            The keys are the names of the definitions, and the values are objects
-            representing those definitions.
-        name (str): The variadic name to resolve.
-        hint (Optional[str]): An optional hint to refine the search.
-        filter (Optional[Section]): A Section object used to filter the definitions
-            by type. Only definitions inheriting from this section will be considered.
-
-    Returns:
-        str: The resolved name based on the provided definitions, filtered as needed.
-
-    Raises:
-        ValueError: If the `definitions` dictionary is empty or if the name cannot
-            be resolved.
-
-    Notes:
-        - The `resolve_variadic_name` function is assumed to handle the core logic
-          of resolving the name within the filtered definitions.
-        - Filtering by `inherited_sections` ensures that only definitions related
-          to the specified type are considered.
-    """
-    fitting_definitions = definitions
-    if filter:
-        fitting_definitions = {}
-        for def_name, definition in definitions.items():
-            if filter in definition.inherited_sections:
-                fitting_definitions[def_name] = definition
-    return resolve_variadic_name(fitting_definitions, name, hint)
 
 
 def __attach_base_section(section: Section, container: Section, default: Section):
@@ -776,11 +817,15 @@ def __attach_base_section(section: Section, container: Section, default: Section
     try:
         newdefinitions = {}
         for def_name, act_def in container.all_sub_sections.items():
-            newdefinitions[def_name] = act_def.sub_section
-        base_section = nexus_resolve_variadic_name(
+            if (
+                "nx_type" in act_def.sub_section.more
+                and section.more["nx_type"] == act_def.sub_section.more["nx_type"]
+            ):
+                newdefinitions[def_name] = act_def.sub_section
+        base_section = resolve_variadic_name(
             newdefinitions,
             section.name.split("__")[-1],
-            filter=default,
+            # filter=default,
         )
     except ValueError:
         base_section = None
@@ -1161,6 +1206,188 @@ def normalize_identifier(self, archive, logger):
         logger.info(f"{self.reference} - referenced directly")
 
 
+def normalize_atom_probe(self, archive, logger):
+    current_cls = __section_definitions[
+        f"{__rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe"
+    ].section_cls
+    super(current_cls, self).normalize(archive, logger)
+    # temporarily disable extra normalisation step
+
+    def plot_3d_plotly(df, palette="Set1"):
+        import re
+
+        import h5py
+        import numpy as np
+        import pandas as pd
+        import plotly.express as px
+        import plotly.graph_objects as go
+        from scipy.spatial import cKDTree
+
+        unique_species = df["element"].unique()
+        num_species = len(unique_species)
+        base_colors = getattr(px.colors.qualitative, palette)
+        colors = (base_colors * ((num_species // len(base_colors)) + 1))[:num_species]
+
+        fig = go.Figure()
+        for i, species in enumerate(unique_species):
+            subset = df[df["element"] == species]
+            fig.add_trace(
+                go.Scatter3d(
+                    x=subset["x"],
+                    y=subset["y"],
+                    z=subset["z"],
+                    mode="markers",
+                    marker=dict(size=1, opacity=0.6, color=colors[i]),
+                    name=str(species),
+                )
+            )
+
+        # Improve axis and box appearance
+        fig.update_layout(
+            title="3D Atom Probe Reconstruction with Plotly WebGL",
+            scene=dict(
+                xaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                yaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                zaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+            ),
+            margin=dict(l=0, r=0, b=0, t=40),
+            height=800,
+            autosize=True,
+            template="plotly_white",
+            showlegend=True,
+            legend=dict(
+                font=dict(size=16),
+                itemsizing="constant",
+                bgcolor="rgba(255,255,255,0.8)",
+            ),
+        )
+        return fig
+
+    # if archive:
+    #     return
+
+    data_path = self.m_attributes["m_nx_data_path"]
+    with h5py.File(
+        os.path.join(archive.m_context.raw_path(), self.m_attributes["m_nx_data_file"]),
+        "r",
+    ) as fp:
+        # Load the reconstructed positions and mass-to-charge values
+        positions = fp[f"{data_path}/reconstruction/reconstructed_positions"][:]
+        mass_to_charge_values = fp[
+            f"{data_path}/mass_to_charge_conversion/mass_to_charge"
+        ][:].flatten()
+        # Build species mapping from ion peak identification groups
+        ion_species_map = {}
+        for ion in self.ranging.peak_identification.ionID:
+            if ion.mass_to_charge_range__field and ion.name__field:
+                mass_range = fp[
+                    f"{ion.m_attributes['m_nx_data_path']}/mass_to_charge_range"
+                ][:]
+                species_name = ion.name__field
+                # Extract only element name (remove charge states and molecular ions)
+                element_name = re.split(r"[^A-Za-z]", species_name)[0]
+                if element_name:  # Avoid empty strings
+                    ion_species_map[element_name] = mass_range
+    # Convert species mapping into an efficient lookup structure
+    species_names = list(set(ion_species_map.keys()))  # Ensure unique element names
+    mass_ranges = np.array(
+        [ion_species_map[s][:, 0] for s in species_names]
+    )  # Extract min/max mass
+    # Compute midpoints for KD-tree search
+    mass_midpoints = mass_ranges.mean(axis=1)
+    # Build a KD-tree for fast species assignment
+    mass_tree = cKDTree(mass_midpoints.reshape(-1, 1))
+    _, nearest_species_idx = mass_tree.query(mass_to_charge_values.reshape(-1, 1))
+    # Assign aggregated atomic element labels
+    atomic_labels = np.array(species_names)[nearest_species_idx]
+    # Filter valid atomic elements using ASE's atomic numbers
+    valid_atomic_labels = [
+        el if el in atomic_numbers else "X" for el in atomic_labels
+    ]  # Replace unknowns with 'X'
+    # Convert to a DataFrame for visualization
+    df = pd.DataFrame(positions, columns=["x", "y", "z"])
+    df["element"] = pd.Categorical(valid_atomic_labels)
+    # Downsample data for efficient rendering (adjust fraction as needed)
+    df_sampled = df.sample(
+        frac=0.02, random_state=42
+    )  # Adjust fraction for performance
+
+    # plotly figure
+    fig = plot_3d_plotly(df_sampled)
+    # find figures hosting subsesction
+    figure_host = archive.data
+    # apend the figure to the figures list
+    figure_host.figures = [PlotlyFigure(figure=fig.to_plotly_json())]
+
+    # normalize to results.material.topology
+    # **Create ASE Atoms Object from Downsampled Data (Using Aggregated Elements)**
+    def create_ase_atoms(df):
+        symbols = df["element"].tolist()
+        positions = df[["x", "y", "z"]].values
+        return Atoms(symbols=symbols, positions=positions)
+
+    atoms_lamela = create_ase_atoms(df_sampled)
+
+    # **Build NOMAD Topology Structure with Individual Element Systems**
+    def build_nomad_topology(archive):
+        if not archive.results:
+            archive.results = Results()
+        if not archive.results.material:
+            archive.results.material = Material()
+
+        elements = list(set(atoms_lamela.get_chemical_symbols()))
+        if not archive.results.material.elements:
+            archive.results.material.elements = elements
+        else:
+            for i in range(len(elements)):
+                if archive.results.material.elements[i] != elements[i]:
+                    print("WARNING: elements are swapped")
+
+        topology = {}
+        system = System(
+            atoms=nomad_atoms_from_ase_atoms(atoms_lamela),
+            label="Atom Probe Tomography - Lamella",
+            description="Reconstructed 3D atom probe tomography dataset.",
+            structural_type="bulk",
+            dimensionality="3D",
+            system_relation=Relation(type="root"),
+        )
+        add_system_info(system, topology)
+        add_system(system, topology)
+
+        child_systems = []
+        for element in elements:
+            element_indices = (
+                np.where(df_sampled["element"] == element)[0].reshape(1, -1).tolist()
+            )
+            element_system = System(
+                atoms_ref=system.atoms,
+                indices=element_indices,
+                label=f"{element} - Subsystem",
+                description=f"Reconstructed subset containing only {element} atoms.",
+                structural_type="bulk",
+                dimensionality="3D",
+                system_relation=Relation(type="subsystem"),
+            )
+            add_system_info(element_system, topology)
+            add_system(element_system, topology, parent=system)
+            child_systems.append(f"results/material/topology/{len(topology) - 1}")
+
+        system.child_systems = child_systems
+        archive.results.material.topology = list(topology.values())
+
+    build_nomad_topology(archive)
+
+
 __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
     __rename_nx_for_nomad("NXsample"): normalize_sample,
@@ -1173,6 +1400,7 @@ __NORMALIZER_MAP: Dict[str, Any] = {
         "normalize": normalize_process,
     },
     __rename_nx_for_nomad("NXdata"): normalize_data,
+    f"{__rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe": normalize_atom_probe,
 }
 
 # Handling nomad BaseSection and other inherited Section from BaseSection

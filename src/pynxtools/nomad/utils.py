@@ -69,12 +69,15 @@ def __rename_nx_for_nomad(
         Optional[str]: The renamed NXDL name, with group names capitalized,
         or None if input is invalid.
     """
-    if name == "NXobject":
-        return name
+    # if name == "NXobject":
+    #    return name
 
     if name and name.startswith("NX"):
         name = __REPLACEMENT_FOR_NX + name[2:]
         name = name[0].upper() + name[1:]
+
+    if name[0] in "0123456789":
+        name = f"_{name}"
 
     if is_group:
         name = __rename_classes_in_nomad(name)

@@ -1,20 +1,11 @@
 definitions:
-  name: "IV Temp ELN Example"
+  name: "ELN Export Example"
   sections:
-    ELN_for_iv_temp:
+    ELN_to_be_exported:
       base_sections:
-        - "pynxtools.nomad.dataconverter.NexusDataConverter"
+        - "pynxtools.nomad.dataconverter.ElnYamlConverter"
         - "nomad.datamodel.data.EntryData"
       m_annotations:
-        template:
-          reader: json_map
-          nxdl: NXiv_temp
-          input_files": [
-            "IV_temp.mapping.json",
-            "iv_temp/IV_temp.pickle"
-          ]
-          output: iv_temp/IV_temp.nxs
-          nexus_view: "../upload/archive/mainfile/iv_temp/IV_temp.nxs#/data"
         eln:
           hide: []
       sub_sections:
