@@ -155,7 +155,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    # "NXidentifier": [EntityReference],
+    "NXobject": [NexusBaseSection, EntityReference],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
@@ -859,7 +859,7 @@ def __create_class_section(xml_node: ET.Element) -> Section:
             [NexusMeasurement] if xml_attrs["extends"] == "NXobject" else []
         )
     else:
-        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection]) + [EntityReference]
+        nomad_base_sec_cls = __BASESECTIONS_MAP.get(nx_name, [NexusBaseSection]) # + [EntityReference]
 
     nx_name = __rename_nx_for_nomad(nx_name)
     class_section: Section = __to_section(
@@ -1208,7 +1208,7 @@ def attach_identifier_normalizer(section_obj):
 
         if not identifiers:
             return
-        for identifier in identifiers:
+        for identifier in identifiers[0:1]:
             # super(current_cls, self).normalize(archive, logger)
             if id_ := getattr(self, identifier):
                 if not self.lab_id:
@@ -1227,6 +1227,7 @@ def attach_identifier_normalizer(section_obj):
                 create_Entity(self.lab_id, archive, f_name)
                 self.reference = get_entry_reference(archive, f_name)
                 logger.info(f"{self.reference} - referenced directly")
+        super(current_cls, self).normalize(archive, logger)
 
     section_obj.section_cls.normalize = generic_normalize_identifier
 
@@ -1442,4 +1443,4 @@ for nx_name, section in __section_definitions.items():
                 setattr(section.section_cls, key, value)
         else:
             section.section_cls.normalize = normalize_func
-        attach_identifier_normalizer(section)
+    attach_identifier_normalizer(section)
