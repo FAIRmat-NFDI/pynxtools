@@ -35,7 +35,7 @@ from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
     "path,value",
     [
         pytest.param("name", "pynxtools.nomad.schema"),
-        pytest.param("NXobject.name", "NXobject"),
+        pytest.param(rename_nx_for_nomad("NXobject") + ".name", "Object"),
         pytest.param(rename_nx_for_nomad("NXentry") + ".nx_kind", "group"),
         pytest.param(rename_nx_for_nomad("NXdetector") + ".real_time__field", "*"),
         pytest.param(rename_nx_for_nomad("NXentry") + ".DATA.nx_optional", True),

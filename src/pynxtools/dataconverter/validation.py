@@ -134,7 +134,7 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
+def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[str]:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -145,20 +145,30 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
     """
-    if not keys:
+    if not nodes:
         return None
 
     nx_name, name2fit = split_class_and_name_of(name)
 
-    if name2fit in keys:
-        return name2fit
-    if nx_name is not None and nx_name in keys:
-        return nx_name
+    best_match = None
+    best_score = -1
 
-    best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name2fit, x)), keys), key=lambda x: x[1]
-    )
-    if score < 0:
+    for node in nodes:
+        if name2fit == node.name:
+            return name2fit
+        if nx_name is not None and nx_name == node.name:
+            return nx_name
+
+        name_any = node.name_type == "any"
+        name_partial = node.name_type == "partial"
+
+        score = get_nx_namefit(name2fit, node.name, name_any, name_partial)
+
+        if score > best_score:
+            best_score = score
+            best_match = node.name
+
+    if best_score < 0:
         return None
 
     return best_match
@@ -166,7 +176,7 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
 
 def validate_dict_against(
     appdef: str, mapping: Mapping[str, Any], ignore_undocumented: bool = False
-) -> bool:
+) -> Tuple[bool, List]:
     """
     Validates a mapping against the NeXus tree for applicationd definition `appdef`.
 
@@ -183,6 +193,7 @@ def validate_dict_against(
 
     Returns:
         bool: True if the mapping is valid according to `appdef`, False otherwise.
+        List: list of keys in mapping that correspond to attributes of non-existing fields
     """
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
@@ -203,8 +214,11 @@ def validate_dict_against(
                 name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
             if nx_name is not None and nx_name != node.name:
                 continue
+            name_any = node.name_type == "any"
+            name_partial = node.name_type == "partial"
+
             if (
-                get_nx_namefit(name2fit, node.name) >= 0
+                get_nx_namefit(name2fit, node.name, name_any, name_partial) >= 0
                 and key not in node.parent.get_all_direct_children_names()
             ):
                 variations.append(key)
@@ -353,7 +367,7 @@ def validate_dict_against(
                         ValidationProblem.ExpectedGroup,
                         None,
                     )
-                return
+                continue
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
             else:
@@ -430,11 +444,19 @@ def validate_dict_against(
                 node.items is not None
                 and mapping[f"{prev_path}/{variant}"] not in node.items
             ):
-                collector.collect_and_log(
-                    f"{prev_path}/{variant}",
-                    ValidationProblem.InvalidEnum,
-                    node.items,
-                )
+                if node.open_enum:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.OpenEnumWithNewItem,
+                        node.items,
+                    )
+
+                else:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.InvalidEnum,
+                        node.items,
+                    )
 
             # Check unit category
             if node.unit is not None:
@@ -505,12 +527,16 @@ def validate_dict_against(
 
     def is_documented(key: str, node: NexusNode) -> bool:
         if mapping.get(key) is None:
-            # This value is not really set. Skip checking it's documentation.
+            # This value is not really set. Skip checking its documentation.
             return True
 
         for name in key[1:].replace("@", "").split("/"):
-            children = node.get_all_direct_children_names()
-            best_name = best_namefit_of(name, children)
+            children_to_check = [
+                node.search_add_child_for(child)
+                for child in node.get_all_direct_children_names()
+            ]
+            best_name = best_namefit_of(name, children_to_check)
+
             if best_name is None:
                 return False
 
@@ -534,7 +560,7 @@ def validate_dict_against(
                 f"{key}", ValidationProblem.MissingUnit, node.unit
             )
 
-        return is_valid_data_field(mapping[key], node.dtype, key)
+        return is_valid_data_field(mapping[key], node.dtype, key)[0]
 
     def recurse_tree(
         node: NexusNode,
@@ -548,7 +574,183 @@ def validate_dict_against(
             keys = _follow_link(keys, prev_path)
             if keys is None:
                 return
+
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
+
+    def check_attributes_of_nonexisting_field(
+        node: NexusNode,
+    ) -> list:
+        """
+            This method runs through the mapping dictionary and checks if there are any
+            attributes assigned to the fields (not groups!) which are not expicitly
+            present in the mapping.
+            If there are any found, a warning is logged and the corresponding items are
+            added to the list returned by the method.
+
+        Args:
+            node (NexusNode): the tree generated from application definition.
+
+        Returns:
+            list: list of keys in mapping that correspond to attributes of
+            non-existing fields
+        """
+
+        keys_to_remove = []
+
+        for key in mapping:
+            last_index = key.rfind("/")
+            if key[last_index + 1] == "@":
+                # key is an attribute. Find a corresponding parent, check all the other
+                # children of this parent
+                attribute_parent_checked = False
+                for key_iterating in mapping:
+                    # check if key_iterating starts with parent of the key OR any
+                    # allowed variation of the parent of the key
+                    flag, extra_length = startswith_with_variations(
+                        key_iterating, key[0:last_index]
+                    )
+                    # the variation of the path to the parent might have different length
+                    # than the key itself, extra_length is adjusting for that
+                    if flag:
+                        if len(key_iterating) == last_index + extra_length:
+                            # the parent is a field
+                            attribute_parent_checked = True
+                            break
+                        elif (key_iterating[last_index + extra_length] == "/") and (
+                            key_iterating[last_index + extra_length + 1] != "@"
+                        ):
+                            # the parent is a group
+                            attribute_parent_checked = True
+                            break
+                if not attribute_parent_checked:
+                    type_of_parent_from_tree = check_type_with_tree(
+                        node, key[0:last_index]
+                    )
+                    # The parent can be a group with only attributes as children; check
+                    # in the tree built from app. def. Alternatively, parent can be not
+                    # in the tree and then group with only attributes is indistinguishable
+                    # from missing field. Continue without warnings or changes.
+                    if not (
+                        type_of_parent_from_tree == "group"
+                        or type_of_parent_from_tree is None
+                    ):
+                        keys_to_remove.append(key)
+                        collector.collect_and_log(
+                            key[0:last_index],
+                            ValidationProblem.AttributeForNonExistingField,
+                            None,
+                        )
+                        collector.collect_and_log(
+                            key,
+                            ValidationProblem.KeyToBeRemoved,
+                            None,
+                        )
+        return keys_to_remove
+
+    def check_type_with_tree(
+        node: NexusNode,
+        path: str,
+    ) -> Optional[str]:
+        """
+            Recursively search for the type of the object from Template
+            (described by path) using subtree hanging below the node.
+            The path should be relative to the current node.
+
+        Args:
+            node (NexusNode): the subtree to search in.
+            path (str): the string addressing the object from Mapping (the Template)
+            to search the type of.
+
+        Returns:
+            Optional str: type of the object as a string, if the object was found
+            in the tree, None otherwise.
+        """
+
+        # already arrived to the object
+        if path == "":
+            return node.type
+        # searching for object among the children of the node
+        next_child_name_index = path[1:].find("/")
+        if (
+            next_child_name_index == -1
+        ):  # the whole path from element #1 is the child name
+            next_child_name_index = (
+                len(path) - 1
+            )  # -1 because we count from element #1, not #0
+        next_child_class, next_child_name = split_class_and_name_of(
+            path[1 : next_child_name_index + 1]
+        )
+        if (next_child_class is not None) or (next_child_name is not None):
+            output = None
+            for child in node.children:
+                # regexs to separate the class and the name from full name of the child
+                child_class_from_node = re.sub(
+                    r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
+                    "",
+                    child.__str__(),
+                )
+                child_name_from_node = re.sub(
+                    r"(\@.*)*(\(.*?\))*(.*\[)*(\].*)*\s*",
+                    "",
+                    child.__str__(),
+                )
+                if (child_class_from_node == next_child_class) or (
+                    child_name_from_node == next_child_name
+                ):
+                    output_new = check_type_with_tree(
+                        child, path[next_child_name_index + 1 :]
+                    )
+                    if output_new is not None:
+                        output = output_new
+            return output
+        else:
+            return None
+
+    def startswith_with_variations(
+        large_str: str, baseline_str: str
+    ) -> Tuple[bool, int]:
+        """
+            Recursively check if the large_str starts with baseline_str or an allowed
+            equivalent (i.e. .../AXISNAME[energy]/... matches .../energy/...).
+
+        Args:
+            large_str (str): the string to be checked.
+            baseline_str (str): the string used as a baseline for comparison.
+
+        Returns:
+            bool: True if large_str starts with baseline_str or equivalent, else False.
+            int: The combined length difference between baseline_str and the equivalent
+            part of the large_str.
+        """
+        if len(baseline_str.split("/")) == 1:
+            # if baseline_str has no separators left, match already found
+            return (True, 0)
+        first_token_large_str = large_str.split("/")[1]
+        first_token_baseline_str = baseline_str.split("/")[1]
+
+        remaining_large_str = large_str[len(first_token_large_str) + 1 :]
+        remaining_baseline_str = baseline_str[len(first_token_baseline_str) + 1 :]
+        if first_token_large_str == first_token_baseline_str:
+            # exact match of n-th token
+            return startswith_with_variations(
+                remaining_large_str, remaining_baseline_str
+            )
+        match_check = re.search(r"\[.*?\]", first_token_large_str)
+        if match_check is None:
+            # tokens are different and do not contain []
+            return (False, 0)
+        variation_first_token_large = match_check.group(0)[1:-1]
+        if variation_first_token_large == first_token_baseline_str:
+            # equivalents match
+            extra_length_this_step = len(first_token_large_str) - len(
+                first_token_baseline_str
+            )
+            a, b = startswith_with_variations(
+                remaining_large_str, remaining_baseline_str
+            )
+            return (a, b + extra_length_this_step)
+        # default
+        return (False, 0)
 
     missing_type_err = {
         "field": ValidationProblem.MissingRequiredField,
@@ -593,7 +795,8 @@ def validate_dict_against(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
 
-    return not collector.has_validation_problems()
+    keys_to_remove = check_attributes_of_nonexisting_field(tree)
+    return (not collector.has_validation_problems(), keys_to_remove)
 
 
 def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int = 0):
@@ -627,4 +830,4 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
 def validate_data_dict(
     _: Mapping[str, Any], read_data: Mapping[str, Any], root: ET._Element
 ) -> bool:
-    return validate_dict_against(root.attrib["name"], read_data)
+    return validate_dict_against(root.attrib["name"], read_data)[0]

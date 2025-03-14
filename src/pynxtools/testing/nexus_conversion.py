@@ -141,7 +141,7 @@ class ReaderTest:
         with self.caplog.at_level(caplog_level):
             _ = validate_dict_against(
                 self.nxdl, read_data, ignore_undocumented=ignore_undocumented
-            )
+            )[0]
         assert self.caplog.text == ""
 
         add_default_root_attributes(
@@ -208,6 +208,8 @@ class ReaderTest:
 
             section_ignore_lines = []
             section = None
+
+            diffs = []
             for ind, (gen_l, ref_l) in enumerate(zip(gen_lines, ref_lines)):
                 if gen_l.startswith(SECTION_SEPARATOR) and ref_l.startswith(
                     SECTION_SEPARATOR
@@ -219,10 +221,13 @@ class ReaderTest:
                 if gen_l != ref_l and not should_skip_line(
                     gen_l, ref_l, IGNORE_LINES + section_ignore_lines
                 ):
-                    raise AssertionError(
-                        f"Log files are different at line {ind}\n"
-                        f"generated: {gen_l}\nreferenced: {ref_l}"
-                    )
+                    diffs += [
+                        f"Log files are different at line {ind}\ngenerated: {gen_l}\nreferenced: {ref_l}"
+                    ]
+
+            if diffs:
+                diff_report = "\n".join(diffs)
+                raise AssertionError(diff_report)
 
         # Load log paths
         ref_log_path = get_log_file(self.ref_nexus_file, "ref_nexus.log", self.tmp_path)

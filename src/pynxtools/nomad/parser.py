@@ -30,7 +30,7 @@ try:
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import EntryData
     from nomad.datamodel.results import Material, Results
-    from nomad.metainfo import MSection
+    from nomad.metainfo import MEnum, MSection
     from nomad.metainfo.util import MQuantity, MSubSectionList, resolve_variadic_name
     from nomad.parsing import MatchingParser
     from nomad.units import ureg
@@ -43,7 +43,8 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __FIELD_STATISTICS as FIELD_STATISTICS
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, get_quantity_base_name
 from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
 
 
@@ -137,6 +138,8 @@ def _get_value(hdf_node):
     if isinstance(hdf_value, bytes):
         return hdf_value.decode()
     if str(hdf_value.dtype) == "bool":
+        if len(hdf_value.shape) > 0:
+            return bool(hdf_value.tolist()[0])
         return bool(hdf_value)
     if hdf_value.dtype.kind in "iufc":
         return hdf_value
@@ -204,60 +207,76 @@ class NexusParser(MatchingParser):
 
                 attr_name = nx_attr.get("name")  # could be 1D array, float or int
                 attr_value = hdf_node.attrs[attr_name]
-                if not isinstance(attr_value, str):
-                    if isinstance(attr_value, np.ndarray):
-                        attr_value = attr_value.tolist()
-                        if len(attr_value) == 1:
-                            attr_value = attr_value[0]
-                        # so values of non-scalar attribute will not end up in metainfo!
-
-                attr_name = attr_name + "__attribute"
                 current = _to_section(attr_name, nx_def, nx_attr, current, self.nx_root)
-
                 try:
                     if nx_root or nx_parent.tag.endswith("group"):
-                        current.m_set_section_attribute(attr_name, attr_value)
+                        parent_html_name = ""
+                        parent_name = ""
+                        parent_field_name = ""
+                        parent_html_base_name = ""
                     else:
-                        parent_html_name = nx_path[-2].get("name")
-
-                        parent_instance_name = hdf_node.name.split("/")[-1] + "__field"
-                        parent_field_name = parent_html_name + "__field"
-
-                        metainfo_def = None
-                        try:
-                            metainfo_def = resolve_variadic_name(
-                                current.m_def.all_properties, parent_field_name
-                            )
-                        except ValueError as exc:
-                            self._logger.warning(
-                                f"{current.m_def} has no suitable property for {parent_field_name}",
-                                target_name=attr_name,
-                                exc_info=exc,
-                            )
-                        if parent_field_name in current.__dict__:
-                            quantity = current.__dict__[parent_field_name]
-                            if isinstance(quantity, dict):
-                                quantity = quantity[parent_instance_name]
-                        else:
-                            quantity = None
-                            raise Warning(
-                                "setting attribute attempt before creating quantity"
-                            )
-                        quantity.m_set_attribute(attr_name, attr_value)
+                        parent_html_name = rename_nx_for_nomad(
+                            nx_path[-2].get("name"), is_field=True
+                        )
+                        parent_name = hdf_node.name.split("/")[-1]
+                        parent_field_name = parent_html_name
+                        parent_html_base_name = parent_html_name.split("__field")[0]
+                    attribute_name = parent_html_base_name + "___" + attr_name
+                    data_instance_name = parent_name + "___" + attr_name
+                    metainfo_def = None
+                    try:
+                        metainfo_def = resolve_variadic_name(
+                            current.m_def.all_quantities, attribute_name
+                        )
+                        attribute = attr_value
+                        # TODO: get unit from attribute <xxx>_units
+                        if isinstance(metainfo_def.type, MEnum):
+                            attribute = str(attr_value)
+                        elif not isinstance(attr_value, str):
+                            if isinstance(attr_value, np.ndarray):
+                                attr_list = attr_value.tolist()
+                                if (
+                                    len(attr_list) == 1
+                                    or attr_value.dtype.kind in "iufc"
+                                ):
+                                    attribute = attr_list[0]
+                                else:
+                                    attribute = str(attr_list)
+                        if metainfo_def.use_full_storage:
+                            attribute = MQuantity.wrap(attribute, data_instance_name)
+                    except ValueError as exc:
+                        self._logger.warning(
+                            f"{current.m_def} has no suitable property for {parent_field_name} and {attr_name} as {attribute_name}",
+                            target_name=attr_name,
+                            exc_info=exc,
+                        )
+                    current.m_set(metainfo_def, attribute)
+                    # if attributes are set before setting the quantity, a bug can cause them being set under a wrong variadic name
+                    attribute.m_set_attribute("m_nx_data_path", hdf_node.name)
+                    attribute.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 except Exception as e:
                     self._logger.warning(
-                        "error while setting attribute",
+                        f"error while setting attribute {data_instance_name} in {current.m_def} as {metainfo_def}",
                         target_name=attr_name,
                         exc_info=e,
                     )
         else:  # it is a field
             # get the corresponding field name
-            html_name = nx_path[-1].get("name")
+            html_name = rename_nx_for_nomad(nx_path[-1].get("name"), is_field=True)
             data_instance_name = hdf_node.name.split("/")[-1] + "__field"
-            field_name = html_name + "__field"
-            metainfo_def = resolve_variadic_name(
-                current.m_def.all_properties, field_name
-            )
+            field_name = html_name
+            try:
+                metainfo_def = resolve_variadic_name(
+                    current.m_def.all_quantities, field_name
+                )
+                isvariadic = metainfo_def.variable
+            except Exception as e:
+                self._logger.warning(
+                    f"error while setting field {data_instance_name} in {current.m_def} as no proper definition found for {field_name}",
+                    target_name=field_name,
+                    exc_info=e,
+                )
+                return
 
             field = _get_value(hdf_node)
 
@@ -267,14 +286,13 @@ class NexusParser(MatchingParser):
                 if isinstance(field, np.ndarray) and field.size > 1:
                     mask = np.isfinite(field)
                     if np.any(mask):
-                        field_stats = np.array(
-                            [
-                                np.mean(field[mask]),
-                                np.var(field[mask]),
-                                np.min(field[mask]),
-                                np.max(field[mask]),
-                            ]
-                        )
+                        field_stats = [
+                            func(field[mask] if ismask else field)
+                            for func, ismask in zip(
+                                FIELD_STATISTICS["function"],
+                                FIELD_STATISTICS["mask"],
+                            )
+                        ]
                         field = field_stats[0]
                         if not np.isfinite(field):
                             self._logger.warning(
@@ -303,6 +321,12 @@ class NexusParser(MatchingParser):
                     else:
                         pint_unit = ureg.parse_units("1")
                     field = ureg.Quantity(field, pint_unit)
+                    if field_stats is not None:
+                        for i in range(len(field_stats)):
+                            if FIELD_STATISTICS["mask"][i]:
+                                field_stats[i] = ureg.Quantity(
+                                    field_stats[i], pint_unit
+                                )
 
                 except (ValueError, UndefinedUnitError):
                     pass
@@ -317,14 +341,30 @@ class NexusParser(MatchingParser):
                 current.m_set(metainfo_def, field)
                 field.m_set_attribute("m_nx_data_path", hdf_node.name)
                 field.m_set_attribute("m_nx_data_file", self.nxs_fname)
+                if isvariadic:
+                    concept_basename = get_quantity_base_name(field.name)
+                    instancename = get_quantity_base_name(data_instance_name)
+                    name_metainfo_def = resolve_variadic_name(
+                        current.m_def.all_quantities, concept_basename + "__name"
+                    )
+                    name_value = MQuantity.wrap(instancename, instancename + "__name")
+                    current.m_set(name_metainfo_def, name_value)
+                    name_value.m_set_attribute("m_nx_data_path", hdf_node.name)
+                    name_value.m_set_attribute("m_nx_data_file", self.nxs_fname)
                 if field_stats is not None:
-                    # TODO _add_additional_attributes function has created these nx_data_*
-                    # attributes speculatively already so if the field_stats is None
-                    # this will cause unpopulated attributes in the GUI
-                    field.m_set_attribute("nx_data_mean", field_stats[0])
-                    field.m_set_attribute("nx_data_var", field_stats[1])
-                    field.m_set_attribute("nx_data_min", field_stats[2])
-                    field.m_set_attribute("nx_data_max", field_stats[3])
+                    concept_basename = get_quantity_base_name(field.name)
+                    instancename = get_quantity_base_name(data_instance_name)
+                    for suffix, stat in zip(
+                        FIELD_STATISTICS["suffix"][1:],
+                        field_stats[1:],
+                    ):
+                        stat_metainfo_def = resolve_variadic_name(
+                            current.m_def.all_quantities, concept_basename + suffix
+                        )
+                        stat = MQuantity.wrap(stat, instancename + suffix)
+                        current.m_set(stat_metainfo_def, stat)
+                        stat.m_set_attribute("m_nx_data_path", hdf_node.name)
+                        stat.m_set_attribute("m_nx_data_file", self.nxs_fname)
             except Exception as e:
                 self._logger.warning(
                     "error while setting field",
@@ -352,6 +392,8 @@ class NexusParser(MatchingParser):
 
         # current: MSection = _to_section(None, nx_def, None, self.nx_root)
         current = self.nx_root
+        current.m_set_section_attribute("m_nx_data_path", "/")
+        current.m_set_section_attribute("m_nx_data_file", self.nxs_fname)
         depth: int = 1
         current_hdf_path = ""
         for name in hdf_path.split("/")[1:]:
@@ -500,13 +542,9 @@ class NexusParser(MatchingParser):
         self._logger = logger if logger else get_logger(__name__)
         self._clear_class_refs()
 
-        mf = mainfile.split("/")
         # if filename does not follow the pattern
         # .volumes/fs/<upload type>/<upload 2char>/<upoad>/<raw/arch>/[subdirs?]/<filename>
-        if len(mf) < 7:
-            self.nxs_fname = mainfile
-        else:
-            self.nxs_fname = "/".join(mf[6:])
+        self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
         nexus_helper = HandleNexus(logger, mainfile)
         nexus_helper.process_nexus_master_file(self.__nexus_populate)
 
