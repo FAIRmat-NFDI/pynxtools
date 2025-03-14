@@ -21,5 +21,7 @@
     "optional_child": 1,
     "@version": "1.0",
     "@array": [0, 1, 2],
-    "name": "Test"
+    "name": "Test",
+    "@group_attribute": "data",
+    "@signal": "data"
 }

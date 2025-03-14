@@ -64,6 +64,13 @@
                     </enumeration>
                 </attribute>
             </field>
+            <attribute name="group_attribute">
+            </attribute>
+            <attribute name="signal">
+                <enumeration>
+                    <item value="data"/>
+                </enumeration>
+            </attribute>
         </group>
         <group type="NXnote" name="required_group">
             <doc>This is a required yet empty group.</doc>

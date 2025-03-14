@@ -192,7 +192,7 @@ def validate_dict_against(
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
         if not node.variadic:
-            if node.name in keys:
+            if f"{'@' if node.type == 'attribute' else ''}{node.name}" in keys:
                 return [node.name]
             elif (
                 hasattr(node, "nx_class")
@@ -228,7 +228,9 @@ def validate_dict_against(
         return variations
 
     def get_field_attributes(name: str, keys: Mapping[str, Any]) -> Mapping[str, Any]:
-        return {k.split("@")[1]: keys[k] for k in keys if k.startswith(f"{name}@")}
+        return {
+            f"@{k.split('@')[1]}": keys[k] for k in keys if k.startswith(f"{name}@")
+        }
 
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         def check_nxdata():
