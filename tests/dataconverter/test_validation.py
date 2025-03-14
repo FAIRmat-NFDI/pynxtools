@@ -762,7 +762,7 @@ TEMPLATE["required"][
                 "s",
             ),
             [
-                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s written without documentation."
+                "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s, is being written but has no documentation."
             ],
             id="field-with-illegal-unit",
         ),
@@ -883,7 +883,7 @@ TEMPLATE["required"][
                 "s",
             ),
             [
-                "The unit, /ENTRY[my_entry]/required_group/author/@units = s written without documentation."
+                "The unit, /ENTRY[my_entry]/required_group/author/@units = s, is being written but has no documentation."
             ],
             id="baseclass-field-with-illegal-unit",
         ),
@@ -900,11 +900,19 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             assert validate_dict_against("NXtest", data_dict)[0]
         assert caplog.text == ""
     else:
-        with caplog.at_level(logging.WARNING):
-            assert not validate_dict_against("NXtest", data_dict)[0]
-        assert len(caplog.records) == len(error_messages)
-        for expected_message, rec in zip(error_messages, caplog.records):
-            assert expected_message == format_error_message(rec.message)
+        if request.node.callspec.id in (
+            "field-with-illegal-unit",
+            "baseclass-field-with-illegal-unit",
+        ):
+            with caplog.at_level(logging.INFO):
+                assert validate_dict_against("NXtest", data_dict)[0]
+                assert error_messages[0] in caplog.text
+        else:
+            with caplog.at_level(logging.WARNING):
+                assert not validate_dict_against("NXtest", data_dict)[0]
+            assert len(caplog.records) == len(error_messages)
+            for expected_message, rec in zip(error_messages, caplog.records):
+                assert expected_message == format_error_message(rec.message)
 
 
 # test

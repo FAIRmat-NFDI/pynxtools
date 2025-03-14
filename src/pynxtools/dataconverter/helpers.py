@@ -80,7 +80,9 @@ class Collector:
             value = "<unknown>"
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
-            logger.warning(f"The unit, {path} = {value} written without documentation.")
+            logger.info(
+                f"The unit, {path} = {value}, is being written but has no documentation."
+            )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
                 f"The value at {path} should be one of the following: {value}"
@@ -161,7 +163,9 @@ class Collector:
             return
         if self.logging and path + str(log_type) + str(value) not in self.data:
             self._log(path, log_type, value, *args, **kwargs)
-        self.data.add(path + str(log_type) + str(value))
+        # info messages should not fail validation
+        if log_type not in (ValidationProblem.UnitWithoutDocumentation,):
+            self.data.add(path + str(log_type) + str(value))
 
     def has_validation_problems(self):
         """Returns True if there were any validation problems."""
