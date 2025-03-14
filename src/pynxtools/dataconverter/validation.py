@@ -134,7 +134,7 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
+def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[str]:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -145,20 +145,30 @@ def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
     Returns:
         Optional[str]: The best fitting key. None if no fit was found.
     """
-    if not keys:
+    if not nodes:
         return None
 
     nx_name, name2fit = split_class_and_name_of(name)
 
-    if name2fit in keys:
-        return name2fit
-    if nx_name is not None and nx_name in keys:
-        return nx_name
+    best_match = None
+    best_score = -1
 
-    best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name2fit, x)), keys), key=lambda x: x[1]
-    )
-    if score < 0:
+    for node in nodes:
+        if name2fit == node.name:
+            return name2fit
+        if nx_name is not None and nx_name == node.name:
+            return nx_name
+
+        name_any = node.name_type == "any"
+        name_partial = node.name_type == "partial"
+
+        score = get_nx_namefit(name2fit, node.name, name_any, name_partial)
+
+        if score > best_score:
+            best_score = score
+            best_match = node.name
+
+    if best_score < 0:
         return None
 
     return best_match
@@ -204,8 +214,11 @@ def validate_dict_against(
                 name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
             if nx_name is not None and nx_name != node.name:
                 continue
+            name_any = node.name_type == "any"
+            name_partial = node.name_type == "partial"
+
             if (
-                get_nx_namefit(name2fit, node.name) >= 0
+                get_nx_namefit(name2fit, node.name, name_any, name_partial) >= 0
                 and key not in node.parent.get_all_direct_children_names()
             ):
                 variations.append(key)
@@ -354,7 +367,7 @@ def validate_dict_against(
                         ValidationProblem.ExpectedGroup,
                         None,
                     )
-                return
+                continue
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
             else:
@@ -431,11 +444,19 @@ def validate_dict_against(
                 node.items is not None
                 and mapping[f"{prev_path}/{variant}"] not in node.items
             ):
-                collector.collect_and_log(
-                    f"{prev_path}/{variant}",
-                    ValidationProblem.InvalidEnum,
-                    node.items,
-                )
+                if node.open_enum:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.OpenEnumWithNewItem,
+                        node.items,
+                    )
+
+                else:
+                    collector.collect_and_log(
+                        f"{prev_path}/{variant}",
+                        ValidationProblem.InvalidEnum,
+                        node.items,
+                    )
 
             # Check unit category
             if node.unit is not None:
@@ -506,12 +527,16 @@ def validate_dict_against(
 
     def is_documented(key: str, node: NexusNode) -> bool:
         if mapping.get(key) is None:
-            # This value is not really set. Skip checking it's documentation.
+            # This value is not really set. Skip checking its documentation.
             return True
 
         for name in key[1:].replace("@", "").split("/"):
-            children = node.get_all_direct_children_names()
-            best_name = best_namefit_of(name, children)
+            children_to_check = [
+                node.search_add_child_for(child)
+                for child in node.get_all_direct_children_names()
+            ]
+            best_name = best_namefit_of(name, children_to_check)
+
             if best_name is None:
                 return False
 
@@ -549,6 +574,7 @@ def validate_dict_against(
             keys = _follow_link(keys, prev_path)
             if keys is None:
                 return
+
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
 
     def check_attributes_of_nonexisting_field(
@@ -657,7 +683,7 @@ def validate_dict_against(
         if (next_child_class is not None) or (next_child_name is not None):
             output = None
             for child in node.children:
-                # regexs to separarte the class and the name from full name of the child
+                # regexs to separate the class and the name from full name of the child
                 child_class_from_node = re.sub(
                     r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
                     "",

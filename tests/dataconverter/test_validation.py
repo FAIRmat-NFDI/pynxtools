@@ -28,7 +28,6 @@ def get_data_dict():
     return {
         "/ENTRY[my_entry]/optional_parent/required_child": 1,
         "/ENTRY[my_entry]/optional_parent/optional_child": 1,
-        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value": 2.0,
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units": "nm",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value": True,
@@ -42,6 +41,7 @@ def get_data_dict():
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value": "just chars",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@units": "",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type": "2nd type",
+        "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2": "2nd type open",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value": "2022-01-22T12:14:12.05018+00:00",
         "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units": "",
         "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value": True,
@@ -65,6 +65,8 @@ def get_data_dict():
         "/ENTRY[my_entry]/required_group/description": "An example description",
         "/ENTRY[my_entry]/required_group2/description": "An example description",
         "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/data": 1,
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/identifier": "my_identifier",
+        "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/identifier1": "my_identifier1",
         "/@default": "Some NXroot attribute",
     }
 
@@ -91,7 +93,7 @@ def alter_dict(new_values: Dict[str, Any], data_dict: Dict[str, Any]) -> Dict[st
         pytest.param(get_data_dict(), id="valid-unaltered-data-dict"),
         pytest.param(
             remove_from_dict(
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value_no_attr",
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 get_data_dict(),
             ),
             id="removed-optional-value",
@@ -143,3 +145,36 @@ def test_validation_shows_warning(caplog, data_dict, error_message):
         assert not validate_dict_against("NXtest", data_dict)[0]
 
     assert error_message in caplog.text
+
+
+@pytest.mark.parametrize(
+    "data_dict, message, log_level",
+    [
+        pytest.param(
+            alter_dict(
+                {
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type": "a very different type"
+                },
+                get_data_dict(),
+            ),
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should be on of the following strings: ['1st type', '2nd type', '3rd type', '4th type']",
+            logging.WARNING,
+            id="closed-enum-with-new-item",
+        ),
+        pytest.param(
+            alter_dict(
+                {
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2": "a very different type"
+                },
+                get_data_dict(),
+            ),
+            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match with the enumerated items from the open enumeration: ['1st type open', '2nd type open'].",
+            logging.INFO,
+            id="open-enum-with-new-item",
+        ),
+    ],
+)
+def test_validation_enumeration(caplog, data_dict, message, log_level):
+    with caplog.at_level(log_level):
+        assert not validate_dict_against("NXtest", data_dict)[0]
+    assert message in caplog.text
