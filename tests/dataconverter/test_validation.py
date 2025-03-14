@@ -188,7 +188,7 @@ TEMPLATE["required"][
 
 # pylint: disable=too-many-arguments
 @pytest.mark.parametrize(
-    "data_dict,error_message",
+    "data_dict,error_messages",
     [
         pytest.param(
             alter_dict(
@@ -196,11 +196,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]",
                 "not_a_num",
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
                 " should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
                 "the NXDL as NX_INT."
-            ),
+            ],
             id="variadic-field-str-instead-of-int",
         ),
         pytest.param(
@@ -209,11 +209,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 "not_a_num",
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/in"
                 "t_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in "
                 "the NXDL as NX_INT."
-            ),
+            ],
             id="string-instead-of-int",
         ),
         pytest.param(
@@ -222,9 +222,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
                 "NOT_TRUE_OR_FALSE",
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value should be one of the following Python types: (<class 'bool'>, <class 'numpy.bool_'>), as defined in the NXDL as NX_BOOLEAN."
-            ),
+            ],
             id="string-instead-of-bool",
         ),
         pytest.param(
@@ -233,10 +233,10 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 ["1", "2", "3"],
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should"
                 " be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
-            ),
+            ],
             id="list-of-int-str-instead-of-int",
         ),
         pytest.param(
@@ -245,10 +245,10 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 np.array([2.0, 3.0, 4.0], dtype=np.float32),
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value should be"
                 " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
-            ),
+            ],
             id="array-of-float-instead-of-int",
         ),
         pytest.param(
@@ -257,7 +257,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 [2, 3, 4],
             ),
-            (""),
+            [],
             id="list-of-int-instead-of-int",
         ),
         pytest.param(
@@ -266,7 +266,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 np.array([2, 3, 4], dtype=np.int32),
             ),
-            (""),
+            [],
             id="array-of-int32-instead-of-int",
         ),
         pytest.param(
@@ -275,10 +275,12 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018-00:00",
             ),
-            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
-            " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
-            " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
-            "T12:14:12.05018+00:00.",
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
+                " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
+                " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
+                "T12:14:12.05018+00:00."
+            ],
             id="int-instead-of-date",
         ),
         pytest.param(
@@ -287,9 +289,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 0,
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT."
-            ),
+            ],
             id="int-instead-of-float",
         ),
         pytest.param(
@@ -298,9 +300,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
                 "0",
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>, <class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_NUMBER."
-            ),
+            ],
             id="str-instead-of-number",
         ),
         pytest.param(
@@ -309,11 +311,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
                 np.array([0.0, 2]),
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one"
                 " of the following Python types: (<class 'str'>, <class 'numpy.character'>), as"
                 " defined in the NXDL as NX_CHAR."
-            ),
+            ],
             id="wrong-type-ndarray-instead-of-char",
         ),
         pytest.param(
@@ -322,7 +324,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
                 np.array(["x", "2"]),
             ),
-            (""),
+            [],
             id="valid-ndarray-instead-of-char",
         ),
         pytest.param(
@@ -331,17 +333,17 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 {"link": "/a-link"},
             ),
-            (""),
+            [],
             id="link-dict-instead-of-int",
         ),
         pytest.param(
             alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value", -1
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value "
                 "should be a positive int, but is -1."
-            ),
+            ],
             id="negative-posint",
         ),
         pytest.param(
@@ -350,10 +352,10 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
                 [-1, 2],
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value "
                 "should be a positive int, but is [-1, 2]."
-            ),
+            ],
             id="negative-posint-list",
         ),
         pytest.param(
@@ -362,10 +364,10 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
                 np.array([-1, 2], dtype=np.int8),
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value should"
                 " be a positive int, but is [-1  2]."
-            ),
+            ],
             id="negative-posint-array",
         ),
         pytest.param(
@@ -374,7 +376,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
                 [1, 2],
             ),
-            (""),
+            [],
             id="positive-posint-list",
         ),
         pytest.param(
@@ -383,18 +385,18 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value",
                 np.array([1, 2], dtype=np.int8),
             ),
-            (""),
+            [],
             id="positive-posint-array",
         ),
         pytest.param(
             alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value", 3
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value should be one of the following Python types:"
                 " (<class 'str'>, <class 'numpy.character'>),"
                 " as defined in the NXDL as NX_CHAR."
-            ),
+            ],
             id="int-instead-of-chars",
         ),
         pytest.param(
@@ -403,7 +405,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
                 np.array(["1", "2", "3"], dtype=np.str_),
             ),
-            (""),
+            [],
             id="array-of-chars",
         ),
         pytest.param(
@@ -412,7 +414,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
                 np.array(["1", "2", "3"], dtype=np.bytes_),
             ),
-            (""),
+            [],
             id="array-of-bytes-chars",
         ),
         pytest.param(
@@ -421,14 +423,14 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value",
                 ["list", "of", "chars"],
             ),
-            "",
+            [],
             id="list-of-string-instead-of-chars",
         ),
         pytest.param(
             alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value", None
             ),
-            "",
+            [],
             id="empty-optional-field",
         ),
         pytest.param(
@@ -437,7 +439,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 np.array([2.0, 3.0, 4.0], dtype=np.float32),
             ),
-            "",
+            [],
             id="array-of-float-instead-of-float",
         ),
         pytest.param(
@@ -446,9 +448,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 np.array(["2.0", "3.0"], dtype=np.str_),
             ),
-            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
-            "one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
-            "as NX_FLOAT.",
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
+                "one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
+                "as NX_FLOAT."
+            ],
             id="array-of-str-instead-of-float",
         ),
         pytest.param(
@@ -457,9 +461,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 [2],  # pylint: disable=E1126
             ),
-            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
-            "one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
-            "as NX_FLOAT.",
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
+                "one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
+                "as NX_FLOAT."
+            ],
             id="list-of-int-instead-of-float",
         ),
         pytest.param(
@@ -468,11 +474,12 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
                 "required",
             ),
-            (
+            [
                 "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
                 "/bool_value is"
-                " required and hasn't been supplied by the reader."
-            ),
+                " required and hasn't been supplied by the reader.",
+                "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value, but the field does not exist.",
+            ],
             id="empty-required-field",
         ),
         pytest.param(
@@ -481,64 +488,39 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
                 "required",
             ),
-            (
+            [
                 "The data entry corresponding to /ENTRY[my_entry]/"
                 "NXODD_name[nxodd_two_name]/bool_value is"
-                " required and hasn't been supplied by the reader."
-            ),
+                " required and hasn't been supplied by the reader.",
+                "There were attributes set for the field /ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value, but the field does not exist.",
+            ],
             id="empty-required-field",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                "optional",
+            ),
+            [
+                "Unit /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units in dataset without its field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value.",
+                "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units will not be written.",
+            ],
+            id="removed-optional-value-with-unit-remaining",
         ),
         pytest.param(
             remove_from_dict(
                 remove_from_dict(
                     TEMPLATE,
-                    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value",
+                    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
                     "required",
                 ),
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units",
                 "required",
             ),
-            (
-                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]"
-                "/bool_value is"
-                " required and hasn't been supplied by the reader."
-            ),
-            id="empty-required-field",
-        ),
-        pytest.param(
-            remove_from_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[float_value_no_attr]",
-                "optional",
-            ),
-            "",
-            id="removed-optional-value",
-        ),
-        pytest.param(
-            remove_from_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
-                "optional",
-            ),
-            "Unit /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units in dataset without its field /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value.",
-            id="removed-optional-value-with-attribute-remaining",
-        ),
-        pytest.param(
-            remove_from_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
-                "optional",
-            ),
-            "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units will not be written.",
-            id="removed-optional-value-with-attribute-remaining",
-        ),
-        pytest.param(
-            remove_from_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value",
-                "required",
-            ),
-            "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader.",
+            [
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value is required and hasn't been supplied by the reader."
+            ],
             id="missing-required-value",
         ),
         pytest.param(
@@ -551,7 +533,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name",
                 "optional",
             ),
-            ("The required group, /ENTRY[my_entry]/NXODD_name, hasn't been supplied."),
+            ["The required group, /ENTRY[my_entry]/NXODD_name, hasn't been supplied."],
             id="all-required-fields-set-to-none",
         ),
         pytest.param(
@@ -560,7 +542,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018+00:00",
             ),
-            "",
+            [],
             id="UTC-with-+00:00",
         ),
         pytest.param(
@@ -569,7 +551,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018Z",
             ),
-            "",
+            [],
             id="UTC-with-Z",
         ),
         pytest.param(
@@ -578,10 +560,12 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018-00:00",
             ),
-            "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
-            " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
-            " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
-            "T12:14:12.05018+00:00.",
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"
+                " = 2022-01-22T12:14:12.05018-00:00 should be a timezone aware"
+                " ISO8601 formatted str. For example, 2022-01-22T12:14:12.05018Z or 2022-01-22"
+                "T12:14:12.05018+00:00."
+            ],
             id="UTC-with--00:00",
         ),
         pytest.param(listify_template(TEMPLATE), "", id="lists"),
@@ -589,21 +573,21 @@ TEMPLATE["required"][
             alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type", "Wrong option"
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
                 "be one of the following"
                 ": ['1st type', '2nd type', '3rd type', '4th type']"
-            ),
+            ],
             id="wrong-enum-choice",
         ),
         pytest.param(
             set_to_none_in_dict(
                 TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
             ),
-            (
+            [
                 "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
                 "required_child is required and hasn't been supplied by the reader."
-            ),
+            ],
             id="atleast-one-required-child-not-provided-optional-parent",
         ),
         pytest.param(
@@ -612,11 +596,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field",
                 "required",
             ),
-            (
+            [
                 "The data entry corresponding to /ENTRY[my_entry]/"
                 "OPTIONAL_group[my_group]/required_field "
                 "is required and hasn't been supplied by the reader."
-            ),
+            ],
             id="required-field-not-provided-in-variadic-optional-group",
         ),
         pytest.param(
@@ -625,7 +609,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field",
                 "required",
             ),
-            (""),
+            [],
             id="required-field-provided-in-variadic-optional-group",
         ),
         pytest.param(
@@ -636,18 +620,22 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/optional_parent/optional_child",
                 None,
             ),
-            (""),
+            [],
             id="no-child-provided-optional-parent",
         ),
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group/description"),
-            "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied.",
+            [
+                "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied."
+            ],
             id="missing-empty-yet-required-group",
         ),
         pytest.param(
             remove_from_dict(TEMPLATE, "/ENTRY[my_entry]/required_group2/description"),
-            "The required group, /ENTRY[my_entry]/required_group2, hasn't been supplied.",
+            [
+                "The required group, /ENTRY[my_entry]/required_group2, hasn't been supplied."
+            ],
             id="missing-empty-yet-required-group2",
         ),
         pytest.param(
@@ -658,7 +646,9 @@ TEMPLATE["required"][
                 "/ENTRY[entry]/required_group",
                 None,
             ),
-            "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied.",
+            [
+                "The required group, /ENTRY[my_entry]/required_group, hasn't been supplied."
+            ],
             id="allow-required-and-empty-group",
         ),
         pytest.param(
@@ -667,11 +657,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]",
                 "required",
             ),
-            (
+            [
                 "The required group, /ENTRY[my_entry]/"
                 "optional_parent/req_group_in_opt_group, "
                 "hasn't been supplied."
-            ),
+            ],
             id="req-group-in-opt-parent-removed",
         ),
         pytest.param((TEMPLATE), (""), id="opt-group-completely-removed"),
@@ -681,18 +671,19 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array",
                 ["0", 1, 2],
             ),
-            (
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]"
-            ),
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT.",
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]",
+            ],
             id="wrong-type-array-in-attribute",
         ),
         pytest.param(
             alter_dict(
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]"
-            ),
+            ],
             id="wrong-value-array-in-attribute",
         ),
         pytest.param(
@@ -701,7 +692,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units",
                 "required",
             ),
-            "Field /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value requires a unit in the unit category NX_ENERGY.",
+            [
+                "Field /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value requires a unit in the unit category NX_ENERGY."
+            ],
             id="missing-unit",
         ),
         pytest.param(
@@ -710,16 +703,10 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
                 "required",
             ),
-            "Unit /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units in dataset without its field /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value.",
-            id="unit-missing-field",
-        ),
-        pytest.param(
-            remove_from_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value",
-                "required",
-            ),
-            "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units will not be written.",
+            [
+                "Unit /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units in dataset without its field /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value.",
+                "The attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units will not be written.",
+            ],
             id="unit-missing-field",
         ),
         pytest.param(
@@ -728,9 +715,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/required_group/illegal_name",
                 1,
             ),
-            (
+            [
                 "Field /ENTRY[my_entry]/required_group/illegal_name written without documentation."
-            ),
+            ],
             id="add-undocumented-field",
         ),
         pytest.param(
@@ -743,9 +730,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/required_group/author/@illegal",
                 "illegal_attribute",
             ),
-            (
+            [
                 "Attribute /ENTRY[my_entry]/required_group/author/@illegal written without documentation."
-            ),
+            ],
             id="add-undocumented-attribute",
         ),
         pytest.param(
@@ -754,7 +741,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@default",
                 "unknown",
             ),
-            "",
+            [],
             id="group-with-only-attributes",
         ),
         pytest.param(
@@ -763,9 +750,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal",
                 "unknown",
             ),
-            (
+            [
                 "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/BEAM[my_beam]/@illegal written without documentation."
-            ),
+            ],
             id="group-with-illegal-attributes",
         ),
         pytest.param(
@@ -774,9 +761,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/optional_parent/required_child/@units",
                 "s",
             ),
-            (
+            [
                 "The unit, /ENTRY[my_entry]/optional_parent/required_child/@units = s written without documentation."
-            ),
+            ],
             id="field-with-illegal-unit",
         ),
         pytest.param(
@@ -785,9 +772,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type",
                 1,
             ),
-            (
+            [
                 "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type written without documentation."
-            ),
+            ],
             id="bad-namefitting",
         ),
         pytest.param(
@@ -796,10 +783,10 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/duration",
                 np.array([2.0, 3.0, 4.0], dtype=np.float32),
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/duration should be"
                 " one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT."
-            ),
+            ],
             id="baseclass-wrong-dtype",
         ),
         pytest.param(
@@ -808,7 +795,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/duration/@units",
                 "required",
             ),
-            "Field /ENTRY[my_entry]/duration requires a unit in the unit category NX_TIME.",
+            [
+                "Field /ENTRY[my_entry]/duration requires a unit in the unit category NX_TIME."
+            ],
             id="baseclass-missing-unit",
         ),
         pytest.param(
@@ -817,20 +806,10 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/collection_time/@illegal",
                 "s",
             ),
-            (
-                "There were attributes set for the field /ENTRY[my_entry]/collection_time, but the field does not exist."
-            ),
-            id="baseclass-attribute-missing-field",
-        ),
-        pytest.param(
-            alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/collection_time/@illegal",
-                "s",
-            ),
-            (
-                "The attribute /ENTRY[my_entry]/collection_time/@illegal will not be written."
-            ),
+            [
+                "There were attributes set for the field /ENTRY[my_entry]/collection_time, but the field does not exist.",
+                "The attribute /ENTRY[my_entry]/collection_time/@illegal will not be written.",
+            ],
             id="baseclass-attribute-missing-field",
         ),
         pytest.param(
@@ -839,14 +818,14 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
                 "Wrong source type",
             ),
-            (
+            [
                 "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type "
                 "should be one of the following: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', "
                 "'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', "
                 "'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', "
                 "'Metal Jet X-ray', 'Laser', 'Dye-Laser', 'Broadband Tunable Light Source', 'Halogen lamp', 'LED', "
                 "'Mercury Cadmium Telluride', 'Deuterium Lamp', 'Xenon Lamp', 'Globar', 'other']"
-            ),
+            ],
             id="baseclass-wrong-enum",
         ),
         pytest.param(
@@ -855,9 +834,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name",
                 1,
             ),
-            (
+            [
                 "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal_name written without documentation."
-            ),
+            ],
             id="baseclass-add-undocumented-field",
         ),
         pytest.param(
@@ -866,9 +845,9 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal",
                 "illegal_attribute",
             ),
-            (
+            [
                 "Attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type/@illegal written without documentation."
-            ),
+            ],
             id="baseclass-add-undocumented-attribute",
         ),
         pytest.param(
@@ -877,21 +856,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units",
                 "illegal_attribute",
             ),
-            (
+            [
                 "Unit /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units "
-                "in dataset without its field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal."
-            ),
-            id="baseclass-add-unit-of-missing-undocumented-field",
-        ),
-        pytest.param(
-            alter_dict(
-                TEMPLATE,
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units",
-                "illegal_attribute",
-            ),
-            (
-                "The attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units will not be written."
-            ),
+                "in dataset without its field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal.",
+                "The attribute /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/illegal/@units will not be written.",
+            ],
             id="baseclass-add-unit-of-missing-undocumented-field",
         ),
         pytest.param(
@@ -904,63 +873,26 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/required_group/author/@units",
                 "s",
             ),
-            (
+            [
                 "The unit, /ENTRY[my_entry]/required_group/author/@units = s written without documentation."
-            ),
+            ],
             id="baseclass-field-with-illegal-unit",
         ),
     ],
 )
-def test_validate_data_dict(caplog, data_dict, error_message, request):
+def test_validate_data_dict(caplog, data_dict, error_messages, request):
     """Unit test for the data validation routine."""
 
     def format_error_message(msg: str) -> str:
         return msg[msg.rfind("G: ") + 3 :].rstrip("\n")
 
-    if request.node.callspec.id in (
-        "valid-data-dict",
-        "lists",
-        "empty-optional-field",
-        "UTC-with-+00:00",
-        "UTC-with-Z",
-        "no-child-provided-optional-parent",
-        "link-dict-instead-of-int",
-        "opt-group-completely-removed",
-        "required-field-provided-in-variadic-optional-group",
-        "valid-ndarray-instead-of-char",
-        "list-of-int-instead-of-int",
-        "list-of-string-instead-of-chars",
-        "array-of-int32-instead-of-int",
-        "List-of-int-instead-of-int",
-        "positive-posint-list",
-        "positive-posint-array",
-        "array-of-chars",
-        "array-of-bytes-chars",
-        "array-of-float-instead-of-float",
-        "numpy-chararray",
-        "removed-optional-value",
-        "group-with-only-attributes",
-    ):
+    if not error_messages:
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)[0]
         assert caplog.text == ""
-    # Missing required fields caught by logger with warning
-    elif request.node.callspec.id in (
-        "empty-required-field",
-        "allow-required-and-empty-group",
-        "req-group-in-opt-parent-removed",
-        "missing-empty-yet-required-group",
-        "missing-empty-yet-required-group2",
-    ):
-        assert "" == caplog.text
-        captured_logs = caplog.records
-        assert not validate_dict_against("NXtest", data_dict)[0]
-        assert any(
-            error_message == format_error_message(rec.message) for rec in captured_logs
-        )
     else:
         with caplog.at_level(logging.WARNING):
             assert not validate_dict_against("NXtest", data_dict)[0]
-        assert any(
-            error_message == format_error_message(rec.message) for rec in caplog.records
-        )
+        assert len(caplog.records) == len(error_messages)
+        for expected_message, rec in zip(error_messages, caplog.records):
+            assert expected_message == format_error_message(rec.message)
