@@ -789,6 +789,24 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/USE[user]/name",
+                "Some name",
+            ),
+            ["Field /ENTRY[my_entry]/USE[user]/name written without documentation."],
+            id="namefitting-of-group-with-typo",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/USE[user]/test",
+                "Some name",
+            ),
+            ["Field /ENTRY[my_entry]/USE[user]/test written without documentation."],
+            id="namefitting-of-group-with-typo-and-new-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/duration",
                 np.array([2.0, 3.0, 4.0], dtype=np.float32),
             ),
