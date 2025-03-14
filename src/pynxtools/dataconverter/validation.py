@@ -790,13 +790,12 @@ def validate_dict_against(
             else:
                 # check that parent has units
                 node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
-                if node is not None:
-                    if node.type != "field" or node.unit is None:
-                        collector.collect_and_log(
-                            not_visited_key,
-                            ValidationProblem.UnitWithoutDocumentation,
-                            mapping[not_visited_key],
-                        )
+                if node is None or node.type != "field" or node.unit is None:
+                    collector.collect_and_log(
+                        not_visited_key,
+                        ValidationProblem.UnitWithoutDocumentation,
+                        mapping[not_visited_key],
+                    )
 
             # parent key will be checked on its own if it exists, because it is in the list
             continue
@@ -806,7 +805,7 @@ def validate_dict_against(
             if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
                 # check that parent is not a group
                 node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
-                if node.type != "group":
+                if node is None or node.type != "group":
                     collector.collect_and_log(
                         not_visited_key.rsplit("/", 1)[0],
                         ValidationProblem.AttributeForNonExistingField,
