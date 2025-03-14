@@ -134,35 +134,38 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, keys: Iterable[str]) -> Tuple[Optional[str], bool]:
+def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode]:
     """
     Get the best namefit of `name` in `keys`.
 
     Args:
         name (str): The name to fit against the keys.
-        keys (Iterable[str]): The keys to fit `name` against.
+        nodes (Iterable[NexusNode]): The nodes to fit `name` against.
 
     Returns:
-        Tuple[Optional[str], bool]: A tuple where the first element is the best fitting key (or None if no fit was found),
-                                    and the second element is a boolean indicating if the match was exact.
+        Optional[NexusNode]: The best fitting node. None if no fit was found.
     """
+    if not nodes:
+        return None
 
-    if not keys:
-        return None, True
+    concept_name, instance_name = split_class_and_name_of(name)
 
-    nx_name, name2fit = split_class_and_name_of(name)
+    for node in nodes:
+        if not node.variadic:
+            if instance_name == node.name:
+                return node
+        else:
+            if not concept_name or concept_name != node.name:
+                continue
+            if instance_name == node.name:
+                return node
 
-    if name2fit in keys:
-        return name2fit, True
-    if nx_name is not None and nx_name in keys:
-        return nx_name, True
-    best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name2fit, x)), keys), key=lambda x: x[1]
-    )
-    if score < 0:
-        return None, False
+            score = get_nx_namefit(instance_name, node.name)
 
-    return best_match, False
+            if score > -1:
+                return node
+
+    return None
 
 
 def validate_dict_against(
@@ -199,21 +202,28 @@ def validate_dict_against(
 
         variations = []
         for key in keys:
-            nx_name, name2fit = split_class_and_name_of(key)
+            concept_name, instance_name = split_class_and_name_of(key)
+
             if node.type == "attribute":
                 # Remove the starting @ from attributes
-                name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
-            if nx_name is not None and nx_name != node.name:
+                instance_name = (
+                    instance_name[1:]
+                    if instance_name.startswith("@")
+                    else instance_name
+                )
+
+            if not concept_name or concept_name != node.name:
                 continue
+
             if (
-                get_nx_namefit(name2fit, node.name) >= 0
+                get_nx_namefit(instance_name, node.name) >= 0
                 and key not in node.parent.get_all_direct_children_names()
             ):
                 variations.append(key)
 
-            if nx_name is not None and not variations:
+            if not variations:
                 collector.collect_and_log(
-                    nx_name, ValidationProblem.FailedNamefitting, keys
+                    concept_name, ValidationProblem.FailedNamefitting, keys
                 )
         return variations
 
@@ -513,24 +523,23 @@ def validate_dict_against(
 
     def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
         for name in key[1:].replace("@", "").split("/"):
-            children = node.get_all_direct_children_names()
-            best_name, good_name_fit = best_namefit_of(name, children)
-            if best_name is None:
-                return None
+            children_to_check = [
+                node.search_add_child_for(child)
+                for child in node.get_all_direct_children_names()
+            ]
+            node = best_namefit_of(name, children_to_check)
 
-            node = node.search_add_child_for(best_name)
-
-            if not good_name_fit:
+            if node is None:
                 return None
 
         return node
 
-    def is_documented(key: str, node: NexusNode) -> bool:
+    def is_documented(key: str, tree: NexusNode) -> bool:
         if mapping.get(key) is None:
             # This value is not really set. Skip checking it's documentation.
             return True
 
-        node = add_best_matches_for(key, node)
+        node = add_best_matches_for(key, tree)
         if node is None:
             return False
 
