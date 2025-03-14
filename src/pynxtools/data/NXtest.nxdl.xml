@@ -82,5 +82,10 @@
                 <doc>This is a required group in an optional group.</doc>
             </group>
         </group>
+        <group type="NXuser" optional="true">
+            <field name="name">
+                <doc>A required NXuser entry.</doc>
+            </field>
+        </group>
     </group>
 </definition>

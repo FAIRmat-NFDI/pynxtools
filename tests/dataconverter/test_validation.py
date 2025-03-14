@@ -780,6 +780,15 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/data/test",
+                1,
+            ),
+            ["Field /ENTRY[my_entry]/data/test written without documentation."],
+            id="namefitting-of-illegal-named-group",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/duration",
                 np.array([2.0, 3.0, 4.0], dtype=np.float32),
             ),
