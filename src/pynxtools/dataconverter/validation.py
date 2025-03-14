@@ -541,6 +541,10 @@ def validate_dict_against(
             # This value is not really set. Skip checking it's documentation.
             return True
 
+        # TODO remove when nameType is implemented
+        if key.endswith("/@URL"):
+            return True
+
         node = add_best_matches_for(key, tree)
         if node is None:
             return False
