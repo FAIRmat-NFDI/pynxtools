@@ -20,5 +20,6 @@
     "required_child": 1,
     "optional_child": 1,
     "@version": "1.0",
-    "@array": [0, 1, 2]
+    "@array": [0, 1, 2],
+    "name": "Test"
 }
