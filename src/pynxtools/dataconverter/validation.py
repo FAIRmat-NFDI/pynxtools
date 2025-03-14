@@ -150,11 +150,15 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
 
     concept_name, instance_name = split_class_and_name_of(name)
 
+    # prefer direct name match over concept match
     for node in nodes:
         if not node.variadic:
             if instance_name == node.name:
                 return node
-        else:
+
+    # if no direct name match is found, look for concept match
+    for node in nodes:
+        if node.variadic:
             if not concept_name or concept_name != node.name:
                 continue
             if instance_name == node.name:
