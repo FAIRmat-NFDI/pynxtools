@@ -693,7 +693,6 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     if nx_dimensionality:
         dimensionality = NXUnitSet.mapping.get(nx_dimensionality)
         if not dimensionality and nx_dimensionality != "NX_ANY":
-            nx_dimensionality = "asdjkalsdbasjdk"
             try:
                 # nx_dimensionality = "some_chasdasdkasdn m"
                 from nomad.units import ureg
