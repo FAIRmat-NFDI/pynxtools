@@ -950,6 +950,20 @@ TEMPLATE["required"][
             ],
             id="baseclass-field-with-illegal-unit",
         ),
+        # This can be re-used later when we have proper unit checking
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion/@units",
+                "J/mm",
+            ),
+            [],
+            id="baseclass-unit-example",
+        ),
     ],
 )
 def test_validate_data_dict(caplog, data_dict, error_messages, request):
