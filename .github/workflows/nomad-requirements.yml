@@ -31,6 +31,7 @@ jobs:
     - name: Add pynxtools dependency in NOMAD test_plugins.txt
       working-directory: ./nomad
       run: |
+        echo "" >> test_plugins.txt
         echo "pynxtools[convert]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }}" >> test_plugins.txt
     - name: Install uv and set the python version to ${{ env.python-version }}
       uses: astral-sh/setup-uv@v5
