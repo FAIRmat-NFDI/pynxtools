@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  python-version: 3.11
+
 jobs:
   pytest:
     name: pytest (${{ matrix.plugin }})
@@ -50,10 +53,10 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Install uv and set the python version to 3.12
+      - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.12
+          python-version: ${{ env.python-version }}
       - name: Install dependencies
         run: |
           uv pip install coverage coveralls
