@@ -34,6 +34,7 @@ dependencies = [
     "mergedeep",
     "importlib-metadata",
     "lxml>=4.9.1",
+    "toposort>=1.10.0",
     "anytree",
     "pint==0.17",
 ]

@@ -806,6 +806,10 @@ class NexusEntity(NexusNode):
             Also the base classes of these entities are considered.
             If there is no restriction this is set to None.
             Defaults to None.
+        open_enum (bool):
+            If enumerations are used, the enumeration can be open (i.e., the value is not limited
+            to the enumeration items) or closed (i.e., the value must exactly match one of the
+            enumeration items). This is controlled by the open_enum boolean. By default, it is closed.
         shape (Optional[Tuple[Optional[int], ...]]):
             The shape of the entity as given by the dimensions tag.
             This is set automatically on init based on the values found in the nxdl file.
@@ -850,8 +854,6 @@ class NexusEntity(NexusNode):
         based on the values in the inheritance chain.
         The first vale found is used.
         """
-        if not self.dtype == "NX_CHAR":
-            return
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
 
@@ -860,7 +862,18 @@ class NexusEntity(NexusNode):
                     self.open_enum = True
                 self.items = []
                 for items in enum.findall(f"nx:item", namespaces=namespaces):
-                    self.items.append(items.attrib["value"])
+                    value = items.attrib["value"]
+                    if value[0] == "[" and value[-1] == "]":
+                        import ast
+
+                        try:
+                            self.items.append(ast.literal_eval(value))
+                        except (ValueError, SyntaxError):
+                            raise Exception(
+                                f"Error parsing enumeration item in the provided NXDL: {value}"
+                            )
+                    else:
+                        self.items.append(value)
                 return
 
     def _set_shape(self):
