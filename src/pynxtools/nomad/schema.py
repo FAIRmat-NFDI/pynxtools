@@ -699,7 +699,10 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
 
                 quantity = 1 * ureg(nx_dimensionality)
                 dimensionality = quantity.dimensionality
-            except pint.errors.UndefinedUnitError as err:
+            except (
+                pint.errors.UndefinedUnitError,
+                pint.errors.DefinitionSyntaxError,
+            ) as err:
                 raise NotImplementedError(
                     f"Unit {nx_dimensionality} is not supported for {name}."
                 ) from err
