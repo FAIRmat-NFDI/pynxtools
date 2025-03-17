@@ -150,26 +150,22 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
 
     concept_name, instance_name = split_class_and_name_of(name)
 
-    # prefer direct name match over concept match
+    best_match = None
+
     for node in nodes:
         if not node.variadic:
             if instance_name == node.name:
                 return node
+        else:
+            if concept_name and concept_name == node.name:
+                if instance_name == node.name:
+                    return node
 
-    # if no direct name match is found, look for concept match
-    for node in nodes:
-        if node.variadic:
-            if not concept_name or concept_name != node.name:
-                continue
-            if instance_name == node.name:
-                return node
+                score = get_nx_namefit(instance_name, node.name)
+                if score > -1:
+                    best_match = node
 
-            score = get_nx_namefit(instance_name, node.name)
-
-            if score > -1:
-                return node
-
-    return None
+    return best_match
 
 
 def validate_dict_against(
