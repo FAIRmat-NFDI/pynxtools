@@ -143,6 +143,7 @@ class NexusIdentifier(EntityReference):
         type=str,
         description="The name of the identifier inferred from identifier value.",
     )
+
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
         if not self.name:
@@ -181,8 +182,8 @@ class NexusReferences(ArchiveSection):
 
             upload_id = archive.metadata.upload_id
             entry_id = hash(upload_id, f_name)
-            # return f'../uploads/{upload_id}/archive/{entry_id}#data'
-            return f"/entries/{entry_id}/archive#/data"
+            return f"../uploads/{upload_id}/archive/{entry_id}#data"
+            # return f"/entries/{entry_id}/archive#/data"
 
         # Consider multiple identifiers exists in the same group/section
         identifiers = [
@@ -1449,7 +1450,6 @@ for nx_name, section in __section_definitions.items():
 
     # Append the normalize method from a function
     if normalize_func:
-
         if isinstance(normalize_func, dict):
             for key, value in normalize_func.items():
                 setattr(section.section_cls, key, value)
