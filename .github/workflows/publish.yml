@@ -4,9 +4,6 @@ on:
   release:
     types: [published]
 
-env:
-  UV_SYSTEM_PYTHON: true
-
 jobs:
   deploy:
     name: Upload release to PyPI
@@ -21,13 +18,12 @@ jobs:
       with:
         fetch-depth: 0
         submodules: recursive
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Install uv and set the python version to 3.11
+      uses: astral-sh/setup-uv@v5
       with:
-        python-version: "3.x"
+        python-version: 3.11
     - name: Install dependencies
       run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
         uv pip install build
     - name: Git tag version
       id: git_tag_version

@@ -9,9 +9,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  UV_SYSTEM_PYTHON: true
-
 jobs:
   pytest:
     name: pytest (${{ matrix.plugin }})
@@ -49,18 +46,17 @@ jobs:
             tests_to_run: tests/.
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - name: Install uv and set the python version to 3.12
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.11
+          python-version: 3.12
       - name: Install dependencies
         run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv pip install --system coverage coveralls
+          uv pip install coverage coveralls
       - name: Install package
         run: |
           uv pip install ".[dev]"
