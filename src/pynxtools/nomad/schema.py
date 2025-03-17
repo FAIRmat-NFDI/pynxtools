@@ -156,7 +156,7 @@ class NexusIdentifier(EntityReference):
                 m_context=archive.m_context,
                 metadata=EntryMetadata(
                     entry_type="identifier", domain="nexus", readonly=True
-                ),  # upload_id=archive.m_context.upload_id,
+                ),
             )
             with archive.m_context.raw_file(f_name, "w") as f_obj:
                 json.dump(entity.m_to_dict(with_meta=True), f_obj)
@@ -1293,9 +1293,6 @@ def normalize_atom_probe(self, archive, logger):
         )
         return fig
 
-    # if archive:
-    #     return
-
     data_path = self.m_attributes["m_nx_data_path"]
     with h5py.File(
         os.path.join(archive.m_context.raw_path(), self.m_attributes["m_nx_data_file"]),
@@ -1413,7 +1410,6 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
     __rename_nx_for_nomad("NXsample"): normalize_sample,
     __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
-    # __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
     __rename_nx_for_nomad("NXentry"): {
         "normalize": normalize_entry,
     },
