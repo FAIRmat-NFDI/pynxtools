@@ -18,12 +18,9 @@ jobs:
         run: |
           git submodule sync --recursive
           git submodule update --init --recursive --jobs=4
-      - name: Install package
+      - name: Install package and dev requirements
         run: |
-          uv pip install --no-deps .
-      - name: Install dev requirements
-        run: |
-          uv pip install -r dev-requirements.txt
+          uv pip install .[dev]
       - name: ruff check
         run: |
           ruff check src/pynxtools tests
