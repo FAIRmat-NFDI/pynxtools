@@ -169,17 +169,14 @@ class NexusIdentifier(EntityReference):
             upload_id = archive.metadata.upload_id
             entry_id = hash(upload_id, f_name)
             return f"../uploads/{upload_id}/archive/{entry_id}#data"
-            # return f"/entries/{entry_id}/archive#/data"
 
-        f_name = f"{self.name}_{self.lab_id}.archive.json"
-        # Chekc if the entry already exists
-        entry = Entry.objects(
-            upload_id=archive.metadata.upload_id, mainfile=f_name
-        ).first()
-        if not entry:
-            create_Entity(self.lab_id, archive, f_name, self.name)
-        self.reference = get_entry_reference(archive, f_name)
         super().normalize(archive, logger)
+        if not self.reference:
+            lab_hash = hashlib.md5(self.lab_id.encode()).hexdigest()
+
+            f_name = f"{self.name}_{lab_hash}.archive.json"
+            create_Entity(self.lab_id, archive, f_name, self.name)
+            self.reference = get_entry_reference(archive, f_name)
 
 
 class NexusReferences(ArchiveSection):
@@ -202,14 +199,9 @@ class NexusReferences(ArchiveSection):
         for identifier in identifiers:
             if not (val := getattr(self, identifier)):
                 continue
-            lab_id = (
-                re.split("([0-9a-zA-Z.]+)", val)[1]
-                + hashlib.md5(val.encode()).hexdigest()
-            )
             identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
-            logger.info(f"{lab_id} to be created")
-            logger.info(f"Identifier {val} refers to {lab_id}.")
-            nx_id = NexusIdentifier(lab_id=lab_id, name=identifier_path)
+            logger.info(f"Lab id {val} to be created")
+            nx_id = NexusIdentifier(lab_id=val, name=identifier_path)
             nx_id.normalize(archive, logger)
             self.NXidentifiers.append(nx_id)
 
