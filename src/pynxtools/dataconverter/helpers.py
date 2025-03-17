@@ -24,7 +24,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union, Sequence
 
 import h5py
 import lxml.etree as ET
@@ -80,12 +80,12 @@ class Collector:
             value = "<unknown>"
 
         if log_type == ValidationProblem.UnitWithoutDocumentation:
-            logger.warning(
-                f"The unit, {path} = {value}, is being written but has no documentation"
+            logger.info(
+                f"The unit, {path} = {value}, is being written but has no documentation."
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be on of the following strings: {value}"
+                f"The value at {path} should be one of the following: {value}"
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
@@ -96,7 +96,7 @@ class Collector:
             )
         elif log_type == ValidationProblem.InvalidType:
             logger.warning(
-                f"The value at {path} should be one of: {value}"
+                f"The value at {path} should be one of the following Python types: {value}"
                 f", as defined in the NXDL as {args[0] if args else '<unknown>'}."
             )
         elif log_type == ValidationProblem.InvalidDatetime:
@@ -114,7 +114,10 @@ class Collector:
                 f"Expected a group at {path} but found a field or attribute."
             )
         elif log_type == ValidationProblem.MissingDocumentation:
-            logger.warning(f"Field {path} written without documentation.")
+            if "@" in path.rsplit("/")[-1]:
+                logger.warning(f"Attribute {path} written without documentation.")
+            else:
+                logger.warning(f"Field {path} written without documentation.")
         elif log_type == ValidationProblem.MissingUnit:
             logger.warning(
                 f"Field {path} requires a unit in the unit category {value}."
@@ -122,7 +125,7 @@ class Collector:
         elif log_type == ValidationProblem.MissingRequiredAttribute:
             logger.warning(f'Missing attribute: "{path}"')
         elif log_type == ValidationProblem.UnitWithoutField:
-            logger.warning(f"Unit {path} in dataset without its field {value}")
+            logger.warning(f"Unit {path} in dataset without its field {value}.")
         elif log_type == ValidationProblem.AttributeForNonExistingField:
             logger.warning(
                 f"There were attributes set for the field {path}, "
@@ -158,9 +161,11 @@ class Collector:
             "NX_ANY",
         ):
             return
-        if self.logging:
+        if self.logging and path + str(log_type) + str(value) not in self.data:
             self._log(path, log_type, value, *args, **kwargs)
-        self.data.add(path)
+        # info messages should not fail validation
+        if log_type not in (ValidationProblem.UnitWithoutDocumentation,):
+            self.data.add(path + str(log_type) + str(value))
 
     def has_validation_problems(self):
         """Returns True if there were any validation problems."""
@@ -215,7 +220,6 @@ def get_nxdl_name_for(xml_elem: ET._Element) -> Optional[str]:
             The name of the element.
             None if the xml element has no name or type attribute.
     """
-    """"""
     if "name" in xml_elem.attrib:
         return xml_elem.attrib["name"]
     if "type" in xml_elem.attrib:
@@ -575,86 +579,47 @@ def is_value_valid_element_of_enum(value, elist) -> Tuple[bool, list]:
     return True, []
 
 
-NUMPY_FLOAT_TYPES = (np.half, np.float16, np.single, np.double, np.longdouble)
-NUMPY_INT_TYPES = (np.short, np.intc, np.int_)
-NUMPY_UINT_TYPES = (np.ushort, np.uintc, np.uint)
-# np int for np version 1.26.0
-np_int = (
-    np.intc,
-    np.int_,
-    np.intp,
-    np.int8,
-    np.int16,
-    np.int32,
-    np.int64,
-    np.uint8,
-    np.uint16,
-    np.uint32,
-    np.uint64,
-    np.unsignedinteger,
-    np.signedinteger,
-)
-np_float = (np.float16, np.float32, np.float64, np.floating)
-np_bytes = (np.bytes_, np.byte, np.ubyte)
-np_char = (np.str_, np.char.chararray, *np_bytes)
-np_bool = (np.bool_,)
-np_complex = (np.complex64, np.complex128, np.cdouble, np.csingle)
+nx_char = (str, np.character)
+nx_int = (int, np.integer)
+nx_float = (float, np.floating)
+nx_number = nx_int + nx_float
+
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
-    "NX_BINARY": (
-        bytes,
-        bytearray,
-        np.ndarray,
-        *np_bytes,
-    ),
-    "NX_BOOLEAN": (bool, np.ndarray, *np_bool),
-    "NX_CHAR": (str, np.ndarray, *np_char),
+    "NX_BINARY": (bytes, bytearray, np.bytes_),
+    "NX_BOOLEAN": (bool, np.bool_),
+    "NX_CHAR": nx_char,
     "NX_DATE_TIME": (str,),
-    "NX_FLOAT": (float, np.ndarray, *np_float),
-    "NX_INT": (int, np.ndarray, *np_int),
-    "NX_UINT": (np.ndarray, np.unsignedinteger),
-    "NX_NUMBER": (
-        int,
-        float,
-        np.ndarray,
-        *np_int,
-        *np_float,
-        dict,
+    "NX_FLOAT": nx_float,
+    "NX_INT": nx_int,
+    "NX_UINT": (np.unsignedinteger,),
+    "NX_NUMBER": nx_number,
+    "NX_POSINT": nx_int,  # > 0 is checked in is_valid_data_field()
+    "NX_COMPLEX": (
+        complex,
+        np.complexfloating,
     ),
-    "NX_POSINT": (
-        int,
-        np.ndarray,
-        np.signedinteger,
-    ),  # > 0 is checked in is_valid_data_field()
-    "NX_COMPLEX": (complex, np.ndarray, *np_complex),
-    "NXDL_TYPE_UNAVAILABLE": (str,),  # Defaults to a string if a type is not provided.
-    "NX_CHAR_OR_NUMBER": (
-        str,
-        int,
-        float,
-        np.ndarray,
-        *np_char,
-        *np_int,
-        *np_float,
-        dict,
-    ),
+    "NX_CHAR_OR_NUMBER": nx_char + nx_number,
+    "NXDL_TYPE_UNAVAILABLE": (
+        nx_char,
+    ),  # Defaults to a string if a type is not provided.
 }
 
 
-def check_all_children_for_callable(objects: list, check: Callable, *args) -> bool:
-    """Checks whether all objects in list are validated by given callable."""
-    for obj in objects:
-        if not check(obj, *args):
-            return False
+def check_all_children_for_callable(
+    objects: Union[list, np.ndarray], check_function: Optional[Callable] = None, *args
+) -> bool:
+    """Checks whether all objects in list or numpy array are validated
+    by given callable and types.
+    """
+    if not isinstance(objects, np.ndarray):
+        objects = np.array(objects)
 
-    return True
+    return all([check_function(o, *args) for o in objects.flat])
 
 
 def is_valid_data_type(value, accepted_types):
     """Checks whether the given value or its children are of an accepted type."""
-    if not isinstance(value, list):
-        return isinstance(value, accepted_types)
-
     return check_all_children_for_callable(value, isinstance, accepted_types)
 
 
@@ -662,59 +627,55 @@ def is_positive_int(value):
     """Checks whether the given value or its children are positive."""
 
     def is_greater_than(num):
-        return num.flat[0] > 0 if isinstance(num, np.ndarray) else num > 0
+        return num > 0
 
-    if isinstance(value, list):
-        return check_all_children_for_callable(value, is_greater_than)
+    return check_all_children_for_callable(
+        objects=value, check_function=is_greater_than
+    )
 
-    return value.flat[0] > 0 if isinstance(value, np.ndarray) else value > 0
 
-
-def convert_str_to_bool_safe(value):
+def convert_str_to_bool_safe(value: str) -> Optional[bool]:
     """Only returns True or False if someone mistakenly adds quotation marks but mean a bool.
 
-    For everything else it returns None.
+    For everything else it raises a ValueError.
     """
     if value.lower() == "true":
         return True
     if value.lower() == "false":
         return False
-    return None
+    raise ValueError(f"Could not interpret string '{value}' as boolean.")
 
 
-def is_valid_data_field(value, nxdl_type, path):
-    # todo: Check this funciton and wtire test for it. It seems the funciton is not
+def is_valid_data_field(value: Any, nxdl_type: str, nxdl_enum: list, path: str) -> Any:
+    # todo: Check this function and write test for it. It seems the function is not
     # working as expected.
-    """Checks whether a given value is valid according to what is defined in the NXDL.
+    """Checks whether a given value is valid according to the type defined in the NXDL.
 
-    This function will also try to convert typical types, for example int to float,
-    and return the successful conversion.
+    This function only tries to convert boolean value in str format (e.g. "true" ) to
+    python Boolean (True). In case, it fails to convert, it raises an Exception.
 
-    If it fails to convert, it raises an Exception.
-
-    Returns two values: first, boolean (True if the the value corresponds to nxdl_type,
-    False otherwise) and second, result of attempted conversion or the original value
-    (if conversion is not needed or impossible)
+    Return:
+        value: the possibly converted data value
     """
-    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
-    output_value = value
 
+    accepted_types = NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+    # Do not count the dict as it represents a link value
     if not isinstance(value, dict) and not is_valid_data_type(value, accepted_types):
-        try:
-            if accepted_types[0] is bool and isinstance(value, str):
+        # try to convert string to bool
+        if accepted_types[0] is bool and isinstance(value, str):
+            try:
                 value = convert_str_to_bool_safe(value)
-                if value is None:
-                    raise ValueError
-            output_value = accepted_types[0](value)
-        except ValueError:
+            except (ValueError, TypeError):
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+                )
+        else:
             collector.collect_and_log(
                 path, ValidationProblem.InvalidType, accepted_types, nxdl_type
             )
-            return False, value
 
     if nxdl_type == "NX_POSINT" and not is_positive_int(value):
         collector.collect_and_log(path, ValidationProblem.IsNotPosInt, value)
-        return False, value
 
     if nxdl_type in ("ISO8601", "NX_DATE_TIME"):
         iso8601 = re.compile(
@@ -724,9 +685,16 @@ def is_valid_data_field(value, nxdl_type, path):
         results = iso8601.search(value)
         if results is None:
             collector.collect_and_log(path, ValidationProblem.InvalidDatetime, value)
-            return False, value
 
-    return True, output_value
+    # Check enumeration
+    if nxdl_enum is not None and value not in nxdl_enum:
+        collector.collect_and_log(
+            path,
+            ValidationProblem.InvalidEnum,
+            nxdl_enum,
+        )
+
+    return value
 
 
 @lru_cache(maxsize=None)

@@ -20,7 +20,7 @@ import re
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
-from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
+from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -134,45 +134,49 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, keys: Iterable[str]) -> Optional[str]:
+def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode]:
     """
     Get the best namefit of `name` in `keys`.
 
     Args:
         name (str): The name to fit against the keys.
-        keys (Iterable[str]): The keys to fit `name` against.
+        nodes (Iterable[NexusNode]): The nodes to fit `name` against.
 
     Returns:
-        Optional[str]: The best fitting key. None if no fit was found.
+        Optional[NexusNode]: The best fitting node. None if no fit was found.
     """
-    if not keys:
+    if not nodes:
         return None
 
-    nx_name, name2fit = split_class_and_name_of(name)
+    concept_name, instance_name = split_class_and_name_of(name)
 
-    if name2fit in keys:
-        return name2fit
-    if nx_name is not None and nx_name in keys:
-        return nx_name
+    best_match = None
 
-    best_match, score = max(
-        map(lambda x: (x, get_nx_namefit(name2fit, x)), keys), key=lambda x: x[1]
-    )
-    if score < 0:
-        return None
+    for node in nodes:
+        if not node.variadic:
+            if instance_name == node.name:
+                return node
+        else:
+            if concept_name and concept_name == node.name:
+                if instance_name == node.name:
+                    return node
+
+                score = get_nx_namefit(instance_name, node.name)
+                if score > -1:
+                    best_match = node
 
     return best_match
 
 
 def validate_dict_against(
-    appdef: str, mapping: Mapping[str, Any], ignore_undocumented: bool = False
+    appdef: str, mapping: MutableMapping[str, Any], ignore_undocumented: bool = False
 ) -> Tuple[bool, List]:
     """
-    Validates a mapping against the NeXus tree for applicationd definition `appdef`.
+    Validates a mapping against the NeXus tree for application definition `appdef`.
 
     Args:
         appdef (str): The appdef name to validate against.
-        mapping (Mapping[str, Any]):
+        mapping (MutableMapping[str, Any]):
             The mapping containing the data to validate.
             This should be a dict of `/` separated paths.
             Attributes are denoted with `@` in front of the last element.
@@ -188,7 +192,7 @@ def validate_dict_against(
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
         if not node.variadic:
-            if node.name in keys:
+            if f"{'@' if node.type == 'attribute' else ''}{node.name}" in keys:
                 return [node.name]
             elif (
                 hasattr(node, "nx_class")
@@ -198,25 +202,35 @@ def validate_dict_against(
 
         variations = []
         for key in keys:
-            nx_name, name2fit = split_class_and_name_of(key)
+            concept_name, instance_name = split_class_and_name_of(key)
+
             if node.type == "attribute":
                 # Remove the starting @ from attributes
-                name2fit = name2fit[1:] if name2fit.startswith("@") else name2fit
-            if nx_name is not None and nx_name != node.name:
+                instance_name = (
+                    instance_name[1:]
+                    if instance_name.startswith("@")
+                    else instance_name
+                )
+
+            if not concept_name or concept_name != node.name:
                 continue
+
             if (
-                get_nx_namefit(name2fit, node.name) >= 0
+                get_nx_namefit(instance_name, node.name) >= 0
                 and key not in node.parent.get_all_direct_children_names()
             ):
                 variations.append(key)
-            if nx_name is not None and not variations:
+
+            if not variations:
                 collector.collect_and_log(
-                    nx_name, ValidationProblem.FailedNamefitting, keys
+                    concept_name, ValidationProblem.FailedNamefitting, keys
                 )
         return variations
 
     def get_field_attributes(name: str, keys: Mapping[str, Any]) -> Mapping[str, Any]:
-        return {k.split("@")[1]: keys[k] for k in keys if k.startswith(f"{name}@")}
+        return {
+            f"@{k.split('@')[1]}": keys[k] for k in keys if k.startswith(f"{name}@")
+        }
 
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         def check_nxdata():
@@ -244,6 +258,14 @@ def validate_dict_against(
 
                 handle_field(
                     node.search_add_child_for_multiple((signal, "DATA")),
+                    keys,
+                    prev_path=prev_path,
+                )
+
+            # check NXdata attributes
+            for attr in ("signal", "auxiliary_signals", "axes"):
+                handle_attribute(
+                    node.search_add_child_for(attr),
                     keys,
                     prev_path=prev_path,
                 )
@@ -342,6 +364,7 @@ def validate_dict_against(
                 None,
             )
             return
+
         for variant in variants:
             if variant in [node.name for node in node.parent_of]:
                 # Don't process if this is actually a sub-variant of this group
@@ -392,17 +415,17 @@ def validate_dict_against(
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    full_path, missing_type_err.get(node.type), None
-                )
-
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
             return
 
         for variant in variants:
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
-                # Check if all fields in the dict are actual attributes (startwith @)
+                # Check if all fields in the dict are actual attributes (startswith @)
                 all_attrs = True
                 for entry in keys[variant]:
                     if not entry.startswith("@"):
@@ -422,20 +445,12 @@ def validate_dict_against(
                 continue
 
             # Check general validity
-            is_valid_data_field(
-                mapping[f"{prev_path}/{variant}"], node.dtype, f"{prev_path}/{variant}"
+            mapping[f"{prev_path}/{variant}"] = is_valid_data_field(
+                mapping[f"{prev_path}/{variant}"],
+                node.dtype,
+                node.items,
+                f"{prev_path}/{variant}",
             )
-
-            # Check enumeration
-            if (
-                node.items is not None
-                and mapping[f"{prev_path}/{variant}"] not in node.items
-            ):
-                collector.collect_and_log(
-                    f"{prev_path}/{variant}",
-                    ValidationProblem.InvalidEnum,
-                    node.items,
-                )
 
             # Check unit category
             if node.unit is not None:
@@ -460,19 +475,23 @@ def validate_dict_against(
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
         variants = get_variations_of(node, keys)
-        if not variants:
-            if node.optionality == "required" and node.type in missing_type_err:
-                collector.collect_and_log(
-                    full_path, missing_type_err.get(node.type), None
-                )
+        if (
+            not variants
+            and node.optionality == "required"
+            and node.type in missing_type_err
+        ):
+            collector.collect_and_log(full_path, missing_type_err.get(node.type), None)
             return
 
         for variant in variants:
-            is_valid_data_field(
+            mapping[
+                f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
+            ] = is_valid_data_field(
                 mapping[
                     f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
                 ],
                 node.dtype,
+                node.items,
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
             )
 
@@ -504,18 +523,31 @@ def validate_dict_against(
         # TODO: Raise error or log the issue?
         pass
 
-    def is_documented(key: str, node: NexusNode) -> bool:
+    def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
+        for name in key[1:].replace("@", "").split("/"):
+            children_to_check = [
+                node.search_add_child_for(child)
+                for child in node.get_all_direct_children_names()
+            ]
+            node = best_namefit_of(name, children_to_check)
+
+            if node is None:
+                return None
+
+        return node
+
+    def is_documented(key: str, tree: NexusNode) -> bool:
         if mapping.get(key) is None:
             # This value is not really set. Skip checking it's documentation.
             return True
 
-        for name in key[1:].replace("@", "").split("/"):
-            children = node.get_all_direct_children_names()
-            best_name = best_namefit_of(name, children)
-            if best_name is None:
-                return False
+        # TODO remove when nameType is implemented
+        if key.endswith("/@URL"):
+            return True
 
-            node = node.search_add_child_for(best_name)
+        node = add_best_matches_for(key, tree)
+        if node is None:
+            return False
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field
@@ -526,6 +558,13 @@ def validate_dict_against(
         if "@" in key and node.type != "attribute":
             return False
 
+        # if we arrive here, the key is supposed to be documented.
+        # We still do some further checks before returning.
+
+        # Check general validity
+        mapping[key] = is_valid_data_field(mapping[key], node.dtype, node.items, key)
+
+        # Check main field exists for units
         if (
             isinstance(node, NexusEntity)
             and node.unit is not None
@@ -535,7 +574,7 @@ def validate_dict_against(
                 f"{key}", ValidationProblem.MissingUnit, node.unit
             )
 
-        return is_valid_data_field(mapping[key], node.dtype, key)[0]
+        return True
 
     def recurse_tree(
         node: NexusNode,
@@ -556,7 +595,7 @@ def validate_dict_against(
     ) -> list:
         """
             This method runs through the mapping dictionary and checks if there are any
-            attributes assigned to the fields (not groups!) which are not expicitly
+            attributes assigned to the fields (not groups!) which are not explicitly
             present in the mapping.
             If there are any found, a warning is logged and the corresponding items are
             added to the list returned by the method.
@@ -573,9 +612,10 @@ def validate_dict_against(
 
         for key in mapping:
             last_index = key.rfind("/")
-            if key[last_index + 1] == "@":
+            if key[last_index + 1] == "@" and key[last_index + 1 :] != "@units":
                 # key is an attribute. Find a corresponding parent, check all the other
                 # children of this parent
+                # ignore units here, they are checked separately
                 attribute_parent_checked = False
                 for key_iterating in mapping:
                     # check if key_iterating starts with parent of the key OR any
@@ -657,7 +697,7 @@ def validate_dict_against(
         if (next_child_class is not None) or (next_child_name is not None):
             output = None
             for child in node.children:
-                # regexs to separarte the class and the name from full name of the child
+                # regexs to separate the class and the name from full name of the child
                 child_class_from_node = re.sub(
                     r"(\@.*)*(\[.*?\])*(\(.*?\))*([a-z]\_)*(\_[a-z])*[a-z]*\s*",
                     "",
@@ -745,22 +785,55 @@ def validate_dict_against(
     not_visited = list(mapping)
     recurse_tree(tree, nested_keys)
 
+    keys_to_remove = check_attributes_of_nonexisting_field(tree)
+
     for not_visited_key in not_visited:
         if not_visited_key.endswith("/@units"):
-            if is_documented(not_visited_key.rsplit("/", 1)[0], tree):
-                continue
-            if not_visited_key.rsplit("/", 1)[0] not in not_visited:
+            # check that parent exists
+            if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
                 collector.collect_and_log(
                     not_visited_key,
                     ValidationProblem.UnitWithoutField,
                     not_visited_key.rsplit("/", 1)[0],
                 )
-            if not ignore_undocumented:
                 collector.collect_and_log(
                     not_visited_key,
-                    ValidationProblem.UnitWithoutDocumentation,
-                    mapping[not_visited_key],
+                    ValidationProblem.KeyToBeRemoved,
+                    None,
                 )
+                keys_to_remove.append(not_visited_key)
+            else:
+                # check that parent has units
+                node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
+                if node is None or node.type != "field" or node.unit is None:
+                    collector.collect_and_log(
+                        not_visited_key,
+                        ValidationProblem.UnitWithoutDocumentation,
+                        mapping[not_visited_key],
+                    )
+
+            # parent key will be checked on its own if it exists, because it is in the list
+            continue
+
+        if "@" in not_visited_key.rsplit("/")[-1]:
+            # check that parent exists
+            if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
+                # check that parent is not a group
+                node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
+                if node is None or node.type != "group":
+                    collector.collect_and_log(
+                        not_visited_key.rsplit("/", 1)[0],
+                        ValidationProblem.AttributeForNonExistingField,
+                        None,
+                    )
+                    collector.collect_and_log(
+                        not_visited_key,
+                        ValidationProblem.KeyToBeRemoved,
+                        None,
+                    )
+                    keys_to_remove.append(not_visited_key)
+                    continue
+
         if is_documented(not_visited_key, tree):
             continue
 
@@ -769,7 +842,6 @@ def validate_dict_against(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
 
-    keys_to_remove = check_attributes_of_nonexisting_field(tree)
     return (not collector.has_validation_problems(), keys_to_remove)
 
 
@@ -802,6 +874,6 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
 
 # Backwards compatibility
 def validate_data_dict(
-    _: Mapping[str, Any], read_data: Mapping[str, Any], root: ET._Element
+    _: MutableMapping[str, Any], read_data: MutableMapping[str, Any], root: ET._Element
 ) -> bool:
     return validate_dict_against(root.attrib["name"], read_data)[0]
