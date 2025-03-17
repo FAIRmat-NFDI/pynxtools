@@ -213,77 +213,41 @@ def test_get_node_at_nxdl_path():
     """Test to verify if we receive the right XML element for a given NXDL path"""
     local_dir = os.path.abspath(os.path.dirname(__file__))
     nxdl_file_path = os.path.join(local_dir, "../../src/pynxtools/data/NXtest.nxdl.xml")
+
     elem = ET.parse(nxdl_file_path).getroot()
+
     node = get_node_at_nxdl_path("/ENTRY/NXODD_name", elem=elem)
     assert node.attrib["type"] == "NXdata"
     assert node.attrib["name"] == "NXODD_name"
 
+    node = get_node_at_nxdl_path("/ENTRY/NXODD_name/anamethatRENAMES", elem=elem)
+    assert node.attrib["type"] == "NX_INT"
+    assert node.attrib["name"] == "anamethatRENAMES"
+    assert node.attrib["nameType"] == "partial"
+    assert node.attrib["units"] == "NX_UNITLESS"
+
     node = get_node_at_nxdl_path("/ENTRY/NXODD_name/float_value", elem=elem)
     assert node.attrib["type"] == "NX_FLOAT"
     assert node.attrib["name"] == "float_value"
+    assert not node.attrib.get("nameType")
 
     node = get_node_at_nxdl_path("/ENTRY/NXODD_name/AXISNAME/long_name", elem=elem)
     assert node.attrib["name"] == "long_name"
 
-    nxdl_file_path = os.path.join(local_dir, "../data/nexus/NXtest2.nxdl.xml")
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/USER/affiliation", elem=elem
-    )
+    node = get_node_at_nxdl_path("/ENTRY/NXODD_name/group_attribute", elem=elem)
+    assert node.attrib["name"] == "group_attribute"
+
+    node = get_node_at_nxdl_path("/ENTRY/optional_parent", elem=elem)
+    assert node.attrib["name"] == "optional_parent"
+    assert node.attrib["optional"] == "true"
+
+    node = get_node_at_nxdl_path("/ENTRY/optional_parent/required_child", elem=elem)
+    assert node.attrib["name"] == "required_child"
+    assert node.attrib["type"] == "NX_INT"
+    assert node.attrib["required"] == "true"
+
+    node = get_node_at_nxdl_path("/ENTRY/USER/affiliation", elem=elem)
     assert node.attrib["name"] == "affiliation"
-
-    node = get_node_at_nxdl_path("/ENTRY/measurement", elem=elem)
-    assert node.attrib["type"] == "NXevent_data_em_set"
-
-    node = get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/stack_3d", elem=elem
-    )
-    assert node.attrib["type"] == "NXdata"
-
-    node = get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/stack_3d/intensity", elem=elem
-    )
-    assert node.attrib["type"] == "NX_NUMBER"
-
-    node = get_node_at_nxdl_path(
-        "/ENTRY/measurement/EVENT_DATA_EM/SPECTRUM_SET/stack_3d/AXISNAME_indices",
-        elem=elem,
-    )
-    assert node.attrib["name"] == "AXISNAME_indices"
-
-    node = get_node_at_nxdl_path("/ENTRY/COORDINATE_SYSTEM_SET", elem=elem)
-    assert node.attrib["type"] == "NXcoordinate_system_set"
-
-    node = get_node_at_nxdl_path(
-        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS", elem=elem
-    )
-    assert node.attrib["type"] == "NXtransformations"
-
-    node = get_node_at_nxdl_path(
-        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME", elem=elem
-    )
-    assert node.attrib["type"] == "NX_NUMBER"
-
-    node = get_node_at_nxdl_path(
-        "/ENTRY/COORDINATE_SYSTEM_SET/TRANSFORMATIONS/AXISNAME/transformation_type",
-        elem=elem,
-    )
-    assert node.attrib["name"] == "transformation_type"
-
-    nxdl_file_path = os.path.join(
-        local_dir,
-        "../../src/pynxtools/definitions/contributed_definitions/NXiv_temp.nxdl.xml",
-    )
-    elem = ET.parse(nxdl_file_path).getroot()
-    node = get_node_at_nxdl_path(
-        "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller", elem=elem
-    )
-    assert node.attrib["name"] == "voltage_controller"
-
-    node = get_node_at_nxdl_path(
-        "/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller/calibration_time", elem=elem
-    )
-    assert node.attrib["name"] == "calibration_time"
 
 
 def test_get_inherited_nodes():
@@ -297,18 +261,18 @@ def test_get_inherited_nodes():
     (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT", elem=elem
     )
-    assert len(elist) == 3
+    assert len(elist) == 4
 
     (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller", elem=elem
     )
-    assert len(elist) == 4
+    assert len(elist) == 6
 
     (_, _, elist) = get_inherited_nodes(
         nxdl_path="/ENTRY/INSTRUMENT/ENVIRONMENT/voltage_controller",
         nx_name="NXiv_temp",
     )
-    assert len(elist) == 4
+    assert len(elist) == 6
 
 
 def test_c_option(tmp_path):
