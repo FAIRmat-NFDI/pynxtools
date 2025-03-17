@@ -141,24 +141,10 @@ class NexusActivityStep(ActivityStep):
 class NexusIdentifier(EntityReference):
     name = Quantity(
         type=str,
-        description="The name of the identifier inferred from identifier value.",
+        description="The name of the nexus identifier field.",
     )
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-        if not self.name:
-            self.name = self.lab_id
-
-
-class NexusReferences(ArchiveSection):
-    identifier = SubSection(
-        section_def=EntityReference,
-        repeats=True,
-        description="A reference corresponds to a NeXus identifierNAME field.",
-    )
-
-    def normalize(self, archive, logger):
-        super().normalize(archive, logger)
         from nomad.processing import Entry
 
         def create_Entity(lab_id, archive, f_name, qunt_name):
@@ -185,43 +171,47 @@ class NexusReferences(ArchiveSection):
             return f"../uploads/{upload_id}/archive/{entry_id}#data"
             # return f"/entries/{entry_id}/archive#/data"
 
+        f_name = f"{self.name}_{self.lab_id}.archive.json"
+        # Chekc if the entry already exists
+        entry = Entry.objects(
+            upload_id=archive.metadata.upload_id, mainfile=f_name
+        ).first()
+        if not entry:
+            create_Entity(self.lab_id, archive, f_name, self.name)
+        self.reference = get_entry_reference(archive, f_name)
+        super().normalize(archive, logger)
+
+
+class NexusReferences(ArchiveSection):
+    NXidentifiers = SubSection(
+        section_def=NexusIdentifier,
+        repeats=True,
+        description="These are the NOMAD references correspond to NeXus identifierNAME fields.",
+    )
+
+    def normalize(self, archive, logger):
         # Consider multiple identifiers exists in the same group/section
         identifiers = [
             key
             for key in self.__dict__.keys()
             if key.startswith("identifier") and key.endswith("__field")
         ]
-        lab_id = None
         if not identifiers:
             return
-        self.identifier = []
+        self.NXidentifiers = []
         for identifier in identifiers:
             if not (val := getattr(self, identifier)):
                 continue
-            id_ = (
+            lab_id = (
                 re.split("([0-9a-zA-Z.]+)", val)[1]
                 + hashlib.md5(val.encode()).hexdigest()
             )
-            if not lab_id:
-                logger.info(f"{val} - identifier received")
-                lab_id = id_
-            else:
-                logger.info(f"Identifier {val} refers to {lab_id}.")
-
+            identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
             logger.info(f"{lab_id} to be created")
-
-            f_name = f"{self.m_def.name}_{id_}.archive.json"
-            quant_name = identifier.split("__field")[0]
-            # Chekc if the entry already exists
-            entry = Entry.objects(
-                upload_id=archive.metadata.upload_id, mainfile=f_name
-            ).first()
-            if not entry:
-                create_Entity(lab_id, archive, f_name, quant_name)
-            reference = get_entry_reference(archive, f_name)
-            self.identifier.append(
-                NexusIdentifier(lab_id=lab_id, reference=reference, name=val)
-            )
+            logger.info(f"Identifier {val} refers to {lab_id}.")
+            nx_id = NexusIdentifier(lab_id=lab_id, name=identifier_path)
+            nx_id.normalize(archive, logger)
+            self.NXidentifiers.append(nx_id)
 
 
 class NexusActivityResult(ActivityResult):
