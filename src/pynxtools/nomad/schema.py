@@ -436,12 +436,12 @@ def nxdata_ensure_definition(
         else:
             filters = ["DATA", "AXISNAME", "FIELDNAME_errors"]
         # get the reduced options
-        newdefintions = {}
+        newdefinitions = {}
         for dname, definition in self.m_def.all_aliases:
             if dname not in filters:
-                newdefintions[dname] = definition
+                newdefinitions[dname] = definition
         # run the query
-        definition = resolve_variadic_name(newdefintions, def_or_name, hint)
+        definition = resolve_variadic_name(newdefinitions, def_or_name, hint)
         return definition
     return super(current_cls, self)._ensure_definition(
         def_or_name,
@@ -481,9 +481,11 @@ def __get_enumeration(xml_node: ET.Element) -> Tuple[Optional[MEnum], Optional[b
         return None, None
 
     items = enumeration.findall("nx:item", __XML_NAMESPACES)
-    open = bool(enumeration.attrib["open"]) if "open" in enumeration.attrib else False
+    open_enum = (
+        bool(enumeration.attrib["open"]) if "open" in enumeration.attrib else False
+    )
 
-    return MEnum([value.attrib["value"] for value in items]), open
+    return MEnum([value.attrib["value"] for value in items]), open_enum
 
 
 def __add_common_properties(xml_node: ET.Element, definition: Definition):
@@ -694,7 +696,6 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
         dimensionality = NXUnitSet.mapping.get(nx_dimensionality)
         if not dimensionality and nx_dimensionality != "NX_ANY":
             try:
-                # nx_dimensionality = "some_chasdasdkasdn m"
                 from nomad.units import ureg
 
                 quantity = 1 * ureg(nx_dimensionality)
