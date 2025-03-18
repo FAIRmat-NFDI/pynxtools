@@ -139,13 +139,8 @@ class NexusActivityStep(ActivityStep):
 
 
 class NexusIdentifier(EntityReference):
-    name = Quantity(
-        type=str,
-        description="The name of the nexus identifier field.",
-    )
 
     def normalize(self, archive, logger):
-        from nomad.processing import Entry
 
         def create_Entity(lab_id, archive, f_name, qunt_name):
             entitySec = Entity()
@@ -173,14 +168,15 @@ class NexusIdentifier(EntityReference):
         super().normalize(archive, logger)
         if not self.reference:
             lab_hash = hashlib.md5(self.lab_id.encode()).hexdigest()
-
-            f_name = f"{self.name}_{lab_hash}.archive.json"
+            # skip any special characters e.g. /
+            name_filtered = re.split("([0-9a-zA-Z.]+)", self.name)[1]
+            f_name = f"{name_filtered}_{lab_hash}.archive.json"
             create_Entity(self.lab_id, archive, f_name, self.name)
             self.reference = get_entry_reference(archive, f_name)
 
 
 class NexusReferences(ArchiveSection):
-    NXidentifiers = SubSection(
+    NexusIdentifiers = SubSection(
         section_def=NexusIdentifier,
         repeats=True,
         description="These are the NOMAD references correspond to NeXus identifierNAME fields.",
@@ -195,15 +191,24 @@ class NexusReferences(ArchiveSection):
         ]
         if not identifiers:
             return
-        self.NXidentifiers = []
+        self.NexusIdentifiers = []
         for identifier in identifiers:
             if not (val := getattr(self, identifier)):
                 continue
-            identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
+            # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
+            field_n = identifier.split('__field')[0]
             logger.info(f"Lab id {val} to be created")
-            nx_id = NexusIdentifier(lab_id=val, name=identifier_path)
+            nx_id = NexusIdentifier(lab_id=val, name=field_n)
+            nx_id.m_set_section_attribute(
+                "m_nx_data_path", self.m_get_section_attribute("m_nx_data_path") + "/" + identifier.split("__field")[0]
+            )
+            nx_id.m_set_section_attribute(
+                "m_nx_data_file", self.m_get_section_attribute("m_nx_data_file")
+            )
+
             nx_id.normalize(archive, logger)
-            self.NXidentifiers.append(nx_id)
+            self.NexusIdentifiers.append(nx_id)
+        super().normalize(archive, logger)
 
 
 class NexusActivityResult(ActivityResult):
