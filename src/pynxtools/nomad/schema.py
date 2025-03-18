@@ -138,7 +138,7 @@ class NexusActivityStep(ActivityStep):
     )
 
 
-class NexusIdentifier(EntityReference):
+class AnchoredReference(EntityReference):
 
     def normalize(self, archive, logger):
 
@@ -169,15 +169,16 @@ class NexusIdentifier(EntityReference):
         if not self.reference:
             lab_hash = hashlib.md5(self.lab_id.encode()).hexdigest()
             # skip any special characters e.g. /
-            name_filtered = re.split("([0-9a-zA-Z.]+)", self.name)[1]
-            f_name = f"{name_filtered}_{lab_hash}.archive.json"
+            parent_concept = self.m_parent.m_def.name
+            filter_name = re.split("([0-9a-zA-Z.]+)", self.name)[1]
+            f_name = f"{parent_concept}_{filter_name}_{lab_hash}.archive.json"
             create_Entity(self.lab_id, archive, f_name, self.name)
             self.reference = get_entry_reference(archive, f_name)
 
 
 class NexusReferences(ArchiveSection):
-    NexusIdentifiers = SubSection(
-        section_def=NexusIdentifier,
+    AnchoredReferences = SubSection(
+        section_def=AnchoredReference,
         repeats=True,
         description="These are the NOMAD references correspond to NeXus identifierNAME fields.",
     )
@@ -191,23 +192,24 @@ class NexusReferences(ArchiveSection):
         ]
         if not identifiers:
             return
-        self.NexusIdentifiers = []
+        self.AnchoredReferences = []
         for identifier in identifiers:
             if not (val := getattr(self, identifier)):
                 continue
             # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
             field_n = identifier.split('__field')[0]
             logger.info(f"Lab id {val} to be created")
-            nx_id = NexusIdentifier(lab_id=val, name=field_n)
+            nx_id = AnchoredReference(lab_id=val, name=field_n)
             nx_id.m_set_section_attribute(
-                "m_nx_data_path", self.m_get_section_attribute("m_nx_data_path") + "/" + identifier.split("__field")[0]
+                "m_nx_data_path", self.m_get_quantity_attribute(identifier, "m_nx_data_path")
             )
             nx_id.m_set_section_attribute(
-                "m_nx_data_file", self.m_get_section_attribute("m_nx_data_file")
+                "m_nx_data_file", self.m_get_quantity_attribute(identifier, "m_nx_data_file")
             )
 
+            self.AnchoredReferences.append(nx_id)
             nx_id.normalize(archive, logger)
-            self.NexusIdentifiers.append(nx_id)
+
         super().normalize(archive, logger)
 
 
@@ -1132,7 +1134,7 @@ def init_nexus_metainfo():
     nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
     nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
     nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusIdentifier.m_def)
+    nexus_metainfo_package.section_definitions.append(AnchoredReference.m_def)
     nexus_metainfo_package.section_definitions.append(NexusReferences.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
