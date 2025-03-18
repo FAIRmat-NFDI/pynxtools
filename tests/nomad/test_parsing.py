@@ -77,6 +77,16 @@ def test_nexus_example():
     assert (1 * data.AXISNAME__field["angles__field"].unit).check("1/Å")
     assert (1 * data.AXISNAME__field["delays__field"].unit).check("fs")
     assert data.___axes == "['angles', 'energies', 'delays']"
+    # testing attributes
+    assert (
+        data.AXISNAME__field["angles__field"].attributes.get("m_nx_data_path")
+        == "/entry/data/angles"
+    )
+    assert (
+        data.m_get_quantity_attribute("angles__field", "m_nx_data_path")
+        == "/entry/data/angles"
+    )
+    assert data.m_attributes.get("m_nx_data_path") == "/entry/data"
 
 
 def test_same_name_field_and_group():
