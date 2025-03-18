@@ -84,6 +84,29 @@ def listify_template(data_dict: Template):
 
 
 TEMPLATE = Template()
+TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
+
+TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1
+TEMPLATE["optional"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field"] = 1
+
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group_with_no_name_type/specified_field_with_no_name_type"
+] = 1.0
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group_with_no_name_type/specified_field_with_no_name_type/@specified_attr_in_field_with_no_name_type"
+] = "data"
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group_with_no_name_type/@specified_attr_with_no_name_type"
+] = "attr"
+
+TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/specified_field"] = 1.0
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field"
+] = "attr"
+TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/@specified_attr"] = "attr"
+
 TEMPLATE["optional"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
 ] = 2
@@ -94,16 +117,15 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units
 TEMPLATE["optional"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[float_value_no_attr]"
 ] = (2.0,)
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value"] = 2
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units"] = (
     "eV"
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
+
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
     [1, 2, 3],  # pylint: disable=E1126
     dtype=np.int8,
@@ -118,8 +140,15 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@units"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute"] = (
     "data"  # pylint: disable=E1126
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
+    "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units"] = ""
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array"] = [0, 1, 2]
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/@signal"] = "data"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]"] = 1  # pylint: disable=E1126
+
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] = True  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value/@units"
@@ -163,23 +192,16 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/@group_attribu
 )
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/@signal"] = "data"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/DATA[data]"] = 1  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array"] = [0, 1, 2]
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
-    "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
-)
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units"] = ""
-TEMPLATE["optional"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field"] = 1
+
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = (
     "An example description"
 )
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = (
     "An example description"
 )
+
+TEMPLATE["required"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
+TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"
 ] = 1
@@ -656,6 +678,36 @@ TEMPLATE["required"][
             ),
             [],
             id="no-child-provided-optional-parent",
+        ),
+        pytest.param(
+            alter_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/optional_parent/required_child",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/optional_parent/DATA[required_child]",
+                1,
+            ),
+            [],
+            id="concept-name-given-for-nonvariadic-field",
+        ),
+        pytest.param(
+            alter_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/optional_parent/optional_child",
+                    "optional",
+                ),
+                "/ENTRY[my_entry]/optional_parent/AXISNAME[optional_child]",
+                "test value",
+            ),
+            [
+                "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
+                "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
+                "defined in the NXDL as NX_INT."
+            ],
+            id="concept-name-given-for-nonvariadic-field-wrong-type",
         ),
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
