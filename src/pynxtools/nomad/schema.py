@@ -91,6 +91,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+
 from pynxtools import get_definitions_url
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad.utils import (
@@ -137,6 +138,81 @@ class NexusActivityStep(ActivityStep):
     )
 
 
+class AnchoredReference(EntityReference):
+
+    def normalize(self, archive, logger):
+
+        def create_Entity(lab_id, archive, f_name, qunt_name):
+            entitySec = Entity()
+            entitySec.lab_id = lab_id
+            entitySec.name = qunt_name
+            entity = EntryArchive(
+                data=entitySec,
+                m_context=archive.m_context,
+                metadata=EntryMetadata(
+                    entry_type="identifier", domain="nexus", readonly=True
+                ),
+            )
+            with archive.m_context.raw_file(f_name, "w") as f_obj:
+                json.dump(entity.m_to_dict(with_meta=True), f_obj)
+            archive.m_context.process_updated_raw_file(f_name)
+
+        def get_entry_reference(archive, f_name):
+            """Returns a reference to data from entry."""
+            from nomad.utils import hash
+
+            upload_id = archive.metadata.upload_id
+            entry_id = hash(upload_id, f_name)
+            return f"../uploads/{upload_id}/archive/{entry_id}#data"
+
+        super().normalize(archive, logger)
+        if not self.reference:
+            lab_hash = hashlib.md5(self.lab_id.encode()).hexdigest()
+            # skip any special characters e.g. /
+            parent_concept = self.m_parent.m_def.name
+            filter_name = re.split("([0-9a-zA-Z.]+)", self.name)[1]
+            f_name = f"{parent_concept}_{filter_name}_{lab_hash}.archive.json"
+            create_Entity(self.lab_id, archive, f_name, self.name)
+            self.reference = get_entry_reference(archive, f_name)
+
+
+class NexusReferences(ArchiveSection):
+    AnchoredReferences = SubSection(
+        section_def=AnchoredReference,
+        repeats=True,
+        description="These are the NOMAD references correspond to NeXus identifierNAME fields.",
+    )
+
+    def normalize(self, archive, logger):
+        # Consider multiple identifiers exists in the same group/section
+        identifiers = [
+            key
+            for key in self.__dict__.keys()
+            if key.startswith("identifier") and key.endswith("__field")
+        ]
+        if not identifiers:
+            return
+        self.AnchoredReferences = []
+        for identifier in identifiers:
+            if not (val := getattr(self, identifier)):
+                continue
+            # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
+            field_n = identifier.split('__field')[0]
+            logger.info(f"Lab id {val} to be created")
+            nx_id = AnchoredReference(lab_id=val, name=field_n)
+            nx_id.m_set_section_attribute(
+                "m_nx_data_path", self.m_get_quantity_attribute(identifier, "m_nx_data_path")
+            )
+            nx_id.m_set_section_attribute(
+                "m_nx_data_file", self.m_get_quantity_attribute(identifier, "m_nx_data_file")
+            )
+
+            self.AnchoredReferences.append(nx_id)
+            nx_id.normalize(archive, logger)
+
+        super().normalize(archive, logger)
+
+
 class NexusActivityResult(ActivityResult):
     reference = Quantity(
         type=ArchiveSection,
@@ -152,11 +228,10 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    # "NXidentifier": [EntityReference],
+    "NXobject": [NexusReferences],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
-    # "object": BaseSection,
 }
 
 
@@ -868,6 +943,8 @@ def __create_class_section(xml_node: ET.Element) -> Section:
         class_section.base_sections = [nx_base_sec] + [
             cls.m_def for cls in nomad_base_sec_cls
         ]
+    elif __rename_nx_for_nomad(nx_name) == "Object":
+        class_section.base_sections = [cls.m_def for cls in nomad_base_sec_cls]
 
     __add_common_properties(xml_node, class_section)
 
@@ -1057,6 +1134,8 @@ def init_nexus_metainfo():
     nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
     nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
     nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
+    nexus_metainfo_package.section_definitions.append(AnchoredReference.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusReferences.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
@@ -1160,52 +1239,6 @@ def normalize_data(self, archive, logger):
     super(current_cls, self).normalize(archive, logger)
 
 
-def normalize_identifier(self, archive, logger):
-    """Normalizer for Identifier section."""
-
-    def create_Entity(lab_id, archive, f_name):
-        entitySec = Entity()
-        entitySec.lab_id = lab_id
-        entity = EntryArchive(
-            data=entitySec,
-            m_context=archive.m_context,
-            metadata=EntryMetadata(
-                entry_type="identifier", domain="nexus", readonly=True
-            ),  # upload_id=archive.m_context.upload_id,
-        )
-        with archive.m_context.raw_file(f_name, "w") as f_obj:
-            json.dump(entity.m_to_dict(with_meta=True), f_obj)
-            # json.dump(entity.m_to_dict(), f_obj)
-        archive.m_context.process_updated_raw_file(f_name)
-
-    def get_entry_reference(archive, f_name):
-        """Returns a reference to data from entry."""
-        from nomad.utils import hash
-
-        upload_id = archive.metadata.upload_id
-        entry_id = hash(upload_id, f_name)
-
-        return f"/entries/{entry_id}/archive#/data"
-
-    current_cls = __section_definitions[
-        __rename_nx_for_nomad("NXidentifier")
-    ].section_cls
-    # super(current_cls, self).normalize(archive, logger)
-    if self.identifier__field:
-        logger.info(f"{self.identifier__field} - identifier received")
-        self.lab_id = self.identifier__field  # + "__occurrence"
-    EntityReference.normalize(self, archive, logger)
-    if not self.reference:
-        logger.info(f"{self.lab_id} to be created")
-        f_name = re.split("([0-9a-zA-Z.]+)", self.lab_id)[1]
-        if len(f_name) != len(self.lab_id):
-            f_name = f_name + hashlib.md5(self.lab_id.encode()).hexdigest()
-        f_name = f"{current_cls.__name__}_{f_name}.archive.json"
-        create_Entity(self.lab_id, archive, f_name)
-        self.reference = get_entry_reference(archive, f_name)
-        logger.info(f"{self.reference} - referenced directly")
-
-
 def normalize_atom_probe(self, archive, logger):
     current_cls = __section_definitions[
         f"{__rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe"
@@ -1214,11 +1247,6 @@ def normalize_atom_probe(self, archive, logger):
     # temporarily disable extra normalisation step
 
     def plot_3d_plotly(df, palette="Set1"):
-        import re
-
-        import h5py
-        import numpy as np
-        import pandas as pd
         import plotly.express as px
         import plotly.graph_objects as go
         from scipy.spatial import cKDTree
@@ -1271,9 +1299,6 @@ def normalize_atom_probe(self, archive, logger):
             ),
         )
         return fig
-
-    # if archive:
-    #     return
 
     data_path = self.m_attributes["m_nx_data_path"]
     with h5py.File(
@@ -1392,7 +1417,6 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
     __rename_nx_for_nomad("NXsample"): normalize_sample,
     __rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
-    __rename_nx_for_nomad("NXidentifier"): normalize_identifier,
     __rename_nx_for_nomad("NXentry"): {
         "normalize": normalize_entry,
     },
@@ -1402,7 +1426,6 @@ __NORMALIZER_MAP: Dict[str, Any] = {
     __rename_nx_for_nomad("NXdata"): normalize_data,
     f"{__rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe": normalize_atom_probe,
 }
-
 # Handling nomad BaseSection and other inherited Section from BaseSection
 for nx_name, section in __section_definitions.items():
     if nx_name == "NXobject":
