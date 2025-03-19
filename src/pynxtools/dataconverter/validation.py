@@ -368,6 +368,7 @@ def validate_dict_against(
 
     def handle_group(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         variants = get_variations_of(node, keys)
+
         if node.parent_of:
             for child in node.parent_of:
                 variants += get_variations_of(child, keys)
@@ -557,10 +558,6 @@ def validate_dict_against(
             if node is None:
                 return None
 
-            if node.type == "group" and node.nx_class == "NXcollection":
-                # Stop iterating, return NXcollection node
-                return node
-
         return node
 
     def is_documented(key: str, tree: NexusNode) -> bool:
@@ -571,6 +568,18 @@ def validate_dict_against(
         node = add_best_matches_for(key, tree)
 
         if node is None:
+            key_path = key.replace("@", "")
+            while "/" in key_path:
+                key_path = key_path.rsplit("/", 1)[0]  # Remove last segment
+                parent_node = add_best_matches_for(key_path, tree)
+                if (
+                    parent_node
+                    and parent_node.type == "group"
+                    and parent_node.nx_class == "NXcollection"
+                ):
+                    # Collection found for parents, mark as documented
+                    return True
+
             return False
 
         if node.type == "group" and node.nx_class == "NXcollection":

@@ -729,6 +729,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
                 1,
             ),
+            # ToDo: should not raise a warning if sibling inheritance works
             [
                 "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
                 "required_child is required and hasn't been supplied by the reader."
@@ -1048,7 +1049,7 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/identified_user/identifier_1",
+                "/ENTRY[my_entry]/identified_calibration/identifier_1",
                 "123",
             ),
             [],
@@ -1059,10 +1060,10 @@ TEMPLATE["required"][
         #     alter_dict(
         #         alter_dict(
         #             TEMPLATE,
-        #             "/ENTRY[my_entry]/identified_user/identifier_1",
+        #             "/ENTRY[my_entry]/identified_calibration/identifier_1",
         #             "123",
         #         ),
-        #         "/ENTRY[my_entry]/identified_user/identifier_1/@type",
+        #         "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
         #         "ORCID",
         #     ),
         #     [],
@@ -1125,10 +1126,10 @@ TEMPLATE["required"][
             alter_dict(
                 alter_dict(
                     TEMPLATE,
-                    "/ENTRY[entry]/named_collection/some_field",
+                    "/ENTRY[my_entry]/named_collection/some_field",
                     0.5,
                 ),
-                "/ENTRY[entry]/named_collection/DATA[data]/some_field",
+                "/ENTRY[my_entry]/named_collection/DATA[data]/some_field",
                 0.5,
             ),
             [],
