@@ -600,11 +600,12 @@ nx_char = (str, np.character)
 nx_int = (int, np.integer)
 nx_float = (float, np.floating)
 nx_number = nx_int + nx_float
+nx_bool = (bool, np.bool_)
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.bytes_),
-    "NX_BOOLEAN": (bool, np.bool_),
+    "NX_BOOLEAN": nx_bool,
     "NX_CHAR": nx_char,
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": nx_float,
@@ -616,7 +617,7 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
         complex,
         np.complexfloating,
     ),
-    "NX_CHAR_OR_NUMBER": nx_char + nx_number,
+    "NX_CHAR_OR_NUMBER": nx_char + nx_number + nx_bool,
     "NXDL_TYPE_UNAVAILABLE": (
         nx_char,
     ),  # Defaults to a string if a type is not provided.
