@@ -57,7 +57,13 @@ class ExampleReader(BaseReader):
             # The entries in the template dict should correspond with what the dataconverter
             # outputs with --generate-template for a provided NXDL file
             if (
-                k.startswith("/ENTRY[entry]/required_group")
+                k.startswith(
+                    (
+                        "/ENTRY[entry]/required_group",
+                        "/ENTRY[entry]/specified_group",
+                        "/ENTRY[entry]/any_groupGROUP[any_groupgroup]",
+                    )
+                )
                 or k
                 in (
                     "/ENTRY[entry]/optional_parent/req_group_in_opt_group",
