@@ -771,15 +771,6 @@ class NexusGroup(NexusNode):
             return f"@{self.name} ({self.optionality[:3]})"
         return f"{self.name} ({self.optionality[:3]})"
 
-    # def __repr__(self) -> str:
-    #     inh_str = "\n   ".join(str(parent.attrib) for parent in self.inheritance)
-    #     sib_str = "\n   ".join(str(sibling) for sibling in self.is_a)
-
-    #     inh_part = f"\n inh:\n   {inh_str}" if inh_str else ""
-    #     sib_part = f"\n sib: {sib_str}" if sib_str else ""
-
-    #     return f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality}, nameType: {self.name_type}{inh_part}{sib_part})"
-
 
 class NexusEntity(NexusNode):
     """
