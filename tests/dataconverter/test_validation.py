@@ -1042,6 +1042,28 @@ TEMPLATE["required"][
             ],
             id="baseclass-field-with-illegal-unit",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/identifierNAME[identifier_id]",
+                "123",
+            ),
+            [],
+            id="identifier",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
+                "ORCID",
+            ),
+            [],
+            id="identifier-with-type",
+        ),
         # This can be re-used later when we have proper unit checking
         pytest.param(
             alter_dict(
