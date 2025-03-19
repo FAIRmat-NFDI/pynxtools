@@ -30,10 +30,10 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-igor
-            branch: main
-            tests_to_run: tests/.
+            branch: update-definitions
+            tests_to_run: tests/.    
           - plugin: pynxtools-mpes
-            branch: main
+            branch: update-definitions
             tests_to_run: tests/.
           - plugin: pynxtools-raman
             branch: update

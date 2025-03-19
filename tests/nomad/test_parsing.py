@@ -64,19 +64,29 @@ def test_nexus_example():
     data = arpes_obj.ENTRY[0].DATA[0]
     assert len(data.AXISNAME__field) == 3
     # there is still a bug in the variadic name resolution, so skip these
-    # assert data.delays__field is not None
-    # assert data.angles__field.check("1/Å")
+    assert data.delays__field is not None
+    assert data.angles__field.check("1/Å")
+    # ToDo: if AXISNAME and DATA can be resolved properly, extend this!
     # assert data.delays__field.check("fs")
-    # assert data.energies__field is not None
-    # assert data.energies__field.check("eV")
+    # but the following still works
+    assert data.energies__field is not None
+    assert data.energies__field.check("eV")
     # manual name resolution
     assert data.AXISNAME__field["angles__field"] is not None
     assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
     assert (1 * data.AXISNAME__field["angles__field"].unit).check("1/Å")
     assert (1 * data.AXISNAME__field["delays__field"].unit).check("fs")
-    assert (1 * data.AXISNAME__field["energies__field"].unit).check("eV")
-    assert (1 * data.DATA__field["data__field"].unit).check("1")
     assert data.___axes == "['angles', 'energies', 'delays']"
+    # testing attributes
+    assert (
+        data.AXISNAME__field["angles__field"].attributes.get("m_nx_data_path")
+        == "/entry/data/angles"
+    )
+    assert (
+        data.m_get_quantity_attribute("angles__field", "m_nx_data_path")
+        == "/entry/data/angles"
+    )
+    assert data.m_attributes.get("m_nx_data_path") == "/entry/data"
 
 
 def test_same_name_field_and_group():

@@ -27,9 +27,34 @@
                 <doc>A dummy entry to test optional parent check for an optional child.</doc>
             </field>
         </group>
+        <group type="NXdata" name="specified_group_with_no_name_type">
+            <doc>A group with a (specified) name, but nameType not given explicitly.</doc>
+            <field name="specified_field_with_no_name_type" type="NX_FLOAT" units="NX_ANY">
+                <attribute name="specified_attr_in_field_with_no_name_type"/>
+            </field>
+            <attribute name="specified_attr_with_no_name_type"/>
+        </group>
+        <group type="NXdata" name="specified_group" nameType="specified">
+            <doc>A group with a name and nameType="specified".</doc>
+            <field name="specified_field" type="NX_FLOAT" units="NX_ANY">
+                <attribute name="specified_attr_in_field"/>
+            </field>
+            <attribute name="specified_attr"/>
+        </group>
+        <group type="NXdata" name="any_groupGROUP" nameType="any">
+            <doc>A group with a name and nameType="any".</doc>
+            <field name="any_fieldFIELD" nameType="any" type="NX_FLOAT" units="NX_ANY">
+                <attribute name="any_attrATTR_in_field" nameType="any"/>
+            </field>
+            <attribute name="any_attrATTR" nameType="any"/>
+        </group>
         <group type="NXdata" name="NXODD_name" nameType="partial">
+            <field name="anamethatRENAMES" nameType="partial" type="NX_INT" units="NX_UNITLESS"/>
             <field name="float_value" type="NX_FLOAT" optional="true" units="NX_ENERGY">
                 <doc>A dummy entry for a float value.</doc>
+            </field>
+            <field name="number_value" type="NX_NUMBER" optional="true" units="NX_ENERGY">
+                <doc>A dummy entry for a number value.</doc>
             </field>
             <field name="bool_value" type="NX_BOOLEAN" required="true" units="NX_UNITLESS">
                 <doc>A dummy entry for a bool value.</doc>
@@ -53,6 +78,12 @@
                     <item value="3rd type"/>
                     <item value="4th type"/>
                 </enumeration>
+                <attribute name="array" type="NX_INT">
+                    <enumeration>
+                        <item value="[0, 1, 2]" />
+                        <item value="[2, 3, 4]" />
+                    </enumeration>
+                </attribute>
             </field>
             <field name="type2" optional="true">
                 <enumeration open="true">
@@ -60,6 +91,13 @@
                     <item value="2nd type open"/>
                 </enumeration>
             </field>
+            <attribute name="group_attribute">
+            </attribute>
+            <attribute name="signal">
+                <enumeration>
+                    <item value="data"/>
+                </enumeration>
+            </attribute>
         </group>
         <group type="NXnote" name="required_group">
             <doc>This is a required yet empty group.</doc>
@@ -78,5 +116,14 @@
                 <doc>This is a required group in an optional group.</doc>
             </group>
         </group>
+        <group type="NXuser" optional="true">
+            <field name="name">
+                <doc>A required NXuser entry.</doc>
+            </field>
+        </group>
+        <group name="identified_calibration" type="NXcalibration" optional="true">
+            <field name="identifier_1"/>
+        </group>
+        <group name="named_collection" type="NXcollection" optional="true"/>
     </group>
 </definition>
