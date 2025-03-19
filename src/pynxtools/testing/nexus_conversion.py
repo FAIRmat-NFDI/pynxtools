@@ -133,7 +133,7 @@ class ReaderTest:
 
         with self.caplog.at_level(caplog_level):
             _ = convert(
-                input_file=input_files,
+                input_file=tuple(input_files),
                 reader=self.reader_name,
                 nxdl=self.nxdl,
                 skip_verify=False,
