@@ -107,14 +107,15 @@ TEMPLATE["required"][
 ] = "attr"
 TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/@specified_attr"] = "attr"
 
+
 TEMPLATE["required"][
-    "/ENTRY[my_entry]/any_groupGROUP[anyany_groupGROUP]/any_fieldFIELD[any_fieldFIELD]"
+    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]"
 ] = 1.0
 TEMPLATE["required"][
-    "/ENTRY[my_entry]/any_groupGROUP[anyany_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/any_attrATTR_in_field[any_attrATTR_in_field]"
+    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]"
 ] = "attr"
 TEMPLATE["required"][
-    "/ENTRY[my_entry]/any_groupGROUP[anyany_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/any_attrATTR[any_attrATTR]"
+    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/@any_attrATTR[@any_attrATTR]"
 ] = "attr"
 
 TEMPLATE["optional"][
@@ -236,19 +237,27 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 alter_dict(
-                    remove_from_dict(
+                    alter_dict(
                         remove_from_dict(
-                            TEMPLATE,
-                            "/ENTRY[my_entry]/any_groupGROUP[anyany_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/any_attrATTR_in_field[any_attrATTR_in_field]",
+                            remove_from_dict(
+                                remove_from_dict(
+                                    TEMPLATE,
+                                    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                                    "required",
+                                ),
+                                "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]",
+                                "required",
+                            ),
+                            "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/@any_attrATTR[@any_attrATTR]",
                             "required",
                         ),
-                        "/ENTRY[my_entry]/any_groupGROUP[anyany_groupGROUP]/any_attrATTR[any_attrATTR]",
-                        "required",
+                        "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/any_fieldFIELD[some_field_name]",
+                        1.0,
                     ),
-                    "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/any_fieldFIELD[some_field_name]/any_attrATTR_in_field[some_attr_name]",
+                    "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/any_fieldFIELD[some_field_name]/@any_attrATTR_in_field[@some_attr_name]",
                     "new attr",
                 ),
-                "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/any_attrATTR[some_attr_name]",
+                "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/@any_attrATTR[@some_attr_name]",
                 "new attr",
             ),
             [],

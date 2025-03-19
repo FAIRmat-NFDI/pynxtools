@@ -112,9 +112,9 @@ def build_nested_dict_from(
 def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     """
     Return the class and the name of a data dict entry of the form
-    `get_class_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
+    `split_class_and_name_of("ENTRY[entry]")`, which will return `("ENTRY", "entry")`.
     If this is a simple string it will just return this string, i.e.
-    `get_class_of("entry")` will return `None, "entry"`.
+    `split_class_and_name_of("entry")` will return `None, "entry"`.
 
     Args:
         name (str): The data dict entry
@@ -204,11 +204,19 @@ def validate_dict_against(
                 return [f"{convert_nexus_to_caps(node.nx_class)}[{node.name}]"]
 
         variations = []
+
         for key in keys:
             concept_name, instance_name = split_class_and_name_of(key)
 
             if node.type == "attribute":
                 # Remove the starting @ from attributes
+                if concept_name:
+                    concept_name = (
+                        concept_name[1:]
+                        if concept_name.startswith("@")
+                        else concept_name
+                    )
+
                 instance_name = (
                     instance_name[1:]
                     if instance_name.startswith("@")
@@ -217,6 +225,7 @@ def validate_dict_against(
 
             if not concept_name or concept_name != node.name:
                 continue
+
             name_any = node.name_type == "any"
             name_partial = node.name_type == "partial"
 
@@ -233,8 +242,12 @@ def validate_dict_against(
         return variations
 
     def get_field_attributes(name: str, keys: Mapping[str, Any]) -> Mapping[str, Any]:
+        prefix = f"{name}@"
         return {
-            f"@{k.split('@')[1]}": keys[k] for k in keys if k.startswith(f"{name}@")
+            # Preserve everything after the field name, keeping '@attr[@attr]' or '@attr'
+            k[len(prefix) - 1 :]: v
+            for k, v in keys.items()
+            if k.startswith(prefix)
         }
 
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
@@ -385,6 +398,8 @@ def validate_dict_against(
                 continue
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
+            # if node.nx_class == "NXcollection":
+            # ToDo: stop recursion here
             else:
                 recurse_tree(node, keys[variant], prev_path=f"{prev_path}/{variant}")
 
@@ -481,6 +496,7 @@ def validate_dict_against(
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
         variants = get_variations_of(node, keys)
+
         if (
             not variants
             and node.optionality == "required"
