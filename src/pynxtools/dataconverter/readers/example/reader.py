@@ -62,6 +62,8 @@ class ExampleReader(BaseReader):
                         "/ENTRY[entry]/required_group",
                         "/ENTRY[entry]/specified_group",
                         "/ENTRY[entry]/any_groupGROUP[any_groupgroup]",
+                        "/ENTRY[entry]/identified_user",
+                        "/ENTRY[entry]/named_collection",
                     )
                 )
                 or k

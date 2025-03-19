@@ -121,5 +121,9 @@
                 <doc>A required NXuser entry.</doc>
             </field>
         </group>
+        <group name="identified_user" type="NXuser" optional="true">
+            <field name="identifier_1"/>
+        </group>
+        <!-- <group name="named_collection" type="NXcollection" optional="true">group/> -->
     </group>
 </definition>

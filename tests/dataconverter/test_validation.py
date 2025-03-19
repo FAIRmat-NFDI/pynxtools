@@ -678,7 +678,7 @@ TEMPLATE["required"][
         ),
         pytest.param(
             set_to_none_in_dict(
-                TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
+                TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "required"
             ),
             [
                 "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
@@ -726,10 +726,13 @@ TEMPLATE["required"][
                     "/ENTRY[my_entry]/optional_parent/required_child",
                     "required",
                 ),
-                "/ENTRY[my_entry]/optional_parent/DATA[required_child]",
+                "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
                 1,
             ),
-            [],
+            [
+                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
+                "required_child is required and hasn't been supplied by the reader."
+            ],
             id="concept-name-given-for-nonvariadic-field",
         ),
         pytest.param(
@@ -1045,11 +1048,38 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/identifierNAME[identifier_id]",
+                "/ENTRY[my_entry]/identified_user/identifier_1",
                 "123",
             ),
             [],
-            id="identifier",
+            id="specified-identifier-with-type",
+        ),
+        # ToDo: reactivate if sibling inheritance works properly
+        # pytest.param(
+        #     alter_dict(
+        #         alter_dict(
+        #             TEMPLATE,
+        #             "/ENTRY[my_entry]/identified_user/identifier_1",
+        #             "123",
+        #         ),
+        #         "/ENTRY[my_entry]/identified_user/identifier_1/@type",
+        #         "ORCID",
+        #     ),
+        #     [],
+        #     id="specified-identifier-with-type",
+        # ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
+                "ORCID",
+            ),
+            [],
+            id="name-fitted-identifier-with-type",
         ),
         pytest.param(
             alter_dict(
@@ -1062,7 +1092,7 @@ TEMPLATE["required"][
                 "ORCID",
             ),
             [],
-            id="identifier-with-type",
+            id="name-fitted-identifier-with-type",
         ),
         # This can be re-used later when we have proper unit checking
         pytest.param(
@@ -1077,6 +1107,32 @@ TEMPLATE["required"][
             ),
             [],
             id="baseclass-unit-example",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/COLLECTION[collection]/some_field",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field",
+                0.5,
+            ),
+            [],
+            id="variadic-nxcollection",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[entry]/named_collection/some_field",
+                    0.5,
+                ),
+                "/ENTRY[entry]/named_collection/DATA[data]/some_field",
+                0.5,
+            ),
+            [],
+            id="nonvariadic-nxcollection",
         ),
     ],
 )

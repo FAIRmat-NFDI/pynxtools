@@ -398,8 +398,8 @@ def validate_dict_against(
                 continue
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
-            # if node.nx_class == "NXcollection":
-            # ToDo: stop recursion here
+            if node.nx_class == "NXcollection":
+                return
             else:
                 recurse_tree(node, keys[variant], prev_path=f"{prev_path}/{variant}")
 
@@ -557,6 +557,10 @@ def validate_dict_against(
             if node is None:
                 return None
 
+            if node.type == "group" and node.nx_class == "NXcollection":
+                # Stop iterating, return NXcollection node
+                return node
+
         return node
 
     def is_documented(key: str, tree: NexusNode) -> bool:
@@ -565,8 +569,13 @@ def validate_dict_against(
             return True
 
         node = add_best_matches_for(key, tree)
+
         if node is None:
             return False
+
+        if node.type == "group" and node.nx_class == "NXcollection":
+            # Collection found, mark as documented
+            return True
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             # TODO: Follow link and check consistency with current field
