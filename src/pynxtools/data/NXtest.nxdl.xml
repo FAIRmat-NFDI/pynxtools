@@ -41,6 +41,13 @@
             </field>
             <attribute name="specified_attr"/>
         </group>
+        <group type="NXdata" name="any_groupGROUP" nameType="any">
+            <doc>A group with a name and nameType="any".</doc>
+            <field name="any_fieldFIELD" type="NX_FLOAT" units="NX_ANY">
+                <attribute name="any_attrATTR_in_field"/>
+            </field>
+            <attribute name="any_attrATTR"/>
+        </group>
         <group type="NXdata" name="NXODD_name" nameType="partial">
             <field name="anamethatRENAMES" nameType="partial" type="NX_INT" units="NX_UNITLESS"/>
             <field name="float_value" type="NX_FLOAT" optional="true" units="NX_ENERGY">
