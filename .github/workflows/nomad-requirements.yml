@@ -13,7 +13,7 @@ on:
     #   - 'dev-requirements.txt'
 
 env:
-  UV_SYSTEM_PYTHON: true
+  python-version: 3.11
 
 jobs:
   validate_dependencies:
@@ -28,26 +28,21 @@ jobs:
         git clone --depth 1 --branch develop --recurse-submodules https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git nomad
         git submodule update --init --recursive --depth 1
 
-    - name: Replace pynxtools dependency in NOMAD pyproject.toml
+    - name: Add pynxtools dependency in NOMAD test_plugins.txt
       working-directory: ./nomad
       run: |
-        sed -i 's|pynxtools\[convert\]==[0-9]\+\(\.[0-9]\+\)\+\([0-9]\)|pynxtools\[convert\]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }} |' default_plugins.txt
-    - name: Set up Python
-      uses: actions/setup-python@v5
+        echo "" >> test_plugins.txt
+        echo "pynxtools[convert]@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }}" >> test_plugins.txt
+    - name: Install uv and set the python version to ${{ env.python-version }}
+      uses: astral-sh/setup-uv@v5
       with:
-        python-version: '3.11'
-
-    - name: Install uv
-      run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-
+        python-version: ${{ env.python-version }}
     - name: Generate (dev-)requirements.txt from modified pyproject.toml
       working-directory: ./nomad
       run: |
-        uv pip compile --universal -p 3.11 --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt pyproject.toml
-        uv pip compile --universal -p 3.11 --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
-        uv pip compile --universal -p 3.11 --annotation-style=line --output-file=requirements-plugins.txt --unsafe-package nomad-lab -c requirements-dev.txt default_plugins.txt
-
+        uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt pyproject.toml
+        uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
+        uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --output-file=requirements-plugins.txt --unsafe-package nomad-lab -c requirements-dev.txt test_plugins.txt
     - name: Install NOMAD dependencies with pynxtools from current branch
       working-directory: ./nomad
       run: |
