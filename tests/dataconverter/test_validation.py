@@ -84,6 +84,40 @@ def listify_template(data_dict: Template):
 
 
 TEMPLATE = Template()
+TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
+
+TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1
+TEMPLATE["optional"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field"] = 1
+
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group_with_no_name_type/specified_field_with_no_name_type"
+] = 1.0
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group_with_no_name_type/specified_field_with_no_name_type/@specified_attr_in_field_with_no_name_type"
+] = "data"
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group_with_no_name_type/@specified_attr_with_no_name_type"
+] = "attr"
+
+TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/specified_field"] = 1.0
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field"
+] = "attr"
+TEMPLATE["required"]["/ENTRY[my_entry]/specified_group/@specified_attr"] = "attr"
+
+
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]"
+] = 1.0
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]"
+] = "attr"
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/@any_attrATTR[@any_attrATTR]"
+] = "attr"
+
 TEMPLATE["optional"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]"
 ] = 2
@@ -94,16 +128,15 @@ TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units
 TEMPLATE["optional"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[float_value_no_attr]"
 ] = (2.0,)
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
-TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value"] = 2
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units"] = (
     "eV"
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
+
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
     [1, 2, 3],  # pylint: disable=E1126
     dtype=np.int8,
@@ -118,8 +151,15 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value/@units"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/@group_attribute"] = (
     "data"  # pylint: disable=E1126
 )
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
+    "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
+)
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units"] = ""
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array"] = [0, 1, 2]
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/@signal"] = "data"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]"] = 1  # pylint: disable=E1126
+
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] = True  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value/@units"
@@ -163,23 +203,16 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/@group_attribu
 )
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/@signal"] = "data"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/DATA[data]"] = 1  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field"] = 1  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/definition/@version"] = "2.4.6"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/program_name"] = "Testing program"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type"  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array"] = [0, 1, 2]
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value"] = (
-    "2022-01-22T12:14:12.05018+00:00"  # pylint: disable=E1126
-)
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value/@units"] = ""
-TEMPLATE["optional"]["/ENTRY[my_entry]/OPTIONAL_group[my_group]/optional_field"] = 1
+
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = (
     "An example description"
 )
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group2/description"] = (
     "An example description"
 )
+
+TEMPLATE["required"]["/ENTRY[my_entry]/optional_parent/required_child"] = 1  # pylint: disable=E1126
+TEMPLATE["optional"]["/ENTRY[my_entry]/optional_parent/optional_child"] = 1  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/optional_parent/req_group_in_opt_group/DATA[data]"
 ] = 1
@@ -201,6 +234,35 @@ TEMPLATE["required"][
 @pytest.mark.parametrize(
     "data_dict,error_messages",
     [
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        remove_from_dict(
+                            remove_from_dict(
+                                remove_from_dict(
+                                    TEMPLATE,
+                                    "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]",
+                                    "required",
+                                ),
+                                "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/any_fieldFIELD[any_fieldFIELD]/@any_attrATTR_in_field[@any_attrATTR_in_field]",
+                                "required",
+                            ),
+                            "/ENTRY[my_entry]/any_groupGROUP[any_groupGROUP]/@any_attrATTR[@any_attrATTR]",
+                            "required",
+                        ),
+                        "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/any_fieldFIELD[some_field_name]",
+                        1.0,
+                    ),
+                    "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/any_fieldFIELD[some_field_name]/@any_attrATTR_in_field[@some_attr_name]",
+                    "new attr",
+                ),
+                "/ENTRY[my_entry]/any_groupGROUP[some_group_name]/@any_attrATTR[@some_attr_name]",
+                "new attr",
+            ),
+            [],
+            id="name-type-any",
+        ),
         pytest.param(
             alter_dict(
                 TEMPLATE,
@@ -598,13 +660,25 @@ TEMPLATE["required"][
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type should "
                 "be one of the following"
-                ": ['1st type', '2nd type', '3rd type', '4th type']"
+                ": ['1st type', '2nd type', '3rd type', '4th type']."
             ],
             id="wrong-enum-choice",
         ),
         pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type2",
+                "a very different type",
+            ),
+            [
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type2 does not match with the "
+                "enumerated items from the open enumeration: ['1st type open', '2nd type open']."
+            ],
+            id="open-enum-with-new-item",
+        ),
+        pytest.param(
             set_to_none_in_dict(
-                TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "optional"
+                TEMPLATE, "/ENTRY[my_entry]/optional_parent/required_child", "required"
             ),
             [
                 "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
@@ -644,6 +718,40 @@ TEMPLATE["required"][
             ),
             [],
             id="no-child-provided-optional-parent",
+        ),
+        pytest.param(
+            alter_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/optional_parent/required_child",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
+                1,
+            ),
+            # ToDo: should not raise a warning if sibling inheritance works
+            [
+                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
+                "required_child is required and hasn't been supplied by the reader."
+            ],
+            id="concept-name-given-for-nonvariadic-field",
+        ),
+        pytest.param(
+            alter_dict(
+                remove_from_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/optional_parent/optional_child",
+                    "optional",
+                ),
+                "/ENTRY[my_entry]/optional_parent/AXISNAME[optional_child]",
+                "test value",
+            ),
+            [
+                "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
+                "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
+                "defined in the NXDL as NX_INT."
+            ],
+            id="concept-name-given-for-nonvariadic-field-wrong-type",
         ),
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(
@@ -695,7 +803,7 @@ TEMPLATE["required"][
             ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as defined in the NXDL as NX_INT.",
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]",
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]].",
             ],
             id="wrong-type-array-in-attribute",
         ),
@@ -704,7 +812,7 @@ TEMPLATE["required"][
                 TEMPLATE, "/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array", [1, 2]
             ),
             [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]"
+                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
             ],
             id="wrong-value-array-in-attribute",
         ),
@@ -864,18 +972,29 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material",
+                "Cu",
+            ),
+            [
+                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/target_material "
+                "should be one of the following: ['Ta', 'W', 'depleted_U', 'enriched_U', 'Hg', 'Pb', 'C']."
+            ],
+            id="baseclass-wrong-enum",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
                 "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type",
                 "Wrong source type",
             ),
             [
-                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type "
-                "should be one of the following: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', "
-                "'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', "
-                "'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', "
-                "'Metal Jet X-ray', 'Laser', 'Dye-Laser', 'Broadband Tunable Light Source', 'Halogen lamp', 'LED', "
-                "'Mercury Cadmium Telluride', 'Deuterium Lamp', 'Xenon Lamp', 'Globar', 'other']"
+                "The value at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type does not match with the enumerated "
+                "items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', "
+                "'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', "
+                "'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', "
+                "'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']."
             ],
-            id="baseclass-wrong-enum",
+            id="baseclass-open-enum-with-new-item",
         ),
         pytest.param(
             alter_dict(
@@ -927,6 +1046,103 @@ TEMPLATE["required"][
             ],
             id="baseclass-field-with-illegal-unit",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                "123",
+            ),
+            [],
+            id="specified-identifier-with-type",
+        ),
+        # ToDo: reactivate if sibling inheritance works properly
+        # pytest.param(
+        #     alter_dict(
+        #         alter_dict(
+        #             TEMPLATE,
+        #             "/ENTRY[my_entry]/identified_calibration/identifier_1",
+        #             "123",
+        #         ),
+        #         "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
+        #         "ORCID",
+        #     ),
+        #     [],
+        #     id="specified-identifier-with-type",
+        # ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
+                "ORCID",
+            ),
+            [],
+            id="name-fitted-identifier-with-type",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identifierNAME[identifier_id]",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identifierNAME[identifier_id]/@type",
+                "ORCID",
+            ),
+            [],
+            id="name-fitted-identifier-with-type",
+        ),
+        # This can be re-used later when we have proper unit checking
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion/@units",
+                "J/mm",
+            ),
+            [],
+            id="baseclass-unit-example",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/COLLECTION[collection]/some_field",
+                        0.5,
+                    ),
+                    "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field/@units",
+                "mm",
+            ),
+            [],
+            id="variadic-nxcollection",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/named_collection/some_field",
+                        0.5,
+                    ),
+                    "/ENTRY[my_entry]/named_collection/DATA[data]/some_field",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/named_collection/DATA[data]/some_field/@units",
+                "mm",
+            ),
+            [],
+            id="nonvariadic-nxcollection",
+        ),
     ],
 )
 def test_validate_data_dict(caplog, data_dict, error_messages, request):
@@ -943,6 +1159,10 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
         if request.node.callspec.id in (
             "field-with-illegal-unit",
             "baseclass-field-with-illegal-unit",
+            "open-enum-with-new-item",
+            "baseclass-open-enum-with-new-item",
+            "variadic-nxcollection",
+            "nonvariadic-nxcollection",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)[0]

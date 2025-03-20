@@ -35,19 +35,23 @@ import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
 from pynxtools.dataconverter.helpers import (
-    contains_uppercase,
     get_all_parents_for,
     get_nxdl_root_and_path,
+    is_variadic,
     is_appdef,
     remove_namespace_from_tag,
 )
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
+    get_nx_namefit,
+    is_name_type,
+)
 
 NexusType = Literal[
     "NX_BINARY",
     "NX_BOOLEAN",
     "NX_CCOMPLEX",
     "NX_CHAR",
+    "NX_CHAR_OR_NUMBER",
     "NX_COMPLEX",
     "NX_DATE_TIME",
     "NX_FLOAT",
@@ -111,6 +115,9 @@ class NexusNode(NodeMixin):
             The name of the node.
         type (Literal["group", "field", "attribute", "choice"]):
             The type of the node, e.g., xml tag in the nxdl file.
+        name_type (Optional["specified", "any", "partial"]):
+            The nameType of the node.
+            Defaults to "specified".
         optionality (Literal["required", "recommended", "optional"], optional):
             The optionality of the node.
             This is automatically set on init (in the respective subclasses)
@@ -118,8 +125,8 @@ class NexusNode(NodeMixin):
             Defaults to "required".
         variadic (bool):
             True if the node name is variadic and can be matched against multiple names.
-            This is set automatically on init and will be True if the name contains
-            any uppercase characets and False otherwise.
+            This is set automatically on init and will be True if the `nameTYPE` is "any"
+            or "partial" and False otherwise.
             Defaults to False.
         inheritance (List[InstanceOf[ET._Element]]):
             The inheritance chain of the node.
@@ -145,6 +152,7 @@ class NexusNode(NodeMixin):
 
     name: str
     type: Literal["group", "field", "attribute", "choice"]
+    name_type: Optional[Literal["specified", "any", "partial"]] = "specified"
     optionality: Literal["required", "recommended", "optional"] = "required"
     variadic: bool = False
     inheritance: List[ET._Element]
@@ -177,6 +185,7 @@ class NexusNode(NodeMixin):
         self,
         name: str,
         type: Literal["group", "field", "attribute", "choice"],
+        name_type: Optional[Literal["specified", "any", "partial"]] = "specified",
         optionality: Literal["required", "recommended", "optional"] = "required",
         variadic: Optional[bool] = None,
         parent: Optional["NexusNode"] = None,
@@ -185,8 +194,9 @@ class NexusNode(NodeMixin):
         super().__init__()
         self.name = name
         self.type = type
+        self.name_type = name_type
         self.optionality = optionality
-        self.variadic = contains_uppercase(self.name)
+        self.variadic = is_variadic(self.name, self.name_type)
         if variadic is not None:
             self.variadic = variadic
         if inheritance is not None:
@@ -460,6 +470,7 @@ class NexusNode(NodeMixin):
                 This represents the direct field or group inside the specific xml file.
         """
         name = xml_elem.attrib.get("name")
+
         inheritance_chain = [xml_elem]
         inheritance = iter(self.inheritance)
         for elem in inheritance:
@@ -483,18 +494,28 @@ class NexusNode(NodeMixin):
                 best_group = None
                 best_score = -1
                 for group in groups:
-                    if name in group.attrib and not contains_uppercase(
-                        group.attrib["name"]
-                    ):
-                        continue
                     group_name = (
                         group.attrib.get("name")
                         if "name" in group.attrib
                         else group.attrib["type"][2:].upper()
                     )
 
-                    score = get_nx_namefit(name, group_name)
-                    if get_nx_namefit(name, group_name) >= best_score:
+                    if "name" in group.attrib:
+                        group_name_type = group.attrib.get("nameType", "specified")
+
+                    else:
+                        group_name_type = group.attrib.get("nameType", "any")
+
+                    if not is_variadic(group_name, group_name_type):
+                        continue
+
+                    group_name_any = is_name_type(group, "any")
+                    group_name_partial = is_name_type(group, "partial")
+
+                    score = get_nx_namefit(
+                        name, group_name, group_name_any, group_name_partial
+                    )
+                    if score >= best_score:
                         best_group = group
                         best_score = score
 
@@ -525,21 +546,31 @@ class NexusNode(NodeMixin):
         """
         default_optionality = "required" if is_appdef(xml_elem) else "optional"
         tag = remove_namespace_from_tag(xml_elem.tag)
+
+        name_type = xml_elem.attrib.get("nameType", "specified")
+
         if tag in ("field", "attribute"):
             name = xml_elem.attrib.get("name")
+
             current_elem = NexusEntity(
                 parent=self,
                 name=name,
+                name_type=name_type,
                 type=tag,
                 optionality=default_optionality,
             )
         elif tag == "group":
-            name = xml_elem.attrib.get("name", xml_elem.attrib["type"][2:].upper())
+            name = xml_elem.attrib.get("name")
+            if not name:
+                name = xml_elem.attrib["type"][2:].upper()
+                name_type = "any"
+
             inheritance_chain = self._build_inheritance_chain(xml_elem)
             current_elem = NexusGroup(
                 parent=self,
                 type=tag,
                 name=name,
+                name_type=name_type,
                 nx_class=xml_elem.attrib["type"],
                 inheritance=inheritance_chain,
                 optionality=default_optionality,
@@ -548,7 +579,7 @@ class NexusNode(NodeMixin):
             current_elem = NexusChoice(
                 parent=self,
                 name=xml_elem.attrib["name"],
-                variadic=contains_uppercase(xml_elem.attrib["name"]),
+                name_type=name_type,
                 optionality=default_optionality,
             )
         else:
@@ -644,6 +675,7 @@ class NexusGroup(NexusNode):
 
         for elem in self.inheritance[1:]:
             parent = elem.getparent()
+
             if parent is None:
                 continue
             siblings = parent.findall(
@@ -651,15 +683,33 @@ class NexusGroup(NexusNode):
             )
 
             for sibling in siblings:
-                sibling_name = sibling.attrib.get(
-                    "name", sibling.attrib["type"][2:].upper()
+                sibling_name = (
+                    sibling.attrib.get("name")
+                    if "name" in sibling.attrib
+                    else sibling.attrib["type"][2:].upper()
                 )
-                if sibling_name == self.name or not contains_uppercase(sibling_name):
+
+                if "name" in sibling.attrib:
+                    sibling_name_type = sibling.attrib.get("nameType", "specified")
+                else:
+                    sibling_name_type = sibling.attrib.get("nameType", "any")
+
+                if not is_variadic(sibling_name, sibling_name_type):
                     continue
-                if get_nx_namefit(self.name, sibling_name) < 0:
+
+                sibling_name_any = is_name_type(sibling, "any")
+                sibling_name_partial = is_name_type(sibling, "partial")
+
+                if (
+                    get_nx_namefit(
+                        self.name, sibling_name, sibling_name_any, sibling_name_partial
+                    )
+                    < 0
+                ):
                     continue
 
                 sibling_node = self.parent.get_child_for(sibling)
+
                 if sibling_node is None:
                     sibling_node = self.parent.add_node_from(sibling)
                 self.is_a.append(sibling_node)
@@ -717,9 +767,9 @@ class NexusGroup(NexusNode):
         self._check_sibling_namefit()
 
     def __repr__(self) -> str:
-        return (
-            f"{self.nx_class[2:].upper()}[{self.name.lower()}] ({self.optionality[:3]})"
-        )
+        if self.type == "attribute":
+            return f"@{self.name} ({self.optionality[:3]})"
+        return f"{self.name} ({self.optionality[:3]})"
 
 
 class NexusEntity(NexusNode):
@@ -747,6 +797,10 @@ class NexusEntity(NexusNode):
             Also the base classes of these entities are considered.
             If there is no restriction this is set to None.
             Defaults to None.
+        open_enum (bool):
+            If enumerations are used, the enumeration can be open (i.e., the value is not limited
+            to the enumeration items) or closed (i.e., the value must exactly match one of the
+            enumeration items). This is controlled by the open_enum boolean. By default, it is closed.
         shape (Optional[Tuple[Optional[int], ...]]):
             The shape of the entity as given by the dimensions tag.
             This is set automatically on init based on the values found in the nxdl file.
@@ -761,7 +815,8 @@ class NexusEntity(NexusNode):
     type: Literal["field", "attribute"]
     unit: Optional[NexusUnitCategory] = None
     dtype: NexusType = "NX_CHAR"
-    items: Optional[List[Any]] = None
+    items: Optional[List[str]] = None
+    open_enum: bool = False
     shape: Optional[Tuple[Optional[int], ...]] = None
 
     def _set_type(self):
@@ -784,7 +839,7 @@ class NexusEntity(NexusNode):
                 self.unit = elem.attrib["units"]
                 return
 
-    def _set_items(self):
+    def _set_items_and_enum_type(self):
         """
         Sets the enumeration items of the current entity
         based on the values in the inheritance chain.
@@ -792,7 +847,10 @@ class NexusEntity(NexusNode):
         """
         for elem in self.inheritance:
             enum = elem.find(f"nx:enumeration", namespaces=namespaces)
+
             if enum is not None:
+                if enum.attrib.get("open") == "true":
+                    self.open_enum = True
                 self.items = []
                 for items in enum.findall(f"nx:item", namespaces=namespaces):
                     value = items.attrib["value"]
@@ -850,7 +908,7 @@ class NexusEntity(NexusNode):
         self._construct_inheritance_chain_from_parent()
         self._set_unit()
         self._set_type()
-        self._set_items()
+        self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
 
@@ -919,6 +977,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
         name=appdef_xml_root.attrib["name"],
         nx_class="NXroot",
         type="group",
+        name_type="specified",
         optionality="required",
         variadic=False,
         parent=None,
