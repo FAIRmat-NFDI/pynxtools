@@ -9,28 +9,32 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  UV_SYSTEM_PYTHON: true
+
 jobs:
   pytest:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Install uv and set the python version to ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v5
+      - name: Set up Python ${{ matrix.python_version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
           uv pip install coverage coveralls
       - name: Install nomad
-        if: "${{ matrix.python-version != '3.8' && matrix.python-version != '3.9'}}"
+        if: "${{ matrix.python_version != '3.8' && matrix.python_version != '3.9'}}"
         run: |
           uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install pynx
