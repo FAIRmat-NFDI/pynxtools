@@ -21,6 +21,9 @@ from typing import Dict, Optional, Set
 import lxml.etree as ET
 import numpy as np
 
+DEBUG_PYNXTOOLS_WITH_NOMAD = False
+
+
 try:
     from ase.data import chemical_symbols
     from nomad.atomutils import Formula
@@ -41,9 +44,8 @@ except ImportError as exc:
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
 from pynxtools.nomad.utils import __FIELD_STATISTICS as FIELD_STATISTICS
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX
+from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, get_quantity_base_name
 from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
-from pynxtools.nomad.utils import get_quantity_base_name
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -126,7 +128,7 @@ def _to_section(
 
 def _get_value(hdf_node):
     """
-    Get value from hdl5 node
+    Get value from hdf5 node
     """
 
     hdf_value = hdf_node[...]
@@ -520,6 +522,13 @@ class NexusParser(MatchingParser):
         logger=None,
         child_archives: Dict[str, EntryArchive] = None,
     ) -> None:
+        if DEBUG_PYNXTOOLS_WITH_NOMAD:
+            import debugpy  # will connect to debugger if in debug mode
+
+            debugpy.debug_this_thread()
+            # now one can anywhere place a manual breakpoint like e.g. so
+            # debugpy.breakpoint()
+
         self.archive = archive
         self.nx_root = nexus_schema.Root()  # type: ignore # pylint: disable=no-member
 

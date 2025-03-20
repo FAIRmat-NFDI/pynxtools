@@ -139,9 +139,7 @@ class NexusActivityStep(ActivityStep):
 
 
 class AnchoredReference(EntityReference):
-
     def normalize(self, archive, logger):
-
         def create_Entity(lab_id, archive, f_name, qunt_name):
             entitySec = Entity()
             entitySec.lab_id = lab_id
@@ -197,14 +195,16 @@ class NexusReferences(ArchiveSection):
             if not (val := getattr(self, identifier)):
                 continue
             # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
-            field_n = identifier.split('__field')[0]
+            field_n = identifier.split("__field")[0]
             logger.info(f"Lab id {val} to be created")
             nx_id = AnchoredReference(lab_id=val, name=field_n)
             nx_id.m_set_section_attribute(
-                "m_nx_data_path", self.m_get_quantity_attribute(identifier, "m_nx_data_path")
+                "m_nx_data_path",
+                self.m_get_quantity_attribute(identifier, "m_nx_data_path"),
             )
             nx_id.m_set_section_attribute(
-                "m_nx_data_file", self.m_get_quantity_attribute(identifier, "m_nx_data_file")
+                "m_nx_data_file",
+                self.m_get_quantity_attribute(identifier, "m_nx_data_file"),
             )
 
             self.AnchoredReferences.append(nx_id)
@@ -328,17 +328,15 @@ def get_nx_type(nx_type: str) -> Optional[Datatype]:
         "NX_CHAR": m_str,
         "NX_BOOLEAN": m_bool,
         "NX_INT": m_int64,
-        "NX_UINT": m_int,
+        "NX_UINT": m_int64,
         "NX_NUMBER": m_float64,
-        "NX_POSINT": m_int,
+        "NX_POSINT": m_int64,
         "NX_BINARY": Bytes,
         "NX_DATE_TIME": Datetime,
         "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
     }
 
     if nx_type in __NX_TYPES:
-        if nx_type in ("NX_UINT", "NX_POSINT"):
-            return __NX_TYPES[nx_type](dtype=np.uint64).no_type_check().no_shape_check()
         return __NX_TYPES[nx_type]().no_type_check().no_shape_check()
     return None
 
