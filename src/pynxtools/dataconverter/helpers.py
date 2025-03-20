@@ -707,6 +707,7 @@ def is_valid_data_field(
 
     # Check enumeration
     if nxdl_enum is not None and value not in nxdl_enum:
+        print(value, nxdl_enum, value == nxdl_enum)
         if nxdl_enum_open:
             collector.collect_and_log(
                 path,
@@ -898,7 +899,7 @@ def add_default_root_attributes(data, filename):
         f"blob/{get_nexus_version_hash()}",
     )
     update_and_warn("/@NeXus_release", get_nexus_version())
-    update_and_warn("/@HDF5_version", ".".join(map(str, h5py.h5.get_libversion())))
+    update_and_warn("/@HDF5_Version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
 
 

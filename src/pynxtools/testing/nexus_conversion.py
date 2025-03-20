@@ -186,7 +186,7 @@ class ReaderTest:
         ]
         IGNORE_SECTIONS: Dict[str, List[str]] = {
             **reader_ignore_sections,
-            "ATTRS (//@HDF5_version)": ["DEBUG - value:"],
+            "ATTRS (//@HDF5_Version)": ["DEBUG - value:"],
             "ATTRS (//@file_name)": ["DEBUG - value:"],
             "ATTRS (//@file_time)": ["DEBUG - value:"],
             "ATTRS (//@file_update_time)": ["DEBUG - value:"],
