@@ -155,6 +155,13 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
     for node in nodes:
         if not node.variadic:
             if instance_name == node.name:
+                if concept_name and concept_name != node.name:
+                    collector.collect_and_log(
+                        concept_name,
+                        ValidationProblem.InvalidConceptForNonVariadic,
+                        node,
+                    )
+                    return None
                 return node
         else:
             if concept_name and concept_name == node.name:
