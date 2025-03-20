@@ -30,19 +30,19 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-igor
-            branch: update-definitions
+            branch: main
             tests_to_run: tests/.    
           - plugin: pynxtools-mpes
-            branch: update-definitions
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-raman
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: FixReaderAlngAppDef
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: update-to-new-nxmpes
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
             branch: main
