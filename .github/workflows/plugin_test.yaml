@@ -24,7 +24,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-ellips
-            branch: update
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-em
             branch: main
@@ -36,7 +36,7 @@ jobs:
             branch: update-definitions
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branch: update
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-spm
             branch: FixReaderAlngAppDef
