@@ -722,6 +722,32 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 remove_from_dict(
+                    remove_from_dict(
+                        remove_from_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/specified_group/specified_field",
+                            "required",
+                        ),
+                        "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field",
+                        "required",
+                    ),
+                    "/ENTRY[my_entry]/specified_group/@specified_attr",
+                    "required",
+                ),
+                "/ENTRY[my_entry]/SAMPLE[specified_group]/specified_field",
+                1.0,
+            ),
+            [
+                "The required group, /ENTRY[my_entry]/specified_group, hasn't been supplied.",
+                "Given group name 'SAMPLE' conflicts with the non-variadic name 'specified_group (req)', "
+                "which should be of type NXdata.",
+                "Field /ENTRY[my_entry]/SAMPLE[specified_group]/specified_field written without documentation.",
+            ],
+            id="illegal-concept-name-for-nonvariadic-group",
+        ),
+        pytest.param(
+            alter_dict(
+                remove_from_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/optional_parent/required_child",
                     "required",
@@ -729,10 +755,13 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
                 1,
             ),
-            # ToDo: should not raise a warning if sibling inheritance works
+            # TODO: should not raise a warning if sibling inheritance works
             [
                 "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
-                "required_child is required and hasn't been supplied by the reader."
+                "required_child is required and hasn't been supplied by the reader.",
+                "Given field name 'AXISNAME' conflicts with the non-variadic name "
+                "'required_child (req)'",
+                "Field /ENTRY[my_entry]/optional_parent/AXISNAME[required_child] written without documentation.",
             ],
             id="concept-name-given-for-nonvariadic-field",
         ),
@@ -747,9 +776,12 @@ TEMPLATE["required"][
                 "test value",
             ),
             [
-                "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
-                "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
-                "defined in the NXDL as NX_INT."
+                "Given field name 'AXISNAME' conflicts with the non-variadic name 'optional_child (opt)'",
+                "Field /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] written without documentation.",
+                # TODO: reactivate if sibling inheritance works
+                # # "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
+                # "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
+                # "defined in the NXDL as NX_INT."
             ],
             id="concept-name-given-for-nonvariadic-field-wrong-type",
         ),
