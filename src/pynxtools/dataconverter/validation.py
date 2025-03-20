@@ -845,6 +845,22 @@ def validate_dict_against(
             else:
                 # check that parent has units
                 node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
+
+                # Search if unit is somewhere in an NXcollection
+                if node is None:
+                    key_path = not_visited_key.replace("@", "")
+                    while "/" in key_path:
+                        key_path = key_path.rsplit("/", 1)[0]  # Remove last segment
+                        parent_node = add_best_matches_for(key_path, tree)
+                        if (
+                            parent_node
+                            and parent_node.type == "group"
+                            and parent_node.nx_class == "NXcollection"
+                        ):
+                            # NXcollection found → break while, continue outer loop
+                            break
+                    continue
+
                 if node is None or node.type != "field" or node.unit is None:
                     if not ignore_undocumented:
                         collector.collect_and_log(

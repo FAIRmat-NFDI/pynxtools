@@ -707,7 +707,6 @@ def is_valid_data_field(
 
     # Check enumeration
     if nxdl_enum is not None and value not in nxdl_enum:
-        print(value, nxdl_enum, value == nxdl_enum)
         if nxdl_enum_open:
             collector.collect_and_log(
                 path,

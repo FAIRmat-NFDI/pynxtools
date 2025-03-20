@@ -1112,12 +1112,16 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/COLLECTION[collection]/some_field",
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/COLLECTION[collection]/some_field",
+                        0.5,
+                    ),
+                    "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field",
                     0.5,
                 ),
-                "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field",
-                0.5,
+                "/ENTRY[my_entry]/COLLECTION[collection]/DATA[data]/some_field/@units",
+                "mm",
             ),
             [],
             id="variadic-nxcollection",
@@ -1125,12 +1129,16 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/named_collection/some_field",
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/named_collection/some_field",
+                        0.5,
+                    ),
+                    "/ENTRY[my_entry]/named_collection/DATA[data]/some_field",
                     0.5,
                 ),
-                "/ENTRY[my_entry]/named_collection/DATA[data]/some_field",
-                0.5,
+                "/ENTRY[my_entry]/named_collection/DATA[data]/some_field/@units",
+                "mm",
             ),
             [],
             id="nonvariadic-nxcollection",
@@ -1153,6 +1161,8 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
+            "variadic-nxcollection",
+            "nonvariadic-nxcollection",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)[0]
