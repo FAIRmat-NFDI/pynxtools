@@ -774,7 +774,10 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
                 from nomad.units import ureg
 
                 quantity = 1 * ureg(nx_dimensionality)
-                dimensionality = quantity.dimensionality
+                if quantity.dimensionality == "dimensionless":
+                    dimensionality = "1"
+                else:
+                    dimensionality = str(quantity.dimensionality)
             except (
                 pint.errors.UndefinedUnitError,
                 pint.errors.DefinitionSyntaxError,
