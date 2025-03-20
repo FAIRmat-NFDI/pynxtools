@@ -20,7 +20,7 @@
 import logging
 import os
 from glob import glob
-from typing import Dict, List, Literal, Tuple
+from typing import Dict, List, Literal, Tuple, Optional
 
 try:
     from nomad.client import parse
@@ -30,13 +30,11 @@ except ImportError:
     NOMAD_AVAILABLE = False
 
 
-from pynxtools.dataconverter.convert import get_reader, transfer_data_into_template
+from pynxtools.dataconverter.convert import get_reader, convert
 from pynxtools.dataconverter.helpers import (
     add_default_root_attributes,
     get_nxdl_root_and_path,
 )
-from pynxtools.dataconverter.validation import validate_dict_against
-from pynxtools.dataconverter.writer import Writer
 from pynxtools.nexus.nexus import HandleNexus
 
 
@@ -115,7 +113,11 @@ class ReaderTest:
         self.ref_nexus_file = [file for file in example_files if file.endswith(".nxs")][
             0
         ]
-        input_files = [file for file in example_files if not file.endswith(".nxs")]
+        input_files = [
+            file
+            for file in example_files
+            if not file.endswith((".nxs", "ref_output.txt"))
+        ]
         assert self.ref_nexus_file, "Reference nexus (.nxs) file not found"
 
         assert (
@@ -126,28 +128,40 @@ class ReaderTest:
         nxdl_root, nxdl_file = get_nxdl_root_and_path(self.nxdl)
         assert os.path.exists(nxdl_file), f"NXDL file {nxdl_file} not found"
 
-        read_data = transfer_data_into_template(
-            input_file=input_files,
-            reader=self.reader_name,
-            nxdl_name=self.nxdl,
-            nxdl_root=nxdl_root,
-            skip_verify=True,
-            **self.kwargs,
-        )
-
-        # Clear the log of `transfer_data_into_template`
+        # Clear the log of `convert`
         self.caplog.clear()
 
         with self.caplog.at_level(caplog_level):
-            _ = validate_dict_against(
-                self.nxdl, read_data, ignore_undocumented=ignore_undocumented
-            )[0]
-        assert self.caplog.text == ""
+            _ = convert(
+                input_file=tuple(input_files),
+                reader=self.reader_name,
+                nxdl=self.nxdl,
+                skip_verify=False,
+                ignore_undocumented=ignore_undocumented,
+                output=self.created_nexus,
+                **self.kwargs,
+            )
 
-        add_default_root_attributes(
-            data=read_data, filename=os.path.basename(self.created_nexus)
-        )
-        Writer(read_data, nxdl_file, self.created_nexus).write()
+        test_output = self.caplog.messages
+
+        files_with_expected_output = [
+            file for file in example_files if file.endswith("ref_output.txt")
+        ]
+
+        if files_with_expected_output:
+            output_file = files_with_expected_output[0]
+            with open(output_file, "r") as file:
+                expected_messages = [line.strip() for line in file.readlines()]
+
+            for message in expected_messages:
+                if caplog_level == "WARNING":
+                    if message.startswith(("WARNING", "ERROR")):
+                        test_output.remove(message)
+                if caplog_level == "ERROR":
+                    if message.startswith("ERROR"):
+                        test_output.remove(message)
+
+        assert test_output == []
 
         if NOMAD_AVAILABLE:
             kwargs = dict(
@@ -172,7 +186,7 @@ class ReaderTest:
         ]
         IGNORE_SECTIONS: Dict[str, List[str]] = {
             **reader_ignore_sections,
-            "ATTRS (//@HDF5_version)": ["DEBUG - value:"],
+            "ATTRS (//@HDF5_Version)": ["DEBUG - value:"],
             "ATTRS (//@file_name)": ["DEBUG - value:"],
             "ATTRS (//@file_time)": ["DEBUG - value:"],
             "ATTRS (//@file_update_time)": ["DEBUG - value:"],

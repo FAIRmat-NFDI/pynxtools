@@ -48,24 +48,25 @@ logger = logging.getLogger("pynxtools")
 class ValidationProblem(Enum):
     UnitWithoutDocumentation = 1
     InvalidEnum = 2
-    MissingRequiredGroup = 3
-    MissingRequiredField = 4
-    MissingRequiredAttribute = 5
-    InvalidType = 6
-    InvalidDatetime = 7
-    IsNotPosInt = 8
-    ExpectedGroup = 9
-    MissingDocumentation = 10
-    MissingUnit = 11
-    ChoiceValidationError = 12
-    UnitWithoutField = 13
-    AttributeForNonExistingField = 14
-    BrokenLink = 15
-    FailedNamefitting = 16
-    NXdataMissingSignalData = 17
-    NXdataMissingAxisData = 18
-    NXdataAxisMismatch = 19
-    KeyToBeRemoved = 20
+    OpenEnumWithNewItem = 3
+    MissingRequiredGroup = 4
+    MissingRequiredField = 5
+    MissingRequiredAttribute = 6
+    InvalidType = 7
+    InvalidDatetime = 8
+    IsNotPosInt = 9
+    ExpectedGroup = 10
+    MissingDocumentation = 11
+    MissingUnit = 12
+    ChoiceValidationError = 13
+    UnitWithoutField = 14
+    AttributeForNonExistingField = 15
+    BrokenLink = 16
+    FailedNamefitting = 17
+    NXdataMissingSignalData = 18
+    NXdataMissingAxisData = 19
+    NXdataAxisMismatch = 20
+    KeyToBeRemoved = 21
 
 
 class Collector:
@@ -85,7 +86,11 @@ class Collector:
             )
         elif log_type == ValidationProblem.InvalidEnum:
             logger.warning(
-                f"The value at {path} should be one of the following: {value}"
+                f"The value at {path} should be one of the following: {value}."
+            )
+        elif log_type == ValidationProblem.OpenEnumWithNewItem:
+            logger.info(
+                f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
             logger.warning(f"The required group, {path}, hasn't been supplied.")
@@ -164,7 +169,10 @@ class Collector:
         if self.logging and path + str(log_type) + str(value) not in self.data:
             self._log(path, log_type, value, *args, **kwargs)
         # info messages should not fail validation
-        if log_type not in (ValidationProblem.UnitWithoutDocumentation,):
+        if log_type not in (
+            ValidationProblem.UnitWithoutDocumentation,
+            ValidationProblem.OpenEnumWithNewItem,
+        ):
             self.data.add(path + str(log_type) + str(value))
 
     def has_validation_problems(self):
@@ -266,7 +274,7 @@ def get_all_parents_for(xml_elem: ET._Element) -> List[ET._Element]:
     root = get_appdef_root(xml_elem)
     inheritance_chain = []
     extends = root.get("extends")
-    while extends is not None and extends != "NXobject":
+    while extends is not None:
         parent_xml_root, _ = get_nxdl_root_and_path(extends)
         extends = parent_xml_root.get("extends")
         inheritance_chain.append(parent_xml_root)
@@ -489,6 +497,15 @@ def contains_uppercase(field_name: Optional[str]) -> bool:
     return any(char.isupper() for char in field_name)
 
 
+def is_variadic(name: str, name_type: str) -> bool:
+    """
+    Determine if a name is variadic based on its nameType.
+    """
+    if name:
+        return False if name_type == "specified" else True
+    return True
+
+
 def convert_nexus_to_suggested_name(nexus_name):
     """Helper function to suggest a name for a group from its NeXus class."""
     if contains_uppercase(nexus_name):
@@ -646,7 +663,9 @@ def convert_str_to_bool_safe(value: str) -> Optional[bool]:
     raise ValueError(f"Could not interpret string '{value}' as boolean.")
 
 
-def is_valid_data_field(value: Any, nxdl_type: str, nxdl_enum: list, path: str) -> Any:
+def is_valid_data_field(
+    value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
+) -> Any:
     # todo: Check this function and write test for it. It seems the function is not
     # working as expected.
     """Checks whether a given value is valid according to the type defined in the NXDL.
@@ -688,11 +707,18 @@ def is_valid_data_field(value: Any, nxdl_type: str, nxdl_enum: list, path: str) 
 
     # Check enumeration
     if nxdl_enum is not None and value not in nxdl_enum:
-        collector.collect_and_log(
-            path,
-            ValidationProblem.InvalidEnum,
-            nxdl_enum,
-        )
+        if nxdl_enum_open:
+            collector.collect_and_log(
+                path,
+                ValidationProblem.OpenEnumWithNewItem,
+                nxdl_enum,
+            )
+        else:
+            collector.collect_and_log(
+                path,
+                ValidationProblem.InvalidEnum,
+                nxdl_enum,
+            )
 
     return value
 
@@ -871,8 +897,8 @@ def add_default_root_attributes(data, filename):
         "https://github.com/FAIRmat-NFDI/nexus_definitions/"
         f"blob/{get_nexus_version_hash()}",
     )
-    update_and_warn("/@NeXus_version", get_nexus_version())
-    update_and_warn("/@HDF5_version", ".".join(map(str, h5py.h5.get_libversion())))
+    update_and_warn("/@NeXus_release", get_nexus_version())
+    update_and_warn("/@HDF5_Version", ".".join(map(str, h5py.h5.get_libversion())))
     update_and_warn("/@h5py_version", h5py.__version__)
 
 

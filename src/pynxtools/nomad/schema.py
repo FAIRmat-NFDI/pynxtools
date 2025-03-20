@@ -39,6 +39,7 @@ from nomad.metainfo import SchemaPackage
 from nomad.normalizing.common import nomad_atoms_from_ase_atoms
 from nomad.normalizing.topology import add_system, add_system_info
 from scipy.spatial import cKDTree
+import pint
 
 try:
     from nomad import utils
@@ -139,9 +140,7 @@ class NexusActivityStep(ActivityStep):
 
 
 class AnchoredReference(EntityReference):
-
     def normalize(self, archive, logger):
-
         def create_Entity(lab_id, archive, f_name, qunt_name):
             entitySec = Entity()
             entitySec.lab_id = lab_id
@@ -197,14 +196,16 @@ class NexusReferences(ArchiveSection):
             if not (val := getattr(self, identifier)):
                 continue
             # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
-            field_n = identifier.split('__field')[0]
+            field_n = identifier.split("__field")[0]
             logger.info(f"Lab id {val} to be created")
             nx_id = AnchoredReference(lab_id=val, name=field_n)
             nx_id.m_set_section_attribute(
-                "m_nx_data_path", self.m_get_quantity_attribute(identifier, "m_nx_data_path")
+                "m_nx_data_path",
+                self.m_get_quantity_attribute(identifier, "m_nx_data_path"),
             )
             nx_id.m_set_section_attribute(
-                "m_nx_data_file", self.m_get_quantity_attribute(identifier, "m_nx_data_file")
+                "m_nx_data_file",
+                self.m_get_quantity_attribute(identifier, "m_nx_data_file"),
             )
 
             self.AnchoredReferences.append(nx_id)
@@ -510,12 +511,12 @@ def nxdata_ensure_definition(
         else:
             filters = ["DATA", "AXISNAME", "FIELDNAME_errors"]
         # get the reduced options
-        newdefintions = {}
+        newdefinitions = {}
         for dname, definition in self.m_def.all_aliases:
             if dname not in filters:
-                newdefintions[dname] = definition
+                newdefinitions[dname] = definition
         # run the query
-        definition = resolve_variadic_name(newdefintions, def_or_name, hint)
+        definition = resolve_variadic_name(newdefinitions, def_or_name, hint)
         return definition
     return super(current_cls, self)._ensure_definition(
         def_or_name,
@@ -555,9 +556,11 @@ def __get_enumeration(xml_node: ET.Element) -> Tuple[Optional[MEnum], Optional[b
         return None, None
 
     items = enumeration.findall("nx:item", __XML_NAMESPACES)
-    open = bool(enumeration.attrib["open"]) if "open" in enumeration.attrib else False
+    open_enum = (
+        bool(enumeration.attrib["open"]) if "open" in enumeration.attrib else False
+    )
 
-    return MEnum([value.attrib["value"] for value in items]), open
+    return MEnum([value.attrib["value"] for value in items]), open_enum
 
 
 def __add_common_properties(xml_node: ET.Element, definition: Definition):
@@ -765,11 +768,23 @@ def __create_field(xml_node: ET.Element, container: Section) -> Quantity:
     # dimensionality
     nx_dimensionality = xml_attrs.get("units", None)
     if nx_dimensionality:
-        if nx_dimensionality not in NXUnitSet.mapping:
-            raise NotImplementedError(
-                f"Unit {nx_dimensionality} is not supported for {name}."
-            )
-        dimensionality = NXUnitSet.mapping[nx_dimensionality]
+        dimensionality = NXUnitSet.mapping.get(nx_dimensionality)
+        if not dimensionality and nx_dimensionality != "NX_ANY":
+            try:
+                from nomad.units import ureg
+
+                quantity = 1 * ureg(nx_dimensionality)
+                if quantity.dimensionality == "dimensionless":
+                    dimensionality = "1"
+                else:
+                    dimensionality = str(quantity.dimensionality)
+            except (
+                pint.errors.UndefinedUnitError,
+                pint.errors.DefinitionSyntaxError,
+            ) as err:
+                raise NotImplementedError(
+                    f"Unit {nx_dimensionality} is not supported for {name}."
+                ) from err
     else:
         dimensionality = None
 
