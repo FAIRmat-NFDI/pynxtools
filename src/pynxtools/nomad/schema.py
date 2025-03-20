@@ -329,17 +329,15 @@ def get_nx_type(nx_type: str) -> Optional[Datatype]:
         "NX_CHAR": m_str,
         "NX_BOOLEAN": m_bool,
         "NX_INT": m_int64,
-        "NX_UINT": m_int,
+        "NX_UINT": m_int64,
         "NX_NUMBER": m_float64,
-        "NX_POSINT": m_int,
+        "NX_POSINT": m_int64,
         "NX_BINARY": Bytes,
         "NX_DATE_TIME": Datetime,
         "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
     }
 
     if nx_type in __NX_TYPES:
-        if nx_type in ("NX_UINT", "NX_POSINT"):
-            return __NX_TYPES[nx_type](dtype=np.uint64).no_type_check().no_shape_check()
         return __NX_TYPES[nx_type]().no_type_check().no_shape_check()
     return None
 
