@@ -31,6 +31,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import h5py
 import numpy as np
 import pandas as pd
+import pint
 from ase import Atoms
 from ase.data import atomic_numbers
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
@@ -39,7 +40,6 @@ from nomad.metainfo import SchemaPackage
 from nomad.normalizing.common import nomad_atoms_from_ase_atoms
 from nomad.normalizing.topology import add_system, add_system_info
 from scipy.spatial import cKDTree
-import pint
 
 try:
     from nomad import utils
@@ -1258,6 +1258,7 @@ def normalize_atom_probe(self, archive, logger):
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
     # temporarily disable extra normalisation step
+    return
 
     def plot_3d_plotly(df, palette="Set1"):
         import plotly.express as px
@@ -1318,6 +1319,17 @@ def normalize_atom_probe(self, archive, logger):
         os.path.join(archive.m_context.raw_path(), self.m_attributes["m_nx_data_file"]),
         "r",
     ) as fp:
+        if (
+            f"{data_path}/reconstruction/reconstructed_positions" not in fp
+            or f"{data_path}/mass_to_charge_conversion/mass_to_charge" not in fp
+        ):
+            return
+        if not hasattr(self, "ranging"):
+            return
+        if not hasattr(self.ranging, "peak_identification"):
+            return
+        if not hasattr(self.ranging.peak_identification, "ionID"):
+            return
         # Load the reconstructed positions and mass-to-charge values
         positions = fp[f"{data_path}/reconstruction/reconstructed_positions"][:]
         mass_to_charge_values = fp[
@@ -1373,7 +1385,7 @@ def normalize_atom_probe(self, archive, logger):
         positions = df[["x", "y", "z"]].values
         return Atoms(symbols=symbols, positions=positions)
 
-    atoms_lamela = create_ase_atoms(df_sampled)
+    apt_tip = create_ase_atoms(df_sampled)
 
     # **Build NOMAD Topology Structure with Individual Element Systems**
     def build_nomad_topology(archive):
@@ -1382,19 +1394,22 @@ def normalize_atom_probe(self, archive, logger):
         if not archive.results.material:
             archive.results.material = Material()
 
-        elements = list(set(atoms_lamela.get_chemical_symbols()))
+        # @Pepe-Marquez, can just be checked for existence, elements have at this point
+        # along the processing pipeline been already been populated
+        elements = list(set(apt_tip.get_chemical_symbols()))
         if not archive.results.material.elements:
             archive.results.material.elements = elements
         else:
+            # @Pepe-Marquez why does the storage order of the elements matter here?
             for i in range(len(elements)):
                 if archive.results.material.elements[i] != elements[i]:
                     print("WARNING: elements are swapped")
 
         topology = {}
         system = System(
-            atoms=nomad_atoms_from_ase_atoms(atoms_lamela),
-            label="Atom Probe Tomography - Lamella",
-            description="Reconstructed 3D atom probe tomography dataset.",
+            atoms=nomad_atoms_from_ase_atoms(apt_tip),
+            label="Reconstruction",
+            description="Reconstruction of the original atom positions",
             structural_type="bulk",
             dimensionality="3D",
             system_relation=Relation(type="root"),

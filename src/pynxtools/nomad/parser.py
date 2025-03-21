@@ -289,7 +289,7 @@ class NexusParser(MatchingParser):
                         ]
                         field = field_stats[0]
                         if not np.isfinite(field):
-                            self._logger.warning(
+                            self._logger.info(
                                 "set NaN for field of an array",
                                 target_name=field_name + "[" + data_instance_name + "]",
                             )
@@ -298,7 +298,7 @@ class NexusParser(MatchingParser):
                         return
                 else:
                     if field.size == 1 and not np.isfinite(field):
-                        self._logger.warning(
+                        self._logger.info(
                             "set NaN for field of a scalar",
                             target_name=field_name + "[" + data_instance_name + "]",
                         )
