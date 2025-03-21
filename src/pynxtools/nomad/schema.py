@@ -196,7 +196,7 @@ class NexusIdentifiers(ArchiveSection):
             if not (val := getattr(self, identifier)):
                 continue
             if isinstance(val, dict):
-                for idname, idobj in val:
+                for idname, idobj in val.items():
                     # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
                     field_n = idname.split("__field")[0]
                     logger.info(f"Lab id {val} to be created")
