@@ -28,7 +28,7 @@ on the fly when the tree is generated.
 It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
-from functools import reduce
+from functools import lru_cache, reduce
 from typing import Any, List, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
@@ -257,6 +257,7 @@ class NexusNode(NodeMixin):
                 return child
         return None
 
+    @lru_cache(maxsize=5000)
     def search_add_child_for(self, name: str) -> Optional["NexusNode"]:
         """
         This searches a child with name `name` in the current node.
