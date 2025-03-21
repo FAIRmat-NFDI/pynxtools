@@ -175,8 +175,8 @@ class AnchoredReference(EntityReference):
             self.reference = get_entry_reference(archive, f_name)
 
 
-class NexusReferences(ArchiveSection):
-    AnchoredReferences = SubSection(
+class NexusIdentifiers(ArchiveSection):
+    NXidentifiers = SubSection(
         section_def=AnchoredReference,
         repeats=True,
         description="These are the NOMAD references correspond to NeXus identifierNAME fields.",
@@ -191,25 +191,43 @@ class NexusReferences(ArchiveSection):
         ]
         if not identifiers:
             return
-        self.AnchoredReferences = []
+        self.NXidentifiers = []
         for identifier in identifiers:
             if not (val := getattr(self, identifier)):
                 continue
-            # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
-            field_n = identifier.split("__field")[0]
-            logger.info(f"Lab id {val} to be created")
-            nx_id = AnchoredReference(lab_id=val, name=field_n)
-            nx_id.m_set_section_attribute(
-                "m_nx_data_path",
-                self.m_get_quantity_attribute(identifier, "m_nx_data_path"),
-            )
-            nx_id.m_set_section_attribute(
-                "m_nx_data_file",
-                self.m_get_quantity_attribute(identifier, "m_nx_data_file"),
-            )
+            if isinstance(val, dict):
+                for idname, idobj in val:
+                    # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
+                    field_n = idname.split("__field")[0]
+                    logger.info(f"Lab id {val} to be created")
+                    nx_id = AnchoredReference(lab_id=val, name=field_n)
+                    nx_id.m_set_section_attribute(
+                        "m_nx_data_path",
+                        self.m_get_quantity_attribute(idname, "m_nx_data_path"),
+                    )
+                    nx_id.m_set_section_attribute(
+                        "m_nx_data_file",
+                        self.m_get_quantity_attribute(idname, "m_nx_data_file"),
+                    )
 
-            self.AnchoredReferences.append(nx_id)
-            nx_id.normalize(archive, logger)
+                    self.NXientifiers.append(nx_id)
+                    nx_id.normalize(archive, logger)
+            else:
+                # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
+                field_n = identifier.split("__field")[0]
+                logger.info(f"Lab id {val} to be created")
+                nx_id = AnchoredReference(lab_id=val, name=field_n)
+                nx_id.m_set_section_attribute(
+                    "m_nx_data_path",
+                    self.m_get_quantity_attribute(identifier, "m_nx_data_path"),
+                )
+                nx_id.m_set_section_attribute(
+                    "m_nx_data_file",
+                    self.m_get_quantity_attribute(identifier, "m_nx_data_file"),
+                )
+
+                self.NXientifiers.append(nx_id)
+                nx_id.normalize(archive, logger)
 
         super().normalize(archive, logger)
 
@@ -229,7 +247,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    "NXobject": [NexusReferences],
+    "NXobject": [NexusIdentifiers],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
@@ -1148,7 +1166,7 @@ def init_nexus_metainfo():
     nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
     nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
     nexus_metainfo_package.section_definitions.append(AnchoredReference.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusReferences.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusIdentifiers.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
