@@ -199,8 +199,8 @@ class NexusIdentifiers(ArchiveSection):
                 for idname, idobj in val.items():
                     # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
                     field_n = idname.split("__field")[0]
-                    logger.info(f"Lab id {idobj.val} to be created")
-                    nx_id = AnchoredReference(lab_id=idobj.val, name=field_n)
+                    logger.info(f"Lab id {idobj.value} to be created")
+                    nx_id = AnchoredReference(lab_id=idobj.value, name=field_n)
                     nx_id.m_set_section_attribute(
                         "m_nx_data_path",
                         self.m_get_quantity_attribute(idname, "m_nx_data_path"),
