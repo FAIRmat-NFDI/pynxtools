@@ -899,6 +899,9 @@ def validate_dict_against(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
 
+    # clear lru_cache
+    NexusNode.search_add_child_for.cache_clear()
+
     return (not collector.has_validation_problems(), keys_to_remove)
 
 

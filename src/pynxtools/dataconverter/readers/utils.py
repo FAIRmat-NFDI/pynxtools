@@ -255,10 +255,17 @@ def flatten_json(
                     create_link_dict=create_link_dict,
                 )
             )
-        elif create_link_dict and isinstance(value, str) and value.startswith("@link:"):
-            flattened_config[key] = {"link": value[6:]}
         else:
-            flattened_config[key] = value
+            if rkey is not None and isinstance(value, str):
+                value = value.replace("*", rkey)
+            if (
+                create_link_dict
+                and isinstance(value, str)
+                and value.startswith("@link:")
+            ):
+                flattened_config[key] = {"link": value[6:]}
+            else:
+                flattened_config[key] = value
 
     for key, value in json_data.items():
         if base_key is not None:
@@ -274,10 +281,6 @@ def flatten_json(
             expand_keys = expand_match.group(1).split(",")
             for ekey in expand_keys:
                 rkey = key.replace(expand_match.group(0), ekey)
-
-                if isinstance(value, str):
-                    value = value.replace("*", ekey)
-
                 update_config(rkey, value, ekey)
             continue
 

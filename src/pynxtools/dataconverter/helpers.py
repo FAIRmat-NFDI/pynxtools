@@ -600,11 +600,12 @@ nx_char = (str, np.character)
 nx_int = (int, np.integer)
 nx_float = (float, np.floating)
 nx_number = nx_int + nx_float
+nx_bool = (bool, np.bool_)
 
 NEXUS_TO_PYTHON_DATA_TYPES = {
     "ISO8601": (str,),
     "NX_BINARY": (bytes, bytearray, np.bytes_),
-    "NX_BOOLEAN": (bool, np.bool_),
+    "NX_BOOLEAN": nx_bool,
     "NX_CHAR": nx_char,
     "NX_DATE_TIME": (str,),
     "NX_FLOAT": nx_float,
@@ -616,39 +617,26 @@ NEXUS_TO_PYTHON_DATA_TYPES = {
         complex,
         np.complexfloating,
     ),
-    "NX_CHAR_OR_NUMBER": nx_char + nx_number,
+    "NX_CHAR_OR_NUMBER": nx_char + nx_number + nx_bool,
     "NXDL_TYPE_UNAVAILABLE": (
         nx_char,
     ),  # Defaults to a string if a type is not provided.
 }
 
 
-def check_all_children_for_callable(
-    objects: Union[list, np.ndarray], check_function: Optional[Callable] = None, *args
-) -> bool:
-    """Checks whether all objects in list or numpy array are validated
-    by given callable and types.
-    """
-    if not isinstance(objects, np.ndarray):
-        objects = np.array(objects)
-
-    return all([check_function(o, *args) for o in objects.flat])
-
-
-def is_valid_data_type(value, accepted_types):
+def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     """Checks whether the given value or its children are of an accepted type."""
-    return check_all_children_for_callable(value, isinstance, accepted_types)
+    if not isinstance(value, np.ndarray):
+        value = np.array(value)
+    return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
 
 
-def is_positive_int(value):
+def is_positive_int(value: Any) -> bool:
     """Checks whether the given value or its children are positive."""
 
-    def is_greater_than(num):
-        return num > 0
-
-    return check_all_children_for_callable(
-        objects=value, check_function=is_greater_than
-    )
+    if not isinstance(value, np.ndarray):
+        value = np.array(value)
+    return bool(np.all(value > 0))
 
 
 def convert_str_to_bool_safe(value: str) -> Optional[bool]:
