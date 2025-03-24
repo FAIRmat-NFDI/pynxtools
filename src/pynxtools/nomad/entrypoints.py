@@ -204,14 +204,14 @@ nexus_app = AppEntryPoint(
                     size=MenuSizeEnum.LG,
                     items=[
                         MenuItemTerms(
-                            title="Model",
+                            title="Name",
                             search_quantity=f"data.ENTRY.INSTRUMENT.name__field#{schema}",
                             width=12,
                             options=12,
                         ),
                         MenuItemTerms(
-                            name="Name",
-                            search_quantity=f"data.ENTRY.INSTRUMENT.name#{schema}",
+                            title="Short Name",
+                            search_quantity=f"data.ENTRY.INSTRUMENT.name___short_name#{schema}",
                             width=12,
                             options=12,
                         ),
@@ -229,7 +229,7 @@ nexus_app = AppEntryPoint(
                         ),
                         MenuItemTerms(
                             title="Sample ID",
-                            search_quantity=f"data.ENTRY.SAMPLE.sample_id__field#{schema}",
+                            search_quantity=f"data.ENTRY.SAMPLE.identifierNAME__field#{schema}",
                             width=12,
                             options=12,
                         ),
@@ -267,7 +267,7 @@ nexus_app = AppEntryPoint(
                 ),
                 MenuItemHistogram(
                     title="Start Time",
-                    x=f"data.ENTRY.start_time#{schema}",
+                    x=f"data.ENTRY.start_time__field#{schema}",
                     autorange=True,
                 ),
                 MenuItemHistogram(
