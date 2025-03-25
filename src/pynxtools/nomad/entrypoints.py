@@ -121,7 +121,7 @@ nexus_app = AppEntryPoint(
             ),
             Column(
                 title="Author",
-                search_quantity=f"[data.ENTRY[*].USER[*].name__field, data.ENTRY[*].userID[*].name__field]#{schema}",
+                search_quantity=f"data.ENTRY[*].USER[*].name__field#{schema}",
                 selected=True,
             ),
             Column(
@@ -131,7 +131,7 @@ nexus_app = AppEntryPoint(
             ),
             Column(
                 title="Sample ID",
-                search_quantity=f"data.ENTRY[*].SAMPLE[*].sample_id__field#{schema}",
+                search_quantity=f"data.ENTRY[*].SAMPLE[*].identifierNAME__field#{schema}",
                 selected=False,
             ),
             Column(
@@ -242,12 +242,6 @@ nexus_app = AppEntryPoint(
                         MenuItemTerms(
                             title="Entry Author",
                             search_quantity=f"data.ENTRY.USER.name__field#{schema}",
-                            width=12,
-                            options=5,
-                        ),
-                        MenuItemTerms(
-                            title="User ID / Entry Author",
-                            search_quantity=f"data.ENTRY.userID.name__field#{schema}#str",
                             width=12,
                             options=5,
                         ),
