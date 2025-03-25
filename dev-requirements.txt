@@ -198,7 +198,7 @@ super-collections==0.5.3
     # via mkdocs-macros-plugin
 termcolor==2.5.0
     # via mkdocs-macros-plugin
-tomli==2.2.1 ; python_full_version <= '3.11'
+tomli==2.2.1 ; python_full_version == '3.11'
     # via coverage
 toposort==1.10
     # via pynxtools (pyproject.toml)
