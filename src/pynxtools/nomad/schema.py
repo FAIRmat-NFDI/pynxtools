@@ -210,7 +210,7 @@ class NexusIdentifiers(ArchiveSection):
                         self.m_get_quantity_attribute(idname, "m_nx_data_file"),
                     )
 
-                    self.NXientifiers.append(nx_id)
+                    self.NXidentifiers.append(nx_id)
                     nx_id.normalize(archive, logger)
             else:
                 # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
@@ -226,7 +226,7 @@ class NexusIdentifiers(ArchiveSection):
                     self.m_get_quantity_attribute(identifier, "m_nx_data_file"),
                 )
 
-                self.NXientifiers.append(nx_id)
+                self.NXidentifiers.append(nx_id)
                 nx_id.normalize(archive, logger)
 
         super().normalize(archive, logger)
