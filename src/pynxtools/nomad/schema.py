@@ -184,6 +184,21 @@ class NexusIdentifiers(ArchiveSection):
 
     def normalize(self, archive, logger):
         # Consider multiple identifiers exists in the same group/section
+        def generate_anchored_reference_and_normalize(value, idname):
+            """Generate anchored reference, connect to m quantities, and normalize."""
+            field_n = idname.split("__field")[0]
+            logger.info(f"Lab id {value} to be created")
+            nx_id = AnchoredReference(lab_id=value, name=field_n)
+            nx_id.m_set_section_attribute(
+                "m_nx_data_path",
+                self.m_get_quantity_attribute(idname, "m_nx_data_path"),
+            )
+            nx_id.m_set_section_attribute(
+                "m_nx_data_file",
+                self.m_get_quantity_attribute(idname, "m_nx_data_file"),
+            )
+            return nx_id
+
         identifiers = [
             key
             for key in self.__dict__.keys()
@@ -197,35 +212,13 @@ class NexusIdentifiers(ArchiveSection):
                 continue
             if isinstance(val, dict):
                 for idname, idobj in val.items():
-                    # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
-                    field_n = idname.split("__field")[0]
-                    logger.info(f"Lab id {idobj.value} to be created")
-                    nx_id = AnchoredReference(lab_id=idobj.value, name=field_n)
-                    nx_id.m_set_section_attribute(
-                        "m_nx_data_path",
-                        self.m_get_quantity_attribute(idname, "m_nx_data_path"),
+                    nx_id = generate_anchored_reference_and_normalize(
+                        idobj.value, idname
                     )
-                    nx_id.m_set_section_attribute(
-                        "m_nx_data_file",
-                        self.m_get_quantity_attribute(idname, "m_nx_data_file"),
-                    )
-
                     self.NXidentifiers.append(nx_id)
                     nx_id.normalize(archive, logger)
             else:
-                # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
-                field_n = identifier.split("__field")[0]
-                logger.info(f"Lab id {val} to be created")
-                nx_id = AnchoredReference(lab_id=val, name=field_n)
-                nx_id.m_set_section_attribute(
-                    "m_nx_data_path",
-                    self.m_get_quantity_attribute(identifier, "m_nx_data_path"),
-                )
-                nx_id.m_set_section_attribute(
-                    "m_nx_data_file",
-                    self.m_get_quantity_attribute(identifier, "m_nx_data_file"),
-                )
-
+                nx_id = generate_anchored_reference_and_normalize(val, identifier)
                 self.NXidentifiers.append(nx_id)
                 nx_id.normalize(archive, logger)
 
