@@ -176,7 +176,7 @@ class AnchoredReference(EntityReference):
 
 
 class NexusIdentifiers(ArchiveSection):
-    NXidentifiers = SubSection(
+    NeXus_identifiers = SubSection(
         section_def=AnchoredReference,
         repeats=True,
         description="These are the NOMAD references correspond to NeXus identifierNAME fields.",
@@ -197,31 +197,24 @@ class NexusIdentifiers(ArchiveSection):
                 "m_nx_data_file",
                 self.m_get_quantity_attribute(idname, "m_nx_data_file"),
             )
-            return nx_id
+            nx_id.normalize(archive, logger)
+            self.NeXus_identifiers.append(nx_id)
 
         identifiers = [
             key
             for key in self.__dict__.keys()
             if key.startswith("identifier") and key.endswith("__field")
         ]
-        if not identifiers:
-            return
-        self.NXidentifiers = []
-        for identifier in identifiers:
-            if not (val := getattr(self, identifier)):
-                continue
-            if isinstance(val, dict):
-                for idname, idobj in val.items():
-                    nx_id = generate_anchored_reference_and_normalize(
-                        idobj.value, idname
-                    )
-                    self.NXidentifiers.append(nx_id)
-                    nx_id.normalize(archive, logger)
-            else:
-                nx_id = generate_anchored_reference_and_normalize(val, identifier)
-                self.NXidentifiers.append(nx_id)
-                nx_id.normalize(archive, logger)
-
+        if identifiers:
+            self.NeXus_identifiers = []
+            for identifier in identifiers:
+                if not (val := getattr(self, identifier)):
+                    continue
+                if isinstance(val, dict):
+                    for idname, idobj in val.items():
+                        generate_anchored_reference_and_normalize(idobj.value, idname)
+                else:
+                    generate_anchored_reference_and_normalize(val, identifier)
         super().normalize(archive, logger)
 
 
