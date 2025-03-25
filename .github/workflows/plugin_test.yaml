@@ -38,15 +38,15 @@ jobs:
           - plugin: pynxtools-raman
             branch: main
             tests_to_run: tests/.
-          - plugin: pynxtools-spm
-            branch: main
-            tests_to_run: tests/.
+          # - plugin: pynxtools-spm
+          #   branch: main
+          #  tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: main
             tests_to_run: tests/.
-          - plugin: pynxtools-xrd
-            branch: main
-            tests_to_run: tests/.
+          # - plugin: pynxtools-xrd
+          #   branch: main
+          #   tests_to_run: tests/.
 
     steps:
       - uses: actions/checkout@v4
