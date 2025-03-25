@@ -31,6 +31,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import h5py
 import numpy as np
 import pandas as pd
+import pint
 from ase import Atoms
 from ase.data import atomic_numbers
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
@@ -39,7 +40,6 @@ from nomad.metainfo import SchemaPackage
 from nomad.normalizing.common import nomad_atoms_from_ase_atoms
 from nomad.normalizing.topology import add_system, add_system_info
 from scipy.spatial import cKDTree
-import pint
 
 try:
     from nomad import utils
@@ -175,8 +175,8 @@ class AnchoredReference(EntityReference):
             self.reference = get_entry_reference(archive, f_name)
 
 
-class NexusReferences(ArchiveSection):
-    AnchoredReferences = SubSection(
+class NexusIdentifiers(ArchiveSection):
+    NeXus_identifiers = SubSection(
         section_def=AnchoredReference,
         repeats=True,
         description="These are the NOMAD references correspond to NeXus identifierNAME fields.",
@@ -184,33 +184,37 @@ class NexusReferences(ArchiveSection):
 
     def normalize(self, archive, logger):
         # Consider multiple identifiers exists in the same group/section
+        def generate_anchored_reference_and_normalize(value, idname):
+            """Generate anchored reference, connect to m quantities, and normalize."""
+            field_n = idname.split("__field")[0]
+            logger.info(f"Lab id {value} to be created")
+            nx_id = AnchoredReference(lab_id=value, name=field_n)
+            nx_id.m_set_section_attribute(
+                "m_nx_data_path",
+                self.m_get_quantity_attribute(idname, "m_nx_data_path"),
+            )
+            nx_id.m_set_section_attribute(
+                "m_nx_data_file",
+                self.m_get_quantity_attribute(idname, "m_nx_data_file"),
+            )
+            nx_id.normalize(archive, logger)
+            self.NeXus_identifiers.append(nx_id)
+
         identifiers = [
             key
             for key in self.__dict__.keys()
             if key.startswith("identifier") and key.endswith("__field")
         ]
-        if not identifiers:
-            return
-        self.AnchoredReferences = []
-        for identifier in identifiers:
-            if not (val := getattr(self, identifier)):
-                continue
-            # identifier_path = f"{self.m_def.name}_{identifier.split('__field')[0]}"
-            field_n = identifier.split("__field")[0]
-            logger.info(f"Lab id {val} to be created")
-            nx_id = AnchoredReference(lab_id=val, name=field_n)
-            nx_id.m_set_section_attribute(
-                "m_nx_data_path",
-                self.m_get_quantity_attribute(identifier, "m_nx_data_path"),
-            )
-            nx_id.m_set_section_attribute(
-                "m_nx_data_file",
-                self.m_get_quantity_attribute(identifier, "m_nx_data_file"),
-            )
-
-            self.AnchoredReferences.append(nx_id)
-            nx_id.normalize(archive, logger)
-
+        if identifiers:
+            self.NeXus_identifiers = []
+            for identifier in identifiers:
+                if not (val := getattr(self, identifier)):
+                    continue
+                if isinstance(val, dict):
+                    for idname, idobj in val.items():
+                        generate_anchored_reference_and_normalize(idobj.value, idname)
+                else:
+                    generate_anchored_reference_and_normalize(val, identifier)
         super().normalize(archive, logger)
 
 
@@ -229,7 +233,7 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
-    "NXobject": [NexusReferences],
+    "NXobject": [NexusIdentifiers],
     "NXentry": [NexusActivityStep],
     "NXprocess": [NexusActivityStep],
     "NXdata": [NexusActivityResult],
@@ -1148,7 +1152,7 @@ def init_nexus_metainfo():
     nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
     nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
     nexus_metainfo_package.section_definitions.append(AnchoredReference.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusReferences.m_def)
+    nexus_metainfo_package.section_definitions.append(NexusIdentifiers.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
@@ -1258,6 +1262,7 @@ def normalize_atom_probe(self, archive, logger):
     ].section_cls
     super(current_cls, self).normalize(archive, logger)
     # temporarily disable extra normalisation step
+    return
 
     def plot_3d_plotly(df, palette="Set1"):
         import plotly.express as px
@@ -1318,6 +1323,17 @@ def normalize_atom_probe(self, archive, logger):
         os.path.join(archive.m_context.raw_path(), self.m_attributes["m_nx_data_file"]),
         "r",
     ) as fp:
+        if (
+            f"{data_path}/reconstruction/reconstructed_positions" not in fp
+            or f"{data_path}/mass_to_charge_conversion/mass_to_charge" not in fp
+        ):
+            return
+        if not hasattr(self, "ranging"):
+            return
+        if not hasattr(self.ranging, "peak_identification"):
+            return
+        if not hasattr(self.ranging.peak_identification, "ionID"):
+            return
         # Load the reconstructed positions and mass-to-charge values
         positions = fp[f"{data_path}/reconstruction/reconstructed_positions"][:]
         mass_to_charge_values = fp[
@@ -1373,7 +1389,7 @@ def normalize_atom_probe(self, archive, logger):
         positions = df[["x", "y", "z"]].values
         return Atoms(symbols=symbols, positions=positions)
 
-    atoms_lamela = create_ase_atoms(df_sampled)
+    apt_tip = create_ase_atoms(df_sampled)
 
     # **Build NOMAD Topology Structure with Individual Element Systems**
     def build_nomad_topology(archive):
@@ -1382,19 +1398,22 @@ def normalize_atom_probe(self, archive, logger):
         if not archive.results.material:
             archive.results.material = Material()
 
-        elements = list(set(atoms_lamela.get_chemical_symbols()))
+        # @Pepe-Marquez, can just be checked for existence, elements have at this point
+        # along the processing pipeline been already been populated
+        elements = list(set(apt_tip.get_chemical_symbols()))
         if not archive.results.material.elements:
             archive.results.material.elements = elements
         else:
+            # @Pepe-Marquez why does the storage order of the elements matter here?
             for i in range(len(elements)):
                 if archive.results.material.elements[i] != elements[i]:
                     print("WARNING: elements are swapped")
 
         topology = {}
         system = System(
-            atoms=nomad_atoms_from_ase_atoms(atoms_lamela),
-            label="Atom Probe Tomography - Lamella",
-            description="Reconstructed 3D atom probe tomography dataset.",
+            atoms=nomad_atoms_from_ase_atoms(apt_tip),
+            label="Reconstruction",
+            description="Reconstruction of the original atom positions",
             structural_type="bulk",
             dimensionality="3D",
             system_relation=Relation(type="root"),

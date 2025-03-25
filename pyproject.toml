@@ -66,32 +66,32 @@ dev = [
     "pre-commit",
 ]
 convert = [
-    "pynxtools[apm,ellips,em,igor,mpes,raman,stm,xps,xrd]",
+    "pynxtools[apm,ellips,em,igor,mpes,raman,spm,xps,xrd]",
 ]
 
 apm = [
-    "pynxtools-apm>=0.2.2",
+    "pynxtools-apm>=0.2.3",
 ]
 ellips = [
-    "pynxtools-ellips>=0.0.7",
+    "pynxtools-ellips>=0.0.8",
 ]
 em = [
-    "pynxtools-em>=0.3.1",
+    "pynxtools-em>=0.3.2",
 ]
 igor = [
-    "pynxtools-igor>=0.1.0",
+    "pynxtools-igor>=0.1.1",
 ]
 mpes = [
-    "pynxtools-mpes>=0.2.1",
+    "pynxtools-mpes>=0.2.2",
 ]
 raman = [
-    "pynxtools-raman>=0.0.5",
+    "pynxtools-raman>=0.0.9",
 ]
-stm = [
-    "pynxtools-spm>=0.0.0",
+spm = [
+    "pynxtools-spm>=0.0.8",
 ]
 xps = [
-    "pynxtools-xps>=0.4.8",
+    "pynxtools-xps>=0.5.0",
 ]
 xrd = [
     "pynxtools-xrd>=0.0.3",
