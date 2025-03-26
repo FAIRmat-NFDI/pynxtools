@@ -225,7 +225,10 @@ class NexusParser(MatchingParser):
                         attribute = attr_value
                         # TODO: get unit from attribute <xxx>_units
                         if isinstance(metainfo_def.type, MEnum):
-                            attribute = str(attr_value)
+                            if isinstance(attr_value, np.ndarray):
+                                attribute = str(attr_value.tolist())
+                            else:
+                                attribute = str(attr_value)
                         elif not isinstance(attr_value, str):
                             if isinstance(attr_value, np.ndarray):
                                 attr_list = attr_value.tolist()
