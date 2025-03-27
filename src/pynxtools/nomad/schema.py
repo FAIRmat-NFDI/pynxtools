@@ -184,26 +184,29 @@ class NexusIdentifiers(ArchiveSection):
 
     def normalize(self, archive, logger):
         # Consider multiple identifiers exists in the same group/section
-        def generate_anchored_reference_and_normalize(attr_obj, value, idname, is_full_storage=False):
+        def generate_anchored_reference_and_normalize(
+            attr_obj, id_value, idname, is_full_storage=False
+        ):
             """Generate anchored reference, connect to m quantities, and normalize."""
             field_n = idname.split("__field")[0]
-            logger.info(f"Lab id {value} to be created")
-            nx_id = AnchoredReference(lab_id=value, name=field_n)
+            logger.info(f"Lab id {id_value} to be created")
+            nx_id = AnchoredReference(lab_id=id_value, name=field_n)
             if not is_full_storage:
-                nx_data_path = attr_obj.m_get_quantity_attribute(idname, "m_nx_data_path")
-                nx_data_file = attr_obj.m_get_quantity_attribute(idname, "m_nx_data_file")
+                nx_data_path = attr_obj.m_get_quantity_attribute(
+                    idname, "m_nx_data_path"
+                )
+                nx_data_file = attr_obj.m_get_quantity_attribute(
+                    idname, "m_nx_data_file"
+                )
             else:
                 nx_data_path = attr_obj.attributes.get("m_nx_data_path")
                 nx_data_file = attr_obj.attributes.get("m_nx_data_file")
 
-            nx_id.m_set_section_attribute(
-                "m_nx_data_path", nx_data_path)
-            nx_id.m_set_section_attribute(
-                "m_nx_data_file", nx_data_file)
+            nx_id.m_set_section_attribute("m_nx_data_path", nx_data_path)
+            nx_id.m_set_section_attribute("m_nx_data_file", nx_data_file)
 
             self.Nexus_identifiers.append(nx_id)
             nx_id.normalize(archive, logger)
-
 
         identifiers = [
             key
@@ -217,11 +220,12 @@ class NexusIdentifiers(ArchiveSection):
                     continue
                 if isinstance(val, dict):
                     for idname, idobj in val.items():
-                        generate_anchored_reference_and_normalize(idobj, idobj.value, idname, True)
+                        generate_anchored_reference_and_normalize(
+                            idobj, idobj.value, idname, True
+                        )
                 else:
                     generate_anchored_reference_and_normalize(self, val, identifier)
         super().normalize(archive, logger)
-        xx = self.Nexus_identifiers
 
 
 class NexusActivityResult(ActivityResult):
