@@ -1,3 +1,5 @@
+"""Define general structure of the ELN mapper."""
+
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -79,9 +81,14 @@ class ElnGenerator:
         self.out_file = self._generate_output_file_name(output_file)
         self.recursive_dict: Dict[str, Any] = {}
 
-        if self.skip_top_levels >= 1:
+        if self.skip_top_levels == 1:
             logger.warning(
-                f"The first {self.skip_top_levels} levels of the NeXus tree "
+                f"The first level below NXentry of the NeXus tree "
+                "are skipped, is this intentional?"
+            )
+        elif self.skip_top_levels > 1:
+            logger.warning(
+                f"The first {self.skip_top_levels - 1} levels of the NeXus tree "
                 "are skipped, is this intentional?"
             )
 
@@ -197,7 +204,7 @@ class ElnGenerator:
 
     def generate_eln(self) -> None:
         """Generate ELN file."""
-        tree = generate_tree_from(self.nxdl)
+        tree = generate_tree_from(self.nxdl, set_root_attr=False)
 
         top_level_section = self._generate_eln_header()
         self._recurse_tree(tree, top_level_section, recursion_level=0)

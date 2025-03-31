@@ -932,7 +932,7 @@ def populate_tree_from_parents(node: NexusNode):
         populate_tree_from_parents(child_node)
 
 
-def generate_tree_from(appdef: str) -> NexusNode:
+def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     """
     Generates a NexusNode tree from an application definition.
     NexusNode is based on anytree nodes and anytree's functions can be used
@@ -940,6 +940,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
 
     Args:
         appdef (str): The application definition name to generate the NexusNode tree from.
+        set_root_attr (bool): Whether or not to set the root attributes.
 
     Returns:
         NexusNode: The tree representing the application definition.
@@ -968,6 +969,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
             add_children_to(current_elem, child)
 
     appdef_xml_root, _ = get_nxdl_root_and_path(appdef)
+
     global namespaces
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
@@ -985,10 +987,11 @@ def generate_tree_from(appdef: str) -> NexusNode:
         inheritance=appdef_inheritance_chain,
     )
     # Set root attributes
-    nx_root, _ = get_nxdl_root_and_path("NXroot")
-    for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
-        child = tree.add_node_from(root_attrib)
-        child.optionality = "optional"
+    if set_root_attr:
+        nx_root, _ = get_nxdl_root_and_path("NXroot")
+        for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
+            child = tree.add_node_from(root_attrib)
+            child.optionality = "optional"
 
     entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
     add_children_to(tree, entry)

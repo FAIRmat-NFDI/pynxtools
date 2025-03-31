@@ -1,4 +1,4 @@
-"""This test is dedicated generate_eln converter tool."""
+"""This test is dedicated to the generate_eln converter tool."""
 
 # Copyright The NOMAD Authors.
 #

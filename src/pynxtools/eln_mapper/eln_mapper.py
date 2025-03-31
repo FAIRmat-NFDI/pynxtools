@@ -1,4 +1,4 @@
-"""This module Generate ELN in a hierarchical format according to NEXUS definition."""
+"""This module generates ELN file in a hierarchical format according to a NeXus application definition."""
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
