@@ -1,14 +1,14 @@
 definitions:
   name: <ADD PREFERED NAME>
   sections:
-    scan:
+    ELN for SCAN:
       base_sections:
-      - nomad.datamodel.metainfo.eln.NexusDataConverter
+      - pynxtools.nomad.dataconverter.NexusDataConverter
       - nomad.datamodel.data.EntryData
       m_annotations:
         template:
           reader: <READER_NAME>
-          nxdl: NX<NAME>.nxdl
+          nxdl: NXscan
         eln:
           hide: []
       quantities:
@@ -17,77 +17,282 @@ definitions:
           m_annotations:
             eln:
               component: StringEditQuantity
-              defaultDisplayUnit: <No Default unit>
-          description: ''
+          description: Extended title for entry
         start_time:
           type: Datetime
           m_annotations:
             eln:
               component: DateTimeEditQuantity
-              defaultDisplayUnit: <No Default unit>
-          description: ''
+          description: Starting time of measurement
         end_time:
           type: Datetime
           m_annotations:
             eln:
               component: DateTimeEditQuantity
-              defaultDisplayUnit: <No Default unit>
-          description: ''
-        definition:
-          type: str
-          m_annotations:
-            eln:
-              component: StringEditQuantity
-              defaultDisplayUnit: <No Default unit>
-          description: Official NeXus NXDL schema to which this file conforms
+          description: Ending time of measurement
       sub_sections:
-        Instrument:
+        instrument:
           section:
             m_annotations:
               eln:
                 overview: true
+            description: Collection of the components of the instrument or beamline.
+              Template of instrument descriptions comprising various beamline components.
+              Each component will also be a NeXus group defined by its distance from
+              the sample. Negative distances represent beamline components that are
+              before the sample while positive distances represent components that
+              are after the sample. This device allows the unique identification of
+              beamline components in a way that is valid for both reactor and pulsed
+              instrumentation.
             sub_sections:
-              Detector:
+              detector:
                 section:
                   m_annotations:
                     eln:
                       overview: true
+                  description: A detector, detector bank, or multidetector.
                   quantities:
                     data:
                       type: int
+                      value: <ADD default value>
                       m_annotations:
                         eln:
                           component: NumberEditQuantity
-                          defaultDisplayUnit: <No Default unit>
-                      description: ''
-        Sample:
+                      description: Data values from the detector. The rank and dimension
+                        ordering should follow a principle of slowest to fastest measurement
+                        axes and may be explicitly specified in application definitions.
+                        Mechanical scanning of objects (e.g. sample position/angle,
+                        incident beam energy, etc) tends to be the slowest part of
+                        an experiment and so any such scan axes should be allocated
+                        to the first dimensions of the array. Note that in some cases
+                        it may be useful to represent a 2D set of scan points as a
+                        single scan-axis in the data array, especially if the scan
+                        pattern doesn't fit a rectangular array nicely. Repetition
+                        of an experiment in a time series tends to be used similar
+                        to a slow scan axis and so will often be in the first dimension
+                        of the data array. The next fastest axes are typically the
+                        readout of the detector. A point detector will not add any
+                        dimensions (as it is just a single value per scan point) to
+                        the data array, a strip detector will add one dimension, an
+                        imaging detector will add two dimensions (e.g. X, Y axes)
+                        and detectors outputting higher dimensional data will add
+                        the corresponding number of dimensions. Note that the detector
+                        dimensions don't necessarily have to be written in order of
+                        the actual readout speeds - the slowest to fastest rule principle
+                        is only a guide. Finally, detectors that operate in a time-of-flight
+                        mode, such as a neutron spectrometer or a silicon drift detector
+                        (used for X-ray fluorescence) tend to have their dimension(s)
+                        added to the last dimensions in the data array. The type of
+                        each dimension should should follow the order of scan points,
+                        detector pixels, then time-of-flight (i.e. spectroscopy, spectrometry).
+                        The rank and dimension sizes (see symbol list) shown here
+                        are merely illustrative of coordination between related datasets.
+        sample:
           section:
             m_annotations:
               eln:
                 overview: true
+            description: Any information on the sample. This could include scanned
+              variables that are associated with one of the data dimensions, e.g.
+              the magnetic field, or logged data, e.g. monitored temperature vs elapsed
+              time.
             quantities:
               rotation_angle:
                 type: np.float64
+                unit: degree
+                value: <ADD default value>
                 m_annotations:
                   eln:
                     component: NumberEditQuantity
-                    defaultDisplayUnit: <No Default unit>
-                description: ''
-        Monitor:
+                    defaultDisplayUnit: degree
+                description: Optional rotation angle for the case when the powder
+                  diagram has been obtained through an omega-2theta scan like from
+                  a traditional single detector powder diffractometer. Note, it is
+                  recommended to use NXtransformations instead.
+        monitor:
           section:
             m_annotations:
               eln:
                 overview: true
+            description: A monitor of incident beam data. It is similar to the :ref:`NXdata`
+              groups containing monitor data and its associated axis coordinates,
+              e.g. time_of_flight or wavelength in pulsed neutron instruments. However,
+              it may also include integrals, or scalar monitor counts, which are often
+              used in both in both pulsed and steady-state instrumentation.
             quantities:
               data:
                 type: int
+                value: <ADD default value>
                 m_annotations:
                   eln:
                     component: NumberEditQuantity
-                    defaultDisplayUnit: <No Default unit>
-                description: ''
-        Data:
+                description: Monitor data
+        data:
           section:
             m_annotations:
               eln:
                 overview: true
+            description: 'The data group .. note:: Before the NIAC2016 meeting [#]_,
+              at least one :ref:`NXdata` group was required in each :ref:`NXentry`
+              group. At the NIAC2016 meeting, it was decided to make :ref:`NXdata`
+              an optional group in :ref:`NXentry` groups for data files that do not
+              use an application definition. It is recommended strongly that all NeXus
+              data files provide a NXdata group. It is permissible to omit the NXdata
+              group only when defining the default plot is not practical or possible
+              from the available data. For example, neutron event data may not have
+              anything that makes a useful plot without extensive processing. Certain
+              application definitions override this decision and require an :ref:`NXdata`
+              group in the :ref:`NXentry` group. The ``minOccurs=0`` attribute in
+              the application definition will indicate the :ref:`NXdata` group is
+              optional, otherwise, it is required. .. [#] NIAC2016: https://www.nexusformat.org/NIAC2016.html,
+              https://github.com/nexusformat/NIAC/issues/16'
+        entry:
+          section:
+            m_annotations:
+              eln:
+                overview: true
+            description: (**required**) :ref:`NXentry` describes the measurement.
+              The top-level NeXus group which contains all the data and associated
+              information that comprise a single measurement. It is mandatory that
+              there is at least one group of this type in the NeXus file.
+            quantities:
+              title:
+                type: str
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+                description: Extended title for entry
+              start_time:
+                type: Datetime
+                m_annotations:
+                  eln:
+                    component: DateTimeEditQuantity
+                description: Starting time of measurement
+              end_time:
+                type: Datetime
+                m_annotations:
+                  eln:
+                    component: DateTimeEditQuantity
+                description: Ending time of measurement
+            sub_sections:
+              instrument:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  description: Collection of the components of the instrument or beamline.
+                    Template of instrument descriptions comprising various beamline
+                    components. Each component will also be a NeXus group defined
+                    by its distance from the sample. Negative distances represent
+                    beamline components that are before the sample while positive
+                    distances represent components that are after the sample. This
+                    device allows the unique identification of beamline components
+                    in a way that is valid for both reactor and pulsed instrumentation.
+                  sub_sections:
+                    detector:
+                      section:
+                        m_annotations:
+                          eln:
+                            overview: true
+                        description: A detector, detector bank, or multidetector.
+                        quantities:
+                          data:
+                            type: int
+                            value: <ADD default value>
+                            m_annotations:
+                              eln:
+                                component: NumberEditQuantity
+                            description: Data values from the detector. The rank and
+                              dimension ordering should follow a principle of slowest
+                              to fastest measurement axes and may be explicitly specified
+                              in application definitions. Mechanical scanning of objects
+                              (e.g. sample position/angle, incident beam energy, etc)
+                              tends to be the slowest part of an experiment and so
+                              any such scan axes should be allocated to the first
+                              dimensions of the array. Note that in some cases it
+                              may be useful to represent a 2D set of scan points as
+                              a single scan-axis in the data array, especially if
+                              the scan pattern doesn't fit a rectangular array nicely.
+                              Repetition of an experiment in a time series tends to
+                              be used similar to a slow scan axis and so will often
+                              be in the first dimension of the data array. The next
+                              fastest axes are typically the readout of the detector.
+                              A point detector will not add any dimensions (as it
+                              is just a single value per scan point) to the data array,
+                              a strip detector will add one dimension, an imaging
+                              detector will add two dimensions (e.g. X, Y axes) and
+                              detectors outputting higher dimensional data will add
+                              the corresponding number of dimensions. Note that the
+                              detector dimensions don't necessarily have to be written
+                              in order of the actual readout speeds - the slowest
+                              to fastest rule principle is only a guide. Finally,
+                              detectors that operate in a time-of-flight mode, such
+                              as a neutron spectrometer or a silicon drift detector
+                              (used for X-ray fluorescence) tend to have their dimension(s)
+                              added to the last dimensions in the data array. The
+                              type of each dimension should should follow the order
+                              of scan points, detector pixels, then time-of-flight
+                              (i.e. spectroscopy, spectrometry). The rank and dimension
+                              sizes (see symbol list) shown here are merely illustrative
+                              of coordination between related datasets.
+              sample:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  description: Any information on the sample. This could include scanned
+                    variables that are associated with one of the data dimensions,
+                    e.g. the magnetic field, or logged data, e.g. monitored temperature
+                    vs elapsed time.
+                  quantities:
+                    rotation_angle:
+                      type: np.float64
+                      unit: degree
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                          defaultDisplayUnit: degree
+                      description: Optional rotation angle for the case when the powder
+                        diagram has been obtained through an omega-2theta scan like
+                        from a traditional single detector powder diffractometer.
+                        Note, it is recommended to use NXtransformations instead.
+              monitor:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  description: A monitor of incident beam data. It is similar to the
+                    :ref:`NXdata` groups containing monitor data and its associated
+                    axis coordinates, e.g. time_of_flight or wavelength in pulsed
+                    neutron instruments. However, it may also include integrals, or
+                    scalar monitor counts, which are often used in both in both pulsed
+                    and steady-state instrumentation.
+                  quantities:
+                    data:
+                      type: int
+                      value: <ADD default value>
+                      m_annotations:
+                        eln:
+                          component: NumberEditQuantity
+                      description: Monitor data
+              data:
+                section:
+                  m_annotations:
+                    eln:
+                      overview: true
+                  description: 'The data group .. note:: Before the NIAC2016 meeting
+                    [#]_, at least one :ref:`NXdata` group was required in each :ref:`NXentry`
+                    group. At the NIAC2016 meeting, it was decided to make :ref:`NXdata`
+                    an optional group in :ref:`NXentry` groups for data files that
+                    do not use an application definition. It is recommended strongly
+                    that all NeXus data files provide a NXdata group. It is permissible
+                    to omit the NXdata group only when defining the default plot is
+                    not practical or possible from the available data. For example,
+                    neutron event data may not have anything that makes a useful plot
+                    without extensive processing. Certain application definitions
+                    override this decision and require an :ref:`NXdata` group in the
+                    :ref:`NXentry` group. The ``minOccurs=0`` attribute in the application
+                    definition will indicate the :ref:`NXdata` group is optional,
+                    otherwise, it is required. .. [#] NIAC2016: https://www.nexusformat.org/NIAC2016.html,
+                    https://github.com/nexusformat/NIAC/issues/16'

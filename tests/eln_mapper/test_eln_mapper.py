@@ -62,11 +62,11 @@ def test_reader_eln(tmp_path):
             "--nxdl",
             "NXscan",
             "--skip-top-levels",
-            1,
+            0,
             "--output-file",
             test_file,
             "--eln-type",
-            "eln",
+            "reader",
         ],
     )
 
@@ -95,7 +95,7 @@ def test_scheme_eln(tmp_path):
     cli_run = testing.CliRunner()
     cli_run.invoke(
         eln_mapper.get_eln,
-        ["--nxdl", "NXscan", "--output-file", test_file, "--eln-type", "scheme_eln"],
+        ["--nxdl", "NXscan", "--output-file", test_file, "--eln-type", "schema"],
     )
     with open(ref_file, encoding="utf-8", mode="r") as ref_f:
         ref_dict = yaml.safe_load(ref_f)

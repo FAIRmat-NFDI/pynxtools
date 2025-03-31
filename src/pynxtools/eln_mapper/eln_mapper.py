@@ -16,9 +16,13 @@
 # limitations under the License.
 #
 
+from typing import Union, Optional
+from pathlib import Path
+
 import click
-from pynxtools.eln_mapper.eln import generate_eln
-from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
+
+from pynxtools.eln_mapper.reader_eln import ReaderElnGenerator
+from pynxtools.eln_mapper.schema_eln import NomadElnGenerator
 
 
 @click.command()
@@ -29,35 +33,86 @@ from pynxtools.eln_mapper.scheme_eln import generate_scheme_eln
 )
 @click.option(
     "--skip-top-levels",
-    default=1,
+    default=0,
     required=False,
     type=int,
     show_default=True,
     help=(
-        "To skip the level of parent hierarchy level. E.g. for default 1 the part "
+        "To skip the level of parent hierarchy level. E.g. for default  the part "
         "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped."
     ),
 )
 @click.option(
     "--output-file",
     required=False,
-    default="eln_data",
-    help=("Name of file that is neede to generated output file."),
+    default=None,
+    help=("Name of file that is needed to generated output file."),
 )
 @click.option(
     "--eln-type",
     required=True,
-    type=click.Choice(["eln", "scheme_eln"], case_sensitive=False),
+    type=click.Choice(["reader", "schema"], case_sensitive=False),
     default="eln",
-    help=("Choose a type of ELN output (eln or scheme_eln)."),
+    help=("Choose a type of ELN output (reader or schema)."),
 )
-def get_eln(nxdl: str, skip_top_levels: int, output_file: str, eln_type: str):
+@click.option(
+    "--optionality",
+    required=False,
+    type=click.Choice(
+        ["required", "recommended", "optional", "all"], case_sensitive=False
+    ),
+    default="required",
+    help=(
+        "Level of requiredness to generate. If any of ('required', 'recommended', 'optional', "
+        "only those concepts matching this requiredness level are created. If 'all', all optional "
+        "concepts from the base classes are also created."
+    ),
+)
+@click.option(
+    "--filter-file",
+    required=False,
+    default=None,
+    help=(
+        "JSON configuration file to filter NeXus concepts (based on the presence of the '@eln' keyword). "
+        "This is a positive filter, i.e., all concepts in the filter file will be included in the ELN."
+    ),
+)
+def get_eln(
+    nxdl: str,
+    skip_top_levels: int,
+    output_file: Optional[str],
+    eln_type: str,
+    optionality: Optional[str],
+    filter_file: Optional[Union[str, Path]],
+):
     """Helper tool for generating ELN files in YAML format."""
+    filter = None
+    if filter_file:
+        filter = []
+        from pynxtools.dataconverter.readers.utils import parse_flatten_json
+
+        filter_dict = parse_flatten_json(filter_file)
+        for key, value in filter_dict.items():
+            if isinstance(value, list):
+                if any(
+                    isinstance(item, str) and item.startswith("@eln") for item in value
+                ):
+                    filter += [key]
+            elif isinstance(value, str):
+                if value.startswith("@eln"):
+                    filter += [key]
+
     eln_type = eln_type.lower()
-    if eln_type == "eln":
-        generate_eln(nxdl, output_file, skip_top_levels)
-    elif eln_type == "scheme_eln":
-        generate_scheme_eln(nxdl, eln_file_name=output_file)
+    if eln_type == "reader":
+        eln_generator = ReaderElnGenerator(
+            nxdl, output_file, skip_top_levels, optionality, filter
+        )
+    elif eln_type == "schema":
+        eln_generator = NomadElnGenerator(
+            nxdl, output_file, skip_top_levels, optionality, filter
+        )
+
+    eln_generator.generate_eln()
 
 
 if __name__ == "__main__":
