@@ -103,6 +103,9 @@ def get_eln(
                     filter += [key]
 
     eln_type = eln_type.lower()
+
+    eln_generator: Union[ReaderElnGenerator, NomadElnGenerator]
+
     if eln_type == "reader":
         eln_generator = ReaderElnGenerator(
             nxdl, output_file, skip_top_levels, optionality, filter

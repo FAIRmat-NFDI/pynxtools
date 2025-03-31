@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
-import os
 import re
 import logging
+from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
 
 import yaml
@@ -34,7 +34,7 @@ from pynxtools.dataconverter.nexus_tree import (
 
 logger = logging.getLogger("pynxtools")
 
-NODES_TO_SKIP: List[str] = {"definition"}
+NODES_TO_SKIP: List[str] = ["definition"]
 
 
 def clean_filters(filter_list: Optional[List[str]]) -> Optional[List[str]]:
@@ -44,7 +44,7 @@ def clean_filters(filter_list: Optional[List[str]]) -> Optional[List[str]]:
     /ENTRY[entry]/sample -> /ENTRY/sample
     """
     if filter_list is None:
-        return
+        return None
     return [convert_data_converter_dict_to_nxdl_path(key) for key in filter_list]
 
 
@@ -63,7 +63,7 @@ def _should_skip_iteration(node: NexusNode, filter_list: Optional[List[str]]) ->
     return True
 
 
-class ElnGenerator:
+class ElnGenerator(ABC):
     def __init__(
         self,
         nxdl: str,
@@ -110,6 +110,7 @@ class ElnGenerator:
         """
         return self.recursive_dict
 
+    @abstractmethod
     def _construct_group_structure(
         self, node: NexusGroup, recursive_dict: Dict, recursion_level: int
     ) -> bool:
@@ -132,6 +133,7 @@ class ElnGenerator:
 
         return True
 
+    @abstractmethod
     def _construct_entity_structure(
         self, node: NexusEntity, recursive_dict: Dict, recursion_level: int
     ) -> bool:
@@ -166,7 +168,9 @@ class ElnGenerator:
             Recursion level in the tree, used to (optionally) skip upper levels like NXentry
         """
 
-        def _handle_unknown_type(node: NexusNode, section_dict: Dict):
+        def _handle_unknown_type(
+            node: NexusNode, section_dict: Dict, recursion_level: int
+        ):
             # This should normally not happen if
             # the handling map includes all types allowed in NexusNode.type
             # Still, it's good to have a fallback
