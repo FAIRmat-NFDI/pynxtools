@@ -38,7 +38,7 @@ from pynxtools.eln_mapper.schema_eln import NomadElnGenerator
     type=int,
     show_default=True,
     help=(
-        "To skip the level of parent hierarchy level. E.g. for default  the part "
+        "To skip the level of parent hierarchy level. For example, by default the part "
         "Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped."
     ),
 )
@@ -58,14 +58,11 @@ from pynxtools.eln_mapper.schema_eln import NomadElnGenerator
 @click.option(
     "--optionality",
     required=False,
-    type=click.Choice(
-        ["required", "recommended", "optional", "all"], case_sensitive=False
-    ),
+    type=click.Choice(["required", "recommended", "optional"], case_sensitive=False),
     default="required",
     help=(
         "Level of requiredness to generate. If any of ('required', 'recommended', 'optional', "
-        "only those concepts matching this requiredness level are created. If 'all', all optional "
-        "concepts from the base classes are also created."
+        "only those concepts matching this requiredness level are created."
     ),
 )
 @click.option(

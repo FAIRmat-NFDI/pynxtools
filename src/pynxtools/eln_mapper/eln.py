@@ -68,7 +68,7 @@ class ElnGenerator(ABC):
         self,
         nxdl: str,
         output_file: Optional[str] = None,
-        skip_top_levels: int = 1,
+        skip_top_levels: int = 0,
         optionality: Optional[str] = "required",
         filter: Optional[List[str]] = None,
     ) -> None:
@@ -128,8 +128,9 @@ class ElnGenerator(ABC):
         if self.filter is not None and all(
             _should_skip_iteration(child, self.filter) for child in node.children
         ):
-            self._recurse_tree(node, recursive_dict, recursion_level + 1)
-            return False  # early exit
+            if not all([child.type == "group" for child in node.children]):
+                self._recurse_tree(node, recursive_dict, recursion_level)
+                return False  # early exit
 
         return True
 
@@ -187,7 +188,6 @@ class ElnGenerator(ABC):
             "required": ("required",),
             "recommended": ("recommended", "required"),
             "optional": ("optional", "recommended", "required"),
-            "all": ("optional", "recommended", "required"),
         }
 
         for child in node.children:
