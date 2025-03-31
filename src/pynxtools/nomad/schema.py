@@ -23,6 +23,7 @@ import os.path
 import pickle
 import re
 import sys
+from owlready2 import get_ontology, sync_reasoner
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -229,6 +230,34 @@ class NexusActivityResult(ActivityResult):
     )
 
 
+<<<<<<< HEAD
+=======
+__BASESECTIONS_MAP: Dict[str, Any] = {
+    "NXfabrication": [basesections.Instrument],
+    "NXsample": [CompositeSystem],
+    "NXsample_component": [Component],
+    # "NXidentifier": [EntityReference],
+    "NXentry": [NexusActivityStep],
+    "NXprocess": [NexusActivityStep],
+    "NXdata": [NexusActivityResult],
+    # "object": BaseSection,
+}
+
+# ########### Tanmay's code ############
+# Function to load ontology
+def load_ontology(*args):
+    owl_file = os.path.join(os.path.dirname(__file__), *args)
+    return get_ontology(owl_file).load()
+
+# Function to extract superclasses
+def get_superclasses(ontology, class_name):
+    cls = ontology[class_name]
+    if cls is None:
+        raise ValueError(f"Class '{class_name}' not found in the ontology.")
+    return cls.ancestors()
+# ########### End of Tanmay's code ############
+
+>>>>>>> a6fcab99 (Register all superclasses in a list: results.eln.methods. This will help to include ontology based search in Nomad GUI)
 class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
         try:
@@ -262,6 +291,24 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
         except (AttributeError, TypeError):
             pass
         super(basesections.Activity, self).normalize(archive, logger)
+
+# ########## Tanmay's code ############
+        try:
+            if hasattr(self, "definition__field") and self.definition__field:
+                ontology = load_ontology("NeXusOntology_full.owl")  # Replace with your ontology file
+                with ontology:
+                    sync_reasoner()  # Run the reasoner
+                superclasses = get_superclasses(ontology, self.definition__field)
+                if archive.results.eln.methods is None:
+                    archive.results.eln.methods = []
+                for superclass in superclasses:
+                    if superclass.name not in archive.results.eln.methods:
+                        archive.results.eln.methods.append(superclass.name)
+        except Exception as e:
+            logger.warning(f"Failed to extract superclasses: {e}")
+
+        super(basesections.Activity, self).normalize(archive, logger)
+# ########## End of Tanmay's code ############
 
         if archive.results.eln.methods is None:
             archive.results.eln.methods = []
