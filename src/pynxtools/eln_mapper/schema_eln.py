@@ -18,7 +18,7 @@
 #
 
 import re
-from typing import List, Dict
+from typing import List, Dict, Union
 
 from pynxtools.dataconverter.nexus_tree import (
     NexusEntity,
@@ -27,7 +27,7 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.eln_mapper.eln import ElnGenerator
 
-DEFAULT_UNITS: Dict[str, str | None] = {
+DEFAULT_UNITS: Dict[str, Union[str, None]] = {
     "NX_ANGLE": "degree",
     "NX_ANY": None,
     "NX_AREA": "m**2",
