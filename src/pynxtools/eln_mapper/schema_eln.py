@@ -27,6 +27,19 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.eln_mapper.eln import ElnGenerator
 
+NEXUS_TO_NOMAD_QUANTITY = {
+    "NX_BINARY": ("bytes", "NumberEditQuantity"),
+    "NX_BOOLEAN": ("bool", "BoolEditQuantity"),
+    "NX_CHAR": ("str", "StringEditQuantity"),
+    "NX_CHAR_OR_NUMBER": ("np.float64", "NumberEditQuantity"),
+    "NX_COMPLEX": ("numpy.complex64", "NumberEditQuantity"),
+    "NX_DATE_TIME": ("Datetime", "DateTimeEditQuantity"),
+    "NX_FLOAT": ("np.float64", "NumberEditQuantity"),
+    "NX_INT": ("int", "NumberEditQuantity"),
+    "NX_NUMBER": ("np.float64", "NumberEditQuantity"),
+    "NX_POSINT": ("int", "NumberEditQuantity"),
+}
+
 DEFAULT_UNITS: Dict[str, Union[str, None]] = {
     "NX_ANGLE": "degree",
     "NX_ANY": None,
@@ -61,37 +74,6 @@ DEFAULT_UNITS: Dict[str, Union[str, None]] = {
     "NX_VOLUME": "m**3",
     "NX_WAVELENGTH": "nm",
     "NX_WAVENUMBER": "1 / m",
-}
-
-NEXUS_TYPE_TO_PYTHON_TYPE = {
-    "NX_CHAR": {
-        "convert_type": "str",
-        "component_name": "StringEditQuantity",
-    },
-    "NX_BOOLEAN": {
-        "convert_type": "bool",
-        "component_name": "BoolEditQuantity",
-    },
-    "NX_DATE_TIME": {
-        "convert_type": "Datetime",
-        "component_name": "DateTimeEditQuantity",
-    },
-    "NX_FLOAT": {
-        "convert_type": "np.float64",
-        "component_name": "NumberEditQuantity",
-    },
-    "NX_INT": {
-        "convert_type": "int",
-        "component_name": "NumberEditQuantity",
-    },
-    "NX_NUMBER": {
-        "convert_type": "np.float64",
-        "component_name": "NumberEditQuantity",
-    },
-    "<NO FIELD TYPE>": {
-        "convert_type": "<NO FIELD TYPE>",
-        "component_nm": "<No Edit Quantity>",
-    },
 }
 
 
@@ -273,30 +255,29 @@ class NomadElnGenerator(ElnGenerator):
         entity_dict = quantities_dict[entity_name]
 
         # handle type
-        nx_field_type = node.dtype
-        convert_dict = NEXUS_TYPE_TO_PYTHON_TYPE.get(nx_field_type)
+        default_types = ("str", "StringEditQuantity")
+        entity_type, component_name = NEXUS_TO_NOMAD_QUANTITY.get(
+            node.dtype, default_types
+        )
 
-        if convert_dict:
-            entity_type = convert_dict["convert_type"]
+        unit = None
+        if node.unit:
+            unit = DEFAULT_UNITS.get(node.unit)
 
-            entity_dict["type"] = entity_type
+        entity_dict["type"] = entity_type
+        if unit:
+            entity_dict["unit"] = unit
+        entity_dict["value"] = "<ADD default value>"
 
-            unit = None
-            if node.unit:
-                unit = DEFAULT_UNITS.get(node.unit)
-                if unit:
-                    entity_dict["unit"] = unit
-                entity_dict["value"] = "<ADD default value>"
+        # handle m_annotation
+        eln_dict = {
+            "component": component_name,
+        }
+        if unit:
+            eln_dict["defaultDisplayUnit"] = unit
+        m_annotation = {"m_annotations": {"eln": eln_dict}}
 
-            # handle m_annotation
-            eln_dict = {
-                "component": convert_dict["component_name"],
-            }
-            if unit:
-                eln_dict["defaultDisplayUnit"] = unit
-            m_annotation = {"m_annotations": {"eln": eln_dict}}
-
-            entity_dict.update(m_annotation)
+        entity_dict.update(m_annotation)
 
         # handle description
         construct_description(node, entity_dict)
