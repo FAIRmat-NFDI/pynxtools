@@ -29,11 +29,12 @@ It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
 from functools import lru_cache, reduce
-from typing import Any, List, Literal, Optional, Set, Tuple, Union
+from typing import Any, List, Dict, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
+from pynxtools import get_definitions_url
 from pynxtools.dataconverter.helpers import (
     get_all_parents_for,
     get_nxdl_root_and_path,
@@ -430,7 +431,7 @@ class NexusNode(NodeMixin):
 
         return req_children
 
-    def get_docstring(self, depth: Optional[int] = None) -> List[str]:
+    def get_docstring(self, depth: Optional[int] = None) -> Dict[str, str]:
         """
         Gets the docstrings of the current node and its parents up to a certain depth.
 
@@ -449,13 +450,83 @@ class NexusNode(NodeMixin):
         if depth is not None and depth < 0:
             raise ValueError("Depth must be a positive integer or None")
 
-        docstrings = []
+        docstrings = {}
         for elem in self.inheritance[:depth][::-1]:
             doc = elem.find("nx:doc", namespaces=namespaces)
+
             if doc is not None:
-                docstrings.append(doc.text)
+                name = elem.attrib.get("name")
+                if not name:
+                    name = elem.attrib["type"][2:].upper()
+                docstrings[name] = doc.text
 
         return docstrings
+
+    # TODO: add a function to the the link to the documentation item
+    # def get_link(self) -> Optional[str]:
+    #     """
+    #     Get documentation url
+    #     """
+    # def __get_documentation_url(
+    #     xml_node: ET.Element, nx_type: Optional[str]
+    # ) -> Optional[str]:
+    #     """
+    #     Get documentation url
+    #     """
+    #     if nx_type is None:
+    #         return None
+
+    #     anchor_segments = []
+    #     if nx_type != "class":
+    #         anchor_segments.append(nx_type)
+
+    #     while True:
+    #         nx_type = xml_node.get("type")
+    #         if nx_type:
+    #             nx_type = nx_type.replace("NX", "")
+    #         segment = xml_node.get("name", nx_type)  # type: ignore
+    #         anchor_segments.append(segment.replace("_", "-"))
+
+    #         xml_parent = xml_node
+    #         xml_node = __XML_PARENT_MAP.get(xml_node)
+    #         if xml_node is None:
+    #             break
+
+    #     definitions_url = get_definitions_url()
+
+    #     doc_base = __NX_DOC_BASES.get(
+    #         definitions_url, "https://manual.nexusformat.org/classes"
+    #     )
+    #     nx_package = xml_parent.get("nxdl_base").split("/")[-1]
+    #     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
+    #     nx_file = anchor_segments[-1].replace("-", "_")
+    #     return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
+
+    # anchor_segments = []
+    # if self.type != "class":
+    #     anchor_segments.append(self.type)
+
+    # while True:
+    #     if nx_type:
+    #         nx_type = nx_type.replace("NX", "")
+    #     segment = xml_node.get("name", nx_type)  # type: ignore
+    #     anchor_segments.append(segment.replace("_", "-"))
+
+    #     for elem in self.inheritance[::-1]:
+    #         xml_node = __XML_PARENT_MAP.get(xml_node)
+    #         if xml_node is None:
+    #             break
+
+    # definitions_url = get_definitions_url()
+
+    # doc_base = __NX_DOC_BASES.get(
+    #     definitions_url, "https://manual.nexusformat.org/classes"
+    # )
+    # nx_package = xml_parent.get("nxdl_base").split("/")[-1]
+    # anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
+    # nx_file = anchor_segments[-1].replace("-", "_")
+    # return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
+    # pass
 
     def _build_inheritance_chain(self, xml_elem: ET._Element) -> List[ET._Element]:
         """

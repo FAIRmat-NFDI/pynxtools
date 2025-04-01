@@ -18,7 +18,7 @@
 #
 
 import re
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Tuple
 
 from pynxtools.dataconverter.nexus_tree import (
     NexusEntity,
@@ -27,7 +27,7 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.eln_mapper.eln import ElnGenerator
 
-NEXUS_TO_NOMAD_QUANTITY = {
+NEXUS_TO_NOMAD_QUANTITY: Dict[str, Tuple[str]] = {
     "NX_BINARY": ("bytes", "NumberEditQuantity"),
     "NX_BOOLEAN": ("bool", "BoolEditQuantity"),
     "NX_CHAR": ("str", "StringEditQuantity"),
@@ -38,6 +38,7 @@ NEXUS_TO_NOMAD_QUANTITY = {
     "NX_INT": ("int", "NumberEditQuantity"),
     "NX_NUMBER": ("np.float64", "NumberEditQuantity"),
     "NX_POSINT": ("int", "NumberEditQuantity"),
+    "NX_UINT": ("int", "NumberEditQuantity"),
 }
 
 DEFAULT_UNITS: Dict[str, Union[str, None]] = {
@@ -76,13 +77,28 @@ DEFAULT_UNITS: Dict[str, Union[str, None]] = {
     "NX_WAVENUMBER": "1 / m",
 }
 
+DEFAULT_READER: Dict[str, str] = {
+    "NXafm": "spm",
+    "NXapm": "apm",
+    "NXellips": "ellips",
+    "NXem": "em",
+    "NXmpes": "mpes",
+    "NXxps": "xps",
+    "NXraman": "raman",
+    "NXspm": "spm",
+    "NXsts": "spm",
+    "NXstm": "spm",
+    "NXxps": "xps",
+    "NXxrd": "xrd",
+}
+
 
 def construct_description(node: NexusNode, concept_dict: Dict) -> None:
     """Collect doc from concept doc (and inherited docs)."""
     inherited_docstrings = node.get_docstring()
 
-    for doc in inherited_docstrings[::-1]:
-        if doc:
+    for key, doc in list(inherited_docstrings.items())[::-1]:
+        if doc is not None:
             doc = re.sub(r"\s+", " ", doc).strip()
             concept_dict["description"] = doc
             break
@@ -133,12 +149,12 @@ class NomadElnGenerator(ElnGenerator):
 
         # Basic building blocks of ELN
         self.recursive_dict["definitions"] = {
-            "name": "<ADD PREFERED NAME>",
+            "name": f"{self.nxdl.lstrip('NX')} ELN data schema",
             "sections": {},
         }
         sections = self.recursive_dict["definitions"]["sections"]
 
-        root_name = f"ELN for {self.nxdl.lstrip('NX').upper()}"
+        root_name = f"ELN for {self.nxdl.lstrip('NX')}"
         sections[root_name] = {}
 
         # Note for later: create a new function to handle root part
@@ -151,9 +167,11 @@ class NomadElnGenerator(ElnGenerator):
             }
         )
 
+        reader = DEFAULT_READER.get(self.nxdl, "<READER_NAME>")
+
         m_annotations: Dict = {
             "m_annotations": {
-                "template": {"reader": "<READER_NAME>", "nxdl": self.nxdl},
+                "template": {"reader": reader, "nxdl": self.nxdl},
                 "eln": {"hide": []},
             }
         }
@@ -267,7 +285,7 @@ class NomadElnGenerator(ElnGenerator):
         entity_dict["type"] = entity_type
         if unit:
             entity_dict["unit"] = unit
-        entity_dict["value"] = "<ADD default value>"
+        # entity_dict["value"] = "<ADD default value>"
 
         # handle m_annotation
         eln_dict = {
