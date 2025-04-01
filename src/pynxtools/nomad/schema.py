@@ -23,6 +23,7 @@ import os.path
 import pickle
 import re
 import sys
+import owlready2
 from owlready2 import get_ontology, sync_reasoner
 
 # noinspection PyPep8Naming
@@ -295,15 +296,15 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
 # ########## Tanmay's code ############
         try:
             if hasattr(self, "definition__field") and self.definition__field:
-                ontology = load_ontology("NeXusOntology_full.owl")  # Replace with your ontology file
+                ontology = load_ontology("NeXusOntology_full.owl") #Load the ontology
                 with ontology:
                     sync_reasoner()  # Run the reasoner
-                superclasses = get_superclasses(ontology, self.definition__field)
+                superclasses = get_superclasses(ontology, self.definition__field) #extract superclasses
                 if archive.results.eln.methods is None:
                     archive.results.eln.methods = []
                 for superclass in superclasses:
                     if superclass.name not in archive.results.eln.methods:
-                        archive.results.eln.methods.append(superclass.name)
+                        archive.results.eln.methods.append(superclass.name) #append superclasses to archive.results.eln.methods list
         except Exception as e:
             logger.warning(f"Failed to extract superclasses: {e}")
 
