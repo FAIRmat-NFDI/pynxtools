@@ -203,6 +203,12 @@ class NexusDataConverter(EntryData):
         a_browser=dict(adaptor="RawFileAdaptor"),
     )
 
+    filter = Quantity(
+        type=str,
+        description="Filter to select additional input files to be converted to NeXus",
+        a_eln=dict(component="StringEditQuantity"),
+    )
+
     output = Quantity(
         type=str,
         description="Output Nexus filename to save all the data. Default: output.nxs",
@@ -211,15 +217,17 @@ class NexusDataConverter(EntryData):
         default="output.nxs",
     )
 
-    filter = Quantity(
-        type=str,
-        description="Filter to select additional input files to be converted to NeXus",
-        a_eln=dict(component="StringEditQuantity"),
+    export = Quantity(
+        type=bool,
+        description="Indicates if conversion to NeXus shall happen automatically when ELN is saved",
+        a_eln=dict(component="BoolEditQuantity"),
+        default=True,
     )
 
     nexus_view = Quantity(
         type=ArchiveSection,
         description="Link to the NeXus Entry",
+        a_eln=dict(overview=True),
     )
 
     def normalize(self, archive, logger):
@@ -235,6 +243,9 @@ class NexusDataConverter(EntryData):
             eln_fname = f"{archive.data.output}_eln_data.yaml"
             write_yaml(archive, eln_fname, eln_dict)
             input_file_list.append(eln_fname)
+
+        if not self.export:
+            return
 
         # collect extra input files
         input_list = [os.path.join(raw_path, file) for file in input_file_list]
