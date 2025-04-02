@@ -225,8 +225,9 @@ class NomadElnGenerator(ElnGenerator):
         section = group_dict["section"]
         section.update(default_m_annot)
 
-        # handle description
+        # handle description and link
         construct_description(node, section)
+        section["links"] = [node.get_link()]
 
         # pass the grp elment for recursive search
         self._recurse_tree(node, section, recursion_level + 1)
@@ -297,7 +298,7 @@ class NomadElnGenerator(ElnGenerator):
 
         entity_dict.update(m_annotation)
 
-        # handle description
         construct_description(node, entity_dict)
+        entity_dict["links"] = [node.get_link()]
 
         self._recurse_tree(node, entity_dict, recursion_level + 1)

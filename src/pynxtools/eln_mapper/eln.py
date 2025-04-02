@@ -92,6 +92,7 @@ class ElnGenerator(ABC):
                 "are skipped, is this intentional?"
             )
 
+    @abstractmethod
     def _generate_output_file_name(self, output_file: str):
         """
         Generate the output file name of the schema ELN generator.

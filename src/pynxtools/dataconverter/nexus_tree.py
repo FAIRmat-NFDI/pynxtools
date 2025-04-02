@@ -149,6 +149,8 @@ class NexusNode(NodeMixin):
         parent_of: List["NexusNode"]:
             The inverse of the above `is_a`. In the example case
             `DATA` `parent_of` `my_data`.
+        nxdl_base: str
+            Base of the NXDL file where the XML element for this node is  defined
     """
 
     name: str
@@ -159,6 +161,7 @@ class NexusNode(NodeMixin):
     inheritance: List[ET._Element]
     is_a: List["NexusNode"]
     parent_of: List["NexusNode"]
+    nxdl_base: str
 
     def _set_optionality(self):
         """
@@ -191,12 +194,14 @@ class NexusNode(NodeMixin):
         variadic: Optional[bool] = None,
         parent: Optional["NexusNode"] = None,
         inheritance: Optional[List[Any]] = None,
+        nxdl_base: Optional[str] = None,
     ) -> None:
         super().__init__()
         self.name = name
         self.type = type
         self.name_type = name_type
         self.optionality = optionality
+        self.nxdl_base = nxdl_base
         self.variadic = is_variadic(self.name, self.name_type)
         if variadic is not None:
             self.variadic = variadic
@@ -462,71 +467,36 @@ class NexusNode(NodeMixin):
 
         return docstrings
 
-    # TODO: add a function to the the link to the documentation item
-    # def get_link(self) -> Optional[str]:
-    #     """
-    #     Get documentation url
-    #     """
-    # def __get_documentation_url(
-    #     xml_node: ET.Element, nx_type: Optional[str]
-    # ) -> Optional[str]:
-    #     """
-    #     Get documentation url
-    #     """
-    #     if nx_type is None:
-    #         return None
+    def get_link(self) -> Optional[str]:
+        """
+        Get documentation url
+        """
+        from pynxtools.nomad.utils import NX_DOC_BASES
 
-    #     anchor_segments = []
-    #     if nx_type != "class":
-    #         anchor_segments.append(nx_type)
+        anchor_segments = [self.type]
+        current_node = self
 
-    #     while True:
-    #         nx_type = xml_node.get("type")
-    #         if nx_type:
-    #             nx_type = nx_type.replace("NX", "")
-    #         segment = xml_node.get("name", nx_type)  # type: ignore
-    #         anchor_segments.append(segment.replace("_", "-"))
+        while True:
+            if not current_node:
+                break
 
-    #         xml_parent = xml_node
-    #         xml_node = __XML_PARENT_MAP.get(xml_node)
-    #         if xml_node is None:
-    #             break
+            segment = current_node.name
+            anchor_segments.append(current_node.name.replace("_", "-"))
+            current_node = current_node.parent
 
-    #     definitions_url = get_definitions_url()
+        definitions_url = get_definitions_url()
+        doc_base = NX_DOC_BASES.get(
+            definitions_url, "https://manual.nexusformat.org/classes"
+        )
+        nx_file = self.nxdl_base.split("/definitions/")[-1].split(".nxdl.xml")[0]
 
-    #     doc_base = __NX_DOC_BASES.get(
-    #         definitions_url, "https://manual.nexusformat.org/classes"
-    #     )
-    #     nx_package = xml_parent.get("nxdl_base").split("/")[-1]
-    #     anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    #     nx_file = anchor_segments[-1].replace("-", "_")
-    #     return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
+        # add the name of the base file at the end, drop the appdef name
+        anchor_segments = anchor_segments[:-1]
+        anchor_segments += [self.nxdl_base.split("/")[-1].split(".nxdl.xml")[0].lower()]
 
-    # anchor_segments = []
-    # if self.type != "class":
-    #     anchor_segments.append(self.type)
+        anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
 
-    # while True:
-    #     if nx_type:
-    #         nx_type = nx_type.replace("NX", "")
-    #     segment = xml_node.get("name", nx_type)  # type: ignore
-    #     anchor_segments.append(segment.replace("_", "-"))
-
-    #     for elem in self.inheritance[::-1]:
-    #         xml_node = __XML_PARENT_MAP.get(xml_node)
-    #         if xml_node is None:
-    #             break
-
-    # definitions_url = get_definitions_url()
-
-    # doc_base = __NX_DOC_BASES.get(
-    #     definitions_url, "https://manual.nexusformat.org/classes"
-    # )
-    # nx_package = xml_parent.get("nxdl_base").split("/")[-1]
-    # anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
-    # nx_file = anchor_segments[-1].replace("-", "_")
-    # return f"{doc_base}/{nx_package}/{nx_file}.html#{anchor}"
-    # pass
+        return f"{doc_base}/{nx_file}.html#{anchor}"
 
     def _build_inheritance_chain(self, xml_elem: ET._Element) -> List[ET._Element]:
         """
@@ -630,6 +600,7 @@ class NexusNode(NodeMixin):
                 name_type=name_type,
                 type=tag,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name")
@@ -646,6 +617,7 @@ class NexusNode(NodeMixin):
                 nx_class=xml_elem.attrib["type"],
                 inheritance=inheritance_chain,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         elif tag == "choice":
             current_elem = NexusChoice(
@@ -653,6 +625,7 @@ class NexusNode(NodeMixin):
                 name=xml_elem.attrib["name"],
                 name_type=name_type,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         else:
             # TODO: Tags: link
@@ -1056,6 +1029,7 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
         variadic=False,
         parent=None,
         inheritance=appdef_inheritance_chain,
+        nxdl_base=appdef_xml_root.base,
     )
     # Set root attributes
     if set_root_attr:
@@ -1070,5 +1044,4 @@ def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     # Add all fields and attributes from the parent appdefs
     if len(appdef_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
-
     return tree
