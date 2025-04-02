@@ -202,20 +202,16 @@ class NomadElnGenerator(ElnGenerator):
             node, recursive_dict, recursion_level
         ):
             return
-
         # if subsections is None:
         if "sub_sections" not in recursive_dict:
             recursive_dict["sub_sections"] = {}
         subsections = recursive_dict["sub_sections"]
 
-        default_m_annot = {"m_annotations": {"eln": {"overview": True}}}
+        m_annotations = {"m_annotations": {"display": {"visible": True}}}
 
         group_name = node.name
-        if node.variadic:
-            if node.name_type == "any":
-                group_name = (
-                    group_name.lower()
-                )  # this is just a suggestion for easier use
+        if node.name_type == "any":
+            group_name = group_name.lower()  # this is just a suggestion for easier use
 
         subsections[group_name] = {}
         group_dict = subsections[group_name]
@@ -223,7 +219,9 @@ class NomadElnGenerator(ElnGenerator):
         # add section in group
         group_dict["section"] = {}
         section = group_dict["section"]
-        section.update(default_m_annot)
+        if node.variadic:
+            section["repeats"] = True
+        section.update(m_annotations)
 
         # handle description and link
         construct_description(node, section)
@@ -284,19 +282,21 @@ class NomadElnGenerator(ElnGenerator):
             unit = DEFAULT_UNITS.get(node.unit)
 
         entity_dict["type"] = entity_type
-        if unit:
-            entity_dict["unit"] = unit
-        # entity_dict["value"] = "<ADD default value>"
 
-        # handle m_annotation
-        eln_dict = {
-            "component": component_name,
+        display_dict = {"visible": True}
+        if unit:
+            display_dict["unit"] = unit
+
+        m_annotations = {
+            "m_annotations": {
+                "eln": {
+                    "component": component_name,
+                },
+                "display": display_dict,
+            }
         }
-        if unit:
-            eln_dict["defaultDisplayUnit"] = unit
-        m_annotation = {"m_annotations": {"eln": eln_dict}}
 
-        entity_dict.update(m_annotation)
+        entity_dict.update(m_annotations)
 
         construct_description(node, entity_dict)
         entity_dict["links"] = [node.get_link()]

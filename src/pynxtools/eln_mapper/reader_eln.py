@@ -89,7 +89,7 @@ class ReaderElnGenerator(ElnGenerator):
             Recursion level in the tree, used to (optionally) skip upper levels like NXentry
         """
         if not super()._construct_group_structure(
-            node, recursive_dict, recursion_level
+            node, recursive_dict, recursion_level=True
         ):
             return
 

@@ -113,7 +113,10 @@ class ElnGenerator(ABC):
 
     @abstractmethod
     def _construct_group_structure(
-        self, node: NexusGroup, recursive_dict: Dict, recursion_level: int
+        self,
+        node: NexusGroup,
+        recursive_dict: Dict,
+        recursion_level: int,
     ) -> bool:
         """
         Handle NeXus group.
@@ -129,7 +132,9 @@ class ElnGenerator(ABC):
         if self.filter is not None and all(
             _should_skip_iteration(child, self.filter) for child in node.children
         ):
-            if not all([child.type == "group" for child in node.children]):
+            if not node.children or not all(
+                [child.type == "group" for child in node.children]
+            ):
                 self._recurse_tree(node, recursive_dict, recursion_level)
                 return False  # early exit
 
