@@ -46,7 +46,7 @@ class ReaderElnGenerator(ElnGenerator):
 
         """
         file_parts: list = []
-        out_file_ext = "eln.yaml"
+        out_file_ext = "eln_data.yaml"
         raw_name = ""
         out_file = ""
 
@@ -89,7 +89,7 @@ class ReaderElnGenerator(ElnGenerator):
             Recursion level in the tree, used to (optionally) skip upper levels like NXentry
         """
         if not super()._construct_group_structure(
-            node, recursive_dict, recursion_level=True
+            node, recursive_dict, recursion_level
         ):
             return
 

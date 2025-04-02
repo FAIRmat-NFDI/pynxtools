@@ -218,4 +218,7 @@ class ElnGenerator(ABC):
 
         top_level_section = self._generate_eln_header()
         self._recurse_tree(tree, top_level_section, recursion_level=0)
+        if not self.recursive_dict:
+            logger.error("Could not write YAML file as it would be empty!")
+            return
         self._write_yaml()

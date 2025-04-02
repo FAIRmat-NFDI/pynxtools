@@ -77,9 +77,9 @@ def test_reader_eln(tmp_path):
     """
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    ref_file = os.path.join(local_dir, "../data/eln_mapper/eln.yaml")
+    ref_file = os.path.join(local_dir, "../data/eln_mapper/scan.eln_data.yaml")
 
-    test_file = os.path.join(tmp_path, "eln.yaml")
+    test_file = os.path.join(tmp_path, "scan.eln_data.yaml")
     cli_run = testing.CliRunner()
     cli_run.invoke(
         eln_mapper.get_eln,
