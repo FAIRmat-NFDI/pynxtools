@@ -467,7 +467,7 @@ class NexusNode(NodeMixin):
 
         return docstrings
 
-    def get_link(self) -> Optional[str]:
+    def get_link(self) -> str:
         """
         Get documentation url
         """
@@ -481,7 +481,7 @@ class NexusNode(NodeMixin):
                 break
 
             segment = current_node.name
-            anchor_segments.append(current_node.name.replace("_", "-"))
+            anchor_segments.append(current_node.name.replace("_", "-"))  # type: ignore[arg-type]
             current_node = current_node.parent
 
         definitions_url = get_definitions_url()
@@ -492,7 +492,7 @@ class NexusNode(NodeMixin):
 
         # add the name of the base file at the end, drop the appdef name
         anchor_segments = anchor_segments[:-1]
-        anchor_segments += [self.nxdl_base.split("/")[-1].split(".nxdl.xml")[0].lower()]
+        anchor_segments += [self.nxdl_base.split("/")[-1].split(".nxdl.xml")[0].lower()]  # type: ignore[list-item]
 
         anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
 

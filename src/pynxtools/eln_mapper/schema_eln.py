@@ -27,7 +27,7 @@ from pynxtools.dataconverter.nexus_tree import (
 )
 from pynxtools.eln_mapper.eln import ElnGenerator
 
-NEXUS_TO_NOMAD_QUANTITY: Dict[str, Tuple[str]] = {
+NEXUS_TO_NOMAD_QUANTITY: Dict[str, Tuple[str, str]] = {
     "NX_BINARY": ("bytes", "NumberEditQuantity"),
     "NX_BOOLEAN": ("bool", "BoolEditQuantity"),
     "NX_CHAR": ("str", "StringEditQuantity"),
@@ -283,7 +283,7 @@ class NomadElnGenerator(ElnGenerator):
 
         entity_dict["type"] = entity_type
 
-        display_dict = {"visible": True}
+        display_dict: Dict[str, Union[bool, str]] = {"visible": True}
         if unit:
             display_dict["unit"] = unit
 
