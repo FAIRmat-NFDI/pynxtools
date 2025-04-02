@@ -5,10 +5,10 @@
         "nxdl": "NXiv_temp",
         "input_files": [
             "IV_temp.mapping.json",
-            "iv_temp/IV_temp.pickle"
+            "IV_temp.pickle"
         ],
-        "output": "iv_temp/IV_temp.nxs",
-        "nexus_view": "../upload/archive/mainfile/iv_temp/IV_temp.nxs#/data",
+        "output": "IV_temp.nxs",
+        "nexus_view": "../upload/archive/mainfile/IV_temp.nxs#/data",
         "notes": {
             "author": "name",
             "note": "example note"
