@@ -123,6 +123,7 @@ definitions:
             quantities:
               rotation_angle:
                 type: np.float64
+                unit: degree
                 m_annotations:
                   eln:
                     component: NumberEditQuantity

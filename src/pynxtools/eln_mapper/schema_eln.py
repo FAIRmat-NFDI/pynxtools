@@ -284,6 +284,7 @@ class NomadElnGenerator(ElnGenerator):
 
         display_dict: Dict[str, Union[bool, str]] = {"visible": True}
         if unit:
+            entity_dict["unit"] = unit
             display_dict["unit"] = unit
 
         m_annotations = {
