@@ -46,6 +46,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
     is_name_type,
 )
+from pynxtools import NX_DOC_BASES
 
 NexusType = Literal[
     "NX_BINARY",
@@ -471,7 +472,6 @@ class NexusNode(NodeMixin):
         """
         Get documentation url
         """
-        from pynxtools.nomad.utils import NX_DOC_BASES
 
         anchor_segments = [self.type]
         current_node = self
