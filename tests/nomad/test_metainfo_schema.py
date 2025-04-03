@@ -28,7 +28,7 @@ except ImportError:
 from typing import Any
 
 from pynxtools.nomad.schema import nexus_metainfo_package
-from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
 
 
 @pytest.mark.parametrize(
