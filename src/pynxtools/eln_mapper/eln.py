@@ -26,7 +26,10 @@ from typing import Any, Dict
 
 import yaml
 
-from pynxtools.dataconverter.helpers import generate_template_from_nxdl
+from pynxtools.dataconverter.helpers import (
+    generate_template_from_nxdl,
+    get_nxdl_root_and_path,
+)
 from pynxtools.dataconverter.template import Template
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 
@@ -85,9 +88,7 @@ def get_empty_template(nexus_def: str) -> Template:
     ------
         Template
     """
-
-    nxdl_file = retrieve_nxdl_file(nexus_def)
-    nxdl_root = ET.parse(nxdl_file).getroot()
+    nxdl_root, _ = get_nxdl_root_and_path(nexus_def)
     template = Template()
     generate_template_from_nxdl(nxdl_root, template)
 
@@ -121,12 +122,14 @@ def get_recursive_dict(
     # splitig keys like: '/entry[ENTRY]/position[POSITION]/xx'.
     # skiping the first empty '' and top parts as directed by users.
     key_li = concatenated_key.split("/")[level_to_skip + 1 :]
+    if len(key_li) == 0:
+        return
     # list of key for special consideration
-    sp_key_li = ["@units"]
+    sp_key_li = ("@units",)
     last_key = ""
     last_dict = {}
     for key in key_li:
-        if "[" in key and "/" not in key:
+        if "[" in key:
             key = re.findall(
                 r"\[(.*?)\]",
                 key,
@@ -151,7 +154,7 @@ def get_recursive_dict(
             else:
                 recursive_dict[key] = {}
                 recursive_dict = recursive_dict[key]
-    # For special key cleaning parts occurs inside take_care_of_special_concepts func.
+
     if last_key not in sp_key_li:
         last_dict[last_key] = None
 
@@ -162,9 +165,9 @@ def generate_eln(nexus_def: str, eln_file: str = "", level_to_skip: int = 1) -> 
     Parameters
     ----------
     nexus_def : str
-        _description_
+        Name of NeXus definition without extension (.nxdl.xml).
     eln_file : str
-        _description_
+        Name of the output file.
 
     Returns:
         None
