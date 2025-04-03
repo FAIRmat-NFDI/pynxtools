@@ -1496,20 +1496,32 @@ information about the individual parts of a NeXus/HDF5 file.</p>
 <tr>
 <td><code>--skip-top-levels</code></td>
 <td>integer</td>
-<td>To skip the level of parent hierarchy level. E.g. for default 1 the part Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped.</td>
-<td><code>1</code></td>
+<td>To skip the level of parent hierarchy level. For example, by default the part Entry[ENTRY] from /Entry[ENTRY]/Instrument[INSTRUMENT]/... will be skiped.</td>
+<td><code>0</code></td>
 </tr>
 <tr>
 <td><code>--output-file</code></td>
 <td>text</td>
-<td>Name of file that is neede to generated output file.</td>
-<td><code>eln_data</code></td>
+<td>Name of file that is needed to generated output file.</td>
+<td>None</td>
 </tr>
 <tr>
 <td><code>--eln-type</code></td>
-<td>choice (<code>eln</code> &#x7C; <code>scheme_eln</code>)</td>
-<td>Choose a type of ELN output (eln or scheme_eln).</td>
+<td>choice (<code>reader</code> &#x7C; <code>schema</code>)</td>
+<td>Choose a type of ELN output (reader or schema).</td>
 <td><code>eln</code></td>
+</tr>
+<tr>
+<td><code>--optionality</code></td>
+<td>choice (<code>required</code> &#x7C; <code>recommended</code> &#x7C; <code>optional</code>)</td>
+<td>Level of requiredness to generate. If any of ('required', 'recommended', 'optional', only those concepts matching this requiredness level are created.</td>
+<td><code>required</code></td>
+</tr>
+<tr>
+<td><code>--filter-file</code></td>
+<td>text</td>
+<td>JSON configuration file to filter NeXus concepts (based on the presence of the '@eln' keyword). This is a positive filter, i.e., all concepts in the filter file will be included in the ELN.</td>
+<td>None</td>
 </tr>
 <tr>
 <td><code>--help</code></td>
