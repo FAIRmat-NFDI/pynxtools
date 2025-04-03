@@ -80,14 +80,13 @@ DEFAULT_UNITS: Dict[str, Union[str, None]] = {
 DEFAULT_READER: Dict[str, str] = {
     "NXafm": "spm",
     "NXapm": "apm",
-    "NXellips": "ellips",
+    "NXellipsometry": "ellips",
     "NXem": "em",
     "NXmpes": "mpes",
-    "NXxps": "xps",
     "NXraman": "raman",
     "NXspm": "spm",
-    "NXsts": "spm",
     "NXstm": "spm",
+    "NXsts": "spm",
     "NXxps": "xps",
     "NXxrd": "xrd",
 }
