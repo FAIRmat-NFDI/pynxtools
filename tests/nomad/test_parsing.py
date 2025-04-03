@@ -33,7 +33,7 @@ from typing import Any
 
 from pynxtools.nomad.parser import NexusParser
 from pynxtools.nomad.schema import nexus_metainfo_package
-from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
 
 
 def test_nexus_example():
