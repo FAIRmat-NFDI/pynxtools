@@ -116,7 +116,7 @@ def test_scheme_eln(tmp_path):
     local_dir = os.path.abspath(os.path.dirname(__file__))
     ref_file = os.path.join(local_dir, "../data/eln_mapper/scan.scheme.archive.yaml")
 
-    test_file = os.path.join(tmp_path, ".scheme.archive.yaml")
+    test_file = os.path.join(tmp_path, "scan.scheme.archive.yaml")
     cli_run = testing.CliRunner()
     cli_run.invoke(
         eln_mapper.get_eln,
