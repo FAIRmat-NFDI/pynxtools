@@ -1,0 +1,31 @@
+name: nexus package check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  # Run workflow only when there are changes in src/pynxtools/nomad or in the definitions submodule
+    # paths:
+    #   - 'src/pynxtools/nomad'
+    #   - 'src/pynxtools/definitions'
+
+jobs:
+  nexus-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Generate metainfo package
+        run: |
+          ./scripts/generate_package.sh
+      - uses: CatChen/check-git-status-action@v1
+        with:
+          fail-if-not-clean: true
+          request-changes-if-not-clean: false
+          push-if-not-clean: false
+      - name: git diff
+        if: failure()
+        run: git diff src/pynxtools/nomad/nxs_metainfo_package.json
