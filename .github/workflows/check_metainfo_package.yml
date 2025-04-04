@@ -5,6 +5,10 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  # Run workflow only when there are changes in src/pynxtools/nomad or in the definitions submodule
+    paths:
+      - 'src/pynxtools/nomad'
+      - 'src/pynxtools/definitions'
 
 jobs:
   nexus-version:
