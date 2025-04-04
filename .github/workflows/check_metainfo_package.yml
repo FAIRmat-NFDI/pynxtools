@@ -1,0 +1,30 @@
+name: nexus package check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  nexus-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Temporarily remove existing metainfo package
+        run: |
+          rm src/pynxtools/nomad/nxs_metainfo_package.json
+      - name: Generate metainfo package
+        run: |
+          python src/pynxtools/nomad/schema.py
+      - uses: CatChen/check-git-status-action@v1
+        with:
+          fail-if-not-clean: true
+          request-changes-if-not-clean: false
+          push-if-not-clean: false
+      - name: git diff
+        if: failure()
+        run: git diff src/pynxtools/nomad/nxs_metainfo_package.json
