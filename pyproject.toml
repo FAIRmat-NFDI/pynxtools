@@ -37,6 +37,7 @@ dependencies = [
     "anytree",
     "pint",
     "cachetools",
+    "orjson"
 ]
 
 [project.urls]
