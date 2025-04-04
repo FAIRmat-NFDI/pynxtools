@@ -19,8 +19,6 @@
 import hashlib
 import json
 import os
-import os.path
-import pickle
 import re
 import sys
 
@@ -28,6 +26,7 @@ import sys
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import orjson
 import h5py
 import numpy as np
 import pandas as pd
@@ -91,6 +90,7 @@ from pynxtools.nomad.utils import (
     _rename_nx_for_nomad,
     get_quantity_base_name,
 )
+
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -1082,56 +1082,47 @@ def create_package_from_nxdl_directories() -> Package:
 nexus_metainfo_package: Optional[Package] = None  # pylint: disable=C0103
 
 
-def save_nexus_schema(suf):
-    nexus_metainfo_package
+def save_nexus_schema():
+    # global nexus_metainfo_package  # pylint: disable=global-statement
     sch_dict = nexus_metainfo_package.m_to_dict()
-    filehandler = open("nexus.obj" + suf, "wb")
-    pickle.dump(sch_dict, filehandler)
-    filehandler.close()
+
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    nxs_filepath = os.path.join(local_dir, "nxs_metainfo_package.json")
+
+    with open(nxs_filepath, "wb") as file:
+        file.write(orjson.dumps(sch_dict))
 
 
-def load_nexus_schema(suf):
-    global nexus_metainfo_package
-    file = open("nexus.obj" + suf, "rb")
-    sch_dict = pickle.load(file)
-    file.close()
-    nexus_metainfo_package = Package().m_from_dict(sch_dict)
-
-
-def init_nexus_metainfo():
-    """
-    Initializes the metainfo package for the nexus definitions.
-    """
+def load_nexus_schema():
     global nexus_metainfo_package  # pylint: disable=global-statement
 
-    if nexus_metainfo_package is not None:
-        return
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    nxs_filepath = os.path.join(local_dir, "nxs_metainfo_package.json")
 
-    # try:
-    #     load_nexus_schema('')
-    # except Exception:
-    #     nexus_metainfo_package = create_package_from_nxdl_directories(nexus_section)
-    #     try:
-    #         save_nexus_schema('')
-    #     except Exception:
-    #         pass
-    nexus_metainfo_package = create_package_from_nxdl_directories()
-    nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
+    with open(nxs_filepath, "rb") as file:
+        schema_dict = orjson.loads(file.read())
+    nexus_metainfo_package = Package().m_from_dict(schema_dict)
+
+
+def create_metainfo_package():
+    """This creates the package to be saved."""
+    nxs_metainfo_package = create_package_from_nxdl_directories()
+    nxs_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
     nexus_metainfo_package.section_definitions.append(AnchoredReference.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusIdentifiers.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusIdentifiers.m_def)
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
-    nexus_metainfo_package.init_metainfo()
+    nxs_metainfo_package.init_metainfo()
 
     # Add additional NOMAD specific attributes (nx_data_path, nx_data_file, nx_mean, ...)
     # This needs to be done in the right order, base sections first.
     visited_definitions = set()
     sections = list()
-    for definition, _, _, _ in nexus_metainfo_package.m_traverse():
+    for definition, _, _, _ in nxs_metainfo_package.m_traverse():
         if isinstance(definition, Section):
             for section in reversed([definition] + definition.all_base_sections):
                 if section not in visited_definitions:
@@ -1148,8 +1139,28 @@ def init_nexus_metainfo():
     # We skip the Python code generation for now and offer Python classes as variables
     # TO DO not necessary right now, could also be done case-by-case by the nexus parser
     python_module = sys.modules[__name__]
-    for section in nexus_metainfo_package.section_definitions:  # pylint: disable=E1133
+    for section in nxs_metainfo_package.section_definitions:  # pylint: disable=E1133
         setattr(python_module, section.name, section.section_cls)
+
+    return nxs_metainfo_package
+
+
+def init_nexus_metainfo():
+    """
+    Initializes the metainfo package for the nexus definitions.
+    """
+    import time
+
+    global nexus_metainfo_package  # pylint: disable=global-statement
+
+    if nexus_metainfo_package is not None:
+        return
+
+    try:
+        load_nexus_schema()
+    except Exception:
+        nexus_metainfo_package = create_metainfo_package()
+        save_nexus_schema()
 
 
 init_nexus_metainfo()
