@@ -38,6 +38,7 @@ dependencies = [
     "pint",
     "cachetools",
     "structlog",
+    "orjson"
 ]
 
 [project.urls]

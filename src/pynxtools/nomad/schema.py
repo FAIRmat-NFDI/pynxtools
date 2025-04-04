@@ -19,8 +19,6 @@
 import hashlib
 import json
 import os
-import os.path
-import pickle
 import re
 import sys
 import types
@@ -29,6 +27,7 @@ import types
 import xml.etree.ElementTree as ET
 from typing import Any, Optional, Union
 
+import orjson
 import h5py
 import numpy as np
 import pandas as pd
@@ -91,6 +90,7 @@ from pynxtools.nomad.utils import (
     get_quantity_base_name,
 )
 from pynxtools.units import NXUnitSet, ureg
+
 
 # URL_REGEXP from
 # https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -301,7 +301,264 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
         act_array.extend(new_items)
 
 
-BASESECTIONS_MAP: dict[str, Any] = {
+def normalize_fabrication(self, archive, logger):
+    """Normalizer for fabrication section."""
+    current_cls = section_definitions[_rename_nx_for_nomad("NXfabrication")].section_cls
+    self.name = (
+        self.__dict__["nx_name"]
+        + " ("
+        + ((self.vendor__field + " / ") if self.vendor__field else "")
+        + (self.model__field if self.model__field else "")
+        + ")"
+    )
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_sample_component(self, archive, logger):
+    """Normalizer for sample_component section."""
+    current_cls = section_definitions[
+        _rename_nx_for_nomad("NXsample_component")
+    ].section_cls
+    if self.name__field:
+        self.name = self.name__field
+    else:
+        self.name = self.__dict__["nx_name"]
+    if self.mass__field:
+        self.mass = self.mass__field
+    # we may want to add normalisation for mass_fraction (calculating from components)
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_sample(self, archive, logger):
+    """Normalizer for sample section."""
+    current_cls = section_definitions[_rename_nx_for_nomad("NXsample")].section_cls
+    self.name = self.__dict__["nx_name"] + (
+        " (" + self.name__field + ")" if self.name__field else ""
+    )
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_entry(self, archive, logger):
+    """Normalizer for Entry section."""
+    current_cls = section_definitions[_rename_nx_for_nomad("NXentry")].section_cls
+    if self.start_time__field:
+        self.start_time = self.start_time__field
+    self.name = self.__dict__["nx_name"] + (
+        " (" + self.title__field + ")" if self.title__field is not None else ""
+    )
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_process(self, archive, logger):
+    """Normalizer for Process section."""
+    current_cls = section_definitions[_rename_nx_for_nomad("NXprocess")].section_cls
+    if self.date__field:
+        self.start_time = self.date__field
+    self.name = self.__dict__["nx_name"]
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_data(self, archive, logger):
+    """Normalizer for Data section."""
+    current_cls = section_definitions[_rename_nx_for_nomad("NXdata")].section_cls
+    self.name = self.__dict__["nx_name"]
+    # one could also copy local ids to identifier for search purposes
+    super(current_cls, self).normalize(archive, logger)
+
+
+def normalize_atom_probe(self, archive, logger):
+    current_cls = section_definitions[
+        f"{_rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe"
+    ].section_cls
+    super(current_cls, self).normalize(archive, logger)
+    # temporarily disable extra normalisation step
+    return
+
+    def plot_3d_plotly(df, palette="Set1"):
+        import plotly.express as px
+        import plotly.graph_objects as go
+        from scipy.spatial import cKDTree
+
+        unique_species = df["element"].unique()
+        num_species = len(unique_species)
+        base_colors = getattr(px.colors.qualitative, palette)
+        colors = (base_colors * ((num_species // len(base_colors)) + 1))[:num_species]
+
+        fig = go.Figure()
+        for i, species in enumerate(unique_species):
+            subset = df[df["element"] == species]
+            fig.add_trace(
+                go.Scatter3d(
+                    x=subset["x"],
+                    y=subset["y"],
+                    z=subset["z"],
+                    mode="markers",
+                    marker=dict(size=1, opacity=0.6, color=colors[i]),
+                    name=str(species),
+                )
+            )
+
+        # Improve axis and box appearance
+        fig.update_layout(
+            title="3D Atom Probe Reconstruction with Plotly WebGL",
+            scene=dict(
+                xaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                yaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+                zaxis=dict(
+                    showgrid=False,
+                    backgroundcolor="white",
+                ),
+            ),
+            margin=dict(l=0, r=0, b=0, t=40),
+            height=800,
+            autosize=True,
+            template="plotly_white",
+            showlegend=True,
+            legend=dict(
+                font=dict(size=16),
+                itemsizing="constant",
+                bgcolor="rgba(255,255,255,0.8)",
+            ),
+        )
+        return fig
+
+    data_path = self.m_attributes["m_nx_data_path"]
+    with h5py.File(
+        os.path.join(archive.m_context.raw_path(), self.m_attributes["m_nx_data_file"]),
+        "r",
+    ) as fp:
+        if (
+            f"{data_path}/reconstruction/reconstructed_positions" not in fp
+            or f"{data_path}/mass_to_charge_conversion/mass_to_charge" not in fp
+        ):
+            return
+        if not hasattr(self, "ranging"):
+            return
+        if not hasattr(self.ranging, "peak_identification"):
+            return
+        if not hasattr(self.ranging.peak_identification, "ionID"):
+            return
+        # Load the reconstructed positions and mass-to-charge values
+        positions = fp[f"{data_path}/reconstruction/reconstructed_positions"][:]
+        mass_to_charge_values = fp[
+            f"{data_path}/mass_to_charge_conversion/mass_to_charge"
+        ][:].flatten()
+        # Build species mapping from ion peak identification groups
+        ion_species_map = {}
+        for ion in self.ranging.peak_identification.ionID:
+            if ion.mass_to_charge_range__field and ion.name__field:
+                mass_range = fp[
+                    f"{ion.m_attributes['m_nx_data_path']}/mass_to_charge_range"
+                ][:]
+                species_name = ion.name__field
+                # Extract only element name (remove charge states and molecular ions)
+                element_name = re.split(r"[^A-Za-z]", species_name)[0]
+                if element_name:  # Avoid empty strings
+                    ion_species_map[element_name] = mass_range
+    # Convert species mapping into an efficient lookup structure
+    species_names = list(set(ion_species_map.keys()))  # Ensure unique element names
+    mass_ranges = np.array(
+        [ion_species_map[s][:, 0] for s in species_names]
+    )  # Extract min/max mass
+    # Compute midpoints for KD-tree search
+    mass_midpoints = mass_ranges.mean(axis=1)
+    # Build a KD-tree for fast species assignment
+    mass_tree = cKDTree(mass_midpoints.reshape(-1, 1))
+    _, nearest_species_idx = mass_tree.query(mass_to_charge_values.reshape(-1, 1))
+    # Assign aggregated atomic element labels
+    atomic_labels = np.array(species_names)[nearest_species_idx]
+    # Filter valid atomic elements using ASE's atomic numbers
+    valid_atomic_labels = [
+        el if el in atomic_numbers else "X" for el in atomic_labels
+    ]  # Replace unknowns with 'X'
+    # Convert to a DataFrame for visualization
+    df = pd.DataFrame(positions, columns=["x", "y", "z"])
+    df["element"] = pd.Categorical(valid_atomic_labels)
+    # Downsample data for efficient rendering (adjust fraction as needed)
+    df_sampled = df.sample(
+        frac=0.02, random_state=42
+    )  # Adjust fraction for performance
+
+    # plotly figure
+    fig = plot_3d_plotly(df_sampled)
+    # find figures hosting subsesction
+    figure_host = archive.data
+    # apend the figure to the figures list
+    figure_host.figures = [PlotlyFigure(figure=fig.to_plotly_json())]
+
+    # normalize to results.material.topology
+    # **Create ASE Atoms Object from Downsampled Data (Using Aggregated Elements)**
+    def create_ase_atoms(df):
+        symbols = df["element"].tolist()
+        positions = df[["x", "y", "z"]].values
+        return Atoms(symbols=symbols, positions=positions)
+
+    apt_tip = create_ase_atoms(df_sampled)
+
+    # **Build NOMAD Topology Structure with Individual Element Systems**
+    def build_nomad_topology(archive):
+        if not archive.results:
+            archive.results = Results()
+        if not archive.results.material:
+            archive.results.material = Material()
+
+        # @Pepe-Marquez, can just be checked for existence, elements have at this point
+        # along the processing pipeline been already been populated
+        elements = list(set(apt_tip.get_chemical_symbols()))
+        if not archive.results.material.elements:
+            archive.results.material.elements = elements
+        else:
+            # @Pepe-Marquez why does the storage order of the elements matter here?
+            for i in range(len(elements)):
+                if archive.results.material.elements[i] != elements[i]:
+                    print("WARNING: elements are swapped")
+
+        topology = {}
+        system = System(
+            atoms=nomad_atoms_from_ase_atoms(apt_tip),
+            label="Reconstruction",
+            description="Reconstruction of the original atom positions",
+            structural_type="bulk",
+            dimensionality="3D",
+            system_relation=Relation(type="root"),
+        )
+        add_system_info(system, topology)
+        add_system(system, topology)
+
+        child_systems = []
+        for element in elements:
+            element_indices = (
+                np.where(df_sampled["element"] == element)[0].reshape(1, -1).tolist()
+            )
+            element_system = System(
+                atoms_ref=system.atoms,
+                indices=element_indices,
+                label=f"{element} - Subsystem",
+                description=f"Reconstructed subset containing only {element} atoms.",
+                structural_type="bulk",
+                dimensionality="3D",
+                system_relation=Relation(type="subsystem"),
+            )
+            add_system_info(element_system, topology)
+            add_system(element_system, topology, parent=system)
+            child_systems.append(f"results/material/topology/{len(topology) - 1}")
+
+        system.child_systems = child_systems
+        archive.results.material.topology = list(topology.values())
+
+    build_nomad_topology(archive)
+
+
+BASESECTIONS_MAP: Dict[str, Any] = {
     "NXfabrication": [basesections.Instrument],
     "NXsample": [CompositeSystem],
     "NXsample_component": [Component],
@@ -311,6 +568,19 @@ BASESECTIONS_MAP: dict[str, Any] = {
     "NXdata": [NexusActivityResult],
 }
 
+NORMALIZER_MAP: Dict[str, Any] = {
+    _rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
+    _rename_nx_for_nomad("NXsample"): normalize_sample,
+    _rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
+    _rename_nx_for_nomad("NXentry"): {
+        "normalize": normalize_entry,
+    },
+    _rename_nx_for_nomad("NXprocess"): {
+        "normalize": normalize_process,
+    },
+    _rename_nx_for_nomad("NXdata"): normalize_data,
+    f"{_rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe": normalize_atom_probe,
+}
 
 VALIDATE = False
 XML_PARENT_MAP: dict[ET.Element, ET.Element]
@@ -1015,56 +1285,43 @@ def create_package_from_nxdl_directories() -> Package:
 nexus_metainfo_package: Package | None = None  # pylint: disable=C0103
 
 
-def save_nexus_schema(suf):
-    nexus_metainfo_package
-    sch_dict = nexus_metainfo_package.m_to_dict()
-    filehandler = open("nexus.obj" + suf, "wb")
-    pickle.dump(sch_dict, filehandler)
-    filehandler.close()
+def save_nexus_schema():
+    # global nexus_metainfo_package  # pylint: disable=global-statement
+    schema_dict = nexus_metainfo_package.m_to_dict()
+
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    nxs_filepath = os.path.join(local_dir, "nxs_metainfo_package.json")
+
+    with open(nxs_filepath, "wb") as file:
+        file.write(orjson.dumps(schema_dict, option=orjson.OPT_INDENT_2))
 
 
-def load_nexus_schema(suf):
-    global nexus_metainfo_package
-    file = open("nexus.obj" + suf, "rb")
-    sch_dict = pickle.load(file)
-    file.close()
-    nexus_metainfo_package = Package().m_from_dict(sch_dict)
-
-
-def init_nexus_metainfo():
-    """
-    Initializes the metainfo package for the nexus definitions.
-    """
+def load_nexus_schema():
     global nexus_metainfo_package  # pylint: disable=global-statement
 
-    if nexus_metainfo_package is not None:
-        return
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    nxs_filepath = os.path.join(local_dir, "nxs_metainfo_package.json")
 
-    # try:
-    #     load_nexus_schema('')
-    # except Exception:
-    #     nexus_metainfo_package = create_package_from_nxdl_directories(nexus_section)
-    #     try:
-    #         save_nexus_schema('')
-    #     except Exception:
-    #         pass
-    nexus_metainfo_package = create_package_from_nxdl_directories()
-    nexus_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
-    nexus_metainfo_package.section_definitions.append(AnchoredReference.m_def)
-    nexus_metainfo_package.section_definitions.append(NexusIdentifiers.m_def)
+    with open(nxs_filepath, "rb") as file:
+        schema_dict = orjson.loads(file.read())
+    nexus_metainfo_package = Package().m_from_dict(schema_dict)
 
-    # We need to initialize the metainfo definitions. This is usually done automatically,
-    # when the metainfo schema is defined though MSection Python classes.
-    nexus_metainfo_package.init_metainfo()
+
+def create_metainfo_package():
+    """This creates the package to be saved."""
+    nxs_metainfo_package = create_package_from_nxdl_directories()
+    nxs_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
+    nxs_metainfo_package.section_definitions.append(AnchoredReference.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusIdentifiers.m_def)
 
     # Add additional NOMAD specific attributes (nx_data_path, nx_data_file, nx_mean, ...)
     # This needs to be done in the right order, base sections first.
     visited_definitions = set()
     sections = list()
-    for definition, _, _, _ in nexus_metainfo_package.m_traverse():
+    for definition, _, _, _ in nxs_metainfo_package.m_traverse():
         if isinstance(definition, Section):
             for section in reversed([definition] + definition.all_base_sections):
                 if section not in visited_definitions:
@@ -1078,6 +1335,40 @@ def init_nexus_metainfo():
         for quantity in section.quantities:
             _add_additional_attributes(quantity, section)
 
+    # Handling nomad BaseSection and other inherited Section from BaseSection
+    for section in nxs_metainfo_package.section_definitions:
+        normalize_func = NORMALIZER_MAP.get(section.__dict__["name"])
+
+        # Append the normalize method from a function
+        if normalize_func:
+            if isinstance(normalize_func, dict):
+                for key, value in normalize_func.items():
+                    setattr(section.section_cls, key, value)
+            else:
+                section.section_cls.normalize = normalize_func
+
+    return nxs_metainfo_package
+
+
+def init_nexus_metainfo():
+    """
+    Initializes the metainfo package for the nexus definitions.
+    """
+    global nexus_metainfo_package  # pylint: disable=global-statement
+
+    if nexus_metainfo_package is not None:
+        return
+
+    try:
+        load_nexus_schema()
+    except Exception:
+        nexus_metainfo_package = create_metainfo_package()
+        save_nexus_schema()
+
+    # We need to initialize the metainfo definitions. This is usually done automatically,
+    # when the metainfo schema is defined though MSection Python classes.
+    nexus_metainfo_package.init_metainfo()
+
     # We skip the Python code generation for now and offer Python classes as variables
     # TO DO not necessary right now, could also be done case-by-case by the nexus parser
     python_module = sys.modules[__name__]
@@ -1086,289 +1377,3 @@ def init_nexus_metainfo():
 
 
 init_nexus_metainfo()
-
-
-def normalize_fabrication(self, archive, logger):
-    """Normalizer for fabrication section."""
-    current_cls = section_definitions[_rename_nx_for_nomad("NXfabrication")].section_cls
-    self.name = (
-        self.__dict__["nx_name"]
-        + " ("
-        + ((self.vendor__field + " / ") if self.vendor__field else "")
-        + (self.model__field if self.model__field else "")
-        + ")"
-    )
-    super(current_cls, self).normalize(archive, logger)
-
-
-def normalize_sample_component(self, archive, logger):
-    """Normalizer for sample_component section."""
-    current_cls = section_definitions[
-        _rename_nx_for_nomad("NXsample_component")
-    ].section_cls
-    if self.name__field:
-        self.name = self.name__field
-    else:
-        self.name = self.__dict__["nx_name"]
-    if self.mass__field:
-        self.mass = self.mass__field
-    # we may want to add normalization for mass_fraction (calculating from components)
-    super(current_cls, self).normalize(archive, logger)
-
-
-def normalize_sample(self, archive, logger):
-    """Normalizer for sample section."""
-    current_cls = section_definitions[_rename_nx_for_nomad("NXsample")].section_cls
-    self.name = self.__dict__["nx_name"] + (
-        " (" + self.name__field + ")" if self.name__field else ""
-    )
-    # one could also copy local ids to identifier for search purposes
-    super(current_cls, self).normalize(archive, logger)
-
-
-def normalize_entry(self, archive, logger):
-    """Normalizer for Entry section."""
-    current_cls = section_definitions[_rename_nx_for_nomad("NXentry")].section_cls
-    if self.start_time__field:
-        self.start_time = self.start_time__field
-    self.name = self.__dict__["nx_name"] + (
-        " (" + self.title__field + ")" if self.title__field is not None else ""
-    )
-    # one could also copy local ids to identifier for search purposes
-    super(current_cls, self).normalize(archive, logger)
-
-
-def normalize_process(self, archive, logger):
-    """Normalizer for Process section."""
-    current_cls = section_definitions[_rename_nx_for_nomad("NXprocess")].section_cls
-    if self.date__field:
-        self.start_time = self.date__field
-    self.name = self.__dict__["nx_name"]
-    # one could also copy local ids to identifier for search purposes
-    super(current_cls, self).normalize(archive, logger)
-
-
-def normalize_data(self, archive, logger):
-    """Normalizer for Data section."""
-    current_cls = section_definitions[_rename_nx_for_nomad("NXdata")].section_cls
-    self.name = self.__dict__["nx_name"]
-    # one could also copy local ids to identifier for search purposes
-    super(current_cls, self).normalize(archive, logger)
-
-
-def normalize_atom_probe(self, archive, logger):
-    current_cls = section_definitions[
-        f"{_rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe"
-    ].section_cls
-    super(current_cls, self).normalize(archive, logger)
-    # temporarily disable extra normalization step
-    return
-
-    def plot_3d_plotly(df, palette="Set1"):
-        import plotly.express as px
-        import plotly.graph_objects as go
-        from scipy.spatial import cKDTree
-
-        unique_species = df["element"].unique()
-        num_species = len(unique_species)
-        base_colors = getattr(px.colors.qualitative, palette)
-        colors = (base_colors * ((num_species // len(base_colors)) + 1))[:num_species]
-
-        fig = go.Figure()
-        for i, species in enumerate(unique_species):
-            subset = df[df["element"] == species]
-            fig.add_trace(
-                go.Scatter3d(
-                    x=subset["x"],
-                    y=subset["y"],
-                    z=subset["z"],
-                    mode="markers",
-                    marker=dict(size=1, opacity=0.6, color=colors[i]),
-                    name=str(species),
-                )
-            )
-
-        # Improve axis and box appearance
-        fig.update_layout(
-            title="3D Atom Probe Reconstruction with Plotly WebGL",
-            scene=dict(
-                xaxis=dict(
-                    showgrid=False,
-                    backgroundcolor="white",
-                ),
-                yaxis=dict(
-                    showgrid=False,
-                    backgroundcolor="white",
-                ),
-                zaxis=dict(
-                    showgrid=False,
-                    backgroundcolor="white",
-                ),
-            ),
-            margin=dict(l=0, r=0, b=0, t=40),
-            height=800,
-            autosize=True,
-            template="plotly_white",
-            showlegend=True,
-            legend=dict(
-                font=dict(size=16),
-                itemsizing="constant",
-                bgcolor="rgba(255,255,255,0.8)",
-            ),
-        )
-        return fig
-
-    data_path = self.m_attributes["m_nx_data_path"]
-    with h5py.File(
-        os.path.join(archive.m_context.raw_path(), self.m_attributes["m_nx_data_file"]),
-        "r",
-    ) as fp:
-        if (
-            f"{data_path}/reconstruction/reconstructed_positions" not in fp
-            or f"{data_path}/mass_to_charge_conversion/mass_to_charge" not in fp
-        ):
-            return
-        if not hasattr(self, "ranging"):
-            return
-        if not hasattr(self.ranging, "peak_identification"):
-            return
-        if not hasattr(self.ranging.peak_identification, "ionID"):
-            return
-        # Load the reconstructed positions and mass-to-charge values
-        positions = fp[f"{data_path}/reconstruction/reconstructed_positions"][:]
-        mass_to_charge_values = fp[
-            f"{data_path}/mass_to_charge_conversion/mass_to_charge"
-        ][:].flatten()
-        # Build species mapping from ion peak identification groups
-        ion_species_map = {}
-        for ion in self.ranging.peak_identification.ionID:
-            if ion.mass_to_charge_range__field and ion.name__field:
-                mass_range = fp[
-                    f"{ion.m_attributes['m_nx_data_path']}/mass_to_charge_range"
-                ][:]
-                species_name = ion.name__field
-                # Extract only element name (remove charge states and molecular ions)
-                element_name = re.split(r"[^A-Za-z]", species_name)[0]
-                if element_name:  # Avoid empty strings
-                    ion_species_map[element_name] = mass_range
-    # Convert species mapping into an efficient lookup structure
-    species_names = list(set(ion_species_map.keys()))  # Ensure unique element names
-    mass_ranges = np.array(
-        [ion_species_map[s][:, 0] for s in species_names]
-    )  # Extract min/max mass
-    # Compute midpoints for KD-tree search
-    mass_midpoints = mass_ranges.mean(axis=1)
-    # Build a KD-tree for fast species assignment
-    mass_tree = cKDTree(mass_midpoints.reshape(-1, 1))
-    _, nearest_species_idx = mass_tree.query(mass_to_charge_values.reshape(-1, 1))
-    # Assign aggregated atomic element labels
-    atomic_labels = np.array(species_names)[nearest_species_idx]
-    # Filter valid atomic elements using ASE's atomic numbers
-    valid_atomic_labels = [
-        el if el in atomic_numbers else "X" for el in atomic_labels
-    ]  # Replace unknowns with 'X'
-    # Convert to a DataFrame for visualization
-    df = pd.DataFrame(positions, columns=["x", "y", "z"])
-    df["element"] = pd.Categorical(valid_atomic_labels)
-    # Downsample data for efficient rendering (adjust fraction as needed)
-    df_sampled = df.sample(
-        frac=0.02, random_state=42
-    )  # Adjust fraction for performance
-
-    # plotly figure
-    fig = plot_3d_plotly(df_sampled)
-    # find figures hosting subsection
-    figure_host = archive.data
-    # append the figure to the figures list
-    figure_host.figures = [PlotlyFigure(figure=fig.to_plotly_json())]
-
-    # normalize to results.material.topology
-    # **Create ASE Atoms Object from Downsampled Data (Using Aggregated Elements)**
-    def create_ase_atoms(df):
-        symbols = df["element"].tolist()
-        positions = df[["x", "y", "z"]].values
-        return Atoms(symbols=symbols, positions=positions)
-
-    apt_tip = create_ase_atoms(df_sampled)
-
-    # **Build NOMAD Topology Structure with Individual Element Systems**
-    def build_nomad_topology(archive):
-        if not archive.results:
-            archive.results = Results()
-        if not archive.results.material:
-            archive.results.material = Material()
-
-        # @Pepe-Marquez, can just be checked for existence, elements have at this point
-        # along the processing pipeline been already been populated
-        elements = list(set(apt_tip.get_chemical_symbols()))
-        if not archive.results.material.elements:
-            archive.results.material.elements = elements
-        else:
-            # @Pepe-Marquez why does the storage order of the elements matter here?
-            for i in range(len(elements)):
-                if archive.results.material.elements[i] != elements[i]:
-                    print("WARNING: elements are swapped")
-
-        topology = {}
-        system = System(
-            atoms=nomad_atoms_from_ase_atoms(apt_tip),
-            label="Reconstruction",
-            description="Reconstruction of the original atom positions",
-            structural_type="bulk",
-            dimensionality="3D",
-            system_relation=Relation(type="root"),
-        )
-        add_system_info(system, topology)
-        add_system(system, topology)
-
-        child_systems = []
-        for element in elements:
-            element_indices = (
-                np.where(df_sampled["element"] == element)[0].reshape(1, -1).tolist()
-            )
-            element_system = System(
-                atoms_ref=system.atoms,
-                indices=element_indices,
-                label=f"{element} - Subsystem",
-                description=f"Reconstructed subset containing only {element} atoms.",
-                structural_type="bulk",
-                dimensionality="3D",
-                system_relation=Relation(type="subsystem"),
-            )
-            add_system_info(element_system, topology)
-            add_system(element_system, topology, parent=system)
-            child_systems.append(f"results/material/topology/{len(topology) - 1}")
-
-        system.child_systems = child_systems
-        archive.results.material.topology = list(topology.values())
-
-    build_nomad_topology(archive)
-
-
-NORMALIZER_MAP: dict[str, Any] = {
-    _rename_nx_for_nomad("NXfabrication"): normalize_fabrication,
-    _rename_nx_for_nomad("NXsample"): normalize_sample,
-    _rename_nx_for_nomad("NXsample_component"): normalize_sample_component,
-    _rename_nx_for_nomad("NXentry"): {
-        "normalize": normalize_entry,
-    },
-    _rename_nx_for_nomad("NXprocess"): {
-        "normalize": normalize_process,
-    },
-    _rename_nx_for_nomad("NXdata"): normalize_data,
-    f"{_rename_nx_for_nomad('NXapm')}__ENTRY__atom_probe": normalize_atom_probe,
-}
-# Handling nomad BaseSection and other inherited Section from BaseSection
-for nx_name, section in section_definitions.items():
-    if nx_name == "NXobject":
-        continue
-
-    normalize_func = NORMALIZER_MAP.get(nx_name)
-
-    # Append the normalize method from a function
-    if normalize_func:
-        if isinstance(normalize_func, dict):
-            for key, value in normalize_func.items():
-                setattr(section.section_cls, key, value)
-        else:
-            section.section_cls.normalize = normalize_func

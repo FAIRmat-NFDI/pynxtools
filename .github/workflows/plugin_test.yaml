@@ -72,7 +72,7 @@ jobs:
           ref: ${{ matrix.branch }}
       - name: Install nomad
         run: |
-          uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
+          uv pip install 'nomad-lab[infrastructure] @ git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@tlc/ensure-identical-section'
       - name: Install ${{ matrix.plugin }}
         run: |
           cd ${{ matrix.plugin }}
