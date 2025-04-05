@@ -24,6 +24,9 @@ import sys
 import types
 from owlready2 import get_ontology, sync_reasoner
 
+# Global variable to store the ontology
+ontology = None
+
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
 from typing import Any, Optional, Union
@@ -230,14 +233,17 @@ class NexusActivityResult(ActivityResult):
     )
 
 def load_ontology(*args):
-    """Function to load ontology"""
-    owl_file = os.path.join(os.path.dirname(__file__), *args)
-    return get_ontology(owl_file).load()
+    global ontology
+    if ontology is None:  # Load only if not already loaded
+        owl_file = os.path.join(os.path.dirname(__file__), *args)
+        if not os.path.exists(owl_file):
+            raise FileNotFoundError(f"Ontology file not found: {owl_file}")
+        ontology = get_ontology(owl_file).load()
+    return ontology
 
 
 def get_superclasses(ontology, class_name):
-    """Function to extract superclasses"""
-    cls = ontology[class_name]
+    cls = ontology.search(iri = "*"+class_name)[0]# ontology[class_name]
     if cls is None:
         raise ValueError(f"Class '{class_name}' not found in the ontology.")
     return cls.ancestors()
@@ -279,8 +285,8 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
         try:
             if hasattr(self, "definition__field") and self.definition__field:
                 ontology = load_ontology("NeXusOntology_full.owl") #Load the ontology
-                with ontology:
-                    sync_reasoner()  # Run the reasoner
+                # with ontology:
+                #     sync_reasoner()  # Run the reasoner
                 superclasses = get_superclasses(ontology, self.definition__field) #extract superclasses
                 if archive.results.eln.methods is None:
                     archive.results.eln.methods = []
