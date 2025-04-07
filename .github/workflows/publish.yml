@@ -3,6 +3,7 @@ name: Upload Python Package
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   python-version: 3.11
@@ -83,6 +84,11 @@ jobs:
       - run: |
           git reset --hard HEAD
           python -m build
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifacts
+          path: dist/
 
   deploy:
     name: Upload to PyPI
@@ -98,8 +104,10 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: actions/setup-python@v5
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
         with:
-          python-version: ${{ env.python-version }}
+          name: dist-artifacts
+          path: dist/
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
