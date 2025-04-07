@@ -103,9 +103,6 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.python-version }}
       - name: Download dist artifacts
         uses: actions/download-artifact@v4
         with:
