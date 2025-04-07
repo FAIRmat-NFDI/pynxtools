@@ -60,11 +60,9 @@ try:
     from nomad.metainfo import (
         Attribute,
         Bytes,
-        Datatype,
         Datetime,
         Definition,
         MEnum,
-        Number,
         Package,
         Property,
         Quantity,
@@ -72,6 +70,7 @@ try:
         Section,
         SubSection,
     )
+    from nomad.metainfo.data_type import Datatype, Number
     from nomad.metainfo.metainfo import resolve_variadic_name
     from nomad.normalizing.common import nomad_atoms_from_ase_atoms
     from nomad.normalizing.topology import add_system, add_system_info
