@@ -19,21 +19,15 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
-
-      - name: Install dependencies
-        run: uv pip install build
-
       - name: Git tag version
         id: git_tag_version
         run: |
           GIT_TAG_VERSION=${GITHUB_REF#refs/tags/v}
           echo "version=$GIT_TAG_VERSION" >> "$GITHUB_OUTPUT"
-
       - name: Citation version
         id: citation_version
         run: |
