@@ -65,6 +65,11 @@ dev = [
     "uv",
     "pre-commit",
 ]
+dev-nomad = [
+    "urllib3==1.26.20",
+    "filelock==3.3.1",
+    "platformdirs==4.3.7"
+]
 convert = [
     "pynxtools[apm,ellips,em,igor,mpes,raman,spm,xps,xrd]",
 ]
