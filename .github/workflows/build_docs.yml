@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master  # Triggers deployment on push to the master branch
+  
+env:
+  python-version: 3.11
 
 permissions:
    contents: write
@@ -24,10 +27,10 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-      - name: Install uv and set the python version to 3.11
+      - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.11
+          python-version: ${{ env.python-version }}
 
       - name: Cache mkdocs-material environment
         uses: actions/cache@v3

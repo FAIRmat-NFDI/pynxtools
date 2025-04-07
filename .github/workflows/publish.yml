@@ -8,8 +8,85 @@ env:
   python-version: 3.11
 
 jobs:
+  setup:
+    name: Checkout and Install
+    runs-on: ubuntu-latest
+    outputs:
+      git_tag_version: ${{ steps.git_tag_version.outputs.version }}
+      citation_version: ${{ steps.citation_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.python-version }}
+      - name: Git tag version
+        id: git_tag_version
+        run: |
+          GIT_TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$GIT_TAG_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Citation version
+        id: citation_version
+        run: |
+          CITATION_VERSION=$(grep '^version:' CITATION.cff | cut -d' ' -f2)
+          echo "version=$CITATION_VERSION" >> "$GITHUB_OUTPUT"
+
+  test:
+    name: Run Tests
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.python-version }}
+      - name: Install latest nomad release
+        run: |
+          uv pip install nomad-lab[infrastructure]
+      - name: Install pynx
+        run: |
+          uv pip install -e ".[dev]"
+      - name: Test with pytest
+        run: pytest tests/
+
+  compare-versions:
+    name: Compare Versions
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if versions mismatch
+        run: |
+          if [ "${{ needs.setup.outputs.git_tag_version }}" != "${{ needs.setup.outputs.citation_version }}" ]; then
+            echo "Version mismatch: Git tag is ${{ needs.setup.outputs.git_tag_version }}, CITATION.cff is ${{ needs.setup.outputs.citation_version }}"
+            exit 1
+          fi
+
+  build:
+    name: Build Package
+    needs: [compare-versions, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.python-version }}
+      - run: uv pip install build
+      - run: |
+          git reset --hard HEAD
+          python -m build
+
   deploy:
-    name: Upload release to PyPI
+    name: Upload to PyPI
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -17,40 +94,12 @@ jobs:
     permissions:
       id-token: write
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        submodules: recursive
-    - name: Install uv and set the python version to ${{ env.python-version }}
-      uses: astral-sh/setup-uv@v5
-      with:
-        python-version: ${{ env.python-version }}
-    - name: Install dependencies
-      run: |
-        uv pip install build
-    - name: Git tag version
-      id: git_tag_version
-      run: |
-        # Extract the version from the tag (e.g., 'v1.0.0' becomes '1.0.0')
-        GIT_TAG_VERSION=${GITHUB_REF#refs/tags/v}
-        echo "GIT_TAG_VERSION=$GIT_TAG_VERSION" >> $GITHUB_ENV
-        echo "Version from Git tag: $GIT_TAG_VERSION"
-    - name: Citation version
-      id: citation_version
-      run: |
-        # Parse the version from the CITATION.cff file
-        CITATION_VERSION=$(grep '^version:' CITATION.cff | cut -d' ' -f2)
-        echo "CITATION_VERSION=$CITATION_VERSION" >> $GITHUB_ENV
-        echo "Version from CITATION.cff: $CITATION_VERSION"
-    - name: Compare versions
-      run: |
-        if [ "$GIT_TAG_VERSION" != "$CITATION_VERSION" ]; then
-          echo "Version mismatch: Git tag version is $GIT_TAG_VERSION, CITATION.cff version is $CITATION_VERSION"
-          exit 1
-        fi
-    - name: Build package
-      run: |
-        git reset --hard HEAD
-        python -m build
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.python-version }}
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
