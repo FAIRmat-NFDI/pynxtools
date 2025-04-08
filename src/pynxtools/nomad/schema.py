@@ -243,7 +243,7 @@ def load_ontology(*args):
 
 
 def get_superclasses(ontology, class_name):
-    cls = ontology.search(iri = "*"+class_name)[0]# ontology[class_name]
+    cls = ontology.search_one(iri = "*"+class_name)# ontology[class_name]
     if cls is None:
         raise ValueError(f"Class '{class_name}' not found in the ontology.")
     return cls.ancestors()
