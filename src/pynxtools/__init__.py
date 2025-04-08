@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+from typing import Dict
 import logging
 import os
 import re
@@ -25,6 +26,13 @@ from pynxtools._build_wrapper import get_vcs_version
 from pynxtools.definitions.dev_tools.globals.nxdl import get_nxdl_version
 
 LOGGER_LEVELS_TO_HIGHLIGHT = (logging.WARNING, logging.ERROR)
+
+MAIN_BRANCH_NAME = "fairmat"
+
+NX_DOC_BASES: Dict[str, str] = {
+    "https://github.com/nexusformat/definitions.git": "https://manual.nexusformat.org/classes",
+    "https://github.com/FAIRmat-NFDI/nexus_definitions.git": "https://fairmat-nfdi.github.io/nexus_definitions/classes",
+}
 
 
 class CustomFormatter(logging.Formatter):
@@ -45,8 +53,6 @@ formatter = CustomFormatter("%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
-
-MAIN_BRANCH_NAME = "fairmat"
 
 
 def _build_version(tag: str, distance: int, node: str, dirty: bool) -> str:

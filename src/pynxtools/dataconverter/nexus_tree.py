@@ -29,11 +29,12 @@ It also allows for adding further nodes from the inheritance chain on the fly.
 """
 
 from functools import lru_cache, reduce
-from typing import Any, List, Literal, Optional, Set, Tuple, Union
+from typing import Any, List, Dict, Literal, Optional, Set, Tuple, Union
 
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
+from pynxtools import get_definitions_url
 from pynxtools.dataconverter.helpers import (
     get_all_parents_for,
     get_nxdl_root_and_path,
@@ -45,6 +46,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
     is_name_type,
 )
+from pynxtools import NX_DOC_BASES
 
 NexusType = Literal[
     "NX_BINARY",
@@ -148,6 +150,8 @@ class NexusNode(NodeMixin):
         parent_of: List["NexusNode"]:
             The inverse of the above `is_a`. In the example case
             `DATA` `parent_of` `my_data`.
+        nxdl_base: str
+            Base of the NXDL file where the XML element for this node is  defined
     """
 
     name: str
@@ -158,6 +162,7 @@ class NexusNode(NodeMixin):
     inheritance: List[ET._Element]
     is_a: List["NexusNode"]
     parent_of: List["NexusNode"]
+    nxdl_base: str
 
     def _set_optionality(self):
         """
@@ -190,12 +195,14 @@ class NexusNode(NodeMixin):
         variadic: Optional[bool] = None,
         parent: Optional["NexusNode"] = None,
         inheritance: Optional[List[Any]] = None,
+        nxdl_base: Optional[str] = None,
     ) -> None:
         super().__init__()
         self.name = name
         self.type = type
         self.name_type = name_type
         self.optionality = optionality
+        self.nxdl_base = nxdl_base
         self.variadic = is_variadic(self.name, self.name_type)
         if variadic is not None:
             self.variadic = variadic
@@ -430,7 +437,7 @@ class NexusNode(NodeMixin):
 
         return req_children
 
-    def get_docstring(self, depth: Optional[int] = None) -> List[str]:
+    def get_docstring(self, depth: Optional[int] = None) -> Dict[str, str]:
         """
         Gets the docstrings of the current node and its parents up to a certain depth.
 
@@ -449,13 +456,47 @@ class NexusNode(NodeMixin):
         if depth is not None and depth < 0:
             raise ValueError("Depth must be a positive integer or None")
 
-        docstrings = []
+        docstrings = {}
         for elem in self.inheritance[:depth][::-1]:
             doc = elem.find("nx:doc", namespaces=namespaces)
+
             if doc is not None:
-                docstrings.append(doc.text)
+                name = elem.attrib.get("name")
+                if not name:
+                    name = elem.attrib["type"][2:].upper()
+                docstrings[name] = doc.text
 
         return docstrings
+
+    def get_link(self) -> str:
+        """
+        Get documentation url
+        """
+
+        anchor_segments = [self.type]
+        current_node = self
+
+        while True:
+            if not current_node:
+                break
+
+            segment = current_node.name
+            anchor_segments.append(current_node.name.replace("_", "-"))  # type: ignore[arg-type]
+            current_node = current_node.parent
+
+        definitions_url = get_definitions_url()
+        doc_base = NX_DOC_BASES.get(
+            definitions_url, "https://manual.nexusformat.org/classes"
+        )
+        nx_file = self.nxdl_base.split("/definitions/")[-1].split(".nxdl.xml")[0]
+
+        # add the name of the base file at the end, drop the appdef name
+        anchor_segments = anchor_segments[:-1]
+        anchor_segments += [self.nxdl_base.split("/")[-1].split(".nxdl.xml")[0].lower()]  # type: ignore[list-item]
+
+        anchor = "-".join([name.lower() for name in reversed(anchor_segments)])
+
+        return f"{doc_base}/{nx_file}.html#{anchor}"
 
     def _build_inheritance_chain(self, xml_elem: ET._Element) -> List[ET._Element]:
         """
@@ -559,6 +600,7 @@ class NexusNode(NodeMixin):
                 name_type=name_type,
                 type=tag,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name")
@@ -575,6 +617,7 @@ class NexusNode(NodeMixin):
                 nx_class=xml_elem.attrib["type"],
                 inheritance=inheritance_chain,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         elif tag == "choice":
             current_elem = NexusChoice(
@@ -582,6 +625,7 @@ class NexusNode(NodeMixin):
                 name=xml_elem.attrib["name"],
                 name_type=name_type,
                 optionality=default_optionality,
+                nxdl_base=xml_elem.base,
             )
         else:
             # TODO: Tags: link
@@ -932,7 +976,7 @@ def populate_tree_from_parents(node: NexusNode):
         populate_tree_from_parents(child_node)
 
 
-def generate_tree_from(appdef: str) -> NexusNode:
+def generate_tree_from(appdef: str, set_root_attr: bool = True) -> NexusNode:
     """
     Generates a NexusNode tree from an application definition.
     NexusNode is based on anytree nodes and anytree's functions can be used
@@ -940,6 +984,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
 
     Args:
         appdef (str): The application definition name to generate the NexusNode tree from.
+        set_root_attr (bool): Whether or not to set the root attributes.
 
     Returns:
         NexusNode: The tree representing the application definition.
@@ -968,6 +1013,7 @@ def generate_tree_from(appdef: str) -> NexusNode:
             add_children_to(current_elem, child)
 
     appdef_xml_root, _ = get_nxdl_root_and_path(appdef)
+
     global namespaces
     namespaces = {"nx": appdef_xml_root.nsmap[None]}
 
@@ -983,12 +1029,14 @@ def generate_tree_from(appdef: str) -> NexusNode:
         variadic=False,
         parent=None,
         inheritance=appdef_inheritance_chain,
+        nxdl_base=appdef_xml_root.base,
     )
     # Set root attributes
-    nx_root, _ = get_nxdl_root_and_path("NXroot")
-    for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
-        child = tree.add_node_from(root_attrib)
-        child.optionality = "optional"
+    if set_root_attr:
+        nx_root, _ = get_nxdl_root_and_path("NXroot")
+        for root_attrib in nx_root.findall("nx:attribute", namespaces=namespaces):
+            child = tree.add_node_from(root_attrib)
+            child.optionality = "optional"
 
     entry = appdef_xml_root.find("nx:group[@type='NXentry']", namespaces=namespaces)
     add_children_to(tree, entry)
@@ -996,5 +1044,4 @@ def generate_tree_from(appdef: str) -> NexusNode:
     # Add all fields and attributes from the parent appdefs
     if len(appdef_inheritance_chain) > 1:
         populate_tree_from_parents(tree)
-
     return tree

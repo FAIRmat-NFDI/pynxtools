@@ -43,9 +43,9 @@ except ImportError as exc:
 
 import pynxtools.nomad.schema as nexus_schema
 from pynxtools.nexus.nexus import HandleNexus
-from pynxtools.nomad.utils import __FIELD_STATISTICS as FIELD_STATISTICS
-from pynxtools.nomad.utils import __REPLACEMENT_FOR_NX, get_quantity_base_name
-from pynxtools.nomad.utils import __rename_nx_for_nomad as rename_nx_for_nomad
+from pynxtools.nomad.utils import FIELD_STATISTICS
+from pynxtools.nomad.utils import REPLACEMENT_FOR_NX, get_quantity_base_name
+from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
 
 
 def _to_group_name(nx_node: ET.Element):
@@ -369,7 +369,7 @@ class NexusParser(MatchingParser):
                     exc_info=e,
                 )
 
-    def __nexus_populate(self, params: dict, attr=None):  # pylint: disable=W0613
+    def _nexus_populate(self, params: dict, attr=None):  # pylint: disable=W0613
         """
         Walks through name_list and generate nxdl nodes
         (hdf_info, nx_def, nx_path, val, logger) = params
@@ -543,7 +543,7 @@ class NexusParser(MatchingParser):
         # .volumes/fs/<upload type>/<upload 2char>/<upoad>/<raw/arch>/[subdirs?]/<filename>
         self.nxs_fname = "/".join(mainfile.split("/")[6:]) or mainfile
         nexus_helper = HandleNexus(logger, mainfile)
-        nexus_helper.process_nexus_master_file(self.__nexus_populate)
+        nexus_helper.process_nexus_master_file(self._nexus_populate)
 
         # TODO: domain experiment could also be registered
         if archive.metadata is None:

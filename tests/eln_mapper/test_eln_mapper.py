@@ -1,4 +1,4 @@
-"""This test is dedicated generate_eln converter tool."""
+"""This test is dedicated to the generate_eln converter tool."""
 
 # Copyright The NOMAD Authors.
 #
@@ -18,7 +18,7 @@
 #
 
 import os
-from typing import Dict
+from typing import Dict, List, Tuple
 
 import yaml
 from click import testing
@@ -26,20 +26,45 @@ from click import testing
 from pynxtools.eln_mapper import eln_mapper
 
 
-def check_keys_from_two_dict(dict1: Dict, dict2: Dict):
-    """Compare keys of two dicts.
+def check_keys_from_two_dict(dict1: Dict, dict2: Dict, path: str = ""):
+    """Compare keys of two dicts and report all differences.
 
     Parameters
     ----------
     dict1 : Dict
-        Dict-1 to compare the key with Dict-2
+        First dictionary to compare.
     dict2 : Dict
-        Dict-2 to compare the key with Dict-1
+        Second dictionary to compare.
+    path : str, optional
+        Current key path being checked (used for recursive calls).
     """
-    for (key1, val1), (key2, val2) in zip(dict1.items(), dict2.items()):
-        assert key1 == key2, "Test and Ref yaml file have different keys."
+    differences: List[Tuple[str, str]] = []
+
+    keys1 = set(dict1.keys())
+    keys2 = set(dict2.keys())
+
+    # Find missing and extra keys
+    missing_in_dict2 = keys1 - keys2
+    missing_in_dict1 = keys2 - keys1
+
+    for key in missing_in_dict2:
+        differences.append((f"{path}.{key}".lstrip("."), "Missing in dict2"))
+
+    for key in missing_in_dict1:
+        differences.append((f"{path}.{key}".lstrip("."), "Missing in dict1"))
+
+    # Check common keys recursively
+    for key in keys1 & keys2:
+        val1, val2 = dict1[key], dict2[key]
         if isinstance(val1, dict) and isinstance(val2, dict):
-            check_keys_from_two_dict(val1, val2)
+            check_keys_from_two_dict(val1, val2, path=f"{path}.{key}".lstrip("."))
+
+    # Raise error if there are differences
+    if differences:
+        error_message = "Key mismatches found:\n" + "\n".join(
+            f"- {key}: {msg}" for key, msg in differences
+        )
+        raise AssertionError(error_message)
 
 
 def test_reader_eln(tmp_path):
@@ -52,9 +77,9 @@ def test_reader_eln(tmp_path):
     """
 
     local_dir = os.path.abspath(os.path.dirname(__file__))
-    ref_file = os.path.join(local_dir, "../data/eln_mapper/eln.yaml")
+    ref_file = os.path.join(local_dir, "../data/eln_mapper/scan.eln_data.yaml")
 
-    test_file = os.path.join(tmp_path, "eln.yaml")
+    test_file = os.path.join(tmp_path, "scan.eln_data.yaml")
     cli_run = testing.CliRunner()
     cli_run.invoke(
         eln_mapper.get_eln,
@@ -62,11 +87,11 @@ def test_reader_eln(tmp_path):
             "--nxdl",
             "NXscan",
             "--skip-top-levels",
-            1,
+            0,
             "--output-file",
             test_file,
             "--eln-type",
-            "eln",
+            "reader",
         ],
     )
 
@@ -91,11 +116,11 @@ def test_scheme_eln(tmp_path):
     local_dir = os.path.abspath(os.path.dirname(__file__))
     ref_file = os.path.join(local_dir, "../data/eln_mapper/scan.scheme.archive.yaml")
 
-    test_file = os.path.join(tmp_path, ".scheme.archive.yaml")
+    test_file = os.path.join(tmp_path, "scan.scheme.archive.yaml")
     cli_run = testing.CliRunner()
     cli_run.invoke(
         eln_mapper.get_eln,
-        ["--nxdl", "NXscan", "--output-file", test_file, "--eln-type", "scheme_eln"],
+        ["--nxdl", "NXscan", "--output-file", test_file, "--eln-type", "schema"],
     )
     with open(ref_file, encoding="utf-8", mode="r") as ref_f:
         ref_dict = yaml.safe_load(ref_f)
