@@ -6,9 +6,9 @@ on:
   pull_request:
     branches: [master]
   # Run workflow only when there are changes in src/pynxtools/nomad or in the definitions submodule
-    paths:
-      - 'src/pynxtools/nomad'
-      - 'src/pynxtools/definitions'
+    # paths:
+    #   - 'src/pynxtools/nomad'
+    #   - 'src/pynxtools/definitions'
 
 jobs:
   nexus-version:
@@ -18,12 +18,9 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Temporarily remove existing metainfo package
-        run: |
-          rm src/pynxtools/nomad/nxs_metainfo_package.json
       - name: Generate metainfo package
         run: |
-          python src/pynxtools/nomad/schema.py
+          ./scripts/generate_package.sh
       - uses: CatChen/check-git-status-action@v1
         with:
           fail-if-not-clean: true
