@@ -30,7 +30,7 @@ jobs:
           python-version: ${{ env.python-version }}
       - name: Install nomad
         run: |
-          uv pip install 'nomad-lab[infrastructure] @ git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@tlc/ensure-identical-section'
+          uv pip install nomad-lab[infrastructure] @ git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install pynx
         run: |
           uv pip install .
