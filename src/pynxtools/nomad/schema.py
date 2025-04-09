@@ -22,7 +22,7 @@ import os
 import re
 import sys
 import types
-from owlready2 import get_ontology, sync_reasoner
+from owlready2 import get_ontology
 
 # Global variable to store the ontology
 ontology = None
