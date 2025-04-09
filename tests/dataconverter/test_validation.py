@@ -1129,6 +1129,31 @@ TEMPLATE["required"][
             [],
             id="name-fitted-identifier-with-type",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                "123",
+            ),
+            [],
+            id="group-with-correct-concept",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_2",
+                "456",
+            ),
+            [
+                "The data entry corresponding to /ENTRY[my_entry]/identified_calibration/identifier_1 is required "
+                "and hasn't been supplied by the reader."
+            ],
+            id="group-with-correct-concept-and-non-concept-sibling",
+        ),
         # This can be re-used later when we have proper unit checking
         pytest.param(
             alter_dict(

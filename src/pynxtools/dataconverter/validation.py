@@ -156,12 +156,21 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
         if not node.variadic:
             if instance_name == node.name:
                 if concept_name and concept_name != node.name:
-                    collector.collect_and_log(
-                        concept_name,
-                        ValidationProblem.InvalidConceptForNonVariadic,
-                        node,
-                    )
-                    return None
+                    if node.type == "group":
+                        if concept_name != node.nx_class[2:].upper():
+                            collector.collect_and_log(
+                                concept_name,
+                                ValidationProblem.InvalidConceptForNonVariadic,
+                                node,
+                            )
+                            return None
+                    else:
+                        collector.collect_and_log(
+                            concept_name,
+                            ValidationProblem.InvalidConceptForNonVariadic,
+                            node,
+                        )
+                        return None
                 return node
         else:
             if concept_name and concept_name == node.name:
