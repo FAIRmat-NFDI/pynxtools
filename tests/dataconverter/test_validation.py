@@ -729,7 +729,6 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
                 1,
             ),
-            # ToDo: should not raise a warning if sibling inheritance works
             [
                 "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
                 "required_child is required and hasn't been supplied by the reader."
@@ -1053,22 +1052,24 @@ TEMPLATE["required"][
                 "123",
             ),
             [],
-            id="specified-identifier-with-type",
+            id="specified-identifier-without-type",
         ),
         # ToDo: reactivate if sibling inheritance works properly
-        # pytest.param(
-        #     alter_dict(
-        #         alter_dict(
-        #             TEMPLATE,
-        #             "/ENTRY[my_entry]/identified_calibration/identifier_1",
-        #             "123",
-        #         ),
-        #         "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
-        #         "ORCID",
-        #     ),
-        #     [],
-        #     id="specified-identifier-with-type",
-        # ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
+                "ORCID",
+            ),
+            [
+                "Attribute /ENTRY[my_entry]/identified_calibration/identifier_1/@type written without documentation."
+            ],
+            id="specified-identifier-with-type",
+        ),
         pytest.param(
             alter_dict(
                 alter_dict(
