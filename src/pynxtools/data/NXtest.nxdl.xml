@@ -123,6 +123,7 @@
         </group>
         <group name="identified_calibration" type="NXcalibration" optional="true">
             <field name="identifier_1"/>
+            <field name="identifier_2" optional="True"/>
         </group>
         <group name="named_collection" type="NXcollection" optional="true"/>
     </group>
