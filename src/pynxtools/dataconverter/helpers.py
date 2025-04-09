@@ -24,7 +24,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union, Sequence
+from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import h5py
 import lxml.etree as ET
@@ -32,6 +32,7 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
+from pynxtools.dataconverter.template import Template
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_enums,
     get_inherited_nodes,
@@ -398,6 +399,45 @@ def add_inherited_children(list_of_children_to_add, path, nxdl_root, template):
             )
             template[optionality][f"{path}/{child}"] = None
     return template
+
+
+def add_template_key_from(nx_node, template: Template, parent_path=""):
+    key = None
+    unit = None
+    if nx_node.type == "attribute":
+        leaf_part = (
+            f"{nx_node.name}[{nx_node.name}]" if nx_node.variadic else nx_node.name
+        )
+        key = f"{parent_path}/@{leaf_part}"
+    elif nx_node.type == "field":
+        leaf_part = (
+            f"{nx_node.name}[{nx_node.name}]" if nx_node.variadic else nx_node.name
+        )
+        key = f"{parent_path}/{leaf_part}"
+        if hasattr(nx_node, "unit") and nx_node.unit:
+            unit = f"{key}/@units"
+    elif nx_node.type == "group":
+        leaf_part = f"{nx_node.name}[{nx_node.name}]"
+        key = f"{parent_path}/{leaf_part}"
+
+    if key:
+        template[nx_node.optionality][key] = None
+    if unit:
+        template[nx_node.optionality][unit] = None
+    return key
+
+
+def build_template_from_nexus_tree(appdef_root, template, parent_path=""):
+    """
+    Build a template from the nexus tree.
+    """
+
+    for child in appdef_root.children:
+        key = add_template_key_from(child, parent_path)
+        if not key:
+            continue
+
+        build_template_from_nexus_tree(child, template, key)
 
 
 def generate_template_from_nxdl(
