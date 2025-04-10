@@ -155,6 +155,22 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
     for node in nodes:
         if not node.variadic:
             if instance_name == node.name:
+                if concept_name and concept_name != node.name:
+                    if node.type == "group":
+                        if concept_name != node.nx_class[2:].upper():
+                            collector.collect_and_log(
+                                concept_name,
+                                ValidationProblem.InvalidConceptForNonVariadic,
+                                node,
+                            )
+                            return None
+                    else:
+                        collector.collect_and_log(
+                            concept_name,
+                            ValidationProblem.InvalidConceptForNonVariadic,
+                            node,
+                        )
+                        return None
                 return node
         else:
             if concept_name and concept_name == node.name:
@@ -548,6 +564,7 @@ def validate_dict_against(
         pass
 
     def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
+        # PRINT = True if "identifier_1/@type" in key else False
         for name in key[1:].replace("@", "").split("/"):
             children_to_check = [
                 node.search_add_child_for(child)
