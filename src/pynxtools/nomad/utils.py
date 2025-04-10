@@ -20,6 +20,8 @@ from typing import Optional
 
 import numpy as np
 
+from pynxtools import get_nexus_version
+
 try:
     from nomad.metainfo.data_type import (
         Bytes,
@@ -128,3 +130,10 @@ def get_quantity_base_name(quantity_name):
         if quantity_name.endswith("__field") and quantity_name[-8] != "_"
         else quantity_name
     )
+
+
+def get_package_filepath():
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
+
+    return os.path.join(local_dir, filename)
