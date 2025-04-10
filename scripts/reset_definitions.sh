@@ -1,4 +1,5 @@
-# Resets the definitions and git restores the metainfo packages
+# Resets the definitions and git restores the metainfo packages.
+# Only works if you have pynxtools installed in editable mode.
 
 update_nexus_version() {
   cd src/pynxtools/definitions && echo "updating nexus-version.txt"
@@ -17,5 +18,4 @@ cd $project_dir
 
 reset_definitions_submodule
 update_nexus_version
-echo "restoring NOMAD metainfo package"
-git restore src/pynxtools/nomad/nxs_metainfo_package.json
+python ./scripts/generate_package.py
