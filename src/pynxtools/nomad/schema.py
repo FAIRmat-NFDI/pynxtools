@@ -80,7 +80,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-from pynxtools import NX_DOC_BASES, get_definitions_url
+from pynxtools import NX_DOC_BASES, get_definitions_url, get_nexus_version
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad.utils import (
     FIELD_STATISTICS,
@@ -1285,12 +1285,18 @@ def create_package_from_nxdl_directories() -> Package:
 nexus_metainfo_package: Package | None = None  # pylint: disable=C0103
 
 
+def _get_package_filepath():
+    local_dir = os.path.abspath(os.path.dirname(__file__))
+    filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
+
+    return os.path.join(local_dir, filename)
+
+
 def save_nexus_schema():
     # global nexus_metainfo_package  # pylint: disable=global-statement
     schema_dict = nexus_metainfo_package.m_to_dict()
 
-    local_dir = os.path.abspath(os.path.dirname(__file__))
-    nxs_filepath = os.path.join(local_dir, "nxs_metainfo_package.json")
+    nxs_filepath = _get_package_filepath()
 
     with open(nxs_filepath, "wb") as file:
         file.write(orjson.dumps(schema_dict, option=orjson.OPT_INDENT_2))
@@ -1299,11 +1305,11 @@ def save_nexus_schema():
 def load_nexus_schema():
     global nexus_metainfo_package  # pylint: disable=global-statement
 
-    local_dir = os.path.abspath(os.path.dirname(__file__))
-    nxs_filepath = os.path.join(local_dir, "nxs_metainfo_package.json")
+    nxs_filepath = _get_package_filepath()
 
     with open(nxs_filepath, "rb") as file:
         schema_dict = orjson.loads(file.read())
+
     nexus_metainfo_package = Package().m_from_dict(schema_dict)
 
 
@@ -1355,6 +1361,10 @@ def init_nexus_metainfo():
     Initializes the metainfo package for the nexus definitions.
     """
     global nexus_metainfo_package  # pylint: disable=global-statement
+
+    import time
+
+    start = time.time()
 
     if nexus_metainfo_package is not None:
         return
