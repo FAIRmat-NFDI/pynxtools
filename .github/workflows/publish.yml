@@ -83,13 +83,14 @@ jobs:
       - run: uv pip install build
       - run: |
           git reset --hard HEAD
-          python -m build
+          rm -f src/pynxtools/nomad/nxs_metainfo_package_*.json
+          uv run src/pynxtools/nomad/schema.py
+          uv build
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-artifacts
           path: dist/
-
   deploy:
     name: Upload to PyPI
     needs: build
