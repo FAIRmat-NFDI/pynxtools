@@ -70,7 +70,7 @@ dev = [
     "debugpy",
 ]
 convert = [
-    "pynxtools[apm,ellips,em,igor,mpes,raman,xps,xrd]",
+    "pynxtools[apm,ellips,em,igor,mpes,raman,spm,xps,xrd]",
 ]
 
 apm = [
