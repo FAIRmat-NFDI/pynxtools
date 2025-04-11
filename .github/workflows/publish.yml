@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Install uv and set the python version
+      - name: Install uv and set the python version to ${{ env.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
@@ -44,15 +44,13 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: astral-sh/setup-uv@v5
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
-      - name: Install latest nomad release
+      - name: Install pynx and latest compatible nomad release
         run: |
-          uv pip install nomad-lab[infrastructure]
-      - name: Install pynx
-        run: |
-          uv pip install -e ".[dev]"
+          uv pip install -e ".[dev, nomad]"
       - name: Test with pytest
         run: pytest tests/
 
@@ -77,20 +75,47 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: astral-sh/setup-uv@v5
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
-      - run: uv pip install build
-      - run: |
+      - name: Build package
+        run: |
           git reset --hard HEAD
           rm -f src/pynxtools/nomad/nxs_metainfo_package_*.json
-          uv run src/pynxtools/nomad/schema.py
+          uv run scripts/generate_package.py
           uv build
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-artifacts
           path: dist/
+
+  test-install:
+    name: Install built package
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifacts
+          path: dist/
+      - name: Install sdist
+        run: |
+          uv pip install dist/*.tar.gz
+      - name: Check that package JSON file exists
+        run: |
+          SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
+          FILE_COUNT=$(find "$SITE_PACKAGES/pynxtools/nomad" -name 'nxs_metainfo_package_*.json' | wc -l)
+          if [ "$FILE_COUNT" -eq 0 ]; then
+            echo "ERROR: nxs_metainfo_package_*.json not found in installed package."
+            exit 1
+          else
+            echo "Found $FILE_COUNT JSON file(s) in package:"
+            find "$SITE_PACKAGES/pynxtools/nomad" -name 'nxs_metainfo_package_*.json'
+          fi
+
   deploy:
     name: Upload to PyPI
     needs: build
