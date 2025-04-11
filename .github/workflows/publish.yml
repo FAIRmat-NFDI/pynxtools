@@ -96,6 +96,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Install uv and set the python version to ${{ env.python-version }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.python-version }}
       - name: Download dist artifacts
         uses: actions/download-artifact@v4
         with:
