@@ -179,3 +179,8 @@ follow_imports = "silent"
 no_strict_optional = true
 disable_error_code = "import, annotation-unchecked"
 exclude = ["src/pynxtools/definitions/*"]
+
+[tool.uv]
+extra-index-url = [
+"https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
+]
