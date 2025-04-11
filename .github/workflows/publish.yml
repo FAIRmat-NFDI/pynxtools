@@ -122,7 +122,7 @@ jobs:
 
   deploy:
     name: Upload to PyPI
-    needs: build
+    needs: [build, test-install]
     runs-on: ubuntu-latest
     environment:
       name: pypi
