@@ -1335,18 +1335,6 @@ def create_metainfo_package():
         for quantity in section.quantities:
             _add_additional_attributes(quantity, section)
 
-    # Handling nomad BaseSection and other inherited Section from BaseSection
-    for section in nxs_metainfo_package.section_definitions:
-        normalize_func = NORMALIZER_MAP.get(section.__dict__["name"])
-
-        # Append the normalize method from a function
-        if normalize_func:
-            if isinstance(normalize_func, dict):
-                for key, value in normalize_func.items():
-                    setattr(section.section_cls, key, value)
-            else:
-                section.section_cls.normalize = normalize_func
-
     return nxs_metainfo_package
 
 
@@ -1359,21 +1347,45 @@ def init_nexus_metainfo():
     if nexus_metainfo_package is not None:
         return
 
+    import time
+
+    start = time.time()
+
     try:
         load_nexus_schema()
+        print(f"Schema loaded after {time.time() - start} s.")
     except Exception:
         nexus_metainfo_package = create_metainfo_package()
         save_nexus_schema()
+        print(f"Schema created after {time.time() - start} s.")
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
     nexus_metainfo_package.init_metainfo()
+
+    print(f"Schema initialized after {time.time() - start} s.")
+
+    # Handling nomad BaseSection and other inherited Section from BaseSection
+    for section in nexus_metainfo_package.section_definitions:
+        normalize_func = NORMALIZER_MAP.get(section.__dict__["name"])
+
+        # Append the normalize method from a function
+        if normalize_func:
+            if isinstance(normalize_func, dict):
+                for key, value in normalize_func.items():
+                    setattr(section.section_cls, key, value)
+            else:
+                section.section_cls.normalize = normalize_func
+
+    print(f"Normalizers attached after {time.time() - start} s.")
 
     # We skip the Python code generation for now and offer Python classes as variables
     # TO DO not necessary right now, could also be done case-by-case by the nexus parser
     python_module = sys.modules[__name__]
     for section in nexus_metainfo_package.section_definitions:  # pylint: disable=E1133
         setattr(python_module, section.name, section.section_cls)
+
+    print(f"Python modules available after {time.time() - start} s.")
 
 
 init_nexus_metainfo()
