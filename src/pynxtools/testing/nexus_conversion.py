@@ -206,9 +206,10 @@ class ReaderTest:
             gen_log_path: str, ref_log_path: str
         ) -> Tuple[List[str], List[str]]:
             """Load log files and return their contents as lists of lines."""
-            with open(gen_log_path, "r", encoding="utf-8") as gen, open(
-                ref_log_path, "r", encoding="utf-8"
-            ) as ref:
+            with (
+                open(gen_log_path, "r", encoding="utf-8") as gen,
+                open(ref_log_path, "r", encoding="utf-8") as ref,
+            ):
                 return gen.readlines(), ref.readlines()
 
         def compare_logs(gen_lines: List[str], ref_lines: List[str]) -> None:
