@@ -116,11 +116,13 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
     - Concatenate dataset in one virtual dataset
     - Internal links
     - External links
-    - compression label"""
+    - compression label
+    """
+    file = None
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
-    if "shape" in data.keys():
+    if file is not None and "shape" in data.keys():
         layout = handle_shape_entries(data, file, path)
         grp.create_virtual_dataset(entry_name, layout)
     # multiple datasets to concatenate
@@ -251,7 +253,6 @@ class Writer:
                 try:
                     grp.attrs["NX_class"] = attrs["type"]
                 except KeyError as e:
-                    flase_name = parent_path.split("/")[-1]
                     raise NxdlAttributeNotFoundError(
                         f"NXDL attribute `type` not found for group : {parent_path} "
                         f"Hint: Follow convention `fixednameVARIACKPART[fixedname_given_name]` "
@@ -267,36 +268,34 @@ class Writer:
         hdf5_links_for_later = []
 
         unit_and_attr = {}
-        for path, value in self.data.items():
-            try:
-                if path[path.rindex("/") + 1 :].startswith("@"):
-                    unit_and_attr[path] = value
-                    continue
 
+        for path, d_value in self.data.items():
+            if not is_not_data_empty(d_value):
+                continue
+            try:
                 entry_name = helpers.get_name_from_data_dict_entry(
                     path[path.rindex("/") + 1 :]
                 )
-                if is_not_data_empty(value):
-                    data = value
-                else:
+                if entry_name and entry_name.startswith("@"):
+                    unit_and_attr[path] = d_value
                     continue
+
                 # Handle field and group
-                if entry_name and entry_name[0] != "@":
-                    grp = self.ensure_and_get_parent_node(
-                        path,
-                        self.data.undocumented.keys(),
-                    )
-                    if isinstance(data, dict):
-                        if "compress" in data.keys():
-                            dataset = handle_dicts_entries(
-                                data, grp, entry_name, self.output_path, path
-                            )
-                        else:
-                            hdf5_links_for_later.append(
-                                [data, grp, entry_name, self.output_path, path]
-                            )
+                grp = self.ensure_and_get_parent_node(
+                    path,
+                    self.data.undocumented.keys(),
+                )
+                if isinstance(d_value, dict):
+                    if "compress" in d_value.keys():
+                        dataset = handle_dicts_entries(
+                            d_value, grp, entry_name, self.output_path, path
+                        )
                     else:
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        hdf5_links_for_later.append(
+                            [d_value, grp, entry_name, self.output_path, path]
+                        )
+                else:
+                    dataset = grp.create_dataset(entry_name, data=d_value)
 
             except InvalidDictProvided as exc:
                 print(str(exc))
@@ -306,12 +305,26 @@ class Writer:
                     f"with the following message: {str(exc)}\n"
                 ) from exc
 
+        for links in hdf5_links_for_later:
+            dataset = handle_dicts_entries(*links)
+            if dataset is None:
+                # If target of a link is invalid to be linked
+                del self.data[links[-1]]
+
         # Handle unit and attribute
-        for path, value in unit_and_attr.items():
+        for path, d_value in unit_and_attr.items():
+            if not is_not_data_empty(d_value):
+                continue
             hdf5_path = helpers.convert_data_dict_path_to_hdf5_path(path)
-            parent, entry_name = hdf5_path.rsplit("/", 1)
+            entry_name = helpers.get_name_from_data_dict_entry(
+                path[path.rindex("/") + 1 :]
+            )
             try:
-                dataset_or_grp = self.output_nexus[parent + "/"]
+                dataset_or_grp = self.ensure_and_get_parent_node(
+                    path,
+                    self.data.undocumented.keys(),
+                )
+
             except KeyError as exc:
                 logger.warning(
                     "No path '%s' available to attached Attribute.", hdf5_path
@@ -320,15 +333,9 @@ class Writer:
             if dataset_or_grp is None:
                 continue
             if path.endswith("/@units"):
-                dataset_or_grp.attrs["units"] = value
+                dataset_or_grp.attrs["units"] = d_value
             else:
-                dataset_or_grp.attrs[entry_name[1:]] = value
-
-        for links in hdf5_links_for_later:
-            dataset = handle_dicts_entries(*links)
-            if dataset is None:
-                # If target of a link is invalid to be linked
-                del self.data[links[-1]]
+                dataset_or_grp.attrs[entry_name[1:]] = d_value
 
     def write(self):
         """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
