@@ -122,7 +122,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
-    if file is not None and "shape" in data.keys():
+    if "shape" in data.keys():
         layout = handle_shape_entries(data, file, path)
         grp.create_virtual_dataset(entry_name, layout)
     # multiple datasets to concatenate
