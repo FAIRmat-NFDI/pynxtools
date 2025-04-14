@@ -118,7 +118,6 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
     - External links
     - compression label
     """
-    file = None
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
