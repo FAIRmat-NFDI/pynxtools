@@ -118,6 +118,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
     - External links
     - compression label
     """
+    file = None
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
@@ -248,11 +249,10 @@ class Writer:
             grp = parent.create_group(parent_path_hdf5)
 
             attrs = self.__nxdl_to_attrs(parent_path)
-            if attrs is not None:
-                try:
-                    grp.attrs["NX_class"] = attrs["type"]
-                except KeyError:
-                    logger.warning(
+            if attrs is not None and attrs.get("type", ""):
+                grp.attrs["NX_class"] = attrs["type"]
+            else:
+                logger.warning(
                         "NXDL attribute `type` not found for group %s.\n"
                         "Hint: Follow the convention `fixednameVARIACKPART[fixedname_given_name]` "
                         "with exact group name `fixednameVARIACKPART`in NXDL file.",
