@@ -254,8 +254,8 @@ class Writer:
                     grp.attrs["NX_class"] = attrs["type"]
                 except KeyError as e:
                     raise NxdlAttributeNotFoundError(
-                        f"NXDL attribute `type` not found for group : {parent_path} "
-                        f"Hint: Follow convention `fixednameVARIACKPART[fixedname_given_name]` "
+                        f"NXDL attribute `type` not found for group {parent_path}.\n"
+                        f"Hint: Follow the convention `fixednameVARIACKPART[fixedname_given_name]` "
                         f"with exact group name `fixednameVARIACKPART`in NXDL file."
                     ) from e
 
