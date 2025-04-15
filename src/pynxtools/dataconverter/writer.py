@@ -247,17 +247,17 @@ class Writer:
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
-
             attrs = self.__nxdl_to_attrs(parent_path)
-            if attrs is not None and attrs.get("type", ""):
-                grp.attrs["NX_class"] = attrs["type"]
+            if attrs is not None and (nx_class := attrs.get("type", "")):
+                grp.attrs["NX_class"] = nx_class
             else:
                 logger.warning(
-                        "NXDL attribute `type` not found for group %s.\n"
-                        "Hint: Follow the convention `fixednameVARIACKPART[fixedname_given_name]` "
-                        "with exact group name `fixednameVARIACKPART`in NXDL file.",
-                        parent_path,
-                    )
+                    "NXDL attribute `type` not found for group %s.\n"
+                    "Hint: Follow the convention `fixednameVARIACKPART[fixedname_given_name]` "
+                    "with exact group name `fixednameVARIACKPART`in NXDL file. Or "
+                    "no such group exists in NXDL file.",
+                    parent_path,
+                )
 
             return grp
         return self.output_nexus[parent_path_hdf5]
@@ -280,7 +280,7 @@ class Writer:
                     unit_and_attr[path] = d_value
                     continue
 
-                # Handle field and group
+                # Handle fields and groups
                 grp = self.ensure_and_get_parent_node(
                     path,
                     self.data.undocumented.keys(),
@@ -304,17 +304,15 @@ class Writer:
                     f"Unknown error occured writing the path: {path} "
                     f"with the following message: {str(exc)}\n"
                 ) from exc
-
+        # Handle links
         for links in hdf5_links_for_later:
             dataset = handle_dicts_entries(*links)
             if dataset is None:
                 # If target of a link is invalid to be linked
                 del self.data[links[-1]]
 
-        # Handle unit and attribute
+        # Handle units and attributes
         for path, d_value in unit_and_attr.items():
-            if not is_not_data_empty(d_value):
-                continue
             hdf5_path = helpers.convert_data_dict_path_to_hdf5_path(path)
             entry_name = helpers.get_name_from_data_dict_entry(
                 path[path.rindex("/") + 1 :]
