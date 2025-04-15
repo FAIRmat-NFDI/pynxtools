@@ -12,22 +12,17 @@ set -euo pipefail
 DEFINITIONS_FOLDER="src/pynxtools/definitions"
 
 update_nexus_version() {
-  cd $DEFINITIONS_FOLDER && echo "updating nexus-version.txt"
+  cd src/pynxtools/definitions && echo "updating nexus-version.txt"
   printf "$(git describe --dirty --tags --long --abbrev=8 --match '*[0-9]*')" > ../nexus-version.txt
   cd ../../../
 }
 
-get_default_branch() {
-  # Detect the default branch of the submodule's remote
-  git -C "$DEFINITIONS_FOLDER" remote show origin | awk '/HEAD branch/ {print $NF}'
-}
-
-update_definitions_submodule() {
-  echo "updating definitions submodule"
-  git submodule sync "$DEFINITIONS_FOLDER"
-  git submodule update --init --remote --jobs=4 "$DEFINITIONS_FOLDER"
-  git -C "$DEFINITIONS_FOLDER" fetch --tags
-}
+# update_definitions_submodule() {
+#   echo "updating definitions submodule"
+#   git submodule sync --recursive
+#   git submodule update --init --recursive --remote --jobs=4
+#   git submodule foreach --recursive 'git fetch --tags'
+# }
 
 reset_definitions_submodule() {
   echo "resetting definitions submodule"
@@ -124,3 +119,26 @@ main() {
 }
 
 main "$@"
+
+
+# #   git submodule deinit -f .
+# #   git submodule update --init
+# # }
+
+# # if [[ "$1" != "update" && "$1" != "reset" ]]; then
+# #   echo "Error: Please specify either 'update' or 'reset'"
+# #   echo "Usage: $0 [update|reset]"
+# #   exit 1
+# # fi
+
+# # project_dir=$(dirname $(dirname $(realpath "$0")))
+# # cd "$project_dir"
+
+# # if [[ "$1" == "update" ]]; then
+# #   update_definitions_submodule
+# # elif [[ "$1" == "reset" ]]; then
+# #   reset_definitions_submodule
+# # fi
+
+# update_nexus_version
+# python ./scripts/generate_package.py
