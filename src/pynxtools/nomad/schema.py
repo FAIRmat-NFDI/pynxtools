@@ -921,20 +921,15 @@ def _create_class_section(xml_node: ET.Element) -> Section:
     else:
         nomad_base_sec_cls = BASESECTIONS_MAP.get(nx_name, [NexusBaseSection])
 
-    nx_name = _rename_nx_for_nomad(nx_name)
-    class_section: Section = to_section(
-        nx_name, nx_kind=nx_type, nx_category=nx_category
-    )
+    name = _rename_nx_for_nomad(nx_name)
+    class_section: Section = to_section(name, nx_kind=nx_type, nx_category=nx_category)
 
     if "extends" in xml_attrs:
         nx_base_sec = to_section(_rename_nx_for_nomad(xml_attrs["extends"]))
         class_section.base_sections = [nx_base_sec] + [
             cls.m_def for cls in nomad_base_sec_cls
         ]
-    elif (
-        _rename_nx_for_nomad(nx_name) == "Object"
-        or _rename_nx_for_nomad(nx_name) == "Root"
-    ):
+    elif name == "Object" or name == "Root":
         class_section.base_sections = [cls.m_def for cls in nomad_base_sec_cls]
 
     _add_common_properties(xml_node, class_section)
