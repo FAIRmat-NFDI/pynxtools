@@ -914,7 +914,7 @@ def _create_class_section(xml_node: ET.Element) -> Section:
 
     if nx_category == "application" or (nx_category == "base" and nx_name == "NXroot"):
         nomad_base_sec_cls = (
-            [NexusMeasurement] if xml_attrs["extends"] == "NXobject" else []
+            [NexusMeasurement] if xml_attrs.get("extends") == "NXobject" else []
         )
     else:
         nomad_base_sec_cls = BASESECTIONS_MAP.get(nx_name, [NexusBaseSection])
