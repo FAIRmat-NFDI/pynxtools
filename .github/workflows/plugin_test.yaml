@@ -33,7 +33,7 @@ jobs:
             branch: main
             tests_to_run: tests/.    
           - plugin: pynxtools-mpes
-            branch: update-defs
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-raman
             branch: main
@@ -42,7 +42,7 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: config-fixes
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
             branch: main
