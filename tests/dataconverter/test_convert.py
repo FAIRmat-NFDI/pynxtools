@@ -131,6 +131,7 @@ def test_cli(caplog, cli_inputs):
     elif result.exit_code == 2:
         assert "Error: Missing option '--nxdl'" in result.output
 
+
 @pytest.mark.xdist_group(name="shared_resource")
 def test_links_and_virtual_datasets(tmp_path):
     """A test for the convert CLI to check whether a Dataset object is created,
@@ -196,6 +197,7 @@ def test_links_and_virtual_datasets(tmp_path):
         )
 
     restore_xarray_file_from_tmp(tmp_path)
+
 
 @pytest.mark.xdist_group(name="shared_resource")
 def test_compression(tmp_path):
