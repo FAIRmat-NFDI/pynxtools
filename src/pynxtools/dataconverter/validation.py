@@ -828,6 +828,11 @@ def validate_dict_against(
     keys_to_remove = check_attributes_of_nonexisting_field(tree)
 
     for not_visited_key in not_visited:
+        # TODO: remove again if "@target"/"@reference" is sorted out by NIAC
+        always_allowed_attributes = ("@target", "@reference")
+        if not_visited_key.endswith(always_allowed_attributes):
+            # If we want to support this in the future, we could check that the targetted field exists.
+            continue
         if not_visited_key.endswith("/@units"):
             # check that parent exists
             if not_visited_key.rsplit("/", 1)[0] not in mapping.keys():
