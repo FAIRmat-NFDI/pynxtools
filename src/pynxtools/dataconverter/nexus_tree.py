@@ -41,7 +41,7 @@ from pynxtools.dataconverter.helpers import (
     is_variadic,
     is_appdef,
     remove_namespace_from_tag,
-    NEXUS_TO_PYTHON_DATA_TYPES
+    NEXUS_TO_PYTHON_DATA_TYPES,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
@@ -226,22 +226,28 @@ class NexusNode(NodeMixin):
             if get_nx_namefit(self.name, elem_name, name_any, name_partial) < 0:
                 return False
             return True
-        
+
         def _check_type_fit(xml_elem: ET._Element) -> bool:
             elem_type = xml_elem.attrib.get("type")
             if elem_type:
-                if not set(NEXUS_TO_PYTHON_DATA_TYPES[self.dtype]).issubset(NEXUS_TO_PYTHON_DATA_TYPES[elem_type]):
+                if not set(NEXUS_TO_PYTHON_DATA_TYPES[self.dtype]).issubset(
+                    NEXUS_TO_PYTHON_DATA_TYPES[elem_type]
+                ):
                     return False
             return True
-        
+
         def _check_units_fit(xml_elem: ET._Element) -> bool:
             elem_units = xml_elem.attrib.get("units")
             if elem_units and elem_units != "NX_ANY":
                 if elem_units != self.unit:
-                    if not elem_units == "NX_TRANSFORMATION" and self.unit in ["NX_LENGTH", "NX_ANGLE", "NX_UNITLESS"]:
+                    if not elem_units == "NX_TRANSFORMATION" and self.unit in [
+                        "NX_LENGTH",
+                        "NX_ANGLE",
+                        "NX_UNITLESS",
+                    ]:
                         return False
             return True
-        
+
         def _check_enum_fit(xml_elem: ET._Element) -> bool:
             if self.items is None:
                 return True
@@ -251,7 +257,7 @@ class NexusNode(NodeMixin):
 
                 if elem_enum_open == "true":
                     return True
-                            
+
                 elem_enum_items = []
                 for items in elem_enum.findall(f"nx:item", namespaces=namespaces):
                     value = items.attrib["value"]
@@ -266,7 +272,7 @@ class NexusNode(NodeMixin):
                             )
                     else:
                         elem_enum_items.append(value)
-                
+
                 def convert_to_hashable(item):
                     """Convert lists to tuples for hashable types, leave non-list items as they are."""
                     if isinstance(item, list):
@@ -274,13 +280,15 @@ class NexusNode(NodeMixin):
                     return item  # Non-list items remain as they are
 
                 set_items = {convert_to_hashable(sublist) for sublist in self.items}
-                set_elem_enum_items = {convert_to_hashable(sublist) for sublist in elem_enum_items}
-               
+                set_elem_enum_items = {
+                    convert_to_hashable(sublist) for sublist in elem_enum_items
+                }
+
                 if not set(set_items).issubset(set_elem_enum_items):
                     # Should we really be this strict here? Or can appdefs define additional terms?
                     return False
             return True
-        
+
         def _check_dimensions_fit(xml_elem: ET._Element) -> bool:
             if not self.shape:
                 return True
@@ -296,17 +304,17 @@ class NexusNode(NodeMixin):
                 elem_dim = elem_dimensions.findall("nx:dim", namespaces=namespaces)
                 elem_dimension_rank = rank if rank is not None else len(rank)
                 dims: List[Optional[int]] = [None] * int(rank)
+
                 for dim in elem_dim:
                     idx = int(dim.attrib["index"])
-                    if "value" not in dim.attrib:
-                        # This is probably an old dim element with ref
-                        pass
-                    try:
-                        value = int(dim.attrib["value"])
-                        dims[idx - 1] = value
-                    except ValueError:
-                        # TODO: Handling of symbols
-                        pass
+                    if value := dim.attrib.get("value", None):
+                        # If not, this is probably an old dim element with ref.
+                        try:
+                            value = int(value)
+                            dims[idx] = value
+                        except ValueError:
+                            # TODO: Handling of symbols
+                            pass
                 elem_shape = tuple(dims)
 
                 if elem_shape:
@@ -314,21 +322,19 @@ class NexusNode(NodeMixin):
                         return False
 
             return True
-        
+
         check_functions = [
             _check_name_fit,
             _check_type_fit,
             _check_units_fit,
             _check_enum_fit,
-            _check_dimensions_fit
-
+            _check_dimensions_fit,
         ]
 
         for func in check_functions:
             if not func(xml_elem):
                 return False
         return True
-
 
     def _construct_inheritance_chain_from_parent(self):
         """
@@ -337,9 +343,7 @@ class NexusNode(NodeMixin):
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
-            elem = xml_elem.find(
-                f"nx:{self.type}", namespaces=namespaces
-            )
+            elem = xml_elem.find(f"nx:{self.type}", namespaces=namespaces)
             if elem is not None:
                 if self._check_compatibility_with(elem):
                     self.inheritance.append(elem)
@@ -718,7 +722,7 @@ class NexusNode(NodeMixin):
                 type=tag,
                 optionality=default_optionality,
                 nxdl_base=xml_elem.base,
-                inheritance=[xml_elem]
+                inheritance=[xml_elem],
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name")
