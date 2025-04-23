@@ -58,6 +58,7 @@ dev = [
     "pytest",
     "pytest-timeout",
     "pytest-cov",
+    "pytest-xdist",
     "structlog",
     "types-pyyaml",
     "types-pytz",
