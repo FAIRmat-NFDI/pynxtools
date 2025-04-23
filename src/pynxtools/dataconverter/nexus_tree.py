@@ -344,6 +344,7 @@ class NexusNode(NodeMixin):
         Returns:
             Set[str]: A set of children names.
         """
+
         if depth is not None and (not isinstance(depth, int) or depth < 0):
             raise ValueError("Depth must be a positive integer or None")
 
@@ -996,10 +997,11 @@ class NexusEntity(NexusNode):
         if self.parent is None:
             return
         for xml_elem in self.parent.inheritance:
-            elem = xml_elem.find(f"nx:{self.type}", namespaces=namespaces)
-            if elem is not None:
-                if self._check_compatibility_with(elem):
-                    self.inheritance.append(elem)
+            subelems = xml_elem.findall(f"nx:{self.type}", namespaces=namespaces)
+            if subelems is not None:
+                for elem in subelems:
+                    if self._check_compatibility_with(elem):
+                        self.inheritance.append(elem)
 
     def _set_type(self):
         """

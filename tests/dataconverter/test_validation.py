@@ -779,7 +779,7 @@ TEMPLATE["required"][
                 "Given field name 'AXISNAME' conflicts with the non-variadic name 'optional_child (opt)'",
                 "Field /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] written without documentation.",
                 # TODO: reactivate if sibling inheritance works
-                # # "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
+                # "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
                 # "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
                 # "defined in the NXDL as NX_INT."
             ],
@@ -1087,7 +1087,6 @@ TEMPLATE["required"][
             [],
             id="specified-identifier-without-type",
         ),
-        # ToDo: reactivate if sibling inheritance works properly
         pytest.param(
             alter_dict(
                 alter_dict(
@@ -1098,9 +1097,7 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
                 "ORCID",
             ),
-            [
-                "Attribute /ENTRY[my_entry]/identified_calibration/identifier_1/@type written without documentation."
-            ],
+            [],
             id="specified-identifier-with-type",
         ),
         pytest.param(
