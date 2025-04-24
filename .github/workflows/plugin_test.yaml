@@ -39,7 +39,7 @@ jobs:
             branch: sibling-inheritance
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: main
+            branch: field-inheritance
             tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: main
