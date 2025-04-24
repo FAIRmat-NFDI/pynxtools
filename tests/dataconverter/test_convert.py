@@ -226,6 +226,7 @@ def test_compression(tmp_path):
 
     restore_xarray_file_from_tmp(tmp_path)
 
+
 @pytest.mark.xdist_group(name="shared_resource")
 def test_params_file():
     """Check if the parameters file is read correctly."""
