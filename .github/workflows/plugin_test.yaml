@@ -33,10 +33,10 @@ jobs:
             branch: main
             tests_to_run: tests/.    
           - plugin: pynxtools-mpes
-            branch: main
+            branch: entry-identifier
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branch: main
+            branch: sibling-inheritance
             tests_to_run: tests/.
           - plugin: pynxtools-spm
             branch: main
