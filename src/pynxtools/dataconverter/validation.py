@@ -221,8 +221,9 @@ def validate_dict_against(
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
         variations = []
 
+        prefix = f"{'@' if node.type == 'attribute' else ''}"
         if not node.variadic:
-            if f"{'@' if node.type == 'attribute' else ''}{node.name}" in keys:
+            if f"{prefix}{node.name}" in keys:
                 variations += [node.name]
             elif (
                 hasattr(node, "nx_class")
@@ -240,8 +241,8 @@ def validate_dict_against(
                     inherited_name = inherited_name[2:].upper()
                 inherited_names += [inherited_name]
             for name in set(inherited_names):
-                if f"{name}[{node.name}]" in keys:
-                    variations += [f"{name}[{node.name}]"]
+                if f"{prefix}{name}[{prefix}{node.name}]" in keys:
+                    variations += [f"{prefix}{name}[{prefix}{node.name}]"]
 
             return variations
 
