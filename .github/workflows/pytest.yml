@@ -39,7 +39,7 @@ jobs:
           uv pip install -e ".[dev]"
       - name: Test with pytest
         run: |
-          coverage run -m pytest -sv --show-capture=no tests
+          coverage run -m pytest -sv --show-capture=no tests -n auto --dist loadgroup
       - name: Submit to coveralls
         continue-on-error: true
         if: "${{ matrix.python-version == '3.12'}}"
