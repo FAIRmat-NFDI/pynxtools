@@ -157,8 +157,13 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
             if instance_name == node.name:
                 if concept_name and concept_name != node.name:
                     inherited_names = [
-                        elem.attrib.get("name", elem.attrib["type"][2:].upper())
+                        name
+                        if (name := elem.attrib.get("name")) is not None
+                        else type_attr[2:].upper()
                         for elem in node.inheritance
+                        if (name := elem.attrib.get("name")) is not None
+                        or (type_attr := elem.attrib.get("type"))
+                        and len(type_attr) > 2
                     ]
                     if concept_name not in inherited_names:
                         if node.type == "group":
