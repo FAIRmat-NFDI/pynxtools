@@ -747,22 +747,19 @@ TEMPLATE["required"][
         ),
         pytest.param(
             alter_dict(
-                remove_from_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/optional_parent/required_child",
-                    "required",
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/optional_parent/required_child",
+                        "required",
+                    ),
+                    "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
+                    1,
                 ),
-                "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
+                "/ENTRY[my_entry]/optional_parent/AXISNAME[optional_child]",
                 1,
             ),
-            # TODO: should not raise a warning if sibling inheritance works
-            [
-                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
-                "required_child is required and hasn't been supplied by the reader.",
-                "Given field name 'AXISNAME' conflicts with the non-variadic name "
-                "'required_child (req)'",
-                "Field /ENTRY[my_entry]/optional_parent/AXISNAME[required_child] written without documentation.",
-            ],
+            [],
             id="concept-name-given-for-nonvariadic-field",
         ),
         pytest.param(
@@ -776,12 +773,9 @@ TEMPLATE["required"][
                 "test value",
             ),
             [
-                "Given field name 'AXISNAME' conflicts with the non-variadic name 'optional_child (opt)'",
-                "Field /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] written without documentation.",
-                # TODO: reactivate if sibling inheritance works
-                # "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
-                # "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
-                # "defined in the NXDL as NX_INT."
+                "The value at /ENTRY[my_entry]/optional_parent/AXISNAME[optional_child] should be "
+                "one of the following Python types: (<class 'int'>, <class 'numpy.integer'>), as "
+                "defined in the NXDL as NX_INT."
             ],
             id="concept-name-given-for-nonvariadic-field-wrong-type",
         ),

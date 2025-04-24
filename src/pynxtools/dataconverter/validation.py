@@ -156,20 +156,24 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
         if not node.variadic:
             if instance_name == node.name:
                 if concept_name and concept_name != node.name:
-                    if node.type == "group":
-                        if concept_name != node.nx_class[2:].upper():
+                    inherited_names = [
+                        elem.attrib.get("name", elem.attrib["type"][2:].upper())
+                        for elem in node.inheritance
+                    ]
+                    if concept_name not in inherited_names:
+                        if node.type == "group":
+                            if concept_name != node.nx_class[2:].upper():
+                                collector.collect_and_log(
+                                    concept_name,
+                                    ValidationProblem.InvalidConceptForNonVariadic,
+                                    node,
+                                )
+                        else:
                             collector.collect_and_log(
                                 concept_name,
                                 ValidationProblem.InvalidConceptForNonVariadic,
                                 node,
                             )
-                            return None
-                    else:
-                        collector.collect_and_log(
-                            concept_name,
-                            ValidationProblem.InvalidConceptForNonVariadic,
-                            node,
-                        )
                         return None
                 return node
         else:
@@ -210,16 +214,31 @@ def validate_dict_against(
     """
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
+        variations = []
+
         if not node.variadic:
             if f"{'@' if node.type == 'attribute' else ''}{node.name}" in keys:
-                return [node.name]
+                variations += [node.name]
             elif (
                 hasattr(node, "nx_class")
                 and f"{convert_nexus_to_caps(node.nx_class)}[{node.name}]" in keys
             ):
-                return [f"{convert_nexus_to_caps(node.nx_class)}[{node.name}]"]
+                variations += [f"{convert_nexus_to_caps(node.nx_class)}[{node.name}]"]
 
-        variations = []
+            # Also add all variations like CONCEPT[node.name] for inherited concepts
+            inherited_names = []
+            for elem in node.inheritance:
+                inherited_name = elem.attrib.get("name")
+                if not inherited_name:
+                    inherited_name = elem.attrib.get("type")[2:].upper()
+                if inherited_name.startswith("NX"):
+                    inherited_name = inherited_name[2:].upper()
+                inherited_names += [inherited_name]
+            for name in set(inherited_names):
+                if f"{name}[{node.name}]" in keys:
+                    variations += [f"{name}[{node.name}]"]
+
+            return variations
 
         for key in keys:
             concept_name, instance_name = split_class_and_name_of(key)
