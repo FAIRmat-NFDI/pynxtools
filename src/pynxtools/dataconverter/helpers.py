@@ -24,7 +24,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union, Sequence
+from typing import Any, Callable, List, Optional, Tuple, Union, Sequence, cast
 
 import h5py
 import lxml.etree as ET
@@ -153,6 +153,7 @@ class Collector:
             logger.warning(f"The attribute {path} will not be written.")
 
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
+            value = cast(Any, value)
             log_text = f"Given {value.type} name '{path}' conflicts with the non-variadic name '{value}'"
             if value.type == "group":
                 log_text += f", which should be of type {value.nx_class}."
