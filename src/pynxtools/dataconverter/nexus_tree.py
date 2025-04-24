@@ -938,8 +938,12 @@ class NexusEntity(NexusNode):
                 }
 
                 if not set(set_items).issubset(set_elem_enum_items):
-                    # Should we really be this strict here? Or can appdefs define additional terms?
-                    return False
+                    if self.name == "definition":
+                        pass
+                    else:
+                        # TODO: should we be this strict here? Or can appdefs define additional terms?
+                        print(self, set_items, set_elem_enum_items)
+                        pass
             return True
 
         def _check_dimensions_fit(xml_elem: ET._Element) -> bool:
@@ -980,8 +984,8 @@ class NexusEntity(NexusNode):
             _check_name_fit,
             _check_type_fit,
             _check_units_fit,
-            # TODO: check if any inheritance is wrongfully assigned without enum and dim checks
-            # _check_enum_fit,
+            _check_enum_fit,
+            # TODO: check if any inheritance is wrongfully assigned without dim checks
             # _check_dimensions_fit,
         ]
 
