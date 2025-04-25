@@ -764,6 +764,15 @@ TEMPLATE["required"][
         ),
         pytest.param(
             alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/optional_parent/@AXISNAME_indices[@required_child_indices]",
+                0,
+            ),
+            [],
+            id="concept-name-given-for-optional-attribute",
+        ),
+        pytest.param(
+            alter_dict(
                 remove_from_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/optional_parent/optional_child",

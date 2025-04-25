@@ -942,7 +942,6 @@ class NexusEntity(NexusNode):
                         pass
                     else:
                         # TODO: should we be this strict here? Or can appdefs define additional terms?
-                        print(self, set_items, set_elem_enum_items)
                         pass
             return True
 
