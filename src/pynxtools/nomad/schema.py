@@ -22,10 +22,7 @@ import os
 import re
 import sys
 import types
-from owlready2 import get_ontology
-
-# Global variable to store the ontology
-ontology = None
+from owlready2 import get_ontology, sync_reasoner
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -232,18 +229,30 @@ class NexusActivityResult(ActivityResult):
         ),
     )
 
+<<<<<<< HEAD
+=======
+
+__BASESECTIONS_MAP: Dict[str, Any] = {
+    "NXfabrication": [basesections.Instrument],
+    "NXsample": [CompositeSystem],
+    "NXsample_component": [Component],
+    # "NXidentifier": [EntityReference],
+    "NXentry": [NexusActivityStep],
+    "NXprocess": [NexusActivityStep],
+    "NXdata": [NexusActivityResult],
+    # "object": BaseSection,
+}
+
+# ########### Tanmay's code ############
+# Function to load ontology
+>>>>>>> 1e9a4e7a (Superclasses server to store superclasses)
 def load_ontology(*args):
-    global ontology
-    if ontology is None:  # Load only if not already loaded
-        owl_file = os.path.join(os.path.dirname(__file__), *args)
-        if not os.path.exists(owl_file):
-            raise FileNotFoundError(f"Ontology file not found: {owl_file}")
-        ontology = get_ontology(owl_file).load()
-    return ontology
+    owl_file = os.path.join(os.path.dirname(__file__), *args)
+    return get_ontology(owl_file).load()
 
 
 def get_superclasses(ontology, class_name):
-    cls = ontology.search_one(iri = "*"+class_name)# ontology[class_name]
+    cls = ontology[class_name]
     if cls is None:
         raise ValueError(f"Class '{class_name}' not found in the ontology.")
     return cls.ancestors()
@@ -284,15 +293,15 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
 
         try:
             if hasattr(self, "definition__field") and self.definition__field:
-                ontology = load_ontology("NeXusOntology_full.owl") #Load the ontology
-                # with ontology:
-                #     sync_reasoner()  # Run the reasoner
-                superclasses = get_superclasses(ontology, self.definition__field) #extract superclasses
+                ontology = load_ontology("NeXusOntology_full.owl")  # Replace with your ontology file
+                with ontology:
+                    sync_reasoner()  # Run the reasoner
+                superclasses = get_superclasses(ontology, self.definition__field)
                 if archive.results.eln.methods is None:
                     archive.results.eln.methods = []
                 for superclass in superclasses:
                     if superclass.name not in archive.results.eln.methods:
-                        archive.results.eln.methods.append(superclass.name) #append superclasses to archive.results.eln.methods list
+                        archive.results.eln.methods.append(superclass.name)
         except Exception as e:
             logger.warning(f"Failed to extract superclasses: {e}")
 
