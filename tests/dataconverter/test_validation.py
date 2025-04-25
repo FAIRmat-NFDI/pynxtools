@@ -722,19 +722,54 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 remove_from_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/optional_parent/required_child",
+                    remove_from_dict(
+                        remove_from_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/specified_group/specified_field",
+                            "required",
+                        ),
+                        "/ENTRY[my_entry]/specified_group/specified_field/@specified_attr_in_field",
+                        "required",
+                    ),
+                    "/ENTRY[my_entry]/specified_group/@specified_attr",
                     "required",
                 ),
-                "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
+                "/ENTRY[my_entry]/SAMPLE[specified_group]/specified_field",
+                1.0,
+            ),
+            [
+                "The required group, /ENTRY[my_entry]/specified_group, hasn't been supplied.",
+                "Given group name 'SAMPLE' conflicts with the non-variadic name 'specified_group (req)', "
+                "which should be of type NXdata.",
+                "Field /ENTRY[my_entry]/SAMPLE[specified_group]/specified_field written without documentation.",
+            ],
+            id="illegal-concept-name-for-nonvariadic-group",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/optional_parent/required_child",
+                        "required",
+                    ),
+                    "/ENTRY[my_entry]/optional_parent/AXISNAME[required_child]",
+                    1,
+                ),
+                "/ENTRY[my_entry]/optional_parent/AXISNAME[optional_child]",
                 1,
             ),
-            # ToDo: should not raise a warning if sibling inheritance works
-            [
-                "The data entry corresponding to /ENTRY[my_entry]/optional_parent/"
-                "required_child is required and hasn't been supplied by the reader."
-            ],
+            [],
             id="concept-name-given-for-nonvariadic-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/optional_parent/@AXISNAME_indices[@required_child_indices]",
+                0,
+            ),
+            [],
+            id="concept-name-given-for-optional-attribute",
         ),
         pytest.param(
             alter_dict(
@@ -1053,22 +1088,21 @@ TEMPLATE["required"][
                 "123",
             ),
             [],
+            id="specified-identifier-without-type",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identified_calibration/identifier_1",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
+                "ORCID",
+            ),
+            [],
             id="specified-identifier-with-type",
         ),
-        # ToDo: reactivate if sibling inheritance works properly
-        # pytest.param(
-        #     alter_dict(
-        #         alter_dict(
-        #             TEMPLATE,
-        #             "/ENTRY[my_entry]/identified_calibration/identifier_1",
-        #             "123",
-        #         ),
-        #         "/ENTRY[my_entry]/identified_calibration/identifier_1/@type",
-        #         "ORCID",
-        #     ),
-        #     [],
-        #     id="specified-identifier-with-type",
-        # ),
         pytest.param(
             alter_dict(
                 alter_dict(
@@ -1094,6 +1128,31 @@ TEMPLATE["required"][
             ),
             [],
             id="name-fitted-identifier-with-type",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                "123",
+            ),
+            [],
+            id="group-with-correct-concept",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/CALIBRATION[identified_calibration]/identifier_1",
+                    "123",
+                ),
+                "/ENTRY[my_entry]/identified_calibration/identifier_2",
+                "456",
+            ),
+            [
+                "The data entry corresponding to /ENTRY[my_entry]/identified_calibration/identifier_1 is required "
+                "and hasn't been supplied by the reader."
+            ],
+            id="group-with-correct-concept-and-non-concept-sibling",
         ),
         # This can be re-used later when we have proper unit checking
         pytest.param(

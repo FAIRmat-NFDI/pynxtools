@@ -41,6 +41,7 @@ from pynxtools.dataconverter.helpers import (
     is_variadic,
     is_appdef,
     remove_namespace_from_tag,
+    NEXUS_TO_PYTHON_DATA_TYPES,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
@@ -214,19 +215,6 @@ class NexusNode(NodeMixin):
         self.is_a = []
         self.parent_of = []
 
-    def _construct_inheritance_chain_from_parent(self):
-        """
-        Builds the inheritance chain of the current node based on the parent node.
-        """
-        if self.parent is None:
-            return
-        for xml_elem in self.parent.inheritance:
-            elem = xml_elem.find(
-                f"nx:{self.type}/[@name='{self.name}']", namespaces=namespaces
-            )
-            if elem is not None:
-                self.inheritance.append(elem)
-
     def get_path(self) -> str:
         """
         Gets the path of the current node based on the node name.
@@ -356,6 +344,7 @@ class NexusNode(NodeMixin):
         Returns:
             Set[str]: A set of children names.
         """
+
         if depth is not None and (not isinstance(depth, int) or depth < 0):
             raise ValueError("Depth must be a positive integer or None")
 
@@ -601,6 +590,7 @@ class NexusNode(NodeMixin):
                 type=tag,
                 optionality=default_optionality,
                 nxdl_base=xml_elem.base,
+                inheritance=[xml_elem],
             )
         elif tag == "group":
             name = xml_elem.attrib.get("name")
@@ -683,6 +673,19 @@ class NexusChoice(NexusNode):
         super().__init__(type=self.type, **data)
         self._construct_inheritance_chain_from_parent()
         self._set_optionality()
+
+    def _construct_inheritance_chain_from_parent(self):
+        """
+        Builds the inheritance chain of the current node based on the parent node.
+        """
+        if self.parent is None:
+            return
+        for xml_elem in self.parent.inheritance:
+            elem = xml_elem.find(
+                f"nx:{self.type}/[@name='{self.name}']", namespaces=namespaces
+            )
+            if elem is not None:
+                self.inheritance.append(elem)
 
 
 class NexusGroup(NexusNode):
@@ -864,6 +867,145 @@ class NexusEntity(NexusNode):
     open_enum: bool = False
     shape: Optional[Tuple[Optional[int], ...]] = None
 
+    def _check_compatibility_with(self, xml_elem: ET._Element) -> bool:
+        """Check compatibility of this node with an XML element from the (possible) inheritance"""
+
+        def _check_name_fit(xml_elem: ET._Element) -> bool:
+            elem_name = xml_elem.attrib.get("name")
+            name_any = is_name_type(xml_elem, "any")
+            name_partial = is_name_type(xml_elem, "partial")
+
+            if get_nx_namefit(self.name, elem_name, name_any, name_partial) < 0:
+                return False
+            return True
+
+        def _check_type_fit(xml_elem: ET._Element) -> bool:
+            elem_type = xml_elem.attrib.get("type")
+            if elem_type:
+                if not set(NEXUS_TO_PYTHON_DATA_TYPES[self.dtype]).issubset(
+                    NEXUS_TO_PYTHON_DATA_TYPES[elem_type]
+                ):
+                    return False
+            return True
+
+        def _check_units_fit(xml_elem: ET._Element) -> bool:
+            elem_units = xml_elem.attrib.get("units")
+            if elem_units and elem_units != "NX_ANY":
+                if elem_units != self.unit:
+                    if not elem_units == "NX_TRANSFORMATION" and self.unit in [
+                        "NX_LENGTH",
+                        "NX_ANGLE",
+                        "NX_UNITLESS",
+                    ]:
+                        return False
+            return True
+
+        def _check_enum_fit(xml_elem: ET._Element) -> bool:
+            elem_enum = xml_elem.find(f"nx:enumeration", namespaces=namespaces)
+            if elem_enum is not None:
+                if self.items is None:
+                    # Case where inherited entity is enumerated, but current node isn't
+                    return False
+                elem_enum_open = elem_enum.attrib.get("open", "false")
+
+                if elem_enum_open == "true":
+                    return True
+
+                elem_enum_items = []
+                for items in elem_enum.findall(f"nx:item", namespaces=namespaces):
+                    value = items.attrib["value"]
+                    if value[0] == "[" and value[-1] == "]":
+                        import ast
+
+                        try:
+                            elem_enum_items.append(ast.literal_eval(value))
+                        except (ValueError, SyntaxError):
+                            raise Exception(
+                                f"Error parsing enumeration item in the provided NXDL: {value}"
+                            )
+                    else:
+                        elem_enum_items.append(value)
+
+                def convert_to_hashable(item):
+                    """Convert lists to tuples for hashable types, leave non-list items as they are."""
+                    if isinstance(item, list):
+                        return tuple(item)  # Convert sublists to tuples
+                    return item  # Non-list items remain as they are
+
+                set_items = {convert_to_hashable(sublist) for sublist in self.items}
+                set_elem_enum_items = {
+                    convert_to_hashable(sublist) for sublist in elem_enum_items
+                }
+
+                if not set(set_items).issubset(set_elem_enum_items):
+                    if self.name == "definition":
+                        pass
+                    else:
+                        # TODO: should we be this strict here? Or can appdefs define additional terms?
+                        pass
+            return True
+
+        def _check_dimensions_fit(xml_elem: ET._Element) -> bool:
+            if not self.shape:
+                return True
+            elem_dimensions = xml_elem.find(f"nx:dimensions", namespaces=namespaces)
+            if elem_dimensions is not None:
+                rank = elem_dimensions.attrib.get("rank")
+                if rank is not None and not isinstance(rank, int):
+                    try:
+                        int(rank)
+                    except ValueError:
+                        # TODO: Handling of symbols
+                        return True
+                elem_dim = elem_dimensions.findall("nx:dim", namespaces=namespaces)
+                elem_dimension_rank = rank if rank is not None else len(rank)
+                dims: List[Optional[int]] = [None] * int(rank)
+
+                for dim in elem_dim:
+                    idx = int(dim.attrib["index"])
+                    if value := dim.attrib.get("value", None):
+                        # If not, this is probably an old dim element with ref.
+                        try:
+                            value = int(value)
+                            dims[idx] = value
+                        except ValueError:
+                            # TODO: Handling of symbols
+                            pass
+                elem_shape = tuple(dims)
+
+                if elem_shape:
+                    if elem_shape != self.shape:
+                        return False
+
+            return True
+
+        check_functions = [
+            _check_name_fit,
+            _check_type_fit,
+            _check_units_fit,
+            _check_enum_fit,
+            # TODO: check if any inheritance is wrongfully assigned without dim checks
+            # _check_dimensions_fit,
+        ]
+
+        for func in check_functions:
+            if not func(xml_elem):
+                return False
+        return True
+
+    def _construct_inheritance_chain_from_parent(self):
+        """
+        Builds the inheritance chain of the current node based on the parent node.
+        """
+        if self.parent is None:
+            return
+        for xml_elem in self.parent.inheritance:
+            subelems = xml_elem.findall(f"nx:{self.type}", namespaces=namespaces)
+            if subelems is not None:
+                for elem in subelems:
+                    if self._check_compatibility_with(elem):
+                        self.inheritance.append(elem)
+
     def _set_type(self):
         """
         Sets the dtype of the current entity based on the values in the inheritance chain.
@@ -950,7 +1092,13 @@ class NexusEntity(NexusNode):
 
     def __init__(self, **data) -> None:
         super().__init__(**data)
+        self._set_unit()
+        self._set_type()
+        self._set_items_and_enum_type()
+        self._set_optionality()
+        self._set_shape()
         self._construct_inheritance_chain_from_parent()
+        # Set all parameters again based on the acquired inheritance
         self._set_unit()
         self._set_type()
         self._set_items_and_enum_type()
