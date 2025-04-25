@@ -254,8 +254,9 @@ class Writer:
                 logger.warning(
                     "NXDL attribute `type` not found for group %s.\n"
                     "Hint: Follow the convention `fixednameVARIADICPART[fixedname_given_name]` "
-                    "with exact group name or type `fixednameVARIADICPART`in NXDL file. Or "
-                    "no such group exists in NXDL file.",
+                    "or `non_variadic_group` where `fixednameVARIADICPART` is a variadic name "
+                    "and `non_variadic_group` is a fixed name of the group defined in NXDL file "
+                    "Or  no such group exists in NXDL file.",
                     parent_path,
                 )
 
