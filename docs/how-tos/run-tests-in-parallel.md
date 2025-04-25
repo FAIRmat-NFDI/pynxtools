@@ -1,6 +1,6 @@
 # Running `pynxtools` Tests in Parallel
 
-The `pytest` framework allows tests to run in sequential and parallel using third-party plugins such as [`pytest-xdist`](https://pytest-xdist.readthedocs.io/en/stable/). In our `pytest` setup for `pynxtools`, we use `pytest-xdist` to execute tests in parallel. To handle shared resources among multiple tests tests are grouped using the `@pytest.mark.xdist_group` fixture. This prevents classic race conditions by ensuring that tests sharing the same resources are executed serially.
+The `pytest` framework allows tests to run in sequential and parallel using third-party plugins such as [`pytest-xdist`](https://pytest-xdist.readthedocs.io/en/stable/). In our `pytest` setup for `pynxtools`, we use `pytest-xdist` to execute tests in parallel. To handle shared resources among multiple tests, tests are grouped using the `@pytest.mark.xdist_group` fixture. This prevents classic race conditions by ensuring that tests sharing the same resources are executed sequentially.
 
 ## Running Tests Sequentially
 
