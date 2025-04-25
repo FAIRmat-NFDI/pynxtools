@@ -36,10 +36,10 @@ jobs:
             branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branch: sibling-inheritance
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: field-inheritance
+            branch: main
             tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: main
