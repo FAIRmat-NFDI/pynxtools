@@ -24,10 +24,8 @@ import pickle
 import re
 import sys
 import owlready2
-from owlready2 import get_ontology
-
-# Global variable to store the ontology
-ontology = None
+from owlready2 import get_ontology, sync_reasoner
+import requests
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -164,25 +162,6 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     # "object": BaseSection,
 }
 
-# ########### Tanmay's code ############
-# Function to load ontology
-def load_ontology(*args):
-    global ontology
-    if ontology is None:  # Load only if not already loaded
-        owl_file = os.path.join(os.path.dirname(__file__), *args)
-        if not os.path.exists(owl_file):
-            raise FileNotFoundError(f"Ontology file not found: {owl_file}")
-        ontology = get_ontology(owl_file).load()
-    return ontology
-
-# Function to extract superclasses
-def get_superclasses(ontology, class_name):
-    cls = ontology.search_one(iri = "*"+class_name)# ontology[class_name]
-    if cls is None:
-        raise ValueError(f"Class '{class_name}' not found in the ontology.")
-    return cls.ancestors()
-# ########### End of Tanmay's code ############
-
 class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
         try:
@@ -212,18 +191,32 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             pass
         super(basesections.Activity, self).normalize(archive, logger)
 
-# ########## Tanmay's code ############
+
+#   ########## Tanmay's code ############
+        print("------------------Superclasses gets called here------------------------")
         try:
             if hasattr(self, "definition__field") and self.definition__field:
-                ontology = load_ontology("NeXusOntology_full.owl") #Load the ontology
-                # with ontology:
-                #     sync_reasoner()  # Run the reasoner
-                superclasses = get_superclasses(ontology, self.definition__field) #extract superclasses
-                if archive.results.eln.methods is None:
-                    archive.results.eln.methods = []
-                for superclass in superclasses:
-                    if superclass.name not in archive.results.eln.methods:
-                        archive.results.eln.methods.append(superclass.name) #append superclasses to archive.results.eln.methods list
+                # definition__field is a list of fields, we take the first one
+                definition_field = self.definition__field[0]
+                # Extract the class name (it's always a string)
+                class_name = definition_field.definition__field.strip()
+
+                print(f"Class name: {class_name}")
+                
+                # Fetch superclasses from the server
+                ontology_name = "NeXusOntology_full.owl"
+                response = requests.get(f"http://localhost:8089/superclasses/{ontology_name}/{class_name}")
+                if response.status_code == 200:
+                    superclasses = response.json().get("superclasses", [])
+                    if archive.results.eln.methods is None:
+                        archive.results.eln.methods = []
+                    for superclass in superclasses:
+                        if superclass not in archive.results.eln.methods:
+                            archive.results.eln.methods.append(superclass)
+                else:
+                    logger.warning(
+                        f"Failed to fetch superclasses: {response.status_code} - {response.text}"
+                    )
         except Exception as e:
             logger.warning(f"Failed to extract superclasses: {e}")
 
