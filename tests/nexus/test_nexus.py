@@ -19,7 +19,6 @@
 
 import logging
 import os
-import difflib
 
 import lxml.etree as ET
 import numpy as np
@@ -160,6 +159,7 @@ def test_get_nexus_classes_units_attributes():
     assert "NX_FLOAT" in nexus_attribute_list
 
 
+@pytest.mark.xdist_group(name="shared_file_201805_WSe2_arpes")
 def test_nexus(tmp_path):
     """
     The nexus test function
