@@ -193,7 +193,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
 
 
 #   ########## Tanmay's code ############
-        print("------------------Superclasses gets called here------------------------")
+        print("------------------Load Ontology Service------------------------")
         try:
             if hasattr(self, "definition__field") and self.definition__field:
                 # definition__field is a list of fields, we take the first one
