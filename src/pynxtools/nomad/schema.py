@@ -229,23 +229,6 @@ class NexusActivityResult(ActivityResult):
         ),
     )
 
-<<<<<<< HEAD
-=======
-
-__BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": [basesections.Instrument],
-    "NXsample": [CompositeSystem],
-    "NXsample_component": [Component],
-    # "NXidentifier": [EntityReference],
-    "NXentry": [NexusActivityStep],
-    "NXprocess": [NexusActivityStep],
-    "NXdata": [NexusActivityResult],
-    # "object": BaseSection,
-}
-
-# ########### Tanmay's code ############
-# Function to load ontology
->>>>>>> 1e9a4e7a (Superclasses server to store superclasses)
 def load_ontology(*args):
     owl_file = os.path.join(os.path.dirname(__file__), *args)
     return get_ontology(owl_file).load()
@@ -291,6 +274,12 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             pass
         super(basesections.Activity, self).normalize(archive, logger)
 
+<<<<<<< HEAD
+=======
+
+#   ########## Tanmay's code ############
+        print("------------------Load Ontology Service------------------------")
+>>>>>>> c559c13e (Renamed superclasses_server.py as ontoloy_service.py)
         try:
             if hasattr(self, "definition__field") and self.definition__field:
                 ontology = load_ontology("NeXusOntology_full.owl")  # Replace with your ontology file
