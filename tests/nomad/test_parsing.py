@@ -36,7 +36,6 @@ from pynxtools.nomad.schema import nexus_metainfo_package
 from pynxtools.nomad.utils import _rename_nx_for_nomad as rename_nx_for_nomad
 
 
-@pytest.mark.xdist_group(name="shared_file_201805_WSe2_arpes")
 def test_nexus_example():
     archive = EntryArchive()
 
