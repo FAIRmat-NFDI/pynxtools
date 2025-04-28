@@ -40,9 +40,13 @@ jobs:
       - name: Test with pytest
         run: |
           coverage run -m pytest -sv --show-capture=no tests -n auto --dist loadgroup
+      - name: Combine coverage data
+        run: |
+          coverage combine
+          coverage report
       - name: Submit to coveralls
         continue-on-error: true
-        if: "${{ matrix.python-version == '3.12'}}"
+        if: ${{ matrix.python-version == '3.12' }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
