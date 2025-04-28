@@ -32,18 +32,17 @@ jobs:
       - name: Install nomad
         if: "${{ matrix.python-version != '3.8' && matrix.python-version != '3.9'}}"
         run: |
-          uv pip install nomad-lab[infrastructure]
-        # @git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
+          uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install pynx
         run: |
           uv pip install -e ".[dev]"
       - name: Test with pytest
         run: |
-          coverage run -m pytest -sv --show-capture=no tests -n auto --dist loadgroup
+          pytest --cov --cov-report xml:cobertura.xml --full-trace --show-capture=no -sv -n auto --dist loadgroup tests/
       - name: Submit to coveralls
         continue-on-error: true
-        if: "${{ matrix.python-version == '3.12'}}"
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-            coveralls --service=github
+        if: ${{ matrix.python-version == '3.12' }}
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./cobertura.xml

@@ -23,6 +23,7 @@ import os
 import lxml.etree as ET
 import numpy as np
 import pytest
+import difflib
 
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_inherited_nodes,
@@ -159,7 +160,6 @@ def test_get_nexus_classes_units_attributes():
     assert "NX_FLOAT" in nexus_attribute_list
 
 
-@pytest.mark.xdist_group(name="shared_file_201805_WSe2_arpes")
 def test_nexus(tmp_path):
     """
     The nexus test function
@@ -177,6 +177,15 @@ def test_nexus(tmp_path):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     nexus_helper = HandleNexus(logger, example_data, None, None)
+
+    default_print_options = {
+        "edgeitems": 3,
+        "threshold": 1000,
+        "precision": 8,
+        "linewidth": 75,
+    }
+
+    np.set_printoptions(**default_print_options)
     nexus_helper.process_nexus_master_file(None)
 
     with open(
@@ -202,11 +211,6 @@ def test_nexus(tmp_path):
         pytest.fail(
             f"Log output does not match reference even though each individual line matches."
         )
-
-    # import filecmp
-    # # didn't work with filecmp library
-    # log = os.path.join(local_dir, '../data/nexus_test_data/nexus_test.log')
-    # ref = os.path.join(local_dir, '../data/nexus_test_data/Ref_nexus_test.log')
 
 
 def test_get_node_at_nxdl_path():
