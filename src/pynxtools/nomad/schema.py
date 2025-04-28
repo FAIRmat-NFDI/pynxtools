@@ -289,7 +289,9 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             pass
         super(basesections.Activity, self).normalize(archive, logger)
 
-# ########## Tanmay's code ############
+
+#   ########## Tanmay's code ############
+        print("------------------Load Ontology Service------------------------")
         try:
             if hasattr(self, "definition__field") and self.definition__field:
                 ontology = load_ontology("NeXusOntology_full.owl")  # Replace with your ontology file
