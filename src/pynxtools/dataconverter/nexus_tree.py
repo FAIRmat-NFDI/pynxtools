@@ -905,7 +905,7 @@ class NexusEntity(NexusNode):
             if elem_enum is not None:
                 if self.items is None:
                     # Case where inherited entity is enumerated, but current node isn't
-                    return False
+                    return True
                 elem_enum_open = elem_enum.attrib.get("open", "false")
 
                 if elem_enum_open == "true":
