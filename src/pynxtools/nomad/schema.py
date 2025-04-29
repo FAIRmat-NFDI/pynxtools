@@ -238,8 +238,9 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             self.steps = []
             for entry in app_entry:
                 ref = NexusActivityStep(name=entry.name, reference=entry)
-                if (self.datetime is None) or (self.datetime > entry.start_time):
-                    self.datetime = entry.start_time
+                if entry.start_time__field is not None:
+                    if (self.datetime is None) or (self.datetime > entry.start_time__field):
+                        self.datetime = entry.start_time__field
                 self.steps.append(ref)
                 mapping = {
                     ActivityStep: (NexusActivityStep, self.steps),
