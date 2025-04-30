@@ -111,8 +111,13 @@ nexus_app = AppEntryPoint(
             ),
             Column(
                 title="Start Time",
-                search_quantity=f"data.ENTRY[*].start_time#{schema}",
+                search_quantity=f"data.datetime#{schema}",
                 selected=True,
+            ),
+            Column(
+                title="Start Times by Entry",
+                search_quantity=f"data.ENTRY[*].start_time__field#{schema}",
+                selected=False,
             ),
             Column(
                 title="Description",
@@ -261,6 +266,11 @@ nexus_app = AppEntryPoint(
                 ),
                 MenuItemHistogram(
                     title="Start Time",
+                    x=f"data.datetime#{schema}",
+                    autorange=True,
+                ),
+                MenuItemHistogram(
+                    title="Start Time by Entry",
                     x=f"data.ENTRY.start_time__field#{schema}",
                     autorange=True,
                 ),
