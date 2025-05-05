@@ -21,7 +21,6 @@
 
 import copy
 import logging
-import sys
 import xml.etree.ElementTree as ET
 
 import h5py
@@ -117,7 +116,9 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
     - Concatenate dataset in one virtual dataset
     - Internal links
     - External links
-    - compression label"""
+    - compression label
+    """
+    file = None
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
@@ -246,11 +247,19 @@ class Writer:
         if not does_path_exist(parent_path, self.output_nexus):
             parent = self.ensure_and_get_parent_node(parent_path, undocumented_paths)
             grp = parent.create_group(parent_path_hdf5)
-
             attrs = self.__nxdl_to_attrs(parent_path)
+            if attrs is not None and (nx_class := attrs.get("type", "")):
+                grp.attrs["NX_class"] = nx_class
+            else:
+                logger.warning(
+                    "NXDL attribute `type` not found for group %s.\n"
+                    "Hint: Follow the convention `fixednameVARIADICPART[fixedname_given_name]` "
+                    "or `non_variadic_group` where `fixednameVARIADICPART` is a variadic name "
+                    "and `non_variadic_group` is a fixed name of the group defined in NXDL file "
+                    "Or  no such group exists in NXDL file.",
+                    parent_path,
+                )
 
-            if attrs is not None:
-                grp.attrs["NX_class"] = attrs["type"]
             return grp
         return self.output_nexus[parent_path_hdf5]
 
@@ -259,82 +268,73 @@ class Writer:
 
         hdf5_links_for_later = []
 
-        def add_units_key(dataset, path):
-            units_key = f"{path}/@units"
-            if units_key in self.data.keys() and self.data[units_key] is not None:
-                dataset.attrs["units"] = self.data[units_key]
+        unit_and_attr = {}
 
-        for path, value in self.data.items():
+        for path, d_value in self.data.items():
+            if not is_not_data_empty(d_value):
+                continue
             try:
-                if path[path.rindex("/") + 1 :] == "@units":
-                    continue
-
                 entry_name = helpers.get_name_from_data_dict_entry(
                     path[path.rindex("/") + 1 :]
                 )
-                if is_not_data_empty(value):
-                    data = value
-                else:
+                if entry_name and entry_name.startswith("@"):
+                    unit_and_attr[path] = d_value
                     continue
 
-                if entry_name[0] != "@":
-                    grp = self.ensure_and_get_parent_node(
-                        path, self.data.undocumented.keys()
-                    )
-                    if isinstance(data, dict):
-                        if "compress" in data.keys():
-                            dataset = handle_dicts_entries(
-                                data, grp, entry_name, self.output_path, path
-                            )
-                        else:
-                            hdf5_links_for_later.append(
-                                [data, grp, entry_name, self.output_path, path]
-                            )
+                # Handle fields and groups
+                grp = self.ensure_and_get_parent_node(
+                    path,
+                    self.data.undocumented.keys(),
+                )
+                if isinstance(d_value, dict):
+                    if "compress" in d_value.keys():
+                        dataset = handle_dicts_entries(
+                            d_value, grp, entry_name, self.output_path, path
+                        )
                     else:
-                        dataset = grp.create_dataset(entry_name, data=data)
+                        hdf5_links_for_later.append(
+                            [d_value, grp, entry_name, self.output_path, path]
+                        )
+                else:
+                    dataset = grp.create_dataset(entry_name, data=d_value)
+
             except InvalidDictProvided as exc:
                 print(str(exc))
             except Exception as exc:
                 raise IOError(
                     f"Unknown error occured writing the path: {path} "
-                    f"with the following message: {str(exc)}"
+                    f"with the following message: {str(exc)}\n"
                 ) from exc
-
+        # Handle links
         for links in hdf5_links_for_later:
             dataset = handle_dicts_entries(*links)
             if dataset is None:
                 # If target of a link is invalid to be linked
                 del self.data[links[-1]]
 
-        for path, value in self.data.items():
+        # Handle units and attributes
+        for path, d_value in unit_and_attr.items():
+            hdf5_path = helpers.convert_data_dict_path_to_hdf5_path(path)
+            entry_name = helpers.get_name_from_data_dict_entry(
+                path[path.rindex("/") + 1 :]
+            )
             try:
-                if path[path.rindex("/") + 1 :] == "@units":
-                    continue
-
-                entry_name = helpers.get_name_from_data_dict_entry(
-                    path[path.rindex("/") + 1 :]
+                dataset_or_grp = self.ensure_and_get_parent_node(
+                    path,
+                    self.data.undocumented.keys(),
                 )
-                if is_not_data_empty(value):
-                    data = value
-                else:
-                    continue
 
-                if entry_name[0] != "@":
-                    path_hdf5 = helpers.convert_data_dict_path_to_hdf5_path(path)
-
-                    add_units_key(self.output_nexus[path_hdf5], path)
-                else:
-                    # consider changing the name here the lvalue can also be group!
-                    dataset = self.ensure_and_get_parent_node(
-                        path, self.data.undocumented.keys()
-                    )
-                    dataset.attrs[entry_name[1:]] = data
-            except Exception as exc:
-                raise IOError(
-                    f"Unknown error occured writing the path: {path}"
-                    f", while writing the value: {value} "
-                    f"with the following message: {str(exc)}"
-                ) from exc
+            except KeyError as exc:
+                logger.warning(
+                    "No path '%s' available to attached Attribute.", hdf5_path
+                )
+                dataset_or_grp = None
+            if dataset_or_grp is None:
+                continue
+            if path.endswith("/@units"):
+                dataset_or_grp.attrs["units"] = d_value
+            else:
+                dataset_or_grp.attrs[entry_name[1:]] = d_value
 
     def write(self):
         """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
