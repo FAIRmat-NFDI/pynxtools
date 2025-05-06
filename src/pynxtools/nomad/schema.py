@@ -266,6 +266,35 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         if isinstance(sec, cls):
                             collection.append(ref_cls(name=sec.name, reference=sec))
                             break
+                # ------------------ ontology service  ------------------
+                print("------------------Load Ontology Service------------------------")
+                try:
+                    if hasattr(entry, "definition__field") and entry.definition__field:
+                        # Directly use entry.definition__field as class_name
+                        class_name = entry.definition__field.strip()
+                        print(f"Class name: {class_name}")
+                        print(f"Class name: {entry.definition__field}")
+                        # Fetch superclasses from the server
+                        url = f"http://localhost:8089/superclasses/{class_name}"
+                        print(f"Request URL: {url}")
+                        response = requests.get(url)
+                        print(f"Response status code: {response.status_code}")
+                        print(f"Response content: {response.text}")
+                        if response.status_code == 200:
+                            superclasses = response.json().get("superclasses", [])
+                            if archive.results.eln.methods is None:
+                                archive.results.eln.methods = []
+                            for superclass in superclasses:
+                                if superclass not in archive.results.eln.methods:
+                                    archive.results.eln.methods.append(superclass)
+                        else:
+                            logger.warning(
+                                f"Failed to fetch superclasses: {response.status_code} - {response.text}"
+                            )
+                    else:
+                        logger.warning("entry.definition__field is missing or empty.")
+                except Exception as e:
+                    logger.warning(f"Failed to extract superclasses: {e}")
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
@@ -273,13 +302,6 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
         except (AttributeError, TypeError):
             pass
         super(basesections.Activity, self).normalize(archive, logger)
-
-<<<<<<< HEAD
-=======
-
-#   ########## Tanmay's code ############
-        print("------------------Load Ontology Service------------------------")
->>>>>>> c559c13e (Renamed superclasses_server.py as ontoloy_service.py)
         try:
             if hasattr(self, "definition__field") and self.definition__field:
                 ontology = load_ontology("NeXusOntology_full.owl")  # Replace with your ontology file
@@ -295,7 +317,6 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             logger.warning(f"Failed to extract superclasses: {e}")
 
         super(basesections.Activity, self).normalize(archive, logger)
-
 
         if archive.results.eln.methods is None:
             archive.results.eln.methods = []
