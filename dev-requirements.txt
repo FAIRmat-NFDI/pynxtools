@@ -229,8 +229,6 @@ urllib3==2.3.0
     # via
     #   requests
     #   types-requests
-uv==0.6.13
-    # via pynxtools (pyproject.toml)
 virtualenv==20.30.0
     # via pre-commit
 watchdog==6.0.0
