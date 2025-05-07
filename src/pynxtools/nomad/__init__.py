@@ -26,7 +26,8 @@ def run_ontology_service():
     if server_process is None or not server_process.is_alive():
         server_process = multiprocessing.Process(target=start_ontology_service)
         server_process.start()
-        atexit.register(stop_ontology_service)  
+        atexit.register(stop_ontology_service) 
+         
 # Ensure the server stops when the main program exits
 if os.getenv("LAUNCH_CONTEXT") == "app":
     run_ontology_service()
