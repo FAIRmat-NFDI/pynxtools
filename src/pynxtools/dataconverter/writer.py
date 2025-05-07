@@ -249,8 +249,12 @@ class Writer:
 
             attrs = self.__nxdl_to_attrs(parent_path)
 
-            if attrs is not None:
-                grp.attrs["NX_class"] = attrs["type"]
+            if attrs is not None and (nx_class := attrs.get("type", "")):
+                grp.attrs["NX_class"] = nx_class
+            else:
+                logger.warning(
+                    f"Writing a group {parent_path_hdf5} without NX_class attribute."
+                )
             return grp
         return self.output_nexus[parent_path_hdf5]
 

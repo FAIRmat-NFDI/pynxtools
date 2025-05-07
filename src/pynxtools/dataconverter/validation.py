@@ -134,9 +134,21 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode]:
+def best_namefit_of(
+    name: str, nodes: Iterable[NexusNode], parent_path: str
+) -> Optional[NexusNode]:
     """
     Get the best namefit of `name` in `keys`.
+
+    Catches four warnings:
+    1. A fixed field has been (correctly) defined and
+       a variadic group (misdeed) at the same level having same name as fixed field
+    1.1. A fixed field is (correctly) defined and
+       a variadic field (misdeed) at the same level having same name as fixed field
+    2. A fixed group has been (correctly) defined and
+       a variadic field (misdeed) at the same level having same name as the group
+    2.1. A fixed group is (correctly) defined and
+       a variadic group (misdeed) at the same level having same name as the group
 
     Args:
         name (str): The name to fit against the keys.
@@ -156,30 +168,31 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
         if not node.variadic:
             if instance_name == node.name:
                 if concept_name and concept_name != node.name:
-                    inherited_names = [
-                        name
-                        if (name := elem.attrib.get("name")) is not None
-                        else type_attr[2:].upper()
-                        for elem in node.inheritance
-                        if (name := elem.attrib.get("name")) is not None
-                        or (type_attr := elem.attrib.get("type"))
-                        and len(type_attr) > 2
-                    ]
-                    if concept_name not in inherited_names:
-                        if node.type == "group":
-                            if concept_name != node.nx_class[2:].upper():
-                                collector.collect_and_log(
-                                    concept_name,
-                                    ValidationProblem.InvalidConceptForNonVariadic,
-                                    node,
-                                )
-                        else:
-                            collector.collect_and_log(
-                                concept_name,
-                                ValidationProblem.InvalidConceptForNonVariadic,
-                                node,
-                            )
-                        return None
+                    # 1. A fixed field has been (correctly) defined and
+                    #    a variadic group (misdeed) at the same level having same name as fixed field
+                    # 1.1. A fixed field is (correctly) defined and
+                    #    a variadic field (misdeed) at the same level having same name as fixed field
+                    if node.type == "field":
+                        collector.collect_and_log(
+                            path=f"{parent_path}/{node.name}",
+                            log_type=ValidationProblem.DuplicateConceptForNonVariadic,
+                            value=node,
+                            duplicate_var=f"{parent_path}/{name}",
+                        )
+                    # 2. A fixed group has been (correctly) defined and
+                    #    a variadic field (misdeed) at the same level having same name as the group
+                    # 2.1. A fixed group is (correctly) defined and
+                    #    a variadic group (misdeed) at the same level having same name as the group
+                    elif node.type == "group":
+                        # if instance_name in inherited_names:
+                        collector.collect_and_log(
+                            path=f"{parent_path}/{node.name}",
+                            log_type=ValidationProblem.DuplicateConceptForNonVariadic,
+                            value=node,
+                            duplicate_var=f"{parent_path}/{name}",
+                        )
+                    # return node to continue searching for the best match
+                    return node
                 return node
         else:
             if concept_name and concept_name == node.name:
@@ -589,12 +602,14 @@ def validate_dict_against(
         pass
 
     def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
+        parent_path = "/"
         for name in key[1:].replace("@", "").split("/"):
             children_to_check = [
                 node.search_add_child_for(child)
                 for child in node.get_all_direct_children_names()
             ]
-            node = best_namefit_of(name, children_to_check)
+            node = best_namefit_of(name, children_to_check, parent_path)
+            parent_path += f"{name}" if parent_path.endswith("/") else f"/{name}"
 
             if node is None:
                 return None
