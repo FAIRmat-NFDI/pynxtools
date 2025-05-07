@@ -24,7 +24,7 @@ import re
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache
-from typing import Any, Callable, List, Optional, Tuple, Union, Sequence, cast
+from typing import Any, Callable, List, Optional, Sequence, Tuple, Union, cast
 
 import h5py
 import lxml.etree as ET
@@ -77,7 +77,14 @@ class Collector:
         self.data = set()
         self.logging = True
 
-    def _log(self, path: str, log_type: ValidationProblem, value: Optional[Any], *args):
+    def _log(
+        self,
+        path: str,
+        log_type: ValidationProblem,
+        value: Optional[Any],
+        *args,
+        **kwargs,
+    ):
         if value is None:
             value = "<unknown>"
 
@@ -153,9 +160,10 @@ class Collector:
             logger.warning(f"The attribute {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
             value = cast(Any, value)
-            log_text = f"Given {value.type} name '{path}' conflicts with the non-variadic name '{value}'"
-            if value.type == "group":
-                log_text += f", which should be of type {value.nx_class}."
+            log_text = f"Given {value.type} non-variadic name '{value.name}' conflicts with the variadic concept '{path}'."
+            if "expected_type" in kwargs:
+                log_text = f" {log_text[:-1]} of ({kwargs['expected_type']}). Such conflict may break pynxtools writer."
+
             logger.warning(log_text)
 
     def collect_and_log(
