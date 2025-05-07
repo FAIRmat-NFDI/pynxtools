@@ -272,14 +272,8 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                     if hasattr(entry, "definition__field") and entry.definition__field:
                         # Directly use entry.definition__field as class_name
                         class_name = entry.definition__field.strip()
-                        print(f"Class name: {class_name}")
-                        print(f"Class name: {entry.definition__field}")
                         # Fetch superclasses from the server
-                        url = f"http://localhost:8089/superclasses/{class_name}"
-                        print(f"Request URL: {url}")
-                        response = requests.get(url)
-                        print(f"Response status code: {response.status_code}")
-                        print(f"Response content: {response.text}")
+                        response = requests.get(f"http://localhost:8089/superclasses/{class_name}")
                         if response.status_code == 200:
                             superclasses = response.json().get("superclasses", [])
                             if archive.results.eln.methods is None:
