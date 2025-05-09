@@ -362,10 +362,19 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 0,
             ),
+            [],
+            id="int-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                np.complex128(0),
+            ),
             [
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL as NX_FLOAT."
             ],
-            id="int-instead-of-float",
+            id="complex-instead-of-float",
         ),
         pytest.param(
             alter_dict(
@@ -534,12 +543,17 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
                 [2],  # pylint: disable=E1126
             ),
-            [
-                "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value should be "
-                "one of the following Python types: (<class 'float'>, <class 'numpy.floating'>), as defined in the NXDL "
-                "as NX_FLOAT."
-            ],
+            [],
             id="list-of-int-instead-of-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                np.array([2]),  # pylint: disable=E1126
+            ),
+            [],
+            id="array-of-int-instead-of-float",
         ),
         pytest.param(
             set_to_none_in_dict(
