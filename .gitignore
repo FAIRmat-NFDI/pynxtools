@@ -209,3 +209,4 @@ cython_debug/
 build/
 nexusparser.egg-info/PKG-INFO
 .python-version
+*.owl
