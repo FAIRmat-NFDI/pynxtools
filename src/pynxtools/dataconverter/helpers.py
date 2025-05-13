@@ -672,6 +672,10 @@ def convert_int_to_float(value):
         return float(value)
     elif isinstance(value, list):
         return [convert_int_to_float(v) for v in value]
+    elif isinstance(value, tuple):
+        return tuple(convert_int_to_float(v) for v in value)
+    elif isinstance(value, set):
+        return {convert_int_to_float(v) for v in value}
     elif isinstance(value, np.ndarray) and np.issubdtype(value.dtype, np.integer):
         return value.astype(float)
     else:
