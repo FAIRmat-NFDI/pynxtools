@@ -658,6 +658,30 @@ def convert_str_to_bool_safe(value: str) -> Optional[bool]:
     raise ValueError(f"Could not interpret string '{value}' as boolean.")
 
 
+def convert_int_to_float(value):
+    """
+    Converts int-like values to float, including values in arrays, and lists
+
+    Args:
+        value: The input value, which can be a single value, list, or numpy array.
+
+    Returns:
+        The input value with all int-like values converted to float.
+    """
+    if isinstance(value, int):
+        return float(value)
+    elif isinstance(value, list):
+        return [convert_int_to_float(v) for v in value]
+    elif isinstance(value, tuple):
+        return tuple(convert_int_to_float(v) for v in value)
+    elif isinstance(value, set):
+        return {convert_int_to_float(v) for v in value}
+    elif isinstance(value, np.ndarray) and np.issubdtype(value.dtype, np.integer):
+        return value.astype(float)
+    else:
+        return value
+
+
 def is_valid_data_field(
     value: Any, nxdl_type: str, nxdl_enum: list, nxdl_enum_open: bool, path: str
 ) -> Any:
@@ -680,6 +704,12 @@ def is_valid_data_field(
             try:
                 value = convert_str_to_bool_safe(value)
             except (ValueError, TypeError):
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidType, accepted_types, nxdl_type
+                )
+        elif accepted_types[0] is float:
+            value = convert_int_to_float(value)
+            if not is_valid_data_type(value, accepted_types):
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidType, accepted_types, nxdl_type
                 )
