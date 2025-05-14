@@ -70,6 +70,7 @@ class ValidationProblem(Enum):
     InvalidConceptForNonVariadic = 22
     ReservedSuffixWithoutField = 23
     ReservedPrefixInWrongContext = 24
+    InvalidNexusTypeForNamedConcept = 25
 
 
 class Collector:
@@ -169,6 +170,12 @@ class Collector:
             if value != "<unknown>":
                 log_text += f" It is only valid in the context of {value}."
             logger.error(log_text)
+        elif log_type == ValidationProblem.InvalidNexusTypeForNamedConcept:
+            value = cast(Any, value)
+            logger.error(
+                f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
+                f"conflicts with another existing concept of the same name, which is of type '{value.type}')."
+            )
 
     def collect_and_log(
         self,

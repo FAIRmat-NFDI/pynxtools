@@ -145,7 +145,12 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode]:
+def best_namefit_of(
+    name: str,
+    nodes: Iterable[NexusNode],
+    expected_types: List[str],
+    check_types: bool = False,
+) -> Optional[NexusNode]:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -166,6 +171,19 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
     for node in nodes:
         if not node.variadic:
             if instance_name == node.name:
+                if node.type not in expected_types and check_types:
+                    expected_types_str = " or ".join(expected_types)
+                    collector.collect_and_log(
+                        name,
+                        ValidationProblem.InvalidNexusTypeForNamedConcept,
+                        node,
+                        expected_types_str,
+                    )
+                    raise TypeError(
+                        f"The type ('{expected_types_str if expected_types else '<unknown>'}') "
+                        f"of the given concept {name} conflicts with another existing concept {node.name} (which is of "
+                        f"type '{node.type}')."
+                    )
                 if concept_name and concept_name != node.name:
                     inherited_names = [
                         name
@@ -176,6 +194,7 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
                         or (type_attr := elem.attrib.get("type"))
                         and len(type_attr) > 2
                     ]
+
                     if concept_name not in inherited_names:
                         if node.type == "group":
                             if concept_name != node.nx_class[2:].upper():
@@ -600,25 +619,52 @@ def validate_dict_against(
         # TODO: Raise error or log the issue?
         pass
 
-    def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
-        for name in key[1:].replace("@", "").split("/"):
+    def add_best_matches_for(
+        key: str, node: NexusNode, check_types: bool = False
+    ) -> Optional[NexusNode]:
+        key_components = key[1:].split("/")
+        is_last_attr = key_components[-1].startswith("@")
+        if is_last_attr:
+            key_components[-1] = key_components[-1].replace("@", "")
+
+        key_len = len(key_components)
+
+        expected_types = None
+        for ind, name in enumerate(key_components):
+            index = ind + 1
             children_to_check = [
                 node.search_add_child_for(child)
                 for child in node.get_all_direct_children_names()
             ]
-            node = best_namefit_of(name, children_to_check)
+            if index < key_len - 1:
+                expected_types = ["group"]
+            elif index == key_len - 1:
+                expected_types = ["group"] if not is_last_attr else ["group", "field"]
+            elif index == key_len:
+                expected_types = ["attribute"] if is_last_attr else ["field"]
+            node = best_namefit_of(name, children_to_check, expected_types, check_types)
 
             if node is None:
                 return None
 
         return node
 
-    def is_documented(key: str, tree: NexusNode) -> bool:
+    def is_documented(key: str, tree: NexusNode) -> Tuple[bool, bool]:
         if mapping.get(key) is None:
             # This value is not really set. Skip checking its documentation.
             return True
 
-        node = add_best_matches_for(key, tree)
+        try:
+            node = add_best_matches_for(key, tree, check_types=True)
+        except TypeError:
+            node = None
+            keys_to_remove.append(key)
+
+            collector.collect_and_log(
+                key,
+                ValidationProblem.KeyToBeRemoved,
+                None,
+            )
 
         if node is None:
             key_path = key.replace("@", "")
@@ -1102,7 +1148,7 @@ def validate_dict_against(
         if is_documented(not_visited_key, tree):
             continue
 
-        if not ignore_undocumented:
+        if not ignore_undocumented and not_visited_key not in keys_to_remove:
             collector.collect_and_log(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )

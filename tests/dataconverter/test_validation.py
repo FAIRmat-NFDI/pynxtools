@@ -787,6 +787,32 @@ TEMPLATE["required"][
         ),
         pytest.param(
             alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/identified_calibration/identifier_1/some_field",
+                "123",
+            ),
+            [
+                "The type ('group') of the given concept 'identifier_1' conflicts with another "
+                "existing concept of the same name, which is of type 'field').",
+                "The attribute /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
+            ],
+            id="group-instead-of-named-field",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/identified_calibration",
+                "123",
+            ),
+            [
+                "The type ('field') of the given concept 'identified_calibration' conflicts with another "
+                "existing concept of the same name, which is of type 'group').",
+                "The attribute /ENTRY[my_entry]/identified_calibration will not be written.",
+            ],
+            id="field-instead-of-named-group",
+        ),
+        pytest.param(
+            alter_dict(
                 remove_from_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/optional_parent/optional_child",
@@ -1299,8 +1325,6 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             "baseclass-field-with-illegal-unit",
             "open-enum-with-new-item",
             "baseclass-open-enum-with-new-item",
-            "variadic-nxcollection",
-            "nonvariadic-nxcollection",
         ):
             with caplog.at_level(logging.INFO):
                 assert validate_dict_against("NXtest", data_dict)[0]
