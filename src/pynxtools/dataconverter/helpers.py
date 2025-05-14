@@ -160,9 +160,12 @@ class Collector:
             logger.warning(f"The attribute {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
             value = cast(Any, value)
-            log_text = f"Given {value.type} non-variadic name '{value.name}' conflicts with the variadic concept '{path}'."
+            log_text = (
+                f"Defined non-variadic name '{value.name}' of {value.type} "
+                f"conflicts with the given variadic concept '{path}'."
+            )
             if "expected_type" in kwargs:
-                log_text = f" {log_text[:-1]} of ({kwargs['expected_type']}). Such conflict may break pynxtools writer."
+                log_text = f"{log_text[:-1]} {kwargs['expected_type']}. Such conflict may break pynxtools writer."
 
             logger.warning(log_text)
 
