@@ -7,6 +7,7 @@ from owlready2.namespace import Ontology
 import os
 import subprocess
 from fastapi.responses import RedirectResponse
+from .script.generate_ontology import main as generate_ontology
 
 #######################################################################
 ########################## define app and functions ###################
@@ -14,20 +15,19 @@ from fastapi.responses import RedirectResponse
 app = FastAPI()
 
 # Define paths
-NEXUS_ONTOLOGY_DIR = os.getenv("NEXUS_ONTOLOGY_DIR", "/home/nomad/work/NeXusOntology")
-OWL_FILE_PATH = os.path.join(NEXUS_ONTOLOGY_DIR, "ontology", "NeXusOntology_full.owl")
-SCRIPT_PATH = os.path.join(NEXUS_ONTOLOGY_DIR, "generate_ontology.sh")
+local_dir = os.path.dirname(os.path.abspath(__file__))
+OWL_FILE_PATH = os.path.join(local_dir, "ontology", "NeXusOntology_full.owl")
 
 def ensure_ontology_file():
     """
-    Ensure the ontology file exists. If not, regenerate it using the script.
+    Ensure the ontology file exists. If not, regenerate it using the Python function.
     """
     if not os.path.exists(OWL_FILE_PATH):
         try:
             print("Ontology file not found. Generating it...")
-            subprocess.run(["bash", SCRIPT_PATH], check=True)
+            generate_ontology(full=True)
             print("Ontology file generated successfully.")
-        except subprocess.CalledProcessError as e:
+        except Exception as e:
             raise RuntimeError(f"Failed to generate ontology file: {e}")
 
 def load_ontology() -> Ontology:
