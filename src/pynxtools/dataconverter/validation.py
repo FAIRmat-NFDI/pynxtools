@@ -629,7 +629,7 @@ def validate_dict_against(
 
         key_len = len(key_components)
 
-        expected_types = None
+        expected_types = []
         for ind, name in enumerate(key_components):
             index = ind + 1
             children_to_check = [
@@ -649,7 +649,7 @@ def validate_dict_against(
 
         return node
 
-    def is_documented(key: str, tree: NexusNode) -> Tuple[bool, bool]:
+    def is_documented(key: str, tree: NexusNode) -> bool:
         if mapping.get(key) is None:
             # This value is not really set. Skip checking its documentation.
             return True
