@@ -19,19 +19,22 @@
 
 # pylint: disable=R0912
 
+import io
 import copy
 import logging
-import sys
 import xml.etree.ElementTree as ET
+from typing import Optional
 
 import h5py
 import numpy as np
+from docutils.core import publish_string
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
+    get_inherited_nodes,
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
@@ -109,7 +112,7 @@ def handle_shape_entries(data, file, path):
 
 
 # pylint: disable=too-many-locals, inconsistent-return-statements
-def handle_dicts_entries(data, grp, entry_name, output_path, path):
+def handle_dicts_entries(data, grp, entry_name, output_path, path, docs):
     """Handle function for dictionaries found as value of the nexus file.
 
     Several cases can be encoutered:
@@ -118,12 +121,14 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
     - Internal links
     - External links
     - compression label"""
+
+    # print(data, grp, entry_name, output_path, path, docs)
     if "link" in data:
         file, path = split_link(data, output_path)
     # generate virtual datasets from slices
     if "shape" in data.keys():
         layout = handle_shape_entries(data, file, path)
-        grp.create_virtual_dataset(entry_name, layout)
+        dataset = grp.create_virtual_dataset(entry_name, layout)
     # multiple datasets to concatenate
     elif "link" in data.keys() and isinstance(data["link"], list):
         total_length = 0
@@ -141,7 +146,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
         for vsource in sources:
             layout[offset : offset + vsource.shape[0]] = vsource
             offset += vsource.shape[0]
-        grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
+        dataset = grp.create_virtual_dataset(entry_name, layout, fillvalue=0)
     # internal and external links
     elif "link" in data.keys():
         if ":/" not in data["link"]:
@@ -159,7 +164,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
             )
             if accept is True:
                 strength = data["strength"]
-            grp.create_dataset(
+            dataset = grp.create_dataset(
                 entry_name,
                 data=data["compress"],
                 compression="gzip",
@@ -167,13 +172,20 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path):
                 compression_opts=strength,
             )
         else:
-            grp.create_dataset(entry_name, data=data["compress"])
+            dataset = grp.create_dataset(entry_name, data=data["compress"])
     else:
         raise InvalidDictProvided(
             "A dictionary was provided to the template but it didn't"
             " fall into any of the know cases of handling"
             " dictionaries. This occured for: " + entry_name
         )
+
+    if docs:
+        try:
+            dataset.attrs["docs"] = docs
+        except NameError:
+            pass
+
     # Check whether link has been stabilished or not
     try:
         return grp[entry_name]
@@ -198,10 +210,14 @@ class Writer:
         output_nexus (h5py.File): The h5py file object to manipulate output file.
         nxdl_data (dict): Stores xml data from given nxdl file to use during conversion.
         nxs_namespace (str): The namespace used in the NXDL tags. Helps search for XML children.
+        write_docs (bool): Write docs for the individual NeXus concepts as HDF5 attributes.
     """
 
     def __init__(
-        self, data: dict = None, nxdl_f_path: str = None, output_path: str = None
+        self,
+        data: dict = None,
+        nxdl_f_path: str = None,
+        output_path: str = None,
     ):
         """Constructs the necessary objects required by the Writer class."""
         self.data = data
@@ -210,6 +226,9 @@ class Writer:
         self.output_nexus = h5py.File(self.output_path, "w")
         self.nxdl_data = ET.parse(self.nxdl_f_path).getroot()
         self.nxs_namespace = get_namespace(self.nxdl_data)
+
+        self.write_docs: bool = False
+        self.docs_format: str = "default"
 
     def __nxdl_to_attrs(self, path: str = "/") -> dict:
         """
@@ -239,6 +258,77 @@ class Writer:
 
         return elem.attrib
 
+    def __nxdl_docs(self, path: str = "/") -> Optional[str]:
+        """Get the NXDL docs for a path in the data."""
+
+        def extract_and_format_docs(elem: ET.Element) -> str:
+            """Get the docstring for a given element in the NDXL tree."""
+            docs_elements = elem.findall(f"{self.nxs_namespace}doc")
+            if docs_elements:
+                docs = docs_elements[0].text
+                if self.docs_format != "default":
+                    docs = publish_string(
+                        docs,
+                        writer_name=self.docs_format,
+                        settings_overrides={"warning_stream": io.StringIO()},
+                    ).decode("utf-8")
+                return docs.strip().replace("\\n", "\n")
+            return ""
+
+        docs: str = ""
+
+        if not self.write_docs:
+            return None
+
+        nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
+
+        if nxdl_path == "/ENTRY":
+            # Special case for docs of application definition
+            app_def_docs = extract_and_format_docs(self.nxdl_data)
+            if app_def_docs:
+                return app_def_docs
+
+        class_path, nxdl_elem_path, elist = get_inherited_nodes(
+            nxdl_path, elem=copy.deepcopy(self.nxdl_data)
+        )
+
+        path_to_check = "/ENTRY/INSTRUMENT/ELECTRONANALYSER/energy_resolution"  # /physical_quantity" # == "/ENTRY/SAMPLE/flood_gun_current_env/flood_gun"
+
+        if nxdl_path == path_to_check:
+            for thing in [
+                # path,
+                # nxdl_path,
+                # class_path,
+                # nxdl_elem_path,
+                # elist
+            ]:
+                print(thing, "\n")
+        for elem in elist:
+            if nxdl_path == path_to_check:
+                # print(elem.tag)
+                # print("\t elem.attrib:", elem.attrib.keys())
+
+                if elem.tag.endswith(("group", "field", "attribute", "definition")):
+                    concept_path = helpers.get_concept_path_from_elem(elem), "\n"
+                #     print(concept_path)
+
+            if not docs:
+                # Only use docs from superclasses if they are not extended.
+                docs += extract_and_format_docs(elem)
+        # print("\n")
+
+        if not elist:
+            # Handle docs for attributeS
+            (_, inherited_nodes, _) = get_inherited_nodes(
+                nxdl_path, elem=copy.deepcopy(self.nxdl_data)
+            )
+            attrs = inherited_nodes[-1].findall(f"{self.nxs_namespace}attribute")
+            for attr in attrs:
+                if attr.attrib["name"] == path.split("@")[-1]:
+                    docs += extract_and_format_docs(attr)
+
+        return docs
+
     def ensure_and_get_parent_node(self, path: str, undocumented_paths) -> h5py.Group:
         """Returns the parent if it exists for a given path else creates the parent group."""
         parent_path = path[0 : path.rindex("/")] or "/"
@@ -251,6 +341,11 @@ class Writer:
 
             if attrs is not None:
                 grp.attrs["NX_class"] = attrs["type"]
+
+            docs = self.__nxdl_docs(parent_path)
+            if docs:
+                grp.attrs["docs"] = docs
+
             return grp
         return self.output_nexus[parent_path_hdf5]
 
@@ -265,6 +360,8 @@ class Writer:
                 dataset.attrs["units"] = self.data[units_key]
 
         for path, value in self.data.items():
+            docs = self.__nxdl_docs(path)
+
             try:
                 if path[path.rindex("/") + 1 :] == "@units":
                     continue
@@ -281,17 +378,22 @@ class Writer:
                     grp = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
+
                     if isinstance(data, dict):
                         if "compress" in data.keys():
                             dataset = handle_dicts_entries(
-                                data, grp, entry_name, self.output_path, path
+                                data, grp, entry_name, self.output_path, path, docs
                             )
+
                         else:
                             hdf5_links_for_later.append(
-                                [data, grp, entry_name, self.output_path, path]
+                                [data, grp, entry_name, self.output_path, path, docs]
                             )
                     else:
                         dataset = grp.create_dataset(entry_name, data=data)
+                        if docs:
+                            dataset.attrs["docs"] = docs
+
             except InvalidDictProvided as exc:
                 print(str(exc))
             except Exception as exc:
@@ -307,6 +409,7 @@ class Writer:
                 del self.data[links[-1]]
 
         for path, value in self.data.items():
+            docs = self.__nxdl_docs(path)
             try:
                 if path[path.rindex("/") + 1 :] == "@units":
                     continue
@@ -324,11 +427,13 @@ class Writer:
 
                     add_units_key(self.output_nexus[path_hdf5], path)
                 else:
-                    # consider changing the name here the lvalue can also be group!
                     dataset = self.ensure_and_get_parent_node(
                         path, self.data.undocumented.keys()
                     )
                     dataset.attrs[entry_name[1:]] = data
+                    if docs:
+                        # Write docs for attributes like <attr>__docs
+                        dataset.attrs[f"{entry_name[1:]}_docs"] = docs
             except Exception as exc:
                 raise IOError(
                     f"Unknown error occured writing the path: {path}"
@@ -336,8 +441,15 @@ class Writer:
                     f"with the following message: {str(exc)}"
                 ) from exc
 
-    def write(self):
-        """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
+    def write(self, write_docs: bool = False, docs_format: str = "default"):
+        """
+        Writes the NeXus file with previously validated data from the reader with NXDL attrs.
+
+        Args:
+            write_docs (bool): Write docs for the individual NeXus concepts as HDF5 attributes. The default is False.
+        """
+        self.write_docs = write_docs
+        self.docs_format = docs_format
         try:
             self._put_data_into_hdf5()
         finally:
