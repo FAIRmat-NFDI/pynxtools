@@ -912,7 +912,8 @@ def validate_dict_against(
         prefixes = reserved_prefixes[nx_type]
 
         if not key.rsplit("/", 1)[-1].startswith(tuple(prefixes.keys())):
-            return True
+            # Ignore this test
+            return False
 
         for prefix, context in prefixes.items():
             if not key.rsplit("/", 1)[-1].startswith(prefix):
@@ -931,17 +932,17 @@ def validate_dict_against(
                 continue
             else:
                 # Check that the prefix is used in the correct application definition.
-                definition_key = (
-                    f"{re.match(r'(/ENTRY\[[^]]+])', key).group(1)}/definition"
-                )
-                if mapping.get(definition_key) != context:
-                    collector.collect_and_log(
-                        prefix,
-                        ValidationProblem.ReservedPrefixInWrongApplication,
-                        context,
-                        key,
-                    )
-                return False
+                match = re.match(r"(/ENTRY\[[^]]+])", key)
+                if match:
+                    definition_key = f"{match.group(1)}/definition"
+                    if mapping.get(definition_key) != context:
+                        collector.collect_and_log(
+                            prefix,
+                            ValidationProblem.ReservedPrefixInWrongApplication,
+                            context,
+                            key,
+                        )
+                    return False
 
         return True
 
