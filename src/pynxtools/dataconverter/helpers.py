@@ -68,6 +68,7 @@ class ValidationProblem(Enum):
     NXdataAxisMismatch = 20
     KeyToBeRemoved = 21
     InvalidConceptForNonVariadic = 22
+    InvalidNexusTypeForNamedConcept = 23
 
 
 class Collector:
@@ -157,6 +158,12 @@ class Collector:
             if value.type == "group":
                 log_text += f", which should be of type {value.nx_class}."
             logger.warning(log_text)
+        elif log_type == ValidationProblem.InvalidNexusTypeForNamedConcept:
+            value = cast(Any, value)
+            logger.error(
+                f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
+                f"conflicts with another existing concept of the same name, which is of type '{value.type}')."
+            )
 
     def collect_and_log(
         self,
