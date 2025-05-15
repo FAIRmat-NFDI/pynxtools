@@ -63,7 +63,6 @@ dev = [
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "uv",
     "pre-commit",
 ]
 convert = [
@@ -74,7 +73,7 @@ apm = [
     "pynxtools-apm>=0.2.3",
 ]
 ellips = [
-    "pynxtools-ellips>=0.0.8",
+    "pynxtools-ellips>=0.0.9",
 ]
 em = [
     "pynxtools-em>=0.3.2",
@@ -83,16 +82,16 @@ igor = [
     "pynxtools-igor>=0.1.1",
 ]
 mpes = [
-    "pynxtools-mpes>=0.2.2",
+    "pynxtools-mpes>=0.2.3",
 ]
 raman = [
-    "pynxtools-raman>=0.0.9",
+    "pynxtools-raman>=0.0.10",
 ]
 spm = [
-    "pynxtools-spm>=0.0.8",
+    "pynxtools-spm>=0.1.1",
 ]
 xps = [
-    "pynxtools-xps>=0.5.0",
+    "pynxtools-xps>=0.5.1",
 ]
 xrd = [
     "pynxtools-xrd>=0.0.3",
