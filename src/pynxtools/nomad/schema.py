@@ -24,6 +24,7 @@ import pickle
 import re
 import sys
 from owlready2 import get_ontology, sync_reasoner
+import requests
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -240,20 +241,6 @@ __BASESECTIONS_MAP: Dict[str, Any] = {
     "NXdata": [NexusActivityResult],
     # "object": BaseSection,
 }
-
-# ########### Tanmay's code ############
-# Function to load ontology
-def load_ontology(*args):
-    owl_file = os.path.join(os.path.dirname(__file__), *args)
-    return get_ontology(owl_file).load()
-
-# Function to extract superclasses
-def get_superclasses(ontology, class_name):
-    cls = ontology[class_name]
-    if cls is None:
-        raise ValueError(f"Class '{class_name}' not found in the ontology.")
-    return cls.ancestors()
-# ########### End of Tanmay's code ############
 
 class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
