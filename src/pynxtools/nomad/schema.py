@@ -23,6 +23,8 @@ import os.path
 import pickle
 import re
 import sys
+from owlready2 import get_ontology, sync_reasoner
+import requests
 
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
@@ -229,6 +231,17 @@ class NexusActivityResult(ActivityResult):
     )
 
 
+__BASESECTIONS_MAP: Dict[str, Any] = {
+    "NXfabrication": [basesections.Instrument],
+    "NXsample": [CompositeSystem],
+    "NXsample_component": [Component],
+    # "NXidentifier": [EntityReference],
+    "NXentry": [NexusActivityStep],
+    "NXprocess": [NexusActivityStep],
+    "NXdata": [NexusActivityResult],
+    # "object": BaseSection,
+}
+
 class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
         try:
@@ -255,6 +268,30 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         if isinstance(sec, cls):
                             collection.append(ref_cls(name=sec.name, reference=sec))
                             break
+                # ------------------ ontology service  ------------------
+                print("------------------Load Ontology Service------------------------")
+                try:
+                    if hasattr(entry, "definition__field") and entry.definition__field:
+                        # Directly use entry.definition__field as class_name
+                        class_name = entry.definition__field.strip()
+                        # Fetch superclasses from the server
+                        response = requests.get(f"http://localhost:8089/superclasses/{class_name}")
+                        if response.status_code == 200:
+                            superclasses = response.json().get("superclasses", [])
+                            if archive.results.eln.methods is None:
+                                archive.results.eln.methods = []
+                            for superclass in superclasses:
+                                if superclass not in archive.results.eln.methods:
+                                    archive.results.eln.methods.append(superclass)
+                        else:
+                            logger.warning(
+                                f"Failed to fetch superclasses: {response.status_code} - {response.text}"
+                            )
+                    else:
+                        logger.warning("entry.definition__field is missing or empty.")
+                except Exception as e:
+                    logger.warning(f"Failed to extract superclasses: {e}")
+                # ------------------ ontology service  ------------------
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:
