@@ -636,12 +636,16 @@ def validate_dict_against(
                 node.search_add_child_for(child)
                 for child in node.get_all_direct_children_names()
             ]
+
             if index < key_len - 1:
                 expected_types = ["group"]
             elif index == key_len - 1:
                 expected_types = ["group"] if not is_last_attr else ["group", "field"]
             elif index == key_len:
                 expected_types = ["attribute"] if is_last_attr else ["field"]
+                if "link" in str(mapping.get(key, "")):
+                    expected_types += ["group"]
+
             node = best_namefit_of(name, children_to_check, expected_types, check_types)
 
             if node is None:

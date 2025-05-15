@@ -45,7 +45,7 @@
         </group>
         <group type="NXdata" name="specified_group" nameType="specified">
             <doc>A group with a name and nameType="specified".</doc>
-            <field name="specified_field" nameType="specified" type="NX_FLOAT" units="NX_ANY" >
+            <field name="specified_field" nameType="specified" type="NX_FLOAT" units="NX_ANY">
                 <attribute name="specified_attr_in_field" nameType="specified"/>
             </field>
             <attribute name="specified_attr"/>
