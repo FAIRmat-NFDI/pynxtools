@@ -859,7 +859,7 @@ def validate_dict_against(
         # default
         return (False, 0)
 
-    def check_reserved_suffix(key: str, mapping: Dict[str, Any]) -> bool:
+    def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]) -> bool:
         """Check if an associated field exists for a key with a reserved suffix."""
         reserved_suffixes = (
             "_end",
@@ -889,7 +889,7 @@ def validate_dict_against(
 
     def check_reserved_prefix(
         key: str,
-        mapping: Dict[str, Any],
+        mapping: MutableMapping[str, Any],
         nx_type: Literal["group", "field", "attribute"],
     ) -> bool:
         """Check if a reserved prefix was used in the correct context."""
