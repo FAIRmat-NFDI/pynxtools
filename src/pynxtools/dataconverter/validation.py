@@ -20,7 +20,18 @@ import re
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
-from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Iterable,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+    Dict,
+    Literal,
+)
 
 import h5py
 import lxml.etree as ET
@@ -515,6 +526,9 @@ def validate_dict_against(
                 f"{prev_path}/{variant}",
             )
 
+            _ = check_reserved_suffix(f"{prev_path}/{variant}", mapping)
+            _ = check_reserved_prefix(f"{prev_path}/{variant}", mapping, "field")
+
             # Check unit category
             if node.unit is not None:
                 remove_from_not_visited(f"{prev_path}/{variant}/@units")
@@ -531,9 +545,6 @@ def validate_dict_against(
                 get_field_attributes(variant, keys),
                 prev_path=f"{prev_path}/{variant}",
             )
-
-        # TODO: Build variadic map for fields and attributes
-        # Introduce variadic siblings in NexusNode?
 
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/@{node.name}")
@@ -559,6 +570,7 @@ def validate_dict_against(
                 node.open_enum,
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
             )
+            _ = check_reserved_prefix(f"{prev_path}/{variant}", mapping, "attribute")
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
@@ -847,6 +859,92 @@ def validate_dict_against(
         # default
         return (False, 0)
 
+    def check_reserved_suffix(key: str, mapping: Dict[str, Any]) -> bool:
+        """Check if an associated field exists for a key with a reserved suffix."""
+        reserved_suffixes = (
+            "_end",
+            "_increment_set",
+            "_errors",
+            "_indices",
+            "_mask",
+            "_set",
+            "_weights",
+            "_scaling_factor",
+            "_offset",
+        )
+
+        if not key.endswith((reserved_suffixes)):
+            # Ignore this test
+            return False
+
+        for suffix in reserved_suffixes:
+            if key.endswith(suffix) and key.rsplit(suffix, 1)[0] not in mapping:
+                collector.collect_and_log(
+                    key,
+                    ValidationProblem.ReservedSuffixWithoutField,
+                    key.rsplit(suffix, 1)[0],
+                )
+                return False
+        return True
+
+    def check_reserved_prefix(
+        key: str,
+        mapping: Dict[str, Any],
+        nx_type: Literal["group", "field", "attribute"],
+    ) -> bool:
+        """Check if a reserved prefix was used in the correct context."""
+        reserved_prefixes = {
+            "attribute": {
+                "@BLUESKY_": None,  # do not use anywhere
+                "@DECTRIS_": "NXmx",
+                "@IDF_": None,  # do not use anywhere
+                "@NDAttr": None,
+                "@NX_": "all",
+                "@PDBX_": None,  # do not use anywhere
+                "@SAS_": "NXcanSAS",
+                "@SILX_": None,  # do not use anywhere
+            },
+            "field": {
+                "DECTRIS_": "NXmx",
+            },
+        }
+
+        prefixes = reserved_prefixes[nx_type]
+
+        if not key.rsplit("/", 1)[-1].startswith(tuple(prefixes.keys())):
+            return True
+
+        for prefix, context in prefixes.items():
+            if not key.rsplit("/", 1)[-1].startswith(prefix):
+                continue
+            if not context:
+                # This prefix should not be used by pynxtools.
+                collector.collect_and_log(
+                    prefix,
+                    ValidationProblem.ReservedPrefixInWrongApplication,
+                    None,
+                    key,
+                )
+                return False
+            elif context == "all":
+                # We can freely use this prefix everywhere.
+                continue
+            else:
+                # Check that the prefix is used in the correct application definition.
+                definition_key = (
+                    f"{re.match(r'(/ENTRY\[[^]]+])', key).group(1)}/definition"
+                )
+                if mapping.get(definition_key) != context:
+                    collector.collect_and_log(
+                        prefix,
+                        ValidationProblem.ReservedPrefixInWrongApplication,
+                        context,
+                        key,
+                    )
+                return False
+
+        return True
+
     missing_type_err = {
         "field": ValidationProblem.MissingRequiredField,
         "group": ValidationProblem.MissingRequiredGroup,
@@ -936,6 +1034,18 @@ def validate_dict_against(
                     )
                     keys_to_remove.append(not_visited_key)
                     continue
+
+        if "@" not in not_visited_key.rsplit("/", 1)[-1]:
+            if check_reserved_suffix(not_visited_key, mapping) or check_reserved_prefix(
+                not_visited_key, mapping, "field"
+            ):
+                continue
+        else:
+            associated_field = not_visited_key.rsplit("/", 1)[-2]
+            if check_reserved_prefix(
+                not_visited_key, mapping, "attribute"
+            ) and check_reserved_prefix(associated_field, mapping, "field"):
+                continue
 
         if is_documented(not_visited_key, tree):
             continue
