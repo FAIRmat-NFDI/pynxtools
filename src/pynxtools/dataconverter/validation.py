@@ -134,7 +134,9 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode]:
+def best_namefit_of(
+    name: str, nodes: Iterable[NexusNode], expected_type: str
+) -> Optional[NexusNode]:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -166,13 +168,20 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
                         and len(type_attr) > 2
                     ]
                     if concept_name not in inherited_names:
-                        if node.type == "group":
+                        if node.type == "group" and node.type != expected_type:
                             if concept_name != node.nx_class[2:].upper():
                                 collector.collect_and_log(
                                     concept_name,
                                     ValidationProblem.InvalidConceptForNonVariadic,
                                     node,
                                 )
+                        elif node.type == "field" and node.type != expected_type:
+                            collector.collect_and_log(
+                                concept_name,
+                                ValidationProblem.InvalidConceptForNonVariadic,
+                                node,
+                                expected_type=expected_type,
+                            )
                         else:
                             collector.collect_and_log(
                                 concept_name,
@@ -589,12 +598,29 @@ def validate_dict_against(
         pass
 
     def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
-        for name in key[1:].replace("@", "").split("/"):
+        is_last_attr = False
+        key_components = key[1:].split("/")
+        if "@" in key_components[-1]:
+            is_last_attr = True
+            key_components[-1] = key_components[-1].replace("@", "")
+        key_len = len(key_components)
+        expected_type = "group_or_field"
+        for ind, name in enumerate(key_components):
             children_to_check = [
                 node.search_add_child_for(child)
                 for child in node.get_all_direct_children_names()
             ]
-            node = best_namefit_of(name, children_to_check)
+            if ind < (key_len - 2):
+                expected_type = "group"
+            elif ind == (key_len - 2) and not is_last_attr:
+                expected_type = "group"
+            elif ind == (key_len - 2) and is_last_attr:
+                expected_type = "group_or_field"
+            elif ind == (key_len - 1) and not is_last_attr:
+                expected_type = "field"
+            elif ind == (key_len - 1) and is_last_attr:
+                expected_type = "attribute"
+            node = best_namefit_of(name, children_to_check, expected_type)
 
             if node is None:
                 return None
