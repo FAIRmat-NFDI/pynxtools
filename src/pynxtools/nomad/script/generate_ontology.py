@@ -11,21 +11,6 @@ def main(full=False):
   os.environ['NEXUS_DEF_PATH']=nexus_def_path
 
   repo = pygit2.Repository(nexus_def_path)
-  # Check for provided commit hash argument
-  # if len(sys.argv) > 2:
-  #     commit_hash = sys.argv[2]
-  #     try:
-  #         # Use the provided commit hash directly
-  #         commit = repo.revparse_single(commit_hash)
-  #         repo.checkout_tree(commit)
-  #         repo.set_head(commit.id)  # Update HEAD to point to the commit
-  #         def_commit = commit_hash[:7]  # Use the provided commit hash
-  #         print(f"Checked out commit hash: {commit_hash} (commit: {def_commit})")
-  #     except KeyError:
-  #         print(f"Error: Commit hash '{commit_hash}' not found in the repository.")
-  #         sys.exit(1)
-  # else:
-  #     # Use the current HEAD commit if no version is specified
   def_commit = str(repo.head.target)[:7]
 
   # Official NeXus definitions: https://manual.nexusformat.org/classes/
@@ -39,13 +24,14 @@ def main(full=False):
   nexus_ontology.gen_classes()
   nexus_ontology.gen_children()
   if full:
-    print("Debug: Generating full ontology datasets...")
     nexus_ontology.gen_datasets()
     fullsuffix='_full'
   else:
     fullsuffix=''
-  output_path = os.path.join(local_dir, f"..{os.sep}ontology{os.sep}NeXusOntology{fullsuffix}.owl")
-  print(f"Debug: Saving ontology to {output_path}")
+
+  # Include the commit hash in the output file name
+  output_file_name = f"NeXusOntology{fullsuffix}_{def_commit}.owl"
+  output_path = os.path.join(local_dir, f"..{os.sep}ontology{os.sep}{output_file_name}")
   onto.save(file=output_path, format="rdfxml")
 
 if __name__ == "__main__":
