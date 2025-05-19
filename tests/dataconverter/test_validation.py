@@ -1227,8 +1227,8 @@ TEMPLATE["required"][
                 1,
             ),
             [
-                "Reserved suffix /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_field_set was used, "
-                "but there is no associated field /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_field."
+                "Reserved suffix '_set' was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_field_set, "
+                "but there is no associated field some_field."
             ],
             id="reserved-suffix-from-appdef",
         ),
@@ -1236,16 +1236,14 @@ TEMPLATE["required"][
             alter_dict(
                 alter_dict(
                     TEMPLATE,
-                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field_weights",
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[required_field_weights]",
                     0.1,
                 ),
-                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/some_random_field_weights",
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[some_random_field_weights]",
                 0.1,
             ),
             [
-                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field_weights written without documentation.",
-                "Reserved suffix /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_random_field_weights was used, but there is no associated field /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_random_field.",
-                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_random_field_weights written without documentation.",
+                "Reserved suffix '_weights' was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[some_random_field_weights], but there is no associated field some_random_field.",
             ],
             id="reserved-suffix-from-base-class",
         ),

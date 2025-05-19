@@ -161,7 +161,7 @@ class Collector:
             logger.warning(log_text)
         elif log_type == ValidationProblem.ReservedSuffixWithoutField:
             logger.warning(
-                f"Reserved suffix {path} was used, but there is no associated field {value}."
+                f"Reserved suffix '{args[0]}' was used in {path}, but there is no associated field {value}."
             )
         elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
             log_text = f"Reserved prefix {path} was used in key {args[0] if args else '<unknown>'}, but is not valid here."

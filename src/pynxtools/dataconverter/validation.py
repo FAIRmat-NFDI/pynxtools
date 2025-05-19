@@ -193,6 +193,9 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
                         return None
                 return node
         else:
+            PRINT_HERE = True if "weights" in name else False
+            # if PRINT_HERE:
+            #     print(node)
             if concept_name and concept_name == node.name:
                 if instance_name == node.name:
                     return node
@@ -601,12 +604,18 @@ def validate_dict_against(
         pass
 
     def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
+        PRINT = False  # True if "weights" in key else False
         for name in key[1:].replace("@", "").split("/"):
             children_to_check = [
                 node.search_add_child_for(child)
                 for child in node.get_all_direct_children_names()
             ]
+            if PRINT:
+                print("<<<<<<<", name, node)
             node = best_namefit_of(name, children_to_check)
+            if PRINT:
+                print("\t", children_to_check)
+                print(">>>>>>", node)
 
             if node is None:
                 return None
@@ -890,14 +899,34 @@ def validate_dict_against(
             "_offset",
         )
 
+        parent_path, name = key.rsplit("/", 1)
+        concept_name, instance_name = split_class_and_name_of(name)
+
         for suffix in reserved_suffixes:
-            if key.endswith(suffix):
-                name = key.rsplit(suffix, 1)[0]
-                if name not in mapping:
+            if instance_name.endswith(suffix):
+                associated_field_name = instance_name.rsplit(suffix, 1)[0]
+
+                # TODO: This strictly limits FIELDNAME_weights[my_field_weights] to match with
+                # either my_field_weights or FIELDNAME[my_field], but AXISNAME[my_field] will
+                # not match.
+
+                possible_fields = [associated_field_name]
+
+                if concept_name:
+                    possible_fields += (
+                        f"{concept_name.rsplit(suffix, 1)[0]}[{associated_field_name}]"
+                    )
+
+                possible_field_keys = [
+                    f"{parent_path}/{field}" for field in possible_fields
+                ]
+
+                if not any(k in mapping for k in possible_field_keys):
                     collector.collect_and_log(
                         key,
                         ValidationProblem.ReservedSuffixWithoutField,
-                        name,
+                        associated_field_name,
+                        suffix,
                     )
                     return False
                 break  # We found the suffix and it passed
