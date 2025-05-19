@@ -193,9 +193,6 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
                         return None
                 return node
         else:
-            PRINT_HERE = True if "weights" in name else False
-            # if PRINT_HERE:
-            #     print(node)
             if concept_name and concept_name == node.name:
                 if instance_name == node.name:
                     return node
@@ -604,18 +601,12 @@ def validate_dict_against(
         pass
 
     def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
-        PRINT = False  # True if "weights" in key else False
         for name in key[1:].replace("@", "").split("/"):
             children_to_check = [
                 node.search_add_child_for(child)
                 for child in node.get_all_direct_children_names()
             ]
-            if PRINT:
-                print("<<<<<<<", name, node)
             node = best_namefit_of(name, children_to_check)
-            if PRINT:
-                print("\t", children_to_check)
-                print(">>>>>>", node)
 
             if node is None:
                 return None
