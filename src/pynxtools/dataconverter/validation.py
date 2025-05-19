@@ -904,28 +904,20 @@ def validate_dict_against(
 
         for suffix in reserved_suffixes:
             if instance_name.endswith(suffix):
-                associated_field_name = instance_name.rsplit(suffix, 1)[0]
+                associated_field = instance_name.rsplit(suffix, 1)[0]
 
-                # TODO: This strictly limits FIELDNAME_weights[my_field_weights] to match with
-                # either my_field_weights or FIELDNAME[my_field], but AXISNAME[my_field] will
-                # not match.
-
-                possible_fields = [associated_field_name]
-
-                if concept_name:
-                    possible_fields += (
-                        f"{concept_name.rsplit(suffix, 1)[0]}[{associated_field_name}]"
+                if not any(
+                    k.startswith(parent_path + "/")
+                    and (
+                        k.endswith(associated_field)
+                        or k.endswith(f"[{associated_field}]")
                     )
-
-                possible_field_keys = [
-                    f"{parent_path}/{field}" for field in possible_fields
-                ]
-
-                if not any(k in mapping for k in possible_field_keys):
+                    for k in mapping
+                ):
                     collector.collect_and_log(
                         key,
                         ValidationProblem.ReservedSuffixWithoutField,
-                        associated_field_name,
+                        associated_field,
                         suffix,
                     )
                     return False
