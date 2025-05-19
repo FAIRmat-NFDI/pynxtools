@@ -1243,6 +1243,7 @@ TEMPLATE["required"][
                 0.1,
             ),
             [
+                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field_weights written without documentation.",
                 "Reserved suffix /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_random_field_weights was used, but there is no associated field /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_random_field.",
                 "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_random_field_weights written without documentation.",
             ],
@@ -1252,14 +1253,18 @@ TEMPLATE["required"][
             alter_dict(
                 alter_dict(
                     alter_dict(
-                        TEMPLATE,
-                        "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
+                            "some text",
+                        ),
+                        "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
                         "some text",
                     ),
-                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
                     "some text",
                 ),
-                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr",
                 "some text",
             ),
             [
@@ -1271,6 +1276,7 @@ TEMPLATE["required"][
                 "Reserved prefix DECTRIS_ was used in key /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid here. "
                 "It is only valid in the context of NXmx.",
                 "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field written without documentation.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr written without documentation.",
             ],
             id="reserved-prefix",
         ),
@@ -1278,7 +1284,6 @@ TEMPLATE["required"][
 )
 def test_validate_data_dict(caplog, data_dict, error_messages, request):
     """Unit test for the data validation routine."""
-    # validate_dict_against("NXtest", data_dict)[0]
 
     def format_error_message(msg: str) -> str:
         for prefix in ("ERROR:", "WARNING:"):

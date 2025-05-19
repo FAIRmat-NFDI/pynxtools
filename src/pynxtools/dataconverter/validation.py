@@ -860,7 +860,24 @@ def validate_dict_against(
         return (False, 0)
 
     def check_reserved_suffix(key: str, mapping: MutableMapping[str, Any]) -> bool:
-        """Check if an associated field exists for a key with a reserved suffix."""
+        """
+        Check if an associated field exists for a key with a reserved suffix.
+
+        Reserved suffixes imply the presence of an associated base field (e.g.,
+        "temperature_errors" implies "temperature" must exist in the mapping).
+
+        Args:
+            key (str):
+                The full key path (e.g., "/ENTRY[entry1]/sample/temperature_errors").
+            mapping (MutableMapping[str, Any]):
+                The mapping containing the data to validate.
+                This should be a dict of `/` separated paths.
+
+        Returns:
+            bool:
+                True if the suffix usage is valid or not applicable.
+                False if the suffix is used without the expected associated base field.
+        """
         reserved_suffixes = (
             "_end",
             "_increment_set",
@@ -873,18 +890,18 @@ def validate_dict_against(
             "_offset",
         )
 
-        if not key.endswith((reserved_suffixes)):
-            # Ignore this test
-            return False
-
         for suffix in reserved_suffixes:
-            if key.endswith(suffix) and key.rsplit(suffix, 1)[0] not in mapping:
-                collector.collect_and_log(
-                    key,
-                    ValidationProblem.ReservedSuffixWithoutField,
-                    key.rsplit(suffix, 1)[0],
-                )
-                return False
+            if key.endswith(suffix):
+                name = key.rsplit(suffix, 1)[0]
+                if name not in mapping:
+                    collector.collect_and_log(
+                        key,
+                        ValidationProblem.ReservedSuffixWithoutField,
+                        name,
+                    )
+                    return False
+                break  # We found the suffix and it passed
+
         return True
 
     def check_reserved_prefix(
@@ -892,7 +909,24 @@ def validate_dict_against(
         mapping: MutableMapping[str, Any],
         nx_type: Literal["group", "field", "attribute"],
     ) -> bool:
-        """Check if a reserved prefix was used in the correct context."""
+        """
+        Check if a reserved prefix was used in the correct context.
+
+        Args:
+            key (str): The full key path (e.g., "/ENTRY[entry1]/instrument/detector/@DECTRIS_config").
+            mapping (MutableMapping[str, Any]):
+                The mapping containing the data to validate.
+                This should be a dict of `/` separated paths.
+                Attributes are denoted with `@` in front of the last element.
+            nx_type (Literal["group", "field", "attribute"]):
+                The NeXus type the key represents. Determines which reserved prefixes are relevant.
+
+
+        Returns:
+            bool:
+                True if the prefix usage is valid or not applicable.
+                False if an invalid or misapplied reserved prefix is detected.
+        """
         reserved_prefixes = {
             "attribute": {
                 "@BLUESKY_": None,  # do not use anywhere
@@ -909,40 +943,47 @@ def validate_dict_against(
             },
         }
 
-        prefixes = reserved_prefixes[nx_type]
+        prefixes = reserved_prefixes.get(nx_type)
+        if not prefixes:
+            return True
 
-        if not key.rsplit("/", 1)[-1].startswith(tuple(prefixes.keys())):
-            # Ignore this test
-            return False
+        name = key.rsplit("/", 1)[-1]
 
-        for prefix, context in prefixes.items():
-            if not key.rsplit("/", 1)[-1].startswith(prefix):
+        if not name.startswith(tuple(prefixes)):
+            return False  # Irrelevant prefix, no check needed
+
+        for prefix, allowed_context in prefixes.items():
+            if not name.startswith(prefix):
                 continue
-            if not context:
-                # This prefix should not be used by pynxtools.
+
+            if allowed_context is None:
+                # This prefix is disallowed entirely
                 collector.collect_and_log(
                     prefix,
-                    ValidationProblem.ReservedPrefixInWrongApplication,
+                    ValidationProblem.ReservedPrefixInWrongContext,
                     None,
                     key,
                 )
                 return False
-            elif context == "all":
+            if allowed_context == "all":
                 # We can freely use this prefix everywhere.
-                continue
-            else:
-                # Check that the prefix is used in the correct application definition.
-                match = re.match(r"(/ENTRY\[[^]]+])", key)
-                if match:
-                    definition_key = f"{match.group(1)}/definition"
-                    if mapping.get(definition_key) != context:
-                        collector.collect_and_log(
-                            prefix,
-                            ValidationProblem.ReservedPrefixInWrongApplication,
-                            context,
-                            key,
-                        )
-                    return False
+                return True
+
+            # Check that the prefix is used in the correct context.
+            match = re.match(r"(/ENTRY\[[^]]+])", key)
+            definition_value = None
+            if match:
+                definition_key = f"{match.group(1)}/definition"
+                definition_value = mapping.get(definition_key)
+
+            if definition_value != allowed_context:
+                collector.collect_and_log(
+                    prefix,
+                    ValidationProblem.ReservedPrefixInWrongContext,
+                    allowed_context,
+                    key,
+                )
+                return False
 
         return True
 
@@ -1037,16 +1078,14 @@ def validate_dict_against(
                     continue
 
         if "@" not in not_visited_key.rsplit("/", 1)[-1]:
-            if check_reserved_suffix(not_visited_key, mapping) or check_reserved_prefix(
-                not_visited_key, mapping, "field"
-            ):
-                continue
+            check_reserved_suffix(not_visited_key, mapping)
+            check_reserved_prefix(not_visited_key, mapping, "field")
+
         else:
             associated_field = not_visited_key.rsplit("/", 1)[-2]
-            if check_reserved_prefix(
-                not_visited_key, mapping, "attribute"
-            ) and check_reserved_prefix(associated_field, mapping, "field"):
-                continue
+            # Check the prefix both for this attribute and the field it belongs to
+            check_reserved_prefix(not_visited_key, mapping, "attribute")
+            check_reserved_prefix(associated_field, mapping, "field")
 
         if is_documented(not_visited_key, tree):
             continue

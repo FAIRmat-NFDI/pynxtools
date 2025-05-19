@@ -69,7 +69,7 @@ class ValidationProblem(Enum):
     KeyToBeRemoved = 21
     InvalidConceptForNonVariadic = 22
     ReservedSuffixWithoutField = 23
-    ReservedPrefixInWrongApplication = 24
+    ReservedPrefixInWrongContext = 24
 
 
 class Collector:
@@ -163,7 +163,7 @@ class Collector:
             logger.warning(
                 f"Reserved suffix {path} was used, but there is no associated field {value}."
             )
-        elif log_type == ValidationProblem.ReservedPrefixInWrongApplication:
+        elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
             log_text = f"Reserved prefix {path} was used in key {args[0] if args else '<unknown>'}, but is not valid here."
             if value != "<unknown>":
                 log_text += f" It is only valid in the context of {value}."
