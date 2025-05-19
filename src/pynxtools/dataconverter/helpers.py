@@ -68,6 +68,8 @@ class ValidationProblem(Enum):
     NXdataAxisMismatch = 20
     KeyToBeRemoved = 21
     InvalidConceptForNonVariadic = 22
+    ReservedSuffixWithoutField = 23
+    ReservedPrefixInWrongContext = 24
 
 
 class Collector:
@@ -157,6 +159,16 @@ class Collector:
             if value.type == "group":
                 log_text += f", which should be of type {value.nx_class}."
             logger.warning(log_text)
+        elif log_type == ValidationProblem.ReservedSuffixWithoutField:
+            logger.warning(
+                f"Reserved suffix '{args[0]}' was used in {path}, but there is no associated field {value}."
+            )
+        elif log_type == ValidationProblem.ReservedPrefixInWrongContext:
+            log_text = f"Reserved prefix {path} was used in key {args[0] if args else '<unknown>'}, but is not valid here."
+            # Note that value=None" gets converted to "<unknown>"
+            if value != "<unknown>":
+                log_text += f" It is only valid in the context of {value}."
+            logger.error(log_text)
 
     def collect_and_log(
         self,

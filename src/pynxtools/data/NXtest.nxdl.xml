@@ -23,6 +23,15 @@
             <field name="required_field" required="true" type="NX_INT">
                 <doc>A dummy entry to test optional parent check for a required child.</doc>
             </field>
+            <field name="required_field_set" optional="true" type="NX_INT">
+                <doc>A dummy entry to test reserved suffixes.</doc>
+            </field>
+            <field name="some_field_set" optional="true" type="NX_INT">
+                <doc>
+                    A dummy entry to test reserved suffixes where the actual field is not given.
+                    Note that this is not allowed by NeXus, but we do this here to test the validation.
+                </doc>
+            </field>
             <field name="optional_field" optional="true" type="NX_INT">
                 <doc>A dummy entry to test optional parent check for an optional child.</doc>
             </field>

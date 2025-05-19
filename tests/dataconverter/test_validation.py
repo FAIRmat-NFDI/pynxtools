@@ -1216,13 +1216,78 @@ TEMPLATE["required"][
             [],
             id="nonvariadic-nxcollection",
         ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/required_field_set",
+                    1,
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/some_field_set",
+                1,
+            ),
+            [
+                "Reserved suffix '_set' was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/some_field_set, "
+                "but there is no associated field some_field."
+            ],
+            id="reserved-suffix-from-appdef",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[required_field_weights]",
+                    0.1,
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[some_random_field_weights]",
+                0.1,
+            ),
+            [
+                "Reserved suffix '_weights' was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[some_random_field_weights], but there is no associated field some_random_field.",
+            ],
+            id="reserved-suffix-from-base-class",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            TEMPLATE,
+                            "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr",
+                            "some text",
+                        ),
+                        "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr",
+                        "some text",
+                    ),
+                    "/ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field",
+                    "some text",
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr",
+                "some text",
+            ),
+            [
+                "Reserved prefix @BLUESKY_ was used in key /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr, but is not valid here.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@BLUESKY_attr written without documentation.",
+                "Reserved prefix @DECTRIS_ was used in key /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr, but is not valid here. "
+                "It is only valid in the context of NXmx.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@DECTRIS_attr written without documentation.",
+                "Reserved prefix DECTRIS_ was used in key /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field, but is not valid here. "
+                "It is only valid in the context of NXmx.",
+                "Field /ENTRY[my_entry]/OPTIONAL_group[my_group]/DECTRIS_field written without documentation.",
+                "Attribute /ENTRY[my_entry]/OPTIONAL_group[my_group]/@NX_attr written without documentation.",
+            ],
+            id="reserved-prefix",
+        ),
     ],
 )
 def test_validate_data_dict(caplog, data_dict, error_messages, request):
     """Unit test for the data validation routine."""
 
     def format_error_message(msg: str) -> str:
-        return msg[msg.rfind("G: ") + 3 :].rstrip("\n")
+        for prefix in ("ERROR:", "WARNING:"):
+            if msg.startswith(prefix):
+                return msg[len(prefix) :].lstrip()
+        return msg
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
