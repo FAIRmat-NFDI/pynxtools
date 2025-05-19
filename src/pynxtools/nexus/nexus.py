@@ -681,9 +681,9 @@ def axis_helper(dim, nxdata, signal, axes, logger):
             if (
                 attr.endswith("_indices")
                 and decode_if_string(nxdata.attrs[attr]) == a_item
-                and nxdata[attr.split("_indices")[0]] not in ax_list
+                and nxdata[attr.split("_indices")[0].replace("@", "")] not in ax_list
             ):
-                ax_list.append(nxdata[attr.split("_indices")[0]])
+                ax_list.append(nxdata[attr.split("_indices")[0].replace("@", "")])
         # v2  # check for ':' separated axes defined in Signal
         if not ax_list:
             try:
