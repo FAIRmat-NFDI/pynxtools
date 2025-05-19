@@ -1,6 +1,3 @@
-# This workflow will install Python 3.9 and run the tests of all supported plugins.
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: test plugins
 
 on:
@@ -21,31 +18,31 @@ jobs:
       matrix:
         include:
           - plugin: pynxtools-apm
-            branch: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-ellips
-            branches: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-em
-            branch: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-igor
-            branch: main
+            branches: [main]
             tests_to_run: tests/.    
           - plugin: pynxtools-mpes
-            branch: main
+            branches: [minor-fix, main]
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branches: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branches: use-multiformat-reader, main
+            branches: [main]
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
-            branch: main
+            branches: [main]
             tests_to_run: tests/.
 
     steps:
@@ -67,9 +64,7 @@ jobs:
         id: check-branch
         run: |
           branch_exists=false
-          IFS=',' read -ra branches <<< "${{ join(matrix.branches, ',') }}"
-
-          for branch in "${branches[@]}"; do
+          for branch in $(echo '${{ toJson(matrix.branches) }}' | jq -r '.[]'); do
             echo "Checking branch: $branch"
             if git ls-remote --heads https://github.com/FAIRmat-NFDI/${{ matrix.plugin }}.git $branch | grep -q "refs/heads/$branch"; then
               echo "Branch $branch exists."
@@ -79,10 +74,10 @@ jobs:
             fi
           done
           if [ "$branch_exists" = "false" ]; then
-            echo "No branches exist."
+            echo "No matching branches found in remote repository."
             exit 1
           fi
-      - name: Output environment variables for debugging
+      - name: Output selected branch
         run: |
           echo "Selected branch: ${{ env.branch }}"
       - name: Clone ${{ matrix.plugin }} repo
