@@ -230,7 +230,6 @@ class NexusActivityResult(ActivityResult):
         ),
     )
 
-<<<<<<< HEAD
 def load_ontology(*args):
     owl_file = os.path.join(os.path.dirname(__file__), *args)
     return get_ontology(owl_file).load()
@@ -241,19 +240,6 @@ def get_superclasses(ontology, class_name):
     if cls is None:
         raise ValueError(f"Class '{class_name}' not found in the ontology.")
     return cls.ancestors()
-=======
-
-__BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": [basesections.Instrument],
-    "NXsample": [CompositeSystem],
-    "NXsample_component": [Component],
-    # "NXidentifier": [EntityReference],
-    "NXentry": [NexusActivityStep],
-    "NXprocess": [NexusActivityStep],
-    "NXdata": [NexusActivityResult],
-    # "object": BaseSection,
-}
->>>>>>> bdb19bce (Resolved conflicts from rebase)
 
 class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
