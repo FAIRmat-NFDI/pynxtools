@@ -153,7 +153,7 @@ class Collector:
                 f"Length of axis {path} does not match to {value} in dimension {args[0]}"
             )
         elif log_type == ValidationProblem.KeyToBeRemoved:
-            logger.warning(f"The attribute {path} will not be written.")
+            logger.warning(f"The {value} {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
             value = cast(Any, value)
             log_text = f"Given {value.type} name '{path}' conflicts with the non-variadic name '{value}'"

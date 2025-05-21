@@ -194,7 +194,6 @@ def best_namefit_of(
                         or (type_attr := elem.attrib.get("type"))
                         and len(type_attr) > 2
                     ]
-
                     if concept_name not in inherited_names:
                         if node.type == "group":
                             if concept_name != node.nx_class[2:].upper():
@@ -662,12 +661,13 @@ def validate_dict_against(
             node = add_best_matches_for(key, tree, check_types=True)
         except TypeError:
             node = None
+            nx_type = "attribute" if key.split("/")[-1].startswith("@") else "field"
             keys_to_remove.append(key)
 
             collector.collect_and_log(
                 key,
                 ValidationProblem.KeyToBeRemoved,
-                None,
+                nx_type,
             )
 
         if node is None:
@@ -800,7 +800,7 @@ def validate_dict_against(
                         collector.collect_and_log(
                             key,
                             ValidationProblem.KeyToBeRemoved,
-                            None,
+                            "attribute",
                         )
         return keys_to_remove
 
@@ -1087,7 +1087,7 @@ def validate_dict_against(
                 collector.collect_and_log(
                     not_visited_key,
                     ValidationProblem.KeyToBeRemoved,
-                    None,
+                    "attribute",
                 )
                 keys_to_remove.append(not_visited_key)
             else:
@@ -1134,7 +1134,7 @@ def validate_dict_against(
                     collector.collect_and_log(
                         not_visited_key,
                         ValidationProblem.KeyToBeRemoved,
-                        None,
+                        "attribute",
                     )
                     keys_to_remove.append(not_visited_key)
                     continue
