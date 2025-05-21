@@ -484,6 +484,26 @@ def validate_dict_against(
     def _follow_link(
         keys: Optional[Mapping[str, Any]], prev_path: str, p=False
     ) -> Optional[Any]:
+        """
+        Resolves internal dictionary "links" by replacing any keys containing a
+        {"link": "/path/to/target"} structure with the actual referenced content.
+
+        This function traverses the mapping and recursively resolves any keys that
+        contain a "link" to another path (relative to the global template).
+        If the link cannot be resolved, the issue is logged.
+
+        Args:
+            keys (Optional[Mapping[str, Any]]): The dictionary structure to process.
+                May be None or a non-dict value, in which case it's returned as-is.
+            prev_path (str): The path leading up to the current `keys` context, used
+                for logging and error reporting.
+            p (bool, optional): Unused parameter (possibly for debugging); included
+                for interface compatibility. Defaults to False.
+
+        Returns:
+            Optional[Any]: A dictionary with resolved links, the original value if
+            `keys` is not a dict, or None if `keys` is None.
+        """
         if keys is None:
             return None
 
