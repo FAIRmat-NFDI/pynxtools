@@ -231,17 +231,6 @@ class NexusActivityResult(ActivityResult):
     )
 
 
-__BASESECTIONS_MAP: Dict[str, Any] = {
-    "NXfabrication": [basesections.Instrument],
-    "NXsample": [CompositeSystem],
-    "NXsample_component": [Component],
-    # "NXidentifier": [EntityReference],
-    "NXentry": [NexusActivityStep],
-    "NXprocess": [NexusActivityStep],
-    "NXdata": [NexusActivityResult],
-    # "object": BaseSection,
-}
-
 class NexusMeasurement(Measurement, Schema, PlotSection):
     def normalize(self, archive, logger):
         try:
