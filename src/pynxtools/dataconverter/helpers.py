@@ -174,7 +174,7 @@ class Collector:
             value = cast(Any, value)
             logger.error(
                 f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
-                f"conflicts with another existing concept of the same name, which is of type '{value.type}')."
+                f"conflicts with another existing concept of the same name, which is of type '{value.type}'."
             )
 
     def collect_and_log(

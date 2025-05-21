@@ -793,8 +793,8 @@ TEMPLATE["required"][
             ),
             [
                 "The type ('group') of the given concept 'identifier_1' conflicts with another "
-                "existing concept of the same name, which is of type 'field').",
-                "The attribute /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
+                "existing concept of the same name, which is of type 'field'.",
+                "The field /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
             ],
             id="group-instead-of-named-field",
         ),
