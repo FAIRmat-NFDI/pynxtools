@@ -590,8 +590,10 @@ def get_name_from_data_dict_entry(entry: str) -> str:
     results = get_regex().search(entry)
     if results is None:
         return entry
+
     if entry[0] == "@":
-        return "@" + results.group(1)
+        name = results.group(1)
+        return name if name.startswith("@") else "@" + name
     return results.group(1)
 
 
