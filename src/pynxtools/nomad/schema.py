@@ -289,8 +289,10 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                             )
                     else:
                         logger.warning("entry.definition__field is missing or empty.")
+                        archive.results.eln.methods.append("Generic Experiment")
                 except Exception as e:
                     logger.warning(f"Failed to extract superclasses: {e}")
+                    archive.results.eln.methods.append("Generic Experiment")
                 # ------------------ ontology service  ------------------
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
@@ -302,10 +304,10 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
 
         if archive.results.eln.methods is None:
             archive.results.eln.methods = []
-        if self.method:
-            archive.results.eln.methods.append(self.method)
-        else:
-            archive.results.eln.methods.append(self.m_def.name)
+        # if self.method:
+        #     archive.results.eln.methods.append(self.method)
+        # else:
+        #     archive.results.eln.methods.append(self.m_def.name)
         if archive.workflow2 is None:
             archive.workflow2 = Workflow(name=self.name)
         # steps to tasks
