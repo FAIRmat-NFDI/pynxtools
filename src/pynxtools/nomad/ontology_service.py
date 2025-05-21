@@ -7,7 +7,7 @@ from owlready2.namespace import Ontology
 import os
 import subprocess
 from fastapi.responses import RedirectResponse
-from .script.generate_ontology import main as generate_ontology
+from ..NeXusOntology.script.generate_ontology import main as generate_ontology
 import logging
 import pygit2
 
@@ -18,6 +18,8 @@ app = FastAPI()
 
 # Define paths
 local_dir = os.path.dirname(os.path.abspath(__file__))
+nexusontology_dir = os.path.abspath(os.path.join(local_dir, "..", "NeXusOntology"))
+ontology_dir = os.path.join(nexusontology_dir, "ontology")
 OWL_FILE_PATH = None
 
 def ensure_ontology_file():
@@ -33,13 +35,13 @@ def ensure_ontology_file():
 
         # Construct the expected ontology file name
         owl_file_name = f"NeXusOntology_full_{latest_commit_hash}.owl"
-        owl_file_path = os.path.join(local_dir, "ontology", owl_file_name)
+        owl_file_path = os.path.join(ontology_dir, owl_file_name)
         # Check if the ontology file exists
         if not os.path.exists(owl_file_path):
             print(f"Ontology file '{owl_file_name}' not found. Generating it...")
             generate_ontology(full=True)
             # Rename the generated file to include the commit hash
-            generated_file_path = os.path.join(local_dir, "ontology", f"NeXusOntology_full_{latest_commit_hash}.owl")	
+            generated_file_path = os.path.join(ontology_dir, f"NeXusOntology_full_{latest_commit_hash}.owl")	
             os.rename(generated_file_path, owl_file_path)
             print(f"Ontology file generated and saved as '{owl_file_name}'.")
 
