@@ -819,6 +819,23 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                {"link": "/my_entry/specified_group/specified_field"},
+            ),
+            [],
+            id="appdef-links-with-matching-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/USER[my_user]",
                     {"link": "/my_entry/my_group/required_field"},
