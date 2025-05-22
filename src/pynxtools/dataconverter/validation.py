@@ -467,6 +467,13 @@ def validate_dict_against(
                         ValidationProblem.ExpectedGroup,
                         None,
                     )
+                    # TODO: decide if we want to remove such keys
+                    # collector.collect_and_log(
+                    #     variant_path,
+                    #     ValidationProblem.KeyToBeRemoved,
+                    #     node.type,
+                    # )
+                    # keys_to_remove.append(not_visited_key)
                 continue
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=variant_path)
@@ -497,8 +504,6 @@ def validate_dict_against(
                 May be None or a non-dict value, in which case it's returned as-is.
             prev_path (str): The path leading up to the current `keys` context, used
                 for logging and error reporting.
-            p (bool, optional): Unused parameter (possibly for debugging); included
-                for interface compatibility. Defaults to False.
 
         Returns:
             Optional[Any]: A dictionary with resolved links, the original value if
@@ -510,7 +515,9 @@ def validate_dict_against(
         if not isinstance(keys, dict):
             return keys
 
-        resolved_keys = keys
+        import copy
+
+        resolved_keys = copy.deepcopy(keys)
         for key, value in keys.copy().items():
             if isinstance(value, dict) and len(value) == 1 and "link" in value:
                 key_path = f"{prev_path}/{key}" if prev_path else key
@@ -561,6 +568,13 @@ def validate_dict_against(
                     ValidationProblem.ExpectedField,
                     None,
                 )
+                # TODO: decide if we want to remove such keys
+                # collector.collect_and_log(
+                #     variant_path,
+                #     ValidationProblem.KeyToBeRemoved,
+                #     node.type,
+                # )
+                # keys_to_remove.append(variant_path)
                 continue
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
                 # Check if all fields in the dict are actual attributes (startswith @)
@@ -713,13 +727,13 @@ def validate_dict_against(
         except TypeError:
             node = None
             nx_type = "attribute" if key.split("/")[-1].startswith("@") else "field"
-            keys_to_remove.append(key)
 
             collector.collect_and_log(
                 key,
                 ValidationProblem.KeyToBeRemoved,
                 nx_type,
             )
+            keys_to_remove.append(key)
 
         if node is None:
             key_path = key.replace("@", "")
@@ -752,12 +766,13 @@ def validate_dict_against(
                     ValidationProblem.ExpectedGroup,
                     None,
                 )
+                # TODO: decide if we want to remove such keys (and below)
                 # collector.collect_and_log(
                 #     key,
                 #     ValidationProblem.KeyToBeRemoved,
                 #     "group",
                 # )
-                keys_to_remove.append(key)
+                # keys_to_remove.append(key)
                 return False
 
             elif node.type == "field":
@@ -770,13 +785,14 @@ def validate_dict_against(
                         ValidationProblem.ExpectedField,
                         None,
                     )
+                    # TODO: decide if we want to remove such keys (and below)
                     # collector.collect_and_log(
                     #     key,
                     #     ValidationProblem.KeyToBeRemoved,
                     #     "field",
                     # )
-                    keys_to_remove.append(key)
-                    return False
+                    # keys_to_remove.append(key)
+                    # return False
                 resolved_link[key] = is_valid_data_field(
                     resolved_link[key], node.dtype, node.items, node.open_enum, key
                 )

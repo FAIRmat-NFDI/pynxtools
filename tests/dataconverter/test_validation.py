@@ -846,6 +846,7 @@ TEMPLATE["required"][
             [
                 "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field but found a group.",
                 "Expected a group at /ENTRY[my_entry]/USER[my_user] but found a field or attribute.",
+                "Field /ENTRY[my_entry]/USER[my_user] written without documentation.",
             ],
             id="appdef-links-with-wrong-nexus-types",
         ),
@@ -874,6 +875,7 @@ TEMPLATE["required"][
             ),
             [
                 "Expected a group at /ENTRY[my_entry]/SAMPLE[my_sample] but found a field or attribute.",
+                "Field /ENTRY[my_entry]/SAMPLE[my_sample] written without documentation.",
                 "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name but found a group.",
             ],
             id="base-class-links-with-wrong-nexus-types",
