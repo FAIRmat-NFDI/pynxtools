@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 import re
+import copy
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
@@ -461,6 +462,7 @@ def validate_dict_against(
                 continue
             nx_class, _ = split_class_and_name_of(variant)
             if not isinstance(keys[variant], Mapping):
+                # Groups should have subelements
                 if nx_class is not None:
                     collector.collect_and_log(
                         variant_path,
@@ -495,6 +497,10 @@ def validate_dict_against(
         Resolves internal dictionary "links" by replacing any keys containing a
         {"link": "/path/to/target"} structure with the actual referenced content.
 
+        Note that the keys are only replaced in copies of the incoming keys, NOT in
+        the gloval mapping. That is, links are resolved for checking, but we still write
+        links into the HDF5 file.
+
         This function traverses the mapping and recursively resolves any keys that
         contain a "link" to another path (relative to the global template).
         If the link cannot be resolved, the issue is logged.
@@ -514,8 +520,6 @@ def validate_dict_against(
 
         if not isinstance(keys, dict):
             return keys
-
-        import copy
 
         resolved_keys = copy.deepcopy(keys)
         for key, value in keys.copy().items():
@@ -563,6 +567,8 @@ def validate_dict_against(
             if isinstance(keys[variant], Mapping) and not all(
                 k.startswith("@") for k in keys[variant]
             ):
+                # A field should not have a dict of keys that are _not_ all attributes,
+                # i.e. no sub-fields or sub-groups.
                 collector.collect_and_log(
                     variant_path,
                     ValidationProblem.ExpectedField,
@@ -766,7 +772,7 @@ def validate_dict_against(
                     ValidationProblem.ExpectedGroup,
                     None,
                 )
-                # TODO: decide if we want to remove such keys (and below)
+                # TODO: decide if we want to remove such keys
                 # collector.collect_and_log(
                 #     key,
                 #     ValidationProblem.KeyToBeRemoved,
@@ -776,7 +782,8 @@ def validate_dict_against(
                 return False
 
             elif node.type == "field":
-                # Field should only have values.
+                # A field should not have a dict of keys that are _not_ all attributes,
+                # i.e. no sub-fields or sub-groups.
                 if is_mapping and not all(
                     k.startswith("@") for k in resolved_link[key]
                 ):
@@ -785,7 +792,7 @@ def validate_dict_against(
                         ValidationProblem.ExpectedField,
                         None,
                     )
-                    # TODO: decide if we want to remove such keys (and below)
+                    # TODO: decide if we want to remove such keys
                     # collector.collect_and_log(
                     #     key,
                     #     ValidationProblem.KeyToBeRemoved,
