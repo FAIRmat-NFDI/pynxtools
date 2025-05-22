@@ -15,3 +15,4 @@ include src/pynxtools/definitions/NXDL_VERSION
 include src/pynxtools/units/*.txt
 graft src/pynxtools/nomad/example_uploads/iv_temp_example
 include src/pynxtools/nomad/converters/templates/*.j2
+include src/pynxtools/NeXusOntology/script/*.py
