@@ -523,7 +523,7 @@ def validate_dict_against(
 
         resolved_keys = copy.deepcopy(keys)
         for key, value in keys.copy().items():
-            if isinstance(value, dict) and len(value) == 1 and "link" in value:
+            if isinstance(value, dict) and "link" in value:
                 key_path = f"{prev_path}/{key}" if prev_path else key
                 current_keys = nested_keys
                 link_key = None
