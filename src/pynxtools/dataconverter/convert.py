@@ -243,7 +243,13 @@ def convert(
     )
 
     helpers.add_default_root_attributes(data=data, filename=os.path.basename(output))
-    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write()
+
+    write_docs = kwargs.pop("write_docs", False)
+    docs_format = kwargs.pop("docs_format", None)
+    Writer(data=data, nxdl_f_path=nxdl_f_path, output_path=output).write(
+        write_docs=write_docs,
+        docs_format=docs_format,
+    )
 
     logger.info(f"The output file generated: {output}.")
 
@@ -356,7 +362,21 @@ def main_cli():
     default=None,
     help="A json config file for the reader",
 )
-# pylint: disable=too-many-arguments
+@click.option(
+    "--write-docs",
+    is_flag=True,
+    default=False,
+    help="Write docs for the individual NeXus concepts as HDF5 attributes.",
+)
+@click.option(
+    "--docs-format",
+    type=click.Choice(["default", "html", "html5", "xml", "pseudoxml"]),
+    default=None,
+    help=(
+        "Optionally specify the format in which the docs for the individual NeXus concepts is generated. "
+        "By default, the docs are formatted as in the NXDL file."
+    ),
+)
 def convert_cli(
     files: Tuple[str, ...],
     input_file: Tuple[str, ...],
@@ -369,6 +389,8 @@ def convert_cli(
     mapping: str,
     config_file: str,
     fail: bool,
+    write_docs: bool,
+    docs_format: str,
     **kwargs,
 ):
     """This command allows you to use the converter functionality of the dataconverter."""
@@ -395,6 +417,18 @@ def convert_cli(
 
     if config_file:
         kwargs["config_file"] = config_file
+
+    if write_docs:
+        kwargs["write_docs"] = write_docs
+        if not docs_format:
+            kwargs["docs_format"] = "default"
+        else:
+            kwargs["docs_format"] = docs_format
+
+    elif docs_format is not None:
+        raise click.UsageError(
+            "Error: --docs-format can only be used with --write-docs."
+        )
 
     file_list = []
     for file in files:
