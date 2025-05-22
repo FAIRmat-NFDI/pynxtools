@@ -153,6 +153,7 @@ validate_nexus = "pynxtools.dataconverter.cli:validate"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+"pynxtools.NeXusOntology.script" = ["*.py"]
 
 [tool.setuptools.packages.find]
 where = [
@@ -166,7 +167,10 @@ local_scheme = "node-and-date"
 
 [tool.ruff]
 include = ["src/**/*.py", "tests/**/*.py"]
-exclude = ["src/pynxtools/definitions"]
+exclude = [
+    "src/pynxtools/definitions",
+    "src/pynxtools/NeXusOntology",
+]
 line-length = 88
 indent-width = 4
 
