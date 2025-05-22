@@ -415,7 +415,11 @@ TEMPLATE["required"][
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
                 {"link": "/a-link"},
             ),
-            [],
+            [
+                "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value to /a-link.",
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value will not be written.",
+                "The data entry corresponding to /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value is required and hasn't been supplied by the reader.",
+            ],
             id="link-dict-instead-of-int",
         ),
         pytest.param(
@@ -792,6 +796,7 @@ TEMPLATE["required"][
                 "123",
             ),
             [
+                "Expected a field at /ENTRY[my_entry]/identified_calibration/identifier_1 but found a group.",
                 "The type ('group') of the given concept 'identifier_1' conflicts with another "
                 "existing concept of the same name, which is of type 'field'.",
                 "The field /ENTRY[my_entry]/identified_calibration/identifier_1/some_field will not be written.",
@@ -810,6 +815,70 @@ TEMPLATE["required"][
                 "The field /ENTRY[my_entry]/identified_calibration will not be written.",
             ],
             id="field-instead-of-named-group",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    remove_from_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/required_group/description",
+                        "optional",
+                    ),
+                    "/ENTRY[my_entry]/required_group",
+                    {"link": "/my_entry/required_group2"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                {"link": "/my_entry/specified_group/specified_field"},
+            ),
+            [],
+            id="appdef-links-with-matching-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/USER[my_user]",
+                    {"link": "/my_entry/my_group/required_field"},
+                ),
+                "/ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field",
+                {"link": "/my_entry/specified_group"},
+            ),
+            [
+                "Expected a field at /ENTRY[my_entry]/OPTIONAL_group[some_group]/required_field but found a group.",
+                "Expected a group at /ENTRY[my_entry]/USER[my_user] but found a field or attribute.",
+                "Field /ENTRY[my_entry]/USER[my_user] written without documentation.",
+            ],
+            id="appdef-links-with-wrong-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
+                    {"link": "/my_entry/my_group"},
+                ),
+                "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
+                {"link": "/my_entry/nxodd_name/char_value"},
+            ),
+            [],
+            id="base-class-links-with-matching-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
+                    {"link": "/my_entry/my_group/required_field"},
+                ),
+                "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
+                {"link": "/my_entry/my_group"},
+            ),
+            [
+                "Expected a group at /ENTRY[my_entry]/SAMPLE[my_sample] but found a field or attribute.",
+                "Field /ENTRY[my_entry]/SAMPLE[my_sample] written without documentation.",
+                "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name but found a group.",
+            ],
+            id="base-class-links-with-wrong-nexus-types",
         ),
         pytest.param(
             alter_dict(
@@ -1317,7 +1386,7 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
-            assert validate_dict_against("NXtest", data_dict)[0]
+            assert validate_dict_against("NXtest", data_dict)
         assert caplog.text == ""
     else:
         if request.node.callspec.id in (
@@ -1327,11 +1396,11 @@ def test_validate_data_dict(caplog, data_dict, error_messages, request):
             "baseclass-open-enum-with-new-item",
         ):
             with caplog.at_level(logging.INFO):
-                assert validate_dict_against("NXtest", data_dict)[0]
+                assert validate_dict_against("NXtest", data_dict)
                 assert error_messages[0] in caplog.text
         else:
             with caplog.at_level(logging.WARNING):
-                assert not validate_dict_against("NXtest", data_dict)[0]
+                assert not validate_dict_against("NXtest", data_dict)
             assert len(caplog.records) == len(error_messages)
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
