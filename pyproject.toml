@@ -118,6 +118,7 @@ validate_nexus = "pynxtools.dataconverter.validate_file:validate_cli"
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
 "pynxtools.dataconverter.readers.hall" = ["enum_map.json"]
 "pynxtools.dataconverter.readers.rii_database.formula_parser" = ["dispersion_function_grammar.lark"]
+"pynxtools.NeXusOntology.script" = ["*.py"]
 
 [tool.setuptools.packages.find]
 where = [
@@ -131,7 +132,10 @@ local_scheme = "node-and-date"
 
 [tool.ruff]
 include = ["src/*.py", "tests/*.py"]
-exclude = ["src/pynxtools/definitions"]
+exclude = [
+    "src/pynxtools/definitions",
+    "src/pynxtools/NeXusOntology",
+]
 line-length = 88
 indent-width = 4
 
