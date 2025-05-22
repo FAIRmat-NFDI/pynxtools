@@ -837,6 +837,19 @@ TEMPLATE["required"][
                 alter_dict(
                     TEMPLATE,
                     "/ENTRY[my_entry]/SAMPLE[my_sample]",
+                    {"link": "/my_entry/my_group"},
+                ),
+                "/ENTRY[my_entry]/SAMPLE[my_sample]/name",
+                {"link": "/my_entry/nxodd_name/char_value"},
+            ),
+            [],
+            id="base-class-links-with-matching-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
                     {"link": "/my_entry/my_group/required_field"},
                 ),
                 "/ENTRY[my_entry]/SAMPLE[my_sample]/name",

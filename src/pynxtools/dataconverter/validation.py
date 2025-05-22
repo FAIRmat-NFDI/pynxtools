@@ -760,11 +760,11 @@ def validate_dict_against(
                 keys_to_remove.append(key)
                 return False
 
-            elif node.type == "field" and not all(
-                k.startswith("@") for k in resolved_link[key]
-            ):
+            elif node.type == "field":
                 # Field should only have values.
-                if is_mapping:
+                if is_mapping and not all(
+                    k.startswith("@") for k in resolved_link[key]
+                ):
                     collector.collect_and_log(
                         key,
                         ValidationProblem.ExpectedField,
