@@ -898,12 +898,18 @@ def validate_dict_against(
                         type_of_parent_from_tree == "group"
                         or type_of_parent_from_tree is None
                     ):
-                        keys_to_remove.append(key)
                         collector.collect_and_log(
                             key[0:last_index],
                             ValidationProblem.AttributeForNonExistingField,
                             "attribute",
                         )
+                        collector.collect_and_log(
+                            key,
+                            ValidationProblem.KeyToBeRemoved,
+                            "attribute",
+                        )
+                        keys_to_remove.append(key)
+                        remove_from_not_visited(key)
 
     def check_type_with_tree(
         node: NexusNode,

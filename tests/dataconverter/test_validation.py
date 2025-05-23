@@ -861,7 +861,7 @@ TEMPLATE["required"][
                 {"link": "/my_entry/nxodd_name/char_value"},
             ),
             [],
-            id="base-class-links-with-matching-nexus-types",
+            id="baseclass-links-with-matching-nexus-types",
         ),
         pytest.param(
             alter_dict(
@@ -878,7 +878,7 @@ TEMPLATE["required"][
                 "Field /ENTRY[my_entry]/SAMPLE[my_sample] written without documentation.",
                 "Expected a field at /ENTRY[my_entry]/SAMPLE[my_sample]/name but found a group.",
             ],
-            id="base-class-links-with-wrong-nexus-types",
+            id="baseclass-links-with-wrong-nexus-types",
         ),
         pytest.param(
             alter_dict(
@@ -1340,7 +1340,7 @@ TEMPLATE["required"][
             [
                 "Reserved suffix '_weights' was used in /ENTRY[my_entry]/OPTIONAL_group[my_group]/FIELDNAME_weights[some_random_field_weights], but there is no associated field some_random_field.",
             ],
-            id="reserved-suffix-from-base-class",
+            id="reserved-suffix-from-baseclass",
         ),
         pytest.param(
             alter_dict(
