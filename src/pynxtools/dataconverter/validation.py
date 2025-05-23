@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 import re
+import copy
 from collections import defaultdict
 from functools import reduce
 from operator import getitem
@@ -145,7 +146,12 @@ def split_class_and_name_of(name: str) -> Tuple[Optional[str], str]:
     ), f"{name_match.group(2)}{'' if prefix is None else prefix}"
 
 
-def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode]:
+def best_namefit_of(
+    name: str,
+    nodes: Iterable[NexusNode],
+    expected_types: List[str],
+    check_types: bool = False,
+) -> Optional[NexusNode]:
     """
     Get the best namefit of `name` in `keys`.
 
@@ -166,6 +172,19 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
     for node in nodes:
         if not node.variadic:
             if instance_name == node.name:
+                if node.type not in expected_types and check_types:
+                    expected_types_str = " or ".join(expected_types)
+                    collector.collect_and_log(
+                        name,
+                        ValidationProblem.InvalidNexusTypeForNamedConcept,
+                        node,
+                        expected_types_str,
+                    )
+                    raise TypeError(
+                        f"The type ('{expected_types_str if expected_types else '<unknown>'}') "
+                        f"of the given concept {name} conflicts with another existing concept {node.name} (which is of "
+                        f"type '{node.type}')."
+                    )
                 if concept_name and concept_name != node.name:
                     inherited_names = [
                         name
@@ -209,7 +228,7 @@ def best_namefit_of(name: str, nodes: Iterable[NexusNode]) -> Optional[NexusNode
 
 def validate_dict_against(
     appdef: str, mapping: MutableMapping[str, Any], ignore_undocumented: bool = False
-) -> Tuple[bool, List]:
+) -> bool:
     """
     Validates a mapping against the NeXus tree for application definition `appdef`.
 
@@ -226,7 +245,6 @@ def validate_dict_against(
 
     Returns:
         bool: True if the mapping is valid according to `appdef`, False otherwise.
-        List: list of keys in mapping that correspond to attributes of non-existing fields
     """
 
     def get_variations_of(node: NexusNode, keys: Mapping[str, Any]) -> List[str]:
@@ -398,6 +416,7 @@ def validate_dict_against(
             for x in keys
             if x not in [signal, *axes, *indices, *errors, *aux_signals]
         }
+        remaining_keys = _follow_link(remaining_keys, prev_path)
         recurse_tree(
             node,
             remaining_keys,
@@ -437,24 +456,34 @@ def validate_dict_against(
             return
 
         for variant in variants:
+            variant_path = f"{prev_path}/{variant}"
             if variant in [node.name for node in node.parent_of]:
                 # Don't process if this is actually a sub-variant of this group
                 continue
             nx_class, _ = split_class_and_name_of(variant)
             if not isinstance(keys[variant], Mapping):
+                # Groups should have subelements
                 if nx_class is not None:
                     collector.collect_and_log(
-                        f"{prev_path}/{variant}",
+                        variant_path,
                         ValidationProblem.ExpectedGroup,
                         None,
                     )
+                    # TODO: decide if we want to remove such keys
+                    # collector.collect_and_log(
+                    #     variant_path,
+                    #     ValidationProblem.KeyToBeRemoved,
+                    #     node.type,
+                    # )
+                    # keys_to_remove.append(not_visited_key)
                 continue
             if node.nx_class == "NXdata":
-                handle_nxdata(node, keys[variant], prev_path=f"{prev_path}/{variant}")
+                handle_nxdata(node, keys[variant], prev_path=variant_path)
             if node.nx_class == "NXcollection":
                 return
             else:
-                recurse_tree(node, keys[variant], prev_path=f"{prev_path}/{variant}")
+                variant_keys = _follow_link(keys[variant], variant_path)
+                recurse_tree(node, variant_keys, prev_path=variant_path)
 
     def remove_from_not_visited(path: str) -> str:
         if path in not_visited:
@@ -462,28 +491,64 @@ def validate_dict_against(
         return path
 
     def _follow_link(
-        keys: Optional[Mapping[str, Any]], prev_path: str
+        keys: Optional[Mapping[str, Any]], prev_path: str, p=False
     ) -> Optional[Any]:
+        """
+        Resolves internal dictionary "links" by replacing any keys containing a
+        {"link": "/path/to/target"} structure with the actual referenced content.
+
+        Note that the keys are only replaced in copies of the incoming keys, NOT in
+        the gloval mapping. That is, links are resolved for checking, but we still write
+        links into the HDF5 file.
+
+        This function traverses the mapping and recursively resolves any keys that
+        contain a "link" to another path (relative to the global template).
+        If the link cannot be resolved, the issue is logged.
+
+        Args:
+            keys (Optional[Mapping[str, Any]]): The dictionary structure to process.
+                May be None or a non-dict value, in which case it's returned as-is.
+            prev_path (str): The path leading up to the current `keys` context, used
+                for logging and error reporting.
+
+        Returns:
+            Optional[Any]: A dictionary with resolved links, the original value if
+            `keys` is not a dict, or None if `keys` is None.
+        """
         if keys is None:
             return None
-        if len(keys) == 1 and "link" in keys:
-            current_keys = nested_keys
-            link_key = None
-            for path_elem in keys["link"][1:].split("/"):
+
+        if not isinstance(keys, dict):
+            return keys
+
+        resolved_keys = copy.deepcopy(keys)
+        for key, value in keys.copy().items():
+            if isinstance(value, dict) and "link" in value:
+                key_path = f"{prev_path}/{key}" if prev_path else key
+                current_keys = nested_keys
                 link_key = None
-                for dict_path_elem in current_keys:
-                    _, hdf_name = split_class_and_name_of(dict_path_elem)
-                    if hdf_name == path_elem:
-                        link_key = hdf_name
-                        break
+                for path_elem in value["link"][1:].split("/"):
+                    link_key = None
+                    for dict_path_elem in current_keys:
+                        _, hdf_name = split_class_and_name_of(dict_path_elem)
+                        if hdf_name == path_elem:
+                            link_key = hdf_name
+                            current_keys = current_keys[dict_path_elem]
+                            break
+
                 if link_key is None:
                     collector.collect_and_log(
-                        prev_path, ValidationProblem.BrokenLink, keys["link"]
+                        key_path, ValidationProblem.BrokenLink, value["link"]
                     )
-                    return None
-                current_keys = current_keys[dict_path_elem]
-            return current_keys
-        return keys
+                    collector.collect_and_log(
+                        key_path,
+                        ValidationProblem.KeyToBeRemoved,
+                        "key",
+                    )
+                    del resolved_keys[key]
+                else:
+                    resolved_keys[key] = current_keys
+        return resolved_keys
 
     def handle_field(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         full_path = remove_from_not_visited(f"{prev_path}/{node.name}")
@@ -497,6 +562,26 @@ def validate_dict_against(
             return
 
         for variant in variants:
+            variant_path = f"{prev_path}/{variant}"
+
+            if isinstance(keys[variant], Mapping) and not all(
+                k.startswith("@") for k in keys[variant]
+            ):
+                # A field should not have a dict of keys that are _not_ all attributes,
+                # i.e. no sub-fields or sub-groups.
+                collector.collect_and_log(
+                    variant_path,
+                    ValidationProblem.ExpectedField,
+                    None,
+                )
+                # TODO: decide if we want to remove such keys
+                # collector.collect_and_log(
+                #     variant_path,
+                #     ValidationProblem.KeyToBeRemoved,
+                #     node.type,
+                # )
+                # keys_to_remove.append(variant_path)
+                continue
             if node.optionality == "required" and isinstance(keys[variant], Mapping):
                 # Check if all fields in the dict are actual attributes (startswith @)
                 all_attrs = True
@@ -506,44 +591,47 @@ def validate_dict_against(
                         break
                 if all_attrs:
                     collector.collect_and_log(
-                        f"{prev_path}/{variant}", missing_type_err.get(node.type), None
+                        variant_path, missing_type_err.get(node.type), None
                     )
                     collector.collect_and_log(
-                        f"{prev_path}/{variant}",
+                        variant_path,
                         ValidationProblem.AttributeForNonExistingField,
                         None,
                     )
                     return
-            if variant not in keys or mapping.get(f"{prev_path}/{variant}") is None:
+            if variant not in keys or mapping.get(variant_path) is None:
                 continue
 
             # Check general validity
-            mapping[f"{prev_path}/{variant}"] = is_valid_data_field(
-                mapping[f"{prev_path}/{variant}"],
+            mapping[variant_path] = is_valid_data_field(
+                mapping[variant_path],
                 node.dtype,
                 node.items,
                 node.open_enum,
-                f"{prev_path}/{variant}",
+                variant_path,
             )
 
-            _ = check_reserved_suffix(f"{prev_path}/{variant}", mapping)
-            _ = check_reserved_prefix(f"{prev_path}/{variant}", mapping, "field")
+            _ = check_reserved_suffix(variant_path, mapping)
+            _ = check_reserved_prefix(variant_path, mapping, "field")
 
             # Check unit category
             if node.unit is not None:
                 remove_from_not_visited(f"{prev_path}/{variant}/@units")
                 if f"{variant}@units" not in keys:
                     collector.collect_and_log(
-                        f"{prev_path}/{variant}",
+                        variant_path,
                         ValidationProblem.MissingUnit,
                         node.unit,
                     )
                 # TODO: Check unit with pint
 
+            field_attributes = get_field_attributes(variant, keys)
+            field_attributes = _follow_link(field_attributes, variant_path)
+
             recurse_tree(
                 node,
-                get_field_attributes(variant, keys),
-                prev_path=f"{prev_path}/{variant}",
+                field_attributes,
+                prev_path=variant_path,
             )
 
     def handle_attribute(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
@@ -559,18 +647,19 @@ def validate_dict_against(
             return
 
         for variant in variants:
-            mapping[
+            variant_path = (
                 f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
-            ] = is_valid_data_field(
+            )
+            mapping[variant_path] = is_valid_data_field(
                 mapping[
                     f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}"
                 ],
                 node.dtype,
                 node.items,
                 node.open_enum,
-                f"{prev_path}/{variant if variant.startswith('@') else f'@{variant}'}",
+                variant_path,
             )
-            _ = check_reserved_prefix(f"{prev_path}/{variant}", mapping, "attribute")
+            _ = check_reserved_prefix(variant_path, mapping, "attribute")
 
     def handle_choice(node: NexusNode, keys: Mapping[str, Any], prev_path: str):
         global collector
@@ -600,13 +689,34 @@ def validate_dict_against(
         # TODO: Raise error or log the issue?
         pass
 
-    def add_best_matches_for(key: str, node: NexusNode) -> Optional[NexusNode]:
-        for name in key[1:].replace("@", "").split("/"):
+    def add_best_matches_for(
+        key: str, node: NexusNode, check_types: bool = False
+    ) -> Optional[NexusNode]:
+        key_components = key[1:].split("/")
+        is_last_attr = key_components[-1].startswith("@")
+        if is_last_attr:
+            key_components[-1] = key_components[-1].replace("@", "")
+
+        key_len = len(key_components)
+
+        expected_types = []
+        for ind, name in enumerate(key_components):
+            index = ind + 1
             children_to_check = [
                 node.search_add_child_for(child)
                 for child in node.get_all_direct_children_names()
             ]
-            node = best_namefit_of(name, children_to_check)
+
+            if index < key_len - 1:
+                expected_types = ["group"]
+            elif index == key_len - 1:
+                expected_types = ["group"] if not is_last_attr else ["group", "field"]
+            elif index == key_len:
+                expected_types = ["attribute"] if is_last_attr else ["field"]
+                if "link" in str(mapping.get(key, "")):
+                    expected_types += ["group"]
+
+            node = best_namefit_of(name, children_to_check, expected_types, check_types)
 
             if node is None:
                 return None
@@ -618,7 +728,18 @@ def validate_dict_against(
             # This value is not really set. Skip checking its documentation.
             return True
 
-        node = add_best_matches_for(key, tree)
+        try:
+            node = add_best_matches_for(key, tree, check_types=True)
+        except TypeError:
+            node = None
+            nx_type = "attribute" if key.split("/")[-1].startswith("@") else "field"
+
+            collector.collect_and_log(
+                key,
+                ValidationProblem.KeyToBeRemoved,
+                nx_type,
+            )
+            keys_to_remove.append(key)
 
         if node is None:
             key_path = key.replace("@", "")
@@ -640,7 +761,49 @@ def validate_dict_against(
             return True
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
-            # TODO: Follow link and check consistency with current field
+            resolved_link = _follow_link({key: mapping[key]}, "")
+
+            is_mapping = isinstance(resolved_link[key], Mapping)
+
+            if node.type == "group" and not is_mapping:
+                # Groups must have subelements
+                collector.collect_and_log(
+                    key,
+                    ValidationProblem.ExpectedGroup,
+                    None,
+                )
+                # TODO: decide if we want to remove such keys
+                # collector.collect_and_log(
+                #     key,
+                #     ValidationProblem.KeyToBeRemoved,
+                #     "group",
+                # )
+                # keys_to_remove.append(key)
+                return False
+
+            elif node.type == "field":
+                # A field should not have a dict of keys that are _not_ all attributes,
+                # i.e. no sub-fields or sub-groups.
+                if is_mapping and not all(
+                    k.startswith("@") for k in resolved_link[key]
+                ):
+                    collector.collect_and_log(
+                        key,
+                        ValidationProblem.ExpectedField,
+                        None,
+                    )
+                    # TODO: decide if we want to remove such keys
+                    # collector.collect_and_log(
+                    #     key,
+                    #     ValidationProblem.KeyToBeRemoved,
+                    #     "field",
+                    # )
+                    # keys_to_remove.append(key)
+                    # return False
+                resolved_link[key] = is_valid_data_field(
+                    resolved_link[key], node.dtype, node.items, node.open_enum, key
+                )
+
             return True
 
         if "@" not in key and node.type != "field":
@@ -677,7 +840,6 @@ def validate_dict_against(
         for child in node.children:
             if ignore_names is not None and child.name in ignore_names:
                 continue
-            keys = _follow_link(keys, prev_path)
             if keys is None:
                 return
 
@@ -685,23 +847,18 @@ def validate_dict_against(
 
     def check_attributes_of_nonexisting_field(
         node: NexusNode,
-    ) -> list:
+    ):
         """
             This method runs through the mapping dictionary and checks if there are any
             attributes assigned to the fields (not groups!) which are not explicitly
             present in the mapping.
             If there are any found, a warning is logged and the corresponding items are
-            added to the list returned by the method.
+            added to the list that stores all keys that shall be removed.
 
         Args:
             node (NexusNode): the tree generated from application definition.
 
-        Returns:
-            list: list of keys in mapping that correspond to attributes of
-            non-existing fields
         """
-
-        keys_to_remove = []
 
         for key in mapping:
             last_index = key.rfind("/")
@@ -741,18 +898,18 @@ def validate_dict_against(
                         type_of_parent_from_tree == "group"
                         or type_of_parent_from_tree is None
                     ):
-                        keys_to_remove.append(key)
                         collector.collect_and_log(
                             key[0:last_index],
                             ValidationProblem.AttributeForNonExistingField,
-                            None,
+                            "attribute",
                         )
                         collector.collect_and_log(
                             key,
                             ValidationProblem.KeyToBeRemoved,
-                            None,
+                            "attribute",
                         )
-        return keys_to_remove
+                        keys_to_remove.append(key)
+                        remove_from_not_visited(key)
 
     def check_type_with_tree(
         node: NexusNode,
@@ -1012,13 +1169,16 @@ def validate_dict_against(
         "choice": handle_choice,
     }
 
+    keys_to_remove = []
+
     tree = generate_tree_from(appdef)
     collector.clear()
     nested_keys = build_nested_dict_from(mapping)
     not_visited = list(mapping)
+    keys = _follow_link(nested_keys, "")
     recurse_tree(tree, nested_keys)
 
-    keys_to_remove = check_attributes_of_nonexisting_field(tree)
+    check_attributes_of_nonexisting_field(tree)
 
     for not_visited_key in not_visited:
         # TODO: remove again if "@target"/"@reference" is sorted out by NIAC
@@ -1037,7 +1197,7 @@ def validate_dict_against(
                 collector.collect_and_log(
                     not_visited_key,
                     ValidationProblem.KeyToBeRemoved,
-                    None,
+                    "attribute",
                 )
                 keys_to_remove.append(not_visited_key)
             else:
@@ -1084,7 +1244,7 @@ def validate_dict_against(
                     collector.collect_and_log(
                         not_visited_key,
                         ValidationProblem.KeyToBeRemoved,
-                        None,
+                        "attribute",
                     )
                     keys_to_remove.append(not_visited_key)
                     continue
@@ -1102,7 +1262,7 @@ def validate_dict_against(
         if is_documented(not_visited_key, tree):
             continue
 
-        if not ignore_undocumented:
+        if not ignore_undocumented and not_visited_key not in keys_to_remove:
             collector.collect_and_log(
                 not_visited_key, ValidationProblem.MissingDocumentation, None
             )
@@ -1110,7 +1270,11 @@ def validate_dict_against(
     # clear lru_cache
     NexusNode.search_add_child_for.cache_clear()
 
-    return (not collector.has_validation_problems(), keys_to_remove)
+    # remove keys that are incorrect
+    for key in set(keys_to_remove):
+        del mapping[key]
+
+    return not collector.has_validation_problems()
 
 
 def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int = 0):
@@ -1144,4 +1308,4 @@ def populate_full_tree(node: NexusNode, max_depth: Optional[int] = 5, depth: int
 def validate_data_dict(
     _: MutableMapping[str, Any], read_data: MutableMapping[str, Any], root: ET._Element
 ) -> bool:
-    return validate_dict_against(root.attrib["name"], read_data)[0]
+    return validate_dict_against(root.attrib["name"], read_data)

@@ -22,7 +22,7 @@ import logging
 import os
 import re
 from datetime import datetime, timezone
-from enum import Enum
+from enum import Enum, auto
 from functools import lru_cache
 from typing import Any, Callable, List, Optional, Tuple, Union, Sequence, cast
 
@@ -46,30 +46,32 @@ logger = logging.getLogger("pynxtools")
 
 
 class ValidationProblem(Enum):
-    UnitWithoutDocumentation = 1
-    InvalidEnum = 2
-    OpenEnumWithNewItem = 3
-    MissingRequiredGroup = 4
-    MissingRequiredField = 5
-    MissingRequiredAttribute = 6
-    InvalidType = 7
-    InvalidDatetime = 8
-    IsNotPosInt = 9
-    ExpectedGroup = 10
-    MissingDocumentation = 11
-    MissingUnit = 12
-    ChoiceValidationError = 13
-    UnitWithoutField = 14
-    AttributeForNonExistingField = 15
-    BrokenLink = 16
-    FailedNamefitting = 17
-    NXdataMissingSignalData = 18
-    NXdataMissingAxisData = 19
-    NXdataAxisMismatch = 20
-    KeyToBeRemoved = 21
-    InvalidConceptForNonVariadic = 22
-    ReservedSuffixWithoutField = 23
-    ReservedPrefixInWrongContext = 24
+    UnitWithoutDocumentation = auto()
+    InvalidEnum = auto()
+    OpenEnumWithNewItem = auto()
+    MissingRequiredGroup = auto()
+    MissingRequiredField = auto()
+    MissingRequiredAttribute = auto()
+    InvalidType = auto()
+    InvalidDatetime = auto()
+    IsNotPosInt = auto()
+    ExpectedGroup = auto()
+    ExpectedField = auto()
+    MissingDocumentation = auto()
+    MissingUnit = auto()
+    ChoiceValidationError = auto()
+    UnitWithoutField = auto()
+    AttributeForNonExistingField = auto()
+    BrokenLink = auto()
+    FailedNamefitting = auto()
+    NXdataMissingSignalData = auto()
+    NXdataMissingAxisData = auto()
+    NXdataAxisMismatch = auto()
+    KeyToBeRemoved = auto()
+    InvalidConceptForNonVariadic = auto()
+    ReservedSuffixWithoutField = auto()
+    ReservedPrefixInWrongContext = auto()
+    InvalidNexusTypeForNamedConcept = auto()
 
 
 class Collector:
@@ -96,9 +98,9 @@ class Collector:
                 f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
-            logger.warning(f"The required group, {path}, hasn't been supplied.")
+            logger.error(f"The required group, {path}, hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.warning(
+            logger.error(
                 f"The data entry corresponding to {path} is required "
                 "and hasn't been supplied by the reader.",
             )
@@ -118,9 +120,9 @@ class Collector:
                 f"The value at {path} should be a positive int, but is {value}."
             )
         elif log_type == ValidationProblem.ExpectedGroup:
-            logger.warning(
-                f"Expected a group at {path} but found a field or attribute."
-            )
+            logger.error(f"Expected a group at {path} but found a field or attribute.")
+        elif log_type == ValidationProblem.ExpectedField:
+            logger.error(f"Expected a field at {path} but found a group.")
         elif log_type == ValidationProblem.MissingDocumentation:
             if "@" in path.rsplit("/")[-1]:
                 logger.warning(f"Attribute {path} written without documentation.")
@@ -140,7 +142,7 @@ class Collector:
                 "but the field does not exist."
             )
         elif log_type == ValidationProblem.BrokenLink:
-            logger.warning(f"Broken link at {path} to {value}")
+            logger.warning(f"Broken link at {path} to {value}.")
         elif log_type == ValidationProblem.FailedNamefitting:
             logger.warning(f"Found no namefit of {path} in {value}.")
         elif log_type == ValidationProblem.NXdataMissingSignalData:
@@ -152,7 +154,7 @@ class Collector:
                 f"Length of axis {path} does not match to {value} in dimension {args[0]}"
             )
         elif log_type == ValidationProblem.KeyToBeRemoved:
-            logger.warning(f"The attribute {path} will not be written.")
+            logger.warning(f"The {value} {path} will not be written.")
         elif log_type == ValidationProblem.InvalidConceptForNonVariadic:
             value = cast(Any, value)
             log_text = f"Given {value.type} name '{path}' conflicts with the non-variadic name '{value}'"
@@ -169,6 +171,12 @@ class Collector:
             if value != "<unknown>":
                 log_text += f" It is only valid in the context of {value}."
             logger.error(log_text)
+        elif log_type == ValidationProblem.InvalidNexusTypeForNamedConcept:
+            value = cast(Any, value)
+            logger.error(
+                f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
+                f"conflicts with another existing concept of the same name, which is of type '{value.type}'."
+            )
 
     def collect_and_log(
         self,
