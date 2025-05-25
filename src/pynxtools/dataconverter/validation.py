@@ -545,6 +545,7 @@ def validate_dict_against(
                         ValidationProblem.KeyToBeRemoved,
                         "key",
                     )
+                    keys_to_remove.append(key_path)
                     del resolved_keys[key]
                 else:
                     resolved_keys[key] = current_keys
@@ -762,6 +763,10 @@ def validate_dict_against(
 
         if isinstance(mapping[key], dict) and "link" in mapping[key]:
             resolved_link = _follow_link({key: mapping[key]}, "")
+
+            if key not in resolved_link:
+                # Link is broken and key will be removed; no need to check further
+                return False
 
             is_mapping = isinstance(resolved_link[key], Mapping)
 

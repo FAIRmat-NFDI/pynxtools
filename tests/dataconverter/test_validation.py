@@ -819,6 +819,24 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/identified_calibration",
+                    {"link": "/my_entry/some_group"},
+                ),
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value",
+                {"link": "/my_entry/specified_group/some_field"},
+            ),
+            [
+                "Broken link at /ENTRY[my_entry]/identified_calibration to /my_entry/some_group.",
+                "The key /ENTRY[my_entry]/identified_calibration will not be written.",
+                "Broken link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value to /my_entry/specified_group/some_field.",
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value will not be written.",
+            ],
+            id="appdef-broken-links",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
                     remove_from_dict(
                         TEMPLATE,
                         "/ENTRY[my_entry]/required_group/description",
@@ -849,6 +867,24 @@ TEMPLATE["required"][
                 "Field /ENTRY[my_entry]/USER[my_user] written without documentation.",
             ],
             id="appdef-links-with-wrong-nexus-types",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/SAMPLE[my_sample]",
+                    {"link": "/my_entry/some_group"},
+                ),
+                "/ENTRY[my_entry]/SAMPLE[my_sample2]/name",
+                {"link": "/my_entry/specified_group/some_field223"},
+            ),
+            [
+                "Broken link at /ENTRY[my_entry]/SAMPLE[my_sample] to /my_entry/some_group.",
+                "The key /ENTRY[my_entry]/SAMPLE[my_sample] will not be written.",
+                "Broken link at /ENTRY[my_entry]/SAMPLE[my_sample2]/name to /my_entry/specified_group/some_field223.",
+                "The key /ENTRY[my_entry]/SAMPLE[my_sample2]/name will not be written.",
+            ],
+            id="baseclass-broken-links",
         ),
         pytest.param(
             alter_dict(
