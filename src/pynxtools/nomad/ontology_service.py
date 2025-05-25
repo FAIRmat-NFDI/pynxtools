@@ -39,7 +39,7 @@ def ensure_ontology_file():
         # Check if the ontology file exists
         if not os.path.exists(owl_file_path):
             print(f"Ontology file '{owl_file_name}' not found. Generating it...")
-            generate_ontology(full=True)
+            generate_ontology(full=True, nexus_def_path=nexus_def_path, def_commit=latest_commit_hash)
             # Rename the generated file to include the commit hash
             generated_file_path = os.path.join(ontology_dir, f"NeXusOntology_full_{latest_commit_hash}.owl")	
             os.rename(generated_file_path, owl_file_path)
