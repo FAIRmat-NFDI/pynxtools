@@ -1,7 +1,9 @@
 [submodule "src/pynxtools/definitions"]
 	path = src/pynxtools/definitions
 	url = https://github.com/FAIRmat-NFDI/nexus_definitions.git
+
 [submodule "src/pynxtools/NeXusOntology"]
 	path = src/pynxtools/NeXusOntology
 	url = https://github.com/FAIRmat-NFDI/NeXusOntology.git
 	branch = tanmay
+	fetchRecurseSubmodules = false
