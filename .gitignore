@@ -210,3 +210,4 @@ src/pynxtools/nomad/nxs_metainfo_*.json
 nexusparser.egg-info/PKG-INFO
 .python-version
 *.owl
+*.sh
