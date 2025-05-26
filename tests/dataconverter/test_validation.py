@@ -240,32 +240,36 @@ TEMPLATE["required"][
                     alter_dict(
                         alter_dict(
                             alter_dict(
-                                TEMPLATE,
-                                "/ENTRY[my_entry]/SAMPLE[some_name]/name",
-                                "A sample name",
+                                alter_dict(
+                                    TEMPLATE,
+                                    "/ENTRY[my_entry]/SAMPLE[some_name]/name",
+                                    "A sample name",
+                                ),
+                                "/ENTRY[my_entry]/USER[some_name]/name",
+                                "A user name",
                             ),
-                            "/ENTRY[my_entry]/USER[some_name]/name",
-                            "A user name",
+                            "/ENTRY[my_entry]/APERTURE[some_name]/name",
+                            "An monitor name",
                         ),
-                        "/ENTRY[my_entry]/MONITOR[some_name]/name",
-                        "A monitor name",
+                        "/ENTRY[my_entry]/APERTURE[another_name]/name",
+                        "Another monitor name",
                     ),
-                    "/ENTRY[my_entry]/MONITOR[another_name]/name",
-                    "Another monitor name",
+                    "/ENTRY[my_entry]/SAMPLE[another_name]/name",
+                    "Another sample name",
                 ),
-                "/ENTRY[my_entry]/SAMPLE[another_name]/name",
-                "Another sample name",
+                "/ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name",
+                "Another c name within an instrument.",
             ),
             [
-                "Instance name 'another_name' used for multiple different concepts: MONITOR, SAMPLE. "
-                "The following keys are affected: /ENTRY[my_entry]/MONITOR[another_name]/name, "
+                "Instance name 'another_name' used for multiple different concepts: APERTURE, SAMPLE. "
+                "The following keys are affected: /ENTRY[my_entry]/APERTURE[another_name]/name, "
                 "/ENTRY[my_entry]/SAMPLE[another_name]/name.",
-                "The key /ENTRY[my_entry]/MONITOR[another_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/APERTURE[another_name]/name will not be written.",
                 "The key /ENTRY[my_entry]/SAMPLE[another_name]/name will not be written.",
-                "Instance name 'some_name' used for multiple different concepts: MONITOR, SAMPLE, USER. "
-                "The following keys are affected: /ENTRY[my_entry]/MONITOR[some_name]/name, "
+                "Instance name 'some_name' used for multiple different concepts: APERTURE, SAMPLE, USER. "
+                "The following keys are affected: /ENTRY[my_entry]/APERTURE[some_name]/name, "
                 "/ENTRY[my_entry]/SAMPLE[some_name]/name, /ENTRY[my_entry]/USER[some_name]/name.",
-                "The key /ENTRY[my_entry]/MONITOR[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/APERTURE[some_name]/name will not be written.",
                 "The key /ENTRY[my_entry]/SAMPLE[some_name]/name will not be written.",
                 "The key /ENTRY[my_entry]/USER[some_name]/name will not be written.",
             ],
@@ -1116,11 +1120,11 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type",
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type",
                 1,
             ),
             [
-                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type written without documentation."
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type written without documentation."
             ],
             id="bad-namefitting",
         ),

@@ -862,6 +862,14 @@ def validate_dict_against(
         name for different concept names (e.g., SAMPLE[my_name] and USER[my_name]) is
         considered a conflict.
 
+        For example, this is a conflict:
+            /ENTRY[entry1]/SAMPLE[my_name]/...
+            /ENTRY[entry1]/USER[my_name]/...
+
+        But this is NOT a conflict:
+            /ENTRY[entry1]/INSTRUMENT[instrument]/FIELD[my_name]/...
+            /ENTRY[entry1]/INSTRUMENT[instrument]/DETECTOR[detector]/FIELD[my_name]/...
+
         When such conflicts are found, an error is logged indicating the instance name
         and the conflicting concept names. Additionally, all keys involved in the conflict
         are logged and added to the `keys_to_remove` list.
@@ -878,15 +886,20 @@ def validate_dict_against(
         """
         pattern = re.compile(r"(?P<concept_name>[^\[\]/]+)\[(?P<instance>[^\]]+)\]")
 
-        # Map from instance name to list of (concept_name, full_key) where it's used
-        instance_usage: Dict[str, List[Tuple[str, str]]] = defaultdict(list)
+        # Tracks instance usage with respect to their parent group
+        instance_usage: Dict[Tuple[str, str], List[Tuple[str, str]]] = defaultdict(list)
 
         for key in mapping:
-            for match in pattern.finditer(key):
-                concept_name, instance_name = match.groups()
-                instance_usage[instance_name].append((concept_name, key))
+            matches = list(pattern.finditer(key))
+            for i, match in enumerate(matches):
+                concept_name = match.group("concept_name")
+                instance_name = match.group("instance")
 
-        for instance_name, entries in sorted(instance_usage.items()):
+                # Determine the parent path up to just before this match
+                parent_path = key[: match.start()]
+                instance_usage[(instance_name, parent_path)].append((concept_name, key))
+
+        for (instance_name, parent_path), entries in sorted(instance_usage.items()):
             concept_names = {c for c, _ in entries}
             if len(concept_names) > 1:
                 keys = sorted(k for _, k in entries)
