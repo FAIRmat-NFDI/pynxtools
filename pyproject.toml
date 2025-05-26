@@ -85,7 +85,7 @@ mpes = [
     "pynxtools-mpes>=0.2.3",
 ]
 raman = [
-    "pynxtools-raman>=0.0.10",
+    "pynxtools-raman>=0.0.11",
 ]
 spm = [
     "pynxtools-spm>=0.1.1",
