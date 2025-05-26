@@ -850,6 +850,59 @@ def validate_dict_against(
 
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
 
+    def find_instance_name_conflicts(
+        mapping: MutableMapping[str, str], keys_to_remove: List[str]
+    ) -> None:
+        """
+        Detect and log conflicts where the same variadic instance name is reused across
+        different concept names.
+
+        This function ensures that a given instance name (e.g., 'my_name') is only used
+        for a single concept (e.g., SAMPLE or USER, but not both). Reusing the same instance
+        name for different concept names (e.g., SAMPLE[my_name] and USER[my_name]) is
+        considered a conflict.
+
+        When such conflicts are found, an error is logged indicating the instance name
+        and the conflicting concept names. Additionally, all keys involved in the conflict
+        are logged and added to the `keys_to_remove` list.
+
+        Parameters:
+            mapping (MutableMapping[str, str]):
+                The mapping containing the data to validate.
+                This should be a dict of `/` separated paths, such as
+                "/ENTRY[entry1]/SAMPLE[sample1]/name".
+            keys_to_remove (List[str]):
+                List of keys that will be removed from the template. This is extended here
+                in the case of conflicts.
+
+        """
+        pattern = re.compile(r"(?P<concept_name>[^\[\]/]+)\[(?P<instance>[^\]]+)\]")
+
+        # Map from instance name to list of (concept_name, full_key) where it's used
+        instance_usage: Dict[str, List[Tuple[str, str]]] = defaultdict(list)
+
+        for key in mapping:
+            for match in pattern.finditer(key):
+                concept_name, instance_name = match.groups()
+                instance_usage[instance_name].append((concept_name, key))
+
+        for instance_name, entries in sorted(instance_usage.items()):
+            concept_names = {c for c, _ in entries}
+            if len(concept_names) > 1:
+                keys = sorted(k for _, k in entries)
+                collector.collect_and_log(
+                    instance_name,
+                    ValidationProblem.DifferentVariadicNodesWithTheSameName,
+                    entries,
+                )
+                for key in keys:
+                    collector.collect_and_log(
+                        key,
+                        ValidationProblem.KeyToBeRemoved,
+                        "key",
+                    )
+                keys_to_remove += keys
+
     def check_attributes_of_nonexisting_field(
         node: NexusNode,
     ):
@@ -1174,10 +1227,11 @@ def validate_dict_against(
         "choice": handle_choice,
     }
 
-    keys_to_remove = []
+    keys_to_remove: List[str] = []
 
     tree = generate_tree_from(appdef)
     collector.clear()
+    find_instance_name_conflicts(mapping, keys_to_remove)
     nested_keys = build_nested_dict_from(mapping)
     not_visited = list(mapping)
     keys = _follow_link(nested_keys, "")

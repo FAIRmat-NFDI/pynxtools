@@ -238,6 +238,43 @@ TEMPLATE["required"][
             alter_dict(
                 alter_dict(
                     alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/SAMPLE[some_name]/name",
+                                "A sample name",
+                            ),
+                            "/ENTRY[my_entry]/USER[some_name]/name",
+                            "A user name",
+                        ),
+                        "/ENTRY[my_entry]/MONITOR[some_name]/name",
+                        "A monitor name",
+                    ),
+                    "/ENTRY[my_entry]/MONITOR[another_name]/name",
+                    "Another monitor name",
+                ),
+                "/ENTRY[my_entry]/SAMPLE[another_name]/name",
+                "Another sample name",
+            ),
+            [
+                "Instance name 'another_name' used for multiple different concepts: MONITOR, SAMPLE. "
+                "The following keys are affected: /ENTRY[my_entry]/MONITOR[another_name]/name, "
+                "/ENTRY[my_entry]/SAMPLE[another_name]/name.",
+                "The key /ENTRY[my_entry]/MONITOR[another_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/SAMPLE[another_name]/name will not be written.",
+                "Instance name 'some_name' used for multiple different concepts: MONITOR, SAMPLE, USER. "
+                "The following keys are affected: /ENTRY[my_entry]/MONITOR[some_name]/name, "
+                "/ENTRY[my_entry]/SAMPLE[some_name]/name, /ENTRY[my_entry]/USER[some_name]/name.",
+                "The key /ENTRY[my_entry]/MONITOR[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/SAMPLE[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/USER[some_name]/name will not be written.",
+            ],
+            id="variadic-groups-of-the-same-name",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
                         remove_from_dict(
                             remove_from_dict(
                                 remove_from_dict(

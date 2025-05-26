@@ -46,6 +46,7 @@ logger = logging.getLogger("pynxtools")
 
 
 class ValidationProblem(Enum):
+    DifferentVariadicNodesWithTheSameName = auto()
     UnitWithoutDocumentation = auto()
     InvalidEnum = auto()
     OpenEnumWithNewItem = auto()
@@ -85,6 +86,13 @@ class Collector:
         if value is None:
             value = "<unknown>"
 
+        if log_type == ValidationProblem.DifferentVariadicNodesWithTheSameName:
+            value = cast(Any, value)
+            logger.error(
+                f"Instance name '{path}' used for multiple different concepts: "
+                f"{', '.join(sorted(set(c for c, _ in value)))}. "
+                f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
+            )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.info(
                 f"The unit, {path} = {value}, is being written but has no documentation."
