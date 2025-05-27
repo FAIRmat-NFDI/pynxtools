@@ -120,7 +120,7 @@ TEMPLATE["optional"][
 ] = 2
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = (
-    "nm"  # pylint: disable=E1126
+    "eV"  # pylint: disable=E1126
 )
 TEMPLATE["optional"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[float_value_no_attr]"
@@ -132,14 +132,14 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@unit
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "nm"  # pylint: disable=E1126
 
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
     [1, 2, 3],  # pylint: disable=E1126
     dtype=np.int8,
 )  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units"] = (
-    "kg"  # pylint: disable=E1126
+    "mm"  # pylint: disable=E1126
 )
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
@@ -166,7 +166,7 @@ TEMPLATE["required"][
 ] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
-    "eV"  # pylint: disable=E1126
+    "m"  # pylint: disable=E1126
 )
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = (
     np.array(
@@ -176,7 +176,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"]
 )  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value/@units"
-] = "kg"  # pylint: disable=E1126
+] = "cm"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
 )
@@ -1125,6 +1125,32 @@ TEMPLATE["required"][
                 "The value at /ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array should be one of the following: [[0, 1, 2], [2, 3, 4]]."
             ],
             id="wrong-value-array-in-attribute",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units",
+                "m",
+            ),
+            [
+                "The unit 'm' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units does not match with the unit category NX_ENERGY of 'float_value'."
+            ],
+            id="appdef-invalid-units",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/duration",
+                    2,
+                ),
+                "/ENTRY[my_entry]/duration/@units",
+                "kg",
+            ),
+            [
+                "The unit 'kg' at /ENTRY[my_entry]/duration/@units does not match with the unit category NX_TIME of 'duration'."
+            ],
+            id="baseclass-invalid-units",
         ),
         pytest.param(
             remove_from_dict(

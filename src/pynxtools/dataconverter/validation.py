@@ -27,6 +27,7 @@ from typing import Any, Literal, Optional, Union
 import h5py
 import lxml.etree as ET
 import numpy as np
+import pint
 
 from pynxtools.dataconverter.helpers import (
     Collector,
@@ -42,6 +43,7 @@ from pynxtools.dataconverter.nexus_tree import (
     generate_tree_from,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
+from pynxtools.units import NXUnitSet, ureg
 
 
 def validate_hdf_group_against(appdef: str, data: h5py.Group):
@@ -214,6 +216,24 @@ def best_namefit_of(
                     best_match = node
 
     return best_match
+
+
+def is_valid_unit_for_node(node: NexusNode, unit: str, unit_path: str) -> None:
+    """
+    Check if a given unit matches the unit category for a node.
+    """
+    # Need to use a list as `NXtransformation` is a special use case
+    node_unit_categories = (
+        ["NX_LENGTH", "NX_ANGLE", "NX_UNITLESS"]
+        if node.unit == "NX_TRANSFORMATION"
+        else [node.unit]
+    )
+
+    for node_unit_category in node_unit_categories:
+        if NXUnitSet.matches(node_unit_category, unit):
+            return
+
+    collector.collect_and_log(unit_path, ValidationProblem.InvalidUnit, node, unit)
 
 
 def validate_dict_against(
@@ -606,15 +626,19 @@ def validate_dict_against(
             _ = check_reserved_prefix(variant_path, mapping, "field")
 
             # Check unit category
-            if node.unit is not None:
-                remove_from_not_visited(f"{prev_path}/{variant}/@units")
+            if node.unit is not None and node.unit != "NX_UNITLESS":
+                unit_path = f"{variant_path}/@units"
+                remove_from_not_visited(unit_path)
                 if f"{variant}@units" not in keys:
                     collector.collect_and_log(
                         variant_path,
                         ValidationProblem.MissingUnit,
                         node.unit,
                     )
-                # TODO: Check unit with pint
+                    break
+
+                unit = keys[f"{variant}@units"]
+                is_valid_unit_for_node(node, unit, unit_path)
 
             field_attributes = get_field_attributes(variant, keys)
             field_attributes = _follow_link(field_attributes, variant_path)
@@ -1343,6 +1367,11 @@ def validate_dict_against(
                             ValidationProblem.UnitWithoutDocumentation,
                             mapping[not_visited_key],
                         )
+
+                if node.unit is not None and node.unit != "NX_UNITLESS":
+                    is_valid_unit_for_node(
+                        node, mapping[not_visited_key], not_visited_key
+                    )
 
             # parent key will be checked on its own if it exists, because it is in the list
             continue

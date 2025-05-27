@@ -47,6 +47,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
     is_name_type,
 )
+from pynxtools.units import NXUnitSet
 
 NexusType = Literal[
     "NX_BINARY",
@@ -65,41 +66,7 @@ NexusType = Literal[
     "NX_UINT",
 ]
 
-NexusUnitCategory = Literal[
-    "NX_ANGLE",
-    "NX_ANY",
-    "NX_AREA",
-    "NX_CHARGE",
-    "NX_COUNT",
-    "NX_CROSS_SECTION",
-    "NX_CURRENT",
-    "NX_DIMENSIONLESS",
-    "NX_EMITTANCE",
-    "NX_ENERGY",
-    "NX_FLUX",
-    "NX_FREQUENCY",
-    "NX_LENGTH",
-    "NX_MASS",
-    "NX_MASS_DENSITY",
-    "NX_MOLECULAR_WEIGHT",
-    "NX_PERIOD",
-    "NX_PER_AREA",
-    "NX_PER_LENGTH",
-    "NX_POWER",
-    "NX_PRESSURE",
-    "NX_PULSES",
-    "NX_SCATTERING_LENGTH_DENSITY",
-    "NX_SOLID_ANGLE",
-    "NX_TEMPERATURE",
-    "NX_TIME",
-    "NX_TIME_OF_FLIGHT",
-    "NX_TRANSFORMATION",
-    "NX_UNITLESS",
-    "NX_VOLTAGE",
-    "NX_VOLUME",
-    "NX_WAVELENGTH",
-    "NX_WAVENUMBER",
-]
+NexusUnitCategory = Literal[tuple(NXUnitSet.mapping.keys())]
 
 # This is the NeXus namespace for finding tags.
 # It's updated from the nxdl file when `generate_tree_from` is called.
