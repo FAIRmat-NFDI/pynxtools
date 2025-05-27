@@ -145,7 +145,11 @@ class AnchoredReference(EntityReference):
             )
             with archive.m_context.raw_file(f_name, "w") as f_obj:
                 json.dump(entity.m_to_dict(with_meta=True), f_obj)
-            archive.m_context.process_updated_raw_file(f_name)
+            try:
+                archive.m_context.process_updated_raw_file(f_name)
+            except AssertionError:
+                # This avoids errors when multiple entries in the same file have the same ID.
+                pass
 
         def get_entry_reference(archive, f_name):
             """Returns a reference to data from entry."""
