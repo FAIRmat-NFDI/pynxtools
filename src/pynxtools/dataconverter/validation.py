@@ -891,6 +891,9 @@ def validate_dict_against(
 
         for key in mapping:
             matches = list(pattern.finditer(key))
+            if not matches:
+                # The keys contains no concepts with variable name, no need to further check
+                continue
             for match in matches:
                 concept_name = match.group("concept_name")
                 instance_name = match.group("instance")
