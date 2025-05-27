@@ -27,7 +27,6 @@ from typing import Any, Literal, Optional, Union
 import h5py
 import lxml.etree as ET
 import numpy as np
-import pint
 
 from pynxtools.dataconverter.helpers import (
     Collector,
