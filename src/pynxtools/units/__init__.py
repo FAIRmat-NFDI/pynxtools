@@ -109,21 +109,33 @@ class NXUnitSet:
         return cls._dimensionalities[token]
 
     @classmethod
-    def matches(cls, expected_token: str, actual_unit: str) -> bool:
-        """Check whether the actual unit matches the expected NX token by comparing dimensionalities."""
-        if expected_token in ["NX_ANY", "NX_UNITLESS"]:
+    def matches(cls, unit_category: str, unit: str) -> bool:
+        """Check whether the actual unit matches the expected unit_categorys by comparing dimensionalities."""
+
+        def is_valid_unit(unit):
+            """Check if unit is generally valid."""
+            if not unit:
+                return False
+            try:
+                ureg(unit)
+                return True
+            except (UndefinedUnitError, DefinitionSyntaxError):
+                return False
+
+        if unit_category in ("NX_ANY"):
+            return is_valid_unit(unit)
+
+        expected_dim = cls.get_dimensionality(unit_category)
+        if expected_dim is None and not unit:
             return True
 
-        expected_dim = cls.get_dimensionality(expected_token)
-        if expected_dim is None:
-            return True
-
-        if expected_dim is "dimensionless" and actual_unit:
+        if expected_dim == "dimensionless" and unit:
             return False
 
-        try:
-            actual_dim = (1 * ureg(actual_unit)).dimensionality
-        except (UndefinedUnitError, DefinitionSyntaxError):
+        # At this point, we expect a valid unit.
+        if not is_valid_unit(unit):
             return False
+
+        actual_dim = (1 * ureg(unit)).dimensionality
 
         return actual_dim == expected_dim
