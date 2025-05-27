@@ -258,7 +258,7 @@ TEMPLATE["required"][
                     "Another sample name",
                 ),
                 "/ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name",
-                "Another c name within an instrument.",
+                "Another aperture name within an instrument.",
             ),
             [
                 "Instance name 'another_name' used for multiple different concepts: APERTURE, SAMPLE. "

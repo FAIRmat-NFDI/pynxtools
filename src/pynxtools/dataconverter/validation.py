@@ -891,7 +891,7 @@ def validate_dict_against(
 
         for key in mapping:
             matches = list(pattern.finditer(key))
-            for i, match in enumerate(matches):
+            for match in matches:
                 concept_name = match.group("concept_name")
                 instance_name = match.group("instance")
 
