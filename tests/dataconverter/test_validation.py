@@ -238,6 +238,59 @@ TEMPLATE["required"][
             alter_dict(
                 alter_dict(
                     alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    alter_dict(
+                                        alter_dict(
+                                            TEMPLATE,
+                                            "/ENTRY[my_entry]/SAMPLE[some_name]/name",
+                                            "A sample name",
+                                        ),
+                                        "/ENTRY[my_entry]/USER[some_name]/name",
+                                        "A user name",
+                                    ),
+                                    "/ENTRY[my_entry]/MONITOR[some_name]/name",
+                                    "An monitor name",
+                                ),
+                                "/ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name",
+                                "An aperture within an instrument",
+                            ),
+                            "/ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name",
+                            "A detector within an instrument",
+                        ),
+                        "/ENTRY[my_entry]/INSTRUMENT[instrument]/SOURCE[my_source]/APERTURE[another_name]/name",
+                        "An aperture within a source inside an instrument",
+                    ),
+                    "/ENTRY[my_entry]/USER[a_third_name]/name",
+                    "A tird user name",
+                ),
+                "/ENTRY[my_entry]/USERS[a_third_name]/name",
+                "An invalid group of the same name",
+            ),
+            [
+                "Instance name 'a_third_name' used for multiple different concepts: USER, USERS. "
+                "The following keys are affected: /ENTRY[my_entry]/USERS[a_third_name]/name, "
+                "/ENTRY[my_entry]/USER[a_third_name]/name.",
+                "The key /ENTRY[my_entry]/USERS[a_third_name]/name will not be written.",
+                "Instance name 'another_name' used for multiple different concepts: APERTURE, DETECTOR. "
+                "The following keys are affected: /ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name, "
+                "/ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name.",
+                "The key /ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name will not be written.",
+                "Instance name 'some_name' used for multiple different concepts: MONITOR, SAMPLE, USER. "
+                "The following keys are affected: /ENTRY[my_entry]/MONITOR[some_name]/name, "
+                "/ENTRY[my_entry]/SAMPLE[some_name]/name, /ENTRY[my_entry]/USER[some_name]/name.",
+                "The key /ENTRY[my_entry]/MONITOR[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/SAMPLE[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/USER[some_name]/name will not be written.",
+            ],
+            id="variadic-groups-of-the-same-name",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
                         remove_from_dict(
                             remove_from_dict(
                                 remove_from_dict(
@@ -1079,11 +1132,11 @@ TEMPLATE["required"][
         pytest.param(
             alter_dict(
                 TEMPLATE,
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type",
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type",
                 1,
             ),
             [
-                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source]/type written without documentation."
+                "Field /ENTRY[my_entry]/INSTRUMENT[my_instrument]/ILLEGAL[my_source2]/type written without documentation."
             ],
             id="bad-namefitting",
         ),
