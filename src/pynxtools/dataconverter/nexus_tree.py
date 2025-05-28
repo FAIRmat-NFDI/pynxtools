@@ -34,7 +34,7 @@ from typing import Any, List, Dict, Literal, Optional, Set, Tuple, Union
 import lxml.etree as ET
 from anytree.node.nodemixin import NodeMixin
 
-from pynxtools import get_definitions_url
+from pynxtools import get_definitions_url, NX_DOC_BASES
 from pynxtools.dataconverter.helpers import (
     get_all_parents_for,
     get_nxdl_root_and_path,
@@ -47,7 +47,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_nx_namefit,
     is_name_type,
 )
-from pynxtools import NX_DOC_BASES
+from pynxtools.units import NXUnitSet
 
 NexusType = Literal[
     "NX_BINARY",
