@@ -30,7 +30,7 @@ except ImportError as exc:
 
 class NXUnitSet:
     """
-    Maps from `NX_` tokens to dimensionality.
+    Maps from `NX_` unit_categories (or unit examples) to dimensionality.
 
     - None  -> disables dimensionality check
     - '1'   -> dimensionless quantities
@@ -75,42 +75,39 @@ class NXUnitSet:
 
     _dimensionalities: Dict[str, Optional[Any]] = {}
 
-    @staticmethod
-    def normalize(value: str) -> str:
-        """Normalize the given token to 'NX_' prefix form."""
-        value = value.upper()
-        if not value.startswith("NX_"):
-            value = "NX_" + value
-        return value
-
     @classmethod
-    def is_nx_token(cls, value: str) -> bool:
-        """Check if a given token is one of the known NX tokens."""
-        return cls.normalize(value) in cls.mapping
+    def get_dimensionality(cls, nx_unit: str) -> Optional[Any]:
+        """Get the dimensionality object for a given NeXus unit category or example."""
+        if nx_unit in cls._dimensionalities:
+            return cls._dimensionalities[nx_unit]
 
-    @classmethod
-    def get_dimensionality(cls, token: str) -> Optional[Any]:
-        """Get the dimensionality object for a given NX token."""
-        token = cls.normalize(token)
-        if token in cls._dimensionalities:
-            return cls._dimensionalities[token]
-
-        definition = cls.mapping.get(token)
+        definition = cls.mapping.get(nx_unit)
         if definition is None or definition == "transformation":
-            cls._dimensionalities[token] = None
+            if definition is None:
+                try:
+                    quantity = 1 * ureg(nx_unit)
+                    if quantity.dimensionality == "dimensionless":
+                        cls._dimensionalities[nx_unit] = "1"
+                    else:
+                        cls._dimensionalities[nx_unit] = str(quantity.dimensionality)
+                except (UndefinedUnitError, DefinitionSyntaxError):
+                    cls._dimensionalities[nx_unit] = None
         elif definition == "1":
-            cls._dimensionalities[token] = ureg("").dimensionality
+            cls._dimensionalities[nx_unit] = ureg("").dimensionality
         else:
             try:
-                cls._dimensionalities[token] = ureg.get_dimensionality(definition)
+                cls._dimensionalities[nx_unit] = ureg.get_dimensionality(definition)
             except (UndefinedUnitError, DefinitionSyntaxError) as e:
-                cls._dimensionalities[token] = None
+                cls._dimensionalities[nx_unit] = None
 
-        return cls._dimensionalities[token]
+        return cls._dimensionalities[nx_unit]
 
     @classmethod
     def matches(cls, unit_category: str, unit: str) -> bool:
-        """Check whether the actual unit matches the expected unit_categorys by comparing dimensionalities."""
+        """
+        Check whether the actual unit matches the expected unit category (or example)
+        by comparing dimensionalities.
+        """
 
         def is_valid_unit(unit):
             """Check if unit is generally valid."""
