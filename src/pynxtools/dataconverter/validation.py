@@ -874,7 +874,7 @@ def validate_dict_against(
         and the conflicting concept names. Additionally, all keys involved in the conflict
         are logged and added to the `keys_to_remove` list.
 
-        Parameters:
+        Args:
             mapping (MutableMapping[str, str]):
                 The mapping containing the data to validate.
                 This should be a dict of `/` separated paths, such as
