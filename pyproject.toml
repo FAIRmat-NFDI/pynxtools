@@ -28,7 +28,7 @@ dependencies = [
     "h5py>=3.6.0",
     "xarray>=0.20.2",
     "PyYAML>=6.0",
-    'numpy>=1.22.4,<2.0.0',
+    'numpy>=1.22.4',
     "pandas>=1.3.2",
     "ase>=3.19.0",
     "mergedeep",
@@ -76,7 +76,7 @@ ellips = [
     "pynxtools-ellips>=0.0.9",
 ]
 em = [
-    "pynxtools-em>=0.3.2",
+    "pynxtools-em@git+https://github.com/FAIRmat-NFDI/pynxtools-em#egg=npyv2",
 ]
 igor = [
     "pynxtools-igor>=0.1.1",
