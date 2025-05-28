@@ -98,9 +98,9 @@ class Collector:
                 f"The value at {path} does not match with the enumerated items from the open enumeration: {value}."
             )
         elif log_type == ValidationProblem.MissingRequiredGroup:
-            logger.error(f"The required group, {path}, hasn't been supplied.")
+            logger.warning(f"The required group, {path}, hasn't been supplied.")
         elif log_type == ValidationProblem.MissingRequiredField:
-            logger.error(
+            logger.warning(
                 f"The data entry corresponding to {path} is required "
                 "and hasn't been supplied by the reader.",
             )
