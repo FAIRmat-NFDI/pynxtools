@@ -241,35 +241,47 @@ TEMPLATE["required"][
                         alter_dict(
                             alter_dict(
                                 alter_dict(
-                                    TEMPLATE,
-                                    "/ENTRY[my_entry]/SAMPLE[some_name]/name",
-                                    "A sample name",
+                                    alter_dict(
+                                        alter_dict(
+                                            TEMPLATE,
+                                            "/ENTRY[my_entry]/SAMPLE[some_name]/name",
+                                            "A sample name",
+                                        ),
+                                        "/ENTRY[my_entry]/USER[some_name]/name",
+                                        "A user name",
+                                    ),
+                                    "/ENTRY[my_entry]/MONITOR[some_name]/name",
+                                    "An monitor name",
                                 ),
-                                "/ENTRY[my_entry]/USER[some_name]/name",
-                                "A user name",
+                                "/ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name",
+                                "An aperture within an instrument",
                             ),
-                            "/ENTRY[my_entry]/APERTURE[some_name]/name",
-                            "An monitor name",
+                            "/ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name",
+                            "A detector within an instrument",
                         ),
-                        "/ENTRY[my_entry]/APERTURE[another_name]/name",
-                        "Another monitor name",
+                        "/ENTRY[my_entry]/INSTRUMENT[instrument]/SOURCE[my_source]/APERTURE[another_name]/name",
+                        "An aperture within a source inside an instrument",
                     ),
-                    "/ENTRY[my_entry]/SAMPLE[another_name]/name",
-                    "Another sample name",
+                    "/ENTRY[my_entry]/USER[a_third_name]/name",
+                    "A tird user name",
                 ),
-                "/ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name",
-                "Another aperture name within an instrument.",
+                "/ENTRY[my_entry]/USERS[a_third_name]/name",
+                "An invalid group of the same name",
             ),
             [
-                "Instance name 'another_name' used for multiple different concepts: APERTURE, SAMPLE. "
-                "The following keys are affected: /ENTRY[my_entry]/APERTURE[another_name]/name, "
-                "/ENTRY[my_entry]/SAMPLE[another_name]/name.",
-                "The key /ENTRY[my_entry]/APERTURE[another_name]/name will not be written.",
-                "The key /ENTRY[my_entry]/SAMPLE[another_name]/name will not be written.",
-                "Instance name 'some_name' used for multiple different concepts: APERTURE, SAMPLE, USER. "
-                "The following keys are affected: /ENTRY[my_entry]/APERTURE[some_name]/name, "
+                "Instance name 'a_third_name' used for multiple different concepts: USER, USERS. "
+                "The following keys are affected: /ENTRY[my_entry]/USERS[a_third_name]/name, "
+                "/ENTRY[my_entry]/USER[a_third_name]/name.",
+                "The key /ENTRY[my_entry]/USERS[a_third_name]/name will not be written.",
+                "Instance name 'another_name' used for multiple different concepts: APERTURE, DETECTOR. "
+                "The following keys are affected: /ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name, "
+                "/ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name.",
+                "The key /ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name will not be written.",
+                "Instance name 'some_name' used for multiple different concepts: MONITOR, SAMPLE, USER. "
+                "The following keys are affected: /ENTRY[my_entry]/MONITOR[some_name]/name, "
                 "/ENTRY[my_entry]/SAMPLE[some_name]/name, /ENTRY[my_entry]/USER[some_name]/name.",
-                "The key /ENTRY[my_entry]/APERTURE[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/MONITOR[some_name]/name will not be written.",
                 "The key /ENTRY[my_entry]/SAMPLE[some_name]/name will not be written.",
                 "The key /ENTRY[my_entry]/USER[some_name]/name will not be written.",
             ],

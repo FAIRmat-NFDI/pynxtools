@@ -911,13 +911,32 @@ def validate_dict_against(
                     ValidationProblem.DifferentVariadicNodesWithTheSameName,
                     entries,
                 )
+                # Now that we have name conflicts, we still need to check that there are
+                # at least two valid keys in that conclit. Only then we remove these.
+                # This takes care of the example with keys like
+                # /ENTRY[my_entry]/USER[some_name]/name and /ENTRY[my_entry]/USERS[some_name]/name,
+                #  where we only want to keep the first one.
+                valid_keys_with_name_conflicts = []
+
                 for key in keys:
+                    try:
+                        node = add_best_matches_for(key, tree)
+                        if node is not None:
+                            valid_keys_with_name_conflicts.append(key)
+                            continue
+                    except TypeError:
+                        pass
                     collector.collect_and_log(
-                        key,
-                        ValidationProblem.KeyToBeRemoved,
-                        "key",
+                        key, ValidationProblem.KeyToBeRemoved, "key"
                     )
-                keys_to_remove += keys
+                    keys_to_remove.append(key)
+
+                if len(valid_keys_with_name_conflicts) > 1:
+                    for valid_key in valid_keys_with_name_conflicts:
+                        collector.collect_and_log(
+                            valid_key, ValidationProblem.KeyToBeRemoved, "key"
+                        )
+                        keys_to_remove.append(valid_key)
 
     def check_attributes_of_nonexisting_field(
         node: NexusNode,

@@ -88,7 +88,7 @@ class Collector:
 
         if log_type == ValidationProblem.DifferentVariadicNodesWithTheSameName:
             value = cast(Any, value)
-            logger.error(
+            logger.warning(
                 f"Instance name '{path}' used for multiple different concepts: "
                 f"{', '.join(sorted(set(c for c, _ in value)))}. "
                 f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
