@@ -1458,7 +1458,6 @@ TEMPLATE["required"][
             ],
             id="group-with-correct-concept-and-non-concept-sibling",
         ),
-        # This can be re-used later when we have proper unit checking
         pytest.param(
             alter_dict(
                 alter_dict(

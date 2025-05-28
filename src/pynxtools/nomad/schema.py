@@ -690,19 +690,9 @@ def _create_field(xml_node: ET.Element, container: Section) -> Quantity:
             nx_dimensionality = "NX_ANY"
         dimensionality = NXUnitSet.get_dimensionality(nx_dimensionality)
         if dimensionality is None and nx_dimensionality != "NX_ANY":
-            try:
-                quantity = 1 * ureg(nx_dimensionality)
-                if quantity.dimensionality == "dimensionless":
-                    dimensionality = "1"
-                else:
-                    dimensionality = str(quantity.dimensionality)
-            except (
-                pint.errors.UndefinedUnitError,
-                pint.errors.DefinitionSyntaxError,
-            ) as err:
-                raise NotImplementedError(
-                    f"Unit {nx_dimensionality} is not supported for {name}."
-                ) from err
+            raise NotImplementedError(
+                f"Unit {nx_dimensionality} is not supported for {name}."
+            )
     else:
         dimensionality = None
 
