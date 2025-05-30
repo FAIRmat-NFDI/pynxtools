@@ -73,28 +73,28 @@ apm = [
     "pynxtools-apm>=0.2.3",
 ]
 ellips = [
-    "pynxtools-ellips>=0.0.9",
+    "pynxtools-ellips>=0.0.10",
 ]
 em = [
     "pynxtools-em>=0.3.2",
 ]
 igor = [
-    "pynxtools-igor>=0.1.1",
+    "pynxtools-igor>=0.1.2",
 ]
 mpes = [
     "pynxtools-mpes>=0.2.3",
 ]
 raman = [
-    "pynxtools-raman>=0.0.10",
+    "pynxtools-raman>=0.0.11",
 ]
 spm = [
-    "pynxtools-spm>=0.1.1",
+    "pynxtools-spm>=0.1.2",
 ]
 xps = [
-    "pynxtools-xps>=0.5.1",
+    "pynxtools-xps>=0.5.2",
 ]
 xrd = [
-    "pynxtools-xrd>=0.0.3",
+    "pynxtools-xrd>=0.0.5",
 ]
 
 [project.entry-points.'nomad.plugin']
