@@ -1153,6 +1153,44 @@ TEMPLATE["required"][
             id="baseclass-invalid-units",
         ),
         pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion/@units",
+                "J/mm",
+            ),
+            [],
+            id="baseclass-valid-units-xample",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]",
+                                1.0,
+                            ),
+                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@units",
+                            "m",
+                        ),
+                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]",
+                        1.0,
+                    ),
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@units",
+                    "degree",
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[direction]",
+                1.0,
+            ),
+            [],
+            id="nxtransformations-unit",
+        ),
+        pytest.param(
             remove_from_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units",
@@ -1454,19 +1492,6 @@ TEMPLATE["required"][
                 "and hasn't been supplied by the reader."
             ],
             id="group-with-correct-concept-and-non-concept-sibling",
-        ),
-        pytest.param(
-            alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion",
-                    0.5,
-                ),
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion/@units",
-                "J/mm",
-            ),
-            [],
-            id="baseclass-unit-example",
         ),
         pytest.param(
             alter_dict(

@@ -20,7 +20,7 @@
 import os
 from typing import Optional, Dict, Any
 from pint import UnitRegistry
-from pint.errors import UndefinedUnitError, DefinitionSyntaxError
+from pint.errors import UndefinedUnitError, DefinitionSyntaxError, DimensionalityError
 
 try:
     from nomad.units import ureg
@@ -109,14 +109,19 @@ class NXUnitSet:
         by comparing dimensionalities.
         """
 
-        def is_valid_unit(unit):
+        def is_valid_unit(unit: str):
             """Check if unit is generally valid."""
             if not unit:
                 return False
             try:
                 ureg(unit)
                 return True
-            except (UndefinedUnitError, DefinitionSyntaxError):
+            except (
+                UndefinedUnitError,
+                DefinitionSyntaxError,
+                AttributeError,
+                DimensionalityError,
+            ):
                 return False
 
         if unit_category in ("NX_ANY"):
@@ -126,8 +131,8 @@ class NXUnitSet:
         if expected_dim is None and not unit:
             return True
 
-        if expected_dim == "dimensionless" and unit:
-            return False
+        if str(expected_dim) == "dimensionless":
+            return True if unit is None else False
 
         # At this point, we expect a valid unit.
         if not is_valid_unit(unit):

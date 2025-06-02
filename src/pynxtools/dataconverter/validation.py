@@ -632,7 +632,7 @@ def validate_dict_against(
             if node.unit is not None and node.unit != "NX_UNITLESS":
                 unit_path = f"{variant_path}/@units"
                 remove_from_not_visited(unit_path)
-                if f"{variant}@units" not in keys:
+                if f"{variant}@units" not in keys and node.unit != "NX_TRANSFORMATION":
                     collector.collect_and_log(
                         variant_path,
                         ValidationProblem.MissingUnit,
@@ -640,7 +640,7 @@ def validate_dict_against(
                     )
                     break
 
-                unit = keys[f"{variant}@units"]
+                unit = keys.get(f"{variant}@units")
                 is_valid_unit_for_node(node, unit, unit_path)
 
             field_attributes = get_field_attributes(variant, keys)
@@ -847,9 +847,11 @@ def validate_dict_against(
             and node.unit is not None
             and f"{key}/@units" not in mapping
         ):
-            collector.collect_and_log(
-                f"{key}", ValidationProblem.MissingUnit, node.unit
-            )
+            # Workaround for NX_UNITLESS of NX_TRANSFORMATION unit category
+            if node.unit != "NX_TRANSFORMATION":
+                collector.collect_and_log(
+                    f"{key}", ValidationProblem.MissingUnit, node.unit
+                )
 
         return True
 
