@@ -850,9 +850,7 @@ def validate_dict_against(
 
             handling_map.get(child.type, handle_unknown_type)(child, keys, prev_path)
 
-    def find_instance_name_conflicts(
-        mapping: MutableMapping[str, str], keys_to_remove: List[str]
-    ) -> None:
+    def find_instance_name_conflicts(mapping: MutableMapping[str, str]) -> None:
         """
         Detect and log conflicts where the same variadic instance name is reused across
         different concept names.
@@ -1266,7 +1264,7 @@ def validate_dict_against(
 
     tree = generate_tree_from(appdef)
     collector.clear()
-    find_instance_name_conflicts(mapping, keys_to_remove)
+    find_instance_name_conflicts(mapping)
     nested_keys = build_nested_dict_from(mapping)
     not_visited = list(mapping)
     keys = _follow_link(nested_keys, "")
