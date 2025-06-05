@@ -236,6 +236,20 @@ TEMPLATE["required"][
     [
         pytest.param(
             alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NOTE[required_group2]/description",
+                "an additional description",
+            ),
+            [
+                "The key '/ENTRY[my_entry]/NOTE[required_group2]/description' uses the valid concept name 'NOTE', "
+                "but there is another valid key /ENTRY[my_entry]/required_group2/description that uses the non-variadic "
+                "name of the node.'",
+                "The key /ENTRY[my_entry]/NOTE[required_group2]/description will not be written.",
+            ],
+            id="same-concept-with-and-without-concept-name",
+        ),
+        pytest.param(
+            alter_dict(
                 alter_dict(
                     alter_dict(
                         alter_dict(

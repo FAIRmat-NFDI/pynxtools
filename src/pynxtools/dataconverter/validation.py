@@ -898,6 +898,30 @@ def validate_dict_against(
 
                 # Determine the parent path up to just before this match
                 parent_path = key[: match.start()]
+                child_path = key[match.start() :].split("/", 1)[-1]
+
+                # Here we check if for this key with a concept name, another valid key
+                # with a non-concept name exists.
+                non_concept_key = f"{parent_path}{instance_name}/{child_path}"
+
+                if non_concept_key in mapping:
+                    try:
+                        node = add_best_matches_for(non_concept_key, tree)
+                        if node is not None:
+                            collector.collect_and_log(
+                                key,
+                                ValidationProblem.KeysWithAndWithoutConcept,
+                                non_concept_key,
+                                concept_name,
+                            )
+                            collector.collect_and_log(
+                                key, ValidationProblem.KeyToBeRemoved, "key"
+                            )
+                            keys_to_remove.append(key)
+                            continue
+                    except TypeError:
+                        pass
+
                 instance_usage[(instance_name, parent_path)].append((concept_name, key))
 
         for (instance_name, parent_path), entries in sorted(instance_usage.items()):
