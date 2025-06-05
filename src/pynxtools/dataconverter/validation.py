@@ -912,7 +912,7 @@ def validate_dict_against(
                     entries,
                 )
                 # Now that we have name conflicts, we still need to check that there are
-                # at least two valid keys in that conclit. Only then we remove these.
+                # at least two valid keys in that conflict. Only then we remove these.
                 # This takes care of the example with keys like
                 # /ENTRY[my_entry]/USER[some_name]/name and /ENTRY[my_entry]/USERS[some_name]/name,
                 #  where we only want to keep the first one.
