@@ -46,6 +46,7 @@ logger = logging.getLogger("pynxtools")
 
 
 class ValidationProblem(Enum):
+    DifferentVariadicNodesWithTheSameName = auto()
     UnitWithoutDocumentation = auto()
     InvalidEnum = auto()
     OpenEnumWithNewItem = auto()
@@ -72,6 +73,7 @@ class ValidationProblem(Enum):
     ReservedSuffixWithoutField = auto()
     ReservedPrefixInWrongContext = auto()
     InvalidNexusTypeForNamedConcept = auto()
+    KeysWithAndWithoutConcept = auto()
 
 
 class Collector:
@@ -85,6 +87,13 @@ class Collector:
         if value is None:
             value = "<unknown>"
 
+        if log_type == ValidationProblem.DifferentVariadicNodesWithTheSameName:
+            value = cast(Any, value)
+            logger.warning(
+                f"Instance name '{path}' used for multiple different concepts: "
+                f"{', '.join(sorted(set(c for c, _ in value)))}. "
+                f"The following keys are affected: {', '.join(sorted(set(k for _, k in value)))}."
+            )
         if log_type == ValidationProblem.UnitWithoutDocumentation:
             logger.info(
                 f"The unit, {path} = {value}, is being written but has no documentation."
@@ -176,6 +185,11 @@ class Collector:
             logger.error(
                 f"The type ('{args[0] if args else '<unknown>'}') of the given concept '{path}' "
                 f"conflicts with another existing concept of the same name, which is of type '{value.type}'."
+            )
+        elif log_type == ValidationProblem.KeysWithAndWithoutConcept:
+            value = cast(Any, value)
+            logger.warning(
+                f"The key '{path}' uses the valid concept name '{args[0]}', but there is another valid key {value} that uses the non-variadic name of the node.'"
             )
 
     def collect_and_log(
