@@ -240,52 +240,118 @@ TEMPLATE["required"][
                     alter_dict(
                         alter_dict(
                             alter_dict(
-                                alter_dict(
-                                    alter_dict(
-                                        alter_dict(
-                                            TEMPLATE,
-                                            "/ENTRY[my_entry]/SAMPLE[some_name]/name",
-                                            "A sample name",
-                                        ),
-                                        "/ENTRY[my_entry]/USER[some_name]/name",
-                                        "A user name",
-                                    ),
-                                    "/ENTRY[my_entry]/MONITOR[some_name]/name",
-                                    "An monitor name",
-                                ),
-                                "/ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name",
-                                "An aperture within an instrument",
+                                TEMPLATE,
+                                "/ENTRY[my_entry]/SAMPLE[some_name]/name",
+                                "A sample name",
                             ),
-                            "/ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name",
-                            "A detector within an instrument",
+                            "/ENTRY[my_entry]/SAMPLE[some_name]/description",
+                            "A sample description",
                         ),
-                        "/ENTRY[my_entry]/INSTRUMENT[instrument]/SOURCE[my_source]/APERTURE[another_name]/name",
-                        "An aperture within a source inside an instrument",
+                        "/ENTRY[my_entry]/USER[some_name]/name",
+                        "A user name",
                     ),
-                    "/ENTRY[my_entry]/USER[a_third_name]/name",
-                    "A tird user name",
+                    "/ENTRY[my_entry]/MONITOR[some_name]/name",
+                    "A monitor name",
                 ),
-                "/ENTRY[my_entry]/USERS[a_third_name]/name",
-                "An invalid group of the same name",
+                "/ENTRY[my_entry]/MONITOR[some_name]/description",
+                "A monitor description",
             ),
             [
-                "Instance name 'a_third_name' used for multiple different concepts: USER, USERS. "
-                "The following keys are affected: /ENTRY[my_entry]/USERS[a_third_name]/name, "
-                "/ENTRY[my_entry]/USER[a_third_name]/name.",
-                "The key /ENTRY[my_entry]/USERS[a_third_name]/name will not be written.",
+                "Instance name 'some_name' used for multiple different concepts: MONITOR, SAMPLE, USER. "
+                "The following keys are affected: /ENTRY[my_entry]/MONITOR[some_name]/description, "
+                "/ENTRY[my_entry]/MONITOR[some_name]/name, /ENTRY[my_entry]/SAMPLE[some_name]/description, "
+                "/ENTRY[my_entry]/SAMPLE[some_name]/name, /ENTRY[my_entry]/USER[some_name]/name.",
+                "The key /ENTRY[my_entry]/MONITOR[some_name]/description will not be written.",
+                "The key /ENTRY[my_entry]/MONITOR[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/SAMPLE[some_name]/description will not be written.",
+                "The key /ENTRY[my_entry]/SAMPLE[some_name]/name will not be written.",
+                "The key /ENTRY[my_entry]/USER[some_name]/name will not be written.",
+            ],
+            id="variadic-groups-of-the-same-name",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name",
+                        "An aperture within an instrument",
+                    ),
+                    "/ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name",
+                    "A detector within an instrument",
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[instrument]/SOURCE[my_source]/APERTURE[another_name]/name",
+                "An aperture within a source inside an instrument",
+            ),
+            [
                 "Instance name 'another_name' used for multiple different concepts: APERTURE, DETECTOR. "
                 "The following keys are affected: /ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name, "
                 "/ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name.",
                 "The key /ENTRY[my_entry]/INSTRUMENT[instrument]/APERTURE[another_name]/name will not be written.",
                 "The key /ENTRY[my_entry]/INSTRUMENT[instrument]/DETECTOR[another_name]/name will not be written.",
-                "Instance name 'some_name' used for multiple different concepts: MONITOR, SAMPLE, USER. "
-                "The following keys are affected: /ENTRY[my_entry]/MONITOR[some_name]/name, "
-                "/ENTRY[my_entry]/SAMPLE[some_name]/name, /ENTRY[my_entry]/USER[some_name]/name.",
-                "The key /ENTRY[my_entry]/MONITOR[some_name]/name will not be written.",
-                "The key /ENTRY[my_entry]/SAMPLE[some_name]/name will not be written.",
-                "The key /ENTRY[my_entry]/USER[some_name]/name will not be written.",
             ],
-            id="variadic-groups-of-the-same-name",
+            id="variadic-groups-of-the-same-name-but-at-different-levels",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    TEMPLATE,
+                                    "/ENTRY[my_entry]/USER[user]/name",
+                                    "A user name",
+                                ),
+                                "/ENTRY[my_entry]/USER[user]/role",
+                                "A user role",
+                            ),
+                            "/ENTRY[my_entry]/USER[user]/affiliation",
+                            "A user affiliation",
+                        ),
+                        "/ENTRY[my_entry]/ILLEGAL[user]/name",
+                        "An illegal user name",
+                    ),
+                    "/ENTRY[my_entry]/ILLEGAL[user]/role",
+                    "An illegal user role",
+                ),
+                "/ENTRY[my_entry]/ILLEGAL[user]/affiliation",
+                "An illegal user affiliation",
+            ),
+            [
+                "Instance name 'user' used for multiple different concepts: ILLEGAL, USER. "
+                "The following keys are affected: /ENTRY[my_entry]/ILLEGAL[user]/affiliation, /ENTRY[my_entry]/ILLEGAL[user]/name, "
+                "/ENTRY[my_entry]/ILLEGAL[user]/role, /ENTRY[my_entry]/USER[user]/affiliation, /ENTRY[my_entry]/USER[user]/name, "
+                "/ENTRY[my_entry]/USER[user]/role.",
+                "The key /ENTRY[my_entry]/ILLEGAL[user]/affiliation will not be written.",
+                "The key /ENTRY[my_entry]/ILLEGAL[user]/name will not be written.",
+                "The key /ENTRY[my_entry]/ILLEGAL[user]/role will not be written.",
+            ],
+            id="variadic-groups-of-the-same-name-illegal-concept-multiple-fields",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        TEMPLATE,
+                        "/ENTRY[my_entry]/USER[user]/name",
+                        "A user name",
+                    ),
+                    "/ENTRY[my_entry]/USERS[user]/name",
+                    "An invalid group of the same name",
+                ),
+                "/ENTRY[my_entry]/SAMPLE[user]/name",
+                "A sample group called user with a name",
+            ),
+            [
+                "Instance name 'user' used for multiple different concepts: SAMPLE, USER, USERS. "
+                "The following keys are affected: /ENTRY[my_entry]/SAMPLE[user]/name, "
+                "/ENTRY[my_entry]/USERS[user]/name, /ENTRY[my_entry]/USER[user]/name.",
+                "The key /ENTRY[my_entry]/USERS[user]/name will not be written.",
+                "The key /ENTRY[my_entry]/SAMPLE[user]/name will not be written.",
+                "The key /ENTRY[my_entry]/USER[user]/name will not be written.",
+            ],
+            id="variadic-groups-of-the-same-name-mix-of-valid-and-illegal-concepts",
         ),
         pytest.param(
             alter_dict(

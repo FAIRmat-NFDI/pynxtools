@@ -929,12 +929,23 @@ def validate_dict_against(
                     )
                     keys_to_remove.append(key)
 
-                if len(valid_keys_with_name_conflicts) > 1:
-                    for valid_key in valid_keys_with_name_conflicts:
-                        collector.collect_and_log(
-                            valid_key, ValidationProblem.KeyToBeRemoved, "key"
-                        )
-                        keys_to_remove.append(valid_key)
+                if len(valid_keys_with_name_conflicts) >= 1:
+                    # At this point, all invalid keys have been removed.
+                    # If more than one valid concept still uses the same instance name under the same parent path,
+                    # this indicates a semantic ambiguity (e.g., USER[alex] and SAMPLE[alex]).
+                    # We remove these keys as well to avoid conflicts in the writer.
+                    remaining_concepts = {
+                        pattern.findall(k)[-1][0]
+                        for k in valid_keys_with_name_conflicts
+                        if pattern.findall(k)
+                    }
+                    # If multiple valid concept names reuse the same instance name, remove them too
+                    if len(remaining_concepts) > 1:
+                        for valid_key in valid_keys_with_name_conflicts:
+                            collector.collect_and_log(
+                                valid_key, ValidationProblem.KeyToBeRemoved, "key"
+                            )
+                            keys_to_remove.append(valid_key)
 
     def check_attributes_of_nonexisting_field(
         node: NexusNode,
