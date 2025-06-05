@@ -217,22 +217,33 @@ def best_namefit_of(
     return best_match
 
 
-def is_valid_unit_for_node(node: NexusNode, unit: str, unit_path: str) -> None:
+def is_valid_unit_for_node(
+    node: NexusNode, unit: str, unit_path: str, hints: Dict[str, Any]
+) -> None:
     """
     Check if a given unit matches the unit category for a node.
     """
     # Need to use a list as `NXtransformation` is a special use case
-    node_unit_categories = (
-        ["NX_LENGTH", "NX_ANGLE", "NX_UNITLESS"]
-        if node.unit == "NX_TRANSFORMATION"
-        else [node.unit]
+    if node.unit == "NX_TRANSFORMATION":
+        if (transformation_type := hints.get("transformation_type")) is not None:
+            category_map: Dict[str, str] = {
+                "translation": "NX_LENGTH",
+                "rotation": "NX_ANGLE",
+            }
+            node_unit_category = category_map.get(transformation_type, "NX_UNITLESS")
+        else:
+            node_unit_category = "NX_UNITLESS"
+        log_input = node_unit_category
+    else:
+        node_unit_category = node.unit
+        log_input = None
+
+    if NXUnitSet.matches(node_unit_category, unit):
+        return
+
+    collector.collect_and_log(
+        unit_path, ValidationProblem.InvalidUnit, node, unit, log_input
     )
-
-    for node_unit_category in node_unit_categories:
-        if NXUnitSet.matches(node_unit_category, unit):
-            return
-
-    collector.collect_and_log(unit_path, ValidationProblem.InvalidUnit, node, unit)
 
 
 def validate_dict_against(
@@ -641,7 +652,14 @@ def validate_dict_against(
                     break
 
                 unit = keys.get(f"{variant}@units")
-                is_valid_unit_for_node(node, unit, unit_path)
+                # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+                if (
+                    transformation_type := keys.get(f"{variant}@transformation_type")
+                ) is not None:
+                    hints = {"transformation_type": transformation_type}
+                else:
+                    hints = {}
+                is_valid_unit_for_node(node, unit, unit_path, hints)
 
             field_attributes = get_field_attributes(variant, keys)
             field_attributes = _follow_link(field_attributes, variant_path)
@@ -1374,8 +1392,17 @@ def validate_dict_against(
                         )
 
                 if node.unit is not None and node.unit != "NX_UNITLESS":
+                    # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+                    if (
+                        transformation_type := mapping.get(
+                            not_visited_key.replace("/@units", "/@transformation_type")
+                        )
+                    ) is not None:
+                        hints = {"transformation_type": transformation_type}
+                    else:
+                        hints = {}
                     is_valid_unit_for_node(
-                        node, mapping[not_visited_key], not_visited_key
+                        node, mapping[not_visited_key], not_visited_key, hints
                     )
 
             # parent key will be checked on its own if it exists, because it is in the list
