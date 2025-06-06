@@ -123,7 +123,7 @@ TEMPLATE["optional"][
 ] = 2
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value"] = 2.0  # pylint: disable=E1126
 TEMPLATE["optional"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units"] = (
-    "nm"  # pylint: disable=E1126
+    "eV"  # pylint: disable=E1126
 )
 TEMPLATE["optional"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[float_value_no_attr]"
@@ -135,14 +135,14 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@unit
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value"] = True  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/bool_value/@units"] = ""
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value"] = 2  # pylint: disable=E1126
-TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "eV"  # pylint: disable=E1126
+TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value/@units"] = "nm"  # pylint: disable=E1126
 
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value"] = np.array(
     [1, 2, 3],  # pylint: disable=E1126
     dtype=np.int8,
 )  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/posint_value/@units"] = (
-    "kg"  # pylint: disable=E1126
+    "mm"  # pylint: disable=E1126
 )
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
@@ -169,7 +169,7 @@ TEMPLATE["required"][
 ] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value"] = 2  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/int_value/@units"] = (
-    "eV"  # pylint: disable=E1126
+    "m"  # pylint: disable=E1126
 )
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"] = (
     np.array(
@@ -179,7 +179,7 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value"]
 )  # pylint: disable=E1126
 TEMPLATE["required"][
     "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/posint_value/@units"
-] = "kg"  # pylint: disable=E1126
+] = "cm"  # pylint: disable=E1126
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/char_value"] = (
     "just chars"  # pylint: disable=E1126
 )
@@ -1130,6 +1130,95 @@ TEMPLATE["required"][
             id="wrong-value-array-in-attribute",
         ),
         pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units",
+                "m",
+            ),
+            [
+                "The unit 'm' at /ENTRY[my_entry]/NXODD_name[nxodd_name]/float_value/@units does not match with the unit category NX_ENERGY of 'float_value'."
+            ],
+            id="appdef-invalid-units",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/duration",
+                    2,
+                ),
+                "/ENTRY[my_entry]/duration/@units",
+                "kg",
+            ),
+            [
+                "The unit 'kg' at /ENTRY[my_entry]/duration/@units does not match with the unit category NX_TIME of 'duration'."
+            ],
+            id="baseclass-invalid-units",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    TEMPLATE,
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion",
+                    0.5,
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion/@units",
+                "J/mm",
+            ),
+            [],
+            id="baseclass-valid-units-xample",
+        ),
+        pytest.param(
+            alter_dict(
+                alter_dict(
+                    alter_dict(
+                        alter_dict(
+                            alter_dict(
+                                alter_dict(
+                                    alter_dict(
+                                        alter_dict(
+                                            alter_dict(
+                                                alter_dict(
+                                                    TEMPLATE,
+                                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]",
+                                                    1.0,
+                                                ),
+                                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@transformation_type",
+                                                "translation",
+                                            ),
+                                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[translation]/@units",
+                                            "m",
+                                        ),
+                                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]",
+                                        1.0,
+                                    ),
+                                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@transformation_type",
+                                    "rotation",
+                                ),
+                                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[rotation]/@units",
+                                "degree",
+                            ),
+                            "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[direction]",
+                            1.0,
+                        ),
+                        "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]",
+                        1.0,
+                    ),
+                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@transformation_type",
+                    "rotation",
+                ),
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@units",
+                "m",
+            ),
+            [
+                "The unit 'm' at /ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation]/@units "
+                "does not match with the unit category NX_TRANSFORMATION of 'AXISNAME'. Based on the 'transformation_type' of the field "
+                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[source]/TRANSFORMATIONS[transformations]/AXISNAME[wrong_translation], "
+                "it should match with 'NX_ANGLE'."
+            ],
+            id="nxtransformations-unit",
+        ),
+        pytest.param(
             remove_from_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/number_value/@units",
@@ -1431,20 +1520,6 @@ TEMPLATE["required"][
                 "and hasn't been supplied by the reader."
             ],
             id="group-with-correct-concept-and-non-concept-sibling",
-        ),
-        # This can be re-used later when we have proper unit checking
-        pytest.param(
-            alter_dict(
-                alter_dict(
-                    TEMPLATE,
-                    "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion",
-                    0.5,
-                ),
-                "/ENTRY[my_entry]/INSTRUMENT[my_instrument]/MONOCHROMATOR[monochromator]/energy_dispersion/@units",
-                "J/mm",
-            ),
-            [],
-            id="baseclass-unit-example",
         ),
         pytest.param(
             alter_dict(

@@ -52,6 +52,7 @@ from pynxtools.dataconverter.nexus_tree import (
     generate_tree_from,
 )
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
+from pynxtools.units import NXUnitSet, ureg
 
 
 def validate_hdf_group_against(appdef: str, data: h5py.Group):
@@ -224,6 +225,35 @@ def best_namefit_of(
                     best_match = node
 
     return best_match
+
+
+def is_valid_unit_for_node(
+    node: NexusNode, unit: str, unit_path: str, hints: Dict[str, Any]
+) -> None:
+    """
+    Check if a given unit matches the unit category for a node.
+    """
+    # Need to use a list as `NXtransformation` is a special use case
+    if node.unit == "NX_TRANSFORMATION":
+        if (transformation_type := hints.get("transformation_type")) is not None:
+            category_map: Dict[str, str] = {
+                "translation": "NX_LENGTH",
+                "rotation": "NX_ANGLE",
+            }
+            node_unit_category = category_map.get(transformation_type, "NX_UNITLESS")
+        else:
+            node_unit_category = "NX_UNITLESS"
+        log_input = node_unit_category
+    else:
+        node_unit_category = node.unit
+        log_input = None
+
+    if NXUnitSet.matches(node_unit_category, unit):
+        return
+
+    collector.collect_and_log(
+        unit_path, ValidationProblem.InvalidUnit, node, unit, log_input
+    )
 
 
 def validate_dict_against(
@@ -448,6 +478,10 @@ def validate_dict_against(
             and node.optionality == "required"
             and node.type in missing_type_err
         ):
+            # Remove any subkeys from further checking.
+            for key in mapping:
+                if key.startswith(f"{prev_path}/{node.name}"):
+                    remove_from_not_visited(key)
             collector.collect_and_log(
                 f"{prev_path}/{node.name}",
                 missing_type_err.get(node.type),
@@ -616,15 +650,26 @@ def validate_dict_against(
             _ = check_reserved_prefix(variant_path, mapping, "field")
 
             # Check unit category
-            if node.unit is not None:
-                remove_from_not_visited(f"{prev_path}/{variant}/@units")
-                if f"{variant}@units" not in keys:
+            if node.unit is not None and node.unit != "NX_UNITLESS":
+                unit_path = f"{variant_path}/@units"
+                remove_from_not_visited(unit_path)
+                if f"{variant}@units" not in keys and node.unit != "NX_TRANSFORMATION":
                     collector.collect_and_log(
                         variant_path,
                         ValidationProblem.MissingUnit,
                         node.unit,
                     )
-                # TODO: Check unit with pint
+                    break
+
+                unit = keys.get(f"{variant}@units")
+                # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+                if (
+                    transformation_type := keys.get(f"{variant}@transformation_type")
+                ) is not None:
+                    hints = {"transformation_type": transformation_type}
+                else:
+                    hints = {}
+                is_valid_unit_for_node(node, unit, unit_path, hints)
 
             field_attributes = get_field_attributes(variant, keys)
             field_attributes = _follow_link(field_attributes, variant_path)
@@ -830,9 +875,11 @@ def validate_dict_against(
             and node.unit is not None
             and f"{key}/@units" not in mapping
         ):
-            collector.collect_and_log(
-                f"{key}", ValidationProblem.MissingUnit, node.unit
-            )
+            # Workaround for NX_UNITLESS of NX_TRANSFORMATION unit category
+            if node.unit != "NX_TRANSFORMATION":
+                collector.collect_and_log(
+                    f"{key}", ValidationProblem.MissingUnit, node.unit
+                )
 
         return True
 
@@ -1353,6 +1400,20 @@ def validate_dict_against(
                             ValidationProblem.UnitWithoutDocumentation,
                             mapping[not_visited_key],
                         )
+
+                if node.unit is not None and node.unit != "NX_UNITLESS":
+                    # Special case: NX_TRANSFORMATION unit depends on `@transformation_type` attribute
+                    if (
+                        transformation_type := mapping.get(
+                            not_visited_key.replace("/@units", "/@transformation_type")
+                        )
+                    ) is not None:
+                        hints = {"transformation_type": transformation_type}
+                    else:
+                        hints = {}
+                    is_valid_unit_for_node(
+                        node, mapping[not_visited_key], not_visited_key, hints
+                    )
 
             # parent key will be checked on its own if it exists, because it is in the list
             continue
