@@ -43,6 +43,16 @@ pynxtools is a Python framework that standardizes experimental data conversion t
 
 Scientific data across experimental physics and materials science remains largely non-FAIR (Findable, Accessible, Interoperable, and Reproducible) due to the complexity and inconsistent implementation of standardized data formats. While NeXus provides comprehensive application definitions for structured scientific data storage, researchers typically struggle with its verbose specification requirements, leading to incomplete implementations, non-compliant outputs, or abandonment of standardization efforts entirely. Existing tools lack comprehensive validation frameworks and provide insufficient guidance for proper NeXus adoption. pynxtools addresses this critical gap by providing an accessible framework that enforces complete NeXus application definition compliance through automated validation, detailed error reporting for missing required fields, and clear implementation pathways via configuration files and extensible plugins. This approach transforms NeXus from a complex specification into a practical solution, enabling researchers to achieve true data interoperability without deep technical expertise in the underlying standards.
 
+# Dataconverter and validation (Sherjeel)
+
+      * Mechanism to write an own reader, i.e. pynxtools-plugin mechanism and test frameworks, not mentioned to much about pynxtools-plugins
+
+# NeXus reader and annotator (read\_nexus) (Sandor)
+
+# NOMAD integration (schema, parser) (Lukas, Sandor)
+
+# ELN generator
+
 # Mathematics
 
 Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
